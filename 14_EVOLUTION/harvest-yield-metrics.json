@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T19:11:23.128Z",
-  "total_cycles_completed": 8327,
-  "total_learnings_persisted": 8327,
-  "total_rules_promoted": 8118,
+  "last_updated": "2026-11-08T19:31:12.757Z",
+  "total_cycles_completed": 8330,
+  "total_learnings_persisted": 8330,
+  "total_rules_promoted": 8123,
   "history": [
-    {
-      "timestamp": "2026-11-08T01:17:53.873Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T01:17:54.957Z",
-      "repository": "SimonSchubert/LinuxCommandLibrary",
-      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T01:25:29.796Z",
-      "repository": "nitrojs/nitro",
-      "learningId": "learn-github-nitrojs-nitro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T01:25:32.572Z",
       "repository": "argoproj/argo-events",
@@ -1403,6 +1382,27 @@
       "repository": "Cloudflare/clef",
       "learningId": "learn-huggingface-cloudflare-clef",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T19:31:08.624Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T19:31:08.984Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T19:31:12.757Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

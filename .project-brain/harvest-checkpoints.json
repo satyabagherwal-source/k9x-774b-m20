@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T19:11:23.132Z",
+  "last_updated": "2026-11-08T19:31:12.761Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -875,14 +875,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
-      "content_hash": "1883a2649f21a5e6db224b99ef0ccfa09806990385e164b58014f1360a9d7a84",
-      "verified_at": "2026-11-05T02:55:59.078Z",
+      "content_hash": "b3d0bb21ea65cf0676c94bac43b829eeffd4db5c14849f6050bed8acc17d1f6f",
+      "verified_at": "2026-11-08T19:31:08.629Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T02:55:59.078Z"
+      "last_updated": "2026-11-08T19:31:08.629Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "d6cc03750e5f13a68baaaa124a98e4ef654c97d8af25f510f2033474b88498c7",
-      "verified_at": "2026-11-08T17:06:08.407Z",
+      "content_hash": "f5a79e573ee5d9be66760dfd31902345b2db94d540bf6143863756c6ea4f3e10",
+      "verified_at": "2026-11-08T19:31:09.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:06:08.407Z"
+      "last_updated": "2026-11-08T19:31:09.019Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "67f654e7d2dd427eb73dfa69f2713d410f443a13d50d510380603843ee9b0640",
-      "verified_at": "2026-11-07T22:16:16.240Z",
+      "content_hash": "d4f3a1e6894b373c3bcc1078662f93abb0225311d850f9291fd88a2e792fb445",
+      "verified_at": "2026-11-08T19:31:12.761Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:16:16.240Z"
+      "last_updated": "2026-11-08T19:31:12.761Z"
     },
     "React95/React95": {
       "repository": "React95/React95",

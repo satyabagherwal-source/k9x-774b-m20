@@ -8371,3 +8371,6 @@ Every entry in this ledger must capture:
 | `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `81275065` | Multi-dimensional audit evidence | 2026-11-08T19:07:05.229Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `0007e8b9` | Multi-dimensional audit evidence | 2026-11-08T19:07:17.990Z |
 | `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-08T19:11:23.122Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-08T19:31:08.605Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `a0c210aa` | Multi-dimensional audit evidence | 2026-11-08T19:31:08.971Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `9ed384be` | Multi-dimensional audit evidence | 2026-11-08T19:31:12.752Z |

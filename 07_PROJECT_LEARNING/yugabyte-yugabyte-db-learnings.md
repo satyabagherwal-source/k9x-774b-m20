@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `6bea62d6`  
+> **Source Version**: `9ed384be`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T22:16:15.027Z  
+> **Timestamp**: 2026-11-08T19:31:10.935Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T22:16:14.743Z  
+> **Harvest Timestamp**: 2026-11-08T19:31:10.927Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2248,11 +2248,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #37311** (2026-11-08): **[YSQL] RR/SR DDL bumps the catalog version at a catalog read time picked before the version lock**
+  *Symptoms*: Jira Link: [DB-26059](https://yugabyte.atlassian.net/browse/DB-26059) ### Description  #### Problem  With object locking and concurrent DDL on, two DDLs in the same database can still fail with a serialization error, even though a lock exists to make one wait for the other.  Each DDL bumps the catalog version row in `pg_yb_catalog_version`. Before the bump it takes `ExclusiveLock` on that table, so concurrent bumps run one after the other (`YbIncrementMasterDBCatalogVersionTableEntryImpl` in `src/postgres/src/backend/catalog/yb_catalog/yb_catalog_version.c`). The bump reads and writes the row at the catalog snapshot. Nothing re-picks that snapshot's read time after the lock. So when the read time was picked before the lock, and another DDL committed its own bump between the read time and the lock, the write fails with:  ``` ERROR:  could not serialize access due to concurrent update ```  #### When the read time is stale  The isolation level decides whether the bump gets a fresh read time after the lock:  - YSQL READ COMMITTED: the bump calls a volatile SQL function, `yb_increment_db_catalog_version_with_inval_messages`. fmgr calls `GetTransactionSnapshot()` for it (`fmgr_sql` in `executor/functions.c`). In READ COMMITTED that call invalidates the catalog snapshot (`GetTransactionSnapshot` in `utils/time/snapmgr.c`), so the bump reads at a time after the lock. - REPEATABLE READ and SERIALIZABLE: `GetTransactionSnapshot()` returns the transaction snapshot without invalidating 
+
 - **Issue #37246** (2026-11-07): **[#37221] DocDB: Fix lock-order inversion in HnswlibTenantTest.ConcurrentInserts**
   *Symptoms*: ## Summary  TSAN reported a lock-order inversion, the same one CSI saw: `addPointImpl` locked the new point's `link_list_locks_` entry (`lock_el`) and then the tenant entry mutex from `getTenantEntryMutex`, while another insert held the tenant entry mutex while `searchBaseLayer` locked other points' link lists. The fix takes `tenant_lock` before `lock_el`, so every insert locks in one order: global, then tenant, then the new point, then other points.  --- _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._  ## Test plan  ./yb_build.sh tsan --clang21 --cxx-test hnswlib_tenant-test --gtest-filter HnswlibTenantTest.ConcurrentInserts -n 100 --stop-at-failure -- -p 6 Ran the above locally with no failures. Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for reference: - clang21-tsan: 7/7 iterations failed locally; CSI 2/2 Machine: GCP n2-standard-16, AlmaLinux 8.10 (Cerulean Leopard) x86_64, 16 vCPU, 63 GiB RAM, Intel(R) Xeon(R) CPU @ 2.80GHz 
-
-- **Issue #37243** (2026-11-07): **[PLAT-23750] YBA: Build the support bundle Go helpers with Go 1.27.3**
-  *Symptoms*: ## Summary  RapidFort flags the Go standard library in the support bundle helpers that ship in the YBA image (`/opt/yugabyte/devops/bin/yb-log-parse-*`, `yb-redact-server-conf-*`, `yb-dump-cdc-state-*`, amd64 and arm64): they are built with Go 1.26.6, which has CVE-2026-94444 and CVE-2026-94447 (High, fixed in 1.26.9 / 1.27.2).  Their `go.mod` files declared `go 1.21`/`go 1.22` with `toolchain go1.26.6`, copied from node-agent before node-agent moved to `go 1.27.3` (#36863). A `go 1.22` directive is met by any installed Go, so `devops/yb_release` built them with the build host's Go 1.26.6. This sets `go 1.27.3`, as in node-agent, yba-cli, yba-installer and yugabyted, so `GOTOOLCHAIN=auto` fetches 1.27.3 the same way it does for those modules.  The helpers are on master only (PLAT-20411); a backport of that work should include this change.  ## Test plan  - [x] `make build-all` in each of `managed/devops/supportbundle/{logparse,serverconfredact,cdcstate}`: all six binaries (linux amd64/arm64) report `go1.27.3` in `go version` - [x] `go vet ./...` and `go test ./...` pass in all three modules - [x] `govulncheck ./...`: no vulnerabilities in any of the three modules - [ ] Rescan the YBA image built from this change in RapidFort  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2269,271 +2269,88 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c2d520e4` (2026-11-07)
-**Commit Message**: [#37140] DocDB: Fix PgWaitQueuesMaxBatchSize1Test.ParallelUpdatesDetectDeadlock (#37141)
-
-## Summary
-
-Since `client_request_id_allocator=sharded-queue` became the default,
-each allocator shard has its own client id, so retryable request ids are
-only unique per client id; with batch size 1, two concurrent writes from
-one transaction can reach a tablet with the same `request_id`, tripping
-the `DCHECK` in `WaitingTxn::PurgeWaiter` in `wait_queue.cc` on debug
-builds on hosts with 16 or more CPUs.
-The change removes that `DCHECK` and documents at
-`WaiterData::request_id` why duplicates are legitimate: waking the extra
-waiter only makes it re-run conflict resolution and re-enter the wait
-queue if still blocked, which is what release builds already do.
-To make that hold by construction, `BlockerData::IsResolved()` now
-returns `bool` (it could never fail), and `SignalWaiter` always resumes
-waiters with an OK status.
-Stale comments that assumed `request_id` is unique per transaction are
-fixed in `InvokeWaiterCallback`, `WriteQuery::DoExecute` and
-`WaitingRequestsInfo::waiting_requests`.
-This fixes the tserver crash that reproduced locally, but not the
-failure CSI saw, where `did_deadlock.Wa
-
-**File**: `src/yb/docdb/deadlock_detector.h` (modified, +3/-1)
-```diff
-@@ -59,7 +59,9 @@ struct BlockerTransactionInfo {
- 
- struct WaitingRequestsInfo {
-   // Map of waiter rpc retryable request id and the time at which it was registered at the
--  // local waiting txn registry.
-+  // local waiting txn registry. Informational only. Ids aren't unique per txn (-1 for read-
-+  // generated writes; retryable ids are unique per client id, see client_request_id_allocator),
-+  // so requests of a txn blocked on the same blocker may share an entry.
-   std::unordered_map<int64_t, HybridTime> waiting_requests;
- 
-   std::string ToString() const {
-```
-
-**File**: `src/yb/docdb/wait_queue.cc` (modified, +13/-20)
-```diff
-@@ -283,6 +283,10 @@ struct WaiterData : public std::enable_shared_from_this<WaiterData> {
-   // query-layer retries and wait queue re-entries. The field is used to report wait start time in
-   // pg_locks.
-   const uint64_t request_start_us;
-+  // Retryable request id from YBClient, or -1 for WriteQuery(s) generated by ReadRpc requests.
-+  // Used to find the current WaiterData of a request across wait queue re-entries. Not unique per
-+  // transaction: retryable request ids are unique per client id, and the sharded allocator gives
-+  // each shard its own client id, so concurrent requests of a txn may share a request_id here.
-   int64_t request_id;
-   // Tracks when this WaiterData instance was created, used for periodically resuming waiters
-   // with TimedOut status so as to make them re-do conflict resolution.
-@@ -575,12 +579,8 @@ struct WaitingTxn : public std::enable_shared_from_this<WaitingTxn> {
-     auto purged_waiters = PurgeWaiters([request_id](const auto& waiter_data) {
-       return waiter_data->request_id == request_id;
-     });
--    // WriteQuery(s) generated by ReadRpc requests have request_id assigned as -1. For all other
--    // requests, request_id holds the value of the retryable request id generated by YBClient.
--    // Hence we don't expect to see multiple requests of the transaction with same request_id,
--    // with exception of -1.
--    DCHECK(purged_waiters.size() <= 1 || request_id == -1)
--        << "Found multiple waiters with the same request_id " << request_id;
-+    // May return several waiters, see WaiterData::request_id; waking an extra one only makes it
-+    // re-run conflict resolution.
-     return purged_waiters;
-   }
- 
-@@ -782,7 +782,7 @@ class BlockerData {
-     }
-   }
- 
--  Result<bool> IsResolved() {
-+  bool IsResolved() {
-     SharedLock blocker_lock(mutex_);
-     return !IsPendingUnlocked();
-   }
-@@ -2102,10 +2102,9 @@ class WaitQueue::Impl {
-       return;
-     }
- 
--    // We cannot use the passed in waiter_data here as it may have been replaced in waiter_status_
--    // by a new WaiterData instance for the same transaction. Such a situation would indicate that
--    // the previous request had returned to the caller and a new request for the same transaction
--    // was now waiting. In this situation, we would want to signal the new waiter.
-+    // The passed in waiter_data may have been replaced by a new WaiterData for the same request,
-+    // which re-ran conflict resolution and entered the queue again. Resume all waiters with this
-+    // request_id (see WaiterData::request_id).
-     std::vector<WaiterDataPtr> found_waiters;
-     {
-       UniqueLock l(mutex_);
-@@ -2132,28 +2131,22 @@ class WaitQueue::Impl {
-   void SignalWaiter(const WaiterDataPtr& waiter_data) {
-     VLOG_WITH_PREFIX(4) << "Signaling waiter " << waiter_data->id
-                         << " with request_id: " << waiter_data->request_id;
--    Status status = Status::OK();
-     size_t num_resolved_blockers = 0;
-     HybridTime max_unblock_ht = HybridTime::kMin;
- 
-     for (const auto& [blocker_data, conflict_info] : waiter_data->blockers) {
--      auto is_resolved = blocker_data->IsResolved();
--      if (!is_resolved.ok()) {
--        status = is_resolved.status();
--        break;
--      }
--      if (*is_resolved ||
-+      if (blocker_data->IsResolved() ||
-           (conflict_info && !blocker_data->HasLiveSubtransaction(conflict_info->subtransactions))) {
-         max_unblock_ht = std::max(max_unblock_ht, blocker_data->status_ht());
-         num_resolved_blockers++;
-       }
-     }
- 
--    if (waiter_data->blockers.size() == num_resolved_blockers || !status.ok()) {
-+    if (waiter_data->blockers.size() == num_resolved_blockers) {
-       // TODO(wait-queues): Abort transactions without re-invoking conflict resolution when
-       // possible, e.g. if the blocking transaction was not a lock-only conflict and was committed.
-       // See https://github.com/yugabyte/yugabyte-db/issues/13577
--      InvokeWaiterCallback(status, waiter_data, max_unblock_ht);
-+      InvokeWaiterCallback(Status::OK(), waiter_data, max_unblock_ht);
-     }
-   }
- 
-```
-
-**File**: `src/yb/tablet/write_query.cc` (modified, +1/-2)
-```diff
-@@ -948,8 +948,7 @@ Status WriteQuery::DoExecute() {
-   }
- 
-   // The request_id field should be populated for all write requests, but any read requests which
--  // trigger a write_query will not have it populated. In this case, we use -1 as the request_id,
--  // and conflict_resolution passes the serial_no to the wait queue as the request_id.
-+  // trigger a write_query will not have it populated. In this case, we use -1 as the request_id.
-   DCHECK(request().has_request_id() || request().write_batch().write_pairs_size() == 0);
-   auto request_id = request().has_request_id() ? request().request_id() : -1;
- 
-```
-
----
-
-### Incident Patch 2: `d27a1f14` (2026-11-07)
-**Commit Message**: [#37150] DocDB: Fix PgObjectLocksTest.ExclusiveLockReleaseInvalidatesCatalogCache (#37151)
-
-## Summary
-
-The test restarted `ts2` with `Shutdown()`, which sends SIGKILL. If the
-kill landed while the tserver's postgres was still starting, the tserver
-never stopped its postgres child, so the postmaster kept running on its
-own. Its ASH collector then waited for shared memory that only the dead
-tserver sets up, and crashed after 10s with the `pg_shared_mem.cc:41`
-FATAL that CI reports. Using `Shutdown(SafeShutdown::kTrue)` sends
-SIGTERM instead, so the tserver stops its own postgres before it exits.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
-the failure logs, wrote the change, and verified it locally._
-
-## Test plan
-
-./yb_build.sh release --clang21 --cxx-test pg_object_locks-test
---gtest-filter
-PgObjectLocksTest.ExclusiveLockReleaseInvalidatesCatalogCache -n 180
---stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this test reproduced locally (same test command and -p /
-env as above, without --stop-at-failure) -- with the CSI dashboard rate
-for reference:
-- clang21-release: 1/60 iterations failed locally; CSI 1/8
-Machine: GC
-
-**File**: `src/yb/yql/pgwrapper/pg_object_locks-test.cc` (modified, +2/-1)
-```diff
-@@ -1259,7 +1259,8 @@ TEST_F(PgObjectLocksTest, ExclusiveLockReleaseInvalidatesCatalogCache) {
-   auto* ts1 = cluster_->tablet_server(ts1_idx);
-   auto* ts2 = cluster_->tablet_server(ts2_idx);
- 
--  ts2->Shutdown();
-+  // SIGKILL could orphan a starting postgres, whose backends then crash on missing shared memory.
-+  ts2->Shutdown(SafeShutdown::kTrue);
-   LogWaiter log_waiter(ts2, "Received new lease epoch");
-   ASSERT_OK(ts2->Restart(
-       ExternalMiniClusterOptions::kDefaultStartCqlProxy,
-```
-
----
-
-### Incident Patch 3: `dda08f5c` (2026-11-06)
-**Commit Message**: [PLAT-23422] YBA: Fix retry of an aborted Kubernetes universe delete
+### Incident Patch 1: `9ed384be` (2026-11-07)
+**Commit Message**: [PLAT-23753] Use the right parameter name for Azure disk throughput
 
 Summary:
-Retrying a failed or aborted Kubernetes universe delete (`DestroyKubernetesUniverse`) failed at once with `UniverseDefinitionTaskParams cannot be cast to DestroyUniverse$Params`. The only way forward was to submit a new delete.
+Data disks created on Azure with `PremiumV2_LRS` or `UltraSSD_LRS` ignored the configured
+throughput and came up at Azure's default (125 MB/s for Premium SSD v2). IOPS was applied
+correctly.
 
-`UniverseDefinitionTaskParams` carries `@JsonDeserialize(converter = BaseConverter.class)`, and Jackson applies that annotation to any subclass that does not declare its own converter. `DestroyUniverse.Params` declared none, so `CustomerTaskManager#retryCustomerTask` read the stored params back as a plain `UniverseDefinitionTaskParams`, and the retried task failed on its first `params()` call.
+`build_data_disk_params` set the throughput under the key `disk_mbps_read_write`. The SDK's
+`Disk` model calls this attribute `disk_m_bps_read_write` (wire name `diskMBpsReadWrite`). The
+SDK serializer drops dict keys that match no model attribute, and it raises no error, so the
+value never reached ARM. The IOPS key (`disk_iops_read_write`) matched, which is why IOPS was
+applied and throughput was not. `update_disk` only resizes, so nothing corrected the
+throughput later.
 
-`DestroyUniverse.Params` now declares its own converter, as the other params classes that retry reads back do. The converter only defaults `expectedUniverseVersion` to -1, which the delete already locks with. A first delete builds its params directly and is unchanged; VM deletes are not retryable and are unchanged.
+The fix renames the key to `disk_m_bps_read_write`.
 
-Test Plan:
-- New `DestroyKubernetesUniverseTest#testDestroyKubernetesUniverseRetries`: aborts the delete at each subtask in turn and retries it through `CustomerTaskManager#ret
+Test Plan: - Ran an instance upgrade task in ybm to move that also changes the disk type to premium v2 with a throughput of 375MB and it works as expected.
 
-**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/DestroyUniverse.java` (modified, +4/-0)
+Reviewers: anijhawan, nbhatia, nsingh, amindrov
+
+Reviewed By: amindrov
+
+Subscribers: yugaware, nikhil
+
+Differential Revision: https://phorge.dev.yugabyte.com/D59996
+
+**File**: `managed/devops/opscli/ybops/cloud/azure/utils.py` (modified, +1/-1)
 ```diff
-@@ -10,6 +10,7 @@
+@@ -461,7 +461,7 @@ def build_data_disk_params(self, size, zone, vol_type, region, tags,
+             if disk_iops is not None:
+                 disk_params['disk_iops_read_write'] = disk_iops
+             if disk_throughput is not None:
+-                disk_params['disk_mbps_read_write'] = disk_throughput
++                disk_params['disk_m_bps_read_write'] = disk_throughput
  
- package com.yugabyte.yw.commissioner.tasks;
- 
-+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
- import com.yugabyte.yw.commissioner.BaseTaskDependencies;
- import com.yugabyte.yw.commissioner.Common.CloudType;
- import com.yugabyte.yw.commissioner.TaskExecutor.SubTaskGroup;
-@@ -63,6 +64,7 @@ public DestroyUniverse(
-     this.supportBundleUtil = supportBundleUtil;
-   }
- 
-+  @JsonDeserialize(converter = Params.Converter.class)
-   public static class Params extends UniverseDefinitionTaskParams {
-     public UUID customerUUID;
-     public Boolean isForceDelete;
-@@ -73,6 +75,8 @@ public static class Params extends UniverseDefinitionTaskParams {
-     @Getter
-     @Setter
-     KubernetesResourceDetails kubernetesResourceDetails;
-+
-+    public static class Converter extends BaseConverter<Params> {}
-   }
- 
-   public Params params() {
+         if disk_custom and len(disk_custom) > 0:
+             merge(disk_params, disk_custom)
 ```
 
-**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/DestroyKubernetesUniverseTest.java` (modified, +23/-0)
+**File**: `managed/devops/tests/opscli/test_azure_create_vm.py` (modified, +17/-4)
 ```diff
-@@ -36,6 +36,7 @@
- import com.yugabyte.yw.common.gflags.GFlagsValidation;
- import com.yugabyte.yw.forms.UniverseDefinitionTaskParams;
- import com.yugabyte.yw.models.AvailabilityZone;
-+import com.yugabyte.yw.models.CustomerTask;
- import com.yugabyte.yw.models.InstanceType;
- import com.yugabyte.yw.models.Region;
- import com.yugabyte.yw.models.TaskInfo;
-@@ -495,4 +496,26 @@ public void testDestroyKubernetesHelm2UniverseSuccess() {
-     assertEquals(Success, taskInfo.getTaskState());
-     assertFalse(defaultCustomer.getUniverseUUIDs().contains(defaultUniverse.getUniverseUUID()));
-   }
+@@ -20,10 +20,10 @@
+ from ybops.common.exceptions import YBOpsRuntimeError
+ 
+ 
+-def to_arm(vm_parameters):
+-    """Serialize a VM body the way the SDK does, to check what actually reaches ARM."""
++def to_arm(parameters, model="VirtualMachine"):
++    """Serialize a request body the way the SDK does, to check what actually reaches ARM."""
+     classes = {k: v for k, v in compute_models.__dict__.items() if isinstance(v, type)}
+-    return Serializer(classes).body(vm_parameters, "VirtualMachine")
++    return Serializer(classes).body(parameters, model)
+ 
+ 
+ def as_vm(data_disks):
+@@ -139,11 +139,24 @@ def test_ultra_disks_carry_iops_and_throughput(self):
+ 
+         for disk_params in self.created_disks().values():
+             self.assertEqual(5000, disk_params["disk_iops_read_write"])
+-            self.assertEqual(200, disk_params["disk_mbps_read_write"])
++            self.assertEqual(200, disk_params["disk_m_bps_read_write"])
+             self.assertEqual("UltraSSD_LRS", disk_params["sku"]["name"])
+         self.assertEqual(
+             {"ultraSSDEnabled": True}, self.vm_payloads[0]["additionalCapabilities"])
+ 
++    def test_iops_and_throughput_serialize_to_arm_disk_properties(self):
++        # The SDK drops dict keys that do not match a Disk attribute without any error, so a
++        # mistyped throughput key leaves Azure to apply its default (125 MB/s on Premium SSD v2).
++        for vol_type in ("premiumv2_lrs", "ultrassd_lrs"):
++            with self.subTest(vol_type=vol_type):
++                self.compute.disks.begin_create_or_update.reset_mock()
++                self.create_or_update_vm(vol_type=vol_type, disk_iops=5000, disk_throughput=375)
 +
-+  @Test
-+  public void testDestroyKubernetesUniverseRetries() {
-+    setupUniverse(false);
-+    defaultUniverse.updateConfig(
-+        ImmutableMap.of(Universe.HELM2_LEGACY, Universe.HelmLegacy.V3.toString()));
-+    defaultUniverse.save();
-+    DestroyKubernetesUniverse.Params taskParams = new DestroyKubernetesUniverse.Params();
-+    taskParams.isForceDelete = false;
-+    taskParams.isDeleteBackups = false;
-+    taskParams.customerUUID = defaultCustomer.getUuid();
-+    taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
-+    super.verifyTaskRetries(
-+        defaultCustomer,
-+        CustomerTask.TaskType.Delete,
-+        CustomerTask.TargetType.Universe,
-+        defaultUniverse.getUniverseUUID(),
-+        TaskType.DestroyKubernetesUniverse,
-+        taskParams,
-+        false);
-+    assertFalse(defaultCustomer.getUniverseUUIDs().contains(defaultUniverse.getUniverseUUID()));
-+  }
- }
++                for disk_params in self.created_disks().values():
++                    properties = to_arm(disk_params, "Disk")["properties"]
++                    self.assertEqual(5000, properties["diskIOPSReadWrite"])
++                    self.assertEqual(375, properties["diskMBpsReadWrite"])
++
+     def test_custom_disk_params_reach_the_disk_resource(self):
+         # yb.azure.custom_params.disk targets the managed disk resource body.
+         self.create_or_update_vm(disk_custom={"tier": "P30"})
 ```
 
 #### Recent Merged Pull Requests:
@@ -2542,7 +2359,7 @@ Test Plan:
 - **PR #37204** (2026-11-07): [#37203] DocDB: Disable load balancing in SealTxnTest.NumBatchesWithRestart (@csi-fix)
 - **PR #37202** (2026-11-07): [#36514] DocDB: Fix RestartTest.WalFooterProperlyInitialized by writing after restart to force a WAL append (@csi-fix)
 - **PR #37201** (2026-11-06): [#37134] YSQL: Fix ConnMgr debug build after format checks (@arpit-saxena)
-- **PR #37193** (2026-11-07): [pg19][#37181,#35023,#35025,#37186] build: Cite the tracking issue for each disabled third-party extension (@dilip-simha)
+- **PR #37197** (closed): [#36572] YSQL: Make new-mode DDLs wait for legacy-mode DMLs during upgrade (@pao214)
 
 ---
 
@@ -2562,30 +2379,28 @@ Test Plan:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#37140] DocDB: Fix PgWaitQueuesMaxBatchSize1Test.ParallelUpdatesDetectDeadlock 
+## X. [PLAT-23753] Use the right parameter name for Azure disk throughput
 
 **RULE**:
-When implementing operations in `src/yb/docdb/deadlock_detector.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `managed/devops/opscli/ybops/cloud/azure/utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c2d520e4`: [#37140] DocDB: Fix PgWaitQueuesMaxBatchSize1Test.ParallelUpdatesDetectDeadlock (#37141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ed384be`: [PLAT-23753] Use the right parameter name for Azure disk throughput. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/docdb/deadlock_detector.h`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/devops/opscli/ybops/cloud/azure/utils.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-  // local waiting txn registry. Informational only. Ids aren't unique per txn (-1 for read-
-  // generated writes; retryable ids are unique per client id, see client_request_id_allocator),
-  // so requests of a txn blocked on the same blocker may share an entry.
+                disk_params['disk_m_bps_read_write'] = disk_throughput
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-  // local waiting txn registry.
+                disk_params['disk_mbps_read_write'] = disk_throughput
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c2d520e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ed384be` are properly handled with clean fallback behavior.

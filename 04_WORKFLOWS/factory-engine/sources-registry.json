@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T19:11:25.739Z",
-    "lastVerified": "2026-11-08T19:11:25.739Z",
+    "lastChecked": "2026-11-08T19:31:15.358Z",
+    "lastVerified": "2026-11-08T19:31:15.358Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T18:35:02.573Z",
+    "lastChecked": "2026-11-08T19:31:09.485Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T18:35:02.573Z"
+    "lastVerified": "2026-11-08T19:31:09.485Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2450,22 +2450,21 @@
     "revisionIdentifier": "b1a36daf"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T15:12:23.505Z",
-    "lastVerified": "2026-11-08T15:12:23.505Z",
+    "lastChecked": "2026-11-08T19:31:07.126Z",
+    "lastVerified": "2026-11-08T19:31:07.126Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "8fb132811524e7caf49ff06dccd1218faea4e86c859898234a91f99aff48a3e8",
+    "contentHash": "f5a79e573ee5d9be66760dfd31902345b2db94d540bf6143863756c6ea4f3e10",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1b0f754b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -3452,9 +3451,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-07T23:18:05.581Z",
+    "lastChecked": "2026-11-08T19:31:01.771Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-07T23:18:05.581Z"
+    "lastVerified": "2026-11-08T19:31:01.771Z"
   },
   "lioensky-vcptoolbox": {
     "name": "VCPToolBox",
@@ -3740,13 +3739,13 @@
     "officialUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T02:55:09.108Z",
-    "lastVerified": "2026-11-05T02:55:09.108Z",
+    "lastChecked": "2026-11-08T19:30:56.878Z",
+    "lastVerified": "2026-11-08T19:30:56.878Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "1883a2649f21a5e6db224b99ef0ccfa09806990385e164b58014f1360a9d7a84",
-    "promotedRulesCount": 0,
+    "contentHash": "b3d0bb21ea65cf0676c94bac43b829eeffd4db5c14849f6050bed8acc17d1f6f",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -6602,14 +6601,14 @@
     "officialUrl": "https://github.com/yugabyte/yugabyte-db",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-07T22:16:14.743Z",
-    "lastVerified": "2026-11-07T22:16:14.743Z",
+    "lastChecked": "2026-11-08T19:31:10.927Z",
+    "lastVerified": "2026-11-08T19:31:10.927Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "67f654e7d2dd427eb73dfa69f2713d410f443a13d50d510380603843ee9b0640",
+    "contentHash": "d4f3a1e6894b373c3bcc1078662f93abb0225311d850f9291fd88a2e792fb445",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7917,9 +7916,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-07T18:16:55.625Z",
+    "lastChecked": "2026-11-08T19:30:54.295Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-07T18:16:55.625Z"
+    "lastVerified": "2026-11-08T19:30:54.295Z"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -11041,9 +11040,9 @@
   "rechsteiner-parchment": {
     "name": "Parchment",
     "officialUrl": "https://github.com/rechsteiner/Parchment",
-    "lastChecked": "2026-11-05T13:05:09.675Z",
+    "lastChecked": "2026-11-08T19:30:59.265Z",
     "revisionIdentifier": "dfb23ea5",
-    "lastVerified": "2026-11-05T13:05:09.675Z"
+    "lastVerified": "2026-11-08T19:30:59.265Z"
   },
   "webrecorder-pywb": {
     "name": "webrecorder/pywb",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T19:11:23.026Z",
+  "last_updated": "2026-11-08T19:31:12.650Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22459,10 +22459,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "1883a2649f21a5e6db224b99ef0ccfa09806990385e164b58014f1360a9d7a84",
+      "content_hash": "b3d0bb21ea65cf0676c94bac43b829eeffd4db5c14849f6050bed8acc17d1f6f",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Joint Head Configuration Consistency",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 351,
           "title": "Consistent Special‑Token Alignment Across Tokenizer and Model Config",
@@ -22521,6 +22526,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 1079,
+          "title": "Tokenizer Special Token Integrity",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1120,
           "title": "**Special‑Token Integrity Rule**",
           "status": "ALREADY_PRESENT_VERIFIED"
@@ -22537,7 +22547,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "Token ID Consistency Rule",
+          "title": "Inference Mode Enforcement",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -22699,7 +22709,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-11-05T02:55:58.921Z",
+      "verified_at": "2026-11-08T19:31:08.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65702,8 +65712,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "6bea62d6",
-      "content_hash": "67f654e7d2dd427eb73dfa69f2713d410f443a13d50d510380603843ee9b0640",
+      "source_version": "9ed384be",
+      "content_hash": "d4f3a1e6894b373c3bcc1078662f93abb0225311d850f9291fd88a2e792fb445",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -65715,6 +65725,11 @@
         {
           "number": null,
           "title": "[#37140] DocDB: Fix PgWaitQueuesMaxBatchSize1Test.ParallelUpdatesDetectDeadlock",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[PLAT-23753] Use the right parameter name for Azure disk throughput",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65798,7 +65813,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:16:16.136Z",
+      "verified_at": "2026-11-08T19:31:12.626Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75543,13 +75558,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "a0c210aa",
-      "content_hash": "d6cc03750e5f13a68baaaa124a98e4ef654c97d8af25f510f2033474b88498c7",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "f5a79e573ee5d9be66760dfd31902345b2db94d540bf6143863756c6ea4f3e10",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -75737,7 +75752,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:06:08.249Z",
+      "verified_at": "2026-11-08T19:31:08.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -91998,15 +92013,15 @@
       "learning_id": "rule-1079",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1079,
-      "title": "Tokenizer Special Token Integrity (Harvested from meta-llama/Llama-3.1-8B-Instruct)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer Special Token Integrity",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-11-08T19:31:08.480Z"
     },
     "rule-1080": {
       "learning_id": "rule-1080",

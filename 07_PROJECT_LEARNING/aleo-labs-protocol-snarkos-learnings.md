@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `1b0f754b`  
+> **Source Version**: `a0c210aa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T02:57:02.794Z  
+> **Timestamp**: 2026-11-08T19:31:07.398Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T02:57:02.504Z  
+> **Harvest Timestamp**: 2026-11-08T19:31:07.126Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1987,375 +1987,31 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1b0f754b` (2026-11-08)
-**Commit Message**: Merge pull request #4648 from aleo-labs-protocol/ci/gauntlet-gate-users
+### Incident Patch 1: `a0c210aa` (2026-11-08)
+**Commit Message**: Merge pull request #4642 from aleo-labs-protocol/ci/run-simple-node-example-tests
 
-**File**: `.github/workflows/stress-test.yml` (modified, +59/-8)
+Run the simple_node example tests in CI
+
+**File**: `.github/workflows/ci.yml` (modified, +5/-2)
 ```diff
-@@ -5,7 +5,8 @@
- # sees the result.
- #
- #   start   "Run workflow", load-test.yml, or a release whose CI passed: approval
--#           in the stress-test environment, then queue the run on the Gauntlet host.
-+#           in the stress-test environment, then start the Gauntlet host, which stops
-+#           itself when idle, and queue the run on it.
- #   follow  poll the Gauntlet host every 5 minutes and keep the check up to date.
- #           GitHub stops a job at 6h, so a longer run hands off to a fresh
- #           dispatch of this workflow, which follows the same run without
-@@ -15,7 +16,8 @@
- # Connect Endpoint, and these settings. Actions logs are public, so anything
- # naming the cloud account is a secret, held in the stress-test and
- # stress-test-status environments so that only this job on staging can read it:
--#   environment secret  STRESS_ROLE_ARN              the role
-+#   environment secret  STRESS_ROLE_ARN              the role; in stress-test-status, one that
-+#                                                    can't start a run
- #   environment secret  STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
- #   secret              ANTHROPIC_API_KEY            optional: the comparison summary
- #   variable            STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
-@@ -89,6 +91,7 @@ jobs:
-       MANAGER: ${{ secrets.STRESS_MANAGER_INSTANCE_ID }}
-       ROLE_ARN: ${{ secrets.STRESS_ROLE_ARN }}
-       HOST_KEY: ${{ vars.STRESS_MANAGER_HOST_KEY }}
-+      GATE_USER: ${{ inputs.follow_run_id == '' && 'gha-gauntlet' || 'gha-gauntlet-status' }}
-       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-     steps:
-       - name: Resolve the request
-@@ -142,9 +145,9 @@ jobs:
-           : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
-           # AWS errors quote ARNs that differ from the secret, so mask the account too.
-           echo "::add-mask::$(cut -d: -f5 <<<"$ROLE_ARN")"
--          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status,
--          # report and cancel. Each connection pushes a key that lives 60 seconds, through the
--          # Instance Connect Endpoint.
-+          # The Gauntlet host's gate users can only run the gate: gha-gauntlet enqueue, status,
-+          # report and cancel, and gha-gauntlet-status all but enqueue. Each connection pushes a
-+          # key that lives 60 seconds, through the Instance Connect Endpoint.
-           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-           ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/stress
-           : "${HOST_KEY:?STRESS_MANAGER_HOST_KEY must be configured}"
-@@ -166,10 +169,35 @@ jobs:
-           gate() {
-             aws_login
-             aws ec2-instance-connect send-ssh-public-key --instance-id "$MANAGER" \
--              --instance-os-user gha-gauntlet --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-+              --instance-os-user "$GATE_USER" --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-             ssh -i ~/.ssh/stress -o BatchMode=yes -o StrictHostKeyChecking=yes \
-               -o "ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id $MANAGER" \
--              "gha-gauntlet@$MANAGER" "$@"
-+              "$GATE_USER@$MANAGER" "$@"
-+          }
-+          # Starts the host, which stops itself when idle, until its gate answers. A host that is
-+          # stopping is started once stopped, and holds the gate's lock until then. EC2 may have no
-+          # capacity for it for a while.
-+          start_host() {
-+            local error="" rc
-+            aws_login
-+            for _ in {1..100}; do
-+              if aws ec2 start-instances --instance-ids "$MANAGER" >/dev/null 2> start.err; then
-+                rc=0; gate status "$RUN_ID" >/dev/null 2> probe.err || rc=$?
-+                (( rc == 255 )) || grep -q 'undergoing maintenance' probe.err || return 0
-+              fi
-+              # Only the error's code: its message names the instance type and zone.
-+              error="$(sed -n 's/.*An error occurred (\([A-Za-z.]*\)).*/\1/p' start.err)"
-+              case "$error" in
-+                ''|IncorrectInstanceState|InsufficientInstanceCapacity|VcpuLimitExceeded) sleep 15 ;;
-+                *) echo "::error::could not start the Gauntlet host: ${error}"; return 1 ;;
-+              esac
-+            done
-+            case "$error" in
-+              InsufficientInstanceCapacity|VcpuLimitExceeded)
-+                echo "::error::EC2 had no capacity to start the Gauntlet host"; touch no-capacity ;;
-+              *) echo "::error::the Gauntlet host did not answer: $(tail -n 1 probe.err)" ;;
-+            esac
-+            return 1
-           }
-           EOF
- 
-@@ -189,6 +217,14 @@ jobs:
-           fi
-           echo "id=$CHECK_ID" >> "$GITHUB_OUTPUT"
- 
-+      - name: Start the Gauntlet host
-+        if: steps.req.outputs.follow == 'false'
-+        env:
-+          RUN_ID: ${{ steps.req.outputs.run_id }}
-+        ru
-```
-
-**File**: `.github/workflows/sync-test.yml` (modified, +59/-9)
-```diff
-@@ -4,15 +4,16 @@
- # without start from the last release's ledger and must reach the tip. Reports it as the
- # "sync-test" check on the commit. The host owns the defaults: this sends only what's filled in.
- #
--#   start   "Run workflow": approval in the sync-test environment, then queue the run
--#           through the sync host's gate, which takes only sync tests.
-+#   start   "Run workflow": approval in the sync-test environment, then start the sync host
-+#           if it's stopped and queue the run through its gate, which takes only sync tests.
- #   follow  poll the sync host every 5 minutes and keep the check up to date. GitHub stops
- #           a job at 6h, so a longer run hands off to a fresh dispatch of this workflow, in
- #           sync-test-status, which follows the same run without asking for approval again.
- #
- # It needs an IAM role that only this file on staging can assume, an Instance Connect
- # Endpoint, and these settings, in both environments:
--#   environment secret    STRESS_ROLE_ARN              the role
-+#   environment secret    STRESS_ROLE_ARN              the role; in sync-test-status, one that
-+#                                                      can't start a run
- #   environment secret    STRESS_MANAGER_INSTANCE_ID   the sync host
- #   environment variable  STRESS_MANAGER_HOST_KEY      the sync host's ssh host key line, over
- #                                                      the repository's, Gauntlet's
-@@ -67,6 +68,7 @@ jobs:
-       MANAGER: ${{ secrets.STRESS_MANAGER_INSTANCE_ID }}
-       ROLE_ARN: ${{ secrets.STRESS_ROLE_ARN }}
-       HOST_KEY: ${{ vars.STRESS_MANAGER_HOST_KEY }}
-+      GATE_USER: ${{ inputs.follow_run_id == '' && 'gha-gauntlet' || 'gha-gauntlet-status' }}
-       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-     steps:
-       - name: Resolve the request
-@@ -111,9 +113,9 @@ jobs:
-           : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
-           # AWS errors quote ARNs that differ from the secret, so mask the account too.
-           echo "::add-mask::$(cut -d: -f5 <<<"$ROLE_ARN")"
--          # The sync host's gha-gauntlet user can only run the gate: enqueue-sync, status,
--          # report and cancel. Each connection pushes a key that lives 60 seconds, through the
--          # Instance Connect Endpoint.
-+          # The sync host's gate users can only run the gate: gha-gauntlet enqueue-sync, status,
-+          # report and cancel, and gha-gauntlet-status all but enqueue-sync. Each connection
-+          # pushes a key that lives 60 seconds, through the Instance Connect Endpoint.
-           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-           ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/stress
-           : "${HOST_KEY:?STRESS_MANAGER_HOST_KEY must be configured}"
-@@ -135,10 +137,35 @@ jobs:
-           gate() {
-             aws_login
-             aws ec2-instance-connect send-ssh-public-key --instance-id "$MANAGER" \
--              --instance-os-user gha-gauntlet --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-+              --instance-os-user "$GATE_USER" --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-             ssh -i ~/.ssh/stress -o BatchMode=yes -o StrictHostKeyChecking=yes \
-               -o "ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id $MANAGER" \
--              "gha-gauntlet@$MANAGER" "$@"
-+              "$GATE_USER@$MANAGER" "$@"
-+          }
-+          # Starts the host, which stops itself when idle, until its gate answers. A host that is
-+          # stopping is started once stopped, and holds the gate's lock until then. EC2 may have no
-+          # capacity for it for a while.
-+          start_host() {
-+            local error="" rc
-+            aws_login
-+            for _ in {1..100}; do
-+              if aws ec2 start-instances --instance-ids "$MANAGER" >/dev/null 2> start.err; then
-+                rc=0; gate status "$RUN_ID" >/dev/null 2> probe.err || rc=$?
-+                (( rc == 255 )) || grep -q 'undergoing maintenance' probe.err || return 0
-+              fi
-+              # Only the error's code: its message names the instance type and zone.
-+              error="$(sed -n 's/.*An error occurred (\([A-Za-z.]*\)).*/\1/p' start.err)"
-+              case "$error" in
-+                ''|IncorrectInstanceState|InsufficientInstanceCapacity|VcpuLimitExceeded) sleep 15 ;;
-+                *) echo "::error::could not start the sync host: ${error}"; return 1 ;;
-+              esac
-+            done
-+            case "$error" in
-+              InsufficientInstanceCapacity|VcpuLimitExceeded)
-+                echo "::error::EC2 had no capacity to start the sync host"; touch no-capacity ;;
-+              *) echo "::error::the sync host did not answer: $(tail -n 1 probe.err)" ;;
-+            esac
-+            return 1
-           }
-           EOF
- 
-@@ -158,6 +185,14 @@ jobs:
-           fi
-           echo "id=$CHECK_ID" >> "$GITHUB_OUTPUT"
- 
-+      - name: Sta
-```
-
----
-
-### Incident Patch 2: `7c98ebe4` (2026-11-08)
-**Commit Message**: ci: separate gate users for follow-on jobs; start the stopped host
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmNSP3RcL6oYCA2bxvj
-
-**File**: `.github/workflows/stress-test.yml` (modified, +59/-8)
-```diff
-@@ -5,7 +5,8 @@
- # sees the result.
- #
- #   start   "Run workflow", load-test.yml, or a release whose CI passed: approval
--#           in the stress-test environment, then queue the run on the Gauntlet host.
-+#           in the stress-test environment, then start the Gauntlet host, which stops
-+#           itself when idle, and queue the run on it.
- #   follow  poll the Gauntlet host every 5 minutes and keep the check up to date.
- #           GitHub stops a job at 6h, so a longer run hands off to a fresh
- #           dispatch of this workflow, which follows the same run without
-@@ -15,7 +16,8 @@
- # Connect Endpoint, and these settings. Actions logs are public, so anything
- # naming the cloud account is a secret, held in the stress-test and
- # stress-test-status environments so that only this job on staging can read it:
--#   environment secret  STRESS_ROLE_ARN              the role
-+#   environment secret  STRESS_ROLE_ARN              the role; in stress-test-status, one that
-+#                                                    can't start a run
- #   environment secret  STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
- #   secret              ANTHROPIC_API_KEY            optional: the comparison summary
- #   variable            STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
-@@ -89,6 +91,7 @@ jobs:
-       MANAGER: ${{ secrets.STRESS_MANAGER_INSTANCE_ID }}
-       ROLE_ARN: ${{ secrets.STRESS_ROLE_ARN }}
-       HOST_KEY: ${{ vars.STRESS_MANAGER_HOST_KEY }}
-+      GATE_USER: ${{ inputs.follow_run_id == '' && 'gha-gauntlet' || 'gha-gauntlet-status' }}
-       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-     steps:
-       - name: Resolve the request
-@@ -142,9 +145,9 @@ jobs:
-           : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
-           # AWS errors quote ARNs that differ from the secret, so mask the account too.
-           echo "::add-mask::$(cut -d: -f5 <<<"$ROLE_ARN")"
--          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status,
--          # report and cancel. Each connection pushes a key that lives 60 seconds, through the
--          # Instance Connect Endpoint.
-+          # The Gauntlet host's gate users can only run the gate: gha-gauntlet enqueue, status,
-+          # report and cancel, and gha-gauntlet-status all but enqueue. Each connection pushes a
-+          # key that lives 60 seconds, through the Instance Connect Endpoint.
-           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-           ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/stress
-           : "${HOST_KEY:?STRESS_MANAGER_HOST_KEY must be configured}"
-@@ -166,10 +169,35 @@ jobs:
-           gate() {
-             aws_login
-             aws ec2-instance-connect send-ssh-public-key --instance-id "$MANAGER" \
--              --instance-os-user gha-gauntlet --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-+              --instance-os-user "$GATE_USER" --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-             ssh -i ~/.ssh/stress -o BatchMode=yes -o StrictHostKeyChecking=yes \
-               -o "ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id $MANAGER" \
--              "gha-gauntlet@$MANAGER" "$@"
-+              "$GATE_USER@$MANAGER" "$@"
-+          }
-+          # Starts the host, which stops itself when idle, until its gate answers. A host that is
-+          # stopping is started once stopped, and holds the gate's lock until then. EC2 may have no
-+          # capacity for it for a while.
-+          start_host() {
-+            local error="" rc
-+            aws_login
-+            for _ in {1..100}; do
-+              if aws ec2 start-instances --instance-ids "$MANAGER" >/dev/null 2> start.err; then
-+                rc=0; gate status "$RUN_ID" >/dev/null 2> probe.err || rc=$?
-+                (( rc == 255 )) || grep -q 'undergoing maintenance' probe.err || return 0
-+              fi
-+              # Only the error's code: its message names the instance type and zone.
-+              error="$(sed -n 's/.*An error occurred (\([A-Za-z.]*\)).*/\1/p' start.err)"
-+              case "$error" in
-+                ''|IncorrectInstanceState|InsufficientInstanceCapacity|VcpuLimitExceeded) sleep 15 ;;
-+                *) echo "::error::could not start the Gauntlet host: ${error}"; return 1 ;;
-+              esac
-+            done
-+            case "$error" in
-+              InsufficientInstanceCapacity|VcpuLimitExceeded)
-+                echo "::error::EC2 had no capacity to start the Gauntlet host"; touch no-capacity ;;
-+              *) echo "::error::the Gauntlet host did not answer: $(tail -n 1 probe.err)" ;;
-+            esac
-+            return 1
-           }
-           EOF
- 
-@@ -189,6 +217,14 @@ jobs:
-           fi
-           echo "id=$CHECK_ID" >> "$GITHUB_OUTPUT"
- 
-+      - name: Start the Gauntlet host
-+        if: steps.req.outputs.follow == 'false'
-+        env:
-+          RUN_ID: ${{ steps.req.outputs.run_id }}
-+        ru
-```
-
-**File**: `.github/workflows/sync-test.yml` (modified, +59/-9)
-```diff
-@@ -4,15 +4,16 @@
- # without start from the last release's ledger and must reach the tip. Reports it as the
- # "sync-test" check on the commit. The host owns the defaults: this sends only what's filled in.
- #
--#   start   "Run workflow": approval in the sync-test environment, then queue the run
--#           through the sync host's gate, which takes only sync tests.
-+#   start   "Run workflow": approval in the sync-test environment, then start the sync host
-+#           if it's stopped and queue the run through its gate, which takes only sync tests.
- #   follow  poll the sync host every 5 minutes and keep the check up to date. GitHub stops
- #           a job at 6h, so a longer run hands off to a fresh dispatch of this workflow, in
- #           sync-test-status, which follows the same run without asking for approval again.
- #
- # It needs an IAM role that only this file on staging can assume, an Instance Connect
- # Endpoint, and these settings, in both environments:
--#   environment secret    STRESS_ROLE_ARN              the role
-+#   environment secret    STRESS_ROLE_ARN              the role; in sync-test-status, one that
-+#                                                      can't start a run
- #   environment secret    STRESS_MANAGER_INSTANCE_ID   the sync host
- #   environment variable  STRESS_MANAGER_HOST_KEY      the sync host's ssh host key line, over
- #                                                      the repository's, Gauntlet's
-@@ -67,6 +68,7 @@ jobs:
-       MANAGER: ${{ secrets.STRESS_MANAGER_INSTANCE_ID }}
-       ROLE_ARN: ${{ secrets.STRESS_ROLE_ARN }}
-       HOST_KEY: ${{ vars.STRESS_MANAGER_HOST_KEY }}
-+      GATE_USER: ${{ inputs.follow_run_id == '' && 'gha-gauntlet' || 'gha-gauntlet-status' }}
-       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-     steps:
-       - name: Resolve the request
-@@ -111,9 +113,9 @@ jobs:
-           : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
-           # AWS errors quote ARNs that differ from the secret, so mask the account too.
-           echo "::add-mask::$(cut -d: -f5 <<<"$ROLE_ARN")"
--          # The sync host's gha-gauntlet user can only run the gate: enqueue-sync, status,
--          # report and cancel. Each connection pushes a key that lives 60 seconds, through the
--          # Instance Connect Endpoint.
-+          # The sync host's gate users can only run the gate: gha-gauntlet enqueue-sync, status,
-+          # report and cancel, and gha-gauntlet-status all but enqueue-sync. Each connection
-+          # pushes a key that lives 60 seconds, through the Instance Connect Endpoint.
-           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-           ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/stress
-           : "${HOST_KEY:?STRESS_MANAGER_HOST_KEY must be configured}"
-@@ -135,10 +137,35 @@ jobs:
-           gate() {
-             aws_login
-             aws ec2-instance-connect send-ssh-public-key --instance-id "$MANAGER" \
--              --instance-os-user gha-gauntlet --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-+              --instance-os-user "$GATE_USER" --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-             ssh -i ~/.ssh/stress -o BatchMode=yes -o StrictHostKeyChecking=yes \
-               -o "ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id $MANAGER" \
--              "gha-gauntlet@$MANAGER" "$@"
-+              "$GATE_USER@$MANAGER" "$@"
-+          }
-+          # Starts the host, which stops itself when idle, until its gate answers. A host that is
-+          # stopping is started once stopped, and holds the gate's lock until then. EC2 may have no
-+          # capacity for it for a while.
-+          start_host() {
-+            local error="" rc
-+            aws_login
-+            for _ in {1..100}; do
-+              if aws ec2 start-instances --instance-ids "$MANAGER" >/dev/null 2> start.err; then
-+                rc=0; gate status "$RUN_ID" >/dev/null 2> probe.err || rc=$?
-+                (( rc == 255 )) || grep -q 'undergoing maintenance' probe.err || return 0
-+              fi
-+              # Only the error's code: its message names the instance type and zone.
-+              error="$(sed -n 's/.*An error occurred (\([A-Za-z.]*\)).*/\1/p' start.err)"
-+              case "$error" in
-+                ''|IncorrectInstanceState|InsufficientInstanceCapacity|VcpuLimitExceeded) sleep 15 ;;
-+                *) echo "::error::could not start the sync host: ${error}"; return 1 ;;
-+              esac
-+            done
-+            case "$error" in
-+              InsufficientInstanceCapacity|VcpuLimitExceeded)
-+                echo "::error::EC2 had no capacity to start the sync host"; touch no-capacity ;;
-+              *) echo "::error::the sync host did not answer: $(tail -n 1 probe.err)" ;;
-+            esac
-+            return 1
-           }
-           EOF
- 
-@@ -158,6 +185,14 @@ jobs:
-           fi
-           echo "id=$CHECK_ID" >> "$GITHUB_OUTPUT"
- 
-+      - name: Sta
+@@ -217,12 +217,15 @@ jobs:
+             runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
+           - name: node
+             runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service --features snarkos-node-bft-storage-service/memory,snarkos-node-bft-storage-service/persistent
+-          # `helpers::telemetry` compiles only under `metrics`. `--no-tests=fail`
+-          # overrides NEXTEST_NO_TESTS, so a filter that stops matching fails.
++          # `helpers::telemetry` compiles only under `metrics`, and nextest
++          # skips the tests in examples unless a command names one.
++          # `--no-tests=fail` overrides NEXTEST_NO_TESTS, so a command that
++          # stops matching any test fails.
+           - name: bft
+             runs: |
+               nextest run -p snarkos-node-bft
+               nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
++              nextest run -p snarkos-node-bft --example simple_node --no-tests=fail
+           - name: router
+             runs: nextest run -p snarkos-node-router
+           - name: sync
 ```
 
 #### Recent Merged Pull Requests:
@@ -2364,7 +2020,7 @@ Claude-Session: https://claude.ai/code/session_01UYfmmNSP3RcL6oYCA2bxvj
 - **PR #4645** (2026-11-07): Pin external GitHub Actions to commit SHAs (@cbeck88)
 - **PR #4644** (2026-11-07): Add the Gauntlet sync test workflow (@cbeck88)
 - **PR #4643** (2026-11-07): Gauntlet workflows: group them in Actions, add a packet-loss option (@cbeck88)
-- **PR #4640** (2026-11-06): ci: fast-forward snarkOS-internal's staging whenever staging moves (@cbeck88)
+- **PR #4642** (2026-11-08): Run the simple_node example tests in CI (@cbeck88)
 
 ---
 
@@ -2384,52 +2040,33 @@ Claude-Session: https://claude.ai/code/session_01UYfmmNSP3RcL6oYCA2bxvj
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4648 from aleo-labs-protocol/ci/gauntlet-gate-users
+## X. Merge pull request #4642 from aleo-labs-protocol/ci/run-simple-node-example-test
 
 **RULE**:
-When implementing operations in `.github/workflows/stress-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1b0f754b`: Merge pull request #4648 from aleo-labs-protocol/ci/gauntlet-gate-users. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a0c210aa`: Merge pull request #4642 from aleo-labs-protocol/ci/run-simple-node-example-tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/stress-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#           in the stress-test environment, then start the Gauntlet host, which stops
-#           itself when idle, and queue the run on it.
-#   environment secret  STRESS_ROLE_ARN              the role; in stress-test-status, one that
-#                                                    can't start a run
-      GATE_USER: ${{ inputs.follow_run_id == '' && 'gha-gauntlet' || 'gha-gauntlet-status' }}
-          # The Gauntlet host's gate users can only run the gate: gha-gauntlet enqueue, status,
-          # report and cancel, and gha-gauntlet-status all but enqueue. Each connection pushes a
-          # key that lives 60 seconds, through the Instance Connect Endpoint.
-              --instance-os-user "$GATE_USER" --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-              "$GATE_USER@$MANAGER" "$@"
-          }
-          # Starts the host, which stops itself when idle, until its gate answers. A host that is
-          # stopping is started once stopped, and holds the gate's lock until then. EC2 may have no
-          # capacity for it for a while.
-          start_host() {
-            local error="" rc
-            aws_login
-            for _ in {1..100}; do
-              if aws
+          # `helpers::telemetry` compiles only under `metrics`, and nextest
+          # skips the tests in examples unless a command names one.
+          # `--no-tests=fail` overrides NEXTEST_NO_TESTS, so a command that
+          # stops matching any test fails.
+              nextest run -p snarkos-node-bft --example simple_node --no-tests=fail
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-#           in the stress-test environment, then queue the run on the Gauntlet host.
-#   environment secret  STRESS_ROLE_ARN              the role
-          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status,
-          # report and cancel. Each connection pushes a key that lives 60 seconds, through the
-          # Instance Connect Endpoint.
-              --instance-os-user gha-gauntlet --ssh-public-key "file://$HOME/.ssh/stress.pub" >/dev/null
-              "gha-gauntlet@$MANAGER" "$@"
+          # `helpers::telemetry` compiles only under `metrics`. `--no-tests=fail`
+          # overrides NEXTEST_NO_TESTS, so a filter that stops matching fails.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1b0f754b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a0c210aa` are properly handled with clean fallback behavior.
