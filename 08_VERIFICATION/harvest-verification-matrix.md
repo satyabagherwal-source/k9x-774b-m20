@@ -8230,3 +8230,5 @@
 | `CYCLE-20261108-C8WA` | `2026-11-08T05:33:14.122Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`920610c8...`) |
 | `CYCLE-20261108-M1RB` | `2026-11-08T05:40:51.432Z` | `ornith-ai/Ornith-1.5-122B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`531539e0...`) |
 | `CYCLE-20261108-M4KE` | `2026-11-08T05:40:55.070Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de94b8a1...`) |
+| `CYCLE-20261108-VHKQ` | `2026-11-08T05:48:11.834Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 876, Rule null` | Yes (`8f0c7664...`) |
+| `CYCLE-20261108-VLCM` | `2026-11-08T05:48:16.726Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`43006cc7...`) |

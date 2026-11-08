@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `1b6a9297`  
+> **Source Version**: `8f6e050c`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:15:08.365Z  
+> **Timestamp**: 2026-11-08T05:48:14.950Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:15:06.729Z  
+> **Harvest Timestamp**: 2026-11-08T05:48:14.767Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9496 stars
+- **Stars / Engagement**: 9495 stars
 
 ---
 
@@ -2301,922 +2301,49 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `496095b5` (2026-11-06)
-**Commit Message**: perf: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (#7298)
+### Incident Patch 1: `8f6e050c` (2026-11-07)
+**Commit Message**: chore: Fix conflict between #7108 and #7298. (#7309)
 
-## What
+Fix conflict between #7108 and #7298.
 
-Allow the existing disjunctive rank join path to handle supported
-single-table
-filters, including row-level security restrictions expressed as equality
-or
-`= ANY(...)`.
-
-A top-K search such as `job.body @@@ ... OR client.name @@@ ...` now
-stays
-eligible for `RankJoinExec` when a policy or `WHERE` restricts either
-input.
-
-## Why
-
-The rank join required each input's base query to match all rows. A
-pushed-down
-policy or `WHERE` restriction therefore prevented its selection, leaving
-these
-searches on `HashJoinExec` followed by Top-K, even with
-`paradedb.rank_join_min_rows = 0`. The hash join's inputs scan every
-permitted
-row of each table.
-
-## How
-
-- Carry the base filter through `ScanMode::Disjunctive`, including
-runtime
-  expression resolution and worker plan serialization.
-- Apply the filter on both the score-ordered stream and partner lookups,
-so rows
-found through either input satisfy its restrictions. Sorted access runs
-the
-filter as a constant-score conjunct, so tantivy's filtered term union
-keeps
-  Block-Max WAND.
-- Give accepted filters zero score contribution whi
-
-**File**: `docs/project/changelog/unreleased/7298.performance.mdx` (added, +5/-0)
+**File**: `pg_search/src/scan/execution_plan.rs` (modified, +10/-6)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: performance
-+---
-+
-+Top-K joins ordered by combined search scores now use the rank join when a leaf carries a single-table filter answered by the index, including row-level security policies, `=`, `= ANY`, and range conditions. Such filters previously forced a hash join over every permitted row.
-```
-
-**File**: `pg_search/src/index/reader/index.rs` (modified, +207/-102)
-```diff
-@@ -284,16 +284,30 @@ pub(crate) enum RaBaseFilter {
-     /// Base query is `AllQuery` and the segment is unconstrained by partition bounds
-     /// (every live document matches with base score `0.0`).
-     MatchAll,
--    /// Segment requires evaluating `weight` (either a non-`All` base query, a `partially_included`
--    /// segment's `partition_bounds` range filter, or their conjunction).
--    /// `contributes_score` is `true` only when the underlying base query itself contributes a
--    /// BM25 score (`!unconstrained_is_match_all && need_scores`); it is `false` when `weight`
--    /// only enforces `partition_bounds` on an `AllQuery` base scan so the range filter's
--    /// non-scoring `ConstScorer` (`1.0`) is never added to the document score.
--    Filtered {
--        weight: Arc<LazyWeight>,
--        contributes_score: bool,
--    },
-+    /// Segment requires evaluating the weight as a `0.0`-score filter (a `partially_included`
-+    /// segment's `partition_bounds` on an `AllQuery` base, a disjunctive scan's base query, an
-+    /// unscored base query, or their conjunction), so its non-scoring `ConstScorer` is never
-+    /// added to the document score.
-+    Filter(Arc<LazyWeight>),
-+    /// Segment requires evaluating the weight, and the base query itself contributes its BM25
-+    /// score (`!unconstrained_is_match_all && need_scores`).
-+    Scored(Arc<LazyWeight>),
-+}
-+
-+impl RaBaseFilter {
-+    fn filter(&self) -> Option<&Arc<LazyWeight>> {
-+        match self {
-+            Self::Filter(weight) => Some(weight),
-+            Self::MatchAll | Self::Scored(_) => None,
-+        }
-+    }
-+
-+    fn scored(&self) -> Option<&Arc<LazyWeight>> {
-+        match self {
-+            Self::Scored(weight) => Some(weight),
-+            Self::MatchAll | Self::Filter(_) => None,
-+        }
-+    }
- }
- 
- /// Reusable base query weights for Random Access (`RA`) point lookups in `lazy_sort` mode.
-@@ -345,12 +359,76 @@ impl<'a> DisjunctScorer<'a> {
-     }
- }
- 
--/// Evaluates an [`RaBaseFilter::MatchAll`] segment when `score_threshold` does not prune the
--/// `0.0` base score, iterating `lookup_weight` directly and adding any [`DisjunctScorer`] score.
-+/// Lazily initialized per-segment base filter for `RA` lookups.
-+struct SegmentBaseFilter<'a> {
-+    segment_reader: &'a SegmentReader,
-+    weight: Option<&'a Arc<LazyWeight>>,
-+    candidate_size: u32,
-+    state: Option<(Box<dyn Scorer>, DocId)>,
-+}
-+
-+impl<'a> SegmentBaseFilter<'a> {
-+    fn new(
-+        segment_reader: &'a SegmentReader,
-+        weight: Option<&'a Arc<LazyWeight>>,
-+        candidate_size: u32,
-+    ) -> Self {
-+        Self {
-+            segment_reader,
-+            weight,
-+            candidate_size,
-+            state: None,
-+        }
-+    }
-+
-+    fn matches(&mut self, target_doc: DocId) -> bool {
-+        let Some(weight) = self.weight else {
-+            return true;
-+        };
-+        // Non-`TermSetQuery` weights (such as `RangeQuery` or `BooleanQuery` from
-+        // `and_query`) fall back to `Weight::scorer`, which positions the scorer at its first
-+        // matching document (`scorer.doc()`) and records `last_seek_pos_opt` on any child
-+        // `RangeDocSet`. Tracking `min_doc` avoids calling `seek_danger` with a `target_doc`
-+        // below the scorer's current lower bound (which would underflow `new_seek -
-+        // last_seek_pos` in `RangeDocSet::is_last_seek_distance_large`).
-+        let (scorer, min_doc) = self.state.get_or_insert_with(|| {
-+            let scorer = weight
-+                .get()
-+                .scorer_for_candidates_unpositioned(
-+                    self.segment_reader,
-+                    1.0,
-+                    self.candidate_size.max(1),
-+                )
-+                .expect("base filter scorer should be constructable");
-+            let first_doc = scorer.doc();
-+            (scorer, first_doc)
-+        });
-+        if target_doc < *min_doc {
-+            return false;
-+        }
-+        match scorer.seek_danger(target_doc) {
-+            tantivy::SeekDangerResult::Found => {
-+                *min_doc = target_doc.saturating_add(1);
-+                true
-+            }
-+            tantivy::SeekDangerResult::SeekLowerBound(next_bound) => {
-+                *min_doc = next_bound;
-+                false
-+            }
-+        }
-+    }
-+}
-+
-+/// Evaluates an unscored-base segment (`RaBaseFilter::MatchAll` or `RaBaseFilter::Filter`) when
-+/// `score_threshold` does not prune the `0.0` base score, iterating `lookup_weight` directly,
-+/// probing any `base_filter_weight` lazily via `seek_danger`, and adding any [`DisjunctScorer`]
-+/// score.
-+#[allow(clippy::too_many_arguments)]
- fn collect_lookup_only_segment(
-     segment_ord: SegmentOrdinal,
-     segment_reader: &SegmentReader,
-     lookup_weight: &dyn Weight,
-+    base_filter_weight: Option<&Arc<LazyWeight>>,
-     disjunct_weight: Option<&Arc<LazyWeight>>,
-     score_threshold: Option<Score>,
-     emitted_docs: &mut crate::api::HashSet
-```
-
-**File**: `pg_search/src/postgres/customscan/joinscan/build.rs` (modified, +2/-34)
-```diff
-@@ -1849,23 +1849,7 @@ impl RelNode {
-     /// the tree and must be visited separately (see `JoinCSClause::visit_queries_mut`).
-     pub fn visit_queries_mut(&mut self, f: &mut impl FnMut(&mut SearchQueryInput)) {
-         match self {
--            RelNode::Scan(source) => match &mut source.scan_info.mode {
--                crate::scan::ScanMode::Standard { query } => f(query),
--                crate::scan::ScanMode::Tagged {
--                    base_query,
--                    local_queries,
--                } => {
--                    f(base_query);
--                    for tq in local_queries {
--                        f(&mut tq.query);
--                    }
--                }
--                crate::scan::ScanMode::Disjunctive { disjunct_queries } => {
--                    for q in disjunct_queries {
--                        f(q);
--                    }
--                }
--            },
-+            RelNode::Scan(source) => source.scan_info.mode.queries_mut().for_each(f),
-             RelNode::Join(j) => {
-                 j.left.visit_queries_mut(f);
-                 j.right.visit_queries_mut(f);
-@@ -1886,23 +1870,7 @@ impl RelNode {
-     /// just to satisfy a `&mut` receiver.
-     pub fn visit_queries(&self, f: &mut impl FnMut(&SearchQueryInput)) {
-         match self {
--            RelNode::Scan(source) => match &source.scan_info.mode {
--                crate::scan::ScanMode::Standard { query } => f(query),
--                crate::scan::ScanMode::Tagged {
--                    base_query,
--                    local_queries,
--                } => {
--                    f(base_query);
--                    for tq in local_queries {
--                        f(&tq.query);
--                    }
--                }
--                crate::scan::ScanMode::Disjunctive { disjunct_queries } => {
--                    for q in disjunct_queries {
--                        f(q);
--                    }
--                }
--            },
-+            RelNode::Scan(source) => source.scan_info.mode.queries().for_each(f),
-             RelNode::Join(j) => {
-                 j.left.visit_queries(f);
-                 j.right.visit_queries(f);
-```
-
-**File**: `pg_search/src/query/mod.rs` (modified, +140/-0)
-```diff
-@@ -500,6 +500,43 @@ impl SearchQueryInput {
-         }
-     }
- 
-+    /// Whether this is a plain SQL restriction as pushdown lowers it (`=`, `= ANY`, a range,
-+    /// `IS NOT NULL`, `<>`, or an AND of those), which the rank join can keep as a `0.0`-score
-+    /// filter. A term counts only on a field `term_is_filter` accepts. A `PostgresExpression` is
-+    /// accepted for plain `EXPLAIN` (before `solve_postgres_expressions` resolves it at
-+    /// execution). Every explicit `@@@` search (`WithIndex`), any boost or non-zero constant
-+    /// score, an OR, and every other form is refused.
-+    pub(crate) fn is_pushdown_filter(&self, term_is_filter: &dyn Fn(&FieldName) -> bool) -> bool {
-+        match self {
-+            SearchQueryInput::All
-+            | SearchQueryInput::Empty
-+            | SearchQueryInput::Null
-+            | SearchQueryInput::TermSet { .. }
-+            | SearchQueryInput::PostgresExpression { .. } => true,
-+            // The negation of a pushed filter guards NULLs with a `0.0` constant.
-+            SearchQueryInput::ConstScore { query, score } => {
-+                *score == 0.0 && query.is_pushdown_filter(term_is_filter)
-+            }
-+            // An excluded clause adds no score, but deciding what it excludes may need one.
-+            SearchQueryInput::Boolean {
-+                must,
-+                should,
-+                must_not,
-+                ..
-+            } => {
-+                should.is_empty()
-+                    && must
-+                        .iter()
-+                        .chain(must_not)
-+                        .all(|q| q.is_pushdown_filter(term_is_filter))
-+            }
-+            SearchQueryInput::FieldedQuery { field, query } => {
-+                query.is_pushdown_filter(field, term_is_filter)
-+            }
-+            _ => false,
-+        }
-+    }
-+
-     /// Estimates a relative upper bound on the BM25 score of `self`, accounting for query-level
-     /// `Boost`, `ConstScore`, `Boolean` sums, and `DisjunctionMax`.
-     pub(crate) fn estimate_max_score(&self) -> f64 {
-@@ -2187,6 +2224,109 @@ mod tests {
- 
-     use pgrx::prelude::*;
- 
-+    #[pg_test]
-+    fn pushdown_filter_admits_sql_restrictions_only() {
-+        let filter = |_: &crate::api::FieldName| true;
-+        let no_filter = |_: &crate::api::FieldName| false;
-+        let term_set = create_term_query();
-+        let term = SearchQueryInput::FieldedQuery {
-+            field: "test".into(),
-+            query: pdb::Query::Term {
-+                value: PdbOwnedValue::Str("value".to_string()),
-+            },
-+        };
-+        let and = SearchQueryInput::Boolean {
-+            must: vec![term_set.clone(), term.clone()],
-+            should: vec![],
-+            must_not: vec![],
-+            minimum_should_match: None,
-+        };
-+        let or = SearchQueryInput::Boolean {
-+            must: vec![],
-+            should: vec![term_set.clone(), term.clone()],
-+            must_not: vec![],
-+            minimum_should_match: None,
-+        };
-+        let score_filter = SearchQueryInput::ScoreFilter {
-+            bounds: vec![],
-+            query: Some(Box::new(term_set.clone())),
-+        };
-+        let not_score_filter = SearchQueryInput::Boolean {
-+            must: vec![SearchQueryInput::All],
-+            should: vec![],
-+            must_not: vec![score_filter.clone()],
-+            minimum_should_match: None,
-+        };
-+        let not_term = SearchQueryInput::Boolean {
-+            must: vec![SearchQueryInput::All],
-+            should: vec![],
-+            must_not: vec![term.clone()],
-+            minimum_should_match: None,
-+        };
-+        let const_over_filter = SearchQueryInput::ConstScore {
-+            query: Box::new(term_set.clone()),
-+            score: 7.0,
-+        };
-+        let explicit_term = SearchQueryInput::WithIndex {
-+            oid: pgrx::pg_sys::Oid::INVALID,
-+            query: Box::new(term.clone()),
-+        };
-+        let explicit_term_set = SearchQueryInput::WithIndex {
-+            oid: pgrx::pg_sys::Oid::INVALID,
-+            query: Box::new(term_set.clone()),
-+        };
-+        let zero_const_over_filter = SearchQueryInput::ConstScore {
-+            query: Box::new(term_set.clone()),
-+            score: 0.0,
-+        };
-+        let const_over_text = SearchQueryInput::ConstScore {
-+            query: Box::new(term.clone()),
-+            score: 7.0,
-+        };
-+        let cast_const_over_text = SearchQueryInput::FieldedQuery {
-+            field: "test".into(),
-+            query: pdb::Query::ScoreAdjusted {
-+                query: Box::new(pdb::Query::Term {
-+                    value: PdbOwnedValue::Str("value".to_string()),
-+                }),
-+                score: Some(pdb::ScoreAdjustStyle::Const(7.0)),
-+            },
-+        };
-+
-+        let pg_expr =
-+            SearchQueryInput::postgres_expression(std::ptr::null_mut(), "expr".to_string());
-+        let and_pg_expr = SearchQueryInput::Boolean {
-+            m
-```
-
-**File**: `pg_search/src/query/pdb_query.rs` (modified, +17/-0)
-```diff
-@@ -736,6 +736,23 @@ impl pdb::Query {
-         }
-     }
- 
-+    /// [`SearchQueryInput::is_pushdown_filter`] for one field's query: a term counts only on a
-+    /// field `term_is_filter` accepts, a score adjustment never does, and the remaining forms
-+    /// count when their score is constant (ranges, exists, term sets).
-+    ///
-+    /// [`SearchQueryInput::is_pushdown_filter`]: crate::query::SearchQueryInput::is_pushdown_filter
-+    pub(crate) fn is_pushdown_filter(
-+        &self,
-+        field: &FieldName,
-+        term_is_filter: &dyn Fn(&FieldName) -> bool,
-+    ) -> bool {
-+        match self {
-+            pdb::Query::Term { .. } => term_is_filter(field),
-+            pdb::Query::ScoreAdjusted { .. } => false,
-+            _ => self.is_constant_score(),
-+        }
-+    }
-+
-     pub(crate) fn is_constant_score(&self) -> bool {
-         match self {
-             pdb::Query::All
-```
-
-**File**: `pg_search/src/scan/execution_plan.rs` (modified, +41/-11)
-```diff
-@@ -771,10 +771,16 @@ impl PgSearchScanPlan {
-     }
- 
-     /// Converts a `ScanMode::Tagged` scan into a tagless `ScanMode::Disjunctive` scan for
--    /// `RankJoinExec` if `base_query` is `SearchQueryInput::All` and all of its `local_queries`
--    /// are in `elided_tags`. Strips the tag columns from the output schema and scanner
--    /// configuration, records the matched tag names in `matched_tags`, and returns the positional
--    /// `old_col_idx -> Option<new_col_idx>` mapping.
-+    /// `RankJoinExec` if `base_query` is answered entirely by the index and all of its
-+    /// `local_queries` are in `elided_tags`. Strips the tag columns from the output schema and
-+    /// scanner configuration, records the matched tag names in `matched_tags`, and returns the
-+    /// positional `old_col_idx -> Option<new_col_idx>` mapping.
-+    ///
-+    /// The base query becomes a `0.0`-score filter (`prepare_sa_and_ra`), because `RankJoinExec`
-+    /// bounds a partner found only by `RA` at `0.0`. Only a pushed SQL restriction
-+    /// (`SearchQueryInput::is_pushdown_filter`) qualifies; an explicit search, a scored base,
-+    /// or one with heap filters that `SA` cannot apply before pulling a window, keeps
-+    /// `HashJoinExec` with its score intact.
-     pub(crate) fn with_elided_disjunctive_tags(
-         &self,
-         elided_tags: &std::collections::BTreeSet<String>,
-@@ -787,17 +793,36 @@ impl PgSearchScanPlan {
-         else {
-             return None;
-         };
--        if !matches!(**base_query, SearchQueryInput::All)
--            || local_queries.is_empty()
-+        if local_queries.is_empty()
-             || !local_queries
-                 .iter()
-                 .all(|tq| elided_tags.contains(&tq.tag_name))
-+            || base_query.has_heap_filters()
-         {
-             return None;
-         }
-+        {
-+            let state = self
-+                .state
-+                .lock()
-+                .unwrap_or_else(|poisoned| poisoned.into_inner());
-+            let schema = match &*state {
-+                ExecutionState::Shared { scan_state, .. }
-+                | ExecutionState::RangePartitioned { scan_state, .. } => {
-+                    Some(scan_state.0.reader.schema())
+@@ -806,16 +806,20 @@ impl PgSearchScanPlan {
+                 .state
+                 .lock()
+                 .unwrap_or_else(|poisoned| poisoned.into_inner());
+-            let schema = match &*state {
++            let is_pushdown = match &*state {
+                 ExecutionState::Shared { scan_state, .. }
+                 | ExecutionState::RangePartitioned { scan_state, .. } => {
+-                    Some(scan_state.0.reader.schema())
++                    crate::postgres::customscan::mpp::run_on_main_thread(|token| {
++                        let schema = scan_state.get(token).reader.schema();
++                        base_query
++                            .is_pushdown_filter(&|field| schema.is_term_filter_field(field.root()))
++                    })
 +                }
-+                ExecutionState::Uninitialized | ExecutionState::Consumed => None,
-+            };
-+            if !base_query.is_pushdown_filter(&|field| {
-+                schema.is_some_and(|s| s.is_term_filter_field(field.root()))
-+            }) {
-+                return None;
-+            }
-+        }
-         matched_tags.extend(local_queries.iter().map(|tq| tq.tag_name.clone()));
-         let disjunct_queries = local_queries.iter().map(|tq| (*tq.query).clone()).collect();
--        let new_scan_mode = crate::scan::ScanMode::disjunctive(disjunct_queries);
-+        let new_scan_mode =
-+            crate::scan::ScanMode::disjunctive((**base_query).clone(), disjunct_queries);
- 
-         let old_schema = self.properties.eq_properties.schema();
-         let mut fields = Vec::with_capacity(old_schema.fields().len());
-@@ -1577,8 +1602,7 @@ impl DisplayAs for PgSearchScanPlan {
-                 base_query,
-                 local_queries,
-             } => {
--                let has_base = !matches!(**base_query, SearchQueryInput::All);
--                if has_base {
-+                if !matches!(**base_query, SearchQueryInput::All) {
-                     write!(f, ", query={}", base_query.explain_format())?;
-                 } else if local_queries.is_empty() {
-                     write!(f, ", query=\"all\"")?;
-@@ -1587,8 +1611,14 @@ impl DisplayAs for PgSearchScanPlan {
-                     write!(f, ", tag_{}={}", tq.tag_idx.0, tq.query.explain_format())?;
++                ExecutionState::Uninitialized | ExecutionState::Consumed => {
++                    base_query.is_pushdown_filter(&|_| false)
                  }
-             }
--            crate::scan::ScanMode::Disjunctive { disjunct_queries } => {
--                if disjunct_queries.is_empty() {
-+            crate::scan::ScanMode::Disjunctive {
-+                base_query,
-+                disjunct_queries,
-+            } => {
-+                let has_base = !matches!(**base_query, SearchQueryInput::All);
-+                if has_base {
-+                    write!(f, ", query={}", base_query.explain_format())?;
-+                } else if disjunct_queries.is_empty() {
-                     write!(f, ", query=\"all\"")?;
-                 }
-                 for q in disjunct_queries {
-```
-
-**File**: `pg_search/src/scan/info.rs` (modified, +67/-90)
-```diff
-@@ -133,10 +133,14 @@ pub enum ScanMode {
-         /// The single-table search predicates lifted from this scan, if any.
-         local_queries: Vec<TaggedQuery>,
-     },
--    /// Scan participating in a tagless disjunctive `RankJoinExec` (`base_query` is `All`).
--    /// `SA` filters and scores by the union of `disjunct_queries`, while `RA` matches all
--    /// documents and scores by `disjunct_queries` (`0.0` when no disjunct matches). No tag columns are emitted.
-+    /// Scan participating in a tagless disjunctive `RankJoinExec`.
-+    /// `SA` filters by `base_query` and scores by the union of `disjunct_queries`, while `RA`
-+    /// matches `base_query` and scores by `disjunct_queries` (`0.0` when no disjunct matches).
-+    /// `base_query` is a `0.0`-score filter and never contributes. No tag columns are emitted.
-     Disjunctive {
-+        /// Constant-score filter answered by the index (e.g. a row-level security policy on an
-+        /// indexed column), or `All`.
-+        base_query: Box<SearchQueryInput>,
-         /// Local disjunct search queries from the cross-table `OR`.
-         disjunct_queries: Vec<SearchQueryInput>,
-     },
-@@ -163,9 +167,16 @@ impl ScanMode {
-         }
-     }
- 
--    /// Creates a tagless disjunctive scan mode for `RankJoinExec` with local disjuncts.
--    pub fn disjunctive(disjunct_queries: Vec<SearchQueryInput>) -> Self {
--        Self::Disjunctive { disjunct_queries }
-+    /// Creates a tagless disjunctive scan mode for `RankJoinExec` with a base filter and local
-+    /// disjuncts.
-+    pub fn disjunctive(
-+        base_query: SearchQueryInput,
-+        disjunct_queries: Vec<SearchQueryInput>,
-+    ) -> Self {
-+        Self::Disjunctive {
-+            base_query: Box::new(base_query),
-+            disjunct_queries,
-+        }
-     }
- 
-     /// Returns a new `ScanMode` with the base or standard query replaced.
-@@ -178,98 +189,80 @@ impl ScanMode {
-                 base_query: Box::new(base_query),
-                 local_queries,
-             },
--            Self::Disjunctive { disjunct_queries } => {
--                debug_assert!(
--                    matches!(base_query, SearchQueryInput::All),
--                    "ScanMode::Disjunctive requires SearchQueryInput::All base query"
--                );
--                Self::Disjunctive { disjunct_queries }
--            }
-+            Self::Disjunctive {
-+                disjunct_queries, ..
-+            } => Self::Disjunctive {
-+                base_query: Box::new(base_query),
-+                disjunct_queries,
-+            },
-         }
-     }
- 
-     /// The base or primary search query for this scan mode.
-     pub fn query(&self) -> &SearchQueryInput {
-         match self {
-             Self::Standard { query } => query,
--            Self::Tagged { base_query, .. } => base_query,
--            Self::Disjunctive { .. } => &SearchQueryInput::All,
-+            Self::Tagged { base_query, .. } | Self::Disjunctive { base_query, .. } => base_query,
-         }
-     }
- 
--    /// Whether any query in this scan mode requires a tokenizer.
--    pub fn needs_tokenizer(&self) -> bool {
--        match self {
--            Self::Standard { query } => query.needs_tokenizer(),
-+    /// Every query of this scan mode: the base or primary query, then the local queries.
-+    pub fn queries(&self) -> impl Iterator<Item = &SearchQueryInput> {
-+        let (first, rest): (_, Box<dyn Iterator<Item = &SearchQueryInput> + '_>) = match self {
-+            Self::Standard { query } => (query, Box::new(std::iter::empty())),
-             Self::Tagged {
-                 base_query,
-                 local_queries,
--            } => {
--                base_query.needs_tokenizer()
--                    || local_queries.iter().any(|tq| tq.query.needs_tokenizer())
--            }
--            Self::Disjunctive { disjunct_queries } => {
--                disjunct_queries.iter().any(|q| q.needs_tokenizer())
--            }
--        }
-+            } => (
-+                base_query,
-+                Box::new(local_queries.iter().map(|tq| &*tq.query)),
-+            ),
-+            Self::Disjunctive {
-+                base_query,
-+                disjunct_queries,
-+            } => (base_query, Box::new(disjunct_queries.iter())),
-+        };
-+        std::iter::once(&**first).chain(rest)
-     }
- 
--    /// Whether any query in this scan mode contains runtime `PostgresExpression` nodes.
--    pub fn has_postgres_expressions(&self) -> bool {
--        match self {
--            Self::Standard { query } => query.has_postgres_expressions(),
-+    /// Mutable counterpart of [`Self::queries`].
-+    pub fn queries_mut(&mut self) -> impl Iterator<Item = &mut SearchQueryInput> {
-+        let (first, rest): (_, Box<dyn Iterator<Item = &mut SearchQueryInput> + '_>) = match self {
-+            Self::Standard { query } => (query, Box::new(std::iter::empty())),
-             Self::Tagged {
-                 base_query,
-                 local_queries,
--            } => {
--                ba
-```
-
-**File**: `pg_search/src/scan/lazy_sort.rs` (modified, +16/-5)
-```diff
-@@ -161,7 +161,8 @@ pub type LazySortTelemetry =
- ///   `SA` searches the union of positive-score queries (`with_disjunctive_sa_queries`) so
- ///   `0.0`-score documents are never visited by `SA`, while `RA` point lookups score `ra_weights`
- ///   directly on matched `DocId`s (returning `0.0` when a document satisfies `base_query` and the
--///   join key but none of `disjunct_queries`).
-+///   join key but none of `disjunct_queries`). A non-`All` `base_query` is a `0.0`-score filter on
-+///   both streams.
- #[derive(Clone)]
- pub struct LazySortConfig {
-     /// Tantivy sort keys passed to `search_top_k_in_segments`.
-@@ -560,11 +561,21 @@ fn prepare_sa_and_ra(
-     range_target: Option<&(PartitionSegments, SearchQueryInput)>,
- ) -> (SearchIndexReader, RaLookupWeights, bool) {
-     let (sa_reader, is_disjunctive_sa, base_is_match_all, ra_disjunct_queries) = match scan_mode {
--        crate::scan::ScanMode::Disjunctive { disjunct_queries } => {
-+        crate::scan::ScanMode::Disjunctive {
-+            base_query,
-+            disjunct_queries,
-+        } => {
-             let has_disjuncts = !disjunct_queries.is_empty();
--            let replace_query = !pushed;
--            let sa = if has_disjuncts {
--                reader.with_disjunctive_sa_queries(replace_query, disjunct_queries)
-+            let replace_query = matches!(base_query.as_ref(), SearchQueryInput::All) && !pushed;
-+            // The reader was opened with the unwrapped base, so the `0.0` score is applied here.
-+            // `RA` never scores the base when disjuncts exist (`prepare_ra_lookup_weights`), and
-+            // `RankJoinExec` bounds `RA`-only partners at `0.0`, so `SA` must not score it either.
-+            let sa = if has_disjuncts && replace_query {
-+                reader.with_disjunctive_sa_queries(true, disjunct_queries)
-+            } else if has_disjuncts {
-+                reader
-+                    .with_constant_score(0.0)
-+                    .with_disjunctive_sa_queries(false, disjunct_queries)
-             } else {
-                 reader.clone()
+-                ExecutionState::Uninitialized | ExecutionState::Consumed => None,
              };
-```
-
----
-
-### Incident Patch 2: `8366aeab` (2026-11-05)
-**Commit Message**: ci: build the benchmark indexes once (#7226)
-
-# Ticket(s) Closed
-
-- None.
-
-## What
-
-This PR runs `VACUUM FULL ANALYZE` before the benchmark builds its
-indexes, not after.
-
-## Why
-
-`VACUUM FULL` rebuilds every index of a table. So the benchmark built
-each index twice, and the queries ran on the second copy. In a 20M Stack
-Overflow run
-([job](https://github.com/paradedb/paradedb/actions/runs/41756262350/job/126332969115)),
-the index builds took about 11 minutes and the vacuum took 12 more. The
-whole 20M step took 54 minutes.
-
-## How
-
-`process_index_creation` runs `VACUUM FULL ANALYZE` on the restored heap
-first. `VACUUM ANALYZE` still runs after the build. It sets the
-visibility map, collects the stats of the expression indexes, and runs
-the pg_search vacuum merge. With `--skip-index`, the order doesn't
-change. Each vacuum now logs its duration.
-
-**File**: `benchmarks/src/main.rs` (modified, +22/-9)
-```diff
-@@ -448,6 +448,12 @@ async fn process_index_creation(args: &BenchmarkArgs) -> anyhow::Result<Vec<Inde
-     let mut conn = PgConnection::connect(&args.url)
-         .await
-         .with_context(|| "Failed to connect to database")?;
-+    // `VACUUM FULL` rebuilds every index of a table, so it runs before the indexes exist.
-+    // It also sets `reltuples`, and the `pg_search` build sizes its segments from it.
-+    if args.vacuum {
-+        vacuum(&mut conn, "VACUUM FULL ANALYZE").await?;
-+    }
-+
-     let index_sql = format!("datasets/{}/indexes/{}.sql", args.dataset, args.index);
-     let statements = queries(Path::new(&index_sql));
-     let params =
-@@ -659,23 +665,30 @@ async fn execute_benchmark_query(
-     }
- }
- 
-+async fn vacuum(conn: &mut PgConnection, statement: &'static str) -> anyhow::Result<()> {
-+    println!("{statement}");
-+    let start = Instant::now();
-+    sqlx::query(statement)
-+        .execute(&mut *conn)
-+        .await
-+        .with_context(|| "Failed to vacuum")?;
-+    println!("{statement} took {:.2?}", start.elapsed());
-+    Ok(())
-+}
-+
- async fn run_benchmarks(args: &BenchmarkArgs) -> anyhow::Result<Vec<QueryResult>> {
-     let mut utility_conn = PgConnection::connect(&args.url)
-         .await
-         .with_context(|| "Failed to connect to database")?;
- 
--    println!("vacuuming...");
-     if args.vacuum {
--        sqlx::query("VACUUM FULL ANALYZE")
--            .execute(&mut utility_conn)
--            .await
--            .with_context(|| "Failed to vacuum")?;
-+        // Without `--skip-index`, `VACUUM FULL` ran before the index build.
-+        if args.skip_index {
-+            vacuum(&mut utility_conn, "VACUUM FULL ANALYZE").await?;
-+        }
-         // VACUUM FULL does not update the visibility map. Run both types so that our heap file
-         // contains no wasted space and we get an updated vm
--        sqlx::query("VACUUM ANALYZE")
--            .execute(&mut utility_conn)
--            .await
--            .with_context(|| "Failed to vacuum")?;
-+        vacuum(&mut utility_conn, "VACUUM ANALYZE").await?;
-     }
- 
-     if args.prewarm {
-```
-
----
-
-### Incident Patch 3: `1b6a9297` (2026-11-07)
-**Commit Message**: fix: Apply merge backpressure to the index-wide segment count (#7273)
-
-The original backpressure logic in #6880 was too conservative -- it
-kicked in when a single layer exceeded `4 x target_segment_count`, and
-excluded segments already being merged from that calculation.
-
-This led to a scenario (seen in prod) where despite segment count being
-`32`, we had over `1K` segments because there were 6 layers and each one
-accumulated to `128`, not including the hundreds being merged in the
-background.
-
-This change makes it so that backpressure kicks in when the total
-visible segment count (including segments being merged) exceeds 4x the
-target.
-
-**File**: `docs/project/changelog/unreleased/7273.performance.mdx` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+header: performance
-+---
-+
-+- Improved merge backpressure during sustained writes by counting all visible segments, including those already being merged, and performing one eligible foreground merge when the index exceeds four times its target segment count.
-```
-
-**File**: `pg_search/src/index/merge_policy.rs` (modified, +12/-3)
-```diff
-@@ -28,6 +28,7 @@ use tantivy::indexer::{MergeCandidate, MergePolicy};
- use tantivy::{Directory, Inventory, SegmentMeta};
- 
- pub type LayeredMergeCandidate = (u64, MergeCandidate);
-+pub(crate) const MUTABLE_SEGMENT_LAYER: u64 = 0;
- 
- #[derive(Debug)]
- pub struct LayeredMergePolicy {
-@@ -276,10 +277,16 @@ impl LayeredMergePolicy {
-                 // If a segment is mutable, then it makes sense to merge it away, even if it is the only item in the segment.
-                 if let Some(segment_meta) = original_segments.iter().find(|s| s.id() == *segment_id)
-                 {
--                    if let Some((_, mc)) = candidates.iter_mut().find(|(lvl, _)| *lvl == 0) {
-+                    if let Some((_, mc)) = candidates
-+                        .iter_mut()
-+                        .find(|(layer_size, _)| *layer_size == MUTABLE_SEGMENT_LAYER)
-+                    {
-                         mc.0.push(segment_meta.id());
-                     } else {
--                        candidates.push((0, MergeCandidate(vec![segment_meta.id()])));
-+                        candidates.push((
-+                            MUTABLE_SEGMENT_LAYER,
-+                            MergeCandidate(vec![segment_meta.id()]),
-+                        ));
-                     }
- 
-                     merged_segments.insert(segment_meta.id());
-@@ -288,7 +295,9 @@ impl LayeredMergePolicy {
-                 // If it is not mutable, but is still empty for some reason, then we should include it in any other candidate level
-                 // that is planned (in order to get rid of it), but there is no point in doing a single-entry merge.
-                 if let Some(segment_meta) = original_segments.iter().find(|s| s.id() == *segment_id)
--                    && let Some((_, mc)) = candidates.iter_mut().find(|(lvl, _)| *lvl == 0)
-+                    && let Some((_, mc)) = candidates
-+                        .iter_mut()
-+                        .find(|(layer_size, _)| *layer_size == MUTABLE_SEGMENT_LAYER)
-                 {
-                     mc.0.push(segment_meta.id());
-                     merged_segments.insert(segment_meta.id());
-```
-
-**File**: `pg_search/src/postgres/merge.rs` (modified, +104/-45)
-```diff
-@@ -16,7 +16,9 @@
- // along with this program. If not, see <http://www.gnu.org/licenses/>.
- 
- use crate::api::HashSet;
--use crate::index::merge_policy::{LayeredMergeCandidate, LayeredMergePolicy};
-+use crate::index::merge_policy::{
-+    LayeredMergeCandidate, LayeredMergePolicy, MUTABLE_SEGMENT_LAYER,
-+};
- use crate::index::mvcc::MvccSatisfies;
- use crate::index::writer::index::{Mergeable, SearchIndexMerger};
- use crate::postgres::PgSearchRelation;
-@@ -171,6 +173,7 @@ impl FromDatum for BackgroundMergeArgs {
- #[derive(Debug, Clone)]
- struct IndexLayerSizes {
-     user_configured_bg_layers: bool,
-+    visible_segment_count: usize,
-     foreground_layer_sizes: Vec<u64>,
-     background_layer_sizes: Vec<u64>,
-     backpressure_layer_size: Option<u64>,
-@@ -240,6 +243,7 @@ impl IndexLayerSizes {
-         if segment_cnt <= target_segment_count {
-             return Self {
-                 user_configured_bg_layers: has_bg_layers,
-+                visible_segment_count: segment_cnt,
-                 foreground_layer_sizes: Vec::new(),
-                 background_layer_sizes: Vec::new(),
-                 backpressure_layer_size: None,
-@@ -274,6 +278,7 @@ impl IndexLayerSizes {
- 
-         Self {
-             user_configured_bg_layers: has_bg_layers,
-+            visible_segment_count: segment_cnt,
-             foreground_layer_sizes,
-             background_layer_sizes,
-             backpressure_layer_size,
-@@ -296,38 +301,38 @@ impl IndexLayerSizes {
- #[inline]
- fn backpressure(
-     candidates: &[LayeredMergeCandidate],
-+    visible_segment_count: usize,
-     target_segment_count: usize,
- ) -> Option<&MergeCandidate> {
-     candidates
-         .chunk_by(|(left, _), (right, _)| left == right)
-         .filter(|layer| {
--            // Layer 0 converts mutable segments, so apply backpressure above two eligible inputs.
--            // Immutable layers allow a backlog proportional to the target segment count.
--            let threshold = if layer[0].0 == 0 {
--                2
-+            let (layer_size, _) = &layer[0];
-+            if *layer_size == MUTABLE_SEGMENT_LAYER {
-+                let eligible_segment_count: usize = layer
-+                    .iter()
-+                    .map(|(_, MergeCandidate(segment_ids))| segment_ids.len())
-+                    .sum();
-+                eligible_segment_count > 2
-             } else {
--                BACKPRESSURE_MULTIPLIER * target_segment_count
--            };
--            layer
--                .iter()
--                .map(|(_, candidate)| candidate.0.len())
--                .sum::<usize>()
--                > threshold
-+                visible_segment_count > BACKPRESSURE_MULTIPLIER * target_segment_count
-+            }
-         })
-         .min_by_key(|layer| layer[0].0)
-         .map(|layer| &layer[0].1)
- }
- 
- /// Kick off a merge of the index, if needed.
- ///
--/// Prefer a background worker; help with one small merge when workers are busy or unavailable.
-+/// Launch background work when possible; overfull indexes also need one eligible foreground merge.
- pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<()> {
-     // don't kick off merges for invalid indexes
-     if !index.is_valid() {
-         return Ok(());
-     }
- 
-     let layer_sizes = IndexLayerSizes::from(index);
-+    let target_segment_count = index.options().target_segment_count();
-     let metadata = MetaPage::open(index);
-     let merge_pins = metadata.pin_merge();
-     let merge_lock = metadata.acquire_merge_lock();
-@@ -340,8 +345,12 @@ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::R
-     warn_unsupported_vector_merge(index, skipped);
-     let needs_background_merge =
-         layer_sizes.user_configured_background_layers() && !candidates.is_empty();
-+    let needs_foreground_backpressure = matches!(style, MergeStyle::Insert { .. })
-+        && layer_sizes.visible_segment_count > BACKPRESSURE_MULTIPLIER * target_segment_count;
- 
--    if needs_background_merge && try_launch_background_merger(index, largest_layer_size) {
-+    let background_launched =
-+        needs_background_merge && try_launch_background_merger(index, largest_layer_size);
-+    if background_launched && !needs_foreground_backpressure {
-         return Ok(());
-     }
-     if let MergeStyle::Insert {
-@@ -359,7 +368,8 @@ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::R
-         warn_unsupported_vector_merge(index, skipped);
-         let candidate = backpressure(
-             &backpressure_candidates,
--            index.options().target_segment_count(),
-+            layer_sizes.visible_segment_count,
-+            target_segment_count,
-         )
-         .or(foreground_candidate);
-         if let Some(candidate) = candidate {
-@@ -769,7 +779,7 @@ mod tests {
-     use pgrx::prelude::*;
- 
-     #[pg_test]
--    fn test_immutable_backpressure_uses_full_candidates() {
-+    fn test_immutable_backpressure_uses_index_wide_count() {
-         let mu
+-            if !base_query.is_pushdown_filter(&|field| {
+-                schema.is_some_and(|s| s.is_term_filter_field(field.root()))
+-            }) {
++            if !is_pushdown {
+                 return None;
+             }
+         }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7309** (2026-11-07): chore: Fix conflict between #7108 and #7298. (@stuhood)
 - **PR #7303** (2026-11-07): perf: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (@paradedb-github-bot[bot])
 - **PR #7298** (2026-11-06): perf: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (@mithuncy)
 - **PR #7291** (closed): ci: benchmark MS MARCO adaptive probing with quantized router rerank 2 (@rebasedming)
 - **PR #7287** (2026-11-06): perf(vector): quantize the IVF router by default (@RuchirRaj)
 - **PR #7280** (closed): feat: Default vector router rerank factor to 4 (@rebasedming)
-- **PR #7279** (2026-11-07): feat: add adaptive vector stopping within max_probe budgets (@rebasedming)
 
 ---
 
@@ -3236,32 +2363,42 @@ target.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep the rank join when a leaf carries a pushed filter such as a row-level secur
+## X. Fix conflict between #7108 and #7298. (#7309)
 
 **RULE**:
-When implementing operations in `docs/project/changelog/unreleased/7298.performance.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pg_search/src/scan/execution_plan.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `496095b5`: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (#7298). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f6e050c`: Fix conflict between #7108 and #7298. (#7309). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7298.performance.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pg_search/src/scan/execution_plan.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-header: performance
----
-
-Top-K joins ordered by combined search scores now use the rank join when a leaf carries a single-table filter answered by the index, including row-level security policies, `=`, `= ANY`, and range conditions. Such filters previously forced a hash join over every permitted row.
+            let is_pushdown = match &*state {
+                    crate::postgres::customscan::mpp::run_on_main_thread(|token| {
+                        let schema = scan_state.get(token).reader.schema();
+                        base_query
+                            .is_pushdown_filter(&|field| schema.is_term_filter_field(field.root()))
+                    })
+                }
+                ExecutionState::Uninitialized | ExecutionState::Consumed => {
+                    base_query.is_pushdown_filter(&|_| false)
+            if !is_pushdown {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            let schema = match &*state {
+                    Some(scan_state.0.reader.schema())
+                ExecutionState::Uninitialized | ExecutionState::Consumed => None,
+            if !base_query.is_pushdown_filter(&|field| {
+                schema.is_some_and(|s| s.is_term_filter_field(field.root()))
+            }) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `496095b5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f6e050c` are properly handled with clean fallback behavior.

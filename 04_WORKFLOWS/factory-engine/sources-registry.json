@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T05:40:57.643Z",
-    "lastVerified": "2026-11-08T05:40:57.643Z",
+    "lastChecked": "2026-11-08T05:48:19.344Z",
+    "lastVerified": "2026-11-08T05:48:19.344Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,9 +369,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T05:18:10.777Z",
+    "lastChecked": "2026-11-08T05:48:13.253Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T05:18:10.777Z"
+    "lastVerified": "2026-11-08T05:48:13.253Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1892,8 +1892,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T02:02:59.700Z",
-    "lastVerified": "2026-11-08T02:02:59.700Z",
+    "lastChecked": "2026-11-08T05:48:08.266Z",
+    "lastVerified": "2026-11-08T05:48:08.266Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -2540,14 +2540,14 @@
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T02:15:06.729Z",
-    "lastVerified": "2026-11-07T02:15:06.729Z",
+    "lastChecked": "2026-11-08T05:48:14.767Z",
+    "lastVerified": "2026-11-08T05:48:14.767Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "0cdfaeeee7554133d5d362c2fc2cdb6fd3da0eb7738aeb4e9b8917edf7a7c549",
+    "contentHash": "43006cc78b6fb9ae3847ac68e7d240d12349bc19ed56d3c05556170054c262c7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4044,9 +4044,9 @@
   "fujiapple852-trippy": {
     "name": "trippy",
     "officialUrl": "https://github.com/fujiapple852/trippy",
-    "lastChecked": "2026-11-06T19:09:30.692Z",
+    "lastChecked": "2026-11-08T05:47:58.231Z",
     "revisionIdentifier": "54c8f399",
-    "lastVerified": "2026-11-06T19:09:30.692Z"
+    "lastVerified": "2026-11-08T05:47:58.231Z"
   },
   "hf-qwen-qwen3-0.6b": {
     "name": "Qwen/Qwen3-0.6B",
@@ -6382,12 +6382,12 @@
     "lastVerified": "2026-11-07T18:42:23.330Z"
   },
   "checkmarx-kics": {
-    "name": "Checkmarx/kics",
+    "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-11-07T03:21:42.481Z",
-    "lastVerified": "2026-11-07T03:21:42.481Z",
+    "lastChecked": "2026-11-08T05:48:05.757Z",
+    "lastVerified": "2026-11-08T05:48:05.757Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
@@ -6396,7 +6396,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "434d3e0b"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -9678,9 +9679,9 @@
   "igorescodro-alkaa": {
     "name": "alkaa",
     "officialUrl": "https://github.com/igorescodro/alkaa",
-    "lastChecked": "2026-11-05T04:50:34.627Z",
+    "lastChecked": "2026-11-08T05:48:03.243Z",
     "revisionIdentifier": "8524e062",
-    "lastVerified": "2026-11-05T04:50:34.627Z"
+    "lastVerified": "2026-11-08T05:48:03.243Z"
   },
   "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {
     "name": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
@@ -13215,13 +13216,13 @@
     "officialUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T19:15:21.461Z",
-    "lastVerified": "2026-11-04T19:15:21.461Z",
+    "lastChecked": "2026-11-08T05:48:00.918Z",
+    "lastVerified": "2026-11-08T05:48:00.918Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-    "contentHash": "8e4f6605d5ea954136458bc032bfb6da879cbbdeb300414723f5ac28e0aaac59",
-    "promotedRulesCount": 3,
+    "contentHash": "8f0c76644da0c554b155b971c19fc4c364ed8a60ca8b6b5034c32d8bf3444f2c",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

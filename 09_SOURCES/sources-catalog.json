@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "1b6a9297",
+    "sourceVersion": "8f6e050c",
     "license": "AGPL-3.0",
-    "contentHash": "0cdfaeeee7554133d5d362c2fc2cdb6fd3da0eb7738aeb4e9b8917edf7a7c549",
-    "lastHarvestedAt": "2026-11-07T02:15:09.732Z",
+    "contentHash": "43006cc78b6fb9ae3847ac68e7d240d12349bc19ed56d3c05556170054c262c7",
+    "lastHarvestedAt": "2026-11-08T05:48:16.739Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -10675,8 +10675,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
     "sourceVersion": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "8e4f6605d5ea954136458bc032bfb6da879cbbdeb300414723f5ac28e0aaac59",
-    "lastHarvestedAt": "2026-11-04T19:15:36.478Z",
+    "contentHash": "8f0c76644da0c554b155b971c19fc4c364ed8a60ca8b6b5034c32d8bf3444f2c",
+    "lastHarvestedAt": "2026-11-08T05:48:11.838Z",
     "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf"
   },
   "makecindy-cindy": {

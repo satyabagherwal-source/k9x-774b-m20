@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-JNYU",
-    "timestamp": "2026-11-05T16:59:50.166Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "f867b11dd60fbe9ca6474365769cf9b050ea222d5d31daa4b189b516f4f9c293",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-JTF8",
-    "timestamp": "2026-11-05T16:59:57.236Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "8d62dec9f4b9ef2ec3fd0ca8433b3a01d44b166852bb83df116f233e68ea6e86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-T8FM",
     "timestamp": "2026-11-05T17:07:16.594Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -7490,6 +7460,36 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "de94b8a14e44d52a1ac2a64ac0296444088a0845ea5f0867726e89f294aeb92f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-VHKQ",
+    "timestamp": "2026-11-08T05:48:11.834Z",
+    "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+    "contentHash": "8f0c76644da0c554b155b971c19fc4c364ed8a60ca8b6b5034c32d8bf3444f2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-VLCM",
+    "timestamp": "2026-11-08T05:48:16.726Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "43006cc78b6fb9ae3847ac68e7d240d12349bc19ed56d3c05556170054c262c7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
