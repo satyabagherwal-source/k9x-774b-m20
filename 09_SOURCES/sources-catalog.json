@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "5820aa27",
+    "sourceVersion": "35c29f4a",
     "license": "Apache-2.0",
-    "contentHash": "e0fbb93e618a95f1b6d100942ba7a96975eee21c5f08827ee186cd9b47213616",
-    "lastHarvestedAt": "2026-11-06T13:20:17.016Z",
+    "contentHash": "0f2fc6393568cbb2a6b84fb3bcbacf11545f5d16e803c98520d84ba8fda93aca",
+    "lastHarvestedAt": "2026-11-08T03:43:15.069Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "c9a4996a",
+    "sourceVersion": "944a95d5",
     "license": "Apache-2.0",
-    "contentHash": "f209865572d4a1ea29b29526825d3190668fbe41e51d1580f28ce45979e14535",
-    "lastHarvestedAt": "2026-11-06T22:36:11.866Z",
+    "contentHash": "f4e6fa92353ce1498de532bb3420cdbd6e8f1b33d71877b25a86acbdb0bd8920",
+    "lastHarvestedAt": "2026-11-08T03:43:22.778Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -6973,10 +6973,10 @@
     "repository": "chroma-core/chroma",
     "platform": "github",
     "sourceUrl": "https://github.com/chroma-core/chroma",
-    "sourceVersion": "52ce8448",
+    "sourceVersion": "1a3ac2c7",
     "license": "Apache-2.0",
-    "contentHash": "689cac78c1b828b8be960ea90f5ba0f796991bbd130f5902756e4633d225c75b",
-    "lastHarvestedAt": "2026-10-22T20:30:28.077Z",
+    "contentHash": "a9912ebdaaa07be4ccb8807c5c76a21480a5fdb7dc23b8442acecf68a9b6cc48",
+    "lastHarvestedAt": "2026-11-08T03:43:27.728Z",
     "learningId": "learn-github-chroma-core-chroma"
   },
   "restatedev-restate": {
@@ -10405,8 +10405,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/Kromoss",
     "sourceVersion": "hf-lodestones-kromoss",
     "license": "Open-Source",
-    "contentHash": "92b0850f14df71e6955180daa7085deea4ecbaa7e5ad5294aa378337203fb5ee",
-    "lastHarvestedAt": "2026-11-04T17:18:03.816Z",
+    "contentHash": "f23353bdbe11efecbb7747f6c710a16bb8e0574a52a126fdbdab558a72311c30",
+    "lastHarvestedAt": "2026-11-08T03:45:05.196Z",
     "learningId": "learn-huggingface-lodestones-kromoss"
   },
   "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16": {

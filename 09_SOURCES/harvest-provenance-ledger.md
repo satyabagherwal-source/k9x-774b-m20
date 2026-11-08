@@ -8206,3 +8206,7 @@ Every entry in this ledger must capture:
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `14da8d0e` | Multi-dimensional audit evidence | 2026-11-08T03:35:46.608Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `6bbe25d6` | Multi-dimensional audit evidence | 2026-11-08T03:35:51.398Z |
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-08T03:35:55.755Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `35c29f4a` | Multi-dimensional audit evidence | 2026-11-08T03:43:15.069Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `944a95d5` | Multi-dimensional audit evidence | 2026-11-08T03:43:22.778Z |
+| `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `1a3ac2c7` | Multi-dimensional audit evidence | 2026-11-08T03:43:27.728Z |
+| `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-08T03:45:05.196Z |

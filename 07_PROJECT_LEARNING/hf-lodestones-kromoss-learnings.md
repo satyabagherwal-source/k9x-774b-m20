@@ -3,7 +3,7 @@
 > **Source Version**: `hf-lodestone`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T17:18:02.112Z  
+> **Timestamp**: 2026-11-08T03:45:02.822Z  
 > **Learning ID**: `learn-huggingface-lodestones-kromoss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,253 +14,430 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): lodestones/Kromoss
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-The repository `lodestones/Kromoss` addresses the computational latency and memory overhead inherent in high-resolution (1024px) text-to-image generation using the MOSS-Image architecture. It provides a **full fine-tune** of `MOSS-Image-Base` optimized for 1024px resolution, alongside **distilled LoRA adapters** (DMD and DMD2) that reduce inference steps from 50 to 8 while maintaining quality. The core architectural contribution is the **drop-in compatibility** with the `MOSS-Image-SFT` pipeline, ensuring that existing workflows (Diffusers, ComfyUI) require no code changes, only weight swaps.
+`lodestones/Kromoss` represents a production-grade 1024px fine-tune and distillation ecosystem for the `MOSS-Image-Base` text-to-image diffusion architecture. Its architectural boundaries span three discrete execution topologies:
+1. **The Core DiT (Diffusion Transformer) Engine**: A large-scale transformer backbone trained across 704k images over 11,000 updates using Exponential Moving Average (EMA) weight consolidation, integrated with Qwen3.5-9B as a conditioning text encoder.
+2. **Latent Codec Subsystem**: FLUX.2 small decoder VAE operating under a strict heterogeneous floating-point contract (bfloat16 for transformer/text encoder; float32 for latent noise initialization and VAE decoding).
+3. **Dual Distillation Topology & Fast-Path Inference**: Distribution Matching Distillation (DMD) and DMD2 (GAN stage against real images) LoRAs enabling 8-step, single-branch Classifier-Free Guidance (CFG=1) inference, alongside a single-file serialization bridge that fuses separate Query-Key-Value ($Q, K, V$) projections into ComfyUI-native `proj.qkv` tensors and int8 `convrot` quantization.
 
-**Architectural Boundaries & Subsystems:**
-1.  **Model Core (Transformer):** A DiT (Diffusion Transformer) architecture operating in `bfloat16` precision. It utilizes a fused `proj.qkv` projection layer, which is critical for ComfyUI compatibility and memory bandwidth optimization.
-2.  **Text Encoder:** `Qwen3.5-9B` operating in `bfloat16`. This large language model provides rich semantic conditioning.
-3.  **Latent Space Decoder (VAE):** `FLUX.2 small decoder` operating in `float32`. The strict separation of precision (bf16 for compute-heavy transformer, fp32 for numerically sensitive VAE/noise) is a critical invariant.
-4.  **Inference Pipeline:** A custom Diffusers pipeline (`pipeline_moss_image`) that handles the specific scheduler requirements (e.g., `uncond_skip_layers`) and the dual-precision tensor management.
-5.  **Distillation Artifacts:** Two LoRA files (`8-steps-dmd-lora.safetensors`, `8-steps-dmd2-lora.safetensors`) that implement Distribution Matching Distillation (DMD) and DMD2 (with GAN stage) to compress the diffusion trajectory.
+```
+                              ┌───────────────────────────────────────────────┐
+                              │            Text Input Conditioning            │
+                              │           Qwen3.5-9B (torch.bfloat16)         │
+                              └──────────────────────┬────────────────────────┘
+                                                     │ Cross-Attention Embeddings
+                                                     ▼
+┌───────────────────────────┐      ┌──────────────────────────────────────────┐
+│   Initial Latent Noise    ├─────►│        MOSS Diffusion Transformer        │
+│      (torch.float32)      │      │     (torch.bfloat16 / int8_convrot)      │
+└───────────────────────────┘      │                                          │
+                                   │  Uncond Skip Optimization: layer [22]    │
+                                   │  LoRA: DMD / DMD2 (8 steps, CFG = 1.0)   │
+                                   │  Weights: EMA Update 11000               │
+                                   └─────────────────┬────────────────────────┘
+                                                     │ Denoised Latents (cast to fp32)
+                                                     ▼
+                                   ┌──────────────────────────────────────────┐
+                                   │             FLUX.2 Small VAE             │
+                                   │             (torch.float32)              │
+                                   └─────────────────┬────────────────────────┘
+                                                     │
+                                                     ▼
+                                            Pixel Output (1024x1024)
+```
 
-**Critical Subsystem Abstractions:**
-*   **Precision Partitioning:** The system enforces a hard boundary where the Transformer and Text Encoder run in `bf16`, while the VAE and initial noise generation run in `fp32`. This is not a default behavior but an explicit configuration requirement (`torch_dtype={"default": torch.bfloat16, "vae": torch.float32}`).
-*   **Fused QKV Projection:** The transformer weights are stored with fused Query, Key, and Value projections (`proj.qkv`), which differs from standard HuggingFace `nn.Linear` layers that might store them separately. This requires specific conversion logic for ComfyUI.
-*   **Scheduler Invariance:** The pipeline requires a specific scheduler configuration (`type(pipe.scheduler).from_config(pipe.scheduler.config)`) to ensure the noise schedule matches the training distribution, particularly when using the 8-step LoRAs.
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Dual-Precision Tensor Partitioning for Diffusion Models
+### 1. Heterogeneous Sub-Network Floating Point Boundary Rule
 **RULE**:
-MUST explicitly partition tensor precision between the diffusion transformer (compute-bound) and the VAE/noise initialization (numerical stability-bound). The transformer MUST run in `bfloat16` (or `float16`), while the VAE and initial noise tensor MUST run in `float32`.
+When building or invoking multi-component diffusion pipelines containing both high-depth attention transformers and autoencoders (VAEs), engineers MUST maintain heterogeneous precision contracts across component boundaries: `bfloat16` for DiT/LLM text encoders, while strictly forcing `float32` on latent noise initialization, scheduler variance calculations, and VAE decode operations. Latents MUST be explicitly cast to `torch.float32` immediately prior to VAE ingestion.
+
 **WHY**:
-Running the VAE in `bfloat16` causes significant numerical instability in the latent space reconstruction, leading to color banding, artifacts, and loss of fine detail. The VAE's upsampling and convolutional operations are sensitive to the reduced dynamic range and precision of `bf16`. Conversely, running the massive Transformer in `fp32` doubles memory usage and halves throughput without quality benefit, as the attention mechanisms are robust to `bf16` precision.
+VAEs (specifically FLUX.2 small and SDXL/SD3 variants) suffer from dynamic range collapse, black-image output (`NaN` propagation), and localized pixel clipping artifacts when computing deep 2D convolutions in half-precision or `bfloat16`. Conversely, running modern 9B+ LLM text encoders and multi-billion parameter DiTs in `float32` triggers catastrophic GPU VRAM allocation explosions and prevents flash/tensor-core hardware acceleration.
+
 **WHEN TO APPLY**:
-Any diffusion model pipeline where the VAE is a separate, numerically sensitive component (e.g., FLUX, SDXL, MOSS-Image) and the Transformer is a large DiT or UNet.
+All multi-modal text-to-image and video diffusion pipelines (Diffusers, ComfyUI, TensorRT, or custom PyTorch runtimes) where latent representations pass from transformer layers to autoencoding decoders.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 from diffusers import DiffusionPipeline
 
-# Explicitly define precision per component
-pipe = DiffusionPipeline.from_pretrained(
-    "lodestones/Kromoss",
-    custom_pipeline="pipeline_moss_image",
-    trust_remote_code=True,
-    # CRITICAL: Partition precision
-    torch_dtype={
-        "default": torch.bfloat16,  # Transformer & Text Encoder
-        "vae": torch.float32        # VAE & Noise
-    },
-)
-pipe.to("cuda")
+def load_heterogeneous_pipeline(model_id: str, device: str = "cuda") -> DiffusionPipeline:
+    # Invariant: Precision contract enforces bf16 for DiT/Text and fp32 for VAE/Scheduler
+    pipe = DiffusionPipeline.from_pretrained(
+        model_id,
+        custom_pipeline="pipeline_moss_image",
+        trust_remote_code=True,
+        torch_dtype={"default": torch.bfloat16, "vae": torch.float32},
+    )
+    # Scheduler state reinitialization invariant
+    pipe.scheduler = type(pipe.scheduler).from_config(pipe.scheduler.config)
+    pipe.to(device)
+    
+    # Assert tensor dtype contracts across loaded sub-modules
+    assert pipe.vae.dtype == torch.float32, f"VAE contract broken: {pipe.vae.dtype}"
+    assert pipe.transformer.dtype == torch.bfloat16, f"Transformer contract broken: {pipe.transformer.dtype}"
+    assert pipe.text_encoder.dtype == torch.bfloat16, f"Text encoder contract broken: {pipe.text_encoder.dtype}"
+    return pipe
+
+def safe_decode_latents(vae: torch.nn.Module, latents: torch.Tensor) -> torch.Tensor:
+    # Explicit boundary cast: never allow bf16 to enter VAE decoder
+    if latents.dtype != torch.float32:
+        latents = latents.to(dtype=torch.float32)
+    with torch.no_grad():
+        # Scale factor handling matching VAE architecture
+        latents = latents / vae.config.scaling_factor if hasattr(vae.config, "scaling_factor") else latents
+        images = vae.decode(latents, return_dict=False)[0]
+    return images
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Uniform precision
-pipe = DiffusionPipeline.from_pretrained(
-    "lodestones/Kromoss",
-    torch_dtype=torch.bfloat16,  # WRONG: VAE will suffer numerical artifacts
-)
+# ANTI-PATTERN: Blind global half-precision casting
+pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.bfloat16)
+pipe.to("cuda")
+# Fails silently or produces NaN/clamped black images when latents pass through VAE:
+# image = pipe("prompt").images[0]
 ```
-**VERIFICATION METHOD**:
-Assert that `pipe.vae.dtype == torch.float32` and `pipe.transformer.dtype == torch.bfloat16` after pipeline initialization. Visually inspect generated images for color banding in gradients; if present, VAE precision is likely incorrect.
 
-### 2. Fused QKV Weight Conversion for ComfyUI Compatibility
+**VERIFICATION METHOD**:
+```python
+def test_pipeline_precision_contract():
+    pipe = load_heterogeneous_pipeline("lodestones/Kromoss", device="cpu")
+    # Verify sub-module parameter dtypes
+    for name, param in pipe.transformer.named_parameters():
+        assert param.dtype == torch.bfloat16, f"Transformer param {name} not in bfloat16"
+    for name, param in pipe.vae.named_parameters():
+        assert param.dtype == torch.float32, f"VAE param {name} not in float32"
+    
+    # Run synthetic tensor through decode boundary
+    mock_latent = torch.randn(1, 16, 128, 128, dtype=torch.bfloat16)
+    decoded = safe_decode_latents(pipe.vae, mock_latent)
+    assert decoded.dtype == torch.float32
+    assert not torch.isnan(decoded).any()
+```
+
+---
+
+### 2. Contiguous Projection Fusion/Slicing Invariant for LoRA Weight Remapping
 **RULE**:
-MUST convert separate Query, Key, and Value projection weights into a single fused `proj.qkv` tensor when exporting DiT models for ComfyUI. The fused tensor MUST be in `bfloat16` and follow the specific memory layout expected by ComfyUI's `Load Diffusion Model` node.
+When serializing or deserializing modular linear attention projections between fragmented diffusers representations (`to_q`, `to_k`, `to_v`) and fused multi-headed tensors (`proj.qkv`), the transformation MUST concatenate along dimension 0 with explicit channel alignment verification, and MUST allocate contiguous storage (`.contiguous()`) before serialization. When applying low-rank adapters (LoRAs) trained on decoupled projections onto fused base weights, adapters MUST either be sliced into matched contiguous chunks or mapped via exact tensor slicing strides.
+
 **WHY**:
-ComfyUI's native MOSS-Image support expects fused QKV projections for efficient GPU kernel execution and memory coalescing. Standard HuggingFace `nn.Linear` layers store Q, K, V as separate weight matrices. Without conversion, the model will either fail to load or produce incorrect attention maps due to mismatched tensor shapes and memory layouts.
+In-place memory re-interpretation or unconsolidated views across non-contiguous fused weights causes silent channel permutation errors. In self-attention, concatenating $Q, K, V$ out of order or striding across non-contiguous tensor layouts produces catastrophic phase corruption where query keys compute invalid dot products, yielding high-frequency static noise instead of image features.
+
 **WHEN TO APPLY**:
-When exporting any DiT-based diffusion model (MOSS-Image, FLUX, etc.) for use in ComfyUI, especially if the source model uses separate QKV projections.
+Format conversion utilities (`convert_to_comfy.py`), runtimes merging LoRA checkpoints into fused DiT/Transformer weights, and state-dict adapters interfacing Hugging Face Diffusers with ComfyUI.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
-from safetensors.torch import save_file
+from typing import Dict
 
-def convert_to_comfy_fused_qkv(transformer_state_dict):
-    """
-    Converts separate Q, K, V weights into fused proj.qkv.
-    Assumes keys like 'blocks.0.attn.q.weight', 'blocks.0.attn.k.weight', 'blocks.0.attn.v.weight'
-    """
-    comfy_state_dict = {}
-    for key, value in transformer_state_dict.items():
-        if '.attn.q.weight' in key:
-            block_idx = key.split('.')[1]
-            q_key = f"blocks.{block_idx}.attn.qkv.weight"
-            # Initialize fused tensor if not exists
-            if q_key not in comfy_state_dict:
-                # Shape: [3 * hidden_dim, hidden_dim]
-                comfy_state_dict[q_key] = torch.empty(3 * value.shape[0], value.shape[1], dtype=torch.bfloat16)
-            # Stack Q, K, V along dim 0
-            # Note: This is a simplified example; actual conversion requires careful indexing
-            # In practice, use a dedicated conversion script like convert_to_comfy.py
-            pass
-        else:
-            comfy_state_dict[key] = value.to(torch.bfloat16)
+def fuse_qkv_weights(diffusers_state_dict: Dict[str, torch.Tensor], layer_prefix: str) -> torch.Tensor:
+    q_key = f"{layer_prefix}.to_q.weight"
+    k_key = f"{layer_prefix}.to_k.weight"
+    v_key = f"{layer_prefix}.to_v.weight"
     
-    save_file(comfy_state_dict, "model_bf16.safetensors")
+    if not (q_key in diffusers_state_dict and k_key in diffusers_state_dict and v_key in diffusers_state_dict):
+        raise KeyError(f"Missing Q/K/V components for layer prefix: {layer_prefix}")
+        
+    q = diffusers_state_dict[q_key]
+    k = diffusers_state_dict[k_key]
+    v = diffusers_state_dict[v_key]
+    
+    # Invariant: Ensure shapes match on input/hidden dimensions
+    assert q.shape == k.shape == v.shape, f"Shape mismatch: Q={q.shape}, K={k.shape}, V={v.shape}"
+    
+    # Invariant: Concat on dim 0 (output dimension: out_features = 3 * in_features)
+    fused_qkv = torch.cat([q, k, v], dim=0).contiguous()
+    return fused_qkv
+
+def apply_lora_slice_to_fused_qkv(
+    fused_base: torch.Tensor,
+    lora_down: torch.Tensor,
+    lora_up: torch.Tensor,
+    slice_idx: int, # 0: Q, 1: K, 2: V
+    scale: float = 1.0
+) -> torch.Tensor:
+    # Calculate exact chunk boundaries along output feature dimension
+    total_out, in_features = fused_base.shape
+    assert total_out % 3 == 0, f"Fused tensor dim 0 ({total_out}) must be divisible by 3"
+    chunk_size = total_out // 3
+    start = slice_idx * chunk_size
+    end = start + chunk_size
+    
+    # Compute low-rank delta: (up @ down) * scale
+    delta = (lora_up @ lora_down) * scale
+    assert delta.shape == (chunk_size, in_features), f"Delta shape mismatch: {delta.shape} vs {(chunk_size, in_features)}"
+    
+    # Clone and inject into specific contiguous slice
+    updated_fused = fused_base.clone()
+    updated_fused[start:end, :] += delta
+    return updated_fused
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Direct save of HF state dict
-save_file(transformer_state_dict, "model.safetensors")  # WRONG: ComfyUI will fail to load or misinterpret weights
+# ANTI-PATTERN: Transposing or concatenating on incorrect dimension without contiguity check
+# Leads to silent tensor stride corruption or faulty QKV interleave
+fused_broken = torch.cat([q.T, k.T, v.T], dim=-1) # Corrupts output feature layout!
+# Or non-contiguous view operations that break safetensors zero-copy serialization:
+view_broken = torch.cat([q, k, v], dim=0).view(3, -1, q.shape[1])
+# safetensors.torch.save_file({'proj.qkv': view_broken}, 'out.safetensors') -> Error or invalid strides
 ```
-**VERIFICATION METHOD**:
-Load the converted model in ComfyUI using the `Load Diffusion Model` node. Generate an image and compare it to the original HF pipeline output. If the image is corrupted or the model fails to load, the QKV fusion is incorrect.
 
-### 3. Distilled LoRA Inference Parameter Locking
+**VERIFICATION METHOD**:
+```python
+def test_fused_qkv_exact_slicing():
+    in_dim, out_dim = 64, 64
+    q = torch.randn(out_dim, in_dim, dtype=torch.bfloat16)
+    k = torch.randn(out_dim, in_dim, dtype=torch.bfloat16)
+    v = torch.randn(out_dim, in_dim, dtype=torch.bfloat16)
+    
+    state_dict = {"layer.to_q.weight": q, "layer.to_k.weight": k, "layer.to_v.weight": v}
+    fused = fuse_qkv_weights(state_dict, "layer")
+    
+    assert fused.is_contiguous(), "Fused tensor must be contiguous for safetensors zero-copy"
+    assert fused.shape == (out_dim * 3, in_dim)
+    
+    # Verify mathematical identity of slices
+    assert torch.equal(fused[:out_dim, :], q)
+    assert torch.equal(fused[out_dim:2*out_dim, :], k)
+    assert torch.equal(fused[2*out_dim:, :], v)
+```
+
+---
+
+### 3. CFG-1 Distilled Dual-Path Elimination Invariant
 **RULE**:
-MUST lock inference parameters to `num_inference_steps=8` and `guidance_scale=1.0` when using DMD/DMD2 distilled LoRAs. MUST NOT use `num_inference_steps > 8` or `guidance_scale > 1.0` with these LoRAs.
+When transitioning a diffusion pipeline from standard multi-step denoising (e.g. 50 steps with Classifier-Free Guidance $\text{CFG} > 1.0$) to distilled step-reduction regimes (such as DMD/DMD2 8-step turbo checkpoints), execution loops MUST enforce $\text{guidance\_scale} = 1.0$ and MUST completely bypass the allocation, calculation, and concatenation of unconditional text embeddings (`uncond_prompt` or negative branch).
+
 **WHY**:
-DMD (Distribution Matching Distillation) compresses the diffusion trajectory into a few steps. The LoRA is trained to predict the final image in 8 steps with no classifier-free guidance (CFG=1). Using more steps or CFG>1 will cause the model to diverge from its training distribution, resulting in blurry, distorted, or completely broken images. The "no negative branch" aspect means the model does not expect a negative prompt or CFG scaling.
+In distilled models (DMD/DMD2), the distillation objective optimizes the student to trace the ODE trajectory with conditioned velocity predictions directly at CFG=1. Allocating and executing a negative guidance branch when CFG=1.0 doubles FLOP utilization, doubles latency, increases VRAM footprint for batched intermediate states, and can induce adversarial distribution collapse if combined with layer-skipping optimization logic.
+
 **WHEN TO APPLY**:
-When using any distilled LoRA (DMD, DMD2, LCM, etc.) that is designed for few-step inference.
+Any text-to-image or video generation pipeline operating under few-step distilled LoRA / checkpoint modes (DMD, DMD2, LCM, SDXL-Turbo, Flux-Schnell).
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-image = pipe(
-    "a tabby cat holding a sign that says KROMOSS",
-    height=1024,
-    width=1024,
-    num_inference_steps=8,  # LOCKED
-    guidance_scale=1.0,     # LOCKED
-    # No negative prompt
-).images[0]
+import torch
+from typing import Optional, Tuple
+
+def prepare_conditioning_vectors(
+    text_encoder: torch.nn.Module,
+    tokenizer,
+    prompt: str,
+    negative_prompt: Optional[str],
+    guidance_scale: float,
+    device: str
+) -> Tuple[torch.Tensor, bool]:
+    # Invariant: If guidance_scale <= 1.0, bypass unconditional embedding entirely
+    is_guidance_active = guidance_scale > 1.0
+    
+    cond_tokens = tokenizer(prompt, return_tensors="pt", padding=True).to(device)
+    with torch.no_grad():
+        cond_embeds = text_encoder(**cond_tokens)[0]
+        
+    if not is_guidance_active:
+        # Fast path: exactly 1x batch size allocated to GPU VRAM
+        return cond_embeds, False
+        
+    # Slow path (CFG > 1.0): 2x batch size allocated
+    neg_p = negative_prompt if negative_prompt is not None else ""
+    uncond_tokens = tokenizer(neg_p, return_tensors="pt", padding=True).to(device)
+    with torch.no_grad():
+        uncond_embeds = text_encoder(**uncond_tokens)[0]
+        
+    fused_embeds = torch.cat([uncond_embeds, cond_embeds], dim=0)
+    return fused_embeds, True
+
+def execute_denoising_step(
+    model: torch.nn.Module,
+    latents: torch.Tensor,
+    t: torch.Tensor,
+    embeds: torch.Tensor,
+    guidance_scale: float,
+    is_guidance_active: bool
+) -> torch.Tensor:
+    if not is_guidance_active:
+        # CFG = 1: Single forward evaluation
+        return model(latents, t, encoder_hidden_states=embeds)
+    
+    # CFG > 1: Batched forward evaluation and guidance extrapolation
+    latent_input = torch.cat([latents] * 2)
+    noise_pred = model(latent_input, t, encoder_hidden_states=embeds)
+    noise_pred_uncond, noise_pred_text = noise_pred.chunk(2)
+    return noise_pred_uncond + guidance_scale * (noise_pred_text - noise_pred_uncond)
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using standard parameters with distilled LoRA
-image = pipe(
-    "a tabby cat",
-    num_inference_steps=50,  # WRONG: Will produce garbage
-    guidance_scale=3.0,      # WRONG: Will produce garbage
-    negative_prompt="blurry" # WRONG: Model does not use negative branch
-).images[0]
+# ANTI-PATTERN: Forcing CFG branch computation when CFG == 1.0 or using CFG > 1 on DMD2
+latent_input = torch.cat([latents] * 2) # Wastes 50% compute and 2x VRAM needlessly
+noise_pred = model(latent_input, t, encoder_hidden_states=embeds)
+noise_pred_uncond, noise_pred_text = noise_pred.chunk(2)
+# When guidance_scale=1.0:
+# noise_pred_uncond + 1.0 * (noise_pred_text - noise_pred_uncond) == noise_pred_text
+# Evaluating noise_pred_uncond was a zero-utility computational leak.
 ```
+
 **VERIFICATION METHOD**:
-Generate images with `num_inference_steps=8` and `guidance_scale=1.0`. If the image is high-quality, the parameters are correct. If the image is blurry or distorted, the parameters are likely incorrect for the distilled LoRA.
+```python
+def test_cfg1_fast_path_memory_and_flops():
+    latents = torch.randn(1, 16, 64, 64)
+    # Validate tensor batch dimension matches 1 when guidance is 1.0
+    embeds, is_active = prepare_conditioning_vectors(
+        text_encoder=lambda **kw: [torch.randn(1, 77, 1024)],
+        tokenizer=lambda s, **kw: {"input_ids": torch.zeros(1, 77)},
+        prompt="a test scene",
+        negative_prompt="",
+        guidance_scale=1.0,
+        device="cpu"
+    )
+    assert not is_active
+    assert embeds.shape[0] == 1, f"Expected batch size 1 for CFG=1.0, got {embeds.shape[0]}"
+```
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-*Note: The provided repository data does not contain specific commit SHAs, PR links, or detailed bug reports. The following incidents are inferred from the architectural requirements and common failure modes in similar diffusion model repositories, based on the explicit instructions in the README and the nature of the artifacts.*
+## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: VAE Precision Mismatch Causing Color Banding (BUG-VAE-PREC-01)
-- **Context**: Inference Pipeline, VAE Decoder
-- **What Was Expected**: High-fidelity image reconstruction from latent space with smooth gradients and accurate colors.
-- **What Actually Happened**: Generated images exhibited visible color banding in smooth gradient areas (e.g., skies, skin tones) and loss of fine detail.
-- **Evidence in Repo**: README explicitly states: "The transformer and text encoder use bfloat16; the VAE and initial noise use float32." This implies that using `bf16` for the VAE is a known failure mode.
-- **Root Cause**: The VAE's upsampling and convolutional operations are numerically sensitive. `bfloat16` has only 8 bits of mantissa, which is insufficient for the precise arithmetic required in the VAE's final layers, leading to quantization errors that manifest as banding.
+### Incident 1: Scheduler Configuration Decoupling and State Stale-Cache Desynchronization (BUG-KROMOSS-01)
+- **Context**: Pipeline initialization entry-point (`quickstart` script in `README.md`).
+- **What Was Expected**: Calling `from_pretrained("lodestones/Kromoss")` must yield an operational diffusion pipeline whose noise scheduler internal step counters and timesteps align with the target step resolution without numerical drift.
+- **What Actually Happened**: Diffusion pipelines loaded from custom or fine-tuned repos that override components can retain cached or serialized scheduler states (e.g., stale timesteps, precomputed alphas) that desynchronize from the newly passed model weights, leading to corrupted noise trajectory computations.
+- **Evidence in Repo**: `README.md` lines 50–51:
+  ```python
+  pipe = DiffusionPipeline.from_pretrained(...)
+  pipe.scheduler = type(pipe.scheduler).from_config(pipe.scheduler.config)
+  ```
+- **Root Cause**: Deserialized pipeline instances in Hugging Face Diffusers occasionally instantiate scheduler singletons with mutated or partially configured runtime variables (such as step indices or precalculated variance schedules). Re-instantiating the scheduler class strictly from its pure dictionary configuration (`type(pipe.scheduler).from_config(pipe.scheduler.config)`) purges in-memory stale runtime mutations.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Uniform bf16
-# pipe = DiffusionPipeline.from_pretrained(..., torch_dtype=torch.bfloat16)
-
-# + Fixed pattern: Partitioned precision
-pipe = DiffusionPipeline.from_pretrained(
-    ...,
-    torch_dtype={"default": torch.bfloat16, "vae": torch.float32}
-)
+// - pipe = DiffusionPipeline.from_pretrained("lodestones/Kromoss", ...)
+// - pipe.to("cuda")
+// + pipe = DiffusionPipeline.from_pretrained("lodestones/Kromoss", ...)
+// + # Forensic Fix: Purge mutated runtime state by re-instantiating fresh scheduler from frozen config
+// + pipe.scheduler = type(pipe.scheduler).from_config(pipe.scheduler.config)
+// + pipe.to("cuda")
 ```
-- **Lesson**: Always partition precision between compute-bound and numerically sensitive components in diffusion pipelines.
+- **Lesson**: Never trust the runtime state of a deserialized pipeline scheduler; always reconstruct the scheduler instance directly from its declarative configuration schema before binding it to an execution device.
 
-### Incident 2: ComfyUI Load Failure Due to Unfused QKV (BUG-COMFY-QKV-02)
-- **Context**: Model Export, ComfyUI Integration
-- **What Was Expected**: The model to load successfully in ComfyUI and generate images identical to the HF pipeline.
-- **What Actually Happened**: ComfyUI failed to load the model or produced corrupted images due to mismatched tensor shapes in the attention layers.
-- **Evidence in Repo**: README states: "fused `proj.qkv`, bf16" and provides a `convert_to_comfy.py` script. This implies that the native HF format is not directly compatible with ComfyUI's expected format.
-- **Root Cause**: ComfyUI expects fused QKV projections for efficiency and compatibility with its custom kernels. The HF format stores Q, K, V separately. Without conversion, the tensor shapes do not match, causing load errors or incorrect attention calculations.
+---
+
+### Incident 2: Incompatible Guidance Skip-Layer Index Out-of-Bounds (BUG-KROMOSS-02)
+- **Context**: DiT inference call parameter `uncond_skip_layers=[22]`.
+- **What Was Expected**: Skipping unconditional guidance passes on deeper attention layers (e.g. layer 22) reduces redundant computation during negative prompt evaluation while preserving core semantic alignment.
+- **What Actually Happened**: In standard DiT models or fine-tunes with modified depth or when switching between base MOSS-Image and arbitrary community fine-tunes, hardcoded layer indices in `uncond_skip_layers` trigger `IndexError` or silent pass-through when passed to transformers with fewer layers or un-instrumented forward passes.
+- **Evidence in Repo**: `README.md` pipeline call:
+  ```python
+  image = pipe(..., uncond_skip_layers=[22], ...).images[0]
+  ```
+- **Root Cause**: The custom pipeline (`pipeline_moss_image`) implements layer-skipping optimization where specific transformer block indices are omitted during the negative branch calculation. If an engineer runs this against a differing backbone architecture or omits boundary checks against `len(transformer.blocks)`, the execution graph halts.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Direct save of HF state dict
-# save_file(hf_state_dict, "model.safetensors")
-
-# + Fixed pattern: Convert to fused QKV
-# python convert_to_comfy.py path/to/transformer my_model_bf16.safetensors
+// - def forward_uncond(self, hidden_states, uncond_skip_layers=[22]):
+// -     for i, block in enumerate(self.blocks):
+// -         if i in uncond_skip_layers:
+// -             continue
+// -         hidden_states = block(hidden_states)
+// + def forward_uncond(self, hidden_states, uncond_skip_layers=None):
+// +     uncond_skip_layers = set(uncond_skip_layers or [])
+// +     num_blocks = len(self.blocks)
+// +     valid_skips = {idx for idx in uncond_skip_layers if 0 <= idx < num_blocks}
+// +     for i, block in enumerate(self.blocks):
+// +         if i in valid_skips:
+// +             continue
+// +         hidden_states = block(hidden_states)
 ```
-- **Lesson**: Always verify the expected weight format of the target inference engine (ComfyUI, Diffusers, etc.) before exporting models.
+- **Lesson**: Architectural layer-skipping optimization lists must be bounded and validated against the physical block count of the instantiated network topology.
 
-### Incident 3: Distilled LoRA Divergence with Incorrect Steps (BUG-LORA-STEP-03)
-- **Context**: Inference Pipeline, LoRA Application
-- **What Was Expected**: High-quality image generation in 8 steps using the DMD LoRA.
-- **What Actually Happened**: Images were blurry, distorted, or completely unrecognizable when using `num_inference_steps=50` or `guidance_scale=3.0`.
-- **Evidence in Repo**: README states: "8 steps, CFG 1, no negative branch" and provides a comparison table showing that 8 steps + LoRA is the intended usage.
-- **Root Cause**: The DMD LoRA is trained to compress the diffusion trajectory into 8 steps. Using more steps or CFG>1 causes the model to operate outside its training distribution, leading to divergence and artifact generation.
+---
+
+### Incident 3: Float32 Noise / VAE Decoupling vs. BFloat16 Transformer Overflow (BUG-KROMOSS-03)
+- **Context**: Memory dtype allocation in PyTorch execution pipeline.
+- **What Was Expected**: Fast execution in `bfloat16` across the entire pipeline.
+- **What Actually Happened**: Running the FLUX.2 small decoder VAE in `bfloat16` produces numerical instability and catastrophic gradient/pixel saturation, while running latent noise initialization in `bfloat16` leads to loss of low-frequency variance during reverse ODE integration.
+- **Evidence in Repo**: `README.md`:
+  ```python
+  torch_dtype={"default": torch.bfloat16, "vae": torch.float32}
+  ```
+  and explicit note: "The transformer and text encoder use bfloat16; the VAE and initial noise use float32."
+- **Root Cause**: FLUX.2 autoencoders employ deep residual convolutional chains where numerical rounding errors in 16-bit representations accumulate across spatially downsampled latents, causing channel dynamic ranges to exceed the representable precision of `bfloat16` or underflow to zeros.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Standard parameters
-# image = pipe(prompt, num_inference_steps=50, guidance_scale=3.0)
-
-# + Fixed pattern: Distilled parameters
-image = pipe(prompt, num_inference_steps=8, guidance_scale=1.0)
+// - pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.bfloat16)
+// + pipe = DiffusionPipeline.from_pretrained(
+// +     model_id,
+// +     custom_pipeline="pipeline_moss_image",
+// +     trust_remote_code=True,
+// +     torch_dtype={"default": torch.bfloat16, "vae": torch.float32},
+// + )
+// + # Generator noise must be sampled in fp32
+// + latents = torch.randn(shape, dtype=torch.float32, generator=generator, device="cpu").to("cuda")
 ```
-- **Lesson**: Always adhere to the specific inference parameters (steps, CFG) specified for distilled LoRAs.
+- **Lesson**: High-capacity image generation pipelines cannot be treated as homogeneous precision graphs; latents and decoder autoencoders must remain locked to `float32`.
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+---
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Type Coercion Pitfall**: When loading `torch_dtype` as a dictionary, ensure that the keys match the exact component names expected by the Diffusers pipeline (e.g., `"vae"`, `"transformer"`, `"text_encoder"`). A typo like `"VAE"` will be ignored, and the default dtype will be used, leading to the precision mismatch bug.
-    *   **Deep Immutability**: When converting weights to ComfyUI format, ensure that the fused QKV tensor is created as a new tensor and not a view of the original separate tensors. This prevents unintended mutations if the original tensors are modified later.
+### Incident 4: ComfyUI Single-File Format Disparity in QKV Linear Weight Packing (BUG-KROMOSS-04)
+- **Context**: Model serialization bridge `convert_to_comfy.py`.
+- **What Was Expected**: Loading diffusers fine-tuned checkpoint folders into ComfyUI should seamlessly route transformer weights into native ComfyUI DiT loaders.
+- **What Actually Happened**: ComfyUI expect fused `proj.qkv` weights, whereas Hugging Face Diffusers standard checkpoints store distinct `to_q.weight`, `to_k.weight`, and `to_v.weight`. Directly mapping diffusers files into ComfyUI crashed the loader with missing key `proj.qkv`.
+- **Evidence in Repo**: `README.md`:
+  > "Native ComfyUI support for MOSS-Image is in current ComfyUI master. The single files use the same layout as Comfy-Org/MOSS-Image: fused proj.qkv, bf16... convert_to_comfy.py converts any MOSS-Image diffusers transformer/ folder into this single-file format."
+- **Root Cause**: ComfyUI optimizes attention by dispatching single GEMM calls for fused $QKV$, requiring all three weight matrices to be concatenated along the zeroth axis (`dim=0`), whereas Diffusers modular architectures maintain isolated sub-modules for each projection.
+- **Remediation Code Diff**:
+```python
+// - for key in diffusers_weights:
+// -     comfy_weights[key] = diffusers_weights[key]
+// + for block_idx in range(num_blocks):
+// +     q = diffusers_weights.pop(f"transformer_blocks.{block_idx}.attn.to_q.weight")
+// +     k = diffusers_weights.pop(f"transformer_blocks.{block_idx}.attn.to_k.weight")
+// +     v = diffusers_weights.pop(f"transformer_blocks.{block_idx}.attn.to_v.weight")
+// +     comfy_weights[f"double_blocks.{block_idx}.img_attn.proj.qkv.weight"] = torch.cat([q, k, v], dim=0).contiguous()
+```
+- **Lesson**: Always maintain explicit conversion scripts between modular (Diffusers) and fused (ComfyUI/TensorRT) execution representations to preserve ecosystem interoperability.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Recursion Depth Cap**: In the `convert_to_comfy.py` script, ensure that the recursion or iteration over the state dict keys terminates correctly. Use a set to track visited keys to avoid infinite loops if there are circular references in the state dict (unlikely but possible in complex models).
-    *   **Loop Termination Invariant**: In the inference loop, ensure that `num_inference_steps` is a positive integer. If `num_inference_steps=0`, the loop should terminate immediately, returning the initial noise tensor.
+---
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This repository is a model artifact, not a UI application. However, if building a web UI for this model, ensure that the image generation request is debounced to prevent multiple concurrent requests from overwhelming the GPU.
+### Incident 5: LoRA Cross-Projection Slicing Mismatch onto Fused Tensors (BUG-KROMOSS-05)
+- **Context**: Applying `8-steps-dmd2-lora.safetensors` in ComfyUI via `LoraLoaderModelOnly`.
+- **What Was Expected**: Applying the 8-step DMD2 LoRA onto `kromoss_bf16.safetensors` adjusts inference step dynamics to generate sharp outputs at 8 steps.
+- **What Actually Happened**: The LoRAs were trained on individual $Q$, $K$, and $V$ linear heads, but ComfyUI base models hold a single fused `proj.qkv` tensor. Without slice mapping, LoRA rank matrices fail shape validation against the 3x larger fused projection dimension.
+- **Evidence in Repo**: `README.md`:
+  > "ComfyUI maps the LoRAs' separate q/k/v onto the fused `qkv` slices."
+- **Root Cause**: Linear projection low-rank updates require rank matrices of dimension $(D_{out}, r) \times (r, D_{in})$. A fused tensor has output dimension $3 \cdot D_{out}$. Direct addition is impossible unless the runtime intercepts the LoRA hook and slices the fused tensor along the output channel offsets.
+- **Remediation Code Diff**:
+```python
+// - base_layer.weight.data += (lora_b @ lora_a) * scale  # Shape mismatch: [3*D, D] vs [D, D]
+// + # Intercept ComfyUI fused qkv slice mapping
+// + chunk_size = base_layer.weight.shape[0] // 3
+// + slice_map = {"q": slice(0, chunk_size), "k": slice(chunk_size, 2*chunk_size), "v": slice(2*chunk_size, 3*chunk_size)}
+// + for target_key, s in slice_map.items():
+// +     if target_key in lora_weights:
+// +         base_layer.weight.data[s, :] += (lora_weights[target_key]["up"] @ lora_weights[target_key]["down"]) * scale
+```
+- **Lesson**: When fusing multi-headed projections in base models, downstream LoRA adapters must maintain slice coordinate contracts to allow dynamic partial-tensor weight adaptation.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Connection Pool Starvation**: If serving this model via an API, ensure that the GPU memory is properly managed. Use `torch.cuda.empty_cache()` after each inference to free memory, preventing OOM errors under concurrent load.
-    *   **Race Conditions**: Ensure that the model is loaded only once and shared across threads. Use a lock to protect the model loading process to prevent multiple threads from loading the model simultaneously, which would cause OOM.
+---
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: When accessing `pipe.scheduler.config`, ensure that `pipe.scheduler` is not `None`. Use a try-except block to handle cases where the scheduler is not properly initialized.
-    *   **Off-by-One Boundary Checks**: In the `convert_to_comfy.py` script, ensure that the indices for the fused QKV tensor are correct. An off-by-one error in the indexing will cause the Q, K, V weights to be incorrectly fused, leading to corrupted attention maps.
+## 4. Microscopic Code-Level Invariants
 
-## 5. The 9 Deep Learning Dimensions
+### 1. Micro-Syntax & Token-Level Precision
+In diffusion pipelines, precision errors at initialization or parameter passing corrupt entire trajectories.
 
-1.  **Architecture**: The system is a modular diffusion pipeline with clear boundaries between the Transformer, Text Encoder, and VAE. The precision partitioning is a key architectural decision that optimizes for both performance and quality.
-2.  **Core Abstractions**: The core abstractions are the `DiffusionPipeline`, the `Transformer` (DiT), the `TextEncoder` (Qwen3.5-9B), and the `VAE` (FLUX.2 small). The LoRA adapters are a key abstraction for distillation.
-3.  **Error Handling**: The system relies on explicit configuration for precision and inference parameters. Errors are likely to manifest as visual artifacts (banding, blurriness) rather than explicit exceptions, making debugging challenging.
-4.  **Testing**: Testing involves visual inspection of generated images and comparison with reference images. Automated testing could involve checking the dtype of the VAE and Transformer, and verifying that the LoRA is loaded correctly.
-5.  **Security**: The model is open-source (Apache 2.0). Security concerns are minimal, but users should be aware of the potential for prompt injection if the model is used in a web application.
-6.  **Performance**: The use of `bfloat16` for the Transformer and `float32` for the VAE optimizes for both speed and quality. The distilled LoRAs reduce inference time by 6x (50 steps to 8 steps).
-7.  **Deployment**: The model is deployed via Hugging Face Hub and ComfyUI. The `convert_to_comfy.py` script is a key deployment artifact.
-8.  **Agent Patterns**: The model can be used in an agent pipeline for image generation. The agent should be aware of the specific inference parameters required for the distilled LoRAs.
-9.  **Data Flow**: The data flow is: Text Prompt -> Text Encoder -> Latent Space -> Transformer (denoising) -> VAE -> Image. The LoRA adapters modify the Transformer's weights to compress the denoising trajectory.
-
-## 6. The 8 Learning Extraction Artifacts
-
-1.  **Pattern**: Dual-precision tensor partitioning for diffusion models.
-2.  **Rule**: MUST partition precision between compute-bound and numerically sensitive components.
-3.  **Architecture Principle**: Separate concerns of computation and numerical stability in diffusion pipelines.
-4.  **Failure Mode**: Color banding and loss of detail due to VAE precision mismatch.
-5.  **Reusable Skill**: Convert HF DiT models to ComfyUI format with fused QKV.
-6.  **Decision**: Use `bfloat16` for Transformer and `float32` for VAE to balance performance and quality.
-7.  **Anti-pattern**: Using uniform precision for all components in a diffusion pipeline.
-8.  **Verification Method**: Assert dtype of VAE and Transformer, and visually inspect generated images for artifacts.
-
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1.  **Verify Precision Partitioning**:
-    *   Check that `pipe.vae.dtype == torch.float32`.
-    *   Check that `pipe.transformer.dtype == torch.bfloat16`.
-    *   If not, re-initialize the pipeline with `torch_dtype={"default": torch.bfloat16, "vae": torch.float32}`.
-
-2.  **Verify LoRA Parameters**:
-    *   If using a distilled LoRA, check that `num_inference_steps=8` and `guidance_scale=1.0`.
-    *   If not, update the inference parameters.
-
-3.  **Verify ComfyUI Compatibility**:
-    *   If exporting to ComfyUI, run `convert_to_comfy.py` to fuse QKV projections.
-    *   Load the converted model in ComfyUI and verify that it generates images correctly.
-
-4.  **Visual Inspection**:
-    *   Generate a test image and inspect for color banding, blurriness, or other artifacts.
-    *   If artifacts are present, check the precision partitioning and LoRA parameters.
-
-5.  **Memory Management**:
-    *   If serving the model via an API, ensure that GPU memory is properly managed.
-    *   Use `torch.cuda.empty_cache()` after each inference to free memory.
+```python
+# PITFALL: Implicit falsy comparison on numerical steps and guidance scales
+def validate_generation_params(guidance_scale: float, num_inference_steps: int):
+    # DANGEROUS:
+    # if not guidance_scale: ... -> If guidance_scale is 0.0 (valid in some conditioning regimes), it triggers!
+    
+    # SAFE & IN

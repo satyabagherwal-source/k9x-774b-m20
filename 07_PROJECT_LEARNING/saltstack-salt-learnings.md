@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `c9a4996a`  
+> **Source Version**: `944a95d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T22:36:10.476Z  
+> **Timestamp**: 2026-11-08T03:43:20.883Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T22:36:09.179Z  
+> **Harvest Timestamp**: 2026-11-08T03:43:20.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15742 stars
+- **Stars / Engagement**: 15747 stars
 
 ---
 
@@ -2067,8 +2067,8 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 - **Issue #70661** (2026-11-03): **[Bug]: cmd.run's runas does not switch the current user from root when salt-call is started with sudo, and runas evaluates as the same user calling salt-call**
   *Symptoms*: ### What happened?  Hey folks! This is pretty edge-casey, but I think it could be problematic and I wanted to let you know. PR on it's way 🫡.  ### The Problem  <blockquote>  It's possible, with the current implementation of `cmd.runas` to not change to the `runas` user because `getpass.getuser()` checks environment variables like `LOGNAME` to determine the current user  This happens if `salt-call` is running with sudo, as the same user as the `runas`  ex. ``` # /srv/salt/problem-state.sls  some-command:   cmd.run:     - runas: me ```  ```bash echo $USER me  sudo salt-call state.apply problem-state ```  evaluates `some-command` as root  </blockquote>   ### Replication steps  <blockquote>  The setup is pretty finnicky here, so here's podman setup to replicate it.  ```Containerfile # Containerfile FROM debian:13  RUN apt-get update \     && apt-get install -y --no-install-recommends build-essential python3 python3-dev python3-venv sudo \     && python3 -m venv /opt/salt-venv \     && /opt/salt-venv/bin/pip install --no-cache-dir 'salt==3008.5' \     && useradd -m -s /bin/bash non-root-user \     && printf 'non-root-user ALL=(root) NOPASSWD: ALL\n' > /etc/sudoers.d/salt-demo \     && chmod 0440 /etc/sudoers.d/salt-demo \     && mkdir -p /srv/salt \     && apt-get clean \     && rm -rf /var/lib/apt/lists/*  COPY demo.sls /srv/salt/demo.sls  CMD ["sleep", "infinity"] ```   ```yaml # demo.sls  show_effective_user:   cmd.run:     - name: |         printf 'effective_uid='; id -u     
 
-- **Issue #70599** (2026-11-04): **[Bug]: Several unit tests fail on macOS when run as a non-root user**
-  *Symptoms*: ### What happened?  Running `python -m nox -e "test-3(coverage=False)" -- tests/pytests/unit/` on macOS as a non-root user fails several tests that are not Salt bugs but test portability problems:  - `tests/pytests/unit/fileserver/test_roots.py::test_serve_file_not_in_root` checks `"win" in sys.platform`, which is also true for `"darwin"`, so it expects the Windows `..\bar` path on macOS. - `tests/pytests/unit/test_scripts.py::test_salt_scripts_pins_fork_start_method` and `test_salt_scripts_pin_survives_fresh_interpreter` expect the `fork` start method, but `salt/scripts.py` deliberately does not pin it on macOS. - `tests/pytests/unit/auth/test_pam.py` (2 tests) compares `/var/...` with the resolved `/private/var/...` path (`/var` is a symlink on macOS). - `tests/pytests/unit/cli/test_salt_call.py::test_passing_cachedir_to_extension_modules` points `--config-dir` at a directory with no minion config, so Salt uses the default `/etc/salt` and `/var/log/salt` paths and exits with `SystemExit: 13` (permission denied). It also leaves the global logging options pointing at `/var/log/salt/minion`, so later tests (`test_master.py::test_run_func`, `test_maintenance_duration`, `utils/test_reactor.py` x2, `engines/test_engines.py::test_engine_title_set`) fail with `No permissions to access "/var/log/salt/minion"`. On Linux CI the tests run as root, which hides this.  Each of these passes when run on its own, except the salt_call test.  ### Environment  - Branch: master (522f75a) - OS: m
+- **Issue #70631** (2026-11-06): **[Bug]: salt CLI exits 0 on authentication / authorization failures**
+  *Symptoms*: ### Description  The `salt` CLI's non-batch run path catches `AuthenticationError`, `AuthorizationError`, `SaltInvocationError`, `EauthAuthenticationError`, and `SaltClientError`, prints the message, then falls out of the function.  Because `_output_ret` only calls `sys.exit` when its `ret` argument is falsy (the "No return received" branch), passing an error string short-circuits that exit and the process ends up returning `0` for a clear-cut failure.  This breaks the standard shell-exit-code contract that `salt ... || alert` and CI pipelines rely on, and contradicts the policy at [`doc/topics/return_codes/index.rst`](https://github.com/saltstack/salt/blob/master/doc/topics/return_codes/index.rst) which says `salt` should exit non-zero on these errors.  ### Setup  Standard master + minion with `external_auth` configured.  ### Steps to Reproduce  ```shell # master's /etc/salt/master: # external_auth: #   file: #     ^filename: /etc/salt/users #     alice: #       - test.* # master's /etc/salt/users: #   alice:correctpassword  # From a shell: salt --eauth file -a alice --password=WRONG '*' test.ping ```  ### Expected behavior  ```shell $ salt --eauth file -a alice --password=WRONG '*' test.ping Authentication error occurred. $ echo $? 1   # or any non-zero ```  ### Actual behavior  ```shell $ salt --eauth file -a alice --password=WRONG '*' test.ping Authentication error occurred. $ echo $? 0   # <-- bug ```  Same with `salt-run`: ```shell $ salt-run --eauth file -a alice --pas
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2085,928 +2085,208 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9a4996a` (2026-11-05)
-**Commit Message**: Add a workflow that posts failed nightly runs to Google Chat (#70679)
+### Incident Patch 1: `944a95d5` (2026-11-07)
+**Commit Message**: Bugfix 67214 minion swarm (#67783)
 
-* Add a workflow that posts failed nightly runs to Google Chat
+* Fix bugs in minionswarm. Updated help with significant enhancements. Added username to salt-master command. Added ability to turn off open_mode.
 
-Triggered by workflow_run for the listed workflows (Nightly Stress Test
-for now) when they end with failure or timed_out.  The webhook URL is the
-GOOGLE_CHAT_WEBHOOK_URL secret.  The job only runs on
-saltstack/salt-nightlies, so it is inert here; the file lives in this repo
-because the salt-nightlies mirror sync removes files that do not exist
-upstream.  Run workflow sends a test message.
+* cleaned up some problems with the parser.add_options and added a
+clarificationn to the config-dir help text.
 
-* notify-google-chat: fix invalid YAML in the test message title
+* added changelog file
 
-The ': ' in the unquoted expression made the line a mapping value, so
-actionlint could not parse the file.
+* Eliminated some trailing whitespace errors revealed by nox -e lint-tests
 
-* notify-google-chat: silence shellcheck SC2016 for the jq variable
+* Pre-commit black and Pre-commit isort fixed problems with tests/minionswarm.py and tests/support/runtests.py
 
-$s in the jq filter is a jq variable.  actionlint with shellcheck, as run
-in CI, reports it once the file parses.
+* Fix tests/minionswarm.py import + correctness bugs
 
-* Add a changelog entry for the Google Chat notification workflow
+Address review feedback on #67214:
 
-**File**: `.github/workflows/notify-google-chat.yml` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+name: Notify Google Chat
-+
-+# Posts a message to a Google Chat space when one of the workflows listed
-+# below ends with "failure" or "timed_out" (not "cancelled").
-+#
-+# - To get notified about another workflow, add its `name:` to the list.
-+# - The incoming webhook URL is the repository secret
-+#   GOOGLE_CHAT_WEBHOOK_URL.  Without it the job does nothing, so forks
-+#   that did not set it are not affected.
-+# - Only runs on saltstack/salt-nightlies (see the `if:` below).  The file
-+#   lives in saltstack/salt because the salt-nightlies mirror sync deletes
-+#   files that do not exist here (see mirror-from-saltstack-salt.yaml).
-+# - `workflow_run` only starts workflows from the default branch, so this
-+#   file has to be on the default branch to have any effect.
-+# - "Run workflow" (workflow_dispatch) sends a test message, to check the
-+#   secret and the Chat space without needing a failing run.
-+
-+on:
-+  workflow_dispatch: {}
-+  workflow_run:
-+    workflows:
-+      - Nightly Stress Test
-+    types:
-+      - completed
-+
-+permissions:
-+  actions: read  # list the failed jobs and steps of the run
-+
-+jobs:
-+  notify:
-+    name: Notify on failure
-+    if: >-
-+      github.repository == 'saltstack/salt-nightlies' &&
-+      (github.event_name == 'workflow_dispatch' ||
-+      contains(fromJSON('["failure", "timed_out"]'), github.event.workflow_run.conclusion))
-+    runs-on: ubuntu-latest
-+    env:
-+      GOOGLE_CHAT_WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
-+    steps:
-+      - name: Post to Google Chat
-+        if: env.GOOGLE_CHAT_WEBHOOK_URL != ''
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          REPO: ${{ github.repository }}
-+          # The fallbacks (after ||) are for the manual test run, where
-+          # there is no workflow_run event.
-+          RUN_ID: ${{ github.event.workflow_run.id || github.run_id }}
-+          RUN_URL: ${{ github.event.workflow_run.html_url || format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}
-+          WORKFLOW: ${{ github.event.workflow_run.name || 'Test message - the Google Chat webhook works' }}
-+          BRANCH: ${{ github.event.workflow_run.head_branch || github.ref_name }}
-+          EVENT: ${{ github.event.workflow_run.event || github.event_name }}
-+          CONCLUSION: ${{ github.event.workflow_run.conclusion || 'test' }}
-+        run: |
-+          # Branch and job names are not trusted text: drop the characters
-+          # Google Chat reads as links and mentions.
-+          clean() { tr -d '<>`*~' ; }
-+
-+          # "<job> (<failed step>, ...)" for each failed job, comma separated.
-+          # The message is still useful without it, so ignore API errors.
-+          # No pipe into clean(): a pipeline's exit status is that of its last
-+          # command, so a failed gh call would not reach the || fallback.
-+          # shellcheck disable=SC2016  # $s is a jq variable, not a shell one
-+          jobs=$(gh api "repos/${REPO}/actions/runs/${RUN_ID}/jobs?per_page=100" \
-+            --jq '[.jobs[] | select(.conclusion == "failure" or .conclusion == "timed_out") | .name + (([.steps[] | select(.conclusion == "failure" or .conclusion == "timed_out") | .name] | join(", ")) as $s | if $s == "" then "" else " (" + $s + ")" end)] | join(", ")' \
-+            2>/dev/null) || jobs=""
-+          jobs=$(printf '%s' "${jobs}" | clean)
-+
-+          name=$(printf '%s' "${WORKFLOW}" | clean)
-+          repo_name="Salt Nightly"
-+          if [ "${CONCLUSION}" = "test" ]; then
-+            text="🧪 ${name} 🧪"
-+          else
-+            text="🚨 ${name} needs attention 🚨"
-+            if [ -n "${jobs}" ]; then
-+              text="${text}"$'\n'"❌ Jobs needing attention: ${jobs}"
-+            fi
-+          fi
-+          text="${text}"$'\n'"📦 Repo: ${repo_name}"
-+          text="${text}"$'\n'"🌿 Branch: $(printf '%s' "${BRANCH}" | clean)"
-+          text="${text}"$'\n'"🔗 <${RUN_URL}|View run>"
-+
-+          jq -n --arg text "${text}" '{text: $text}' \
-+            | curl --fail --silent --show-error --max-time 30 \
-+                --header 'Content-Type: application/json; charset=UTF-8' \
-+                --data @- "${GOOGLE_CHAT_WEBHOOK_URL}"
-```
+* tests/support/runtests.py: restore canonical package-qualified
+  import. ``import support.paths as paths`` only resolved when the
+  CWD was ``tests/`` and broke ``from tests.support.runtests import
+  RUNTIME_VARS`` -- used by 50+ conftests/tests. Use
+  ``from tests.support import paths`` instead. This was the root
+  cause of the 393 failing Test Salt / Test Package jobs.
+* tests/minionswarm.py: use ``from tests.support import runtests``
+  and add a sys.path bootstrap so the script can still be executed
+  directly via ``python tests/minionswarm.py`` (the original
+  ``cd tests/`` reproduction fr
 
-**File**: `changelog/70678.added.md` (added, +1/-0)
+**File**: `changelog/67214.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Added a workflow that posts a Google Chat message when a nightly stress test fails on saltstack/salt-nightlies. Fixes #70678.
++Fixed bugs in minionswarm and added ability turn off open-mode.
 ```
 
----
-
-### Incident Patch 2: `08157d50` (2026-11-05)
-**Commit Message**: Manage Salt master clusters (#70656)
-
-* Rebase remote CLI implementation onto latest master
-
-This commit rebases the remote CLI client authentication and ACL
-implementation from the 6-month-old base (713a9238c4b) onto the
-current master (021a041a0be - 2,111 commits ahead).
-
-Resolved Conflicts:
-- salt/cli/key.py: Combined context manager with client_auth check
-- salt/config/__init__.py: Merged tracing/metrics configs with encryption configs
-- salt/crypt.py: Combined role-based PKI paths with _creds bug fix
-- salt/daemons/masterapi.py: Added wheel and client ACL initialization
-- salt/channel/server.py: Kept updated auth logic and class structure
-- tests/pytests/unit/test_master.py: Merged test fixture configurations
-
-salt/master.py Resolution:
-Accepted master's version due to extensive refactoring (8 conflicts).
-The client ACL publish checks from our implementation need to be
-re-applied in a follow-up commit. Original logic is in wip-remote-cli
-branch for reference.
-
-Next Steps:
-1. Re-add client ACL checking to salt/master.py minion_publish()
-2. Run full test suite to verify functionality
-3. Update any broken tests due to master refactoring
-
-* Re-add client ACL logic to publish() met
-
-**File**: `DEPENDENCIES.md` (removed, +0/-124)
+**File**: `tests/minionswarm.py` (modified, +181/-37)
 ```diff
-@@ -1,124 +0,0 @@
--| **OSS Software Name**     | **Version** | **Primary License**                     | **Source Code Download URL**                   | **Author**                                                               | **Copyright Year** |
--| ------------------------- | :---------- | --------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------ | -----------------: |
--|                           |             |                                         |                                                |                                                                          |                    |
--| Cheetah3                  | 3.1.0       | MIT/X11                                 | https://pypi.org/project/Cheetah3/             | Travis Rudd                                                              |          2017-2019 |
--| CherryPy                  | 17.3.0      | BSD                                     | https://pypi.org/project/CherryPy/             | CherryPy Team                                                            |          2004-2019 |
--| Genshi                    | 0.7.3       | BSD                                     | https://pypi.org/project/Genshi/               | Edgewall Software                                                        |          2006-2010 |
--| GitPython                 | 3.1.3       | BSD                                     | https://pypi.org/project/GitPython/            | Sebastian Thiel, Michael Trier                                           |         2008, 2009 |
--| Jinja2                    | 2.11.2      | BSD                                     | https://pypi.org/project/Jinja2                | Armin Ronacher                                                           |               2007 |
--| Mako                      | 1.1.3       | MIT/X11                                 | https://pypi.org/project/Mako/                 | Mike Bayer                                                               |          2006-2020 |
--| MarkupSafe                | 1.1.1       | BSD                                     | https://pypi.org/project/MarkupSafe/           | Armin Ronacher                                                           |               2010 |
--| PyJWT                     | 1.7.1       | MIT/X11                                 | https://pypi.org/project/PyJWT/                | Jose Padilla                                                             |               2015 |
--| PyNaCl                    | 1.4.0       | Apache License, V2.0                    | https://pypi.org/project/PyNaCl/               | The PyNaCl developers                                                    |               2004 |
--| PyYAML                    | 5.3.1       | MIT/X11                                 | https://pypi.org/project/PyYAML/               | Kirill Simonov                                                           |          2006-2019 |
--| WerkZeug                  | 1.0.1       | BSD                                     | https://pypi.org/project/Werkzeug/             | Armin Ronacher                                                           |               2007 |
--| apache-libcloud           | 2.0.0       | Apache License, V2.0                    | https://pypi.org/project/apache-libcloud/      | Apache Software Foundation                                               |               2004 |
--| appdirs                   | 1.4.4       | MIT/X11                                 | https://pypi.org/project/appdirs/              | Trent Mick                                                               |               2010 |
--| asn1crypto                | 1.3.0       | MIT/X11                                 | https://pypi.org/project/asn1crypto/           | wbond                                                                    |          2015-2019 |
--| attrs                     | 19.3.1      | MIT/X11                                 | https://pypi.org/project/attrs/                | Hynek Schlawack                                                          |               2015 |
--| aws-sam-translator        | 1.25.0      | Apache License, V2.0                    | https://pypi.org/project/aws-sam-translator/   | Amazon Web Services                                                      |               2004 |
--| aws-xray-sdk              | 2.6.0       | Apache License, V2.0                    | https://pypi.org/project/aws-xray-sdk/         | Amazon Web Services                                                      |               2004 |
--| bcrypt                    | 3.1.7       | Apache License, V2.0                    | https://pypi.org/project/bcrypt/               | The Python Cryptographic Authority                                       |               2013 |
--| boto                      | 2.49.0      | MIT/X11                                 | https://pypi.org/projec
-```
-
-**File**: `FIXED_TESTS.md` (removed, +0/-71)
-```diff
-@@ -1,71 +0,0 @@
--# FIXED_TESTS.md: Salt Merge-Forward CI Regressions (3006.x -> 3007.x)
--
--This document tracks the test regressions and CI failures resolved during the merge of Salt 3006.x into 3007.x (PR #68929).
--
--## 1. Package Lifecycle Tests (Downgrade/Upgrade)
--*   **Files**:
--    *   `tests/pytests/pkg/downgrade/test_salt_downgrade.py`
--    *   `tests/pytests/pkg/upgrade/test_salt_upgrade.py`
--*   **Symptom**: `AssertionError` where `3007.13` was incorrectly evaluated as equal to `3007.13+187.g813a978cff` due to `.base_version` usage.
--*   **Fix**: Switched to full `packaging.version.Version` objects for comparison, correctly identifying that dev/git versions are "greater than" the base stable version. Also initialized `original_py_version = None` to resolve pylint warnings.
--
--## 2. Salt-SSH Unit Tests
--*   **Files**:
--    *   `tests/pytests/unit/client/ssh/test_ssh.py`
--    *   `tests/pytests/unit/client/ssh/test_password.py`
--*   **Symptom**: `ValueError` (too many values to unpack) and `AttributeError` after refactoring.
--*   **Fix**:
--    *   Refactored tests to match the renamed `_handle_routine_thread` method.
--    *   Updated mocks to handle the new 3-tuple return format (`stdout`, `stderr`, `retcode`).
--    *   Added robust `retcode = None` handling.
--    *   Switched to `ANY` for `opts` in `display_output` mocks to accommodate merge-added internal configuration keys.
--
--## 3. Salt-Mine Integration & Runner Tests
--*   **Files**:
--    *   `tests/integration/modules/test_mine.py`
--    *   `tests/pytests/integration/runners/test_mine.py`
--*   **Symptom**: Flaky failures and race conditions where Mine data was not available immediately after being sent.
--*   **Fix**: Ported 30-second polling logic and `mine.update` patterns from `master` to ensure data consistency before assertions.
--
--## 4. Async Client Unit Tests
--*   **File**: `tests/pytests/unit/test_client.py`
--*   **Symptom**: `RuntimeError: Event loop is closed` and JID nesting errors in `pub_async`.
--*   **Fix**: Ported the `async def` test pattern from `master`, ensuring Tornado/Asyncio loops are properly managed and that `jid` and `timeout` are correctly extracted from nested return structures.
--
--## 5. Loader/Grains Cleanup Tests
--*   **File**: `tests/pytests/unit/loader/test_grains_cleanup.py`
--*   **Symptom**: Failures in grain provider cleanup due to stub module interference.
--*   **Fix**: Aligned module filtering logic with `master` to correctly handle (and ignore) stub modules that were causing cleanup failures.
--
--## 6. System Verification Unit Tests
--*   **File**: `tests/pytests/unit/utils/verify/test_verify.py`
--*   **Symptom**: **Hard Crash/Hang** of the unit test shard (specifically Unit 4 on Linux).
--*   **Fix**: Patched `resource.getrlimit` and `resource.setrlimit` (and Windows equivalents) to prevent the test from actually lowering the process file descriptor limit to 256. Previously, hitting this limit caused Salt's logging and master processes to crash recursively without a summary.
--
--## 7. Package Ownership Integration Tests
--*   **File**: `tests/pytests/pkg/integration/test_salt_user.py`
--*   **Symptom**: `AssertionError: assert 'salt' == 'root'` at various paths (e.g., `/etc/salt/pki/minion/minion.pub`, `/var/cache/salt/master/proc`).
--*   **Fix**: Refactored `test_pkg_paths` to use a non-recursive, explicit path check for `salt` user ownership. This correctly aligns the test with Salt's 3006.x+ multi-user security model, where `root`-owned subdirectories often exist within `salt`-managed parent directories, and avoids the cascading failures caused by the previous recursive logic.
--
--## 8. Integration Shard 1 (Widespread Collision)
--*   **Symptom**: 169+ failures in Ubuntu 24.04 (and other Linux) integration shards.
--*   **Error**: `salt.loader.lazy: ERROR Module/package collision: '.../salt/utils/vault.py' and '.../salt/utils/vault'`.
--*   **Fix**: Deleted the redundant `salt/utils/vault.py` (which was accidentally restored from 3006.x) in favor of the `salt/utils/vault/` directory structure required by 3007.x. Also removed redundant `tests/pytests/unit/utils/test_vault.py`.
--
--## 9. GPG Key Download Failures
--*   **File**: `tests/support/pytest/helpers.py`
--*   **Symptom**: `requests.exceptions.ConnectionError` in restricted/air-gapped CI environments when downloading Broadcom GPG keys.
--*   **Fix**: Added a local PGP public key fallback to the `download_file` helper, allowing tests to proceed even when the Broadcom artifactory is unreachable.
--
--## 10. Systemd Masked Service Hangs
--*   **File**: `tests/pytests/pkg/upgrade/systemd/test_service_preservation.py`
--*   **Symptom**: **5-hour Hang** in package upgrade tests.
--*   **Fix**: Disabled automated service stopping for masked units during the `install(upgrade=True)` call. `systemctl stop` can block indefinitely on masked services in certain environments.
--
-----
--
--## Core Supporting Fixes (Verified)
--The following core changes were required to enable the test
-```
-
-**File**: `GAP5.md` (removed, +0/-153)
-```diff
-@@ -1,153 +0,0 @@
--# Gap 5 — `state.py __virtual__` guard is too broad: resource types without a `state.*` override lose `state.sls`
--
--Discovered: 2026-05-10, during `salt-call -r --tgt dwozniak-91-ss state.sls starting_state.vcf-91-dev`
--after adding a second resource type (`ssh`) to the Pillar alongside `starting_state`.
--
--**Status: fixed via the per-type directory layout** (`salt/resources/<rtype>/modules/`).
--The broad `__virtual__` guard in `salt/modules/state.py` was deleted entirely;
--the standard ``state.py`` now loads in every context.  Per-type ``state.py``
--overrides under ``salt/resources/<rtype>/modules/`` (or under any
--extension's ``saltext/<ext>/resources/<rtype>/modules/``) win their slot
--via directory-order priority in :func:`salt.loader._module_dirs`.  See
--``RESOURCE_STATE_GAPS.md`` for the full picture.
--
-----
--
--## What happened
--
--The following command failed immediately — before any state even ran — with:
--
--```
--Function 'state.sls' is not supported for resource type 'starting_state'.
--```
--
--```bash
--sudo salt-call -r --tgt dwozniak-91-ss --local \
--  --config-dir .../saltcall \
--  state.sls starting_state.vcf-91-dev
--```
--
--The same command had worked on the two prior runs (when only the `starting_state`
--resource type was active).  The only thing that changed between the working and
--failing run was that `pillar/ssh_resources.sls` now contained a real SSH host
--(`jumphost-dwozniak-91-ss`), causing the minion to discover and build a loader
--for the `ssh` resource type in addition to `starting_state`.
--
-----
--
--## Root cause
--
--### 1. The Gap 2 fix introduced a broad `__virtual__` guard in `salt/modules/state.py`
--
--Commit `5fd6da6810a` ("state: call resource init() in State.load_modules") changed
--`State.load_modules` to build `self.functions` via `salt.loader.resource_modules`
--instead of `minion_mods` when `opts["resource_type"]` is set.  As a companion
--change, `salt/modules/state.py` was given a `__virtual__` guard that returns
--`False` for **all** resource types:
--
--```python
--# salt/modules/state.py
--def __virtual__():
--    if __opts__.get("resource_type"):
--        return False, "state: not loaded in resource-type loaders"
--    ...
--    return __virtualname__
--```
--
--The intent was to yield the `"state"` virtualname slot to resource-specific
--override modules like `sshresource_state` (which provides `state.sls`,
--`state.highstate`, and `state.apply` for SSH resources).
--
--### 2. The guard is too broad — it fires for ALL resource types, not just `ssh`
--
--`sshresource_state` only overrides `state.*` when `resource_type == "ssh"`:
--
--```python
--# salt/modules/sshresource_state.py
--def __virtual__():
--    if __opts__.get("resource_type") == "ssh":
--        return __virtualname__   # "state"
--    return False, "sshresource_state: only loads in an ssh-resource-type loader."
--```
--
--For resource types that have **no** override module (e.g. `starting_state`,
--`dummy`, any future custom type), the outcome is:
--
--- `salt/modules/state.py` → returns `False` (blocked by the broad guard)
--- `sshresource_state.py`  → returns `False` (wrong resource type)
--- Result: **the `state` virtualname slot is empty** in the resource loader for
--  that type.
--
--### 3. The caller-level check catches the empty slot before `State.load_modules` is reached
--
--`salt/cli/caller.py` checks `if fun not in loader` against the minion's
--per-type `resource_loaders[rtype]` loader **before** running the function:
--
--```python
--# salt/cli/caller.py ~387
--loader = getattr(self.minion, "resource_loaders", {}).get(rtype)
--if fun not in loader:
--    results[rid] = (
--        f"Function '{fun}' is not supported for resource "
--        f"type '{rtype}'."
--    )
--    continue
--```
--
--Because `state.sls` is absent from `resource_loaders["starting_state"]`,
--the call is rejected here and never reaches `State.load_modules` at all.
--
--### 4. Why it only appeared when the `ssh` resource type was added
--
--When only `starting_state` was in the Pillar, only a `starting_state`
--resource loader was built.  `state.sls` was absent from it (same root cause),
--but the two successful runs that preceded this failure had a warm Pillar cache
--that still showed `hosts: {}` for the SSH resource — the minion had not yet
--reloaded the updated Pillar.  Once the cache expired and the full Pillar
--(including a real SSH host) was compiled, the minion built a loader for `ssh`
--too.  The `ssh` loader's presence is what finally caused the lazy evaluation
--of `resource_loaders["starting_state"]` to reveal the missing `state.sls`.
--
--(The `starting_state` loader was always broken post–Gap 2; the Pillar cache
--masked the failure for two runs.)
--
-----
--
--## How it was fixed
--
--**Option B** was implemented in commit `d28f8d2e981`: a narrow
--`_RESOURCE_TYPES_WITH_STATE_OVERRIDE = frozenset({"ssh"})` sentinel is
--defined in `salt/modules/state.py`.  The `__virtual__` guard only returns
--`False` for resource types *in* that set.  For all other resource t
-```
-
-**File**: `MULTI_RING_DESIGN.md` (removed, +0/-446)
-```diff
-@@ -1,446 +0,0 @@
--# Multi-Ring / Multi-Raft Cluster Design
--
--Working notes for the evolution from "single global ring, single Raft
--group, every master votes" to "named rings per cache type, per-ring
--Raft groups, capped voter and ring-member counts".
--
--The original sketch (preserved below as historical context) is now
--mostly **landed**.  This top section describes the shipping shape;
--read it first if you want operational context, and consult the
--"Original design sketch" section if you're tracing decisions.
--
--## Shipping shape (2026-05-16)
--
--Multi-ring landed across seven slices.  All 722 tests in the cluster
--suites pass.  Operator surface and on-the-wire shape are stable from
--here.
--
--### Architecture
--
--```
--            cluster Raft log (single group, "cluster" id)
--            ┌──────────────────────────────────────────┐
--            │ MembershipStateMachine        (CONFIG)   │
--            │ RingRegistryStateMachine      (RING_REGISTRY) │
--            │ RoutingStateMachine           (ROUTE)    │
--            │ RingConfigStateMachine        (RING_CONFIG, legacy) │
--            └──────────────────────────────────────────┘
--                                │
--              spawns per-founder
--                                v
--       ring_X Raft log (own group, own log/term/leader)
--       ┌─────────────────────────────────────┐
--       │ MembershipStateMachine  (per-ring CONFIG) │
--       │ RingConfigStateMachine  (per-ring policy) │
--       └─────────────────────────────────────┘
--```
--
--The cluster log is the only consensus state every master needs to
--agree on; per-ring logs handle their own membership and policy
--churn so a ring outage doesn't take down other rings or the cluster.
--
--### Substrate
--
--* `SaltStorage(node_id, opts, ring_id="cluster")` — on-disk path
--  scheme: `cachedir/cluster/consensus/<node_id>/<ring_id>/`.
--* RPC envelope carries `raft_group_id` (default `"cluster"`).
--  `salt/cluster/consensus/rpc.py:pack/unpack` handle it; pre-multi-ring
--  envelopes default to the cluster group on decode.
--* `salt/cluster/consensus/peer.py:RaftDispatcher` accepts either a
--  single `Node` (treated as cluster) or `dict[str, Node]`; routes
--  inbound RPCs by `raft_group_id`.  `register_node`/`unregister_node`
--  let `RaftService` mutate the routing table at runtime.
--* `salt/cluster/consensus/service.py:RaftService` keeps `self._node`
--  for backward compat and `self._nodes = {"cluster": self._node}` as
--  the multi-ring registry.  `_heartbeat_tick` iterates all groups.
--
--### Cluster-log state machines
--
--* `RingRegistryStateMachine` (`raft/log.py`) — registry of named
--  rings.  Each entry: `{ring_id, founding_voters, status}`.  Snapshot
--  round-trips; `on_change` fires per commit.
--* `RoutingStateMachine` (`raft/log.py`) — data-type → ring mapping
--  (or `None` for broadcast).  Snapshot round-trips; `on_change`
--  populates the per-process routing snapshot.
--* New `LogEntryType.RING_REGISTRY = 4` and `LogEntryType.ROUTE = 5`;
--  the legacy `RING_CONFIG = 3` continues to drive the single-ring
--  fallback that pre-multi-ring callers use.
--
--### Per-ring lifecycle
--
--`RaftService._on_ring_registry_change` brings up a per-ring `Node`
--(with its own `SaltStorage(ring_id=...)`, `MembershipStateMachine`,
--and `RingConfigStateMachine`) whenever a registry entry commits and
--this master is in the founder list.  `status="destroyed"` tears down
--the local `Node` and drops it from the dispatcher; on-disk state is
--preserved so re-create with the same id recovers state.
--
--### Ring registry / routing surface
--
--`salt/cluster/ring_membership.py` is now a registry of named rings.
--
--* `get_ring(name)` lazily creates an empty `HashRing` per name.
--* `rebuild(name, voters, replicas=1)` keyed by name; legacy
--  `rebuild(voters)` keeps targeting the `"cluster"` ring.
--* `owns_for(opts, data_type, key)` consults `_ROUTING` first: no
--  route ⇒ broadcast (True); routed to an unknown/empty ring ⇒ False;
--  routed to a populated ring ⇒ defers to `ring.owns()`.
--* `set_route(data_type, ring_id)` / `drop_ring(name)` are called by
--  `RaftService` on commits to keep the per-process snapshot in sync.
--
--### Gate sites
--
--`salt/master.py:1171,1187` (job submission + job return mirroring)
--call `ring_membership.owns_for(self.opts, "jobs", jid)`.  No routing
--entry for `"jobs"` keeps today's broadcast behaviour; an operator
--flips it to a ring with `cluster.route_set`.
--
--### Operator runners
--
--All in `salt/runners/cluster.py`:
--
--| Runner | Purpose |
--|---|---|
--| `cluster.ring_create name=X voters=[…]` | Propose `RING_REGISTRY` entry creating ring X |
--| `cluster.ring_destroy name=X` | Propose destroy (status="destroyed") |
--| `cluster.route_set data_type=… ring=…` | Propose `ROUTE` entry binding data_type to ring |
--| `cluster.route_clear data_type=…` | Propose route → `None` (back to broadcast) |
--| `cluster.ring_set name=X members=voters replicas=N` | Propose `RING_CONFIG` on ring X's *own* log (per-ring poli
-```
-
-**File**: `doc/ref/clients/index.rst` (modified, +77/-0)
-```diff
-@@ -125,3 +125,80 @@ SSHClient
- 
- .. autoclass:: salt.client.ssh.client.SSHClient
-     :members: cmd, cmd_iter
-+
-+.. _remote-clients:
-+
-+Remote clients
-+==============
-+
-+The ``*Client`` classes above assume the Python process is running on the Salt
-+master itself: they publish jobs through the master's local IPC sockets and
-+read returns directly from the master's job cache and event bus. That model
-+is not available from an operator workstation that only has a network path to
-+the master.
-+
-+The remote client classes mirror the master-local clients, but each call
-+travels over the same AES-authenticated ``ReqChannel`` that a minion uses to
-+talk to the master. The workstation presents a PKI identity (its own key pair
-+under the client ``pki_dir``) during the sign-in handshake, and then layers
-+eauth / token credentials inside the encrypted payload so the master's
-+``ClearFuncs`` endpoint can authorize the call. Minion job returns come back
-+over an authenticated network event subscription instead of the master's
-+local IPC event bus.
-+
-+These clients are selected automatically by the CLI entry points
-+(``salt``, ``salt-run``, ``salt-key``) when the loaded config has
-+``__role: client``. :func:`salt.config.client_config` is the loader for that
-+config file -- it is read from ``/etc/salt/client`` by default, and its
-+presence is what distinguishes a workstation install from a master install.
-+Programmatic callers that want to force the remote variant can load the same
-+config explicitly and pass it to the client constructor.
-+
-+For end-user documentation on configuring a workstation and running Salt
-+commands against a remote master, see ``doc/topics/execution/remote_execution.rst``.
-+
-+RemoteClient
-+------------
-+
-+Remote equivalent of :class:`~salt.client.LocalClient` used by the ``salt``
-+command on an operator workstation. Publishes jobs through the master's
-+authenticated ``ReqChannel`` instead of the master-local IPC publisher and
-+subscribes to minion returns over the network event bus.
-+
-+.. autoclass:: salt.client.RemoteClient
-+    :members: cmd, run_job, cmd_async, cmd_cli, cmd_subset, cmd_batch,
-+        cmd_iter, cmd_iter_no_block
-+
-+RemoteRunnerClient
-+------------------
-+
-+Remote equivalent of :class:`~salt.runner.RunnerClient` used by ``salt-run``
-+on an operator workstation. Dispatches runner calls to the master's
-+``ClearFuncs.runner`` endpoint and receives the result via the authenticated
-+network event subscription.
-+
-+.. autoclass:: salt.runner.RemoteRunnerClient
-+    :members: cmd, cmd_sync, master_call
-+
-+RemoteRunner
-+------------
-+
-+CLI driver for remote ``salt-run``. Subclass of
-+:class:`~salt.runner.RemoteRunnerClient` that mirrors
-+:class:`~salt.runner.Runner` but routes every call through the remote
-+dispatch path.
-+
-+.. autoclass:: salt.runner.RemoteRunner
-+    :members: run
-+
-+RemoteWheelClient
-+-----------------
-+
-+Remote equivalent of :class:`~salt.wheel.WheelClient` used by ``salt-key``
-+and other wheel operations on an operator workstation. Sends wheel calls to
-+the master's ``ClearFuncs.wheel`` endpoint; the master's wheel endpoint
-+blocks server-side and returns the full ``{tag, data}`` response inline for
-+synchronous calls.
-+
-+.. autoclass:: salt.wheel.RemoteWheelClient
-+    :members: cmd, cmd_sync, cmd_async, master_call
-```
-
-**File**: `salt/acl/__init__.py` (modified, +480/-1)
-```diff
-@@ -1,5 +1,5 @@
+@@ -6,6 +6,7 @@
  """
--The acl module handles publisher_acl operations
-+The acl module handles publisher_acl and client_acl operations
+ # pylint: disable=resource-leakage
  
- Additional information on publisher_acl can be
- found by reading the salt documentation:
-@@ -8,10 +8,489 @@
- """
++import getpass
+ import hashlib
+ import optparse  # pylint: disable=deprecated-module
+ import os
+@@ -18,10 +19,20 @@
+ import time
+ import uuid
  
- # Import python libraries
-+import fnmatch
+-import salt
+-import salt.utils.files
+-import salt.utils.yaml
+-import tests.support.runtests
++# When this module is executed directly (``python tests/minionswarm.py``)
++# the parent of ``tests/`` is not on ``sys.path``, which makes the
++# ``from tests.support import runtests`` import below fail. Pre-pend the
++# repository root so the script remains runnable without ``PYTHONPATH``
++# manipulation. This is a no-op when the module is imported normally
++# (e.g. by pytest) because the repository root is already on ``sys.path``.
++_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
++if _REPO_ROOT not in sys.path:
++    sys.path.insert(0, _REPO_ROOT)
++
++import salt  # noqa: E402
++import salt.utils.files  # noqa: E402
++import salt.utils.yaml  # noqa: E402
++from tests.support import runtests  # noqa: E402
  
- import salt.utils.stringutils
+ OSES = [
+     "Arch",
+@@ -34,25 +45,40 @@
+     "Solaris",
+ ]
+ VERS = [
+-    "2014.1.6",
+-    "2014.7.4",
+-    "2015.5.5",
+-    "2015.8.0",
++    "3006.1",
++    "3006.5",
++    "3006.9",
++    "3007.1",
+ ]
  
  
-+class ClientACL:
-+    """
-+    Represents the client ACL and provides methods to query the ACL
-+    for operations performed by remote CLI clients.
-+
-+    Remote CLI clients (salt-run, salt-key, etc.) using client authentication
-+    can have their access controlled via client_acl configuration.
-+    """
-+
-+    def __init__(self, client_acl):
-+        """
-+        Initialize the ClientACL
-+
-+        :param dict client_acl: The client_acl configuration from master config.
-+                                Expected format:
-+                                {
-+                                    'client-id-1': {
-+                                        'runner': ['*'],
-+                                        'wheel': ['key.*']
-+                                    },
-+                                    'client-id-2': {
-+                                        'runner': ['jobs.*', 'cache.*'],
-+                                        'wheel': []
-+                                    }
-+                                }
-+        """
-+        self.client_acl = client_acl or {}
-+
-+    def _get_client_permissions(self, client_id):
-+        """
-+        Get merged permissions for a client ID, supporting glob pattern matching.
-+
-+        Multiple patterns can match a single client_id. When this happens,
-+        permissions from all matching patterns are merged together.
-+
-+        :param str client_id: The client ID to check
-+        :rtype: dict or None
-+        :return: Merged permissions dict or None if no match found
-+        """
-+        if not self.client_acl:
-+            return None
-+
-+        # Check for exact match first (optimization)
-+        if client_id in self.client_acl:
-+            return self.client_acl[client_id]
-+
-+        # Check for pattern matches
-+        matched_perms = {}
-+        found_match = False
-+
-+        for pattern, perms in self.client_acl.items():
-+            if fnmatch.fnmatch(client_id, pattern):
-+                found_match = True
-+                # Merge permissions from all matching patterns
-+                for perm_type, perm_list in perms.items():
-+                    if perm_type not in matched_perms:
-+                        matched_perms[perm_type] = []
-+                    # Merge lists, avoiding duplicates
-+                    if isinstance(perm_list, list):
-+                        for item in perm_list:
-+                            if item not in matched_perms[perm_type]:
-+                                matched_perms[perm_type].append(item)
-+                    else:
-+                        matched_perms[perm_type] = perm_list
-+
-+        return matched_perms if found_match else None
-+
-+    _CMD_TYPE_ALIASES = {
-+        "runner": ("runner", "runners"),
-+        "wheel": ("wheel", "wheels"),
-+    }
-+
-+    def client_is_allowed(self, client_id, cmd, cmd_type):
-+        """
-+        Check if a client ID is allowed to run a specific command.
-+
-+        :param str client_id: The client ID making the request
-+        :param str cmd: The command/function to execute (e.g., 'jobs.list_jobs', 'key.list_all')
-+        :param str cmd_type: The type of command ('runner' or 'wheel')
-+
-+        :rtype: bool
-+        :return: True if the client is allowed, False otherwise
-+        """
-+        # If no client_acl configured, allow all access (backward compatibility)
-+        if not self.client_acl:
-+            return True
-+
-+        # Get permissions for this client (supports pattern matching)
-+        client_perms = self._get_client_permissions(client_id)
-+
-+        # If client_id doesn't match any patterns, deny access
-+        if client_perms is None:
-+            return False
-+
-+        # Accept both singular and plural forms (``runner``/``runners``,
-+        # ``wheel``/``wheels``), matching the ``minion``/``minions`` alias
-+        # already supported in ``client_can_target_minion``.
-+        aliases = self._CMD_TYPE_ALIASES.get(cmd_type, (cmd_type,))
-+        key = next((k for k in aliases if k in client_perms), None)
-+        if key is None:
-+            return False
-+
-+        allowed_cmds = client_perms[key]
-+
-+        # Empty list means deny all (explicit empty permissions)
-+        if not allowed_cmds:
-+            return False
-+
-+        # Check if command is allowed
-+        if isinstance(cmd, str):
-+            cmd = [cmd]
-+
-+        for fun in cmd:
-+            if not salt.utils.stringutils.check_whitelist_blacklist(
-+                fun, whitelist=allowed_cmds
-+            ):
-+                return False
-+
-+        return True
-+
-+    def client_is_blacklisted(self, client_id, cmd, cmd_type, blacklist):
-+        """
-+        Check if a c
+ def parse():
+     """
+     Parse the cli options
+     """
+-    parser = optparse.OptionParser()
++    guidance = (
++        "\n\n   To execute salt commands against minionswarm you must include the configuration\n"
++        "   file using the -c option. For commands such as salt, salt-key, salt-cp,\n"
++        "   and salt-run use -c <temp-dir>/master. For example, when using the\n"
++        "   default for --temp-dir, the configuration directory would be\n"
++        "   /tmp/sroot/master. If the master runs on a different machine you\n"
++        "   must execute the command on that machine using the master config file\n"
++        "   there. For the salt-call command, which is a minion side\n"
++        "   command, use -c <tmp-dir>/<name>-<minion number>. For example to\n"
++        "   execute salt-call on the first minion using the default values for\n"
++        "   temp-dir and name use -c /tmp/sroot/minion-0. The commands salt-api,\n"
++        "   salt-cloud, salt-extend, salt-master, salt-minion, salt-proxy,\n"
++        "   salt-ssh, salt-syndic and spm are not supported."
++    )
++    usage = "usage: python %prog [options]" + guidance
++    parser = optparse.OptionParser(usage)
+     parser.add_option(
+         "-m",
+         "--minions",
+         dest="minions",
+         default=5,
+         type="int",
+-        help="The number of minions to make",
++        help="The number of minions to make (default = %default)",
+     )
+     parser.add_option(
+         "-M",
+@@ -64,19 +90,19 @@ def parse():
+     parser.add_option(
+         "--master",
+         dest="master",
+-        default="salt",
+-        help="The location of the salt master that this swarm will serve",
++        default="localhost",
++        help="The location of the salt master that this swarm will serve. (default = %default) "
++        "The standard port used by daemon masters is 4506. Masters can be specified using "
++        "<IP address>:<port>. For example, 192.168.1.2:4506",
+     )
+     parser.add_option(
+         "--name",
+         "-n",
+         dest="name",
+-        default="ms",
+-        help=(
+-            "Give the minions an alternative id prefix, this is used "
+-            "when minions from many systems are being aggregated onto "
+-            "a single master"
+-        ),
++        default="minion",
++        help="Give the minions an alternative id prefix, this is used "
++        "when minions from many systems are being aggregated onto "
++        "a single master. (default = %default)",
+     )
+     parser.add_option(
+         "--rand-os",
+@@ -111,7 +137,7 @@ def parse():
+         "--keep-modules",
+         dest="keep",
+         default="",
+-        help="A comma delimited list of modules to enable",
++        help="A comma delimited list of modules to enable. (default = %default)",
+     )
+     parser.add_option(
+         "-f",
+@@ -124,26 +150,33 @@ def parse():
+     parser.add_option(
+         "--temp-dir",
+         dest="temp_dir",
+-        default=None,
+-        help="Place temporary files/directories here",
++        default="/tmp/sroot",
++        help="Place temporary files/directories here, (default = %default)",
+     )
+     parser.add_option(
+         "--no-clean",
+         action="store_true",
+         default=False,
+-        help="Don't cleanup temporary files/directories",
++        help="Don't cleanup temporary files/directories. "
++        "If specified, you must manually recursively delete "
++        "the swarm root (see --temp-dir) before running "
++        "minionswarm again, e.g., using the default swarm "
++        "root, rm -fr /tmp/sroot",
+     )
+     parser.add_option(
+         "--root-dir",
+         dest="root_dir",
+         default=None,
+-        help="Override the minion root_dir config",
+
 ```
 
-**File**: `salt/auth/__init__.py` (modified, +45/-2)
+**File**: `tests/support/runtests.py` (modified, +1/-1)
 ```diff
-@@ -720,6 +720,34 @@ def check_authentication(self, load, auth_type, key=None, show_username=False):
-                 if not auth_list:
-                     ret["error"] = {"name": "UserAuthenticationError", "message": msg}
-                     return ret
-+        elif auth_type == "client":
-+            # Pure-PKI remote client.  The sender's identity was proven
-+            # at the AES-handshake layer (sign-in rotated an AES session
-+            # key using the stored ``client_keys/<client_id>`` pubkey),
-+            # and :meth:`salt.master.MWorker._is_client_bridge` gated
-+            # routing on membership in that same cache.  By the time
-+            # this branch runs, the client is authenticated; the only
-+            # remaining question is authorization, which is handled by
-+            # the ``client_acl`` matching that publish/runner/wheel
-+            # perform downstream when they see ``auth_type == "client"``.
-+            client_id = load.get("client_id")
-+            if not client_id:
-+                ret["error"] = {
-+                    "name": "ClientAuthenticationError",
-+                    "message": (
-+                        'Authentication failure of type "client" occurred: '
-+                        "payload missing client_id"
-+                    ),
-+                }
-+                return ret
-+            # Expose the client id to callers using the standard
-+            # ``username`` key so is_client / client_acl gating paths
-+            # that already consume ``auth_check["username"]`` work
-+            # without further branching.
-+            ret["username"] = client_id
-+            # ``auth_list`` stays empty here; the dispatcher's is_client
-+            # branch loads the client-specific ACL out of ``client_acl``
-+            # on master opts.
-         else:
-             ret["error"] = {
-                 "name": "SaltInvocationError",
-@@ -743,12 +771,27 @@ def __init__(self, opts):
-         self.auth = salt.loader.auth(opts)
+@@ -50,7 +50,7 @@
  
-     def _send_token_request(self, load):
-+        # Remote clients (``__role=client``) carry username/password to the
-+        # master's ``mk_token`` endpoint on this channel.  Use ``crypt="aes"``
-+        # so the credentials travel encrypted under the PKI handshake
-+        # session key; the master bridges the AES-wrapped ``mk_token`` cmd
-+        # to :meth:`ClearFuncs.mk_token` after verifying the sender is a
-+        # known client (see :meth:`salt.master.MWorker._handle_payload_inner`).
-+        # Master-local callers (salt-api, etc.) stay on ``crypt="clear"``
-+        # because that's a trusted loopback IPC path.
-+        is_remote_client = self.opts.get("__role") == "client"
-+        if is_remote_client:
-+            master = self.opts.get("master", "localhost")
-+            crypt = "aes"
-+        else:
-+            master = self.opts["interface"]
-+            crypt = "clear"
-         master_uri = "tcp://{}:{}".format(
--            salt.utils.network.ip_bracket(self.opts["interface"]),
-+            salt.utils.network.ip_bracket(master),
-             str(self.opts["ret_port"]),
-         )
-         with salt.channel.client.ReqChannel.factory(
--            self.opts, crypt="clear", master_uri=master_uri
-+            self.opts, crypt=crypt, master_uri=master_uri
-         ) as channel:
-             return channel.send(load)
+ import salt.utils.path
+ import salt.utils.platform
+-import tests.support.paths as paths
++from tests.support import paths
  
-```
-
-**File**: `salt/cache/localfs_key.py` (modified, +173/-14)
-```diff
-@@ -50,6 +50,13 @@
-     "minions_denied": "denied",
- }
- 
-+CLIENT_BASE_MAPPING = {
-+    "clients_pre": "pending",
-+    "clients_rejected": "rejected",
-+    "clients": "accepted",
-+    "clients_denied": "denied",
-+}
-+
- # master_keys keys that if fetched, even with cluster_id set, will still refer
- # to pki_dir instead of cluster_pki_dir
- NON_CLUSTERED_MASTER_KEYS = []
-@@ -94,8 +101,16 @@ def store(bank, key, data, cachedir, user, **kwargs):
-     base = None
-     if bank in ["keys", "denied_keys"] and not valid_id(__opts__, key):
-         raise SaltCacheError(f"key {key} is not a valid minion_id")
--
--    if bank not in ["keys", "denied_keys", "master_keys"]:
-+    if bank in ["client_keys", "client_denied_keys"] and not valid_id(__opts__, key):
-+        raise SaltCacheError(f"key {key} is not a valid client_id")
-+
-+    if bank not in [
-+        "keys",
-+        "denied_keys",
-+        "client_keys",
-+        "client_denied_keys",
-+        "master_keys",
-+    ]:
-         raise SaltCacheError(f"Unrecognized bank: {bank}")
- 
-     if __opts__["permissive_pki_access"]:
-@@ -113,10 +128,24 @@ def store(bank, key, data, cachedir, user, **kwargs):
-         else:
-             raise SaltCacheError("Unrecognized data/bank: {}".format(data["state"]))
-         data = data["pub"]
-+    elif bank == "client_keys":
-+        if data["state"] == "rejected":
-+            base = "clients_rejected"
-+        elif data["state"] == "pending":
-+            base = "clients_pre"
-+        elif data["state"] == "accepted":
-+            base = "clients"
-+        else:
-+            raise SaltCacheError("Unrecognized data/bank: {}".format(data["state"]))
-+        data = data["pub"]
-     elif bank == "denied_keys":
-         # denied keys is a list post migration, but is a single key in legacy
-         data = data[0]
-         base = "minions_denied"
-+    elif bank == "client_denied_keys":
-+        # denied keys is a list post migration, but is a single key in legacy
-+        data = data[0]
-+        base = "clients_denied"
-     elif bank == "master_keys":
-         # private keys are separate from permissive_pki_access
-         umask = 0o277
-@@ -173,12 +202,20 @@ def store(bank, key, data, cachedir, user, **kwargs):
- 
- def fetch(bank, key, cachedir, **kwargs):
-     """
--    Fetch and construct state data for a given minion based on the bank and id
-+    Fetch and construct state data for a given minion or client based on the bank and id
-     """
-     if bank in ["keys", "denied_keys"] and not valid_id(__opts__, key):
-         raise SaltCacheError(f"key {key} is not a valid minion_id")
--
--    if bank not in ["keys", "denied_keys", "master_keys"]:
-+    if bank in ["client_keys", "client_denied_keys"] and not valid_id(__opts__, key):
-+        raise SaltCacheError(f"key {key} is not a valid client_id")
-+
-+    if bank not in [
-+        "keys",
-+        "denied_keys",
-+        "client_keys",
-+        "client_denied_keys",
-+        "master_keys",
-+    ]:
-         raise SaltCacheError(f"Unrecognized bank: {bank}")
- 
-     if not clean_path(cachedir, key, subdir=True):
-@@ -195,6 +232,21 @@ def fetch(bank, key, cachedir, **kwargs):
-             ]:
-                 keyfile = Path(cachedir, bank, key)
- 
-+                if not clean_path(cachedir, str(keyfile), subdir=True):
-+                    raise SaltCacheError(f"key {key} is not a valid key path.")
-+
-+                if keyfile.is_file() and not keyfile.is_symlink():
-+                    with salt.utils.files.fopen(keyfile, "r") as fh_:
-+                        return {"state": state, "pub": fh_.read()}
-+            return None
-+        elif bank == "client_keys":
-+            for state, bank in [
-+                ("rejected", "clients_rejected"),
-+                ("pending", "clients_pre"),
-+                ("accepted", "clients"),
-+            ]:
-+                keyfile = Path(cachedir, bank, key)
-+
-                 if not clean_path(cachedir, str(keyfile), subdir=True):
-                     raise SaltCacheError(f"key {key} is not a valid key path.")
- 
-@@ -207,6 +259,17 @@ def fetch(bank, key, cachedir, **kwargs):
-             # with the filesystem, so return a list of 1
-             pubfn_denied = os.path.join(cachedir, "minions_denied", key)
- 
-+            if not clean_path(cachedir, pubfn_denied, subdir=True):
-+                raise SaltCacheError(f"key {key} is not a valid key path.")
-+
-+            if os.path.isfile(pubfn_denied):
-+                with salt.utils.files.fopen(pubfn_denied, "r") as fh_:
-+                    return [fh_.read()]
-+        elif bank == "client_denied_keys":
-+            # there can be many denied keys per client post refactor, but only 1
-+            # with the filesystem, so return a list of 1
-+            pubfn_denied = os.path.join(cachedir, "clients_denied", key)
-+
-             if not clean_path(cachedir, pubfn_denied, subdir=True):
-                 raise SaltCacheError(f"key {key} is not a valid key path.")
- 
-@@ -239,13 +302,19 @@ def updated(bank, key, cachedir, **
+ try:
+     import pwd
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #70710** (2026-11-07): [3008.x] Log deltaproxy sub-proxy initialization failures at ERROR (@ITJamie)
+- **PR #70707** (2026-11-07): Add resources scaling docs and proxy/deltaproxy direction notes (@dwoz)
+- **PR #70704** (2026-11-06): mmap_cache: fix roster-divergence cascade + add put_many bulk path (@dwoz)
+- **PR #70703** (2026-11-06): Fix quadratic disk use in minion resource-fanout queued payloads (@dwoz)
+- **PR #70702** (2026-11-06): Port 3 bug fixes from 3006.x missing on 3008.x (@dwoz)
 - **PR #70700** (closed): Merge forward 3006.x into 3007.x (@charzl)
-- **PR #70697** (closed): Fix flaky test_async_reading_streamclosederror (IOLoop is already running) (@LakshmikanthRaju)
-- **PR #70693** (closed): Fix flaky test_async_reading_streamclosederror (IOLoop is already running) (@LakshmikanthRaju)
-- **PR #70685** (2026-11-05): Skip join() on live children in SubprocessList.cleanup() to unblock minion ioloop (@dwoz)
-- **PR #70682** (closed): Nightly stress test: skip the warm-up when checking the Master RSS slope (@charzl)
-- **PR #70681** (closed): Nightly stress test: skip the warm-up when checking the Master RSS slope (@charzl)
 
 ---
 
@@ -3026,60 +2306,74 @@ Next Steps:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a workflow that posts failed nightly runs to Google Chat (#70679)
+## X. Bugfix 67214 minion swarm (#67783)
 
 **RULE**:
-When implementing operations in `.github/workflows/notify-google-chat.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/minionswarm.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9a4996a`: Add a workflow that posts failed nightly runs to Google Chat (#70679). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `944a95d5`: Bugfix 67214 minion swarm (#67783). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/notify-google-chat.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/minionswarm.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-name: Notify Google Chat
+import getpass
+# When this module is executed directly (``python tests/minionswarm.py``)
+# the parent of ``tests/`` is not on ``sys.path``, which makes the
+# ``from tests.support import runtests`` import below fail. Pre-pend the
+# repository root so the script remains runnable without ``PYTHONPATH``
+# manipulation. This is a no-op when the module is imported normally
+# (e.g. by pytest) because the repository root is already on ``sys.path``.
+_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
-# Posts a message to a Google Chat space when one of the workflows listed
-# below ends with "failure" or "timed_out" (not "cancelled").
-#
-# - To get notified about another workflow, add its `name:` to the list.
-# - The incoming webhook URL is the repository secret
-#   GOOGLE_CHAT_WEBHOOK_URL.  Without it the job does nothing, so forks
-#   that did not set it are not affected.
-# - Only runs on saltstack/salt-nightlies (see the `if:` below).  The file
-#   lives in saltstack/salt because the salt-nightlies mirror sync deletes
-#   files that do not exist here (see mirror-from-saltstack-salt.yaml).
-# - `workflow_run` only starts workflows from the default branch, so this
-#   file has to be on the default branch to have any effect.
-# - "Run workflow" (workflow_dispatch) sends a test message, to check the
-#   secret and the Chat space without needing a failing run.
-
-on:
-  workflow_dispatch: {}
-  workflow_run:
-    workflows:
-      - Nightly Stress Test
-    types:
-      - completed
-
-permissions:
-  actions: read  # list the failed jobs and steps of the run
-
-jobs:
-  notify:
-    name: Notify on failure
-    if: >-
-      github.repository == 'saltstack/salt-nightlies' &
+import salt  # noqa: E402
+import salt.utils.files  # noqa: E402
+import salt.utils.yaml  # noqa: E402
+from tests.support import runtests  # noqa: E402
+    "3006.1",
+    "3006.5",
+    "3006.9",
+    "3007.1",
+    guidance = (
+        "\n\n   To execute salt commands against minionswarm you must include the configuration\n"
+        "   file using the -c option. For commands such as salt, salt-key, salt-cp,\n"
+        "   and salt-run use -c <temp-dir>/master. For example, when using the\n"
+        "   default for --temp-dir, the configuration directory would be\n"
+        "   /tmp/sroot/master. If the ma
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+import salt
+import salt.utils.files
+import salt.utils.yaml
+import tests.support.runtests
+    "2014.1.6",
+    "2014.7.4",
+    "2015.5.5",
+    "2015.8.0",
+    parser = optparse.OptionParser()
+        help="The number of minions to make",
+        default="salt",
+        help="The location of the salt master that this swarm will serve",
+        default="ms",
+        help=(
+            "Give the minions an alternative id prefix, this is used "
+            "when minions from many systems are being aggregated onto "
+            "a single master"
+        ),
+        help="A comma delimited list of modules to enable",
+        default=None,
+        help="Place temporary files/directories here",
+        help="Don't cleanup temporary files/directories",
+        help="Override the minion root_dir config",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9a4996a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `944a95d5` are properly handled with clean fallback behavior.

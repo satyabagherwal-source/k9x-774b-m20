@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T03:35:55.779Z",
+  "last_updated": "2026-11-08T03:45:05.206Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "e0fbb93e618a95f1b6d100942ba7a96975eee21c5f08827ee186cd9b47213616",
-      "verified_at": "2026-11-06T13:20:17.025Z",
+      "content_hash": "0f2fc6393568cbb2a6b84fb3bcbacf11545f5d16e803c98520d84ba8fda93aca",
+      "verified_at": "2026-11-08T03:43:15.079Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:20:17.025Z"
+      "last_updated": "2026-11-08T03:43:15.079Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "f209865572d4a1ea29b29526825d3190668fbe41e51d1580f28ce45979e14535",
-      "verified_at": "2026-11-06T22:36:11.885Z",
+      "content_hash": "f4e6fa92353ce1498de532bb3420cdbd6e8f1b33d71877b25a86acbdb0bd8920",
+      "verified_at": "2026-11-08T03:43:22.798Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:36:11.885Z"
+      "last_updated": "2026-11-08T03:43:22.798Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",
@@ -10521,14 +10521,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chroma-core-chroma",
-      "content_hash": "689cac78c1b828b8be960ea90f5ba0f796991bbd130f5902756e4633d225c75b",
-      "verified_at": "2026-10-22T20:30:28.083Z",
+      "content_hash": "a9912ebdaaa07be4ccb8807c5c76a21480a5fdb7dc23b8442acecf68a9b6cc48",
+      "verified_at": "2026-11-08T03:43:27.738Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:30:28.083Z"
+      "last_updated": "2026-11-08T03:43:27.738Z"
     },
     "restatedev/restate": {
       "repository": "restatedev/restate",
@@ -15621,14 +15621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-kromoss",
-      "content_hash": "92b0850f14df71e6955180daa7085deea4ecbaa7e5ad5294aa378337203fb5ee",
-      "verified_at": "2026-11-04T17:18:03.825Z",
+      "content_hash": "f23353bdbe11efecbb7747f6c710a16bb8e0574a52a126fdbdab558a72311c30",
+      "verified_at": "2026-11-08T03:45:05.206Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:18:03.825Z"
+      "last_updated": "2026-11-08T03:45:05.206Z"
     },
     "HemmingwayAI/Hemmingway-1": {
       "repository": "HemmingwayAI/Hemmingway-1",

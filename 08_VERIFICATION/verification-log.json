@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-DA3R",
-    "timestamp": "2026-11-05T14:06:54.567Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "d1520966cb96710ff931fce269774c569d369c8bcd1c0733597f019fcd216bdb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-LXBA",
-    "timestamp": "2026-11-05T14:13:37.894Z",
-    "repository": "Louis-CFM/coucou",
-    "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "1f650e4b1e8a7fda1976ce916433d912eb102b7240fe5e63a78e4a3490548b67",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-M233",
-    "timestamp": "2026-11-05T14:13:44.079Z",
-    "repository": "autotrust/JEV-35B",
-    "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "5179d46e7ffc46cd26f434c64e7482737439a537fcd5fd556736a4a809f37121",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-M5HI",
-    "timestamp": "2026-11-05T14:13:48.486Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "ffcce9031feb6f30a5e8d0531b9a031abb8c35dbab039c438fc1fdd98bfefcf6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-XOAA",
     "timestamp": "2026-11-05T14:22:46.066Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7490,6 +7430,66 @@
     "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
     "contentHash": "8673227ad392e495f41df825f28e41188d42564fb2efe65cdbea5b58d55b2943",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-ET14",
+    "timestamp": "2026-11-08T03:43:15.064Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "0f2fc6393568cbb2a6b84fb3bcbacf11545f5d16e803c98520d84ba8fda93aca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-EYZA",
+    "timestamp": "2026-11-08T03:43:22.774Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "f4e6fa92353ce1498de532bb3420cdbd6e8f1b33d71877b25a86acbdb0bd8920",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-F2SH",
+    "timestamp": "2026-11-08T03:43:27.713Z",
+    "repository": "chroma-core/chroma",
+    "learningId": "learn-github-chroma-core-chroma",
+    "contentHash": "a9912ebdaaa07be4ccb8807c5c76a21480a5fdb7dc23b8442acecf68a9b6cc48",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-H5ZY",
+    "timestamp": "2026-11-08T03:45:05.182Z",
+    "repository": "lodestones/Kromoss",
+    "learningId": "learn-huggingface-lodestones-kromoss",
+    "contentHash": "f23353bdbe11efecbb7747f6c710a16bb8e0574a52a126fdbdab558a72311c30",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

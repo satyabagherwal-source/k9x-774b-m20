@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T03:35:55.669Z",
+  "last_updated": "2026-11-08T03:45:05.069Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7461,11 +7461,16 @@
       "slug": "chroma-core-chroma",
       "platform": "github",
       "source_url": "https://github.com/chroma-core/chroma",
-      "source_version": "52ce8448",
-      "content_hash": "689cac78c1b828b8be960ea90f5ba0f796991bbd130f5902756e4633d225c75b",
+      "source_version": "1a3ac2c7",
+      "content_hash": "a9912ebdaaa07be4ccb8807c5c76a21480a5fdb7dc23b8442acecf68a9b6cc48",
       "dossier_path": "07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[DOC] Remove the retired BYOC option from the Cloud docs (#7945)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2291,
           "title": "RAII Scoped Resource Budgeting for Native C-Runtime Handles",
@@ -7492,7 +7497,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:30:28.037Z",
+      "verified_at": "2026-11-08T03:43:27.547Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48417,14 +48422,19 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "5820aa27",
-      "content_hash": "e0fbb93e618a95f1b6d100942ba7a96975eee21c5f08827ee186cd9b47213616",
+      "source_version": "35c29f4a",
+      "content_hash": "0f2fc6393568cbb2a6b84fb3bcbacf11545f5d16e803c98520d84ba8fda93aca",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Compare JSON String/Template",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "bad cache identifier for TLS certificate asserts.",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48498,7 +48508,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:20:16.898Z",
+      "verified_at": "2026-11-08T03:43:14.911Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53895,14 +53905,19 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "c9a4996a",
-      "content_hash": "f209865572d4a1ea29b29526825d3190668fbe41e51d1580f28ce45979e14535",
+      "source_version": "944a95d5",
+      "content_hash": "f4e6fa92353ce1498de532bb3420cdbd6e8f1b33d71877b25a86acbdb0bd8920",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Add a workflow that posts failed nightly runs to Google Chat (#70679)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Bugfix 67214 minion swarm (#67783)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53956,7 +53971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:36:11.749Z",
+      "verified_at": "2026-11-08T03:43:22.654Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122791,10 +122806,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/Kromoss",
       "source_version": "hf-lodestones-kromoss",
-      "content_hash": "92b0850f14df71e6955180daa7085deea4ecbaa7e5ad5294aa378337203fb5ee",
+      "content_hash": "f23353bdbe11efecbb7747f6c710a16bb8e0574a52a126fdbdab558a72311c30",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Heterogeneous Sub-Network Floating Point Boundary Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Contiguous Projection Fusion/Slicing Invariant for LoRA Weight Remapping",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "CFG-1 Distilled Dual-Path Elimination Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 4214,
           "title": "Heterogeneous Precision Boundary Isolation for Latent Diffusion Pipelines",
@@ -122841,7 +122871,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:18:03.702Z",
+      "verified_at": "2026-11-08T03:45:05.024Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

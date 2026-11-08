@@ -8197,3 +8197,7 @@
 | `CYCLE-20261108-56ZW` | `2026-11-08T03:35:46.604Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`7cd0775f...`) |
 | `CYCLE-20261108-5AOY` | `2026-11-08T03:35:51.394Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`18b5d4f8...`) |
 | `CYCLE-20261108-5E1Z` | `2026-11-08T03:35:55.751Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule 633` | Yes (`8673227a...`) |
+| `CYCLE-20261108-ET14` | `2026-11-08T03:43:15.064Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0f2fc639...`) |
+| `CYCLE-20261108-EYZA` | `2026-11-08T03:43:22.774Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f4e6fa92...`) |
+| `CYCLE-20261108-F2SH` | `2026-11-08T03:43:27.713Z` | `chroma-core/chroma` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a9912ebd...`) |
+| `CYCLE-20261108-H5ZY` | `2026-11-08T03:45:05.182Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`f23353bd...`) |

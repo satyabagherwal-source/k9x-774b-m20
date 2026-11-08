@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `5820aa27`  
+> **Source Version**: `35c29f4a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:20:15.537Z  
+> **Timestamp**: 2026-11-08T03:43:13.588Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:20:14.404Z  
+> **Harvest Timestamp**: 2026-11-08T03:43:12.552Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19305 stars
+- **Stars / Engagement**: 19308 stars
 
 ---
 
@@ -1845,11 +1845,13 @@ pub mod visit;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5414** (2026-11-06): **Bad certificate assert with Hurl compiled in release, OK in debug**
+  *Symptoms*: With this file:  ```hurl GET https://hurl.dev HTTP 200 [Asserts] certificate "Subject" contains "hurl.dev"  GET https://gitlab.com HTTP * [Asserts] certificate "Subject" contains "gitlab.com"  # Reuses the first connection, so the certificate comes from hurl's cache GET https://hurl.dev HTTP 200 [Asserts] certificate "Subject" contains "hurl.dev" ```  Compiling the current Hurl in debug:  ```shell $ target/debug/hurl --test /tmp/cert.hurl Success /tmp/cert.hurl (3 request(s) in 485 ms) -------------------------------------------------------------------------------- Executed files:    1 Executed requests: 3 (6.2/s) Succeeded files:   1 (100.0%) Failed files:      0 (0.0%) Duration:          486 ms (0h:0m:0s:486ms) ```  While in release:  ```shell $ target/release/hurl --test /tmp/cert.hurl error: Assert failure   --> /tmp/cert.hurl:15:0    |    | GET https://hurl.dev    | ... 15 | certificate "Subject" contains "hurl.dev"    |   actual:   string <CN = gitlab.com>    |   expected: contains string <hurl.dev>    |  Failure /tmp/cert.hurl (3 request(s) in 534 ms) -------------------------------------------------------------------------------- Executed files:    1 Executed requests: 3 (5.6/s) Succeeded files:   0 (0.0%) Failed files:      1 (100.0%) Duration:          536 ms (0h:0m:0s:536ms) ```  
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for fixing the bug! It was cool to see BorrowSanitizer finding a correctness bug in the wild!
+
 - **Issue #5374** (2026-10-23): **Escape curl command from --curl option and --verbose log**
   *Symptoms*: Using this Hurl file  ```hurl GET http://localhost:8000/x'; touch foo; : ' ```  The curl command in verbose mode (or using `--curl`) can produces malicious shell command:  ```shell $ hurl --verbose foo.hurl * ------------------------------------------------------------------------------ * Executing entry 1 * * Cookie store: * * Request: * GET http://127.0.0.1:8000/x'; touch foo; : ' * * Request can be run with the following curl command: * curl 'http://127.0.0.1:8000/x'; touch foo; : '' * error: HTTP connection   --> /tmp/test.hurl:1:5    |  1 | GET http://127.0.0.1:8000/x'; touch foo; : '    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ (3) URL rejected: Malformed input to a URL function    | ```  Then running the curl command `curl 'http://127.0.0.1:8000/x'; touch foo; : ''`will produce a `foo` file  
-
-- **Issue #5356** (2026-10-16): **Fix crash when receiving non-UTF-8 server cookie**
-  *Symptoms*: When receiving non UTF-8 cookie from server (i.e. `Set-Cookie: bad=\xff`), Hurl 8.0.1 crash:  ```shell $ hurl thread 'main' (3620034) panicked at packages/hurl/src/http/client.rs:793:47: called `Result::unwrap()` on an `Err` value: Utf8Error { valid_up_to: 49, error_len: Some(1) } note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace zsh: abort      /opt/homebrew/bin/hurl --cookie-jar build/cookies.txt --no-output  ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1866,279 +1868,97 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5820aa27` (2026-11-06)
-**Commit Message**: Compare JSON String/Template
+### Incident Patch 1: `420da7f8` (2026-11-06)
+**Commit Message**: Fix bad cache identifier for TLS certificate asserts.
 
-**File**: `packages/hurl/src/runner/assert/json_compare.rs` (modified, +165/-27)
+**File**: `integration/hurl/tests_ssl/live.hurl` (modified, +22/-0)
 ```diff
-@@ -15,8 +15,9 @@
-  * limitations under the License.
-  *
-  */
--use crate::runner::Number;
--use crate::runner::Value;
-+use crate::runner::expr;
-+use crate::runner::template::eval_template;
-+use crate::runner::{Number, RunnerError, Value, VariableSet};
- use hurl_core::ast::{JsonValue, JsonValueKind, SourceInfo};
- use serde_json;
+@@ -2,3 +2,25 @@ GET https://google.com
+ GET https://github.com
+ GET https://gitlab.com
  
-@@ -64,28 +65,40 @@ fn value_from_json(value: &serde_json::Value) -> Value {
-         serde_json::Value::Null => Value::Null,
-         serde_json::Value::Bool(value) => Value::Bool(*value),
-         serde_json::Value::Number(value) => Value::Number(number_from_str(&value.to_string())),
-+        serde_json::Value::String(value) => Value::String(value.clone()),
-         _ => todo!(),
-     }
- }
- 
--fn value_from_expected(expected: &JsonValue) -> Value {
--    match expected.kind() {
-+fn value_from_expected(
-+    expected: &JsonValue,
-+    variables: &VariableSet,
-+) -> Result<Value, RunnerError> {
-+    let value = match expected.kind() {
-+        JsonValueKind::Placeholder(placeholder) => expr::eval(&placeholder.expr, variables)?,
-+        JsonValueKind::String(template) => Value::String(eval_template(template, variables)?),
-         JsonValueKind::Number(number) => Value::Number(number_from_str(number)),
-         JsonValueKind::Boolean(value) => Value::Bool(*value),
-         JsonValueKind::Null => Value::Null,
-         _ => todo!(),
--    }
-+    };
-+    Ok(value)
- }
- 
--fn mismatch(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Mismatch {
--    Mismatch::new(
-+fn mismatch(
-+    path: &str,
-+    expected: &JsonValue,
-+    actual: &serde_json::Value,
-+    variables: &VariableSet,
-+) -> Result<Mismatch, RunnerError> {
-+    Ok(Mismatch::new(
-         path.to_string(),
-         *expected.source_info(),
-         MismatchKind::Value {
-             actual: value_from_json(actual),
--            expected: value_from_expected(expected),
-+            expected: value_from_expected(expected, variables)?,
-         },
--    )
-+    ))
- }
- 
- /// Compares a JSON value against an expected JSON value and returns a list of mismatches.
-@@ -94,11 +107,17 @@ fn mismatch(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Mis
- /// * `path` - The JSON path to the value being compared.
- /// * `expected` - The expected JSON value.
- /// * `actual` - The actual JSON value.
-+/// * `variables` - The variables used to evaluate placeholders and string templates.
- ///
- /// # Returns
--/// A vector of `Mismatch` instances representing the differences between the expected and actual JSON values.
--pub fn compare(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Vec<Mismatch> {
--    match (expected.kind(), actual) {
-+/// A vector of mismatches, or an error if evaluating the expected value fails.
-+pub fn compare(
-+    path: &str,
-+    expected: &JsonValue,
-+    actual: &serde_json::Value,
-+    variables: &VariableSet,
-+) -> Result<Vec<Mismatch>, RunnerError> {
-+    let mismatches = match (expected.kind(), actual) {
-         (JsonValueKind::Number(expected_number), serde_json::Value::Number(actual_number)) => {
-             // TODO: avoid f64 equality
-             let expected_number_value = expected_number
-@@ -108,30 +127,51 @@ pub fn compare(path: &str, expected: &JsonValue, actual: &serde_json::Value) ->
-                 .as_f64()
-                 .expect("actual JSON number is representable as f64");
- 
--            if expected_number_value != actual_number_value {
--                return vec![mismatch(path, expected, actual)];
-+            if expected_number_value == actual_number_value {
-+                vec![]
-+            } else {
-+                vec![mismatch(path, expected, actual, variables)?]
-             }
--            vec![]
-         }
-         (JsonValueKind::Boolean(expected_boolean), serde_json::Value::Bool(actual_boolean)) => {
-             if expected_boolean == actual_boolean {
-                 vec![]
-             } else {
--                vec![mismatch(path, expected, actual)]
-+                vec![mismatch(path, expected, actual, variables)?]
-             }
-         }
-         (JsonValueKind::Null, serde_json::Value::Null) => {
-             vec![]
-         }
--        _ => todo!("Mismatch at path {}", path),
--    }
-+        (JsonValueKind::String(expected_string), serde_json::Value::String(actual_string)) => {
-+            let expected_string = eval_template(expected_string, variables)?;
-+            if expected_string == *actual_string {
-+                vec![]
-+            } else {
-+                vec![Mismatch::new(
-+                    path.to_string(),
-+                    *expected.source_info(),
-+                    MismatchKind::Value {
-+                        actual: Value::String(actual_string.clone()),
-+                        expected: Value::String(expected_string),
-+                    },
-+                )]
-+            }
-+        }
-+        _ => vec![mismatch(path, expected, actual, variables)?],
-+    };
-+    Ok(mismatches)
- }
- 
- #[cfg(test)]
- mod t
++# We test that certificates in cache are set by connection. Need curl >= 8.2.0
++# See <https://github.com/Orange-OpenSource/hurl/issues/5414>
++HEAD https://hurl.dev
++[Options]
++skip: {{skip_cert_test}}
++HTTP 200
++[Asserts]
++certificate "Subject" contains "hurl.dev"
++
++HEAD https://gitlab.com
++[Options]
++skip: {{skip_cert_test}}
++HTTP *
++[Asserts]
++certificate "Subject" contains "gitlab.com"
++
++HEAD https://hurl.dev
++[Options]
++skip: {{skip_cert_test}}
++HTTP 200
++[Asserts]
++certificate "Subject" contains "hurl.dev"
 ```
 
----
-
-### Incident Patch 2: `ac1d3935` (2026-11-06)
-**Commit Message**: Compare JSON scalar values
-
-**File**: `packages/hurl/src/runner/assert/json_compare.rs` (modified, +84/-8)
+**File**: `integration/hurl/tests_ssl/live.ps1` (modified, +9/-1)
 ```diff
-@@ -59,6 +59,35 @@ fn number_from_str(number: &str) -> Number {
-     }
- }
- 
-+fn value_from_json(value: &serde_json::Value) -> Value {
-+    match value {
-+        serde_json::Value::Null => Value::Null,
-+        serde_json::Value::Bool(value) => Value::Bool(*value),
-+        serde_json::Value::Number(value) => Value::Number(number_from_str(&value.to_string())),
-+        _ => todo!(),
-+    }
+@@ -1,3 +1,11 @@
+ Set-StrictMode -Version latest
+ $ErrorActionPreference = 'Stop'
+-hurl tests_ssl/live.hurl
++
++# The tests for certificate reuse need a libcurl >= 8.2.0
++$skip_cert_test = 'true'
++$curl_version = [regex]::Match((curl.exe --version | Out-String), '^curl (\d+\.\d+\.\d+)').Groups[1].Value
++if ([version]$curl_version -ge [version]'8.2.0') {
++    $skip_cert_test = 'false'
 +}
 +
-+fn value_from_expected(expected: &JsonValue) -> Value {
-+    match expected.kind() {
-+        JsonValueKind::Number(number) => Value::Number(number_from_str(number)),
-+        JsonValueKind::Boolean(value) => Value::Bool(*value),
-+        JsonValueKind::Null => Value::Null,
-+        _ => todo!(),
-+    }
-+}
-+
-+fn mismatch(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Mismatch {
-+    Mismatch::new(
-+        path.to_string(),
-+        *expected.source_info(),
-+        MismatchKind::Value {
-+            actual: value_from_json(actual),
-+            expected: value_from_expected(expected),
-+        },
-+    )
-+}
-+
- /// Compares a JSON value against an expected JSON value and returns a list of mismatches.
- ///
- /// # Arguments
-@@ -80,17 +109,20 @@ pub fn compare(path: &str, expected: &JsonValue, actual: &serde_json::Value) ->
-                 .expect("actual JSON number is representable as f64");
++hurl --variable skip_cert_test=$skip_cert_test tests_ssl/live.hurl
+```
+
+**File**: `integration/hurl/tests_ssl/live.sh` (modified, +10/-1)
+```diff
+@@ -1,4 +1,13 @@
+ #!/bin/bash
+ set -Eeuo pipefail
+-hurl tests_ssl/live.hurl
  
-             if expected_number_value != actual_number_value {
--                return vec![Mismatch::new(
--                    path.to_string(),
--                    *expected.source_info(),
--                    MismatchKind::Value {
--                        actual: Value::Number(number_from_str(&actual_number.to_string())),
--                        expected: Value::Number(number_from_str(expected_number)),
--                    },
--                )];
-+                return vec![mismatch(path, expected, actual)];
-             }
-             vec![]
-         }
-+        (JsonValueKind::Boolean(expected_boolean), serde_json::Value::Bool(actual_boolean)) => {
-+            if expected_boolean == actual_boolean {
-+                vec![]
-+            } else {
-+                vec![mismatch(path, expected, actual)]
-+            }
-+        }
-+        (JsonValueKind::Null, serde_json::Value::Null) => {
-+            vec![]
-+        }
-         _ => todo!("Mismatch at path {}", path),
++
++# The tests for certificate reuse need a libcurl >= 8.2.0
++skip_cert_test=true
++curl_version=$(curl --version | grep -o '^curl [0-9.]*' | head -n1 | cut -d' ' -f2)
++IFS=. read -r major minor _ <<< "$curl_version"
++if (( major > 8 || (major == 8 && minor >= 2) )); then
++    skip_cert_test=false
++fi
++
++hurl --variable skip_cert_test=$skip_cert_test tests_ssl/live.hurl
+```
+
+**File**: `packages/hurl/src/http/easy_ext.rs` (modified, +2/-2)
+```diff
+@@ -94,8 +94,8 @@ fn extract_pem_from_certinfo(data: &[String]) -> Option<Pem> {
+ /// Returns the connection identifier use by this libcurl handle.
+ pub fn conn_id(easy: &Easy) -> Result<i64, Error> {
+     unsafe {
+-        let conn_id: curl_off_t = 0;
+-        let rc = curl_sys::curl_easy_getinfo(easy.raw(), CURLINFO_CONN_ID, &conn_id);
++        let mut conn_id: curl_off_t = 0;
++        let rc = curl_sys::curl_easy_getinfo(easy.raw(), CURLINFO_CONN_ID, &mut conn_id);
+         cvt(easy, rc)?;
+         Ok(conn_id)
      }
- }
-@@ -108,6 +140,10 @@ mod tests {
-         )
-     }
- 
-+    fn json_value(kind: JsonValueKind) -> JsonValue {
-+        JsonValue::new(SourceInfo::new(Pos::new(1, 1), Pos::new(1, 10)), kind)
-+    }
-+
-     #[test]
-     fn test_compare_number_as_equal() {
-         assert!(compare("$.age", &json_number("22"), &serde_json::json!(22)).is_empty());
-@@ -140,4 +176,44 @@ mod tests {
-             )]
-         );
-     }
-+
-+    #[test]
-+    fn test_compare_boolean() {
-+        assert!(
-+            compare(
-+                "$.enabled",
-+                &json_value(JsonValueKind::Boolean(true)),
-+                &serde_json::json!(true)
-+            )
-+            .is_empty()
-+        );
-+
-+        assert_eq!(
-+            compare(
-+                "$.enabled",
-+                &json_value(JsonValueKind::Boolean(true)),
-+                &serde_json::json!(false)
-+            ),
-+            vec![Mismatch::new(
-+                "$.enabled".to_string(),
-+                SourceInfo::new(Pos::new(1, 1), Pos::new(1, 10)),
-+                MismatchKind::Value {
-+                    actual: Value::Bool(false),
-+                    expected: Value::Bool(true),
-+                }
-+            )]
-+        );
-+    }
-+
-+    #[test]
-+    fn test_compare_null() {
-+        assert!(
-+            compare(
-+                "$.value",
-+                &json_value(JsonValueKind::Null),
-+                &serde_json::Value::Null
-+            )
-+            .is_empty()
-+        );
-+    }
- }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5416** (2026-11-06): Compare JSON String/Template (@fabricereix)
-- **PR #5415** (2026-11-06): Compare JSON scalar value (@fabricereix)
-- **PR #5413** (2026-11-04): Update crates (@hurl-bot)
-- **PR #5412** (2026-11-04): Disable ntml test on Fedora (md4 removed from openssl) (@jcamiel)
-- **PR #5411** (closed): Update crates (except openssl) (@jcamiel)
-- **PR #5410** (closed): Update crates (@hurl-bot)
+- **PR #5422** (2026-11-07): Update crates (@hurl-bot)
+- **PR #5421** (2026-11-06): Update docs. (@jcamiel)
+- **PR #5420** (2026-11-06): Compare placeholder in JSON (@fabricereix)
+- **PR #5419** (2026-11-06): Fix TLS certificate cache assertion mis-behaviour. (@jcamiel)
+- **PR #5418** (closed): Test patching libxml-0.3.23 to support pkgconfig on Windows build. (@jcamiel)
+- **PR #5417** (2026-11-06): The grammar is desynchronised from the parser (@qligier)
 
 ---
 
@@ -2158,76 +1978,49 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Compare JSON String/Template
+## X. bad cache identifier for TLS certificate asserts.
 
 **RULE**:
-When implementing operations in `packages/hurl/src/runner/assert/json_compare.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `integration/hurl/tests_ssl/live.hurl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5820aa27`: Compare JSON String/Template. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `420da7f8`: bad cache identifier for TLS certificate asserts.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/runner/assert/json_compare.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/hurl/tests_ssl/live.hurl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::runner::expr;
-use crate::runner::template::eval_template;
-use crate::runner::{Number, RunnerError, Value, VariableSet};
-        serde_json::Value::String(value) => Value::String(value.clone()),
-fn value_from_expected(
-    expected: &JsonValue,
-    variables: &VariableSet,
-) -> Result<Value, RunnerError> {
-    let value = match expected.kind() {
-        JsonValueKind::Placeholder(placeholder) => expr::eval(&placeholder.expr, variables)?,
-        JsonValueKind::String(template) => Value::String(eval_template(template, variables)?),
-    };
-    Ok(value)
-fn mismatch(
-    path: &str,
-    expected: &JsonValue,
-    actual: &serde_json::Value,
-    variables: &VariableSet,
-) -> Result<Mismatch, RunnerError> {
-    Ok(Mismatch::new(
-            expected: value_from_expected(expected, variables)?,
-    ))
-/// * `variables` - The variables used to evaluate placeholders and string templates.
-/// A vector of mismatches, or an error if evaluating the expected value fails.
-pub fn compare(
-    path: &str,
-    expected: &JsonValue,
-    actual: &serde_json::Value,
-    variables: &VariableSet,
-) -> Result<Vec<Mismatch>, RunnerError> {
-    let mismatches = match (expected.kind(), actual) {
-   
+# We test that certificates in cache are set by connection. Need curl >= 8.2.0
+# See <https://github.com/Orange-OpenSource/hurl/issues/5414>
+HEAD https://hurl.dev
+[Options]
+skip: {{skip_cert_test}}
+HTTP 200
+[Asserts]
+certificate "Subject" contains "hurl.dev"
+
+HEAD https://gitlab.com
+[Options]
+skip: {{skip_cert_test}}
+HTTP *
+[Asserts]
+certificate "Subject" contains "gitlab.com"
+
+HEAD https://hurl.dev
+[Options]
+skip: {{skip_cert_test}}
+HTTP 200
+[Asserts]
+certificate "Subject" contains "hurl.dev"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use crate::runner::Number;
-use crate::runner::Value;
-fn value_from_expected(expected: &JsonValue) -> Value {
-    match expected.kind() {
-    }
-fn mismatch(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Mismatch {
-    Mismatch::new(
-            expected: value_from_expected(expected),
-    )
-/// A vector of `Mismatch` instances representing the differences between the expected and actual JSON values.
-pub fn compare(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Vec<Mismatch> {
-    match (expected.kind(), actual) {
-            if expected_number_value != actual_number_value {
-                return vec![mismatch(path, expected, actual)];
-            vec![]
-                vec![mismatch(path, expected, actual)]
-        _ => todo!("Mismatch at path {}", path),
-    }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5820aa27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `420da7f8` are properly handled with clean fallback behavior.

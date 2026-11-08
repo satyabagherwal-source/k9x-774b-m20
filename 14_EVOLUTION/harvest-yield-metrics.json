@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T03:35:55.774Z",
-  "total_cycles_completed": 8162,
-  "total_learnings_persisted": 8162,
-  "total_rules_promoted": 7847,
+  "last_updated": "2026-11-08T03:45:05.202Z",
+  "total_cycles_completed": 8166,
+  "total_learnings_persisted": 8166,
+  "total_rules_promoted": 7853,
   "history": [
-    {
-      "timestamp": "2026-11-07T04:44:26.873Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T04:44:31.293Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T04:56:55.310Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T05:09:02.468Z",
-      "repository": "dalance/procs",
-      "learningId": "learn-github-dalance-procs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T05:09:09.530Z",
       "repository": "open-policy-agent/opa",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-08T03:35:55.774Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
       "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T03:43:15.076Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T03:43:22.795Z",
+      "repository": "saltstack/salt",
+      "learningId": "learn-github-saltstack-salt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T03:43:27.735Z",
+      "repository": "chroma-core/chroma",
+      "learningId": "learn-github-chroma-core-chroma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T03:45:05.202Z",
+      "repository": "lodestones/Kromoss",
+      "learningId": "learn-huggingface-lodestones-kromoss",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
