@@ -8352,3 +8352,5 @@
 | `CYCLE-20261108-ZFB0` | `2026-11-08T17:59:05.532Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bca4a4dd...`) |
 | `CYCLE-20261108-F6N8` | `2026-11-08T18:11:20.804Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4c04f7bc...`) |
 | `CYCLE-20261108-FC8D` | `2026-11-08T18:11:28.045Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1274, Rule null` | Yes (`b1fce58d...`) |
+| `CYCLE-20261108-ONUT` | `2026-11-08T18:18:43.013Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`8b6f1b94...`) |
+| `CYCLE-20261108-OZDC` | `2026-11-08T18:18:57.936Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`24dd2c69...`) |

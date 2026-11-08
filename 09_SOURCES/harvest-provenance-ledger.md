@@ -8361,3 +8361,5 @@ Every entry in this ledger must capture:
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `03070c56` | Multi-dimensional audit evidence | 2026-11-08T17:59:05.536Z |
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `01ce2b3a` | Multi-dimensional audit evidence | 2026-11-08T18:11:20.808Z |
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-08T18:11:28.050Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-08T18:18:43.017Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `8ae1f91f` | Multi-dimensional audit evidence | 2026-11-08T18:18:57.941Z |

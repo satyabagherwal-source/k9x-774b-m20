@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T18:11:28.065Z",
-  "total_cycles_completed": 8317,
-  "total_learnings_persisted": 8317,
-  "total_rules_promoted": 8104,
+  "last_updated": "2026-11-08T18:18:57.948Z",
+  "total_cycles_completed": 8319,
+  "total_learnings_persisted": 8319,
+  "total_rules_promoted": 8105,
   "history": [
-    {
-      "timestamp": "2026-11-08T00:49:13.446Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T00:56:01.193Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T00:56:04.262Z",
       "repository": "fastapi/fastapi",
@@ -1403,6 +1389,20 @@
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-psrben-visionhope",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T18:18:43.023Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T18:18:57.948Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
