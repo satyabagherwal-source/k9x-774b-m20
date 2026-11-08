@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T10:28:57.301Z",
+  "last_updated": "2026-11-08T10:49:07.706Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -290,14 +290,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "content_hash": "ebd10e6061dedebf128e41bf8f42f55e87ea98da09e705da243d4e141114b96b",
-      "verified_at": "2026-11-04T21:50:16.156Z",
+      "content_hash": "b98ec77bc6c802f98f6caa15958cc8cce75cc7adabe10e64c39f080417ca7875",
+      "verified_at": "2026-11-08T10:48:30.210Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:50:16.156Z"
+      "last_updated": "2026-11-08T10:48:30.210Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "ed8e6254e96ca41826115c3efd4f304881ec7266ae520d69eae95226a93d1316",
-      "verified_at": "2026-11-07T05:21:53.454Z",
+      "content_hash": "30108373fd8b4619bef4aca330996b872d4f479e2a45394dff94f84e38b627b4",
+      "verified_at": "2026-11-08T10:49:07.706Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:21:53.454Z"
+      "last_updated": "2026-11-08T10:49:07.706Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",

@@ -8275,3 +8275,5 @@
 | `CYCLE-20261108-NX1E` | `2026-11-08T10:22:14.786Z` | `exyte/PopupView` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`9e41ea7d...`) |
 | `CYCLE-20261108-RGWH` | `2026-11-08T10:25:00.497Z` | `audio-cpp/audio.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`dc59d311...`) |
 | `CYCLE-20261108-WJLT` | `2026-11-08T10:28:57.281Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`137fa529...`) |
+| `CYCLE-20261108-LOMS` | `2026-11-08T10:48:30.196Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule EXISTING` | Yes (`b98ec77b...`) |
+| `CYCLE-20261108-MHK4` | `2026-11-08T10:49:07.684Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`30108373...`) |

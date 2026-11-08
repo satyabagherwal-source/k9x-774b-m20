@@ -8284,3 +8284,5 @@ Every entry in this ledger must capture:
 | `learn-github-exyte-popupview` | `https://github.com/exyte/PopupView` | `f8769ffd` | Multi-dimensional audit evidence | 2026-11-08T10:22:14.789Z |
 | `learn-huggingface-audio-cpp-audio-cpp-gguf` | `https://huggingface.co/audio-cpp/audio.cpp-gguf` | `hf-audio-c` | Multi-dimensional audit evidence | 2026-11-08T10:25:00.500Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `1d4faeaf` | Multi-dimensional audit evidence | 2026-11-08T10:28:57.284Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-08T10:48:30.200Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `f01dd925` | Multi-dimensional audit evidence | 2026-11-08T10:49:07.688Z |

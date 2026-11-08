@@ -265,8 +265,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceVersion": "hf-deepseek-ai-deepseek-r1",
     "license": "Open-Source",
-    "contentHash": "ebd10e6061dedebf128e41bf8f42f55e87ea98da09e705da243d4e141114b96b",
-    "lastHarvestedAt": "2026-11-04T21:50:16.140Z",
+    "contentHash": "b98ec77bc6c802f98f6caa15958cc8cce75cc7adabe10e64c39f080417ca7875",
+    "lastHarvestedAt": "2026-11-08T10:48:30.200Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1"
   },
   "hf-moonshotai-kimi-k3": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "9c6d5753",
+    "sourceVersion": "f01dd925",
     "license": "Apache-2.0",
-    "contentHash": "ed8e6254e96ca41826115c3efd4f304881ec7266ae520d69eae95226a93d1316",
-    "lastHarvestedAt": "2026-11-07T05:21:53.447Z",
+    "contentHash": "30108373fd8b4619bef4aca330996b872d4f479e2a45394dff94f84e38b627b4",
+    "lastHarvestedAt": "2026-11-08T10:49:07.688Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {

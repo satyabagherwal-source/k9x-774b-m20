@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T10:28:57.298Z",
-  "total_cycles_completed": 8240,
-  "total_learnings_persisted": 8240,
-  "total_rules_promoted": 7992,
+  "last_updated": "2026-11-08T10:49:07.702Z",
+  "total_cycles_completed": 8242,
+  "total_learnings_persisted": 8242,
+  "total_rules_promoted": 7997,
   "history": [
-    {
-      "timestamp": "2026-11-07T20:23:08.288Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:42:08.027Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T20:42:11.534Z",
       "repository": "higress-group/higress",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T10:28:57.298Z",
       "repository": "prometheus/prometheus",
       "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T10:48:30.207Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T10:49:07.702Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

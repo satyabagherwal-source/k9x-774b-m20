@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T10:28:57.189Z",
+  "last_updated": "2026-11-08T10:49:07.560Z",
   "total_verified_learnings": 1238,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11555,8 +11555,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "9c6d5753",
-      "content_hash": "ed8e6254e96ca41826115c3efd4f304881ec7266ae520d69eae95226a93d1316",
+      "source_version": "f01dd925",
+      "content_hash": "30108373fd8b4619bef4aca330996b872d4f479e2a45394dff94f84e38b627b4",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -11569,6 +11569,21 @@
           "number": null,
           "title": "consolidation): default MCP_TYPED_EDGES_ENABLED to false (#1887)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Invariant Separation of Hydration vs. Ingestion Mutation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dual-Barrier Exception Class Logging for Empty Message Exceptions",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Multi-Process Monotonic Version Polling for In-Memory Schema Overlays",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1821,
@@ -11656,7 +11671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:21:53.343Z",
+      "verified_at": "2026-11-08T10:49:07.521Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24494,10 +24509,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
       "source_version": "hf-deepseek-ai-deepseek-r1",
-      "content_hash": "ebd10e6061dedebf128e41bf8f42f55e87ea98da09e705da243d4e141114b96b",
+      "content_hash": "b98ec77bc6c802f98f6caa15958cc8cce75cc7adabe10e64c39f080417ca7875",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Group-Constrained MoE Dispatch Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 267,
           "title": "YaRN RoPE Scaling Parameter Invariant",
@@ -24564,6 +24584,11 @@
           "number": 6987,
           "title": "YaRN Positional Encoding Extrapolation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Block-Wise Quantization Scale Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24584,7 +24609,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv43zicx",
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv"
       ],
-      "verified_at": "2026-11-04T21:50:16.028Z",
+      "verified_at": "2026-11-08T10:48:30.008Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
