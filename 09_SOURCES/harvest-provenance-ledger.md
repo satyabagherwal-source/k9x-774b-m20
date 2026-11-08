@@ -8313,3 +8313,5 @@ Every entry in this ledger must capture:
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `b61e0159` | Multi-dimensional audit evidence | 2026-11-08T14:49:07.883Z |
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-08T15:05:12.790Z |
 | `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T15:12:29.472Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-08T15:21:44.295Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `b9817438` | Multi-dimensional audit evidence | 2026-11-08T15:21:47.664Z |

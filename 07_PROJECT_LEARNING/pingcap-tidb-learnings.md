@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `41efd866`  
+> **Source Version**: `b9817438`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T19:23:47.309Z  
+> **Timestamp**: 2026-11-08T15:21:46.062Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T19:23:46.818Z  
+> **Harvest Timestamp**: 2026-11-08T15:21:45.596Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40719 stars
+- **Stars / Engagement**: 40720 stars
 
 ---
 
@@ -1940,696 +1940,274 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13377f09` (2026-11-06)
-**Commit Message**: *: cache unredacted slow query in the memory (#72410)
+### Incident Patch 1: `b9817438` (2026-11-07)
+**Commit Message**: statistics: defer auto analyze until materialized views are ready (#72678)
 
-close pingcap/tidb#72414
+ref pingcap/tidb#18023
 
-**File**: `pkg/executor/BUILD.bazel` (modified, +5/-0)
+**File**: `pkg/statistics/handle/autoanalyze/BUILD.bazel` (modified, +2/-1)
 ```diff
-@@ -91,6 +91,7 @@ go_library(
-         "shuffle.go",
-         "simple.go",
-         "slow_query.go",
-+        "slow_query_cache.go",
-         "split.go",
-         "statement_ru_mpp.go",
-         "statement_ru_plan_walk.go",
-@@ -117,6 +118,7 @@ go_library(
-         "//pkg/bindinfo",
-         "//pkg/config",
-         "//pkg/config/deploymode",
-+        "//pkg/config/diagnosticmode",
-         "//pkg/config/kerneltype",
-         "//pkg/ddl",
-         "//pkg/ddl/label",
-@@ -431,6 +433,7 @@ go_test(
-         "shuffle_test.go",
-         "simple_internal_test.go",
-         "simple_test.go",
-+        "slow_query_cache_test.go",
-         "slow_query_sql_test.go",
-         "slow_query_test.go",
-         "split_test.go",
-@@ -459,6 +462,7 @@ go_test(
+@@ -40,13 +40,14 @@ go_test(
+     timeout = "short",
+     srcs = ["autoanalyze_test.go"],
+     flaky = True,
+-    shard_count = 14,
++    shard_count = 15,
      deps = [
-         "//pkg/config",
-         "//pkg/config/deploymode",
-+        "//pkg/config/diagnosticmode",
-         "//pkg/config/kerneltype",
-         "//pkg/ddl",
-         "//pkg/ddl/label",
-@@ -560,6 +564,7 @@ go_test(
-         "//pkg/util/disk",
-         "//pkg/util/execdetails",
-         "//pkg/util/hint",
-+        "//pkg/util/intest",
-         "//pkg/util/logutil",
-         "//pkg/util/memory",
-         "//pkg/util/mock",
+         ":autoanalyze",
+         "//pkg/domain",
+         "//pkg/domain/infosync",
+         "//pkg/domain/serverinfo",
+         "//pkg/keyspace",
++        "//pkg/meta/model",
+         "//pkg/parser/ast",
+         "//pkg/parser/mysql",
+         "//pkg/sessionctx",
 ```
 
-**File**: `pkg/executor/adapter.go` (modified, +38/-0)
+**File**: `pkg/statistics/handle/autoanalyze/autoanalyze.go` (modified, +13/-1)
 ```diff
-@@ -2129,6 +2129,20 @@ func (a *ExecStmt) LogSlowQuery(txnTS uint64, succ bool, hasMoreResults bool, st
- 	if slowItems == nil {
- 		slowItems = &variable.SlowQueryLogItems{}
- 	}
-+
-+	var unredactedSQL string
-+	// tidb_redact_log off already writes the original SQL to the slow log, so
-+	// skip the cache. ON and MARKER redact that line. Only non-sensitive SELECT
-+	// statements are queued, and SensitiveStmtNode must never retain its
-+	// original SQL in memory.
-+	if sessVars.EnableRedactLog != errors.RedactLogDisable && a.isSlowQueryCacheable() {
-+		// Capture the original text before it is redacted into the slow log line.
-+		// Only this SQL string is retained in memory.
-+		// OriginalSQL may be a substring of a much larger multi-statement request;
-+		// clone it so the cache does not retain that request's backing buffer.
-+		unredactedSQL = strings.Clone(sessVars.StmtCtx.OriginalSQL)
-+	}
-+
- 	SetSlowLogItems(a, txnTS, hasMoreResults, slowItems)
- 	slowItems.RUDetails = a.ruDetailsForStatementLog(slowItems.RUDetails, statementRUTotal)
- 	failpoint.Inject("assertSyncStatsFailed", func(val failpoint.Value) {
-@@ -2138,6 +2152,16 @@ func (a *ExecStmt) LogSlowQuery(txnTS uint64, succ bool, hasMoreResults bool, st
+@@ -463,7 +463,7 @@ func RandomPickOneTableAndTryAutoAnalyze(
+ 				continue
  			}
- 		}
- 	})
-+
-+	if unredactedSQL != "" {
-+		// Queue the plaintext before the redacted line is written. A full queue
-+		// drops the cache entry and the disk write below still happens.
-+		globalSlowQueryCache.putIntoCache(
-+			slowQueryKeyOf(slowItems.TxnTS, slowQueryTimeKey(slowItems.TimeTotal), slowItems.Digest),
-+			unredactedSQL,
-+		)
-+	}
-+
- 	slowLog := sessVars.SlowLogFormat(slowItems)
- 	logutil.SlowQueryLogger.Warn(slowLog)
  
-@@ -2523,6 +2547,20 @@ func (a *ExecStmt) GetTextToLog(keepHint bool) string {
- 	return sql
+-			if tblInfo.IsView() || tblInfo.MaterializedViewLog != nil {
++			if ShouldSkipAutoAnalyzeTable(tblInfo) {
+ 				continue
+ 			}
+ 
+@@ -522,6 +522,18 @@ func RandomPickOneTableAndTryAutoAnalyze(
+ 	return false
  }
  
-+// isSlowQueryCacheable reports whether this statement may keep its original SQL
-+// in the plaintext slow-query cache. Only a directly executed SELECT qualifies.
-+// Prepared executions, TABLE, VALUES, and sensitive statements do not.
-+func (a *ExecStmt) isSlowQueryCacheable() bool {
-+	if a.isPreparedStmt {
++// ShouldSkipAutoAnalyzeTable excludes views, materialized view logs, and materialized
++// views whose initial build is not ready from ordinary auto analyze.
++func ShouldSkipAutoAnalyzeTable(tblInfo *model.TableInfo) bool {
++	if tblInfo == nil {
 +		return false
 +	}
-+	if _, sensitive := a.StmtNode.(ast.SensitiveStmtNode); sensitive {
-+		return false
++	if tblInfo.IsView() || tblInfo.MaterializedViewLog != nil {
++		return true
 +	}
-+	sel, ok := a.StmtNode.(*ast.SelectStmt)
-+	return ok && sel.Kind == ast.SelectStmtKindSelect
++	return tblInfo.MaterializedView != nil && !tblInfo.MaterializedView.GetInitBuildState().IsReady()
 +}
 +
- func restoreStmtTextForSlowLogWhenEmptySQL(stmt ast.StmtNode) string {
- 	implementStmt, ok := stmt.(*ast.RefreshMaterializedViewImplementStmt)
- 	if !ok || implementStmt.RefreshStmt == nil {
+ func getPartitionStats(
+ 	statsHandle statstypes.StatsHandle,
+ 	defs []model.PartitionDefinition,
 ```
 
-**File**: `pkg/executor/cluster_table_test.go` (modified, +49/-0)
+**File**: `pkg/statistics/handle/autoanalyze/autoanalyze_test.go` (modified, +32/-0)
 ```diff
-@@ -20,6 +20,7 @@ import (
- 	"fmt"
- 	"net"
- 	"os"
-+	"path/filepath"
- 	"strconv"
- 	"strings"
- 	"testing"
-@@ -34,8 +35,10 @@ import (
+@@ -27,6 +27,7 @@ import (
+ 	"github.com/pingcap/tidb/pkg/domain/infosync"
+ 	"github.com/pingcap/tidb/pkg/domain/serverinfo"
+ 	"github.com/pingcap/tidb/pkg/keyspace"
++	"github.com/pingcap/tidb/pkg/meta/model"
+ 	"github.com/pingcap/tidb/pkg/parser/ast"
  	"github.com/pingcap/tidb/pkg/parser/mysql"
- 	"github.com/pingcap/tidb/pkg/server"
- 	"github.com/pingcap/tidb/pkg/session/sessmgr"
-+	"github.com/pingcap/tidb/pkg/sessionctx/vardef"
- 	"github.com/pingcap/tidb/pkg/testkit"
- 	"github.com/pingcap/tidb/pkg/testkit/testutil"
-+	"github.com/pingcap/tidb/pkg/util/logutil"
- 	"github.com/stretchr/testify/require"
- 	"google.golang.org/grpc"
- )
-@@ -82,6 +85,52 @@ func createRPCServer(t *testing.T, dom *domain.Domain) *grpc.Server {
- 	return srv
+ 	"github.com/pingcap/tidb/pkg/sessionctx"
+@@ -82,6 +83,37 @@ func TestEnableAutoAnalyzePriorityQueue(t *testing.T) {
+ 	require.Equal(t, "tidb_enable_auto_analyze_priority_queue has been deprecated and TiDB will always use priority queue to schedule auto analyze", err.Error())
  }
  
-+func TestClusterTableSlowQueryInMemoryOriginalQuery(t *testing.T) {
-+	executor.StartSlowQueryCache()
-+	store, dom := testkit.CreateMockStoreAndDomain(t)
-+	srv := createRPCServer(t, dom)
-+	t.Cleanup(srv.Stop)
-+
-+	slowLogFile := filepath.Join(t.TempDir(), "tidb-slow.log")
-+	config.UpdateGlobal(func(conf *config.Config) {
-+		conf.Log.SlowQueryFile = slowLogFile
-+	})
-+	require.NoError(t, logutil.InitLogger(config.GetGlobalConfig().Log.ToLogConfig()))
-+	tk := testkit.NewTestKit(t, store)
-+	originalMode := tk.MustQuery("select @@global.tidb_redact_log").Rows()[0][0].(string)
-+	originalThreshold := fmt.Sprint(tk.MustQuery("select @@tidb_slow_log_threshold").Rows()[0][0])
-+	t.Cleanup(func() {
-+		tk.MustExec("set tidb_slow_log_threshold = " + originalThreshold)
-+		tk.MustExec("set global tidb_redact_log = '" + originalMode + "'")
-+	})
-+	tk.MustExec("set tidb_slow_log_threshold = 0")
-+	tk.MustExec("set global tidb_redact_log = 'ON'")
-+	tk.MustExec("select 7123456789")
-+
-+	// Establish that the SQL was cached locally before exercising the remote
-+	// session created by the cluster table's coprocessor request.
-+	tk.EventuallyMustQueryAndCheck(
-+		"select query, in_memory_original_query from information_schema.slow_query where query = 'select ?;'",
-+		nil, testkit.Rows("select ?; select 7123456789"), 3*time.Second, 20*time.Millisecond,
-+	)
-+
-+	for _, mode := range []string{vardef.On, vardef.Off, vardef.Marker, vardef.On} {
-+		t.Run(mode, func(t *testing.T) {
-+			tk := testkit.NewTestKitWithSession(t, store, tk.Session())
-+			tk.MustExec("set global tidb_redact_log = '" + mode + "'")
-+			// Reading ignores tidb_redact_log, including a requesting session whose
-+			// value differs from the global mode and the coprocessor session.
-+			vars := tk.Session().GetSessionVars()
-+			vars.EnableRedactLog = vardef.Off
-+			if mode == vardef.Off {
-+				vars.EnableRedactLog = vardef.On
-+			}
-+			tk.MustQuery("select query, in_memory_original_query from information_schema.cluster_slow_query where query = 'select ?;'").
-+				Check(testkit.Rows("select ?; select 7123456789"))
-+		})
-+	}
++func TestShouldSkipAutoAnalyzeTableNotReadyMV(t *testing.T) {
++	require.True(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
++		Name: ast.NewCIStr("mv_not_ready"),
++		MaterializedView: &model.MaterializedViewInfo{
++			InitBuildState: model.MViewInitBuildBuilding,
++		},
++	}))
++	require.True(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
++		Name: ast.NewCIStr("mv_deferred"),
++		MaterializedView: &model.MaterializedViewInfo{
++			InitBuildState: model.MViewInitBuildDeferred,
++		},
++	}))
++	require.False(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
++		Name: ast.NewCIStr("mv_ready"),
++		MaterializedView: &model.MaterializedViewInfo{
++			InitBuildState: model.MViewInitBuildReady,
++		},
++	}))
++	require.False(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
++		Name: ast.NewCIStr("normal_table"),
++	}))
++	require.True(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
++		View: &model.ViewInfo{},
++	}))
++	require.True(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
++		MaterializedViewLog: &model.MaterializedViewLogInfo{},
++	}))
++	require.False(t, autoanalyze.ShouldSkipAutoAnalyzeTable(nil))
 +}
 +
- func TestClusterTableSlowQuery(t *testing.T) {
+ func TestAutoAnalyzeLockedTable(t *testing.T) {
  	store, dom := testkit.CreateMockStoreAndDomain(t)
- 	srv := createRPCServer(t, dom)
+ 	tk := testkit.NewTestKit(t, store)
 ```
 
-**File**: `pkg/executor/compact_table_test.go` (modified, +81/-0)
+**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/dynamic_partitioned_table_analysis_job.go` (modified, +4/-0)
 ```diff
-@@ -55,6 +55,87 @@ func withMockTiFlash(nodes int) mockstore.MockTiKVStoreOption {
- 	)
- }
- 
-+// withMockTiFlashCluster is withMockTiFlash that also keeps the cluster handle.
-+// Table splits after bootstrap only keep the TiKV peer, so callers can place
-+// TiFlash peers on those regions before reading from TiFlash.
-+func withMockTiFlashCluster(nodes int, cluster **unistore.Cluster) mockstore.MockTiKVStoreOption {
-+	return mockstore.WithMultipleOptions(
-+		mockstore.WithClusterInspector(func(c testutils.Cluster) {
-+			mockCluster := c.(*unistore.Cluster)
-+			if cluster != nil {
-+				*cluster = mockCluster
-+			}
-+			_, _, regionID := mockstore.BootstrapWithSingleStore(c)
-+			for i := range nodes {
-+				storeID := c.AllocID()
-+				peerID := c.AllocID()
-+				mockCluster.AddStore(storeID, fmt.Sprintf("tiflash%d", i), &metapb.StoreLabel{Key: "engine", Value: "tiflash"})
-+				mockCluster.AddPeer(regionID, storeID, peerID)
-+			}
-+		}),
-+		mockstore.WithStoreType(mockstore.EmbedUnistore),
-+	)
-+}
-+
-+// addTiFlashPeersToAllRegions gives every region a peer on each TiFlash store.
-+// Table splits keep only the TiKV peer on the new region. A later TiFlash read
-+// then retries with no_tiflash_access_store until tikv:9012 TiFlash server timeout.
-+// store is the kv store returned with cluster; its region cache is dropped so the
-+// next read reloads the peers just added.
-+func addTiFlashPeersToAllRegions(t *testing.T, cluster *unistore.Cluster, store any) {
-+	t.Helper()
-+	require.NotNil(t, cluster)
-+	cacheStore, ok := store.(interface{ GetRegionCache() *tikv.RegionCache })
-+	require.True(t, ok)
-+	cache := cacheStore.GetRegionCache()
-+	require.NotNil(t, cache)
-+
-+	var storeIDs []uint64
-+	for _, st := range cluster.GetAllStores() {
-+		for _, label := range st.Labels {
-+			if label.Key == "engine" && label.Value == "tiflash" {
-+				storeIDs = append(storeIDs, st.Id)
-+				break
-+			}
-+		}
-+	}
-+	require.NotEmpty(t, storeIDs)
-+
-+	key := []byte{}
-+	seen := make(map[uint64]struct{})
-+	for range 10000 {
-+		region, _, _, _ := cluster.GetRegionByKey(key)
-+		if region == nil && len(key) == 0 {
-+			region, _, _, _ = cluster.GetRegionByKey([]byte{0})
-+		}
-+		if region == nil {
-+			break
-+		}
-+		if _, dup := seen[region.Id]; dup {
-+			break
-+		}
-+		seen[region.Id] = struct{}{}
-+		if region.RegionEpoch != nil {
-+			cache.InvalidateCachedRegion(tikv.NewRegionVerID(region.Id, region.RegionEpoch.ConfVer, region.RegionEpoch.Version))
-+		}
-+		have := make(map[uint64]struct{}, len(region.Peers))
-+		for _, peer := range region.Peers {
-+			have[peer.StoreId] = struct{}{}
-+		}
-+		for _, storeID := range storeIDs {
-+			if _, exists := have[storeID]; exists {
-+				continue
-+			}
-+			cluster.AddPeer(region.Id, storeID, cluster.AllocID())
-+		}
-+		if len(region.EndKey) == 0 {
-+			break
-+		}
-+		key = append([]byte(nil), region.EndKey...)
-+	}
-+	require.NotEmpty(t, seen)
-+}
-+
- func TestCompactTableTooBusy(t *testing.T) {
- 	mocker := newCompactRequestMocker(t)
- 	mocker.MockFrom(`tiflash0/#1`, func(req *kvrpcpb.CompactRequest) (*kvrpcpb.CompactResponse, error) {
-```
-
-**File**: `pkg/executor/main_test.go` (modified, +1/-0)
-```diff
-@@ -61,6 +61,7 @@ func TestMain(m *testing.M) {
- 		goleak.IgnoreTopFunction("github.com/pingcap/tidb/pkg/ttl/ttlworker.(*JobManager).jobLoop"),
- 		// backoff function will lead to sleep, so there is a high probability of goroutine leak while it's doing backoff.
- 		goleak.IgnoreTopFunction("github.com/tikv/client-go/v2/config/retry.(*Config).createBackoffFn.newBackoffFn.func2"),
-+		goleak.IgnoreTopFunction("github.com/pingcap/tidb/pkg/executor.(*slowQueryCache).loop"),
- 		goleak.IgnoreTopFunction("github.com/tikv/client-go/v2/config/retry.newBackoffFn.func1"),
+@@ -178,6 +178,10 @@ func (j *DynamicPartitionedTableAnalysisJob) ValidateAndPrepare(
+ 		callFailureHook(false)
+ 		return false, schemaNotExist
  	}
- 	callback := func(i int) int {
++	if valid, failReason, needRetry := checkTableReadyForAnalyze(tableInfo); !valid {
++		callFailureHook(needRetry)
++		return false, failReason
++	}
+ 	partitionInfo := tableInfo.GetPartitionInfo()
+ 	if partitionInfo == nil {
+ 		callFailureHook(false)
 ```
 
-**File**: `pkg/executor/slow_query.go` (modified, +83/-22)
+**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/job.go` (modified, +12/-0)
 ```diff
-@@ -32,6 +32,7 @@ import (
+@@ -18,6 +18,7 @@ import (
+ 	"fmt"
+ 	"time"
  
- 	"github.com/pingcap/errors"
- 	"github.com/pingcap/failpoint"
-+	"github.com/pingcap/tidb/pkg/config/diagnosticmode"
- 	"github.com/pingcap/tidb/pkg/infoschema"
++	"github.com/pingcap/tidb/pkg/meta/model"
+ 	"github.com/pingcap/tidb/pkg/sessionctx"
+ 	"github.com/pingcap/tidb/pkg/sessionctx/sysproctrack"
+ 	"github.com/pingcap/tidb/pkg/statistics/handle/logutil"
+@@ -104,6 +105,17 @@ const (
+ 	partitionNotExist   = "partition does not exist"
+ )
+ 
++func checkTableReadyForAnalyze(tableInfo *model.TableInfo) (bool, string, bool) {
++	if tableInfo == nil || tableInfo.MaterializedView == nil {
++		return true, "", false
++	}
++	initBuildState := tableInfo.MaterializedView.GetInitBuildState()
++	if initBuildState.IsReady() {
++		return true, "", false
++	}
++	return false, initBuildState.AccessErrorMessage(tableInfo.Name.O), true
++}
++
+ // isValidToAnalyze checks whether the table is valid to analyze.
+ // It checks the last failed analysis duration and the average analysis duration.
+ // If the last failed analysis duration is less than 2 times the average analysis duration,
+```
+
+**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/non_partitioned_table_analysis_job.go` (modified, +4/-0)
+```diff
+@@ -151,6 +151,10 @@ func (j *NonPartitionedTableAnalysisJob) ValidateAndPrepare(
+ 		callFailureHook(false)
+ 		return false, schemaNotExist
+ 	}
++	if valid, failReason, needRetry := checkTableReadyForAnalyze(tableInfo); !valid {
++		callFailureHook(needRetry)
++		return false, failReason
++	}
+ 	tableName := tableInfo.Name.O
+ 	indexNames := make([]string, 0, len(j.IndexIDs))
+ 	for _, index := range tableInfo.Indices {
+```
+
+**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/non_partitioned_table_analysis_job_test.go` (modified, +71/-0)
+```diff
+@@ -17,8 +17,11 @@ package priorityqueue_test
+ import (
+ 	"context"
+ 	"testing"
++	"time"
+ 
++	"github.com/pingcap/failpoint"
  	"github.com/pingcap/tidb/pkg/meta/metadef"
- 	"github.com/pingcap/tidb/pkg/meta/model"
-@@ -68,17 +69,18 @@ const slowLogTimeRangeInternalTolerance = time.Second
- 
- // slowQueryRetriever is used to read slow log data.
- type slowQueryRetriever struct {
--	table                 *model.TableInfo
--	outputCols            []*model.ColumnInfo
--	initialized           bool
--	extractor             *plannercore.SlowQueryExtractor
--	limit                 uint64
--	files                 []logFile
--	fileIdx               int
--	fileLine              int
--	checker               *slowLogChecker
--	columnValueFactoryMap map[string]slowQueryColumnValueFactory
--	instanceFactory       func([]types.Datum)
-+	table                      *model.TableInfo
-+	outputCols                 []*model.ColumnInfo
-+	initialized                bool
-+	extractor                  *plannercore.SlowQueryExtractor
-+	limit                      uint64
-+	files                      []logFile
-+	fileIdx                    int
-+	fileLine                   int
-+	checker                    *slowLogChecker
-+	columnValueFactoryMap      map[string]slowQueryColumnValueFactory
-+	instanceFactory            func([]types.Datum)
-+	inMemoryOriginalQueryIndex int
- 
- 	taskList      chan slowLogTask
- 	stats         *slowQueryRuntimeStats
-@@ -108,7 +110,12 @@ func (e *slowQueryRetriever) initialize(ctx context.Context, sctx sessionctx.Con
- 	}
- 	// initialize column value factories.
- 	e.columnValueFactoryMap = make(map[string]slowQueryColumnValueFactory, len(e.outputCols))
-+	e.inMemoryOriginalQueryIndex = -1
- 	for idx, col := range e.outputCols {
-+		if strings.EqualFold(col.Name.O, variable.SlowLogInMemoryOriginalQueryStr) {
-+			e.inMemoryOriginalQueryIndex = idx
-+			continue
-+		}
- 		if col.Name.O == metadef.ClusterTableInstanceColumnName {
- 			e.instanceFactory, err = getInstanceColumnValueFactory(sctx, idx)
- 			if err != nil {
-@@ -169,6 +176,10 @@ func (e *slowQueryRetriever) close() error {
- 
- type parsedSlowLog struct {
- 	rows [][]types.Datum
-+	// keys is the slow-query cache lookup for rows. keys[i] identifies rows[i]
-+	// by Txn_start_ts, Query_time, and the digest prefix. parseLog appends them
-+	// together, and a limit truncates both slices to the same length.
-+	keys []slowQueryKey
- 	err  error
++	"github.com/pingcap/tidb/pkg/meta/model"
+ 	"github.com/pingcap/tidb/pkg/parser/ast"
+ 	"github.com/pingcap/tidb/pkg/sessionctx"
+ 	"github.com/pingcap/tidb/pkg/statistics/handle/autoanalyze/priorityqueue"
+@@ -214,3 +217,71 @@ func TestValidateAndPrepareWhenOnlyHasFailedAnalysisRecords(t *testing.T) {
+ 	require.False(t, valid)
+ 	require.Equal(t, "last failed analysis duration is less than 30m0s", failReason)
  }
- 
-@@ -276,12 +287,39 @@ func (e *slowQueryRetriever) dataForSlowLog(ctx context.Context) ([][]types.Datu
- 		if len(rows) == 0 {
- 			continue
- 		}
 +
-+		// parseLog already charged the pre-fill row size. Measure again after the
-+		// plaintext and instance columns are filled so the next fetch releases
-+		// the same number of bytes.
-+		accounted := calculateDatumsSize(rows)
++func TestNonPartitionedTableValidateAndPrepareRetriesNotReadyMV(t *testing.T) {
++	store, dom := testkit.CreateMockStoreAndDomain(t)
++	tk := testkit.NewTestKit(t, store)
++	tk.MustExec("use test")
++	tk.MustExec("set tidb_mview_enable=on")
++	tk.MustExec(metadef.CreateAnalyzeJobsTable)
++	tk.MustExec("create table t (a int not null, b int not null)")
++	tk.MustExec("insert into t values (1, 10), (1, 5), (2, 7)")
++	tk.MustExec("create materialized view log on t (a, b) purge next date_add(now(), interval 1 hour)")
 +
-+		// Diagnostic mode does not read the cache; in_memory_original_query stays at the
-+		// zero value set while parsing. Lookups do not consult tidb_redact_log.
-+		// A nil result also leaves that zero value in place. A successful lookup
-+		// returns one string per key, and parseLog keeps keys aligned with rows.
-+		if !diagnosticmode.Enabled() && e.inMemoryOriginalQueryIndex >= 0 {
-+			unredactedQueries, err := globalSlowQueryCache.getUnredactedQueries(ctx, result.keys)
-+			if err != nil {
-+				return nil, err
-+			}
-+
-+			if unredactedQueries != nil {
-+				for i := range rows {
-+					rows[i][e.inMemoryOriginalQueryIndex] = types.NewStringDatum(unredactedQueries[i])
-+				}
-+			}
++	const pauseBuildFailpoint = "github.com/pingcap/tidb/pkg/ddl/pauseCreateMaterializedViewBuild"
++	require.NoError(t, failpoint.Enable(pauseBuildFailpoint, "pause"))
++	enabled := true
++	defer func() {
++		if enabled {
++			require.NoError(t, failpoint.Disable(pauseBuildFailpoint))
 +		}
++	}()
 +
- 		if e.instanceFactory != nil {
- 			for i := range rows {
- 				e.instanceFactory(rows[i])
- 			}
- 		}
--		e.lastFetchSize = calculateDatumsSize(rows)
-+		updated := calculateDatumsSize(rows)
-+		if delta := updated - accounted; delta != 0 {
-+			e.memConsume(delta)
++	ddlDone := make(chan error, 1)
++	go func() {
++		tkDDL := testkit.NewTestKit(t, store)
++		tkDDL.MustExec("use test")
++		tkDDL.MustExec("set tidb_mview_enable=on")
++		ddlDone <- tkDDL.ExecToErr("create materialized view mv_not_ready (a, s, cnt) refresh fast next date_add(now(), interval 1 hour) as select a, sum(b), count(1) from t group by a")
++	}()
++
++	require.Eventually(t, func() bool {
++		is := dom.InfoSchema()
++		mvTable, err := is.TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("mv_not_ready"))
++		if err != nil {
++			return false
 +		}
-+		e.lastFetchSize = updated
- 		return rows, nil
- 	}
- }
-@@ -685,7 +723,7 @@ func (e *slowQueryRetriever) parseSlowLogByBatchGetter(
- 				return
- 			case e.taskList <- t:
- 			}
--			e.sendParsedSlowLogCh(t, parsedSlowLog{nil, err})
-+			e.sendParsedSlowLogCh(t, parsedSlowLog{err: err})
- 			return
- 		}
- 		if len(log) == 0 {
-@@ -709,8 +747,8 @@ func (e *slowQueryRetriever) parseSlowLogByBatchGetter(
- 		e.wg.Add(1)
- 		go func(log []string, start offset, t slowLogTask) {
- 			defer e.wg.Done()
--			result, err := e.parseLog(ctx, sctx, log, start)
--			e.sendParsedSlowLogCh(t, parsedSlowLog{result, err})
-+			result, keys, err := e.parseLog(ctx, sctx, log, start)
-+			e.sendParsedSlowLogCh(t, parsedSlowLog{rows: result, keys: keys, err: err})
- 			<-ch
- 		}(log, start, t)
- 		if afterBatch != nil {
-@@ -750,7 +788,7 @@ func (e *slowQueryRetriever) parseSlowLogByBatchGetterWithLimit(
- 				return
- 			case e.taskList <- t:
- 			}
--			e.sendParsedSlowLogCh(t, parsedSlowLog{nil, err})
-+			e.sendParsedSlowLogCh(t, parsedSlowLog{err: err})
- 			return
- 		}
- 		if len(log) == 0 {
-@@ -770,16 +808,17 @@ func (e *slowQueryRetriever) parseSlowLogByBatchGetterWithLimit(
- 			return
- 		case e.taskList <- t:
- 		}
++		return mvTable.Meta().MaterializedView != nil &&
++			mvTable.Meta().MaterializedView.GetInitBuildState() == model.MViewInitBuildBuilding
++	}, 30*time.Second, 100*time.Millisecond)
++
++	mvTable, err := dom.InfoSchema().TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("mv_not_ready"))
++	require.NoError(t, err)
++	job := &priorityqueue.NonPartitionedTableAnalysisJob{
++		TableID: mvTable.Meta().ID,
++		Weight:  1,
++	}
++	var (
++		failureHookCalled bool
++		needRetry         bool
++	)
++	job.RegisterFailureHook(func(_ priorityqueue.AnalysisJob, boolRetry bool) {
++		failureHookCalled = true
++		needRetry = boolRetry
++	})
++
++	valid, failReason := job.ValidateAndPrepare(tk.Session().(sessionctx.Context))
++	require.False(t, valid)
++	require.True(t, failureHookCalled)
++	require.True(t, needRetry)
++	require.Contains(t, failReason, "initial build is in progress")
++
++	require.NoError(t, failpoint.Disable(pauseBuildFailpoint))
++	enabled = false
++	select {
++	case err := <-ddlDone:
++		require.NoError(t, err)
++	case <-time.After(60 * time.Second):
++		t.Fatal("timed out waiting CREATE MATERIALIZED VIEW to finish")
++	}
++}
 ```
 
-**File**: `pkg/executor/slow_query_cache.go` (added, +382/-0)
+**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/static_partitioned_table_analysis_job.go` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,382 @@
-+// Copyright 2026 PingCAP, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package executor
-+
-+import (
-+	"context"
-+	"time"
-+	"unsafe"
-+
-+	"github.com/pingcap/tidb/pkg/config/diagnosticmode"
-+	"github.com/pingcap/tidb/pkg/util"
-+)
-+
-+const (
-+	// slowQueryCacheCapacity is the number of entries retained by the cache.
-+	// The backing array is allocated when the cache is initialized. The slice
-+	// grows until this capacity is reached, then writes reuse its oldest slot.
-+	slowQueryCacheCapacity = 50000
-+	// slowQueryCacheMaxMem is the budget for entries the worker has retained.
-+	// Plaintext waiting on writeCh is not included. Once appending an entry
-+	// would pass the budget, the unused slots are abandoned and the ring stays
-+	// frozen. A later statement can reuse an existing slot; the replaced
-+	// entry's bytes are released when that write lands. The index map and the
-+	// preallocated backing array are not counted.
-+	slowQueryCacheMaxMem        = 50 * 1024 * 1024
-+	slowQueryCacheWriteChanSize = 10
-+	slowQueryCacheReadChanSize  = 100
-+)
-+
-+// slowQueryKey identifies one slow query in the plaintext cache. Digest is
-+// shortened to 10 characters. The three fields are the same ones written to
-+// the slow log, so a later read can find the row again.
-+type slowQueryKey struct {
-+	txnStartTS uint64
-+	queryTime  float64
-+	digest     string
-+}
-+
-+// slowQuery is one cached slow query. Only the unredacted SQL is retained;
-+// the key is kept so the slot can be removed from the index when it is reused.
-+// Every element of slowQueries is occupied. A slot that no longer holds its
-+// original key is identified by comparing Key with the lookup key.
-+type slowQuery struct {
-+	Key           slowQueryKey
-+	UnredactedSQL string
-+}
-+
-+type slowQueryCacheWriteTask struct {
-+	key slowQueryKey
-+	sql string
-+}
-+
-+// slowQueryCacheReadTask is one batch lookup. values is filled by the cache
-+// worker and done wakes the reader after that fill finishes.
-+type slowQueryCacheReadTask struct {
-+	keys   []slowQueryKey
-+	values []string
-+	done   chan struct{}
-+}
-+
-+// slowQueryCache is owned by one background goroutine. Callers only send tasks.
-+// memoryUsage is updated only by that goroutine. A producer drops a statement
-+// when writeCh is full, without consulting the memory budget. Readers block
-+// until woken or their context ends. Non-diagnostic TiDB starts the worker in
-+// Server.Run. Read and write entrypoints check that lifecycle state before
-+// sending tasks; diagnostic mode neither starts the worker nor enqueues reads
-+// or writes.
-+type slowQueryCache struct {
-+	writeCh chan slowQueryCacheWriteTask
-+	readCh  chan *slowQueryCacheReadTask
-+	running bool
-+	// stopCh is closed by stop after the test has finished sending. exited is
-+	// closed by the worker after that loop returns. Production never closes
-+	// stopCh. Both stay nil until start.
-+	stopCh chan struct{}
-+	exited chan struct{}
-+
-+	slowQueries []slowQuery
-+	writePos    int
-+	// frozen stays set after the first insert that cannot be appended. A later
-+	// shorter replacement may free memory, but growing again would leave
-+	// writePos behind the chronological order of the slots.
-+	frozen      bool
-+	locations   map[slowQueryKey]int
-+	memoryUsage int64
-+	maxMemUsage int64
-+}
-+
-+var globalSlowQueryCache = newSlowQueryCache()
-+
-+func newSlowQueryCache() *slowQueryCache {
-+	return newSlowQueryCacheWithLimits(slowQueryCacheCapacity, slowQueryCacheMaxMem, slowQueryCacheWriteChanSize)
-+}
-+
-+func newSlowQueryCacheWithLimits(capacity int, maxMem int64, writeChanSize int) *slowQueryCache {
-+	if capacity < 0 {
-+		capacity = 0
+@@ -167,6 +167,10 @@ func (j *StaticPartitionedTableAnalysisJob) ValidateAndPrepare(
+ 		callFailureHook(false)
+ 		return false, schemaNotExist
+ 	}
++	if valid, failReason, needRetry := checkTableReadyForAnalyze(tableInfo); !valid {
++		callFailureHook(needRetry)
++		return false, failReason
 +	}
-+	return &slowQueryCache{
-+		writeCh:     make(chan slowQueryCacheWriteTask, writeChanSize),
-+		readCh:      make(chan *slowQueryCacheReadTask, slowQueryCacheReadChanSize),
-+		slowQueries: make([]slowQuery, 0, capacity),
-+		locations:   make(map[slowQueryKey]int),
-+		maxMemUsage: maxMem,
-+	}
-+}
-+
-+// StartSlowQueryCache starts the process-wide worker that retains plaintext
-+// slow-query SQL. Server.Run calls it before accepting connections, whether or
-+// not tidb_redact_log is enabled. That setting only decides whether a slow
-+// query is inserted. Lookups always read the cache. Extra calls do not start
-+// another worker. Diagnostic mode leaves the worker unstarted.
-+func StartSlowQueryCache() {
-+	globalSlowQueryCache.start()
-+}
-+
-+func (c *slowQueryCache) start() {
-+	if diagnosticmode.Enabled() {
-+		
-```
-
-**File**: `pkg/executor/slow_query_cache_test.go` (added, +411/-0)
-```diff
-@@ -0,0 +1,411 @@
-+// Copyright 2026 PingCAP, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package executor
-+
-+import (
-+	"context"
-+	"strconv"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/pingcap/tidb/pkg/config/diagnosticmode"
-+	"github.com/pingcap/tidb/pkg/types"
-+	"github.com/pingcap/tidb/pkg/util/intest"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestSlowQueryCacheReadWrite(t *testing.T) {
-+	cache := newSlowQueryCache()
-+	key := slowQueryKeyOf(123, 1.25, "0123456789abcdef")
-+	cache.handleWrite(slowQueryCacheWriteTask{key: key, sql: "select 123;"})
-+
-+	result := &slowQueryCacheReadTask{
-+		keys:   []slowQueryKey{key, slowQueryKeyOf(456, 2.5, "another")},
-+		values: make([]string, 2),
-+		done:   make(chan struct{}),
-+	}
-+	cache.handleRead(result)
-+
-+	require.Equal(t, []string{"select 123;", ""}, result.values)
-+	require.Equal(t, "0123456789", key.digest)
-+}
-+
-+func TestSlowQueryCacheDuplicateKeyUsesLatestValue(t *testing.T) {
-+	cache := newSlowQueryCache()
-+	key := slowQueryKeyOf(123, 1.25, "0123456789abcdef")
-+	cache.handleWrite(slowQueryCacheWriteTask{key: key, sql: "select 1;"})
-+	cache.handleWrite(slowQueryCacheWriteTask{key: key, sql: "select 2;"})
-+
-+	result := &slowQueryCacheReadTask{
-+		keys:   []slowQueryKey{key},
-+		values: make([]string, 1),
-+		done:   make(chan struct{}),
-+	}
-+	cache.handleRead(result)
-+	require.Equal(t, []string{"select 2;"}, result.values)
-+	// Both values stay. The index map is not charged.
-+	require.Equal(t, getSlowQueryValueMemUsage(key, "select 1;")+getSlowQueryValueMemUsage(key, "select 2;"), cache.memoryUsage)
-+}
-+
-+func TestSlowQueryCacheUsesPreallocatedRing(t *testing.T) {
-+	cache := newSlowQueryCache()
-+	require.Zero(t, len(cache.slowQueries))
-+	require.Equal(t, slowQueryCacheCapacity, cap(cache.slowQueries))
-+	require.Equal(t, 10, cap(cache.writeCh))
-+	require.Zero(t, cache.writePos)
-+	for i := 0; i < slowQueryCacheCapacity; i++ {
-+		key := slowQueryKeyOf(uint64(i), 1, strconv.Itoa(i))
-+		cache.handleWrite(slowQueryCacheWriteTask{key: key, sql: "x"})
-+	}
-+
-+	require.Len(t, cache.slowQueries, slowQueryCacheCapacity)
-+	require.Equal(t, 0, cache.writePos)
-+	require.Equal(t, "x", lookupSlowQueryCache(cache, slowQueryKeyOf(0, 1, "0"))[0])
-+
-+	newKey := slowQueryKeyOf(slowQueryCacheCapacity, 1, strconv.Itoa(slowQueryCacheCapacity))
-+	cache.handleWrite(slowQueryCacheWriteTask{key: newKey, sql: "new"})
-+	require.Equal(t, "", lookupSlowQueryCache(cache, slowQueryKeyOf(0, 1, "0"))[0])
-+	require.Equal(t, "new", lookupSlowQueryCache(cache, newKey)[0])
-+	require.Equal(t, 1, cache.writePos)
-+}
-+
-+func TestSlowQueryCacheEvictsOldestAndFreezesRing(t *testing.T) {
-+	first := slowQueryKeyOf(1, 1, "first-key")
-+	second := slowQueryKeyOf(2, 1, "second-key")
-+	third := slowQueryKeyOf(3, 1, "third-key")
-+	droppedKey := slowQueryKeyOf(4, 1, "dropped")
-+	firstSQL, secondSQL, thirdSQL := "12345", "12345", "123456"
-+	droppedSQL := "123456789012"
-+	twoEntries := getSlowQueryValueMemUsage(first, firstSQL) + getSlowQueryValueMemUsage(second, secondSQL)
-+	afterThird := getSlowQueryValueMemUsage(second, secondSQL) + getSlowQueryValueMemUsage(third, thirdSQL)
-+	afterDropped := getSlowQueryValueMemUsage(third, thirdSQL) + getSlowQueryValueMemUsage(droppedKey, droppedSQL)
-+	require.Greater(t, afterDropped, afterThird)
-+
-+	cache := newSlowQueryCacheWithLimits(4, afterThird, 8)
-+	cache.handleWrite(slowQueryCacheWriteTask{key: first, sql: firstSQL})
-+	cache.handleWrite(slowQueryCacheWriteTask{key: second, sql: secondSQL})
-+	require.Equal(t, twoEntries, cache.memoryUsage)
-+
-+	cache.handleWrite(slowQueryCacheWriteTask{key: third, sql: thirdSQL})
-+	require.Equal(t, afterThird, cache.memoryUsage)
-+	// The two unused slots are abandoned once the memory budget is reached.
-+	require.Len(t, cache.slowQueries, 2)
-+	require.Equal(t, 4, cap(cache.slowQueries))
-+	require.True(t, cache.frozen)
-+	require.Equal(t, []string{"", secondSQL, thirdSQL}, lookupSlowQueryCache(cache, first, second, third))
-+
-+	// Replacing the next slot would pass the frozen ceiling, so the SQL is discarded.
-+	before := cache.memoryUsage
-+	pos := cache.writePos
-+	cache.handleWrite(slowQueryCacheWriteTask{key: droppedKey, sql: droppedSQL})
-+	require.Equal(t, before, cache.memoryUsage)
-+	require.Equal(t, pos, cache.writePos)
-+	require.True(t, cache.frozen)
-+	require.Equal(t, []string{secondSQL}, lookupSlowQueryCache(cache, second))
-+
-+	// Capacity 4, budget 300, one-byte digests, SQL lengths 100, 100, 1, 1,
+ 	partitionInfo := tableInfo.GetPartitionInfo()
+ 	if partitionInfo == nil {
+ 		callFailureHook(false)
 ```
 
 #### Recent Merged Pull Requests:
@@ -2658,32 +2236,29 @@ close pingcap/tidb#72414
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. *: cache unredacted slow query in the memory (#72410)
+## X. statistics: defer auto analyze until materialized views are ready (#72678)
 
 **RULE**:
-When implementing operations in `pkg/executor/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/statistics/handle/autoanalyze/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13377f09`: *: cache unredacted slow query in the memory (#72410). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9817438`: statistics: defer auto analyze until materialized views are ready (#72678). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/BUILD.bazel`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/statistics/handle/autoanalyze/BUILD.bazel`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "slow_query_cache.go",
-        "//pkg/config/diagnosticmode",
-        "slow_query_cache_test.go",
-        "//pkg/config/diagnosticmode",
-        "//pkg/util/intest",
+    shard_count = 15,
+        "//pkg/meta/model",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    shard_count = 14,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13377f09` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9817438` are properly handled with clean fallback behavior.

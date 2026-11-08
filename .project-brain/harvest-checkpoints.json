@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T15:12:29.483Z",
+  "last_updated": "2026-11-08T15:21:47.673Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -485,14 +485,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-lensvlm-9b",
-      "content_hash": "23d4889fcc73a0bbb4ae948ef49e7b7298f1724fe32d5aa60dd76c8ae59d85c7",
-      "verified_at": "2026-11-04T23:34:43.326Z",
+      "content_hash": "e0efb330929580e8d311497727f3ff2937b646884133f00327d8a9998079825e",
+      "verified_at": "2026-11-08T15:21:44.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T23:34:43.326Z"
+      "last_updated": "2026-11-08T15:21:44.312Z"
     },
     "Altworld/Hemmingway-1": {
       "repository": "Altworld/Hemmingway-1",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "aa73801260ae7fd9075843fd9f5d41e8cd68bb09d534d87d25a19d1b70b61483",
-      "verified_at": "2026-11-07T19:23:48.937Z",
+      "content_hash": "c62b2da6121903c735b64f13ab5f71820cec1387ca78465d5cc1a2bc4682c766",
+      "verified_at": "2026-11-08T15:21:47.673Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:23:48.937Z"
+      "last_updated": "2026-11-08T15:21:47.673Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

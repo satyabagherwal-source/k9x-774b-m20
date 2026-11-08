@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "23d4889fcc73a0bbb4ae948ef49e7b7298f1724fe32d5aa60dd76c8ae59d85c7",
-    "lastHarvestedAt": "2026-11-04T23:34:43.309Z",
+    "contentHash": "e0efb330929580e8d311497727f3ff2937b646884133f00327d8a9998079825e",
+    "lastHarvestedAt": "2026-11-08T15:21:44.295Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "41efd866",
+    "sourceVersion": "b9817438",
     "license": "Apache-2.0",
-    "contentHash": "aa73801260ae7fd9075843fd9f5d41e8cd68bb09d534d87d25a19d1b70b61483",
-    "lastHarvestedAt": "2026-11-07T19:23:48.922Z",
+    "contentHash": "c62b2da6121903c735b64f13ab5f71820cec1387ca78465d5cc1a2bc4682c766",
+    "lastHarvestedAt": "2026-11-08T15:21:47.664Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

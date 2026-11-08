@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T15:12:29.332Z",
+  "last_updated": "2026-11-08T15:21:47.572Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19854,10 +19854,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "23d4889fcc73a0bbb4ae948ef49e7b7298f1724fe32d5aa60dd76c8ae59d85c7",
+      "content_hash": "e0efb330929580e8d311497727f3ff2937b646884133f00327d8a9998079825e",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Consistent Token ID Mapping Across Modalities",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Alignment of `use_cache` Between Model and Generation Config",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Enforce `dtype` Consistency Across Text and Vision Branches",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 280,
           "title": "2 Rule 2 – Layer‑Type Consistency",
@@ -20113,7 +20128,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-11-04T23:34:43.198Z",
+      "verified_at": "2026-11-08T15:21:44.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50235,8 +50250,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "41efd866",
-      "content_hash": "aa73801260ae7fd9075843fd9f5d41e8cd68bb09d534d87d25a19d1b70b61483",
+      "source_version": "b9817438",
+      "content_hash": "c62b2da6121903c735b64f13ab5f71820cec1387ca78465d5cc1a2bc4682c766",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -50248,6 +50263,11 @@
         {
           "number": null,
           "title": "*: cache unredacted slow query in the memory (#72410)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "statistics: defer auto analyze until materialized views are ready (#72678)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50346,7 +50366,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:23:48.826Z",
+      "verified_at": "2026-11-08T15:21:47.551Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

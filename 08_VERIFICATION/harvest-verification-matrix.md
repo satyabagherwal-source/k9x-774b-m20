@@ -8304,3 +8304,5 @@
 | `CYCLE-20261108-74TJ` | `2026-11-08T14:49:07.879Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ddf3dfce...`) |
 | `CYCLE-20261108-RTCH` | `2026-11-08T15:05:12.785Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`26426e06...`) |
 | `CYCLE-20261108-16AJ` | `2026-11-08T15:12:29.467Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`6451b5b3...`) |
+| `CYCLE-20261108-D2EC` | `2026-11-08T15:21:44.292Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`e0efb330...`) |
+| `CYCLE-20261108-D4ZQ` | `2026-11-08T15:21:47.654Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c62b2da6...`) |
