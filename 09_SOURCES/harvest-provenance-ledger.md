@@ -8213,3 +8213,5 @@ Every entry in this ledger must capture:
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `39bf8539` | Multi-dimensional audit evidence | 2026-11-08T03:54:26.896Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `80ec9bcd` | Multi-dimensional audit evidence | 2026-11-08T03:54:27.559Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T03:55:59.674Z |
+| `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-08T04:02:56.579Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `9b71df9a` | Multi-dimensional audit evidence | 2026-11-08T04:03:01.935Z |

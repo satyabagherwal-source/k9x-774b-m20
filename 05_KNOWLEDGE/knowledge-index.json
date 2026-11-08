@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T03:55:59.572Z",
+  "last_updated": "2026-11-08T04:03:01.816Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -61158,13 +61158,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "9b71df9a",
-      "content_hash": "e43a5dc6a9d897b6a3045465e5e906174817805b7132dce49081bb9e3a7301d1",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "content_hash": "2ea3285f4ea72e8727d664752e8730581e5b4cea0b42be753af5a16130016f8f",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -61332,7 +61332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:17:53.719Z",
+      "verified_at": "2026-11-08T04:03:01.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127097,10 +127097,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
       "source_version": "hf-orcarouter-orcacyber-nano-1.0",
-      "content_hash": "425c6da15d8317c5ab10c535a7b047ae29ea061b2f64dc880fad83dc9cc19b19",
+      "content_hash": "e893f517507b56d07579012730a4aa509af81c3b30ed926e942774bfedfd4bdb",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Repository Integrity Pre-Flight Check",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Graceful Degradation on Missing Metadata",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 3541,
           "title": "Repository Integrity & Non-Empty State Invariant",
@@ -127132,7 +127142,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:37:26.050Z",
+      "verified_at": "2026-11-08T04:02:56.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

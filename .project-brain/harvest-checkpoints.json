@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T03:55:59.685Z",
+  "last_updated": "2026-11-08T04:03:01.943Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "e43a5dc6a9d897b6a3045465e5e906174817805b7132dce49081bb9e3a7301d1",
-      "verified_at": "2026-11-08T01:17:53.895Z",
+      "content_hash": "2ea3285f4ea72e8727d664752e8730581e5b4cea0b42be753af5a16130016f8f",
+      "verified_at": "2026-11-08T04:03:01.943Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T01:17:53.895Z"
+      "last_updated": "2026-11-08T04:03:01.943Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -15681,14 +15681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "content_hash": "425c6da15d8317c5ab10c535a7b047ae29ea061b2f64dc880fad83dc9cc19b19",
-      "verified_at": "2026-11-04T17:37:26.125Z",
+      "content_hash": "e893f517507b56d07579012730a4aa509af81c3b30ed926e942774bfedfd4bdb",
+      "verified_at": "2026-11-08T04:02:56.588Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:37:26.125Z"
+      "last_updated": "2026-11-08T04:02:56.588Z"
     },
     "Ryder-Sun/Meldwork": {
       "repository": "Ryder-Sun/Meldwork",

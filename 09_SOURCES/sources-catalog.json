@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "65a31536",
+    "sourceVersion": "9b71df9a",
     "license": "MIT",
-    "contentHash": "a8e6a7b8d0c33428a3a7b0500a285516f4b2c327599c6ed409a4e8a1aff04956",
-    "lastHarvestedAt": "2026-11-06T21:59:35.999Z",
+    "contentHash": "2ea3285f4ea72e8727d664752e8730581e5b4cea0b42be753af5a16130016f8f",
+    "lastHarvestedAt": "2026-11-08T04:03:01.935Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -10435,8 +10435,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
     "sourceVersion": "hf-orcarouter-orcacyber-nano-1.0",
     "license": "Open-Source",
-    "contentHash": "425c6da15d8317c5ab10c535a7b047ae29ea061b2f64dc880fad83dc9cc19b19",
-    "lastHarvestedAt": "2026-11-04T17:37:26.119Z",
+    "contentHash": "e893f517507b56d07579012730a4aa509af81c3b30ed926e942774bfedfd4bdb",
+    "lastHarvestedAt": "2026-11-08T04:02:56.579Z",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
   },
   "ryder-sun-meldwork": {

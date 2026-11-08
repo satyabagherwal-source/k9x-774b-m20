@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T03:55:59.681Z",
-  "total_cycles_completed": 8169,
-  "total_learnings_persisted": 8169,
-  "total_rules_promoted": 7857,
+  "last_updated": "2026-11-08T04:03:01.940Z",
+  "total_cycles_completed": 8171,
+  "total_learnings_persisted": 8171,
+  "total_rules_promoted": 7860,
   "history": [
-    {
-      "timestamp": "2026-11-07T05:28:18.420Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T05:28:23.568Z",
-      "repository": "SeekStorm/SeekStorm",
-      "learningId": "learn-github-seekstorm-seekstorm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T05:37:01.542Z",
       "repository": "nodejs/undici",
@@ -1403,6 +1389,20 @@
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T04:02:56.585Z",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T04:03:01.940Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
