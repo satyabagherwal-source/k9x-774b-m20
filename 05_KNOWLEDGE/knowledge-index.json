@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T14:49:07.759Z",
+  "last_updated": "2026-11-08T15:05:12.650Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32233,10 +32233,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "28ad5f6862b771db0113503646498571d7284ebc5247540b040e698d8d7878c1",
+      "content_hash": "26426e069f975aaac548b919b21d2eb345a463a2961aa27cd9c17c01c833c391",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hardened Strict-Candidate Partitioning for Compact Decision Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Tier Decoupled Manifest Loading Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 278,
           "title": "The Confidence Threshold Gate",
@@ -32339,7 +32349,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-11-04T23:20:56.108Z",
+      "verified_at": "2026-11-08T15:05:12.625Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
