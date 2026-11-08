@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T07:15:35.442Z",
+  "last_updated": "2026-11-08T07:23:37.859Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24761,10 +24761,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "dd7dcab5c8ed35d4173ca7da1e574e0ba05a28507e9e22bd701378da592ff0da",
+      "content_hash": "750771b7420b9d19ddf0b4322d97efed18da68fd8d449e52eaf18151398fd011",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Causal Audio-Language Stride Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Delay-Token Synchronization Invariant in Causal ASR",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 993,
           "title": "Bounded Context Streaming Invariant",
@@ -25176,7 +25186,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-11-04T20:46:41.330Z",
+      "verified_at": "2026-11-08T07:23:37.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47763,8 +47773,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "b04b69a0",
-      "content_hash": "024082a2b28d920fa8a6e33a0220978805356519173a99a1796184980f881f65",
+      "source_version": "bbcac03c",
+      "content_hash": "e98b247f09f98819a09470254d8d4867bcce52cbbab282b404cc85280732dda1",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -47776,6 +47786,11 @@
         {
           "number": null,
           "title": "build: Move release builds off retired macos-14 runners (#9520)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ast: Allow keys of empty collections in rules replaced by with",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47854,7 +47869,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:09:09.395Z",
+      "verified_at": "2026-11-08T07:22:06.103Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

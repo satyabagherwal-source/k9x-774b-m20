@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T07:15:35.528Z",
+  "last_updated": "2026-11-08T07:23:37.955Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -52,14 +52,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
-      "content_hash": "dd7dcab5c8ed35d4173ca7da1e574e0ba05a28507e9e22bd701378da592ff0da",
-      "verified_at": "2026-11-04T20:46:41.461Z",
+      "content_hash": "750771b7420b9d19ddf0b4322d97efed18da68fd8d449e52eaf18151398fd011",
+      "verified_at": "2026-11-08T07:23:37.955Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:46:41.461Z"
+      "last_updated": "2026-11-08T07:23:37.955Z"
     },
     "abenzerps/Qwen-Image-2.1-Uncensored-GGUF": {
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "024082a2b28d920fa8a6e33a0220978805356519173a99a1796184980f881f65",
-      "verified_at": "2026-11-07T05:09:09.533Z",
+      "content_hash": "e98b247f09f98819a09470254d8d4867bcce52cbbab282b404cc85280732dda1",
+      "verified_at": "2026-11-08T07:22:06.193Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:09:09.533Z"
+      "last_updated": "2026-11-08T07:22:06.193Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",

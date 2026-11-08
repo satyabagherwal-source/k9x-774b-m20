@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "dd7dcab5c8ed35d4173ca7da1e574e0ba05a28507e9e22bd701378da592ff0da",
-    "lastHarvestedAt": "2026-11-04T20:46:41.452Z",
+    "contentHash": "750771b7420b9d19ddf0b4322d97efed18da68fd8d449e52eaf18151398fd011",
+    "lastHarvestedAt": "2026-11-08T07:23:37.943Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "b04b69a0",
+    "sourceVersion": "bbcac03c",
     "license": "Apache-2.0",
-    "contentHash": "024082a2b28d920fa8a6e33a0220978805356519173a99a1796184980f881f65",
-    "lastHarvestedAt": "2026-11-07T05:09:09.515Z",
+    "contentHash": "e98b247f09f98819a09470254d8d4867bcce52cbbab282b404cc85280732dda1",
+    "lastHarvestedAt": "2026-11-08T07:22:06.173Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {

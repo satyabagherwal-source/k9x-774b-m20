@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-Z9BD",
-    "timestamp": "2026-11-05T18:07:56.905Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-8PU4",
-    "timestamp": "2026-11-05T18:15:18.220Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "797fd838c1b8fd400b2e8b7ca07370d1859e26614505d14612127690ea8550a0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-8V45",
     "timestamp": "2026-11-05T18:15:25.061Z",
     "repository": "linkerd/linkerd2",
@@ -7492,6 +7462,36 @@
     "contentHash": "4e1ec651617a68482bbfd6104d5ac295b15d064afdbb560eabff072ba608bdff",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-8923",
+    "timestamp": "2026-11-08T07:22:06.171Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "e98b247f09f98819a09470254d8d4867bcce52cbbab282b404cc85280732dda1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-A7V8",
+    "timestamp": "2026-11-08T07:23:37.940Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "750771b7420b9d19ddf0b4322d97efed18da68fd8d449e52eaf18151398fd011",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

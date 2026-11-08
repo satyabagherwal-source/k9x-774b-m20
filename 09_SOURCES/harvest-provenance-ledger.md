@@ -8262,3 +8262,5 @@ Every entry in this ledger must capture:
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `af6a474b` | Multi-dimensional audit evidence | 2026-11-08T07:15:20.438Z |
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-08T07:15:27.347Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `1557de2f` | Multi-dimensional audit evidence | 2026-11-08T07:15:35.522Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `bbcac03c` | Multi-dimensional audit evidence | 2026-11-08T07:22:06.173Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-08T07:23:37.943Z |

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T07:15:38.111Z",
-    "lastVerified": "2026-11-08T07:15:38.111Z",
+    "lastChecked": "2026-11-08T07:23:40.541Z",
+    "lastVerified": "2026-11-08T07:23:40.541Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -191,13 +191,13 @@
     "officialUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T20:46:36.120Z",
-    "lastVerified": "2026-11-04T20:46:36.120Z",
+    "lastChecked": "2026-11-08T07:21:55.743Z",
+    "lastVerified": "2026-11-08T07:21:55.743Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "dd7dcab5c8ed35d4173ca7da1e574e0ba05a28507e9e22bd701378da592ff0da",
-    "promotedRulesCount": 0,
+    "contentHash": "750771b7420b9d19ddf0b4322d97efed18da68fd8d449e52eaf18151398fd011",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -369,9 +369,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T06:49:22.181Z",
+    "lastChecked": "2026-11-08T07:22:08.145Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T06:49:22.181Z"
+    "lastVerified": "2026-11-08T07:22:08.145Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -537,8 +537,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T03:43:18.228Z",
-    "lastVerified": "2026-11-08T03:43:18.228Z",
+    "lastChecked": "2026-11-08T07:22:03.174Z",
+    "lastVerified": "2026-11-08T07:22:03.174Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -3383,9 +3383,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-11-07T04:03:18.041Z",
+    "lastChecked": "2026-11-08T07:22:05.651Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-11-07T04:03:18.041Z"
+    "lastVerified": "2026-11-08T07:22:05.651Z"
   },
   "o2sh-onefetch": {
     "name": "onefetch",
@@ -4836,9 +4836,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-06T21:51:50.570Z",
+    "lastChecked": "2026-11-08T07:21:53.182Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-06T21:51:50.570Z"
+    "lastVerified": "2026-11-08T07:21:53.182Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7191,14 +7191,14 @@
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T05:09:07.021Z",
-    "lastVerified": "2026-11-07T05:09:07.021Z",
+    "lastChecked": "2026-11-08T07:22:04.691Z",
+    "lastVerified": "2026-11-08T07:22:04.691Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "024082a2b28d920fa8a6e33a0220978805356519173a99a1796184980f881f65",
+    "contentHash": "e98b247f09f98819a09470254d8d4867bcce52cbbab282b404cc85280732dda1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10022,9 +10022,9 @@
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",
     "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
-    "lastChecked": "2026-11-05T06:21:36.927Z",
+    "lastChecked": "2026-11-08T07:21:58.107Z",
     "revisionIdentifier": "6157c77e",
-    "lastVerified": "2026-11-05T06:21:36.927Z"
+    "lastVerified": "2026-11-08T07:21:58.107Z"
   },
   "kaiopiola-seocheck": {
     "name": "SEOCheck",

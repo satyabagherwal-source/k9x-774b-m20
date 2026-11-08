@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T07:15:35.526Z",
-  "total_cycles_completed": 8218,
-  "total_learnings_persisted": 8218,
-  "total_rules_promoted": 7936,
+  "last_updated": "2026-11-08T07:23:37.947Z",
+  "total_cycles_completed": 8220,
+  "total_learnings_persisted": 8220,
+  "total_rules_promoted": 7939,
   "history": [
-    {
-      "timestamp": "2026-11-07T19:23:31.742Z",
-      "repository": "alchaincyf/nuwa-skill",
-      "learningId": "learn-github-alchaincyf-nuwa-skill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T19:23:48.006Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T19:23:48.927Z",
       "repository": "pingcap/tidb",
@@ -1403,6 +1389,20 @@
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T07:22:06.183Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T07:23:37.947Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

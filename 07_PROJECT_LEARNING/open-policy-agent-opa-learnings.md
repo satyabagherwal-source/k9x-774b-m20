@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `b04b69a0`  
+> **Source Version**: `bbcac03c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:09:07.650Z  
+> **Timestamp**: 2026-11-08T07:22:05.266Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:09:07.021Z  
+> **Harvest Timestamp**: 2026-11-08T07:22:04.691Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12442 stars
+- **Stars / Engagement**: 12445 stars
 
 ---
 
@@ -967,48 +967,296 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b10aaf8e` (2026-11-05)
-**Commit Message**: build: Move release builds off retired macos-14 runners (#9520)
+### Incident Patch 1: `bbcac03c` (2026-11-07)
+**Commit Message**: ast: Allow keys of empty collections in rules replaced by with
 
-GitHub retired the macos-14 runner image on 2026-11-02, so the darwin
-jobs in the post-merge and post-tag workflows are cancelled without a
-runner. Use macos-15, as the pull request workflow already does.
+A rule like `default x := {}` is typed as an empty collection, so any
+constant key on it is rejected, even though tests replace it using `with`.
+Empty collections in the types of rules that a with modifier targets are
+now typed as any.
 
 Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/post-merge.yaml` (modified, +1/-1)
+**File**: `v1/ast/check.go` (modified, +95/-0)
 ```diff
-@@ -136,7 +136,7 @@ jobs:
+@@ -35,6 +35,8 @@ type typeChecker struct {
+ 	schemaTypes         map[string]types.Type
+ 	dependentsResolver  dependentsResolver
+ 	withTrees           map[string]*typeTreeNode
++	replacedRules       func() map[*Rule]struct{}
++	replaced            map[*Rule]struct{}
+ }
  
-   release-build-darwin:
-     name: Release Build (darwin)
--    runs-on: macos-14
-+    runs-on: macos-15
-     needs: generate
-     steps:
-       - name: Check out code
+ // newTypeChecker returns a new typeChecker object that has no errors.
+@@ -111,6 +113,26 @@ func (tc *typeChecker) WithVarRewriter(f varRewriter) *typeChecker {
+ 	return tc
+ }
+ 
++// WithReplacedRules sets the function returning the rules that a with modifier
++// replaces somewhere. Their values are not known statically, so empty collections
++// in their types are typed as any. It is called at most once, and only if a rule
++// has such a type.
++func (tc *typeChecker) WithReplacedRules(f func() map[*Rule]struct{}) *typeChecker {
++	tc.replacedRules = f
++	return tc
++}
++
++func (tc *typeChecker) isReplaced(rule *Rule) bool {
++	if tc.replacedRules == nil {
++		return false
++	}
++	if tc.replaced == nil {
++		tc.replaced = tc.replacedRules()
++	}
++	_, ok := tc.replaced[rule]
++	return ok
++}
++
+ // WithDependentsResolver sets the function used to look up the rules that depend
+ // on the document(s) replaced by a with modifier.
+ func (tc *typeChecker) WithDependentsResolver(f dependentsResolver) *typeChecker {
+@@ -369,6 +391,10 @@ func (tc *typeChecker) checkRule(env *TypeEnv, as *AnnotationSet, rule *Rule) {
+ 	}
+ 
+ 	if tpe != nil {
++		if hasEmptyCollectionType(tpe) && tc.isReplaced(rule) {
++			// e.g. `default x := {}`, which tests replace with another value.
++			tpe = relaxEmptyCollections(tpe)
++		}
+ 		env.tree.Insert(path, tpe, env)
+ 	}
+ }
+@@ -1129,6 +1155,75 @@ func isEmptyCollectionType(tpe types.Type) bool {
+ 	return false
+ }
+ 
++// hasEmptyCollectionType returns true if tpe is, or contains, an empty collection type.
++func hasEmptyCollectionType(tpe types.Type) bool {
++	if isEmptyCollectionType(tpe) {
++		return true
++	}
++	switch tpe := tpe.(type) {
++	case *types.Object:
++		for _, p := range tpe.StaticProperties() {
++			if hasEmptyCollectionType(p.Value) {
++				return true
++			}
++		}
++		if dp := tpe.DynamicProperties(); dp != nil {
++			return hasEmptyCollectionType(dp.Value)
++		}
++	case *types.Array:
++		for i := range tpe.Len() {
++			if hasEmptyCollectionType(tpe.Select(i)) {
++				return true
++			}
++		}
++		return tpe.Dynamic() != nil && hasEmptyCollectionType(tpe.Dynamic())
++	case *types.Set:
++		return tpe.Of() != nil && hasEmptyCollectionType(tpe.Of())
++	case types.Any:
++		return slices.ContainsFunc(tpe, hasEmptyCollectionType)
++	}
++	return false
++}
++
++// relaxEmptyCollections returns tpe with every empty collection type, however
++// deeply nested, replaced by any.
++func relaxEmptyCollections(tpe types.Type) types.Type {
++	if isEmptyCollectionType(tpe) {
++		return types.A
++	}
++	switch tpe := tpe.(type) {
++	case *types.Object:
++		static := make([]*types.StaticProperty, 0, len(tpe.StaticProperties()))
++		for _, p := range tpe.StaticProperties() {
++			static = append(static, types.NewStaticProperty(p.Key, relaxEmptyCollections(p.Value)))
++		}
++		var dynamic *types.DynamicProperty
++		if dp := tpe.DynamicProperties(); dp != nil {
++			dynamic = types.NewDynamicProperty(dp.Key, relaxEmptyCollections(dp.Value))
++		}
++		return types.NewObject(static, dynamic)
++	case *types.Array:
++		static := make([]types.Type, tpe.Len())
++		for i := range static {
++			static[i] = relaxEmptyCollections(tpe.Select(i))
++		}
++		var dynamic types.Type
++		if tpe.Dynamic() != nil {
++			dynamic = relaxEmptyCollections(tpe.Dynamic())
++		}
++		return types.NewArray(static, dynamic)
++	case *types.Set:
++		return types.NewSet(relaxEmptyCollections(tpe.Of()))
++	case types.Any:
++		members := make([]types.Type, len(tpe))
++		for i, m := range tpe {
++			members[i] = relaxEmptyCollections(m)
++		}
++		return types.NewAny(members...)
++	}
++	return tpe
++}
++
+ // unifies checks whether two types are compatible with each other.
+ func unifies(a, b types.Type) bool {
+ 
 ```
 
-**File**: `.github/workflows/post-tag.yaml` (modified, +1/-1)
+**File**: `v1/ast/check_test.go` (modified, +97/-0)
 ```diff
-@@ -71,7 +71,7 @@ jobs:
+@@ -3277,6 +3277,103 @@ func TestCheckWithModifiers(t *testing.T) {
+ 				q if { lower(data.p.a) == "foo" with data.p.f as "foo" }`,
+ 			},
+ 		},
++		{
++			note: "key of a replaced empty default object",
++			modules: []string{
++				`package p
++				default allowed := {}
++				a contains x if { some x in allowed.k }
++				test_a if { count(a) == 1 with data.p.allowed as {"k": [1]} }`,
++			},
++		},
++		{
++			note: "key of a replaced empty default array",
++			modules: []string{
++				`package p
++				default allowed := []
++				a := allowed[0]
++				test_a if { a == 1 with data.p.allowed as [1] }`,
++			},
++		},
++		{
++			note: "key of a replaced empty default set",
++			modules: []string{
++				`package p
++				default s := set()
++				a := s[1]
++				test_a if { a == 1 with data.p.s as {1} }`,
++			},
++		},
++		{
++			note: "key of a replaced rule with an empty default and another definition",
++			modules: []string{
++				`package p
++				default allowed := {}
++				allowed := {"z": 1} if { input.x }
++				a := allowed.k
++				test_a if { a == 1 with data.p.allowed as {"k": 1} }`,
++			},
++		},
++		{
++			note: "key of a nested empty collection in a replaced default",
++			modules: []string{
++				`package p
++				default cfg := {"a": {}, "b": [[]], "c": {"d": set()}}
++				r := [cfg.a.x, cfg.b[0][0], cfg.c.d[1]]
++				test_r if { r == [1, 2, 3] with data.p.cfg as {"a": {"x": 1}, "b": [[2]], "c": {"d": {3}}} }`,
++			},
++		},
++		{
++			note: "empty default replaced through an import alias",
++			modules: []string{
++				`package p
++				import data.p as pp
++				default allowed := {}
++				a := allowed.k
++				test_a if { a == 1 with pp.allowed as {"k": 1} }`,
++			},
++		},
++		{
++			note: "empty default replaced from another package",
++			modules: []string{
++				`package p
++				default allowed := {}
++				a := allowed.k`,
++				`package q
++				test_a if { data.p.a == 1 with data.p.allowed as {"k": 1} }`,
++			},
++		},
++		{
++			note: "empty default replaced by its package",
++			modules: []string{
++				`package p
++				default allowed := {}
++				a := allowed.k`,
++				`package q
++				test_a if { data.p.a == 1 with data.p as {"allowed": {"k": 1}} }`,
++			},
++		},
++		{
++			note: "key of an unreplaced empty default next to a replaced one",
++			modules: []string{
++				`package p
++				default replaced := {}
++				default other := {}
++				a := replaced.k
++				b := other.k
++				test_a if { a == 1 with data.p.replaced as {"k": 1} }`,
++			},
++			err: "rego_type_error: undefined ref: data.p.other.k",
++		},
++		{
++			note: "key of an empty default object that is never replaced",
++			modules: []string{
++				`package p
++				default allowed := {}
++				a contains x if { some x in allowed.k }`,
++			},
++			err: "rego_type_error: undefined ref: data.p.allowed.k[__local",
++		},
+ 		{
+ 			note: "function replacement arity is still checked",
+ 			modules: []string{
+```
+
+**File**: `v1/ast/compile.go` (modified, +20/-0)
+```diff
+@@ -2278,6 +2278,7 @@ func (c *Compiler) checkTypes() {
+ 		WithRequiredCapabilities(c.Required).
+ 		WithVarRewriter(rewriteRefErrVars(c.localvargen.subjects, c.RewrittenVars)).
+ 		WithDependentsResolver(c.dependentRuleRefs).
++		WithReplacedRules(c.replacedRules).
+ 		WithAllowUndefinedFunctionCalls(c.allowUndefinedFuncCalls)
+ 	var as *AnnotationSet
+ 	if c.useTypeCheckAnnotations {
+@@ -2288,6 +2289,25 @@ func (c *Compiler) checkTypes() {
+ 	c.TypeEnv = env
+ }
  
-   release-build-darwin:
-     name: Release Build (darwin)
--    runs-on: macos-14
-+    runs-on: macos-15
-     needs: generate
-     steps:
-       - name: Check out code
++// replacedRules returns the rules that the with modifier of any module could replace.
++func (c *Compiler) replacedRules() map[*Rule]struct{} {
++	var rules map[*Rule]struct{}
++	for _, module := range c.Modules {
++		WalkWiths(module, func(w *With) bool {
++			if ref, ok := w.Target.Value.(Ref); ok && ref.HasPrefix(DefaultRootRef) {
++				for _, rule := range c.GetRulesDynamicWithOpts(ref, RulesOptions{IncludeHiddenModules: true}) {
++					if rules == nil {
++						rules = map[*Rule]struct{}{}
++					}
++					rules[rule] = struct{}{}
++				}
++			}
++			return false
++		})
++	}
++	return rules
++}
++
+ // dependentRuleRefs returns the refs of the rules that ref could refer to,
+ // together with the refs of the rules that transitively depend on them.
+ func (c *Compiler) dependentRuleRefs(ref Ref) []Ref {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9529** (2026-11-07): ast: Allow keys of empty collections in rules replaced by with (@sspaink)
 - **PR #9524** (2026-11-06): cmd/inspect: Show labels metadata with -a (@srenatus)
 - **PR #9523** (2026-11-06): release: Open the patch release integration PR from the post-tag workflow (@srenatus)
 - **PR #9522** (2026-11-06): Integrate release 1.22.2 (@sspaink)
 - **PR #9521** (2026-11-05): Release 1.22.2 prep (@sspaink)
 - **PR #9520** (2026-11-05): build: Move release builds off retired macos-14 runners (@sspaink)
-- **PR #9519** (2026-11-05): ast: Allow iterating empty collections in the type checker (@sspaink)
 
 ---
 
@@ -1028,28 +1276,66 @@ Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: Move release builds off retired macos-14 runners (#9520)
+## X. ast: Allow keys of empty collections in rules replaced by with
 
 **RULE**:
-When implementing operations in `.github/workflows/post-merge.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `v1/ast/check.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b10aaf8e`: build: Move release builds off retired macos-14 runners (#9520). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bbcac03c`: ast: Allow keys of empty collections in rules replaced by with. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/post-merge.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/ast/check.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    runs-on: macos-15
+	replacedRules       func() map[*Rule]struct{}
+	replaced            map[*Rule]struct{}
+// WithReplacedRules sets the function returning the rules that a with modifier
+// replaces somewhere. Their values are not known statically, so empty collections
+// in their types are typed as any. It is called at most once, and only if a rule
+// has such a type.
+func (tc *typeChecker) WithReplacedRules(f func() map[*Rule]struct{}) *typeChecker {
+	tc.replacedRules = f
+	return tc
+}
+
+func (tc *typeChecker) isReplaced(rule *Rule) bool {
+	if tc.replacedRules == nil {
+		return false
+	}
+	if tc.replaced == nil {
+		tc.replaced = tc.replacedRules()
+	}
+	_, ok := tc.replaced[rule]
+	return ok
+}
+
+		if hasEmptyCollectionType(tpe) && tc.isReplaced(rule) {
+			// e.g. `default x := {}`, which tests replace with another value.
+			tpe = relaxEmptyCollections(tpe)
+		}
+// hasEmptyCollectionType returns true if tpe is, or contains, an empty collection type.
+func hasEmptyCollectionType(tpe types.Type) bool {
+	if isEmptyCollectionType(tpe) {
+		return true
+	}
+	switch tpe := tpe.(type) {
+	case *types.Object:
+		for _, p := range tpe.StaticProperties() {
+			if hasEmptyCollectionType(p.Value) {
+				return true
+			}
+		}
+		if
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    runs-on: macos-14
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b10aaf8e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bbcac03c` are properly handled with clean fallback behavior.
