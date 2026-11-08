@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T06:32:59.599Z",
+  "last_updated": "2026-11-08T06:42:25.151Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -146801,10 +146801,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
       "source_version": "hf-baidu-unlimited-ocr-2",
-      "content_hash": "92fdb6db138f9c5946a2e8dcfd396e5970ce5c947abf8d61788511c84d7ba4e4",
+      "content_hash": "a485d497085605e57e117f8d25eb4b365a73f9a49b8b14c69ba3a1bc8e25e82f",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Sliding Window Attention Context Boundary Integrity",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MoE Expert Routing Stability Under Long Sequences",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 4770,
           "title": "Sparse Attention Windowing for Unbounded Context",
@@ -146836,7 +146846,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:10:57.025Z",
+      "verified_at": "2026-11-08T06:42:25.127Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -8250,3 +8250,4 @@ Every entry in this ledger must capture:
 | `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `e55f946d` | Multi-dimensional audit evidence | 2026-11-08T06:25:38.181Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T06:25:44.887Z |
 | `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-11-08T06:32:59.739Z |
+| `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-08T06:42:25.240Z |

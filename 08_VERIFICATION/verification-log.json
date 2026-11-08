@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-LARN",
-    "timestamp": "2026-11-05T17:29:05.987Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "4390e90e336b62b4b73348d865eeaf9e1eb52e8faaa79aa2a7cb659e0e147b7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-LEXX",
     "timestamp": "2026-11-05T17:29:11.397Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7475,21 @@
     "repository": "FastVideo/FastH3-Omni-Comfy",
     "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
     "contentHash": "7805a4f72db08bb89c80f4f2a3704c3d8339b28db63ae440388054c45c1300d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-T7X0",
+    "timestamp": "2026-11-08T06:42:25.236Z",
+    "repository": "baidu/Unlimited-OCR-2",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+    "contentHash": "a485d497085605e57e117f8d25eb4b365a73f9a49b8b14c69ba3a1bc8e25e82f",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

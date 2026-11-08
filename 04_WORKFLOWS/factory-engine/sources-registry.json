@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T03:07:52.854Z",
-    "lastVerified": "2026-11-08T03:07:52.854Z",
+    "lastChecked": "2026-11-08T06:42:19.311Z",
+    "lastVerified": "2026-11-08T06:42:19.311Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T06:33:02.320Z",
-    "lastVerified": "2026-11-08T06:33:02.320Z",
+    "lastChecked": "2026-11-08T06:42:27.833Z",
+    "lastVerified": "2026-11-08T06:42:27.833Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,8 +258,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T06:12:28.963Z",
-    "lastVerified": "2026-11-08T06:12:28.963Z",
+    "lastChecked": "2026-11-08T06:42:24.324Z",
+    "lastVerified": "2026-11-08T06:42:24.324Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -3065,9 +3065,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-07T03:21:43.438Z",
+    "lastChecked": "2026-11-08T06:42:21.767Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-07T03:21:43.438Z"
+    "lastVerified": "2026-11-08T06:42:21.767Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -4497,12 +4497,12 @@
     "lastVerified": "2026-11-07T17:22:33.277Z"
   },
   "aome510-spotify-player": {
-    "name": "aome510/spotify-player",
+    "name": "spotify-player",
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T21:06:37.054Z",
-    "lastVerified": "2026-11-06T21:06:37.054Z",
+    "lastChecked": "2026-11-08T06:42:09.341Z",
+    "lastVerified": "2026-11-08T06:42:09.341Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -4511,7 +4511,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "966d84a6"
   },
   "hf-meta-llama-meta-llama-3-8b": {
     "name": "meta-llama/Meta-Llama-3-8B",
@@ -6838,9 +6839,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-07T04:22:24.354Z",
+    "lastChecked": "2026-11-08T06:42:16.775Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-07T04:22:24.354Z"
+    "lastVerified": "2026-11-08T06:42:16.775Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -9863,9 +9864,9 @@
   "jinxiansen-swiftui": {
     "name": "SwiftUI",
     "officialUrl": "https://github.com/Jinxiansen/SwiftUI",
-    "lastChecked": "2026-11-05T05:46:41.398Z",
+    "lastChecked": "2026-11-08T06:42:14.256Z",
     "revisionIdentifier": "d8192c12",
-    "lastVerified": "2026-11-05T05:46:41.398Z"
+    "lastVerified": "2026-11-08T06:42:14.256Z"
   },
   "iaincollins-structured-data-testing-tool": {
     "name": "structured-data-testing-tool",
@@ -13339,13 +13340,13 @@
     "officialUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T20:09:54.849Z",
-    "lastVerified": "2026-11-04T20:09:54.849Z",
+    "lastChecked": "2026-11-08T06:42:12.033Z",
+    "lastVerified": "2026-11-08T06:42:12.033Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-    "contentHash": "92fdb6db138f9c5946a2e8dcfd396e5970ce5c947abf8d61788511c84d7ba4e4",
-    "promotedRulesCount": 0,
+    "contentHash": "a485d497085605e57e117f8d25eb4b365a73f9a49b8b14c69ba3a1bc8e25e82f",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

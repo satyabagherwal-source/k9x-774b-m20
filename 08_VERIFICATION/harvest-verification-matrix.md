@@ -8241,3 +8241,4 @@
 | `CYCLE-20261108-7MV6` | `2026-11-08T06:25:38.178Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`926952b6...`) |
 | `CYCLE-20261108-7S1G` | `2026-11-08T06:25:44.884Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`18de81b6...`) |
 | `CYCLE-20261108-H3KN` | `2026-11-08T06:32:59.735Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`7805a4f7...`) |
+| `CYCLE-20261108-T7X0` | `2026-11-08T06:42:25.236Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`a485d497...`) |

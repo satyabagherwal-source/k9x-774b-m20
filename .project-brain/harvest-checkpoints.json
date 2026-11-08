@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T06:32:59.750Z",
+  "last_updated": "2026-11-08T06:42:25.259Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -16401,14 +16401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr-2",
-      "content_hash": "92fdb6db138f9c5946a2e8dcfd396e5970ce5c947abf8d61788511c84d7ba4e4",
-      "verified_at": "2026-11-04T20:10:57.187Z",
+      "content_hash": "a485d497085605e57e117f8d25eb4b365a73f9a49b8b14c69ba3a1bc8e25e82f",
+      "verified_at": "2026-11-08T06:42:25.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:10:57.187Z"
+      "last_updated": "2026-11-08T06:42:25.258Z"
     },
     "Joooook/12306-mcp": {
       "repository": "Joooook/12306-mcp",
