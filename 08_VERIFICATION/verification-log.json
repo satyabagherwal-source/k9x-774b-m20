@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-4XPZ",
-    "timestamp": "2026-11-05T12:36:26.423Z",
-    "repository": "N1nEmAn/sapper-v2",
-    "learningId": "learn-github-n1neman-sapper-v2",
-    "contentHash": "924b6a9101e36089f6e4e107c701eb045752be3de6dcd55786e1fa58e581d13b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-4ZNY",
-    "timestamp": "2026-11-05T12:36:28.942Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "37b0b0024128bcabf15cc004354b16b26ab41bdaac4b120adf51d86066ed7a03",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-58U3",
     "timestamp": "2026-11-05T12:36:40.827Z",
     "repository": "zarf-dev/zarf",
@@ -7490,6 +7460,36 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary",
     "contentHash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-HNI1",
+    "timestamp": "2026-11-08T01:25:29.785Z",
+    "repository": "nitrojs/nitro",
+    "learningId": "learn-github-nitrojs-nitro",
+    "contentHash": "17668ac0888318dff8f9aa01b62d9fb1c22cbbaafda1011994d9870bb9500cb2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-HPN6",
+    "timestamp": "2026-11-08T01:25:32.562Z",
+    "repository": "argoproj/argo-events",
+    "learningId": "learn-github-argoproj-argo-events",
+    "contentHash": "da7b7aab1fdb82d7574ef13bc3fc2dd17f3d5dbe00457811da8fa1b232227508",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

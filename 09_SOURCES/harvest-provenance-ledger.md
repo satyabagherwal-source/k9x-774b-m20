@@ -8173,3 +8173,5 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-libsql` | `https://github.com/libsql/libsql` | `a1d031cb` | Multi-dimensional audit evidence | 2026-11-08T01:10:04.449Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `9b71df9a` | Multi-dimensional audit evidence | 2026-11-08T01:17:53.863Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `bf7f6dc2` | Multi-dimensional audit evidence | 2026-11-08T01:17:54.950Z |
+| `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `0317e652` | Multi-dimensional audit evidence | 2026-11-08T01:25:29.789Z |
+| `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `c6a8c5ae` | Multi-dimensional audit evidence | 2026-11-08T01:25:32.566Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T01:17:54.957Z",
-  "total_cycles_completed": 8129,
-  "total_learnings_persisted": 8129,
-  "total_rules_promoted": 7801,
+  "last_updated": "2026-11-08T01:25:32.572Z",
+  "total_cycles_completed": 8131,
+  "total_learnings_persisted": 8131,
+  "total_rules_promoted": 7803,
   "history": [
-    {
-      "timestamp": "2026-11-07T02:31:59.235Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T02:41:09.923Z",
-      "repository": "Xudong-Huang/may",
-      "learningId": "learn-github-xudong-huang-may",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T02:41:10.648Z",
       "repository": "webrecorder/pywb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T01:17:54.957Z",
       "repository": "SimonSchubert/LinuxCommandLibrary",
       "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T01:25:29.796Z",
+      "repository": "nitrojs/nitro",
+      "learningId": "learn-github-nitrojs-nitro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T01:25:32.572Z",
+      "repository": "argoproj/argo-events",
+      "learningId": "learn-github-argoproj-argo-events",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

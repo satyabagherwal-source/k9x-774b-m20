@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T01:17:54.962Z",
+  "last_updated": "2026-11-08T01:25:32.576Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3171,14 +3171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nitrojs-nitro",
-      "content_hash": "b3cf3a5d171cb333cc84ff6cba773c88aed98bc0cc9e20042d40ccef6462dcf9",
-      "verified_at": "2026-11-04T09:40:03.755Z",
+      "content_hash": "17668ac0888318dff8f9aa01b62d9fb1c22cbbaafda1011994d9870bb9500cb2",
+      "verified_at": "2026-11-08T01:25:29.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T09:40:03.755Z"
+      "last_updated": "2026-11-08T01:25:29.799Z"
     },
     "h3js/h3": {
       "repository": "h3js/h3",
@@ -6066,14 +6066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-events",
-      "content_hash": "37a32afa459a09952e339d50e110d4601fe1589feba4700a69f0d28b4fa016f8",
-      "verified_at": "2026-11-01T01:40:30.584Z",
+      "content_hash": "da7b7aab1fdb82d7574ef13bc3fc2dd17f3d5dbe00457811da8fa1b232227508",
+      "verified_at": "2026-11-08T01:25:32.575Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T01:40:30.584Z"
+      "last_updated": "2026-11-08T01:25:32.575Z"
     },
     "HelixDB/helix-db": {
       "repository": "HelixDB/helix-db",

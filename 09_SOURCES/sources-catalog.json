@@ -2023,10 +2023,10 @@
     "repository": "nitrojs/nitro",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/nitro",
-    "sourceVersion": "c7cf4fe9",
+    "sourceVersion": "0317e652",
     "license": "NOASSERTION",
-    "contentHash": "b3cf3a5d171cb333cc84ff6cba773c88aed98bc0cc9e20042d40ccef6462dcf9",
-    "lastHarvestedAt": "2026-11-04T09:40:03.748Z",
+    "contentHash": "17668ac0888318dff8f9aa01b62d9fb1c22cbbaafda1011994d9870bb9500cb2",
+    "lastHarvestedAt": "2026-11-08T01:25:29.789Z",
     "learningId": "learn-github-nitrojs-nitro"
   },
   "unjs-h3": {
@@ -3963,10 +3963,10 @@
     "repository": "argoproj/argo-events",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-events",
-    "sourceVersion": "7265166e",
+    "sourceVersion": "c6a8c5ae",
     "license": "Apache-2.0",
-    "contentHash": "37a32afa459a09952e339d50e110d4601fe1589feba4700a69f0d28b4fa016f8",
-    "lastHarvestedAt": "2026-11-01T01:40:30.577Z",
+    "contentHash": "da7b7aab1fdb82d7574ef13bc3fc2dd17f3d5dbe00457811da8fa1b232227508",
+    "lastHarvestedAt": "2026-11-08T01:25:32.566Z",
     "learningId": "learn-github-argoproj-argo-events"
   },
   "helixdb-helix-db": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T01:17:54.847Z",
+  "last_updated": "2026-11-08T01:25:32.467Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3451,11 +3451,16 @@
       "slug": "argoproj-argo-events",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-events",
-      "source_version": "7265166e",
-      "content_hash": "37a32afa459a09952e339d50e110d4601fe1589feba4700a69f0d28b4fa016f8",
+      "source_version": "c6a8c5ae",
+      "content_hash": "da7b7aab1fdb82d7574ef13bc3fc2dd17f3d5dbe00457811da8fa1b232227508",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (#4270)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1904,
           "title": "docs): invalid code in the doc (#4213)",
@@ -3477,7 +3482,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T01:40:30.493Z",
+      "verified_at": "2026-11-08T01:25:32.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81360,11 +81365,16 @@
       "slug": "unjs-nitro",
       "platform": "github",
       "source_url": "https://github.com/unjs/nitro",
-      "source_version": "c7cf4fe9",
-      "content_hash": "b3cf3a5d171cb333cc84ff6cba773c88aed98bc0cc9e20042d40ccef6462dcf9",
+      "source_version": "0317e652",
+      "content_hash": "17668ac0888318dff8f9aa01b62d9fb1c22cbbaafda1011994d9870bb9500cb2",
       "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "config): detect `index.html` and `server.ts` added before a vite restart (#5037)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1676,
           "title": "Unified Hook Merging In Deep Configuration Trees",
@@ -81421,7 +81431,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:40:03.657Z",
+      "verified_at": "2026-11-08T01:25:29.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
