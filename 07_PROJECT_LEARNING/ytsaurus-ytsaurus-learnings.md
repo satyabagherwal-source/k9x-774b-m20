@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `7da7e6c8`  
+> **Source Version**: `b97aa44c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T23:18:18.235Z  
+> **Timestamp**: 2026-11-08T20:31:30.193Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T23:18:16.609Z  
+> **Harvest Timestamp**: 2026-11-08T20:31:30.188Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2325 stars
+- **Stars / Engagement**: 2326 stars
 
 ---
 
@@ -1195,380 +1195,188 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8fcd5226` (2026-11-07)
-**Commit Message**: YT-30346: Isolate job-proxy build probes and reduce their frequency
+### Incident Patch 1: `2dd6ae69` (2026-11-08)
+**Commit Message**: Fix test_replication_card_migration cleanup ordering
 
-Slow job-proxy build probes block node heartbeats and can abort healthy jobs as `node_offline`. Run them asynchronously on the existing RPC heavy invoker once a minute; publish the result and update job-proxy availability on JobThread.
-commit_hash:39f68fe6d17a96495fe29d569cc7f3f92a33ba3c
+Retain foreign replication cards until migration confirmation notifies
+watchers, preventing stale cached eras. Use a new reign to preserve older
+mutation replay.
 
-**File**: `yt/yt/server/lib/exec_node/config.cpp` (modified, +1/-1)
+Assigned YT test: test_chaos.py::TestChaosMetaCluster[0]::test_replication_card_migration[suspend] (savrus, osidorkin)
+
+Test history: https://nda.ya.ru/t/PZrtS9Ba7w3gHv
+commit_hash:58f1efe2c81aee771e37904b509cc4b7c37b9325
+
+**File**: `yt/yt/server/node/chaos_node/chaos_manager.cpp` (modified, +8/-0)
 ```diff
-@@ -820,7 +820,7 @@ void TJobControllerDynamicConfig::Register(TRegistrar registrar)
-         .Default(TDuration::Seconds(60));
+@@ -1225,6 +1225,7 @@ class TChaosManager
  
-     registrar.Parameter("job_proxy_build_info_update_period", &TThis::JobProxyBuildInfoUpdatePeriod)
--        .Default(TDuration::Seconds(5));
-+        .Default(TDuration::Minutes(1));
- 
-     registrar.Parameter("disable_job_proxy_profiling", &TThis::DisableJobProxyProfiling)
-         .Default(false);
-```
-
-**File**: `yt/yt/server/node/exec_node/job_controller.cpp` (modified, +15/-10)
-```diff
-@@ -42,11 +42,14 @@
- #include <yt/yt/library/process/subprocess.h>
- 
- #include <yt/yt/core/concurrency/periodic_executor.h>
-+#include <yt/yt/core/concurrency/scheduler_api.h>
- 
- #include <yt/yt/core/misc/backoff_strategy.h>
- #include <yt/yt/core/misc/process_exit_profiler.h>
- #include <yt/yt/core/misc/statistics.h>
- 
-+#include <yt/yt/core/rpc/dispatcher.h>
-+
- #include <yt/yt/core/ytree/composite_map.h>
- #include <yt/yt/core/ytree/service_combiner.h>
- #include <yt/yt/core/ytree/virtual.h>
-@@ -1986,22 +1989,24 @@ class TJobController
+     void HydraChaosNodeRemoveMigratedReplicationCards(NChaosNode::NProto::TReqRemoveMigratedReplicationCards* request)
      {
-         YT_ASSERT_THREAD_AFFINITY(JobThread);
++        auto reign = static_cast<EChaosReign>(GetCurrentMutationContext()->Request().Reign);
+         int cardsRemoved = 0;
+         for (const auto& protoMigratedCard : request->migrated_cards()) {
+             auto replicationCardId = FromProto<TReplicationCardId>(protoMigratedCard.replication_card_id());
+@@ -1237,6 +1238,13 @@ class TChaosManager
+                 continue;
+             }
  
--        // TODO(max42): not sure if running ytserver-job-proxy --build --yson from JobThread
--        // is a good idea; maybe delegate to another thread?
--
-         TErrorOr<TBuildInfoPtr> buildInfo;
++            // COMPAT(savrus)
++            if (reign >= EChaosReign::RemoveOnlyConfirmedMigratedCards &&
++                replicationCard->GetState() != EReplicationCardState::Migrated)
++            {
++                continue;
++            }
++
+             for (const auto& [replicaId, replicaInfo] : replicationCard->Replicas()) {
+                 ReplicaCounters_.erase(replicaId);
+             }
+```
+
+**File**: `yt/yt/server/node/chaos_node/foreign_migrated_replication_card_remover.cpp` (modified, +1/-1)
+```diff
+@@ -93,7 +93,7 @@ class TForeignMigratedReplicationCardRemover
+                 continue;
+             }
  
-         try {
--            auto jobProxyPath = ResolveBinaryPath(JobProxyProgramName)
--                .ValueOrThrow();
-+            buildInfo = WaitFor(BIND([] {
-+                auto jobProxyPath = ResolveBinaryPath(JobProxyProgramName)
-+                    .ValueOrThrow();
+-            if (!replicationCard->IsMigrated()) {
++            if (replicationCard->GetState() != EReplicationCardState::Migrated) {
+                 continue;
+             }
  
--            TSubprocess jobProxy(jobProxyPath);
--            jobProxy.AddArguments({"--build", "--yson"});
-+                TSubprocess jobProxy(jobProxyPath);
-+                jobProxy.AddArguments({"--build", "--yson"});
+```
+
+**File**: `yt/yt/server/node/chaos_node/serialize.h` (modified, +1/-0)
+```diff
+@@ -59,6 +59,7 @@ DEFINE_ENUM(EChaosReign,
+     ((GrantChaosLeaseShortcutsToNewCells)       (300505)) // shamteev
+     ((CheckLastTransactionCommitTimestamp)      (300506)) // osidorkin
+     ((CheckReplicaPathBeforeApplying)           (300507)) // osidorkin
++    ((RemoveOnlyConfirmedMigratedCards)         (300508)) // savrus
+ );
  
--            auto result = jobProxy.Execute();
--            result.Status.ThrowOnError();
-+                auto result = jobProxy.Execute();
-+                result.Status.ThrowOnError();
- 
--            buildInfo = ConvertTo<TBuildInfoPtr>(TYsonString(result.Output));
-+                return ConvertTo<TBuildInfoPtr>(TYsonString(result.Output));
-+            })
-+                .AsyncVia(NRpc::TDispatcher::Get()->GetHeavyInvoker())
-+                .Run())
-+                .ValueOrThrow();
-         } catch (const std::exception& ex) {
-             buildInfo = TError(NExecNode::EErrorCode::JobProxyUnavailable, "Failed to receive job proxy build info")
-                 .With(ex);
+ static_assert(TEnumTraits<EChaosReign>::IsMonotonic, "Chaos reign enum is not monotonic");
 ```
 
 ---
 
-### Incident Patch 2: `d322d908` (2026-11-07)
-**Commit Message**: YQL-21806: Fix Clang Tidy diagnostics
+### Incident Patch 2: `761f62fc` (2026-11-08)
+**Commit Message**: YT-30345: Reduce the TestLayers fixture and split its class budget
 
-{% cut "Ovsyana ✨ PR Descirption" %}
+TestLayers exceeded its 480-second class limit at 497.9 seconds across 28 cases. The fixture starts three masters and five nodes, including two full-node restarts in the disabled-layer-location case.
 
-### Reason
+Reduce the fixture to one master and one node with replication factors of one, and split the class into two partitions.
+commit_hash:fcaed110b3683f66fca540002e79932e1d3a0a10
 
-The YQL Clang Tidy flow fails in 12 style suites covering fastcheck, UDF metadata, the SQL proto parser, core tests, and MiniKQL.
-
-### Design
-
-Add missing literal-argument comments and designated initializers, fix a static variable name, and replace two test buffers with `std::array`.
-
-Keep the public UDF metadata header compatible with C by suppressing `modernize-use-using` on its three ABI typedefs. Document the intentional ignored return value of `release()` after ownership is transferred to the metadata object.
-
-{% endcut %}
-commit_hash:248bdfe878b4ada8f8b74f356521fdb67b1e11bc
-
-**File**: `yql/essentials/core/ut/yql_expr_type_annotation_ut.cpp` (modified, +1/-1)
+**File**: `yt/yt/tests/integration/node/test_layers.py` (modified, +11/-0)
 ```diff
-@@ -262,7 +262,7 @@ struct TLazyBindFixture {
-         const auto ast = ParseAst(TStringBuilder() << "((return " << expression << "))");
-         UNIT_ASSERT_C(ast.IsOk(), ast.Issues.ToString());
-         UNIT_ASSERT_C(CompileExpr(*ast.Root, Expression, Context, nullptr, nullptr), Context.IssueManager.GetIssues().ToString());
--        return InstantAnnotateTypes(Expression, Context, false, Types);
-+        return InstantAnnotateTypes(Expression, Context, /*wholeProgram=*/false, Types);
-     }
- };
+@@ -110,6 +110,17 @@ class TestPortoLayersBase(TestLayersBase):
  
-```
-
-**File**: `yql/essentials/minikql/computation/mkql_value_builder_ut.cpp` (modified, +6/-4)
-```diff
-@@ -12,6 +12,8 @@
- #include <arrow/scalar.h>
- #include <arrow/chunked_array.h>
  
-+#include <array>
+ class TestLayers(TestPortoLayersBase):
++    NUM_MASTERS = 1
++    NUM_NODES = 1
++    NUM_TEST_PARTITIONS = 2
 +
- namespace NYql::NCommon {
- 
- TString PgValueToNativeText(const NUdf::TUnboxedValuePod& value, ui32 pgTypeId);
-@@ -108,10 +110,10 @@ class TMiniKQLValueBuilderTest: public TTestBase {
- 
-     void TestValueStringViews() {
-         const IValueBuilder& builder = Builder_;
--        const char digits[] = {'4', '2', 'x'};
--        UNIT_ASSERT_VALUES_EQUAL(builder.ValueFromString(EDataSlot::Int32, TStringRef(digits, 2)).Get<i32>(), 42);
--        const char binary[] = {'a', '\0', 'b'};
--        for (const TStringRef text : {TStringRef(""), TStringRef(binary, sizeof(binary)),
-+        const std::array<char, 3> digits = {'4', '2', 'x'};
-+        UNIT_ASSERT_VALUES_EQUAL(builder.ValueFromString(EDataSlot::Int32, TStringRef(digits.data(), 2)).Get<i32>(), 42);
-+        const std::array<char, 3> binary = {'a', '\0', 'b'};
-+        for (const TStringRef text : {TStringRef(""), TStringRef(binary.data(), binary.size()),
-                                       TStringRef("a string longer than an embedded value")}) {
-             const auto parsed = builder.ValueFromString(EDataSlot::String, text);
-             UNIT_ASSERT(parsed);
-```
-
-**File**: `yql/essentials/public/fastcheck/abi/impl/result.h` (modified, +2/-2)
-```diff
-@@ -14,8 +14,8 @@ struct TResult {
- 
- template <class THandle>
- THandle* AllocationFailure() noexcept {
--    static THandle result;
--    return &result;
-+    static THandle Result;
-+    return &Result;
- }
- 
- template <class THandle, class TFunction>
-```
-
-**File**: `yql/essentials/public/fastcheck/linter.cpp` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ TSet<TString> ListChecks(const TMaybe<TVector<TCheckFilter>>& filters) {
-     NAbi::NProto::TLinterRequest request;
-     request.SetListOnly(true);
-     NAbi::EncodeFilters(filters, request);
--    const auto result = Invoke(request, nullptr);
-+    const auto result = Invoke(request, /*metadata=*/nullptr);
-     return {result.GetCheckNames().begin(), result.GetCheckNames().end()};
- }
- 
-```
-
-**File**: `yql/essentials/public/udf_meta/abi/udf_meta.h` (modified, +3/-3)
-```diff
-@@ -10,13 +10,13 @@ extern "C" {
-     #define YQL_UDF_META_NOEXCEPT
- #endif
- 
--    typedef struct TYqlUdfMetaString {
-+    typedef struct TYqlUdfMetaString { // NOLINT(modernize-use-using): C-compatible ABI.
-         const char* Data;
-         size_t Size;
-     } TYqlUdfMetaString;
- 
-     // String buffers are immutable and remain valid until the owning cookie is freed.
--    typedef struct TYqlUdfMetaFunction {
-+    typedef struct TYqlUdfMetaFunction { // NOLINT(modernize-use-using): C-compatible ABI.
-         int IsTypeAwareness;
-         TYqlUdfMetaString CallableType;
-         TYqlUdfMetaString RunConfigType;
-@@ -34,7 +34,7 @@ extern "C" {
-     // they return 1 for presence, 0 for absence, or -1 for an exception.
-     // GetMetadata writes a caller-owned descriptor and never exposes a C++ object.
-     // Copies borrow the cookie; Free must be called exactly once by its owner.
--    typedef struct TYqlUdfMeta {
-+    typedef struct TYqlUdfMeta { // NOLINT(modernize-use-using): C-compatible ABI.
-         void* Context;
-         void (*Free)(void* context) YQL_UDF_META_NOEXCEPT;
-         int (*HasModule)(const void* context, TYqlUdfMetaString module) YQL_UDF_META_NOEXCEPT;
-```
-
-**File**: `yql/essentials/public/udf_meta/parse.cpp` (modified, +1/-1)
-```diff
-@@ -160,7 +160,7 @@ int GetMetadata(const void* context, TYqlUdfMetaString module, TYqlUdfMetaString
- std::unique_ptr<TUdfMeta> ParseUdfMeta(const NJson::TJsonValue& json) {
-     auto storage = std::make_unique<TStorage>(json);
-     auto result = std::make_unique<TUdfMeta>(TYqlUdfMeta{storage.get(), Free, HasModule, HasFunction, GetMetadata});
--    storage.release();
-+    storage.release(); // NOLINT(bugprone-unused-return-value): ownership has been transferred to result.
-     return result;
- }
- 
-```
-
-**File**: `yql/essentials/sql/v1/proto_parser/check/check_range.cpp` (modified, +6/-6)
-```diff
-@@ -97,7 +97,7 @@ class TRangeChecker final {
-             if (!index) {
-                 return Nothing();
-             }
--            return TVisitResult{{true, *index, *index}, *index};
-+            return TVisitResult{.Range = {.HasToken = true, .Start = *index, .End = *index}, .NextTokenIndex = *index};
-         }
- 
-         const auto* reflection = node.GetReflection();
-@@ -131,17 +131,17 @@ class TRangeChecker final {
- 
-         // The EOF terminal is consumed but intentionally has no TToken message.
-         if (descriptor->name() == "TRule_sql_stmt_list" || descriptor->name() == "TRule_ansi_sql_stmt_list") {
--            derived.Include({true, static_cast<ui32>(Tokens_.size() - 1), static_cast<ui32>(Tokens_.size() - 1)});
-+            derived.Include({.HasToken = true, .Start = static_cast<ui32>(Tokens_.size() - 1), .End = static_cast<ui32>(Tokens_.size() - 1)});
-         }
- 
--        TTokenIndexRange expected{nextTokenIndex, static_cast<ui32>(nextTokenIndex - 1)};
-+        TTokenIndexRange expected{.Start = nextTokenIndex, .End = static_cast<ui32>(nextTokenIndex - 1)};
-         if (derived.HasToken) {
--            expected = {derived.Start, derived.End};
-+            expected = {.Start = derived.Start, .End = derived.End};
-         }
-         if (!CheckStoredRange(node, path, expected)) {
-             return Nothing();
-         }
--        return TVisitResult{derived, nextTokenIndex};
-+        return TVisitResult{.Range = derived, .NextTokenIndex = nextTokenIndex};
-     }
- 
-     bool CheckStoredRange(const Message& node, const TString& path, TTokenIndexRange expected) {
-@@ -153,7 +153,7 @@ class TRangeChecker final {
-             return false;
-         }
-         const auto* reflection = node.GetReflection();
--        const TTokenIndexRange actual{reflection->GetUInt32(node, start), reflection->GetUInt32(node, end)};
-+        const TTokenIndexRange actual{.Start = reflection->GetUInt32(node, start), .End = reflection->GetUInt32(node, end)};
-         if (actual.Start != expected.Start || actual.End != expected.End) {
-             Issues_.AddIssue(TStringBuilder() << path << " (" << descriptor->full_name() << ") has token range [" << actual.Start << ", " << actual.End
-                                               << "], expected [" << expected.Start << ", " << expected.End << ']');
-```
-
-**File**: `yql/essentials/sql/v1/proto_parser/check/check_range_ut.cpp` (modified, +3/-3)
-```diff
-@@ -18,8 +18,8 @@ void CheckQuery(const TString& query, bool ansiLexer = false) {
-     NSQLTranslation::TParsedTokenList tokens;
- 
-     TParsers parsers;
--    parsers.Antlr4 = MakeAntlr4ParserFactory(false, false, Nothing());
--    parsers.Antlr4Ansi = MakeAntlr4AnsiParserFactory(false, false, Nothing());
-+    parsers.Antlr4 = MakeAntlr4ParserFactory(/*isAmbiguityError=*/false, /*isAmbiguityDebugging=*/false, Nothing());
-+    parsers.Antlr4Ansi = MakeAntlr4AnsiParserFactory(/*isAmbiguityError=*/false, /*isAmbiguityDebugging=*/false, Nothing());
-     const auto* tree = SqlAST(parsers, query, "", issues, NSQLTranslation::SQL_MAX_PARSER_ERRORS, ansiLexer, &arena);
-     UNIT_ASSERT_C(tree, issues.ToString());
- 
-@@ -63,7 +63,7 @@ Y_UNIT_TEST(AnsiRoot) {
- }
- 
- Y_UNIT_TEST(AnsiLexer) {
--    CheckQuery("SELECT 1", true);
-+    CheckQuery("SELECT 1", /*ansiLexer=*/true);
- }
- } // Y_UNIT_TEST_SUITE(ProtoParserCheckRangeTests)
- 
++    DELTA_DYNAMIC_MASTER_CONFIG = {
++        "cypress_manager": {
++            "default_table_replication_factor": 1,
++            "default_file_replication_factor": 1,
++        },
++    }
++
+     @authors("ilpauzner")
+     def test_disabled_layer_locations(self):
+         for node in self.Env.configs["node"]:
 ```
 
 ---
 
-### Incident Patch 3: `7da7e6c8` (2026-11-07)
-**Commit Message**: YT-30274, YT-30275: fix default CA config in tests and use lazy tx externalization by default
-commit_hash:8f41b41c21300641629f0e85c94569acef438d8d
+### Incident Patch 3: `595f9309` (2026-11-08)
+**Commit Message**: YT-29246 Fix test_get_table_pivot_keys across secondary masters
 
-**File**: `yt/python/yt/environment/default_config.py` (modified, +0/-7)
+Synchronize mount-info reads with the object's native master so foreign node
+registration reaches the external master before lookup.
+
+Assigned YT test: test_dynamic_tables.py::TestDynamicTablesPortal[*]::test_get_table_pivot_keys (kiselyovp)
+
+Test history: https://nda.ya.ru/t/ck5FJdby7w4Juy
+commit_hash:dc5924097e79e07a803589ce342e777103bf472b
+
+**File**: `yt/yt/ytlib/tablet_client/native_table_mount_cache.cpp` (modified, +21/-2)
 ```diff
-@@ -109,10 +109,6 @@ def get_dynamic_master_config():
+@@ -12,6 +12,7 @@
+ 
+ #include <yt/yt/ytlib/hive/cell_directory.h>
+ 
++#include <yt/yt/ytlib/object_client/helpers.h>
+ #include <yt/yt/ytlib/object_client/object_service_proxy.h>
+ 
+ #include <yt/yt/ytlib/table_client/table_ypath_proxy.h>
+@@ -38,6 +39,8 @@
+ 
+ #include <yt/yt/core/yson/string.h>
+ 
++#include <yt/yt/core/ytree/public.h>
++
+ #include <yt/yt_proto/yt/core/rpc/proto/rpc.pb.h>
+ 
+ #include <yt/yt_proto/yt/core/ytree/proto/ypath.pb.h>
+@@ -176,7 +179,13 @@ class TTableMountCache
+                 if (!mountInfoOrError.IsOK() && PrimaryRevision_) {
+                     WaitFor(RequestTableAttributes(PrimaryRevision_))
+                         .ThrowOnError();
+-                    mountInfoOrError = WaitFor(RequestMountInfo(NHydra::NullRevision));
++
++                    auto syncWithNativeCell = mountInfoOrError.FindMatching(NYTree::EErrorCode::ResolveError).has_value();
++                    mountInfoOrError = WaitFor(RequestMountInfo(
++                        syncWithNativeCell
++                            ? SecondaryResponseRevision_
++                            : NHydra::NullRevision,
++                        syncWithNativeCell));
+                 }
+ 
+                 if (!mountInfoOrError.IsOK() && SecondaryRevision_) {
+@@ -208,6 +217,7 @@ class TTableMountCache
+         TCellTag CellTag_;
+         NHydra::TRevision PrimaryRevision_ = NHydra::NullRevision;
+         NHydra::TRevision SecondaryRevision_ = NHydra::NullRevision;
++        NHydra::TRevision SecondaryResponseRevision_ = NHydra::NullRevision;
+ 
+         TMasterReadOptions GetMasterReadOptions()
+         {
+@@ -291,7 +301,9 @@ class TTableMountCache
              }
-         },
+         }
  
--        "chunk_service": {
--            "use_lazy_transaction_externalization": True,
--        },
--
-         "node_tracker": {
-             "master_cache_manager": {
-                 "update_period": 1000,
-@@ -162,7 +158,6 @@ def get_dynamic_master_config():
-             "forbid_transaction_actions_for_cypress_transactions": True,
-             "profiling_period": 100,
-             "alert_flush_period": 100,
--            "enable_lazy_transaction_externalization": True,
-         },
-         "table_manager": {
-             "enable_column_constraints_for_tables": True,
-@@ -449,8 +444,6 @@ def get_controller_agent_config():
-                 "duration_before_job_considered_disappeared_from_node": 1000,
-                 "node_disconnection_timeout": 2000,
-             },
--
--            "use_lazy_transaction_externalization": True,
-         },
-     }
+-        TFuture<TTableMountInfoPtr> RequestMountInfo(NHydra::TRevision refreshSecondaryRevision)
++        TFuture<TTableMountInfoPtr> RequestMountInfo(
++            NHydra::TRevision refreshSecondaryRevision,
++            bool syncWithNativeCell = false)
+         {
+             auto connection = Connection_.Lock();
+             if (!connection) {
+@@ -315,6 +327,9 @@ class TTableMountCache
+             SetBalancingHeader(batchReq, connection, options);
  
-```
-
-**File**: `yt/yt/tests/library/yt_env_setup.py` (modified, +32/-8)
-```diff
-@@ -1575,21 +1575,35 @@ def apply_config_patches(cls, configs, ytserver_version, cluster_index, cluster_
+             auto req = TTableYPathProxy::GetMountInfo(FromObjectId(TableId_));
++            if (syncWithNativeCell && CellTagFromId(TableId_) != connection->GetPrimaryMasterCellTag()) {
++                AddCellTagToSyncWith(req, TableId_);
++            }
+             SetCachingHeader(req, connection, options, refreshSecondaryRevision);
  
-         for index, config in enumerate(configs["controller_agent"]):
-             update_inplace(config, YTEnvSetup._DEFAULT_DELTA_CONTROLLER_AGENT_CONFIG)
-+
-+            master_version = "trunk"
-+            controller_agent_version = "trunk"
-+            for version, components in cls.ARTIFACT_COMPONENTS.items():
-+                if "master" in components:
-+                    master_version = version
-+                if "controller_agent" in components:
-+                    controller_agent_version = version
-+
-             if not cls._is_ground_cluster(index) and \
-                     (cls.get_param("ENABLE_CYPRESS_TRANSACTIONS_IN_SEQUOIA", index) or
-                      cls.get_param("ENABLE_SYS_OPERATIONS_ROOTSTOCK", index)):
-                 assert cls.get_param("ENABLE_CYPRESS_TRANSACTIONS_IN_SEQUOIA", index)
--                for version, components in cls.ARTIFACT_COMPONENTS.items():
--                    yt_commands.print_debug(f"version = {version}, components = {components}")
--                    if "controller_agent" not in components:
--                        continue
--                    # COMPAT(kvk1920)
--                    if version == "trunk" or version >= "25_4":
--                        continue
-+
-+                # COMPAT(kvk1920)
-+                if controller_agent_version != "trunk" and controller_agent_version < "25_4":
-                     update_inplace(config, {
-                         "set_committed_attribute_via_transaction_action": False,
-                         "commit_operation_cypress_node_changes_via_system_transaction": True,
-                     })
-+
-+            # COMPAT(kvk1920)
-+            if (controller_agent_version == "trunk" or controller_agent_version >= "26_3") and \
-+                    (master_version == "trunk" or master_version >= "26_3"):
-+                yt_commands.print_debug("Using lazy trasaction externalization in CA")
-+                update_inplace(config, {"controller_agent": {
-+                    "use_lazy_transaction_externalization": True,
-+                }})
-+
-             # COMPAT(pogorelov): controller-agent versions before 26.2 default to
-             # the legacy sorted pool; force the new one to match trunk behavior.
-             controller_agent_version = None
-@@ -2614,7 +2628,17 @@ def _apply_master_dynamic_config_patches(cls, config, cluster_index):
-         if not cls.TEST_MAINTENANCE_FLAGS and cls.Env.get_component_version("ytserver-master").abi >= (23, 1):
-             config["node_tracker"]["forbid_maintenance_attribute_writes"] = True
+             size_t hash = 0;
+@@ -337,6 +352,10 @@ class TTableMountCache
  
--        config.setdefault("chunk_service", {})
-+        # COMPAT(kvk1920)
-+        master_version = "trunk"
-+        for version, components in cls.ARTIFACT_COMPONENTS.items():
-+            if "master" in components:
-+                master_version = version
-+                break
-+        if master_version == "trunk" or master_version >= "26_3":
-+            config.setdefault("transaction_manager", {})["enable_lazy_transaction_externalization"] = True
-+            config.setdefault("chunk_service", {})["use_lazy_transaction_externalization"] = True
-+        else:
-+            config.setdefault("cell_master", {}).setdefault("logging", {}).setdefault("message_level_overrides")["Lazy transaction externalization is disabled but someone requested it"] = "error"
+         TTableMountInfoPtr OnTableMountInfoReceived(const TObjectServiceProxy::TErrorOrRspExecuteBatchPtr& batchRspOrError)
+         {
++            SecondaryResponseRevision_ = batchRspOrError.IsOK() && batchRspOrError.Value()->GetResponseCount() == 1
++                ? batchRspOrError.Value()->GetRevision(0)
++                : NHydra::NullRevision;
++
+             THROW_ERROR_EXCEPTION_IF_FAILED(GetCumulativeError(batchRspOrError), "Error getting mount info for table %v",
+                 Path_);
  
-         # COMPAT(cherepashka): YT-27231, drop after enable_location_indexes_in_data_node_heartbeats will be enabled by default.
-         if cls.combined_envs[cluster_index].yt_config.enable_multidaemon:
 ```
 
 #### Recent Merged Pull Requests:
@@ -1597,28 +1405,35 @@ commit_hash:8f41b41c21300641629f0e85c94569acef438d8d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-30346: Isolate job-proxy build probes and reduce their frequency
+## X. test_replication_card_migration cleanup ordering
 
 **RULE**:
-When implementing operations in `yt/yt/server/lib/exec_node/config.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/server/node/chaos_node/chaos_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8fcd5226`: YT-30346: Isolate job-proxy build probes and reduce their frequency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dd6ae69`: test_replication_card_migration cleanup ordering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/lib/exec_node/config.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/node/chaos_node/chaos_manager.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        .Default(TDuration::Minutes(1));
+        auto reign = static_cast<EChaosReign>(GetCurrentMutationContext()->Request().Reign);
+            // COMPAT(savrus)
+            if (reign >= EChaosReign::RemoveOnlyConfirmedMigratedCards &&
+                replicationCard->GetState() != EReplicationCardState::Migrated)
+            {
+                continue;
+            }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        .Default(TDuration::Seconds(5));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8fcd5226` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dd6ae69` are properly handled with clean fallback behavior.

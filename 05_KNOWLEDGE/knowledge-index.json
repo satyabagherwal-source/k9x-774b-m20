@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T20:21:47.933Z",
+  "last_updated": "2026-11-08T20:31:31.123Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -65684,8 +65684,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "7da7e6c8",
-      "content_hash": "be6ed8a8d1d6fdb9f2b17fc3e0f111f39d21ae69f81c900e44a2e96be1429585",
+      "source_version": "b97aa44c",
+      "content_hash": "692420c164801127b8aa7113a7aa8ee433cb38549d4fc14eeff0f8c465d808d6",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -65697,6 +65697,11 @@
         {
           "number": null,
           "title": "YT-30346: Isolate job-proxy build probes and reduce their frequency",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test_replication_card_migration cleanup ordering",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65780,7 +65785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T23:18:19.450Z",
+      "verified_at": "2026-11-08T20:31:31.105Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -184322,7 +184327,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
       "source_version": "hf-nvidia-nvidia-nemotronlabs-re-use",
-      "content_hash": "cf5270dded6d39d0b643c2148f30a944369134c882e01283db776eac03c1fae9",
+      "content_hash": "4e750a0e12a60a91925ca8e841e1f13d99b8bb87a691c18046ab4c73ec4870f5",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
       "promoted_rules": [],
@@ -184331,7 +184336,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:46:19.543Z",
+      "verified_at": "2026-11-08T20:31:14.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

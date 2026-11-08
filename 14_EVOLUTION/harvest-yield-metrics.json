@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T20:21:48.043Z",
-  "total_cycles_completed": 8343,
-  "total_learnings_persisted": 8343,
-  "total_rules_promoted": 8142,
+  "last_updated": "2026-11-08T20:31:31.228Z",
+  "total_cycles_completed": 8345,
+  "total_learnings_persisted": 8345,
+  "total_rules_promoted": 8143,
   "history": [
-    {
-      "timestamp": "2026-11-08T02:40:31.190Z",
-      "repository": "qybaihe/bla",
-      "learningId": "learn-github-qybaihe-bla",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T02:40:33.195Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T02:40:49.256Z",
       "repository": "milvus-io/milvus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T20:21:48.043Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:31:14.848Z",
+      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:31:31.228Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

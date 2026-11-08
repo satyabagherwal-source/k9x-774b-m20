@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-0OE1",
-    "timestamp": "2026-11-06T14:40:46.201Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "0d5945e902dfc7bc8144cfcee73e3f171a1be629f086a4c586f75a03c364da07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-9NAM",
-    "timestamp": "2026-11-06T14:47:44.686Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "1b9f4aae098d8aa8ec24c354b90a289321910f685a5f1fae23135729350ba287",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-9P2G",
     "timestamp": "2026-11-06T14:47:46.984Z",
     "repository": "karakeep-app/karakeep",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "aa19150b9d9de966ebfc56efa4fd53a21a9545ac4295fe6ad57cbc48a0b73d96",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-F3IW",
+    "timestamp": "2026-11-08T20:31:14.840Z",
+    "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+    "contentHash": "4e750a0e12a60a91925ca8e841e1f13d99b8bb87a691c18046ab4c73ec4870f5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-FG5N",
+    "timestamp": "2026-11-08T20:31:31.211Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "692420c164801127b8aa7113a7aa8ee433cb38549d4fc14eeff0f8c465d808d6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

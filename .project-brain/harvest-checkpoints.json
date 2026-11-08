@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T20:21:48.047Z",
+  "last_updated": "2026-11-08T20:31:31.232Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "be6ed8a8d1d6fdb9f2b17fc3e0f111f39d21ae69f81c900e44a2e96be1429585",
-      "verified_at": "2026-11-07T23:18:19.577Z",
+      "content_hash": "692420c164801127b8aa7113a7aa8ee433cb38549d4fc14eeff0f8c465d808d6",
+      "verified_at": "2026-11-08T20:31:31.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T23:18:19.577Z"
+      "last_updated": "2026-11-08T20:31:31.231Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -17976,14 +17976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-      "content_hash": "cf5270dded6d39d0b643c2148f30a944369134c882e01283db776eac03c1fae9",
-      "verified_at": "2026-11-05T03:46:19.640Z",
+      "content_hash": "4e750a0e12a60a91925ca8e841e1f13d99b8bb87a691c18046ab4c73ec4870f5",
+      "verified_at": "2026-11-08T20:31:14.851Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:46:19.640Z"
+      "last_updated": "2026-11-08T20:31:14.851Z"
     },
     "ricursiveAI/Ripple-65B-Preview": {
       "repository": "ricursiveAI/Ripple-65B-Preview",

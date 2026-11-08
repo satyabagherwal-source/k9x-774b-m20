@@ -8378,3 +8378,5 @@
 | `CYCLE-20261108-2KSU` | `2026-11-08T20:21:30.702Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`7e037497...`) |
 | `CYCLE-20261108-2QBM` | `2026-11-08T20:21:37.858Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7851a9d5...`) |
 | `CYCLE-20261108-2Y69` | `2026-11-08T20:21:48.033Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aa19150b...`) |
+| `CYCLE-20261108-F3IW` | `2026-11-08T20:31:14.840Z` | `nvidia/NVIDIA-NemotronLabs-RE-USE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md` | Yes (`4e750a0e...`) |
+| `CYCLE-20261108-FG5N` | `2026-11-08T20:31:31.211Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`692420c1...`) |
