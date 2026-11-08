@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T17:40:46.342Z",
+  "last_updated": "2026-11-08T01:46:12.877Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4083,6 +4083,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nginx-kubernetes-ingress"
+    },
+    {
+      "id": "CD-8AOD",
+      "directive_title": "shimmy-0py: record verified distribution channels and support limits [skip ci]",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Michael-A-Kuykendall/shimmy",
+      "source_commit": "8dc08d28",
+      "date_staged": "2026-11-08",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-michael-a-kuykendall-shimmy"
     }
   ]
 }

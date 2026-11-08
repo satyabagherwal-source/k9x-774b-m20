@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-DZA6",
-    "timestamp": "2026-11-05T12:43:28.350Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-qwen-qwen3-4b",
-    "contentHash": "31a6a26819e9b47feb71f72fa4810281a835a6457a787cad63f7ce3bc425b98e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-NHHZ",
-    "timestamp": "2026-11-05T12:50:51.863Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "cedca00f58d098d165bc70a6051aa9d4c249f9ff078a1202c3453f43040ecfc2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-X45I",
     "timestamp": "2026-11-05T12:58:21.126Z",
     "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
@@ -7492,6 +7462,36 @@
     "contentHash": "cd43034dd81d484ba6cae3cddead88a2dad9316941d06e66b4fb2415f5642530",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-8AO6",
+    "timestamp": "2026-11-08T01:46:12.870Z",
+    "repository": "Michael-A-Kuykendall/shimmy",
+    "learningId": "learn-github-michael-a-kuykendall-shimmy",
+    "contentHash": "d49be6c2cf6d65cfa666ed31119dbc2fe22e825604f07418f0c6e67a579366e3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-8E8S",
+    "timestamp": "2026-11-08T01:46:17.500Z",
+    "repository": "thaw-app/Thaw",
+    "learningId": "learn-github-thaw-app-thaw",
+    "contentHash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

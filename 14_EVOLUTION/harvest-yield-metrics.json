@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T01:36:02.514Z",
-  "total_cycles_completed": 8132,
-  "total_learnings_persisted": 8132,
+  "last_updated": "2026-11-08T01:46:17.507Z",
+  "total_cycles_completed": 8134,
+  "total_learnings_persisted": 8134,
   "total_rules_promoted": 7806,
   "history": [
-    {
-      "timestamp": "2026-11-07T02:54:24.596Z",
-      "repository": "webrecorder/browsertrix-crawler",
-      "learningId": "learn-github-webrecorder-browsertrix-crawler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T02:54:26.330Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T02:54:31.933Z",
       "repository": "cilium/cilium",
@@ -1403,6 +1389,20 @@
       "repository": "meshtastic/Meshtastic-Android",
       "learningId": "learn-github-meshtastic-meshtastic-android",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T01:46:12.878Z",
+      "repository": "Michael-A-Kuykendall/shimmy",
+      "learningId": "learn-github-michael-a-kuykendall-shimmy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T01:46:17.507Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -8176,3 +8176,5 @@ Every entry in this ledger must capture:
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `0317e652` | Multi-dimensional audit evidence | 2026-11-08T01:25:29.789Z |
 | `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `c6a8c5ae` | Multi-dimensional audit evidence | 2026-11-08T01:25:32.566Z |
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `4b2503d2` | Multi-dimensional audit evidence | 2026-11-08T01:36:02.508Z |
+| `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `8dc08d28` | Multi-dimensional audit evidence | 2026-11-08T01:46:12.873Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `92c959b6` | Multi-dimensional audit evidence | 2026-11-08T01:46:17.503Z |

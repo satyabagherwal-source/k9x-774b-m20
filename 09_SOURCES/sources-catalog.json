@@ -2953,10 +2953,10 @@
     "repository": "Michael-A-Kuykendall/shimmy",
     "platform": "github",
     "sourceUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "sourceVersion": "fc792f3a",
+    "sourceVersion": "8dc08d28",
     "license": "Apache-2.0",
-    "contentHash": "56f0d2d754f916d8180f4aefb69526c0c352d6532110ad26d53cf27d75903e2f",
-    "lastHarvestedAt": "2026-11-03T23:13:08.327Z",
+    "contentHash": "d49be6c2cf6d65cfa666ed31119dbc2fe22e825604f07418f0c6e67a579366e3",
+    "lastHarvestedAt": "2026-11-08T01:46:12.873Z",
     "learningId": "learn-github-michael-a-kuykendall-shimmy"
   },
   "infinitered-reactotron": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "fa2b68af",
+    "sourceVersion": "92c959b6",
     "license": "GPL-3.0",
-    "contentHash": "07cf412cad3ed68770b99ed88368ac06b10f93931e713c5d278297c6ff3cb1de",
-    "lastHarvestedAt": "2026-11-05T01:15:12.490Z",
+    "contentHash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
+    "lastHarvestedAt": "2026-11-08T01:46:17.503Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {

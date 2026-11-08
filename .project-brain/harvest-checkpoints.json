@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T01:36:02.528Z",
+  "last_updated": "2026-11-08T01:46:17.510Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4551,14 +4551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-michael-a-kuykendall-shimmy",
-      "content_hash": "56f0d2d754f916d8180f4aefb69526c0c352d6532110ad26d53cf27d75903e2f",
-      "verified_at": "2026-11-03T23:13:08.336Z",
+      "content_hash": "d49be6c2cf6d65cfa666ed31119dbc2fe22e825604f07418f0c6e67a579366e3",
+      "verified_at": "2026-11-08T01:46:12.881Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:13:08.336Z"
+      "last_updated": "2026-11-08T01:46:12.881Z"
     },
     "infinitered/reactotron": {
       "repository": "infinitered/reactotron",
@@ -11781,14 +11781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thaw-app-thaw",
-      "content_hash": "07cf412cad3ed68770b99ed88368ac06b10f93931e713c5d278297c6ff3cb1de",
-      "verified_at": "2026-11-05T01:15:12.501Z",
+      "content_hash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
+      "verified_at": "2026-11-08T01:46:17.509Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T01:15:12.501Z"
+      "last_updated": "2026-11-08T01:46:17.509Z"
     },
     "rtk-ai/rtk": {
       "repository": "rtk-ai/rtk",

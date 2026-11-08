@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T01:36:02.419Z",
+  "last_updated": "2026-11-08T01:46:17.433Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42150,8 +42150,8 @@
       "slug": "michael-a-kuykendall-shimmy",
       "platform": "github",
       "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
-      "source_version": "fc792f3a",
-      "content_hash": "56f0d2d754f916d8180f4aefb69526c0c352d6532110ad26d53cf27d75903e2f",
+      "source_version": "8dc08d28",
+      "content_hash": "d49be6c2cf6d65cfa666ed31119dbc2fe22e825604f07418f0c6e67a579366e3",
       "dossier_path": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "promoted_rules": [
@@ -42186,7 +42186,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:13:08.207Z",
+      "verified_at": "2026-11-08T01:46:12.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59465,8 +59465,8 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "fa2b68af",
-      "content_hash": "07cf412cad3ed68770b99ed88368ac06b10f93931e713c5d278297c6ff3cb1de",
+      "source_version": "92c959b6",
+      "content_hash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
@@ -59511,7 +59511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:15:12.344Z",
+      "verified_at": "2026-11-08T01:46:17.418Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

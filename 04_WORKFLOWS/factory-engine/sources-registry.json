@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T01:36:05.104Z",
-    "lastVerified": "2026-11-08T01:36:05.104Z",
+    "lastChecked": "2026-11-08T01:46:21.979Z",
+    "lastVerified": "2026-11-08T01:46:21.979Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T01:09:56.050Z",
-    "lastVerified": "2026-11-08T01:09:56.050Z",
+    "lastChecked": "2026-11-08T01:46:21.969Z",
+    "lastVerified": "2026-11-08T01:46:21.969Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1705,9 +1705,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-07T21:29:25.882Z",
+    "lastChecked": "2026-11-08T01:46:16.910Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-07T21:29:25.882Z"
+    "lastVerified": "2026-11-08T01:46:16.910Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -1907,22 +1907,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "michael-a-kuykendall-shimmy": {
-    "name": "shimmy",
+    "name": "Michael-A-Kuykendall/shimmy",
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T22:24:58.390Z",
-    "lastVerified": "2026-11-05T22:24:58.390Z",
+    "lastChecked": "2026-11-08T01:46:10.647Z",
+    "lastVerified": "2026-11-08T01:46:10.647Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-michael-a-kuykendall-shimmy",
-    "contentHash": "56f0d2d754f916d8180f4aefb69526c0c352d6532110ad26d53cf27d75903e2f",
+    "contentHash": "d49be6c2cf6d65cfa666ed31119dbc2fe22e825604f07418f0c6e67a579366e3",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fc792f3a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-supersoniclabs-julia-1": {
     "name": "SupersonicLabs/Julia-1",
@@ -4375,9 +4374,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-06T20:45:27.890Z",
+    "lastChecked": "2026-11-08T01:46:14.535Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-06T20:45:27.890Z"
+    "lastVerified": "2026-11-08T01:46:14.535Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -7973,8 +7972,8 @@
     "officialUrl": "https://github.com/pathwaycom/serviette",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-06T18:54:40.882Z",
-    "lastVerified": "2026-11-06T18:54:40.882Z",
+    "lastChecked": "2026-11-08T01:46:19.431Z",
+    "lastVerified": "2026-11-08T01:46:19.431Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pathwaycom-serviette",
@@ -8947,14 +8946,14 @@
     "officialUrl": "https://github.com/thaw-app/Thaw",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-05T01:15:12.164Z",
-    "lastVerified": "2026-11-05T01:15:12.164Z",
+    "lastChecked": "2026-11-08T01:46:16.779Z",
+    "lastVerified": "2026-11-08T01:46:16.779Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "07cf412cad3ed68770b99ed88368ac06b10f93931e713c5d278297c6ff3cb1de",
+    "contentHash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
     "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12726,9 +12725,9 @@
   "unjs-ofetch": {
     "name": "ofetch",
     "officialUrl": "https://github.com/unjs/ofetch",
-    "lastChecked": "2026-11-04T10:05:24.651Z",
+    "lastChecked": "2026-11-08T01:46:09.422Z",
     "revisionIdentifier": "1dbc37fd",
-    "lastVerified": "2026-11-04T10:05:24.651Z"
+    "lastVerified": "2026-11-08T01:46:09.422Z"
   },
   "unjs-ufo": {
     "name": "ufo",

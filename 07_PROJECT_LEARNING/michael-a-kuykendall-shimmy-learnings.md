@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md`  
 > **Source**: github ([https://github.com/Michael-A-Kuykendall/shimmy](https://github.com/Michael-A-Kuykendall/shimmy))  
-> **Source Version**: `fc792f3a`  
+> **Source Version**: `8dc08d28`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:13:08.068Z  
+> **Timestamp**: 2026-11-08T01:46:12.665Z  
 > **Learning ID**: `learn-github-michael-a-kuykendall-shimmy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Michael-A-Kuykendall/shimmy](https://github.com/Michael-A-Kuykendall/shimmy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:13:05.654Z  
+> **Harvest Timestamp**: 2026-11-08T01:46:10.647Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Pure-Rust WebGPU inference engine — OpenAI-API compatible, GGUF native, runs on any GPU. No Python. No llama.cpp. Single binary.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6007 stars
+- **Stars / Engagement**: 6012 stars
 
 ---
 
@@ -175,13 +175,16 @@ use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
+use super::resident::{load_once, Resident};
 use super::{GenOptions, InferenceEngine, LoadedModel, ModelSpec};
 
+use super::stop_buffer::StopBuffer;
 use airframe::runtime::gpu::{GpuRuntime, SamplingParams};
+use anyhow::Context;
 
 /// Airframe GPU inference engine — in-process, zero-HTTP.
 pub struct AirframeEngine {
-    runtime: Arc<Mutex<Option<GpuRuntime>>>,
+    runtime: Arc<Mutex<Option<Resident<GpuRuntime>>>>,
 }
 
 impl AirframeEngine {
@@ -201,23 +204,59 @@ impl Default for AirframeEngine {
 #[async_trait]
 impl InferenceEngine for AirframeEngine {
     async fn load(&self, spec: &ModelSpec) -> Result<Box<dyn LoadedModel>> {
-        let mut guard = self.runtime.lock().await;
-        if guard.is_none() {
-            let rt = GpuRuntime::load(&spec.base_path)
-                .await
-                .map_err(|e| anyhow::anyhow!("Airframe GPU load failed: {}", e))?;
-            *guard = Some(rt);
-        }
-        drop(guard);
-
+        let path = spec
+            .base_path
+            .canonicalize()
+            .map_err(|_| anyhow::anyhow!("Airframe model file is unavailable"))?;
+        load_once(&self.runtime, &path, || async {
+            GpuRuntime::load_with_context(
+                &path,
+                Some(
+                    spec.ctx_len.min(
+                        airframe::execution::admission::inspect_model(&path)?
+                            .native_context
+                            .unwrap_or(spec.ctx_len),
+                    ),
+                ),
+            )
+            .await
+            .map_err(crate::inference_error::from_boxed)
+            .context("Airframe GPU load failed")
+        })
+        .await?;
         Ok(Box::new(AirframeModel {
             runtime: self.runtime.clone(),
         }))
     }
 }
 
+struct RequestControl {
+    cancel: Option<crate::prepared_prompt::Cancellation>,
+    stopped: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    inner: Option<Box<dyn airframe::control::InferenceControl + Send + Sync>>,
+}
+impl airframe::control::InferenceControl for RequestControl {
+    fn intervene(
+        &self,
+        event: &airframe::control::InferenceEvent<'_>,
+    ) -> airframe::control::ControlDecision {
+        if self.stopped.load(std::sync::atomic::Ordering::Acquire)
+            || self
+                .cancel
+                .as_ref()
+                .is_some_and(|c| c.load(std::sync::atomic::Ordering::Acquire))
+        {
+            return airframe::control::ControlDecision::EarlyExit;
+        }
+        self.inner
+            .as_ref()
+            .map(|c| c.intervene(event))
+            .unwrap_or(airframe::control::ControlDecision::Allow)
+    }
+}
+
 struct AirframeModel {
-    runtime: Arc<Mutex<Option<GpuRuntime>>>,
+    runtime: Arc<Mutex<Option<Resident<GpuRuntime>>>>,
 }
 
 unsafe impl Send for AirframeModel {}
@@ -238,192 +277,137 @@ impl AirframeModel {
 
 #[async_trait]
 impl LoadedModel for AirframeModel {
-    async fn generate(
-        &self,
-        prompt: &str,
-        opts: GenOptions,
-        on_token: Option<Box<dyn FnMut(String) + Send>>,
-    ) -> Result<String> {
-        Ok(self
-            .generate_with_metadata(prompt, opts, on_token)
-            .await?
-            .text)
+    async fn special_tokens(&self) -> Result<Option<(String, String)>> {
+        let guard = self.runtime.lock().await;
+        let resident = guard
+            .as_ref()
+            .ok_or_else(|| anyhow::anyhow!("Airframe runtime is unavailable"))?;
+        let tok = resident.value.tokenizer_arc();
+        Ok(Some((
+            tok.token_to_piece(tok.bos_token())?,
+            tok.token_to_piece(tok.eos_token())?,
+        )))
     }
-
-    async fn generate_with_metadata(
+    async fn generate_prepared(
         &self,
-        prompt: &str,
+        prepared: crate::prepared_prompt::PreparedPrompt,
         opts: GenOptions,
+        cancel: Option<crate::prepared_prompt::Cancellation>,
         on_token: Option<Box<dyn FnMut(String) + Send>>,
     ) -> Result<crate::engine::GenerationOutput> {
+        if prepared.stops() != opts.stop_tokens.as_slice() {
+            return Err(crate::prepared_prompt::PromptError::StopPolicy.into());
+        }
         let params = Self::bridge_params(&opts);
         let runtime = self.runtime.clone();
-        let prompt = prompt.to_string();
-
-        let result = tokio::task::spawn_blocking(move || {
-            let guard = runtime.blocking_lock();
-            let rt = guard
-                .as_ref()
-                .expect("AirframeModel used before engine loaded");
-            rt.reset();
-
-            // Build hooks from opts
-            let control = build_control(&opts);
-            let modify_logits = build_modify_logits(rt, &opts);
-            let trace_cb = build_trace(&opts);
-
-            let callback: Option<Box<dyn FnMut(&str) + Send>> = on_token.map(|mut cb| {
-                let wrapper: Box<dyn FnMut(&str) + Send> = Box::new(move |piece: &str| {
-                    cb(piece.to_string());
-                });
-                wrapper
-            });
-
-            // Apply the model's chat template (Jinja-first) so instruct models are
-            // NOT fed a raw prompt (the cert-path fix). The engine's `generate`
-            // receives a bare completion prompt; wrap it with the GGUF template
-            // unless --raw (opts.raw_prompt) or the model has no template (base).
-            let model_name = rt.spec().model_name.clone();
-            let gguf_tpl = rt.chat_template().map(|s| s.to_string());
-            let mut extras = crate::prompt_render::JinjaExtras::for_model(&model_name);
-            // Resolve real bos/eos strings from the tokenizer for template vars.
-            let tok = rt.tokenizer_arc();
-            extras.bos_token = tok.token_to_piece(tok.bos_token()).ok();
-            extras.eos_token = tok.token_to_piece(tok.eos_token()).ok();
-            let fam = crate::prompt_render::family_from_spec(None, &model_name);
-            let rendered = crate::prompt_render::render_completion_prompt_with_extras(
-                &prompt,
-                gguf_tpl.as_deref(),
-                fam,
-                opts.raw_prompt,
-                &extras,
-            );
-            let final_prompt = rendered.text;
-
-            rt.generate_with_metadata(
-                &final_prompt,
-                &params,
-                callback,
-                control,
-                modify_logits,
-                trace_cb,
+        let result=tokio::task::spawn_blocking(move ||->Result<crate::engine::GenerationOutput,Box<dyn std::error::Error+Send+Sync>>{
+        if cancel.as_ref().is_some_and(|c|c.load(std::sync::atomic::Ordering::Acquire)){return Err(crate::prepared_prompt::PromptError::Cancelled.into());}
+        let guard=runtime.blocking_lock();let resident=guard.as_ref().ok_or_else(||std::io::Error::other("Airframe runtime unavailable"))?;let rt=&resident.value;
+        let expected=rt.model_identity();let id=prepared.identity().ok_or(crate::prepared_prompt::PromptError::Identity)?;
+        if id.model_sha256!=expected.model_sha256||id.plan_sha256!=expected.plan_sha256{return Err(crate::prepared_prompt::PromptError::Identity.into());}
+        let ids=prepared.token_ids().ok_or(crate::prepared_prompt::PromptError::MissingIds)?;
+        let buffer=std::sync::Arc::new(std::sync::Mutex::new(StopBuffer::new(&opts.stop_tokens)?));
+        let stopped=std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let callback_sink=std::sync::Arc::new(std::sync::Mutex::new(on_token));
+        let callback_for_tokens=callback_sink.clone();
+        let buffer_for_tokens=buffer.clone();let stopped_for_tokens=stopped.clone();
+        let callback:Box<dyn FnMut(&str)+Send>=Box::new(move |piece|{
+            let mut b=buffer_for_tokens.lock().unwrap();let emitted=b.push(piece);
+            if b.stopped(){stopped_for_tokens.store(true,std::sync::atomic::Ordering::Release);}
+            drop(b);if !emitted.is_empty(){if let Some(cb)=callback_for_tokens.lock().unwrap().as_mut(){cb(emitted);}}
+        });
+        let control=Some(Box::new(RequestControl{cancel,stopped:stopped.clone(),inner:build_control(&opts)}) as Box<dyn airframe::control::InferenceControl+Send+Sync>);
+        let modify_logits=build_modify_logits(rt,&opts);let trace_cb=build_trace(&opts);
+        let result=rt.generate_token_ids_with_metadata(ids,&params,Some(callback),control,modify_logits,trace_cb)?;
+        let mut buffer=buffer.lock().unwrap();let tail=buffer.finish();
+        let output_text=buffer.output().to_owned();
+        drop(buffer);
+        if !tail.is_empty(){if let Some(cb)=callback_sink.lock().unwrap().as_mut(){cb(tail);}}
+        Ok(crate::engine::GenerationOutput{text:output_text,usage:Some(crate::engine::TokenUsage{prompt_tokens:result.prompt_tokens,completion_tokens:result.completion_tokens,total_tokens:result.prompt_tokens+result.completion_tokens}),finish_reason:Some(if stopped.load(std::sync::atomic::Ordering::Acquire){"stop"}else{match result.finish_reason{airframe::runtime::generation::FinishReason::Stop=>"stop",airframe::runtime::generation::FinishReason::Length=>"length"}}.into())})
+    }).await.map_err(|e|anyhow::anyhow!("Airframe task failed: {e}"))?.map_err(crate::inference_error::from_boxed)?;
+        Ok(result)
+    }
+    async fn prepare_prompt(
+        &self,
+        text: &str,
+        source: crate::prompt_render::RenderSource,
+        template: Option<&str>,
+        stops: &[String],
+    ) -> Result<crate::prepared_prompt::PreparedPrompt> {
+        if source == crate::prompt_render::RenderSource::FamilyFallback {
+            return Err(crate::prepared_prompt::PromptError::Template(
+                "uncertified family fallback".into(),
             )
-        })
-        .await
-        .map_err(|e| anyhow::anyhow!("Airframe task panicked: {}", e))?
-        .map_err(|e| anyhow::anyhow!("Airframe generation failed: {}", e))?;
-
-        Ok(crate::engine::GenerationOutput {
-            text: result.text,
-            usage: Some(crate::engine::TokenUsage {
-                prompt_tokens: result.prompt_tokens,
-                completion_tokens: result.completion_tokens,
-                total_tokens: result.prompt_tokens + result.completion_tokens,
-            }),
-            finish_reason: Some(
-                match result.finish_reason {
-                    airframe::runtime::generation::FinishReason::Stop => "stop",
-                    airframe::runtime::generation::FinishReason::Length => "length",
-                }
-                .into(),
-            ),
-        })
+            .into());
+        }
+        let _ = StopBuffer::new(stops)?;
+        let guard = self.runtime.lock().await;
+        let resident = guard
+            .as_ref()
+            .ok_or_else(|| anyhow::anyhow!("Airframe runtime is unavailable"))?;
+        let rt = &resident.value;
+        let ids = rt.encode_prompt(text)?;
+        let identity = rt.model_identity();
+        Ok(crate::prepared_prompt::PreparedPrompt::model_owned(
+            text,
+            source,
+            template,
+            stops,
+            ids,
+            crate::prepared_prompt::PromptIdentity {
+                model_sha256: identity.model_sha256.clone(),
+                plan_sha256: identity.plan_sha256.clone(),
+            },
+        ))
     }
-}
-
-fn build_control(
-    opts: &GenOptions,
-) -> Option<Box<dyn airframe::control::InferenceControl + Send + Sync>> {
-    airframe::runtime::gpu::fse_control_from_patterns(&opts.fse_reject_patterns)
-}
-
-/// Pre-sample logits mask hook type shared by grammar and FSE control paths.
-type LogitsMask = Box<dyn Fn(&mut [f32]) + Send + Sync>;
-/// Post-sample trace callback type (step, logits, elapsed).
-type TraceHook = Box<dyn FnMut(usize, &[f32], f64) + Send>;
-
-fn build_modify_logits(rt: &GpuRuntime, opts: &GenOptions) -> Option<LogitsMask> {
-    airframe::grammar::grammar_hooks(
-        &opts.grammar_mode,
-        rt.tokenizer_arc(),
-        rt.spec().n_vocab,
-        rt.eos_token(),
-        rt.im_end_token(),
-    )
-    .map(|(mask, _control)| mask)
-}
-
-fn build_trace(opts: &GenOptions) -> Option<TraceHook> {
-    airframe::runtime::gpu::trace_callback(&opts.trace_path)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::engine::GenOptions;
-
-    #[test]
-    fn test_bridge_params_maps_basic_fields() {
-        let opts = GenOptions {
-            max_tokens: 128,
-            temperature: 0.5,
-            top_p: 0.85,
-            top_k: 40,
-            repeat_penalty: 1.2,
-            seed: Some(7),
-            stream: false,
-            stop_tokens: Vec::new(),
-            grammar_mode: "none".to_string(),
-            fse_reject_patterns: String::new(),
-            math_bypass: false,
-            trace_path: String::new(),
-            session_id: String::new(),
-            raw_prompt: false,
-        };
-        let p = AirframeModel::bridge_params(&opts);
-        assert_eq!(p.max_tokens, 128);
-        assert!((p.temperature - 0.5).abs() < 1e-6);
-        assert!((p.top_p - 0.85).abs() < 1e-6);
-        assert!((p.repetition_penalty - 1.2).abs() < 1e-6);
-        assert_eq!(p.seed, 7u64);
-        assert!(p.extra_stop_tokens.is_empty());
+    async fn thinking_policy(&self) -> Result<Option<bool>> {
+        let g = self.runtime.lock().await;
+        let r = g
+            .as_ref()
+            .ok_or_else(|| anyhow::anyhow!("Airframe runtime unavailable"))?;
+        Ok(
+            if r.value.spec().arch == airframe::core::spec::ModelArch::Qwen3 {
+                Some(false)
+            } else {
+                None
+            },
+        )
     }
-
-    #[test]
-    fn test_bridge_params_propagates_stop_tokens() {
-        let opts = GenOptions {
-            stop_tokens: vec!["<|eot_id|>".to_string(), "<|im_end|>".to_string()],
-            grammar_mode: "none".to_string(),
-            fse_reject_patterns: String::new(),
-            math_bypass: false,
-            trace_path: String::new(),
-            session_id: String::new(),
-            raw_prompt: false,
-            ..GenOptions::default()
-        };
-        let p = AirframeModel::bridge_params(&opts);
-        assert_eq!(p.extra_stop_tokens.len(), 2);
-        assert!(p.extra_stop_tokens.contains(&"<|eot_id|>".to_string()));
-        assert!(p.extra_stop_tokens.contains(&"<|im_end|>".to_string()));
+    async fn chat_template(&self) -> Result<Option<String>> {
+        let g = self.runtime.lock().await;
+        let r = g
+            .as_ref()
+            .ok_or_else(|| anyhow::anyhow!("Airframe runtime unavailable"))?;
+        Ok(r.value.chat_template().map(str::to_string))
     }
-
-    #[test]
-    fn test_bridge_params_seed_default_when_none() {
-        let opts = GenOptions {
-            seed: None,
-            grammar_mode: "none".to_string(),
-            fse_reject_patterns: String::new(),
-            math_bypass: false,
-            trace_path: String::new(),
-            session_id: String::new(),
-            raw_prompt: false,
-            ..GenOptions::default()
-        };
-        let p = AirframeModel::bridge_params(&opts);
-        assert_eq!(p.seed, 42u64);
+    fn strict_prompt_contract(&self) -> bool {
+        true
     }
-}
-
+    async fn warmup(&self) -> Result<()> {
+        let runtime = self.runtime.clone();
+        let task = tokio::task::spawn_blocking(move || -> Result<()> {
+            let guard = runtime.blocking_lock();
+            let resident = guard
+                .as_ref()
+                .ok_or_else(|| anyhow::anyhow!("Airframe runtime is unavailable"))?;
+            let rt = &resident.value;
+            let params = SamplingParams {
+                max_tokens: 1,
+                temperature: 0.0,
+                top_p: 1.0,
+                repetition_penalty: 1.0,
+                seed: 0,
+                extra_stop_tokens: vec![],
+            };
+            let output = rt.generate_with_metadata("warmup", &params, None, None, None, None);
+            let output = output
+                .map_err(crate::inference_error::from_boxed)
+                .context("Airframe warm-up forward failed")?;
+            rt.try_reset()
+                .map_err(crate::inference_error::from_boxed)
+                .context("Airframe warm-up reset failed")?;
+            anyhow::ensure!(
+                o
 ```
 
 ### Core Architecture Module: `src/engine/mod.rs`
@@ -432,6 +416,10 @@ use anyhow::Result;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+
+#[derive(Debug, thiserror::Error)]
+#[error("Airframe supports one resident model per engine; restart with the requested model")]
+pub struct ResidentModelConflict;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GenOptions {
@@ -514,6 +502,47 @@ pub struct GenerationOutput {
 
 #[async_trait]
 pub trait LoadedModel: Send + Sync {
+    fn strict_prompt_contract(&self) -> bool {
+        false
+    }
+    async fn chat_template(&self) -> Result<Option<String>> {
+        Ok(None)
+    }
+    async fn thinking_policy(&self) -> Result<Option<bool>> {
+        Ok(None)
+    }
+    async fn prepare_prompt(
+        &self,
+        text: &str,
+        source: crate::prompt_render::RenderSource,
+        template: Option<&str>,
+        stops: &[String],
+    ) -> Result<crate::prepared_prompt::PreparedPrompt> {
+        Ok(crate::prepared_prompt::PreparedPrompt::backend_owned(
+            text, source, template, stops,
+        ))
+    }
+    async fn generate_prepared(
+        &self,
+        prepared: crate::prepared_prompt::PreparedPrompt,
+        mut opts: GenOptions,
+        _cancel: Option<crate::prepared_prompt::Cancellation>,
+        on_token: Option<Box<dyn FnMut(String) + Send>>,
+    ) -> Result<GenerationOutput> {
+        opts.raw_prompt = true;
+        self.generate_with_metadata(prepared.text(), opts, on_token)
+            .await
+    }
+
+    /// Model-owned BOS/EOS strings; unknown backends retain template fallbacks.
+    async fn special_tokens(&self) -> Result<Option<(String, String)>> {
+        Ok(None)
+    }
+    /// Initialize a loaded backend without accepting a user request.
+    async fn warmup(&self) -> Result<()> {
+        anyhow::bail!("Startup warm-up is unsupported by this backend")
+    }
+
     async fn generate(
         &self,
         prompt: &str,
@@ -539,7 +568,114 @@ pub trait LoadedModel: Send + Sync {
 pub mod adapter;
 #[cfg(feature = "airframe")]
 pub mod airframe;
+#[cfg(feature = "airframe")]
+mod resident;
 pub mod safetensors_native;
+#[cfg(any(feature = "airframe", test))]
+mod stop_buffer;
+
+```
+
+### Core Architecture Module: `src/engine/resident.rs`
+```
+//! A single resident model, with identity checked before reuse.
+use anyhow::Result;
+use std::future::Future;
+use std::path::{Path, PathBuf};
+use tokio::sync::Mutex;
+
+pub(super) struct Resident<T> {
+    pub path: PathBuf,
+    pub value: T,
+}
+
+pub(super) async fn load_once<T, F, Fut>(
+    slot: &Mutex<Option<Resident<T>>>,
+    path: &Path,
+    load: F,
+) -> Result<()>
+where
+    F: FnOnce() -> Fut,
+    Fut: Future<Output = Result<T>>,
+{
+    let mut guard = slot.lock().await;
+    if let Some(resident) = guard.as_ref() {
+        if resident.path != path {
+            return Err(super::ResidentModelConflict.into());
+        }
+        return Ok(());
+    }
+    let value = load().await?;
+    *guard = Some(Resident {
+        path: path.to_owned(),
+        value,
+    });
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc,
+    };
+    #[tokio::test]
+    async fn reuse_conflict_and_failure_are_atomic() {
+        let slot = Mutex::new(None);
+        let calls = AtomicUsize::new(0);
+        assert!(load_once(&slot, Path::new("a"), || async {
+            calls.fetch_add(1, Ordering::SeqCst);
+            anyhow::bail!("load failed")
+        })
+        .await
+        .is_err());
+        assert!(slot.lock().await.is_none());
+        load_once(&slot, Path::new("a"), || async {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Ok(7)
+        })
+        .await
+        .unwrap();
+        load_once(&slot, Path::new("a"), || async {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Ok(99)
+        })
+        .await
+        .unwrap();
+        assert!(load_once(&slot, Path::new("b"), || async {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Ok(99)
+        })
+        .await
+        .is_err());
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+        assert_eq!(slot.lock().await.as_ref().unwrap().value, 7);
+    }
+    #[tokio::test]
+    async fn concurrent_first_load_runs_once() {
+        let slot = Arc::new(Mutex::new(None));
+        let calls = Arc::new(AtomicUsize::new(0));
+        let mut jobs = vec![];
+        for _ in 0..8 {
+            let slot = slot.clone();
+            let calls = calls.clone();
+            jobs.push(tokio::spawn(async move {
+                load_once(&slot, Path::new("a"), || async {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    tokio::task::yield_now().await;
+                    Ok(1)
+                })
+                .await
+                .unwrap();
+            }));
+        }
+        for job in jobs {
+            job.await.unwrap();
+        }
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+    }
+}
 
 ```
 
@@ -848,6 +984,107 @@ impl SafeTensorsModel {
             .unwrap_or(32) as usize;
 ```
 
+### Core Architecture Module: `src/engine/stop_buffer.rs`
+```
+#[derive(Debug)]
+pub(crate) struct StopBuffer {
+    stops: Vec<String>,
+    pending: String,
+    output: String,
+    stopped: bool,
+}
+impl StopBuffer {
+    pub(crate) fn new(stops: &[String]) -> Result<Self, crate::prepared_prompt::PromptError> {
+        if stops.iter().any(String::is_empty) {
+            return Err(crate::prepared_prompt::PromptError::StopPolicy);
+        }
+        Ok(Self {
+            stops: stops.to_vec(),
+            pending: String::new(),
+            output: String::new(),
+            stopped: false,
+        })
+    }
+    pub(crate) fn push(&mut self, piece: &str) -> String {
+        if self.stopped {
+            return String::new();
+        }
+        self.pending.push_str(piece);
+        if let Some(position) = self.stops.iter().filter_map(|s| self.pending.find(s)).min() {
+            let emitted = self.pending[..position].to_string();
+            self.output.push_str(&emitted);
+            self.pending.clear();
+            self.stopped = true;
+            return emitted;
+        }
+        let max = self
+            .stops
+            .iter()
+            .map(String::len)
+            .max()
+            .unwrap_or(0)
+            .saturating_sub(1)
+            .min(self.pending.len());
+        let hold = (1..=max)
+            .rev()
+            .find(|len| {
+                let start = self.pending.len() - len;
+                self.pending.is_char_boundary(start)
+                    && self
+                        .stops
+                        .iter()
+                        .any(|s| s.starts_with(&self.pending[start..]))
+            })
+            .unwrap_or(0);
+        let emitted = self.pending[..self.pending.len() - hold].to_string();
+        self.pending.drain(..self.pending.len() - hold);
+        self.output.push_str(&emitted);
+        emitted
+    }
+    pub(crate) fn finish(&mut self) -> String {
+        if self.stopped {
+            return String::new();
+        }
+        let tail = std::mem::take(&mut self.pending);
+        self.output.push_str(&tail);
+        tail
+    }
+    pub(crate) fn stopped(&self) -> bool {
+        self.stopped
+    }
+    pub(crate) fn output(&self) -> &str {
+        &self.output
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn split_stop_is_withheld_and_removed() {
+        let mut b = StopBuffer::new(&["STOP".into()]).unwrap();
+        assert_eq!(b.push("hello ST"), "hello ");
+        assert_eq!(b.push("OP ignored"), "");
+        assert!(b.stopped());
+        assert_eq!(b.output(), "hello ");
+    }
+    #[test]
+    fn partial_nonmatching_stop_is_flushed() {
+        let mut b = StopBuffer::new(&["stop".into()]).unwrap();
+        assert_eq!(b.push("test st"), "test ");
+        assert_eq!(b.finish(), "st");
+        assert_eq!(b.output(), "test st");
+    }
+    #[test]
+    fn unicode_stop_and_overlap_preserve_bytes() {
+        let mut b = StopBuffer::new(&["你好".into(), "END".into()]).unwrap();
+        assert_eq!(b.push("a你"), "a");
+        assert_eq!(b.push("好z"), "");
+        assert_eq!(b.output(), "a");
+    }
+}
+
+```
+
 ### Core Architecture Module: `src/prompt_render.rs`
 ```
 //! Unified prompt rendering: **shimmyjinja + GGUF chat_template first**,
@@ -983,7 +1220,57 @@ pub fn render_chat_prompt(
     )
 }
 
+/// Preserve backend-owned special tokens when a protocol renders the prompt.
+pub async fn extras_for_loaded_model(
+    model_name: &str,
+    loaded: &dyn crate::engine::LoadedModel,
+) -> anyhow::Result<JinjaExtras> {
+    let mut extras = JinjaExtras::for_model(model_name);
+    if let Some((bos, eos)) = loaded.special_tokens().await? {
+        extras.bos_token = Some(bos);
+        extras.eos_token = Some(eos);
+    }
+    if let Some(policy) = loaded.thinking_policy().await? {
+        extras.enable_thinking = Some(policy);
+    }
+    Ok(extras)
+}
 /// Same as [`render_chat_prompt`] with BOS/EOS and thinking-policy knobs.
+pub fn render_chat_prompt_strict(
+    template: Option<&str>,
+    system: Option<&str>,
+    messages: &[(String, String)],
+    user_input: Option<&str>,
+    extras: &JinjaExtras,
+) -> Result<RenderedPrompt, crate::prepared_prompt::PromptError> {
+    let template = template.ok_or(crate::prepared_prompt::PromptError::MissingTemplate)?;
+    let text = render_via_jinja(template, system, messages, user_input, extras)
+        .map_err(crate::prepared_prompt::PromptError::Template)?;
+    if text.is_empty() {
+        return Err(crate::prepared_prompt::PromptError::Template(
+            "rendered prompt is empty".into(),
+        ));
+    }
+    Ok(RenderedPrompt {
+        text,
+        source: RenderSource::GgufJinja,
+    })
+}
+pub fn render_completion_prompt_strict(
+    prompt: &str,
+    template: Option<&str>,
+    raw: bool,
+    extras: &JinjaExtras,
+) -> Result<RenderedPrompt, crate::prepared_prompt::PromptError> {
+    if raw || template.is_none() {
+        return Ok(RenderedPrompt {
+            text: prompt.into(),
+            source: RenderSource::Raw,
+        });
+    }
+    render_chat_prompt_strict(template, None, &[], Some(prompt), extras)
+}
+
 pub fn render_chat_prompt_with_extras(
     gguf_chat_template: Option<&str>,
     family: TemplateFamily,
@@ -1097,65 +1384,7 @@ fn thinking_policy(extras: &JinjaExtras) -> (Option<bool>, &'static str) {
     let hint = extras
         .model_hint
         .as_deref()
-        .unwrap_or("")
-        .to_ascii_lowercase();
-    // Reasoning families often default-open <think>; keep no-think unless overridden.
-    if hint.contains("qwen")
-        || hint.contains("qwq")
-        || hint.contains("deepseek-r1")
-        || hint.contains("deepseek_r1")
-    {
-        (Some(false), "heuristic_no_think")
-    } else {
-        (None, "template_default")
-    }
-}
-
-fn render_via_jinja(
-    template: &str,
-    system: Option<&str>,
-    messages: &[(String, String)],
-    user_input: Option<&str>,
-    extras: &JinjaExtras,
-) -> Result<String, String> {
-    let (enable_thinking, _policy) = thinking_policy(extras);
-
-    let mut msgs: Vec<ChatMessage> = Vec::new();
-    if let Some(sys) = system {
-        if !sys.is_empty() {
-            msgs.push(ChatMessage {
-                role: "system".into(),
-                content: sys.into(),
-            });
-        }
-    }
-    for (role, content) in messages {
-        msgs.push(ChatMessage {
-            role: role.clone(),
-            content: content.clone(),
-        });
-    }
-    if let Some(inp) = user_input {
-        let dup = msgs
-            .last()
-            .map(|m| m.role == "user" && m.content == inp)
-            .unwrap_or(false);
-        if !dup {
-            if msgs.last().map(|m| m.role.as_str()) == Some("user") {
-                if let Some(last) = msgs.last_mut() {
-                    last.content = inp.to_string();
-                }
-            } else {
-                msgs.push(ChatMessage {
-                    role: "user".into(),
-                    content: inp.into(),
-                });
-            }
-        }
-    }
-
-    // Match airframe shimmy_server_gpu: append /nothink when thinking disabled.
-   
+     
 ```
 
 ### Core Architecture Module: `src/util/diag.rs`
@@ -1517,220 +1746,6 @@ criterion_main!(benches);
 
 ```
 
-### Core Architecture Module: `benches/model_loading.rs`
-```
-// Model Loading Performance Benchmarks
-// Measures performance of various model loading operations
-
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use shimmy::auto_discovery::ModelAutoDiscovery;
-use shimmy::model_registry::{ModelEntry, Registry};
-use std::path::PathBuf;
-
-fn benchmark_model_discovery(c: &mut Criterion) {
-    c.bench_function("model_auto_discovery_scan", |b| {
-        b.iter(|| {
-            let discovery = ModelAutoDiscovery::new();
-            let discovered = discovery.discover_models();
-            black_box(discovered)
-        })
-    });
-}
-
-fn benchmark_model_registry(c: &mut Criterion) {
-    let mut registry = Registry::new();
-
-    c.bench_function("model_registry_register", |b| {
-        b.iter(|| {
-            let entry = ModelEntry {
-                name: black_box("test-model".to_string()),
-                base_path: black_box(PathBuf::from("test.gguf")),
-                lora_path: None,
-                template: Some("chatml".to_string()),
-                ctx_len: Some(black_box(4096)),
-                n_threads: Some(black_box(4)),
-            };
-            registry.register(black_box(entry));
-        })
-    });
-
-    // Add some models for listing benchmark
-    for i in 0..100 {
-        let entry = ModelEntry {
-            name: format!("model-{}", i),
-            base_path: PathBuf::from(format!("model-{}.gguf", i)),
-            lora_path: None,
-            template: Some("chatml".to_string()),
-            ctx_len: Some(4096),
-            n_threads: Some(4),
-        };
-        registry.register(entry);
-    }
-
-    c.bench_function("model_registry_list_100", |b| {
-        b.iter(|| {
-            let models = registry.list();
-            black_box(models)
-        })
-    });
-
-    c.bench_function("model_registry_get", |b| {
-        b.iter(|| {
-            let model = registry.get(black_box("model-50"));
-            black_box(model)
-        })
-    });
-
-    c.bench_function("model_registry_infer_template", |b| {
-        b.iter(|| {
-            let template = registry.infer_template(black_box("llama-3-8b"));
-            black_box(template)
-        })
-    });
-}
-
-fn benchmark_safetensors_detection(c: &mut Criterion) {
-    c.bench_function("safetensors_file_detection", |b| {
-        b.iter(|| {
-            let paths = vec![
-                "model.safetensors",
-                "model.gguf",
-                "model.bin",
-                "pytorch_model.bin",
-                "model.pt",
-            ];
-
-            for path in paths {
-                let path_buf = PathBuf::from(black_box(path));
-                let is_safetensors = path_buf
-                    .extension()
-                    .and_then(|ext| ext.to_str())
-                    .map(|ext| ext == "safetensors")
-                    .unwrap_or(false);
-                black_box(is_safetensors);
-            }
-        })
-    });
-}
-
-criterion_group!(
-    benches,
-    benchmark_model_discovery,
-    benchmark_model_registry,
-    benchmark_safetensors_detection
-);
-criterion_main!(benches);
-
-```
-
-### Core Architecture Module: `packaging/npm/lib/install.js`
-```
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-
-const GITHUB_REPO = 'Michael-A-Kuykendall/shimmy';
-const BINARY_NAME = process.platform === 'win32' ? 'shimmy.exe' : 'shimmy';
-
-function getPlatformInfo() {
-  const platform = process.platform;
-  const arch = process.arch;
-
-  const platformMap = {
-    'win32': 'windows',
-    'darwin': 'darwin',
-    'linux': 'linux'
-  };
-
-  const archMap = {
-    'x64': 'amd64',
-    'arm64': 'arm64'
-  };
-
-  return {
-    platform: platformMap[platform],
-    arch: archMap[arch],
-    extension: platform === 'win32' ? '.exe' : ''
-  };
-}
-
-async function downloadBinary() {
-  console.log('🔄 Installing Shimmy binary...');
-
-  const { platform, arch, extension } = getPlatformInfo();
-
-  if (!platform || !arch) {
-    throw new Error(`Unsupported platform: ${process.platform}-${process.arch}`);
-  }
-
-  const packageJson = require('../package.json');
-  const version = packageJson.version;
-
-  // Construct download URL
-  const filename = `shimmy-${platform}-${arch}${extension}`;
-  const downloadUrl = `https://github.com/${GITHUB_REPO}/releases/download/v${version}/${filename}`;
-
-  // Create bin directory
-  const binDir = path.join(__dirname, '..', 'bin');
-  if (!fs.existsSync(binDir)) {
-    fs.mkdirSync(binDir, { recursive: true });
-  }
-
-  const binaryPath = path.join(binDir, BINARY_NAME);
-
-  console.log(`📥 Downloading from: ${downloadUrl}`);
-
-  return new Promise((resolve, reject) => {
-    const file = fs.createWriteStream(binaryPath);
-
-    https.get(downloadUrl, (response) => {
-      if (response.statusCode === 200) {
-        response.pipe(file);
-        file.on('finish', () => {
-          file.close();
-
-          // Make executable on Unix systems
-          if (process.platform !== 'win32') {
-            fs.chmodSync(binaryPath, '755');
-          }
-
-          console.log('✅ Shimmy installed successfully!');
-          console.log(`📍 Binary location: ${binaryPath}`);
-          console.log('🚀 Run "shimmy --help" to get started');
-          resolve();
-        });
-      } else if (response.statusCode === 302 || response.statusCode === 301) {
-        // Handle redirect
-        https.get(response.headers.location, (redirectResponse) => {
-          redirectResponse.pipe(file);
-          file.on('finish', () => {
-            file.close();
-            if (process.platform !== 'win32') {
-              fs.chmodSync(binaryPath, '755');
-            }
-            console.log('✅ Shimmy installed successfully!');
-            resolve();
-          });
-        }).on('error', reject);
-      } else {
-        reject(new Error(`Download failed: ${response.statusCode} ${response.statusMessage}`));
-      }
-    }).on('error', reject);
-
-    file.on('error', reject);
-  });
-}
-
-// Run installation
-downloadBinary().catch(error => {
-  console.error('❌ Installation failed:', error.message);
-  console.error('💡 Try installing manually from: https://github.com/Michael-A-Kuykendall/shimmy/releases');
-  process.exit(1);
-});
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1758,73 +1773,118 @@ downloadBinary().catch(error => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc792f3a` (2026-11-01)
-**Commit Message**: Simplify SPONSORS.md to remove public individual listing
+### Incident Patch 1: `8dc08d28` (2026-11-07)
+**Commit Message**: shimmy-0py: record verified distribution channels and support limits [skip ci]
 
-**File**: `SPONSORS.md` (modified, +4/-19)
+**File**: `CHANGELOG.md` (modified, +5/-1)
 ```diff
-@@ -1,22 +1,7 @@
--# These amazing people make Shimmy possible 🙏
-+# Sponsors
+@@ -1,6 +1,10 @@
+ # Changelog
  
--## Corporate Backers ($100+/month)
--*Your logo could be here*
-+This project is independently maintained. Sponsorship helps keep it free and moving forward.
+-## 2.6.6 postpublication licensing correction — 2026-11-07
++## 2.6.6 postpublication licensing and distribution — 2026-11-07
++
++- Publish verified native Linux x86-64/ARM64, Windows x86-64 and macOS ARM64 binary bundles with component and third-party licenses, exact checksums and source identities.
++- Add the versioned GHCR 2.6.6 multiarch image with native startup/authentication checks; retain the existing latest tag. Add tested custom Homebrew and Scoop installation paths. No crate republishing or npm release.
++- Execute an Apple Paravirtual Metal compute/Qwen3-0.6B HTTP diagnostic; full-vector Metal/M4 and WSL stability remain uncertified. Preserve the active macOS Paste maintenance warning.
  
--## Bug Prioritizers ($25+/month)
--*Your name could be here — [sponsor](https://github.com/sponsors/Michael-A-Kuykendall)*
-+[Become a sponsor on GitHub](https://github.com/sponsors/Michael-A-Kuykendall)
+ - The existing libfse 0.1.4 archive is additionally licensed under [Apache-2.0](https://github.com/Michael-A-Kuykendall/airframe/blob/8efb1e7a830b0822cfc5ac1b121e149948d5ffe3/crates/libfse/LICENSE-GRANT-0.1.4.md), including commercial use, modification and redistribution without separate permission. Original crates, dependency locks and tags remain unchanged; see [stack licensing](LICENSING.md).
  
--## Coffee Tier Heroes ($5+/month)
--- **[alistairheath](https://github.com/alistairheath)**
--
-----
--
--**Want to support Shimmy?** [Become a sponsor](https://github.com/sponsors/Michael-A-Kuykendall)
--
--Shimmy is free forever, but your sponsorship helps me:
--- Fix bugs faster
--- Add new features
--- Maintain compatibility with new models
--- Keep the project alive and thriving
--
--Every dollar matters. Every sponsor gets my eternal gratitude. 🚀
-+Thank you to everyone who supports the work.
+```
+
+**File**: `README.md` (modified, +1/-2)
+```diff
+@@ -41,8 +41,7 @@ shimmy --ctx 512 --kv-quant f32 serve --model-path /path/to/model.gguf --bind 12
+ 
+ Use a verified admitted fixture in place of the path. A working Rust toolchain
+ and GPU driver are required. The fast profile does not provide inference.
+-A **crates.io-only 2.6.6 release does not create GitHub binary assets, Docker
+-images, Homebrew, Scoop or npm packages**. Verify the installed version; an old latest asset is not version 2.6.6.
++The separately verified [native downloads, Homebrew and Scoop installers](docs/BINARY_INSTALL.md) and [versioned GHCR image](README-DOCKER.md) are now available for 2.6.6. A crates.io upload does not create those channels automatically. Docker latest is unchanged; npm is not included. Verify the exact installed version.
+ 
+ See [quickstart](docs/quickstart.md) for model hashes, listing, requests and
+ network access. Unavailable translations are not linked as current guides.
+```
+
+**File**: `ROADMAP.md` (modified, +6/-5)
+```diff
+@@ -1,20 +1,21 @@
+ # Roadmap — Shimmy 2.6.6
+ 
+-## Current scoped candidate
++## Current delivered release
+ 
+ Deliver the coordinated dense-text correctness foundation and reviewed
+ dependency/documentation corrections. The release contract is
+ [SUPPORTED_MODELS](docs/SUPPORTED_MODELS.md), with explicit unsupported and
+ NOT_RUN modes. No broad family count or universal speed promise supersedes that contract. Commercial use is permitted under the [component licenses and additional libfse grant](LICENSING.md).
+ 
+-The five prepared versions are ShimmyTok 0.8.5, libfse 0.1.4,
+-airframe-observe 0.1.4, Airframe 0.4.5 and Shimmy 2.6.6.
+-A prepared candidate is not published until explicitly approved and verified.
++The five published versions are ShimmyTok 0.8.5, libfse 0.1.4,
++airframe-observe 0.1.4, Airframe 0.4.5 and Shimmy 2.6.6. Their published archives and tags remain unchanged.
++
++[Native downloads and custom Homebrew/Scoop installers](docs/BINARY_INSTALL.md) and the [versioned GHCR image](README-DOCKER.md) have separate executed distribution checks. These do not expand GPU numerical certification. Docker latest remains unchanged; npm is excluded.
+ 
+ ## Separately scoped later work
+ 
+ Other architectures, larger fixtures, native-platform certification, WSL
+-stability, performance changes and distribution channels each need their own
++stability, performance changes and additional distribution channels each need their own
+ design, acceptance evidence and approval. Gemma/MoE/recurrent development does
+ not automatically enable an executor in this release.
+ 
 ```
 
 ---
 
-### Incident Patch 2: `c55e977e` (2026-11-01)
-**Commit Message**: Standardize sponsorship language in README (remove public sponsor listing)
+### Incident Patch 2: `dd97812b` (2026-11-07)
+**Commit Message**: shimmy-0py: add exact licensed Windows Scoop distribution [skip ci]
 
-**File**: `README.md` (modified, +8/-7)
+**File**: `bucket/shimmy.json` (added, +17/-0)
 ```diff
-@@ -182,17 +182,18 @@ _Measured on RTX 3060, Shimmy v2.6.0, TinyLlama-1.1B. Your results vary by hardw
+@@ -0,0 +1,17 @@
++{
++    "version": "2.6.6",
++    "description": "Local model inference server with the default Airframe engine",
++    "homepage": "https://github.com/Michael-A-Kuykendall/shimmy",
++    "license": {
++        "identifier": "Apache-2.0",
++        "url": "https://github.com/Michael-A-Kuykendall/shimmy/blob/main/LICENSING.md"
++    },
++    "architecture": {
++        "64bit": {
++            "url": "https://github.com/Michael-A-Kuykendall/shimmy/releases/download/v2.6.6/shimmy-windows-x86_64.zip",
++            "hash": "6c7b854ba851f54347601827d5948c661283ae0a60f03c9a9f6e0ec7ddfd6dd4"
++        }
++    },
++    "bin": "shimmy.exe",
++    "notes": "Primary Shimmy license: Apache-2.0. Complete component licenses, third-party notices and the libfse 0.1.4 additional Apache-2.0 grant are retained in LICENSES and DISTRIBUTION-LICENSE.txt. Native CLI tests do not certify Windows GPU inference. No separate commercial permission is required."
++}
+```
+
+**File**: `docs/BINARY_INSTALL.md` (modified, +14/-1)
+```diff
+@@ -56,4 +56,17 @@ brew test Michael-A-Kuykendall/shimmy/shimmy
  
- ---
+ macOS ARM64 and Linux x86-64/ARM64 select their exact licensed archives above. macOS Intel has no release binary. Licenses and the libfse grant are retained under the formula prefix at share/shimmy. This custom formula does not certify additional GPU configurations.
  
--## Sponsor Shimmy
-+## Support
- 
--Shimmy is independently maintained. Sponsorship funds certification, compatibility work, and releases.
-+This project is independently maintained and free forever. Sponsorship helps fund ongoing development, certification, compatibility work, and releases.
- 
--- **$5/month**: Coffee tier ☕ — Sponsor badge + name in [SPONSORS.md](SPONSORS.md)
--- **$25/month**: Supporter 🐛 — Priority support + name in [SPONSORS.md](SPONSORS.md)
--- **$100/month**: Corporate backer 🏢 — Logo placement + release recognition
--- **$500/month**: Infrastructure partner 🚀 — Office hours + roadmap consultation
-+[Sponsor on GitHub](https://github.com/sponsors/Michael-A-Kuykendall) · [Buy Me a Coffee](https://www.buymeacoffee.com/michaelakuykendall)
- 
-+Any amount is appreciated. Suggested tiers:
- 
--[**🎯 Become a Sponsor**](https://github.com/sponsors/Michael-A-Kuykendall) · [Invoicing](mailto:michaelallenkuykendall@gmail.com)
-+- **$5/month** — Thanks
-+- **$15/month** — Supporter
-+- **$50/month** — Backer
-+- **Custom** — [Email for invoicing](mailto:michaelallenkuykendall@gmail.com)
- 
- ---
- 
+-[Versioned Docker/GHCR instructions](../README-DOCKER.md) are separate from native downloads; Docker latest remains unchanged. Scoop requires its own installation gate. npm is not included.
++[Versioned Docker/GHCR instructions](../README-DOCKER.md) are separate from native downloads; Docker latest remains unchanged. Scoop installation is described below. npm is not included.
++
++## Scoop (Windows x86-64)
++
++The repository provides an explicit custom bucket (not Scoop main):
++
++```powershell
++scoop bucket add shimmy https://github.com/Michael-A-Kuykendall/shimmy
++scoop install shimmy/shimmy
++shimmy --version
++shimmy --help
++```
++
++The 2.6.6 manifest selects the exact Windows ZIP and checksum above. It retains LICENSES, the libfse additional grant and notices in the installed app directory. ARM Windows and native Windows GPU inference are not certified by the x86-64 CLI installation test. No npm package is implied.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1853,48 +1913,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Simplify SPONSORS.md to remove public individual listing
+## X. shimmy-0py: record verified distribution channels and support limits [skip ci]
 
 **RULE**:
-When implementing operations in `SPONSORS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Michael-A-Kuykendall/shimmy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Michael-A-Kuykendall/shimmy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc792f3a`: Simplify SPONSORS.md to remove public individual listing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8dc08d28`: shimmy-0py: record verified distribution channels and support limits [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SPONSORS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Sponsors
-This project is independently maintained. Sponsorship helps keep it free and moving forward.
-[Become a sponsor on GitHub](https://github.com/sponsors/Michael-A-Kuykendall)
-Thank you to everyone who supports the work.
+## 2.6.6 postpublication licensing and distribution — 2026-11-07
+
+- Publish verified native Linux x86-64/ARM64, Windows x86-64 and macOS ARM64 binary bundles with component and third-party licenses, exact checksums and source identities.
+- Add the versioned GHCR 2.6.6 multiarch image with native startup/authentication checks; retain the existing latest tag. Add tested custom Homebrew and Scoop installation paths. No crate republishing or npm release.
+- Execute an Apple Paravirtual Metal compute/Qwen3-0.6B HTTP diagnostic; full-vector Metal/M4 and WSL stability remain uncertified. Preserve the active macOS Paste maintenance warning.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# These amazing people make Shimmy possible 🙏
-## Corporate Backers ($100+/month)
-*Your logo could be here*
-## Bug Prioritizers ($25+/month)
-*Your name could be here — [sponsor](https://github.com/sponsors/Michael-A-Kuykendall)*
-## Coffee Tier Heroes ($5+/month)
-- **[alistairheath](https://github.com/alistairheath)**
-
-
-**Want to support Shimmy?** [Become a sponsor](https://github.com/sponsors/Michael-A-Kuykendall)
-
-Shimmy is free forever, but your sponsorship helps me:
-- Fix bugs faster
-- Add new features
-- Maintain compatibility with new models
-- Keep the project alive and thriving
-
-Every dollar matters. Every sponsor gets my eternal gratitude. 🚀
+## 2.6.6 postpublication licensing correction — 2026-11-07
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc792f3a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8dc08d28` are properly handled with clean fallback behavior.

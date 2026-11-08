@@ -8167,3 +8167,5 @@
 | `CYCLE-20261108-HNI1` | `2026-11-08T01:25:29.785Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`17668ac0...`) |
 | `CYCLE-20261108-HPN6` | `2026-11-08T01:25:32.562Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`da7b7aab...`) |
 | `CYCLE-20261108-V7PK` | `2026-11-08T01:36:02.504Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`cd43034d...`) |
+| `CYCLE-20261108-8AO6` | `2026-11-08T01:46:12.870Z` | `Michael-A-Kuykendall/shimmy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md` | Yes (`d49be6c2...`) |
+| `CYCLE-20261108-8E8S` | `2026-11-08T01:46:17.500Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md` | Yes (`6b972a7d...`) |
