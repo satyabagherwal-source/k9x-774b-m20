@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "64fd6ba15293afab2a8d71d1849d1b247fba4b30153c8631e64c2dc93781df71",
-    "lastHarvestedAt": "2026-11-04T21:26:28.116Z",
+    "contentHash": "5b1e9ebf9ee3285c1fdd5233c26c76ddd0cda1b9949573043eca2d67526892ac",
+    "lastHarvestedAt": "2026-11-08T09:31:59.317Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "34bbba0f",
+    "sourceVersion": "e059f4bc",
     "license": "Apache-2.0",
-    "contentHash": "3b125315aead77b6a9b73e8166fd412ee207ae596a3dfe38b6b9868412a7b07d",
-    "lastHarvestedAt": "2026-11-08T07:31:01.972Z",
+    "contentHash": "cbf31917c9dfec607e49c39895a0ff40cc9545584bb57e30b231dfcd1caf2936",
+    "lastHarvestedAt": "2026-11-08T09:32:12.109Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5043,10 +5043,10 @@
     "repository": "webrtc-rs/webrtc",
     "platform": "github",
     "sourceUrl": "https://github.com/webrtc-rs/webrtc",
-    "sourceVersion": "8ea6e2a6",
+    "sourceVersion": "3c4584ae",
     "license": "Apache-2.0",
-    "contentHash": "97038f63f1bdec12cc22c28534bed71b7b5503540db836a204e2cb4da3eebac8",
-    "lastHarvestedAt": "2026-11-02T14:46:22.550Z",
+    "contentHash": "3b84edf4f9ded01d25f26f5712e837271e4553b3e65b663aa85b6e157a788c4a",
+    "lastHarvestedAt": "2026-11-08T09:29:06.023Z",
     "learningId": "learn-github-webrtc-rs-webrtc"
   },
   "midudev-preguntas-entrevista-react": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "082be7be",
+    "sourceVersion": "450984ae",
     "license": "Apache-2.0",
-    "contentHash": "de664776ee1fc47211a591c649f33c1c7ba2426487e11cebfade4a714b0c1455",
-    "lastHarvestedAt": "2026-11-07T05:50:56.359Z",
+    "contentHash": "58d129d40903f5cf5ab22c8303b71b10b8df11374a9f253c3129d9fa37e05e30",
+    "lastHarvestedAt": "2026-11-08T09:35:13.159Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "ecb615e5",
+    "sourceVersion": "7d5b106e",
     "license": "MPL-2.0",
-    "contentHash": "608e96e3fe9f44c7f05755dadf14c52c90c80e567e231d882ca890dc5ff82218",
-    "lastHarvestedAt": "2026-11-05T06:58:22.380Z",
+    "contentHash": "33297e04a3b367c29f67e22b91b35cc80315e6e6ecd09d0ad3539a6e3db98bb9",
+    "lastHarvestedAt": "2026-11-08T09:30:15.130Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {

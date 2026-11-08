@@ -8272,3 +8272,8 @@ Every entry in this ledger must capture:
 | `learn-github-swiftwebui-swiftwebui` | `https://github.com/SwiftWebUI/SwiftWebUI` | `b0b6be06` | Multi-dimensional audit evidence | 2026-11-08T08:25:04.102Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `74c71f96` | Multi-dimensional audit evidence | 2026-11-08T08:49:00.220Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-08T08:58:20.410Z |
+| `learn-github-webrtc-rs-webrtc` | `https://github.com/webrtc-rs/webrtc` | `3c4584ae` | Multi-dimensional audit evidence | 2026-11-08T09:29:06.023Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `7d5b106e` | Multi-dimensional audit evidence | 2026-11-08T09:30:15.130Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-08T09:31:59.317Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e059f4bc` | Multi-dimensional audit evidence | 2026-11-08T09:32:12.109Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `450984ae` | Multi-dimensional audit evidence | 2026-11-08T09:35:13.159Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T08:58:20.428Z",
+  "last_updated": "2026-11-08T09:35:13.168Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -215,14 +215,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
-      "content_hash": "64fd6ba15293afab2a8d71d1849d1b247fba4b30153c8631e64c2dc93781df71",
-      "verified_at": "2026-11-04T21:26:28.126Z",
+      "content_hash": "5b1e9ebf9ee3285c1fdd5233c26c76ddd0cda1b9949573043eca2d67526892ac",
+      "verified_at": "2026-11-08T09:31:59.335Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:26:28.126Z"
+      "last_updated": "2026-11-08T09:31:59.335Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "3b125315aead77b6a9b73e8166fd412ee207ae596a3dfe38b6b9868412a7b07d",
-      "verified_at": "2026-11-08T07:31:01.986Z",
+      "content_hash": "cbf31917c9dfec607e49c39895a0ff40cc9545584bb57e30b231dfcd1caf2936",
+      "verified_at": "2026-11-08T09:32:12.118Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T07:31:01.986Z"
+      "last_updated": "2026-11-08T09:32:12.118Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7686,14 +7686,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrtc-rs-webrtc",
-      "content_hash": "97038f63f1bdec12cc22c28534bed71b7b5503540db836a204e2cb4da3eebac8",
-      "verified_at": "2026-11-02T14:46:22.558Z",
+      "content_hash": "3b84edf4f9ded01d25f26f5712e837271e4553b3e65b663aa85b6e157a788c4a",
+      "verified_at": "2026-11-08T09:29:06.042Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T14:46:22.558Z"
+      "last_updated": "2026-11-08T09:29:06.042Z"
     },
     "midudev/preguntas-entrevista-react": {
       "repository": "midudev/preguntas-entrevista-react",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "de664776ee1fc47211a591c649f33c1c7ba2426487e11cebfade4a714b0c1455",
-      "verified_at": "2026-11-07T05:50:56.371Z",
+      "content_hash": "58d129d40903f5cf5ab22c8303b71b10b8df11374a9f253c3129d9fa37e05e30",
+      "verified_at": "2026-11-08T09:35:13.168Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:50:56.371Z"
+      "last_updated": "2026-11-08T09:35:13.168Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -12531,14 +12531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jellyfin-swiftfin",
-      "content_hash": "608e96e3fe9f44c7f05755dadf14c52c90c80e567e231d882ca890dc5ff82218",
-      "verified_at": "2026-11-05T06:58:22.395Z",
+      "content_hash": "33297e04a3b367c29f67e22b91b35cc80315e6e6ecd09d0ad3539a6e3db98bb9",
+      "verified_at": "2026-11-08T09:30:15.147Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:58:22.395Z"
+      "last_updated": "2026-11-08T09:30:15.147Z"
     },
     "sergdort/ModernCleanArchitectureSwiftUI": {
       "repository": "sergdort/ModernCleanArchitectureSwiftUI",

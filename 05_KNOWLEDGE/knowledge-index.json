@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T08:58:20.318Z",
+  "last_updated": "2026-11-08T09:35:13.064Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13161,8 +13161,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "082be7be",
-      "content_hash": "de664776ee1fc47211a591c649f33c1c7ba2426487e11cebfade4a714b0c1455",
+      "source_version": "450984ae",
+      "content_hash": "58d129d40903f5cf5ab22c8303b71b10b8df11374a9f253c3129d9fa37e05e30",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -13175,6 +13175,21 @@
           "number": null,
           "title": "dynamic_modules: fix `EnvoyBuffer::new` lifetime (#49063)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "In-Place Address Mutation vs. Host Pool Lifecycle Invariance",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Native Dynamic Allocator Interception Invariance",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Untrusted Data Plane Log Rate Starvation Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2187,
@@ -13247,7 +13262,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:50:56.287Z",
+      "verified_at": "2026-11-08T09:35:13.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30743,10 +30758,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "64fd6ba15293afab2a8d71d1849d1b247fba4b30153c8631e64c2dc93781df71",
+      "content_hash": "5b1e9ebf9ee3285c1fdd5233c26c76ddd0cda1b9949573043eca2d67526892ac",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Linear Attention State Isolation in Batched Inference",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Vision Token Alignment & Padding Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 969,
           "title": "Hybrid Attention Layer Interleaving Invariant",
@@ -30776,6 +30801,11 @@
           "number": 4141,
           "title": "Partial Rotary Dimension (Partial-RoPE) Stride Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5098,
+          "title": "Hybrid Attention Periodicity Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 5153,
@@ -30811,7 +30841,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv43c1y3",
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75"
       ],
-      "verified_at": "2026-11-04T21:26:27.972Z",
+      "verified_at": "2026-11-08T09:31:59.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35741,11 +35771,21 @@
       "slug": "jellyfin-swiftfin",
       "platform": "github",
       "source_url": "https://github.com/jellyfin/Swiftfin",
-      "source_version": "ecb615e5",
-      "content_hash": "608e96e3fe9f44c7f05755dadf14c52c90c80e567e231d882ca890dc5ff82218",
+      "source_version": "7d5b106e",
+      "content_hash": "33297e04a3b367c29f67e22b91b35cc80315e6e6ecd09d0ad3539a6e3db98bb9",
       "dossier_path": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "View Modifier Hierarchy Order for SwiftUI Environment Injection",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Monotonic Multi-Flight Seek Reconciliation Pattern",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5559,
           "title": "Single-Flight Seek Coalescing with Structural UUID Fencing",
@@ -35772,7 +35812,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:58:22.257Z",
+      "verified_at": "2026-11-08T09:30:15.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46353,8 +46393,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "34bbba0f",
-      "content_hash": "3b125315aead77b6a9b73e8166fd412ee207ae596a3dfe38b6b9868412a7b07d",
+      "source_version": "e059f4bc",
+      "content_hash": "cbf31917c9dfec607e49c39895a0ff40cc9545584bb57e30b231dfcd1caf2936",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -46397,6 +46437,21 @@
           "number": null,
           "title": "Include input dimensions in analyzer prompt",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Mandatory Before-Image Pairing with Mutation Primitives",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Read-Only Entity Enforcement at the Memory Subsystem Boundary",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Disambiguation-Proof Lookahead Parsing for Overloaded Language Primitives",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 3289,
@@ -46689,7 +46744,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T07:31:01.824Z",
+      "verified_at": "2026-11-08T09:32:11.979Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63626,11 +63681,26 @@
       "slug": "webrtc-rs-webrtc",
       "platform": "github",
       "source_url": "https://github.com/webrtc-rs/webrtc",
-      "source_version": "8ea6e2a6",
-      "content_hash": "97038f63f1bdec12cc22c28534bed71b7b5503540db836a204e2cb4da3eebac8",
+      "source_version": "3c4584ae",
+      "content_hash": "3b84edf4f9ded01d25f26f5712e837271e4553b3e65b663aa85b6e157a788c4a",
       "dossier_path": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Atomic IEEE-754 Scalar Transport Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Custom JoinHandle RAII Detach-on-Drop Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "SCTP Send-Buffer Watermark Starvation Guard",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2042,
           "title": "[v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912",
@@ -63652,7 +63722,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:46:22.439Z",
+      "verified_at": "2026-11-08T09:29:05.910Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153196,14 +153266,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5098,
       "title": "Hybrid Attention Periodicity Invariant",
-      "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
-      "source_version": "hf-internscience-sage-a1.5",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-08T04:26:53.785Z"
+      "verified_at": "2026-11-08T09:31:59.198Z"
     },
     "rule-5099": {
       "learning_id": "rule-5099",

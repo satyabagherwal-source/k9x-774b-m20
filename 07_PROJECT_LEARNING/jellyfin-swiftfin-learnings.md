@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source**: github ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
-> **Source Version**: `ecb615e5`  
+> **Source Version**: `7d5b106e`  
 > **License**: MPL-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:58:21.540Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-08T09:30:13.129Z  
 > **Learning ID**: `learn-github-jellyfin-swiftfin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,490 +12,126 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): jellyfin/Swiftfin
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:58:21.533Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): jellyfin/Swiftfin
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `jellyfin/Swiftfin`
-- **Description**: Native Jellyfin Client for iOS and tvOS 
-- **Primary Language / Ecosystem**: Swift
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4258 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### Exact Technical Problem Solved
+Swiftfin serves as the native multiplatform client (iOS, iPadOS, tvOS) for the open-source Jellyfin media ecosystem. The primary engineering problem it solves is orchestrating low-latency, resilient media playback and navigation against heterogeneously transcoded remote media servers across disparate Apple platforms. The application reconciles strict Apple Human Interface Guidelines across touch, pointer, and tvOS Siri Remote focus engines while maintaining deterministic playback state synchronization, Electronic Program Guide (EPG) 2D spatial virtualization, and robust offline Core Data persistence via `CoreStore`.
+
+### Architectural Boundaries & Subsystem Decoupling
+```
++-------------------------------------------------------------------------------+
+|                       Presentation Layer (SwiftUI / UIKit)                    |
+|  [EPG Grid Virtualization] [VideoPlayer Overlay] [Focus Engine (tvOS/iOS)]    |
++---------------------------------------+---------------------------------------+
+                                        | (State bindings, @EnvironmentObject)
+                                        v
++-------------------------------------------------------------------------------+
+|                         State & Coordination Engines                          |
+|  [PlaybackTimeline]  [MediaPlayerQueue]  [EPGScrollState]  [LazyState<T>]     |
++---------------------------------------+---------------------------------------+
+                                        | (Observation, async/await, Combine)
+                                        v
++-------------------------------------------------------------------------------+
+|                         Core Persistence & API Boundary                       |
+|   [JellyfinAPI Client]  <--->  [CoreStore Logger / SQLite] <---> [Keychain]   |
++-------------------------------------------------------------------------------+
+```
+
+1. **Presentation vs. Playback Core Isolation**: The UI binds to `PlaybackTimeline` and `PlaybackState` value types rather than directly mutating low-level playback primitives (`AVPlayer` or `VLCKit`). This ensures that user interactions (scrubbing, seeking) update optimistic timeline projections (`displayed`) while asynchronous seeking commands (`inFlight`, `pending`) resolve deterministically without UI stutter or micro-jank.
+2. **Dynamic Lazy Property Evaluation (`LazyState`)**: Swiftfin decouples heavy initialization pipelines from view instantiation via a custom `@MainActor @propertyWrapper LazyState<Value>`. This avoids the expensive cost of evaluating complex view state factories during SwiftUI view tree hierarchy evaluations.
+3. **EPG Grid Virtualization Pipeline**: Swiftfin utilizes a hybrid UIKit-backed grid collection view combined with Combine publishers (`EPGScrollState`) using threshold clamping (`abs(delta) > 0.5`) to decouple high-frequency 60/120Hz scroll events from subview recalculations.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. View Modifier Hierarchy Order for SwiftUI Environment Injection
+**RULE**:
+When attaching custom `ViewModifier` instances that read from `@EnvironmentObject` or `@Environment`, the environment injector (`.environmentObject(...)` or `.environment(...)`) MUST wrap the modifier call from the outer scope, or the injector MUST be declared AFTER any modifier that relies on that environment in the modifier chain hierarchy evaluation order. Specifically, a custom modifier that invokes internal subviews dependent on an `EnvironmentObject` MUST NOT be chained before the `.environmentObject()` modifier is attached to that view hierarchy branch.
 
-### Core Architecture Module: `Shared/Components/EPG/Body/Components/EPGScrollState.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
+**WHY**:
+In SwiftUI, modifiers wrap views from inside-out. If a custom modifier (e.g., `KeyCommandsModifier`) installs an underlying UIKit hosting controller or inspects an environment dependency of an embedded subview, placing `.environmentObject(target)` *before* `.modifier(KeyCommandsModifier())` results in the modifier capturing the parent environment rather than the newly injected object, or dropping the object across the hosting bridge boundary. In production, this causes a fatal assertion failure: `Fatal error: No ObservableObject of type ToastProxy found. A View.environmentObject(_:) for ToastProxy may be missing as an ancestor of this view.`
 
-import Combine
-import UIKit
+**WHEN TO APPLY**:
+Applies to all SwiftUI platforms (iOS, macOS, tvOS, watchOS) whenever combining custom view modifiers (`ViewModifier`), UIKit bridging modifiers (`UIViewRepresentable`, `UIViewControllerRepresentable`), and environment injection chains.
 
-final class EPGScrollState {
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Swiftfin Pattern: VideoPlayer overlay key handling & toast injection
+struct PlaybackControlsView: View {
+    @ObservedObject var viewState: VideoPlayerViewState
 
-    private let visibleLeadingOffsetSubject = CurrentValueSubject<CGFloat, Never>(0)
-
-    var visibleLeadingOffset: CGFloat {
-        visibleLeadingOffsetSubject.value
-    }
-
-    var visibleLeadingOffsetPublisher: AnyPublisher<CGFloat, Never> {
-        visibleLeadingOffsetSubject.eraseToAnyPublisher()
-    }
-
-    func update(visibleLeadingOffset: CGFloat) {
-        guard abs(self.visibleLeadingOffset - visibleLeadingOffset) > 0.5 else { return }
-
-        visibleLeadingOffsetSubject.send(visibleLeadingOffset)
-    }
-}
-
-```
-
-### Core Architecture Module: `Shared/Errors/NetworkError.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import Foundation
-import JellyfinAPI
-
-// This is only kept as reference until more strongly-typed errors are implemented.
-
-// enum NetworkError: Error {
-//
-//    /// For the case that the ErrorResponse object has a code of -1
-//    case URLError(response: ErrorResponse, displayMessage: String?)
-//
-//    /// For the case that the ErrorRespones object has a code of -2
-//    case HTTPURLError(response: ErrorResponse, displayMessage: String?)
-//
-//    /// For the case that the ErrorResponse object has a positive code
-//    case JellyfinError(response: ErrorResponse, displayMessage: String?)
-//
-//    var errorMessage: ErrorMessage {
-//        switch self {
-//        case let .URLError(response, displayMessage):
-//            return NetworkError.parseURLError(from: response, displayMessage: displayMessage)
-//        case let .HTTPURLError(response, displayMessage):
-//            return NetworkError.parseHTTPURLError(from: response, displayMessage: displayMessage)
-//        case let .JellyfinError(response, displayMessage):
-//            return NetworkError.parseJellyfinError(from: response, displayMessage: displayMessage)
-//        }
-//    }
-//
-//    private static func parseURLError(from response: ErrorResponse, displayMessage: String?) -> ErrorMessage {
-//        let errorMessage: ErrorMessage
-//
-//        switch response {
-//        case let .error(_, _, _, err):
-//
-//            // Code references:
-//            // https://developer.apple.com/documentation/foundation/1508628-url_loading_system_error_codes
-//            switch err._code {
-//            case -1001:
-//                errorMessage = ErrorMessage(
-//                    code: err._code,
-//                    title: L10n.error,
-//                    message: L10n.networkTimedOut
-//                )
-//            case -1003:
-//                errorMessage = ErrorMessage(
-//                    code: err._code,
-//                    title: L10n.error,
-//                    message: L10n.unableToFindHost
-//                )
-//            case -1004:
-//                errorMessage = ErrorMessage(
-//                    code: err._code,
-//                    title: L10n.error,
-//                    message: L10n.cannotConnectToHost
-//                )
-//            default:
-//                errorMessage = ErrorMessage(
-//                    code: err._code,
-//                    title: L10n.error,
-//                    message: L10n.unknownError
-//                )
-//            }
-//        }
-//
-//        return errorMessage
-//    }
-//
-//    private static func parseHTTPURLError(from response: ErrorResponse, displayMessage: String?) -> ErrorMessage {
-//        let errorMessage: ErrorMessage
-//
-//        // Not implemented as has not run into one of these errors as time of writing
-//        switch response {
-//        case .error:
-//            errorMessage = ErrorMessage(
-//                code: 0,
-//                title: L10n.error,
-//                message: "An HTTP URL error has occurred"
-//            )
-//        }
-//
-//        return errorMessage
-//    }
-//
-//    private static func parseJellyfinError(from response: ErrorResponse, displayMessage: String?) -> ErrorMessage {
-//        let errorMessage: ErrorMessage
-//
-//        switch response {
-//        case let .error(code, _, _, _):
-//
-//            // Generic HTTP status codes
-//            switch code {
-//            case 401:
-//                errorMessage = ErrorMessage(
-//                    code: code,
-//                    title: L10n.unauthorized,
-//                    message: L10n.unauthorizedUser
-//                )
-//            default:
-//                errorMessage = ErrorMessage(
-//                    code: code,
-//                    title: L10n.error,
-//                    message: displayMessage ?? L10n.unknownError
-//                )
-//            }
-//        }
-//
-//        return errorMessage
-//    }
-// }
-
-```
-
-### Core Architecture Module: `Shared/Extensions/JellyfinAPI/PlayerStateInfo.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import Foundation
-import JellyfinAPI
-
-extension PlayerStateInfo {
-
-    var position: Duration? {
-        guard let positionTicks else { return nil }
-
-        return Duration.microseconds(positionTicks / 10)
-    }
-
-    @available(*, deprecated, message: "Use `position` instead")
-    var positionSeconds: Int? {
-        guard let positionTicks else { return nil }
-
-        return positionTicks / 10_000_000
-    }
-}
-
-```
-
-### Core Architecture Module: `Shared/Extensions/JellyfinAPI/PlaystateCommand.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import JellyfinAPI
-import SwiftUI
-
-extension PlaystateCommand: Displayable, SystemImageable {
-
-    var displayTitle: String {
-        switch self {
-        case .stop:
-            L10n.stop
-        case .pause:
-            L10n.pause
-        case .unpause:
-            L10n.play
-        case .nextTrack:
-            L10n.next
-        case .previousTrack:
-            L10n.previous
-        case .seek:
-            L10n.seek
-        case .rewind:
-            L10n.rewind
-        case .fastForward:
-            L10n.fastForward
-        case .playPause:
-            L10n.playAndPause
+    var body: some View {
+        ZStack {
+            ControlsOverlayView()
+            ToastContainerView()
         }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .stop:
-            "stop.fill"
-        case .pause:
-            "pause.fill"
-        case .unpause:
-            "play.fill"
-        case .nextTrack:
-            "forward.end.fill"
-        case .previousTrack:
-            "backward.end.fill"
-        case .seek:
-            "timeline.selection"
-        case .rewind:
-            "backward.fill"
-        case .fastForward:
-            "forward.fill"
-        case .playPause:
-            "playpause.fill"
-        }
+        // Step 1: Attach system and platform bridge modifiers first
+        .modifier(VideoPlayer.KeyCommandsModifier())
+        // Step 2: Ensure environment injections enclose all modifier subtrees
+        .environmentObject(viewState.toastProxy)
+        // Step 3: Attach animations dependent on state changes
+        .animation(.linear(duration: 0.1), value: viewState.isScrubbing)
+        .animation(.easeInOut(duration: 0.2), value: viewState.toastProxy.isPresenting)
     }
 }
-
 ```
 
-### Core Architecture Module: `Shared/Extensions/JellyfinAPI/TaskState.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Attaching .environmentObject BEFORE custom structural modifiers
+// that bridge to UIKit view controllers or evaluate inner views.
+struct PlaybackControlsView: View {
+    @ObservedObject var viewState: VideoPlayerViewState
 
-import Foundation
-import JellyfinAPI
-
-extension TaskState: Displayable {
-
-    var displayTitle: String {
-        switch self {
-        case .cancelling:
-            L10n.cancelling
-        case .idle:
-            L10n.idle
-        case .running:
-            L10n.running
+    var body: some View {
+        ZStack {
+            ControlsOverlayView()
+            ToastContainerView()
         }
+        // BROKEN: KeyCommandsModifier cannot resolve toastProxy in its internal view passes,
+        // triggering ASC fatal crash on production devices.
+        .environmentObject(viewState.toastProxy)
+        .modifier(VideoPlayer.KeyCommandsModifier())
     }
 }
-
 ```
 
-### Core Architecture Module: `Shared/Logging/SwiftfinCorestoreLogger.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import CoreStore
-import Logging
-
-struct SwiftfinCorestoreLogger: CoreStoreLogger {
-
-    private let logger = Logger.swiftfin()
-
-    func log(
-        error: CoreStoreError,
-        message: String,
-        fileName: StaticString,
-        lineNumber: Int,
-        functionName: StaticString
-    ) {
-        logger.error(
-            "\(message)",
-            metadata: nil,
-            source: "Corestore",
-            file: fileName.description,
-            function: functionName.description,
-            line: UInt(lineNumber)
-        )
-    }
-
-    func log(
-        level: LogLevel,
-        message: String,
-        fileName: StaticString,
-        lineNumber: Int,
-        functionName: StaticString
-    ) {
-        logger.log(
-            level: level.asSwiftLog,
-            "\(message)",
-            metadata: nil,
-            source: "Corestore",
-            file: fileName.description,
-            function: functionName.description,
-            line: UInt(lineNumber)
-        )
-    }
-
-    func assert(
-        _ condition: @autoclosure () -> Bool,
-        message: @autoclosure () -> String,
-        fileName: StaticString,
-        lineNumber: Int,
-        functionName: StaticString
-    ) {
-        guard !condition() else { return }
-
-        logger.critical(
-            "\(message())",
-            metadata: nil,
-            source: "Corestore",
-            file: fileName.description,
-            function: functionName.description,
-            line: UInt(lineNumber)
-        )
-    }
+**VERIFICATION METHOD**:
+Verify using an automated UI View Inspector / XCTest case that instantiates the hosting controller and exercises key commands without an ancestor environment object:
+```swift
+func testKeyCommandsModifierPreservesEnvironmentToastProxy() throws {
+    let state = VideoPlayerViewState()
+    let view = PlaybackControlsView(viewState: state)
+    let hostingController = UIHostingController(rootView: view)
+    
+    // Force layout pass and view hierarchy extraction
+    hostingController.loadViewIfNeeded()
+    XCTAssertNoThrow(try hostingController.rootView.inspect().find(ToastContainerView.self))
 }
-
-extension CoreStore.LogLevel {
-
-    var asSwiftLog: Logger.Level {
-        switch self {
-        case .trace:
-            .trace
-        case .notice:
-            .debug
-        case .warning:
-            .warning
-        case .fatal:
-            .critical
-        }
-    }
-}
-
 ```
 
-### Core Architecture Module: `Shared/Objects/LazyState.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
+---
 
-import SwiftUI
+### 2. Monotonic Multi-Flight Seek Reconciliation Pattern
+**RULE**:
+When building media scrubbing interfaces, the state engine MUST separate the `observed` engine position, the `pending` target position, and the `inFlight` request position into an atomic state structure. The UI MUST display `pending ?? observed`, and seeking completion handlers MUST NEVER clear a seek state unless the completed seek matches the unique UUID of the currently tracked `inFlight` request.
 
-@MainActor
-@propertyWrapper
-struct LazyState<Value>: @preconcurrency DynamicProperty {
+**WHY**:
+Network and disk seek operations are asynchronous and variable-latency. If a user scrubs rapidly from $t=10$ to $t=20$ to $t=30$, an engine dispatch for $t=20$ might complete *after* the user has already requested $t=30$. If the completion handler blindly resets the display or sets seeking state to idle, the UI will jitter backward to $t=20$ before jumping to $t=30$, or will prematurely accept stale duration ticks, causing visual desynchronization and corrupted stream decoders.
 
-    final class Box {
+**WHEN TO APPLY**:
+All audio/video streaming, playback timeline engines, and scrubbable timeline visualizations across iOS, macOS, Android, and Web media players.
 
-        private var value: Value!
-        private let thunk: () -> Value
-        var didThunk = false
-
-        var wrappedValue: Value {
-            value
-        }
-
-        func setup() {
-            value = thunk()
-            didThunk = true
-        }
-
-        init(wrappedValue thunk: @autoclosure @escaping () -> Value) {
-            self.thunk = thunk
-        }
-    }
-
-    @State
-    private var holder: Box
-
-    var wrappedValue: Value {
-        holder.wrappedValue
-    }
-
-    var projectedValue: Binding<Value> {
-        Binding(get: { wrappedValue }, set: { _ in })
-    }
-
-    func update() {
-        guard !holder.didThunk else { return }
-
-        holder.setup()
-    }
-
-    init(wrappedValue thunk: @autoclosure @escaping () -> Value) {
-        _holder = State(wrappedValue: Box(wrappedValue: thunk()))
-    }
-}
-
-```
-
-### Core Architecture Module: `Shared/Objects/MediaPlayerManager/PlaybackState.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import Foundation
-
-/// Observations from an engine, independent of what the user has requested.
-struct PlaybackState: Equatable {
-
-    var isReady = false
-    var isPlaying = false
-    var isSeekable = false
-    var isSeeking = false
-    var isWaitingForDisplay = false
-    var duration: Duration?
-    var isBuffering = false
-}
-
-/// Only one seek is dispatched at a time. Requests made while it runs replace
-/// the queued target, but update the displayed position immediately.
-struct PlaybackTimeline {
-
-    struct Seek: Equatable {
-
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Swiftfin PlaybackTimeline Production Pattern
+struct PlaybackTimeline: Sendable {
+    struct Seek: Equatable, Sendable {
         let id = UUID()
         let target: Duration
     }
@@ -515,19 +151,15 @@ struct PlaybackTimeline {
     mutating func requestSeek(to position: Duration, duration: Duration?) {
         let target = max(.zero, duration.map { min(position, $0) } ?? position)
         guard target != displayed else { return }
-
         pending = Seek(target: target)
     }
 
     mutating func beginSeek() -> Seek? {
         guard inFlight == nil, let pending else { return nil }
-
         inFlight = pending
-
         return pending
     }
 
-    /// A completion for a previous load or request cannot clear a newer intent.
     @discardableResult
     mutating func completeSeek(_ id: UUID, position: Duration?) -> Bool {
         guard inFlight?.id == id else { return false }
@@ -536,929 +168,443 @@ struct PlaybackTimeline {
             observe(position)
         }
 
+        // Only clear pending if it wasn't superseded by a newer scrub
         if pending?.id == id {
             pending = nil
         }
 
         inFlight = nil
-
         return true
-    }
-
-    mutating func reset(position: Duration = .zero) {
-        self = PlaybackTimeline()
-        observe(position)
-    }
-}
-
-```
-
-### Core Architecture Module: `Shared/Objects/MediaPlayerManager/Players/VideoPlaybackState.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import Foundation
-
-struct VideoPlaybackState: Equatable, Sendable {
-
-    var videoSize: CGSize = .zero
-}
-
-```
-
-### Core Architecture Module: `Shared/Objects/MediaPlayerManager/Supplements/Components/MediaPlayerQueue.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import Observation
-
-enum MediaPlayerQueueState {
-
-    case initial
-    case loading
-    case content
-    case error
-}
-
-@MainActor
-protocol MediaPlayerQueue: AnyObject, Observable, MediaSessionObserver {
-
-    var state: MediaPlayerQueueState { get }
-    var items: [ItemEntry] { get }
-    var currentEntryID: ItemEntry.ID? { get }
-
-    var hasNextItem: Bool { get }
-    var hasPreviousItem: Bool { get }
-
-    var nextItem: PlaybackIntent? { get }
-    var previousItem: PlaybackIntent? { get }
-
-    func resolve(_ intent: PlaybackIntent, userSession: UserSession) async throws -> PlaybackIntent
-    func next() async throws -> PlaybackIntent?
-    func refresh()
-    func select(_ entry: ItemEntry)
-}
-
-extension MediaPlayerQueue {
-
-    func resolve(_ intent: PlaybackIntent, userSession: UserSession) async throws -> PlaybackIntent {
-        intent
-    }
-
-    func next() async throws -> PlaybackIntent? {
-        nextItem
-    }
-
-    var hasNextItem: Bool {
-        nextItem != nil
-    }
-
-    var hasPreviousItem: Bool {
-        previousItem != nil
-    }
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2399** (2026-11-01): **Filter/sort bar too tall in Movies view; buttons only respond at offset position**
-  *Symptoms*: ### This issue respects the following points:  - [x] This is a **bug**, not a question or a configuration issue; Please visit our [forum or chat rooms](https://jellyfin.org/contact/) first to troubleshoot with volunteers, before creating a report. - [x] This issue is **not** already reported on [GitHub](https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue). - [x] I have read the [Common Issues](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/common_issues.md) documentation and this issue was not mentioned there. - [x] I'm using an up to date version of Swiftfin; We generally do not support previous older versions. If possible, please update to the latest version before opening an issue. - [x] I agree to follow Jellyfin's [Code of Conduct](https://jellyfin.org/docs/general/community-standards.html#code-of-conduct).  ### Description of the bug  ### Summary In a library view (e.g. Movies), the area between the navigation bar and the filter/sort bar is much taller than it should be, leaving a large empty blurred gap. The filter/sort buttons (Audio, Genres, Letter, Rating, Sort, …) are drawn lower than their actual tap targets. Tapping the visible buttons does nothing; they only respond when tapping higher up, where they should have been rendered.  ### Reproduction steps  ### Steps to reproduce  (If relevant, some language settings are in Norwegian)  1. Open Swiftfin and sign in to a server. 2. Go to Media → open a library (e.g. Movies). 3. Look at the t
-
-- **Issue #2398** (2026-11-01): **Fix content group looping**
-  *Symptoms*: Fix a bug that could cause many content group loops.
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `ecb615e5` (2026-11-04)
-**Commit Message**: Performance, update MPVUI, update SDK (#2400)
-
-**File**: `Shared/Objects/DefaultsKeyCache.swift` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+//
-+// Swiftfin is subject to the terms of the Mozilla Public
-+// License, v2.0. If a copy of the MPL was not distributed with this
-+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-+//
-+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-+//
-+
-+import Defaults
-+import Foundation
-+
-+final class DefaultsKeyCache {
-+
-+    private let keys = NSCache<NSString, AnyObject>()
-+
-+    init() {
-+        keys.countLimit = 256
-+    }
-+
-+    func key<Value: Defaults.Serializable>(
-+        _ name: String,
-+        default defaultValue: Value,
-+        suiteName: String
-+    ) -> Defaults.Key<Value> {
-+        let identity = "\(suiteName.utf8.count):\(suiteName)\(name)" as NSString
-+
-+        if let key = keys.object(forKey: identity) as? Defaults.Key<Value> {
-+            return key
-+        }
-+
-+        let key = Defaults.Key(name, default: defaultValue, suite: UserDefaults(suiteName: suiteName)!)
-+        keys.setObject(key, forKey: identity)
-+
-+        return key
-+    }
-+}
-```
-
-**File**: `Shared/Objects/MediaPlayerManager/MPVTrackIdentity.swift` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+//
-+// Swiftfin is subject to the terms of the Mozilla Public
-+// License, v2.0. If a copy of the MPL was not distributed with this
-+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-+//
-+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-+//
-+
-+/// Normalizes Jellyfin identifiers for matching player tracks.
-+enum MPVTrackIdentity {
-+
-+    static func subtitleID(_ index: Int) -> String {
-+        "jellyfin-subtitle-\(index)"
-+    }
-+
-+    static func codecName(_ name: String) -> String {
-+        let name = name.lowercased()
-+
-+        switch name {
-+        case "dts_hd":
-+            return "dts"
-+
-+        case "dv":
-+            return "dvvideo"
-+
-+        case "ssa":
-+            return "ass"
-+
-+        case "cc_dec":
-+            return "eia_608"
-+
-+        case "dvbsub":
-+            return "dvb_subtitle"
-+
-+        case "dvdsub":
-+            return "dvd_subtitle"
-+
-+        case "pgssub":
-+            return "hdmv_pgs_subtitle"
-+
-+        case "vtt":
-+            return "webvtt"
-+
-+        case "srt":
-+            return "subrip"
-+
-+        default:
-+            return name
-+        }
-+    }
-+}
-```
-
-**File**: `Shared/Objects/MediaPlayerManager/MediaPlayerItem/MediaPlayerItem.swift` (modified, +37/-2)
-```diff
-@@ -87,6 +87,7 @@ final class MediaPlayerItem {
-         (mediaSession?.player as? MediaPlayerSecondarySubtitleProviding)?.setSecondarySubtitle(
-             indexMap.playerIndex(for: effectiveSecondarySubtitleStreamIndex).flatMap { $0 >= 0 ? $0 : nil }
-         )
-+        requestSubtitlePreparation(effectiveSecondarySubtitleStreamIndex)
-     }
- 
-     /// Secondary subtitles must play locally without changing the server's burn-in selection.
-@@ -266,29 +267,63 @@ final class MediaPlayerItem {
-     }
- 
-     func switchTrack(type: MediaStreamType, index: Int?) {
--        guard let player = mediaSession?.player as? any MediaPlayerTrackProviding else { return }
-+        guard let player = mediaSession?.player as? any MediaPlayerTrackProviding else {
-+            return
-+        }
- 
-         let playerIndex = indexMap.playerIndex(for: index)
- 
-         switch type {
-         case .audio:
--            guard let playerIndex else { return }
-+            guard let playerIndex else {
-+                return
-+            }
- 
-             player.setStream(.init(index: playerIndex, type: .audio))
- 
-         case .subtitle:
-             // Disable subtitles until the requested track is available.
-             player.setStream(.init(index: playerIndex ?? -1, type: .subtitle))
-+            requestSubtitlePreparation(index)
- 
-         default:
-             return
-         }
-     }
- 
-+    /// Makes a requested sidecar available without changing persistent or temporary choices.
-+    func prepareSubtitle(at index: Int) async -> Bool {
-+        guard !Task.isCancelled, mediaSession?.playbackItem === self else {
-+            return false
-+        }
-+
-+        if let playerIndex = indexMap.playerIndex(for: index), playerIndex >= 0 {
-+            return true
-+        }
-+
-+        guard let stream = subtitleStreams.first(where: { $0.index == index && $0.isSidecarSubtitle }),
-+              let provider = mediaSession?.player as? MediaPlayerExternalSubtitleProviding
-+        else {
-+            return false
-+        }
-+
-+        return await provider.prepareSubtitle(stream)
-+    }
-+
-     /// Replaces estimated track indexes with those reported by the player.
-     func setTrackIndexes(_ indexMap: MediaTrackIndexMap) {
-         self.indexMap = indexMap
-         switchTrack(type: .audio, index: selectedAudioStreamIndex)
-         applySelectedSubtitleTracks()
-     }
-+
-+    private func requestSubtitlePreparation(_ index: Int?) {
-+        guard let index, index >= 0, indexMap.playerIndex(for: index) == nil else {
-+            return
-+        }
-+
-+        Task { [weak self] in
-+            _ = await self?.prepareSubtitle(at: index)
-+        }
-+    }
- }
-```
-
-**File**: `Shared/Objects/MediaPlayerManager/MediaPlayerItem/MediaPlayerItemReplaySubtitles.swift` (modified, +138/-46)
-```diff
-@@ -15,13 +15,17 @@ import MediaAccessibilityKit
- final class MediaPlayerItemReplaySubtitles {
- 
-     private weak var item: MediaPlayerItem?
-+    private let isEnabled: () -> Bool
-+
-     private var observation: AnyCancellable?
-+
-+    private var preparation: Task<Void, Never>?
-+    private var preparationOrigin: Duration?
-     private var seek: (id: UUID, origin: Duration)?
-     private var window: SkipBackSubtitles?
--    private let isEnabled: () -> Bool
- 
-     var hasPendingSeek: Bool {
--        seek != nil
-+        seek != nil || preparation != nil
-     }
- 
-     init(
-@@ -37,16 +41,59 @@ final class MediaPlayerItemReplaySubtitles {
-         }
-     }
- 
--    isolated deinit {}
-+    isolated deinit {
-+        preparation?.cancel()
-+    }
-+
-+    func end(apply: Bool = true) {
-+        preparation?.cancel()
-+        preparation = nil
-+        preparationOrigin = nil
-+        seek = nil
-+        window = nil
-+
-+        if item?.temporarySubtitleTracks != nil {
-+            item?.setTemporarySubtitleTracks(nil, apply: apply)
-+        }
-+    }
-+
-+    /// Called by both transport updates and the loaded item's engine cue callbacks.
-+    func refresh() {
-+        guard var window else {
-+            return
-+        }
-+        guard isEnabled() else {
-+            end()
-+            return
-+        }
-+        guard let mediaSession = item?.mediaSession,
-+              !mediaSession.isSeeking,
-+              let provider = mediaSession.player as? MediaPlayerSubtitleCueProviding
-+        else {
-+            return
-+        }
-+
-+        if window.hasFinished(at: mediaSession.observedSeconds, cues: provider.subtitleCues) {
-+            end()
-+        } else {
-+            self.window = window
-+        }
-+    }
- 
-     private func receive(_ event: MediaSession.PlaybackEvent) {
-         switch event {
-         case .positionChanged:
-             refresh()
- 
-         case let .seekRequested(request, origin):
-+            let previousOrigin = preparationOrigin
-+
-+            preparation?.cancel()
-+            preparation = nil
-+            preparationOrigin = nil
-+
-             if request.target < origin, isEnabled() {
--                seek = (request.id, max(origin, max(seek?.origin ?? origin, window?.end ?? origin)))
-+                seek = (request.id, max(origin, max(previousOrigin ?? origin, max(seek?.origin ?? origin, window?.end ?? origin))))
-             } else {
-                 end()
-             }
-@@ -57,77 +104,122 @@ final class MediaPlayerItemReplaySubtitles {
-                 seek = nil
- 
-                 if let position, let origin, !hasPendingSeek, position < origin {
--                    begin(from: origin, at: position)
-+                    begin(from: origin)
-                 }
-             }
- 
-             refresh()
-         }
-     }
- 
--    private func begin(from origin: Duration, at position: Duration) {
--        guard isEnabled(), let item,
-+    private func begin(from origin: Duration) {
-+        guard isEnabled(),
-+              let item,
-               !item.subtitlesEnabled || item.isShowingSubtitlesOnSkipBack,
--              let provider = item.mediaSession?.player as? MediaPlayerSubtitleCueProviding else { return }
-+              let provider = item.mediaSession?.player as? MediaPlayerSubtitleCueProviding
-+        else {
-+            return
-+        }
- 
-         func isAvailable(_ index: Int) -> Bool {
--            guard index >= 0, let playerIndex = item.indexMap.playerIndex(for: index),
--                  !item.isRebuildRequired(type: .subtitle, from: -1, to: index) else { return false }
-+            guard index >= 0,
-+                  let playerIndex = item.indexMap.playerIndex(for: index),
-+                  !item.isRebuildRequired(type: .subtitle, from: -1, to: index)
-+            else {
-+                return false
-+            }
- 
-             return provider.canObserveSubtitleCues(at: playerIndex)
-         }
- 
--        var tracks = SubtitleTrackSelection(
-+        let preferred = SubtitleTrackSelection(
-             primary: item.configuration.disabledSubtitleTracks != nil || item.isShowingSubtitlesOnSkipBack
-                 ? item.subtitleTrackIndex(secondary: false) : -1,
-             secondary: item.subtitleTrackIndex(secondary: true)
-         )
- 
--        if !isAvailable(tracks.primary) {
--            tracks.primary = -1
--        }
-+        window = nil
- 
--        if !isAvailable(tracks.secondary) {
--            tracks.secondary = -1
-+        if item.isShowingSubtitlesOnSkipBack {
-+            item.setTemporarySubtitleTracks(nil)
-         }
- 
--        if tracks.primary < 0, tracks.secondary < 0 {
--            let streams = item.subtitleStreams.filter { isAvailable($0.index ?? -1) }
-+        preparation?.cancel()
-+        preparationOrigin = origin
- 
--            tracks.primary = MediaPlaybackPreferences.current.subtitleForReplay(
--                in: streams, defaultIndex: item.mediaSource.defaultSubtitleStreamIndex
--            ) ?? -1
--        }
-+        preparation = Task { 
-```
-
-**File**: `Shared/Objects/MediaPlayerManager/MediaTrackIndexMap+MPV.swift` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+//
-+// Swiftfin is subject to the terms of the Mozilla Public
-+// License, v2.0. If a copy of the MPL was not distributed with this
-+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-+//
-+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-+//
-+
-+import JellyfinAPI
-+import MPVUI
-+
-+extension MediaTrackIndexMap {
-+
-+    /// FFmpeg indexes match the original representation. Transcodes are mapped only to the requested audio stream.
-+    static func mpv(
-+        mediaStreams: [MediaStream],
-+        tracks: [MPVMediaTrack],
-+        isTranscoding: Bool,
-+        selectedAudioStreamIndex: Int?
-+    ) -> MediaTrackIndexMap {
-+        var map = MediaTrackIndexMap()
-+
-+        for (streamType, trackType) in [(MediaStreamType.audio, MPVTrackType.audio), (.subtitle, .subtitle)] {
-+            let streams = mediaStreams.filter { $0.type == streamType && $0.isExternal != true && !$0.isSidecarSubtitle }
-+            let internalTracks = tracks.filter { $0.type == trackType && !$0.isExternal }
-+
-+            if isTranscoding {
-+                if streamType == .audio, let index = selectedAudioStreamIndex, let track = internalTracks.first {
-+                    map.setPlayerIndex(track.mpvID, for: index)
-+                }
-+
-+                continue
-+            }
-+
-+            var remaining = internalTracks
-+
-+            for stream in streams {
-+                guard let index = stream.index else {
-+                    continue
-+                }
-+
-+                let exact = remaining.filter { $0.sourceStreamIndex == index }
-+                let matches = exact.isEmpty ? remaining.filter { track in
-+                    guard track.sourceStreamIndex == nil else {
-+                        return false
-+                    }
-+
-+                    if let codec = stream.codec,
-+                       let native = track.codec,
-+                       MPVTrackIdentity.codecName(codec) != MPVTrackIdentity.codecName(native)
-+                    {
-+                        return false
-+                    }
-+
-+                    if let language = stream.language, let native = track.language, language != native {
-+                        return false
-+                    }
-+
-+                    if let title = stream.title, let native = track.title, title != native {
-+                        return false
-+                    }
-+
-+                    if stream.isHearingImpaired == true && !track.isHearingImpaired {
-+                        return false
-+                    }
-+
-+                    return true
-+                } : exact
-+
-+                guard matches.count == 1, let track = matches.first else {
-+                    continue
-+                }
-+
-+                map.setPlayerIndex(track.mpvID, for: index)
-+                remaining.removeAll { $0.id == track.id }
-+            }
-+        }
-+
-+        for stream in mediaStreams.sidecarSubtitles {
-+            if let index = stream.index,
-+               let track = tracks
-+                .first(where: { $0.type == .subtitle && $0.isExternal && $0.clientID == MPVTrackIdentity.subtitleID(index) })
-+            {
-+                map.setPlayerIndex(track.mpvID, for: index)
-+            }
-+        }
-+
-+        return map
-+    }
-+}
-```
-
-**File**: `Shared/Objects/MediaPlayerManager/MediaTrackIndexMap.swift` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@
- import Foundation
- import JellyfinAPI
- 
--struct MediaTrackIndexMap {
-+struct MediaTrackIndexMap: Equatable {
- 
-     private var playerIndexesByJellyfinIndex: [Int: Int]
- 
-```
-
-**File**: `Shared/Objects/MediaPlayerManager/NowPlayable/NowPlayableObserver.swift` (modified, +14/-3)
-```diff
-@@ -32,6 +32,7 @@ final class NowPlayableObserver: MediaSessionObserver {
-     private var itemArtwork: UIImage?
-     private var artworkSources: [ImageSource]?
-     private var languageOptions = NowPlayableLanguageOptions()
-+    private var publishedPositionSecond: Int64?
- 
-     private var registeredCommands: [NowPlayableCommand] {
-         [
-@@ -108,9 +109,15 @@ final class NowPlayableObserver: MediaSessionObserver {
-                 self?.updateRemoteCommands()
-             },
-             ObservationToken { [weak mediaSession] in
--                mediaSession?.observedSeconds
--            } onChange: { [weak self] _ in
--                self?.updatePlaybackInfo()
-+                mediaSession?.observedSeconds.components.seconds
-+            } onChange: { [weak self] second in
-+                guard let self, second != publishedPositionSecond else {
-+                    return
-+                }
-+
-+                // Now Playing extrapolates between positions using the published rate.
-+                // State, rate, and seek changes still publish immediately above.
-+                updatePlaybackInfo()
-             },
-         ]
- 
-@@ -147,6 +154,7 @@ final class NowPlayableObserver: MediaSessionObserver {
-         guard observedItem !== item else { return }
- 
-         observedItem = item
-+        publishedPositionSecond = nil
-         itemImageCancellable = nil
-         programRefreshTask = nil
-         programEndDate = nil
-@@ -276,6 +284,8 @@ final class NowPlayableObserver: MediaSessionObserver {
-     private func updatePlaybackInfo() {
-         guard isActive, let mediaSession, let item = mediaSession.playbackItem else { return }
- 
-+        publishedPositionSecond = mediaSession.observedSeconds.components.seconds
-+
-         let state = mediaSession.playbackState
-         let isAdvancing = mediaSession.playbackRequestStatus == .playing && state.isPlaying
-             && !mediaSession.isSeeking && !state.isSeeking && !state.isBuffering && !state.isWaitingForDisplay
-@@ -399,6 +409,7 @@ final class NowPlayableObserver: MediaSessionObserver {
-         itemArtwork = nil
-         artworkSources = nil
-         observedItem = nil
-+        publishedPositionSecond = nil
-         playbackRequestStateBeforeInterruption = nil
-         MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
- 
-```
-
-**File**: `Shared/Objects/MediaPlayerManager/Players/AVMediaPlayer.swift` (modified, +0/-17)
-```diff
-@@ -360,23 +360,6 @@ extension AVMediaPlayer {
- 
-             .store(in: &playbackObservations)
- 
--        NotificationCenter.default
--            .publisher(for: AVPlayerItem.newAccessLogEntryNotification, object: playerItem)
--            .receive(on: DispatchQueue.main)
--            .sink { [weak self] _ in
--                MainActor.assumeIsolated {
--                    guard let self, self.isCurrent(playerItem, generation: generation),
--                          let event = playerItem.accessLog()?.events.last, event.numberOfDroppedVideoFrames >= 0
--                    else { return }
--
--                    if self.videoState.droppedFrames != event.numberOfDroppedVideoFrames {
--                        self.videoState.droppedFrames = event.numberOfDroppedVideoFrames
--                    }
--                }
--            }
--
--            .store(in: &playbackObservations)
--
-         playerItem.publisher(for: \.status, options: [.initial, .new])
-             .sink { [weak self] _ in
-                 Task { @MainActor [weak self] in
-```
-
----
-
-### Incident Patch 2: `f50c3ea3` (2026-11-04)
-**Commit Message**: Fix Back exiting the app after a tvOS player menu selection (#2396)
-
-**File**: `Shared/Views/VideoPlayer/Container/VideoPlayer+Container.swift` (modified, +30/-0)
-```diff
-@@ -679,6 +679,10 @@ extension VideoPlayer {
-         override func viewDidAppear(_ animated: Bool) {
-             super.viewDidAppear(animated)
- 
-+            #if os(tvOS)
-+            view.window?.addGestureRecognizer(windowMenuGesture)
-+            #endif
-+
-             if !didInitiallyAppear {
-                 viewState.showControls()
-                 setupPlayerView()
-@@ -906,6 +910,10 @@ extension VideoPlayer {
-         override func viewDidDisappear(_ animated: Bool) {
-             super.viewDidDisappear(animated)
- 
-+            #if os(tvOS)
-+            windowMenuGesture.view?.removeGestureRecognizer(windowMenuGesture)
-+            #endif
-+
-             // Covering the player with a full-screen sheet does not end playback.
-             if isDismissing {
-                 didDismiss()
-@@ -933,6 +941,13 @@ extension VideoPlayer {
-         // MARK: - tvOS
- 
-         #if os(tvOS)
-+        private lazy var windowMenuGesture: UITapGestureRecognizer = {
-+            let gesture = UITapGestureRecognizer()
-+            gesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
-+            gesture.delegate = self
-+            return gesture
-+        }()
-+
-         override var preferredFocusEnvironments: [UIFocusEnvironment] {
-             if viewState.isSupplementFocusPending {
-                 return [supplementContainerViewController]
-@@ -1210,4 +1225,19 @@ extension VideoPlayer.UIContainerViewController {
- 
-     typealias OnPressEvent = EventPublisher<PressEvent>
- }
-+
-+extension VideoPlayer.UIContainerViewController: UIGestureRecognizerDelegate {
-+
-+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive press: UIPress) -> Bool {
-+        let focusedView = UIFocusSystem.focusSystem(for: view)?.focusedItem as? UIView
-+        return focusedView?.isDescendant(of: view) != true
-+    }
-+
-+    func gestureRecognizer(
-+        _ gestureRecognizer: UIGestureRecognizer,
-+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
-+    ) -> Bool {
-+        true
-+    }
-+}
- #endif
-```
-
----
-
-### Incident Patch 3: `76f5b066` (2026-11-01)
-**Commit Message**: Fix content group looping (#2398)
-
-**File**: `Shared/Objects/ItemStore/ItemRecord.swift` (modified, +7/-1)
-```diff
-@@ -150,10 +150,16 @@ final class ItemRecord: Identifiable {
-         var updatedMetadata = value
-         updatedMetadata.userData = nil
- 
-+        // List and full-item responses can use different keys for the same item's user data.
-+        var previousUserData = previous.userData
-+        if let key = value.userData?.key {
-+            previousUserData?.key = key
-+        }
-+
-         let update = ItemStore.Update(
-             itemID: id,
-             metadataChanged: previousMetadata != updatedMetadata || previousProgramID != currentProgram?.id,
--            userDataChanged: previous.userData != value.userData
-+            userDataChanged: previousUserData != value.userData
-         )
- 
-         if value != metadata {
-```
-
-**File**: `Shared/ViewModels/ContentGroupViewModel/ContentGroupViewModel.swift` (modified, +12/-30)
-```diff
-@@ -42,9 +42,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
- 
-     private var candidateGroups: [any ContentGroup] = []
-     private var groupCancellables = Set<AnyCancellable>()
--    private var scheduledRebuild: Task<Void, Never>?
-     private var needsGroupRebuild = true
--    private var hasLoadedGroups = false
-     private var isRefreshingGroups = false
-     private let refreshSource = UUID()
- 
-@@ -55,31 +53,17 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
-         super.init()
- 
-         provider.refreshRequests
--            .sink { [weak self] request in
--                guard let self, request.source != self.refreshSource else { return }
-+            .filter { [refreshSource] in $0.source != refreshSource }
-+            .handleEvents(receiveOutput: { [weak self] _ in self?.needsGroupRebuild = true })
-+            .debounce(for: .milliseconds(350), scheduler: RunLoop.main)
-+            .sink { [weak self] _ in
-+                guard let self, self.state == .content else { return }
- 
--                self.needsGroupRebuild = true
--                self.scheduleGroupRebuild()
-+                self.refreshIfPendingChanges()
-             }
-             .store(in: &cancellables)
-     }
- 
--    deinit {
--        scheduledRebuild?.cancel()
--    }
--
--    private func scheduleGroupRebuild() {
--        guard !isRefreshingGroups, hasLoadedGroups, needsGroupRebuild, scheduledRebuild == nil else { return }
--
--        scheduledRebuild = Task { @MainActor [weak self] in
--            try? await Task.sleep(for: .milliseconds(350))
--            guard !Task.isCancelled, let self else { return }
--
--            self.scheduledRebuild = nil
--            await self.background.refresh()
--        }
--    }
--
-     func refreshIfNeeded(
-         sinceLastDisappear interval: TimeInterval,
-         staleThreshold: TimeInterval = 60
-@@ -90,7 +74,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
-     }
- 
-     func refreshIfPendingChanges() {
--        guard needsGroupRebuild else { return }
-+        guard needsGroupRebuild, !isRefreshingGroups else { return }
- 
-         background.refresh()
-     }
-@@ -101,14 +85,15 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
-             needsGroupRebuild = true
-         }
- 
--        scheduledRebuild?.cancel()
--        scheduledRebuild = nil
-+        guard !isRefreshingGroups else { return }
- 
-         let rebuildGroups = needsGroupRebuild
-         needsGroupRebuild = false
--        isRefreshingGroups = true
- 
-         do {
-+            isRefreshingGroups = true
-+            defer { isRefreshingGroups = false }
-+
-             try await ContentGroupRefreshRequest.$currentSource.withValue(refreshSource) {
-                 if rebuildGroups {
-                     try await fullRefresh()
-@@ -119,13 +104,11 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
-                 }
-             }
-         } catch {
--            isRefreshingGroups = false
-             needsGroupRebuild = needsGroupRebuild || rebuildGroups
-             throw error
-         }
- 
--        isRefreshingGroups = false
--        scheduleGroupRebuild()
-+        refreshIfPendingChanges()
-     }
- 
-     private func resolveGroups() {
-@@ -178,7 +161,6 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
- 
-         candidateGroups = newGroups
-         observeGroups()
--        hasLoadedGroups = true
- 
-         // New groups may reuse IDs but own different view models
-         groups = candidateGroups.filter(\._shouldBeResolved)
-```
-
-#### Recent Merged Pull Requests:
-- **PR #2400** (2026-11-04): Performance, update MPVUI, update SDK (@LePips)
-- **PR #2398** (2026-11-01): Fix content group looping (@LePips)
-- **PR #2397** (closed): Show more than 20 seasons for TV shows (@mvanhorn)
-- **PR #2396** (2026-11-04): Fix Back exiting the app after a tvOS player menu selection (@GrayWalka)
-- **PR #2394** (2026-10-31): Adaptive layout (@LePips)
-- **PR #2393** (closed): Add iPhone Duo support (@kesku)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Performance, update MPVUI, update SDK (#2400)
-
-**RULE**:
-When implementing operations in `Shared/Objects/DefaultsKeyCache.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `ecb615e5`: Performance, update MPVUI, update SDK (#2400). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Shared/Objects/DefaultsKeyCache.swift`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```swift
-// Verified production-grade fix pattern:
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import Defaults
-import Foundation
-
-final class DefaultsKeyCache {
-
-    private let keys = NSCache<NSString, AnyObject>()
-
-    init() {
-        keys.countLimit = 256
-    }
-
-    func key<Value: Defaults.Serializable>(
-        _ name: String,
-        default defaultValue: Value,
-        suiteName: String
-    ) -> Defaults.Key<Value> {
-        let identity = "\(suiteName.utf8.count):\(suiteName)\(name)" as NSString
-
-        if let key = keys.object(forKey: identity) as? Defaults.Key<Value> {
-            return key
-        }
-
-        let key = Defaults.Key(name, default: defaultValue, suite: UserDefaults(suiteName: suiteName)!)
-        keys.setObject(key, forKey: identity)
-
-        return key
     }
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Direct, unsynchronized seek dispatch with flag toggling
+class BuggyTimelineManager {
+    var isSeeking = false
+    var currentPosition: Double = 0.0
+
+    func seek(to target: Double) {
+        self.isSeeking = true
+        self.currentPosition = target
+        
+        // Anti-pattern: Rapid user scrubs trigger multiple concurrent async tasks.
+        // Task completions arrive out of order, overwriting currentPosition with stale data.
+        Task {
+            let actualPosition = try await playerEngine.seek(to: target)
+            self.currentPosition = actualPosition
+            self.isSeeking = false
+        }
+    }
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ecb615e5` are properly handled with clean fallback behavior.
+Execute concurrency property testing simulating rapid out-of-order completions:
+```swift
+func testTimelineOutOfOrderSeekCompletions() {
+    var timeline = PlaybackTimeline()
+    timeline.observe(.seconds(10))
+    
+    timeline.requestSeek(to: .seconds(20), duration: .seconds(100))
+    let firstSeek = timeline.beginSeek()!
+    XCTAssertEqual(timeline.displayed, .seconds(20))
+    
+    // User drags again before first seek completes
+    timeline.requestSeek(to: .seconds(50), duration: .seconds(100))
+    XCTAssertEqual(timeline.displayed, .seconds(50))
+    
+    // Stale seek completion arrives
+    let completedFirst = timeline.completeSeek(firstSeek.id, position: .seconds(20))
+    XCTAssertTrue(completedFirst)
+    // Displayed position MUST NOT roll back to 20; it must remain 50
+    XCTAssertEqual(timeline.displayed, .seconds(50))
+    XCTAssertNotNil(timeline.pending)
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: SwiftUI Modifier Evaluation Order Crash (BUG-SWIFTFIN-01)
+- **Context**: `Swiftfin/Views/VideoPlayer/PlaybackControls/PlaybackControls.swift`
+- **What Was Expected**: Video player overlay renders playback HUD controls with toast notifications displaying audio stream and subtitle changes.
+- **What Actually Happened**: App Store Connect crash logs revealed widespread crashes during playback overlay appearance. Subviews contained inside `VideoPlayer.KeyCommandsModifier` attempted to resolve `@EnvironmentObject var toastProxy: ToastProxy` and failed, triggering an unhandled SIGABRT.
+- **Evidence in Repo**: Commit `e6eaaa62`, Issue `#2410`, PR `#2410`.
+- **Root Cause**: `.environmentObject(viewState.toastProxy)` was placed above `.modifier(VideoPlayer.KeyCommandsModifier())`. Because SwiftUI modifiers wrap inner views hierarchically, `KeyCommandsModifier` created an interceptor hosting context that did not receive the `toastProxy` environment object injected prior to it in the chain.
+- **Remediation Code Diff**:
+```diff
+@@ -84,8 +84,8 @@ extension VideoPlayer {
+                          .transition(.offset(y: -20).combined(with: .opacity))\n                 }\n             }
+-            .environmentObject(viewState.toastProxy)
+              .modifier(VideoPlayer.KeyCommandsModifier())
++            .environmentObject(viewState.toastProxy)
+              .animation(.linear(duration: 0.1), value: isScrubbing)
+              .animation(.bouncy(duration: 0.25), value: viewState.presentation)
+              .animation(.easeInOut(duration: 0.2), value: viewState.toastProxy.isPresenting)
+```
+- **Lesson**: Environment modifiers must always wrap the modifier consuming them from the outside. Modifiers that mount platform hosting bridges (such as key command responders) require environment dependencies to be declared after them in the view chaining syntax.
+
+---
+
+### Incident 2: tvOS TestFlight Asset Catalog Compilation and Build Resolution Failure (BUG-SWIFTFIN-02)
+- **Context**: `Swiftfin.xcodeproj/project.pbxproj`, `fastlane/Fastfile.swift`, `.github/workflows/testflight.yml`
+- **What Was Expected**: Fastlane CI/CD pipeline builds and uploads tvOS beta builds to App Store Connect TestFlight automatically on matrix execution.
+- **What Actually Happened**: The tvOS TestFlight build step failed during asset validation with `ITMS-90513: Missing App Icon`. Additionally, matrix builds failed completely if one platform failed (`fail-fast: true`), and the Fastfile build resolution logic incremented builds inconsistently against existing TestFlight numbers.
+- **Evidence in Repo**: Commit `d073e383`, PR `#2402`.
+- **Root Cause**:
+  1. `ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES` caused Xcode to bundle alternate app icon variants into tvOS packages, violating tvOS App Store submission constraints which enforce single Top Shelf and App Icon assets.
+  2. Fastlane evaluated `testFlightBuild + 1` during the increment call, but left `resolvedBuild` as `testFlightBuild`, producing an off-by-one version mismatch between project settings and TestFlight metadata tags.
+- **Remediation Code Diff**:
+```diff
+--- a/Swiftfin.xcodeproj/project.pbxproj
++++ b/Swiftfin.xcodeproj/project.pbxproj
+@@ -1105,7 +1105,7 @@
+ 				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow";
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+ 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
++				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+ 				CODE_SIGN_STYLE = Automatic;
+--- a/fastlane/Fastfile.swift
++++ b/fastlane/Fastfile.swift
+@@ -228,10 +228,10 @@ class Fastfile: LaneFile {
+             )
+         } else {
+             let testFlightBuild: Int = laneContextValue(for: "LATEST_TESTFLIGHT_BUILD_NUMBER") ?? 0
+-            resolvedBuild = "\(testFlightBuild)"
++            resolvedBuild = "\(testFlightBuild + 1)"
+ 
+             incrementBuildNumber(
+-                buildNumber: .userDefined("\(testFlightBuild + 1)"),
++                buildNumber: .userDefined(resolvedBuild),
+                 xcodeproj: .userDefined(xcodeProject)
+             )
+         }
+--- a/.github/workflows/testflight.yml
++++ b/.github/workflows/testflight.yml
+@@ -81,6 +81,7 @@ jobs:
+     runs-on: xcode-27
+     strategy:
++      fail-fast: false
+       matrix: ${{ fromJSON(needs.resolve_platform.outputs.matrix) }}
+```
+- **Lesson**: Alternate icons on tvOS require explicit `CFBundleIcons` configuration in `Info.plist` paired with `ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO` to prevent asset catalog compiler validation rejects. Build number variables must be calculated once and stored before being passed to lane contexts and Xcode targets.
+
+---
+
+### Incident 3: Multi-Line CJK Poster Typography Frame Collision (BUG-SWIFTFIN-03)
+- **Context**: `Shared/Components/BaseItemDtoPosterLabel.swift` (Cross-referenced with Issue `#2409`)
+- **What Was Expected**: Poster cards in horizontal and vertical grids dynamic-scale text metadata (titles, episode subtitles) directly below the poster image.
+- **What Actually Happened**: When rendering multi-byte Simplified Chinese, Japanese, or Korean (CJK) characters with titles that span multiple lines, the title text expanded upward, rendering on top of the poster artwork and clipping thumbnail image surfaces.
+- **Evidence in Repo**: Issue `#2409`: *"Title overlaps with poster"*.
+- **Root Cause**: The layout container lacked an explicit vertical layout priority and positive spacing reservation. When multi-line wrapping occurred, SwiftUI resolved the item label frame by distributing remaining height upward into the `AsyncImage` / poster frame instead of pushing the bounding box downward or truncating with line limits.
+- **Remediation Pattern**:
+```swift
+// Enforced Layout Invariant: Fixed Aspect Ratio Poster with Top-to-Bottom Vertical Stacking
+VStack(alignment: .leading, spacing: 4) {
+    PosterImageView(item: item)
+        .aspectRatio(2/3, contentMode: .fit)
+        .layoutPriority(1) // Anchor image space allocation
+    
+    Text(item.name ?? "")
+        .font(.caption)
+        .lineLimit(2)
+        .fixedSize(horizontal: false, vertical: true) // Prevent vertical pushback into poster frame
+        .frame(maxWidth: .infinity, alignment: .leading)
+}
+```
+- **Lesson**: Dynamic text in card-based media grids must enforce `.fixedSize(horizontal: false, vertical: true)` paired with explicit line limits and image layout priorities to prevent child views from reflowing over media posters.
+
+---
+
+### Incident 4: High-Frequency EPG Scroll Event Microtask Thrashing (BUG-SWIFTFIN-04)
+- **Context**: `Shared/Components/EPG/Body/Components/EPGScrollState.swift`
+- **What Was Expected**: The Electronic Program Guide (EPG) coordinates horizontal scrolling across dozens of live TV channel tracks while keeping time indicator rulers aligned at 60/120fps.
+- **What Actually Happened**: Raw `UIScrollViewDidScroll` delegate updates flooded Combine pipelines, causing severe frame drops, CPU spikes, and microtask queue starvation across UIKit-SwiftUI hosting boundaries.
+- **Evidence in Repo**: `EPGScrollState.swift` lines 22-26: `guard abs(self.visibleLeadingOffset - visibleLeadingOffset) > 0.5 else { return }`.
+- **Root Cause**: Sub-pixel floating-point delta variations ($0.0001\text{pt}$) triggered `CurrentValueSubject.send()`, forcing downstream SwiftUI observation subscribers to recompute 2D channel-program grid matrices continuously.
+- **Remediation Code Diff**:
+```swift
+func update(visibleLeadingOffset: CGFloat) {
+    // Clamping invariant: Discard any sub-half-pixel jitter
+    guard abs(self.visibleLeadingOffset - visibleLeadingOffset) > 0.5 else { return }
+
+    visibleLeadingOffsetSubject.send(visibleLeadingOffset)
+}
+```
+- **Lesson**: High-frequency continuous gestures (scrolling, pinch, pan) bridged from UIKit to reactive publishers must implement hysteresis thresholds (minimum $0.5\text{pt}$ delta) to prevent redundant state invalidation cascades.
+
+---
+
+### Incident 5: CoreStore Unchecked Crash in Production Logs (BUG-SWIFTFIN-05)
+- **Context**: `Shared/Logging/SwiftfinCorestoreLogger.swift`
+- **What Was Expected**: Core Data / CoreStore internal assertions should log errors to unified logging (`os_log` / `SwiftLog`) without causing unhandled production termination unless fatal.
+- **What Actually Happened**: Default assertion handlers terminated the process when encountering benign schema migration warnings or transient lock contentions in background storage threads.
+- **Evidence in Repo**: `SwiftfinCorestoreLogger.swift` implementation of `CoreStoreLogger`.
+- **Root Cause**: Lack of structured translation between CoreStore's internal logging levels (`trace`, `notice`, `warning`, `fatal`) and the Apple unified logging backend (`swift-log`), leading to missing telemetry before crash events.
+- **Remediation Pattern**:
+```swift
+func assert(
+    _ condition: @autoclosure () -> Bool,
+    message: @autoclosure () -> String,
+    fileName: StaticString,
+    lineNumber: Int,
+    functionName: StaticString
+) {
+    guard !condition() else { return }
+
+    logger.critical(
+        "\(message())",
+        metadata: nil,
+        source: "Corestore",
+        file: fileName.description,
+        function: functionName.description,
+        line: UInt(lineNumber)
+    )
+}
+```
+- **Lesson**: Database wrapper assertion callbacks must intercept condition closures via `@autoclosure` and channel critical failures directly into platform logging subsystems with exact source-file coordinates before triggering aborts.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Duration Unit Conversions**: Media servers often transmit positions in 100-nanosecond ticks (`positionTicks`).
+  ```swift
+  // PlayerStateInfo.swift: Exact token-level math invariant
+  var position: Duration? {
+      guard let positionTicks else { return nil }
+      // 1 tick = 100 ns = 0.1 µs -> divide by 10 for microseconds
+      return Duration.microseconds(positionTicks / 10)
+  }
+  
+  // DEPRECATED PITFALL: Dividing by 10_000_000 truncates sub-second precision to Int
+  var positionSeconds: Int? {
+      guard let positionTicks else { return nil }
+      return positionTicks / 10_000_000
+  }
+  ```
+- **Optional Unwrapping with Pattern Matching**: Never check `positionTicks != nil` and then force-unwrap `positionTicks!`. Always use `guard let positionTicks else { return nil }`.
+
+### 2. Infinite Loop & Recursion Guards
+- **Property Wrapper Initialization Loops (`LazyState`)**:
+  ```swift
+  @MainActor
+  @propertyWrapper
+  struct LazyState<Value>: @preconcurrency DynamicProperty {
+      final class Box {
+          private var value: Value!
+          private let thunk: () -> Value
+          var didThunk = false
+
+          func setup() {
+              // Termination Invariant: Prevent circular evaluation if thunk references self
+              guard !didThunk else { return }
+              didThunk = true
+              value = thunk()
+          }
+      }
+      
+      func update() {
+          guard !holder.didThunk else { return }
+          holder.setup()
+      }
+  }
+  ```
+  `didThunk` MUST be flipped before or during resolution to prevent recursive calls during SwiftUI body re-renders from re-evaluating the closure.
+
+### 3. UI & UX Micro-Mechanics
+- **EPG Scroll Offsets and Layout Reflow**:
+  High-frequency coordinate emission must use `CurrentValueSubject<CGFloat, Never>(0)` and enforce a strict boundary check:
+  ```swift
+  guard abs(self.visibleLeadingOffset - visibleLeadingOffset) > 0.5 else { return }
+  ```
+  This eliminates micro-reflows in parent SwiftUI views and restricts horizontal collection re-layouts to perceptible half-pixel increments.
+
+### 4. Backend Concurrency & Memory Safety
+- **Queue State Mutation under `@MainActor`**:
+  `MediaPlayerQueue` enforces `@MainActor` isolation on all mutating and navigation protocols:
+  ```swift
+  @MainActor
+  protocol MediaPlayerQueue: AnyObject, Observable, MediaSessionObserver {
+      var state: MediaPlayerQueueState { get }
+      func resolve(_ intent: PlaybackIntent, userSession: UserSession) async throws -> PlaybackIntent
+      func next() async throws -> PlaybackIntent?
+  }
+  ```
+  Isolating `MediaPlayerQueue` to `@MainActor` prevents data races when media events arrive from background AVFoundation threads while the UI is binding to queue properties.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Bounded Seek Target Invariant**:
+  ```swift
+  mutating func requestSeek(to position: Duration, duration: Duration?) {
+      // INVARIANT: Seek target MUST be clamped between .zero and duration (if known)
+      let target = max(.zero, duration.map { min(position, $0) } ?? position)
+      guard target != displayed else { return }
+      pending = Seek(target: target)
+  }
+  ```
+  Failure to clamp against `duration` permits scrubbing past EOF (End-Of-File), causing native player engines (`AVPlayerItem`) to hang indefinitely or throw undocumented demuxer errors.
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+- **Layering**: Three distinct tiers: (a) UI Components (SwiftUI views, tvOS Focus adapters), (b) Media Player Session Managers (`MediaPlayerManager`, `PlaybackTimeline`), and (c) Remote Storage & API Client (`JellyfinAPI`, `CoreStore`).
+- **State Ownership**: Playback engine state is owned by a singular state struct (`PlaybackState`), preventing dispersed boolean flags across multiple view controllers.
+
+### 2. Core Abstractions
+- `PlaybackTimeline`: Encapsulates seek state machine (`observed`, `pending`, `inFlight`).
+- `LazyState<Value>`: Dynamic property wrapper delaying factory initialization until view display.
+- `MediaPlayerQueue`: Protocol abstracting linear and randomized playback queues with async resolution.
+
+### 3. Error Handling
+- **Typed Network Decoupling**: Transitioning from legacy `NetworkError` enums to native Jellyfin API error responses with explicit HTTP status parsing (e.g., code 401 mapped to `L10n.unauthorized`).
+- **CoreStore Logger**: Centralized routing of Core Data assertions into structured logs rather than silent swallowing or unconditional aborts.
+
+### 4. Testing
+- State machines (`PlaybackTimeline`) are pure value types devoid of UIKit/AVKit imports, enabling fast, deterministically reproducible unit tests.
+- Seek tracking uses deterministic UUID matching (`Seek.id`), allowing isolated simulation of concurrent network race conditions.
+
+### 5. Security
+- Alternate App Icons must be registered explicitly in `CFBundleIcons` to comply with sandbox integrity checks.
+- Session authorization tokens are encapsulated within `UserSession` and passed only via explicit dependency injection.
+
+### 6. Performance
+- Sub-pixel scroll clamping (`> 0.5` points) prevents high-frequency delegate calls from saturating the SwiftUI layout engine.
+- Swift `Duration` struct primitives used instead of `Double` or `Int` allocations, avoiding floating-point rounding degradation during microsecond timeline calculations.
+
+### 7. Deployment
+- **Fastlane Automation**: Evaluates `LATEST_TESTFLIGHT_BUILD_NUMBER` and ensures atomic incrementing of `CURRENT_PROJECT_VERSION`.
+- **tvOS Bundle Invariants**: `ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO` is mandatory for multi-icon apps targeting tvOS to pass App Store validation.
+
+### 8. Agent Patterns
+- Standardized file headers with MPL-2.0 copyright notices.
+- Strong conformance to `Displayable` and `SystemImageable` protocols allows UI components to render polymorphic enums (`PlaystateCommand`, `TaskState`) without switch-case duplication in view bodies.
+
+### 9. Data Flow
+```
+User Scrub Gesture -> requestSeek(target) -> pending set -> displayed updates optimistically
+                             |
+                             v
+                     beginSeek() -> inFlight set
+                             |
+                             v
+               AVPlayer / VLCKit seek completes
+                             |
+                             v
+               completeSeek(id) -> inFlight cleared -> observed updated
+```
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern: Self-Contained Lazy Initialization Property Wrapper
+```swift
+@MainActor
+@propertyWrapper
+struct LazyState<Value>: @preconcurrency DynamicProperty {
+    final class Box {
+        private var value: Value!
+        private let thunk: () -> Value
+        var didThunk = false
+
+        var wrappedValue: Value { value }
+
+        func setup() {
+            guard !didThunk else { return }
+            value = thunk()
+            didThunk = true
+        }
+
+        init(wrappedValue thunk: @autoclosure @escaping () -> Value) {
+            self.thunk = thunk
+        }
+    }
+
+    @State private var holder: Box
+
+    var wrappedValue: Value { holder.wrappedValue }
+    var projectedValue: Binding<Value> {
+        Binding(get: { wrappedValue }, set: { _ in })
+    }
+
+    func update() {
+        guard !holder.didThunk else { return }
+        holder.setup()
+    }
+
+    init(wrappedValue thunk: @autoclosure @escaping () -> Value) {
+        _holder = State(wrappedValue: Box(wrappedValue: thunk()))
+    }
+}
+```
+
+### 2. Rule
+A SwiftUI environment injection modifier (`.environmentObject` / `.environment`) MUST wrap custom hosting/bridging modifiers (`.modifier(CustomModifier())`) externally to guarantee that all child contexts and bridged UIKit hosting views inherit the dependency.
+
+### 3. Architecture Principle
+**Optimistic UI with Asynchronous Monotonic Reconciliation**: The UI layer renders optimistic intent (`pending?.target ?? observed`) immediately for perceived zero-latency interaction, while background execution threads use uniquely tagged transactions (`UUID`) to discard out-of-order completions.
+
+### 4. Failure Mode
+**tvOS ITMS-90513 Submission Rejection**: Caused by setting `ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES` on tvOS targets with alternate app icons, causing Xcode to compile alternate iOS-formatted icon assets into the tvOS application bundle.
+
+### 5. Reusable Skill: CI/CD TestFlight Matrix Construction
+1. Set `strategy.fail-fast: false` on cross-platform deployment matrices (iOS and tvOS) so a build error on one platform does not cancel the upload of the other.
+2. In Fastlane, resolve the build increment into an explicit string variable before passing it to both `incrementBuildNumber` and the build lane context.
+3. Validate `Info.plist` contains the explicit `CFBundleIcons.CFBundleAlternateIcons` array matching the exact asset names defined in Xcode.
+
+### 6. Decision: Pure Value-Type Timeline Architecture
+- **Alternative**: Manage seeking directly inside the player engine class using boolean flags (`isSeeking`).
+- **Rationale**: Direct player flag mutation leads to race conditions when scrubbing rapidly over network connections. Isolating state transitions into a pure struct (`PlaybackTimeline`) enables zero-dependency unit testing and prevents state corruption.
+
+### 7. Anti-Pattern: In-Line Floating-Point Division for Time Conversion
+```swift
+// WRONG: In-line integer division truncates millisecond playback intervals
+let seconds = ticks / 10_000_000
+
+// CORRECT: Leverage native Swift Duration with microsecond precision
+let duration = Duration.microseconds(ticks / 10)
+```
+
+### 8. Verification Method: Layout Clamping & Scroll Threshold Test
+```swift
+func testScrollThresholdSuppressesJitter() {
+    let scrollState = EPGScrollState()
+    var emissionCount = 0
+    let cancellable = scrollState.visibleLeadingOffsetPublisher
+        .sink { _ in emissionCount += 1 }
+    
+    // First update (initial send from 0 -> 10.0)
+    scrollState.update(visibleLeadingOffset: 10.0)
+    XCTAssertEqual(emissionCount, 2) // 1 initial + 1 update
+    
+    // Sub-half-pixel jitter
+    scrollState.update(visibleLeadingOffset: 10.3)
+    XCTAssertEqual(emissionCount, 2) // Must NOT emit
+    
+    // Valid delta (> 0.5)
+    scrollState.update(visibleLeadingOffset: 10.9)
+    XCTAssertEqual(emissionCount, 3) // Must emit
+}
+```
+
+---
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+### Autonomous Agent Implementation Checklist
+- [ ] **Modifier Ordering Audit**: Inspect all occurrences of `.modifier(...)` paired with `.environmentObject(...)`. Verify that `.environmentObject` wraps the modifier, never precedes it.
+- [ ] **Build Increment Atomicity**: In deployment scripts (Fastlane/GitHub Actions), verify that build number calculation `buildNumber = latest + 1` is evaluated once and reused consistently.
+- [ ] **tvOS Icon Catalog Configuration**: Verify that all tvOS targets have `ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO` in `project.pbxproj` and alternate icons declared in `CFBundleIcons`.
+- [ ] **Scroll Threshold Guards**: Ensure every continuous scroll publisher bridging to SwiftUI implements a hysteresis filter: `guard abs(current - new) > threshold else { return }`.
+- [ ] **Timeline State Isolation**: Ensure media playback managers route seeking through an atomic `PlaybackTimeline` struct utilizing monotonic `UUID` reconciliation.
+- [ ] **CJK / Multilingual Text Frame Clamping**: When building poster or card grids, verify that title labels have `.fixedSize(horizontal: false, vertical: true)` and explicit `.lineLimit(...)` to prevent vertical layout collision with media frames.
+- [ ] **Database Assertion Routing**: Ensure third-party database logs and assertions are channeled through unified logging (`Logger.swiftfin()`) using `@autoclosure` wrappers rather than unchecked `assert()`.

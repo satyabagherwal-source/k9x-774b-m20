@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T08:58:20.424Z",
-  "total_cycles_completed": 8228,
-  "total_learnings_persisted": 8228,
-  "total_rules_promoted": 7958,
+  "last_updated": "2026-11-08T09:35:13.164Z",
+  "total_cycles_completed": 8233,
+  "total_learnings_persisted": 8233,
+  "total_rules_promoted": 7972,
   "history": [
-    {
-      "timestamp": "2026-11-07T19:47:56.595Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T19:55:20.125Z",
-      "repository": "google/closure-compiler",
-      "learningId": "learn-github-google-closure-compiler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T19:55:24.224Z",
-      "repository": "nats-io/nats-server",
-      "learningId": "learn-github-nats-io-nats-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:02:04.873Z",
-      "repository": "sveltejs/svelte",
-      "learningId": "learn-github-sveltejs-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:02:07.020Z",
-      "repository": "lysine-dev/okio",
-      "learningId": "learn-github-lysine-dev-okio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T20:09:34.204Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-08T08:58:20.424Z",
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T09:29:06.029Z",
+      "repository": "webrtc-rs/webrtc",
+      "learningId": "learn-github-webrtc-rs-webrtc",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T09:30:15.136Z",
+      "repository": "jellyfin/Swiftfin",
+      "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T09:31:59.323Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T09:32:12.115Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T09:35:13.164Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
