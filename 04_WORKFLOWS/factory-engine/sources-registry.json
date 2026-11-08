@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T12:35:11.917Z",
-    "lastVerified": "2026-11-08T12:35:11.917Z",
+    "lastChecked": "2026-11-08T13:15:42.191Z",
+    "lastVerified": "2026-11-08T13:15:42.191Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -464,13 +464,13 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T11:04:19.053Z",
-    "lastVerified": "2026-11-08T11:04:19.053Z",
+    "lastChecked": "2026-11-08T13:06:22.182Z",
+    "lastVerified": "2026-11-08T13:06:22.182Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "a31d71b1735ba63c8d776b1b8022b07dcea78264c7796467986348ade7e34bbe",
-    "promotedRulesCount": 3,
+    "contentHash": "0c40fa4dfae8377e39e581c3ab8b7916bf657f16739f88c83f63c1620fee3ac7",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -518,12 +518,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "kubernetes-sigs/aws-load-balancer-controller",
+    "name": "aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T17:48:00.946Z",
-    "lastVerified": "2026-11-07T17:48:00.946Z",
+    "lastChecked": "2026-11-08T13:06:11.078Z",
+    "lastVerified": "2026-11-08T13:06:11.078Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -532,7 +532,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fdcdb1e5"
   },
   "smallstep-cli": {
     "name": "cli",
@@ -1330,13 +1331,13 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T22:27:26.732Z",
-    "lastVerified": "2026-11-04T22:27:26.732Z",
+    "lastChecked": "2026-11-08T13:06:06.088Z",
+    "lastVerified": "2026-11-08T13:06:06.088Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "d8b2592a9ea70a460a09519ccb7785458d48ef67d609d0c4d7779ddac1928497",
-    "promotedRulesCount": 0,
+    "contentHash": "a4b6fa3c78dcaec7ae5999af54c558782be20f47837951e31dda34c34b325769",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1722,9 +1723,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-08T05:33:10.127Z",
+    "lastChecked": "2026-11-08T13:06:13.582Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-08T05:33:10.127Z"
+    "lastVerified": "2026-11-08T13:06:13.582Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -4231,9 +4232,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-07T05:58:15.753Z",
+    "lastChecked": "2026-11-08T13:06:16.120Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-07T05:58:15.753Z"
+    "lastVerified": "2026-11-08T13:06:16.120Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -5587,9 +5588,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-06T23:40:00.088Z",
+    "lastChecked": "2026-11-08T13:06:03.555Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-06T23:40:00.088Z"
+    "lastVerified": "2026-11-08T13:06:03.555Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -10279,12 +10280,12 @@
     "revisionIdentifier": "8d10a017"
   },
   "thebaselab-codeapp": {
-    "name": "thebaselab/codeapp",
+    "name": "codeapp",
     "officialUrl": "https://github.com/thebaselab/codeapp",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-05T08:00:42.627Z",
-    "lastVerified": "2026-11-05T08:00:42.627Z",
+    "lastChecked": "2026-11-08T13:06:08.561Z",
+    "lastVerified": "2026-11-08T13:06:08.561Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-thebaselab-codeapp",
@@ -10293,7 +10294,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ef33ee57"
   },
   "yuezhiai-jonex": {
     "name": "yuezhiai/jonex",

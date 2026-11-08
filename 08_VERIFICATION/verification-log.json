@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-GIHJ",
-    "timestamp": "2026-11-05T19:45:20.791Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "2361acfc09cd2f5c7a2e38caa8c63991934732ffadf4454e19d2d1905f84b301",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-GNGD",
-    "timestamp": "2026-11-05T19:45:27.229Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "9d22f65d8a6c28812a3391d050c2c1ce654ccc7aefa2e35a75d326ed79e714c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-GT8Q",
     "timestamp": "2026-11-05T19:45:34.730Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7490,6 +7460,36 @@
     "repository": "LLPhant/LLPhant",
     "learningId": "learn-github-llphant-llphant",
     "contentHash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-OEN3",
+    "timestamp": "2026-11-08T13:10:35.295Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "0c40fa4dfae8377e39e581c3ab8b7916bf657f16739f88c83f63c1620fee3ac7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-UXGC",
+    "timestamp": "2026-11-08T13:15:39.612Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "a4b6fa3c78dcaec7ae5999af54c558782be20f47837951e31dda34c34b325769",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

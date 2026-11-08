@@ -8283,3 +8283,5 @@
 | `CYCLE-20261108-5H2U` | `2026-11-08T11:59:52.758Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`05584a52...`) |
 | `CYCLE-20261108-3HMU` | `2026-11-08T12:26:19.782Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5acdb1cd...`) |
 | `CYCLE-20261108-EU7E` | `2026-11-08T12:35:09.290Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`347a3458...`) |
+| `CYCLE-20261108-OEN3` | `2026-11-08T13:10:35.295Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`0c40fa4d...`) |
+| `CYCLE-20261108-UXGC` | `2026-11-08T13:15:39.612Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a4b6fa3c...`) |

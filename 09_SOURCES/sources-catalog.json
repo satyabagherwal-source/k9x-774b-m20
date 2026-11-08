@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "d8b2592a9ea70a460a09519ccb7785458d48ef67d609d0c4d7779ddac1928497",
-    "lastHarvestedAt": "2026-11-04T22:27:27.807Z",
+    "contentHash": "a4b6fa3c78dcaec7ae5999af54c558782be20f47837951e31dda34c34b325769",
+    "lastHarvestedAt": "2026-11-08T13:15:39.616Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "713cc5a4",
+    "sourceVersion": "11443aa0",
     "license": "Apache-2.0",
-    "contentHash": "a31d71b1735ba63c8d776b1b8022b07dcea78264c7796467986348ade7e34bbe",
-    "lastHarvestedAt": "2026-11-08T11:07:47.696Z",
+    "contentHash": "0c40fa4dfae8377e39e581c3ab8b7916bf657f16739f88c83f63c1620fee3ac7",
+    "lastHarvestedAt": "2026-11-08T13:10:35.299Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {

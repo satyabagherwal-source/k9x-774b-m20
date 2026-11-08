@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T12:35:09.198Z",
+  "last_updated": "2026-11-08T13:15:39.513Z",
   "total_verified_learnings": 1238,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30415,10 +30415,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "d8b2592a9ea70a460a09519ccb7785458d48ef67d609d0c4d7779ddac1928497",
+      "content_hash": "a4b6fa3c78dcaec7ae5999af54c558782be20f47837951e31dda34c34b325769",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Static Conditioning Prefix Key-Value Cache Pinning in Iterative Diffusion Loops",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Channel Latent Unification for Alpha Transparency Generation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dynamic Positional Coordinate Boundary Guard for Multi-Reference Sequence Packing",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 270,
           "title": "Blended Attention Granularity",
@@ -30460,7 +30475,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo",
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t"
       ],
-      "verified_at": "2026-11-04T22:27:27.677Z",
+      "verified_at": "2026-11-08T13:15:39.472Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46538,8 +46553,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "713cc5a4",
-      "content_hash": "a31d71b1735ba63c8d776b1b8022b07dcea78264c7796467986348ade7e34bbe",
+      "source_version": "11443aa0",
+      "content_hash": "0c40fa4dfae8377e39e581c3ab8b7916bf657f16739f88c83f63c1620fee3ac7",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -46611,6 +46626,16 @@
         {
           "number": null,
           "title": "Asymmetric Dynamic Axis Endpoint Binding Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Invariant Before-Image Recording on Unified Mutation Entry Points",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Salted Cryptographic Permutation for Categorical Token Neutralization",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -46904,7 +46929,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T11:07:47.584Z",
+      "verified_at": "2026-11-08T13:10:35.119Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

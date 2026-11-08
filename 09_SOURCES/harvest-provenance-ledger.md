@@ -8292,3 +8292,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-08T11:59:52.763Z |
 | `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-08T12:26:19.786Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `1992a18d` | Multi-dimensional audit evidence | 2026-11-08T12:35:09.294Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `11443aa0` | Multi-dimensional audit evidence | 2026-11-08T13:10:35.299Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-08T13:15:39.616Z |

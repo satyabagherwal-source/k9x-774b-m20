@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T12:35:09.300Z",
-  "total_cycles_completed": 8248,
-  "total_learnings_persisted": 8248,
-  "total_rules_promoted": 8015,
+  "last_updated": "2026-11-08T13:15:39.621Z",
+  "total_cycles_completed": 8250,
+  "total_learnings_persisted": 8250,
+  "total_rules_promoted": 8020,
   "history": [
-    {
-      "timestamp": "2026-11-07T20:49:12.745Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:56:00.134Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T20:56:04.892Z",
       "repository": "onejs/one",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T12:35:09.300Z",
       "repository": "LLPhant/LLPhant",
       "learningId": "learn-github-llphant-llphant",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T13:10:35.306Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T13:15:39.621Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
