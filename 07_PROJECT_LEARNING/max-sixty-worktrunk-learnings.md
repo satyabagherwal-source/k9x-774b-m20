@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `79f19f64`  
+> **Source Version**: `71d99c7e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:45:19.402Z  
+> **Timestamp**: 2026-11-08T00:15:23.834Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:45:18.119Z  
+> **Harvest Timestamp**: 2026-11-08T00:15:22.855Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11434 stars
+- **Stars / Engagement**: 11948 stars
 
 ---
 
@@ -370,7 +370,7 @@ export const register: Register = on => {
       })
     }
     return ran
-  }).catch(($, e, next) => next(e))
+  })
 
   on('turn.complete', async ($, e, next) => {
     const done = await next(e)
@@ -489,7 +489,8 @@ export const register: Register = on => {
               </Button>
             ))}
             {files.map((file, index) => (
-              <Box key={`box:${file.path}`} flexDirection="colu
+              <Box key={`box:${file.path}`} flexDirection="column" marginTop={1}>
+            
 ```
 
 ### Core Architecture Module: `src/cli/hook.rs`
@@ -2018,431 +2019,498 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d46d6b3` (2026-11-05)
-**Commit Message**: fix(picker): keep a superseded refresh from overwriting the alt-x layout (#4708)
+### Incident Patch 1: `eb231c18` (2026-11-07)
+**Commit Message**: ci: stop fast-checks saving the shared Linux rust cache (#4724)
 
-After two quick `alt-r` refreshes in the `wt switch` picker, a
-superseded refresh whose skeleton lands last could overwrite the layout
-that `alt-x` uses, so a later `alt-x` rendered its `/ branch` row on the
-old column grid. `provide_layout` wrote the session-shared `layout_slot`
-unconditionally. `on_skeleton` already guards the other session-shared
-writes (`shared_items` and the shortcut table) with
-`spawn_gen.is_current()`. This change applies the same check inside the
-lock and updates the module summary, which still described three sinks.
+On main, `fast-checks` and `test (linux)` both save the
+`v1-rust-shared-Linux-x64-*` rust cache. When the key changes (a
+`Cargo.lock` or toolchain change), `fast-checks` finishes minutes
+earlier and reserves the key with a cache built only for lockfile,
+doctest, and rustdoc. `test (linux)` then fails to save, and later Linux
+runs restore that partial cache until the key changes again. This PR
+passes `save-cache: "false"` to `fast-checks`, as `collect-affected`,
+`affected-tests`, and `release-target` already do, so `test` stays the
+only job that saves the cache, as the `test-setup` input description
+says.
 
-`superseded_skeleton_leaves_shared_state_alone` now also checks that a
-live spawn publishes its layout and that a superseded one leaves the
-slot empty. The new assertion fails without the guard.
+Two recent main runs show the race:
 
-The nightly sweep (run
-[41980394445](https://github.com/max-sixty/worktrunk/actions/runs/41980394445))
-prepared this fix, but its PR was refused twice because the bot had
-reached its creation allowance (#4706). The daily run review opened it
-from the pushed branch without changes.
+-
+[41815243371](https://github.com/max-sixty/worktrunk/actions/runs/41815243371):
+`fast-checks` started `Saving cache` at 10:37:15. `test (linux)` reached
+its save at 10:44:25 and got `Failed to save: Unable to reserve cache
+with key v1-rust-shared-Linux-x64-867d58cd-d69464dc, another job may be
+creating this cache.`
+-
+[41832227759](https://github.com/max-sixty/worktrunk/actions/runs/41832227759):
+the same thing happened with key `…-659612d8`.
 
-Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
+When the key is unchanged, every job
 
-**File**: `src/commands/picker/progressive_handler.rs` (modified, +54/-8)
+**File**: `.github/actions/test-setup/action.yaml` (modified, +6/-4)
 ```diff
-@@ -1,9 +1,11 @@
- //! Progressive-rendering glue between `collect::collect` and the skim picker.
- //!
--//! Each event funnels into three places: skim's item stream (`tx`, consumed
--//! by the skeleton batch — the handler's only send), each item's shared
--//! `rendered` mutex (in-place redraws), and `shared_items` used by
--//! `PickerCollector` for alt-x.
-+//! Rows funnel into skim's item stream (`tx`, consumed by the skeleton
-+//! batch — the handler's only send) and each item's shared `rendered` mutex
-+//! (in-place redraws). The skeleton also publishes session-shared state that
-+//! outlives this spawn — `shared_items`, the shortcut table, and the layout
-+//! `PickerCollector` uses for alt-x — and only the live spawn writes it, so a
-+//! superseded skeleton landing after a rapid second alt-r leaves it alone.
- //!
- //! # Why updates poke a render
- //!
-@@ -639,8 +641,13 @@ impl PickerProgressHandler for PickerHandler {
+@@ -9,10 +9,12 @@ inputs:
+     description: >-
+       Whether this job may save the shared rust cache (and then only on main).
+       `test` is the canonical saver and leaves this at the default; everyone
+-      else (collect-affected, affected-tests, release-target) passes 'false' so
+-      they restore main's cache but never write — keeps instrumented
+-      (collect-affected) and cross-compiled (release-target) artifacts out of
+-      the shared cache, and stops PR runs depositing single-use caches.
++      else (fast-checks, collect-affected, affected-tests, release-target)
++      passes 'false' so they restore main's cache but never write — keeps
++      instrumented (collect-affected) and cross-compiled (release-target)
++      artifacts out of the shared cache, stops a faster job (fast-checks)
++      winning the save race with a partial build, and stops PR runs
++      depositing single-use caches.
+     default: "true"
  
-     fn provide_layout(&self, layout: &crate::commands::list::layout::LayoutConfig) {
-         // Stow a clone for `PickerCollector` to render the `alt-x` `/ branch`
--        // row on this grid. Overwritten each skeleton (a refresh re-collects).
--        *self.layout_slot.lock().unwrap() = Some(layout.clone());
-+        // row on this grid. Overwritten each skeleton (a refresh re-collects),
-+        // but only by the live spawn — a superseded skeleton's grid would
-+        // misalign the morph row, as in `on_skeleton`'s shared-list guard.
-+        let mut slot = self.layout_slot.lock().unwrap();
-+        if self.spawn_gen.is_current() {
-+            *slot = Some(layout.clone());
-+        }
-     }
+ runs:
+```
+
+**File**: `.github/workflows/ci.yaml` (modified, +5/-0)
+```diff
+@@ -159,6 +159,11 @@ jobs:
+       uses: actions/checkout@v7
  
-     fn on_collect_complete(&self) {
-@@ -747,6 +754,28 @@ mod tests {
-         crate::commands::list::layout::ColumnGrid::default()
-     }
+     - uses: ./.github/actions/test-setup
++      with:
++        # Restore-only: this job finishes minutes before `test (linux)`, so
++        # when the cache key changes it would win the save race with a cache
++        # missing the nextest build, and `test` could no longer reserve the key.
++        save-cache: "false"
  
-+    fn layout(items: &[ListItem]) -> crate::commands::list::layout::LayoutConfig {
-+        use crate::commands::list::layout;
-+        layout::calculate_layout_with_width(
-+            items,
-+            &crate::commands::list::columns::all_tasks(),
-+            layout::Destination {
-+                width: 80,
-+                link_style: layout::LinkStyle::Expanded,
-+            },
-+            std::path::Path::new("/test"),
-+            layout::ColumnSelection {
-+                custom: &[],
-+                selected: None,
-+            },
-+            layout::RepoFacts {
-+                has_remote: true,
-+                url_template: None,
-+                max_pr_number: None,
-+            },
-+        )
-+    }
-+
-     /// `on_skeleton` reads the worktree/branch inventory through the handler's
-     /// own per-spawn `repo`, NOT the orchestrator's startup-cloned repo. `spawn`
-     /// rebuilds `repo` fresh each refresh; reading inventory through the
-@@ -1755,23 +1784,36 @@ mod tests {
-     }
- 
-     /// A handler superseded by a refresh must not publish its skeleton into
--    /// the session-shared row list / shortcut table, nor seed summary hints:
-+    /// the session-shared row list / shortcut table / alt-x layout, nor seed
-+    /// summary hints:
-     /// a rapid second `alt-r` can schedule the new spawn's skeleton before a
-     /// slow prior spawn's, and the stale skeleton landing second would
-     /// otherwise overwrite the live rows (feeding a later `alt-x` resync and
-     /// the `alt-y`/`alt-o` lookups) and write stale-row hint keys into the
-     /// refreshed cache.
-     #[test]
-     fn superseded_skeleton_leaves_shared_state_alone() {
-+        // The live spawn publishes its layout for `alt-x`'s morph row.
-+        let (live, _live_test, _live_rx) = make_handler();
-+        let live_items = vec![ListItem::new_branch("abc".into(), "live".into())];
-+        live.provide_layout(&layout(&live_items));
-+        assert!(
-+            live.layout_slot.lock().unwrap().is_some(),
-+            "live skeleton publishes its layout"
-+        );
-+
-         let (handler, test, rx) = make_handler();
-         handler.orchestrator.refresh(test.repo.clone());
- 
-+        let stale_items = vec![ListItem::new_branch("abc".into(), "stale".into())];
-         handler.on_skeleton(
--            vec![ListItem::new_branch("abc".into(), "stale".into())],
-+            stale_items.clone(),
-             vec!["skel".into()],
-             header("hdr"),
-             grid(),
-         );
-+        // `collect` hands over the layout right after the skeleton.
-+        handler.provide_layout(&layout(&stale_items));
-         handler.orchestrator.wait_for_idle();
- 
-         // The rows still stream to this spawn's (dead) skim channel...
-@@ -1790,6 +1832,10 @@ mod tests {
-             handler.preview_cache.is_empty(),
-             "superseded skeleton must not seed hints into the refreshed cache"
-         );
-+        assert!(
-+            handler.layout_slot.lock().unwrap().is_none(),
-+            "superseded skeleton must not overwrite the alt-x layout"
-+        );
-     }
- 
-     /// A superseded handler's `maybe_spawn_comments` is fully inert. Its
+     - name: Install wt
+       uses: baptiste0928/cargo-install@v3
 ```
 
 ---
 
-### Incident Patch 2: `f7735f2e` (2026-11-05)
-**Commit Message**: fix(shell): treat PowerShell directive paths literally (#4680)
+### Incident Patch 2: `1a406817` (2026-11-06)
+**Commit Message**: fix(docs): restore 48px favicon and apple-touch-icon links (#4719)
 
-When the PowerShell temporary directory contains wildcard characters
-such as `temp[1]`, `wt switch` can finish without changing the parent
-shell's directory. The directive file is written, but the wrapper treats
-its path as a wildcard during lookup and cleanup, leaving the file
-behind.
+The Astro rebuild (#3866) moved `favicon-48.png` and
+`apple-touch-icon.png` into `docs/public/` but dropped the `<link>` tags
+that #627 had added to the old Zola base template. Since then every page
+emits only `<link rel="shortcut icon" href="/favicon.png">` (32×32).
+This PR adds the two links back through Starlight's `head` option, so
+the larger icons are discoverable again.
 
-Use `-LiteralPath` for all four directive-file operations. Add a
-regression that checks both the directory change and removal of the
-temporary file, and refresh the generated PowerShell snapshot.
+This restores metadata. It doesn't fix the generic globe in Google
+Search (#4718), because nothing establishes the cause. [Google's favicon
+guidance](https://developers.google.com/search/docs/appearance/favicon-in-search)
+accepts a square icon of at least 8×8 and supports `shortcut icon`, so
+the existing 32×32 icon is not inherently ineligible. Advertising a
+48×48 icon follows Google's recommendation for a larger size, but
+whether it changes the search result is unverified.
 
-Validation: all 4 PowerShell integration tests pass with all features
-enabled, including the new regression. The shell-generation snapshot
-test, pre-commit checks (including clippy), doctests and rustdoc also
-pass. The original template reproduced the failure on Windows PowerShell
-5; the corrected template switches directories and leaves no directive
-file on both Windows PowerShell 5 and PowerShell 7.6.9.
+A new `built-site.test.mjs` case requires both links on every rendered
+page, so they can't drop out silently again. It fails on the current
+build and passes with this change. `npm run check`, `npm test`, and the
+rest of `test:site` pass locally. The exception is the exist
 
-The full `hook pre-merge --yes` gate did not pass on this Windows host:
-4,693 passed, 74 failed, 40 skipped. Failures include
-configuration/statusline snapshots, switch tests and the performance
-helper CLI; those failures and snapshots are o
-
-**File**: `src/shell/snapshots/worktrunk__shell__tests__init_powershell.snap` (modified, +3/-3)
+**File**: `docs/astro.config.mjs` (modified, +12/-0)
 ```diff
-@@ -44,8 +44,8 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
-         # Process the directive and clean it up even if cd throws.
-         try {
-             # cd file holds a raw path (no shell escaping needed)
--            if ((Test-Path $cdFile) -and (Get-Item $cdFile).Length -gt 0) {
--                $target = Get-Content -Path $cdFile -Raw
-+            if ((Test-Path -LiteralPath $cdFile) -and (Get-Item -LiteralPath $cdFile).Length -gt 0) {
-+                $target = Get-Content -LiteralPath $cdFile -Raw
-                 if ($target) {
-                     Set-Location -LiteralPath $target
-                     if ($exitCode -eq 0) {
-@@ -56,7 +56,7 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
- 
-         }
-         finally {
--            Remove-Item $cdFile -ErrorAction SilentlyContinue
-+            Remove-Item -LiteralPath $cdFile -ErrorAction SilentlyContinue
-         }
- 
-         # Propagate the exit code so scripts/CI can read $LASTEXITCODE.
+@@ -41,6 +41,18 @@ export default defineConfig({
+       description: 'Git worktree management for parallel AI agent workflows.',
+       disable404Route: true,
+       favicon: '/favicon.png',
++      head: [
++        // Restores the icon links the Zola site carried (#627); `favicon` above
++        // emits only the 32x32 shortcut icon.
++        {
++          tag: 'link',
++          attrs: { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/favicon-48.png' },
++        },
++        {
++          tag: 'link',
++          attrs: { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
++        },
++      ],
+       logo: {
+         src: './public/logo.png',
+         alt: 'Worktrunk',
 ```
 
-**File**: `templates/powershell.ps1` (modified, +3/-3)
+**File**: `docs/tests/built-site.test.mjs` (modified, +18/-0)
 ```diff
-@@ -40,8 +40,8 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
-         # Process the directive and clean it up even if cd throws.
-         try {
-             # cd file holds a raw path (no shell escaping needed)
--            if ((Test-Path $cdFile) -and (Get-Item $cdFile).Length -gt 0) {
--                $target = Get-Content -Path $cdFile -Raw
-+            if ((Test-Path -LiteralPath $cdFile) -and (Get-Item -LiteralPath $cdFile).Length -gt 0) {
-+                $target = Get-Content -LiteralPath $cdFile -Raw
-                 if ($target) {
-                     Set-Location -LiteralPath $target
-                     if ($exitCode -eq 0) {
-@@ -52,7 +52,7 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
+@@ -345,6 +345,24 @@ test('every command reference receives semantic syntax roles', async () => {
+   assert.equal(frameCount, headingCount, 'some command references remain plain code blocks');
+ });
  
-         }
-         finally {
--            Remove-Item $cdFile -ErrorAction SilentlyContinue
-+            Remove-Item -LiteralPath $cdFile -ErrorAction SilentlyContinue
-         }
++test('built pages link the 48px favicon and apple-touch-icon', async () => {
++  // Starlight's `favicon` option links only favicon.png, so these icon files in
++  // docs/public/ stay reachable only through the `head` entries.
++  for (const page of renderedPages) {
++    const html = await readFile(page, 'utf8');
++    assert.match(
++      html,
++      /<link rel="icon" type="image\/png" sizes="48x48" href="\/favicon-48\.png"\/?>/,
++      `${page} lacks a 48x48 favicon link`,
++    );
++    assert.match(
++      html,
++      /<link rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon\.png"\/?>/,
++      `${page} lacks an apple-touch-icon link`,
++    );
++  }
++});
++
+ test('built pages only reference emitted local assets', async () => {
+   const files = new Set(await allFiles());
  
-         # Propagate the exit code so scripts/CI can read $LASTEXITCODE.
 ```
 
-**File**: `tests/integration_tests/shell_powershell.rs` (modified, +55/-0)
+---
+
+### Incident Patch 3: `c45a2f63` (2026-11-07)
+**Commit Message**: fix(switch): use a GitHub PR URL's host for gh api (#4722)
+
+`wt switch https://host/owner/repo/pull/N` asked `gh api` with no
+`--hostname`, so the lookup went to gh's default host. An Enterprise URL
+then 404'd when the git remote was github.com, even though gh was logged
+in on the URL's host.
+
+When `forge.hostname` is unset, the `/pull/N` URL's host is now passed
+as `--hostname` if `gh auth token` succeeds for it. `pr:N` still follows
+the remote, and the 404 hint is unchanged.
+
+Checked with the new switch cases (logged in and not), the existing
+enterprise-remote regression, the URL-host unit test, `cargo test
+--doc`, and `cargo clippy --all-targets --all-features -- -D warnings`.
+
+Refs #4709
+
+**File**: `src/commands/worktree/switch.rs` (modified, +17/-13)
 ```diff
-@@ -181,6 +181,61 @@ wt list
+@@ -290,12 +290,13 @@ fn fetch_ref_info(
+     forge: ForgeKind,
+     number: u32,
+     repo: &Repository,
++    url_host: Option<&str>,
+ ) -> anyhow::Result<RemoteRefInfo> {
+     let _watchdog = worktrunk::progress::Watchdog::start(
+         &format!("the {} lookup", forge.ref_type().name()),
+         None,
      );
+-    remote_ref::fetch_info(forge, number, repo)
++    remote_ref::fetch_info(forge, number, repo, url_host)
  }
  
-+/// A temp directory containing brackets must not turn directive-file operations
-+/// into wildcard lookups, which silently skips the directory change and cleanup.
-+#[test]
-+fn test_powershell_wrapper_handles_literal_temp_paths() {
-+    let temp_dir = worktrunk::testing::test_tempdir();
-+    let temp_path = temp_dir.path().join("temp[1]");
-+    let target_path = temp_dir.path().join("target");
-+    std::fs::create_dir(&temp_path).unwrap();
-+    std::fs::create_dir(&target_path).unwrap();
-+    let target_path = dunce::canonicalize(target_path).unwrap();
-+
-+    let mock_bin = temp_dir.path().join("mock-wt.ps1");
-+    std::fs::write(
-+        &mock_bin,
-+        r#"
-+if ($env:COMPLETE) { exit 0 }
-+[IO.File]::WriteAllText($env:WORKTRUNK_DIRECTIVE_CD_FILE, $env:WORKTRUNK_TEST_TARGET)
-+exit 0
-+"#,
-+    )
-+    .unwrap();
-+
-+    let wrapper = ShellInit::with_prefix(Shell::PowerShell, "wt".to_string())
-+        .generate()
-+        .unwrap();
-+    let mock_bin_escaped = mock_bin.display().to_string().replace('\'', "''");
-+    let script = format!(
-+        r#"
-+$ErrorActionPreference = 'Stop'
-+$env:WORKTRUNK_BIN = '{mock_bin_escaped}'
-+{wrapper}
-+wt switch feature
-+Write-Output (Get-Location).Path
-+exit $LASTEXITCODE
-+"#
-+    );
-+
-+    let output = Command::new("pwsh")
-+        .args(["-NoProfile", "-NonInteractive", "-Command", &script])
-+        .env("TMP", &temp_path)
-+        .env("TEMP", &temp_path)
-+        .env("TMPDIR", &temp_path)
-+        .env("WORKTRUNK_TEST_TARGET", &target_path)
-+        .output()
-+        .expect("Failed to run pwsh");
-+    let stdout = String::from_utf8_lossy(&output.stdout);
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(
-+        output.status.success(),
-+        "pwsh command failed.\nstdout: {stdout}\nstderr: {stderr}",
-+    );
-+    assert_eq!(stdout.trim(), target_path.to_str().unwrap());
-+    assert_eq!(std::fs::read_dir(&temp_path).unwrap().count(), 0);
-+}
-+
- /// The installed `pwsh` decides where install writes on Unix: with
- /// `XDG_CONFIG_HOME` pointing away from `~/.config`, the profile lands where
- /// PowerShell loads it.
+ /// Resolve a remote ref (PR or MR) through the selected forge.
+@@ -304,6 +305,7 @@ fn resolve_remote_ref(
+     forge: ForgeKind,
+     number: u32,
+     create: bool,
++    url_host: Option<&str>,
+ ) -> anyhow::Result<ResolvedTarget> {
+     let ref_type = forge.ref_type();
+     let symbol = ref_type.symbol();
+@@ -314,7 +316,7 @@ fn resolve_remote_ref(
+         progress_message(cformat!("Fetching {} {symbol}{number}...", ref_type.name()))
+     );
+ 
+-    let info = fetch_ref_info(forge, number, repo)?;
++    let info = fetch_ref_info(forge, number, repo, url_host)?;
+ 
+     // Display context with URL (as gutter under fetch progress)
+     eprintln!("{}", format_with_gutter(&format_ref_context(&info), None));
+@@ -537,20 +539,21 @@ fn fetch_same_repo_branch(repo: &Repository, info: &RemoteRefInfo) -> anyhow::Re
+ /// `https://github.com/owner/repo/pull/123`) into the same literal shortcut so
+ /// both forms flow through one dispatch. Returns `None` for a regular branch
+ /// name, which callers resolve as an ordinary ref.
+-fn parse_ref_shortcut(input: &str) -> Option<(RefType, u32)> {
++fn parse_ref_shortcut(input: &str) -> Option<(RefType, u32, Option<String>)> {
+     let normalised = parse_ref_url(input);
+-    let input = normalised.as_deref().unwrap_or(input);
+-    if let Some(number) = input
++    let shortcut = normalised.as_deref().unwrap_or(input);
++    if let Some(number) = shortcut
+         .strip_prefix("pr:")
+         .and_then(|s| s.parse::<u32>().ok())
+     {
+-        return Some((RefType::Pr, number));
++        // Only a GitHub `/pull/N` URL names a host; literal `pr:N` doesn't.
++        return Some((RefType::Pr, number, remote_ref::github_pull_url_host(input)));
+     }
+-    if let Some(number) = input
++    if let Some(number) = shortcut
+         .strip_prefix("mr:")
+         .and_then(|s| s.parse::<u32>().ok())
+     {
+-        return Some((RefType::Mr, number));
++        return Some((RefType::Mr, number, None));
+     }
+     None
+ }
+@@ -575,12 +578,12 @@ fn resolve_base_ref(
+     repo: &Repository,
+     base: &str,
+ ) -> anyhow::Result<(String, Option<(String, String)>)> {
+-    if let Some((ref_type, number)) = parse_ref_shortcut(base) {
++    if let Some((ref_type, number, url_host)) = parse_ref_shortcut(base) {
+         let forge = match ref_type {
+             RefType::Pr => choose_pr_forge(repo)?,
+             RefType::Mr => ForgeKind::GitLab,
+         };
+-        return resolve_remote_ref_as_base(repo, forge, number);
++        return resolve_remote_ref_as_base(repo, forge, number, url_host.as_deref());
+     }
+ 
+     let selector = repo.expand_selector(base)?;
+@@ -612,6 +615,7 @@ fn resolve_remote_ref_as_base(
+     repo: &Repository,
+     forge: ForgeKind,
+     number: u32,
++    url_host: Option<&str>,
+ ) -> anyhow::Result<(String, Option<(String, String)>)> {
+     let ref_type = forge.ref_type();
+     let symbol = ref_type.symbol();
+@@ -624,7 +628,7 @@ fn resolve_remote_ref_as_base(
+         ))
+     );
+ 
+-    let info = fetch_ref_info(forge, number, repo)?;
++    let info = fetch_ref_info(forge, number, repo, url_host)?;
+     eprintln!("{}", format_with_gutter(&format_ref_context(&info), None));
+ 
+     if !info.is_cross_repo {
+@@ -676,7 +680,7 @@ fn resolve_ref_shortcut_target(
+ ) -> anyhow::Result<Option<ResolvedTarget>> {
+     // `pr:N` dispatches to GitHub, Gitea, or Azure DevOps based on remotes;
+     // `mr:N` to GitLab. Forge PR/MR web URLs normalise to the same shortcuts.
+-    let Some((ref_type, number)) = parse_ref_shortcut(branch) else {
++    let Some((ref_type, number, url_host)) = parse_ref_shortcut(branch) else {
+         return Ok(None);
+     };
+     // Fail closed on a malformed project config before choosing a forge:
+@@ -694,7 +698,7 @@ fn resolve_ref_shortcut_target(
+         RefType::Pr => choose_pr_forge(repo)?,
+         RefType::Mr => ForgeKind::GitLab,
+     };
+-    resolve_remote_ref(repo, forge, number, create).map(Some)
++    resolve_remote_ref(repo, forge, number, create, url_host.as_deref()).map(Some)
+ }
+ 
+ /// Decide how a new worktree for `branch` gets created, validating
 ```
 
----
-
-### Incident Patch 3: `79f19f64` (2026-11-05)
-**Commit Message**: fix(switch): pass a GitHub Enterprise remote's host to gh api when gh is logged in to it (#4710)
-
-`gh api` doesn't take its host from the repository. Without `--hostname`
-it uses gh's default host, which is github.com once more than one host
-is logged in. `fetch_pr_info` passed `--hostname` only when
-`forge.hostname` was set, so on a GitHub Enterprise remote `wt switch
-pr:N` and `wt switch <PR URL>` asked github.com for the PR and got a
-404. With no `forge.hostname`, the lookup now passes the GitHub remote's
-host as `--hostname` if `gh auth token --hostname <host>` succeeds (a
-local check, no network; `choose_pr_forge` already uses the same check).
-An SSH alias such as `github-personal` has no gh login, so it still goes
-to gh's default host. That keeps the #1790 fix in place, the one #1826
-made by removing host detection. A configured `forge.hostname` still
-takes priority. github.com remotes skip the check, so they behave as
-before.
-
-`test_switch_pr_enterprise_remote_passes_hostname` uses an
-`https://github.example.com/...` remote and a mock `gh`. When `gh` is
-logged in to that host, the test expects `--hostname github.example.com`
-on the `api` call; it failed before this change an
-
-**File**: `src/git/remote_ref/github.rs` (modified, +11/-2)
+**File**: `src/git/remote_ref/github.rs` (modified, +28/-8)
 ```diff
-@@ -107,8 +107,17 @@ pub(super) fn fetch_pr_info(pr_number: u32, repo: &Repository) -> anyhow::Result
+@@ -81,7 +81,11 @@ fn gh_default_repo(repo_root: &Path) -> Option<(String, String)> {
+ }
  
-     let api_path = format!("repos/{}/{}/pulls/{}", owner, repo_name, pr_number);
+ /// Fetch PR information from GitHub using the `gh` CLI.
+-pub(super) fn fetch_pr_info(pr_number: u32, repo: &Repository) -> anyhow::Result<RemoteRefInfo> {
++pub(super) fn fetch_pr_info(
++    pr_number: u32,
++    repo: &Repository,
++    url_host: Option<&str>,
++) -> anyhow::Result<RemoteRefInfo> {
+     let repo_root = repo.repo_path()?;
  
--    // Only pass --hostname when explicitly configured (for GHE / self-hosted).
--    let hostname = repo.forge_hostname();
-+    // `gh api` doesn't infer the host from the repository: without
-+    // `--hostname` it asks gh's default host, which is github.com once several
-+    // hosts are logged in. A configured `forge.hostname` wins; otherwise a
-+    // GitHub Enterprise remote's host is the API host when gh holds a login
-+    // for it. An SSH alias (`git@github-personal:…`) has no login, so it keeps
-+    // gh's default (#1790).
-+    let hostname = repo.forge_hostname().or_else(|| {
-+        repo.forge_remote_parsed_url(|u| u.is_github())
-+            .map(|u| u.host().to_string())
-+            .filter(|host| !host.eq_ignore_ascii_case("github.com") && is_authed_for(host))
-+    });
+     // Determine which owner/repo to query. Prefer gh's default repo
+@@ -109,14 +113,16 @@ pub(super) fn fetch_pr_info(pr_number: u32, repo: &Repository) -> anyhow::Result
+ 
+     // `gh api` doesn't infer the host from the repository: without
+     // `--hostname` it asks gh's default host, which is github.com once several
+-    // hosts are logged in. A configured `forge.hostname` wins; otherwise a
+-    // GitHub Enterprise remote's host is the API host when gh holds a login
+-    // for it. An SSH alias (`git@github-personal:…`) has no login, so it keeps
+-    // gh's default (#1790).
++    // hosts are logged in. A configured `forge.hostname` wins. Otherwise a
++    // non-github.com host in a `/pull/N` URL the user passed wins when gh is
++    // logged in there (#4709), then a GitHub Enterprise remote's host. An SSH alias
++    // (`git@github-personal:…`) has no login, so it keeps gh's default (#1790).
+     let hostname = repo.forge_hostname().or_else(|| {
+-        repo.forge_remote_parsed_url(|u| u.is_github())
+-            .map(|u| u.host().to_string())
+-            .filter(|host| !host.eq_ignore_ascii_case("github.com") && is_authed_for(host))
++        authed_enterprise_host(url_host).or_else(|| {
++            repo.forge_remote_parsed_url(|u| u.is_github())
++                .map(|u| u.host().to_string())
++                .and_then(|host| authed_enterprise_host(Some(&host)))
++        })
+     });
  
      let mut args = vec!["api", api_path.as_str()];
-     if let Some(h) = &hostname {
-```
-
-**File**: `tests/integration_tests/switch.rs` (modified, +79/-0)
-```diff
-@@ -6575,6 +6575,85 @@ fn test_switch_pr_self_hosted_defaults_to_github(
-     }
+@@ -224,6 +230,20 @@ fn use_ssh_protocol(host: &str) -> bool {
+     cli_config_value("gh", &["git_protocol", "--host", host]).as_deref() == Some("ssh")
  }
  
-+/// A GitHub Enterprise remote with no `forge.hostname`: `gh api` sends a
-+/// request without `--hostname` to gh's default host, so the PR lookup must
-+/// name the remote's host when gh holds a login for it, and leave gh's default
-+/// alone when it doesn't (an SSH alias such as `github-personal`, #1790).
-+#[rstest]
-+#[case::authed_host(true)]
-+#[case::unauthed_host(false)]
-+fn test_switch_pr_enterprise_remote_passes_hostname(
-+    #[from(repo_with_remote)] mut repo: TestRepo,
-+    #[case] gh_authed: bool,
-+) {
-+    repo.add_worktree("feature-auth");
-+    repo.run_git(&["push", "origin", "feature-auth"]);
-+
-+    let bare_url = String::from_utf8_lossy(
-+        &repo
-+            .git_command()
-+            .args(["config", "remote.origin.url"])
-+            .run()
-+            .unwrap()
-+            .stdout,
-+    )
-+    .trim()
-+    .to_string();
-+    let ghe_url = "https://github.example.com/owner/test-repo.git";
-+    repo.run_git(&["remote", "set-url", "origin", ghe_url]);
-+    repo.run_git(&["config", &format!("url.{bare_url}.insteadOf"), ghe_url]);
-+
-+    let gh_response = r#"{
-+        "title": "Enterprise PR",
-+        "user": {"login": "alice"},
-+        "state": "open",
-+        "draft": false,
-+        "head": {
-+            "ref": "feature-auth",
-+            "repo": {"name": "test-repo", "owner": {"login": "owner"}}
-+        },
-+        "base": {
-+            "ref": "main",
-+            "repo": {"name": "test-repo", "owner": {"login": "owner"}}
-+        },
-+        "html_url": "https://github.example.com/owner/test-repo/pull/101"
-+    }"#;
-+    let mock_bin = repo.root_path().join("mock-bin");
-+    fs::create_dir_all(&mock_bin).unwrap();
-+    fs::write(mock_bin.join("pr_response.json"), gh_response).unwrap();
-+    let mut gh = MockConfig::new("gh").command("api", MockResponse::file("pr_response.json"));
-+    if gh_authed {
-+        gh = gh.command("auth token --hostname", MockResponse::output("gho_mock"));
-+    }
-+    gh.command("_default", MockResponse::exit(1))
-+        .write(&mock_bin);
-+    let call_log = worktrunk::testing::tempdir().unwrap();
-+
-+    let mut cmd = repo.wt_command();
-+    configure_mock_cli_env(&mut cmd, &mock_bin);
-+    let output = cmd
-+        .args(["switch", "pr:101"])
-+        .env("WORKTRUNK_TEST_MOCK_CALL_LOG_DIR", call_log.path())
-+        .output()
-+        .unwrap();
-+    assert!(
-+        output.status.success(),
-+        "{}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+
-+    let calls = fs::read_to_string(call_log.path().join("gh.calls")).unwrap();
-+    let api_call = calls.lines().find(|line| line.starts_with("api ")).unwrap();
-+    if gh_authed {
-+        assert_eq!(
-+            api_call,
-+            "api repos/owner/test-repo/pulls/101 --hostname github.example.com"
-+        );
++/// Enterprise host to pass as `gh api --hostname`, when gh is logged in there.
++///
++/// `github.com` is the no-flag default once more than one host is logged in,
++/// so naming it would only repeat that path. No login reads as `None` and the
++/// caller tries the next candidate.
++fn authed_enterprise_host(host: Option<&str>) -> Option<String> {
++    let host = host?;
++    if host.eq_ignore_ascii_case("github.com") || !is_authed_for(host) {
++        None
 +    } else {
-+        assert_eq!(api_call, "api repos/owner/test-repo/pulls/101");
++        Some(host.to_string())
 +    }
 +}
 +
- /// A configured SSH hostname can differ from the web hostname. tea's login
- /// list supplies both, so an SSH remote must route to the same Gitea account.
- #[rstest]
+ /// Whether `gh` has an authentication token configured for `host`.
+ ///
+ /// `gh auth token --hostname <host>` reads from `~/.config/gh/hosts.yml`, the
+```
+
+**File**: `src/git/remote_ref/mod.rs` (modified, +46/-2)
+```diff
+@@ -16,7 +16,7 @@
+ //! use worktrunk::git::{ForgeKind, remote_ref};
+ //! # fn example() -> Result<(), Box<dyn std::error::Error>> {
+ //! let repo = Repository::at(".")?;
+-//! let info = remote_ref::fetch_info(ForgeKind::GitHub, 123, &repo)?;
++//! let info = remote_ref::fetch_info(ForgeKind::GitHub, 123, &repo, None)?;
+ //! println!("PR #{}: {}", info.number, info.title);
+ //! # Ok(())
+ //! # }
+@@ -105,15 +105,30 @@ pub fn fetch_info(
+     forge: ForgeKind,
+     number: u32,
+     repo: &Repository,
++    url_host: Option<&str>,
+ ) -> anyhow::Result<RemoteRefInfo> {
+     match forge {
+-        ForgeKind::GitHub => github::fetch_pr_info(number, repo),
++        // A GitHub `/pull/N` URL names its host. `pr:N` has none (`url_host` is
++        // `None`) and keeps the remote-host lookup.
++        ForgeKind::GitHub => github::fetch_pr_info(number, repo, url_host),
+         ForgeKind::GitLab => gitlab::fetch_mr_info(number, repo),
+         ForgeKind::Gitea => gitea::fetch_pr_info(number, repo),
+         ForgeKind::AzureDevOps => azure::fetch_pr_info(number, repo),
+     }
+ }
+ 
++/// Host named by a GitHub `/pull/N` web URL.
++///
++/// Literal `pr:N` and the other forges' URL shapes (`/pulls/`, `/pullrequest/`,
++/// `/-/merge_requests/`) return `None`. A port in the authority is kept.
++pub fn github_pull_url_host(input: &str) -> Option<String> {
++    let parts = parse_ref_url_parts(input)?;
++    if parts.segments.get(parts.marker_index).copied() != Some("pull") {
++        return None;
++    }
++    authority_host(parts.segments.first().copied()?).map(str::to_string)
++}
++
+ /// Whether `forge`'s CLI holds a login for `host`.
+ ///
+ /// Each CLI answers from its own local state, so the answer needs no network
+@@ -628,6 +643,35 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn github_pull_url_host_keeps_only_github_pull_urls() {
++        assert_eq!(
++            github_pull_url_host("https://github.example.com/acme/app/pull/62").as_deref(),
++            Some("github.example.com")
++        );
++        assert_eq!(
++            github_pull_url_host("https://github.com/owner/repo/pull/123/files").as_deref(),
++            Some("github.com")
++        );
++        assert_eq!(
++            github_pull_url_host("https://ghe.acme.internal/acme/app/pull/7").as_deref(),
++            Some("ghe.acme.internal")
++        );
++        assert_eq!(github_pull_url_host("pr:62"), None);
++        assert_eq!(
++            github_pull_url_host("https://codeberg.org/owner/repo/pulls/55"),
++            None
++        );
++        assert_eq!(
++            github_pull_url_host("https://gitlab.com/group/repo/-/merge_requests/42"),
++            None
++        );
++        assert_eq!(
++            github_pull_url_host("https://dev.azure.com/org/project/_git/repo/pullrequest/9"),
++            None
++        );
++    }
++
+     #[test]
+     fn parse_ref_url_gitea() {
+         // Gitea / Codeberg use /pulls/N rather than GitHub's /pull/N.
+```
+
+**File**: `tests/integration_tests/switch.rs` (modified, +21/-12)
+```diff
+@@ -6575,15 +6575,24 @@ fn test_switch_pr_self_hosted_defaults_to_github(
+     }
+ }
+ 
+-/// A GitHub Enterprise remote with no `forge.hostname`: `gh api` sends a
+-/// request without `--hostname` to gh's default host, so the PR lookup must
+-/// name the remote's host when gh holds a login for it, and leave gh's default
+-/// alone when it doesn't (an SSH alias such as `github-personal`, #1790).
+-#[rstest]
+-#[case::authed_host(true)]
+-#[case::unauthed_host(false)]
+-fn test_switch_pr_enterprise_remote_passes_hostname(
++const GHE_REMOTE: &str = "https://github.example.com/owner/test-repo.git";
++const ALIAS_REMOTE: &str = "git@github-work:owner/test-repo.git";
++const GHE_PR_URL: &str = "https://github.example.com/owner/test-repo/pull/101";
++
++/// With no `forge.hostname`, `gh api` sends a request without `--hostname` to
++/// gh's default host. The PR lookup names a host only when gh holds a login
++/// for it: the host in a `/pull/N` URL first (#4709), then a GitHub Enterprise
++/// remote's host. An SSH alias (`github-work`, #1790) has no login; the alias
++/// cases pass only if the URL host is tried before the remote host.
++#[rstest]
++#[case::authed_remote_host(GHE_REMOTE, "pr:101", true)]
++#[case::unauthed_remote_host(GHE_REMOTE, "pr:101", false)]
++#[case::authed_url_host_over_alias_remote(ALIAS_REMOTE, GHE_PR_URL, true)]
++#[case::unauthed_url_host(ALIAS_REMOTE, GHE_PR_URL, false)]
++fn test_switch_pr_enterprise_passes_hostname(
+     #[from(repo_with_remote)] mut repo: TestRepo,
++    #[case] origin_url: &str,
++    #[case] switch_arg: &str,
+     #[case] gh_authed: bool,
+ ) {
+     repo.add_worktree("feature-auth");
+@@ -6599,9 +6608,8 @@ fn test_switch_pr_enterprise_remote_passes_hostname(
+     )
+     .trim()
+     .to_string();
+-    let ghe_url = "https://github.example.com/owner/test-repo.git";
+-    repo.run_git(&["remote", "set-url", "origin", ghe_url]);
+-    repo.run_git(&["config", &format!("url.{bare_url}.insteadOf"), ghe_url]);
++    repo.run_git(&["remote", "set-url", "origin", origin_url]);
++    repo.run_git(&["config", &format!("url.{bare_url}.insteadOf"), origin_url]);
+ 
+     let gh_response = r#"{
+         "title": "Enterprise PR",
+@@ -6623,6 +6631,7 @@ fn test_switch_pr_enterprise_remote_passes_hostname(
+     fs::write(mock_bin.join("pr_response.json"), gh_response).unwrap();
+     let mut gh = MockConfig::new("gh").command("api", MockResponse::file("pr_response.json"));
+     if gh_authed {
++        // Answers for any host, so the alias cases check host precedence.
+         gh = gh.command("auth token --hostname", MockResponse::output("gho_mock"));
+     }
+     gh.command("_default", MockResponse::exit(1))
+@@ -6632,7 +6641,7 @@ fn test_switch_pr_enterprise_remote_passes_hostname(
+     let mut cmd = repo.wt_command();
+     configure_mock_cli_env(&mut cmd, &mock_bin);
+     let output = cmd
+-        .args(["switch", "pr:101"])
++        .args(["switch", switch_arg])
+         .env("WORKTRUNK_TEST_MOCK_CALL_LOG_DIR", call_log.path())
+         .output()
+         .unwrap();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4710** (2026-11-05): fix(switch): pass a GitHub Enterprise remote's host to gh api when gh is logged in to it (@worktrunk-bot)
-- **PR #4708** (2026-11-05): fix(picker): keep a superseded refresh from overwriting the alt-x layout (@worktrunk-bot)
-- **PR #4707** (2026-11-05): Ship Codex activity-marker hooks as a separate hooks-only plugin (@worktrunk-bot)
-- **PR #4704** (2026-11-05): fix(switch): clear a stale marker when --create makes the branch (@worktrunk-bot)
-- **PR #4703** (2026-11-05): docs(remove): mention the wt switch picker's Alt-x in wt remove help (@worktrunk-bot)
-- **PR #4701** (2026-11-05): chore: bump taiki-e/install-action from 2.89.0 to 2.89.1 (@dependabot[bot])
+- **PR #4725** (2026-11-07): skills(writing-user-outputs): fold a second suggestion into the existing hint (@worktrunk-bot)
+- **PR #4724** (2026-11-07): ci: stop fast-checks saving the shared Linux rust cache (@worktrunk-bot)
+- **PR #4722** (2026-11-07): fix(switch): use a GitHub PR URL's host for gh api (@anqorithm)
+- **PR #4721** (2026-11-06): fix(completion): filter PowerShell completions by prefix (@Bortlesboat)
+- **PR #4720** (closed): docs(readme): add pt-BR and es translations (@Cabreira97)
+- **PR #4719** (2026-11-06): fix(docs): restore 48px favicon and apple-touch-icon links (@worktrunk-bot)
 
 ---
 
@@ -2462,55 +2530,36 @@ on the `api` call; it failed before this change an
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. picker): keep a superseded refresh from overwriting the alt-x layout (#4708)
+## X. ci: stop fast-checks saving the shared Linux rust cache (#4724)
 
 **RULE**:
-When implementing operations in `src/commands/picker/progressive_handler.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/test-setup/action.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d46d6b3`: picker): keep a superseded refresh from overwriting the alt-x layout (#4708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb231c18`: ci: stop fast-checks saving the shared Linux rust cache (#4724). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/picker/progressive_handler.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/test-setup/action.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Rows funnel into skim's item stream (`tx`, consumed by the skeleton
-//! batch — the handler's only send) and each item's shared `rendered` mutex
-//! (in-place redraws). The skeleton also publishes session-shared state that
-//! outlives this spawn — `shared_items`, the shortcut table, and the layout
-//! `PickerCollector` uses for alt-x — and only the live spawn writes it, so a
-//! superseded skeleton landing after a rapid second alt-r leaves it alone.
-        // row on this grid. Overwritten each skeleton (a refresh re-collects),
-        // but only by the live spawn — a superseded skeleton's grid would
-        // misalign the morph row, as in `on_skeleton`'s shared-list guard.
-        let mut slot = self.layout_slot.lock().unwrap();
-        if self.spawn_gen.is_current() {
-            *slot = Some(layout.clone());
-        }
-    fn layout(items: &[ListItem]) -> crate::commands::list::layout::LayoutConfig {
-        use crate::commands::list::layout;
-        layout::calculate_layout_with_width(
-            items,
-            &crate::commands::list::columns::all_tasks(),
-            layout::Destination {
-                width: 80,
-                link_style: layout::LinkStyle::Expa
+      else (fast-checks, collect-affected, affected-tests, release-target)
+      passes 'false' so they restore main's cache but never write — keeps
+      instrumented (collect-affected) and cross-compiled (release-target)
+      artifacts out of the shared cache, stops a faster job (fast-checks)
+      winning the save race with a partial build, and stops PR runs
+      depositing single-use caches.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-//! Each event funnels into three places: skim's item stream (`tx`, consumed
-//! by the skeleton batch — the handler's only send), each item's shared
-//! `rendered` mutex (in-place redraws), and `shared_items` used by
-//! `PickerCollector` for alt-x.
-        // row on this grid. Overwritten each skeleton (a refresh re-collects).
-        *self.layout_slot.lock().unwrap() = Some(layout.clone());
-    /// the session-shared row list / shortcut table, nor seed summary hints:
-            vec![ListItem::new_branch("abc".into(), "stale".into())],
+      else (collect-affected, affected-tests, release-target) passes 'false' so
+      they restore main's cache but never write — keeps instrumented
+      (collect-affected) and cross-compiled (release-target) artifacts out of
+      the shared cache, and stops PR runs depositing single-use caches.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d46d6b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb231c18` are properly handled with clean fallback behavior.

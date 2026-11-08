@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T00:07:03.835Z",
+  "last_updated": "2026-11-08T00:15:40.061Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41001,14 +41001,19 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "79f19f64",
-      "content_hash": "2361acfc09cd2f5c7a2e38caa8c63991934732ffadf4454e19d2d1905f84b301",
+      "source_version": "71d99c7e",
+      "content_hash": "237ab97fa82edd6128b9e8baa96a6c2df337e6611f2ad7146eafaa950b0a56e8",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "picker): keep a superseded refresh from overwriting the alt-x layout (#4708)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci: stop fast-checks saving the shared Linux rust cache (#4724)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -41087,7 +41092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:45:20.668Z",
+      "verified_at": "2026-11-08T00:15:25.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62254,14 +62259,19 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "33023211",
-      "content_hash": "60003d2c571fd1963f054cc698d68c873ef2b2cdabfc20544a73f6a66d34a1af",
+      "source_version": "b74dc9e9",
+      "content_hash": "dae872a7608507b4472226a7f5f6901d6c85892b523ea2549f96e4cd45e1a13d",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "avoid overflow in decoder input size check",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "require dimension names to be valid identifiers in Java",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62355,7 +62365,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:58:50.894Z",
+      "verified_at": "2026-11-08T00:15:40.027Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81030,11 +81040,16 @@
       "slug": "scrapinghub-scrapy-poet",
       "platform": "github",
       "source_url": "https://github.com/scrapinghub/scrapy-poet",
-      "source_version": "7ec78c35",
-      "content_hash": "7e49c89c2d97e1748f7058e7b07b2c546ed401e690decb91b025a6ef70ff4dd2",
+      "source_version": "c54e48e7",
+      "content_hash": "8438e5918b1be14243a8f927d630d8536e49fbf2c7828ce5ced430585eca329d",
       "dossier_path": "07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Bump version: 0.27.2 → 0.28.0",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1653,
           "title": "Weak-Key Snapshot Invalidation Invariant",
@@ -81076,7 +81091,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:21:58.482Z",
+      "verified_at": "2026-11-08T00:15:29.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

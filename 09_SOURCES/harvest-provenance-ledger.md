@@ -8149,3 +8149,6 @@ Every entry in this ledger must capture:
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `a3cdce35` | Multi-dimensional audit evidence | 2026-11-08T00:02:39.005Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `f03e9020` | Multi-dimensional audit evidence | 2026-11-08T00:02:44.937Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `d440ad4b` | Multi-dimensional audit evidence | 2026-11-08T00:07:03.932Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `71d99c7e` | Multi-dimensional audit evidence | 2026-11-08T00:15:25.358Z |
+| `learn-github-scrapinghub-scrapy-poet` | `https://github.com/scrapinghub/scrapy-poet` | `c54e48e7` | Multi-dimensional audit evidence | 2026-11-08T00:15:29.237Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `b74dc9e9` | Multi-dimensional audit evidence | 2026-11-08T00:15:40.169Z |

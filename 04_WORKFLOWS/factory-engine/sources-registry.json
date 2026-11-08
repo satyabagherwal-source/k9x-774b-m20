@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T00:07:06.547Z",
-    "lastVerified": "2026-11-08T00:07:06.547Z",
+    "lastChecked": "2026-11-08T00:15:42.744Z",
+    "lastVerified": "2026-11-08T00:15:42.744Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T23:34:20.025Z",
+    "lastChecked": "2026-11-08T00:15:32.690Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T23:34:20.025Z"
+    "lastVerified": "2026-11-08T00:15:32.690Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -742,9 +742,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-07T19:55:20.089Z",
+    "lastChecked": "2026-11-08T00:15:28.005Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-07T19:55:20.089Z"
+    "lastVerified": "2026-11-08T00:15:28.005Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -955,14 +955,14 @@
     "officialUrl": "https://github.com/max-sixty/worktrunk",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T19:45:18.119Z",
-    "lastVerified": "2026-11-05T19:45:18.119Z",
+    "lastChecked": "2026-11-08T00:15:22.855Z",
+    "lastVerified": "2026-11-08T00:15:22.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "2361acfc09cd2f5c7a2e38caa8c63991934732ffadf4454e19d2d1905f84b301",
+    "contentHash": "237ab97fa82edd6128b9e8baa96a6c2df337e6611f2ad7146eafaa950b0a56e8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3716,12 +3716,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dragonflyoss-dragonfly": {
-    "name": "dragonflyoss/dragonfly",
+    "name": "dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T15:05:48.683Z",
-    "lastVerified": "2026-11-06T15:05:48.683Z",
+    "lastChecked": "2026-11-08T00:15:25.409Z",
+    "lastVerified": "2026-11-08T00:15:25.409Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
@@ -3730,7 +3730,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "afb8bc2e"
   },
   "matrixorigin-matrixone": {
     "name": "matrixorigin/matrixone",
@@ -7196,14 +7197,14 @@
     "officialUrl": "https://github.com/vespa-engine/vespa",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-06T13:58:48.689Z",
-    "lastVerified": "2026-11-06T13:58:48.689Z",
+    "lastChecked": "2026-11-08T00:15:38.181Z",
+    "lastVerified": "2026-11-08T00:15:38.181Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "60003d2c571fd1963f054cc698d68c873ef2b2cdabfc20544a73f6a66d34a1af",
+    "contentHash": "dae872a7608507b4472226a7f5f6901d6c85892b523ea2549f96e4cd45e1a13d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8432,9 +8433,9 @@
   "louiscad-splitties": {
     "name": "Splitties",
     "officialUrl": "https://github.com/LouisCAD/Splitties",
-    "lastChecked": "2026-11-04T23:41:47.485Z",
+    "lastChecked": "2026-11-08T00:15:22.670Z",
     "revisionIdentifier": "1ed56ba2",
-    "lastVerified": "2026-11-04T23:41:47.485Z"
+    "lastVerified": "2026-11-08T00:15:22.670Z"
   },
   "biomejs-biome": {
     "name": "biomejs/biome",
@@ -12467,12 +12468,12 @@
     "officialUrl": "https://github.com/scrapinghub/scrapy-poet",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T08:21:44.370Z",
-    "lastVerified": "2026-11-04T08:21:44.370Z",
+    "lastChecked": "2026-11-08T00:15:27.227Z",
+    "lastVerified": "2026-11-08T00:15:27.227Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapinghub-scrapy-poet",
-    "contentHash": "7e49c89c2d97e1748f7058e7b07b2c546ed401e690decb91b025a6ef70ff4dd2",
+    "contentHash": "8438e5918b1be14243a8f927d630d8536e49fbf2c7828ce5ced430585eca329d",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,

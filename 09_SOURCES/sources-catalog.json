@@ -1943,10 +1943,10 @@
     "repository": "scrapinghub/scrapy-poet",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapinghub/scrapy-poet",
-    "sourceVersion": "7ec78c35",
+    "sourceVersion": "c54e48e7",
     "license": "BSD-3-Clause",
-    "contentHash": "7e49c89c2d97e1748f7058e7b07b2c546ed401e690decb91b025a6ef70ff4dd2",
-    "lastHarvestedAt": "2026-11-04T08:21:58.591Z",
+    "contentHash": "8438e5918b1be14243a8f927d630d8536e49fbf2c7828ce5ced430585eca329d",
+    "lastHarvestedAt": "2026-11-08T00:15:29.237Z",
     "learningId": "learn-github-scrapinghub-scrapy-poet"
   },
   "webdriverio-webdriverio": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "79f19f64",
+    "sourceVersion": "71d99c7e",
     "license": "NOASSERTION",
-    "contentHash": "2361acfc09cd2f5c7a2e38caa8c63991934732ffadf4454e19d2d1905f84b301",
-    "lastHarvestedAt": "2026-11-05T19:45:20.795Z",
+    "contentHash": "237ab97fa82edd6128b9e8baa96a6c2df337e6611f2ad7146eafaa950b0a56e8",
+    "lastHarvestedAt": "2026-11-08T00:15:25.358Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "33023211",
+    "sourceVersion": "b74dc9e9",
     "license": "Apache-2.0",
-    "contentHash": "60003d2c571fd1963f054cc698d68c873ef2b2cdabfc20544a73f6a66d34a1af",
-    "lastHarvestedAt": "2026-11-06T13:58:50.965Z",
+    "contentHash": "dae872a7608507b4472226a7f5f6901d6c85892b523ea2549f96e4cd45e1a13d",
+    "lastHarvestedAt": "2026-11-08T00:15:40.169Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

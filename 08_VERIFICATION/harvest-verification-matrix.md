@@ -8140,3 +8140,6 @@
 | `CYCLE-20261108-J40P` | `2026-11-08T00:02:39.001Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a176072a...`) |
 | `CYCLE-20261108-J8LH` | `2026-11-08T00:02:44.933Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`16a8bc64...`) |
 | `CYCLE-20261108-OSFS` | `2026-11-08T00:07:03.928Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a59a86dd...`) |
+| `CYCLE-20261108-ZJCA` | `2026-11-08T00:15:25.354Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`237ab97f...`) |
+| `CYCLE-20261108-ZMC1` | `2026-11-08T00:15:29.233Z` | `scrapinghub/scrapy-poet` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8438e591...`) |
+| `CYCLE-20261108-ZURH` | `2026-11-08T00:15:40.157Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dae872a7...`) |

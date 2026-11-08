@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `33023211`  
+> **Source Version**: `b74dc9e9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:58:50.108Z  
+> **Timestamp**: 2026-11-08T00:15:38.187Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:58:48.689Z  
+> **Harvest Timestamp**: 2026-11-08T00:15:38.181Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7163 stars
+- **Stars / Engagement**: 7164 stars
 
 ---
 
@@ -1065,219 +1065,107 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6929b1b` (2026-11-06)
-**Commit Message**: avoid overflow in decoder input size check
+### Incident Patch 1: `650065bd` (2026-11-06)
+**Commit Message**: require dimension names to be valid identifiers in Java
 
-The check that serialized input is large enough to hold the claimed
-cells multiplied num_blocks, subspace_size and sizeof(T), which could
-wrap around for large (but valid) types, letting the check pass.
-Compare using division instead.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `eval/src/tests/eval/value_codec/value_codec_test.cpp` (modified, +19/-0)
-```diff
-@@ -394,4 +394,23 @@ TEST(ValueCodecTest, bad_dense_tensors_are_caught) {
- 
- //-----------------------------------------------------------------------------
- 
-+TEST(ValueCodecTest, claimed_size_overflow_is_caught) {
-+    // tensor(x[2^30],y[2^30],z[2]) is a valid type with 2^61 cells;
-+    // as doubles that is 2^64 bytes, which wraps to 0 in size_t
-+    nbostream data;
-+    data.putInt1_4Bytes(2); // dense, default cell type (double)
-+    data.putInt1_4Bytes(3);
-+    data.writeSmallString("x");
-+    data.putInt1_4Bytes(1u << 30);
-+    data.writeSmallString("y");
-+    data.putInt1_4Bytes(1u << 30);
-+    data.writeSmallString("z");
-+    data.putInt1_4Bytes(2);
-+    data << 1.0;
-+    VESPA_EXPECT_EXCEPTION(decode_value(data, factory), vespalib::eval::DecodeValueException,
-+                           "serialized input claims 1 blocks of size 2305843009213693952*8, but only");
-+}
-+
-+//-----------------------------------------------------------------------------
-+
- GTEST_MAIN_RUN_ALL_TESTS()
-```
-
-**File**: `eval/src/vespa/eval/eval/value_codec.cpp` (modified, +2/-1)
-```diff
-@@ -185,7 +185,8 @@ struct ContentDecoder {
-     static std::unique_ptr<Value> invoke(nbostream& input, const DecodeState& state,
-                                          const ValueBuilderFactory& factory) {
-         SmallVector<std::string_view> address(state.num_mapped_dims);
--        if (state.num_blocks * state.subspace_size * sizeof(T) > input.size()) {
-+        // avoid overflow; equivalent to num_blocks * subspace_size * sizeof(T) > input.size()
-+        if (state.num_blocks > (input.size() / sizeof(T)) / state.subspace_size) {
-             auto err = fmt("serialized input claims %zu blocks of size %zu*%zu, but only %zu bytes available",
-                            state.num_blocks, state.subspace_size, sizeof(T), input.size());
-             throw IllegalStateException(err);
-```
-
----
-
-### Incident Patch 2: `089273ff` (2026-11-06)
-**Commit Message**: require dimension names to be valid identifiers
-
-Dimension names must now match the identifier rule of the type spec
-parser ([A-Za-z_][A-Za-z0-9_]*). Previously any non-empty name was
-accepted, letting rename/concat in expressions (which allow leading
-digits, '@' and '$') and decoded binary values create types whose
-spec could not be parsed back, or would parse as a different type.
-
-Also make the elementwise rank features fail setup cleanly when given
-an invalid dimension name, instead of throwing.
+Align Java with the C++ rule: dimension names must match
+[A-Za-z_][A-Za-z0-9_]*. Previously Java also accepted a leading
+digit, '-' or '@', and '@' or '$' after the first character.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `eval/src/tests/eval/node_types/node_types_test.cpp` (modified, +3/-0)
+**File**: `vespajlib/src/main/java/com/yahoo/tensor/Tensor.java` (modified, +1/-1)
 ```diff
-@@ -124,6 +124,8 @@ TEST(NodeTypesTest, require_that_rename_resolves_correct_type) {
-     verify("rename(tensor(x{},y[1],z[5]),x,y)", "error");
-     verify("rename(tensor(x{},y[1],z[5]),x,x)", "tensor(x{},y[1],z[5])");
-     verify("rename(tensor(x{},y[1],z[5]),x,w)", "tensor(w{},y[1],z[5])");
-+    verify("rename(tensor(x{},y[1],z[5]),x,1w)", "error"); // not a valid dimension name
-+    verify("rename(tensor(x{},y[1],z[5]),x,@w)", "error"); // not a valid dimension name
-     verify("rename(tensor(x{},y[1],z[5]),y,w)", "tensor(x{},w[1],z[5])");
-     verify("rename(tensor(x{},y[1],z[5]),z,w)", "tensor(x{},y[1],w[5])");
-     verify("rename(tensor(x{},y[1],z[5]),(x,y,z),(z,y,x))", "tensor(z{},y[1],x[5])");
-@@ -337,6 +339,7 @@ TEST(NodeTypesTest, require_that_tensor_concat_resolves_correct_type) {
-     verify("concat(tensor(x[2]),tensor(x[3]),x)", "tensor(x[5])");
-     verify("concat(tensor(x[2]),tensor(x[2]),y)", "tensor(x[2],y[2])");
-     verify("concat(tensor(x[2]),tensor(x[3]),y)", "error");
-+    verify("concat(double,double,1x)", "error"); // not a valid dimension name
-     verify("concat(tensor(x[2]),tensor(x{}),x)", "error");
-     verify("concat(tensor(x[2]),tensor(y{}),x)", "tensor(x[3],y{})");
-     verify("concat(tensor<float>(x[2]),tensor<float>(x[3]),x)", "tensor<float>(x[5])");
+@@ -38,7 +38,7 @@
+  * <p>
+  * A tensor consists of a set of <i>dimension</i> names and a set of <i>cells</i> containing scalar <i>values</i>.
+  * Each cell is identified by its <i>address</i>, which consists of a set of dimension-label pairs which defines
+- * the location of that cell. Both dimensions and labels are string on the form of an identifier or integer.
++ * the location of that cell. Dimension names are identifiers ([A-Za-z_][A-Za-z0-9_]*) and labels are strings.
+  * <p>
+  * The size of the set of dimensions of a tensor is called its <i>rank</i>.
+  * <p>
 ```
 
-**File**: `eval/src/tests/eval/value_type/value_type_test.cpp` (modified, +21/-0)
+**File**: `vespajlib/src/main/java/com/yahoo/tensor/TensorType.java` (modified, +4/-2)
 ```diff
-@@ -126,6 +126,27 @@ TEST(ValueTypeTest, require_that_empty_dimension_names_result_in_error_types) {
-     EXPECT_TRUE(ValueType::make_type(CellType::DOUBLE, {{"x"}, {""}}).is_error());
- }
+@@ -29,6 +29,8 @@
+ public class TensorType {
  
-+TEST(ValueTypeTest, require_that_dimension_names_must_be_valid_identifiers) {
-+    for (const char* name : {"x", "X", "_", "_x", "x_1", "abc123"}) {
-+        EXPECT_FALSE(ValueType::make_type(CellType::DOUBLE, {{name}}).is_error()) << name;
-+        EXPECT_FALSE(ValueType::make_type(CellType::DOUBLE, {{name, 3}}).is_error()) << name;
-+    }
-+    for (const char* name : {"1x", "@x", "x$", "x-y", "x y", " x", "x.y", "x{},y", "x[3]", "\xc3\xa6"}) {
-+        EXPECT_TRUE(ValueType::make_type(CellType::DOUBLE, {{name}}).is_error()) << name;
-+        EXPECT_TRUE(ValueType::make_type(CellType::DOUBLE, {{name, 3}}).is_error()) << name;
-+    }
-+    EXPECT_TRUE(ValueType::make_type(CellType::DOUBLE, {{std::string("x\0y", 3)}}).is_error());
-+}
-+
-+TEST(ValueTypeTest, require_that_rename_to_invalid_dimension_name_results_in_error_type) {
-+    EXPECT_EQ(type("tensor(x[3])").rename({"x"}, {"1y"}), type("error"));
-+    EXPECT_EQ(type("tensor(x{})").rename({"x"}, {"@y"}), type("error"));
-+}
-+
-+TEST(ValueTypeTest, require_that_concat_with_invalid_dimension_name_results_in_error_type) {
-+    EXPECT_EQ(ValueType::concat(type("double"), type("double"), "1x"), type("error"));
-+}
-+
- TEST(ValueTypeTest, require_that_dense_subspace_size_does_not_overflow) {
-     auto ok_type = ValueType::make_type(CellType::DOUBLE, {{"x", max_size}, {"y", max_size}});
-     EXPECT_FALSE(ok_type.is_error());
-```
-
-**File**: `eval/src/vespa/eval/eval/value_type.cpp` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ void sort_dimensions(DimensionList& dimensions) {
- bool verify_dimensions(const DimensionList& dimensions) {
-     size_t dense_size = 1;
-     for (size_t i = 0; i < dimensions.size(); ++i) {
--        if (dimensions[i].name.empty()) {
-+        if (!value_type::is_valid_dimension_name(dimensions[i].name)) {
-             return false;
+     static Ascii7BitMatcher labelMatcher = new Ascii7BitMatcher("-_@" + charsAndNumbers(), "_@$" + charsAndNumbers());
++    private static final String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
++    private static final Ascii7BitMatcher dimensionNameMatcher = new Ascii7BitMatcher("_" + letters, "_" + charsAndNumbers());
+ 
+     /** The permissible cell value types. Default is double. */
+     public enum Value {
+@@ -437,8 +439,8 @@ public static Dimension mapped(String name) {
+         static private String requireIdentifier(String name) {
+             if (name == null)
+                 throw new IllegalArgumentException("A dimension name cannot be null");
+-            if ( ! TensorType.labelMatcher.matches(name))
+-                throw new IllegalArgumentException("A dimension name must be an identifier or integer, not '" + name + "'");
++            if ( ! dimensionNameMatcher.matches(name))
++                throw new IllegalArgumentException("A dimension name must be an identifier, not '" + name + "'");
+             return name;
          }
-         if (dimensions[i].size == 0) {
-```
-
-**File**: `eval/src/vespa/eval/eval/value_type_spec.cpp` (modified, +12/-0)
-```diff
-@@ -188,6 +188,18 @@ CellType parse_cell_type(ParseContext& ctx) {
- 
- } // namespace
- 
-+bool is_valid_dimension_name(const std::string& name) {
-+    if (name.empty() || !is_ident(name[0], true)) {
-+        return false;
-+    }
-+    for (size_t i = 1; i < name.size(); ++i) {
-+        if (!is_ident(name[i], false)) {
-+            return false;
-+        }
-+    }
-+    return true;
-+}
-+
- ValueType parse_spec(const char* pos_in, const char* end_in, const char*& pos_out,
-                      std::vector<ValueType::Dimension>* unsorted) {
-     ParseContext ctx(pos_in, end_in, pos_out);
-```
-
-**File**: `eval/src/vespa/eval/eval/value_type_spec.h` (modified, +6/-0)
-```diff
-@@ -11,6 +11,12 @@ namespace vespalib::eval::value_type {
- std::optional<CellType> cell_type_from_name(const std::string& name);
- std::string cell_type_to_name(CellType cell_type);
- 
-+/**
-+ * Is this a valid dimension name; that is, an identifier that can be
-+ * parsed as part of a type spec: [A-Za-z_][A-Za-z0-9_]*
-+ **/
-+bool is_valid_dimension_name(const std::string& name);
-+
- ValueType parse_spec(const char* pos_in, const char* end_in, const char*& pos_out,
-                      std::vector<ValueType::Dimension>* unsorted = nullptr);
  
 ```
 
-**File**: `searchlib/src/tests/features/elementwise/elementwise_test.cpp` (modified, +7/-0)
+**File**: `vespajlib/src/test/java/com/yahoo/tensor/TensorParserTestCase.java` (modified, +2/-2)
 ```diff
-@@ -125,6 +125,13 @@ TEST_F(ElementwiseBlueprintTest, blueprint_setup_fails_when_cell_type_is_malform
-     expect_setup_fail({"bm25(is)", "x", "complex"});
- }
+@@ -375,9 +375,9 @@ private void assertDense(Tensor expectedTensor, String denseFormat) {
  
-+TEST_F(ElementwiseBlueprintTest, blueprint_setup_fails_when_dimension_name_is_invalid) {
-+    expect_setup_fail({"bm25(is)", "1x"});
-+    expect_setup_fail({"bm25(is)", "x-y"});
-+    expect_setup_fail({"matches(va)", "1x"});
-+    expect_setup_fail({"matches(va)", "x-y"});
-+}
-+
- TEST_F(ElementwiseBlueprintTest, blueprint_setup_succeeds_for_index_field) {
-     expect_bm25_setup_succeed({"bm25(is)", "x"});
-     expect_bm25_setup_succeed({"bm25(ia)", "x"});
+     @Test
+     public void testIllegalStrings() {
+-        assertIllegal("A dimension name must be an identifier or integer, not ''x''",
++        assertIllegal("A dimension name must be an identifier, not ''x''",
+                       "{{'x':\"l0\"}:1.0}");
+-        assertIllegal("A dimension name must be an identifier or integer, not '\"x\"'",
++        assertIllegal("A dimension name must be an identifier, not '\"x\"'",
+                       "{{\"x\":\"l0\", \"y\":\"l0\"}:1.0, {\"x\":\"l0\", \"y\":\"l1\"}:2.0}");
+  //     assertIllegal("At {x:0}: '1-.0' is not a valid double",
+  //                   "{{x:0}:1-.0}");
 ```
 
-**File**: `searchlib/src/vespa/searchlib/features/elementwise_utils.cpp` (modified, +3/-0)
+**File**: `vespajlib/src/test/java/com/yahoo/tensor/TensorTypeTestCase.java` (modified, +14/-0)
 ```diff
-@@ -49,6 +49,9 @@ std::optional<std::string> ElementwiseUtils::build_output_tensor_type(ValueType&
-         return make_string("'%s' is not a valid tensor cell type", cell_type_name.c_str());
+@@ -5,6 +5,7 @@
+ 
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertThrows;
+ import static org.junit.Assert.assertTrue;
+ import static org.junit.Assert.fail;
+ 
+@@ -48,6 +49,19 @@ public void requireThatIndexedBoundDimensionMustHaveNonZeroSize() {
+         assertIllegalTensorType("tensor(x[0])", "Size of bound dimension 'x' must be at least 1");
      }
-     output_tensor_type = ValueType::make_type(cell_type.value(), {{dimension_name}});
-+    if (output_tensor_type.is_error()) {
-+        return make_string("'%s' is not a valid tensor dimension name", dimension_name.c_str());
-+    }
-     return std::nullopt;
- }
  
++    @Test
++    public void requireThatDimensionNamesMustBeValidIdentifiers() {
++        for (String name : new String[] { "x", "X", "_", "_x", "x_1", "abc123" }) {
++            TensorType.Dimension.mapped(name);
++            TensorType.Dimension.indexed(name, 3);
++        }
++        for (String name : new String[] { "", "1x", "@x", "x$", "-x", "x-y", "x y", " x", "x.y", "x{},y", "x[3]", "æ", "x\0y" }) {
++            assertThrows(name, IllegalArgumentException.class, () -> TensorType.Dimension.mapped(name));
++            assertThrows(name, IllegalArgumentException.class, () -> TensorType.Dimension.indexed(name, 3));
++        }
++        assertIllegalTensorType("tensor(1x[3])", "A dimension name must be an identifier");
++    }
++
+     @Test
+     public void requireThatDimensionsMustHaveUniqueNames() {
+         assertIllegalTensorType("tensor(x[10],y[20],x[30])", "Could not add dimension x[30] as this dimension is already present");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #38462** (2026-11-06): Require tensor dimension names to be valid identifiers in Java (@havardpe)
+- **PR #38461** (2026-11-06): Add a dedicated centroid quantization acceleration function (@vekterli)
+- **PR #38460** (2026-11-07): Use inputExpression (@bratseth)
 - **PR #38459** (2026-11-06): Make tensor types more robust (@havardpe)
 - **PR #38458** (2026-11-06): Avoid holding cache stripe lock across backing store writes (@arnej27959)
 - **PR #38456** (2026-11-06): chore: update third-party attributions (@github-actions[bot])
-- **PR #38453** (2026-11-06): Support range limit in string ranges (@boeker)
-- **PR #38452** (2026-11-05): Add cache::update() for write-through that does not bump LRU position (@arnej27959)
-- **PR #38451** (2026-11-05): Remove ZooKeeper server 3.9.5, make 3.9.6 default (@hmusum)
 
 ---
 
@@ -1297,46 +1185,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid overflow in decoder input size check
+## X. require dimension names to be valid identifiers in Java
 
 **RULE**:
-When implementing operations in `eval/src/tests/eval/value_codec/value_codec_test.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `vespajlib/src/main/java/com/yahoo/tensor/Tensor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6929b1b`: avoid overflow in decoder input size check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `650065bd`: require dimension names to be valid identifiers in Java. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `eval/src/tests/eval/value_codec/value_codec_test.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `vespajlib/src/main/java/com/yahoo/tensor/Tensor.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-TEST(ValueCodecTest, claimed_size_overflow_is_caught) {
-    // tensor(x[2^30],y[2^30],z[2]) is a valid type with 2^61 cells;
-    // as doubles that is 2^64 bytes, which wraps to 0 in size_t
-    nbostream data;
-    data.putInt1_4Bytes(2); // dense, default cell type (double)
-    data.putInt1_4Bytes(3);
-    data.writeSmallString("x");
-    data.putInt1_4Bytes(1u << 30);
-    data.writeSmallString("y");
-    data.putInt1_4Bytes(1u << 30);
-    data.writeSmallString("z");
-    data.putInt1_4Bytes(2);
-    data << 1.0;
-    VESPA_EXPECT_EXCEPTION(decode_value(data, factory), vespalib::eval::DecodeValueException,
-                           "serialized input claims 1 blocks of size 2305843009213693952*8, but only");
-}
-
-//-----------------------------------------------------------------------------
-
+ * the location of that cell. Dimension names are identifiers ([A-Za-z_][A-Za-z0-9_]*) and labels are strings.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ * the location of that cell. Both dimensions and labels are string on the form of an identifier or integer.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6929b1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `650065bd` are properly handled with clean fallback behavior.
