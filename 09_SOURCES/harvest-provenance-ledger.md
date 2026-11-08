@@ -8253,3 +8253,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-08T06:42:25.240Z |
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `74561086` | Multi-dimensional audit evidence | 2026-11-08T06:49:18.949Z |
 | `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-08T06:50:54.429Z |
+| `learn-github-mtkennerly-ludusavi` | `https://github.com/mtkennerly/ludusavi` | `9365477d` | Multi-dimensional audit evidence | 2026-11-08T06:59:30.967Z |
+| `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-08T06:59:42.050Z |
+| `learn-github-pingcap-autoflow` | `https://github.com/pingcap/autoflow` | `01cdf88f` | Multi-dimensional audit evidence | 2026-11-08T06:59:42.175Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `adc282a7` | Multi-dimensional audit evidence | 2026-11-08T06:59:47.249Z |

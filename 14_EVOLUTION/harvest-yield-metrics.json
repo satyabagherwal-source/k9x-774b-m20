@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T06:50:54.434Z",
-  "total_cycles_completed": 8209,
-  "total_learnings_persisted": 8209,
-  "total_rules_promoted": 7924,
+  "last_updated": "2026-11-08T06:59:47.254Z",
+  "total_cycles_completed": 8213,
+  "total_learnings_persisted": 8213,
+  "total_rules_promoted": 7929,
   "history": [
-    {
-      "timestamp": "2026-11-07T18:24:58.715Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T18:42:36.197Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T18:50:15.755Z",
-      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T18:57:12.976Z",
-      "repository": "gkd-kit/gkd",
-      "learningId": "learn-github-gkd-kit-gkd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T18:57:13.868Z",
       "repository": "Kong/kubernetes-ingress-controller",
@@ -1403,6 +1375,34 @@
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
       "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:59:30.973Z",
+      "repository": "mtkennerly/ludusavi",
+      "learningId": "learn-github-mtkennerly-ludusavi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:59:42.056Z",
+      "repository": "LiquidAI/LFM3-1.7B",
+      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:59:42.181Z",
+      "repository": "pingcap/autoflow",
+      "learningId": "learn-github-pingcap-autoflow",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:59:47.254Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

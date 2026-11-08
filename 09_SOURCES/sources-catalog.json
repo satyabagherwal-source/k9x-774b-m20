@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "5f2b3ade",
+    "sourceVersion": "adc282a7",
     "license": "Apache-2.0",
-    "contentHash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
-    "lastHarvestedAt": "2026-11-07T17:57:53.312Z",
+    "contentHash": "ebf7f702179bf33b6bdbdce353ec3aab1cf557a2086ce8bfc5f83dd62d8c55d1",
+    "lastHarvestedAt": "2026-11-08T06:59:47.249Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2643,10 +2643,10 @@
     "repository": "pingcap/autoflow",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/autoflow",
-    "sourceVersion": "c4cb19d8",
+    "sourceVersion": "01cdf88f",
     "license": "Apache-2.0",
-    "contentHash": "303f3e1ce837d54c4cf9718c7bc1f47b8fae0ad2c83de6d2c5d2107ed664e804",
-    "lastHarvestedAt": "2026-10-18T21:52:11.506Z",
+    "contentHash": "e63145c7481148cbe92679e7424f612d0e8efe867e647895480f256224b24d20",
+    "lastHarvestedAt": "2026-11-08T06:59:42.175Z",
     "learningId": "learn-github-pingcap-autoflow"
   },
   "saadeghi-daisyui": {
@@ -4943,10 +4943,10 @@
     "repository": "mtkennerly/ludusavi",
     "platform": "github",
     "sourceUrl": "https://github.com/mtkennerly/ludusavi",
-    "sourceVersion": "95b651aa",
+    "sourceVersion": "9365477d",
     "license": "MIT",
-    "contentHash": "4de2d7a765ed1dbf10b883bda40eee6443927d593d5ecad50f496f06601cfc75",
-    "lastHarvestedAt": "2026-10-19T02:37:04.228Z",
+    "contentHash": "40571b44662b0a90599490c008dc35f09822c2df93b5f379fba46ff019999365",
+    "lastHarvestedAt": "2026-11-08T06:59:30.967Z",
     "learningId": "learn-github-mtkennerly-ludusavi"
   },
   "nativewind-nativewind": {
@@ -11365,8 +11365,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B",
     "sourceVersion": "hf-liquidai-lfm3-1.7b",
     "license": "Open-Source",
-    "contentHash": "111b2c24dadf6cb53debbfbed0b5481903e6d4dfa2cda40b80530bd34350f3bc",
-    "lastHarvestedAt": "2026-11-04T20:25:09.265Z",
+    "contentHash": "d9af71410f65ebee9f42cb1474568713d61d26828913795b644f1b3ee4cd3520",
+    "lastHarvestedAt": "2026-11-08T06:59:42.050Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b"
   },
   "michael-denyer-pstack-claude": {

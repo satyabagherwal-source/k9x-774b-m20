@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md`  
 > **Source**: github ([https://github.com/mtkennerly/ludusavi](https://github.com/mtkennerly/ludusavi))  
-> **Source Version**: `95b651aa`  
+> **Source Version**: `9365477d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:37:04.008Z  
+> **Timestamp**: 2026-11-08T06:59:29.774Z  
 > **Learning ID**: `learn-github-mtkennerly-ludusavi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mtkennerly/ludusavi](https://github.com/mtkennerly/ludusavi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:37:04.000Z  
+> **Harvest Timestamp**: 2026-11-08T06:59:29.649Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Backup tool for PC game saves
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6432 stars
+- **Stars / Engagement**: 6537 stars
 
 ---
 
@@ -44,7 +44,7 @@ use ludusavi::api::*;
 fn main() {
     let mut ludusavi = Ludusavi::load().unwrap();
 
-    let games = vec![std::env::args().skip(1).next().unwrap_or_else(|| "Celeste".to_string())];
+    let games = vec![std::env::args().nth(1).unwrap_or_else(|| "Celeste".to_string())];
 
     let backups = ludusavi
         .list_backups(parameters::ListBackups { games: games.clone() })
@@ -493,7 +493,7 @@ fn parse_game(game: Option<String>) -> Option<String> {
                 None
             } else {
                 let game = stdin.lines().next().and_then(Result::ok);
-                log::debug!("Game from stdin: {:?}", &game);
+                log::debug!("Game from stdin: {:?}", game);
                 game
             }
         }
@@ -511,7 +511,7 @@ fn parse_games(games: Vec<String>) -> Vec<String> {
             vec![]
         } else {
             let games = stdin.lines().map_while(Result::ok).collect();
-            log::debug!("Games from stdin: {:?}", &games);
+            log::debug!("Games from stdin: {:?}", games);
             games
         }
     }
@@ -694,7 +694,7 @@ pub fn run(sub: Subcommand, no_manifest_update: bool, try_manifest_update: bool)
                         should_sync_cloud_after = false;
                         reporter.trip_cloud_sync_failed();
                     }
-        
+          
 ```
 
 ### Core Architecture Module: `src/cli/api.rs`
@@ -1552,7 +1552,7 @@ impl RcloneProcess {
             command.creation_flags(windows::Win32::System::Threading::CREATE_NO_WINDOW.0);
         }
 
-        log::debug!("Running command: {} {:?}", &program, &args);
+        log::debug!("Running command: {} {:?}", program, args);
 
         let mut child = command.spawn().map_err(|e| {
             let e = CommandError::Launched {
@@ -1815,6 +1815,7 @@ impl Remote {
     }
 
     pub fn config_args(&self) -> Option<Vec<String>> {
+ 
 ```
 
 ### Core Architecture Module: `src/gui.rs`
@@ -2207,11 +2208,11 @@ impl App {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #663** (2026-11-07): **chore(deps): Update dependencies to address various RUSTSEC advisories**
+  *Symptoms*: This PR updates dependencies to deal with multiple RUSTSEC advisories. Each `chore(deps)` commit describes how the changes in the commit were produced and which advisories are resolved by the commit, if any.  A few additional code changes are included, to address breaking changes in the `zip` dependency and new `clippy` lints in Rust 1.99.1.  It might also be a good idea to switch off the `macos-14` runner for GitHub Actions. That runner has been retired, and the job will just unconditionally be skipped now. See: https://github.blog/changelog/2026-10-01-github-actions-macos-14-runner-image-retirement/
+
 - **Issue #655** (2026-10-18): **Allow clearing the duplicates filter from the status row**
   *Symptoms*: With "Show disabled games" turned off, disabling every game in the duplicates view leaves an empty list with no way to exit the filter. The per-game badges disappear with the rows, and the status-row badge disappears when the conflicts become resolved.  Keep the status-row DUPLICATES badge visible and clickable while the filter is selected, using the existing filter-clear message and active badge styling. This applies to both backup and restore. Outside the filter, the badge keeps its existing informational behavior.  Validation: - A software-rendered Iced test checks the badge text and sends real mouse press/release events with both backup and restore scan kinds, with unresolved, resolved, and absent duplicates, and with the filter active and inactive. - A state-flow regression follows selecting the filter, disabling both conflicting games, clearing the filter, and showing the unrelated game again without changing "Show disabled games". - Fault injection checks that tests fail if the exit badge is hidden after resolution, its click action is removed, or the application ignores the clear-filter message.  Local checks passed: - `cargo test --locked --config 'profile.dev.package."*".opt-level=0'`: 255 library tests and 30 binary tests passed. The documented Windows registry fixture was temporarily imported and removed after the run. - `cargo fmt --all -- --check` - `git diff --check` - `cargo clippy --locked --workspace --config 'profile.dev.package."*".opt-level=0
-
-- **Issue #653** (2026-10-18): **Unable to leave "duplicate" view once all titles have been disabled w/o changing settings**
-  *Symptoms*: ### Ludusavi version  v0.31.0  ### Operating system  Windows  ### Installation method  Standalone  ### Description  Minor and very specific issue, but reporting nonetheless. I have "show disabled games" unchecked in Other. When I go to Backup/Restore Mode > preview and click the DUPLICATES badge, it shows only the conflicting titles, if I disable all titles (which makes them disappear), I remain stuck in this empty view with no way to see all the other titles unless I re-enable "show disabled games", re-click DUPLICATES to exit the view, and then re-disable "show disabled games".  ### Logs  Dupe games listed under Backup Mode <img width="1026" height="800" alt="Image" src="https://github.com/user-attachments/assets/eb0585bb-b88c-4d7e-bb93-dfd761db9828" />  Disabled both (because I do not own or have those games installed, never have. The files they are looking for belonged to a different game entirely) and now I cannot exit this dupe view without having to change my settings. <img width="1026" height="800" alt="Image" src="https://github.com/user-attachments/assets/2cd92ac4-f0b6-4799-a13c-1c6e3fecd906" />
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2228,466 +2229,139 @@ impl App {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d6ff801` (2026-10-18)
-**Commit Message**: Merge pull request #655 from Zhong-fan/fix/653-exit-duplicates-filter
+### Incident Patch 1: `cc0cb3f3` (2026-11-07)
+**Commit Message**: fix(layout): Address breaking changes in `zip`
 
-Allow clearing the duplicates filter from the status row
+This *should* address the breaking changes in `zip`.
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+See:
+- https://github.com/zip-rs/zip2/commit/7d61377503f82c618916b6372ea7632601626d5a
+- https://github.com/zip-rs/zip2/pull/24/changes
+
+For the changes that broke here (and the inspiration for how to resolve
+the breakage).
+
+Signed-off-by: hashcatHitman <[REDACTED_EMAIL]>
+
+**File**: `src/scan/layout.rs` (modified, +3/-3)
 ```diff
-@@ -19,6 +19,8 @@
-   * CLI: In `--api` mode, the `backup` command now outputs a `tags` field based on manifest tags.
-     ([Contributed by ChrisJr404](https://github.com/mtkennerly/ludusavi/pull/645))
- * Fixed:
-+  * GUI: The duplicates filter can now be cleared from the status row,
-+    even when all matching games are hidden or their conflicts are resolved.
-   * Two distinct drives whose escaped folder names collided
-     (such as the UNC shares `\\a_b\c` and `\\a\b_c`) would share one backup
-     so saves from one could silently overwrite the other.
-```
-
-**File**: `src/gui/app.rs` (modified, +90/-0)
-```diff
-@@ -3089,3 +3089,93 @@ impl App {
-             .into()
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::{
-+        gui::game_list::GameListEntry,
-+        scan::{Duplication, ScanChange, ScanInfo, ScannedFile},
-+    };
-+
-+    #[test]
-+    fn clearing_duplicates_filter_restores_visible_games_after_disabling_all_matches() {
-+        for scan_kind in [ScanKind::Backup, ScanKind::Restore] {
-+            let mut app = App::default();
-+            app.config.scan.show_deselected_games = false;
-+
-+            let (log, detector) = match scan_kind {
-+                ScanKind::Backup => (&mut app.backup_screen.log, &mut app.backup_screen.duplicate_detector),
-+                ScanKind::Restore => (&mut app.restore_screen.log, &mut app.restore_screen.duplicate_detector),
-+            };
-+            for (name, path) in [
-+                ("duplicate1", "shared.sav"),
-+                ("duplicate2", "shared.sav"),
-+                ("other", "other.sav"),
-+            ] {
-+                let scan_info = ScanInfo {
-+                    game_name: name.to_owned(),
-+                    found_files: HashMap::from([(
-+                        StrictPath::from(path),
-+                        ScannedFile {
-+                            original_path: (scan_kind == ScanKind::Restore).then(|| StrictPath::from(path)),
-+                            change: ScanChange::New,
-+                            ..Default::default()
-+                        },
-+                    )]),
-+                    backup: (scan_kind == ScanKind::Restore)
-+                        .then(|| crate::scan::layout::Backup::Full(Default::default())),
-+                    has_backups: scan_kind == ScanKind::Restore,
-+                    ..Default::default()
-+                };
-+                detector.add_game(&scan_info, true);
-+                log.entries.push(GameListEntry {
-+                    scan_info,
-+                    scanned: true,
-+                    ..Default::default()
-+                });
-+            }
-+
-+            let visible_games = |app: &App| {
-+                let (log, detector) = match scan_kind {
-+                    ScanKind::Backup => (&app.backup_screen.log, &app.backup_screen.duplicate_detector),
-+                    ScanKind::Restore => (&app.restore_screen.log, &app.restore_screen.duplicate_detector),
-+                };
-+                log.visible_games(scan_kind, &app.config, &app.manifest.extended, detector)
-+            };
-+            let _ = app.update(Message::FilterDuplicates {
-+                scan_kind,
-+                game: Some("duplicate1".to_owned()),
-+            });
-+            assert_eq!(
-+                visible_games(&app),
-+                HashSet::from(["duplicate1".to_owned(), "duplicate2".to_owned()])
-+            );
-+
-+            for name in ["duplicate1", "duplicate2"] {
-+                let _ = app.update(Message::Config {
-+                    event: config::Event::GameListEntryEnabled {
-+                        name: name.to_owned(),
-+                        enabled: false,
-+                        scan_kind,
-+                    },
-+                });
-+            }
-+            assert!(visible_games(&app).is_empty());
-+            let detector = match scan_kind {
-+                ScanKind::Backup => &app.backup_screen.duplicate_detector,
-+                ScanKind::Restore => &app.restore_screen.duplicate_detector,
-+            };
-+            assert_eq!(detector.overall(), Duplication::Resolved);
-+
-+            let _ = app.update(Message::FilterDuplicates { scan_kind, game: None });
-+            assert_eq!(visible_games(&app), HashSet::from(["other".to_owned()]));
-+            assert!(!app.config.scan.show_deselected_games);
-+            let log = match scan_kind {
-+                ScanKind::Backup => &app.backup_screen.log,
-+                ScanKind::Restore => &app.restore_screen.log,
-+            };
-+            assert!(!log.is_filtered());
-+        }
-+    }
-+}
-```
-
-**File**: `src/gui/screen.rs` (modified, +115/-3)
-```diff
-@@ -37,7 +37,12 @@ fn template(content: Column) -> Element {
-         .into()
- }
+@@ -1283,14 +1283,14 @@ impl GameLayout {
+             }
+         };
+         let mut zip = zip::ZipWriter::new(archive_file);
+-        let options = zip::write::FileOptions::default()
++        let options = zip::write::FileOptions::<()>::default()
+             .compression_method(match format.zip.compression {
+                 ZipCompression::None => zip::CompressionMethod::Stored,
+                 ZipCompression::Deflate => zip::CompressionMethod::Deflated,
+                 ZipCompression::Bzip2 => zip::CompressionMethod::Bzip2,
+                 ZipCompression::Zstd => zip::CompressionMethod::Zstd,
+             })
+-            .compression_level(format.level())
++            .compression_level(format.level().map(Into::into))
+             .large_file(true);
  
--fn make_status_row<'a>(status: &OperationStatus, duplication: Duplication) -> Row<'a> {
-+fn make_status_row<'a>(
-+    status: &OperationStatus,
-+    duplication: Duplication,
-+    scan_kind: ScanKind,
-+    filtering_duplicates: bool,
-+) -> Row<'a> {
-     let size = 25;
+         'item: for (scan_key, file) in &scan.found_files {
+@@ -1942,7 +1942,7 @@ impl GameLayout {
+             return Err(Box::new(e));
+         }
  
-     Row::new()
-@@ -53,8 +58,12 @@ fn make_status_row<'a>(status: &OperationStatus, duplication: Duplication) -> Ro
-         })
-         .push(text("|").size(size))
-         .push(text(TRANSLATOR.processed_bytes(status)).size(size))
--        .push_if(!duplication.resolved(), || {
--            Badge::new(&TRANSLATOR.badge_duplicates()).view()
-+        .push_if(filtering_duplicates || !duplication.resolved(), || {
-+            let mut badge = Badge::new(&TRANSLATOR.badge_duplicates());
-+            if filtering_duplicates {
-+                badge = badge.on_press(Message::FilterDuplicates { scan_kind, game: None });
-+            }
-+            badge.view()
-         })
- }
- 
-@@ -116,6 +125,8 @@ impl Backup {
-                     duplicatees.as_ref(),
-                 ),
-                 self.duplicate_detector.overall(),
-+                Self::SCAN_KIND,
-+                self.log.filter_duplicates_of.is_some(),
-             ))
-             .push(
-                 Row::new()
-@@ -206,6 +217,8 @@ impl Restore {
-                     duplicatees.as_ref(),
-                 ),
-                 self.duplicate_detector.overall(),
-+                Self::SCAN_KIND,
-+                self.log.filter_duplicates_of.is_some(),
-             ))
-             .push(
-                 Row::new()
-@@ -725,3 +738,102 @@ pub fn other<'a>(
- 
-     template(content)
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use iced::{
-+        Event, Font, Pixels, Rectangle, Size,
-+        advanced::{
-+            Layout, Shell, clipboard, layout, mouse,
-+            renderer::Headless,
-+            widget::{Id, Operation as WidgetOperation, Tree},
-+        },
-+    };
-+
-+    use super::*;
-+
-+    struct FindBadge {
-+        label: String,
-+        bounds: Option<Rectangle>,
-+    }
-+
-+    impl WidgetOperation for FindBadge {
-+        fn traverse(&mut self, operate: &mut dyn FnMut(&mut dyn WidgetOperation)) {
-+            operate(self);
-+        }
-+
-+        fn text(&mut self, _id: Option<&Id>, bounds: Rectangle, text: &str) {
-+            if text == self.label {
-+                self.bounds = Some(bounds);
-+            }
-+        }
-+    }
-+
-+    #[tokio::test]
-+    async fn status_row_duplicates_badge_can_clear_active_filter() {
-+        let renderer = iced::Renderer::new(Font::DEFAULT, Pixels(16.0), Some("tiny-skia"))
-+            .await
-+            .expect("software renderer");
-+        let viewport = Rectangle::with_size(Size::new(1000.0, 100.0));
-+
-+        for scan_kind in [ScanKind::Backup, ScanKind::Restore] {
-+            for duplication in [Duplication::Duplicate, Duplication::Resolved, Duplication::Unique] {
-+                for filtering_duplicates in [false, true] {
-+                    let mut element: Element = make_status_row(
-+                        &OperationStatus::default(),
-+                        duplication,
-+                        scan_kind,
-+                        filtering_duplicates,
-+                    )
-+                    .into();
-+                    let mut tree = Tree::new(element.as_widget());
-+                    let node = element.as_widget_mut().layout(
-+                        &mut tree,
-+                        &renderer,
-+                        &layout::Limits::new(Size::ZERO, viewport.size()),
-+                    );
-+                    let layout = Layout::new(&node);
-+                    let mut badge = FindBadge {
-+                        label: TRANSLATOR.badge_duplicates(),
-+                        bounds: None,
-+                    };
-+                    element
-+                        .as_widget_mut()
-+                        .operate(&mut tree, layout, &renderer, &mut badge);
-+                    assert_eq!(badge.bounds.is_some(), filtering_duplicates || !duplication.resolved());
-+                    let Some(bounds) = badge.bounds else { continue };
-+                    let cursor = mouse::Cursor::Available(bounds.center());
-+                    let mut messages = vec![];
-+
-+                    for event in [
-+                        mouse::Event::ButtonPressed(mouse::Button::Left),
-+                        mouse::Event::ButtonReleased(mouse::Button::Left),
-+                    ] {
-+                        element.as_widget_mut().update(
-+                            &mut tree,
-+                            &Event::Mouse(event),
-+                            layout,
-+                            cursor,
-+                            &renderer,
-+                            &mut clipboard::Null,
-+                            &mut Shell::new(&mut messages),
-+                            &viewport,
-+                        );
-+                    }
-+
-+             
+-        let mtime = source_file.last_modified();
++        let mtime = source_file.last_modified().unwrap_or_else(zip::DateTime::default);
+         if let Err(e) = target.set_mtime_zip(mtime) {
+             log::error!(
+                 "[{}] unable to set modification time: {:?} -> {:?} to {:#?} | {e:?}",
 ```
 
 ---
 
-### Incident Patch 2: `308fd22f` (2026-10-12)
-**Commit Message**: Fix clearing the duplicates filter when game rows are hidden
+### Incident Patch 2: `261325e0` (2026-11-07)
+**Commit Message**: chore(deps): Revert `windows-sys` downgrade
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -19,6 +19,8 @@
-   * CLI: In `--api` mode, the `backup` command now outputs a `tags` field based on manifest tags.
-     ([Contributed by ChrisJr404](https://github.com/mtkennerly/ludusavi/pull/645))
- * Fixed:
-+  * GUI: The duplicates filter can now be cleared from the status row,
-+    even when all matching games are hidden or their conflicts are resolved.
-   * Two distinct drives whose escaped folder names collided
-     (such as the UNC shares `\\a_b\c` and `\\a\b_c`) would share one backup
-     so saves from one could silently overwrite the other.
-```
+The changes in this commit were made manually, to avoid a downgrade
+caused in a previous commit by `cargo update`.
 
-**File**: `src/gui/screen.rs` (modified, +86/-3)
+Signed-off-by: hashcatHitman <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +5/-5)
 ```diff
-@@ -37,7 +37,12 @@ fn template(content: Column) -> Element {
-         .into()
- }
+@@ -1232,7 +1232,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
  
--fn make_status_row<'a>(status: &OperationStatus, duplication: Duplication) -> Row<'a> {
-+fn make_status_row<'a>(
-+    status: &OperationStatus,
-+    duplication: Duplication,
-+    scan_kind: ScanKind,
-+    filtering_duplicates: bool,
-+) -> Row<'a> {
-     let size = 25;
+ [[package]]
+@@ -3956,7 +3956,7 @@ dependencies = [
+  "once_cell",
+  "socket2",
+  "tracing",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
  
-     Row::new()
-@@ -53,8 +58,12 @@ fn make_status_row<'a>(status: &OperationStatus, duplication: Duplication) -> Ro
-         })
-         .push(text("|").size(size))
-         .push(text(TRANSLATOR.processed_bytes(status)).size(size))
--        .push_if(!duplication.resolved(), || {
--            Badge::new(&TRANSLATOR.badge_duplicates()).view()
-+        .push_if(filtering_duplicates || !duplication.resolved(), || {
-+            let mut badge = Badge::new(&TRANSLATOR.badge_duplicates());
-+            if filtering_duplicates {
-+                badge = badge.on_press(Message::FilterDuplicates { scan_kind, game: None });
-+            }
-+            badge.view()
-         })
- }
+ [[package]]
+@@ -4439,7 +4439,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys 0.11.0",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
  
-@@ -116,6 +125,8 @@ impl Backup {
-                     duplicatees.as_ref(),
-                 ),
-                 self.duplicate_detector.overall(),
-+                Self::SCAN_KIND,
-+                self.log.filter_duplicates_of.is_some(),
-             ))
-             .push(
-                 Row::new()
-@@ -206,6 +217,8 @@ impl Restore {
-                     duplicatees.as_ref(),
-                 ),
-                 self.duplicate_detector.overall(),
-+                Self::SCAN_KIND,
-+                self.log.filter_duplicates_of.is_some(),
-             ))
-             .push(
-                 Row::new()
-@@ -725,3 +738,73 @@ pub fn other<'a>(
+ [[package]]
+@@ -4496,7 +4496,7 @@ dependencies = [
+  "security-framework",
+  "security-framework-sys",
+  "webpki-root-certs",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
  
-     template(content)
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use iced::{
-+        Event, Font, Pixels, Rectangle, Size,
-+        advanced::{Layout, Shell, clipboard, layout, mouse, renderer::Headless, widget::Tree},
-+    };
-+
-+    use super::*;
-+
-+    #[test]
-+    fn status_row_hides_resolved_duplicates_when_not_filtering() {
-+        use iced::advanced::Widget;
-+
-+        for scan_kind in [ScanKind::Backup, ScanKind::Restore] {
-+            for duplication in [Duplication::Unique, Duplication::Resolved] {
-+                let row = make_status_row(&OperationStatus::default(), duplication, scan_kind, false);
-+                assert_eq!(row.children().len(), 3);
-+            }
-+            let row = make_status_row(&OperationStatus::default(), Duplication::Duplicate, scan_kind, false);
-+            assert_eq!(row.children().len(), 4);
-+        }
-+    }
-+
-+    #[tokio::test]
-+    async fn status_row_can_clear_duplicates_filter_without_game_rows() {
-+        let renderer = iced::Renderer::new(Font::DEFAULT, Pixels(16.0), Some("tiny-skia"))
-+            .await
-+            .expect("software renderer");
-+        let viewport = Rectangle::with_size(Size::new(1000.0, 100.0));
-+
-+        for scan_kind in [ScanKind::Backup, ScanKind::Restore] {
-+            for duplication in [Duplication::Duplicate, Duplication::Resolved, Duplication::Unique] {
-+                let mut element: Element =
-+                    make_status_row(&OperationStatus::default(), duplication, scan_kind, true).into();
-+                let mut tree = Tree::new(element.as_widget());
-+                let node = element.as_widget_mut().layout(
-+                    &mut tree,
-+                    &renderer,
-+                    &layout::Limits::new(Size::ZERO, viewport.size()),
-+                );
-+                let layout = Layout::new(&node);
-+                assert_eq!(layout.children().count(), 4, "active filter must keep its exit badge");
-+                let cursor = mouse::Cursor::Available(layout.children().last().unwrap().bounds().center());
-+                let mut messages = vec![];
-+
-+                for event in [
-+                    mouse::Event::ButtonPressed(mouse::Button::Left),
-+                    mouse::Event::ButtonReleased(mouse::Button::Left),
-+                ] {
-+                    element.as_widget_mut().update(
-+                        &mut tree,
-+                        &Event::Mouse(event),
-+                        layout,
-+                        cursor,
-+                        &renderer,
-+                        &mut clipboard::Null,
-+                        &mut Shell::new(&mut messages),
-+                        &viewport,
-+                    );
-+                }
-+
-+                assert!(matches!(
-+                    messages.as_slice(),
-+                    [Message::FilterDuplicates { scan_kind: kind, game: None }] if *kind == scan_kind
-+                ));
-+            }
-+        }
-+    }
-+}
+ [[package]]
+@@ -5187,7 +5187,7 @@ dependencies = [
+  "getrandom 0.3.4",
+  "once_cell",
+  "rustix 1.1.2",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
 ```
 
 ---
 
-### Incident Patch 3: `70f4abb3` (2026-09-11)
-**Commit Message**: Fix Windows 32-bit build
+### Incident Patch 3: `e811e4bc` (2026-11-06)
+**Commit Message**: chore(deps): Revert `windows-targets` downgrade
 
-**File**: `.github/workflows/main.yaml` (modified, +9/-8)
+The changes in this commit were made manually, to avoid a downgrade
+caused in a previous commit by `cargo update`.
+
+Signed-off-by: hashcatHitman <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -43,36 +43,37 @@ jobs:
-           args: --style semver
-       - uses: dtolnay/rust-toolchain@master
-         with:
--          toolchain: stable-${{ matrix.rust-target }}
-+          targets: ${{ matrix.rust-target }}
-+          toolchain: stable
-       - uses: Swatinem/rust-cache@v2
-         with:
-           key: ${{ matrix.os }}-${{ matrix.rust-target }}
-       - if: ${{ startsWith(matrix.os, 'ubuntu-') }}
-         run: sudo apt-get update && sudo apt-get install -y gcc libxcb-composite0-dev libgtk-3-dev
--      - run: cargo build --release
-+      - run: cargo build --release --target ${{ matrix.rust-target }}
-       - if: ${{ matrix.artifact-name == 'mac' }}
-         run: bash tests/package-macos-app.sh
-       - if: ${{ matrix.artifact-name == 'mac' }}
-         run: >
-           scripts/package-macos-app.sh
--          target/release/${{ matrix.artifact-file }}
-+          target/${{ matrix.rust-target }}/release/${{ matrix.artifact-file }}
-           ${{ env.LUDUSAVI_VERSION }}
--          target/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}
--          target/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz
-+          target/${{ matrix.rust-target }}/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}
-+          target/${{ matrix.rust-target }}/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz
-       - if: ${{ matrix.tar && matrix.artifact-name != 'mac' }}
-         run: |
--          cd target/release
-+          cd target/${{ matrix.rust-target }}/release
-           tar --create --gzip --file=ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz ${{ matrix.artifact-file }}
-       - if: ${{ matrix.tar }}
-         uses: actions/upload-artifact@v4
-         with:
-           name: ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}
--          path: target/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz
-+          path: target/${{ matrix.rust-target }}/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz
-       - if: ${{ !matrix.tar }}
-         uses: actions/upload-artifact@v4
-         with:
-           name: ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}
--          path: target/release/${{ matrix.artifact-file }}
-+          path: target/${{ matrix.rust-target }}/release/${{ matrix.artifact-file }}
+@@ -2562,7 +2562,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "4979f22fdb869068da03c9f7528f8297c6fd2606bc3a4affe42e6a823fdb8da4"
+ dependencies = [
+  "cfg-if",
+- "windows-targets 0.48.5",
++ "windows-targets 0.52.6",
+ ]
  
-   test:
-     strategy:
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #663** (2026-11-07): chore(deps): Update dependencies to address various RUSTSEC advisories (@hashcatHitman)
+- **PR #661** (2026-11-07): Load the primary manifest faster by reusing a saved copy (@beallio)
+- **PR #658** (2026-11-07): Fix misleading Simplified Chinese duplicate badges (@hzura)
 - **PR #655** (2026-10-18): Allow clearing the duplicates filter from the status row (@Zhong-fan)
 - **PR #647** (2026-09-06): Prevent --full-limit 0 from discarding all backups (@rleeon)
 - **PR #645** (2026-08-27): Expose manifest file tags in the API output (@ChrisJr404)
-- **PR #643** (closed): Fix: escape literal brackets in custom game paths (@Darkmet98)
-- **PR #642** (2026-08-16): Package the macOS release as Ludusavi.app (@marcodallagatta)
-- **PR #641** (2026-08-10): Add hoverable placeholder menu for custom paths (@a1156883061)
 
 ---
 
@@ -2707,29 +2381,32 @@ Allow clearing the duplicates filter from the status row
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #655 from Zhong-fan/fix/653-exit-duplicates-filter
+## X. layout): Address breaking changes in `zip`
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mtkennerly/ludusavi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/scan/layout.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mtkennerly/ludusavi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d6ff801`: Merge pull request #655 from Zhong-fan/fix/653-exit-duplicates-filter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc0cb3f3`: layout): Address breaking changes in `zip`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/scan/layout.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  * GUI: The duplicates filter can now be cleared from the status row,
-    even when all matching games are hidden or their conflicts are resolved.
+        let options = zip::write::FileOptions::<()>::default()
+            .compression_level(format.level().map(Into::into))
+        let mtime = source_file.last_modified().unwrap_or_else(zip::DateTime::default);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        let options = zip::write::FileOptions::default()
+            .compression_level(format.level())
+        let mtime = source_file.last_modified();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d6ff801` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc0cb3f3` are properly handled with clean fallback behavior.

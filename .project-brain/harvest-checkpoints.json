@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T06:50:54.438Z",
+  "last_updated": "2026-11-08T06:59:47.258Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
-      "verified_at": "2026-11-07T17:57:53.320Z",
+      "content_hash": "ebf7f702179bf33b6bdbdce353ec3aab1cf557a2086ce8bfc5f83dd62d8c55d1",
+      "verified_at": "2026-11-08T06:59:47.257Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T17:57:53.320Z"
+      "last_updated": "2026-11-08T06:59:47.257Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4101,14 +4101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-autoflow",
-      "content_hash": "303f3e1ce837d54c4cf9718c7bc1f47b8fae0ad2c83de6d2c5d2107ed664e804",
-      "verified_at": "2026-10-18T21:52:11.509Z",
+      "content_hash": "e63145c7481148cbe92679e7424f612d0e8efe867e647895480f256224b24d20",
+      "verified_at": "2026-11-08T06:59:42.184Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:52:11.509Z"
+      "last_updated": "2026-11-08T06:59:42.184Z"
     },
     "saadeghi/daisyui": {
       "repository": "saadeghi/daisyui",
@@ -7536,14 +7536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mtkennerly-ludusavi",
-      "content_hash": "4de2d7a765ed1dbf10b883bda40eee6443927d593d5ecad50f496f06601cfc75",
-      "verified_at": "2026-10-19T02:37:04.233Z",
+      "content_hash": "40571b44662b0a90599490c008dc35f09822c2df93b5f379fba46ff019999365",
+      "verified_at": "2026-11-08T06:59:30.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:37:04.233Z"
+      "last_updated": "2026-11-08T06:59:30.976Z"
     },
     "nativewind/nativewind": {
       "repository": "nativewind/nativewind",
@@ -17076,14 +17076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b",
-      "content_hash": "111b2c24dadf6cb53debbfbed0b5481903e6d4dfa2cda40b80530bd34350f3bc",
-      "verified_at": "2026-11-04T20:25:09.279Z",
+      "content_hash": "d9af71410f65ebee9f42cb1474568713d61d26828913795b644f1b3ee4cd3520",
+      "verified_at": "2026-11-08T06:59:42.059Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:25:09.279Z"
+      "last_updated": "2026-11-08T06:59:42.059Z"
     },
     "michael-denyer/pstack-claude": {
       "repository": "michael-denyer/pstack-claude",

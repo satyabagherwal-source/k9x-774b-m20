@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `5f2b3ade`  
+> **Source Version**: `adc282a7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T17:57:51.776Z  
+> **Timestamp**: 2026-11-08T06:59:45.650Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T17:57:50.495Z  
+> **Harvest Timestamp**: 2026-11-08T06:59:45.521Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1190,7 +1190,7 @@ export async function value({
 }) {
   milestone.constructing_instance({ instance_name });
 
-  const { x, y } = Matrix.locate(input_instance_matrix);
+  const { x, y, width, height } = Matrix.locate(input_instance_matrix);
 
   const { orientation } = await llm.generate({
     puzzle_id,
@@ -1254,6 +1254,8 @@ export async function value({
           ${JSON.stringify(Matrix.crop(input_instance_matrix))}
           input_x: ${x}
           input_y: ${y}
+          input_width: ${width}
+          input_height: ${height}
           orientation: ${orientation}
           json_format:
           {
@@ -1335,7 +1337,7 @@ import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(
-  puzzle_id: string = "6d0aefbc",
+  puzzle_id: string = "d631b094",
   only_puzzle_dataset: boolean = false
 ) {
   const { arc_train, test_input_matrix, test_output_matrix } =
@@ -1584,170 +1586,457 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e5dcf14` (2026-11-07)
-**Commit Message**: Apply published Rust guidelines to the crate
+### Incident Patch 1: `adc282a7` (2026-11-08)
+**Commit Message**: Include input dimensions in analyzer prompt
 
-Add rust-guidelines.instructions.md, which makes the Rust API Guidelines,
-Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy
-required for the crate, ranked below the Power of 10 adaptation. It digests
-each source for the crate, records the deliberate divergences, including
-comment-free Rust source, and lists the static-verification gaps.
+Pass the input instance's width and height alongside its position and orientation.
 
-Index it in .claude/CLAUDE.md and reference it from CONTRIBUTING.md, the
-Rust and Rust-improvement rules, and the rust-improver agent.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
-
-**File**: `.claude/CLAUDE.md` (modified, +1/-0)
+**File**: `arc/src/analyzer.ts` (modified, +3/-1)
 ```diff
-@@ -14,6 +14,7 @@ not a replacement for the policies it links to.
- | [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, JSON-only LLM exchanges, and no automated ARC tests |
- | [rust.instructions.md](rules/rust.instructions.md) | Concrete runtime types, dependencies, and Rust community conventions |
- | [power-of-ten.instructions.md](rules/power-of-ten.instructions.md) | NASA's Power of 10 rules adapted to the Rust crate: the lints, runtime limits and policy test that enforce them, and the known runtime-value recursion gap |
-+| [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
- | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
- | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
- | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
+@@ -87,7 +87,7 @@ export async function value({
+ }) {
+   milestone.constructing_instance({ instance_name });
+ 
+-  const { x, y } = Matrix.locate(input_instance_matrix);
++  const { x, y, width, height } = Matrix.locate(input_instance_matrix);
+ 
+   const { orientation } = await llm.generate({
+     puzzle_id,
+@@ -151,6 +151,8 @@ export async function value({
+           ${JSON.stringify(Matrix.crop(input_instance_matrix))}
+           input_x: ${x}
+           input_y: ${y}
++          input_width: ${width}
++          input_height: ${height}
+           orientation: ${orientation}
+           json_format:
+           {
 ```
 
-**File**: `.claude/agents/rust-improver.agent.md` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ other validation.
- 
- ## Improvements
- 
--- Apply current Rust idioms where they materially improve correctness, clarity, reliability, or maintainability. Do not manufacture cleanup or rewrite code that is already appropriate.
-+- Apply current Rust idioms, as [rust-guidelines.instructions.md](../rules/rust-guidelines.instructions.md) and [power-of-ten.instructions.md](../rules/power-of-ten.instructions.md) define them, where they materially improve correctness, clarity, reliability, or maintainability. Do not manufacture cleanup or rewrite code that is already appropriate.
- - Improve ownership and borrowing, concrete types, typed `Result` errors, API design, and shared helpers where needed. Avoid unnecessary cloning, casts, abstractions, and duplicated logic.
- - Respect `Cargo.toml`'s `rust-version`, intended behavior, and public API semantic versioning. Do not upgrade dependencies or the minimum Rust version just to use a newer idiom.
- - Reuse repository conventions and well-maintained crates rather than inventing infrastructure. Add dependencies only when the task requires them and document the choice.
-```
+---
 
-**File**: `.claude/rules/rust-guidelines.instructions.md` (added, +261/-0)
-```diff
-@@ -0,0 +1,261 @@
-+---
-+applyTo: "**"
-+---
-+
-+# Rust guidelines
-+
-+The Rust crate (`Cargo.toml`, `src/`, `tests/`, `examples/`, `build.rs`)
-+always follows the published principles below. They apply to every Rust
-+change by every agent: features, fixes, refactors, NUC candidates and the
-+[rust-improver](../agents/rust-improver.agent.md) pass.
-+
-+| Source | Governs |
-+| --- | --- |
-+| [The Power of 10](https://spinroot.com/gerard/pdf/Power_of_Ten.pdf) | Control flow, bounds, assertions, checked results and zero warnings, adapted in [power-of-ten.instructions.md](power-of-ten.instructions.md) |
-+| [Rust API Guidelines](https://rust-lang.github.io/api-guidelines) | The public API: naming, traits, type safety, dependability and future proofing |
-+| [Google Rust Style Guide](https://google.github.io/styleguide/rustguide.html) | Code organization, imports, ownership, signatures, traits and implementation style |
-+| [Microsoft Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guidelines/) | Universal, library, correctness, performance and AI-facing design |
-+| [Clippy](https://clippy.rust-lang.org) | The lints that enforce much of the above |
-+
-+## How they apply
-+
-+- Every applicable guideline is required, not advisory. Deviate only where a
-+  higher-ranked rule requires it, as recorded under
-+  [Deliberate divergences](#deliberate-divergences).
-+- The sections below digest each source for this crate. The source stays the
-+  full text, and an item the digest leaves out still applies.
-+- Precedence, highest first:
-+  1. The user's explicit instructions and the other repository instruction
-+     files.
-+  2. The [Power of 10 adaptation](power-of-ten.instructions.md).
-+  3. The Rust API Guidelines, which Google and Microsoft both build on.
-+  4. The Microsoft and Google guidelines. Google's product-specific rules
-+     (`[chrome]`, `[Fuchsia]`, per-codebase formatters and test frameworks)
-+     do not apply.
-+- Library API rules bind everything reachable from `src/lib.rs`; the binary
-+  (`src/main.rs`, `src/terminal/`) follows the rest.
-+- Apply the guidelines to new and touched code. Bring older code in line
-+  incrementally under the
-+  [Leave the world better](rust-improvement.instructions.md) policy, never
-+  through unrelated rewrites. Report, rather than make, a conformance fix
-+  that would break the public API; versions stay
-+  [human-owned](versions.instructions.md).
-+- Lints enforce what they can and review covers the rest. These guidelines add
-+  no NUC hard criterion beyond the warning-denied Clippy build that the
-+  [automatic acceptance rule](proposals.instructions.md#automatic-acceptance-caller-only)
-+  already requires.
-+
-+## Rust API Guidelines
-+
-+- Naming: RFC 430 casing (C-CASE); `as_`, `to_` and `into_` conversions with
-+  the matching `self` (C-CONV); getters without `get_` (C-GETTER); `iter`,
-+  `iter_mut` and `into_iter`, with iterator types named after them (C-ITER,
-+  C-ITER-TY); a consistent word order (C-WORD-ORDER); feature names without
-+  placeholder words (C-FEATURE).
-+- Interoperability: eagerly implement the common traits that fit (`Clone`,
-+  `Copy`, `PartialEq`, `Eq`, `Hash`, `PartialOrd`, `Ord`, `Debug`, `Display`,
-+  `Default`) (C-COMMON-TRAITS); convert through `From`, `TryFrom`, `AsRef`,
-+  `AsMut` and `FromStr` (C-CONV-TRAITS); collections implement
-+  `FromIterator` and `Extend` (C-COLLECT); types are `Send` and `Sync` where
-+  possible (C-SEND-SYNC, M-TYPES-SEND); errors are meaningful and implement
-+  `std::error::Error` (C-GOOD-ERR); generic readers and writers are taken by
-+  value (C-RW-VALUE).
-+- Predictability: constructors are static inherent functions (C-CTOR);
-+  functions with a clear receiver are methods (C-METHOD); no out-parameters
-+  (C-NO-OUT); operator overloads keep their usual meaning (C-OVERLOAD); only
-+  smart pointers implement `Deref`, and they add no inherent methods
-+  (C-DEREF, C-SMART-PTR); conversions live on the most specific type
-+  (C-CONV-SPECIFIC).
-+- Flexibility: expose intermediate results (C-INTERMEDIATE); let the caller
-+  decide where data is copied (C-CALLER-CONTROL); minimize assumptions with
-+  statically dispatched generics (C-GENERIC).
-+- Type safety: newtypes for distinct values (C-NEWTYPE); enums and dedicated
-+  types rather than `bool` or `Option` arguments (C-CUSTOM-TYPE); bit-flag
-+  types for flag sets (C-BITFLAG); builders for complex values (C-BUILDER).
-+- Dependability: validate arguments with typed errors (C-VALIDATE);
-+  destructors never fail or block (C-DTOR-FAIL, C-DTOR-BLOCK).
-+- Debuggability: every public type has a non-empty `Debug` (C-DEBUG,
-+  C-DEBUG-NONEMPTY), which `missing_debug_implementations` enforces.
-+- Future proofing: private struct fields (C-STRUCT-PRIVATE); newtypes hide
-+  their representation (C-NEWTYPE-HIDE); sealed traits where downstream
-+  implementations must not exist (C-SEALED); no derived bounds repeated on
-+  data structures (C-STRUCT-BOUNDS); implementation details stay private 
-```
+### Incident Patch 2: `ac49bb38` (2026-11-08)
+**Commit Message**: Expose object dimensions to ARC visualizer
 
-**File**: `.claude/rules/rust-improvement.instructions.md` (modified, +1/-1)
+Return crop dimensions from Matrix.locate and include them in visualizer requests. Remove comments from ARC datasets and update the default puzzle and terminal formatting.
+
+**File**: `arc/README.md` (modified, +6/-5)
 ```diff
-@@ -4,7 +4,7 @@ applyTo: "**"
+@@ -2389,11 +2389,12 @@ This standalone utility does not change the full-size instance masks or return
+ position metadata. Use `Matrix.locate` to retain the original position with
+ the crop.
  
- # Leave the world better than you found it
- 
--When adding a feature, review the code you touch and apply current Rust best practices where needed. Adopt improved idioms and methods incrementally, including ownership and borrowing, concrete types, typed errors, and maintainable APIs, so the codebase improves continuously.
-+When adding a feature, review the code you touch and apply current Rust best practices, as [rust-guidelines.instructions.md](rust-guidelines.instructions.md) and [power-of-ten.instructions.md](power-of-ten.instructions.md) define them, where needed. Adopt improved idioms and methods incrementally, including ownership and borrowing, concrete types, typed errors, and maintainable APIs, so the codebase improves continuously.
- 
- Keep improvements focused on touched code and directly related helpers, proportional to the feature. Preserve intended behavior, respect public API semantic versioning, and cover affected non-ARC behavior with appropriate tests. For ARC-related changes, follow the no-tests policy in [arc.instructions.md](arc.instructions.md). Avoid unrelated rewrites, and follow the existing `cargo fmt` and warning-denied `cargo clippy` conventions.
+-`Matrix.locate(matrix)` returns `{ matrix, x, y }`, pairing the same tight crop
+-with its zero-based top-left position in the original matrix: `x` is the column
+-and `y` is the row. Empty and all-zero matrices return
+-`{ matrix: [], x: 0, y: 0 }`. It uses the same validation as `Matrix.crop` and
+-does not modify the input. For a located result,
++`Matrix.locate(matrix)` returns `{ matrix, x, y, width, height }`, pairing the
++same tight crop with its zero-based top-left position in the original matrix
++and its size: `x` is the column, `y` is the row, `width` is the crop's column
++count and `height` is its row count. Empty and all-zero matrices return
++`{ matrix: [], x: 0, y: 0, width: 0, height: 0 }`. It uses the same validation
++as `Matrix.crop` and does not modify the input. For a located result,
+ `Matrix.pad(result.matrix, rows, cols, result.x, result.y)` restores the crop
+ to its original position on a canvas at least as large as the supplied dimensions.
  
 ```
 
-**File**: `.claude/rules/rust.instructions.md` (modified, +1/-1)
+**File**: `arc/src/app.ts` (modified, +1/-1)
 ```diff
-@@ -10,4 +10,4 @@ Prefer popular, well-maintained crates over hand-rolled infrastructure — lexin
+@@ -8,7 +8,7 @@ import fs from "node:fs/promises";
  
- ## Open source
- 
--Nucleoid is published as open source under Apache-2.0, so everything is public-facing and follows mainstream Rust community practice rather than local invention: default `cargo fmt`, `cargo clippy` clean with warnings denied in CI, library in `src/lib.rs` with a thin binary, integration tests in `tests/`, examples in `examples/`, complete `Cargo.toml` metadata (`description`, `license`, `repository`, `readme`, `keywords`, `categories`, `rust-version`) before publishing, and semantic versioning on the public API. When a convention exists, default to it and flag any deliberate divergence.
-+Nucleoid is published as open source under Apache-2.0, so everything is public-facing and follows mainstream Rust community practice rather than local invention: default `cargo fmt`, `cargo clippy` clean with warnings denied in CI, library in `src/lib.rs` with a thin binary, integration tests in `tests/`, examples in `examples/`, complete `Cargo.toml` metadata (`description`, `license`, `repository`, `readme`, `keywords`, `categories`, `rust-version`) before publishing, and semantic versioning on the public API. When a convention exists, default to it and flag any deliberate divergence. The published guidelines behind that practice, their precedence and the recorded divergences are in [rust-guidelines.instructions.md](rust-guidelines.instructions.md).
+ // Genesis puzzle_id: 3aa6fb7a
+ export async function start(
+-  puzzle_id: string = "6d0aefbc",
++  puzzle_id: string = "d631b094",
+   only_puzzle_dataset: boolean = false
+ ) {
+   const { arc_train, test_input_matrix, test_output_matrix } =
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +5/-0)
+**File**: `arc/src/dataset/dataset.017c7c7b.json` (modified, +9/-9)
 ```diff
-@@ -22,6 +22,11 @@ means no macros, trait objects or function pointers, and zero warnings from
- pedantic Clippy and rustdoc. The lints in `src/lib.rs` and `src/main.rs`,
- `clippy.toml` and `tests/power_of_ten.rs` enforce them.
- 
-+It also follows the Rust API Guidelines, Google's Rust Style Guide,
-+Microsoft's Pragmatic Rust Guidelines and Clippy, ranked below the Power of 10
-+rules in [rust-guidelines.instructions.md](.claude/rules/rust-guidelines.instructions.md),
-+which digests them for the crate and records its deliberate divergences.
-+
- ### What lives where
- 
- | path | what it is |
+@@ -1,10 +1,10 @@
+ {
+   "declarations": [
+-    "# There is an Obj type, the whole pattern of colored cells on the canvas,\n# which has its x and y position, the width and height of its box,\n# its orientation, its color, and its period, the number of rows\n# after which the pattern starts over, as integers\n# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, color: int, period: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l9100'\n    this.color = color\n    this.period = period",
+-    "# Every pattern grows by repeating its rows every period rows\n$Obj.tag = 'l8384'",
+-    "# Every pattern grows down from its top row, which stays in place\n$Obj.extension_direction = 'down'",
+-    "# Every pattern grows to one and a half times its height\n$Obj.height = $Obj.height@first * 3 / 2",
+-    "# Every cell of the pattern turns color 2\n$Obj.color = 2"
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, color: int, period: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l9100'\n    this.color = color\n    this.period = period",
++    "$Obj.tag = 'l8384'",
++    "$Obj.extension_direction = 'down'",
++    "$Obj.height = $Obj.height@first * 3 / 2",
++    "$Obj.color = 2"
+   ],
+   "output_canvas": "EXACT",
+   "dataset": [
+@@ -50,7 +50,7 @@
+             [0, 2, 2],
+             [0, 2, 0]
+           ],
+-          "implementation": "# The whole pattern of color 1, repeating every 4 rows,\n# 3 by 6 at x 0, y 0\nobj7868bfbcdc17 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=4)",
++          "implementation": "obj7868bfbcdc17 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=4)",
+           "input_value": {"color":1,"height":6,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l9100","width":3,"x":0,"y":0},
+           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l8384","width":3,"x":0,"y":0}
+         }
+@@ -98,7 +98,7 @@
+             [2, 0, 2],
+             [0, 2, 0]
+           ],
+-          "implementation": "# The whole pattern of color 1, repeating every 2 rows,\n# 3 by 6 at x 0, y 0\nobj251f7bd03919 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=2)",
++          "implementation": "obj251f7bd03919 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=2)",
+           "input_value": {"color":1,"height":6,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l9100","width":3,"x":0,"y":0},
+           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l8384","width":3,"x":0,"y":0}
+         }
+@@ -146,7 +146,7 @@
+             [2, 2, 0],
+             [0, 2, 0]
+           ],
+-          "implementation": "# The whole pattern of color 1, repeating every 3 rows,\n# 2 by 6 at x 0, y 0\nobj69f9506dfd32 = Obj(x=0, y=0, width=2, height=6, orientation=0, color=1, period=3)",
++          "implementation": "obj69f9506dfd32 = Obj(x=0, y=0, width=2, height=6, orientation=0, color=1, period=3)",
+           "input_value": {"color":1,"height":6,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l9100","width":2,"x":0,"y":0},
+           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l8384","width":2,"x":0,"y":0}
+         }
+@@ -194,7 +194,7 @@
+             [0, 2, 0],
+             [0, 2, 0]
+           ],
+-          "implementation": "# The whole pattern of color 1, repeating every 3 rows,\n# 3 by 6 at x 0, y 0\nobj93fb566cfca3 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=3)",
++          "implementation": "obj93fb566cfca3 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=3)",
+           "input_value": {"color":1,"height":6,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l9100","width":3,"x":0,"y":0},
+           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l8384","width":3,"x":0,"y":0}
+         }
+```
+
+**File**: `arc/src/dataset/dataset.0ca9ddb6.json` (modified, +18/-18)
+```diff
+@@ -1,8 +1,8 @@
+ {
+   "declarations": [
+-    "# There is an Obj type, a single point on the grid,\n# which has its x and y position, its width and height,\n# its orientation and its vertex color as integers\n# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, vertex_color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l7544'\n    this.vertex_color = vertex_color",
+-    "# A point of vertex color 1 gains color-7 neighbors\n# above, below, left and right, an orthogonal cross\n# that starts one column left and one row up\n# and is two columns wider and two rows taller\nif $Obj.vertex_color is 1:\n    $Obj.tag = 'l1707'\n    $Obj.marker_color = 7\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2",
+-    "# A point of vertex color 2 gains color-4 neighbors\n# on its four diagonals, a diagonal cross\n# that starts one column left and one row up\n# and is two columns wider and two rows taller\nif $Obj.vertex_color is 2:\n    $Obj.tag = 'l2404'\n    $Obj.marker_color = 4\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2"
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, vertex_color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l7544'\n    this.vertex_color = vertex_color",
++    "if $Obj.vertex_color is 1:\n    $Obj.tag = 'l1707'\n    $Obj.marker_color = 7\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2",
++    "if $Obj.vertex_color is 2:\n    $Obj.tag = 'l2404'\n    $Obj.marker_color = 4\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2"
+   ],
+   "output_canvas": "EXACT",
+   "dataset": [
+@@ -54,7 +54,7 @@
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A single point of color 2 at x 2, y 3\nobj08c8feaa60ea = Obj(x=2, y=3, width=1, height=1, orientation=0, vertex_color=2)",
++          "implementation": "obj08c8feaa60ea = Obj(x=2, y=3, width=1, height=1, orientation=0, vertex_color=2)",
+           "input_value": {"height":1,"id":"obj08c8feaa60ea","orientation":0,"tag":"l7544","vertex_color":2,"width":1,"x":2,"y":3},
+           "output_value": {"height":3,"id":"obj08c8feaa60ea","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"width":3,"x":1,"y":2}
+         },
+@@ -82,7 +82,7 @@
+             [0, 0, 0, 0, 0, 0, 7, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A single point of color 1 at x 6, y 6\nobjfa5219213773 = Obj(x=6, y=6, width=1, height=1, orientation=0, vertex_color=1)",
++          "implementation": "objfa5219213773 = Obj(x=6, y=6, width=1, height=1, orientation=0, vertex_color=1)",
+           "input_value": {"height":1,"id":"objfa5219213773","orientation":0,"tag":"l7544","vertex_color":1,"width":1,"x":6,"y":6},
+           "output_value": {"height":3,"id":"objfa5219213773","marker_color":7,"orientation":0,"tag":"l1707","vertex_color":1,"width":3,"x":5,"y":5}
+         }
+@@ -136,7 +136,7 @@
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A single point of color 8 at x 3, y 0\nobja15258787f8e = Obj(x=3, y=0, width=1, height=1, orientation=0, vertex_color=8)",
++          "implementation": "obja15258787f8e = Obj(x=3, y=0, width=1, height=1, orientation=0, vertex_color=8)",
+           "input_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"width":1,"x":3,"y":0},
+           "output_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"width":1,"x":3,"y":0}
+         },
+@@ -164,7 +164,7 @@
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A single point of color 2 at x 6, y 2\nobj21a7f426034a = Obj(x=6, y=2, width=1, height=1, orientation=0, vertex_color=2)",
++          "implementation": "obj21a7f426034a = Obj(x=6, y=2, width=1, height=1, orientation=0, vertex_color=2)",
+           "input_value": {"height":1,"id":"obj21a7f426034a","orientation":0,"tag":"l7544","vertex_color":2,"width":1,"x":6,"y":2},
+           "output_value": {"height":3,"id":"obj21a7f426034a","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"width":3,"x":5,"y":1}
+         },
+@@ -192,7 +192,7 @@
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0
+```
+
+**File**: `arc/src/dataset/dataset.0d3d703e.json` (modified, +17/-17)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "declarations": [
+-    "# There is an Obj type, a vertical stripe of one color,\n# which has its x and y position, the width and height of its box,\n# its orientation and its color as integers\n# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l6953'\n    this.color = color",
+-    "# Colors come in four pairs, 1 and 5, 2 and 6, 3 and 4, and 8 and 9,\n# whose two colors trade places: every stripe takes the other color\n# of the pair its color belongs to\n$Obj.color = [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l6953'\n    this.color = color",
++    "$Obj.color = [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
+   ],
+   "output_canvas": "EXACT",
+   "dataset": [
+@@ -29,7 +29,7 @@
+             [4, 0, 0],
+             [4, 0, 0]
+           ],
+-          "implementation": "# A vertical stripe of color 3,\n# 1 by 3 at x 0, y 0\nobj4d683f973e7d = Obj(x=0, y=0, width=1, height=3, orientation=0, color=3)",
++          "implementation": "obj4d683f973e7d = Obj(x=0, y=0, width=1, height=3, orientation=0, color=3)",
+           "input_value": {"color":3,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","width":1,"x":0,"y":0},
+           "output_value": {"color":4,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","width":1,"x":0,"y":0}
+         },
+@@ -45,7 +45,7 @@
+             [0, 5, 0],
+             [0, 5, 0]
+           ],
+-          "implementation": "# A vertical stripe of color 1,\n# 1 by 3 at x 1, y 0\nobj21e76bc9df63 = Obj(x=1, y=0, width=1, height=3, orientation=0, color=1)",
++          "implementation": "obj21e76bc9df63 = Obj(x=1, y=0, width=1, height=3, orientation=0, color=1)",
+           "input_value": {"color":1,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","width":1,"x":1,"y":0},
+           "output_value": {"color":5,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","width":1,"x":1,"y":0}
+         },
+@@ -61,7 +61,7 @@
+             [0, 0, 6],
+             [0, 0, 6]
+           ],
+-          "implementation": "# A vertical stripe of color 2,\n# 1 by 3 at x 2, y 0\nobjfd9a9320bfe9 = Obj(x=2, y=0, width=1, height=3, orientation=0, color=2)",
++          "implementation": "objfd9a9320bfe9 = Obj(x=2, y=0, width=1, height=3, orientation=0, color=2)",
+           "input_value": {"color":2,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","width":1,"x":2,"y":0},
+           "output_value": {"color":6,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","width":1,"x":2,"y":0}
+         }
+@@ -91,7 +91,7 @@
+             [6, 0, 0],
+             [6, 0, 0]
+           ],
+-          "implementation": "# A vertical stripe of color 2,\n# 1 by 3 at x 0, y 0\nobje305b9fc2bcb = Obj(x=0, y=0, width=1, height=3, orientation=0, color=2)",
++          "implementation": "obje305b9fc2bcb = Obj(x=0, y=0, width=1, height=3, orientation=0, color=2)",
+           "input_value": {"color":2,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","width":1,"x":0,"y":0},
+           "output_value": {"color":6,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","width":1,"x":0,"y":0}
+         },
+@@ -107,7 +107,7 @@
+             [0, 4, 0],
+             [0, 4, 0]
+           ],
+-          "implementation": "# A vertical stripe of color 3,\n# 1 by 3 at x 1, y 0\nobjb8e066db3336 = Obj(x=1, y=0, width=1, height=3, orientation=0, color=3)",
++          "implementation": "objb8e066db3336 = Obj(x=1, y=0, width=1, height=3, orientation=0, color=3)",
+           "input_value": {"color":3,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","width":1,"x":1,"y":0},
+           "output_value": {"color":4,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","width":1,"x":1,"y":0}
+         },
+@@ -123,7 +123,7 @@
+             [0, 0, 9],
+             [0, 0, 9]
+           ],
+-          "implementation": "# A vertical stripe of color 8,\n# 1 by 3 at x 2, y 0\nobj459cb43b4fc7 = Obj(x=2, y=0, width=1, height=3, orientation=0, color=8)",
++          "implementation": "obj459cb43b4fc7 = Obj(x=2, y=0, width=1, height=3, orientation=0, color=8)",
+           "input_value": {"color":8,"height":3,"id":"obj459cb43b4fc7","orientation":0,"tag":"l6953","width":1,"x":2,"y":0},
+           "output_value": {"color":9,"height":3,"id":"obj459cb43b4fc7","orientation":0,"tag":"l6953","width":1
+```
+
+**File**: `arc/src/dataset/dataset.25d8a9c8.json` (modified, +16/-16)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "declarations": [
+-    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, parts: list):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l3058'\n    this.parts = parts",
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, parts: list):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l3058'\n    this.parts = parts",
+     "$Obj.fill_color = 5 if $Obj.parts.distinct().length is 1 else 0"
+   ],
+   "output_canvas": "EXACT",
+@@ -29,7 +29,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# A horizontal line of 3 cells of color 4,\n# 3 by 1 at x 0, y 0\nobj264fe4293acf = Obj(x=0, y=0, width=3, height=1, orientation=90, parts=[4, 4, 4])",
++          "implementation": "obj264fe4293acf = Obj(x=0, y=0, width=3, height=1, orientation=90, parts=[4, 4, 4])",
+           "input_value": {"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","width":3,"x":0,"y":0},
+           "output_value": {"fill_color":5,"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","width":3,"x":0,"y":0}
+         },
+@@ -45,7 +45,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# A horizontal line of 3 cells of colors 2, 3 and 2,\n# 3 by 1 at x 0, y 1\nobje69821b4eaf1 = Obj(x=0, y=1, width=3, height=1, orientation=90, parts=[2, 3, 2])",
++          "implementation": "obje69821b4eaf1 = Obj(x=0, y=1, width=3, height=1, orientation=90, parts=[2, 3, 2])",
+           "input_value": {"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","width":3,"x":0,"y":1},
+           "output_value": {"fill_color":0,"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","width":3,"x":0,"y":1}
+         },
+@@ -61,7 +61,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# A horizontal line of 3 cells of color 3 with a color-2 head,\n# 3 by 1 at x 0, y 2, pointing west\nobj1ece888d68bd = Obj(x=0, y=2, width=3, height=1, orientation=270, parts=[2, 3, 3])",
++          "implementation": "obj1ece888d68bd = Obj(x=0, y=2, width=3, height=1, orientation=270, parts=[2, 3, 3])",
+           "input_value": {"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","width":3,"x":0,"y":2},
+           "output_value": {"fill_color":0,"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","width":3,"x":0,"y":2}
+         }
+@@ -91,7 +91,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# A horizontal line of 3 cells of color 3 with a color-7 head,\n# 3 by 1 at x 0, y 0, pointing west\nobj95bc4ed42279 = Obj(x=0, y=0, width=3, height=1, orientation=270, parts=[7, 3, 3])",
++          "implementation": "obj95bc4ed42279 = Obj(x=0, y=0, width=3, height=1, orientation=270, parts=[7, 3, 3])",
+           "input_value": {"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","width":3,"x":0,"y":0},
+           "output_value": {"fill_color":0,"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","width":3,"x":0,"y":0}
+         },
+@@ -107,7 +107,7 @@
+             [5, 5, 5],
+             [0, 0, 0]
+           ],
+-          "implementation": "# A horizontal line of 3 cells of color 6,\n# 3 by 1 at x 0, y 1\nobjde7e64595025 = Obj(x=0, y=1, width=3, height=1, orientation=90, parts=[6, 6, 6])",
++          "implementation": "objde7e64595025 = Obj(x=0, y=1, width=3, height=1, orientation=90, parts=[6, 6, 6])",
+           "input_value": {"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","width":3,"x":0,"y":1},
+           "output_value": {"fill_color":5,"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","width":3,"x":0,"y":1}
+         },
+@@ -123,7 +123,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# A horizontal line of 3 cells of color 7 with a color-3 head,\n# 3 by 1 at x 0, y 2, pointing west\nobj96cdc68d576d = Obj(x=0, y=2, width=3, height=1, orientation=270, parts=[3, 7, 7])",
++          "implementation": "obj96cdc68d576d = Obj(x=0, y=2, width=3, height=1, orientation=270, parts=[3, 7, 7])",
+           "input_value": {"height":1,"id":"obj96cdc68d576d","orientation":270,"parts":[3,7,7],"tag":"l3058","width":3,"x":0,"y":2},
+           "output_value": {"fill_color":0,"height":1,"id":"obj96cdc68d576d","orientation":270,"parts":[3,7,7],"tag":"l3058","width":3,"x":0,"y":2}
+         }
+@@ -153,7 +153,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-  
+```
+
+**File**: `arc/src/dataset/dataset.25ff71a9.json` (modified, +7/-7)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "declarations": [
+-    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l9100'",
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l9100'",
+     "$Obj.y = $Obj.y@first + 1"
+   ],
+   "output_canvas": "EXACT",
+@@ -29,7 +29,7 @@
+             [1, 1, 1],
+             [0, 0, 0]
+           ],
+-          "implementation": "# A horizontal line of 3 cells of color 1,\n# 3 by 1 at x 0, y 0\nobj56f6c04f44d8 = Obj(x=0, y=0, width=3, height=1, orientation=90)",
++          "implementation": "obj56f6c04f44d8 = Obj(x=0, y=0, width=3, height=1, orientation=90)",
+           "input_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","width":3,"x":0,"y":0},
+           "output_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","width":3,"x":0,"y":1}
+         }
+@@ -59,7 +59,7 @@
+             [0, 0, 0],
+             [1, 1, 1]
+           ],
+-          "implementation": "# A horizontal line of 3 cells of color 1,\n# 3 by 1 at x 0, y 1\nobjb2baa9b2270c = Obj(x=0, y=1, width=3, height=1, orientation=90)",
++          "implementation": "objb2baa9b2270c = Obj(x=0, y=1, width=3, height=1, orientation=90)",
+           "input_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","width":3,"x":0,"y":1},
+           "output_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","width":3,"x":0,"y":2}
+         }
+@@ -89,7 +89,7 @@
+             [0, 1, 0],
+             [1, 1, 0]
+           ],
+-          "implementation": "# A corner of 3 cells of color 1,\n# 2 by 2 at x 0, y 0, pointing southeast\nobj470037f0334e = Obj(x=0, y=0, width=2, height=2, orientation=135)",
++          "implementation": "obj470037f0334e = Obj(x=0, y=0, width=2, height=2, orientation=135)",
+           "input_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","width":2,"x":0,"y":0},
+           "output_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","width":2,"x":0,"y":1}
+         }
+@@ -119,7 +119,7 @@
+             [0, 2, 2],
+             [0, 0, 2]
+           ],
+-          "implementation": "# A corner of 3 cells of color 2,\n# 2 by 2 at x 1, y 0, pointing northeast\nobj2ad74ac3e6ef = Obj(x=1, y=0, width=2, height=2, orientation=45)",
++          "implementation": "obj2ad74ac3e6ef = Obj(x=1, y=0, width=2, height=2, orientation=45)",
+           "input_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","width":2,"x":1,"y":0},
+           "output_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","width":2,"x":1,"y":1}
+         }
+@@ -149,7 +149,7 @@
+             [2, 0, 0],
+             [2, 0, 0]
+           ],
+-          "implementation": "# A vertical line of 2 cells of color 2,\n# 1 by 2 at x 0, y 0\nobjb847b315216d = Obj(x=0, y=0, width=1, height=2, orientation=0)",
++          "implementation": "objb847b315216d = Obj(x=0, y=0, width=1, height=2, orientation=0)",
+           "input_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","width":1,"x":0,"y":0},
+           "output_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","width":1,"x":0,"y":1}
+         }
+@@ -179,7 +179,7 @@
+             [0, 0, 0],
+             [0, 1, 0]
+           ],
+-          "implementation": "# A single cell of color 1 at x 1, y 1\nobjf247c9d3ab45 = Obj(x=1, y=1, width=1, height=1, orientation=0)",
++          "implementation": "objf247c9d3ab45 = Obj(x=1, y=1, width=1, height=1, orientation=0)",
+           "input_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","width":1,"x":1,"y":1},
+           "output_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","width":1,"x":1,"y":2}
+         }
+```
+
+**File**: `arc/src/dataset/dataset.27a28665.json` (modified, +13/-13)
+```diff
+@@ -1,10 +1,10 @@
+ {
+   "declarations": [
+-    "# There is an Obj type, the whole block of colored cells on the canvas,\n# which has its x and y position, the width and height of its box\n# and its orientation as integers,\n# and its tag, the name of its shape, as a string\n# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, tag: str):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = tag",
+-    "# Every block becomes a single output point\n$Obj.tag = 'l7544'",
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, tag: str):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = tag",
++    "$Obj.tag = 'l7544'",
+     "$Obj.width = 1",
+     "$Obj.height = 1",
+-    "# Every point's color is the code of its block's shape:\n# 1 for a hollow diamond with a filled corner, 2 for a diagonal cross,\n# 3 for a square with a diagonal tail and 6 for an orthogonal cross\n$Obj.fill_color = {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]"
++    "$Obj.fill_color = {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]"
+   ],
+   "output_canvas": "FIT",
+   "dataset": [
+@@ -28,7 +28,7 @@
+           "output_instance_matrix": [
+             [1]
+           ],
+-          "implementation": "# The whole block of color 5 in the shape named l4262,\n# 3 by 3 at x 0, y 0\nobj3fc7d6382a47 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l4262')",
++          "implementation": "obj3fc7d6382a47 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l4262')",
+           "input_value": {"height":3,"id":"obj3fc7d6382a47","orientation":0,"tag":"l4262","width":3,"x":0,"y":0},
+           "output_value": {"fill_color":1,"height":1,"id":"obj3fc7d6382a47","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
+         }
+@@ -54,7 +54,7 @@
+           "output_instance_matrix": [
+             [2]
+           ],
+-          "implementation": "# The whole block of color 8 in the shape named l2404,\n# 3 by 3 at x 0, y 0\nobj4eb5795d0cdd = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l2404')",
++          "implementation": "obj4eb5795d0cdd = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l2404')",
+           "input_value": {"height":3,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l2404","width":3,"x":0,"y":0},
+           "output_value": {"fill_color":2,"height":1,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
+         }
+@@ -80,7 +80,7 @@
+           "output_instance_matrix": [
+             [2]
+           ],
+-          "implementation": "# The whole block of color 5 in the shape named l2404,\n# 3 by 3 at x 0, y 0\nobj6601704d7bf6 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l2404')",
++          "implementation": "obj6601704d7bf6 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l2404')",
+           "input_value": {"height":3,"id":"obj6601704d7bf6","orientation":0,"tag":"l2404","width":3,"x":0,"y":0},
+           "output_value": {"fill_color":2,"height":1,"id":"obj6601704d7bf6","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
+         }
+@@ -106,7 +106,7 @@
+           "output_instance_matrix": [
+             [3]
+           ],
+-          "implementation": "# The whole block of color 1 in the shape named l3743,\n# 3 by 3 at x 0, y 0\nobjae50fa19d8b4 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l3743')",
++          "implementation": "objae50fa19d8b4 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l3743')",
+           "input_value": {"height":3,"id":"objae50fa19d8b4","orientation":0,"tag":"l3743","width":3,"x":0,"y":0},
+           "output_value": {"fill_color":3,"height":1,"id":"objae50fa19d8b4","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
+         }
+@@ -132,7 +132,7 @@
+           "output_instance_matrix": [
+             [3]
+           ],
+-          "implementation": "# The whole block of color 8 in the shape named l3743,\n# 3 by 3 at x 0, y 0\nobj1f918c128ece = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l3743')",
++          "implementation": "obj1f918c128ece = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l3743')",
+           "input_value": {"height":3,"id":"obj1f918c128ece","orientation":0,"tag":"l3743","width":3,"x":0,"y":0},
+           "output_value": {"fill_color":3,"height":1,"id":"obj1f918c128ece","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
+         }
+@@ -158,7 +158,7 @@
+           "output_instance_matrix": [
+             [1]
+           ],
+-          "implementation": "# The whole block of color 4 in the shape named l4262,\n# 3 by 3 at x 0, y 0\nobja9f56fdb5669 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l4262')",
++          "implementation": "obja9f56fdb5669 = Obj(x=0, y=0, width=3, height=3, ori
 ```
 
 #### Recent Merged Pull Requests:
@@ -1776,28 +2065,30 @@ Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Apply published Rust guidelines to the crate
+## X. Include input dimensions in analyzer prompt
 
 **RULE**:
-When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/analyzer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e5dcf14`: Apply published Rust guidelines to the crate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `adc282a7`: Include input dimensions in analyzer prompt. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/analyzer.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
+  const { x, y, width, height } = Matrix.locate(input_instance_matrix);
+          input_width: ${width}
+          input_height: ${height}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  const { x, y } = Matrix.locate(input_instance_matrix);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e5dcf14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `adc282a7` are properly handled with clean fallback behavior.

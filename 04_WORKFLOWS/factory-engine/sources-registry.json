@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T06:50:57.033Z",
-    "lastVerified": "2026-11-08T06:50:57.033Z",
+    "lastChecked": "2026-11-08T06:59:49.842Z",
+    "lastVerified": "2026-11-08T06:59:49.842Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -231,9 +231,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-08T03:21:29.621Z",
+    "lastChecked": "2026-11-08T06:59:35.724Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-08T03:21:29.621Z"
+    "lastVerified": "2026-11-08T06:59:35.724Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -458,22 +458,21 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T06:25:42.261Z",
-    "lastVerified": "2026-11-08T06:25:42.261Z",
+    "lastChecked": "2026-11-08T06:59:45.521Z",
+    "lastVerified": "2026-11-08T06:59:45.521Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
+    "contentHash": "ebf7f702179bf33b6bdbdce353ec3aab1cf557a2086ce8bfc5f83dd62d8c55d1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5f2b3ade"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -3178,11 +3177,21 @@
     "revisionIdentifier": "c6d10667"
   },
   "pingcap-autoflow": {
-    "name": "autoflow",
+    "name": "pingcap/autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
-    "lastChecked": "2026-11-07T03:41:52.395Z",
-    "revisionIdentifier": "c4cb19d8",
-    "lastVerified": "2026-11-07T03:41:52.395Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-08T06:59:41.695Z",
+    "lastVerified": "2026-11-08T06:59:41.695Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pingcap-autoflow",
+    "contentHash": "e63145c7481148cbe92679e7424f612d0e8efe867e647895480f256224b24d20",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-prithivmlmods-gender-classifier-mini": {
     "name": "prithivMLmods/Gender-Classifier-Mini",
@@ -4619,11 +4628,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mtkennerly-ludusavi": {
-    "name": "ludusavi",
+    "name": "mtkennerly/ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
-    "lastChecked": "2026-11-06T21:20:55.173Z",
-    "revisionIdentifier": "95b651aa",
-    "lastVerified": "2026-11-06T21:20:55.173Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-08T06:59:29.649Z",
+    "lastVerified": "2026-11-08T06:59:29.649Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mtkennerly-ludusavi",
+    "contentHash": "40571b44662b0a90599490c008dc35f09822c2df93b5f379fba46ff019999365",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -6980,12 +6999,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "juicedata-juicefs": {
-    "name": "juicedata/juicefs",
+    "name": "juicefs",
     "officialUrl": "https://github.com/juicedata/juicefs",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T04:37:02.942Z",
-    "lastVerified": "2026-11-07T04:37:02.942Z",
+    "lastChecked": "2026-11-08T06:59:33.334Z",
+    "lastVerified": "2026-11-08T06:59:33.334Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juicedata-juicefs",
@@ -6994,7 +7013,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fd69a571"
   },
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
@@ -9903,9 +9923,9 @@
   "bernaferrari-figmatocode": {
     "name": "FigmaToCode",
     "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
-    "lastChecked": "2026-11-05T06:00:20.201Z",
+    "lastChecked": "2026-11-08T06:59:30.793Z",
     "revisionIdentifier": "f5c4831d",
-    "lastVerified": "2026-11-05T06:00:20.201Z"
+    "lastVerified": "2026-11-08T06:59:30.793Z"
   },
   "hf-diffuspace-clover-35b-a3b-preview": {
     "name": "Diffuspace/Clover-35B-A3B-Preview",
@@ -13375,12 +13395,12 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T20:24:56.861Z",
-    "lastVerified": "2026-11-04T20:24:56.861Z",
+    "lastChecked": "2026-11-08T06:59:28.774Z",
+    "lastVerified": "2026-11-08T06:59:28.774Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-    "contentHash": "111b2c24dadf6cb53debbfbed0b5481903e6d4dfa2cda40b80530bd34350f3bc",
+    "contentHash": "d9af71410f65ebee9f42cb1474568713d61d26828913795b644f1b3ee4cd3520",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

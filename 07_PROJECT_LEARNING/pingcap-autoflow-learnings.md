@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-autoflow-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/autoflow](https://github.com/pingcap/autoflow))  
-> **Source Version**: `c4cb19d8`  
+> **Source Version**: `01cdf88f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:52:11.388Z  
+> **Timestamp**: 2026-11-08T06:59:41.893Z  
 > **Learning ID**: `learn-github-pingcap-autoflow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-autoflow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/autoflow](https://github.com/pingcap/autoflow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:52:11.381Z  
+> **Harvest Timestamp**: 2026-11-08T06:59:41.695Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: pingcap/autoflow is a Graph RAG based and conversational knowledge base tool built with TiDB Serverless Vector Storage. Demo: https://tidb.ai
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2978 stars
+- **Stars / Engagement**: 2982 stars
 
 ---
 
@@ -764,469 +764,127 @@ def format_namespace(namespace: Optional[str] = None) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4cb19d8` (2026-04-27)
-**Commit Message**: build(deps): bump litellm from 1.80.13 to 1.83.0 in /core (#712)
+### Incident Patch 1: `01cdf88f` (2026-11-08)
+**Commit Message**: Stop publishing credential-backed E2E recordings (#718)
 
-Bumps [litellm](https://github.com/BerriAI/litellm) from 1.80.13 to
-1.83.0.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/BerriAI/litellm/releases">litellm's
-releases</a>.</em></p>
-<blockquote>
-<h2>litellm-trace-dev-v1.81.16</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>feat(vertex): add gemini-3.1-flash-image-preview to model DB by <a
-href="https://github.com/emerzon"><code>@​emerzon</code></a> in <a
-href="https://redirect.github.com/BerriAI/litellm/pull/22223">BerriAI/litellm#22223</a></li>
-<li>perf(spendlogs): optimize old spendlog deletion cron job by <a
-href="https://github.com/Harshit28j"><code>@​Harshit28j</code></a> in <a
-href="https://redirect.github.com/BerriAI/litellm/pull/21930">BerriAI/litellm#21930</a></li>
-<li>Fix converse handling for parallel_tool_calls by <a
-href="https://github.com/Sameerlite"><code>@​Sameerlite</code></a> in <a
-href="https://redirect.github.com/BerriAI/litellm/pull/22267">BerriAI/litellm#22267</a></li>
-<li>[Fix]Preserve forwarding server side called tools by <a
-href="https://github.com/Sameerlite"><code>@​Sameerlite</code></a> in <a
-href="https
+E2E bootstrap enters provider credentials while Playwright traces, video
+and published HTML reports can retain those inputs or requests. Disable
+trace/video capture, use the line reporter in CI, and remove the GitHub
+artifact and Vercel report publication jobs. Test execution and its
+success/failure status remain available.
 
-**File**: `core/uv.lock` (modified, +3/-65)
+This contains further report generation independently of the broader
+security migration in #717. Existing reports are being retired
+separately.
+
+Validation: workflow YAML parses, test execution remains present,
+publication steps are absent, and the Playwright configuration passes
+syntax validation. The existing full E2E run currently fails model setup
+with `llm/AuthenticationError`; this change does not bypass that
+assertion.
+
+**File**: `.github/workflows/release.yml` (modified, +0/-60)
 ```diff
-@@ -1031,67 +1031,6 @@ wheels = [
-     { url = "https://files.pythonhosted.org/packages/b1/5e/38b408f41064c9fcdbb0ea27c1bd13a1c8657c4846e04dab9f5ea770602c/griffe-1.7.2-py3-none-any.whl", hash = "sha256:1ed9c2e338a75741fc82083fe5a1bc89cb6142efe126194cc313e34ee6af5423", size = 129187, upload-time = "2025-04-01T14:38:43.227Z" },
- ]
- 
--[[package]]
--name = "grpcio"
--version = "1.76.0"
--source = { registry = "https://pypi.org/simple" }
--dependencies = [
--    { name = "typing-extensions" },
--]
--sdist = { url = "https://files.pythonhosted.org/packages/b6/e0/318c1ce3ae5a17894d5791e87aea147587c9e702f24122cc7a5c8bbaeeb1/grpcio-1.76.0.tar.gz", hash = "sha256:7be78388d6da1a25c0d5ec506523db58b18be22d9c37d8d3a32c08be4987bd73", size = 12785182, upload-time = "2025-10-21T16:23:12.106Z" }
--wheels = [
--    { url = "https://files.pythonhosted.org/packages/88/17/ff4795dc9a34b6aee6ec379f1b66438a3789cd1315aac0cbab60d92f74b3/grpcio-1.76.0-cp310-cp310-linux_armv7l.whl", hash = "sha256:65a20de41e85648e00305c1bb09a3598f840422e522277641145a32d42dcefcc", size = 5840037, upload-time = "2025-10-21T16:20:25.069Z" },
--    { url = "https://files.pythonhosted.org/packages/4e/ff/35f9b96e3fa2f12e1dcd58a4513a2e2294a001d64dec81677361b7040c9a/grpcio-1.76.0-cp310-cp310-macosx_11_0_universal2.whl", hash = "sha256:40ad3afe81676fd9ec6d9d406eda00933f218038433980aa19d401490e46ecde", size = 11836482, upload-time = "2025-10-21T16:20:30.113Z" },
--    { url = "https://files.pythonhosted.org/packages/3e/1c/8374990f9545e99462caacea5413ed783014b3b66ace49e35c533f07507b/grpcio-1.76.0-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:035d90bc79eaa4bed83f524331d55e35820725c9fbb00ffa1904d5550ed7ede3", size = 6407178, upload-time = "2025-10-21T16:20:32.733Z" },
--    { url = "https://files.pythonhosted.org/packages/1e/77/36fd7d7c75a6c12542c90a6d647a27935a1ecaad03e0ffdb7c42db6b04d2/grpcio-1.76.0-cp310-cp310-manylinux2014_i686.manylinux_2_17_i686.whl", hash = "sha256:4215d3a102bd95e2e11b5395c78562967959824156af11fa93d18fdd18050990", size = 7075684, upload-time = "2025-10-21T16:20:35.435Z" },
--    { url = "https://files.pythonhosted.org/packages/38/f7/e3cdb252492278e004722306c5a8935eae91e64ea11f0af3437a7de2e2b7/grpcio-1.76.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:49ce47231818806067aea3324d4bf13825b658ad662d3b25fada0bdad9b8a6af", size = 6611133, upload-time = "2025-10-21T16:20:37.541Z" },
--    { url = "https://files.pythonhosted.org/packages/7e/20/340db7af162ccd20a0893b5f3c4a5d676af7b71105517e62279b5b61d95a/grpcio-1.76.0-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:8cc3309d8e08fd79089e13ed4819d0af72aa935dd8f435a195fd152796752ff2", size = 7195507, upload-time = "2025-10-21T16:20:39.643Z" },
--    { url = "https://files.pythonhosted.org/packages/10/f0/b2160addc1487bd8fa4810857a27132fb4ce35c1b330c2f3ac45d697b106/grpcio-1.76.0-cp310-cp310-musllinux_1_2_i686.whl", hash = "sha256:971fd5a1d6e62e00d945423a567e42eb1fa678ba89072832185ca836a94daaa6", size = 8160651, upload-time = "2025-10-21T16:20:42.492Z" },
--    { url = "https://files.pythonhosted.org/packages/2c/2c/ac6f98aa113c6ef111b3f347854e99ebb7fb9d8f7bb3af1491d438f62af4/grpcio-1.76.0-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:9d9adda641db7207e800a7f089068f6f645959f2df27e870ee81d44701dd9db3", size = 7620568, upload-time = "2025-10-21T16:20:45.995Z" },
--    { url = "https://files.pythonhosted.org/packages/90/84/7852f7e087285e3ac17a2703bc4129fafee52d77c6c82af97d905566857e/grpcio-1.76.0-cp310-cp310-win32.whl", hash = "sha256:063065249d9e7e0782d03d2bca50787f53bd0fb89a67de9a7b521c4a01f1989b", size = 3998879, upload-time = "2025-10-21T16:20:48.592Z" },
--    { url = "https://files.pythonhosted.org/packages/10/30/d3d2adcbb6dd3ff59d6ac3df6ef830e02b437fb5c90990429fd180e52f30/grpcio-1.76.0-cp310-cp310-win_amd64.whl", hash = "sha256:a6ae758eb08088d36812dd5d9af7a9859c05b1e0f714470ea243694b49278e7b", size = 4706892, upload-time = "2025-10-21T16:20:50.697Z" },
--    { url = "https://files.pythonhosted.org/packages/a0/00/8163a1beeb6971f66b4bbe6ac9457b97948beba8dd2fc8e1281dce7f79ec/grpcio-1.76.0-cp311-cp311-linux_armv7l.whl", hash = "sha256:2e1743fbd7f5fa713a1b0a8ac8ebabf0ec980b5d8809ec358d488e273b9cf02a", size = 5843567, upload-time = "2025-10-21T16:20:52.829Z" },
--    { url = "https://files.pythonhosted.org/packages/10/c1/934202f5cf335e6d852530ce14ddb0fef21be612ba9ecbbcbd4d748ca32d/grpcio-1.76.0-cp311-cp311-macosx_11_0_universal2.whl", hash = "sha256:a8c2cf1209497cf659a667d7dea88985e834c24b7c3b605e6254cbb5076d985c", size = 11848017, upload-time = "2025-10-21T16:20:56.705Z" },
--    { url = "https://files.pythonhosted.org/packages/11/0b/8dec16b1863d74af6eb3543928600ec2195af49ca58b16334972f6775663/grpcio-1.76.0-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:08caea849a9d3c71a542827d6df9d5a69067b0a1efbea8a855633ff5d9571465", size = 6412027, upload-time = "2025-10-21T16:20:59.3Z" },
--    { url = "https://files.pythonhosted.org/pack
-```
-
----
-
-### Incident Patch 2: `c1b6ac1d` (2025-12-19)
-**Commit Message**: Fix React Server Components CVE vulnerabilities (#706)
-
-> [!IMPORTANT]
-> This is an automatic PR generated by Vercel to help you with patching
-efforts. We can't guarantee it's comprehensive, and it may contain
-mistakes. Please review our
-[guidance](https://vercel.link/additional-checks) before merging these
-changes.
-
-A critical remote code execution (RCE) vulnerability in React Server
-Components, impacting frameworks such as Next.js, was identified in the
-project [autoflow](https://vercel.com/pingcap/autoflow). The
-vulnerability enables unauthenticated RCE on the server via insecure
-deserialization in the React Flight protocol.
-
-This issue is tracked under:
-
-- GitHub Security Advisory:
-[GHSA-9qr9-h5gf-34mp](https://github.com/vercel/next.js/security/advisories/GHSA-9qr9-h5gf-34mp)
-- React Advisory:
-[CVE-2025-55182](https://react.dev/blog/2025/12/03/critical-security-vulnerability-in-react-server-components)
-- Next.js Advisory:
-[CVE-2025-66478](https://nextjs.org/blog/CVE-2025-66478)
-
-This automated pull request upgrades the affected React and Next.js
-packages to patched versions that fully remediate the issue.
-
-[More Info](https://vercel.link/cve-2025-55182-automated-pr) |
-[REDACTE
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@
-     "start": "next start"
-   },
-   "dependencies": {
--    "next": "^15.0.2",
-+    "next": "15.0.7",
-     "nextra": "^4.2.17",
-     "nextra-theme-docs": "^4.2.17",
-     "react": "19.1.0",
-```
-
-**File**: `docs/pnpm-lock.yaml` (modified, +144/-151)
-```diff
-@@ -9,14 +9,14 @@ importers:
-   .:
-     dependencies:
-       next:
--        specifier: ^15.0.2
--        version: 15.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-+        specifier: 15.0.7
-+        version: 15.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-       nextra:
-         specifier: ^4.2.17
--        version: 4.2.17(acorn@8.14.1)(next@15.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)
-+        version: 4.2.17(acorn@8.14.1)(next@15.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)
-       nextra-theme-docs:
-         specifier: ^4.2.17
--        version: 4.2.17(@types/react@19.1.2)(next@15.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(nextra@4.2.17(acorn@8.14.1)(next@15.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-+        version: 4.2.17(@types/react@19.1.2)(next@15.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(nextra@4.2.17(acorn@8.14.1)(next@15.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-       react:
-         specifier: 19.1.0
-         version: 19.1.0
-@@ -103,112 +103,107 @@ packages:
-   '@iconify/utils@2.3.0':
-     resolution: {integrity: sha512-GmQ78prtwYW6EtzXRU1rY+KwOKfz32PD7iJh6Iyqw68GiKuoZ2A6pRtzWONz5VQJbp50mEjXh/7NkumtrAgRKA==}
- 
--  '@img/sharp-darwin-arm64@0.34.1':
--    resolution: {integrity: sha512-pn44xgBtgpEbZsu+lWf2KNb6OAf70X68k+yk69Ic2Xz11zHR/w24/U49XT7AeRwJ0Px+mhALhU5LPci1Aymk7A==}
-+  '@img/sharp-darwin-arm64@0.33.5':
-+    resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@img/sharp-darwin-x64@0.34.1':
--    resolution: {integrity: sha512-VfuYgG2r8BpYiOUN+BfYeFo69nP/MIwAtSJ7/Zpxc5QF3KS22z8Pvg3FkrSFJBPNQ7mmcUcYQFBmEQp7eu1F8Q==}
-+  '@img/sharp-darwin-x64@0.33.5':
-+    resolution: {integrity: sha512-fyHac4jIc1ANYGRDxtiqelIbdWkIuQaI84Mv45KvGRRxSAa7o7d1ZKAOBaYbnepLC1WqxfpimdeWfvqqSGwR2Q==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@img/sharp-libvips-darwin-arm64@1.1.0':
--    resolution: {integrity: sha512-HZ/JUmPwrJSoM4DIQPv/BfNh9yrOA8tlBbqbLz4JZ5uew2+o22Ik+tHQJcih7QJuSa0zo5coHTfD5J8inqj9DA==}
-+  '@img/sharp-libvips-darwin-arm64@1.0.4':
-+    resolution: {integrity: sha512-XblONe153h0O2zuFfTAbQYAX2JhYmDHeWikp1LM9Hul9gVPjFY427k6dFEcOL72O01QxQsWi761svJ/ev9xEDg==}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@img/sharp-libvips-darwin-x64@1.1.0':
--    resolution: {integrity: sha512-Xzc2ToEmHN+hfvsl9wja0RlnXEgpKNmftriQp6XzY/RaSfwD9th+MSh0WQKzUreLKKINb3afirxW7A0fz2YWuQ==}
-+  '@img/sharp-libvips-darwin-x64@1.0.4':
-+    resolution: {integrity: sha512-xnGR8YuZYfJGmWPvmlunFaWJsb9T/AO2ykoP3Fz/0X5XV2aoYBPkX6xqCQvUTKKiLddarLaxpzNe+b1hjeWHAQ==}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@img/sharp-libvips-linux-arm64@1.1.0':
--    resolution: {integrity: sha512-IVfGJa7gjChDET1dK9SekxFFdflarnUB8PwW8aGwEoF3oAsSDuNUTYS+SKDOyOJxQyDC1aPFMuRYLoDInyV9Ew==}
-+  '@img/sharp-libvips-linux-arm64@1.0.4':
-+    resolution: {integrity: sha512-9B+taZ8DlyyqzZQnoeIvDVR/2F4EbMepXMc/NdVbkzsJbzkUjhXv/70GQJ7tdLA4YJgNP25zukcxpX2/SueNrA==}
-     cpu: [arm64]
-     os: [linux]
- 
--  '@img/sharp-libvips-linux-arm@1.1.0':
--    resolution: {integrity: sha512-s8BAd0lwUIvYCJyRdFqvsj+BJIpDBSxs6ivrOPm/R7piTs5UIwY5OjXrP2bqXC9/moGsyRa37eYWYCOGVXxVrA==}
-+  '@img/sharp-libvips-linux-arm@1.0.5':
-+    resolution: {integrity: sha512-gvcC4ACAOPRNATg/ov8/MnbxFDJqf/pDePbBnuBDcjsI8PssmjoKMAz4LtLaVi+OnSb5FK/yIOamqDwGmXW32g==}
-     cpu: [arm]
-     os: [linux]
- 
--  '@img/sharp-libvips-linux-ppc64@1.1.0':
--    resolution: {integrity: sha512-tiXxFZFbhnkWE2LA8oQj7KYR+bWBkiV2nilRldT7bqoEZ4HiDOcePr9wVDAZPi/Id5fT1oY9iGnDq20cwUz8lQ==}
--    cpu: [ppc64]
--    os: [linux]
+@@ -194,63 +194,3 @@ jobs:
+             E2E_RERANKER_PROVIDER: ${{vars.E2E_RERANKER_PROVIDER || 'jinaai'}}
+             E2E_RERANKER_MODEL: ${{vars.E2E_RERANKER_MODEL || ''}}
+             E2E_RERANKER_CREDENTIALS: ${{secrets.E2E_RERANKER_CREDENTIALS}}
 -
--  '@img/sharp-libvips-linux-s390x@1.1.0':
--    resolution: {integrity: sha512-xukSwvhguw7COyzvmjydRb3x/09+21HykyapcZchiCUkTThEQEOMtBj9UhkaBRLuBrgLFzQ2wbxdeCCJW/jgJA==}
-+  '@img/sharp-libvips-linux-s390x@1.0.4':
-+    resolution: {integrity: sha512-u7Wz6ntiSSgGSGcjZ55im6uvTrOxSIS8/dgoVMoiGE9I6JAfU50yH5BoDlYA1tcuGS7g/QNtetJnxA6QEsCVTA==}
-     cpu: [s390x]
-     os: [linux]
- 
--  '@img/sharp-libvips-linux-x64@1.1.0':
--    resolution: {integrity: sha512-yRj2+reB8iMg9W5sULM3S74jVS7zqSzHG3Ol/twnAAkAhnGQnpjj6e4ayUz7V+FpKypwgs82xbRdYtchTTUB+Q==}
-+  '@img/sharp-libvips-linux-x64@1.0.4':
-+    resolution: {integrity: sha512-MmWmQ3iPFZr0Iev+BAgVMb3ZyC4KeFc3jFxnNbEPas60e1cIfevbtuyf9nDGIzOaW9PdnDciJm+wFFaTlj5xYw==}
-     cpu: [x64]
-     os: [linux]
- 
--  '@img/sharp-libvips-linuxmusl-arm64@1.1.0':
--    resolution: {integrity: sha512-jYZdG+whg0MDK+q2COKbYidaqW/WTz0cc1E+tMAusiDygrM4ypmSCjOJPmFTvHHJ8j/6cAGyeDWZOsK06tP33w==}
-+  '@im
+-        - uses: actions/upload-artifact@v4
+-          if: "!cancelled()"
+-          with:
+-            name: e2e-report
+-            path: e2e/playwright-report/
+-            retention-days: 30
+-
+-    e2e-test-deploy:
+-      name: "Deploy E2E Test Results"
+-      runs-on: ubuntu-latest
+-      needs: e2e-test
+-      if: |
+-        always() 
+-        && !contains(needs.e2e-test.result, 'skipped') 
+-        && !contains(needs.e2e-test.result, 'cancelled')
+-      defaults:
+-        run:
+-          working-directory: e2e
+-      steps:
+-        - uses: actions/checkout@v4
+-
+-        - uses: actions/setup-node@v4
+-
+-        - uses: actions/download-artifact@v4
+-          with:
+-            name: e2e-report
+-            path: e2e/playwright-report/
+-
+-        - name: Deploy Test Results to Vercel
+-          id: deploy-test-result
+-          run: |
+-            deploy_message=$(./deploy-test-result.sh)
+-            echo "deploy-message=${deploy_message}" >> $GITHUB_OUTPUT
+-          if: "!cancelled()"
+-          env:
+-            VERCEL_TOKEN: ${{secrets.E2E_VERCEL_TOKEN}}
+-            VERCEL_ORG_ID: ${{secrets.E2E_VERCEL_ORG_ID}}
+-            VERCEL_PROJECT_ID: ${{secrets.E2E_VERCEL_PROJECT_ID}}
+-            VERCEL_CLI_ARGS: ${{(github.ref == 'refs/heads/main' && '--prod') || ''}}
+-
+-        - name: Find PR Comment
+-          uses: peter-evans/find-comment@v3
+-          if: github.event.pull_request.number
+-          id: find-comment
+-          with:
+-            issue-number: ${{ github.event.pull_request.number }}
+-            comment-author: 'github-actions[bot]'
+-            body-includes: E2E Result Deployment
+-
+-        - name: Upsert Comment on PR
+-          uses: peter-evans/create-or-update-comment@v4
+-          if: github.event.pull_request.number
+-          with:
+-            comment-id: ${{ steps.find-comment.outputs.comment-id }}
+-            issue-number: ${{ github.event.pull_request.number }}
+-            body: |
+-              ### E2E Result Deployment
+-              ${{steps.deploy-test-result.outputs.deploy-message}}
+-            edit-mode: replace
 ```
 
-**File**: `frontend/app/package.json` (modified, +1/-1)
+**File**: `e2e/playwright.config.ts` (modified, +5/-4)
 ```diff
-@@ -54,7 +54,7 @@
-     "js-cookie": "^3.0.5",
-     "lucide-react": "^0.400.0",
-     "merge-refs": "^1.3.0",
--    "next": "15.1.9",
-+    "next": "15.1.11",
-     "next-themes": "^0.4.4",
-     "react": "19.0.0",
-     "react-day-picker": "^8.10.1",
-```
-
-**File**: `frontend/pnpm-lock.yaml` (modified, +19/-19)
-```diff
-@@ -27,7 +27,7 @@ importers:
-         version: 3.9.1(react-hook-form@7.54.0(react@19.0.0))
-       '@next/third-parties':
-         specifier: 15.1.9
--        version: 15.1.9(next@15.1.9(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0))(react@19.0.0)
-+        version: 15.1.9(next@15.1.11(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0))(react@19.0.0)
-       '@radix-ui/react-accordion':
-         specifier: ^1.2.3
-         version: 1.2.3(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-@@ -143,8 +143,8 @@ importers:
-         specifier: ^1.3.0
-         version: 1.3.0(@types/react@19.0.1)
-       next:
--        specifier: 15.1.9
--        version: 15.1.9(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0)
-+        specifier: 15.1.11
-+        version: 15.1.11(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0)
-       next-themes:
-         specifier: ^0.4.4
-         version: 0.4.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-@@ -226,7 +226,7 @@ importers:
-         version: 8.4.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.3.3))
-       '@storybook/nextjs':
-         specifier: ^8.4.7
--        version: 8.4.7(@swc/core@1.10.1(@swc/helpers@0.5.15))(esbuild@0.24.0)(next@15.1.9(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0)(storybook@8.4.7(prettier@3.3.3))(type-fest@2.19.0)(typescript@5.7.2)(webpack-hot-middleware@2.26.1)(webpack@5.97.1(@swc/core@1.10.1(@swc/helpers@0.5.15))(esbuild@0.24.0))
-+        version: 8.4.7(@swc/core@1.10.1(@swc/helpers@0.5.15))(esbuild@0.24.0)(next@15.1.11(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0)(storybook@8.4.7(prettier@3.3.3))(type-fest@2.19.0)(typescript@5.7.2)(webpack-hot-middleware@2.26.1)(webpack@5.97.1(@swc/core@1.10.1(@swc/helpers@0.5.15))(esbuild@0.24.0))
-       '@storybook/react':
-         specifier: ^8.4.7
-         version: 8.4.7(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.3.3)))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.3.3))(typescript@5.7.2)
-@@ -352,7 +352,7 @@ importers:
-         version: 7.1.0(monaco-editor@0.50.0)(webpack@5.97.1(@swc/core@1.10.1(@swc/helpers@0.5.15))(esbuild@0.24.0))
-       next-sitemap:
-         specifier: ^4.2.3
--        version: 4.2.3(next@15.1.9(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0))
-+        version: 4.2.3(next@15.1.11(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0))
-       postcss:
-         specifier: ^8.4.49
-         version: 8.4.49
-@@ -1649,8 +1649,8 @@ packages:
-   '@next/env@13.5.7':
-     resolution: {integrity: sha512-uVuRqoj28Ys/AI/5gVEgRAISd0KWI0HRjOO1CTpNgmX3ZsHb5mdn14Y59yk0IxizXdo7ZjsI2S7qbWnO+GNBcA==}
+@@ -21,17 +21,18 @@ export default defineConfig({
+   /* Opt out of parallel tests on CI. */
+   workers: process.env.CI ? 1 : undefined,
+   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+-  reporter: 'html',
++  // Provider credentials are entered during bootstrap; keep CI output textual.
++  reporter: process.env.CI ? 'line' : 'html',
+   globalSetup: 'global.setup.ts',
+   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+   use: {
+     /* Base URL to use in actions like `await page.goto('/')`. */
+     baseURL: 'http://127.0.0.1:3000',
  
--  '@next/env@15.1.9':
--    resolution: {integrity: sha512-Te1wbiJ//I40T7UePOUG8QBwh+VVMCc0OTuqesOcD3849TVOVOyX4Hdrkx7wcpLpy/LOABIcGyLX5P/SzzXhFA==}
-+  '@next/env@15.1.11':
-+    resolution: {integrity: sha512-yp++FVldfLglEG5LoS2rXhGypPyoSOyY0kxZQJ2vnlYJeP8o318t5DrDu5Tqzr03qAhDWllAID/kOCsXNLcwKw==}
+-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+-    trace: 'on',
++    // Traces and video can retain credential entry and provider requests.
++    trace: 'off',
+     screenshot: 'off',
+-    video: 'on',
++    video: 'off',
+   },
  
-   '@next/eslint-plugin-next@15.1.9':
-     resolution: {integrity: sha512-H7CuatO2RXQQmm40cX3C6kFPNh/v6Dx2oEy1iKZKfubL0mhuuDMBLSUdwu5JgCP1mtuPBufK1h7WSIVjBADZtw==}
-@@ -6150,8 +6150,8 @@ packages:
-       react: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
-       react-dom: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
- 
--  next@15.1.9:
--    resolution: {integrity: sha512-OoQpDPV2i3o5Hnn46nz2x6fzdFxFO+JsU4ZES12z65/feMjPHKKHLDVQ2NuEvTaXTRisix/G5+6hyTkwK329kA==}
-+  next@15.1.11:
-+    resolution: {integrity: sha512-UiVJaOGhKST58AadwbFUZThlNBmYhKqaCs8bVtm4plTxsgKq0mJ0zTsp7t7j/rzsbAEj9WcAMdZCztjByi4EoQ==}
-     engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
-     hasBin: true
-     peerDependencies:
-@@ -9248,7 +9248,7 @@ snapshots:
- 
-   '@next/env@13.5.7': {}
- 
--  '@next/env@15.1.9': {}
-+  '@next/env@15.1.11': {}
- 
-   '@next/eslint-plugin-next@15.1.9':
-     dependencies:
-@@ -9278,9 +9278,9 @@ snapshots:
-   '@next/swc-win32-x64-msvc@15.1.9':
-     optional: true
- 
--  '@next/third-parties@15.1.9(next@15.1.9(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0))(react@19.0.0)':
-+  '@next/third-parties@15.1.9(next@15.1.11(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0))(react@19.0.0)':
-     dependencies:
--      next: 15.1.9(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.82.0)
-+      next: 15.1.11(@babel/core@7.26.0)(@o
-```
-
----
-
-### Incident Patch 3: `24a82d56` (2025-05-13)
-**Commit Message**: fix: replace lru_cache with singleflight_cache for dynamic model creation for multi-thread safe (#685)
-
-The singleflight pattern ensures that for any given set of arguments,
-concurrent calls to the decorated function will only result in a single
-actual execution. Other threads with the same arguments will wait for
-    the first execution to complete and then receive the same result,
-    rather than triggering duplicate computations.
-
-**File**: `backend/app/models/chunk.py` (modified, +2/-3)
-```diff
-@@ -1,7 +1,6 @@
- import enum
--from functools import lru_cache
-+from app.utils.singleflight_cache import singleflight_cache
- 
--import sys
- from typing import Optional, Type
- from sqlmodel import (
-     Field,
-@@ -35,7 +34,7 @@ def get_kb_chunk_model(kb: KnowledgeBase) -> Type[SQLModel]:
-     return get_dynamic_chunk_model(vector_dimension, str(kb.id))
- 
- 
--@lru_cache(maxsize=sys.maxsize)
-+@singleflight_cache
- def get_dynamic_chunk_model(
-     vector_dimension: int,
-     namespace: Optional[str] = None,
-```
-
-**File**: `backend/app/models/entity.py` (modified, +2/-3)
-```diff
-@@ -1,6 +1,5 @@
- import enum
--from functools import lru_cache
--import sys
-+from app.utils.singleflight_cache import singleflight_cache
- from typing import Optional, List, Dict, Type
- 
- from sqlmodel import (
-@@ -41,7 +40,7 @@ def get_kb_entity_model(kb: KnowledgeBase) -> Type[SQLModel]:
-     return get_dynamic_entity_model(vector_dimension, str(kb.id))
- 
- 
--@lru_cache(maxsize=sys.maxsize)
-+@singleflight_cache
- def get_dynamic_entity_model(
-     vector_dimension: int,
-     namespace: Optional[str] = None,
-```
-
-**File**: `backend/app/models/relationship.py` (modified, +2/-3)
-```diff
-@@ -1,6 +1,5 @@
- from datetime import datetime
--from functools import lru_cache
--import sys
-+from app.utils.singleflight_cache import singleflight_cache
- from typing import Optional, Type
- from uuid import UUID
- 
-@@ -37,7 +36,7 @@ def get_kb_relationship_model(kb: KnowledgeBase) -> Type[SQLModel]:
-     return get_dynamic_relationship_model(vector_dimension, str(kb.id), entity_model)
- 
- 
--@lru_cache(maxsize=sys.maxsize)
-+@singleflight_cache
- def get_dynamic_relationship_model(
-     vector_dimension: int,
-     namespace: Optional[str] = None,
-```
-
-**File**: `backend/app/utils/singleflight_cache.py` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+import threading
-+from functools import wraps
-+
-+
-+def singleflight_cache(func):
-+    """
-+    A thread-safe cache decorator implementing the 'singleflight' pattern.
-+
-+    The singleflight pattern ensures that for any given set of arguments,
-+    concurrent calls to the decorated function will only result in a single
-+    actual execution. Other threads with the same arguments will wait for
-+    the first execution to complete and then receive the same result,
-+    rather than triggering duplicate computations.
-+
-+    This is especially useful for expensive or resource-intensive operations
-+    where you want to avoid redundant work and prevent cache stampede.
-+
-+    Example:
-+        @singleflight_cache
-+        def load_data(key):
-+            # expensive operation
-+            ...
-+
-+        # In multiple threads:
-+        load_data('foo')  # Only one thread will actually execute the function for 'foo'
-+    """
-+    _cache = {}
-+    _locks = {}
-+    _locks_lock = threading.Lock()
-+
-+    @wraps(func)
-+    def wrapper(*args, **kwargs):
-+        key = args + tuple(sorted(kwargs.items()))
-+        if key in _cache:
-+            return _cache[key]
-+        with _locks_lock:
-+            lock = _locks.setdefault(key, threading.Lock())
-+        with lock:
-+            if key in _cache:
-+                return _cache[key]
-+            result = func(*args, **kwargs)
-+            _cache[key] = result
-+            return result
-+
-+    return wrapper
-```
-
-**File**: `backend/tests/test_dynamic_models.py` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+import threading
-+from app.models.entity import get_dynamic_entity_model
-+from app.models.relationship import get_dynamic_relationship_model
-+from app.models.chunk import get_dynamic_chunk_model
-+
-+
-+def dynamic_model_creation(dim, ns):
-+    entity_model = get_dynamic_entity_model(dim, ns)
-+    relationship_model = get_dynamic_relationship_model(dim, ns, entity_model)
-+    chunk_model = get_dynamic_chunk_model(dim, ns)
-+    return entity_model, relationship_model, chunk_model
-+
-+
-+def test_concurrent_dynamic_model_creation():
-+    results = [None] * 10
-+    threads = []
-+    for i in range(10):
-+        t = threading.Thread(
-+            target=lambda idx: results.__setitem__(
-+                idx, dynamic_model_creation(128, "test")
-+            ),
-+            args=(i,),
-+        )
-+        threads.append(t)
-+    for t in threads:
-+        t.start()
-+    for t in threads:
-+        t.join()
-+
-+    # Ensure each model is created only once across all threads
-+    entity_models, relationship_models, chunk_models = zip(*results)
-+    assert all(m is entity_models[0] for m in entity_models)
-+    assert all(m is relationship_models[0] for m in relationship_models)
-+    assert all(m is chunk_models[0] for m in chunk_models)
+   /* Configure projects for major browsers */
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #718** (2026-11-08): Stop publishing credential-backed E2E recordings (@shizn)
 - **PR #713** (closed): ci: declare workflow-level `contents: read` on backend-test and regression (@arpitjain099)
 - **PR #712** (2026-04-27): build(deps): bump litellm from 1.80.13 to 1.83.0 in /core (@dependabot[bot])
 - **PR #708** (2026-01-09): chore: update llama-index package version requirements (@Mini256)
 - **PR #707** (2026-01-09): chore: upgrade litellm to 1.77.5+ to support latest OpenAI models (@Mini256)
 - **PR #706** (2025-12-19): Fix React Server Components CVE vulnerabilities (@vercel[bot])
-- **PR #705** (2025-10-21): fix: fix azure openai dpsy LM (@Mini256)
 
 ---
 

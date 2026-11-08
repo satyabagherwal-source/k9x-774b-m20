@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T06:50:54.319Z",
+  "last_updated": "2026-11-08T06:59:47.112Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44370,11 +44370,16 @@
       "slug": "mtkennerly-ludusavi",
       "platform": "github",
       "source_url": "https://github.com/mtkennerly/ludusavi",
-      "source_version": "95b651aa",
-      "content_hash": "4de2d7a765ed1dbf10b883bda40eee6443927d593d5ecad50f496f06601cfc75",
+      "source_version": "9365477d",
+      "content_hash": "40571b44662b0a90599490c008dc35f09822c2df93b5f379fba46ff019999365",
       "dossier_path": "07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "layout): Address breaking changes in `zip`",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2028,
           "title": "Merge pull request #655 from Zhong-fan/fix/653-exit-duplicates-filter",
@@ -44386,7 +44391,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:37:04.177Z",
+      "verified_at": "2026-11-08T06:59:30.869Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46253,8 +46258,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "5f2b3ade",
-      "content_hash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
+      "source_version": "adc282a7",
+      "content_hash": "ebf7f702179bf33b6bdbdce353ec3aab1cf557a2086ce8bfc5f83dd62d8c55d1",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -46291,6 +46296,11 @@
         {
           "number": null,
           "title": "Apply published Rust guidelines to the crate",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Include input dimensions in analyzer prompt",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46584,7 +46594,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:57:53.207Z",
+      "verified_at": "2026-11-08T06:59:47.092Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49710,8 +49720,8 @@
       "slug": "pingcap-autoflow",
       "platform": "github",
       "source_url": "https://github.com/pingcap/autoflow",
-      "source_version": "c4cb19d8",
-      "content_hash": "303f3e1ce837d54c4cf9718c7bc1f47b8fae0ad2c83de6d2c5d2107ed664e804",
+      "source_version": "01cdf88f",
+      "content_hash": "e63145c7481148cbe92679e7424f612d0e8efe867e647895480f256224b24d20",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-autoflow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-autoflow-learnings.md",
       "promoted_rules": [],
@@ -49720,7 +49730,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:52:11.454Z",
+      "verified_at": "2026-11-08T06:59:42.057Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
