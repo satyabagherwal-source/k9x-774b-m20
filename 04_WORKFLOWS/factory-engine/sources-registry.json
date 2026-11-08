@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T21:00:00.372Z",
-    "lastVerified": "2026-11-08T21:00:00.372Z",
+    "lastChecked": "2026-11-08T21:07:02.798Z",
+    "lastVerified": "2026-11-08T21:07:02.798Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -259,8 +259,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T20:38:50.747Z",
-    "lastVerified": "2026-11-08T20:38:50.747Z",
+    "lastChecked": "2026-11-08T21:06:55.658Z",
+    "lastVerified": "2026-11-08T21:06:55.658Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1011,8 +1011,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T16:51:06.638Z",
-    "lastVerified": "2026-11-08T16:51:06.638Z",
+    "lastChecked": "2026-11-08T21:06:50.522Z",
+    "lastVerified": "2026-11-08T21:06:50.522Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -4111,9 +4111,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-08T01:03:09.397Z",
+    "lastChecked": "2026-11-08T21:06:47.941Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-08T01:03:09.397Z"
+    "lastVerified": "2026-11-08T21:06:47.941Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -4398,12 +4398,12 @@
     "officialUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T04:14:26.984Z",
-    "lastVerified": "2026-11-05T04:14:26.984Z",
+    "lastChecked": "2026-11-08T21:06:43.071Z",
+    "lastVerified": "2026-11-08T21:06:43.071Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "c5d20032aa8eff8bd7737826f91e033ae2501383c6bcea1c28be5bf0f534abba",
+    "contentHash": "eb20ce7b4b38acd9a8d785cb4f462ed954a77cb18c7892e5d8729f211a6ca2aa",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7300,14 +7300,14 @@
     "officialUrl": "https://github.com/vespa-engine/vespa",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-08T00:15:38.181Z",
-    "lastVerified": "2026-11-08T00:15:38.181Z",
+    "lastChecked": "2026-11-08T21:06:59.060Z",
+    "lastVerified": "2026-11-08T21:06:59.060Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "dae872a7608507b4472226a7f5f6901d6c85892b523ea2549f96e4cd45e1a13d",
+    "contentHash": "9d5cae168aaa2e2fd1c10e07cb9e494e50303e226e6a2a208c4a4ac938bd6437",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8477,9 +8477,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-07T20:16:16.951Z",
+    "lastChecked": "2026-11-08T21:06:40.419Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-07T20:16:16.951Z"
+    "lastVerified": "2026-11-08T21:06:40.419Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",
@@ -11357,9 +11357,9 @@
   "relatedcode-progresshud": {
     "name": "ProgressHUD",
     "officialUrl": "https://github.com/relatedcode/ProgressHUD",
-    "lastChecked": "2026-11-05T14:30:01.420Z",
+    "lastChecked": "2026-11-08T21:06:45.472Z",
     "revisionIdentifier": "25471d6e",
-    "lastVerified": "2026-11-05T14:30:01.420Z"
+    "lastVerified": "2026-11-08T21:06:45.472Z"
   },
   "rehypejs-rehype": {
     "name": "rehype",

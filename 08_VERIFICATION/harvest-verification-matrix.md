@@ -8387,3 +8387,5 @@
 | `CYCLE-20261108-6YZ6` | `2026-11-08T20:52:55.314Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`87e7cbc4...`) |
 | `CYCLE-20261108-73TP` | `2026-11-08T20:53:01.597Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d8d5400a...`) |
 | `CYCLE-20261108-FUQJ` | `2026-11-08T20:59:49.723Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`1a6f8383...`) |
+| `CYCLE-20261108-OQHQ` | `2026-11-08T21:06:44.126Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`eb20ce7b...`) |
+| `CYCLE-20261108-P2WJ` | `2026-11-08T21:07:00.211Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9d5cae16...`) |

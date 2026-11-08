@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T20:59:49.731Z",
-  "total_cycles_completed": 8352,
-  "total_learnings_persisted": 8352,
-  "total_rules_promoted": 8149,
+  "last_updated": "2026-11-08T21:07:00.220Z",
+  "total_cycles_completed": 8354,
+  "total_learnings_persisted": 8354,
+  "total_rules_promoted": 8150,
   "history": [
-    {
-      "timestamp": "2026-11-08T03:07:53.671Z",
-      "repository": "ParthJadhav/app-store-screenshots",
-      "learningId": "learn-github-parthjadhav-app-store-screenshots",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T03:08:03.720Z",
-      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
-      "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T03:15:00.533Z",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
@@ -1403,6 +1389,20 @@
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T21:06:44.134Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T21:07:00.220Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

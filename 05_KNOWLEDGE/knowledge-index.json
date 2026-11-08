@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T20:59:49.634Z",
+  "last_updated": "2026-11-08T21:07:00.117Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23310,7 +23310,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
       "source_version": "hf-compvis-stable-diffusion-v1-4",
-      "content_hash": "c5d20032aa8eff8bd7737826f91e033ae2501383c6bcea1c28be5bf0f534abba",
+      "content_hash": "eb20ce7b4b38acd9a8d785cb4f462ed954a77cb18c7892e5d8729f211a6ca2aa",
       "dossier_path": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "promoted_rules": [
@@ -23404,7 +23404,7 @@
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm",
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6"
       ],
-      "verified_at": "2026-11-05T04:14:27.992Z",
+      "verified_at": "2026-11-08T21:06:44.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63395,8 +63395,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "b74dc9e9",
-      "content_hash": "dae872a7608507b4472226a7f5f6901d6c85892b523ea2549f96e4cd45e1a13d",
+      "source_version": "4303c987",
+      "content_hash": "9d5cae168aaa2e2fd1c10e07cb9e494e50303e226e6a2a208c4a4ac938bd6437",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -63408,6 +63408,11 @@
         {
           "number": null,
           "title": "require dimension names to be valid identifiers in Java",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #38464 from vespa-engine/johsol/add-foreach-field-to-language",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -63501,7 +63506,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:15:40.027Z",
+      "verified_at": "2026-11-08T21:07:00.096Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

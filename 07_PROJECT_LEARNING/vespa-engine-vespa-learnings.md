@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `b74dc9e9`  
+> **Source Version**: `4303c987`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:15:38.187Z  
+> **Timestamp**: 2026-11-08T21:06:59.065Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:15:38.181Z  
+> **Harvest Timestamp**: 2026-11-08T21:06:59.060Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1065,107 +1065,186 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `650065bd` (2026-11-06)
-**Commit Message**: require dimension names to be valid identifiers in Java
+### Incident Patch 1: `4303c987` (2026-11-08)
+**Commit Message**: Merge pull request #38464 from vespa-engine/johsol/add-foreach-field-to-language-server
 
-Align Java with the C++ rule: dimension names must match
-[A-Za-z_][A-Za-z0-9_]*. Previously Java also accepted a leading
-digit, '-' or '@', and '@' or '$' after the first character.
+add for_each_field to language server
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `vespajlib/src/main/java/com/yahoo/tensor/Tensor.java` (modified, +1/-1)
+**File**: `integration/schema-language-server/language-server/src/main/ccc/indexinglanguage/IndexingParser.ccc` (modified, +13/-0)
 ```diff
-@@ -38,7 +38,7 @@
-  * <p>
-  * A tensor consists of a set of <i>dimension</i> names and a set of <i>cells</i> containing scalar <i>values</i>.
-  * Each cell is identified by its <i>address</i>, which consists of a set of dimension-label pairs which defines
-- * the location of that cell. Both dimensions and labels are string on the form of an identifier or integer.
-+ * the location of that cell. Dimension names are identifiers ([A-Za-z_][A-Za-z0-9_]*) and labels are strings.
-  * <p>
-  * The size of the set of dimensions of a tensor is called its <i>rank</i>.
-  * <p>
+@@ -198,6 +198,7 @@ TOKEN :
+     <EXHEX16_DOUBLE_ENCODE: "exhex16doubleencode"> |
+     <FLATTEN: "flatten"> |
+     <FOR_EACH: "for_each"> |
++    <FOR_EACH_FIELD: "for_each_field"> |
+     <GENERATE: "generate"> |
+     <GET_FIELD: "get_field"> |
+     <GET_LANGUAGE: "get_language"> |
+@@ -366,6 +367,7 @@ Expression value() :
+       val = exHex16DoubleEncodeExp() |
+       val = flattenExp()            |
+       val = forEachExp()            |
++      val = forEachFieldExp()       |
+       val = generateExp()           |
+       val = getFieldExp()           |
+       val = getLanguageExp()        |
+@@ -556,6 +558,16 @@ Expression forEachExp() :
+     { return new ForEachExpression(val); }
+ ;
+ 
++Expression forEachFieldExp() :
++{
++    String path;
++    Expression val;
++}
++ 
++    ( <FOR_EACH_FIELD> path = stringLiteral() <LCURLY> consumeNL() val = statement() consumeNL() <RCURLY> )
++    { return new ForEachFieldExpression(path, val); }
++;
++
+ Expression generateExp() :
+ {
+     String generatorId = "";
+@@ -1019,6 +1031,7 @@ String identifierStr() :
+         <EMBED>                  |
+         <FLATTEN>                |
+         <FOR_EACH>               |
++        <FOR_EACH_FIELD>         |
+         <GENERATE>               |
+         <GET_FIELD>              |
+         <GET_LANGUAGE>           |
 ```
 
-**File**: `vespajlib/src/main/java/com/yahoo/tensor/TensorType.java` (modified, +4/-2)
+**File**: `integration/schema-language-server/language-server/src/main/java/ai/vespa/schemals/lsp/schema/completion/provider/IndexingLanguageCompletion.java` (modified, +1/-0)
 ```diff
-@@ -29,6 +29,8 @@
+@@ -68,6 +68,7 @@ public List<CompletionItem> getCompletionItems(EventCompletionContext context) {
+                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("exhex8floatencode")),
+                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("exhex16doubleencode")),
+                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("for_each")),
++                CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("for_each_field")),
+                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("generate")),
+                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("get_field")),
+                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("get_language")),
+```
+
+**File**: `integration/schema-language-server/language-server/src/main/java/ai/vespa/schemals/lsp/schema/semantictokens/SchemaSemanticTokenConfig.java` (modified, +1/-0)
+```diff
+@@ -317,6 +317,7 @@ class SchemaSemanticTokenConfig {
+     static final Set<ai.vespa.schemals.parser.indexinglanguage.Token.TokenType> indexingLanguageKeywords = new HashSet<>() {{
+         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.IF);
+         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.FOR_EACH);
++        add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.FOR_EACH_FIELD);
+         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.SWITCH);
+         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.SELECT_INPUT);
+         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.ELSE);
+```
+
+**File**: `integration/tmgrammar/grammars/vespa-schema.tmLanguage.json` (modified, +1/-1)
+```diff
+@@ -508,7 +508,7 @@
+         },
+         {
+           "name": "keyword.control.indexing.vespa",
+-          "match": "\\b(select_input|for_each|default|switch|case|else|if)\\b"
++          "match": "\\b(for_each_field|select_input|for_each|default|switch|case|else|if)\\b"
+         },
+         {
+           "name": "entity.name.function.indexing.vespa",
+```
+
+---
+
+### Incident Patch 2: `638cb26c` (2026-11-08)
+**Commit Message**: Merge pull request #38463 from vespa-engine/arnej/move-char-lists
+
+Centralize ASCII character-class strings in Ascii7BitMatcher
+
+**File**: `vespajlib/abi-spec.json` (modified, +4/-1)
+```diff
+@@ -3190,7 +3190,10 @@
+       "public void <init>(java.lang.String)",
+       "public void <init>(java.lang.String, java.lang.String)",
+       "public boolean matches(java.lang.String)",
+-      "public static java.lang.String charsAndNumbers()"
++      "public static java.lang.String asciiLetters()",
++      "public static java.lang.String charsAndUnderscore()",
++      "public static java.lang.String charsAndNumbers()",
++      "public static java.lang.String charsNumbersAndUnderscore()"
+     ],
+     "fields" : [ ]
+   },
+```
+
+**File**: `vespajlib/src/main/java/com/yahoo/tensor/TensorType.java` (modified, +4/-5)
+```diff
+@@ -16,8 +16,6 @@
+ import java.util.Locale;
+ import java.util.stream.Collectors;
+ 
+-import static com.yahoo.text.Ascii7BitMatcher.charsAndNumbers;
+-
+ /**
+  * A tensor type with its dimensions. This is immutable.
+  * <p>
+@@ -28,9 +26,10 @@
+  */
  public class TensorType {
  
-     static Ascii7BitMatcher labelMatcher = new Ascii7BitMatcher("-_@" + charsAndNumbers(), "_@$" + charsAndNumbers());
-+    private static final String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-+    private static final Ascii7BitMatcher dimensionNameMatcher = new Ascii7BitMatcher("_" + letters, "_" + charsAndNumbers());
+-    static Ascii7BitMatcher labelMatcher = new Ascii7BitMatcher("-_@" + charsAndNumbers(), "_@$" + charsAndNumbers());
+-    private static final String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+-    private static final Ascii7BitMatcher dimensionNameMatcher = new Ascii7BitMatcher("_" + letters, "_" + charsAndNumbers());
++    static Ascii7BitMatcher labelMatcher = new Ascii7BitMatcher("-_@" + Ascii7BitMatcher.charsAndNumbers(), "_@$" + Ascii7BitMatcher.charsAndNumbers());
++    private static final String identStart = Ascii7BitMatcher.charsAndUnderscore();
++    private static final String identChars = Ascii7BitMatcher.charsNumbersAndUnderscore();
++    private static final Ascii7BitMatcher dimensionNameMatcher = new Ascii7BitMatcher(identStart, identChars);
  
      /** The permissible cell value types. Default is double. */
      public enum Value {
-@@ -437,8 +439,8 @@ public static Dimension mapped(String name) {
-         static private String requireIdentifier(String name) {
-             if (name == null)
-                 throw new IllegalArgumentException("A dimension name cannot be null");
--            if ( ! TensorType.labelMatcher.matches(name))
--                throw new IllegalArgumentException("A dimension name must be an identifier or integer, not '" + name + "'");
-+            if ( ! dimensionNameMatcher.matches(name))
-+                throw new IllegalArgumentException("A dimension name must be an identifier, not '" + name + "'");
-             return name;
+```
+
+**File**: `vespajlib/src/main/java/com/yahoo/text/Ascii7BitMatcher.java` (modified, +12/-14)
+```diff
+@@ -49,19 +49,17 @@ public boolean matches(String s) {
          }
- 
-```
-
-**File**: `vespajlib/src/test/java/com/yahoo/tensor/TensorParserTestCase.java` (modified, +2/-2)
-```diff
-@@ -375,9 +375,9 @@ private void assertDense(Tensor expectedTensor, String denseFormat) {
- 
-     @Test
-     public void testIllegalStrings() {
--        assertIllegal("A dimension name must be an identifier or integer, not ''x''",
-+        assertIllegal("A dimension name must be an identifier, not ''x''",
-                       "{{'x':\"l0\"}:1.0}");
--        assertIllegal("A dimension name must be an identifier or integer, not '\"x\"'",
-+        assertIllegal("A dimension name must be an identifier, not '\"x\"'",
-                       "{{\"x\":\"l0\", \"y\":\"l0\"}:1.0, {\"x\":\"l0\", \"y\":\"l1\"}:2.0}");
-  //     assertIllegal("At {x:0}: '1-.0' is not a valid double",
-  //                   "{{x:0}:1-.0}");
-```
-
-**File**: `vespajlib/src/test/java/com/yahoo/tensor/TensorTypeTestCase.java` (modified, +14/-0)
-```diff
-@@ -5,6 +5,7 @@
- 
- import static org.junit.Assert.assertEquals;
- import static org.junit.Assert.assertFalse;
-+import static org.junit.Assert.assertThrows;
- import static org.junit.Assert.assertTrue;
- import static org.junit.Assert.fail;
- 
-@@ -48,6 +49,19 @@ public void requireThatIndexedBoundDimensionMustHaveNonZeroSize() {
-         assertIllegalTensorType("tensor(x[0])", "Size of bound dimension 'x' must be at least 1");
+         return true;
      }
+-    static public String charsAndNumbers() {
+-        char[] chars = new char[26*2+10];
+-        int i = 0;
+-        for (char c = 'A'; c <= 'Z'; c++) {
+-            chars[i++] = c;
+-        }
+-        for (char c = 'a'; c <= 'z'; c++) {
+-            chars[i++] = c;
+-        }
+-        for (char c = '0'; c <= '9'; c++) {
+-            chars[i++] = c;
+-        }
+-        return new String(chars);
+-    }
  
-+    @Test
-+    public void requireThatDimensionNamesMustBeValidIdentifiers() {
-+        for (String name : new String[] { "x", "X", "_", "_x", "x_1", "abc123" }) {
-+            TensorType.Dimension.mapped(name);
-+            TensorType.Dimension.indexed(name, 3);
-+        }
-+        for (String name : new String[] { "", "1x", "@x", "x$", "-x", "x-y", "x y", " x", "x.y", "x{},y", "x[3]", "æ", "x\0y" }) {
-+            assertThrows(name, IllegalArgumentException.class, () -> TensorType.Dimension.mapped(name));
-+            assertThrows(name, IllegalArgumentException.class, () -> TensorType.Dimension.indexed(name, 3));
-+        }
-+        assertIllegalTensorType("tensor(1x[3])", "A dimension name must be an identifier");
-+    }
++    private static final String LCC = "abcdefghijklmnopqrstuvwxyz"; // lowercase letters
++    private static final String UCC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // uppercase letters
++    private static final String NUM = "0123456789"; // digits
++    private static final String CHS = UCC + LCC; // all letters
++    private static final String CAU = "_" + CHS; // letters and underscore
++    private static final String CAN = CHS + NUM; // letters and digits
++    private static final String CNU = "_" + CAN; // letters, digits and underscore
 +
-     @Test
-     public void requireThatDimensionsMustHaveUniqueNames() {
-         assertIllegalTensorType("tensor(x[10],y[20],x[30])", "Could not add dimension x[30] as this dimension is already present");
++    static public String asciiLetters() { return CHS; }
++    static public String charsAndUnderscore() { return CAU; }
++    static public String charsAndNumbers() { return CAN; }
++    static public String charsNumbersAndUnderscore() { return CNU; }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #38464** (2026-11-08): add for_each_field to language server (@johansolbakken)
+- **PR #38463** (2026-11-08): Centralize ASCII character-class strings in Ascii7BitMatcher (@arnej27959)
 - **PR #38462** (2026-11-06): Require tensor dimension names to be valid identifiers in Java (@havardpe)
 - **PR #38461** (2026-11-06): Add a dedicated centroid quantization acceleration function (@vekterli)
 - **PR #38460** (2026-11-07): Use inputExpression (@bratseth)
 - **PR #38459** (2026-11-06): Make tensor types more robust (@havardpe)
-- **PR #38458** (2026-11-06): Avoid holding cache stripe lock across backing store writes (@arnej27959)
-- **PR #38456** (2026-11-06): chore: update third-party attributions (@github-actions[bot])
 
 ---
 
@@ -1185,28 +1264,40 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. require dimension names to be valid identifiers in Java
+## X. Merge pull request #38464 from vespa-engine/johsol/add-foreach-field-to-language
 
 **RULE**:
-When implementing operations in `vespajlib/src/main/java/com/yahoo/tensor/Tensor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `integration/schema-language-server/language-server/src/main/ccc/indexinglanguage/IndexingParser.ccc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `650065bd`: require dimension names to be valid identifiers in Java. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4303c987`: Merge pull request #38464 from vespa-engine/johsol/add-foreach-field-to-language-server. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `vespajlib/src/main/java/com/yahoo/tensor/Tensor.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/schema-language-server/language-server/src/main/ccc/indexinglanguage/IndexingParser.ccc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
- * the location of that cell. Dimension names are identifiers ([A-Za-z_][A-Za-z0-9_]*) and labels are strings.
+    <FOR_EACH_FIELD: "for_each_field"> |
+      val = forEachFieldExp()       |
+Expression forEachFieldExp() :
+{
+    String path;
+    Expression val;
+}
+ 
+    ( <FOR_EACH_FIELD> path = stringLiteral() <LCURLY> consumeNL() val = statement() consumeNL() <RCURLY> )
+    { return new ForEachFieldExpression(path, val); }
+;
+
+        <FOR_EACH_FIELD>         |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
- * the location of that cell. Both dimensions and labels are string on the form of an identifier or integer.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `650065bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4303c987` are properly handled with clean fallback behavior.

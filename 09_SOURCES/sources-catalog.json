@@ -805,8 +805,8 @@
     "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
     "license": "Open-Source",
-    "contentHash": "c5d20032aa8eff8bd7737826f91e033ae2501383c6bcea1c28be5bf0f534abba",
-    "lastHarvestedAt": "2026-11-05T04:14:28.132Z",
+    "contentHash": "eb20ce7b4b38acd9a8d785cb4f462ed954a77cb18c7892e5d8729f211a6ca2aa",
+    "lastHarvestedAt": "2026-11-08T21:06:44.129Z",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4"
   },
   "hf-meta-llama-meta-llama-3-8b": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "b74dc9e9",
+    "sourceVersion": "4303c987",
     "license": "Apache-2.0",
-    "contentHash": "dae872a7608507b4472226a7f5f6901d6c85892b523ea2549f96e4cd45e1a13d",
-    "lastHarvestedAt": "2026-11-08T00:15:40.169Z",
+    "contentHash": "9d5cae168aaa2e2fd1c10e07cb9e494e50303e226e6a2a208c4a4ac938bd6437",
+    "lastHarvestedAt": "2026-11-08T21:07:00.215Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

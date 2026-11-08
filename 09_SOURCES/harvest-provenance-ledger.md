@@ -8396,3 +8396,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T20:52:55.318Z |
 | `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `b1bc09de` | Multi-dimensional audit evidence | 2026-11-08T20:53:01.601Z |
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-08T20:59:49.726Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-08T21:06:44.129Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `4303c987` | Multi-dimensional audit evidence | 2026-11-08T21:07:00.215Z |
