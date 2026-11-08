@@ -8410,3 +8410,5 @@
 | `CYCLE-20261108-Z3KX` | `2026-11-08T22:10:46.881Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`655b5c20...`) |
 | `CYCLE-20261108-Z8SY` | `2026-11-08T22:10:53.650Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0bdebd24...`) |
 | `CYCLE-20261108-1T32` | `2026-11-08T22:12:53.246Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`599e77db...`) |
+| `CYCLE-20261108-AOTI` | `2026-11-08T22:19:47.622Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`6d6e27b1...`) |
+| `CYCLE-20261108-APTN` | `2026-11-08T22:19:48.923Z` | `Scantist/GLM-5.3-SLIM-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`e244e905...`) |

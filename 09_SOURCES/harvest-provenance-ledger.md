@@ -8419,3 +8419,5 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `87ecf9e0` | Multi-dimensional audit evidence | 2026-11-08T22:10:46.884Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `c847f42e` | Multi-dimensional audit evidence | 2026-11-08T22:10:53.653Z |
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-08T22:12:53.250Z |
+| `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-08T22:19:47.626Z |
+| `learn-huggingface-scantist-glm-5-3-slim-gguf` | `https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF` | `hf-scantis` | Multi-dimensional audit evidence | 2026-11-08T22:19:49.079Z |

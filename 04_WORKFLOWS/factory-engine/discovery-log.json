@@ -20692,5 +20692,17 @@
     "downloads": 136706,
     "qualityScore": 3710,
     "discoveredAt": "2026-11-08T13:57:29.648Z"
+  },
+  {
+    "name": "Scantist/GLM-5.3-SLIM-GGUF",
+    "fullName": "Scantist/GLM-5.3-SLIM-GGUF",
+    "url": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Scantist/GLM-5.3-SLIM-GGUF (1113 likes, 4938 downloads)",
+    "likes": 1113,
+    "downloads": 4938,
+    "qualityScore": 13130,
+    "discoveredAt": "2026-11-08T22:17:23.418Z"
   }
 ]

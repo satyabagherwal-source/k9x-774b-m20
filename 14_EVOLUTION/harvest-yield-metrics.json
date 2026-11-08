@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T22:12:53.254Z",
-  "total_cycles_completed": 8375,
-  "total_learnings_persisted": 8375,
-  "total_rules_promoted": 8171,
+  "last_updated": "2026-11-08T22:19:49.084Z",
+  "total_cycles_completed": 8377,
+  "total_learnings_persisted": 8377,
+  "total_rules_promoted": 8175,
   "history": [
-    {
-      "timestamp": "2026-11-08T04:19:34.278Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T04:26:49.289Z",
-      "repository": "Jarvis322/macos-sysdata",
-      "learningId": "learn-github-jarvis322-macos-sysdata",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T04:26:52.338Z",
       "repository": "meshery/meshery",
@@ -1403,6 +1389,20 @@
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:19:47.632Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:19:49.084Z",
+      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+      "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

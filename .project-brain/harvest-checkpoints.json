@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T22:12:53.258Z",
+  "last_updated": "2026-11-08T22:19:49.088Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1115,14 +1115,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3",
-      "content_hash": "357a97dd8430e82f32c93415da06065f7e9e1788dbee2d782a07d4318d36c0ed",
-      "verified_at": "2026-11-05T04:57:38.831Z",
+      "content_hash": "6d6e27b18dbee4c549bcf342d3386ea88e1d23cc17a9a3e25e0631f2239d1000",
+      "verified_at": "2026-11-08T22:19:47.635Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T04:57:38.831Z"
+      "last_updated": "2026-11-08T22:19:47.635Z"
     },
     "Qwen/Qwen3.8-Flash-Next": {
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -18374,6 +18374,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-08T14:04:56.247Z"
+    },
+    "Scantist/GLM-5.3-SLIM-GGUF": {
+      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+      "content_hash": "e244e905d405d519fbaa2a9dd811bd370c26dc68048b0b8a17e184ee9779d917",
+      "verified_at": "2026-11-08T22:19:49.087Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-08T22:19:49.087Z"
     }
   },
   "repos": {

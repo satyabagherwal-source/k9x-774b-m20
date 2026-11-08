@@ -865,8 +865,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceVersion": "hf-minimaxai-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "357a97dd8430e82f32c93415da06065f7e9e1788dbee2d782a07d4318d36c0ed",
-    "lastHarvestedAt": "2026-11-05T04:57:38.816Z",
+    "contentHash": "6d6e27b18dbee4c549bcf342d3386ea88e1d23cc17a9a3e25e0631f2239d1000",
+    "lastHarvestedAt": "2026-11-08T22:19:47.626Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3"
   },
   "hf-qwen-qwen3.8-flash-next": {
@@ -12208,5 +12208,15 @@
     "contentHash": "bdeac2a1b57655740c51790e2acb1aad60627db3fb39c8aa9dfbdb01481d6a6e",
     "lastHarvestedAt": "2026-11-08T14:04:56.238Z",
     "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf"
+  },
+  "hf-scantist-glm-5.3-slim-gguf": {
+    "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
+    "sourceVersion": "hf-scantist-glm-5.3-slim-gguf",
+    "license": "Open-Source",
+    "contentHash": "e244e905d405d519fbaa2a9dd811bd370c26dc68048b0b8a17e184ee9779d917",
+    "lastHarvestedAt": "2026-11-08T22:19:49.079Z",
+    "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf"
   }
 }

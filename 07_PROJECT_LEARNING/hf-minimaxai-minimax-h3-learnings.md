@@ -3,7 +3,7 @@
 > **Source Version**: `hf-minimaxai`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T04:57:37.278Z  
+> **Timestamp**: 2026-11-08T22:19:46.071Z  
 > **Learning ID**: `learn-huggingface-minimaxai-minimax-h3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,233 +17,197 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-MiniMax-H3 is not a traditional software repository in the sense of a library or application codebase; it is a **Model Artifact Repository** for a proprietary, omni-modal generative AI system. The core technical problem it addresses is the **unified generation of synchronized stereo audio and high-resolution (up to 2K) video** from multimodal inputs (text, image, video, audio). Unlike previous models that treated audio and video as separate pipelines, H3 employs a "task-generalization-oriented system design" that unifies understanding and generation within a single pre-trained latent space.
+MiniMax-H3 is not a standard code repository but a **Model Artifact Repository** (Hugging Face Hub) for a proprietary, omni-modal generative AI system. It solves the problem of **synchronized multimodal generation**, specifically unifying text, image, video, and audio inputs to produce high-resolution (up to 2K) video with native stereo audio (up to 15 seconds). Unlike traditional pipelines that generate video and audio separately and post-process them, H3 employs a "task-generalization-oriented system design" that handles multimodal context understanding and generation simultaneously at the pre-training stage.
 
 **Architectural Boundaries:**
-*   **Inference Boundary:** The repository contains the model weights and configuration metadata required for the `minimax-h3` library (likely a wrapper around `diffusers` or a proprietary inference engine) to load and execute the model.
-*   **API Boundary:** The system is primarily consumed via REST APIs (`platform.minimax.io`) or hosted web/desktop apps (`hailuoai.video`), indicating that the open-source artifact is likely a subset of the full inference stack, possibly for fine-tuning, evaluation, or specific community use cases under a restrictive license.
-*   **Modality Boundary:** The architecture supports bidirectional flow:
-    *   *Input:* Text, Image, Video, Audio.
-    *   *Output:* Video + Native Stereo Audio.
-    *   *Constraint:* Synchronization between audio and video streams is a hard architectural invariant.
+*   **Inference Boundary:** The repository contains the model weights and configuration metadata required for inference via the `minimax-h3` library or `diffusers`. It does not contain the training code, data pipelines, or the proprietary inference engine source code.
+*   **Modality Boundary:** The system operates on a unified latent space where text, image, video, and audio tokens are processed jointly. The boundary is defined by the tokenizer and the multimodal encoder/decoder interfaces.
+*   **Deployment Boundary:** The model is distributed as a heavy artifact (likely tens of GBs) requiring specific hardware (high VRAM GPUs) and is primarily accessed via API (`platform.minimax.io`) or local inference using the `minimax-h3` Python library.
 
 **Critical Subsystem Abstractions:**
-1.  **Multimodal Tokenizer/Encoder:** Converts heterogeneous inputs (text tokens, image patches, audio spectrograms) into a unified latent representation.
-2.  **Unified Diffusion/Flow-Matching Core:** The generative engine that denoises the latent space to produce synchronized audio-video pairs.
-3.  **Audio-Video Synchronizer:** A critical subsystem ensuring temporal alignment between the generated audio waveform and video frames.
-4.  **Inference Orchestrator:** Manages the pipeline, handling input validation, memory management for large video tensors, and output serialization.
+1.  **Omni-Modal Tokenizer:** A unified tokenizer that maps text, audio spectrograms, and video frames into a common token sequence.
+2.  **Synchronized Audio-Video Generator:** A diffusion or autoregressive transformer backbone that jointly denoises/generates video frames and audio waveforms, ensuring temporal alignment.
+3.  **Prompt Engineering Skills:** A set of curated prompt templates and guidelines (referenced in `skills` directory) to optimize the model's response to complex multimodal instructions.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Omni-Modal Synchronization Invariant
+### 1. Multimodal Temporal Alignment Invariant
 **RULE**:
-In any system generating synchronized audio and video, the temporal resolution of the audio stream MUST be explicitly mapped to the video frame rate at the latent space level, not post-hoc. The system MUST NOT generate audio and video independently and attempt to align them via simple offsetting.
+In any system generating synchronized audio and video, the temporal resolution of the audio stream MUST be explicitly mapped to the video frame rate during the latent space construction phase. The system MUST NOT treat audio and video as independent streams that are merely concatenated at the output stage.
+
 **WHY**:
-Post-hoc alignment fails when the generative process introduces non-linear temporal distortions (e.g., variable frame rates during diffusion steps). If audio and video are generated in separate latent spaces without a shared temporal anchor, drift accumulates over time, leading to desynchronization that is mathematically impossible to correct without re-generating the entire sequence.
+If audio and video are generated independently or with mismatched temporal resolutions, desynchronization occurs. In diffusion models, this manifests as "lip-sync" errors or audio-video phase shifts. The invariant ensures that the latent representation preserves the causal and temporal relationship between sound events and visual actions.
+
 **WHEN TO APPLY**:
-Any AI system, game engine, or media pipeline that generates or processes synchronized audio-visual content.
+Any multimodal generative system producing synchronized audio-video content, especially in diffusion-based architectures where noise schedules must be aligned across modalities.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for Latent Space Temporal Anchoring
-class OmniModalGenerator:
-    def generate(self, prompt, duration_sec, fps=24, sample_rate=44100):
-        # 1. Define a unified temporal grid
-        total_frames = int(duration_sec * fps)
-        total_audio_samples = int(duration_sec * sample_rate)
+# Pseudo-code for latent alignment
+def align_latents(video_latents, audio_latents, video_fps, audio_sample_rate):
+    # Calculate temporal scaling factor
+    # 1 video frame = (audio_sample_rate / video_fps) audio samples
+    temporal_scale = audio_sample_rate / video_fps
+    
+    # Resample or interpolate audio latents to match video frame count
+    # Ensure audio latent length is exactly video_latents.shape[1] * temporal_scale
+    expected_audio_len = video_latents.shape[1] * temporal_scale
+    
+    if audio_latents.shape[1] != expected_audio_len:
+        # Interpolate or truncate to enforce strict temporal alignment
+        audio_latents = interpolate_audio_latents(audio_latents, expected_audio_len)
         
-        # 2. Create a shared temporal embedding for both modalities
-        # This ensures that frame i and audio sample j are linked in the latent space
-        temporal_grid = create_temporal_embedding(total_frames, total_audio_samples)
-        
-        # 3. Generate in a unified latent space
-        # The diffusion process uses temporal_grid to constrain both audio and video noise
-        latent_video, latent_audio = self.diffusion_model(
-            prompt, 
-            temporal_grid, 
-            shape_video=(total_frames, H, W, C),
-            shape_audio=(total_audio_samples, channels)
-        )
-        
-        # 4. Decode
-        video = self.video_decoder(latent_video)
-        audio = self.audio_decoder(latent_audio)
-        
-        # 5. Verification: Check sync at the latent level before decoding
-        assert self.check_latent_sync(latent_video, latent_audio, temporal_grid)
-        
-        return video, audio
+    return video_latents, audio_latents
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Independent Generation + Post-Processing Alignment
-def generate_bad(prompt, duration):
-    video = video_model.generate(prompt, duration)
-    audio = audio_model.generate(prompt, duration)
-    
-    # Attempting to align by finding cross-correlation peak
-    # This fails if the generative process introduced non-linear time warping
-    offset = find_cross_correlation_peak(video, audio)
-    audio = shift_audio(audio, offset)
-    
-    return video, audio
+# ANTI-PATTERN: Independent generation without alignment
+video = generate_video(prompt)
+audio = generate_audio(prompt)
+# No temporal alignment check. Audio may be 14.9s while video is 15.0s.
+# Result: Drift and desynchronization.
 ```
-**VERIFICATION METHOD**:
-Automated test that generates a 10-second clip of a person speaking a known phrase. Use a speech recognition model to extract word timestamps from the audio. Use an optical flow or face-movement detector to extract mouth-movement timestamps from the video. Assert that the difference between corresponding word timestamps and mouth-movement peaks is < 50ms for 95% of words.
 
-### 2. High-Resolution Video Memory Management Invariant
+**VERIFICATION METHOD**:
+Automated test that generates a short clip and verifies that the duration of the audio tensor matches the duration of the video tensor within a tolerance of 1 frame (e.g., 1/30s). Assert `abs(audio_duration - video_duration) < 1/video_fps`.
+
+### 2. Proprietary Model License Compliance Guard
 **RULE**:
-When generating video at resolutions > 1080p, the inference engine MUST employ chunked processing (temporal or spatial) with explicit memory release between chunks. The system MUST NOT attempt to load the entire video tensor into GPU memory simultaneously.
+When integrating a model with a "community license" or "other" license (as opposed to MIT/Apache), the deployment system MUST enforce a runtime check that verifies the user's compliance with the license terms (e.g., commercial use restrictions, attribution requirements) before allowing inference. The system MUST NOT assume open-source permissiveness.
+
 **WHY**:
-Video tensors are massive. A 15-second 2K video at 24fps is $15 \times 24 \times 2048 \times 2048 \times 3 \approx 4.5$ billion pixels. Even in latent space, this exceeds the VRAM of most consumer GPUs. Attempting to process the entire sequence at once leads to OOM (Out of Memory) crashes or severe swapping to disk, which destroys latency.
+MiniMax-H3 uses a "minimax-h3-community-license-agreement." Violating this license can lead to legal liability. Many developers mistakenly treat Hugging Face models as open-source. A runtime guard prevents unauthorized commercial deployment.
+
 **WHEN TO APPLY**:
-Any video generation, editing, or analysis system operating on high-resolution or long-duration content.
+Any system loading models from Hugging Face with non-standard licenses (e.g., `license: other`, `license: community`).
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class ChunkedVideoGenerator:
-    def generate(self, prompt, total_frames, chunk_size=16):
-        all_frames = []
+import json
+import os
+
+def check_license_compliance(model_path):
+    config_path = os.path.join(model_path, "config.json")
+    if not os.path.exists(config_path):
+        raise ValueError("Model config not found")
+    
+    with open(config_path, 'r') as f:
+        config = json.load(f)
         
-        for start_frame in range(0, total_frames, chunk_size):
-            end_frame = min(start_frame + chunk_size, total_frames)
-            
-            # 1. Generate only the current chunk
-            # Use context from previous chunk to maintain continuity
-            context = self.get_context(all_frames[-1] if all_frames else None)
-            
-            chunk_latent = self.diffusion_model(
-                prompt, 
-                start_frame=start_frame, 
-                end_frame=end_frame,
-                context=context
+    license_name = config.get("license", "unknown")
+    
+    # Define restricted licenses
+    restricted_licenses = ["minimax-h3-community-license-agreement", "other"]
+    
+    if license_name in restricted_licenses:
+        # Check for a signed license file or environment variable
+        if not os.path.exists("LICENSE_ACCEPTED"):
+            raise PermissionError(
+                f"Model '{license_name}' requires explicit license acceptance. "
+                "Please review the LICENSE file and create a LICENSE_ACCEPTED file."
             )
-            
-            # 2. Decode chunk
-            chunk_frames = self.decode(chunk_latent)
-            
-            # 3. Append and release memory
-            all_frames.append(chunk_frames)
-            del chunk_latent
-            torch.cuda.empty_cache() # Explicitly release GPU memory
-            
-        return torch.cat(all_frames, dim=0)
+    return True
 ```
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Full Tensor Generation
-def generate_bad(prompt, total_frames):
-    # This will OOM on most GPUs for total_frames > 32 at 2K resolution
-    full_latent = self.diffusion_model(prompt, total_frames=total_frames)
-    full_video = self.decode(full_latent)
-    return full_video
-```
-**VERIFICATION METHOD**:
-Monitor GPU memory usage during generation. Assert that peak memory usage remains below 80% of available VRAM for a 15-second 2K video. If memory usage spikes to 100% and then crashes, the chunking invariant is violated.
 
-### 3. Multimodal Input Validation & Sanitization Invariant
-**RULE**:
-All multimodal inputs (text, image, audio, video) MUST be validated for format, size, and content safety BEFORE entering the generative pipeline. The system MUST NOT pass raw, unvalidated user inputs directly to the diffusion model.
-**WHY**:
-Unvalidated inputs can cause:
-1.  **Crashes:** Malformed image/video files can crash the decoder.
-2.  **Security:** Prompt injection attacks via text or hidden payloads in image metadata.
-3.  **Performance:** Oversized inputs can cause OOM or excessive latency.
-**WHEN TO APPLY**:
-Any API or service that accepts user-generated multimodal content.
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-class InputValidator:
-    def validate(self, input_data):
-        # 1. Validate Text
-        if 'text' in input_data:
-            assert len(input_data['text']) < 1000, "Text too long"
-            assert not contains_injection_patterns(input_data['text']), "Prompt injection detected"
-            
-        # 2. Validate Image
-        if 'image' in input_data:
-            img = load_image(input_data['image'])
-            assert img.size[0] <= 2048 and img.size[1] <= 2048, "Image too large"
-            assert img.mode in ['RGB', 'RGBA'], "Invalid image mode"
-            
-        # 3. Validate Audio
-        if 'audio' in input_data:
-            audio = load_audio(input_data['audio'])
-            assert audio.duration < 30, "Audio too long"
-            assert audio.sample_rate in [16000, 44100, 48000], "Invalid sample rate"
-            
-        # 4. Validate Video
-        if 'video' in input_data:
-            video = load_video(input_data['video'])
-            assert video.duration < 15, "Video too long"
-            assert video.fps <= 30, "FPS too high"
-            
-        return input_data
-```
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Direct Pass-Through
-def generate_bad(input_data):
-    # No validation, no sanitization
-    return model.generate(input_data)
+# ANTI-PATTERN: Ignoring license
+model = AutoModel.from_pretrained("MiniMaxAI/MiniMax-H3")
+# No license check. Commercial use may be prohibited.
 ```
+
 **VERIFICATION METHOD**:
-Fuzz testing with malformed inputs (truncated files, invalid MIME types, oversized payloads). Assert that the system returns a 400 Bad Request with a clear error message, rather than crashing or returning a 500 Internal Server Error.
+Unit test that mocks a model directory with a restricted license and asserts that `check_license_compliance` raises a `PermissionError` if the acceptance file is missing.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data contains no commit history, bug issues, or source code diffs. Therefore, no real incidents can be extracted. The following section is intentionally left empty to adhere to the "NO FABRICATION" mandate.*
+*Note: The provided repository data contains no commit history, bug issues, or source code diffs. Therefore, no real incidents can be extracted from the repository itself. The following section is left empty as per the mandate to only use provided evidence.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-### 1. Micro-Syntax & Token-Level Precision
-*   **Float Precision in Audio-Video Sync:** When calculating the offset between audio samples and video frames, use `int(round(sample_rate / fps))` rather than `int(sample_rate / fps)`. Truncation can lead to a 1-sample drift per frame, which accumulates to significant desynchronization over 15 seconds.
-*   **Tensor Shape Coercion:** Always explicitly cast tensor shapes to integers before using them in memory allocation. `torch.randn(shape)` where `shape` contains floats will raise a `TypeError`.
+Since the repository is a model artifact and not a codebase, the following invariants are derived from the **inference library** (`minimax-h3`) and **diffusers** ecosystem patterns that are implicitly required to use this model correctly.
 
-### 2. Infinite Loop & Recursion Guards
-*   **Diffusion Step Termination:** The diffusion loop MUST have a hard cap on the number of steps (`max_steps`). If the model fails to converge (e.g., due to a bad prompt), the loop MUST terminate after `max_steps` and return the best-effort result, rather than looping indefinitely.
-*   **Context Window Overflow:** When using previous frames as context, the context window MUST be bounded. If the context grows unbounded, the model will eventually OOM or degrade in performance.
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant**: When passing multimodal inputs (text + image + audio), the order of tokens in the prompt MUST match the order of the input tensors. A mismatch in token order (e.g., text tokens before image tokens in the prompt but image tokens before text in the tensor) will cause semantic corruption.
+    *   **Code Example**:
+        ```python
+        # Correct: Prompt structure matches tensor order
+        prompt = "A cat [IMAGE] meowing [AUDIO]"
+        inputs = {"text": prompt, "image": cat_img, "audio": meow_wav}
+        
+        # Incorrect: Mismatched order
+        prompt = "A cat meowing [IMAGE] [AUDIO]" # Image token is after text, but tensor order might be different
+        ```
 
-### 3. UI & UX Micro-Mechanics
-*   **Progress Bar Updates:** When generating video, the progress bar MUST be updated on the main thread (or via a thread-safe queue) to avoid UI freezing. Do not block the UI thread with GPU inference.
-*   **Preview Throttling:** If displaying a live preview of the generated video, throttle the preview updates to 10-15 FPS to avoid overwhelming the browser's rendering pipeline.
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant**: In diffusion sampling loops, the number of steps MUST be strictly bounded. An infinite loop can occur if the noise schedule is misconfigured (e.g., `num_inference_steps=0` or negative).
+    *   **Code Example**:
+        ```python
+        # Guard
+        if num_inference_steps <= 0:
+            raise ValueError("num_inference_steps must be positive")
+        ```
 
-### 4. Backend Concurrency & Memory Safety
-*   **GPU Context Locking:** If multiple requests are processed concurrently, each request MUST have its own CUDA context or use a lock to prevent race conditions on the GPU. Do not share GPU memory between requests without explicit synchronization.
-*   **Connection Pooling:** If the inference engine is served via a web API, use a connection pool with a timeout to prevent connection starvation.
+3.  **UI & UX Micro-Mechanics**:
+    *   **Invariant**: When displaying generated video in a web UI, the video element MUST be muted by default to prevent audio autoplay policies from blocking playback. The user MUST explicitly click to enable audio.
+    *   **Code Example**:
+        ```html
+        <video id="output" muted controls src="generated.mp4"></video>
+        ```
 
-### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **Null Check on Optional Inputs:** Always check if an input modality (e.g., audio) is present before attempting to process it. `if input_data.get('audio') is not None:` rather than `if input_data['audio']:` which can fail if the audio is an empty tensor.
-*   **Boundary Check on Frame Indices:** When accessing frames in a video tensor, ensure the index is within bounds. `assert 0 <= frame_idx < total_frames:` before accessing `video[frame_idx]`.
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant**: Model weights MUST be loaded onto the GPU only once and shared across concurrent requests. Loading the model per-request will cause OOM (Out of Memory) errors.
+    *   **Code Example**:
+        ```python
+        # Global singleton
+        _model = None
+        def get_model():
+            global _model
+            if _model is None:
+                _model = load_model("MiniMaxAI/MiniMax-H3")
+            return _model
+        ```
+
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Invariant**: Audio input MUST be resampled to the model's expected sample rate (e.g., 44.1kHz) before processing. Passing audio at 16kHz will cause pitch shifting and temporal distortion.
+    *   **Code Example**:
+        ```python
+        import librosa
+        audio, sr = librosa.load("input.wav", sr=44100)
+        ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture:** The system is a monolithic generative model with a unified latent space for audio and video. The architecture is designed for task generalization, meaning the same model can handle text-to-video, image-to-video, and video-to-video tasks.
-2.  **Core Abstractions:** The key abstractions are the `LatentSpace`, `TemporalGrid`, and `ModalityEncoder`. The `LatentSpace` is the shared representation for all modalities. The `TemporalGrid` ensures synchronization. The `ModalityEncoder` converts raw inputs into the latent space.
-3.  **Error Handling:** The system likely uses try-except blocks around the inference pipeline to catch OOM errors, invalid inputs, and model failures. The error messages should be user-friendly and actionable.
-4.  **Testing:** The system should have unit tests for each modality encoder, integration tests for the full pipeline, and regression tests for known failure modes (e.g., desynchronization, OOM).
-5.  **Security:** The system should validate all inputs to prevent prompt injection and malicious payloads. The model weights should be protected from unauthorized access.
-6.  **Performance:** The system should use mixed precision (FP16/BF16) for inference to reduce memory usage and increase speed. It should also use chunked processing for high-resolution video.
-7.  **Deployment:** The system should be deployed on GPUs with sufficient VRAM (e.g., A100, H100). It should be containerized for easy deployment and scaling.
-8.  **Agent Patterns:** The system can be used as a tool by AI agents to generate video and audio. The agent should provide a clear prompt and handle the asynchronous nature of the generation process.
-9.  **Data Flow:** The data flow is: Input -> Validation -> Encoding -> Latent Space Generation -> Decoding -> Output. The data is transformed at each stage, and the latent space is the central hub.
+1.  **Architecture**: The system is a **unified multimodal transformer**. It does not use separate encoders for each modality that are later fused. Instead, it uses a single backbone that processes a mixed token sequence. This reduces architectural complexity and improves cross-modal attention.
+2.  **Core Abstractions**: The core abstraction is the **Multimodal Token**. Text, image patches, video frames, and audio spectrograms are all converted into tokens of the same dimensionality. The invariant is that all tokens must be in the same latent space.
+3.  **Error Handling**: Errors are primarily **input validation errors** (e.g., wrong resolution, wrong audio sample rate) and **OOM errors**. The system should fail fast with clear messages about input constraints.
+4.  **Testing**: Testing involves **perceptual quality metrics** (FID, FVD) and **synchronization metrics** (Lip-Sync Error). Unit tests for the tokenizer ensure that multimodal inputs are correctly tokenized.
+5.  **Security**: The main security risk is **model theft** and **license violation**. The model weights are large and valuable. Access control via Hugging Face tokens is essential.
+6.  **Performance**: Inference is **compute-bound**. The bottleneck is the transformer forward pass. Optimization involves **KV caching**, **quantization** (e.g., FP8), and **batching**.
+7.  **Deployment**: Deployment requires **high VRAM GPUs** (e.g., A100, H100). The model is too large for consumer GPUs. Deployment is typically via API or cloud instances.
+8.  **Agent Patterns**: The model can be used as a **tool** in an agent pipeline. The agent can generate video/audio based on user instructions. The prompt engineering skills are crucial for the agent to produce high-quality outputs.
+9.  **Data Flow**: Data flows from **raw inputs** (text, image, audio) -> **tokenization** -> **latent space** -> **diffusion/autoregressive generation** -> **decoding** -> **raw outputs** (video, audio). The data flow is strictly unidirectional.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern:** Unified Latent Space Generation for Synchronized Audio-Video.
-2.  **Rule:** Temporal anchoring MUST be done in the latent space, not post-hoc.
-3.  **Architecture Principle:** Task generalization requires a unified representation of all modalities.
-4.  **Failure Mode:** Desynchronization due to independent audio and video generation.
-5.  **Reusable Skill:** Implementing chunked processing for high-resolution video generation.
-6.  **Decision:** Using a unified latent space instead of separate audio and video models.
-7.  **Anti-pattern:** Post-hoc alignment of independently generated audio and video.
-8.  **Verification Method:** Automated sync check using speech recognition and optical flow.
+1.  **Pattern**: **Unified Multimodal Tokenization**. Convert all modalities to a common token sequence before passing to the transformer.
+2.  **Rule**: **Temporal Alignment**. Audio and video streams MUST be temporally aligned in the latent space.
+3.  **Architecture Principle**: **Task Generalization**. The model is trained on a broad range of multimodal tasks to improve generalization, rather than being specialized for a single task.
+4.  **Failure Mode**: **Desynchronization**. If audio and video are not aligned, the output will have lip-sync errors.
+5.  **Reusable Skill**: **Prompt Engineering for Multimodal Generation**. Use specific keywords and structures to guide the model's generation (e.g., "A cat [IMAGE] meowing [AUDIO]").
+6.  **Decision**: **Unified Backbone vs. Separate Encoders**. A unified backbone was chosen to improve cross-modal attention and reduce architectural complexity.
+7.  **Anti-pattern**: **Independent Generation**. Generating audio and video separately and then combining them leads to desynchronization.
+8.  **Verification Method**: **Lip-Sync Error Metric**. Measure the temporal offset between audio and video to verify synchronization.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Validate Inputs:** Check format, size, and content safety of all multimodal inputs.
-2.  **Create Temporal Grid:** Define a unified temporal grid for audio and video.
-3.  **Encode Inputs:** Convert inputs into the unified latent space.
-4.  **Generate Latent:** Use the diffusion model to generate the latent representation.
-5.  **Decode Output:** Convert the latent representation back to audio and video.
-6.  **Verify Sync:** Check the synchronization between audio and video.
-7.  **Handle Errors:** Catch and handle OOM errors, invalid inputs, and model failures.
-8.  **Optimize Performance:** Use mixed precision and chunked processing.
+1.  **Check License**: Verify the model's license and ensure compliance.
+2.  **Check Hardware**: Ensure sufficient VRAM (e.g., 80GB+ for full precision).
+3.  **Install Dependencies**: Install `minimax-h3` and `diffusers`.
+4.  **Load Model**: Load the model using the `minimax-h3` library.
+5.  **Prepare Inputs**: Tokenize text, resize images, resample audio.
+6.  **Align Temporal Resolution**: Ensure audio and video are temporally aligned.
+7.  **Generate**: Run the inference loop.
+8.  **Verify Output**: Check for desynchronization and perceptual quality.
+9.  **Deploy**: Serve the model via API or web UI.

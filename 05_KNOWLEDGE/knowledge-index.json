@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T22:12:53.152Z",
-  "total_verified_learnings": 1239,
+  "last_updated": "2026-11-08T22:19:48.829Z",
+  "total_verified_learnings": 1240,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -28982,10 +28982,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "357a97dd8430e82f32c93415da06065f7e9e1788dbee2d782a07d4318d36c0ed",
+      "content_hash": "6d6e27b18dbee4c549bcf342d3386ea88e1d23cc17a9a3e25e0631f2239d1000",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Multimodal Temporal Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Proprietary Model License Compliance Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1586,
           "title": "Rational-Grid Multi-Modal Temporal Alignment Invariant",
@@ -29030,7 +29040,7 @@
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu"
       ],
-      "verified_at": "2026-11-05T04:57:38.721Z",
+      "verified_at": "2026-11-08T22:19:47.462Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -187984,6 +187994,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-08T14:04:56.141Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-scantist-glm-5-3-slim-gguf": {
+      "learning_id": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Scantist/GLM-5.3-SLIM-GGUF",
+      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+      "slug": "hf-scantist-glm-5.3-slim-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
+      "source_version": "hf-scantist-glm-5.3-slim-gguf",
+      "content_hash": "e244e905d405d519fbaa2a9dd811bd370c26dc68048b0b8a17e184ee9779d917",
+      "dossier_path": "07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "GGUF MoE Expert Pruning via Byte-Range Contiguity",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MTP Layer Removal for Speculative Decoding Compatibility",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-08T22:19:48.808Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

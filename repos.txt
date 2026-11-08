@@ -4954,3 +4954,7 @@ https://huggingface.co/audio-cpp/audio.cpp-gguf
 # --- Automatically Discovered by AI Scout Engine [2026-11-08T13:59:37.597Z] ---
 # [HUGGINGFACE-AI-MODELS] mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF (3710 score) - Verified Hugging Face Model: mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-
 https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-08T22:19:31.431Z] ---
+# [HUGGINGFACE-AI-MODELS] Scantist/GLM-5.3-SLIM-GGUF (13130 score) - Verified Hugging Face Model: Scantist/GLM-5.3-SLIM-GGUF (1113 likes, 4938 downlo
+https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF

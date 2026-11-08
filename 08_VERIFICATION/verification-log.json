@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-1WDP",
-    "timestamp": "2026-11-06T20:45:38.221Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "f4cfd87c3212f4d9f924b3e839c8de45fdea9ba20bde04bc8908cb659570c3b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-1XWF",
-    "timestamp": "2026-11-06T20:45:40.191Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "038b235d19f7df2efa62463fcc86bd33dff009739117b380b5b75709f718acba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-AA6M",
     "timestamp": "2026-11-06T20:52:09.358Z",
     "repository": "pimalaya/himalaya",
@@ -7492,6 +7462,36 @@
     "contentHash": "599e77dbebe3bdf68edd8b915ee57ca5dc5cb51d2377543972a2c862e9bbb7d4",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-AOTI",
+    "timestamp": "2026-11-08T22:19:47.622Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3",
+    "contentHash": "6d6e27b18dbee4c549bcf342d3386ea88e1d23cc17a9a3e25e0631f2239d1000",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-APTN",
+    "timestamp": "2026-11-08T22:19:48.923Z",
+    "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+    "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+    "contentHash": "e244e905d405d519fbaa2a9dd811bd370c26dc68048b0b8a17e184ee9779d917",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

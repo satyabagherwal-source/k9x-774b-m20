@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T22:12:55.845Z",
-    "lastVerified": "2026-11-08T22:12:55.845Z",
+    "lastChecked": "2026-11-08T22:19:51.904Z",
+    "lastVerified": "2026-11-08T22:19:51.904Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T21:33:33.302Z",
-    "lastVerified": "2026-11-08T21:33:33.302Z",
+    "lastChecked": "2026-11-08T22:19:51.894Z",
+    "lastVerified": "2026-11-08T22:19:51.894Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1631,9 +1631,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-08T17:49:25.096Z",
+    "lastChecked": "2026-11-08T22:19:46.991Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-08T17:49:25.096Z"
+    "lastVerified": "2026-11-08T22:19:46.991Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4586,9 +4586,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-11-08T02:02:57.082Z",
+    "lastChecked": "2026-11-08T22:19:44.366Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-11-08T02:02:57.082Z"
+    "lastVerified": "2026-11-08T22:19:44.366Z"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -4751,13 +4751,13 @@
     "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T04:57:28.347Z",
-    "lastVerified": "2026-11-05T04:57:28.347Z",
+    "lastChecked": "2026-11-08T22:19:39.709Z",
+    "lastVerified": "2026-11-08T22:19:39.709Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "357a97dd8430e82f32c93415da06065f7e9e1788dbee2d782a07d4318d36c0ed",
-    "promotedRulesCount": 3,
+    "contentHash": "6d6e27b18dbee4c549bcf342d3386ea88e1d23cc17a9a3e25e0631f2239d1000",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -7832,12 +7832,12 @@
     "lastVerified": "2026-11-07T21:36:24.297Z"
   },
   "libsql-libsql": {
-    "name": "tursodatabase/libsql",
+    "name": "libsql",
     "officialUrl": "https://github.com/libsql/libsql",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-08T01:10:02.940Z",
-    "lastVerified": "2026-11-08T01:10:02.940Z",
+    "lastChecked": "2026-11-08T22:19:49.428Z",
+    "lastVerified": "2026-11-08T22:19:49.428Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-libsql",
@@ -7846,7 +7846,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a1d031cb"
   },
   "zvec-ai-zvec-grep": {
     "name": "zvec-grep",
@@ -11518,9 +11519,9 @@
   "blackjacx-wwdc": {
     "name": "WWDC",
     "officialUrl": "https://github.com/Blackjacx/WWDC",
-    "lastChecked": "2026-11-05T15:30:05.981Z",
+    "lastChecked": "2026-11-08T22:19:41.873Z",
     "revisionIdentifier": "4973be7a",
-    "lastVerified": "2026-11-05T15:30:05.981Z"
+    "lastVerified": "2026-11-08T22:19:41.873Z"
   },
   "axios-axios": {
     "name": "axios/axios",
@@ -14463,6 +14464,23 @@
     "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
     "contentHash": "bdeac2a1b57655740c51790e2acb1aad60627db3fb39c8aa9dfbdb01481d6a6e",
     "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-scantist-glm-5.3-slim-gguf": {
+    "name": "Scantist/GLM-5.3-SLIM-GGUF",
+    "officialUrl": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-08T22:19:37.256Z",
+    "lastVerified": "2026-11-08T22:19:37.256Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+    "contentHash": "e244e905d405d519fbaa2a9dd811bd370c26dc68048b0b8a17e184ee9779d917",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
