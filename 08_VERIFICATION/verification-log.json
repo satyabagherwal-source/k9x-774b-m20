@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-02XI",
-    "timestamp": "2026-11-06T22:36:11.862Z",
-    "repository": "saltstack/salt",
-    "learningId": "learn-github-saltstack-salt",
-    "contentHash": "f209865572d4a1ea29b29526825d3190668fbe41e51d1580f28ce45979e14535",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-07N4",
-    "timestamp": "2026-11-06T22:36:17.968Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "da79e20241f7dde513eb8dddaa5bda71c1febd349bcd307fe585ddd5f7d52822",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-PMC5",
-    "timestamp": "2026-11-06T22:56:03.413Z",
-    "repository": "i18next/react-i18next",
-    "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "990f328c5a265d522b291e447a38a63d95dda981ac6559f116d92f83c08d1ec5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-PNTT",
     "timestamp": "2026-11-06T22:56:05.345Z",
     "repository": "aws/aws-cdk",
@@ -7490,6 +7445,51 @@
     "repository": "run-llama/llama_index",
     "learningId": "learn-github-run-llama-llama_index",
     "contentHash": "41404ce11f8f936806ade39ca792045e88e5139133ffca3125545a10e71a4dba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-JG98",
+    "timestamp": "2026-11-08T23:50:35.276Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "891a29f5810f46253760fb9d1c2415ad1d4a2586102468f460e9b896d5c278f9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-JLNW",
+    "timestamp": "2026-11-08T23:50:42.284Z",
+    "repository": "iPlug2/iPlug2",
+    "learningId": "learn-github-iplug2-iplug2",
+    "contentHash": "a58f52dc9761845795655a51de51231e65cd98075b77c2092f1ba0d3f359ff42",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-JS41",
+    "timestamp": "2026-11-08T23:50:50.641Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "cb90c093965bf3f0c12c489120c988c46e7e6455f45731dbeb37c4f2628932b8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

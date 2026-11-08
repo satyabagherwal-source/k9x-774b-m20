@@ -8436,3 +8436,6 @@
 | `CYCLE-20261108-APZM` | `2026-11-08T23:43:47.986Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`e6383373...`) |
 | `CYCLE-20261108-AQ36` | `2026-11-08T23:43:48.114Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b3c2809d...`) |
 | `CYCLE-20261108-ARVZ` | `2026-11-08T23:43:50.447Z` | `run-llama/llama_index` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`41404ce1...`) |
+| `CYCLE-20261108-JG98` | `2026-11-08T23:50:35.276Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`891a29f5...`) |
+| `CYCLE-20261108-JLNW` | `2026-11-08T23:50:42.284Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md` | Yes (`a58f52dc...`) |
+| `CYCLE-20261108-JS41` | `2026-11-08T23:50:50.641Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cb90c093...`) |

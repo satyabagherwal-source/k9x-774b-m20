@@ -8445,3 +8445,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-08T23:43:47.990Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `0d7daaab` | Multi-dimensional audit evidence | 2026-11-08T23:43:48.118Z |
 | `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `fe107aab` | Multi-dimensional audit evidence | 2026-11-08T23:43:50.451Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-08T23:50:35.280Z |
+| `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `b320ce3b` | Multi-dimensional audit evidence | 2026-11-08T23:50:42.287Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `686b129c` | Multi-dimensional audit evidence | 2026-11-08T23:50:50.645Z |

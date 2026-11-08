@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "da061060bb034e2a1ca6b5ea82178ef5639c84cd10884de1e3b5f0e126f5f0e3",
-    "lastHarvestedAt": "2026-11-05T06:14:56.692Z",
+    "contentHash": "891a29f5810f46253760fb9d1c2415ad1d4a2586102468f460e9b896d5c278f9",
+    "lastHarvestedAt": "2026-11-08T23:50:35.280Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "eba8be50",
+    "sourceVersion": "686b129c",
     "license": "Apache-2.0",
-    "contentHash": "7cfe6fe1223979ef7dd28abf61628c09cb0843f94af2c6048799bbc5fa8b7360",
-    "lastHarvestedAt": "2026-11-08T02:40:49.250Z",
+    "contentHash": "cb90c093965bf3f0c12c489120c988c46e7e6455f45731dbeb37c4f2628932b8",
+    "lastHarvestedAt": "2026-11-08T23:50:50.645Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -9683,10 +9683,10 @@
     "repository": "iPlug2/iPlug2",
     "platform": "github",
     "sourceUrl": "https://github.com/iPlug2/iPlug2",
-    "sourceVersion": "d82b2e99",
+    "sourceVersion": "b320ce3b",
     "license": "NOASSERTION",
-    "contentHash": "b0f81c97852e9a337f03701637889780e6dba751aef1e8ca378aec1d280da350",
-    "lastHarvestedAt": "2026-10-26T14:23:21.252Z",
+    "contentHash": "a58f52dc9761845795655a51de51231e65cd98075b77c2092f1ba0d3f359ff42",
+    "lastHarvestedAt": "2026-11-08T23:50:42.287Z",
     "learningId": "learn-github-iplug2-iplug2"
   },
   "digitalbazaar-jsonld.js": {

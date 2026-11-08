@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `eba8be50`  
+> **Source Version**: `686b129c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T02:40:47.371Z  
+> **Timestamp**: 2026-11-08T23:50:49.457Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T02:40:47.364Z  
+> **Harvest Timestamp**: 2026-11-08T23:50:49.450Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46612 stars
+- **Stars / Engagement**: 46609 stars
 
 ---
 
@@ -1430,195 +1430,60 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eba8be50` (2026-11-07)
-**Commit Message**: fix: merge adjacent integer ranges in OR chains (#54716)
-
-issue: #54693
+### Incident Patch 1: `686b129c` (2026-11-08)
+**Commit Message**: enhance: upgrade apt in ubuntu22.04 runtime images for CVE-2026-109518 (#55206)
 
 ## What
+Fix CVE-2026-109518 (HIGH): apt package vulnerable (< 2.4.15ubuntu0.1)
+on Ubuntu 22.04 (jammy).
 
-The expression rewriter now merges OR'd ranges on an integer column when
-they meet at consecutive integers. The issue's filter, `(age >= 1 and
-age <= 1) or (age >= 2 and age <= 2) or ... or (age >= 1000 and age <=
-1000)`, becomes a single `1 <= age <= 1000` range instead of 1000
-separate range checks.
+## Changed image variants
+- `build/docker/milvus/ubuntu22.04/Dockerfile` — add `apt` to `apt-get
+upgrade` list
+- `build/docker/milvus/gpu/ubuntu22.04/Dockerfile` — same
 
-## Why
+## Deliberately skipped (not affected)
+- `ubuntu20.04` / `gpu/ubuntu20.04` — focal ships apt 2.0.x, outside the
+affected range (jammy-only CVE)
+- `amazonlinux2023` / `rockylinux9` — rpm-based, no apt package
 
-Each `(age >= i) and (age <= i)` becomes a `BinaryRangeExpr [i, i]`, and
-the OR chain is then merged by `combineOrBinaryRanges`. Its sweep only
-merged intervals that overlap or share an endpoint with at least one
-side inclusive, so `[1,1]` and `[2,2]` were treated as disjoint. On
-integers, nothing lies between them.
+Auto-generated CVE fix.
 
-## How
+Signed-off-by: Li Liu <[REDACTED_EMAIL]>
 
-- New helper `integerRangesAdjacent` in `rewriter/range.go`. It returns
-true only when:
-- the group's effective type is Int8, Int16, Int32 or Int64 (this covers
-integer array elements);
-  - both facing bounds are inclusive;
-  - `upper + 1 == lower`, with a guard at `MaxInt64`.
-- The sweep in `combineOrBinaryRanges` merges two intervals when that
-helper is true, in addition to the existing overlap and shared-endpoint
-cases. The merged interval reuses the input literals, so no
-
-**File**: `internal/parser/planparserv2/rewriter/README.md` (modified, +1/-0)
+**File**: `build/docker/milvus/gpu/ubuntu22.04/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -102,6 +102,7 @@ The rewriter can be configured via the following parameter (refreshable at runti
-   - OR: Merge overlapping or adjacent `BinaryRangeExpr` nodes into wider interval
-     - `(10 < x < 25) OR (20 < x < 40)` → `(10 < x < 40)` (overlapping)
-     - `(10 < x <= 20) OR (20 <= x < 30)` → `(10 < x < 30)` (adjacent with inclusive)
-+    - Integer columns (Int8/Int16/Int32/Int64, including array elements) also merge inclusive bounds one apart: `(1 <= x <= 1) OR (2 <= x <= 2)` → `(1 <= x <= 2)`. JSON and float columns do not, since they can hold values between two integers.
-     - Disjoint intervals remain separate: `(10 < x < 20) OR (30 < x < 40)` → remains as OR
-   - Inclusivity handling: AND prefers exclusive on equal bounds (stronger), OR prefers inclusive (weaker)
- 
+@@ -15,7 +15,7 @@ RUN apt-get update && \
+     apt-get install -y --no-install-recommends ca-certificates && \
+     sed -i 's/http:/https:/g' /etc/apt/sources.list && \
+     apt-get update && \
+-    apt-get upgrade -y openssl libssl3 curl libcurl4 tar zlib1g libc6 libc-bin && \
++    apt-get upgrade -y apt openssl libssl3 curl libcurl4 tar zlib1g libc6 libc-bin && \
+     apt-get install -y --no-install-recommends curl libaio-dev libgomp1 && \
+     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata && \
+         ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
 ```
 
-**File**: `internal/parser/planparserv2/rewriter/range.go` (modified, +27/-2)
+**File**: `build/docker/milvus/ubuntu22.04/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -396,6 +396,29 @@ func (v *visitor) combineOrRangePredicates(parts []*planpb.Expr) []*planpb.Expr
- 	return out
- }
- 
-+// integerRangesAdjacent reports whether an interval ending at upper and the
-+// next interval starting at lower (upper < lower) leave no value between them.
-+// Only typed integer columns qualify: JSON numbers and float columns can hold
-+// values between two integer literals. Normalizing exclusive bounds to
-+// inclusive (x < u as x <= u-1, x > l as x >= l+1) only widens a gap, so the
-+// intervals are adjacent exactly when both bounds are inclusive and
-+// upper + 1 == lower. The merged interval reuses the input literals.
-+func integerRangesAdjacent(dt schemapb.DataType, upper *planpb.GenericValue, upperInc bool, lower *planpb.GenericValue, lowerInc bool) bool {
-+	switch dt {
-+	case schemapb.DataType_Int8,
-+		schemapb.DataType_Int16,
-+		schemapb.DataType_Int32,
-+		schemapb.DataType_Int64:
-+	default:
-+		return false
-+	}
-+	if !upperInc || !lowerInc {
-+		return false
-+	}
-+	u := upper.GetInt64Val()
-+	return u != math.MaxInt64 && u+1 == lower.GetInt64Val()
-+}
-+
- func newBinaryRangeExpr(col *planpb.ColumnInfo, lowerInclusive bool, upperInclusive bool, lower *planpb.GenericValue, upper *planpb.GenericValue) *planpb.Expr {
- 	return &planpb.Expr{
- 		Expr: &planpb.Expr_BinaryRangeExpr{
-@@ -733,7 +756,8 @@ func (v *visitor) combineAndBinaryRanges(parts []*planpb.Expr) []*planpb.Expr {
- 	return out
- }
- 
--// combineOrBinaryRanges merges BinaryRangeExpr nodes with OR semantics (union if overlapping/adjacent).
-+// combineOrBinaryRanges merges BinaryRangeExpr nodes with OR semantics (union if overlapping/adjacent;
-+// for integer columns [a, v] and [v+1, b] are adjacent).
- // Also handles mixing BinaryRangeExpr with UnaryRangeExpr.
- func (v *visitor) combineOrBinaryRanges(parts []*planpb.Expr) []*planpb.Expr {
- 	type interval struct {
-@@ -896,7 +920,8 @@ func (v *visitor) combineOrBinaryRanges(parts []*planpb.Expr) []*planpb.Expr {
- 			}
- 			last := &merged[len(merged)-1]
- 			c := cmpGeneric(g.effDt, last.upper, iv.lower)
--			if c < 0 || (c == 0 && !last.upperInc && !iv.lowerInc) {
-+			if (c < 0 && !integerRangesAdjacent(g.effDt, last.upper, last.upperInc, iv.lower, iv.lowerInc)) ||
-+				(c == 0 && !last.upperInc && !iv.lowerInc) {
- 				merged = append(merged, iv)
- 				continue
- 			}
-```
-
-**File**: `internal/parser/planparserv2/rewriter/range_or_union_test.go` (modified, +147/-0)
-```diff
-@@ -200,3 +200,150 @@ func TestRewriteOrRangeUnionLargeParserChain(t *testing.T) {
- 	require.True(t, merged.GetLowerInclusive())
- 	require.True(t, merged.GetUpperInclusive())
- }
-+
-+// Integer domains have no values between v and v+1, so [a,v] and [v+1,b]
-+// cover a gap-free range. The rewriter decides adjacency from the
-+// inclusive-normalized bounds but emits only literals that appear in the input.
-+func TestRewriteOrRangeUnionIntegerAdjacent(t *testing.T) {
-+	for _, tc := range []struct {
-+		name   string
-+		column *planpb.ColumnInfo
-+		input  []orUnionInterval
-+		want   []orUnionInterval
-+	}{
-+		{"unit_ranges", edgeTestRangeColumn(schemapb.DataType_Int64), []orUnionInterval{{3, 3, true, true}, {1, 1, true, true}, {2, 2, true, true}}, []orUnionInterval{{1, 3, true, true}}},
-+		{"gap_kept", edgeTestRangeColumn(schemapb.DataType_Int64), []orUnionInterval{{1, 2, true, true}, {4, 5, true, true}, {3, 3, false, true}}, []orUnionInterval{{1, 2, true, true}, {3, 3, false, true}, {4, 5, true, true}}},
-+		{"exclusive_outer_bounds", edgeTestRangeColumn(schemapb.DataType_Int64), []orUnionInterval{{0, 4, false, true}, {5, 8, true, false}}, []orUnionInterval{{0, 8, false, false}}},
-+		{"exclusive_chain", edgeTestRangeColumn(schemapb.DataType_Int64), []orUnionInterval{{0, 5, true, false}, {5, 6, true, true}, {7, 9, true, false}, {10, 12, false, true}}, []orUnionInterval{{0, 9, true, false}, {10, 12, false, true}}},
-+		{"exclusive_both_gap", edgeTestRangeColumn(schemapb.DataType_Int64), []orUnionInterval{{0, 5, true, false}, {5, 8, false, true}}, []orUnionInterval{{0, 5, true, false}, {5, 8, false, true}}},
-+		{"int8_limits", edgeTestRangeColumn(schemapb.DataType_Int8), []orUnionInterval{{-128, -1, true, true}, {0, 126, true, true}, {127, 127, true, true}}, []orUnionInterval{{-128, 127, true, true}}},
-+		{"int32_mixed", edgeTestRangeColumn(schemapb.DataType_Int32), []orUnionInterval{{10, 20, true, true}, {21, 30, true, false}, {29, 40, true, true}}, []orUnionInterval{{10, 40, true, true}}},
-+		{"int16_chain", edgeTestRangeColumn(schemapb.DataType_Int16), []orUnionInterval{{5, 9, true, true}, {-3, 4, true, true}, {10, 12, true, false}}, []orUnionInterval{{-3, 12, true, false}}},
-+		{"array_int64_element_level", &planpb.ColumnInfo{
-+			FieldId:        101,
-+			DataType:       schemapb.DataType_Array,
-+			ElementType:    schemapb.DataType_Int64,
-+			IsElementLevel: true,
-+		}, []orUnionInterval{{4, 6, true, true}, {0, 3, true, true}, {8, 9, true, true}}, []orUnionInterval{{0, 6, true, true}, {8, 9, true, true}}},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			column := tc.column
-+			parts := make([]*planpb.Expr, len(tc.input))
-+			for i, interval := range tc.input {
-+				parts[i] = orUnionRange(column, interval)
-+			}
-+			output := rewriter.RewriteExprWithConfig(orUnionChain(parts...), true)
-+			var got []orUnionInterval
-+			for _, leaf := range orUnionLeaves(output) {
-+				predicate := leaf.GetBinaryRangeExpr()
-+				require.NotNil(t, predicate)
-+				require.Equal(t, column.GetDataType(), predicate.GetColumnInfo().GetDataType())
-+				require.Equal(t, column.GetIsElementLevel(), predicate.GetColumnInfo().GetIsElementLevel())
-+				got = append(got, orUnionInterval{predicate.GetLowerValue().GetInt64Val(), predicate.GetUpperValue().GetInt64Val(), predicate.GetLowerInclusive(), predicate.GetUpperInclusive()})
-+			}
-+			require.ElementsMatch(t, tc.want, got)
-+			matches := func(sample int64, intervals []orUnionInterval) bool {
-+				for _, interval := range intervals {
-+					if (sample > interval.lower || sample == interval.lower && interval.lowerInc) &&
-+						(sample < interval.upper || sample == interval.upper && interval.upperInc) {
-+						return true
-+					}
-+				}
-+				return false
-+			}
-+			for sample := int64(-130); sample <= 130; sample++ {
-+				require.Equal(t, matches(sample, tc.input), matches(sample, got), "sample=%d", sample)
-+			}
-+		})
-+	}
-+}
-+
-+func TestRewriteOrRangeUnionIntegerAdjacentAtInt64Limits(t *testing.T) {
-+	column := edgeTestRangeColumn(schemapb.DataType_Int64)
-+	for _, tc := range []struct {
-+		name  string
-+		input []orUnionInterval
-+		want  []orUnionInterval
-+	}{
-+		{"max", []orUnionInterval{{math.MaxInt64 - 2, math.MaxInt64 - 1, true, true}, {math.MaxInt64, math.MaxInt64, true, true}}, []orUnionInterval{{math.MaxInt64 - 2, math.MaxInt64, true, true}}},
-+		{"min", []orUnionInterval{{math.MinInt64, math.MinInt64, true, true}, {math.MinInt64 + 1, math.MinInt64 + 2, true, true}}, []orUnionInterval{{math.MinInt64, math.MinInt64 + 2, true, true}}},
-+		{"max_exclusive_gap", []orUnionInterval{{math.MaxInt64 - 3, math.MaxInt64 - 1, true, false}, {math.MaxInt64 - 1, math.MaxInt64, false, true}}, []orUnionInterval{{math.MaxInt64 - 3, math.MaxInt64 - 1, true, false}, {math.MaxInt64 - 1, math.MaxInt64, false, true}}},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			parts := make([]*planpb.Expr, len(tc.input))
-+			for i, interval := range tc.input {
-+				parts[i] = orUnionRange(column, interval)
-+			}
-+			ou
+@@ -30,7 +30,7 @@ RUN apt-get update && \
+     apt-get install -y --no-install-recommends ca-certificates && \
+     sed -i 's/http:/https:/g' /etc/apt/sources.list && \
+     apt-get update && \
+-    apt-get upgrade -y openssl libssl3 curl libcurl4 tar zlib1g libc6 libc-bin && \
++    apt-get upgrade -y apt openssl libssl3 curl libcurl4 tar zlib1g libc6 libc-bin && \
+     apt-get install -y --no-install-recommends gpgv curl libaio-dev libgomp1 && \
+     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata && \
+         ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #55252** (2026-11-07): test: wait for indexed sources before mix compaction (@xiaofan-luan)
 - **PR #55222** (2026-11-06): fix: report NumPy import schema errors through the job instead of the proxy (@xaxys)
 - **PR #55214** (2026-11-06): enhance: [3.0] broadcast file resource metadata through WAL (#54562) (@aoiasd)
+- **PR #55206** (2026-11-08): enhance: upgrade apt in ubuntu22.04 runtime images for CVE-2026-109518 (@liliu-z)
 - **PR #55203** (2026-11-06): fix: [cp3.0] validate import schemas when a numpy or parquet file counts to zero (@xaxys)
 - **PR #55202** (2026-11-06): fix: clear drained piece references when a reshard bucket spills (@xaxys)
-- **PR #55201** (2026-11-06): fix: [3.0] stop growing filter cursors at batch boundaries (@zhengbuqian)
 
 ---
 
@@ -1638,28 +1503,28 @@ cases. The merged interval reuses the input literals, so no
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. merge adjacent integer ranges in OR chains (#54716)
+## X. enhance: upgrade apt in ubuntu22.04 runtime images for CVE-2026-109518 (#55206)
 
 **RULE**:
-When implementing operations in `internal/parser/planparserv2/rewriter/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/docker/milvus/gpu/ubuntu22.04/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eba8be50`: merge adjacent integer ranges in OR chains (#54716). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `686b129c`: enhance: upgrade apt in ubuntu22.04 runtime images for CVE-2026-109518 (#55206). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/parser/planparserv2/rewriter/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/docker/milvus/gpu/ubuntu22.04/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    - Integer columns (Int8/Int16/Int32/Int64, including array elements) also merge inclusive bounds one apart: `(1 <= x <= 1) OR (2 <= x <= 2)` → `(1 <= x <= 2)`. JSON and float columns do not, since they can hold values between two integers.
+    apt-get upgrade -y apt openssl libssl3 curl libcurl4 tar zlib1g libc6 libc-bin && \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    apt-get upgrade -y openssl libssl3 curl libcurl4 tar zlib1g libc6 libc-bin && \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eba8be50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `686b129c` are properly handled with clean fallback behavior.

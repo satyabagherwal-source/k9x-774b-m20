@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T23:43:50.356Z",
+  "last_updated": "2026-11-08T23:50:50.506Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27847,7 +27847,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "da061060bb034e2a1ca6b5ea82178ef5639c84cd10884de1e3b5f0e126f5f0e3",
+      "content_hash": "891a29f5810f46253760fb9d1c2415ad1d4a2586102468f460e9b896d5c278f9",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
@@ -27969,7 +27969,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-11-05T06:14:56.568Z",
+      "verified_at": "2026-11-08T23:50:35.166Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35984,8 +35984,8 @@
       "slug": "iplug2-iplug2",
       "platform": "github",
       "source_url": "https://github.com/iPlug2/iPlug2",
-      "source_version": "d82b2e99",
-      "content_hash": "b0f81c97852e9a337f03701637889780e6dba751aef1e8ca378aec1d280da350",
+      "source_version": "b320ce3b",
+      "content_hash": "a58f52dc9761845795655a51de51231e65cd98075b77c2092f1ba0d3f359ff42",
       "dossier_path": "07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
       "promoted_rules": [
@@ -36005,7 +36005,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T14:23:21.177Z",
+      "verified_at": "2026-11-08T23:50:42.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43971,8 +43971,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "eba8be50",
-      "content_hash": "7cfe6fe1223979ef7dd28abf61628c09cb0843f94af2c6048799bbc5fa8b7360",
+      "source_version": "686b129c",
+      "content_hash": "cb90c093965bf3f0c12c489120c988c46e7e6455f45731dbeb37c4f2628932b8",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -43984,6 +43984,11 @@
         {
           "number": null,
           "title": "merge adjacent integer ranges in OR chains (#54716)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "enhance: upgrade apt in ubuntu22.04 runtime images for CVE-2026-109518 (#55206)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44067,7 +44072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:40:49.096Z",
+      "verified_at": "2026-11-08T23:50:50.486Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T23:43:50.457Z",
-  "total_cycles_completed": 8401,
-  "total_learnings_persisted": 8401,
-  "total_rules_promoted": 8200,
+  "last_updated": "2026-11-08T23:50:50.659Z",
+  "total_cycles_completed": 8404,
+  "total_learnings_persisted": 8404,
+  "total_rules_promoted": 8201,
   "history": [
-    {
-      "timestamp": "2026-11-08T06:12:30.527Z",
-      "repository": "briaai/Fibo-2.0-dev",
-      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T06:19:02.590Z",
-      "repository": "XHToken/Spark-X2.6-4B-GGUF",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T06:25:38.186Z",
-      "repository": "modelcontextprotocol/kotlin-sdk",
-      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T06:25:44.901Z",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-08T23:43:50.457Z",
       "repository": "run-llama/llama_index",
       "learningId": "learn-github-run-llama-llama_index",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:50:35.285Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:50:42.292Z",
+      "repository": "iPlug2/iPlug2",
+      "learningId": "learn-github-iplug2-iplug2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:50:50.659Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

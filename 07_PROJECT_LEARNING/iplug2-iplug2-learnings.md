@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source**: github ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
-> **Source Version**: `d82b2e99`  
+> **Source Version**: `b320ce3b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T14:23:20.854Z  
+> **Timestamp**: 2026-11-08T23:50:42.021Z  
 > **Learning ID**: `learn-github-iplug2-iplug2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T14:23:20.605Z  
+> **Harvest Timestamp**: 2026-11-08T23:50:42.017Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2437 stars
+- **Stars / Engagement**: 2440 stars
 
 ---
 
@@ -1452,105 +1452,112 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f3c104b3` (2026-10-25)
-**Commit Message**: Merge pull request #1387 from iPlug2/fix/macos-metal-layer-leak-on-close
+### Incident Patch 1: `b320ce3b` (2026-11-07)
+**Commit Message**: Revert "Merge pull request #1447 from iPlug2/fix/wasm-restore-state-to-dsp"
 
-IGraphicsMac: fix CAMetalLayer leak on window close
+This reverts commit ed9e7dff57823312e4ad48bc801b8206a5223fa8, reversing
+changes made to d82b2e99b17c8f723d3f6e2a88ffd8b656f28e5d.
 
-**File**: `IGraphics/Platforms/IGraphicsMac_view.mm` (modified, +5/-3)
+**File**: `IPlug/WEB/IPlugWasmUI.cpp` (modified, +0/-17)
 ```diff
-@@ -384,10 +384,12 @@ @implementation IGRAPHICS_VIEW
- - (CALayer *)makeBackingLayer
- {
-   // CAMetalLayer is correct for both Metal and GLES - ANGLE uses Metal backend on macOS
-+  // NB: this file is not ARC; the caller retains, so the layer must be autoreleased
-+  // or it is stranded (with its drawable pool) every time the window closes
- #if defined IGRAPHICS_METAL || defined IGRAPHICS_GLES2 || defined IGRAPHICS_GLES3
--  return [[CAMetalLayer alloc] init];
-+  return [[[CAMetalLayer alloc] init] autorelease];
- #else
--  return [[CALayer alloc] init];
-+  return [[[CALayer alloc] init] autorelease];
- #endif
+@@ -45,23 +45,6 @@ void IPlugWasmUI::SendParameterValueFromUI(int paramIdx, double value)
+   IPlugAPIBase::SendParameterValueFromUI(paramIdx, value);
  }
  
-@@ -410,7 +412,7 @@ - (id) initWithIGraphics: (IGraphicsMac*) pGraphics
-   #if defined IGRAPHICS_METAL || defined IGRAPHICS_GLES2 || defined IGRAPHICS_GLES3
-   CAMetalLayer* mtlLayer = (CAMetalLayer*) self.layer;
-   [mtlLayer setPixelFormat:MTLPixelFormatBGRA8Unorm];
--  mtlLayer.device = MTLCreateSystemDefaultDevice();
-+  mtlLayer.device = [MTLCreateSystemDefaultDevice() autorelease]; // Create-rule +1, property assignment retains
-   mtlLayer.framebufferOnly = YES;
-   #elif defined IGRAPHICS_GL2 || defined IGRAPHICS_GL3
-   NSOpenGLPixelFormatAttribute profile = NSOpenGLProfileVersionLegacy;
+-void IPlugWasmUI::OnRestoreState()
+-{
+-  // The DSP instance only hears about parameter changes that are sent to it, so after restoring
+-  // state on the UI instance (e.g. RestorePreset(), LoadPresetFromFXP()) send it every parameter value
+-  for (int i = 0; i < NParams(); i++)
+-  {
+-    EM_ASM({
+-      if (typeof window.iPlugController !== 'undefined') {
+-        window.iPlugController.setParam($0, $1);
+-      }
+-    }, i, GetParam(i)->GetNormalized());
+-  }
+-
+-  // Update the UI
+-  IPlugAPIBase::OnRestoreState();
+-}
+-
+ void IPlugWasmUI::SendMidiMsgFromUI(const IMidiMsg& msg)
+ {
+   EM_ASM({
+```
+
+**File**: `IPlug/WEB/IPlugWasmUI.h` (modified, +0/-4)
+```diff
+@@ -39,10 +39,6 @@ class IPlugWasmUI : public IPlugAPIBase
+   void SendSysexMsgFromUI(const ISysEx& msg) override;
+   void SendArbitraryMsgFromUI(int msgTag, int ctrlTag = kNoTag, int dataSize = 0, const void* pData = nullptr) override;
+ 
+-  /** State (e.g. a preset) is restored on the UI instance, so this sends the new parameter values to the DSP instance.
+-   * Plug-ins that override OnRestoreState() must call the base class! */
+-  void OnRestoreState() override;
+-
+   /** Plug-ins that override OnIdle() must call the base class! */
+   void OnIdle() override { SendDSPIdleTick(); }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `61c5553a` (2026-10-15)
-**Commit Message**: swell-gdi-lice: fix clipping of child windows to parent client rect -- from 2a2d8191 and c0d29442
+### Incident Patch 2: `ed9e7dff` (2026-11-07)
+**Commit Message**: Merge pull request #1447 from iPlug2/fix/wasm-restore-state-to-dsp
 
-**File**: `WDL/swell/swell-gdi-lice.cpp` (modified, +18/-4)
+Wasm: send restored parameter values to the DSP module
+
+**File**: `IPlug/WEB/IPlugWasmUI.cpp` (modified, +17/-0)
 ```diff
-@@ -1719,6 +1719,7 @@ void SWELL_internalLICEpaint(HWND hwnd, LICE_IBitmap *bmout, int bmout_xpos, int
-   //   we would want to only really use them for top level windows, and on those, only update windows (and children of windows) who had backingstore invalidated.
-   if (hwnd->m_invalidated) forceref=true;
+@@ -45,6 +45,23 @@ void IPlugWasmUI::SendParameterValueFromUI(int paramIdx, double value)
+   IPlugAPIBase::SendParameterValueFromUI(paramIdx, value);
+ }
  
-+  int calced_w = -1, calced_h = -1;
-   if (forceref || hwnd->m_child_invalidated)
-   {
-     swell_gdpLocalContext ctx;
-@@ -1746,6 +1747,8 @@ void SWELL_internalLICEpaint(HWND hwnd, LICE_IBitmap *bmout, int bmout_xpos, int
-       p.rgrc[0]=r2;
-       hwnd->m_wndproc(hwnd,WM_NCCALCSIZE,FALSE,(LPARAM)&p);
-       RECT r = p.rgrc[0];
-+      calced_w = r.right-r.left;
-+      calced_h = r.bottom-r.top;
-       if (forceref) hwnd->m_wndproc(hwnd,WM_NCPAINT,(WPARAM)1,0);
- 
-       // dx,dy is offset from the window's nonclient root
-@@ -1806,9 +1809,20 @@ void SWELL_internalLICEpaint(HWND hwnd, LICE_IBitmap *bmout, int bmout_xpos, int
-     {
-       if (h->m_visible && (forceref || h->m_invalidated||h->m_child_invalidated))
-       {
--        int width = h->m_position.right - h->m_position.left, 
--            height = h->m_position.bottom - h->m_position.top; // max width possible for this window
--        int xp = h->m_position.left - bmout_xpos, yp = h->m_position.top - bmout_ypos;
-+        RECT cr = h->m_position;
-+        int width = cr.right - cr.left, height = cr.bottom - cr.top; // max width possible for this window
-+        int xp = cr.left, yp = cr.top;
-+        int extra_xo = 0, extra_yo = 0;
-+        if (calced_w >= 0 && calced_h >= 0)
-+        {
-+          if (xp < 0) { extra_xo = xp; width += extra_xo; xp = 0; }
-+          if (yp < 0) { extra_yo = yp; height += extra_yo; yp = 0; }
-+          if (xp + width > calced_w) width = calced_w - xp;
-+          if (yp + height > calced_h) height = calced_h - yp;
-+        }
++void IPlugWasmUI::OnRestoreState()
++{
++  // The DSP instance only hears about parameter changes that are sent to it, so after restoring
++  // state on the UI instance (e.g. RestorePreset(), LoadPresetFromFXP()) send it every parameter value
++  for (int i = 0; i < NParams(); i++)
++  {
++    EM_ASM({
++      if (typeof window.iPlugController !== 'undefined') {
++        window.iPlugController.setParam($0, $1);
++      }
++    }, i, GetParam(i)->GetNormalized());
++  }
 +
-+        xp -= bmout_xpos;
-+        yp -= bmout_ypos;
++  // Update the UI
++  IPlugAPIBase::OnRestoreState();
++}
++
+ void IPlugWasmUI::SendMidiMsgFromUI(const IMidiMsg& msg)
+ {
+   EM_ASM({
+```
+
+**File**: `IPlug/WEB/IPlugWasmUI.h` (modified, +4/-0)
+```diff
+@@ -39,6 +39,10 @@ class IPlugWasmUI : public IPlugAPIBase
+   void SendSysexMsgFromUI(const ISysEx& msg) override;
+   void SendArbitraryMsgFromUI(int msgTag, int ctrlTag = kNoTag, int dataSize = 0, const void* pData = nullptr) override;
  
-         if (okToClearChild && !forceref)
-         {
-@@ -1828,7 +1842,7 @@ void SWELL_internalLICEpaint(HWND hwnd, LICE_IBitmap *bmout, int bmout_xpos, int
-         {
-           LICE_SubBitmap subbm(bmout,subx,suby,width,height); // the right/bottom will automatically be clipped to the clip rect etc
-           if (subbm.getWidth()>0 && subbm.getHeight()>0)
--            SWELL_internalLICEpaint(h,&subbm,-xp,-yp,forceref);
-+            SWELL_internalLICEpaint(h,&subbm,-extra_xo-xp,-extra_yo-yp,forceref);
-         }
-       }
-       h = h->m_next;
++  /** State (e.g. a preset) is restored on the UI instance, so this sends the new parameter values to the DSP instance.
++   * Plug-ins that override OnRestoreState() must call the base class! */
++  void OnRestoreState() override;
++
+   /** Plug-ins that override OnIdle() must call the base class! */
+   void OnIdle() override { SendDSPIdleTick(); }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1447** (2026-11-07): Wasm: send restored parameter values to the DSP module (@olilarkin)
 - **PR #1429** (2026-10-25): CI: unpin claude-code-action (back to @v1) (@olilarkin)
 - **PR #1428** (2026-10-18): CI: pin claude-code-action to v1.0.196 (@olilarkin)
 - **PR #1427** (2026-10-25): Bump macOS deployment target to 13.0 (@olilarkin)
 - **PR #1426** (2026-10-17): CI: move macOS runners from macos-14 to macos-15 (@olilarkin)
 - **PR #1425** (2026-10-17): iOS App: adopt UIScene life cycle (fixes #1420) (@olilarkin)
-- **PR #1417** (closed): CLAP: request parameter rescan after state load, fix main ports in audio ports config (@michaelhovedk)
 
 ---
 
@@ -1564,40 +1571,3 @@ IGraphicsMac: fix CAMetalLayer leak on window close
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge pull request #1387 from iPlug2/fix/macos-metal-layer-leak-on-close
-
-**RULE**:
-When implementing operations in `IGraphics/Platforms/IGraphicsMac_view.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `f3c104b3`: Merge pull request #1387 from iPlug2/fix/macos-metal-layer-leak-on-close. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `IGraphics/Platforms/IGraphicsMac_view.mm`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```c
-// Verified production-grade fix pattern:
-  // NB: this file is not ARC; the caller retains, so the layer must be autoreleased
-  // or it is stranded (with its drawable pool) every time the window closes
-  return [[[CAMetalLayer alloc] init] autorelease];
-  return [[[CALayer alloc] init] autorelease];
-  mtlLayer.device = [MTLCreateSystemDefaultDevice() autorelease]; // Create-rule +1, property assignment retains
-```
-
-**NEGATIVE CONSTRAINT**:
-```c
-// Anti-pattern to NEVER write (induced failure mode):
-  return [[CAMetalLayer alloc] init];
-  return [[CALayer alloc] init];
-  mtlLayer.device = MTLCreateSystemDefaultDevice();
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f3c104b3` are properly handled with clean fallback behavior.
