@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T14:41:46.793Z",
+  "last_updated": "2026-11-08T14:49:07.759Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33830,10 +33830,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "96b031261148aafc4ceec59e3c2deb1a014ddd9458fd85d49b9bbf032114f3fc",
+      "content_hash": "3c5fa8de6b4dc568909a9ea0b07016c392b91b94d12ed7d83e5fee1c61ffcc64",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "MoE Layer Initialization Stability Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MLA KV-Cache Compression & RoPE Splitting Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "YaRN Long-Context Scaling Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2092,
           "title": "MLA KV-Cache Compression Invariant",
@@ -33893,7 +33908,7 @@
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
       ],
-      "verified_at": "2026-11-04T23:13:28.869Z",
+      "verified_at": "2026-11-08T14:49:06.018Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41172,8 +41187,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "d032b9f2",
-      "content_hash": "8dc056edd59cfdc32ae42ef86aa111bc5473e609648e45fcee549055b952e7e8",
+      "source_version": "b61e0159",
+      "content_hash": "ddf3dfce93caee5bf27eb2c154e28ea2bc31d530c3380564305b861633e84e29",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -41185,6 +41200,11 @@
         {
           "number": null,
           "title": "deps): update dependency ip-address to v10.7.4 [security] (#40553)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update dependency jsdom to v30 (#40568)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -41273,7 +41293,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:48:09.464Z",
+      "verified_at": "2026-11-08T14:49:07.739Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64791,14 +64811,19 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "8e447440",
-      "content_hash": "3ef2bcde83ce3b9d38c673b7d2f3382c272df2cdef53a0d58df5f2db76bcbb79",
+      "source_version": "ee9b4bb8",
+      "content_hash": "d9862369c9bc38eebbae0fb6547f2f3463cbe4f3918f27289ec8c45a244a170f",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "cancelled coroutines completing normally during suspended unwinds",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "release-chain recursion in Semphore, SyncFlag and RwLock",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64822,7 +64847,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T02:41:09.775Z",
+      "verified_at": "2026-11-08T14:48:54.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

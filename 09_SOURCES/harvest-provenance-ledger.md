@@ -8308,3 +8308,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-08T14:24:42.964Z |
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `64ddd4a0` | Multi-dimensional audit evidence | 2026-11-08T14:41:45.594Z |
 | `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-08T14:41:46.883Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `ee9b4bb8` | Multi-dimensional audit evidence | 2026-11-08T14:48:54.479Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-08T14:49:06.149Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `b61e0159` | Multi-dimensional audit evidence | 2026-11-08T14:49:07.883Z |

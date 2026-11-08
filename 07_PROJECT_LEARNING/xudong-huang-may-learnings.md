@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source**: github ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
-> **Source Version**: `8e447440`  
+> **Source Version**: `ee9b4bb8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:41:08.637Z  
+> **Timestamp**: 2026-11-08T14:48:53.307Z  
 > **Learning ID**: `learn-github-xudong-huang-may`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:41:07.011Z  
+> **Harvest Timestamp**: 2026-11-08T14:48:52.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -131,8 +131,11 @@ use std::time::Duration;
 
 fn main() {
     may::go!(|| {
-        let (sx1, rx1) = may::sync::mpsc::channel();
-        let (sx2, rx2) = may::sync::mpsc::channel();
+        // `loop_select!` re-runs the branch closures and borrows the
+        // receivers, so use the multi-consumer channel (`mpsc::Receiver` is
+        // `!Sync`).
+        let (sx1, rx1) = may::sync::mpmc::channel();
+        let (sx2, rx2) = may::sync::mpmc::channel();
         sx1.send(100i32).unwrap();
         sx2.send(200i32).unwrap();
 
@@ -2184,410 +2187,727 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64877358` (2026-11-06)
-**Commit Message**: Fix cancelled coroutines completing normally during suspended unwinds
+### Incident Patch 1: `6fe9b92d` (2026-11-07)
+**Commit Message**: Fix release-chain recursion in Semphore, SyncFlag and RwLock
 
-A coroutine's Cancel-panic unwind can be suspended when a Drop parks
-mid-unwind (e.g. RwLockReadGuard::drop acquiring the reader-count
-mutex). While suspended, thread::panicking() stays true for the whole
-worker thread while other coroutines keep running on it, which caused:
+The permit/signal forwarding in these three primitives recursed once per
+waiter that had already left the queue (timed out or canceled). A cancel
+storm or a burst of timeouts can leave a long run of released blockers
+queued, so a single post/fire/unlock could overflow the 32KB default
+coroutine stack. Make the forwarding iterative, matching the earlier
+fixes in Mutex::unlock and Condvar::notify_one.
 
-- check_cancel to silently swallow other coroutines' cancels, letting
-  them run their post-cancel code and complete with join() == Ok
-- poison::done to spuriously poison locks whose guards were dropped by
-  other coroutines during the window
+Also:
+- semphore: CAS-loop the permit increment so an overflow panics instead
+  of wrapping the counter; document timeout retention and cancellation
+  panics; mark wait_timeout/try_wait must_use; add the Semaphore alias.
+- sync_flag: broadcast is level-triggered, so re-entering fire() from
+  wakeup_all is unnecessary; just drain the queue.
+- add regression tests that queue 1000 canceled waiters (Semphore and
+  SyncFlag) and 500 (RwLock) and verify the hand-off completes.
 
-Fixes:
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
-- track Cancel-panic unwinds in flight with a thread-local flag set by
-  trigger_cancel_panic and cleared when the unwind completes at the
-  generator boundary (only when thread::panicking() has reset, so a
-  normal completion during someone else's suspended unwind keeps it)
-- poison::done skips poisoning while the flag is set: a suspended
-  cancel unwind is not a real panic
-- RwLockReadGuard::drop avoids parking during unwinds entirely: acquire
-  the reader-count mutex with a bounded try_lock spin when
-  thread::panicking(), so may's own drops never suspend an unwind and
-  the window cannot o
-
-**File**: `src/cancel.rs` (modified, +37/-0)
+**File**: `src/sync/mod.rs` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,4 @@
-+use std::cell::Cell;
- use std::io;
- use std::sync::atomic::{AtomicUsize, Ordering};
- use std::sync::Arc;
-@@ -12,6 +13,39 @@ use crate::sync::AtomicOption;
- use crate::yield_now::{get_co_para, set_co_para};
- use generator::Error;
- 
-+// a cancel panic is in flight on this thread: a coroutine's unwind from a
-+// Cancel panic can be suspended (a Drop that parks), during which
-+// `thread::panicking()` stays true for the whole thread while other
-+// coroutines keep running on it. The flag distinguishes that window from a
-+// real (non-cancel) panic so that:
-+// - `poison::done` does not spuriously poison locks whose guards are
-+//   dropped by other coroutines during the window
-+// - the unwinding coroutine's own drops never re-trigger the cancel panic
-+thread_local! {
-+    static CANCEL_PANICKING: Cell<bool> = const { Cell::new(false) };
-+}
-+
-+/// true if a Cancel-panic unwind is currently in flight on this thread
-+#[inline]
-+pub(crate) fn cancel_panic_in_flight() -> bool {
-+    CANCEL_PANICKING.with(|f| f.get())
-+}
-+
-+/// mark that a Cancel-panic unwind started on this thread
-+/// called by `trigger_cancel_panic`, cleared when the coroutine completes
-+/// in `run_coroutine`
-+#[inline]
-+fn set_cancel_panic_flag() {
-+    CANCEL_PANICKING.with(|f| f.set(true));
-+}
-+
-+/// clear the Cancel-panic flag once the unwind has completed
-+/// idempotent, called from `run_coroutine` on every coroutine completion
-+#[inline]
-+pub(crate) fn clear_cancel_panic_flag() {
-+    CANCEL_PANICKING.with(|f| f.set(false));
-+}
-+
- // the cancel is implemented by triggering a Cancel panic
- // if drop is called due to a Cancel panic, it's not safe
- // to call Any coroutine API in the drop any more because
-@@ -23,6 +57,9 @@ pub fn trigger_cancel_panic() -> ! {
-     // if thread::panicking() {
-     //     eprintln!("trigger another panic while panicking");
-     // }
-+    if crate::coroutine_impl::is_coroutine() {
-+        set_cancel_panic_flag();
-+    }
- 
-     // should we clear the cancel flag to let other API continue?
-     // so that we can avoid the re-panic problem?
+@@ -22,6 +22,6 @@ pub use blocking::{Blocker, FastBlocker};
+ pub use condvar::{Condvar, WaitTimeoutResult};
+ pub use mutex::{Mutex, MutexGuard};
+ pub use rwlock::{RwLock, RwLockReadGuard, RwLockWriteGuard};
+-pub use semphore::Semphore;
++pub use semphore::{Semaphore, Semphore};
+ pub use sync_flag::SyncFlag;
+ pub use wait_group::WaitGroup;
 ```
 
-**File**: `src/coroutine_impl.rs` (modified, +22/-1)
+**File**: `src/sync/rwlock.rs` (modified, +76/-3)
 ```diff
-@@ -279,8 +279,21 @@ impl Builder {
-             // to unwind these local data. for the panic err we would set it in the
-             // coroutine local data so that can return from the packet variable
+@@ -152,15 +152,35 @@ impl<T: ?Sized> RwLock<T> {
+     }
  
-+            let result = f();
+     fn unlock(&self) {
+-        if self.cnt.fetch_sub(1, Ordering::SeqCst) > 1 {
+-            self.to_wake
++        // pass the lock down the waiter chain iteratively: a popped waiter
++        // that registered a release action timed out or was canceled and
++        // won't take the lock, so the hand-off continues with the next
++        // waiter. Recursing here would overflow the (small, 32KB default)
++        // coroutine stack when a cancel storm leaves a long chain of
++        // released waiters (see the same fix in `Mutex::unlock` and
++        // `Condvar::notify_one`).
++        let mut cnt = self.cnt.fetch_sub(1, Ordering::SeqCst);
++        while cnt > 1 {
++            let w = self
++                .to_wake
+                 .get_or_init(SegQueue::new)
+                 .pop()
+-                .map(|w| self.unpark_one(&w))
+                 .expect("got null blocker!");
 +
-+            // if the coroutine was canceled but the cancel panic never fired
-+            // (the cancel was delivered while another unwind was suspended on
-+            // this thread, or landed just before completion), report the
-+            // cancellation from `join` instead of silently returning `Ok`
-+            if crate::coroutine_impl::is_coroutine()
-+                && crate::coroutine_impl::current_cancel_data().is_canceled()
-+            {
-+                their_join.trigger();
-+                return subscriber;
++            w.unpark();
++            // when release is taken, the waiter is leaving without the lock
++            // and its slot must be released as well
++            if !w.take_release() {
++                break;
 +            }
-+
-             // set the return packet
--            their_packet.store(f());
-+            their_packet.store(result);
- 
-             their_join.trigger();
-             subscriber
-@@ -530,6 +543,14 @@ pub(crate) fn run_coroutine(mut co: CoroutineImpl) {
-             }
-             // trigger the join here
-             join.trigger();
-+            // if this coroutine was unwinding from a Cancel panic, the
-+            // unwind has now completed at the generator boundary and the
-+            // thread's panic count has been reset; only then may the flag
-+            // be cleared. A normal completion while another coroutine's
-+            // unwind is still suspended must keep the flag set.
-+            if !std::thread::panicking() {
-+                crate::cancel::clear_cancel_panic_flag();
-+            }
-             Done::drop_coroutine(co);
++            cnt = self.cnt.fetch_sub(1, Ordering::SeqCst);
          }
      }
+ 
++    /// Unpark one waiter for the first-grab path in [`lock`].
++    ///
++    /// If the waiter has already registered its release action, continue the
++    /// hand-off with the iterative [`unlock`] loop.
+     fn unpark_one(&self, w: &SyncBlocker) {
+         w.unpark();
+         if w.take_release() {
+@@ -1079,4 +1099,57 @@ mod tests {
+         let mut g = rw.write().unwrap();
+         *g += 1;
+     }
++
++    /// Regression test for the hand-off chain: a cancel storm leaves many
++    /// released blockers queued, and unlocking must walk past all of them
++    /// iteratively. The old implementation recursed once per released
++    /// waiter and overflowed the 32KB coroutine stack on a chain this long.
++    #[test]
++    fn test_rwlock_unlock_skips_canceled_waiters() {
++        const N: usize = 500;
++
++        let rw = Arc::new(RwLock::new(0usize));
++        let (ready_tx, ready_rx) = channel();
++        let (release_tx, release_rx) = channel();
++
++        // hold the write lock from a coroutine so the hand-off on drop runs
++        // on a coroutine stack
++        let rw_holder = rw.clone();
++        let holder = go!(move || {
++            let _g = rw_holder.write().unwrap();
++            ready_tx.send(()).unwrap();
++            release_rx.recv().unwrap();
++            // `_g` drops here, performing the hand-off
++        });
++        ready_rx.recv().unwrap();
++
++        let waiters: Vec<_> = (0..N)
++            .map(|_| {
++                let rw = rw.clone();
++                go!(move || {
++                    drop(rw.write().unwrap());
++                })
++            })
++            .collect();
++
++        // let the waiters park, then cancel them all; each leaves a released
++        // blocker in the hand-off queue
++        std::thread::sleep(std::time::Duration::from_millis(100));
++        for w in &waiters {
++            w.coroutine().cancel();
++        }
++        for w in waiters {
++            assert!(w.join().is_err());
++        }
++
++        // dropping the guard now walks the released chain on a 32KB stack
++        release_tx.send(()).unwrap();
++        holder.join().unwrap();
++
++        // the lock must be usable afterwards
++        assert!(!rw.is_poisoned());
++        let mut g = rw.write().unwrap();
++        *g += 1;
++        assert_eq!(*g, 1);
++    }
+ }
 ```
 
-**File**: `src/sync/poison.rs` (modified, +9/-1)
+**File**: `src/sync/semphore.rs` (modified, +127/-22)
 ```diff
-@@ -30,7 +30,15 @@ impl Flag {
+@@ -47,6 +47,9 @@ pub struct Semphore {
+     to_wake: SegQueue<Arc<SyncBlocker>>,
+ }
  
++/// Alias for [`Semphore`] using the conventional spelling.
++pub type Semaphore = Semphore;
++
+ impl Semphore {
+     /// create a semphore with the initial value
+     pub fn new(init: usize) -> Self {
+@@ -57,17 +60,29 @@ impl Semphore {
+         }
+     }
+ 
++    // wake up the first live waiter, forwarding the permit past waiters that
++    // have already timed out or been canceled (their `release` flag is set).
++    //
++    // Iterative on purpose: a cancel storm can leave many released blockers
++    // back to back in the queue, and recursing through `post` would overflow
++    // the (small, 32KB default) coroutine stack and abort.
      #[inline]
-     pub fn done(&self, guard: &Guard) {
--        if !guard.panicking && thread::panicking() {
-+        // `thread::panicking()` is true while any unwind is in flight on this
-+        // thread — including a *suspended* coroutine Cancel-panic unwind,
-+        // during which other coroutines keep running on the thread. In that
-+        // window their guards must not poison: the "panic" is not theirs and
-+        // not a real panic at all.
-+        if !guard.panicking
-+            && thread::panicking()
-+            && !crate::cancel::cancel_panic_in_flight()
-+        {
-             let is_canceled = if crate::coroutine_impl::is_coroutine() {
-                 let cancel = crate::coroutine_impl::current_cancel_data();
-                 cancel.is_canceled()
+     fn wakeup_one(&self) {
+-        self.to_wake
+-            .pop()
+-            .map(|w| {
+-                w.unpark();
+-                if w.take_release() {
+-                    self.post();
+-                }
+-            })
+-            .expect("got null blocker!");
++        loop {
++            let w = self.to_wake.pop().expect("got null blocker!");
++
++            w.unpark();
++            if !w.take_release() {
++                // a live waiter consumed the permit
++                break;
++            }
++
++            // the released waiter no longer counts as waiting (`cnt += 1`);
++            // forward the permit if there are still waiters behind it
++            if self.cnt.fetch_add(1, Ordering::SeqCst) >= 0 {
++                break;
++            }
++        }
+     }
+ 
+     // return false if timeout
+@@ -109,21 +124,40 @@ impl Semphore {
+         }
+     }
+ 
+-    /// wait for a semphore
+-    /// if the semphore value is bigger than zero the function returns immediately
+-    /// otherwise it would block the until a `post` is executed
++    /// Wait for a semaphore.
++    ///
++    /// If the semaphore value is bigger than zero the function returns
++    /// immediately, otherwise it blocks until a `post` is executed.
++    ///
++    /// # Panics
++    ///
++    /// In a coroutine context, panics if the coroutine is canceled while
++    /// waiting.
+     pub fn wait(&self) {
+         self.wait_timeout_impl(None);
+     }
+ 
+-    /// same as `wait` except that with an extra timeout value
+-    /// return false if timeout happened
++    /// Same as [`wait`](Self::wait), but returns `false` if the timeout
++    /// expired before a permit became available.
++    ///
++    /// A timed-out waiter leaves its blocker in the internal queue until a
++    /// later `post` pops it and forwards the permit, so a timeout-polling
++    /// loop retains one blocker per timeout until the next post.
++    ///
++    /// # Panics
++    ///
++    /// In a coroutine context, panics if the coroutine is canceled while
++    /// waiting.
++    #[must_use = "returns false when the timeout expired"]
+     pub fn wait_timeout(&self, dur: Duration) -> bool {
+         self.wait_timeout_impl(Some(dur))
+     }
+ 
+-    /// return false if would block
+-    /// return true if successfully acquire one semphore resource
++    /// Try to acquire one semaphore resource without blocking.
++    ///
++    /// Returns `true` if a permit was acquired and `false` if the call would
++    /// block.
++    #[must_use = "returns false if the semaphore would block"]
+     pub fn try_wait(&self) -> bool {
+         // we not register ourself at all
+         // just manipulate the cnt is enough
+@@ -140,19 +174,37 @@ impl Semphore {
+         false
+     }
+ 
+-    /// increment the semphore value
+-    /// and would wakeup a thread/coroutine that is calling `wait`
++    /// Increment the semaphore value and wake up a thread/coroutine that is
++    /// calling [`wait`](Self::wait), if any.
++    ///
++    /// # Panics
++    ///
++    /// Panics if the permit count would overflow `isize::MAX`.
+     pub fn post(&self) {
+-        let cnt = self.cnt.fetch_add(1, Ordering::SeqCst);
+-        assert!(cnt < isize::MAX);
++        // CAS loop so the counter is not wrapped before the overflow check
++        // can fire
++        let prev = loop {
++            let cur = self.cnt.load(Ordering::SeqCst);
++            assert!(cur < isize::MAX, "semaphore permit count overflow");
++            match self
++                .cnt
++                .compare_exchange_weak(cur, cur + 1, Ordering::SeqCst, Ordering::SeqCst)
++            {
++                Ok(_) => break cur,
++                Err(_) => continue,
++            }
++        };
+ 
+         // try to wakeup one waiter first
+-        if cnt < 0 {
++        if prev < 0 {
+             self.wakeup_one();
+         }
+     }
+ 
+-    /// return the current semphore value
++    /// Return the current semaphore value.
++    ///
++    /// Queued waiters are not reported: the value is clamped to `0` while
++    /// the internal counter is negative.
+     pub fn get_value(&self) -> usize {
+         let cnt = self.cnt.load(Ordering::SeqCst);
+         if cnt > 0 {
+@@ -311,4 +363,57 @@ mod tests {
+         sem1.post();
+         h2.join().unwrap();
+     }
++
++  
 ```
 
-**File**: `src/sync/rwlock.rs` (modified, +48/-8)
+**File**: `src/sync/sync_flag.rs` (modified, +69/-10)
 ```diff
-@@ -6,6 +6,7 @@ use std::ops::{Deref, DerefMut};
- use std::panic::{RefUnwindSafe, UnwindSafe};
- use std::sync::atomic::{AtomicUsize, Ordering};
- use std::sync::Arc;
-+use std::thread;
- use std::sync::{LockResult, OnceLock, PoisonError, TryLockError, TryLockResult};
+@@ -43,8 +43,8 @@ use crossbeam::queue::SegQueue;
+ /// flag.wait();
+ /// ```
+ pub struct SyncFlag {
+-    // track how many resources available for the SyncFlag
+-    // if it's negative means how many threads are waiting for
++    // waiter count: negative while waiters are queued, and `isize::MAX` once
++    // fired (the "true" state)
+     cnt: AtomicIsize,
+     // the waiting blocker list, must be mpmc
+     to_wake: SegQueue<Arc<SyncBlocker>>,
+@@ -65,13 +65,19 @@ impl SyncFlag {
+         Default::default()
+     }
  
- use crate::cancel::trigger_cancel_panic;
-@@ -14,7 +15,7 @@ use crate::park::ParkError;
++    // Wake every waiter. `fire` is level-triggered (`cnt` is set to
++    // `isize::MAX` and never drops back), so unlike a notify-one hand-off
++    // there is no permit to forward past released blockers: just drain the
++    // queue. Iterative because a cancel storm can leave many released
++    // blockers queued, and re-entering `fire` recursively would overflow the
++    // (small, 32KB default) coroutine stack.
+     #[inline]
+     fn wakeup_all(&self) {
+         while let Some(w) = self.to_wake.pop() {
+             w.unpark();
+-            if w.take_release() {
+-                self.fire();
+-            }
++            // consume the flag to keep the blocker's state consistent;
++            // nothing needs to be forwarded for a broadcast wakeup
++            let _ = w.take_release();
+         }
+     }
+ 
+@@ -114,15 +120,31 @@ impl SyncFlag {
+         }
+     }
+ 
+-    /// wait for a SyncFlag
+-    /// if the SyncFlag value is bigger than zero the function returns immediately
+-    /// otherwise it would block the until a `fire` is executed
++    /// Wait for a `SyncFlag`.
++    ///
++    /// If the flag is already fired the function returns immediately,
++    /// otherwise it blocks until a `fire` is executed.
++    ///
++    /// # Panics
++    ///
++    /// In a coroutine context, panics if the coroutine is canceled while
++    /// waiting.
+     pub fn wait(&self) {
+         self.wait_timeout_impl(None);
+     }
+ 
+-    /// same as `wait` except that with an extra timeout value
+-    /// return false if timeout happened
++    /// Same as [`wait`](Self::wait), but returns `false` if the timeout
++    /// expired before the flag was fired.
++    ///
++    /// A timed-out waiter leaves its blocker in the internal queue until a
++    /// later `fire` pops it, so a timeout-polling loop retains one blocker
++    /// per timeout until the flag is fired.
++    ///
++    /// # Panics
++    ///
++    /// In a coroutine context, panics if the coroutine is canceled while
++    /// waiting.
++    #[must_use = "returns false when the timeout expired"]
+     pub fn wait_timeout(&self, dur: Duration) -> bool {
+         self.wait_timeout_impl(Some(dur))
+     }
+@@ -249,4 +271,41 @@ mod tests {
+         flag1.fire();
+         h2.join().unwrap();
+     }
++
++    /// Regression test for the release-forwarding chain: canceled waiters
++    /// leave released blockers queued, and a single `fire` must walk past all
++    /// of them. The old implementation re-entered `fire` recursively and
++    /// overflowed the 32KB coroutine stack on a chain this long.
++    #[test]
++    fn released_waiters_are_woken_iteratively() {
++        use crate::sleep::sleep;
++
++        const N: usize = 1000;
++
++        let flag = Arc::new(SyncFlag::new());
++        let waiters: Vec<_> = (0..N)
++            .map(|_| {
++                let f = flag.clone();
++                go!(move || f.wait())
++            })
++            .collect();
++
++        // let the waiters enqueue, then cancel them all; each leaves a
++        // released blocker behind
++        sleep(Duration::from_millis(50));
++        for w in &waiters {
++            w.coroutine().cancel();
++        }
++        for w in waiters {
++            assert!(w.join().is_err());
++        }
++
++        // run the fire (and thus the drain) on a coroutine stack
++        let f = flag.clone();
++        go!(move || f.fire()).join().unwrap();
++
++        assert!(flag.is_fired());
++        // the fired state wakes future waiters immediately
++        flag.wait();
++    }
+ }
+```
+
+---
+
+### Incident Patch 2: `64056dd3` (2026-11-06)
+**Commit Message**: Fix Condvar signal forwarding and notify recursion
+
+- Register the release action immediately when a wait exits via
+  timeout/cancel, before the blocking mutex re-lock: a notify arriving
+  while the waiter is stuck re-locking used to consume the signal on the
+  departing waiter's blocker, losing the wakeup for the live waiter
+  queued behind it (the standard lock-predicate-notify pattern made
+  this deterministic).
+- Walk the notify_one release chain iteratively instead of recursing:
+  a burst of canceled/timed-out waiters followed by one notify could
+  overflow the 32KB coroutine stack and abort.
+- Make cancel disable/enable unwind-safe with an RAII guard so a panic
+  between the pair can't leave cancel permanently disabled.
+- std parity: const new, wait_timeout_while, Debug impl.
+- Regression tests for both lost-wakeup scenarios, the release chain,
+  and the new API.
+
+**File**: `src/sync/condvar.rs` (modified, +290/-30)
+```diff
+@@ -2,16 +2,36 @@
+ //! please ref the doc from std::sync::condvar
  use crossbeam::queue::SegQueue;
  
++use std::fmt;
+ use std::sync::atomic::{AtomicUsize, Ordering};
+ use std::sync::Arc;
+ use std::sync::{LockResult, PoisonError};
+ use std::time::Duration;
+ 
  use super::blocking::SyncBlocker;
--use super::mutex::{self, Mutex};
-+use super::mutex::{self, Mutex, MutexGuard};
- use super::poison;
+ use super::mutex::{self, Mutex, MutexGuard};
+-use crate::cancel::trigger_cancel_panic;
++use crate::cancel::{trigger_cancel_panic, Cancel};
+ use crate::park::ParkError;
  
- /// A reader-writer lock.
-@@ -238,12 +239,18 @@ impl<T: ?Sized> RwLock<T> {
- 
-     fn read_unlock(&self) {
-         // this runs from `RwLockReadGuard::drop`, which may execute while a
--        // cancel panic is unwinding the coroutine. If the rlock acquisition
--        // has to park while the cancel bit is set, the park's subscribe
--        // re-delivers the cancel, the mutex would trigger a second cancel
--        // panic and abort the process with a panic-while-panicking. Disable
--        // the cancel around the acquisition so the drop always completes;
--        // the pending cancel resumes once the unwind finishes.
-+        // cancel panic is unwinding the coroutine. Two hazards to avoid:
-+        // - parking here would suspend the unwind mid-flight, leaving
-+        //   `thread::panicking()` set for the whole worker thread while
-+        //   other coroutines run on it; their cancels would then be
-+        //   silently swallowed by `check_cancel`'s panicking guard and
-+        //   their guards spuriously poisoned
-+        // - if a park had to happen while the cancel bit is set, the
-+        //   park's subscribe would re-deliver the cancel and abort the
-+        //   process with a panic-while-panicking
-+        // so acquire the reader-count mutex without parking (see
-+        // `try_lock_rlock`), and keep the cancel disabled as a
-+        // belt-and-braces for the fallback path
-         let cancel = if is_coroutine() {
-             Some(current_cancel_data())
-         } else {
-@@ -252,7 +259,15 @@ impl<T: ?Sized> RwLock<T> {
-         if let Some(c) = cancel.as_ref() {
-             c.disable_cancel();
-         }
--        let mut r = self.rlock.lock().expect("rwlock read_unlock");
-+        let mut r = if thread::panicking() {
-+            // we are inside an unwind (our own cancel panic, or another
-+            // coroutine's suspended one): avoid parking so the unwind is
-+            // not suspended mid-flight (see the comment above)
-+            self.try_lock_rlock()
-+        } else {
-+            // normal drop: the blocking lock is cheap and safe here
-+            self.rlock.lock().expect("rwlock read_unlock")
-+        };
-         if let Some(c) = cancel.as_ref() {
-             c.enable_cancel();
-         }
-@@ -262,6 +277,31 @@ impl<T: ?Sized> RwLock<T> {
-         }
-     }
- 
-+    /// Acquire the internal reader-count mutex without parking if possible.
-+    ///
-+    /// The mutex is only ever held for a few instructions: the read()/read_
-+    /// unlock() critical sections never park while holding it (a reader can
-+    /// only wait for the global lock after seeing *r == 0, i.e. while no
-+    /// read guard exists), so a bounded spin virtually always acquires.
-+    fn try_lock_rlock(&self) -> MutexGuard<'_, usize> {
-+        for _ in 0..1_000_000 {
-+            match self.rlock.try_lock() {
-+                Ok(r) => return r,
-+                Err(TryLockError::Poisoned(_)) => {
-+                    // the internal mutex's critical sections never panic,
-+                    // so this is a spurious poison; clear and retry
-+                    self.rlock.clear_poison();
-+                    continue;
-+                }
-+                Err(TryLockError::WouldBlock) => std::hint::spin_loop(),
-+            }
-+        }
-+        // pathological case: the holder is descheduled mid-section; fall
-+        // back to the blocking lock. the cancel is disabled around this
-+        // call so a re-delivered cancel cannot double-panic
-+        self.rlock.lock().expect("rwlock read_unlock")
-+    }
++/// restores cancel delivery on drop, so that a panic between
++/// `disable_cancel` and `enable_cancel` cannot leave the coroutine with
++/// cancel permanently disabled (the cancel data state is inflated by 2 per
++/// disable and only deflated by a matching enable)
++struct CancelDisableGuard(&'static Cancel);
 +
-     /// Locks this `RwLock` with exclusive write access, blocking the current
-     /// thread or coroutine until it can be acquired.
-     ///
-```
-
-**File**: `tests/cancel_stress.rs` (modified, +22/-0)
-```diff
-@@ -207,6 +207,28 @@ fn cancel_after_finish() {
-     }
- }
- 
-+/// Cancel a coroutine that has no cancellation-aware point left (busy
-+/// running): the cancellation must still be reported from `join` instead of
-+/// silently returning the coroutine's result.
-+#[test]
-+fn cancel_reported_at_completion() {
-+    for _ in 0..100 {
-+        let (tx, rx) = channel();
-+        let j = go!(move || {
-+            tx.send(()).unwrap();
-+            // busy work with no suspension points
-+            let mut x = 0usize;
-+            for i in 0..10_000_000 {
-+                x = x.wrapping_add(i);
-+            }
-+            x
-+        });
-+        rx.recv().unwrap();
-+        j.coroutine().cancel();
-+        assert!(j.join().is_err_and(|e| is_cancel(&*e)));
++impl CancelDisableGuard {
++    fn new(cancel: &'static Cancel) -> Self {
++        cancel.disable_cancel();
++        CancelDisableGuard(cancel)
 +    }
 +}
 +
- /// Cancel a coroutine while it is parked on a `Mutex` with cancellation
- /// *disabled* — the state `Condvar::wait_impl` enters for its internal
- /// re-lock — must not corrupt the mutex's waiter count.
-```
-
----
-
-### Incident Patch 2: `9eb5af14` (2026-11-06)
-**Commit Message**: spsc: clear wait_co after recv_timeout thread wakeup
-
-After park_timeout returns, the blocker may still be registered: a
-sender can push data and find it only after the consumer already
-returned, unparking a thread that is no longer waiting and keeping the
-Thread handle alive until the queue drops. Clear it on every wakeup
-path; the take is a no-op if send() already consumed the blocker.
-
-Add regression test recv_timeout_thread_no_stale_blocker.
-
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-**File**: `src/sync/spsc.rs` (modified, +25/-0)
-```diff
-@@ -447,6 +447,14 @@ impl<T> Receiver<T> {
++impl Drop for CancelDisableGuard {
++    fn drop(&mut self) {
++        self.0.enable_cancel();
++    }
++}
++
+ /// A type indicating whether a timed wait on a condition variable returned
+ /// due to a time out or not.
+ #[derive(Debug, PartialEq, Eq, Clone)]
+@@ -26,13 +46,18 @@ impl WaitTimeoutResult {
+ 
+ pub struct Condvar {
+     // the waiting blocker list
++    // NOTE: a blocker that exits the wait via timeout/cancel without being
++    // notified stays in the queue (with the release flag set) until a
++    // notify pops it, so the signal can be forwarded to the next live
++    // waiter. If a condvar is never notified again, those blockers are
++    // retained for the lifetime of the condvar.
+     to_wake: SegQueue<Arc<SyncBlocker>>,
+     // used to verify the same mutex instance
+     mutex: AtomicUsize,
+ }
+ 
+ impl Condvar {
+-    pub fn new() -> Condvar {
++    pub const fn new() -> Condvar {
+         Condvar {
+             to_wake: SegQueue::new(),
+             mutex: AtomicUsize::new(0),
+@@ -50,31 +75,25 @@ impl Condvar {
+         let cur = SyncBlocker::current();
+ 
+         // we can't cancel panic here!!
+-        if let Some(c) = cancel.as_ref() {
+-            c.disable_cancel();
+-        }
++        let _g = cancel.map(CancelDisableGuard::new);
+ 
+         self.to_wake.push(cur.clone());
+ 
+         // unlock the mutex to let other continue
+         mutex::unlock_mutex(lock);
+-        if let Some(c) = cancel.as_ref() {
+-            c.enable_cancel();
+-        }
++        // re-enable cancel before parking: a pending cancel is delivered
++        // by the park itself
++        drop(_g);
+ 
+         // wait until coming back
+         let ret = cur.park(dur);
+-        // disable cancel panic
+-        if let Some(c) = cancel.as_ref() {
+-            c.disable_cancel();
+-        }
+-        // don't run the guard destructor
+-        ::std::mem::forget(lock.lock());
+ 
++        // when timed out or canceled, register the release action BEFORE
++        // the re-lock below: the re-lock can block indefinitely, and a
++        // notify that pops our blocker while we are blocked must forward
++        // the signal to the next live waiter instead of delivering it to
++        // a waiter that is already leaving
+         if ret.is_err() {
+-            // when in a cancel state, could cause problem for the lock
+-            // make notify never panic by disable the cancel bit
+-
+             // check the unpark status
+             if cur.is_unparked() {
+                 self.notify_one();
+@@ -88,14 +107,17 @@ impl Condvar {
              }
          }
  
-+        // After waking, our blocker may still be registered: a sender can
-+        // push data and find the blocker only after we already returned
-+        // from park_timeout, which would unpark a thread that is no longer
-+        // waiting and keep the Thread handle alive until the queue drops.
-+        // Clear it on every wakeup path; the take is a no-op if send()
-+        // already consumed the blocker.
-+        self.inner.wait_co.clear();
++        // disable cancel panic
++        let _g = cancel.map(CancelDisableGuard::new);
++        // don't run the guard destructor
++        ::std::mem::forget(lock.lock());
 +
-         // After waking (from data or timeout), try to receive again.
-         // Data might have arrived while we were parked.
-         match self.inner.try_recv() {
-@@ -923,6 +931,23 @@ mod tests {
-         );
+         // drop the parker here without panic!
+         // it may panic in the drop of Park
+         drop(cur);
+ 
+-        // enable cancel panic
+-        if let Some(c) = cancel.as_ref() {
+-            c.enable_cancel();
+-        }
++        // enable cancel panic (guard drop)
++        drop(_g);
+ 
+         ret
+     }
+@@ -136,6 +158,29 @@ impl Condvar {
+         Ok(guard)
      }
  
-+    #[test]
-+    fn recv_timeout_thread_no_stale_blocker() {
-+        let (tx, rx) = channel::<i32>();
-+        assert_eq!(
-+            rx.recv_timeout(Duration::from_millis(10)),
-+            Err(RecvTimeoutError::Timeout)
-+        );
-+        // send() must not find a registered waiter: if the timeout left a
-+        // stale blocker behind, send() would unpark us here and the next
-+        // park would return immediately instead of sleeping.
-+        tx.send(1).unwrap();
-+        let start = Instant::now();
-+        thread::park_timeout(Duration::from_millis(30));
-+        assert!(start.elapsed() >= Duration::from_millis(20));
-+        assert_eq!(rx.try_recv(), Ok(1));
++    pub fn wait_timeout_while<'a, T, F>(
++        &self,
++        mut guard: MutexGuard<'a, T>,
++        dur: Duration,
++        mut condition: F,
++    ) -> LockResult<(MutexGuard<'a, T>, WaitTimeoutResult)>
++    where
++        F: FnMut(&mut T) -> bool,
++    {
++        while condition(&mut *guard) {
++            match self.wait_timeout(guard, dur) {
++                Ok((g, timeout_result)) => {
++                    if timeout_result.timed_out() {
++                        return Ok((g, timeout_result));
++                    }
++                    guard = g;
++                }
++                Err(e) => return Err(e),
++            }
++        }
++        Ok((guard, WaitTimeoutResult(false)))
 +    }
 +
-     // -----------------------------------------------------------------------
-     // Existing tests (unchanged)
-     // -----------------------------------------------------------------------
+     pub fn wait_timeout<'a, T>(
+         &self,
+         guard: MutexGuard<'a, T>,
+@@ -166,15 +211,23 @@ impl Condvar {
+     }
+ 
+     pub fn notify_one(&self) {
+-        // NOTICE: the following code would not drop the lock
 ```
 
 ---
 
-### Incident Patch 3: `5deadd58` (2026-11-05)
-**Commit Message**: Add WaitIo cancel regression test and simplify check_cancel
+### Incident Patch 3: `ff2a51c8` (2026-11-06)
+**Commit Message**: Fix Mutex unlock release-chain recursion
 
-check_cancel duplicated is_canceled's state == 1 test; delegate to it
-instead of re-reading the atomic. Add cancel_wait_io_coroutine to lock
-in the RawIoBlock cancellation fix so a coroutine blocked in
-WaitIo::wait_io unwinds on cancel rather than hanging join().
+unlock/unpark_one recursed once per released (canceled) waiter when
+passing the lock down the chain: with 32KB default coroutine stacks, a
+cancel storm while the lock is held overflows the holder's stack when
+it releases. Walk the chain iteratively instead, preserving the exact
+fetch_sub/pop hand-off sequence.
 
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+Regression test test_mutex_release_chain: 500 canceled waiters + a
+holder coroutine that releases the lock at the end; verified to abort
+with STATUS_STACK_OVERFLOW against the recursive version.
 
-**File**: `src/cancel.rs` (modified, +1/-1)
+**File**: `src/sync/mutex.rs` (modified, +84/-9)
 ```diff
-@@ -109,7 +109,7 @@ impl<T: CancelIo> CancelImpl<T> {
- 
-     // panic if cancel was set
-     pub fn check_cancel(&self) {
--        if unlikely(self.state.load(Ordering::Acquire) == 1) {
-+        if unlikely(self.is_canceled()) {
-             // before panic clear the last coroutine error
-             // this would affect future new coroutine that reuse the instance
-             get_co_para();
-```
-
-**File**: `tests/lib.rs` (modified, +36/-0)
-```diff
-@@ -82,6 +82,42 @@ fn cancel_io_coroutine() {
-     }
- }
- 
-+// A coroutine blocked in `WaitIo::wait_io` must unwind on cancel. This is the
-+// regression test for the `RawIoBlock::yield_back` override that used to clear
-+// the cancel bit instead of re-checking it, leaving `join()` hanging forever.
-+#[test]
-+#[cfg(all(unix, feature = "io_cancel"))]
-+fn cancel_wait_io_coroutine() {
-+    use may::io::WaitIo;
-+    use std::sync::mpsc::channel;
-+
-+    let (tx, rx) = channel();
-+
-+    let j = go!(move || {
-+        // a listening socket has no io event until a connection arrives, so
-+        // `wait_io()` suspends the coroutine until a cancel resumes it
-+        let listener = may::net::TcpListener::bind(("127.0.0.1", 0)).unwrap();
-+        tx.send(()).unwrap();
-+        listener.wait_io()
-+    });
-+
-+    // wait until the coroutine is blocked in wait_io
-+    rx.recv().unwrap();
-+
-+    j.coroutine().cancel();
-+
-+    match j.join() {
-+        Ok(_) => panic!("test should return panic"),
-+        Err(panic) => {
-+            use generator::Error;
-+            match panic.downcast_ref::<Error>() {
-+                Some(&Error::Cancel) => println!("coroutine cancelled"),
-+                _ => panic!("panic type wrong"),
+@@ -87,11 +87,14 @@ impl<T: ?Sized> Mutex<T> {
+         self.to_wake.get_or_init(Queue::new).push(cur.clone());
+         // inc the cnt, if it's the first grab, unpark the first waiter
+         if self.cnt.fetch_add(1, Ordering::SeqCst) == 0 {
+-            self.to_wake
++            let w = self
++                .to_wake
+                 .get_or_init(Queue::new)
+                 .pop()
+-                .map(|w| self.unpark_one(&w))
+                 .expect("got null blocker!");
++            if self.unpark_one(&w) {
++                self.unlock();
 +            }
-+        }
-+    }
-+}
+         }
+         loop {
+             match cur.park(None) {
+@@ -154,20 +157,33 @@ impl<T: ?Sized> Mutex<T> {
+         }
+     }
+ 
+-    fn unpark_one(&self, w: &SyncBlocker) {
++    /// unpark one waiter, return true if it registered a release action:
++    /// it is unwinding (canceled) and won't take the lock, so the hand-off
++    /// must continue with the next waiter
++    fn unpark_one(&self, w: &SyncBlocker) -> bool {
+         w.unpark();
+-        if w.take_release() {
+-            self.unlock();
+-        }
++        w.take_release()
+     }
+ 
+     fn unlock(&self) {
+-        if self.cnt.fetch_sub(1, Ordering::SeqCst) > 1 {
+-            self.to_wake
++        // pass the lock down the waiter chain iteratively: a popped waiter
++        // that registered a release action is unwinding and won't take the
++        // lock, so the hand-off continues with the next waiter. Recursing
++        // here would overflow the (small, 32KB default) coroutine stack
++        // when a cancel storm leaves a chain of released waiters (see the
++        // same fix in condvar::notify_one).
++        let mut cnt = self.cnt.fetch_sub(1, Ordering::SeqCst);
++        while cnt > 1 {
++            let w = self
++                .to_wake
+                 .get_or_init(Queue::new)
+                 .pop()
+-                .map(|w| self.unpark_one(&w))
+                 .expect("got null blocker!");
++            if !self.unpark_one(&w) {
++                break;
++            }
++            // the released waiter's slot is released as well
++            cnt = self.cnt.fetch_sub(1, Ordering::SeqCst);
+         }
+     }
+ 
+@@ -663,4 +679,63 @@ mod tests {
+         let g = mutex1.lock().unwrap();
+         assert_eq!(*g, 1);
+     }
 +
- #[test]
- fn one_coroutine() {
-     let j = go!(move || {
++    // regression: releasing the lock must walk the chain of released
++    // (canceled) waiters iteratively — a recursive unlock would overflow
++    // the coroutine stack
++    #[test]
++    fn test_mutex_release_chain() {
++        use crate::sleep::sleep;
++        use crate::sync::mpsc::channel;
++        use std::time::Duration;
++
++        const N: usize = 500;
++
++        let m = Arc::new(Mutex::new(()));
++        let m_holder = m.clone();
++        let (tx_held, rx_held) = channel();
++        let (tx_go, rx_go) = channel();
++        // the holder is a coroutine so the release-chain walk runs on a
++        // 32KB coroutine stack; it holds the lock until the test tells it
++        // to release, so the waiters can never acquire the lock
++        let holder = go!(move || {
++            let _g = m_holder.lock().unwrap();
++            tx_held.send(()).unwrap(); // the lock is definitely held now
++            rx_go.recv().unwrap(); // wait until all waiters are canceled
++                                   // dropping the guard at scope end walks the chain
++        });
++
++        // wait until the holder acquired the lock before spawning the
++        // waiters: otherwise a waiter could win the lock race, panic with
++        // unreachable!() before being canceled, and poison the mutex
++        rx_held.recv().unwrap();
++
++        let mut handles = vec![];
++        for _ in 0..N {
++            let m = m.clone();
++            handles.push(go!(move || {
++                let _g = m.lock().unwrap(); // canceled while waiting
++                unreachable!();
++            }));
++        }
++
++        // let all waiters enqueue
++        sleep(Duration::from_millis(100));
++        // cancel all waiters while they are parked on the mutex: each one
++        // registers a release action and then unwinds
++        for h in &handles {
++            h.coroutine().cancel();
++        }
++        for h in handles {
++            assert!(h.join().is_err());
++        }
++
++        // the holder releases the lock and iteratively passes it down the
++        // chain of released waiters
++        tx_go.send(()).unwrap();
++        holder.join().unwrap();
++        // the mutex must be usable afterwards
++        let g = m.lock().unwrap();
++        drop(g);
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2616,58 +2936,28 @@ Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cancelled coroutines completing normally during suspended unwinds
+## X. release-chain recursion in Semphore, SyncFlag and RwLock
 
 **RULE**:
-When implementing operations in `src/cancel.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/sync/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `64877358`: cancelled coroutines completing normally during suspended unwinds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6fe9b92d`: release-chain recursion in Semphore, SyncFlag and RwLock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cancel.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::cell::Cell;
-// a cancel panic is in flight on this thread: a coroutine's unwind from a
-// Cancel panic can be suspended (a Drop that parks), during which
-// `thread::panicking()` stays true for the whole thread while other
-// coroutines keep running on it. The flag distinguishes that window from a
-// real (non-cancel) panic so that:
-// - `poison::done` does not spuriously poison locks whose guards are
-//   dropped by other coroutines during the window
-// - the unwinding coroutine's own drops never re-trigger the cancel panic
-thread_local! {
-    static CANCEL_PANICKING: Cell<bool> = const { Cell::new(false) };
-}
-
-/// true if a Cancel-panic unwind is currently in flight on this thread
-#[inline]
-pub(crate) fn cancel_panic_in_flight() -> bool {
-    CANCEL_PANICKING.with(|f| f.get())
-}
-
-/// mark that a Cancel-panic unwind started on this thread
-/// called by `trigger_cancel_panic`, cleared when the coroutine completes
-/// in `run_coroutine`
-#[inline]
-fn set_cancel_panic_flag() {
-    CANCEL_PANICKING.with(|f| f.set(true));
-}
-
-/// clear the Cancel-panic flag once the unwind has completed
-/// idempotent, called from `run_coroutine` on every coroutine completion
-#[inline]
-pub(crate
+pub use semphore::{Semaphore, Semphore};
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+pub use semphore::Semphore;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64877358` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6fe9b92d` are properly handled with clean fallback behavior.

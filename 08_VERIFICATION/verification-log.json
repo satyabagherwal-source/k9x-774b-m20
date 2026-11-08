@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-2WKQ",
-    "timestamp": "2026-11-05T21:54:43.946Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "04c705dae4861d87c3b2c70e7da73984f6b664d25c63bac6e275436af218b33b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-30U4",
-    "timestamp": "2026-11-05T21:54:49.468Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "e17b1517f6b76691e2a5f00543883018b87f187496f4b2871752e6e6290a52c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-BGKA",
-    "timestamp": "2026-11-05T22:01:23.098Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "164f31f370403fb466857062b53ae1c4302d47f7b9f0f3b0f6dc37e4a767985c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-BHVJ",
     "timestamp": "2026-11-05T22:01:24.799Z",
     "repository": "mistralai/Mistral-Large-4-1T-A52B",
@@ -7492,6 +7447,51 @@
     "contentHash": "bc4708800f4b3fc6f57c2b22b8ce9250483bdae65903350f312e6078364a479c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-6UH7",
+    "timestamp": "2026-11-08T14:48:54.475Z",
+    "repository": "Xudong-Huang/may",
+    "learningId": "learn-github-xudong-huang-may",
+    "contentHash": "d9862369c9bc38eebbae0fb6547f2f3463cbe4f3918f27289ec8c45a244a170f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-73HD",
+    "timestamp": "2026-11-08T14:49:06.145Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "3c5fa8de6b4dc568909a9ea0b07016c392b91b94d12ed7d83e5fee1c61ffcc64",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-74TJ",
+    "timestamp": "2026-11-08T14:49:07.879Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "ddf3dfce93caee5bf27eb2c154e28ea2bc31d530c3380564305b861633e84e29",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

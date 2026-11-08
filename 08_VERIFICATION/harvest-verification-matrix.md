@@ -8299,3 +8299,6 @@
 | `CYCLE-20261108-BQH2` | `2026-11-08T14:24:42.950Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`610c888e...`) |
 | `CYCLE-20261108-XNJQ` | `2026-11-08T14:41:45.591Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ba834839...`) |
 | `CYCLE-20261108-XOJJ` | `2026-11-08T14:41:46.879Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`bc470880...`) |
+| `CYCLE-20261108-6UH7` | `2026-11-08T14:48:54.475Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d9862369...`) |
+| `CYCLE-20261108-73HD` | `2026-11-08T14:49:06.145Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`3c5fa8de...`) |
+| `CYCLE-20261108-74TJ` | `2026-11-08T14:49:07.879Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ddf3dfce...`) |

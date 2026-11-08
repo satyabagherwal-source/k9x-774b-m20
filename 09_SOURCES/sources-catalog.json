@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "96b031261148aafc4ceec59e3c2deb1a014ddd9458fd85d49b9bbf032114f3fc",
-    "lastHarvestedAt": "2026-11-04T23:13:29.007Z",
+    "contentHash": "3c5fa8de6b4dc568909a9ea0b07016c392b91b94d12ed7d83e5fee1c61ffcc64",
+    "lastHarvestedAt": "2026-11-08T14:49:06.149Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "d032b9f2",
+    "sourceVersion": "b61e0159",
     "license": "NOASSERTION",
-    "contentHash": "8dc056edd59cfdc32ae42ef86aa111bc5473e609648e45fcee549055b952e7e8",
-    "lastHarvestedAt": "2026-11-07T17:48:09.616Z",
+    "contentHash": "ddf3dfce93caee5bf27eb2c154e28ea2bc31d530c3380564305b861633e84e29",
+    "lastHarvestedAt": "2026-11-08T14:49:07.883Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -5893,10 +5893,10 @@
     "repository": "Xudong-Huang/may",
     "platform": "github",
     "sourceUrl": "https://github.com/Xudong-Huang/may",
-    "sourceVersion": "8e447440",
+    "sourceVersion": "ee9b4bb8",
     "license": "Apache-2.0",
-    "contentHash": "3ef2bcde83ce3b9d38c673b7d2f3382c272df2cdef53a0d58df5f2db76bcbb79",
-    "lastHarvestedAt": "2026-11-07T02:41:09.918Z",
+    "contentHash": "d9862369c9bc38eebbae0fb6547f2f3463cbe4f3918f27289ec8c45a244a170f",
+    "lastHarvestedAt": "2026-11-08T14:48:54.479Z",
     "learningId": "learn-github-xudong-huang-may"
   },
   "rcbyr-keen-slider": {

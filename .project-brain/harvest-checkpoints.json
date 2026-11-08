@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T14:41:46.892Z",
+  "last_updated": "2026-11-08T14:49:07.891Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -455,14 +455,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "content_hash": "96b031261148aafc4ceec59e3c2deb1a014ddd9458fd85d49b9bbf032114f3fc",
-      "verified_at": "2026-11-04T23:13:29.017Z",
+      "content_hash": "3c5fa8de6b4dc568909a9ea0b07016c392b91b94d12ed7d83e5fee1c61ffcc64",
+      "verified_at": "2026-11-08T14:49:06.157Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T23:13:29.017Z"
+      "last_updated": "2026-11-08T14:49:06.157Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "8dc056edd59cfdc32ae42ef86aa111bc5473e609648e45fcee549055b952e7e8",
-      "verified_at": "2026-11-07T17:48:09.631Z",
+      "content_hash": "ddf3dfce93caee5bf27eb2c154e28ea2bc31d530c3380564305b861633e84e29",
+      "verified_at": "2026-11-08T14:49:07.890Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T17:48:09.631Z"
+      "last_updated": "2026-11-08T14:49:07.890Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -8961,14 +8961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xudong-huang-may",
-      "content_hash": "3ef2bcde83ce3b9d38c673b7d2f3382c272df2cdef53a0d58df5f2db76bcbb79",
-      "verified_at": "2026-11-07T02:41:09.926Z",
+      "content_hash": "d9862369c9bc38eebbae0fb6547f2f3463cbe4f3918f27289ec8c45a244a170f",
+      "verified_at": "2026-11-08T14:48:54.487Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T02:41:09.926Z"
+      "last_updated": "2026-11-08T14:48:54.487Z"
     },
     "rcbyr/keen-slider": {
       "repository": "rcbyr/keen-slider",
