@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T06:42:25.259Z",
+  "last_updated": "2026-11-08T06:50:54.438Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12381,14 +12381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-maziyarpanahi-openmed",
-      "content_hash": "b65be4522dc9aac763753aafb001f83bc44ba631e71ed26a0baf673ee41ff280",
-      "verified_at": "2026-11-05T05:53:13.512Z",
+      "content_hash": "9fac6036ce24b02769c275fbf51dafa75251b2375e852324a98f4b8f5c82061d",
+      "verified_at": "2026-11-08T06:49:18.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:53:13.512Z"
+      "last_updated": "2026-11-08T06:49:18.957Z"
     },
     "bernaferrari/FigmaToCode": {
       "repository": "bernaferrari/FigmaToCode",
@@ -16971,14 +16971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-      "content_hash": "601c12eb95f9d7db49e8a4a815fa83b1af05977e7b46a713725059db787c93fa",
-      "verified_at": "2026-11-04T20:18:09.978Z",
+      "content_hash": "929f3f89395a8d286d152014a9521f16712a5cca75b5205b8649a0d16b06c385",
+      "verified_at": "2026-11-08T06:50:54.437Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:18:09.978Z"
+      "last_updated": "2026-11-08T06:50:54.437Z"
     },
     "AgileRL/AgileRL": {
       "repository": "AgileRL/AgileRL",

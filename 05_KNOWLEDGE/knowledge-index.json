@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T06:42:25.151Z",
+  "last_updated": "2026-11-08T06:50:54.319Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41314,11 +41314,16 @@
       "slug": "maziyarpanahi-openmed",
       "platform": "github",
       "source_url": "https://github.com/maziyarpanahi/openmed",
-      "source_version": "29ffa700",
-      "content_hash": "b65be4522dc9aac763753aafb001f83bc44ba631e71ed26a0baf673ee41ff280",
+      "source_version": "74561086",
+      "content_hash": "9fac6036ce24b02769c275fbf51dafa75251b2375e852324a98f4b8f5c82061d",
       "dossier_path": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add synthetic malformed multimodal preflight fixtures",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2646,
           "title": "require patched MCP session handling (#4221)",
@@ -41355,7 +41360,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T05:53:13.420Z",
+      "verified_at": "2026-11-08T06:49:18.816Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150571,10 +150576,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
-      "content_hash": "601c12eb95f9d7db49e8a4a815fa83b1af05977e7b46a713725059db787c93fa",
+      "content_hash": "929f3f89395a8d286d152014a9521f16712a5cca75b5205b8649a0d16b06c385",
       "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "WebGL/Three.js Resource Disposal Invariant in Autonomous 3D Code Generation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Token Termination Matching Invariant for Dual EOS Token Arrays",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Spatial Token Delimiter Preservation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 4950,
           "title": "Quantization-Induced Layer Drift Mitigation",
@@ -150621,7 +150641,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:18:09.846Z",
+      "verified_at": "2026-11-08T06:50:54.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

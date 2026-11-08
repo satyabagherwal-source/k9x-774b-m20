@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T06:42:27.833Z",
-    "lastVerified": "2026-11-08T06:42:27.833Z",
+    "lastChecked": "2026-11-08T06:50:57.033Z",
+    "lastVerified": "2026-11-08T06:50:57.033Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -119,8 +119,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T03:14:54.137Z",
-    "lastVerified": "2026-11-08T03:14:54.137Z",
+    "lastChecked": "2026-11-08T06:49:17.256Z",
+    "lastVerified": "2026-11-08T06:49:17.256Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -369,9 +369,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T06:19:01.278Z",
+    "lastChecked": "2026-11-08T06:49:22.181Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T06:19:01.278Z"
+    "lastVerified": "2026-11-08T06:49:22.181Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3121,9 +3121,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-11-07T03:29:39.588Z",
+    "lastChecked": "2026-11-08T06:49:19.760Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-11-07T03:29:39.588Z"
+    "lastVerified": "2026-11-08T06:49:19.760Z"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -4566,9 +4566,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-06T21:13:36.583Z",
+    "lastChecked": "2026-11-08T06:49:07.194Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-06T21:13:36.583Z"
+    "lastVerified": "2026-11-08T06:49:07.194Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -6893,12 +6893,12 @@
     "revisionIdentifier": "d486a5e8"
   },
   "argoproj-argo-workflows": {
-    "name": "argoproj/argo-workflows",
+    "name": "argo-workflows",
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T04:29:40.170Z",
-    "lastVerified": "2026-11-07T04:29:40.170Z",
+    "lastChecked": "2026-11-08T06:49:14.805Z",
+    "lastVerified": "2026-11-08T06:49:14.805Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
@@ -6907,7 +6907,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "45e810c8"
   },
   "ytsaurus-ytsaurus": {
     "name": "ytsaurus/ytsaurus",
@@ -9880,14 +9881,14 @@
     "officialUrl": "https://github.com/maziyarpanahi/openmed",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T05:53:12.959Z",
-    "lastVerified": "2026-11-05T05:53:12.959Z",
+    "lastChecked": "2026-11-08T06:49:16.829Z",
+    "lastVerified": "2026-11-08T06:49:16.829Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-maziyarpanahi-openmed",
-    "contentHash": "b65be4522dc9aac763753aafb001f83bc44ba631e71ed26a0baf673ee41ff280",
+    "contentHash": "9fac6036ce24b02769c275fbf51dafa75251b2375e852324a98f4b8f5c82061d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13357,12 +13358,12 @@
     "officialUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T20:18:02.502Z",
-    "lastVerified": "2026-11-04T20:18:02.502Z",
+    "lastChecked": "2026-11-08T06:49:09.783Z",
+    "lastVerified": "2026-11-08T06:49:09.783Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-    "contentHash": "601c12eb95f9d7db49e8a4a815fa83b1af05977e7b46a713725059db787c93fa",
+    "contentHash": "929f3f89395a8d286d152014a9521f16712a5cca75b5205b8649a0d16b06c385",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

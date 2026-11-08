@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source**: github ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
-> **Source Version**: `29ffa700`  
+> **Source Version**: `74561086`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T05:53:12.964Z  
+> **Timestamp**: 2026-11-08T06:49:17.775Z  
 > **Learning ID**: `learn-github-maziyarpanahi-openmed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T05:53:12.959Z  
+> **Harvest Timestamp**: 2026-11-08T06:49:16.829Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first healthcare AI: clinical NER and HIPAA PII de-identification on hardware you control. 2,200+ medical models, 35 model-backed PII languages, and Python, MLX, Android and browser runtimes. Apache-2.0 SDK.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5777 stars
+- **Stars / Engagement**: 5787 stars
 
 ---
 
@@ -2325,977 +2325,1483 @@ def _check_element(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f17f1e6` (2026-11-03)
-**Commit Message**: feat: add edge-VLM memory planning (#3633)
+### Incident Patch 1: `f698a58f` (2026-11-07)
+**Commit Message**: Add synthetic malformed multimodal preflight fixtures
 
-Add deterministic local memory planning with bounded tier selection, per-frame cache estimates, and overflow abstention.
-
-Closes #2792
+Closes #3007
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -190,6 +190,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- ### Added
+ - Add deterministic DICOM series sampling with acquisition-aware geometry coverage, bounded native previews, source-bound manifests, and local VLM drafts that distinguish selected evidence from unexamined frames (#2793).
  
-+- Add deterministic edge-VLM execution memory plans with explicit device budgets, bounded preprocessing estimates and local-only abstention before allocation (#2792).
++- Ship bounded synthetic malformed-header fixtures exercising the existing multimodal preflight and batch contracts (#3007).
 +
- - Define an offline edge-VLM provider contract with bounded image/prompt inputs, source-linked evidence, model/preprocessing digests, shared abstentions, content-free reports and explicit human review for non-diagnostic drafts (#2791).
+ - Run ordered multimodal batch preflight with shared per-asset reports, aggregate ceilings, duplicates and explicit stop policies (#3009).
  
- ## [3.2.0] - 2026-10-30
+ - Add a bounded Python session for injected local image, PDF and streaming-audio providers, with preflighted immutable snapshots, explicit ownership, cooperative cancellation and metadata-only ordered results (#3677).
 ```
 
 **File**: `docs/brand/system/publication.yml` (modified, +1/-0)
 ```diff
-@@ -470,6 +470,7 @@ classification:
-     - multimodal/manifest-profiles.md
-     - multimodal/asset-limits.md
-     - multimodal/batch-memory-estimates.md
-+    - multimodal/vision/vlm-resource-planning.md
+@@ -478,6 +478,7 @@ classification:
+     - multimodal/vision/vlm-resource-planning.md
      - multimodal/preflight.md
+     - multimodal/batch-preflight.md
++    - multimodal/preflight-fixtures.md
+     - multimodal/preflight-cli.md
+     - multimodal/inference-cli.md
      - multimodal/page-batches.md
-     - multimodal/asset-batches.md
 ```
 
-**File**: `docs/multimodal/vision/vlm-resource-planning.md` (added, +139/-0)
+**File**: `docs/multimodal/preflight-fixtures.md` (added, +34/-0)
 ```diff
-@@ -0,0 +1,139 @@
-+# Edge-VLM Execution Memory Plans
+@@ -0,0 +1,34 @@
++# Synthetic malformed-asset preflight fixtures
 +
-+`openmed.multimodal.vision.runtime.resource_planner` estimates the peak memory
-+of running an edge vision-language model over a declared preprocessing plan,
-+compares that estimate with the device tiers the caller registers, and selects
-+the **smallest tier that can hold it**. When the estimate cannot be trusted or
-+nothing fits, the planner abstains.
++The version-1 bundled negative pack contains **13** minimal synthetic cases for
++PDF, PNG, JPEG, TIFF, DICOM and WAV. Each case declares stable expected finding
++codes from the existing `preflight_asset` or `validate_asset_batch` contract.
++Headers are at most 132 bytes: they contain signatures, truncations and zero
++preambles, with no image pixels, audio samples, DICOM dataset, patient text or
++credentials. These cases are not fuzzing, malware or real clinical media.
 +
-+A plan is a declaration, not a measurement. It does not load weights, download
-+models, reserve memory, schedule inference, or contact a service. It holds only
-+under the documented arithmetic and the policy factors the caller supplies, and
-+it never proposes a cloud fallback: `CLOUD_FALLBACK_ALLOWED` is `False`, and
-+every plan reports `cloud_fallback_allowed` as `false`.
++```python
++from openmed.multimodal.preflight_fixtures import load_preflight_fixtures
 +
-+## Inputs
++for case in load_preflight_fixtures():
++    assert case.actual_findings() == case.expected_findings
++```
 +
-+`plan_vlm_execution(policy, preprocessing)` takes two frozen declarations:
++Cases cover each format's truncated signature, a declared-type mismatch, zero
++dimensions, an oversized frame count, a bad digest, duplicate asset IDs/content,
++unknown media and a pixel-resource ceiling. The PDF truncation also retains the
++existing resource contract's insufficient-geometry finding. Expected codes are
++complete code sets, sorted without copying asset values or source bytes.
 +
-+- `policy`: a `VLMExecutionPolicy` holding the registered device tiers and the
-+  five factors a preprocessing plan cannot carry.
-+- `preprocessing`: a `PreprocessingPlan` describing the image geometry and the
-+  tile assignment.
++The loader checks a strict schema and JSON fields, duplicate JSON keys, unique
++case IDs, closed categories and expected codes, numeric metadata, hex encoding,
++at most 64 cases and a 64 KiB input ceiling. Cases and manifest mappings are
++immutable. Optional payloads must be synthetic JSON bytes or text; filenames,
++transports and unknown payload fields are not accepted. The default pack ships
++under `openmed/multimodal/fixtures/malformed_asset_preflight.json`.
 +
-+`VLMExecutionPolicy(tiers, parameter_count=None, weight_bytes_per_parameter=None,
-+activation_bytes_per_pixel=None, cache_bytes_per_tile=None, output_bytes=None,
-+runtime_overhead_bytes=0)`. Every factor is either `None` or a bounded integer.
-+None has a default, and none is guessed: a factor the caller does not supply
-+makes the run unevaluable.
-+
-+| Factor | Bound | Used for |
-+| --- | --- | --- |
-+| `parameter_count` | 0 to 2^62 | model weights |
-+| `weight_bytes_per_parameter` | 1 to 64 | model weights |
-+| `activation_bytes_per_pixel` | 1 to 4096 | frame stack and tile buffer |
-+| `cache_bytes_per_tile` | 0 to 2^32 | cache for one tile in one frame |
-+| `output_bytes` | 0 to 2^40 | decoded output |
-+| `runtime_overhead_bytes` | 0 to 2^63 - 1 | fixed runtime overhead |
-+
-+`PreprocessingPlan(width, height, tile_size, tile_overlap=0, frames=1)` derives
-+`stride = tile_size - tile_overlap`, `tiles_x = ceil(width / stride)`,
-+`tiles_y = ceil(height / stride)`, and `tile_count = tiles_x x tiles_y`.
-+
-+## Device tiers
-+
-+A tier is a `DeviceTier(name, memory_budget_bytes, reserved_bytes=0)`. The name
-+is an opaque label of at most 64 characters matching `[a-z][a-z0-9]*([._-][a-z0-9]+)*`. Use static tier labels, never patient or site identifiers; syntactic validation does not de-identify caller-supplied names.
-+`reserved_bytes` must stay below `memory_budget_bytes`; the difference is the
-+`available_bytes` a plan may use.
-+
-+| Tier | Budget | Reserved | Available |
-+| --- | --- | --- | --- |
-+| `VLM_TIER_MOBILE_V1` (`mobile.v1`) | 6 GiB | 1 GiB | 5 GiB |
-+| `VLM_TIER_DESKTOP_V1` (`desktop.v1`) | 32 GiB | 4 GiB | 28 GiB |
-+
-+Zero, negative, boolean, and fractional byte counts are rejected with
-+`VLMResourcePlannerError`, as are budgets above `MAX_MEMORY_BYTES`. A policy
-+holds between 1 and `MAX_DEVICE_TIERS` (64) tiers with unique names.
-+
-+## Estimation
-+
-+| Component | Formula |
-+| --- | --- |
-+| `model_bytes` | `parameter_count x weight_bytes_per_parameter` |
-+| `peak_activation_bytes` | `width x height x frames x activation_bytes_per_pixel` + `tile_size x tile_size x frames x activation_bytes_per_pixel` |
-+| `cache_bytes` | `tile_count x frames x cache_bytes_per_tile` |
-+| `output_bytes` | `output_bytes` |
-+| `runtime_overhead_bytes` | `runtime_overhead_bytes` |
-+| `total_bytes` | the sum of the five components above |
-+
-+Overlapping tiles are charged the full tile buffer, because the planner bounds
-+a decoder that materializes each tile independently.
-+
-+## Outcomes
-+
-+| Outcome | Condition |
-+| --- | --- |
-+| `safe` | every factor is present, nothing saturates, and at least one tier's `available_bytes` is at least `total_bytes` |
-+| `abstain` | a factor is missing, an estimate saturates, or no tier fits |
-+
-+Every plan carries a content-free `VLMResourceEstimate` with the components
-+above, and each declared tier is reported as:
-+`TierCandidate(name, available_bytes, fits)`.
-+
-+| Reason code | Meaning | `total_bytes` | Candidates |
-+| --- | --- | --- | --- |
-+| `insufficient_metadata` | a policy factor is missing; `field_name` names the first one | `null` | none |
-+| `estimate_saturated` | a component would pass the saturation ceiling; `field_name` names it | `null` | none |
-+| `memory_budget_exceeded` | no declared tier fits; every candidate reports `fits=False` | the estimate | all tiers |
-+
-+A `safe` plan names the selected `tier_name` and its `tier_available_bytes`.
-+An `abstain` plan leaves both `null`. Selection is deterministic and ignores
-+declaration order: candidates are ordered by `(available_bytes, name)`, the
-+smallest fitting tier wins, and ties break on the lexicographically first name.
-+
-+## Arithmetic
-+
-+All arithmetic is integer and platform-independent. A component or total that
-+would exceed `MAX_MEMORY_BYTES`, 2^63 - 1, saturates, and a saturated estimate
-+always abstains, so saturation nev
++The single-asset preflight detects signatures, validates declared metadata,
++checks limits and hashes bytes; it does **not** deeply parse every header or
++prove a file is decodable. These fixtures exercise that existing boundary and
++do not claim complete malformed-file coverage, PHI absence in arbitrary input,
++clinical validity or model qualification.
 ```
 
 **File**: `mkdocs.yml` (modified, +1/-0)
 ```diff
-@@ -410,6 +410,7 @@ nav:
-       - Multimodal Manifest Profiles: multimodal/manifest-profiles.md
-       - Multimodal Asset Limit Profiles: multimodal/asset-limits.md
-       - Multimodal Batch Memory Estimates: multimodal/batch-memory-estimates.md
-+      - Edge-VLM Execution Memory Plans: multimodal/vision/vlm-resource-planning.md
+@@ -418,6 +418,7 @@ nav:
+       - Edge-VLM Execution Memory Plans: multimodal/vision/vlm-resource-planning.md
        - Multimodal Preflight Report: multimodal/preflight.md
+       - Ordered Multimodal Batch Preflight: multimodal/batch-preflight.md
++      - Synthetic Preflight Fixtures: multimodal/preflight-fixtures.md
+       - Offline Multimodal Preflight CLI: multimodal/preflight-cli.md
+       - Offline Media Task CLI: multimodal/inference-cli.md
        - Document Page Batches: multimodal/page-batches.md
-       - Privacy-safe Asset Batches: multimodal/asset-batches.md
 ```
 
-**File**: `openmed/multimodal/vision/__init__.py` (modified, +12/-1)
+**File**: `openmed/multimodal/fixtures/malformed_asset_preflight.json` (added, +279/-0)
 ```diff
-@@ -1 +1,12 @@
--"""Offline vision orchestration; runtime adapters live in backend packages."""
-+"""On-device vision contracts for multimodal workflows.
-+
-+This package groups the vision-specific contracts that build on the shared
-+:mod:`openmed.multimodal` ingestion surface. The sub-packages stay stdlib-only,
-+so importing :mod:`openmed.multimodal.vision` never pulls an optional extra.
-+"""
-+
-+from __future__ import annotations
-+
-+from . import runtime
-+
-+__all__ = ["runtime"]
+@@ -0,0 +1,279 @@
++{
++  "schema_version": 1,
++  "synthetic": true,
++  "cases": [
++    {
++      "case_id": "pdf_truncated",
++      "category": "truncation",
++      "assets": [
++        {
++          "manifest": {
++            "asset_id": "pdf_truncated",
++            "media_type": "application/pdf",
++            "sha256": "b9c39a040804e0b3424df7b13a11cca1d0e45bd246b541acb1177429cd3236ab",
++            "byte_size": 2,
++            "pages": 1
++          },
++          "header_hex": "2550"
++        }
++      ],
++      "expected_findings": [
++        "limits.insufficient_metadata",
++        "media_type.unknown"
++      ]
++    },
++    {
++      "case_id": "png_truncated",
++      "category": "truncation",
++      "assets": [
++        {
++          "manifest": {
++            "asset_id": "png_truncated",
++            "media_type": "image/png",
++            "sha256": "449ba17f2a44989a58050282f82fec8663b84f57a6a443d3750033a0c02f8be9",
++            "byte_size": 3,
++            "width": 8,
++            "height": 8
++          },
++          "header_hex": "89504e"
++        }
++      ],
++      "expected_findings": [
++        "media_type.unknown"
++      ]
++    },
++    {
++      "case_id": "jpeg_truncated",
++      "category": "truncation",
++      "assets": [
++        {
++          "manifest": {
++            "asset_id": "jpeg_truncated",
++            "media_type": "image/jpeg",
++            "sha256": "71563ad80061407ede9c6f316836284bd3710a520c5a792b5eda1cb703690815",
++            "byte_size": 2,
++            "width": 8,
++            "height": 8
++          },
++          "header_hex": "ffd8"
++        }
++      ],
++      "expected_findings": [
++        "media_type.unknown"
++      ]
++    },
++    {
++      "case_id": "tiff_truncated",
++      "category": "truncation",
++      "assets": [
++        {
++          "manifest": {
++            "asset_id": "tiff_truncated",
++            "media_type": "image/tiff",
++            "sha256": "2e561ff2355c06484efc416619b5b7f7fc055acdb4e5b6db7a4bc0a5016b19e3",
++            "byte_size": 2,
++            "width": 8,
++            "height": 8
++          },
++          "header_hex": "4949"
++        }
++      ],
++      "expected_findings": [
++        "media_type.unknown"
++      ]
++    },
++    {
++      "case_id": "dicom_truncated",
++      "category": "truncation",
++      "assets": [
++        {
++          "manifest": {
++            "asset_id": "dicom_truncated",
++            "media_type": "application/dicom",
++            "sha256": "ef2d8d1b20317cd4025b904d7e73adba4725199aed41390781fbb6f8a03eecbb",
++            "byte_size": 130,
++            "width": 8,
++            "height": 8,
++            "frames": 1
++          },
++          "header_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004449"
++        }
++      ],
++      "expected_findings": [
++        "media_type.unknown"
++      ]
++    },
++    {
++      "case_id": "wav_truncated",
++      "category": "truncation",
++      "assets": [
++        {
++          "manifest": {
++            "asset_id": "wav_truncated",
++            "media_type": "audio/wav",
++            "sha256": "465c9de99e308a0f400eea7020cab9eb4e73149a0ff2dced52599a0e9b21f867",
++            "byte_size": 10,
++            "duration_seconds": 1
++          },
++          "header_hex": "52494646000000005741"
++        }
++      ],
++      "expected_findings": [
++        "media_type.unknown"
++      ]
++    },
++    {
++      "case_id": "type_mismatch",
++      "category": "type_mismatch",
++      "assets": [
++        {
++          "manifest": {
++            "asset_id": "type_mismatch",
++            "media_type": "image/jpeg",
++            "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6",
++            "byte_size": 8,
++            "width": 8,
++            "height": 8
++          },
++          "header_hex": "89504e470d0a1a0a"
++        }
++      ],
++      "expected_findings": [
++        "media_type.mismatch"
++      ]
++    },
++    {
++      "case_id": "invalid_dimensions",
++      "category": "invalid_dimensions",
++      "assets": [
++        {
++          "manifest": {
++            "asset_id": "invalid_dimensions",
++            "media_type": "image/png",
++            "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6",
++            "byte_size": 8,
++            "width": 0,
++            "height": 8
++          },
++          "header_hex": "89504e470d0a1a0a"
++        }
++      ],
++      "expected_findings": [
++        "manifest.malformed_manifest"
++      ]
++    },
++    {
++      "case_id": "oversized_counts",
++      "category": "oversized_counts",
++      "assets": [
++        {
++          "manifest": {
++            "asset_id": "oversized_counts",
++            "media_type": "application/dicom",
++            "sha256": "314a5c728edd839d51d46862b48989b0c1d791e6295301bd798390c741495ccb",
++    
 ```
 
-**File**: `openmed/multimodal/vision/runtime/__init__.py` (added, +57/-0)
+**File**: `openmed/multimodal/preflight_fixtures.py` (added, +261/-0)
 ```diff
-@@ -0,0 +1,57 @@
-+"""Execution planning contracts for on-device vision workloads."""
-+
-+from __future__ import annotations
-+
-+from .resource_planner import (
-+    CLOUD_FALLBACK_ALLOWED,
-+    MAX_ACTIVATION_BYTES_PER_PIXEL,
-+    MAX_CACHE_BYTES_PER_TILE,
-+    MAX_DEVICE_TIERS,
-+    MAX_FRAMES,
-+    MAX_MEMORY_BYTES,
-+    MAX_MODEL_PARAMETERS,
-+    MAX_OUTPUT_BYTES,
-+    MAX_PIXEL_SIDE,
-+    MAX_TILE_SIZE,
-+    MAX_WEIGHT_BYTES_PER_PARAMETER,
-+    RESOURCE_PLAN_REASON_CODES,
-+    RESOURCE_PLAN_VERSION,
-+    VLM_TIER_DESKTOP_V1,
-+    VLM_TIER_MOBILE_V1,
-+    DeviceTier,
-+    PreprocessingPlan,
-+    ResourcePlanOutcome,
-+    TierCandidate,
-+    VLMExecutionPlan,
-+    VLMExecutionPolicy,
-+    VLMResourceEstimate,
-+    VLMResourcePlannerError,
-+    plan_vlm_execution,
-+)
-+
-+__all__ = [
-+    "CLOUD_FALLBACK_ALLOWED",
-+    "MAX_ACTIVATION_BYTES_PER_PIXEL",
-+    "MAX_CACHE_BYTES_PER_TILE",
-+    "MAX_DEVICE_TIERS",
-+    "MAX_FRAMES",
-+    "MAX_MEMORY_BYTES",
-+    "MAX_MODEL_PARAMETERS",
-+    "MAX_OUTPUT_BYTES",
-+    "MAX_PIXEL_SIDE",
-+    "MAX_TILE_SIZE",
-+    "MAX_WEIGHT_BYTES_PER_PARAMETER",
-+    "RESOURCE_PLAN_REASON_CODES",
-+    "RESOURCE_PLAN_VERSION",
-+    "VLM_TIER_DESKTOP_V1",
-+    "VLM_TIER_MOBILE_V1",
-+    "DeviceTier",
-+    "PreprocessingPlan",
-+    "ResourcePlanOutcome",
-+    "TierCandidate",
-+    "VLMExecutionPlan",
-+    "VLMExecutionPolicy",
-+    "VLMResourceEstimate",
-+    "VLMResourcePlannerError",
-+    "plan_vlm_execution",
-+]
-```
-
-**File**: `openmed/multimodal/vision/runtime/resource_planner.py` (added, +590/-0)
-```diff
-@@ -0,0 +1,590 @@
-+"""Deterministic memory planning for on-device vision-language execution.
-+
-+Before an edge runtime allocates tensors for a vision-language model it needs a
-+declared answer to one question: does this model and preprocessing plan fit a
-+registered device tier, or must the runtime abstain? This module answers that
-+from caller-supplied factors and a declared preprocessing plan, using integer
-+arithmetic only.
-+
-+The planner never allocates, decodes, measures live memory, inspects a device,
-+or contacts a network. Every figure is an estimate that holds only under the
-+documented accounting assumptions, so a plan is a guardrail for allocation
-+order, not a measurement. When an input factor is missing the estimate is
-+unevaluable, when a product would exceed the signed 64-bit ceiling the estimate
-+saturates, and when no registered tier fits the estimated total the plan
-+abstains. Abstention is final: this contract has no cloud fallback, and a plan
-+never names a provider, endpoint, credential, or region.
-+"""
+@@ -0,0 +1,261 @@
++"""Small synthetic negative fixtures for existing multimodal preflight contracts."""
 +
 +from __future__ import annotations
 +
 +import json
 +import re
-+from collections.abc import Sequence
 +from dataclasses import dataclass
-+from enum import Enum
-+from typing import Any, Final
++from pathlib import Path
++from types import MappingProxyType
++from typing import Mapping
 +
-+__all__ = [
-+    "CLOUD_FALLBACK_ALLOWED",
-+    "MAX_ACTIVATION_BYTES_PER_PIXEL",
-+    "MAX_CACHE_BYTES_PER_TILE",
-+    "MAX_DEVICE_TIERS",
-+    "MAX_FRAMES",
-+    "MAX_MEMORY_BYTES",
-+    "MAX_MODEL_PARAMETERS",
-+    "MAX_OUTPUT_BYTES",
-+    "MAX_PIXEL_SIDE",
-+    "MAX_TILE_SIZE",
-+    "MAX_WEIGHT_BYTES_PER_PARAMETER",
-+    "RESOURCE_PLAN_REASON_CODES",
-+    "RESOURCE_PLAN_VERSION",
-+    "VLM_TIER_DESKTOP_V1",
-+    "VLM_TIER_MOBILE_V1",
-+    "DeviceTier",
-+    "PreprocessingPlan",
-+    "ResourcePlanOutcome",
-+    "TierCandidate",
-+    "VLMExecutionPlan",
-+    "VLMExecutionPolicy",
-+    "VLMResourceEstimate",
-+    "VLMResourcePlannerError",
-+    "plan_vlm_execution",
-+]
++from .asset_batch import validate_asset_batch
++from .preflight import preflight_asset
 +
-+RESOURCE_PLAN_VERSION: Final = 1
-+
-+# This contract is local-only by construction. The constant exists so a caller
-+# can assert the invariant instead of trusting a docstring.
-+CLOUD_FALLBACK_ALLOWED: Final = False
-+
-+# Every product, sum, and budget is held at or below this signed 64-bit
-+# ceiling, so a plan means the same thing on every platform. A product that
-+# would pass it saturates: the component is dropped from the estimate and the
-+# plan abstains with ``estimate_saturated``.
-+MAX_MEMORY_BYTES: Final = (1 << 63) - 1
-+
-+# Inclusive bounds on declared inputs and policy factors.
-+MAX_DEVICE_TIERS: Final = 64
-+MAX_MODEL_PARAMETERS: Final = 1 << 62
-+MAX_WEIGHT_BYTES_PER_PARAMETER: Final = 64
-+MAX_ACTIVATION_BYTES_PER_PIXEL: Final = 4096
-+MAX_CACHE_BYTES_PER_TILE: Final = 1 << 32
-+MAX_OUTPUT_BYTES: Final = 1 << 40
-+MAX_PIXEL_SIDE: Final = 1 << 16
-+MAX_TILE_SIZE: Final = 1 << 14
-+MAX_FRAMES: Final = 1 << 20
-+
-+RESOURCE_PLAN_REASON_CODES: Final = frozenset(
-+    {"insufficient_metadata", "estimate_saturated", "memory_budget_exceeded"}
++MAX_FIXTURE_BYTES = 65536
++MAX_CASES = 64
++MAX_HEADER_BYTES = 132
++_CODE = re.compile(r"[a-z][a-z0-9_-]{0,63}\Z")
++_DIGEST = re.compile(r"[0-9a-f]{64}\Z")
++_MEDIA = frozenset(
++    {
++        "application/pdf",
++        "image/png",
++        "image/jpeg",
++        "image/tiff",
++        "application/dicom",
++        "audio/wav",
++        "image/unknown",
++    }
 +)
-+
-+# A tier name is an opaque lower-case label. It never carries a hostname, a
-+# serial number, a site, an endpoint, or any other identifying string.
-+_TIER_NAME = re.compile(r"[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*\Z")
-+_MAX_TIER_NAME_CHARS = 64
-+
-+
-+class VLMResourcePlannerError(ValueError):
-+    """Raised when a policy, tier, or preprocessing plan is invalid."""
-+
-+
-+class ResourcePlanOutcome(str, Enum):
-+    """Closed set of plan outcomes."""
-+
-+    SAFE = "safe"
-+    ABSTAIN = "abstain"
-+
-+
-+def _require_int(value: Any, name: str, *, minimum: int, maximum: int) -> None:
-+    # ``type(...) is int`` rejects booleans, floats (including NaN and
-+    # infinities), and int subclasses in one test.
-+    if type(value) is not int or not minimum <= value <= maximum:
-+        raise VLMResourcePlannerError(f"{name} must be a bounded integer")
-+
-+
-+def _saturating_add(total: int, value: int) -> int | None:
-+    total += value
-+    return total if total <= MAX_MEMORY_BYTES else None
-+
-+
-+def _saturating_product(factors: Sequence[int]) -> int | None:
-+    product = 1
-+    for factor in factors:
-+        product *= factor
-+        if product > MAX_MEMORY_BYTES:
-+            return None
-+    return product
++_CATEGORIES = frozenset(
++    {
++        "truncation",
++        "type_mismatch",
++        "invalid_dimensions",
++        "oversized_counts",
++        "bad_digest",
++        "duplicate_asset",
++        "unknown_media",
++        "resource_limit",
++    }
++)
++_EXPECTED = frozenset(
++    {
++        "manifest.malformed_manifest",
++        "media_type.unknown",
++        "media_type.mismatch",
++        "metadata.missing_required",
++        "metadata.inapplicable_present",
++        "limits.insufficient_metadata",
++        "limits.limit_exceeded",
++        "digest.sha256_mismatch",
++        "digest.byte_count_mismatch",
++        "digest.not_evaluated",
++        "batch.duplicate_asset_id",
++        "batch.duplicate_sha256",
++        "batch.order_not_canonical",
++    }
++)
++_MANIFEST_FIELDS = frozenset(
++    {
++        "version",
++        "asset_id",
++        "media_type",
++        "sha256",
++        "byte_size",
++        "pages",
++        "width",
++        "height",
++        "frames",
++        "duration_seconds",
++    }
++)
 +
 +
 +@dataclass(frozen=True, slots=True)
-+class DeviceTier:
-+    """A registered device memory tier, identified by an opaque label.
++class PreflightFixtureAsset:
++    """Immutable controlled metadata plus at most 132 synthetic header bytes."""
 +
-+    ``memory_budget_bytes`` is the total budget for the process and
-+    ``reserved_bytes`` is the part the runtime keeps for itself, so
-+    :attr:`available_bytes` is what a plan may use.
-+    """
-+
-+    name: str
-+    memory_budget_bytes: int
-+    reserved_bytes: int = 0
++    manifest: Mapping[str, object]
++    header: bytes
 +
 +    def __post_init__(self) -> None:
 +        if (
-+            type(self.name) is not str
-+            or len(self.name) > _MAX_TIER_NAME_CHARS
-+            or _TIER_NAME.fullmatch(self.name) is None
++            not isinstance(self.manifest, Mapping)
++            or set(self.manifest) - _MANIFEST_FIELDS
++            or not {"asset_id", "media_type", "sha256", "byte_size"}
++            <= set(self.manifest)
 +        ):
-+            raise VLMResourcePlannerError("device tier name must be a bounded label")
-+        _require_int(
-+            self.memory_budget_bytes,
-+            "memory_budget_bytes",
-+    
++            raise ValueError("invalid preflight fixture manifest fields")
++        manifest = dict(self.manifest)
++        if not isinstance(manifest["asset_id"], str) or not _CODE.fullmatch(
++            manifest["asset_id"]
++        ):
++            raise ValueError("invalid preflight fixture asset code")
++        if (
++            not isinstance(manifest["media_type"], str)
++            or manifest["media_type"] not in _MEDIA
++        ):
++            raise ValueError("invalid preflight fixture media type")
++        if not isinstance(manifest["sha256"], str) or not _DIGEST.fullmatch(
++            manifest["sha256"]
++        ):
++            raise ValueError("invalid preflight fixture digest")
++        for key in set(manifest) - {"asset_id", "media_type", "sha256"}:
++            value = manifest[key]
++            if type(value) is not int or not 0 <= value <= 2**63:
++                raise ValueError("invalid preflight fixture numeric metadata")
++        if (
++            type(self.header) is not bytes
++            or not 1 <= len(self.header) <= MAX_HEADER_BYTES
++        ):
++            raise ValueError("invalid preflight fixture header size")
++        object.__setattr__(self, "manifest", MappingProxyType(manifest))
++
++
++@dataclass(frozen=True, slots=True)
++class PreflightFixtureCase:
++    """A bounded named negative case with a closed expected-finding inventory."""
++
++    case_id: str
++    category: str
++    assets: tuple[PreflightFixtureAsset, ...]
++    expected_findings: tuple[str, ...]
++
++    def __post_init__(self) -> None:
++        if not isinstance(self.case_id, str) or not _CODE.fullmatch(self.case_id):
++            raise ValueError("invalid preflight fixture case code")
++        if not isinstance(self.category, str) or self.category not in _CATEGORIES:
++            raise ValueError("invalid preflight fixture category")
++        if (
++            not isinstance(self.assets, (tuple, list))
++            or not 1 <= len(self.assets) <= 2
++            or any(
++                not isinstance(asset, PreflightFixtureAsset) for asset in self.assets
++            )
++        ):
++            raise ValueError("invalid preflight fixture asset collection")
++        if (self.category == "duplicate_asset") != (len(self.assets) == 2):
++            raise ValueError("invalid preflight fixture batch category")
++        if (
++            not isinstance(self.expected_findings, (tuple, list))
++            or not 1 <= len(self.expected_findings) <= len(_EXPECTED)
++            or any(
++                not isinstance(code, str) or code not in _EXPECTED
++                for code in self.expected_findings
++            )
++        ):
++            raise ValueError("invalid preflight fixture expected findings
 ```
 
-**File**: `tests/unit/multimodal/vision/runtime/test_resource_planner.py` (added, +696/-0)
+**File**: `tests/unit/multimodal/test_preflight_fixtures.py` (added, +133/-0)
 ```diff
-@@ -0,0 +1,696 @@
-+"""Tests for the on-device vision memory planner contract."""
+@@ -0,0 +1,133 @@
++"""Complete coverage of the bundled synthetic negative fixture inventory."""
 +
-+from __future__ import annotations
-+
-+import re
++import json
 +from dataclasses import FrozenInstanceError
++from pathlib import Path
 +
 +import pytest
 +
-+from openmed.multimodal.vision import runtime as runtime_module
-+from openmed.multimodal.vision.runtime import (
-+    CLOUD_FALLBACK_ALLOWED,
-+    MAX_ACTIVATION_BYTES_PER_PIXEL,
-+    MAX_CACHE_BYTES_PER_TILE,
-+    MAX_DEVICE_TIERS,
-+    MAX_FRAMES,
-+    MAX_MEMORY_BYTES,
-+    MAX_MODEL_PARAMETERS,
-+    MAX_OUTPUT_BYTES,
-+    MAX_PIXEL_SIDE,
-+    MAX_TILE_SIZE,
-+    MAX_WEIGHT_BYTES_PER_PARAMETER,
-+    RESOURCE_PLAN_REASON_CODES,
-+    RESOURCE_PLAN_VERSION,
-+    VLM_TIER_DESKTOP_V1,
-+    VLM_TIER_MOBILE_V1,
-+    DeviceTier,
-+    PreprocessingPlan,
-+    ResourcePlanOutcome,
-+    TierCandidate,
-+    VLMExecutionPlan,
-+    VLMExecutionPolicy,
-+    VLMResourceEstimate,
-+    VLMResourcePlannerError,
-+    plan_vlm_execution,
++from openmed.multimodal.preflight_fixtures import (
++    MAX_FIXTURE_BYTES,
++    PreflightFixtureAsset,
++    load_preflight_fixtures,
 +)
-+from openmed.multimodal.vision.runtime import resource_planner as planner
 +
-+PREPROCESSING = PreprocessingPlan(width=64, height=32, tile_size=16)
-+GIB = 1 << 30
-+
-+
-+def _policy(**overrides: object) -> VLMExecutionPolicy:
-+    values: dict[str, object] = {
-+        "tiers": (VLM_TIER_MOBILE_V1,),
-+        "parameter_count": 1000,
-+        "weight_bytes_per_parameter": 4,
-+        "activation_bytes_per_pixel": 4,
-+        "cache_bytes_per_tile": 16,
-+        "output_bytes": 256,
-+        "runtime_overhead_bytes": 64,
++CASE_IDS = frozenset(
++    {
++        "pdf_truncated",
++        "png_truncated",
++        "jpeg_truncated",
++        "tiff_truncated",
++        "dicom_truncated",
++        "wav_truncated",
++        "type_mismatch",
++        "invalid_dimensions",
++        "oversized_counts",
++        "bad_digest",
++        "duplicate_asset",
++        "unknown_media",
++        "resource_limit",
 +    }
-+    values.update(overrides)
-+    return VLMExecutionPolicy(**values)  # type: ignore[arg-type]
++)
 +
 +
-+def test_reference_tiers_describe_declared_budgets() -> None:
-+    assert VLM_TIER_MOBILE_V1.name == "mobile.v1"
-+    assert VLM_TIER_MOBILE_V1.memory_budget_bytes == 6 * GIB
-+    assert VLM_TIER_MOBILE_V1.reserved_bytes == GIB
-+    assert VLM_TIER_MOBILE_V1.available_bytes == 5 * GIB
-+    assert VLM_TIER_DESKTOP_V1.name == "desktop.v1"
-+    assert VLM_TIER_DESKTOP_V1.available_bytes == 28 * GIB
-+    assert VLM_TIER_DESKTOP_V1.to_dict() == {
-+        "name": "desktop.v1",
-+        "memory_budget_bytes": 32 * GIB,
-+        "reserved_bytes": 4 * GIB,
-+        "available_bytes": 28 * GIB,
-+    }
++def payload():
++    import openmed.multimodal.preflight_fixtures as module
++
++    return json.loads(
++        (
++            Path(module.__file__).parent / "fixtures/malformed_asset_preflight.json"
++        ).read_bytes()
++    )
 +
 +
-+def test_tier_already_available_bytes_when_nothing_is_reserved() -> None:
-+    tier = DeviceTier(name="edge.v1", memory_budget_bytes=4096)
-+    assert tier.reserved_bytes == 0
-+    assert tier.available_bytes == 4096
++def test_complete_case_id_coverage_and_production_expected_findings():
++    cases = load_preflight_fixtures()
++    assert {case.case_id for case in cases} == CASE_IDS
++    for case in cases:
++        assert case.actual_findings() == case.expected_findings
++        assert all(0 < len(asset.header) <= 132 for asset in case.assets)
 +
 +
-+def test_preprocessing_derives_tile_geometry() -> None:
-+    assert PREPROCESSING.stride == 16
-+    assert PREPROCESSING.tiles_x == 4
-+    assert PREPROCESSING.tiles_y == 2
-+    assert PREPROCESSING.tile_count == 8
-+    assert PREPROCESSING.to_dict() == {
-+        "width": 64,
-+        "height": 32,
-+        "tile_size": 16,
-+        "tile_overlap": 0,
-+        "frames": 1,
-+        "tiles_x": 4,
-+        "tiles_y": 2,
-+        "tile_count": 8,
-+    }
++def test_reordered_input_has_identical_immutable_cases():
++    data = payload()
++    original = load_preflight_fixtures(json.dumps(data))
++    data["cases"].reverse()
++    assert load_preflight_fixtures(json.dumps(data)) == original
++    assert tuple(case.case_id for case in original) == tuple(sorted(CASE_IDS))
++    with pytest.raises(FrozenInstanceError):
++        original[0].category = "changed"
++    with pytest.raises(TypeError):
++        original[0].assets[0].manifest["width"] = 0
 +
 +
 +@pytest.mark.parametrize(
-+    ("width", "height", "tile_size", "overlap", "expected"),
++    "mutation",
 +    [
-+        (64, 32, 16, 0, (4, 2, 8)),
-+        (64, 32, 16, 8, (8, 4, 32)),
-+        (17, 17, 16, 0, (2, 2, 4)),
-+        (3, 3, 64, 0, (1, 1, 1)),
-+        (64, 64, 64, 0, (1, 1, 1)),
-+        (65, 1, 64, 32, (3, 1, 3)),
++        lambda x: x.update(schema_version=True),
++        lambda x: x.update(synthetic=False),
++        lambda x: x.update(private_path="synthetic/private"),
++        lambda x: x["cases"].append(x["cases"][0]),
++        lambda x: x["cases"][0].update(expected_findings=["invented.reason"]),
++        lambda x: x["cases"][0].update(expected_findings=[]),
++        lambda x: x["cases"][0]["assets"][0].update(header_hex="00" * 133),
++        lambda x: x["cases"][0]["assets"][0].update(header_hex="nothex"),
++        lambda x: x["cases"][0]["assets"][0]["manifest"].update(
++            patient="synthetic/private"
++        ),
++        lambda x: x["cases"][0].update(case_id="synthetic/private"),
++        lambda x: x["cases"][0]["assets"][0]["manifest"].update(width=True),
 +    ],
 +)
-+def test_tile_counts_ceiling_divide_by_stride(
-+    width: int,
-+    height: int,
-+    tile_size: int,
-+    overlap: int,
-+    expected: tuple[int, int, int],
-+) -> None:
-+    plan = PreprocessingPlan(
-+        width=width, height=height, tile_size=tile_size, tile_overlap=overlap
-+    )
-+    assert (plan.tiles_x, plan.tiles_y, plan.tile_count) == expected
++def test_malformed_fixtures_reject_without_payload_echo(mutation):
++    data = payload()
++    mutation(data)
++    with pytest.raises(ValueError) as exc:
++        load_preflight_fixtures(json.dumps(data))
++    assert "synthetic/private" not in str(exc.value)
 +
 +
-+def test_safe_plan_charges_every_documented_component() -> None:
-+    plan = plan_vlm_execution(_policy(), PREPROCESSING)
-+
-+    assert plan.outcome is ResourcePlanOutcome.SAFE
-+    assert plan.tier_name == "mobile.v1"
-+    assert plan.tier_available_bytes == 5 * GIB
-+    assert plan.estimate == VLMResourceEstimate(
-+        model_bytes=4000,
-+        peak_activation_bytes=8192 + 1024,
-+        cache_bytes=8 * 16,
-+        output_bytes=256,
-+        runtime_overhead_bytes=64,
-+        total_bytes=4000 + 9216 + 128 + 256 + 64,
-+        reason_code=None,
-+        field_name=None,
-+    )
-+    assert plan.estimate.total_bytes == 13664
-+    assert plan.candidates == (
-+        TierCandidate(name="mobile.v1", available_bytes=5 * GIB, fits=True),
-+    )
++def test_payload_and_case_count_bounds():
++    with pytest.raises(ValueError):
++        load_preflight_fixtures(b" " * (MAX_FIXTURE_BYTES + 1))
++    data = payload()
++    data["cases"] = data["cases"][:1] * 65
++    with pytest.raises(ValueError, match="case count"):
++        load_preflight_fixtures(json.dumps(data))
 +
 +
-+def test_overlapping_tiles_repeat_cache_and_activation_work() -> None:
-+    overlapping = PreprocessingPlan(width=64, height=32, tile_size=16, tile_overlap=8)
-+    plan = plan_vlm_execution(_policy(), overlapping)
-+
-+    assert plan.estimate.cache_bytes == 32 * 16
-+    assert plan.estimate.peak_activation_bytes == 8192 + 1024
-+    assert plan.estimate.total_bytes == 4000 + 9216 + 512 + 256 + 64
++def test_duplicate_json_keys_reject_before_fixture_construction():
++    with pytest.raises(ValueError, match="JSON"):
++        load_preflight_fixtures('{"schema_version":1,"schema_version":1}')
 +
 +
-+def test_multiple_frames_scale_the_frame_stack_and_every_tile() -> None:
-+    frames = PreprocessingPlan(width=64, height=32, tile_size=16, frames=3)
-+    plan = plan_vlm_execution(_policy(), frames)
++def test_no_real_media_or_sensitive_payload_metadata_in_bundled_cases():
++    cases = load_preflight_fixtures()
++    forbidden = {
++        "patient",
++        "name",
++        "credential",
++        "path",
++        "transcript",
++        "text",
++        "dataset",
++        "endpoint",
++    }
++    for case in cases:
++        for asset in case.assets:
++            assert not forbidden & set(asset.manifest)
++            assert len(asset.header) <= 132
++    formats = {asset.manifest["media_type"] for case in cases for asset in case.assets}
++    assert {
++        "application/pdf",
++        "image/png",
++        "image/jpeg",
++        "image/tiff",
++        "application/dicom",
++        "audio/wav",
++    } <= formats
 +
-+    assert plan.estimate.peak_activation_bytes == (64 * 32 * 3 * 4) + (16 * 16 * 3 * 4)
-+   
++
++def test_direct_asset_constructor_rejects_private_metadata():
++    with pytest.raises(ValueError):
++        PreflightFixtureAsset({"path": "synthetic/private"}, b"\x00")
 ```
 
 ---
 
-### Incident Patch 2: `059a7640` (2026-11-03)
-**Commit Message**: fix: account for per-frame VLM cache memory
+### Incident Patch 2: `706fcdd1` (2026-11-07)
+**Commit Message**: Extend malformed PDF and DICOM header fixtures
 
-**File**: `docs/multimodal/vision/vlm-resource-planning.md` (modified, +3/-4)
+Closes #3094
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -32,7 +32,7 @@ makes the run unevaluable.
- | `parameter_count` | 0 to 2^62 | model weights |
- | `weight_bytes_per_parameter` | 1 to 64 | model weights |
- | `activation_bytes_per_pixel` | 1 to 4096 | frame stack and tile buffer |
--| `cache_bytes_per_tile` | 0 to 2^32 | per-tile cache |
-+| `cache_bytes_per_tile` | 0 to 2^32 | cache for one tile in one frame |
- | `output_bytes` | 0 to 2^40 | decoded output |
- | `runtime_overhead_bytes` | 0 to 2^63 - 1 | fixed runtime overhead |
+@@ -186,6 +186,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
-@@ -43,8 +43,7 @@ makes the run unevaluable.
- ## Device tiers
+ - Add a bounded Python session for injected local image, PDF and streaming-audio providers, with preflighted immutable snapshots, explicit ownership, cooperative cancellation and metadata-only ordered results (#3677).
  
- A tier is a `DeviceTier(name, memory_budget_bytes, reserved_bytes=0)`. The name
--is a bounded opaque label matching `[a-z][a-z0-9]*([._-][a-z0-9]+)*`, so an
--identifier can be reported in diagnostics without carrying free-form text.
-+is an opaque label of at most 64 characters matching `[a-z][a-z0-9]*([._-][a-z0-9]+)*`. Use static tier labels, never patient or site identifiers; syntactic validation does not de-identify caller-supplied names.
- `reserved_bytes` must stay below `memory_budget_bytes`; the difference is the
- `available_bytes` a plan may use.
- 
-@@ -63,7 +62,7 @@ holds between 1 and `MAX_DEVICE_TIERS` (64) tiers with unique names.
- | --- | --- |
- | `model_bytes` | `parameter_count x weight_bytes_per_parameter` |
- | `peak_activation_bytes` | `width x height x frames x activation_bytes_per_pixel` + `tile_size x tile_size x frames x activation_bytes_per_pixel` |
--| `cache_bytes` | `tile_count x cache_bytes_per_tile` |
-+| `cache_bytes` | `tile_count x frames x cache_bytes_per_tile` |
- | `output_bytes` | `output_bytes` |
- | `runtime_overhead_bytes` | `runtime_overhead_bytes` |
- | `total_bytes` | the sum of the five components above |
++- Added deterministic synthetic malformed PDF and DICOM header fixtures with
++  recorded pre-decode boundaries, expected reason codes and payload digests,
++  plus offline regression tests (#3094).
++
+ - Added a bounded, dependency-free DICOM transfer-syntax preflight that classifies
+   declared file-meta transfer syntaxes into closed native, optional-decoder,
+   review, and unsupported outcomes with stable reason codes, and reports no
 ```
 
-**File**: `openmed/multimodal/vision/runtime/resource_planner.py` (modified, +8/-3)
+**File**: `docs/brand/system/publication.yml` (modified, +1/-0)
 ```diff
-@@ -82,6 +82,7 @@
- # A tier name is an opaque lower-case label. It never carries a hostname, a
- # serial number, a site, an endpoint, or any other identifying string.
- _TIER_NAME = re.compile(r"[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*\Z")
-+_MAX_TIER_NAME_CHARS = 64
- 
- 
- class VLMResourcePlannerError(ValueError):
-@@ -130,7 +131,11 @@ class DeviceTier:
-     reserved_bytes: int = 0
- 
-     def __post_init__(self) -> None:
--        if not isinstance(self.name, str) or not _TIER_NAME.match(self.name):
-+        if (
-+            type(self.name) is not str
-+            or len(self.name) > _MAX_TIER_NAME_CHARS
-+            or _TIER_NAME.fullmatch(self.name) is None
-+        ):
-             raise VLMResourcePlannerError("device tier name must be a bounded label")
-         _require_int(
-             self.memory_budget_bytes,
-@@ -396,7 +401,7 @@ def plan_vlm_execution(
-     """Plan memory for one workload against the registered device tiers.
- 
-     The estimate charges the model weights, one decoded frame stack plus one
--    tile working buffer, the declared per-tile cache for every tile, the
-+    tile working buffer, the declared per-tile cache for every tile in every frame, the
-     declared output, and the runtime overhead once. A safe plan selects the
-     smallest registered tier that fits, breaking ties by tier name; an abstained
-     plan always reports ``tier_name`` as ``None`` and never falls back to a
-@@ -473,7 +478,7 @@ def plan_vlm_execution(
-         )
- 
-     cache_bytes = _saturating_product(
--        (preprocessing.tile_count, policy.cache_bytes_per_tile)
-+        (preprocessing.tile_count, preprocessing.frames, policy.cache_bytes_per_tile)
-     )
-     if cache_bytes is None:
-         return _abstain(
+@@ -468,6 +468,7 @@ classification:
+     - i18n/locale-pack-conformance.md
+     - multimodal/pdf-reading-order.md
+     - multimodal/pdf-geometry-preflight.md
++    - multimodal/synthetic-malformed-fixtures.md
+     - multimodal/ocr-streaming.md
+     - multimodal/asset-digests.md
+     - multimodal/asset-manifests.md
 ```
 
-**File**: `tests/unit/multimodal/vision/runtime/test_resource_planner.py` (modified, +30/-2)
+**File**: `docs/multimodal/synthetic-malformed-fixtures.md` (added, +93/-0)
 ```diff
-@@ -152,7 +152,24 @@ def test_multiple_frames_scale_the_frame_stack_and_every_tile() -> None:
-     plan = plan_vlm_execution(_policy(), frames)
- 
-     assert plan.estimate.peak_activation_bytes == (64 * 32 * 3 * 4) + (16 * 16 * 3 * 4)
--    assert plan.estimate.cache_bytes == 8 * 16
-+    assert plan.estimate.cache_bytes == 8 * 3 * 16
+@@ -0,0 +1,93 @@
++# Synthetic malformed header fixtures
++
++The multimodal preflight suite already refuses malformed document and
++medical-image headers before any decode. This contribution adds reusable,
++deterministic corruption fixtures and focused regression tests for those
++boundaries; it does **not** add PDF or DICOM parsing support, relax any refusal,
++or change runtime behavior.
++
++```python
++from openmed.multimodal.pdf_geometry import read_pdf_geometry
++from tests.fixtures.multimodal.malformed import case_by_name
++
++case = case_by_name("pdf-header-cyclic")
++report = read_pdf_geometry(case.payload)
++assert report.reason_codes == ("pdf_page_tree_invalid",)
++```
++
++`tests/fixtures/multimodal/malformed.py` exposes one table,
++`MALFORMED_HEADER_CASES`, with five corruption classes for each modality:
++truncated, oversized, cyclic, inconsistent, and unsupported. Each entry records
++the payload, the boundary that refuses it, and the exact reason that boundary
++reports, so tests and documentation cannot drift from implemented behavior.
++
++## Pre-decode boundaries
++
++PDF fixtures are consumed by `openmed.multimodal.pdf_geometry.read_pdf_geometry`,
++the bounded, dependency-free header and page-tree reader. Corrupt input does not
++raise: the reader returns a report whose `reason_codes` are stable members of
++`PDF_REASON_CODES`.
++
++| Fixture | Corruption | Expected reason | Status |
++| --- | --- | --- | --- |
++| `pdf-header-truncated` | truncated | `pdf_catalog_missing` | rejected |
++| `pdf-header-oversized` | oversized | `pdf_object_limit` | rejected |
++| `pdf-header-cyclic` | cyclic | `pdf_page_tree_invalid` | rejected |
++| `pdf-header-inconsistent` | inconsistent | `page_count_mismatch` | review |
++| `pdf-header-unsupported` | unsupported | `pdf_encrypted` | rejected |
++
++`pdf-header-oversized` is a twelve-object file probed with an explicit
++`max_objects=4` budget, so the fixture exercises the reader's bounded object
++allowance without carrying a large payload. `pdf-header-inconsistent` is the one
++case that is not rejected: a declared `/Count 3` over a single page-tree leaf is
++reported as `page_count_mismatch` on a `review` verdict, which is the reader's
++existing precedence rule.
++
++## DICOM boundary limitation
++
++This repository has **no byte-level DICOM structure preflight**. The only raw
++byte boundary is the media-type check in
++`openmed.multimodal.media_type.detect_media_type`, which inspects at most
++`MAX_MEDIA_TYPE_PREFIX_BYTES` (132) leading bytes and matches the `DICM` magic at
++offset 128, followed by `openmed.multimodal.preflight.preflight_asset`, which
++reports `unknown` or `mismatch` under its `media_type` check. Every DICOM decode
++path takes a path and calls `pydicom.dcmread(..., force=True)`, so a truncated or
++badly sized data set may never raise there.
++
++The DICOM fixtures therefore document the bounded magic boundary and the
++preflight media-type verdict only. They never reach a decoder and make no claim
++about group length, transfer syntax, or pixel data.
++
++| Fixture | Corruption | Expected reason (`media_type`) | Status |
++| --- | --- | --- | --- |
++| `dicom-header-truncated` | truncated | `unknown` | abstain |
++| `dicom-header-oversized` | oversized | `unknown` | abstain |
++| `dicom-header-cyclic` | cyclic | `unknown` | abstain |
++| `dicom-header-inconsistent` | inconsistent | `mismatch` | abstain |
++| `dicom-header-unsupported` | unsupported | `unknown` | abstain |
++
++Each DICOM fixture also records the manifest declaration it is compared against
++(a `frames`/`width`/`height` DICOM manifest, or an `image/bmp` manifest for the
++inconsistent case), so the preflight report contains exactly one finding: the
++media-type verdict that classifies the corruption.
++
++## Determinism and privacy
++
++Every fixture is assembled from constants only — no randomness, no timestamps,
++no third-party dependency. Payloads are at most 4096 bytes and, apart from the
++PDF structural dictionaries, contain no text, no patient identifiers, no
++clinical pixels, and no encoded image data. `PAYLOAD_SHA256` pins each payload's
++digest, and the tests fail if a fixture's bytes, size, or recorded reason code
++drift.
++
++## Verification
++
++```bash
++uv run --frozen --extra dev pytest tests/unit/multimodal/test_malformed_headers.py -q
++```
++
++The tests run entirely offline and assert, per fixture, the boundary's status,
++the exact reason code, the media type reported by the bounded sniffer, the
++presence of a valid `DICM` magic only where one is expected, and the absence of
++PHI markers. Existing PDF geometry, media-type, and preflight tests are retained
++unmodified. No network calls, decoders, model weights, or credentials are needed.
+```
+
+**File**: `mkdocs.yml` (modified, +1/-0)
+```diff
+@@ -408,6 +408,7 @@ nav:
+       - Locale-Pack Conformance Checks: i18n/locale-pack-conformance.md
+       - PDF Reading Order: multimodal/pdf-reading-order.md
+       - PDF Page Geometry Preflight: multimodal/pdf-geometry-preflight.md
++      - Synthetic Malformed Header Fixtures: multimodal/synthetic-malformed-fixtures.md
+       - OCR Through Memory: multimodal/ocr-streaming.md
+       - Bounded Asset Digests: multimodal/asset-digests.md
+       - Privacy-safe Asset Manifests: multimodal/asset-manifests.md
+```
+
+**File**: `tests/fixtures/multimodal/malformed.py` (added, +400/-0)
+```diff
+@@ -0,0 +1,400 @@
++"""Synthetic malformed PDF and DICOM header fixtures for multimodal preflight.
++
++Every fixture is a tiny, deterministic, fully synthetic byte string assembled
++from constants only: no randomness, no timestamps, no real PHI, no clinical
++pixels, and no third-party dependency. Payloads are at most a few hundred bytes
++so they can be inlined into preflight tests without touching the filesystem.
++
++The fixtures exist to pin the *pre-decode* boundaries that already refuse
++malformed document and medical-image headers:
++
++* PDF payloads are consumed by ``openmed.multimodal.pdf_geometry.read_pdf_geometry``,
++  the bounded, dependency-free header and page-tree reader. Each fixture fails
++  with one stable reason code from ``PDF_REASON_CODES``.
++* DICOM payloads are consumed by ``openmed.multimodal.preflight.preflight_asset``,
++  whose media-type check reads at most
++  ``openmed.multimodal.media_type.MAX_MEDIA_TYPE_PREFIX_BYTES`` (132) leading
++  bytes and matches the ``DICM`` magic at offset 128. No byte-level DICOM
++  structure reader exists in this repository, so the DICOM fixtures document
++  the bounded magic boundary plus the preflight media-type verdict; they never
++  reach ``pydicom``.
++
++``MALFORMED_HEADER_CASES`` maps each corruption class (truncated, oversized,
++cyclic, inconsistent, unsupported) for each modality to the boundary that
++refuses it and the reason that boundary reports, so tests and documentation
++cannot drift from the implemented behavior.
++"""
++
++from __future__ import annotations
++
++import hashlib
++from dataclasses import dataclass
++from typing import Final
++
++CORRUPTION_CLASSES: Final[tuple[str, ...]] = (
++    "truncated",
++    "oversized",
++    "cyclic",
++    "inconsistent",
++    "unsupported",
++)
++
++MODALITIES: Final[tuple[str, ...]] = ("pdf", "dicom")
++
++PDF_BOUNDARY: Final[str] = "pdf_geometry"
++DICOM_BOUNDARY: Final[str] = "media_type_preflight"
++
++# Largest payload any fixture may carry; keeps the fixtures tiny by construction.
++MAX_FIXTURE_BYTES: Final[int] = 4096
++
++# Byte markers that must never appear in a fixture payload.
++PHI_MARKERS: Final[tuple[bytes, ...]] = (
++    b"Patient",
++    b"MRN",
++    b"DOE^",
++    b"1977",
++    b"OpenMed Synthetic",
++)
++
++_DICOM_PREAMBLE_BYTES: Final[int] = 128
++_DICOM_MAGIC: Final[bytes] = b"DICM"
++_DICOM_FOREIGN_MAGIC: Final[bytes] = b"DICX"
++
++# Synthetic PDF building blocks (version string, object bodies, trailer).
++_PDF_HEADER: Final[bytes] = b"%PDF-1.7\n%\xe2\xe3\xcf\xd3\n"
++_PDF_CATALOG: Final[str] = "<< /Type /Catalog /Pages 2 0 R >>"
++_PDF_SINGLE_PAGE_TREE: Final[str] = "<< /Type /Pages /Kids [3 0 R] /Count 1 >>"
++_PDF_SINGLE_PAGE: Final[str] = (
++    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 8 8] /Contents 4 0 R >>"
++)
++_PDF_EMPTY_CONTENT: Final[str] = "<< /Length 0 >>\nstream\n\nendstream"
++_PDF_CYCLIC_PAGE_TREE: Final[str] = "<< /Type /Pages /Kids [2 0 R] /Count 1 >>"
++_PDF_UNBALANCED_PAGE_TREE: Final[str] = "<< /Type /Pages /Kids [3 0 R] /Count 3 >>"
 +
 +
-+def test_multiframe_cache_cannot_admit_an_undersized_tier() -> None:
-+    policy = _policy(
-+        tiers=(DeviceTier(name="tiny", memory_budget_bytes=150),),
-+        parameter_count=0,
-+        activation_bytes_per_pixel=1,
-+        cache_bytes_per_tile=100,
-+        output_bytes=0,
-+        runtime_overhead_bytes=0,
++@dataclass(frozen=True, slots=True)
++class MalformedHeaderCase:
++    """One synthetic malformed-header fixture and its pre-decode verdict.
++
++    Attributes:
++        name: Stable kebab-case identifier used as the test id.
++        modality: ``"pdf"`` or ``"dicom"``.
++        corruption: One of :data:`CORRUPTION_CLASSES`.
++        payload: The synthetic bytes handed to the preflight boundary.
++        boundary: Boundary that refuses the payload (``pdf_geometry`` or
++            ``media_type_preflight``).
++        expected_reason: Reason the boundary reports: a full ``PDF_REASON_CODES``
++            member for the PDF boundary, or the ``media_type`` reason code
++            (``"unknown"`` or ``"mismatch"``) for the DICOM boundary.
++        expected_detected: Media type the bounded sniffer reports, or ``None``
++            when the payload is not a supported type.
++        rejected: ``True`` when the boundary rejects the payload outright;
++            ``False`` when it reports the reason on a review verdict.
++        declared_media_type: Media type the manifest declares when the DICOM
++            boundary is exercised; empty for PDF fixtures.
++        declared_fields: Manifest count fields paired with ``declared_media_type``.
++        reader_limits: Keyword limits passed to ``read_pdf_geometry`` for the
++            cases that exercise the reader's bounded byte/object budget.
++        notes: One-line explanation of the corruption, reused by the docs page.
++    """
++
++    name: str
++    modality: str
++    corruption: str
++    payload: bytes
++    boundary: str
++    expected_reason: str
++    expected_detected: str | None = None
++    rejected: bool = True
++    declared_media_type: str = ""
++    declared_fields: tuple[tuple[str, int], ...] = ()
++    reader_limits: tuple[tuple[str, int], ...] = ()
++    notes: str = ""
++
++    def __post_init__(self) -> None:
++        if self.modality not in MODALITIES:
++            raise ValueError("fixture modality is unsupported")
+
+```
+
+**File**: `tests/unit/multimodal/test_malformed_headers.py` (added, +220/-0)
+```diff
+@@ -0,0 +1,220 @@
++"""Tests for the synthetic malformed PDF and DICOM header fixtures (#3094).
++
++The fixtures pin the two *pre-decode* boundaries this repository already
++implements: the dependency-free PDF header/page-tree reader
++(``read_pdf_geometry``) and the bounded media-type preflight
++(``preflight_asset``/``detect_media_type``). Every assertion is offline and
++byte-exact so a fixture cannot silently drift away from the boundary it
++documents.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import importlib
++import socket
++
++import pytest
++
++from openmed.multimodal.asset_manifest import AssetManifest
++from openmed.multimodal.media_type import MAX_MEDIA_TYPE_PREFIX_BYTES, detect_media_type
++from openmed.multimodal.pdf_geometry import (
++    PDF_REASON_CODES,
++    PdfGeometryStatus,
++    read_pdf_geometry,
++)
++from openmed.multimodal.preflight import PreflightStatus, preflight_asset
++from tests.fixtures.multimodal.malformed import (
++    CORRUPTION_CLASSES,
++    DICOM_BOUNDARY,
++    MALFORMED_HEADER_CASES,
++    MAX_FIXTURE_BYTES,
++    MODALITIES,
++    PAYLOAD_SHA256,
++    PDF_BOUNDARY,
++    PHI_MARKERS,
++    MalformedHeaderCase,
++    case_by_name,
++    cases_for,
++    corruption_matrix,
++)
++
++PDF_CASES = cases_for("pdf")
++DICOM_CASES = cases_for("dicom")
++ALL_CASES = MALFORMED_HEADER_CASES
++IDS = [case.name for case in ALL_CASES]
++READER_LIMIT_NAMES = frozenset(
++    {"max_bytes", "max_pages", "max_objects", "max_decompressed_bytes"}
++)
++DICOM_MAGIC = b"DICM"
++
++
++def _manifest(case: MalformedHeaderCase) -> AssetManifest:
++    """Build the matching manifest for a DICOM-boundary fixture."""
++    return AssetManifest(
++        asset_id="fixture-asset",
++        sha256=case.sha256(),
++        byte_size=len(case.payload),
++        **case.declaration(),
 +    )
-+    single = plan_vlm_execution(policy, PreprocessingPlan(1, 1, 1))
-+    stacked = plan_vlm_execution(policy, PreprocessingPlan(1, 1, 1, frames=2))
-+    assert single.outcome is ResourcePlanOutcome.SAFE
-+    assert stacked.estimate.total_bytes == 204
-+    assert stacked.outcome is ResourcePlanOutcome.ABSTAIN
-+    assert stacked.estimate.reason_code == "memory_budget_exceeded"
++
++
++def test_fixture_table_covers_every_modality_and_corruption_class() -> None:
++    assert len(ALL_CASES) == len(MODALITIES) * len(CORRUPTION_CLASSES)
++    assert tuple(case.modality for case in PDF_CASES) == ("pdf",) * len(
++        CORRUPTION_CLASSES
++    )
++    assert tuple(case.modality for case in DICOM_CASES) == ("dicom",) * len(
++        CORRUPTION_CLASSES
++    )
++    assert tuple(case.corruption for case in PDF_CASES) == CORRUPTION_CLASSES
++    assert tuple(case.corruption for case in DICOM_CASES) == CORRUPTION_CLASSES
++    assert corruption_matrix() == {
++        "pdf": CORRUPTION_CLASSES,
++        "dicom": CORRUPTION_CLASSES,
++    }
++
++
++def test_fixture_names_are_unique_and_kebab_case() -> None:
++    assert len(set(IDS)) == len(IDS)
++    for case in ALL_CASES:
++        assert case.name == case.name.lower()
++        assert "-" in case.name
++        assert case.name.startswith(f"{case.modality}-")
++
++
++def test_boundary_matches_modality() -> None:
++    for case in PDF_CASES:
++        assert case.boundary == PDF_BOUNDARY
++    for case in DICOM_CASES:
++        assert case.boundary == DICOM_BOUNDARY
++
++
++def test_payloads_are_tiny_and_carry_no_phi_markers() -> None:
++    for case in ALL_CASES:
++        assert 0 < len(case.payload) <= MAX_FIXTURE_BYTES
++        for marker in PHI_MARKERS:
++            assert marker not in case.payload
++
++
++def test_payload_digests_match_the_pinned_table() -> None:
++    assert set(PAYLOAD_SHA256) == set(IDS)
++    for case in ALL_CASES:
++        digest = hashlib.sha256(case.payload).hexdigest()
++        assert digest == case.sha256()
++        assert PAYLOAD_SHA256[case.name] == digest
++
++
++def test_fixture_module_is_byte_stable_across_reloads() -> None:
++    module = importlib.import_module("tests.fixtures.multimodal.malformed")
++    reloaded = importlib.reload(module)
++    try:
++        assert tuple(case.payload for case in reloaded.MALFORMED_HEADER_CASES) == tuple(
++            case.payload for case in ALL_CASES
++        )
++        assert reloaded.PAYLOAD_SHA256 == PAYLOAD_SHA256
++    finally:
++        importlib.reload(module)
++
++
++@pytest.mark.parametrize("case", PDF_CASES, ids=[c.name for c in PDF_CASES])
++def test_pdf_fixture_fails_at_the_geometry_boundary(case: MalformedHeaderCase) -> None:
++    report = read_pdf_geometry(case.payload, **case.limits())
++    assert case.expected_reason in PDF_REASON_CODES
++    assert report.reason_codes == (case.expected_reason,)
++    if case.rejected:
++        assert report.status is PdfGeometryStatus.REJECTED
++        assert report.pages == ()
++    else:
++        assert report.status is PdfGeometryStatus.REVIEW
++        assert report.pages
++
++
++def test_reader_limits_are_declared_only_where_a_budget_is_exercised() -> None:
++    limited = [case for case in PDF_CASES if case.limits()]
++    assert [case.name for case in limited] == ["pdf-header-oversized"]
++    for case in PDF_CASES:
++        assert set(case.limits()) <= READER_LIMIT_NAMES
++        assert case.declared_media_type == ""
++        assert case.declaration() == {"media_type": ""}
++
++
++@pytest.mark.parametrize("case", DICOM_CASES, ids=[c.name for c in DICOM_CASES])
++def test_dicom_fixture_fails_at_th
+```
+
+---
+
+### Incident Patch 3: `5e1eb459` (2026-11-07)
+**Commit Message**: Render synthetic clinical dialogue and timed PHI truth
+
+Closes #3831
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -102,6 +102,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
+ - Generate bounded non-diagnostic waveform stimuli with declared event timing and synthetic device metadata (#2850).
  
- def test_plan_json_is_compact_and_key_ordered() -> None:
-@@ -413,7 +430,18 @@ def test_reason_codes_are_a_closed_set() -> None:
++- Offline synthetic dialogue rendering through licensed local speech adapters,
++  sample-exact PHI chunks and word timing manifests, a model-free waveform fixture,
++  and seeded noise, gain, overlap and bandpass augmentation provenance (#3831).
++
+ - Generate reproducible synthetic DICOM files with paired metadata, burned-in identifier masks, annotation and ruler geometry, native pixel roundtrips and source-bound privacy-mask lineage (#2849).
  
- @pytest.mark.parametrize(
-     "name",
--    ["", "Mobile", "MOBILE", "1mobile", "-mobile", "mobile/1", "a b", "a@b", "mobile."],
+ - Compare packet-scoped identity digests, page numbering, rendered pixels, template anchors and continuation cues across document pages; preserve original evidence and masks when splitting or quarantining inconsistent groups (#2805).
+```
+
+**File**: `docs/brand/system/publication.yml` (modified, +1/-0)
+```diff
+@@ -441,6 +441,7 @@ classification:
+     - training/synthetic/document-rendering.md
+     - training/synthetic/dicom-overlays.md
+     - training/synthetic/waveform-records.md
++    - training/synthetic/speech-rendering.md
+     - training/synthetic/longitudinal-trajectories.md
+     - training/synthetic/fhir-records.md
+     - training/synthetic/omop-cohorts.md
+```
+
+**File**: `docs/training/synthetic/speech-rendering.md` (added, +135/-0)
+```diff
+@@ -0,0 +1,135 @@
++# Synthetic speech rendering and timing truth
++
++`openmed.training.synthetic.speech_render.render_dialogue` renders caller-authored
++synthetic scripts through an injected local `SpeechSynthesizer`. It writes mono
++16-bit little-endian PCM WAV and a version-1 manifest with turn, word and gold
++PHI timing. This is Python training/evaluation fixture tooling, scoped to #3831;
++there is no runtime speech synthesis or OpenMedKit adapter in this slice.
++
++```python
++import io
++
++from openmed.multimodal.asr_audio_profile import (
++    MONO_16K_PCM_PROFILE,
++    check_asr_compatibility,
++)
++from openmed.multimodal.wav_metadata import read_wav_metadata
++from openmed.training.synthetic.speech_render import (
++    GoldPhiSpan,
++    ModelFreeSynthesizer,
++    ScriptedTurn,
++    render_dialogue,
++)
++
++wav = io.BytesIO()
++manifest = render_dialogue(
++    (
++        ScriptedTurn("patient", "en", "Synthetic One speaks", (GoldPhiSpan(0, 13),)),
++        ScriptedTurn("reviewer", "fr", "Synthetic Deux répond", (GoldPhiSpan(0, 14),)),
++    ),
++    ModelFreeSynthesizer(),
++    wav,
++)
++report = check_asr_compatibility(
++    read_wav_metadata(wav.getvalue()), MONO_16K_PCM_PROFILE
++)
++assert report.is_compatible
++assert manifest.to_dict()["reviewer_confirmation_required"]
++```
++
++The bundled model-free engine produces deterministic token waveforms, **not
++intelligible speech**. Its alignments are known by construction. It exercises
++plumbing and timing-sensitive privacy fixtures without weights, downloads,
++network calls or speech-quality claims. A real engine and its measured word
++alignment must be supplied for speech or ASR evaluation; no provider is qualified
++by these tests.
++
++## Script and adapter contract
++
++Each `ScriptedTurn` carries a speaker role, language, text and sorted, disjoint
++`GoldPhiSpan` intervals. All character offsets use Python Unicode code points;
++all sample and character intervals are half-open `[start, end)`. Adjacent PHI
++spans are allowed. Empty, whitespace-only, overlapping or out-of-range spans
++fail closed before synthesis. Scripts must be synthetic, never real patient
++records. Authoring, translation, PHI detection and withholding remain separate.
++
++The renderer splits each turn at gold PHI boundaries and synthesizes each PHI
++span independently from its surrounding text. Nonempty chunks are concatenated
++with exactly `chunk_gap_samples` silent frames (default 160). Whitespace-only
++surrounding slices are omitted. Turns are separated by `turn_gap_samples`
++(default 1,600). A PHI interval encloses precisely its complete synthesized
++chunk, including any leading/trailing silence supplied by the engine, without
++surrounding chunks or declared gaps in the unaugmented output.
++
++The protocol receives the chunk text, role, language and requested sample rate;
++it returns `SynthesizedChunk(pcm16, words)`. PCM must be mono signed little-endian
++16-bit samples at that rate. Each `WordAlignment` supplies character and sample
++bounds for one `\S+` whitespace token, in order. Missing, overlapping, empty,
++out-of-range or mismatched word alignments are rejected. Timing is never inferred
++from text length for real adapters. Languages without whitespace have one token
++per whitespace-delimited run; no linguistic segmentation is claimed.
++
++A PHI boundary can split a token, such as `Ada` in `Ada,`. The manifest preserves
++both engine-aligned fragments with their exact offsets and gives the original
++script token their enclosing interval. That envelope can include the declared
++inter-chunk gap. No intra-token alignment is fabricated.
++
++Before synthesis, **both** engine and voice licenses must normalize to one of
++MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC or 0BSD. Missing, unknown,
++custom `LicenseRef`, compound and non-permissive declarations are rejected.
++`SynthesizerDeclaration.offline` and `.synthetic_voice` must both be true.
++The caller must review actual engine/voice terms, keep assets local and use only
++synthetic voices that do not clone or imitate a real person. Declarations are
++checked; they are not independent verification or sandboxing of arbitrary
++adapter code. Adapters must avoid network IO, payload logging and retention.
++
++## Augmentation truth
++
++`Augmentations` records its seed, numeric parameters and controlled labels.
++Operations run in this order: overlap mix, gain, seeded uniform integer noise,
++optional centered FIR bandpass, then rounded PCM16 clipping.
++
++| Label | Signal effect | Timing effect recorded |
++| --- | --- | --- |
++| `uniform_noise` | Adds noise bounded by `noise_amplitude` using a private seeded PRNG | Source intervals unchanged; output digests change |
++| `gain` | Applies positive linear gain, at most 16 | Intervals unchanged; clipped-sample count measured after filtering |
++| `speaker_overlap` | Mixes consecutive distinct speakers; removes turn gaps and advances each later turn by `overlap_samples` | Absolute intervals shifted; accumulated `tim
+```
+
+**File**: `mkdocs.yml` (modified, +1/-0)
+```diff
+@@ -381,6 +381,7 @@ nav:
+           - Synthetic Document Rendering: training/synthetic/document-rendering.md
+           - Synthetic DICOM Overlays: training/synthetic/dicom-overlays.md
+           - Synthetic Waveform Records: training/synthetic/waveform-records.md
++          - Synthetic Speech Timing: training/synthetic/speech-rendering.md
+           - Synthetic Longitudinal Trajectories: training/synthetic/longitudinal-trajectories.md
+           - Synthetic FHIR Records: training/synthetic/fhir-records.md
+           - Synthetic OMOP Cohorts: training/synthetic/omop-cohorts.md
+```
+
+**File**: `openmed/training/synthetic/speech_render.py` (added, +589/-0)
+```diff
+@@ -0,0 +1,589 @@
++"""Offline synthetic dialogue rendering with sample-exact PHI chunk truth."""
++
++from __future__ import annotations
++
++import hashlib
++import io
++import json
++import math
++import random
++import re
++import struct
++import wave
++from dataclasses import asdict, dataclass, field
++from typing import Any, BinaryIO, Protocol, TextIO
++
++from .spdx_identifier import normalize_spdx_identifier
++
++__all__ = [
++    "Augmentations",
++    "GoldPhiSpan",
++    "ModelFreeSynthesizer",
++    "ScriptedTurn",
++    "SpeechRenderError",
++    "SpeechRenderManifest",
++    "SpeechSynthesizer",
++    "SynthesizedChunk",
++    "SynthesizerDeclaration",
++    "WordAlignment",
++    "render_dialogue",
++]
++
++# Match the in-process dependency policy; do not infer permissive terms from
++# arbitrary declarations or accept custom LicenseRef expressions.
++_LICENSES = frozenset(
++    {"MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD"}
++)
++_WORDS = re.compile(r"\S+")
++_NOTICE = "Synthetic test audio only; non-diagnostic; no clinical validation."
++
++
++class SpeechRenderError(ValueError):
++    """Controlled, value-free rendering failure."""
++
++
++@dataclass(frozen=True)
++class GoldPhiSpan:
++    """Gold PHI interval in Python Unicode character offsets, end exclusive."""
++
++    start: int
++    end: int
++
++
++@dataclass(frozen=True)
++class ScriptedTurn:
++    """Caller-supplied synthetic turn; source values are excluded from repr."""
++
++    speaker_role: str = field(repr=False)
++    language: str = field(repr=False)
++    text: str = field(repr=False)
++    phi_spans: tuple[GoldPhiSpan, ...] = ()
++
++
++@dataclass(frozen=True)
++class SynthesizerDeclaration:
++    """Adapter declarations checked before any synthesis call.
++
++    Args:
++        engine_license: Permissive SPDX identifier for the engine.
++        voice_license: Permissive SPDX identifier for the voice assets.
++        offline: True only for local execution without network access.
++        synthetic_voice: True only for voices that do not clone or imitate people.
++    """
++
++    engine_license: str = field(repr=False)
++    voice_license: str = field(repr=False)
++    offline: bool = True
++    synthetic_voice: bool = True
++
++
++@dataclass(frozen=True)
++class WordAlignment:
++    """One whitespace token's character and sample bounds within a chunk."""
++
++    char_start: int
++    char_end: int
++    start_sample: int
++    end_sample: int
++
++
++@dataclass(frozen=True)
++class SynthesizedChunk:
++    """Mono little-endian signed PCM16 and measured local word alignments."""
++
++    pcm16: bytes = field(repr=False)
++    words: tuple[WordAlignment, ...]
++
++
++class SpeechSynthesizer(Protocol):
++    """Injected local engine with caller-reviewed licensing and word alignment.
++
++    Adapters must not perform network IO, clone voices, log source text, or
++    retain payloads. The renderer validates declarations, not engine behavior.
++    """
++
++    declaration: SynthesizerDeclaration
++
++    def synthesize(
++        self, text: str, *, speaker_role: str, language: str, sample_rate_hz: int
++    ) -> SynthesizedChunk:
++        """Return PCM16 and exact whitespace-token alignments for this chunk."""
++        ...
++
++
++class ModelFreeSynthesizer:
++    """Deterministic waveform fixture for plumbing, never intelligible speech.
++
++    This engine has no model or voice assets. Its waveforms cannot qualify an
++    ASR provider or establish clinical quality.
++    """
++
++    declaration = SynthesizerDeclaration("Apache-2.0", "Apache-2.0")
++
++    def synthesize(
++        self, text: str, *, speaker_role: str, language: str, sample_rate_hz: int
++    ) -> SynthesizedChunk:
++        """Generate deterministic token waveforms with construction-time truth."""
++        pcm = bytearray()
++        words = []
++        for match in _WORDS.finditer(text):
++            start = len(pcm) // 2
++            length = max(1, len(match.group()) * sample_rate_hz // 100)
++            digest = hashlib.sha256(
++                json.dumps([speaker_role, language, match.group()]).encode()
++            ).digest()
++            for index in range(length):
++                value = (digest[index % len(digest)] - 128) * 32
++                pcm.extend(struct.pack("<h", value))
++            words.append(
++                WordAlignment(match.start(), match.end(), start, start + length)
++            )
++        return SynthesizedChunk(bytes(pcm), tuple(words))
++
++
++@dataclass(frozen=True)
++class Augmentations:
++    """Seeded amplitude noise, gain, turn overlap and fixed FIR band limiting.
++
++    Args:
++        seed: Integer seed for an isolated PRNG.
++        noise_amplitude: Uniform integer PCM noise bound (0 disables noise).
++        gain: Linear gain before clipping to PCM16.
++        overlap_samples: Later turns start this far before the preceding end.
++        band_limit: Apply centered five-tap bandpass [-1, 0, 2, 0, -1] / 4.
++    """
++
++    seed: int = 0
++    noise_amplitude: int = 0
++    gain: float = 1.0
++    overlap_samples: i
+```
+
+**File**: `tests/integration/test_synthetic_speech_render.py` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++"""Offline fixture handoff to existing audio preflight contracts."""
++
++import io
++
++import pytest
++
++from openmed.multimodal.asr_audio_profile import (
++    MONO_16K_PCM_PROFILE,
++    check_asr_compatibility,
++)
++from openmed.multimodal.wav_metadata import read_wav_metadata
++from openmed.training.synthetic.speech_render import (
++    GoldPhiSpan,
++    ModelFreeSynthesizer,
++    ScriptedTurn,
++    render_dialogue,
++)
++
++
++@pytest.mark.integration
++def test_synthetic_dialogue_handoff_without_provider_qualification():
++    wav = io.BytesIO()
++    manifest = render_dialogue(
++        (
++            ScriptedTurn(
++                "patient", "en", "Synthetic One speaks", (GoldPhiSpan(0, 13),)
++            ),
++            ScriptedTurn(
++                "reviewer", "fr", "Synthetic Deux répond", (GoldPhiSpan(0, 14),)
++            ),
++        ),
++        ModelFreeSynthesizer(),
++        wav,
++    ).to_dict()
++    metadata = read_wav_metadata(wav.getvalue())
++    report = check_asr_compatibility(metadata, MONO_16K_PCM_PROFILE)
++    assert report.is_compatible
++    assert metadata.frame_count == manifest["frame_count"]
++    assert all(turn["phi"] for turn in manifest["turns"])
++    assert manifest["reviewer_confirmation_required"] is True
+```
+
+**File**: `tests/unit/training/synthetic/test_speech_render.py` (added, +447/-0)
+```diff
+@@ -0,0 +1,447 @@
++"""Synthetic offline renderer controls; all identifiers are invented."""
++
++from __future__ import annotations
++
++import hashlib
++import io
++import json
++import socket
++import struct
++import wave
++from dataclasses import replace
++
++import pytest
++
++from openmed.multimodal.asr_audio_profile import (
++    MONO_16K_PCM_PROFILE,
++    AsrAudioProfile,
++    check_asr_compatibility,
++)
++from openmed.multimodal.wav_metadata import read_wav_metadata
++from openmed.training.synthetic.speech_render import (
++    Augmentations,
++    GoldPhiSpan,
++    ModelFreeSynthesizer,
++    ScriptedTurn,
++    SpeechRenderError,
++    SynthesizedChunk,
++    SynthesizerDeclaration,
++    WordAlignment,
++    render_dialogue,
++)
++
++
++def scripts():
++    return (
++        ScriptedTurn("patient", "en", "I am Synthetic Ada.", (GoldPhiSpan(5, 18),)),
++        ScriptedTurn("reviewer", "fr", "Bonjour Élise Test.", (GoldPhiSpan(8, 18),)),
++    )
++
++
++def render(turns=None, provider=None, **kwargs):
++    wav = io.BytesIO()
++    output = io.StringIO()
++    manifest = render_dialogue(
++        turns or scripts(),
++        provider or ModelFreeSynthesizer(),
++        wav,
++        manifest_output=output,
++        **kwargs,
++    )
++    assert output.getvalue() == manifest.to_json()
++    assert json.loads(output.getvalue()) == manifest.to_dict()
++    with wave.open(io.BytesIO(wav.getvalue()), "rb") as reader:
++        pcm = reader.readframes(reader.getnframes())
++    return wav.getvalue(), pcm, manifest.to_dict()
++
++
++def test_deterministic_two_speaker_phi_sample_truth_and_word_fragments():
++    first = render()
++    assert first == render()
++    _, pcm, manifest = first
++    provider = ModelFreeSynthesizer()
++    for script, turn in zip(scripts(), manifest["turns"]):
++        assert turn["start_seconds"] == turn["start_sample"] / 16000
++        assert turn["end_seconds"] == turn["end_sample"] / 16000
++        assert turn["overlapping_turns"] == []
++        for phi in turn["phi"]:
++            text = script.text[phi["char_start"] : phi["char_end"]]
++            expected = provider.synthesize(
++                text,
++                speaker_role=script.speaker_role,
++                language=script.language,
++                sample_rate_hz=16000,
++            ).pcm16
++            actual = pcm[2 * phi["start_sample"] : 2 * phi["end_sample"]]
++            assert actual == expected
++            assert phi["source_pcm_sha256"] == hashlib.sha256(actual).hexdigest()
++            assert phi["rendered_pcm_sha256"] == phi["source_pcm_sha256"]
++        # Punctuation immediately after a PHI span splits a script token. Both
++        # exact fragment intervals are retained instead of estimating timing.
++        last_word = turn["words"][-1]
++        assert len(last_word["fragments"]) == 2
++        assert (
++            last_word["fragments"][0]["end_sample"] + 160
++            == last_word["fragments"][1]["start_sample"]
++        )
++
++
++@pytest.mark.parametrize("rate", [8000, 16000, 44100, 48000])
++def test_wav_metadata_matches_declared_asr_profile(rate):
++    wav, pcm, manifest = render(sample_rate_hz=rate)
++    metadata = read_wav_metadata(wav)
++    profile = replace(MONO_16K_PCM_PROFILE, sample_rates_hz=(rate,))
++    assert isinstance(profile, AsrAudioProfile)
++    assert check_asr_compatibility(metadata, profile).is_compatible
++    assert metadata.frame_count == len(pcm) // 2 == manifest["frame_count"]
++    assert metadata.sample_rate_hz == manifest["sample_rate_hz"] == rate
++    assert metadata.bit_depth == 16
++    assert manifest["wav_sha256"] == hashlib.sha256(wav).hexdigest()
++
++
++@pytest.mark.parametrize(
++    "license_value",
 +    [
++        None,
 +        "",
-+        "Mobile",
-+        "MOBILE",
-+        "1mobile",
-+        "-mobile",
-+        "mobile/1",
-+        "a b",
-+        "a@b",
-+        "mobile.",
-+        "a" * 65,
++        "unknown",
++        "LicenseRef-private",
++        "GPL-3.0-only",
++        "MPL-2.0",
++        "MIT OR GPL-3.0-only",
 +    ],
- )
- def test_tier_names_must_be_bounded_labels(name: str) -> None:
-     with pytest.raises(VLMResourcePlannerError) as caught:
-```
-
----
-
-### Incident Patch 3: `f553f298` (2026-11-03)
-**Commit Message**: Merge master into edge-VLM memory planner branch
-
-**File**: `.github/workflows/android-ci.yml` (modified, +6/-2)
-```diff
-@@ -2,14 +2,14 @@ name: Android CI (OpenMedKit)
- 
- on:
-   push:
--    branches: [main, master]
-+    branches: [main, master, 'release/v*' ]
-     paths:
-       - '.github/workflows/android-ci.yml'
-       - 'android/**'
-       - 'tests/fixtures/parity/offset_contract.json'
-       - 'tests/fixtures/processing/zh_segmentation_gold.json'
-   pull_request:
--    branches: [main, master]
-+    branches: [main, master, 'release/v*' ]
-     paths:
-       - '.github/workflows/android-ci.yml'
-       - 'android/**'
-@@ -19,6 +19,10 @@ on:
- permissions:
-   contents: read
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++)
++@pytest.mark.parametrize("field", ["engine_license", "voice_license"])
++def test_license_negative_controls_rejected_before_synthesis(license_value, field):
++    class NeverCalled(ModelFreeSynthesizer):
++        declaration = replace(
++            ModelFreeSynthesizer.declaration, **{field: license_value}
++        )
 +
- jobs:
-   build-and-test:
-     name: Build & Test Android OpenMedKit
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +229/-14)
-```diff
-@@ -2,12 +2,25 @@ name: CI
- 
- on:
-   push:
--    branches: [ main, master, develop ]
-+    branches: [ main, master, develop, 'release/v*' ]
-   pull_request:
--    branches: [ main, master, develop ]
-+    branches: [ main, master, develop, 'release/v*' ]
-+    types: [opened, synchronize, reopened, labeled]
++        def synthesize(self, *args, **kwargs):
++            pytest.fail("Rejected adapter was called")
 +
-+concurrency:
-+  # Concurrency is evaluated before job conditions. An unrelated label event
-+  # must not replace the useful PR run with a run whose jobs all skip.
-+  group: >-
-+    ${{ github.workflow }}-${{ github.event_name == 'pull_request' &&
-+    (github.event.action != 'labeled' || github.event.label.name == 'full-ci') &&
-+    github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: >-
-+    ${{ github.event_name == 'pull_request' &&
-+    (github.event.action != 'labeled' || github.event.label.name == 'full-ci') }}
- 
- jobs:
-   repo-policy:
-+    if: github.event.action != 'labeled' || github.event.label.name == 'full-ci'
-     runs-on: ubuntu-latest
-     outputs:
-       run-i18n-cjk-indic: ${{ steps.i18n_changes.outputs.should_run }}
-@@ -169,6 +182,7 @@ jobs:
-           grounding-export-validation.md
- 
-   lockfile-drift:
-+    if: github.event.action != 'labeled' || github.event.label.name == 'full-ci'
-     runs-on: ubuntu-latest
-     steps:
-     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-@@ -221,6 +235,10 @@ jobs:
-       run: |
-         uv run ruff format --check .
- 
-+    - name: Check classified effects and legacy-writer boundaries
-+      run: |
-+        uv run python scripts/security/check_effect_paths.py --check
++    wav = io.BytesIO()
++    with pytest.raises(SpeechRenderError, match="speech_license_rejected"):
++        render_dialogue(scripts(), NeverCalled(), wav)
++    assert wav.getvalue() == b""
 +
-     - name: Enforce public API backwards-compatibility policy
-       run: |
-         uv run python scripts/release/check_public_api.py
-@@ -232,16 +250,14 @@ jobs:
-   test:
-     needs: [repo-policy, lint]
-     runs-on: ${{ matrix.os }}
-+    timeout-minutes: 45
-     strategy:
--      matrix:
--        os: [ubuntu-latest, windows-latest, macos-latest]
--        python-version: ["3.10", "3.11", "3.12"]
--        exclude:
--          # Exclude some combinations to reduce CI time
--          - os: windows-latest
--            python-version: "3.10"
--          - os: macos-latest
--            python-version: "3.10"
-+      fail-fast: false
-+      # Pull requests run the fast tier (everything except `slow` and `fuzz`)
-+      # on Linux at both ends of the supported range, plus the portability
-+      # checks on Windows and macOS. Pushes to the default branches, and pull
-+      # requests labelled `full-ci`, run the full suite on every platform.
-+      matrix: ${{ fromJSON((github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'full-ci')) && '{"include":[{"os":"ubuntu-latest","python-version":"3.11","tier":"full","coverage":false},{"os":"ubuntu-latest","python-version":"3.12","tier":"full","coverage":true},{"os":"windows-latest","python-version":"3.11","tier":"full","coverage":false},{"os":"windows-latest","python-version":"3.12","tier":"full","coverage":false},{"os":"macos-latest","python-version":"3.11","tier":"full","coverage":false},{"os":"macos-latest","python-version":"3.12","tier":"full","coverage":false}]}' || '{"include":[{"os":"ubuntu-latest","python-version":"3.11","tier":"fast","coverage":false},{"os":"ubuntu-latest","python-version":"3.12","tier":"fast","coverage":true},{"os":"windows-latest","python-version":"3.12","tier":"portability","coverage":false},{"os":"macos-latest","python-version":"3.12","tier":"portability","coverage":false}]}') }}
- 
-     steps:
-     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-@@ -272,18 +288,149 @@ jobs:
-       run: |
-         uv run pytest tests/unit/test_no_raw_text_logging.py -q
- 
-+    - name: Verify secure image dependency selection
-+      run: >-
-+        uv run --frozen python -c
-+        "from importlib.metadata import version;
-+        assert int(version('Pillow').split('.')[0]) >= 13"
 +
-+    - name: Portability regression checks
-+      if: matrix.tier == 'portability'
-+      timeout-minutes: 15
-+      run: >-
-+        uv run --frozen pytest -q -n auto --tb=short --show-capture=no
-+        tests/unit/test_utils.py
-+        tests/unit/structured/registry/test_naaccr.py
-+        tests/unit/release/test_agent_release_candidate.py
-+        tests/unit/service/test_workflow_routes.py
-+        tests/unit/test_doctests.py
-+        tests/unit/cli/test_clinical_cli.py
-+        tests/unit/cli/test_clinical_review_cli.py
-+        tests/unit/clinical/test_multilingual_brief.py
-+        tests/unit/clinical/test_summarize_backends.py
-+        tests/unit/clinical/test_brief_parity.py
-+        tests/unit/clinical/grounding/test_ground_facade.py
-+        tests/unit/agent/permissions/test_access_events.py
-+        tests/unit/agent/workflows/test_journal_retirement.py
-+        tests/integration/test_clinical_cli_offline.py
-+        tests/integration/test_clinical_workflow_examples.py
-+        tests/integration/test_clinical_review_cli.py
-+        tests/integration/test
-```
-
-**File**: `.github/workflows/coherence.yml` (modified, +4/-0)
-```diff
-@@ -53,6 +53,10 @@ on:
- permissions:
-   contents: read
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++@pytest.mark.parametrize("field", ["offline", "synthetic_voice"])
++def test_cloud_and_cloned_voice_declarations_rejected(field):
++    provider = ModelFreeSynthesizer()
++    provider.declaration = replace(provider.declaration, **{field: False})
++    with pytest.raises(SpeechRenderError, match="speech_adapter_policy_rejected"):
++        render(provider=provider)
 +
- jobs:
-   catalog-coherence:
-     runs-on: ubuntu-latest
-```
-
-**File**: `.github/workflows/container-multiarch.yml` (modified, +7/-6)
-```diff
-@@ -23,18 +23,19 @@ permissions:
- env:
-   IMAGE_NAME: ghcr.io/${{ github.repository }}
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 +
- jobs:
-   smoke:
-     name: Build and smoke (${{ matrix.platform }})
-     runs-on: ubuntu-latest
-     strategy:
-       fail-fast: false
--      matrix:
--        include:
--          - platform: linux/amd64
--            arch: amd64
--          - platform: linux/arm64
--            arch: arm64
-+      # Pull requests smoke-test the native amd64 image; the emulated arm64
-+      # build runs on pushes, tags and manual runs.
-+      matrix: ${{ fromJSON(github.event_name == 'pull_request' && '{"include":[{"platform":"linux/amd64","arch":"amd64"}]}' || '{"include":[{"platform":"linux/amd64","arch":"amd64"},{"platform":"linux/arm64","arch":"arm64"}]}') }}
- 
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-```
-
-**File**: `.github/workflows/edge-benchmark.yml` (modified, +6/-2)
-```diff
-@@ -2,7 +2,7 @@ name: Edge SBC benchmark
- 
- on:
-   pull_request:
--    branches: [master]
-+    branches: [master, 'release/v*' ]
-     paths:
-       - ".github/workflows/edge-benchmark.yml"
-       - "openmed/eval/budgets/edge_sbc.json"
-@@ -16,7 +16,7 @@ on:
-       - "tests/unit/eval/test_footprint_gate.py"
-       - "uv.lock"
-   push:
--    branches: [master]
-+    branches: [master, 'release/v*' ]
-     paths:
-       - ".github/workflows/edge-benchmark.yml"
-       - "openmed/eval/budgets/edge_sbc.json"
-@@ -32,6 +32,10 @@ on:
- permissions:
-   contents: read
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++def test_missing_declaration_is_rejected():
++    with pytest.raises(SpeechRenderError, match="speech_declaration_invalid"):
++        render(provider=object())
 +
- jobs:
-   benchmark:
-     name: Edge SBC (${{ matrix.profile }})
-```
-
-**File**: `.github/workflows/eval.yml` (modified, +6/-2)
-```diff
-@@ -2,7 +2,7 @@ name: Clinical domain evaluation
- 
- on:
-   pull_request:
--    branches: [master]
-+    branches: [master, 'release/v*' ]
-     paths:
-       - ".github/workflows/eval.yml"
-       - "openmed/cli/main.py"
-@@ -16,7 +16,7 @@ on:
-       - "pyproject.toml"
-       - "uv.lock"
-   push:
--    branches: [master]
-+    branches: [master, 'release/v*' ]
-     paths:
-       - ".github/workflows/eval.yml"
-       - "openmed/cli/main.py"
-@@ -34,6 +34,10 @@ on:
- permissions:
-   contents: read
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 +
- jobs:
-   clinical-domain-coverage:
-     runs-on: ubuntu-latest
-```
-
-**File**: `.github/workflows/flutter-ci.yml` (modified, +4/-0)
-```diff
-@@ -21,6 +21,10 @@ on:
- permissions:
-   contents: read
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- jobs:
-   ffi-test:
-     runs-on: ubuntu-latest
-```
-
-**File**: `.github/workflows/helm-lint.yml` (modified, +6/-2)
-```diff
-@@ -2,17 +2,21 @@ name: Helm Chart
- 
- on:
-   push:
--    branches: [main, master, develop]
-+    branches: [main, master, develop, 'release/v*' ]
-     paths:
-       - ".github/workflows/helm-lint.yml"
-       - "deploy/helm/openmed-service/**"
-   pull_request:
--    branches: [main, master, develop]
-+    branches: [main, master, develop, 'release/v*' ]
-     paths:
-       - ".github/workflows/helm-lint.yml"
-       - "deploy/helm/openmed-service/**"
-   workflow_dispatch:
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- jobs:
-   helm-lint-template:
-     runs-on: ubuntu-latest
++def test_
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4377** (2026-11-02): Prepare OpenMed v3.2.0 release (@maziyarpanahi)
-- **PR #4376** (closed): Release/v3.2.0 (@maziyarpanahi)
-- **PR #4373** (2026-10-31): Require patched ASN.1 decoding in the cloud extra (@maziyarpanahi)
-- **PR #4371** (2026-10-31): Preserve CJK date formats during date shifting (@maziyarpanahi)
-- **PR #4370** (2026-10-31): Fix source-span alignment in escaped HTML output (@maziyarpanahi)
-- **PR #4369** (2026-11-02): Prepare OpenMed v3.2.0 release candidate (@maziyarpanahi)
+- **PR #4435** (2026-11-06): De-identify System One requests before local decision scoring (@maziyarpanahi)
+- **PR #4434** (2026-11-06): Support user-supplied d1-omni weights for local text, image and audio decisions (@maziyarpanahi)
+- **PR #4433** (2026-11-05): Run pinned d3-edge decision models on local CPU (@maziyarpanahi)
+- **PR #4432** (2026-11-05): Accept verified local images and videos in fixed-option decisions (@maziyarpanahi)
+- **PR #4431** (2026-11-05): Add experimental local streaming speech inference with ONNX Runtime (@maziyarpanahi)
+- **PR #4430** (2026-11-07): Mute finalized spoken identifiers in retained audio (@maziyarpanahi)
 
 ---
 
@@ -3315,13 +3821,13 @@ Closes #2792
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add edge-VLM memory planning (#3633)
+## X. Add synthetic malformed multimodal preflight fixtures
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f17f1e6`: add edge-VLM memory planning (#3633). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f698a58f`: Add synthetic malformed multimodal preflight fixtures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -3329,7 +3835,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Add deterministic edge-VLM execution memory plans with explicit device budgets, bounded preprocessing estimates and local-only abstention before allocation (#2792).
+- Ship bounded synthetic malformed-header fixtures exercising the existing multimodal preflight and batch contracts (#3007).
 
 ```
 
@@ -3340,4 +3846,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f17f1e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f698a58f` are properly handled with clean fallback behavior.

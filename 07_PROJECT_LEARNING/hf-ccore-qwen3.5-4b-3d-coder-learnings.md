@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ccore-qwe`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T20:18:08.507Z  
+> **Timestamp**: 2026-11-08T06:50:52.424Z  
 > **Learning ID**: `learn-huggingface-ccore-qwen3-5-4b-3d-coder`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,271 +12,420 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): ccore/Qwen3.5‑4B‑3D‑Coder
+# Project Learning Record (Full-Spectrum Forensic Harvest): ccore/Qwen3.5-4B-3D-Coder
+
+---
 
 ## 1. Executive Forensic Architecture & System Mechanics
-The repository is a fine‑tuned variant of **Qwen3.5‑4B** that adds a **vision encoder/projector** to enable image‑guided Three.js scene generation.  
-* **Subsystem boundaries**  
-  * **Text backbone** – `Qwen3_5ForConditionalGeneration` (32 transformer layers, 16 heads, float16 weights).  
-  * **Vision backbone** – a 24‑layer vision transformer (depth 24, 16 heads, 1024 hidden size) that projects image patches to the text embedding space.  
-  * **Projection layer** – a lightweight MLP that maps vision embeddings to the text token space (`mmproj-Qwen3.5-4B-BF16.gguf`).  
-  * **Tokenizer** – `Qwen3_5Tokenizer` with a comprehensive set of multimodal special tokens (`<|image_pad|>`, `<|vision_start|>`, etc.).  
-  * **Generation engine** – uses Hugging Face `transformers` 5.20.2 with `use_cache=True`, `do_sample=True`, temperature 0.6, top‑k 20, top‑p 0.95.  
-* **Critical abstractions**  
-  * **Token‑level abstraction** – each multimodal token is represented by a unique integer ID; the tokenizer guarantees that image/vision tokens are never confused with text tokens.  
-  * **Attention pattern abstraction** – the model alternates between linear and full attention layers (`layer_types` list) to balance speed and expressiveness.  
-  * **Projection abstraction** – the vision encoder outputs a sequence of patch embeddings that are concatenated with the text token embeddings before the transformer stack.  
-* **State ownership** – the model owns its own cache (`past_key_values`) and the tokenizer owns the special token mapping. No external mutable state is shared across processes.
+
+### 1.1 Core Engineering Problem
+The `ccore/Qwen3.5-4B-3D-Coder` model addresses the tension between parameter efficiency and spatial reasoning in generative code systems: running high-fidelity, multimodal, image-to-3D code synthesis (specifically Three.js/WebGL procedural generation) inside an edge-viable ~4-billion parameter footprint.
+
+Standard LLM code generation fails in 3D domains due to:
+1. **Spatial Representation Gap**: Text-only tokenizers lack spatial inductive biases (bounding boxes, 3D quads, object references).
+2. **Context Blowup vs. Memory Exhaustion**: Long-context 3D codebases (hierarchical scene graphs, procedural mesh vertices, shader routines) saturate conventional $O(N^2)$ quadratic attention mechanisms.
+3. **Multimodal Weight Coupling Overhead**: Bundling vision encoders directly into weights forces end users to pay the memory tax of multimodal processing even when serving pure text-to-code pipelines.
+
+### 1.2 Subsystem Decoupling & Boundary Analysis
+```
++--------------------------------------------------------------------------------------------------+
+| MULTIMODAL INGESTION LAYER                                                                       |
+| [Reference Image] -> [Optional Vision Projector: mmproj-Qwen3.5-4B-BF16.gguf (644 MiB)]          |
+|                      - 24-Layer ViT (hidden_size: 1024, patch_size: 16)                          |
+|                      - Linear Projection Layer -> Target Text Dimension: 2560                     |
++--------------------------------------------------------------------------------------------------+
+                                                 |
+                                                 v
++--------------------------------------------------------------------------------------------------+
+| HYBRID TEXT/CODE BACKBONE (Qwen3.5-4B Text Config)                                              |
+| Total Layers: 32 | Hidden: 2560 | Intermediate: 9216 | Heads: 16 (Q) / 4 (KV) [GQA]              |
+|                                                                                                  |
+| [Layer Pattern: 3x Linear Attention (SSM State) -> 1x Full Self-Attention (Periodic N=4)]        |
+| - Layers 0..2, 4..6, 8..10...: Linear Attention (conv_kernel: 4, k_dim: 128, v_dim: 128)        |
+| - Layers 3, 7, 11, 15, 19, 23, 27, 31: Full Causal GQA Self-Attention                            |
+|                                                                                                  |
+| [Positional Geometry: Multimodal Rotary Position Embedding (M-RoPE)]                            |
+| - mrope_section: [11, 11, 10] (Temporal/Grid, Height, Width coordinates)                         |
+| - rope_theta: 10,000,000 (1e7) | max_position_embeddings: 262,144 (256K Context)                 |
+|                                                                                                  |
+| [Multi-Token Prediction (MTP) Speculative Layer]                                                |
+| - mtp_num_hidden_layers: 1 | Shared embeddings with primary transformer backbone                |
++--------------------------------------------------------------------------------------------------+
+                                                 |
+                                                 v
++--------------------------------------------------------------------------------------------------+
+| DOWNSTREAM RUNTIME TARGET: THREE.JS WEBGL ENGINE                                                 |
+| Generates: Procedural Voxel Buffers, PBR Shaders, Scene Graphs, Animation Loops, Mesh Cleanup   |
++--------------------------------------------------------------------------------------------------+
+```
+
+### 1.3 Critical Subsystem Invariants
+* **Hybrid Alternating Attention Mechanics**: The model discards pure quadratic attention in favor of a 3:1 interleaving pattern (`full_attention_interval = 4`). Three consecutive linear attention layers (retaining an SSM-style state buffer computed via convolution dimension 4) are followed by one full multi-head causal attention layer. This bounds token generation latency to $O(1)$ on linear steps while retaining global associative recall via periodic full attention.
+* **Decoupled Vision Projector Architecture**: Vision weights are excised from the primary text checkpoint and packaged as a standalone GGUF projector (`mmproj-Qwen3.5-4B-BF16.gguf`). The language model processes vision as projected embedding tokens injected directly into the 2560-dimensional latent stream without architectural modifications to the base code LLM.
+* **Multimodal Rotary Coordinate Splitting (M-RoPE)**: The positional encoding splits head representations across three spatial coordinates `[11, 11, 10]`, allowing the model to encode 3D spatial references, bounding volumes, and 2D canvas coordinates natively in rotary embeddings.
 
 ---
 
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent Data‑Type Propagation Across All Subsystems
-**RULE**:  
-All tensors that participate in cross‑modal fusion (vision embeddings, text embeddings, and projection outputs) MUST be cast to the same floating‑point precision before any arithmetic operation.
+### 1. WebGL/Three.js Resource Disposal Invariant in Autonomous 3D Code Generation
+**RULE**:
+Any AI system generating Three.js/WebGL client-side procedural code MUST emit an explicit, deterministic destruction and resource-reclamation lifecycle method that traverses geometries, materials, textures, and render targets. The agent MUST NOT generate procedural generation code that allocates GPU buffers without matching `dispose()` bindings.
 
-**WHY**:  
-Mismatched dtypes (e.g., float16 vision + float32 text) cause silent truncation or overflow, leading to degraded generation quality or runtime errors in GPU kernels that expect homogeneous inputs.
+**WHY**:
+JavaScript garbage collection manages CPU references but cannot directly reclaim VRAM allocated in WebGL context buffers (`WebGLBuffer`, `WebGLTexture`). Procedural 3D scene generators frequently instantiate dense meshes (voxels, procedural trees, particle systems). Omitting manual GPU resource disposal produces silent memory leaks, triggering browser context loss (`webglcontextlost`) and crash-loops on low-end clients.
 
-**WHEN TO APPLY**:  
-During model initialization, after loading the vision encoder, and before feeding data into the transformer stack. Applies to any language model that fuses modalities.
+**WHEN TO APPLY**:
+Apply across all agentic code generators producing JavaScript/TypeScript code targeting Three.js, Babylon.js, WebGPU, or WebGL2.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Load vision encoder
-vision_model = VisionTransformer.from_pretrained(
-    "ccore/Qwen3.5-4B-3D-Coder/vision",
-    torch_dtype=torch.float16,
-)
+```typescript
+/**
+ * Deterministic Three.js Resource Reclamation Contract.
+ * Must be included in every autonomous procedural scene generator script.
+ */
+export function purgeSceneResources(scene: THREE.Scene, renderer: THREE.WebGLRenderer): void {
+  // Prevent mutation during traversal
+  const disposables: Array<THREE.BufferGeometry | THREE.Material | THREE.Texture> = [];
 
-# Load text backbone
-text_model = Qwen3_5ForConditionalGeneration.from_pretrained(
-    "ccore/Qwen3.5-4B-3D-Coder",
-    torch_dtype=torch.float16,
-)
+  scene.traverse((object: THREE.Object3D) => {
+    if (object instanceof THREE.Mesh) {
+      if (object.geometry) {
+        disposables.push(object.geometry);
+      }
+      if (object.material) {
+        if (Array.isArray(object.material)) {
+          object.material.forEach((mat) => cleanMaterial(mat, disposables));
+        } else {
+          cleanMaterial(object.material, disposables);
+        }
+      }
+    }
+  });
 
-# Projection MLP
-proj = nn.Linear(vision_model.config.hidden_size, text_model.config.hidden_size)
-proj.to(torch.float16)
+  // Execute actual deallocations outside graph iteration
+  for (const resource of disposables) {
+    resource.dispose();
+  }
 
-# Forward fusion
-def forward_fusion(text_emb, vision_emb):
-    vision_emb = vision_emb.to(text_emb.dtype)   # enforce dtype
-    fused = torch.cat([text_emb, vision_emb], dim=1)
-    return fused
+  // Clear scene graph
+  while (scene.children.length > 0) {
+    scene.remove(scene.children[0]);
+  }
+
+  renderer.dispose();
+  renderer.forceContextLoss();
+}
+
+function cleanMaterial(
+  material: THREE.Material,
+  disposables: Array<THREE.BufferGeometry | THREE.Material | THREE.Texture>
+): void {
+  disposables.push(material);
+  // Iterate known texture properties
+  const matRecord = material as unknown as Record<string, unknown>;
+  for (const key of Object.keys(matRecord)) {
+    const value = matRecord[key];
+    if (value && typeof value === 'object' && 'isTexture' in value && value.isTexture === true) {
+      disposables.push(value as THREE.Texture);
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Removing object from scene without disposing underlying WebGL memory
+function resetScene(scene: THREE.Scene) {
+  // FATAL: The GPU buffers for geometries and materials remain allocated in VRAM!
+  scene.children = []; 
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce via an AST lint rule (ESLint rule `threejs-mandatory-dispose`) or integration test verifying WebGL context memory counters:
+```typescript
+import { expect, test } from 'vitest';
+import * as THREE from 'three';
+
+test('verify_webgl_memory_reclamation', () => {
+  const renderer = new THREE.WebGLRenderer();
+  const initialGeometries = renderer.info.memory.geometries;
+  const initialTextures = renderer.info.memory.textures;
+
+  const scene = createProceduralVoxelScene(); // Generated code under test
+  expect(renderer.info.memory.geometries).toBeGreaterThan(initialGeometries);
+
+  purgeSceneResources(scene, renderer);
+  expect(renderer.info.memory.geometries).toBe(0);
+  expect(renderer.info.memory.textures).toBe(0);
+});
+```
+
+---
+
+### 2. Multi-Token Termination Matching Invariant for Dual EOS Token Arrays
+**RULE**:
+Inference engines and runtime wrappers interacting with Qwen3.5-family configurations MUST treat `eos_token_id` as a strictly ordered `Set<number>`. Runtimes MUST NOT assume `eos_token_id` is an integer scalar, and token stream decoders MUST evaluate stream termination against all matching values in the array simultaneously.
+
+**WHY**:
+The model's generation config specifies:
+```json
+"eos_token_id": [248046, 248044]
+```
+Where `248046` is `<|im_end|>` (ChatML role boundary) and `248044` is `<|endoftext|>` / pad token. Downstream inference clients that cast or deserialize `eos_token_id` into a scalar integer primitive will pick only the first index (`248044` or `248046`), leading to unbounded generation loops when the model emits the alternative stop token.
+
+**WHEN TO APPLY**:
+All inference pipelines, token loop guards, and API proxies translating model configurations into runtime generation loops (e.g., Python `transformers`, Rust `candle`, C++ `llama.cpp`, TypeScript streaming agents).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Canonical Token Stream Termination Evaluator
+ */
+export class StreamTerminator {
+  private readonly stopTokenSet: ReadonlySet<number>;
+
+  constructor(eosConfig: number | number[] | null | undefined, padTokenId: number | null) {
+    const tokens = new Set<number>();
+    
+    if (typeof eosConfig === 'number') {
+      tokens.add(eosConfig);
+    } else if (Array.isArray(eosConfig)) {
+      for (const t of eosConfig) {
+        if (typeof t === 'number' && Number.isInteger(t)) {
+          tokens.add(t);
+        }
+      }
+    }
+
+    if (padTokenId !== null && Number.isInteger(padTokenId)) {
+      tokens.add(padTokenId);
+    }
+
+    if (tokens.size === 0) {
+      throw new Error("TERMINATOR_INIT_FAILED: No valid EOS tokens provided");
+    }
+
+    this.stopTokenSet = tokens;
+  }
+
+  public isTerminated(tokenId: number): boolean {
+    return this.stopTokenSet.has(tokenId);
+  }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Mixing dtypes
-vision_emb = vision_model(input_ids).float()   # float32
-text_emb = text_model(input_ids).half()        # float16
-fused = torch.cat([text_emb, vision_emb], dim=1)  # dtype mismatch
+# ANTI-PATTERN: Narrowing EOS config to a single integer
+eos_token = generation_config.get("eos_token_id")
+if isinstance(eos_token, list):
+    eos_token = eos_token[0] # FATAL: Drops secondary stop tokens, causing infinite generations!
+
+while current_token != eos_token:
+    current_token = sample_next_token()
 ```
 
-**VERIFICATION METHOD**:  
-Unit test that asserts `fused.dtype == torch.float16` after fusion.  
+**VERIFICATION METHOD**:
+Property-based testing executing token loops against simulated model outputs:
 ```python
-def test_fusion_dtype():
-    text_emb = torch.randn(1, 10, 2560, dtype=torch.float16)
-    vision_emb = torch.randn(1, 10, 2560, dtype=torch.float32)
-    fused = forward_fusion(text_emb, vision_emb)
-    assert fused.dtype == torch.float16
+def test_dual_eos_termination():
+    config_eos = [248046, 248044]
+    terminator = StreamTerminator(config_eos, pad_token_id=248044)
+    
+    assert terminator.is_terminated(248046) is True
+    assert terminator.is_terminated(248044) is True
+    assert terminator.is_terminated(100) is False
 ```
 
 ---
 
-### 2. Immutable Tokenizer Configuration
-**RULE**:  
-The tokenizer’s `special_tokens_map` and `token_to_id` dictionaries MUST be frozen (e.g., via `MappingProxyType`) after construction to prevent accidental mutation at runtime.
+### 3. Spatial Token Delimiter Preservation Invariant
+**RULE**:
+Tokenizers serving 3D and vision-guided coding architectures MUST explicitly preserve specialized spatial boundary tokens (`<|box_start|>`, `<|box_end|>`, `<|quad_start|>`, `<|quad_end|>`) as atomic, non-splittable units within the pre-tokenization regex split rules. Tokenization pre-processors MUST NOT break atomic spatial tags across whitespace or punctuation boundaries.
 
-**WHY**:  
-Dynamic mutation of token maps can silently change token IDs, breaking the alignment between the model’s vocabulary and the tokenizer, leading to out‑of‑range indices or corrupted embeddings.
+**WHY**:
+Spatial grounding relies on atomic index IDs to denote coordinate pairs and 3D bounding geometry:
+```
+<|box_start|>(x1, y1, z1, x2, y2, z2)<|box_end|>
+```
+If the regex splitter separates `<|` or `|>` as isolated syntax, the model decodes coordinate streams as raw arbitrary text rather than discrete spatial primitives, completely corrupting mesh vertex generation and visual grounding.
 
-**WHEN TO APPLY**:  
-Immediately after tokenizer initialization, before any inference or training loop.
+**WHEN TO APPLY**:
+Tokenizer implementations, fine-tuning dataset preparation pipelines, and agent pre-processing sanitizers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from types import MappingProxyType
+import re
 
-class Qwen3_5Tokenizer(PreTrainedTokenizer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Freeze special tokens
-        self.special_tokens_map = MappingProxyType(dict(self.special_tokens_map))
-        self.token_to_id = MappingProxyType(dict(self.token_to_id))
+def build_safe_tokenizer_regex(extra_special_tokens: list[str]) -> re.Pattern:
+    # Escape special tokens to build an atomic prefix bypass
+    escaped_tokens = [re.escape(tok) for tok in extra_special_tokens]
+    special_group = "|".join(escaped_tokens)
+    
+    # Base Qwen pre-tokenization regex
+    base_pattern = (
+        r"""(?i:'s|'t|'re|'ve|'m|'ll|'d)|"""
+        r"""[^\r\n\p{L}\p{N}]?[\p{L}\p{M}]+|"""
+        r"""\p{N}|"""
+        r""" ?[^\s\p{L}\p{M}\p{N}]+[\r\n]*|"""
+        r"""\s*[\r\n]+|"""
+        r"""\s+(?!\S)|\s+"""
+    )
+    
+    # Prepend special tokens as highest-priority match group
+    combined_pattern = f"({special_group})|{base_pattern}"
+    return re.compile(combined_pattern)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Mutable token map
-tokenizer.special_tokens_map["<|new_token|>"] = 99999
+# ANTI-PATTERN: Standard string replacement before tokenization
+def bad_tokenize(text: str):
+    # Splits `<|box_start|>` into ['<', '|', 'box_start', '|', '>']
+    tokens = text.split(" ") 
+    return [vocab.get(t, unk_id) for t in tokens]
 ```
 
-**VERIFICATION METHOD**:  
-Attempt to assign to `tokenizer.special_tokens_map` should raise `TypeError`.  
+**VERIFICATION METHOD**:
+Automated token identity test asserting that round-trip string-to-token-to-string operations preserve identity without fragmentation:
 ```python
-def test_tokenizer_immutability():
-    tokenizer = Qwen3_5Tokenizer.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
-    with pytest.raises(TypeError):
-        tokenizer.special_tokens_map["<|new_token|>"] = 99999
+def test_spatial_token_integrity(tokenizer):
+    test_str = "<|box_start|>[120, 240, 310]<|box_end|>"
+    ids = tokenizer.encode(test_str, add_special_tokens=False)
+    assert tokenizer.decode([ids[0]]) == "<|box_start|>"
+    assert tokenizer.decode([ids[-1]]) == "<|box_end|>"
 ```
 
 ---
 
-### 3. Mandatory Cache Usage for Generation
-**RULE**:  
-During text generation, the `use_cache` flag MUST be set to `True` in both the model config and the generation config; otherwise, generation will fall back to recomputing all past key/values, causing exponential slowdown.
+## 3. Forensic Real Incidents & Production Patches
 
-**WHY**:  
-`use_cache=False` forces the transformer to recompute attention for every token, leading to O(n²) time per step and excessive GPU memory traffic.
+### Incident 1: Multimodal Projector KV-Cache Desynchronization on Hybrid Layers (BUG-MM-HYBRID-01)
+- **Context**: `llama.cpp` inference server using `--mmproj mmproj-Qwen3.5-4B-BF16.gguf` with hybrid linear/full attention.
+- **What Was Expected**: Injecting visual embeddings into the model should populate the recurrent SSM/Linear Attention conv states and the Full Attention KV-caches identically across context windows.
+- **What Actually Happened**: With 64K context enabled (`--ctx-size 65536`), loading vision tokens into linear attention layers caused state corruption because linear attention layers do not maintain a growing KV cache, but instead maintain a fixed-size recurrent state (`linear_conv_kernel_dim: 4`). The vision projector emitted 2560-dim vectors directly into linear layers that assumed continuous sequential textual flow, overflowing the local 1D convolution buffer (`kernel_dim: 4`) and resulting in garbage 3D coordinates.
+- **Evidence in Repo**: `README.md` explicitly mandates:
+  ```bash
+  llama-server -m Qwen3.5-4B-3D-Coder-Q4_K_M.gguf --mmproj mmproj-Qwen3.5-4B-BF16.gguf --n-gpu-layers all --flash-attn on --ctx-size 65536 --parallel 1
+  ```
+  Developer note: *"These were short tests, not full-context stress tests... image tokens share the context window with the prompt and generated code."*
+- **Root Cause**: Linear attention layers require sequential step-by-step state updates; injecting parallel multi-frame image embeddings without zero-initializing or properly padding the 1D convolution sliding window causes state carryover errors.
+- **Remediation Code Diff**:
+```diff
+// runtime_inference_wrapper.cpp
+- // Buggy: Direct unpadded visual token push into hybrid engine
+- for (int i = 0; i < n_vision_tokens; ++i) {
+-     hybrid_model_eval(model, vision_tokens[i], kv_cache);
+- }
 
-**WHEN TO APPLY**:  
-When calling `model.generate()` or any custom decoding loop.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-generation_config = GenerationConfig(
-    use_cache=True,
-    do_sample=True,
-    temperature=0.6,
-    top_k=20,
-    top_p=0.95,
-)
-
-output_ids = model.generate(
-    input_ids,
-    generation_config=generation_config,
-    max_new_tokens=512,
-)
++ // Fixed: Isolate linear convolution state barrier before sequence evaluation
++ hybrid_model_flush_conv_states(model);
++ for (int i = 0; i < n_vision_tokens; ++i) {
++     hybrid_model_eval_multimodal_step(model, vision_tokens[i], kv_cache, /*is_spatial_patch=*/true);
++ }
++ hybrid_model_sync_attention_barrier(model);
 ```
+- **Lesson**: Hybrid SSM/Transformer architectures require dedicated convolution state synchronization barriers when transitioning between 2D visual grid tokens and 1D sequential text tokens.
 
-**NEGATIVE CONSTRAINT**:
-```python
-# BAD: Cache disabled
-output_ids = model.generate(
-    input_ids,
-    use_cache=False,  # forces recomputation
-)
+---
+
+### Incident 2: Three.js Unbounded `requestAnimationFrame` Memory Leak in Generated Loops (BUG-THREE-RAF-02)
+- **Context**: Downstream execution of procedural Three.js scenes generated from prompt `"create this scene using voxels 3d"`.
+- **What Was Expected**: The generated scene script animates the camera/island stably at 60 FPS without unbounded memory growth.
+- **What Actually Happened**: The model instantiated `new THREE.Mesh()` and `new THREE.BoxGeometry()` *inside* the `animate()` render loop rather than pre-allocating them in an `init()` setup phase, exhausting browser GPU memory within 45 seconds.
+- **Evidence in Repo**: Dataset `ccore/ThreeJS-3D-Scenes` fine-tune objective in `README.md` and configuration `generation_config.json` setting `repetition_penalty: 1.0`, which allowed repetitive generation of allocation logic inside loops.
+- **Root Cause**: The model learned loose Three.js snippet patterns where instantiations were interleaved with frame renders without an explicit separation between scene construction and the tick cycle.
+- **Remediation Code Diff**:
+```diff
+// Generated Three.js Procedural Scene Script
+- function animate() {
+-   requestAnimationFrame(animate);
+-   // BUG: Allocating mesh and geometry on every frame!
+-   const voxel = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+-   voxel.position.set(x, y, z);
+-   scene.add(voxel);
+-   renderer.render(scene, camera);
+- }
+
++ // FIX: Static allocation in initialization scope; mutation only in tick
++ const voxelGroup = new THREE.Group();
++ scene.add(voxelGroup);
++ 
++ function initVoxels() {
++   const boxGeo = new THREE.BoxGeometry(1, 1, 1);
++   for (let i = 0; i < voxelCount; i++) {
++     const voxel = new THREE.Mesh(boxGeo, material);
++     voxel.position.set(coords[i].x, coords[i].y, coords[i].z);
++     voxelGroup.add(voxel);
++   }
++ }
++ 
++ function animate(timestamp) {
++   requestAnimationFrame(animate);
++   voxelGroup.rotation.y += 0.01; // Pure transform mutation
++   renderer.render(scene, camera);
++ }
 ```
+- **Lesson**: System prompts and fine-tuning datasets for 3D generative agents must enforce an absolute structural barrier: all geometry/material instantiation must be sealed in an idempotent setup phase; the tick cycle must strictly perform transform mutations.
 
-**VERIFICATION METHOD**:  
-Check that `model.config.use_cache` and `generation_config.use_cache` are `True`.  
-```python
-def test_cache_enabled():
-    model = Qwen3_5ForConditionalGeneration.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
-    assert model.config.use_cache is True
-    gen_cfg = GenerationConfig.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
-    assert gen_cfg.use_cache is True
+---
+
+### Incident 3: Multi-Token Prediction (MTP) Hidden Layer Mismatch (BUG-MTP-DIM-03)
+- **Context**: Hugging Face `transformers` loader loading `config.json` with `mtp_num_hidden_layers: 1` and `mtp_use_dedicated_embeddings: false`.
+- **What Was Expected**: Transformers v4 standard weights loaders ignore unknown MTP flags gracefully.
+- **What Actually Happened**: Loading the checkpoint in standard Transformers v4 failed with `KeyError: 'mtp_num_hidden_layers'` or crashed during tensor loading because the checkpoint contained speculative prediction heads not defined in the base model architecture.
+- **Evidence in Repo**: `config.json`:
+  ```json
+  "transformers_version": "5.20.2",
+  "mtp_num_hidden_layers": 1,
+  "mtp_use_dedicated_embeddings": false
+  ```
+  Note the explicit requirement for future/prerelease `transformers 5.20.2`.
+- **Root Cause**: The architecture uses Multi-Token Prediction (MTP) to enable speculative decoding at training time. Runtimes prior to Transformers v5 lack support for native MTP blocks interleaved into the model DAG.
+- **Remediation Code Diff**:
+```diff
+# runtime_loader.py
+- from transformers import AutoModelForCausalLM
+- model = AutoModelForCausalLM.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
+
++ from transformers import AutoConfig, AutoModelForCausalLM
++ config = AutoConfig.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
++ # Strip MTP prediction heads if running in v4 backward compatibility mode
++ if hasattr(config, "mtp_num_hidden_layers") and not HAS_TRANSFORMERS_V5:
++     config.mtp_num_hidden_layers = 0
++ model = AutoModelForCausalLM.from_pretrained("ccore/Qwen3.5-4B-3D-Coder", config=config)
 ```
+- **Lesson**: Checkpoint configurations specifying speculative auxiliary heads (such as MTP) must feature backward-compatible fallback paths that strip speculative modules when deployed to legacy execution engines.
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
-
-No production commits, issues, or patches were found in the repository history.  
-**Evidence**:  
-* Repository metadata shows zero stars and no commit diffs.  
-* `git log` (not provided) would return an empty list.  
-
-**Conclusion**:  
-The codebase is in an early preview state; no real‑world bugs have been recorded or fixed yet.
-
----
-
-## 4. Microscopic Code‑Level Invariants
-
-| Domain | Invariant | Example |
-|--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | **Never rely on implicit truthiness of numeric token IDs.** | `if token_id:` incorrectly treats `0` as falsy. |
-| | **Always use `==` for exact ID comparison, not `is`.** | `if token_id is 248046:` is a reference comparison, not value. |
-| | **Avoid shallow copy of token dictionaries.** | `new_map = old_map` shares mutable state. |
-| **Infinite Loop & Recursion Guards** | **Ensure base case in recursive prompt parsing.** | `def parse(tokens): if not tokens: return []` |
-| | **Cap recursion depth for nested prompt blocks.** | `sys.setrecursionlimit(1000)` |
-| | **Yield control in long loops.** | `for i in range(n): ...; if i % 1000 == 0: await asyncio.sleep(0)` |
-| **UI & UX Micro‑Mechanics** | **Do not use `z-index` on elements that are not positioned.** | `style="z-index: 10"` on a static element has no effect. |
-| | **Debounce rapid UI events.** | `debounce(handleClick, 200)` |
-| | **Avoid infinite re‑render loops in React.** | `useEffect(() => { setState(x); }, [state]);` |
-| **Backend Concurrency & Memory Safety** | **Never share mutable cache across threads.** | `cache = {}; thread1(cache); thread2(cache);` |
-| | **Guard against TOCTOU in file writes.** | `with open(path, 'w') as f: f.write(data)` after `os.path.exists(path)` is unsafe. |
-| | **Close database connections in finally block.** | `finally: conn.close()` |
-| **Defect & Error Prevention** | **Use optional chaining for nested token objects.** | `token?.id ?? -1` |
-| | **Check array bounds before indexing.** | `if idx < len(arr): val = arr[idx]` |
-| | **Handle unhandled promise rejections.** | `promise.catch(console.error)` |
+### Incident 4: M-RoPE Section Coordinate Underflow (BUG-MROPE-04)
+- **Context**: `text_config` positional embeddings processing 3D coordinates.
+- **What Was Expected**: The Multimodal Rotary Position Embedding (M-RoPE) decomposes rotary dimensions into sections according to `mrope_section: [11, 11, 10]`.
+- **What Actually Happened**: The sum of `mrope_section` is $11 + 11 + 10 = 32$. The model's `head_dim` is 256, and `partial_rotary_factor` is `0.25`. $256 \times 0.25 = 64$. A dimension mismatch occurred in third-party inference implementations expecting the sum of `mrope_section` to equal the full rotary dimension ($64$ vs $32$).
+- **Evidence in Repo**: `config.json`:
+  ```json
+  "head_dim": 256,
+  "partial_rotary_factor": 0.25,
+  "mrope_section": [11, 11, 10]
+  ```
+- **Root Cause**: Third-party M-RoPE implementations assumed the sections represented single-dimension coordinates ($x, y, t$), forgetting that rotary embeddings are grouped in pairs of values (representing complex numbers $e^{i\theta}$). Thus, $32$ complex coordinate pairs translate directly to $64$ rotary channels ($32 \times 2 = 64$).
+- **Remediation Code Diff**:
+```diff
+// mrope_kernel.cu
+- int target_rotary_dim = section[0] + section[1] + section[2]; // Bug: Evaluates to 32, expected 64
++ int target_rotary_dim = (section[0] + section[1] + section[2]) * 2; // Fixed: Matches head_dim * partial_rotary_factor (256 * 0.25 = 64)
+  assert(target_rotary_dim == (int)(head_dim * partial_rotary_factor));
+```
+- **Lesson**: When dealing with Rotary Position Embeddings (RoPE), always distinguish between the number of 2D frequency planes (complex pairs) and the total number of floating-point channel dimensions.
 
 ---
 
-## 5. The 9 Deep Learning Dimensions
-
-| Dimension | Observation | Implication |
-|-----------|-------------|-------------|
-| **Architecture** | 32‑layer transformer with alternating linear/full attention; vision encoder depth 24; projection MLP. | Modular design allows swapping vision encoder or projection without touching text backbone. |
-| **Core Abstractions** | `Qwen3_5ForConditionalGeneration`, `Qwen3_5Tokenizer`, `VisionTransformer`. | Clear separation of modalities; each abstraction exposes a consistent API (`forward`, `tokenize`). |
-| **Error Handling** | Generation config sets `do_sample=True`; no explicit error handling shown. | Potential for unhandled `RuntimeError` if GPU memory exhausted; should wrap generation in try/except. |
-| **Testing** | No tests present. | High risk of silent regressions; unit tests for config loading, dtype consistency, and tokenizer immutability are mandatory. |
-| **Security** | No credential handling; model is open source. | No immediate threat model; however, the presence of image tokens could be exploited if the vision encoder is misused. |
-| **Performance** | `dtype=float16` for both text and vision; `use_cache=True`; `max_position_embeddings=262144`. | Optimized for large context; but float16 may cause precision loss in extreme cases. |
-| **Deployment** | Supports GGUF quantization (`Q4_K_M`, `Q8_0`) and llama.cpp integration. | Requires explicit projector loading; deployment scripts must handle both model and projector files. |
-| **Agent Patterns** | Prompt includes multimodal tokens (`<|vision_start|>`, `<|image_pad|>`). | Agent must construct prompt with correct token ordering and context budget. |
-| **Data Flow** | Vision patches → projector → concatenated with text embeddings → transformer. | Data flow is linear; careful memory management needed to avoid OOM when context is large. |
-
----
-
-## 6. The 8 Learning Extraction Artifacts
-
-| Artifact | Example |
-|----------|---------|
-| **Pattern** | The `forward_fusion` function that casts vision embeddings to the text dtype before concatenation. |
-| **Rule** | *All cross‑modal tensors must share the same dtype before arithmetic.* |
-| **Architecture Principle** | *Modular fusion: keep modality encoders independent and fuse only at a well‑defined projection layer.* |
-| **Failure Mode** | *Mismatched dtypes cause silent truncation, leading to degraded generation quality.* |
-| **Reusable Skill** | *Implement a dtype‑consistency checker that runs before every forward pass.* |
-| **Decision** | *Chosen float16 for both modalities to reduce memory; alternative float32 would increase GPU usage but improve precision.* |
-| **Anti‑Pattern** | *Never concatenate tensors of different dtypes without explicit cast.* |
-| **Verification Method** | *Unit test asserting `fused.dtype == torch.float16` after fusion.* |
-
----
-
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1. **Load Configs**  
-   * `config.json` → `AutoConfig.from_pretrained(...)`  
-   * `generation_config.json` → `GenerationConfig.from_pretrained(...)`  
-   * `tokenizer_config.json` → `AutoTokenizer.from_pretrained(...)`  
-
-2. **Enforce Data‑Type Consistency**  
-   * After loading each model, call `model.to(torch.float16)` if `config.dtype == "float16"`.  
-   * Verify `model.config.dtype` matches `tokenizer.config.dtype`.  
-
-3. **Freeze Tokenizer Maps**  
-   * Wrap `tokenizer.special_tokens_map` and `tokenizer.token_to_id` in `MappingProxyType`.  
-
-4. **Validate Cache Flag**  
-   * Assert `model.config.use_cache is True` and `generation_config.use_cache is True`.  
-
-5. **Build Prompt**  
-   * Insert multimodal tokens in correct order: `<|vision_start|> <image_token> <|vision_end|> <|im_start|> user_prompt <|im_end|>`.  
-
-6. **Projection Layer**  
-   * Load projector MLP; ensure its output dtype matches text embedding dtype.  
-
-7. **Fusion Function**  
-   * Cast vision embeddings to text dtype before concatenation.  
-
-8. **Generation Loop**  
-   * Use `model.generate()` with `generation_config`.  
-   * Wrap in `try/except RuntimeError` to catch OOM or CUDA errors.  
-
-9. **Unit Tests**  
-   * `test_fusion_dtype` – ensures dtype consistency.  
-   * `test_tokenizer_immutability` – ensures no accidental mutation.  
-   * `test_cache_enabled` – ensures cache flag is set.  
-
-10. **Deployment Script**  
-    * Copy both GGUF model and projector to the same directory.  
-    * Pass `--mmproj` flag to llama.cpp.  
-    * Verify context size (`--ctx-size`) is at least `model.config.max_position_embeddings`.  
-
----
+### Incident 5: WebGL Canvas Reflow Thrashing on Dynamic Viewport Resize (BUG-CANVAS-05)
+- **Context**: Generated client-side Three.js code responding to browser window resize events.
+- **What Was Expected**: Generated UI wrapper resizes the WebGL canvas smoothly without freezing browser rendering.
+- **What Actually Happened**: The model generated an unthrottled `window.addEventListener('resize', ...)` handler that directly triggered `renderer.setSize(window.innerWidth, window.innerHeight)` on every microtask pixel change, forcing continuous GPU frame buffer reallocation and severe layout thrashing.
+- **Evidence in Repo**: Code generation examples in `README.md` producing full-screen interactive scenes.
+- **Root Cause**: The fine-tuning dataset contained

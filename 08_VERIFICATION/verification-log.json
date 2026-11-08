@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-LEXX",
-    "timestamp": "2026-11-05T17:29:11.397Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "87bc7d2922e697a7218587b5cdae59f2847a68a2ac4e01cb09fac811fdaa8946",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-UX4I",
-    "timestamp": "2026-11-05T17:36:34.866Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "9de6a9f7020de2f0cf22cb56420c540b9c6fbd8849dc01b585f0e80a13f3ca52",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-V1ZN",
     "timestamp": "2026-11-05T17:36:41.171Z",
     "repository": "rook/rook",
@@ -7492,6 +7462,36 @@
     "contentHash": "a485d497085605e57e117f8d25eb4b365a73f9a49b8b14c69ba3a1bc8e25e82f",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-234X",
+    "timestamp": "2026-11-08T06:49:18.945Z",
+    "repository": "maziyarpanahi/openmed",
+    "learningId": "learn-github-maziyarpanahi-openmed",
+    "contentHash": "9fac6036ce24b02769c275fbf51dafa75251b2375e852324a98f4b8f5c82061d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-44T6",
+    "timestamp": "2026-11-08T06:50:54.426Z",
+    "repository": "ccore/Qwen3.5-4B-3D-Coder",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+    "contentHash": "929f3f89395a8d286d152014a9521f16712a5cca75b5205b8649a0d16b06c385",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

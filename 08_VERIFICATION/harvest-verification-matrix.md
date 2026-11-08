@@ -8242,3 +8242,5 @@
 | `CYCLE-20261108-7S1G` | `2026-11-08T06:25:44.884Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`18de81b6...`) |
 | `CYCLE-20261108-H3KN` | `2026-11-08T06:32:59.735Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`7805a4f7...`) |
 | `CYCLE-20261108-T7X0` | `2026-11-08T06:42:25.236Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`a485d497...`) |
+| `CYCLE-20261108-234X` | `2026-11-08T06:49:18.945Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9fac6036...`) |
+| `CYCLE-20261108-44T6` | `2026-11-08T06:50:54.426Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`929f3f89...`) |

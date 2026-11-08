@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T06:42:25.246Z",
-  "total_cycles_completed": 8207,
-  "total_learnings_persisted": 8207,
-  "total_rules_promoted": 7920,
+  "last_updated": "2026-11-08T06:50:54.434Z",
+  "total_cycles_completed": 8209,
+  "total_learnings_persisted": 8209,
+  "total_rules_promoted": 7924,
   "history": [
-    {
-      "timestamp": "2026-11-07T18:17:11.677Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T18:24:51.546Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T18:24:58.715Z",
       "repository": "typedb/typedb",
@@ -1403,6 +1389,20 @@
       "repository": "baidu/Unlimited-OCR-2",
       "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:49:18.954Z",
+      "repository": "maziyarpanahi/openmed",
+      "learningId": "learn-github-maziyarpanahi-openmed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:50:54.434Z",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
