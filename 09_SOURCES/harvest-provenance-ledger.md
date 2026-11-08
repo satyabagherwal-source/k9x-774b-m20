@@ -8199,3 +8199,5 @@ Every entry in this ledger must capture:
 | `learn-github-parthjadhav-app-store-screenshots` | `https://github.com/ParthJadhav/app-store-screenshots` | `e889033b` | Multi-dimensional audit evidence | 2026-11-08T03:07:53.665Z |
 | `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T03:08:03.703Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-08T03:15:00.528Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-11-08T03:21:23.210Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `2b7b78e7` | Multi-dimensional audit evidence | 2026-11-08T03:21:25.474Z |

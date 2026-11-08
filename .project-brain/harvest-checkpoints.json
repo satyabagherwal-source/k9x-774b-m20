@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T03:15:00.545Z",
+  "last_updated": "2026-11-08T03:21:25.489Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "bfc3b13537ab23f173ff6972d1cbf8b6be473188a389ae3817dddf097339fc7b",
-      "verified_at": "2026-11-04T00:46:24.600Z",
+      "content_hash": "20aea369b5c0a77fb332ce77af8164b6f3b3d92f1dfa589aa587e29feb68510b",
+      "verified_at": "2026-11-08T03:21:25.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:46:24.600Z"
+      "last_updated": "2026-11-08T03:21:25.489Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",
@@ -13881,14 +13881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "content_hash": "a6508d0b7d708d45660f9a3d7c3f99cce75c3d9ad23deb58ff94534dc933de00",
-      "verified_at": "2026-11-04T16:50:12.901Z",
+      "content_hash": "46375b5ec832d2d68d59195f403477aaba212f47d90a9e8128c1ba3f2bbba0a0",
+      "verified_at": "2026-11-08T03:21:23.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T16:50:12.901Z"
+      "last_updated": "2026-11-08T03:21:23.217Z"
     },
     "webrecorder/pywb": {
       "repository": "webrecorder/pywb",

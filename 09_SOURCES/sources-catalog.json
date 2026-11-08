@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "2b6793e6",
+    "sourceVersion": "2b7b78e7",
     "license": "MIT",
-    "contentHash": "bfc3b13537ab23f173ff6972d1cbf8b6be473188a389ae3817dddf097339fc7b",
-    "lastHarvestedAt": "2026-11-04T00:46:24.588Z",
+    "contentHash": "20aea369b5c0a77fb332ce77af8164b6f3b3d92f1dfa589aa587e29feb68510b",
+    "lastHarvestedAt": "2026-11-08T03:21:25.474Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {
@@ -9225,8 +9225,8 @@
     "sourceUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
     "sourceVersion": "hf-reflection-beam-1.0-501b-a23b",
     "license": "Open-Source",
-    "contentHash": "a6508d0b7d708d45660f9a3d7c3f99cce75c3d9ad23deb58ff94534dc933de00",
-    "lastHarvestedAt": "2026-11-04T16:50:12.895Z",
+    "contentHash": "46375b5ec832d2d68d59195f403477aaba212f47d90a9e8128c1ba3f2bbba0a0",
+    "lastHarvestedAt": "2026-11-08T03:21:23.210Z",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b"
   },
   "webrecorder-pywb": {

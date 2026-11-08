@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source**: github ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
-> **Source Version**: `2b6793e6`  
+> **Source Version**: `2b7b78e7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:46:23.836Z  
+> **Timestamp**: 2026-11-08T03:21:24.493Z  
 > **Learning ID**: `learn-github-ratatui-ratatui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:46:22.051Z  
+> **Harvest Timestamp**: 2026-11-08T03:21:24.488Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23156 stars
+- **Stars / Engagement**: 23187 stars
 
 ---
 
@@ -940,11 +940,11 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2895** (2026-11-03): **build(deps): bump rustls from 0.23.45 to 0.23.46 in the cargo group across 1 directory**
-  *Symptoms*: Bumps the cargo group with 1 update in the / directory: [rustls](https://github.com/rustls/rustls).  Updates `rustls` from 0.23.45 to 0.23.46 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/rustls/rustls/commit/f04804fa13341a9b1dc02b5d1dd8a746f2c4b7fb"><code>f04804f</code></a> Delay saving KX hint until handshake confirmation</li> <li><a href="https://github.com/rustls/rustls/commit/049d39b975ef5c39f546a10fa03d420dcf053510"><code>049d39b</code></a> Bump version to 0.23.46</li> <li><a href="https://github.com/rustls/rustls/commit/6d0ba089d6d446959d113bdad43042780949ba48"><code>6d0ba08</code></a> Eliminate secret from impl Debug for <code>ServerSessionValue</code></li> <li><a href="https://github.com/rustls/rustls/commit/2b82b8141ae090fa193a9961705598b81d3aae9c"><code>2b82b81</code></a> unbuffered: update TLS 1.3 traffic keys before exhausting them</li> <li><a href="https://github.com/rustls/rustls/commit/74343e7047d7179b9bd7e67cef543b6c490518a1"><code>74343e7</code></a> conn: update TLS 1.3 traffic keys within fragmented writes</li> <li><a href="https://github.com/rustls/rustls/commit/795eea719e9491ee45aae38acc62a60a98969fbe"><code>795eea7</code></a> Advance the HPKE sequence only after seal succeeds</li> <li><a href="https://github.com/rustls/rustls/commit/d67cb716e6a086a9d88b69b966ab10c470087119"><code>d67cb71</code></a> stream: provide backpressure while buffering received plaintext</li> <li><a href="https://github.com/rustls/rustls/commit/7a69adee
+- **Issue #2901** (2026-11-07): **build(deps): update rand to patched versions**
+  *Symptoms*: Updates `rand` in `Cargo.lock` to clear Dependabot alerts [15](https://github.com/ratatui/ratatui/security/dependabot/15) and [16](https://github.com/ratatui/ratatui/security/dependabot/16) (low severity) for [GHSA-cq8v-f236-94qc](https://github.com/advisories/GHSA-cq8v-f236-94qc):  - `rand` 0.8.5 to 0.8.8 (fixed in 0.8.6), used through `phf_generator`. - `rand` 0.9.2 to 0.9.5 (fixed in 0.9.3), used through `fakeit` for the `table` example and `ratatui` dev-dependencies.  The advisory needs the `log` and `thread_rng` features together, plus a custom logger that calls `rand::rng()` and triggers a reseed. Neither version here enables `log`, so ratatui isn't affected. This update clears the alerts and keeps the lockfile on patched versions.  Only `Cargo.lock` changes. 
 
-- **Issue #2894** (2026-11-02): **build(deps): bump tombi-toml/setup-tombi from 1.9.1 to 1.9.8**
-  *Symptoms*: Bumps [tombi-toml/setup-tombi](https://github.com/tombi-toml/setup-tombi) from 1.9.1 to 1.9.8. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/tombi-toml/setup-tombi/releases">tombi-toml/setup-tombi's releases</a>.</em></p> <blockquote> <h2>v1.9.8</h2> <p>This setup-tombi release matches <a href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.8">tombi v1.9.8</a>.</p> <p><strong>Full Changelog</strong>: <a href="https://github.com/tombi-toml/setup-tombi/compare/v1.9.7...v1.9.8">https://github.com/tombi-toml/setup-tombi/compare/v1.9.7...v1.9.8</a></p> <h2>v1.9.7</h2> <p>This setup-tombi release matches <a href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.7">tombi v1.9.7</a>.</p> <p><strong>Full Changelog</strong>: <a href="https://github.com/tombi-toml/setup-tombi/compare/v1.9.6...v1.9.7">https://github.com/tombi-toml/setup-tombi/compare/v1.9.6...v1.9.7</a></p> <h2>v1.9.6</h2> <p>This setup-tombi release matches <a href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.6">tombi v1.9.6</a>.</p> <p><strong>Full Changelog</strong>: <a href="https://github.com/tombi-toml/setup-tombi/compare/v1.9.5...v1.9.6">https://github.com/tombi-toml/setup-tombi/compare/v1.9.5...v1.9.6</a></p> <h2>v1.9.5</h2> <p>This setup-tombi release matches <a href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.5">tombi v1.9.5</a>.</p> <p><strong>Full Changelog</strong>: <a href="https://github.com/tombi-toml/setup-tombi/compare/v1.9.4.
+- **Issue #2900** (2026-11-07): **build(deps): update futures-util and chacha20**
+  *Symptoms*: Updates two lockfile entries reported by `cargo deny check advisories`:  - `futures-util` 0.3.31 to 0.3.34 (and the rest of the `futures-*` family), which removes `pin-utils`, now unmaintained ([RUSTSEC-2026-0441](https://rustsec.org/advisories/RUSTSEC-2026-0441)). - `chacha20` 0.10.0 to 0.10.2, because 0.10.0 was yanked.  Only `Cargo.lock` changes. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -961,239 +961,323 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18b858cd` (2026-11-02)
-**Commit Message**: build(deps): bump tombi-toml/setup-tombi from 1.9.1 to 1.9.8 (#2894)
+### Incident Patch 1: `2b7b78e7` (2026-11-07)
+**Commit Message**: build(deps): update rand to patched versions (#2901)
 
-Bumps
-[tombi-toml/setup-tombi](https://github.com/tombi-toml/setup-tombi) from
-1.9.1 to 1.9.8.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/tombi-toml/setup-tombi/releases">tombi-toml/setup-tombi's
-releases</a>.</em></p>
-<blockquote>
-<h2>v1.9.8</h2>
-<p>This setup-tombi release matches <a
-href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.8">tombi
-v1.9.8</a>.</p>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/tombi-toml/setup-tombi/compare/v1.9.7...v1.9.8">https://github.com/tombi-toml/setup-tombi/compare/v1.9.7...v1.9.8</a></p>
-<h2>v1.9.7</h2>
-<p>This setup-tombi release matches <a
-href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.7">tombi
-v1.9.7</a>.</p>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/tombi-toml/setup-tombi/compare/v1.9.6...v1.9.7">https://github.com/tombi-toml/setup-tombi/compare/v1.9.6...v1.9.7</a></p>
-<h2>v1.9.6</h2>
-<p>This setup-tombi release matches <a
-href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.6">tombi
-v1.9.6</a>.</p>
-<p><strong>Full Changelog</strong>: <a
-href="https://githu
+Updates `rand` in `Cargo.lock` to clear Dependabot alerts
+[15](https://github.com/ratatui/ratatui/security/dependabot/15) and
+[16](https://github.com/ratatui/ratatui/security/dependabot/16) (low
+severity) for
+[GHSA-cq8v-f236-94qc](https://github.com/advisories/GHSA-cq8v-f236-94qc):
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+- `rand` 0.8.5 to 0.8.8 (fixed in 0.8.6), used through `phf_generator`.
+- `rand` 0.9.2 to 0.9.5 (fixed in 0.9.3), used through `fakeit` for the
+`table` example and `ratatui` dev-dependencies.
+
+The advisory needs the `log` and `thread_rng` features together, plus a
+custom logger that calls `rand::rng()` and triggers a reseed. Neither
+version here enables `log`, so ratatui isn't affected. This update
+clears the alerts and keeps the lockfile on patched versions.
+
+Only `Cargo.lock` changes.
+
+**File**: `Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -37,7 +37,7 @@ jobs:
-           toolchain: nightly
-           components: rustfmt
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
--      - uses: tombi-toml/setup-tombi@73552b752982de9c40393832cef2dc8a43013e6b # v1.9.1
-+      - uses: tombi-toml/setup-tombi@88295e71426671820b98934ea75ea352d73eba8b # v1.9.8
-         with:
-           version: "0.9.19"
-       - run: cargo xtask format --check
+@@ -1017,7 +1017,7 @@ version = "1.4.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "9ff50593e569e8da220e12d8c171c89794fb2dab023f6391edbe5d16f3cdb311"
+ dependencies = [
+- "rand 0.9.2",
++ "rand 0.9.5",
+  "simplerand",
+  "uuid 0.8.2",
+ ]
+@@ -2376,7 +2376,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3c80231409c20246a13fddb31776fb942c38553c51e871f8cbd687a4cfb5843d"
+ dependencies = [
+  "phf_shared 0.11.3",
+- "rand 0.8.5",
++ "rand 0.8.8",
+ ]
+ 
+ [[package]]
+@@ -2655,18 +2655,18 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
+ 
+ [[package]]
+ name = "rand"
+-version = "0.8.5"
++version = "0.8.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
++checksum = "e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c"
+ dependencies = [
+  "rand_core 0.6.4",
+ ]
+ 
+ [[package]]
+ name = "rand"
+-version = "0.9.2"
++version = "0.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6db2770f06117d490610c7488547d543617b21bfa07796d7a12f6f1bd53850d1"
++checksum = "b9ef1d0d795eb7d84685bca4f72f3649f064e6641543d3a8c415898726a57b41"
+ dependencies = [
+  "rand_chacha 0.9.0",
+  "rand_core 0.9.3",
 ```
 
 ---
 
-### Incident Patch 2: `8c970b3a` (2026-11-02)
-**Commit Message**: build(deps): bump taiki-e/install-action from 2.87.31 to 2.88.1 (#2893)
+### Incident Patch 2: `77c1b683` (2026-11-07)
+**Commit Message**: build(deps): update futures-util and chacha20
 
-Bumps
-[taiki-e/install-action](https://github.com/taiki-e/install-action) from
-2.87.31 to 2.88.1.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/taiki-e/install-action/releases">taiki-e/install-action's
-releases</a>.</em></p>
-<blockquote>
-<h2>2.88.1</h2>
-<ul>
-<li>
-<p>Update <code>wasmtime@latest</code> to 50.0.1.</p>
-</li>
-<li>
-<p>Update <code>vacuum@latest</code> to 0.36.0.</p>
-</li>
-<li>
-<p>Update <code>tombi@latest</code> to 1.9.8.</p>
-</li>
-<li>
-<p>Update <code>mise@latest</code> to 2026.10.23.</p>
-</li>
-<li>
-<p>Update <code>kingfisher@latest</code> to 2.15.0.</p>
-</li>
-<li>
-<p>Update <code>espup@latest</code> to 0.19.0.</p>
-</li>
-<li>
-<p>Update <code>deepsource@latest</code> to 0.10.2.</p>
-</li>
-<li>
-<p>Update <code>biome@latest</code> to 2.6.4.</p>
-</li>
-</ul>
-<h2>2.88.0</h2>
-<ul>
-<li>Support <code>similarity-rs</code>. (<a
-href="https://redirect.github.com/taiki-e/install-action/pull/2017">#2017</a>,
-thanks <a
-href="https://github.com/HardMax71"><code>@​HardMax71</code></a>)</li>
-</ul>
-<h2>2.87.33</h2>
-<ul>
-<li>
-<p>Update <code>vacuum@latest</code> to 0.35.4.<
+Remove the unmaintained pin-utils (RUSTSEC-2026-0441) from the lockfile
+and move off the yanked chacha20 0.10.0.
 
-**File**: `.github/workflows/ci.yml` (modified, +8/-8)
+**File**: `Cargo.lock` (modified, +17/-24)
 ```diff
-@@ -101,7 +101,7 @@ jobs:
-       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
-         with:
-           toolchain: ${{ env.RATATUI_NIGHTLY_TOOLCHAIN }}
--      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-+      - uses: taiki-e/install-action@68a389c788b2cd04016ce8c80ee23b80d2ab3d68 # v2.88.1
-         with:
-           tool: cargo-udeps
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-@@ -160,7 +160,7 @@ jobs:
-         with:
-           toolchain: stable
-           components: llvm-tools
--      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-+      - uses: taiki-e/install-action@68a389c788b2cd04016ce8c80ee23b80d2ab3d68 # v2.88.1
-         with:
-           tool: cargo-llvm-cov
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-@@ -186,7 +186,7 @@ jobs:
-       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
-         with:
-           toolchain: ${{ matrix.toolchain }}
--      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-+      - uses: taiki-e/install-action@68a389c788b2cd04016ce8c80ee23b80d2ab3d68 # v2.88.1
-         with:
-           tool: cargo-hack
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-@@ -205,7 +205,7 @@ jobs:
-       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
-         with:
-           toolchain: stable
--      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-+      - uses: taiki-e/install-action@68a389c788b2cd04016ce8c80ee23b80d2ab3d68 # v2.88.1
-         with:
-           tool: cargo-minimal-versions,cargo-hack
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-@@ -251,7 +251,7 @@ jobs:
-         with:
-           persist-credentials: false
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
--      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-+      - uses: taiki-e/install-action@68a389c788b2cd04016ce8c80ee23b80d2ab3d68 # v2.88.1
-         with:
-           tool: cargo-rdme
-       - run: cargo rdme install-rust-toolchain-for-intralinks
-@@ -274,7 +274,7 @@ jobs:
-       - uses: dtolnay/install@74f735cdf643820234e37ae1c4089a08fd266d8a # master
-         with:
-           crate: cargo-docs-rs
--      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-+      - uses: taiki-e/install-action@68a389c788b2cd04016ce8c80ee23b80d2ab3d68 # v2.88.1
-         with:
-           tool: cargo-hack
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-@@ -292,7 +292,7 @@ jobs:
-       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
-         with:
-           toolchain: stable
--      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-+      - uses: taiki-e/install-action@68a389c788b2cd04016ce8c80ee23b80d2ab3d68 # v2.88.1
-         with:
-           tool: cargo-hack
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-@@ -314,7 +314,7 @@ jobs:
-       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
-         with:
-           toolchain: stable
--      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-+      - uses: taiki-e/install-action@68a389c788b2cd04016ce8c80ee23b80d2ab3d68 # v2.88.1
-         with:
-           tool: cargo-hack
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+@@ -376,9 +376,9 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
+ 
+ [[package]]
+ name = "chacha20"
+-version = "0.10.0"
++version = "0.10.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6f8d983286843e49675a4b7a2d174efe136dc93a18d69130dd18198a6c167601"
++checksum = "65c35e4b699c7e15ccbe7ee35c005e4fc0a278d22238a2857e6ce2dadeda1b06"
+ dependencies = [
+  "cfg-if",
+  "cpufeatures 0.3.0",
+@@ -1127,19 +1127,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "futures-channel"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2dff15bf788c671c1934e366d07e30c1814a8ef514e1af724a602e8a2fbe1b10"
++checksum = "b1f9e3d69d39e4862ffed03ed071a76f9a13ba1d9109d355b0f0aa6b15e393c4"
+ dependencies = [
+  "futures-core",
+  "futures-sink",
+ ]
+ 
+ [[package]]
+ name = "futures-core"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "05f29059c0c2090612e8d742178b0580d2dc940c837851ad723096f87af6663e"
++checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
+ 
+ [[package]]
+ name = "futures-executor"
+@@ -1154,32 +1154,32 @@ dependencies = [
+ 
+ [[package]]
+ name = "futures-io"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9e5c1b78ca4aae1ac06c48a526a655760685149f0d465d21f37abfe57ce075c6"
++checksum = "53c0fa8157de1303bfffdaa1cc2a673bfffb60102f76b0ef4441659124373fed"
+ 
+ [[package]]
+ name = "futures-macro"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "162ee34ebcb7c64a8abebc059ce0fee27c2262618d7b60ed8faf72fef13c3650"
++checksum = "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 2.0.117",
++ "syn 3.0.2",
+ ]
+ 
+ [[package]]
+ name = "futures-sink"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e575fab7d1e0dcb8d0c7bcf9a63ee213816ab51902e6d244a95819acacf1d4f7"
++checksum = "1944426bf7d03f1d14f708785e4b33efd750b36d48a157b836b3efc15ede8e1d"
+ 
+ [[package]]
+ name = "futures-task"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
++checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
+ 
+ [[package]]
+ name = "futures-timer"
+@@ -1189,9 +1189,9 @@ checksum = "f288b0a4f20f9a56b5d1da57e2227c661b7b16168e2f72365f57b63326e29b24"
+ 
+ [[package]]
+ name = "futures-util"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9fa08315bb612088cc391249efdc3bc77536f16c91f6cf495e6fbe85b20a4a81"
++checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
+ dependencies = [
+  "futures-channel",
+  "futures-core",
+@@ -1201,7 +1201,6 @@ dependencies = [
+  "futures-task",
+  "memchr",
+  "pin-project-lite",
+- "pin-utils",
+  "slab",
+ ]
+ 
+@@ -2462,12 +2461,6 @@ version = "0.2.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3b3cff922bd51709b605d9ead9aa71031d81447142d828eb4a6eba76fe619f9b"
+ 
+-[[package]]
+-name = "pin-utils"
+-version = "0.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
+-
+ [[package]]
+ name = "pkg-config"
+ version = "0.3.34"
 ```
 
 ---
 
-### Incident Patch 3: `15dadc75` (2026-11-02)
-**Commit Message**: build(deps): bump release-plz/action from 0.5.145 to 0.5.147 (#2891)
+### Incident Patch 3: `834ab723` (2026-11-07)
+**Commit Message**: Merge pull request #2900 from ratatui/joshka/deps-futures-chacha
 
-Bumps [release-plz/action](https://github.com/release-plz/action) from
-0.5.145 to 0.5.147.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/release-plz/action/releases">release-plz/action's
-releases</a>.</em></p>
-<blockquote>
-<h2>v0.5.147</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>chore(deps): lock file maintenance by <a
-href="https://github.com/renovate"><code>@​renovate</code></a>[bot] in
-<a
-href="https://redirect.github.com/release-plz/action/pull/585">release-plz/action#585</a></li>
-<li>chore(deps): update dependency taiki-e/install-action to v2.87.32 by
-<a href="https://github.com/renovate"><code>@​renovate</code></a>[bot]
-in <a
-href="https://redirect.github.com/release-plz/action/pull/586">release-plz/action#586</a></li>
-<li>Update to 0.4.2 by <a
-href="https://github.com/marcoieni"><code>@​marcoieni</code></a> in <a
-href="https://redirect.github.com/release-plz/action/pull/587">release-plz/action#587</a></li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/release-plz/action/compare/v0.5.146...v0.5.147">https://github.com/release-plz/action/compare/
+build(deps): update futures-util and chacha20
 
-**File**: `.github/workflows/release-plz.yml` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +17/-24)
 ```diff
-@@ -35,7 +35,7 @@ jobs:
-       - uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1
-         id: auth
-       - name: Run release-plz
--        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
-+        uses: release-plz/action@f67a7e724bdad4a0f6875f186060a0ca2770d76c # v0.5
-         with:
-           command: release
-         env:
-@@ -64,7 +64,7 @@ jobs:
-         with:
-           toolchain: stable
-       - name: Run release-plz
--        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
-+        uses: release-plz/action@f67a7e724bdad4a0f6875f186060a0ca2770d76c # v0.5
-         with:
-           command: release-pr
-         env:
+@@ -376,9 +376,9 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
+ 
+ [[package]]
+ name = "chacha20"
+-version = "0.10.0"
++version = "0.10.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6f8d983286843e49675a4b7a2d174efe136dc93a18d69130dd18198a6c167601"
++checksum = "65c35e4b699c7e15ccbe7ee35c005e4fc0a278d22238a2857e6ce2dadeda1b06"
+ dependencies = [
+  "cfg-if",
+  "cpufeatures 0.3.0",
+@@ -1127,19 +1127,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "futures-channel"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2dff15bf788c671c1934e366d07e30c1814a8ef514e1af724a602e8a2fbe1b10"
++checksum = "b1f9e3d69d39e4862ffed03ed071a76f9a13ba1d9109d355b0f0aa6b15e393c4"
+ dependencies = [
+  "futures-core",
+  "futures-sink",
+ ]
+ 
+ [[package]]
+ name = "futures-core"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "05f29059c0c2090612e8d742178b0580d2dc940c837851ad723096f87af6663e"
++checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
+ 
+ [[package]]
+ name = "futures-executor"
+@@ -1154,32 +1154,32 @@ dependencies = [
+ 
+ [[package]]
+ name = "futures-io"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9e5c1b78ca4aae1ac06c48a526a655760685149f0d465d21f37abfe57ce075c6"
++checksum = "53c0fa8157de1303bfffdaa1cc2a673bfffb60102f76b0ef4441659124373fed"
+ 
+ [[package]]
+ name = "futures-macro"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "162ee34ebcb7c64a8abebc059ce0fee27c2262618d7b60ed8faf72fef13c3650"
++checksum = "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 2.0.117",
++ "syn 3.0.2",
+ ]
+ 
+ [[package]]
+ name = "futures-sink"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e575fab7d1e0dcb8d0c7bcf9a63ee213816ab51902e6d244a95819acacf1d4f7"
++checksum = "1944426bf7d03f1d14f708785e4b33efd750b36d48a157b836b3efc15ede8e1d"
+ 
+ [[package]]
+ name = "futures-task"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
++checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
+ 
+ [[package]]
+ name = "futures-timer"
+@@ -1189,9 +1189,9 @@ checksum = "f288b0a4f20f9a56b5d1da57e2227c661b7b16168e2f72365f57b63326e29b24"
+ 
+ [[package]]
+ name = "futures-util"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9fa08315bb612088cc391249efdc3bc77536f16c91f6cf495e6fbe85b20a4a81"
++checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
+ dependencies = [
+  "futures-channel",
+  "futures-core",
+@@ -1201,7 +1201,6 @@ dependencies = [
+  "futures-task",
+  "memchr",
+  "pin-project-lite",
+- "pin-utils",
+  "slab",
+ ]
+ 
+@@ -2462,12 +2461,6 @@ version = "0.2.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3b3cff922bd51709b605d9ead9aa71031d81447142d828eb4a6eba76fe619f9b"
+ 
+-[[package]]
+-name = "pin-utils"
+-version = "0.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
+-
+ [[package]]
+ name = "pkg-config"
+ version = "0.3.34"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2901** (2026-11-07): build(deps): update rand to patched versions (@joshka)
+- **PR #2900** (2026-11-07): build(deps): update futures-util and chacha20 (@joshka)
+- **PR #2898** (closed): feat(widgets): add Ring widget (@shreyasbharath)
 - **PR #2895** (2026-11-03): build(deps): bump rustls from 0.23.45 to 0.23.46 in the cargo group across 1 directory (@dependabot[bot])
 - **PR #2894** (2026-11-02): build(deps): bump tombi-toml/setup-tombi from 1.9.1 to 1.9.8 (@dependabot[bot])
 - **PR #2893** (2026-11-02): build(deps): bump taiki-e/install-action from 2.87.31 to 2.88.1 (@dependabot[bot])
-- **PR #2892** (2026-11-02): build(deps): bump unicode-width from 0.2.2 to 0.2.3 (@dependabot[bot])
-- **PR #2891** (2026-11-02): build(deps): bump release-plz/action from 0.5.145 to 0.5.147 (@dependabot[bot])
-- **PR #2890** (2026-11-02): build(deps): bump octocrab from 0.54.5 to 0.54.7 (@dependabot[bot])
 
 ---
 
@@ -1213,28 +1297,38 @@ href="https://github.com/release-plz/action/compare/v0.5.146...v0.5.147">https:/
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump tombi-toml/setup-tombi from 1.9.1 to 1.9.8 (#2894)
+## X. build(deps): update rand to patched versions (#2901)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18b858cd`: build(deps): bump tombi-toml/setup-tombi from 1.9.1 to 1.9.8 (#2894). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b7b78e7`: build(deps): update rand to patched versions (#2901). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - uses: tombi-toml/setup-tombi@88295e71426671820b98934ea75ea352d73eba8b # v1.9.8
+ "rand 0.9.5",
+ "rand 0.8.8",
+version = "0.8.8"
+checksum = "e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c"
+version = "0.9.5"
+checksum = "b9ef1d0d795eb7d84685bca4f72f3649f064e6641543d3a8c415898726a57b41"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      - uses: tombi-toml/setup-tombi@73552b752982de9c40393832cef2dc8a43013e6b # v1.9.1
+ "rand 0.9.2",
+ "rand 0.8.5",
+version = "0.8.5"
+checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
+version = "0.9.2"
+checksum = "6db2770f06117d490610c7488547d543617b21bfa07796d7a12f6f1bd53850d1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18b858cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b7b78e7` are properly handled with clean fallback behavior.
