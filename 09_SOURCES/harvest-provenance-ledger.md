@@ -8321,3 +8321,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-08T15:28:22.644Z |
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-08T15:35:13.464Z |
 | `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `a055ad41` | Multi-dimensional audit evidence | 2026-11-08T15:35:13.646Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-08T15:42:23.508Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `86e98e3f` | Multi-dimensional audit evidence | 2026-11-08T15:42:24.876Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ad9b5734` | Multi-dimensional audit evidence | 2026-11-08T15:42:39.976Z |

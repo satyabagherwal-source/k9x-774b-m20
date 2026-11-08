@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T15:35:13.561Z",
+  "last_updated": "2026-11-08T15:42:39.871Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10840,14 +10840,19 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "acc63448",
-      "content_hash": "4cd799929091fd9aae8c8ba0e9e0912fc8b18806fbfb0faf1875e6172188eec6",
+      "source_version": "86e98e3f",
+      "content_hash": "9b6a9db2b3cdc04364175cba0377d94beb9c33a5b1cd420c92d07c593a983ca9",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "diagnostics): attribute incomplete regex evaluation [skip ci]",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "separate interpreter literal data from shell execution [skip ci]",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10921,7 +10926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:41:46.296Z",
+      "verified_at": "2026-11-08T15:42:24.754Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26757,7 +26762,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "deba39c6732dce8c12936a86c8c70ae89b8b0ee202469eb1598019d100de1a74",
+      "content_hash": "6b45ba98a790f2051190763a6f53b1bf3c458fc078508f81eefad9f129fc6031",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -26875,7 +26880,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
       ],
-      "verified_at": "2026-11-05T00:00:13.609Z",
+      "verified_at": "2026-11-08T15:42:23.361Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46698,8 +46703,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "5bc314fd",
-      "content_hash": "ee8bda1d50756419828b2f1359d1316ffa8dd2393608d5aa8942dbd4573a3359",
+      "source_version": "ad9b5734",
+      "content_hash": "3af5332f9cf43e43968f88d6ac5521a82821b312c8c26bd2edb468be82d806bf",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -46786,6 +46791,11 @@
         {
           "number": null,
           "title": "Revert \"Document blocked dynamic-axis revision for ARC 74dd1130\"",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Support Windows PowerShell 5 in run-puzzles script",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47079,7 +47089,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T14:19:46.974Z",
+      "verified_at": "2026-11-08T15:42:39.846Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

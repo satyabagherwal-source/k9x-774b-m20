@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "deba39c6732dce8c12936a86c8c70ae89b8b0ee202469eb1598019d100de1a74",
-    "lastHarvestedAt": "2026-11-05T00:00:13.702Z",
+    "contentHash": "6b45ba98a790f2051190763a6f53b1bf3c458fc078508f81eefad9f129fc6031",
+    "lastHarvestedAt": "2026-11-08T15:42:23.508Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "5bc314fd",
+    "sourceVersion": "ad9b5734",
     "license": "Apache-2.0",
-    "contentHash": "ee8bda1d50756419828b2f1359d1316ffa8dd2393608d5aa8942dbd4573a3359",
-    "lastHarvestedAt": "2026-11-08T14:19:47.097Z",
+    "contentHash": "3af5332f9cf43e43968f88d6ac5521a82821b312c8c26bd2edb468be82d806bf",
+    "lastHarvestedAt": "2026-11-08T15:42:39.976Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "acc63448",
+    "sourceVersion": "86e98e3f",
     "license": "NOASSERTION",
-    "contentHash": "4cd799929091fd9aae8c8ba0e9e0912fc8b18806fbfb0faf1875e6172188eec6",
-    "lastHarvestedAt": "2026-11-07T03:41:46.411Z",
+    "contentHash": "9b6a9db2b3cdc04364175cba0377d94beb9c33a5b1cd420c92d07c593a983ca9",
+    "lastHarvestedAt": "2026-11-08T15:42:24.876Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {

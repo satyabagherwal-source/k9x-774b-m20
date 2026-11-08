@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T15:35:13.661Z",
-  "total_cycles_completed": 8277,
-  "total_learnings_persisted": 8277,
-  "total_rules_promoted": 8064,
+  "last_updated": "2026-11-08T15:42:39.982Z",
+  "total_cycles_completed": 8280,
+  "total_learnings_persisted": 8280,
+  "total_rules_promoted": 8066,
   "history": [
-    {
-      "timestamp": "2026-11-07T22:08:03.845Z",
-      "repository": "apache/pinot",
-      "learningId": "learn-github-apache-pinot",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T22:09:05.298Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T22:09:36.929Z",
-      "repository": "Tencent-TDS/KuiklyUI",
-      "learningId": "learn-github-tencent-tds-kuiklyui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T22:16:03.676Z",
       "repository": "google/tcmalloc",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-08T15:35:13.661Z",
       "repository": "SimonSchubert/Kai",
       "learningId": "learn-github-simonschubert-kai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:42:23.514Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:42:24.894Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:42:39.982Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

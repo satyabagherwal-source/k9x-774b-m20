@@ -8312,3 +8312,6 @@
 | `CYCLE-20261108-LLRI` | `2026-11-08T15:28:22.638Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5af40da8...`) |
 | `CYCLE-20261108-UER8` | `2026-11-08T15:35:13.460Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`38d57757...`) |
 | `CYCLE-20261108-UEWB` | `2026-11-08T15:35:13.643Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`162b65de...`) |
+| `CYCLE-20261108-3MKW` | `2026-11-08T15:42:23.504Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`6b45ba98...`) |
+| `CYCLE-20261108-3NMW` | `2026-11-08T15:42:24.872Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9b6a9db2...`) |
+| `CYCLE-20261108-3ZA4` | `2026-11-08T15:42:39.964Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3af5332f...`) |

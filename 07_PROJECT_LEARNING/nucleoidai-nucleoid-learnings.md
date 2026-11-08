@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `5bc314fd`  
+> **Source Version**: `ad9b5734`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T14:19:45.326Z  
+> **Timestamp**: 2026-11-08T15:42:38.110Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T14:19:44.870Z  
+> **Harvest Timestamp**: 2026-11-08T15:42:38.102Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1190,7 +1190,7 @@ export async function instances({
 }) {
   milestone.segmenting_training_objects();
 
-  const { instances } = await llm.generate({
+  const response = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
     messages: [
@@ -1214,6 +1214,13 @@ export async function instances({
       },
     ],
   });
+
+  const instances = response.instances.map(
+    ({ input_instance_matrix, output_instance_matrix }) => ({
+      input_instance_matrix: Matrix.normalize(input_instance_matrix),
+      output_instance_matrix: Matrix.normalize(output_instance_matrix),
+    })
+  );
 
   milestone.training_objects_segmented({ instances });
 
@@ -1628,583 +1635,342 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `653ec5d6` (2026-11-08)
-**Commit Message**: Revert "Document blocked dynamic-axis revision for ARC 74dd1130"
+### Incident Patch 1: `ad9b5734` (2026-11-08)
+**Commit Message**: Support Windows PowerShell 5 in run-puzzles script
 
-This reverts commit 713cc5a4edc56226329242ec06eb80f117b2dc96.
+Lower the script's required version from 7.0 to 5.0 and update the README to show `powershell` (with `pwsh` as the PowerShell 7 alternative).
 
-**File**: `arc/docs/ARC-NUC-74dd1130.md` (modified, +6/-58)
+Process.Kill($true) is only available in PowerShell 7 (.NET Core). Add Stop-PuzzleProcess, which uses it there and otherwise walks the child process tree via CIM and stops each process, deepest first, ignoring processes that have already exited.
+
+**File**: `arc/README.md` (modified, +5/-2)
 ```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/74dd1130.json`](../data/training/74dd1130.json) |
--| Instruction dataset | [`dataset.74dd1130.json`](../src/dataset/dataset.74dd1130.json): the puzzle's 4 original training pairs and its test pair, 5 mosaic instances, one per pair; committed with this record; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; dynamic-axis revision blocked before publication on 8-Nov-2026 |
-+| Instruction dataset | [`dataset.74dd1130.json`](../src/dataset/dataset.74dd1130.json): the puzzle's 4 original training pairs and its test pair, 5 mosaic instances, one per pair; committed with this record; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026 |
- | Output canvas | `EXACT` |
- | Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply; the rule is one unconditional class-level rule of accepted Nucleoid |
- | Solver changes | None; suggested changes await review, not applied |
--| Solver runs | 1 local run on 5-Nov-2026, exit 0, an exact match, with this dataset's test pair in its few-shot context; none of the current version; the 8-Nov-2026 dynamic-axis invocation ended without a run |
-+| Solver runs | 1 local run on 5-Nov-2026, exit 0, an exact match, with this dataset's test pair in its few-shot context; none of the current version |
- | Updated | 8-Nov-2026 |
+@@ -79,12 +79,15 @@ without an additional library; an unknown option, or a value such as
  
- ## Puzzle
-@@ -39,19 +39,17 @@ puzzles tied with [`3c9b0459`](ARC-NUC-3c9b0459.md), the previous default.
+ ### Parallel local run
  
- ## Gestalt overview
+-Run the five-puzzle batch from the repository root with PowerShell 7:
++Run the five-puzzle batch from the repository root with Windows PowerShell 5
++or PowerShell 7:
  
--- **Whole grid.** Each input and output is a 3 by 3 canvas filled by one
--  mosaic of three colors, with no background cell.
-+- **Whole grid.** A 3 by 3 canvas filled by one mosaic of three colors, with
-+  no background cell.
- - **Figures.** One figure per grid, the whole mosaic.
- - **Relations.** The mosaic relates to the canvas's main diagonal, from the
-   top-left corner to the bottom-right. No training mosaic looks the same
-   under another turn or mirror of the square, so each pair shows the flip on
-   its own.
- - **Change.** The whole mosaic flips across that diagonal, so its rows
-   become its columns.
--- **World model.** The retained dataset has one object per pair, the whole
--  mosaic, whose flip is its `mirror_axis`, 135. The unpublished 8-Nov-2026
--  revision keeps that whole-object level and derives the mirror line from
--  its opposite bounding-box corners; no finer model was needed.
-+- **World model.** One object per pair, the whole mosaic, whose flip is its
-+  `mirror_axis`, 135.
+ ```powershell
+-pwsh -NoProfile -File .\arc\run-puzzles.ps1
++powershell -NoProfile -File .\arc\run-puzzles.ps1
+ ```
  
- ## Dataset
++Use `pwsh` instead of `powershell` for PowerShell 7.
++
+ The script starts `3aa6fb7a`, `0ca9ddb6`, `e9afcf9a`, `6fa7a44f`, and
+ `d631b094` concurrently, using the same Bun, Nucleoid runtime, and OpenRouter
+ setup as `bun run start`. These are live, paid OpenRouter calls.
+```
+
+**File**: `arc/run-puzzles.ps1` (modified, +41/-5)
+```diff
+@@ -1,10 +1,49 @@
+-#requires -Version 7.0
++#requires -Version 5.0
  
-@@ -185,57 +183,12 @@ instance names, positions, sizes, orientations, and tags are unchanged. `Matrix.
- orientation call's few-shot crops read exactly as before. No solver run has
- measured this version, so its difference is unknown, not zero.
+ [CmdletBinding()]
+ param()
  
--### Dynamic axis attempt -- 8-Nov-2026
--
--The user requested `dynamic set $Obj.mirror_axis instead of 135 direcly`.
--This invocation named the puzzle explicitly and authorized replacing its
--fixed-axis rule, rather than selecting another default puzzle. The
--arc-dataset worker kept the whole mosaic as the figure and fixed the
--northwest-to-southeast reflection from the training pairs alone. Its proposed
--axis is the line between the mosaic's opposite input bounding-box corners:
--
--```nuc
--$Obj.mirror_axis = {start: {x: $Obj.x@first, y: $Obj.y@first}, end: {x: $Obj.x@first + $Obj.width@first - 1, y: $Obj.y@first + $Obj.height@first - 1}}
--```
--
--This would replace a scalar degree bearing with an endpoint-defined line,
--not move `135` into a default or disguise it with arithmetic. The existing
--standard entries supply its geometry, so it adds no input property, pixel
--objects, or redundant population operation. The worker reported native
--regeneration and independent replay of all five input and output states on
--accepted `e059f4b`, together with offline geometric reconstruction of the
--original outputs. This is offline evidence, not a live solver result. No
--NUC was requested, and strategy learning is `not_applicable`.
--
--The handoff was **blocked**, not `written`. The dataset and README changed
--outside this invocation while the worker was preparing the revision, and
--the shared letter-ranking policy changed too. There was no stable
--preservation baseline to overwrite safely. The worker also reported 30
--missing coordinate/orientation metadata fields across five instances and
--five missing object-description comments under its schema checks. Its
--original-grid and letter-ranking failures used the earlier palette policy
--that counted test outputs; concurrent working-tree policy edits instead
--rank the training pairs and test inputs. Those earlier diagnostics do not
--establish that the new pale
+ $ErrorActionPreference = 'Stop'
+ 
++function Stop-PuzzleProcess {
++    param([System.Diagnostics.Process]$Process)
++
++    if ($Process.HasExited) {
++        return
++    }
++
++    if ($PSVersionTable.PSVersion.Major -ge 7) {
++        $Process.Kill($true)
++    }
++    else {
++        $processes = @(Get-CimInstance -ClassName Win32_Process -Property ProcessId, ParentProcessId)
++        $processIds = @($Process.Id)
++
++        for ($index = 0; $index -lt $processIds.Count; $index++) {
++            $parentId = $processIds[$index]
++            $processIds += @(
++                $processes | Where-Object {
++                    $_.ParentProcessId -eq $parentId -and $_.ProcessId -notin $processIds
++                } | Select-Object -ExpandProperty ProcessId
++            )
++        }
++
++        [array]::Reverse($processIds)
++        foreach ($processId in $processIds) {
++            try {
++                Stop-Process -Id $processId -Force -ErrorAction Stop
++            }
++            catch {
++                if ($_.CategoryInfo.Category -ne [System.Management.Automation.ErrorCategory]::ObjectNotFound) {
++                    throw
++                }
++            }
++        }
++    }
++
++    $Process.WaitForExit()
++}
++
+ $puzzleIds = @(
+     '3aa6fb7a'
+     '0ca9ddb6'
+@@ -70,10 +109,7 @@ finally {
+         }
+ 
+         try {
+-            if (-not $run.Process.HasExited) {
+-                $run.Process.Kill($true)
+-                $run.Process.WaitForExit()
+-            }
++            Stop-PuzzleProcess -Process $run.Process
+         }
+         catch {
+             Write-Warning "Could not stop $($run.Puzzle): $($_.Exception.Message)"
 ```
 
 ---
 
-### Incident Patch 2: `cfc11dbf` (2026-11-08)
-**Commit Message**: Revert "Use dataset-specific ARC color letters"
+### Incident Patch 2: `254ab181` (2026-11-08)
+**Commit Message**: Normalize model-generated matrix colors
 
-This reverts commit 284713c51fc79d60bf99dcd14bb03a482e58f9f9.
+Convert single-digit string cells to numbers in analyzer and visualizer responses. Document matrix normalization and the parallel puzzle run.
 
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +14/-15)
+**File**: `arc/README.md` (modified, +27/-0)
 ```diff
-@@ -82,16 +82,15 @@ inferred only from the training pairs.
+@@ -77,6 +77,25 @@ below the puzzle ID; a run without it does not mention the flag.
+ without an additional library; an unknown option, or a value such as
+ `--only-puzzle-dataset=true`, fails the run before any model call.
  
- Follow the exact pattern of each pair in `arc/data/training/<id>.json`, but
- write no color as its number. `0` stays `0`. Every other color becomes a
--letter from `A` to `Z` out of the dataset's own random set, so each file has
--its own letters and a color keeps one letter everywhere in its file. The set
--is fixed by the dataset's key, the name between `dataset.` and `.json`: the
--puzzle ID, or a genesis name such as `core`. Order the 26 letters by the
--hexadecimal SHA-256 digest of `<key>:<letter>`, such as `c8f0f002:A`,
--smallest first, and give the colors that occur in any of the dataset's
--`input_matrix` and `output_matrix` grids, in increasing order, the letters in
--that order. For `c8f0f002`, that writes 1 as `T`, 5 as `B`, 7 as `Q`, and 8 as
--`D`. The letters carry no meaning beyond which cells share a color: `A` is not
--the most used color, and one color has different letters in different files.
-+letter of `ABCDEFGHI`, ranked by how often it occurs across every
-+`input_matrix` and `output_matrix` of the dataset, training and test pairs
-+together: the most used color is `A`, the next `B`, and so on. A tie goes to
-+the color read first, reading the pairs in dataset order, each input before
-+its output, and each matrix row by row. This is how `Matrix.silhouette` in
-+`arc/src/lib/Matrix.ts` ranks one matrix, applied to the whole dataset at once
-+so that a color keeps one letter in every pair. The letters are no fixed map
-+from numbers: color 1 is not always `A`, because each dataset ranks its own
-+colors. Count only the pair grids, not the instance masks.
++### Parallel local run
++
++Run the five-puzzle batch from the repository root with PowerShell 7:
++
++```powershell
++pwsh -NoProfile -File .\arc\run-puzzles.ps1
++```
++
++The script starts `3aa6fb7a`, `0ca9ddb6`, `e9afcf9a`, `6fa7a44f`, and
++`d631b094` concurrently, using the same Bun, Nucleoid runtime, and OpenRouter
++setup as `bun run start`. These are live, paid OpenRouter calls.
++
++Each puzzle's standard output and standard error go to separate files in a
++new `arc\logs\batch-*` directory. After all runs finish, a table shows each
++puzzle's result, exit code, and elapsed seconds. `PASS` means an exact grid
++match; `FAIL` means a mismatch or execution error; `NOT RUN` means the process
++could not start. A failed puzzle does not cancel the others. The script exits
++with `0` only when all five pass, and otherwise exits with `1`.
++
+ ### Genesis puzzle
  
- Use the same letters everywhere the dataset holds a color:
+ `3aa6fb7a` is the genesis puzzle, the training puzzle the solver was originally
+@@ -2577,6 +2596,14 @@ colors as, ranked the same way, so a dataset crop is ranked by its own counts.
+ It rejects any other cell, such as `10` or `J`, and it does not crop or modify
+ the input.
  
-@@ -291,9 +290,9 @@ Verify with a throwaway script outside the repository; do not add tests:
-   back to their colors makes every `input_matrix` and `output_matrix` equal
-   its original grid, including dimensions, colors, positions, and zero
-   padding. There are no synthesized examples.
--- Recomputing the dataset's random set from its key gives exactly its
--  letters, one per color, and no color is written as its number in the grids,
--  masks, declarations, implementations, or snapshots.
-+- Ranking the dataset's letters again by their counts gives `A`, `B`, `C`, and
-+  so on in order, and no color is written as its number in the grids, masks,
-+  declarations, implementations, or snapshots.
- - The transformation inferred from the training pairs reproduces every
-   original train and test output.
- - All pairs share the dataset's declarations and output-canvas mode, and
-@@ -360,8 +359,8 @@ versions, spawn agents, start a NUC, commit, or push.
- 
- Return the status (`written`, `nucleoid_enhancement_required`, or `blocked`)
- with `dataset_path`, the source puzzle path, any annotation helper's path,
--train and test pair counts, instance counts, the color-to-letter mapping, the
--declarations, the
-+train and test pair counts, instance counts, the color-to-letter mapping with
-+each color's count, the declarations, the
- big-picture formulation you started from and, for a finer model, why it fell
- short, each check with its result, how you used any hint, any NUC request, any
- suggested solver change, and any blockers. A staged handoff also includes
++`Matrix.normalize(matrix)` returns a new matrix in which every cell written as
++a one-digit string, such as `"8"`, becomes that number, `8`, so the model may
++write a color either way. Every other cell stays as it is, and the input is not
++modified. The analyzer and the visualizer apply it to every matrix the model
++returns, the instance masks of the training pairs and of the test input and
++each output instance matrix, before the solver crops, silhouettes, merges, or
++scores them.
++
+ The same prediction path replays every training pair before predicting the
+ held-out input. A training mismatch stops the run. Held-out predictions are
+ frozen before expected outputs are accessed for exact-grid scoring, including
 ```
 
-**File**: `.claude/agents/arc-purposal.agent.md` (modified, +3/-3)
+**File**: `arc/run-puzzles.ps1` (added, +94/-0)
 ```diff
-@@ -54,9 +54,9 @@ Follow `.claude/CLAUDE.md`, the
- - Have every dataset write its colors as letters, under the same step, and
-   pass that requirement to every `arc-dataset` run: the grids follow the
-   puzzle's pairs in `arc/data/training/` exactly, but `0` stays `0` and every
--  other color is a letter from `A` to `Z` out of the dataset's own random set,
--  fixed by its file name and consistent inside the file, never its number. The
--  masks and the world model use the same letters.
-+  other color is a letter of `ABCDEFGHI` ranked by how often it occurs across
-+  the dataset's input and output matrices, `A` for the most used, never its
-+  number. The masks and the world model use the same letters.
- - Never change the TypeScript implementation in `arc/`, except that before
-   the run you make the puzzle the solver's default puzzle in `arc/src/app.ts`
-   under the skill's [run step](../skills/arc-purposal/SKILL.md#run-the-puzzle).
+@@ -0,0 +1,94 @@
++#requires -Version 7.0
++
++[CmdletBinding()]
++param()
++
++$ErrorActionPreference = 'Stop'
++
++$puzzleIds = @(
++    '3aa6fb7a'
++    '0ca9ddb6'
++    'e9afcf9a'
++    '6fa7a44f'
++    'd631b094'
++)
++
++$bun = (Get-Command bun -CommandType Application -ErrorAction Stop).Source
++$batchId = '{0}-{1}' -f (Get-Date -Format 'yyyyMMdd-HHmmss'), [guid]::NewGuid().ToString('N')
++$logDirectory = Join-Path $PSScriptRoot "logs\batch-$batchId"
++New-Item -ItemType Directory -Path $logDirectory | Out-Null
++
++$runs = @()
++
++try {
++    foreach ($puzzleId in $puzzleIds) {
++        $stdout = Join-Path $logDirectory "$puzzleId.stdout.log"
++        $stderr = Join-Path $logDirectory "$puzzleId.stderr.log"
++        $run = [pscustomobject]@{
++            Puzzle = $puzzleId
++            Result = 'NOT RUN'
++            ExitCode = $null
++            Seconds = $null
++            StartedAt = [datetime]::UtcNow
++            Process = $null
++        }
++        $runs += $run
++
++        try {
++            $run.Process = Start-Process -FilePath $bun `
++                -ArgumentList @('run', 'start', $puzzleId) `
++                -WorkingDirectory $PSScriptRoot -NoNewWindow -PassThru `
++                -RedirectStandardOutput $stdout -RedirectStandardError $stderr
++            # Retain the handle for processes that finish before collection.
++            $null = $run.Process.Handle
++            Write-Host "Started $puzzleId (PID $($run.Process.Id))"
++        }
++        catch {
++            $_ | Out-String | Set-Content -LiteralPath $stderr
++            Write-Warning "Could not start $puzzleId. See $stderr"
++        }
++    }
++
++    foreach ($run in $runs) {
++        if ($null -eq $run.Process) {
++            continue
++        }
++
++        $run.Process.WaitForExit()
++        $run.ExitCode = $run.Process.ExitCode
++        $run.Result = if ($run.ExitCode -eq 0) { 'PASS' } else { 'FAIL' }
++        $run.Seconds = [math]::Round(
++            ($run.Process.ExitTime.ToUniversalTime() - $run.StartedAt).TotalSeconds,
++            1
++        )
++    }
++}
++finally {
++    foreach ($run in $runs) {
++        if ($null -eq $run.Process) {
++            continue
++        }
++
++        try {
++            if (-not $run.Process.HasExited) {
++                $run.Process.Kill($true)
++                $run.Process.WaitForExit()
++            }
++        }
++        catch {
++            Write-Warning "Could not stop $($run.Puzzle): $($_.Exception.Message)"
++        }
++        finally {
++            $run.Process.Dispose()
++        }
++    }
++}
++
++Write-Host "`nLogs: $logDirectory"
++$runs | Format-Table Puzzle, Result, ExitCode, Seconds -AutoSize | Out-Host
++
++if (@($runs | Where-Object { $_.Result -ne 'PASS' }).Count -gt 0) {
++    exit 1
++}
++
++exit 0
 ```
 
-**File**: `.claude/rules/arc.instructions.md` (modified, +3/-3)
+**File**: `arc/src/analyzer.ts` (modified, +8/-1)
 ```diff
-@@ -89,9 +89,9 @@ special-cased workaround.
+@@ -45,7 +45,7 @@ export async function instances({
+ }) {
+   milestone.segmenting_training_objects();
  
- Infer segmentation, background, object roles, and transformations from training
- pairs. Treat colors `0` through `9` as categorical values. Instruction datasets
--write them as letters: `0` stays `0`, and every other color is a letter from
--`A` to `Z` out of the dataset's own random set, fixed by its file name and
--consistent inside the file, under the
-+write them as letters: `0` stays `0`, and every other color is a letter of
-+`ABCDEFGHI` ranked by its count across the dataset's input and output matrices,
-+`A` for the most used, under the
- [arc-dataset profile](../agents/arc-dataset.agent.md#write-colors-as-letters).
- Preserve positions
- and the current full-size, zero-padded instance matrices at existing boundaries.
+-  const { instances } = await llm.generate({
++  const response = await llm.generate({
+     puzzle_id,
+     only_puzzle_dataset,
+     messages: [
+@@ -70,6 +70,13 @@ export async function instances({
+     ],
+   });
+ 
++  const instances = response.instances.map(
++    ({ input_instance_matrix, output_instance_matrix }) => ({
++      input_instance_matrix: Matrix.normalize(input_instance_matrix),
++      output_instance_matrix: Matrix.normalize(output_instance_matrix),
++    })
++  );
++
+   milestone.training_objects_segmented({ instances });
+ 
+   return { instances };
 ```
 
-**File**: `.claude/skills/arc-dataset/SKILL.md` (modified, +3/-3)
+**File**: `arc/src/lib/Matrix.ts` (modified, +9/-0)
 ```diff
-@@ -23,9 +23,9 @@ additional entries at the same level as the training pairs: the same `dataset`
- array and entry structure, with no separate section or marker. Copy the input
- and output grids' exact pattern, positions, zero padding, and canvas
- dimensions, but write each color as a letter: `0` stays `0`, and the other
--colors take letters from `A` to `Z` out of the dataset's own random set, fixed
--by its file name and consistent inside the file, never their numbers. The
--masks and the world model use the same letters, as the profile's
-+colors take the letters `ABCDEFGHI` by how often they occur across all of the
-+dataset's input and output matrices, `A` for the most used, never as their
-+numbers. The masks and the world model use the same letters, as the profile's
- [letter rule](../../agents/arc-dataset.agent.md#write-colors-as-letters)
- defines. Do not synthesize, resample, recolor beyond those letters, or
- duplicate examples into numbered variants.
-```
-
-**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +12/-10)
-```diff
-@@ -136,17 +136,19 @@ Write every color as a letter, and pass this requirement to every
- `/arc-dataset` run too. The dataset follows the exact pattern of the puzzle's
- pairs in `arc/data/training/`, cell for cell and shape for shape, but never
- writes a color as its number. `0` stays `0`, and every other color becomes a
--letter from `A` to `Z` out of the dataset's own random set, fixed by its file
--name: each file has its own letters, and a color keeps one letter in every pair
--of its file. The letters carry no meaning beyond which cells share a color, so
--the pattern reaches the model without the colors. The same letters replace the
--colors in the instance masks and the world model: color properties hold
--letters, such as `color='B'`, and rules name colors by letter, such as
--`if $Obj.color is 'C':`. The arc-dataset profile's
-+letter of `ABCDEFGHI`, ranked by how often it occurs across all of the
-+dataset's input and output matrices, training and test pairs together: the
-+most used color is `A`, the next `B`, and so on, as `Matrix.silhouette` in
-+`arc/src/lib/Matrix.ts` ranks a matrix, with a tie going to the color read
-+first. The letters are the dataset's own ranking, not a fixed map from
-+numbers to letters, so a color keeps one letter in every pair of its dataset.
-+The same letters replace the colors in the instance masks and the world model:
-+color properties hold letters, such as `color='B'`, and rules name colors by
-+letter, such as `if $Obj.color is 'C':`. The arc-dataset profile's
- [letter rule](../../agents/arc-dataset.agent.md#write-colors-as-letters)
--defines how the set is drawn. Check a `written` handoff against it before the
--run, and send back one that writes a color as its number or uses other
--letters.
-+defines the ranking in full. Check a `written` handoff against it before the
-+run, and send back one that writes a color as its number or ranks its letters
-+another way.
+@@ -38,6 +38,15 @@ export function locate(matrix) {
+ }
  
- Continue by the handoff's status:
+ const LETTERS: string = "ABCDEFGHI";
++const DIGITS = [..."0123456789"];
++
++// Reads each cell written as a one-digit string, such as "8", as that number,
++// so the model may write a color either way. Every other cell stays as it is.
++export function normalize(matrix) {
++  return matrix.map((row) =>
++    row.map((value) => (DIGITS.includes(value) ? Number(value) : value))
++  );
++}
  
-```
-
-**File**: `arc/README.md` (modified, +90/-93)
-```diff
-@@ -291,18 +291,16 @@ that has a dataset receives its expected test output in the few-shot context.
- That is intended: the datasets are being prepared as few-shot examples, and
- these runs are not yet held-out tests.
- 
--Every dataset writes its colors as letters rather than numbers, so its
--examples carry the puzzle's pattern without its colors. `0` stays `0`, and
--every other color becomes a letter from `A` to `Z` out of the dataset's own
--random set. The set is fixed by the dataset's key, the name between `dataset.`
--and `.json`: the 26 letters, ordered by the SHA-256 digest of `<key>:<letter>`,
--go to the colors that occur in its `input_matrix` and `output_matrix` grids, in
--increasing order. Each file therefore has its own letters, and a color keeps
--one letter in every pair of its file, while one color has different letters in
--different files: 2 is `G` in `dataset.017c7c7b.json`, `J` in
--`dataset.0d3d703e.json`, and `W` in `dataset.27a28665.json`. The letters carry
--no meaning beyond which cells share a color; `A` is not the most used color.
--The same letters replace the colors in both instance
-+Every dataset writes its colors as letters rather than numbers. `0` stays `0`,
-+and every other color becomes a letter of `ABCDEFGHI`, ranked by how often it
-+occurs across all of the dataset's `input_matrix` and `output_matrix` grids,
-+training and test pairs together: the most frequent color is `A`, the next
-+`B`, and so on, with a tie going to the color read first, pair by pair, each
-+input before its output, row by row. This is `Matrix.silhouette`'s ranking
-+applied to a whole dataset at once, so a color keeps one letter in every pair
-+of its dataset, while each dataset ranks its own colors: 2 is `A` in
-+`dataset.017c7c7b.json`, `B` in `dataset.0d3d703e.json`, and `D` in
-+`dataset.27a28665.json`. The same letters replace the colors in both instance
- masks, in the world model's color parameters, which are `str`, such as
- `color: str`, and its rules, such as `if $Obj.color@first is 'C':`, in the
- implementations' arguments, such as `color='B'` or `parts=['A', 'C']`, and in
-@@ -356,10 +354,10 @@ V points up. The genesis rules match categorical colors and orientations with
- `is`, the spelling of `==` that [NUC 86](../docs/nuc-0086.md) adds, as in the
- line header `if $Obj.orientation is 270:`, and the line rules assign quoted
- strings, as in `$Obj.extension_direction = 'right'`.
--The genesis datasets write these colors in their own random letters too: in
--`dataset.core.json` 4 is `H` and 9 is `S`, in `dataset.extension.json` 4 is
--`C` and 7 is `J`, in `dataset.curve.json` 2 is `Q`, 4 is `D`, 8 is `T`, and 9
--is `W`, and in `dataset.line.json` 6 is `E` and 8 is `A`.
-+The genesis datasets write these colors as letters too, ranked by count: in
-+`dataset.core.json` 9 is `A` and 4 is `B`, in `dataset.extension.json` 4 is
-+`A` and 7 is `B`, in `dataset.curve.json` 4 is `A`, 8 is `B`, 9 is `C`, and 2
-+is `D`, and in `dataset.line.json` 6 is `A` and 8 is `B`.
- 
- Instance `implementation` snippets use named constructor arguments whose names
- match the parameters in their class declarations. The canvas size is not one
-@@ -376,9 +374,9 @@ instance's own arguments and input mask into words, and Nucleoid skips them,
- so they change no snapshot:
- 
- ```nuc
--# A corner whose vertex and both segments are color S,
-+# A corner whose vertex and both segments are color A,
- # 2 by 2 at x 5, y 1, pointing southeast
--obj7e96305711c2 = Obj(x=5, y=1, width=2, height=2, orientation=135, vertex_color='S', vertical_segment_color='S', horizontal_segment_color='S')
-+obj7e96305711c2 = Obj(x=5, y=1, width=2, height=2, orientation=135, vertex_color='A', vertical_segment_color='A', horizontal_segment_color='A')
- ```
- 
- Every `input_instance_matrix` has exactly its pair's `input_matrix` row and
-@@ -426,7 +424,7 @@ Unconditional class-level rules set the output tag and introduce one
- property, `extension_direction`, which is absent before the rules run and is
- `down`, as in `dataset.line.json`.
- The rules also rewrite `height` to `$Obj.height@first * 3 / 2`, 9 rows, the
--pattern's one change in size, and `color` to `'G'`, the letter of color 2.
-+pattern's one change in size, and `color` to `'A'`, the letter of color 2.
- They leave `width` unchanged,
- because the pattern grows down only and each output's box is as wide as its
- input's, 3, 3, 2, and 3 columns, and they leave `x` and `y` unchanged because
-@@ -447,8 +445,8 @@ the 9 by 3 outputs, while `FIT` would crop the empty right column of the third
- training output. Orientation is 0 in both states because the pattern is not
- turned. The test pair follows the training pairs at the same level and is
- annotated by the same rules.
--The dataset writes its colors in its own random letters: 1 as `A` and 2 as
--`G`.
-+The dataset writes its colors as letters ranked by count: 2 as `A` and 1 as
-+`B`.
- 
- `dataset.0ca9ddb6.json` annotates the three training pairs from
- `data\training\0ca9ddb6.json`, followed 
-```
-
-**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +14/-21)
-```diff
-@@ -213,36 +213,29 @@ user's choice, no solver run has measured this version.
- ### Letter colors
- 
- On 8-Nov-2026, at the user's request, every instruction dataset started
--writing its colors as letters instead of numbers, so that the pattern reaches
--the model without the colors. `0` stays `0`, and every other color takes a
--letter from `A` to `Z` out of the dataset's own random set: the 26 letters,
--ordered by the SHA-256 digest of `<key>:<letter>` with the puzzle ID as the
--key, go to the dataset's colors in increasing order. Each file therefore has
--its own letters, a color keeps one letter in every pair, and the letters carry
--no meaning beyond which cells share a color. This dataset writes its colors in
--its own random letters: 1 as `A` and 2 as `G`. Mapping the letters back
--reproduces the puzzle's pairs cell for cell. A first version the same day
--ranked the letters by count, `A` for the most used color, which gave every
--letter a meaning; the random set replaced it.
-+writing its colors as letters instead of numbers. `0` stays `0`, and every
-+other color is a letter of `ABCDEFGHI`, ranked by how often it occurs across
-+all of the dataset's input and output matrices, training and test pairs
-+together: `A` for the most used, then `B`, and so on, a tie going to the color
-+read first, as `Matrix.silhouette` ranks one matrix. This dataset writes its
-+colors as letters ranked by count: 2 as `A` and 1 as `B`. Mapping the letters
-+back reproduces the puzzle's pairs cell for cell.
- 
- The pair grids, both instance masks, the implementations, and the snapshots
- use those letters, and the class and rules name the same colors by letter.
- Only the color literals changed, and the changed declarations now read:
- 
- ```nuc
- class Obj(x: int, y: int, width: int, height: int, orientation: int, color: str, period: int):
--$Obj.color = 'G'
-+$Obj.color = 'A'
- ```
- 
--Every snapshot was regenerated and replays byte for byte with the accepted
--runtime at `1931f77`, whose last runtime change is `34bbba0`, and equals its
--earlier snapshot with its colors replaced by their letters, so the rules
--behave as before; instance names, positions, sizes, orientations, and tags are
--unchanged. `Matrix.silhouette` takes any letter from `A` to `Z` and still
--ranks each crop by its own counts, the most used color as `A`, so the
--orientation call's crops read exactly as before. The solver still sends the
--running puzzle as numbers. No solver run has measured this version, so its
--difference is unknown, not zero.
-+Every snapshot was regenerated with the accepted runtime at `adc282a` and
-+equals its earlier snapshot with its colors replaced by their letters, so the
-+rules behave as before; instance names, positions, sizes, orientations, and
-+tags are unchanged. `Matrix.silhouette` now also takes letters, so the
-+orientation call's few-shot crops read exactly as before. No solver run has
-+measured this version, so its difference is unknown, not zero.
- 
- ## Runs
+ type Color = number | string;
  
 ```
 
-**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +18/-25)
+**File**: `arc/src/visualizer.ts` (modified, +10/-2)
 ```diff
-@@ -188,50 +188,43 @@ user's choice, no solver run has measured this version.
- ### Letter colors
+@@ -11,7 +11,7 @@ export async function instances({
+ }) {
+   milestone.segmenting_test_input({ test_input_matrix });
  
- On 8-Nov-2026, at the user's request, every instruction dataset started
--writing its colors as letters instead of numbers, so that the pattern reaches
--the model without the colors. `0` stays `0`, and every other color takes a
--letter from `A` to `Z` out of the dataset's own random set: the 26 letters,
--ordered by the SHA-256 digest of `<key>:<letter>` with the puzzle ID as the
--key, go to the dataset's colors in increasing order. Each file therefore has
--its own letters, a color keeps one letter in every pair, and the letters carry
--no meaning beyond which cells share a color. This dataset writes its colors in
--its own random letters: 1 as `P`, 2 as `G`, 4 as `D`, 6 as `F`, 7 as `E`, and
--8 as `Z`. Mapping the letters back reproduces the puzzle's pairs cell for
--cell. A first version the same day ranked the letters by count, `A` for the
--most used color, which gave every letter a meaning; the random set replaced
--it.
-+writing its colors as letters instead of numbers. `0` stays `0`, and every
-+other color is a letter of `ABCDEFGHI`, ranked by how often it occurs across
-+all of the dataset's input and output matrices, training and test pairs
-+together: `A` for the most used, then `B`, and so on, a tie going to the color
-+read first, as `Matrix.silhouette` ranks one matrix. This dataset writes its
-+colors as letters ranked by count: 4 as `A`, 7 as `B`, 2 as `C`, 1 as `D`, 8
-+as `E`, and 6 as `F`. Mapping the letters back reproduces the puzzle's pairs
-+cell for cell.
+-  const { instances } = await llm.generate({
++  const response = await llm.generate({
+     puzzle_id,
+     only_puzzle_dataset,
+     messages: [
+@@ -40,6 +40,10 @@ export async function instances({
+     ],
+   });
  
- The pair grids, both instance masks, the implementations, and the snapshots
- use those letters, and the class and rules name the same colors by letter.
- Only the color literals changed, and the changed declarations now read:
++  const instances = response.instances.map(({ input_instance_matrix }) => ({
++    input_instance_matrix: Matrix.normalize(input_instance_matrix),
++  }));
++
+   milestone.test_input_segmented({ instances });
  
- ```nuc
- class Obj(x: int, y: int, width: int, height: int, orientation: int, vertex_color: str):
--if $Obj.vertex_color is 'P':
-+if $Obj.vertex_color is 'D':
-     $Obj.tag = 'l1707'
--    $Obj.marker_color = 'E'
-+    $Obj.marker_color = 'B'
-     $Obj.x = $Obj.x@first - 1
-     $Obj.y = $Obj.y@first - 1
-     $Obj.width = $Obj.width@first + 2
-     $Obj.height = $Obj.height@first + 2
--if $Obj.vertex_color is 'G':
-+if $Obj.vertex_color is 'C':
-     $Obj.tag = 'l2404'
--    $Obj.marker_color = 'D'
-+    $Obj.marker_color = 'A'
-     $Obj.x = $Obj.x@first - 1
-     $Obj.y = $Obj.y@first - 1
-     $Obj.width = $Obj.width@first + 2
-     $Obj.height = $Obj.height@first + 2
- ```
+   return { instances };
+@@ -164,7 +168,7 @@ export async function output_instance_matrix({
  
--Every snapshot was regenerated and replays byte for byte with the accepted
--runtime at `1931f77`, whose last runtime change is `34bbba0`, and equals its
--earlier snapshot with its colors replaced by their letters, so the rules
--behave as before; instance names, positions, sizes, orientations, and tags are
--unchanged. `Matrix.silhouette` takes any letter from `A` to `Z` and still
--ranks each crop by its own counts, the most used color as `A`, so the
--orientation call's crops read exactly as before. The solver still sends the
--running puzzle as numbers. No solver run has measured this version, so its
--difference is unknown, not zero.
-+Every snapshot was regenerated with the accepted runtime at `adc282a` and
-+equals its earlier snapshot with its colors replaced by their letters, so the
-+rules behave as before; instance names, positions, sizes, orientations, and
-+tags are unchanged. `Matrix.silhouette` now also takes letters, so the
-+orientation call's few-shot crops read exactly as before. No solver run has
-+measured this version, so its difference is unknown, not zero.
+   milestone.composing_output({ instance_name });
  
- ## Decision: locate the delta from the initial position (NUC 53 and NUC 55)
+-  const { output_instance_matrix } = await llm.generate({
++  const response = await llm.generate({
+     puzzle_id,
+     only_puzzle_dataset,
+     messages: [
+@@ -209,6 +213,10 @@ export async function output_instance_matrix({
+     ],
+   });
  
-```
-
----
-
-### Incident Patch 3: `cea73a47` (2026-11-08)
-**Commit Message**: Revert "Clarify deterministic ARC color assignment"
-
-This reverts commit 11443aa068c5f915bc56fd03e5d3c6394e4ee362.
-
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +3/-4)
-```diff
-@@ -291,10 +291,9 @@ Verify with a throwaway script outside the repository; do not add tests:
-   back to their colors makes every `input_matrix` and `output_matrix` equal
-   its original grid, including dimensions, colors, positions, and zero
-   padding. There are no synthesized examples.
--- Recomputing the dataset's SHA-256 shuffle from its key gives exactly its
--  letters, one per color in increasing color order, and no color is written as
--  its number in the grids, masks, declarations, implementations, or
--  snapshots.
-+- Recomputing the dataset's random set from its key gives exactly its
-+  letters, one per color, and no color is written as its number in the grids,
-+  masks, declarations, implementations, or snapshots.
- - The transformation inferred from the training pairs reproduces every
-   original train and test output.
- - All pairs share the dataset's declarations and output-canvas mode, and
-```
-
-**File**: `.claude/agents/arc-purposal.agent.md` (modified, +3/-8)
-```diff
-@@ -54,14 +54,9 @@ Follow `.claude/CLAUDE.md`, the
- - Have every dataset write its colors as letters, under the same step, and
-   pass that requirement to every `arc-dataset` run: the grids follow the
-   puzzle's pairs in `arc/data/training/` exactly, but `0` stays `0` and every
--  other color takes its letter from the dataset's SHA-256 shuffle of `A` to
--  `Z`: the letters ordered by the SHA-256 digest of `<key>:<letter>`, where the
--  key is the name between `dataset.` and `.json`, go to the dataset's colors in
--  increasing order. The shuffle makes each file's letters its own and
--  reproducible, and a color keeps its letter everywhere in the file; never
--  choose letters another way or write a color as its number. The masks and the
--  world model use the same letters. Recompute the shuffle and check the letters
--  before the run, as the skill's dataset step shows.
-+  other color is a letter from `A` to `Z` out of the dataset's own random set,
-+  fixed by its file name and consistent inside the file, never its number. The
-+  masks and the world model use the same letters.
- - Never change the TypeScript implementation in `arc/`, except that before
-   the run you make the puzzle the solver's default puzzle in `arc/src/app.ts`
-   under the skill's [run step](../skills/arc-purposal/SKILL.md#run-the-puzzle).
-```
-
-**File**: `.claude/rules/arc.instructions.md` (modified, +1/-1)
-```diff
-@@ -90,7 +90,7 @@ special-cased workaround.
- Infer segmentation, background, object roles, and transformations from training
- pairs. Treat colors `0` through `9` as categorical values. Instruction datasets
- write them as letters: `0` stays `0`, and every other color is a letter from
--the dataset's SHA-256 shuffle of `A` to `Z`, keyed by its file name and
-+`A` to `Z` out of the dataset's own random set, fixed by its file name and
- consistent inside the file, under the
- [arc-dataset profile](../agents/arc-dataset.agent.md#write-colors-as-letters).
- Preserve positions
-```
-
-**File**: `.claude/skills/arc-dataset/SKILL.md` (modified, +2/-4)
-```diff
-@@ -23,10 +23,8 @@ additional entries at the same level as the training pairs: the same `dataset`
- array and entry structure, with no separate section or marker. Copy the input
- and output grids' exact pattern, positions, zero padding, and canvas
- dimensions, but write each color as a letter: `0` stays `0`, and the other
--colors take letters from the dataset's SHA-256 shuffle of `A` to `Z`, the
--letters ordered by the SHA-256 digest of `<key>:<letter>` with the file's key,
--in increasing color order and consistent inside the file, never their numbers.
--The
-+colors take letters from `A` to `Z` out of the dataset's own random set, fixed
-+by its file name and consistent inside the file, never their numbers. The
- masks and the world model use the same letters, as the profile's
- [letter rule](../../agents/arc-dataset.agent.md#write-colors-as-letters)
- defines. Do not synthesize, resample, recolor beyond those letters, or
-```
-
-**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +12/-34)
-```diff
-@@ -135,39 +135,18 @@ training pairs need.
- Write every color as a letter, and pass this requirement to every
- `/arc-dataset` run too. The dataset follows the exact pattern of the puzzle's
- pairs in `arc/data/training/`, cell for cell and shape for shape, but never
--writes a color as its number. `0` stays `0`, and every other color takes its
--letter from the dataset's own SHA-256 shuffle of the alphabet:
--
--1. Take the dataset's key, the name between `dataset.` and `.json`: the
--   puzzle ID, or a genesis name such as `core`.
--2. Shuffle `A` to `Z` by SHA-256: order the 26 letters by the hexadecimal
--   SHA-256 digest of `<key>:<letter>`, such as `c8f0f002:A`, smallest digest
--   first.
--3. Give the colors that occur in any of the dataset's `input_matrix` and
--   `output_matrix` grids, in increasing order, the letters in that order.
--
--For `c8f0f002` the shuffle starts `T B Q D`, so its colors 1, 5, 7, and 8
--become `T`, `B`, `Q`, and `D`; for `0d3d703e` it starts `H J Y Q G U S D`, so
--color 1 is `H` there. The SHA-256 shuffle is what makes each file's letters its
--own and random across files, yet reproducible from the file name alone, and a
--color keeps one letter in every pair of its file. Never choose letters by
--hand, by frequency, or with any other shuffle or seed. The letters carry no
--meaning beyond which cells share a color, so the pattern reaches the model
--without the colors. The same letters replace the colors in the instance masks
--and the world model: color properties hold letters, such as `color='B'`, and
--rules name colors by letter, such as `if $Obj.color is 'C':`. The arc-dataset
--profile's
-+writes a color as its number. `0` stays `0`, and every other color becomes a
-+letter from `A` to `Z` out of the dataset's own random set, fixed by its file
-+name: each file has its own letters, and a color keeps one letter in every pair
-+of its file. The letters carry no meaning beyond which cells share a color, so
-+the pattern reaches the model without the colors. The same letters replace the
-+colors in the instance masks and the world model: color properties hold
-+letters, such as `color='B'`, and rules name colors by letter, such as
-+`if $Obj.color is 'C':`. The arc-dataset profile's
- [letter rule](../../agents/arc-dataset.agent.md#write-colors-as-letters)
--states the same shuffle.
--
--Before the run, recompute the shuffle for a `written` handoff's dataset:
--
--    node -e "const {createHash} = require('crypto'); const digest = (l) => createHash('sha256').update(process.argv[1] + ':' + l).digest('hex'); console.log([...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].sort((a, b) => (digest(a) < digest(b) ? -1 : 1)).join(' '))" <key>
--
--The dataset's colors, in increasing order, must hold the first letters of that
--output, one each, in every grid, mask, declaration, implementation, and
--snapshot. Send back a handoff whose letters differ from the shuffle or that
--writes a color as its number.
-+defines how the set is drawn. Check a `written` handoff against it before the
-+run, and send back one that writes a color as its number or uses other
-+letters.
- 
- Continue by the handoff's status:
- 
-@@ -511,8 +490,7 @@ When nothing is left to commit, make no empty commit, and report why.
- Save one JSON result record in the session workspace with the puzzle ID and
- how it was chosen (given, or the default with both its measurements), the
- starting revision, and hint (`null` without one); the dataset status,
--`dataset_path` and source puzzle path, the dataset's key with its recomputed
--SHA-256 letters and whether the dataset matches them,
-+`dataset_path` and source puzzle path,
- the reporting-workflow path and whether its new entry was retained or
- withdrawn, and arc-dataset's use of the hint; the NUC path, blob, category,
- evaluator decision, and report path; the solver's previous and new default
++  const output_instance_matrix = Matrix.normalize(
++    response.output_instance_matrix
++  );
++
+   milestone.output_composed({
+     instance_name,
+     input_instance_matrix,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2233,44 +1999,33 @@ This reverts commit 11443aa068c5f915bc56fd03e5d3c6394e4ee362.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "Document blocked dynamic-axis revision for ARC 74dd1130"
+## X. Support Windows PowerShell 5 in run-puzzles script
 
 **RULE**:
-When implementing operations in `arc/docs/ARC-NUC-74dd1130.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `653ec5d6`: Revert "Document blocked dynamic-axis revision for ARC 74dd1130". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad9b5734`: Support Windows PowerShell 5 in run-puzzles script. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/docs/ARC-NUC-74dd1130.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| Instruction dataset | [`dataset.74dd1130.json`](../src/dataset/dataset.74dd1130.json): the puzzle's 4 original training pairs and its test pair, 5 mosaic instances, one per pair; committed with this record; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026 |
-| Solver runs | 1 local run on 5-Nov-2026, exit 0, an exact match, with this dataset's test pair in its few-shot context; none of the current version |
-- **Whole grid.** A 3 by 3 canvas filled by one mosaic of three colors, with
-  no background cell.
-- **World model.** One object per pair, the whole mosaic, whose flip is its
-  `mirror_axis`, 135.
+Run the five-puzzle batch from the repository root with Windows PowerShell 5
+or PowerShell 7:
+powershell -NoProfile -File .\arc\run-puzzles.ps1
+Use `pwsh` instead of `powershell` for PowerShell 7.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| Instruction dataset | [`dataset.74dd1130.json`](../src/dataset/dataset.74dd1130.json): the puzzle's 4 original training pairs and its test pair, 5 mosaic instances, one per pair; committed with this record; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; dynamic-axis revision blocked before publication on 8-Nov-2026 |
-| Solver runs | 1 local run on 5-Nov-2026, exit 0, an exact match, with this dataset's test pair in its few-shot context; none of the current version; the 8-Nov-2026 dynamic-axis invocation ended without a run |
-- **Whole grid.** Each input and output is a 3 by 3 canvas filled by one
-  mosaic of three colors, with no background cell.
-- **World model.** The retained dataset has one object per pair, the whole
-  mosaic, whose flip is its `mirror_axis`, 135. The unpublished 8-Nov-2026
-  revision keeps that whole-object level and derives the mirror line from
-  its opposite bounding-box corners; no finer model was needed.
-### Dynamic axis attempt -- 8-Nov-2026
-
-The user requested `dynamic set $Obj.mirror_axis instead of 135 direcly`.
-This invocation named the puzzle explici
+Run the five-puzzle batch from the repository root with PowerShell 7:
+pwsh -NoProfile -File .\arc\run-puzzles.ps1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `653ec5d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad9b5734` are properly handled with clean fallback behavior.
