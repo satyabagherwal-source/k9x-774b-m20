@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T23:29:17.378Z",
+  "last_updated": "2026-11-08T23:36:22.442Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21693,7 +21693,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "d72c93dfd26b1c13bdfb627bd5b35e346a7501dab1a4a115092d3f6e616e6ae7",
+      "content_hash": "13133dc38181f49e514442d74ec208a9d4a19168e053dbe11e87ec1229ffb6bb",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [
@@ -21785,7 +21785,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-11-05T06:00:30.821Z",
+      "verified_at": "2026-11-08T23:36:20.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74085,8 +74085,8 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "21af52d1",
-      "content_hash": "03b7a0d1a755a8f170264e9cae511e16bfe5b8aa9d91d08e13389eea77b5870a",
+      "source_version": "d0e358e1",
+      "content_hash": "9a5e95bd027309a23c03cf8d48eabeee3c231e0baa3ed55e77bbb6f7626370d4",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
@@ -74098,6 +74098,11 @@
         {
           "number": null,
           "title": "build(desktop): sign macOS dev builds with Developer ID",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): remove unmaintained pin-utils dependency",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -74161,7 +74166,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:23:35.092Z",
+      "verified_at": "2026-11-08T23:36:22.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

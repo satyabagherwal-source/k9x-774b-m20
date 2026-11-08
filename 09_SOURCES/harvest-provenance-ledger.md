@@ -8440,3 +8440,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-08T23:29:00.852Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `62d055f4` | Multi-dimensional audit evidence | 2026-11-08T23:29:11.893Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `84fa81e9` | Multi-dimensional audit evidence | 2026-11-08T23:29:17.486Z |
+| `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-11-08T23:36:20.874Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `d0e358e1` | Multi-dimensional audit evidence | 2026-11-08T23:36:22.535Z |

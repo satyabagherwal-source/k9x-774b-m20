@@ -945,8 +945,8 @@
     "sourceUrl": "https://huggingface.co/bigscience/bloom",
     "sourceVersion": "hf-bigscience-bloom",
     "license": "Open-Source",
-    "contentHash": "d72c93dfd26b1c13bdfb627bd5b35e346a7501dab1a4a115092d3f6e616e6ae7",
-    "lastHarvestedAt": "2026-11-05T06:00:30.933Z",
+    "contentHash": "13133dc38181f49e514442d74ec208a9d4a19168e053dbe11e87ec1229ffb6bb",
+    "lastHarvestedAt": "2026-11-08T23:36:20.874Z",
     "learningId": "learn-huggingface-bigscience-bloom"
   },
   "hf-openai-gpt-oss-20b": {
@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "21af52d1",
+    "sourceVersion": "d0e358e1",
     "license": "MIT",
-    "contentHash": "03b7a0d1a755a8f170264e9cae511e16bfe5b8aa9d91d08e13389eea77b5870a",
-    "lastHarvestedAt": "2026-11-07T22:23:35.258Z",
+    "contentHash": "9a5e95bd027309a23c03cf8d48eabeee3c231e0baa3ed55e77bbb6f7626370d4",
+    "lastHarvestedAt": "2026-11-08T23:36:22.535Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {

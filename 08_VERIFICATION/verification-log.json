@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-7CYA",
-    "timestamp": "2026-11-06T22:13:51.826Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "27efc8937d397b31f12dff83559d0fdee934b57339c6ed526011c1b94ec30d9a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-7GXO",
-    "timestamp": "2026-11-06T22:13:56.988Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "690bee15654d5d7fa0c3d7c4487621078d51eb0d08bccc40dbc8e8687b12803a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-GWFH",
     "timestamp": "2026-11-06T22:21:16.973Z",
     "repository": "aquasecurity/trivy",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "3db3eb5a099cc5b332cacebaf342535f55bcf2a50291c8c2e8a89ab50260c02e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-14ZQ",
+    "timestamp": "2026-11-08T23:36:20.870Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-bigscience-bloom",
+    "contentHash": "13133dc38181f49e514442d74ec208a9d4a19168e053dbe11e87ec1229ffb6bb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-169V",
+    "timestamp": "2026-11-08T23:36:22.531Z",
+    "repository": "nguyenphutrong/quotio",
+    "learningId": "learn-github-nguyenphutrong-quotio",
+    "contentHash": "9a5e95bd027309a23c03cf8d48eabeee3c231e0baa3ed55e77bbb6f7626370d4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
