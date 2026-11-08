@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `43c52739`  
+> **Source Version**: `a74b7cdb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:48:59.669Z  
+> **Timestamp**: 2026-11-08T21:33:24.255Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:48:58.973Z  
+> **Harvest Timestamp**: 2026-11-08T21:33:24.250Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23366 stars
+- **Stars / Engagement**: 23378 stars
 
 ---
 
@@ -1048,17 +1048,17 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29026** (2026-11-07): **fix(ecmascript): round nondecimal strings to numbers once**
-  *Symptoms*: Nondecimal `StringToNumber` accumulated digits in `f64`, losing low bits before the final rounding. For example, `"0x10000000000000801"` rounded to `2^64` instead of `2^64 + 4096`.  Retain an integer significand and sticky bit, then round once and scale by a power of two. Continue validating trailing digits after overflow. Regression tests cover binary, octal, and hexadecimal rounding boundaries, distant sticky bits, leading zeros, overflow, and invalid suffixes.
+- **Issue #29073** (2026-11-08): **docs(mangler): correct naming strategy and pipeline order**
+  *Symptoms*: Describe the fixed frequency-ordered alphabet, reference-frequency-based slot naming, and scope-aware name reuse. Correct the supported preservation options and show compression before identifier mangling in the minifier pipeline.
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"96843d6f17b92cefc39df1bdff36a8939f14880a","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-07T19:36:29.192026Z">2026-11-07T19:36:29.192026Z</relative-time> | `96843d6` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
-  > ### Merge activity  * **Nov 7, 7:36 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 7, 7:37 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 7, 7:41 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"622d8059abec3ec19768c175cf22f3fccb37c2d4","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-08T20:48:13.507673Z">2026-11-08T20:48:13.507673Z</relative-time> | `622d805` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+  > ### Merge activity  * **Nov 8, 8:50 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 8, 8:50 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 8, 8:54 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
-- **Issue #29003** (2026-11-07): **fix(linter/eslint/prefer-destructuring): skip fixes that remove comments**
-  *Symptoms*: Skip object-destructuring fixes when replacing a declarator would discard comments, while retaining the diagnostic. Keep fixes that preserve comments inside the copied receiver or outside the replacement, with regression coverage for static and computed member access and parentheses.  Fixes #28981
+- **Issue #29072** (2026-11-08): **docs(ecmascript): clarify test locations**
+  *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"09d41c5a721130fac51034cc314569b7a1510e02","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-07T18:28:03.628708Z">2026-11-07T18:28:03.628708Z</relative-time> | `09d41c5` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
-  > AI assistance: OpenAI Codex was used to implement, review, and test this change.  Validation: `just fmt`, `just test -p oxc_linter` (1,294 unit tests plus integration tests and doctests), `just lint -p oxc_linter`, and `just test -p oxlint` (385 passed). Two independent read-only reviewers found no issues. The first Oxlint build hit a full disk; removing this worktree’s disposable incremental cache and retrying with incremental compilation disabled succeeded.
+  > ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</kbd> - adds this PR to the back of the merge queue - <kbd>hotfix</kbd> - for urgent changes, fast-track this PR to the front of the merge queue  You must have a Graphite account in order to use the merge queue. Sign up using [this link](https://app.graphite.com/invite/github/oxc-project?ref=merge-queue-instructions-comment&prId=8815151596).  <h2></h2> <sub>  An organization admin has enabled the [Graphite Merge Queue](https://graphite.dev/docs/graphite-merge-queue) in this repository.  </sub>  <sub>  Please do not merge from GitHub as this will restart CI on PRs being processed by the merge queue.  </sub>
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"4499d4f82c1dbba3d0c3fa1a994e1aa731a57f23","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-08T20:47:58.089941Z">2026-11-08T20:47:58.089941Z</relative-time> | `4499d4f` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1075,287 +1075,341 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b71234fb` (2026-11-07)
-**Commit Message**: fix(cfg): skip labeled contexts for unlabeled jumps (#29001)
+### Incident Patch 1: `fe66fa77` (2026-11-07)
+**Commit Message**: fix(linter/eslint/no-lone-blocks): report redundant blocks in function bodies (#29043)
 
-Unlabeled jumps must skip labeled CFG contexts and target the enclosing loop or switch. Previously, an unlabeled `break` inside a labeled block could make `no-unreachable` miss code after the block and incorrectly flag reachable code after the loop.
+Report redundant blocks in function bodies even when they have sibling statements or contain multiple statements. Apply the existing lexical-declaration checks and use the nested-block diagnostic consistently with ESLint.
 
-Keep named-label resolution unchanged and add CFG and linter regressions for loop, switch, labeled-break, and continue behavior.
+Add regressions for declarations, expressions, arrows, methods, async functions, generators, and lexical scopes, including directive-bearing bodies.
 
-Fixes #28947
+Fixes #28874
 
-**File**: `crates/oxc_cfg/src/builder/context.rs` (modified, +1/-1)
+**File**: `crates/oxc_linter/src/rules/eslint/no_lone_blocks.rs` (modified, +26/-4)
 ```diff
-@@ -247,7 +247,7 @@ impl<'a> ControlFlowGraphBuilder<'a> {
-                 .rev()
-                 // anything up the function is unreachable
-                 .take_while(|it| !it.flags.intersects(CtxFlags::FUNCTION))
--                .find(|it| it.flags.contains(flag))
-+                .find(|it| it.label.is_none() && it.flags.contains(flag))
-         };
+@@ -103,7 +103,7 @@ impl Rule for NoLoneBlocks {
  
-         if let Some(ctx) = ctx {
-```
-
-**File**: `crates/oxc_cfg/tests/builder.rs` (modified, +17/-0)
-```diff
-@@ -36,3 +36,20 @@ fn labeled_statement_with_multiple_loops_continue_and_break() {
+         match parent_node.kind() {
+             AstKind::FunctionBody(parent)
+-                if parent.statements.len() == 1 && stmt.body.len() == 1 =>
++                if parent.directives.is_empty() && parent.statements.len() == 1 =>
+             {
+                 report(ctx, node, parent_node);
+             }
+@@ -120,7 +120,7 @@ impl Rule for NoLoneBlocks {
  
-     cfg.build();
- }
-+
-+#[test]
-+fn unlabeled_break_skips_labeled_context() {
-+    let mut cfg = ControlFlowGraphBuilder::default();
-+    cfg.attach_error_harness(oxc_cfg::ErrorEdgeKind::Implicit);
-+    cfg.ctx(None).default().allow_break();
-+    cfg.ctx(Some("B")).default().allow_break();
-+    let before_break = cfg.new_basic_block_normal();
-+    cfg.append_break(NodeId::DUMMY, None);
-+    let after_label = cfg.new_basic_block_normal();
-+    cfg.ctx(Some("B")).mark_break(after_label).resolve();
-+    let after_loop = cfg.new_basic_block_normal();
-+    cfg.ctx(None).mark_break(after_loop).resolve();
-+    let cfg = cfg.build();
-+    assert!(cfg.is_reachable(before_break, after_loop));
-+    assert!(!cfg.is_reachable(before_break, after_label));
-+}
-```
-
-**File**: `crates/oxc_linter/src/rules/eslint/no_unreachable.rs` (modified, +5/-0)
-```diff
-@@ -302,6 +302,9 @@ fn test() {
-             return 'Hello, tsdown!';
+ fn report(ctx: &LintContext, node: &AstNode, parent_node: &AstNode) {
+     match parent_node.kind() {
+-        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) => {
++        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) | AstKind::FunctionBody(_) => {
+             ctx.diagnostic(no_nested_lone_blocks_diagnostic(node.span()));
          }
+         _ => ctx.diagnostic(no_lone_blocks_diagnostic(node.span())),
+@@ -129,7 +129,10 @@ fn report(ctx: &LintContext, node: &AstNode, parent_node: &AstNode) {
+ 
+ fn is_lone_block(node: &AstNode, parent_node: &AstNode) -> bool {
+     match parent_node.kind() {
+-        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) | AstKind::Program(_) => true,
++        AstKind::BlockStatement(_)
++        | AstKind::StaticBlock(_)
++        | AstKind::Program(_)
++        | AstKind::FunctionBody(_) => true,
+         AstKind::SwitchCase(parent_node) => {
+             let consequent = &parent_node.consequent;
+             if consequent.len() != 1 {
+@@ -151,7 +154,6 @@ fn test() {
+         "if (foo) { if (bar) { baz(); } }",
+         "do { bar(); } while (foo)",
+         "function foo() { while (bar) { baz() } }",
+-        "function test() { { console.log(6); console.log(6) } }",
+         "{ let x = 1; }",                      // { "ecmaVersion": 6 },
+         "{ const x = 1; }",                    // { "ecmaVersion": 6 },
+         "'use strict'; { function bar() {} }", // { "ecmaVersion": 6 },
+@@ -222,6 +224,15 @@ fn test() {
+                 // do nothing
+             }
          ",
-+        "function f() { for (;;) { B: { break; } } return 'ok'; }",
-+        "function f() { for (;;) { B: { break B; } return 'ok'; } }",
-+        "function f() { for (;;) { B: C: { continue; } } }",
++        "function example() { before(); { let value = 1; consume(value); } }",
++        "function example() { { const value = 1; consume(value); } after(); }",
++        "function example() { before(); { class Local {} consume(Local); } }",
++        "function example() { before(); { function local() {} local(); } }",
++        "function example() { before(); { using value = resource(); consume(value); } }",
++        "async function example() { before(); { await using value = resource(); consume(value); } }",
++        "function example() { if (condition) { notify(); } }",
++        "function example() { label: { notify(); } }",
++        r#"function example() { "use strict"; { let value = 1; consume(value); } }"#,
      ];
  
      let fail = vec![
-@@ -375,6 +378,8 @@ fn test() {
-         }
-         ",
-         "function foo() { while (true) { return ''; } return ''; }",
-+        "function f() { for (;;) { B: { break; } throw 1; } return \"ok\"; }",
-+        "function f(x) { switch (x) { default: B: { break; } throw 1; } return \"ok\"; }",
+@@ -386,6 +397,17 @@ fn test() {
+                 }
+             }
+         ", // { "ecmaVersion": 2022 }
++        "export function example() { before(); { notify(); } }",
++        "function example() { { notify(); } after(); }",
++        "function example() { before(); { var value = 1; notify(value); } after(); }",
++        "function test() { { console.log(6); console.log(6) } }",
++        "const example = function () { before(); { notify(); } };",
++        "const example = () => { before(); { notify(); } };",
++        "class Example { method() { before(); { notify(); } } }",
++        "const example = { method() { before(); { notify(); } } };",
++        "async function example() { before(); { await notify(); } }",
++        "function* example() { before(); { yield value; } }",
++        "function example() { { let value = 1; consume(value); } }",
      ];
  
-     Tester::new(NoUnreachable::NAME, NoUnreachable::PLUGIN, pass, fail).test_and_snapshot();
+     Tester::new(NoLoneBlocks::NAME, NoLoneBlocks::PLUGIN, pass, fail).test_and_snapshot();
 ```
 
-**File**: `crates/oxc_linter/src/snapshots/eslint_no_unreachable.snap` (modified, +14/-0)
+**File**: `crates/oxc_linter/src/snapshots/eslint_no_lone_blocks.snap` (modified, +85/-8)
 ```diff
-@@ -199,3 +199,17 @@ source: crates/oxc_linter/src/tester.rs
-    ·                                              ──────────
+@@ -23,12 +23,12 @@ source: crates/oxc_linter/src/tester.rs
     ╰────
-   help: Remove the unreachable code or fix the control flow to make it reachable.
+   help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
+ 
+-  ⚠ eslint(no-lone-blocks): Block is unnecessary.
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:1:19]
+  1 │ function test() { { console.log(6); } }
+    ·                   ───────────────────
+    ╰────
+-  help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
++  help: Remove the redundant nested block statement.
+ 
+   ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:1:19]
+@@ -52,12 +52,12 @@ source: crates/oxc_linter/src/tester.rs
+    ╰────
+   help: Remove the redundant nested block statement.
+ 
+-  ⚠ eslint(no-lone-blocks): Block is unnecessary.
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:1:25]
+  1 │ function foo() { bar(); {} baz(); }
+    ·                         ──
+    ╰────
+-  help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
++  help: Remove the redundant nested block statement.
+ 
+   ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:1:15]
+@@ -129,25 +129,25 @@ source: crates/oxc_linter/src/tester.rs
+    ╰────
+   help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
+ 
+-  ⚠ eslint(no-lone-blocks): Block is unnecessary.
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:3:17]
+  2 │                 function foo () {
+  3 │ ╭─▶                 {
+  4 │ │                       const x = 4;
+  5 │ ╰─▶                 }
+  6 │                 }
+    ╰────
+-  help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
++  help: Remove the redundant nested block statement.
+ 
+-  ⚠ eslint(no-lone-blocks): Block is unnecessary.
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:3:17]
+  2 │                 function foo () {
+  3 │ ╭─▶                 {
+  4 │ │                       var x = 4;
+  5 │ ╰─▶                 }
+  6 │                 }
+    ╰────
+-  help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
++  help: Remove the redundant nested block statement.
+ 
+   ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:5:25]
+@@ -258,3 +258,80 @@ source: crates/oxc_linter/src/tester.rs
+  8 │                     }
+    ╰────
+   help: Remove the redundant nested block statement.
 +
-+  ⚠ eslint(no-unreachable): Unreachable code.
-+   ╭─[no_unreachable.tsx:1:41]
-+ 1 │ function f() { for (;;) { B: { break; } throw 1; } return "ok"; }
-+   ·                                         ────────
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:39]
++ 1 │ export function example() { before(); { notify(); } }
++   ·                                       ─────────────
 +   ╰────
-+  help: Remove the unreachable code or fix the control flow to make it reachable.
++  help: Remove the redundant nested block statement.
 +
-+  ⚠ eslint(no-unreachable): Unreachable code.
-+   ╭─[no_unreachable.tsx:1:53]
-+ 1 │ function f(x) { switch (x) { default: B: { break; } throw 1; } return "ok"; }
-+   ·                                                     ────────
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:22]
++ 1 │ function example() { { notify(); } after(); }
++   ·                      ─────────────
 +   ╰────
-+  help: Remove the unreachable code or fix the control flow to make it reachable.
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:32]
++ 1 │ function example() { before(); { var value = 1; notify(value); } after(); }
++   ·                                ─────────────────────────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:19]
++ 1 │ function test() { { console.log(6); console.log(6) } }
++   ·                   ──────────────────────────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:41]
++ 1 │ const example = function () { before(); { notify(); } };
++   ·                                         ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:35]
++ 1 │ const example = () => { before(); { notify(); } };
++   ·                                   ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:38]
++ 1 │ class Example { method() { before(); { notify(); } } }
++   ·                                      ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:40]
++ 1 │ const example = { method() { before(); { notify(); } } };
++   ·                                        ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blo
 ```
 
 ---
 
-### Incident Patch 2: `43c52739` (2026-11-07)
-**Commit Message**: fix(ecmascript): round nondecimal strings to numbers once (#29026)
+### Incident Patch 2: `6448a543` (2026-11-08)
+**Commit Message**: docs(napi/parser): correct parser options and usage guidance (#29065)
 
-Nondecimal `StringToNumber` accumulated digits in `f64`, losing low bits before the final rounding. For example, `"0x10000000000000801"` rounded to `2^64` instead of `2^64 + 4096`.
+Correct the documented `lang` and `sourceType` options, defaults, and precedence. Document the default parenthesized AST nodes and clarify that async parsing still deserializes the AST on the calling thread, with worker threads recommended for parallel parsing.
 
-Retain an integer significand and sticky bit, then round once and scale by a power of two. Continue validating trailing digits after overflow. Regression tests cover binary, octal, and hexadecimal rounding boundaries, distant sticky bits, leading zeros, overflow, and invalid suffixes.
-
-**File**: `crates/oxc_ecmascript/src/string_to_number.rs` (modified, +84/-6)
+**File**: `napi/parser/README.md` (modified, +8/-4)
 ```diff
-@@ -61,16 +61,31 @@ impl StringToNumber for &str {
-                     return f64::from(value);
-                 }
+@@ -26,6 +26,8 @@ The only differences between Oxc's AST and ESTree / TS-ESTree are:
+   with `'source'` in the `phase` field (as in ESTree spec), where TS-ESLint represents it
+   as a `CallExpression` with `MetaProperty` as its `callee`.
+ - Addition of a non-standard `hashbang` field to `Program`.
++- Non-standard `ParenthesizedExpression` and `TSParenthesizedType` nodes when
++  `preserveParens` is enabled (the default). Set `preserveParens: false` to omit them.
  
--                // Slow path
--                let mut value: f64 = 0.0;
-+                let bits_per_digit = radix.ilog2();
-+                let mut significand = 0_u64;
-+                let mut exponent = 0_u32;
-+                let mut sticky = 0_u32;
-                 for c in bytes {
--                    if let Some(digit) = char::from(c).to_digit(radix) {
--                        value = value.mul_add(f64::from(radix), f64::from(digit));
--                    } else {
-+                    let Some(digit) = char::from(c).to_digit(radix) else {
-                         return f64::NAN;
-+                    };
-+                    if significand < (1 << 54) {
-+                        significand = (significand << bits_per_digit) | u64::from(digit);
-+                    } else {
-+                        exponent = (exponent + bits_per_digit).min(1024);
-+                        sticky |= digit;
-                     }
-                 }
--                return value;
-+                if exponent > 1023 {
-+                    return f64::INFINITY;
-+                }
-+
-+                // Preserve discarded nonzero digits below the rounding bit so the cast
-+                // distinguishes exact ties from values above them.
-+                significand |= u64::from(sticky != 0);
-+                #[expect(clippy::cast_precision_loss)]
-+                let value = significand as f64;
-+                return value * f64::from_bits(u64::from(exponent + 1023) << 52);
-             }
-         }
+ That aside, the AST should completely align with Acorn's ESTree AST or TS-ESLint's TS-ESTree.
+ Any deviation would be considered a bug.
+@@ -85,7 +87,7 @@ Does not produce any errors when `showSemanticErrors` is `false`, which is the d
  
-@@ -86,8 +101,71 @@ fn is_str_white_space_char(c: char) -> bool {
+ Fast mode is best suited for parser plugins, where other parts of your build pipeline has already checked for errors.
  
- #[cfg(test)]
- mod tests {
-+    use num_bigint::BigUint;
-+
-     use super::StringToNumber;
+-Please note that turning off fast mode ​incurs​ a small performance overhead.
++Please note that turning off fast mode incurs a small performance overhead.
  
-+    #[test]
-+    #[expect(clippy::cast_precision_loss)]
-+    fn rounds_nondecimal_strings_once() {
-+        for bits in 53..128 {
-+            let base = 1_u128 << bits;
-+            let half_ulp = 1_u128 << (bits - 53);
-+            for offset in [
-+                half_ulp - 1,
-+                half_ulp,
-+                half_ulp + 1,
-+                3 * half_ulp - 1,
-+                3 * half_ulp,
-+                3 * half_ulp + 1,
-+            ] {
-+                let value = base + offset;
-+                for (prefix, digits) in [
-+                    ("0b", format!("{value:b}")),
-+                    ("0o", format!("{value:o}")),
-+                    ("0x", format!("{value:x}")),
-+                    ("0B", format!("{value:b}")),
-+                    ("0O", format!("{value:o}")),
-+                    ("0X", format!("{value:X}")),
-+                ] {
-+                    for leading in ["", "00000000000000000000"] {
-+                        let input = format!("{prefix}{leading}{digits}");
-+                        assert_eq!(input.as_str().string_to_number(), value as f64, "{input}");
-+                    }
-+                }
-+            }
-+        }
-+    }
-+
-+    #[test]
-+    fn rounds_nondecimal_strings_at_float_limits() {
-+        for (binary, expected) in [
-+            (
-+                format!("1{}1{}1", "0".repeat(52), "0".repeat(969)),
-+                f64::from_bits(0x7fe0_0000_0000_0001),
-+            ),
-+            (format!("{}{}", "1".repeat(53), "0".repeat(971)), f64::MAX),
-+            (format!("{}0{}", "1".repeat(53), "1".repeat(970)), f64::MAX),
-+            (format!("{}{}", "1".repeat(54), "0".repeat(970)), f64::INFINITY),
-+            (format!("1{}", "0".repeat(1100)), f64::INFINITY),
-+            ("0".repeat(1100), 0.0),
-+            (format!("{}1", "0".repeat(1100)), 1.0),
-+        ] {
-+            let integer = BigUint::parse_bytes(binary.as_bytes(), 2).unwrap();
-+            for (radix, prefix) in [(2, "0b"), (8, "0o"), (16, "0x")] {
-+                let digits = integer.to_str_radix(radix);
-+                for leading in ["", "0".repeat(1100).as_str()] {
-+                    let input = format!("{prefix}{leading}{digits}");
-+                    assert_eq!(input.as_str().string_to_number(), expected, "{input}");
-+                    for suffix in ["g", "_", "\u{00e9}"] {
-+                        let invalid = format!("{input}{suffix}");
-+                        assert!(invalid.as_str().string_to_number().is_nan(), "{invalid}");
-+                    }
-+                }
-+            }
-+        }
-+    }
-+
-     #[test]
-     fn trims_ecmascript_whitespace_from_both_ends() {
-         const WHITESPACE: &str = "\u{0009}\u{000B}\u{000C}\u{0020}\u{00A0}\u{1680}\u{2000}\u{2001}\u{2002}\u{2003}\u{2004}\u{2005}\u{2006}\u{2007}\u{2008}\u{2009}\u{200A}\u{202F}\u{205F}\u{3000}\u{FEFF}\u{000A}\u{000D}\u{2028}\u{2029}";
+ ### Returns ESM information.
+ 
+@@ -129,7 +131,9 @@ parseSync(filename: string, sourceText: string, options?: ParserOptions): ParseR
+ parse(filename: string, sourceText: string, options?: ParserOptions): Promise<ParseResult>
+ ```
+ 
+-Use `parseSync` for synchronous parsing. Use `parse` for asynchronous parsing, which can be beneficial in I/O-bound or concurrent scenarios, though it adds async overhead.
++Prefer `parseSync` for most workloads. `parse` moves Rust parsing to a worker-pool thread,
++but AST deserialization still runs synchronously on the calling thread and usually accounts
++for most of the work. To parse multiple files in parallel, use `parseSync` in worker threads.
+ 
+ ### Example
+ 
+@@ -178,8 +182,8 @@ console.log(visitations);
+ 
+ All options are optional.
+ 
+-- `lang`: `'js'` | `'jsx'` | `'ts'` | `'tsx'`. Set language of source. If omitted, language is deduced from file extension.
+-- `sourceType`: `'script'` | `'module'` | `'unambiguous'`. Set source type. Defaults to `'module'`.
++- `lang`: `'js'` | `'jsx'` | `'ts'` | `'tsx'` | `'dts'`. Set language of source. If omitted, language is deduced from file extension.
++- `sourceType`: `'script'` | `'module'` | `'commonjs'` | `'unambiguous'`. Override the module kind. When both `sourceType` and `lang` are omitted, `.mjs` / `.mts` use module mode, `.cjs` / `.cts` use CommonJS mode, and `.js` / `.jsx` / `.ts` / `.tsx` use unambiguous mode. An explicit `lang` uses unambiguous mode, except `'dts'`, which uses module mode. An explicit `sourceType` takes precedence.
+ - `astType`: `'js'` | `'ts'`. Set to `'ts'` if you want ASTs of plain JS/JSX files to contain TypeScript-specific properties.
+ - `range`: `true` | `false`. If `true`, AST nodes contain a `range` field. Defaults to `false`.
+ - `preserveParens`: `true` | `false`. If `true`, parenthesized expressions are represented by (non-standard) `ParenthesizedExpression` and `TSParenthesizedType` AST nodes. Defaults to `true`.
 ```
 
 ---
 
-### Incident Patch 3: `bf11006b` (2026-11-06)
-**Commit Message**: fix(linter/react/exhaustive-deps): suggest dependency removals (#28925)
+### Incident Patch 3: `e1694bdc` (2026-11-07)
+**Commit Message**: fix(linter/unicorn/no-useless-undefined): preserve shadowed bindings (#29046)
 
-Removing `ref.current` or outer-scope dependencies can change when an effect runs. Mark these removals as dangerous suggestions so plain `--fix` preserves the dependency array and applying them requires `--fix-dangerously`.
+Require references to the global `undefined` before reporting or removing them, including trailing call arguments. Local bindings named `undefined` can hold values, so removing them changes runtime behavior. Adds regression coverage for local declarations, parameters, returns, yields, arrow bodies, defaults, and calls.
 
-Addresses the plain `--fix` behavior in #28884. Regression tests cover both reported cases and verify that only dangerous suggestions apply the removals.
+Fixes #28987
 
-**File**: `crates/oxc_linter/src/rules/react/exhaustive_deps.rs` (modified, +31/-1)
+**File**: `crates/oxc_linter/src/rules/unicorn/no_useless_undefined.rs` (modified, +18/-3)
 ```diff
-@@ -592,7 +592,7 @@ impl Rule for ExhaustiveDeps {
-                 }
+@@ -220,7 +220,10 @@ impl Rule for NoUselessUndefined {
+                     fixer.replace(conditional.span, replacement)
+                 });
              }
+-            AstKind::IdentifierReference(undefined_literal) if undefined_literal.is_undefined() => {
++            AstKind::IdentifierReference(undefined_literal)
++                if undefined_literal.is_undefined()
++                    && ctx.is_reference_to_global_variable(undefined_literal) =>
++            {
+                 let Some(parent_node) = outermost_paren_parent(node, ctx) else {
+                     return;
+                 };
+@@ -356,11 +359,15 @@ impl Rule for NoUselessUndefined {
+                     return;
+                 }
  
--            ctx.diagnostic_with_fix(
-+            ctx.diagnostic_with_dangerous_suggestion(
-                 unnecessary_outer_scope_dependency_diagnostic(
-                     hook_name,
-                     &dependency.name,
-@@ -1554,6 +1554,36 @@ fn invalid_configs_error_in_from_configuration() {
-     assert!(ExhaustiveDeps::from_configuration(valid_regex).is_ok());
- }
++                let is_global_undefined = |expression: &Expression| {
++                    matches!(expression, Expression::Identifier(ident)
++                        if ident.is_undefined() && ctx.is_reference_to_global_variable(ident))
++                };
+                 let arguments = &call_expr.arguments;
+                 if !arguments
+                     .last()
+                     .and_then(Argument::as_expression)
+-                    .is_some_and(Expression::is_undefined)
++                    .is_some_and(is_global_undefined)
+                 {
+                     return;
+                 }
+@@ -376,7 +383,7 @@ impl Rule for NoUselessUndefined {
+                 let mut undefined_args_spans = Vec::new();
+                 for i in (0..arguments.len()).rev() {
+                     let arg = &arguments[i];
+-                    if arg.as_expression().is_some_and(Expression::is_undefined) {
++                    if arg.as_expression().is_some_and(is_global_undefined) {
+                         let span = arg.span();
+                         undefined_args_spans.push(span);
+                     } else {
+@@ -835,6 +842,14 @@ fn test() {
+             "function getBackLinks(subject: string, limit = 16, cursor?: string, reverse = false, ttl: number | undefined = undefined) {}",
+             None,
+         ),
++        ("function a() { const undefined = 1; let x = undefined; return x; }", None),
++        ("function b(undefined) { { let y = undefined; return y; } }", None),
++        ("function c(undefined) { return undefined; }", None),
++        ("function d(undefined, f) { return f(undefined, undefined); }", None),
++        ("function* e(undefined) { yield undefined; }", None),
++        ("function g(undefined, h = undefined) { return h; }", None),
++        ("const arrow = (undefined) => undefined;", None),
++        ("function defaults(undefined) { const {x = undefined} = {}; }", None),
+     ];
  
-+#[test]
-+fn test_unnecessary_dependency_suggestions() {
-+    use crate::{fixer::FixKind, tester::Tester};
-+
-+    let cases = [
-+        (
-+            "function A({ section }) { const ref = useRef(null); useEffect(() => { if (section === 'a') ref.current?.scrollIntoView(); }, [section, ref.current]); }",
-+            "function A({ section }) { const ref = useRef(null); useEffect(() => { if (section === 'a') ref.current?.scrollIntoView(); }, [section]); }",
-+        ),
-+        (
-+            "const OUTER = 1; function B({ section }) { useEffect(() => { console.log(section, OUTER); }, [section, OUTER]); }",
-+            "const OUTER = 1; function B({ section }) { useEffect(() => { console.log(section, OUTER); }, [section]); }",
-+        ),
-+    ];
-+
-+    let fail = cases.iter().map(|(source, _)| *source).collect();
-+    let fix = cases
-+        .into_iter()
-+        .flat_map(|(source, expected)| {
-+            [
-+                (source, source, None, FixKind::SafeFix),
-+                (source, source, None, FixKind::SafeFixOrSuggestion),
-+                (source, expected, None, FixKind::DangerousSuggestion),
-+            ]
-+        })
-+        .collect();
-+
-+    Tester::new(ExhaustiveDeps::NAME, ExhaustiveDeps::PLUGIN, vec![], fail).expect_fix(fix).test();
-+}
-+
- #[test]
- fn test() {
-     use crate::tester::Tester;
+     let fail = vec![
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29026** (2026-11-07): fix(ecmascript): round nondecimal strings to numbers once (@camc314)
-- **PR #29003** (2026-11-07): fix(linter/eslint/prefer-destructuring): skip fixes that remove comments (@camc314)
-- **PR #29002** (2026-11-07): fix(linter/import/no-anonymous-default-export): report parenthesized exports (@camc314)
-- **PR #29001** (2026-11-07): fix(cfg): skip labeled contexts for unlabeled jumps (@camc314)
-- **PR #28986** (2026-11-07): chore(lexer): set `oxc_lexer` crate version to 0.0.0 (@overlookmotel)
-- **PR #28970** (2026-11-07): feat(lexer): add more methods to `Vec128` (@overlookmotel)
+- **PR #29073** (2026-11-08): docs(mangler): correct naming strategy and pipeline order (@camc314)
+- **PR #29072** (2026-11-08): docs(ecmascript): clarify test locations (@camc314)
+- **PR #29070** (2026-11-08): docs(ast): clarify which AST nodes use arena allocation (@camc314)
+- **PR #29069** (2026-11-08): chore(deps): update dependency playwright to v1.65.0 (@renovate[bot])
+- **PR #29068** (2026-11-08): docs(oxc): correct README APIs and feature requirements (@camc314)
+- **PR #29066** (2026-11-08): docs(allocator): clarify arena storage and memory reclamation (@camc314)
 
 ---
 
@@ -1375,28 +1429,48 @@ Addresses the plain `--fix` behavior in #28884. Regression tests cover both repo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cfg): skip labeled contexts for unlabeled jumps (#29001)
+## X. linter/eslint/no-lone-blocks): report redundant blocks in function bodies (#2904
 
 **RULE**:
-When implementing operations in `crates/oxc_cfg/src/builder/context.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/eslint/no_lone_blocks.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b71234fb`: cfg): skip labeled contexts for unlabeled jumps (#29001). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe66fa77`: linter/eslint/no-lone-blocks): report redundant blocks in function bodies (#29043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_cfg/src/builder/context.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_lone_blocks.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                .find(|it| it.label.is_none() && it.flags.contains(flag))
+                if parent.directives.is_empty() && parent.statements.len() == 1 =>
+        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) | AstKind::FunctionBody(_) => {
+        AstKind::BlockStatement(_)
+        | AstKind::StaticBlock(_)
+        | AstKind::Program(_)
+        | AstKind::FunctionBody(_) => true,
+        "function example() { before(); { let value = 1; consume(value); } }",
+        "function example() { { const value = 1; consume(value); } after(); }",
+        "function example() { before(); { class Local {} consume(Local); } }",
+        "function example() { before(); { function local() {} local(); } }",
+        "function example() { before(); { using value = resource(); consume(value); } }",
+        "async function example() { before(); { await using value = resource(); consume(value); } }",
+        "function example() { if (condition) { notify(); } }",
+        "function example() { label: { notify(); } }",
+        r#"function example() { "use strict"; { let value = 1; consume(value); } }"#,
+        "export function example() { before(); { notify(); } }",
+        "function example() { { notify(); } after(); }",
+        "function example() { before(); { var va
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                .find(|it| it.flags.contains(flag))
+                if parent.statements.len() == 1 && stmt.body.len() == 1 =>
+        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) => {
+        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) | AstKind::Program(_) => true,
+        "function test() { { console.log(6); console.log(6) } }",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b71234fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe66fa77` are properly handled with clean fallback behavior.

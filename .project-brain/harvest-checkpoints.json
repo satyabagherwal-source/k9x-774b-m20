@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T21:24:47.847Z",
+  "last_updated": "2026-11-08T21:33:35.898Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1085,14 +1085,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-whisper-large-v3",
-      "content_hash": "322d92af2dedfdd448b30161abb59ae821c1f81e1ff1da7a53c426eb2562f6cf",
-      "verified_at": "2026-11-05T04:36:02.740Z",
+      "content_hash": "b072865280454e73257e568cd62e4cf2097f36bf8463fd4ba4d2e032452cf655",
+      "verified_at": "2026-11-08T21:33:21.888Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T04:36:02.740Z"
+      "last_updated": "2026-11-08T21:33:21.888Z"
     },
     "black-forest-labs/FLUX.1-schnell": {
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "8900871c0b0703e76dd9571b969b3652067820ae813ac303ae42a54b03c66df0",
-      "verified_at": "2026-11-07T20:49:10.192Z",
+      "content_hash": "dc3fa3c3faa11c8f749c0a57ca245e6cd395f5c3f2bf94cae854b39bbc47f466",
+      "verified_at": "2026-11-08T21:33:33.601Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:49:10.192Z"
+      "last_updated": "2026-11-08T21:33:33.601Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "02acac14a4e4b521ed9884fb2237410b8e522451ed2037d7e36ff2f308f7dd08",
-      "verified_at": "2026-11-08T00:41:52.814Z",
+      "content_hash": "03a557d8da695d666ed9ca566f666f4c4d76c35e1fc5288a088aceb9106c7e99",
+      "verified_at": "2026-11-08T21:33:35.897Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:41:52.814Z"
+      "last_updated": "2026-11-08T21:33:35.897Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "a26c5e6bd6ce03563fda63670fd04c342d223d8da6b49a68e63fdf70eeeaba42",
-      "verified_at": "2026-11-07T20:49:00.567Z",
+      "content_hash": "7f61a00fe4fb591cc7f8061e4f4fe8c5fa23777939d6cd83a4468ca08c3d3e5f",
+      "verified_at": "2026-11-08T21:33:25.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:49:00.567Z"
+      "last_updated": "2026-11-08T21:33:25.194Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

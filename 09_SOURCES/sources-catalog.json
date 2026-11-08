@@ -845,8 +845,8 @@
     "sourceUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceVersion": "hf-openai-whisper-large-v3",
     "license": "Open-Source",
-    "contentHash": "322d92af2dedfdd448b30161abb59ae821c1f81e1ff1da7a53c426eb2562f6cf",
-    "lastHarvestedAt": "2026-11-05T04:36:02.731Z",
+    "contentHash": "b072865280454e73257e568cd62e4cf2097f36bf8463fd4ba4d2e032452cf655",
+    "lastHarvestedAt": "2026-11-08T21:33:21.881Z",
     "learningId": "learn-huggingface-openai-whisper-large-v3"
   },
   "hf-black-forest-labs-flux.1-schnell": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "c9f3057f",
+    "sourceVersion": "0186d63c",
     "license": "NOASSERTION",
-    "contentHash": "8900871c0b0703e76dd9571b969b3652067820ae813ac303ae42a54b03c66df0",
-    "lastHarvestedAt": "2026-11-07T20:49:10.180Z",
+    "contentHash": "dc3fa3c3faa11c8f749c0a57ca245e6cd395f5c3f2bf94cae854b39bbc47f466",
+    "lastHarvestedAt": "2026-11-08T21:33:33.595Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "df51ed41",
+    "sourceVersion": "9fff58aa",
     "license": "NOASSERTION",
-    "contentHash": "02acac14a4e4b521ed9884fb2237410b8e522451ed2037d7e36ff2f308f7dd08",
-    "lastHarvestedAt": "2026-11-08T00:41:52.804Z",
+    "contentHash": "03a557d8da695d666ed9ca566f666f4c4d76c35e1fc5288a088aceb9106c7e99",
+    "lastHarvestedAt": "2026-11-08T21:33:35.891Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "43c52739",
+    "sourceVersion": "a74b7cdb",
     "license": "MIT",
-    "contentHash": "a26c5e6bd6ce03563fda63670fd04c342d223d8da6b49a68e63fdf70eeeaba42",
-    "lastHarvestedAt": "2026-11-07T20:49:00.561Z",
+    "contentHash": "7f61a00fe4fb591cc7f8061e4f4fe8c5fa23777939d6cd83a4468ca08c3d3e5f",
+    "lastHarvestedAt": "2026-11-08T21:33:25.187Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

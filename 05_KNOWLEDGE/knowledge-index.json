@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T21:24:47.648Z",
+  "last_updated": "2026-11-08T21:33:35.775Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15268,8 +15268,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "c9f3057f",
-      "content_hash": "8900871c0b0703e76dd9571b969b3652067820ae813ac303ae42a54b03c66df0",
+      "source_version": "0186d63c",
+      "content_hash": "dc3fa3c3faa11c8f749c0a57ca245e6cd395f5c3f2bf94cae854b39bbc47f466",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15301,6 +15301,11 @@
         {
           "number": null,
           "title": "transport): hold the bandwidth limit on short-RTT QUIC paths (#6126)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "config): bootstrap from compiled-in gateways when the index is down (#6146)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15519,7 +15524,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:49:10.101Z",
+      "verified_at": "2026-11-08T21:33:33.515Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29780,7 +29785,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/whisper-large-v3",
       "source_version": "hf-openai-whisper-large-v3",
-      "content_hash": "322d92af2dedfdd448b30161abb59ae821c1f81e1ff1da7a53c426eb2562f6cf",
+      "content_hash": "b072865280454e73257e568cd62e4cf2097f36bf8463fd4ba4d2e032452cf655",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "promoted_rules": [],
@@ -29802,7 +29807,7 @@
         "learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw",
         "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq"
       ],
-      "verified_at": "2026-11-05T04:36:02.602Z",
+      "verified_at": "2026-11-08T21:33:21.793Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49697,8 +49702,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "43c52739",
-      "content_hash": "a26c5e6bd6ce03563fda63670fd04c342d223d8da6b49a68e63fdf70eeeaba42",
+      "source_version": "a74b7cdb",
+      "content_hash": "7f61a00fe4fb591cc7f8061e4f4fe8c5fa23777939d6cd83a4468ca08c3d3e5f",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -49710,6 +49715,11 @@
         {
           "number": null,
           "title": "cfg): skip labeled contexts for unlabeled jumps (#29001)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "linter/eslint/no-lone-blocks): report redundant blocks in function bodies (#2904",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49778,7 +49788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:49:00.485Z",
+      "verified_at": "2026-11-08T21:33:25.105Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53305,14 +53315,19 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "df51ed41",
-      "content_hash": "02acac14a4e4b521ed9884fb2237410b8e522451ed2037d7e36ff2f308f7dd08",
+      "source_version": "9fff58aa",
+      "content_hash": "03a557d8da695d666ed9ca566f666f4c4d76c35e1fc5288a088aceb9106c7e99",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "[MOD-20101] Add the query memory checkpoint helper (#12100)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[MOD-19959] Fix memory leak when a JSON multi-value doc fails to index (#11927)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53391,7 +53406,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:41:52.618Z",
+      "verified_at": "2026-11-08T21:33:35.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

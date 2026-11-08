@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `df51ed41`  
+> **Source Version**: `9fff58aa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:41:52.429Z  
+> **Timestamp**: 2026-11-08T21:33:34.657Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:41:51.414Z  
+> **Harvest Timestamp**: 2026-11-08T21:33:34.652Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1626,370 +1626,282 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df51ed41` (2026-11-06)
-**Commit Message**: [MOD-17995] Type the non-null pointer contract in the pure Rust crates (#11067)
+### Incident Patch 1: `10f5d630` (2026-11-08)
+**Commit Message**: [MOD-19959] Fix memory leak when a JSON multi-value doc fails to index (#11927)
 
-* Take NonNull<RedisModuleCtx> in pure Rust crates
+* Add flow tests for JSON multi-value INDEXEMPTY and INDEXMISSING
 
-The module context is never nullable at these call sites, so make the
-signatures say so: `redis_reply::Replier`, `numeric_range_tree::debug`,
-and `redis_json_api` now take `NonNull<RedisModuleCtx>`, and the FFI
-entry points that feed them do the null check at the boundary.
+* Assert expected indexing failures in JSON multi-value tests
 
-`NumericRangeTree_Debug*` previously only asserted non-null in debug
-builds; the check is now unconditional, replacing what was undefined
-behaviour in release builds.
+A doc that fails to index looks the same as a doc that does not match,
+so the negative cases could pass for the wrong reason. Assert
+hash_indexing_failures per case, with the failing docs declared next to
+the test docs.
 
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* Take NonNull<ForkGC> in fork_gc
+* Check which JSON multi-value docs fail to index
 
-`ForkGC::from_ptr_mut` immediately produces a reference, so the pointer
-was never allowed to be null. The FFI entry points do the null check.
+Asserting only the failure count lets one shape start failing while
+another starts indexing without the test noticing. Check the failure
+counter after each insert instead, against the docs declared as failing.
 
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* Take NonNull<ReducerOptions> in reducers
+* Fix leak of multi-value JSON field when sort key build fails
 
-`ReducerOptions::from_raw_mut` documents its pointer as non-null, so it
-now says so in the type; the `Option::unwrap` that re-checked it at
-runtime goes away with the raw pointer.
+For a SORTABLE JSON field, a multi-value array is stored in the doc
+field before its sort key is built. If building the key fails (e.g. `[]`
+on `$.f`), the doc is freed, but ClearOwnedField only frees the array
+when `indexAs` is set, which preprocessing does later. Set `indexAs` at
+load time so the failed doc cleans up its array.
 
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
+C
 
-* Take NonNull<Reducer> in reducers
-
-`Reducer::from_raw` documents its 
-
-**File**: `src/redisearch_rs/Cargo.lock` (modified, +0/-1)
+**File**: `src/document_basic.c` (modified, +3/-0)
 ```diff
-@@ -2281,7 +2281,6 @@ dependencies = [
-  "libc",
-  "min-max-heap",
-  "priority-queue",
-- "query_error",
-  "redis_mock",
-  "redisearch_rs",
-  "reducers",
+@@ -313,6 +313,9 @@ int Document_LoadSchemaFieldJson(Document *doc, RedisSearchCtx *sctx, RedisModul
+ 
+     size_t oix = doc->numFields++;
+     doc->fields[oix].docFieldName = HiddenString_Duplicate(field->fieldName);
++    // Set before loading, not left to preprocessing: if the load fails after storing a
++    // multi-value array, `ClearOwnedField` only frees it when `indexAs` is set.
++    doc->fields[oix].indexAs = field->types;
+ 
+     // on crdt the return value might be the underline value, we must copy it!!!
+     // TODO: change `fs->text` to support hash or json not RedisModuleString
 ```
 
-**File**: `src/redisearch_rs/c_entrypoint/index_gc_ffi/src/fork.rs` (modified, +4/-4)
+**File**: `tests/pytests/test_empty.py` (modified, +64/-1)
 ```diff
-@@ -10,14 +10,14 @@
- //! C ABI entrypoints for the Fork GC child and parent orchestration.
- 
- use index_gc::{
--    DocExistence, ForkPipe, GcError, HandleOutcome,
-+    DocExistence, GcError, HandleOutcome,
-     fork::cycle::{collect_scanners, handle_scanners},
- };
- use index_spec::IndexSpecReadGuard;
- use tracing::Level;
- use tracing_log_error::log_error;
- 
--use crate::ForkGCError;
-+use crate::{ForkGCError, util::borrow_fork_pipe};
- 
- /// Scan every Fork GC index kind and send its deltas to the parent process.
- ///
-@@ -33,7 +33,7 @@ use crate::ForkGCError;
- #[unsafe(no_mangle)]
- pub unsafe extern "C" fn ForkGC_childScanIndexes(gc: *mut ffi::IndexGC, spec: *mut ffi::IndexSpec) {
-     // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkPipe::from_ptr_mut(gc) };
-+    let fgc = unsafe { borrow_fork_pipe(gc) };
-     // SAFETY: caller guarantees (2).
-     let spec = unsafe { &*spec };
-     // SAFETY: caller guarantees (3). We don't actually hold a read lock, but when the Fork GC code
-@@ -55,7 +55,7 @@ pub unsafe extern "C" fn ForkGC_childScanIndexes(gc: *mut ffi::IndexGC, spec: *m
- #[unsafe(no_mangle)]
- pub unsafe extern "C" fn ForkGC_parentHandleFromChild(gc: *mut ffi::IndexGC) -> ForkGCError {
-     // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkPipe::from_ptr_mut(gc) };
-+    let fgc = unsafe { borrow_fork_pipe(gc) };
- 
-     match fgc.with_read_ahead(handle_scanners) {
-         Ok(HandleOutcome::Collected) => ForkGCError::Collected,
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/index_gc_ffi/src/lib.rs` (modified, +9/-7)
-```diff
-@@ -20,7 +20,7 @@ use std::{
-     io::{Read, Write},
- };
- 
--use index_gc::{ForkPipe, Frame, fork::io_result_ext::IoResultExt};
-+use index_gc::{Frame, fork::io_result_ext::IoResultExt};
- use nul_terminated_bytes::NulTerminatedBytes;
- 
- use tracing::Level;
-@@ -29,6 +29,8 @@ use tracing_log_error::log_error;
- mod fork;
- mod util;
- 
-+use util::borrow_fork_pipe;
+@@ -99,13 +99,13 @@ def EmptyTagJSONTest(env, idx, dialect):
+     }
+     js = json.dumps(j, separators=(',', ':'))
+     conn.execute_command('JSON.SET', 'j', '$', js)
+-    res = conn.execute_command('FT.SEARCH', idx, '@t:{""}')
+     # add a document where all values are non-empty
+     k = {
+         't': ['a', 'b', 'c']
+     }
+     ks = json.dumps(k, separators=(',', ':'))
+     conn.execute_command('JSON.SET', 'k', '$', ks)
++    res = conn.execute_command('FT.SEARCH', idx, '@t:{""}')
+     if dialect >= 3:
+         js = json.dumps([j], separators=(',', ':'))
+     expected = [1, 'j', ['$', js]]
+@@ -1469,3 +1469,66 @@ def testemptyfuzzy():
+         res = env.cmd('FT.SEARCH', 'idx', s)
+         expected = [1, 'h2', ['t', 'sr']]
+         env.assertEqual(res, expected)
 +
- /// Status code returned by Fork GC parent-side pipe-receive operations.
- #[cheadergen::config(export)]
- #[repr(C)]
-@@ -67,7 +69,7 @@ pub unsafe extern "C" fn ForkGC_sendFixed(fgc: *mut ffi::IndexGC, buff: *const c
-     debug_assert!(len > 0, "buffer length cannot be 0");
- 
-     // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
-+    let fgc = unsafe { borrow_fork_pipe(fgc) };
-     // SAFETY: caller guarantees (2).
-     let slice = unsafe { std::slice::from_raw_parts(buff.cast::<u8>(), len) };
- 
-@@ -94,7 +96,7 @@ pub unsafe extern "C" fn ForkGC_sendBuffer(
-     len: usize,
- ) {
-     // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
-+    let fgc = unsafe { borrow_fork_pipe(fgc) };
- 
-     let slice = if len > 0 {
-         // SAFETY: caller guarantees (2).
-@@ -121,7 +123,7 @@ pub unsafe extern "C" fn ForkGC_sendBuffer(
- #[unsafe(no_mangle)]
- pub unsafe extern "C" fn ForkGC_sendTerminator(fgc: *mut ffi::IndexGC) {
-     // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
-+    let fgc = unsafe { borrow_fork_pipe(fgc) };
- 
-     Frame::Terminator.encode(&mut fgc.writer()).unwrap_or_exit();
- }
-@@ -144,7 +146,7 @@ pub unsafe extern "C" fn ForkGC_recvFixed(
-     len: usize,
- ) -> c_int {
-     // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
-+    let fgc = unsafe { borrow_fork_pipe(fgc) };
-     // SAFETY: caller guarantees (2).
-     let slice = unsafe { std::slice::from_raw_parts_mut(buf.cast::<u8>(), len) };
- 
-@@ -184,7 +186,7 @@ pub unsafe extern "C" fn ForkGC_recvBuffer(
-     len: *mut usize,
- ) -> c_int {
-     // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
-+    let fgc = unsafe { borrow_fork_pipe(fgc) };
- 
-     let frame = match Frame::decode_nul_terminated(&mut fgc.reader()) {
-         Ok(frame) => frame,
-@@ -227,7 +229,7 @@ pub unsafe extern "C" fn recvFieldHeader(
-     id_ptr: *mut u64,
- ) -> ForkGCError {
-     // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
-+    let fgc = unsafe { borrow_fork_pipe(fgc) };
-     let mut reader = fgc.reader();
- 
-     let frame = match Frame::decode_nul_terminated(&mut reader) {
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/index_gc_ffi/src/util.rs` (modified, +21/-2)
-```diff
-@@ -7,11 +7,30 @@
-  * GNU Affero General Public License v3 (AGPLv3).
- */
- 
--use std::{ffi::c_void, ptr};
-+use std::{ffi::c_void, ptr, ptr::NonNull};
- 
--use index_gc::Frame;
-+use index_gc::{ForkPipe, Frame};
- use nul_terminated_bytes::NulTerminatedBytes;
- 
-+/// Borrow the [`ForkPipe`] behind a pointer received from C.
-+///
-+/// A null `fgc` fails a debug assertion that reports the calling entrypoint;
-+/// release builds do not check.
-+///
-+/// # Safety
-+///
-+/// 1. `fgc` must point to a valid, initialised [`ffi::IndexGC`].
-+/// 2. For the chosen lifetime `'a`, no other reference to the same struct may
-+///    exist.
-+#[track_caller]
-+pub(crate) unsafe fn borrow_fork_pipe<'a>(fgc: *mut ffi::IndexGC) -> &'a mut ForkPipe {
-+    debug_assert!(!fgc.is_null(), "`fgc` must not be null");
-+    // SAFETY: caller guarantees (1), which implies `fgc` is non-null.
-+    let fgc = unsafe { NonNull::new_unchecked(fgc) };
-+    // SAFETY: caller guarantees (1) and (2).
-+    unsafe { ForkPipe::from_ptr_mut(fgc) }
++# JSON shapes a multi-value field can take, by key suffix.
++JSON_MULTI_VALUE_EMPTY_DOCS = {
++    'null': {'f': None},
++    'empty_str': {'f': ''},
++    'empty_arr': {'f': []},
++    'all_nulls': {'f': [None, None]},
++    'one_empty': {'f': ['']},
++    'all_empty': {'f': ['', '']},
++    'null_and_empty': {'f': [None, '']},
++    'mixed': {'f': ['foo', '']},
++    'non_empty': {'f': ['foo', 'bar']},
 +}
 +
- /// Consume the frame, producing the `(buf, len)` pair that the C
- /// `ForkGC_recvBuffer` and `recvFieldHeader` API exposes through its
- /// out-parameters.
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/iterators_ffi/src/profile_print.rs` (modified, +3/-0)
-```diff
-@@ -114,6 +114,9 @@ pub unsafe extern "C" fn Profile_PrintIterators(
-         "Profile_PrintIterators expects a profile-wrapped iterator tree",
-     );
- 
-+    debug_assert!(!ctx.is_null(), "`ctx` must not be null");
-+    // SAFETY: precondition 1, which implies `ctx` is non-null.
-+    let ctx = unsafe { NonNull::new_unchecked(ctx) };
-     // SAFETY: precondition 1.
-     let mut replier = unsafe { Replier::new(ctx) };
-     let mut profile_ctx = ProfilePrintCtx::new(limited, print_profile_clock);
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/numeric_range_tree_ffi/src/debug.rs` (modified, +8/-0)
-```diff
-@@ -14,6 +14,8 @@
- //! - DUMP_NUMIDX: Index entries dump
- //! - DUMP_NUMIDXTREE: Tree structure dump
- 
-+use std::ptr::NonNull;
++# Path -> docs matching the empty value. `[]` and all-null arrays index
++# nothing, so they never match. `$.f[*]` yields no results for a scalar `""`.
++JSON_MULTI_VALUE_EXPECTED_EMPTY = {
++    '$.f': {'empty_str', 'one_empty', 'all_empty', 'null_and_empty', 'mixed'},
++    '$.f[*]': {'one_empty', 'all_empty', 'null_and_empty', 'mixed'},
++}
 +
- use numeric_range_tree::NumericRangeTree;
- use redis_module::RedisModuleCtx;
- 
-@@ -32,6 +34,8 @@ pub unsafe extern "C" fn NumericRangeTree_DebugSummary(
-     t: *const NumericRangeTree,
- ) {
-     debug_assert!(!ctx.is_null(), "ctx cannot be NULL");
-+    // SAFETY: `ctx` is a valid Redis module context per the function docs, so non-null.
-+    let ctx = unsafe { NonNull::new_unchecked(ctx) };
-     // SAFETY: Caller ensures `t` is either NULL or a valid pointer.
-     let tree = unsafe { t.as_ref() };
-     // SAFETY: ctx is valid per function docs
-@@ -57,6 +61,8 @@ pub unsafe extern "C" fn NumericRangeTree_DebugDumpIndex(
-     with_headers: bool,
- ) {
-     debug_assert!(!ctx.is_null(), "ctx cannot be NULL");
-+    // SAFETY: `ctx` is a valid Redis module context per the function docs, so non-null.
-+    let ctx = unsafe { NonNull::new_unchecked(ctx) };
-     // SAFETY: Caller ensures `t` is either NULL or a valid pointer.
-     let tree = unsafe { t.as_ref() };
-     // SAFETY: ctx is valid per function docs
-@@ -82,6 +88,8 @@ pub unsafe extern "C" fn NumericRangeTree_DebugDumpTree(
-     minimal: bool,
- ) {
-     debug_assert!(!ctx.is_null(), "ctx cannot be NULL");
-+    // SAFETY: `ctx` is a valid Redis module context per the function docs, so non-null.
-+    let ctx = unsafe { NonNull::new_unchecked(ctx) };
-     // SAFETY: Caller ensures `t` is either NULL or a valid pointer.
-     let tree = unsafe { t.as_ref() };
-     // SAFETY: ctx is valid per function docs
++# (path, field type, SORTABLE) -> docs that fail to index; absent keys mean none.
++# SORTABLE on `$.f` builds its sort key from the array's first element, so `[]`
++# fails.
++JSON_MULTI_VALUE_INDEXING_FAILURES = {
++    ('$.f', 'TAG', True): {'empty_arr'},
++    ('$.f', 'TEXT', True): {'empty_arr'},
++}
++
++@skip(cluster=True, no_json=True)
++def testJsonMultiValueEmpty():
++    """Pins which JSON multi-value shapes INDEXEMPTY indexes as the empty value,
++    and that dropped nulls and empty strings leave the other values indexed, for
++    each path form, field type and SORTABLE (which builds a multi-value sort
++    key)."""
++
++    env = Env(moduleArgs='DEFAULT_DIALECT 2')
++    conn = getConnectionByEnv(env)
++
++    for path, expected_empty in JSON_MULTI_VALUE_EXPECTED_EMPTY.items():
++        for field_type, empty_query, value_query in (('TAG', '@f:{""}', '@f:{foo}'),
++                                                     ('TEXT', '@f:""', '@f:foo')):
++            for options in ([], ['SORTABLE']):
++                case = f'{path} {field_type} {options}'
++                env.expect('FT.CREATE', 'idx', 'ON', 'JSON', 'PREFIX', '1', 'doc:', 'SCHEMA',
++                           path, 'AS', 'f', field_type, 'INDEXEMPTY', *options).ok()
++                # A doc that fails to index also looks like a non-match, so check each insert.
++                failed = JSON_MULTI_VALUE_INDEXING_FAILURES.get(
++                    (path, field_type, bool(options)), set())
++                failures = 0
++                for suffix, doc in JSON_MULTI_VALUE_EMPTY_DOCS.items():
++                    conn.execute_command('JSON.SET', f'doc:{suffix}', '$', json.dumps(doc))
++                    total = index_info(env, 'idx')['hash_indexing_failures']
++                    env.assertEqual(total > failures, suffix in failed, message=f'{case} {suffix}')
++                    failures = total
++
++                for query, expected in ((empty_query, expected_empty),
++                                        (value_query, {'mixed', 'non_empty'})):
++                    res = env.cmd('FT.SEARCH', 'idx', query, 'NOCONTENT', 'LIMIT', '0', '100')
++                    env.assertEqual(res[0], len(expected), message=f'{case} {query}: {res}')
++                    env.assertEqual(set(res[1:]), {f'doc:{s}' for s in expected},
++                                    message=f'{case} {query}')
++                env.flush()
 ```
 
-**File**: `src/redisearch_rs/index_gc/src/fork/pipe.rs` (modified, +6/-5)
+**File**: `tests/pytests/test_json_error_handling.py` (modified, +40/-0)
 ```diff
-@@ -12,6 +12,7 @@ use std::{
-     marker::PhantomData,
-     mem::ManuallyDrop,
-     os::fd::FromRawFd,
-+    ptr::NonNull,
-     time::Duration,
- };
+@@ -108,3 +108,43 @@ def test_json_type_validation_errors(env):
+     env.assertIn('last indexing error key', error_dict)
+     env.assertEqual(error_dict['last indexing error key'], 'obj_val_error_doc')
  
-@@ -57,11 +58,11 @@ impl ForkPipe {
-     /// 1. `ptr` must point to a valid, initialised [`ffi::IndexGC`].
-     /// 2. For the chosen lifetime `'a`, no other reference to the same
-     ///    struct may exist.
--    pub unsafe fn from_ptr_mut<'a>(ptr: *mut ffi::IndexGC) -> &'a mut Self {
--        // SAFETY: `#[repr(transparent)]` guarantees `*mut ffi::IndexGC` and
--        // `*mut ForkPipe` have identical layout. Validity and aliasing are
--        // the caller's responsibility per (1) and (2).
--        unsafe { &mut *ptr.cast::<ForkPipe>() }
-+    pub const unsafe fn from_ptr_mut<'a>(ptr: NonNull<ffi::IndexGC>) -> &'a mut Self {
-+        // SAFETY: `#[repr(transparent)]` guarantees `ffi::IndexGC` and
-+        // `ForkPipe` have identical layout. Validity and aliasing are the
-+        // caller's responsibility per (1) and (2).
-+        unsafe { ptr.cast::<ForkPipe>().as_mut() }
-     }
- 
-     /// Return a writable handle to the GC pipe.
++
++
++@skip(no_json=True, cluster=True)
++def test_populated_array_freed_when_later_field_fails(env):
++    """A populated multi-value field loads, then a later schema field fails, so
++    the document is discarded. The stored array, and for SORTABLE the multi-value
++    sorting value built at load time, must be freed: a leak is only reported
++    under the sanitizer job."""
++
++    conn = getConnectionByEnv(env)
++    # (field, type, array, query matching the array)
++    arrays = [
++        ('tags', 'TAG', '["foo","bar"]', '@tags:{foo}'),
++        ('nums', 'NUMERIC', '[1,2,3]', '@nums:[1 3]'),
++    ]
++    cases = [(name, ftype, arr, query, path, sortable)
++             for name, ftype, arr, query in arrays
++             for path in (f'$.{name}', f'$.{name}[*]')
++             for sortable in ([], ['SORTABLE'])]
++
++    for name, ftype, arr, query, path, sortable in cases:
++        msg = f'{path} {ftype} {" ".join(sortable)}'
++        # Fields load in schema order: the array field must precede `n`.
++        env.expect('FT.CREATE', 'idx', 'ON', 'JSON', 'PREFIX', '1', 'doc:',
++                   'SCHEMA', path, 'AS', name, ftype, *sortable,
++                   '$.n', 'AS', 'n', 'NUMERIC').ok()
++
++        # Control: the same array indexes when `n` is valid.
++        conn.execute_command('JSON.SET', 'doc:ok', '$', f'{{"{name}": {arr}, "n": 1}}')
++        env.expect('FT.SEARCH', 'idx', query, 'NOCONTENT').equal([1, 'doc:ok'], message=msg)
++
++        conn.execute_command('JSON.SET', 'doc:bad', '$', f'{{"{name}": {arr}, "n": "invalid"}}')
++        info = index_info(env, 'idx')
++        env.assertEqual(info['hash_indexing_failures'], 1, message=msg)
++        errors = to_dict(info['Index Errors'])
++        env.assertEqual(errors['last indexing error key'], 'doc:bad', message=msg)
++        env.assertContains('String type can represent only', errors['last indexing error'],
++                           message=msg)
++        env.expect('FT.SEARCH', 'idx', query, 'NOCONTENT').equal([1, 'doc:ok'], message=msg)
++        env.flush()
 ```
 
-**File**: `src/redisearch_rs/index_gc/tests/pipe.rs` (modified, +8/-7)
+**File**: `tests/pytests/test_missing.py` (modified, +81/-0)
 ```diff
-@@ -17,6 +17,7 @@ use std::{
-     io::{self, Read, Write},
-     mem,
-     os::fd::AsRawFd,
-+    ptr::NonNull,
-     time::Duration,
- };
- 
-@@ -45,7 +46,7 @@ fn make_fork_pipe() -> (ffi::IndexGC, io::PipeReader, io::PipeWriter) {
- fn roundtrip_through_fork_pipe() {
-     let (mut raw, _pipe_reader, _pipe_writer) = make_fork_pipe();
-     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
--    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
-+    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
- 
-     fgc.writer().write_all(b"hello").unwrap();
- 
-@@ -58,7 +59,7 @@ fn roundtrip_through_fork_pipe() {
- fn times_out_when_no_data_available() {
-     let (mut raw, _pipe_reader, _pipe_writer) = make_fork_pipe();
-     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
--    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
-+    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
- 
-     let mut buf = [0u8; 5];
-     let err = fgc
-@@ -78,7 +79,7 @@ fn read_ahead_fetches_many_messages_in_one_read() {
-     const MESSAGES: u32 = 100;
-     let (mut raw, pipe_reader, _pipe_writer) = make_fork_pipe();
-     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
--    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
-+    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
-     for i in 0..MESSAGES {
-         serialize(&mut fgc.writer(), i).unwrap();
-     }
-@@ -101,7 +102,7 @@ fn read_ahead_fetches_many_messages_in_one_read() {
- fn read_ahead_is_uninstalled_when_the_closure_unwinds() {
-     let (mut raw, _pipe_reader, _pipe_writer) = make_fork_pipe();
-     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
--    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
-+    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
- 
-     let unwound = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-         fgc.with_read_ahead(|_| panic!("the closure unwinds"))
-@@ -117,7 +118,7 @@ fn read_ahead_is_uninstalled_when_the_closure_unwinds() {
- fn a_nested_read_ahead_reuses_the_outer_buffer() {
-     let (mut raw, _pipe_reader, _pipe_writer) = make_fork_pipe();
-     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
--    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
-+    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
-     serialize(&mut fgc.writer(), 1u32).unwrap();
-     serialize(&mut fgc.writer(), 2u32).unwrap();
- 
-@@ -147,7 +148,7 @@ fn read_ahead_decodes_messages_larger_than_its_buffer() {
-         serialize(&mut pipe_writer, 2u8).unwrap();
-     });
-     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
--    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
-+    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
- 
-     fgc.with_read_ahead(|fgc| {
-         assert_eq!(deserialize::<u8>(&mut fgc.reader(), "before").unwrap(), 1);
-@@ -164,7 +165,7 @@ fn read_ahead_decodes_messages_larger_than_its_buffer() {
- fn read_ahead_reports_end_of_stream_after_the_buffered_bytes() {
-     let (mut raw, _pipe_reader, pipe_writer) = make_fork_pipe();
-     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
--    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
-+    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
-     let mut pipe_writer = pipe_writer;
-     pipe_writer.write_all(b"tail").unwrap();
-     // The ForkPipe borrows this fd; dropping its owner closes the write end.
+@@ -773,3 +773,84 @@ def test_alter_add_sortable_noindex_field_indexes_existing_docs(env):
+     env.assertEqual(int(index_info(env, 'idx')['num_docs']), 2)
+     env.expect('FT.SEARCH', 'idx', '*', 'SORTBY', 'sortable_noindex', 'DESC', 'LIMIT', '0', '1',
+                'RETURN', '1', 'sortable_noindex').equal([2, 'doc:2', ['sortable_noindex', 'x']])
++
++# JSON shapes a multi-value field can take, by key suffix.
++JSON_MULTI_VALUE_MISSING_DOCS = {
++    'missing': {'other': 'x'},
++    'null': {'f': None},
++    'empty_str': {'f': ''},
++    'empty_arr': {'f': []},
++    'all_nulls': {'f': [None, None]},
++    'non_empty': {'f': ['foo', 'bar']},
++}
++
++# Path -> docs matching `ismissing`. `$.f` yields one result even for `null`
++# and `[]`, so the field counts as present. `$.f[*]` yields zero results for
++# scalars and `[]`, which makes the field missing.
++JSON_MULTI_VALUE_EXPECTED_MISSING = {
++    '$.f': {'missing'},
++    '$.f[*]': {'missing', 'null', 'empty_str', 'empty_arr'},
++}
++
++# (path, field type, SORTABLE) -> docs that fail to index; absent keys mean none.
++# NUMERIC rejects the string values. SORTABLE on `$.f` builds its sort key from
++# the array's first element, so `[]` fails.
++JSON_MULTI_VALUE_INDEXING_FAILURES = {
++    ('$.f', 'TAG', True): {'empty_arr'},
++    ('$.f', 'TEXT', True): {'empty_arr'},
++    ('$.f', 'NUMERIC', False): {'empty_str', 'non_empty'},
++    ('$.f', 'NUMERIC', True): {'empty_str', 'non_empty', 'empty_arr'},
++    ('$.f[*]', 'NUMERIC', False): {'non_empty'},
++    ('$.f[*]', 'NUMERIC', True): {'non_empty'},
++}
++
++@skip(cluster=True, no_json=True)
++def testJsonMultiValueMissing():
++    """Pins which JSON multi-value shapes (`null`, `""`, `[]`, all-null arrays)
++    INDEXMISSING treats as missing, for each path form, field type and SORTABLE
++    (which builds a multi-value sort key)."""
++
++    env = Env(moduleArgs='DEFAULT_DIALECT 2')
++    conn = getConnectionByEnv(env)
++
++    for path, expected in JSON_MULTI_VALUE_EXPECTED_MISSING.items():
++        for field_type in ('TAG', 'TEXT', 'NUMERIC'):
++            for options in ([], ['SORTABLE']):
++                case = f'{path} {field_type} {options}'
++                env.expect('FT.CREATE', 'idx', 'ON', 'JSON', 'PREFIX', '1', 'doc:', 'SCHEMA',
++                           path, 'AS', 'f', field_type, 'INDEXMISSING', *options).ok()
++                # A doc that fails to index also looks absent, so check each insert.
++                failed = JSON_MULTI_VALUE_INDEXING_FAILURES.get(
++                    (path, field_type, bool(options)), set())
++                failures = 0
++                for suffix, doc in JSON_MULTI_VALUE_MISSING_DOCS.items():
++                    conn.execute_command('JSON.SET', f'doc:{suffix}', '$', json.dumps(doc))
++                    total = index_info(env, 'idx')['hash_indexing_failures']
++                    env.assertEqual(total > failures, suffix in failed, message=f'{case} {suffix}')
++                    failures = total
++
++                res = env.cmd('FT.SEARCH', 'idx', 'ismissing(@f)', 'NOCONTENT', 'LIMIT', '0', '100')
++                env.assertEqual(res[0], len(expected), message=f'{case}: {res}')
++                env.assertEqual(set(res[1:]), {f'doc:{s}' for s in expected}, message=case)
++                env.flush()
++
++@skip(cluster=True, no_json=True)
++def testJsonEmptyArraySortableIndexingFailure():
++    """SORTABLE on a `$.f` path builds its sort key from the array's first
++    element, so `[]` fails to index. A failed document is not reported as
++    missing either."""
++
++    env = Env(moduleArgs='DEFAULT_DIALECT 2')
++    conn = getConnectionByEnv(env)
++
++    for field_type in ('TAG', 'TEXT'):
++        env.expect('FT.CREATE', 'idx', 'ON', 'JSON', 'PREFIX', '1', 'doc:', 'SCHEMA',
++                   '$.f', 'AS', 'f', field_type, 'INDEXMISSING', 'SORTABLE').ok()
++        conn.execute_command('JSON.SET', 'doc:empty_arr', '$', '{"f": []}')
++
++        info = index_info(env, 'idx')
++        env.assertEqual(info['hash_indexing_failures'], 1, message=field_type)
++        env.assertEqual(to_dict(info['Index Errors'])['last indexing error key'],
++                        'doc:empty_arr', message=field_type)
++        env.expect('FT.SEARCH', 'idx', 'ismissing(@f)', 'NOCONTENT').equal([0])
++        env.flush()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12206** (2026-11-05): [MOD-20165] Delete dead heap_doubles, circular_buffer and TagIndex_IterateValuesWithFilter (@Itzikvaknin)
-- **PR #12205** (2026-11-05): [MOD-20887] Test loading all fields of hash-template keys (@eyalrund)
-- **PR #12204** (2026-11-05): jj-split-changeset skill: roll back via the op log instead of duplicating (@gdesmott)
-- **PR #12202** (2026-11-05): [8.6-rse] Refactor FT.CREATE option parsing into a reusable function (@redisearch-backport-pull-request[bot])
-- **PR #12201** (2026-11-05): [8.8-rse] Refactor FT.CREATE option parsing into a reusable function (@redisearch-backport-pull-request[bot])
-- **PR #12200** (2026-11-04): [MOD-20869] Chore: use NonNull::from_ref in ThinVec constructor (@GuyAv46)
+- **PR #12232** (2026-11-08): [8.4] Refactor FT.CREATE option parsing into a reusable function (@redisearch-backport-pull-request[bot])
+- **PR #12230** (closed): [8.10-rse] [MOD-19005] Reduce aggregate shard traffic and expose Network profiling (@ofiryanai)
+- **PR #12229** (2026-11-08): [8.2] Retry Bullseye APT installs in CI (@oshadmi)
+- **PR #12228** (closed): [8.0] Retry Bullseye APT installs in CI (@oshadmi)
+- **PR #12227** (2026-11-08): [2.10] Retry Bullseye APT installs in CI (@oshadmi)
+- **PR #12226** (2026-11-08): [2.8] Retry Bullseye APT installs in CI (@oshadmi)
 
 ---
 
@@ -2003,3 +1915,36 @@ Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. [MOD-19959] Fix memory leak when a JSON multi-value doc fails to index (#11927)
+
+**RULE**:
+When implementing operations in `src/document_basic.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `10f5d630`: [MOD-19959] Fix memory leak when a JSON multi-value doc fails to index (#11927). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/document_basic.c`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    // Set before loading, not left to preprocessing: if the load fails after storing a
+    // multi-value array, `ClearOwnedField` only frees it when `indexAs` is set.
+    doc->fields[oix].indexAs = field->types;
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `10f5d630` are properly handled with clean fallback behavior.

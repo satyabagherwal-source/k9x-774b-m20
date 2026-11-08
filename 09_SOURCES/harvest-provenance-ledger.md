@@ -8405,3 +8405,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-08T21:24:41.180Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `274eaf91` | Multi-dimensional audit evidence | 2026-11-08T21:24:47.063Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `68eb8cc8` | Multi-dimensional audit evidence | 2026-11-08T21:24:47.840Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-08T21:33:21.881Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `a74b7cdb` | Multi-dimensional audit evidence | 2026-11-08T21:33:25.187Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0186d63c` | Multi-dimensional audit evidence | 2026-11-08T21:33:33.595Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `9fff58aa` | Multi-dimensional audit evidence | 2026-11-08T21:33:35.891Z |

@@ -8396,3 +8396,7 @@
 | `CYCLE-20261108-BTJT` | `2026-11-08T21:24:41.177Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 509, Rule 378, Rule null` | Yes (`ddb2d18d...`) |
 | `CYCLE-20261108-BY38` | `2026-11-08T21:24:47.060Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6ae481b2...`) |
 | `CYCLE-20261108-BYMS` | `2026-11-08T21:24:47.764Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bcd89c4e...`) |
+| `CYCLE-20261108-MZBQ` | `2026-11-08T21:33:21.878Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`b0728652...`) |
+| `CYCLE-20261108-N1VC` | `2026-11-08T21:33:25.176Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7f61a00f...`) |
+| `CYCLE-20261108-N8D4` | `2026-11-08T21:33:33.592Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dc3fa3c3...`) |
+| `CYCLE-20261108-NA4W` | `2026-11-08T21:33:35.888Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`03a557d8...`) |
