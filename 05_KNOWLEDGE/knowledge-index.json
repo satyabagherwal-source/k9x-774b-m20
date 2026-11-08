@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T18:48:44.521Z",
+  "last_updated": "2026-11-08T18:58:42.569Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24508,10 +24508,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "06d1128621a03a3a3225aad86ef42826c7f21f7656a6e0c198a54631b3844a78",
+      "content_hash": "56946dbb36db05c8aa9510825fb60076a49e0964d714486c2b03cbfbbab89601",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Speculative Decoding Multi-Token Prediction Head Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dual Importance Matrix (DI-MATRIX) Hessian Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Reasoning Chain Token Cap and Recursion Guard Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 820,
           "title": "Uncensored Model Safety Boundary",
@@ -24591,7 +24606,7 @@
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
       ],
-      "verified_at": "2026-11-05T02:40:23.864Z",
+      "verified_at": "2026-11-08T18:58:42.549Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

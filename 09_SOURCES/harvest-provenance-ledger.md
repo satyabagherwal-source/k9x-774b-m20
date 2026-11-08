@@ -8367,3 +8367,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-08T18:38:42.755Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `ac735a43` | Multi-dimensional audit evidence | 2026-11-08T18:46:05.838Z |
 | `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-08T18:48:44.617Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-08T18:58:42.682Z |

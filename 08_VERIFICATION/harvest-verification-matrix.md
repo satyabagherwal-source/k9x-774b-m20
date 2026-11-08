@@ -8358,3 +8358,4 @@
 | `CYCLE-20261108-EDKV` | `2026-11-08T18:38:42.751Z` | `PrunaAI/P-H3-Image-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`56e4fe3c...`) |
 | `CYCLE-20261108-NVGQ` | `2026-11-08T18:46:05.834Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`65d3c9c1...`) |
 | `CYCLE-20261108-R9Z9` | `2026-11-08T18:48:44.613Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`ef2904b3...`) |
+| `CYCLE-20261108-43G6` | `2026-11-08T18:58:42.678Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`56946dbb...`) |
