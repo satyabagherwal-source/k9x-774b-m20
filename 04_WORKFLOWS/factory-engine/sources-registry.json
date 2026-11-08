@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T01:25:35.137Z",
-    "lastVerified": "2026-11-08T01:25:35.137Z",
+    "lastChecked": "2026-11-08T01:36:05.104Z",
+    "lastVerified": "2026-11-08T01:36:05.104Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -154,8 +154,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T01:03:16.925Z",
-    "lastVerified": "2026-11-08T01:03:16.925Z",
+    "lastChecked": "2026-11-08T01:34:02.257Z",
+    "lastVerified": "2026-11-08T01:34:02.257Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1611,9 +1611,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-07T21:18:18.909Z",
+    "lastChecked": "2026-11-08T01:33:57.299Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-07T21:18:18.909Z"
+    "lastVerified": "2026-11-08T01:33:57.299Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -1812,12 +1812,12 @@
     "lastVerified": "2026-11-06T22:36:09.318Z"
   },
   "falkordb-falkordb": {
-    "name": "FalkorDB/FalkorDB",
+    "name": "FalkorDB",
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T22:16:00.000Z",
-    "lastVerified": "2026-11-05T22:16:00.000Z",
+    "lastChecked": "2026-11-08T01:33:47.319Z",
+    "lastVerified": "2026-11-08T01:33:47.319Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-falkordb-falkordb",
@@ -1826,7 +1826,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5d98077a"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
     "name": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -4289,8 +4290,8 @@
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T20:38:06.974Z",
-    "lastVerified": "2026-11-06T20:38:06.974Z",
+    "lastChecked": "2026-11-08T01:33:54.785Z",
+    "lastVerified": "2026-11-08T01:33:54.785Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -7909,12 +7910,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tickernelz-opencode-mem": {
-    "name": "tickernelz/opencode-mem",
+    "name": "opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-06T15:27:33.674Z",
-    "lastVerified": "2026-11-06T15:27:33.674Z",
+    "lastChecked": "2026-11-08T01:33:59.749Z",
+    "lastVerified": "2026-11-08T01:33:59.749Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
@@ -7923,7 +7924,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6c5828f3"
   },
   "str4d-rage": {
     "name": "rage",
@@ -8894,14 +8896,14 @@
     "officialUrl": "https://github.com/meshtastic/Meshtastic-Android",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-05T01:07:57.300Z",
-    "lastVerified": "2026-11-05T01:07:57.300Z",
+    "lastChecked": "2026-11-08T01:33:55.526Z",
+    "lastVerified": "2026-11-08T01:33:55.526Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "241ded5705ec728854c4f5a1233b2ccfdfce8ebefcde5e032ebcf685cfd66548",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "contentHash": "cd43034dd81d484ba6cae3cddead88a2dad9316941d06e66b4fb2415f5642530",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12717,9 +12719,9 @@
   "unjs-h3": {
     "name": "h3",
     "officialUrl": "https://github.com/unjs/h3",
-    "lastChecked": "2026-11-04T09:57:38.715Z",
+    "lastChecked": "2026-11-08T01:33:49.807Z",
     "revisionIdentifier": "f0e17808",
-    "lastVerified": "2026-11-04T09:57:38.715Z"
+    "lastVerified": "2026-11-08T01:33:49.807Z"
   },
   "unjs-ofetch": {
     "name": "ofetch",

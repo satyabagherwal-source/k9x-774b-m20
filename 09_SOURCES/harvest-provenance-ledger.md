@@ -8175,3 +8175,4 @@ Every entry in this ledger must capture:
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `bf7f6dc2` | Multi-dimensional audit evidence | 2026-11-08T01:17:54.950Z |
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `0317e652` | Multi-dimensional audit evidence | 2026-11-08T01:25:29.789Z |
 | `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `c6a8c5ae` | Multi-dimensional audit evidence | 2026-11-08T01:25:32.566Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `4b2503d2` | Multi-dimensional audit evidence | 2026-11-08T01:36:02.508Z |

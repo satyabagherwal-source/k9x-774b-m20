@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T01:25:32.467Z",
+  "last_updated": "2026-11-08T01:36:02.419Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41891,11 +41891,26 @@
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "9ea8d718",
-      "content_hash": "241ded5705ec728854c4f5a1233b2ccfdfce8ebefcde5e032ebcf685cfd66548",
+      "source_version": "4b2503d2",
+      "content_hash": "cd43034dd81d484ba6cae3cddead88a2dad9316941d06e66b4fb2415f5642530",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Jetpack Glance Isolated Preview Scope Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Rolling-Quota In-Process BLE Scan Throttling Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Metric Sentinel Zero vs Real Float Absence Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2517,
           "title": "node): remove every unheard node from the banner's Remove (#7667)",
@@ -41932,7 +41947,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:07:58.005Z",
+      "verified_at": "2026-11-08T01:36:02.396Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
