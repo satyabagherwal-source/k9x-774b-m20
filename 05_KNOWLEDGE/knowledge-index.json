@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T15:28:22.579Z",
+  "last_updated": "2026-11-08T15:35:13.561Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19501,10 +19501,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "07110e8adba56d4d8428f5d67fa48012b746a8bc71d24a2a5db0cfd5c1f59fbd",
+      "content_hash": "38d57757252cc27fd282f2868d6d5948efa0faddd285e3f4b09d991bef845451",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[Special Token Integrity Rule]",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "[Hybrid Attention Consistency Rule]",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 282,
           "title": "**Rule Title**: *Explicit Special‑Token Declaration*",
@@ -19630,6 +19640,11 @@
           "number": "EXISTING",
           "title": "Token ID Consistency Across Configurations",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": null,
+          "title": "[Full‑Attention Interval Safety Rule]",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1334,
@@ -19765,7 +19780,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-11-04T23:53:22.876Z",
+      "verified_at": "2026-11-08T15:35:13.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56264,8 +56279,8 @@
       "slug": "simonschubert-kai",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "f0c4ee48",
-      "content_hash": "1754b948dbc58a412ae5aba83ac5f97923a5e122a84e0f59f01a2a93c3dd9a91",
+      "source_version": "a055ad41",
+      "content_hash": "162b65de80f8dd90722497a08588329cddc607e2a0235990712091d211e1d2a7",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "promoted_rules": [
@@ -56285,7 +56300,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T09:57:46.305Z",
+      "verified_at": "2026-11-08T15:35:13.540Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127873,13 +127888,13 @@
       "rule_number": 3545,
       "title": "Upgrade dependencies",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "f0c4ee48",
+      "source_version": "a055ad41",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-05T09:57:46.305Z"
+      "verified_at": "2026-11-08T15:35:13.540Z"
     },
     "rule-3546": {
       "learning_id": "rule-3546",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T15:28:22.657Z",
+  "last_updated": "2026-11-08T15:35:13.665Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13011,14 +13011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-kai",
-      "content_hash": "1754b948dbc58a412ae5aba83ac5f97923a5e122a84e0f59f01a2a93c3dd9a91",
-      "verified_at": "2026-11-05T09:57:46.395Z",
+      "content_hash": "162b65de80f8dd90722497a08588329cddc607e2a0235990712091d211e1d2a7",
+      "verified_at": "2026-11-08T15:35:13.664Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T09:57:46.395Z"
+      "last_updated": "2026-11-08T15:35:13.664Z"
     },
     "a4csi/schema-org-validate": {
       "repository": "a4csi/schema-org-validate",
@@ -15636,14 +15636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-altworld-hemmingway-1",
-      "content_hash": "07110e8adba56d4d8428f5d67fa48012b746a8bc71d24a2a5db0cfd5c1f59fbd",
-      "verified_at": "2026-11-04T23:53:22.977Z",
+      "content_hash": "38d57757252cc27fd282f2868d6d5948efa0faddd285e3f4b09d991bef845451",
+      "verified_at": "2026-11-08T15:35:13.484Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T23:53:22.977Z"
+      "last_updated": "2026-11-08T15:35:13.484Z"
     },
     "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16": {
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",

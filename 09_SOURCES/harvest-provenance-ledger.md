@@ -8319,3 +8319,5 @@ Every entry in this ledger must capture:
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `7431c4b6` | Multi-dimensional audit evidence | 2026-11-08T15:28:19.352Z |
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `17efbb51` | Multi-dimensional audit evidence | 2026-11-08T15:28:21.280Z |
 | `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-08T15:28:22.644Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-08T15:35:13.464Z |
+| `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `a055ad41` | Multi-dimensional audit evidence | 2026-11-08T15:35:13.646Z |

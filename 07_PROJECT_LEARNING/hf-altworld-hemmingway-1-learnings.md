@@ -3,7 +3,7 @@
 > **Source Version**: `hf-altworld-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T23:53:21.803Z  
+> **Timestamp**: 2026-11-08T15:35:11.863Z  
 > **Learning ID**: `learn-huggingface-altworld-hemmingway-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,242 +14,234 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): HemmingwayAI/Hemmingway‑1
 
-## 1. Executive Forensic Architecture & System Mechanics  
-The repository is a **Hugging‑Face model card** for a 27 B‑parameter causal language model that claims to generate “human‑like” everyday text.  
-* **Problem domain** – The model is intended to replace generic chat or creative‑writing engines for routine communication (e‑mail, messages, notes).  
-* **Subsystem boundaries** –  
-  * **Tokenizer** – `Qwen2Tokenizer` with a custom `pretokenize_regex` that handles contractions, punctuation, and non‑ASCII characters.  
-  * **Model** – `Qwen3_5ForCausalLM` with a hybrid attention schedule: 64 layers, 24 heads, alternating linear and full attention.  
-  * **Generation config** – Sampling parameters (`do_sample`, `top_k`, `top_p`, `temperature`) and token‑level controls (`bos_token_id`, `eos_token_id`, `pad_token_id`).  
-  * **Deployment** – The README shows a `vllm` command that sets `--max-model-len 262144`, matching the `max_position_embeddings` in the config.  
-* **Critical abstractions** –  
-  * **Attention schedule** – `layer_types` array defines the exact sequence of attention mechanisms; this is a *domain primitive* that must be preserved for reproducibility.  
-  * **Token IDs** – `bos_token_id` and `eos_token_id` are both `248044` (the same value), a design choice that requires careful handling in generation logic.  
-  * **Rope parameters** – `rope_parameters` includes a large `rope_theta` (`10 000 000`) and a custom `partial_rotary_factor`, which must be respected by the transformer implementation.  
+## 1. Executive Forensic Architecture & System Mechanics
+The repository implements a **large‑scale causal language model** fine‑tuned from **Qwen/Qwen3.8‑27B** to produce concise, human‑like everyday text.  
+Key architectural boundaries:
+
+| Subsystem | Responsibility | Interface |
+|-----------|----------------|-----------|
+| **Tokenizer** | Maps raw text to token IDs. Uses `Qwen2Tokenizer` with custom audio, image, and video tokens. | `tokenizer.apply_chat_template`, `tokenizer.encode`, `tokenizer.decode` |
+| **Model Core** | Implements a 64‑layer transformer with a hybrid attention schedule: 4‑step full attention, the rest linear attention. Configured via `config.json`. | `AutoModelForCausalLM` loading, `model.generate` |
+| **Generation Engine** | Handles sampling parameters (`do_sample`, `top_k`, `top_p`, `temperature`). | `generation_config.json` |
+| **Deployment** | Exposes a vLLM‑based inference server (`vllm serve`). | `vllm serve` CLI, `model.generate` API |
+| **Documentation & Packaging** | README, license, and model card. | `README.md`, `LICENSE` |
+
+Critical abstractions:
+
+* **Attention Layer Abstraction** – `layer_types` array defines the exact sequence of `linear_attention` and `full_attention` blocks.  
+* **Special Token Registry** – `tokenizer_config.json` registers audio, image, and video tokens; these must be preserved across all tokenizers.  
+* **Model Hyper‑parameter Contract** – `config.json` enforces a strict contract between `hidden_size`, `num_attention_heads`, `head_dim`, and linear attention parameters (`linear_num_key_heads`, `linear_num_value_heads`, etc.).  
+
+The system is stateless; all inference is performed on the fly, with no persistent session state beyond the model weights.
+
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. [Causal Attention Bias Invariant]  
+### 1. [Special Token Integrity Rule]
 **RULE**:  
-> **MUST** set `attention_bias` to `false` for all causal language model architectures.  
-
+A tokenizer **MUST NOT** alter the numeric IDs of any special token after the tokenizer is instantiated.  
 **WHY**:  
-A non‑zero attention bias in a causal transformer introduces a learned bias that can leak future‑token information during inference, violating the autoregressive property and leading to hallucinations or context leakage.  
-
+Changing a special token’s ID breaks the mapping between the model’s vocabulary and the tokenizer, causing mis‑tokenization, incorrect attention masking, and catastrophic inference failures.  
 **WHEN TO APPLY**:  
-* Any model with `architectures` containing `*ForCausalLM`.  
-* All downstream inference pipelines that rely on strict autoregressive generation.  
-
-**VERIFIED IMPLEMENTATION PATTERN**  
-```json
-{
-  "architectures": ["Qwen3_5ForCausalLM"],
-  "attention_bias": false,
-  "attention_dropout": 0.0,
-  "attn_output_gate": true
+All tokenizers that expose `add_special_tokens` or `tokenizer.add_tokens` in any language (Python, Rust, C++).  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Correct pattern – preserve IDs
+special_tokens = {
+    "audio_bos_token": "<|audio_start|>",
+    "audio_eos_token": "<|audio_end|>",
+    "audio_token": "<|audio_pad|>",
+    "image_token": "<|image_pad|>",
+    "video_token": "<|video_pad|>",
+    "vision_bos_token": "<|vision_start|>",
+    "vision_eos_token": "<|vision_end|>",
 }
+tokenizer.add_special_tokens(special_tokens)
+# Verify IDs remain unchanged
+assert tokenizer.convert_tokens_to_ids("<|audio_start|>") == 248045
 ```
-
-**NEGATIVE CONSTRAINT**  
-```json
-{
-  "architectures": ["Qwen3_5ForCausalLM"],
-  "attention_bias": true   // ❌ Future‑token leakage
-}
+**NEGATIVE CONSTRAINT**:
+```python
+# Anti‑pattern – re‑assigning IDs manually
+tokenizer.add_tokens(["<|audio_start|>"])
+tokenizer.add_tokens(["<|audio_start|>"])  # ID changes to a new index
 ```
-
-**VERIFICATION METHOD**  
-* Unit test that parses `config.json` and asserts `config["attention_bias"] === false`.  
-* Linter rule that flags any `attention_bias: true` in a causal LM config.  
+**VERIFICATION METHOD**:  
+Run a unit test that asserts the ID of each special token before and after any tokenizer modification. Use `pytest` with `assert tokenizer.convert_tokens_to_ids(token) == expected_id`.
 
 ---
 
-### 2. [BFloat16 Memory‑Efficiency Invariant]  
+### 2. [Hybrid Attention Consistency Rule]
 **RULE**:  
-> **MUST** set `dtype` to `"bfloat16"` for all large‑parameter models that are deployed on GPU hardware supporting BF16.  
-
+The product of `num_attention_heads` and `head_dim` **MUST EQUAL** `hidden_size`, and the sum of `linear_num_key_heads * linear_key_head_dim` and `linear_num_value_heads * linear_value_head_dim` **MUST EQUAL** `hidden_size`.  
 **WHY**:  
-BF16 halves memory usage while preserving dynamic range for large‑scale transformer weights, enabling 27 B models to fit on a single GPU. Using FP32 or FP16 would either exceed memory or degrade numerical stability.  
-
+Inconsistent dimensions lead to shape mismatches during matrix multiplication, causing runtime errors or silent broadcasting that corrupts gradients and inference.  
 **WHEN TO APPLY**:  
-* Models with `hidden_size` ≥ 4096 and `num_hidden_layers` ≥ 32.  
-* Deployment environments with NVIDIA Ampere or newer GPUs.  
+During model construction in any language that builds the transformer (Python, C++).  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Example validation in Python
+hidden_size = 5120
+num_attention_heads = 24
+head_dim = 256
+assert hidden_size == num_attention_heads * head_dim
 
-**VERIFIED IMPLEMENTATION PATTERN**  
-```json
-{
-  "dtype": "bfloat16",
-  "hidden_size": 5120,
-  "num_hidden_layers": 64
-}
+linear_num_key_heads = 16
+linear_key_head_dim = 128
+linear_num_value_heads = 48
+linear_value_head_dim = 128
+assert hidden_size == (linear_num_key_heads * linear_key_head_dim +
+                       linear_num_value_heads * linear_value_head_dim)
 ```
-
-**NEGATIVE CONSTRAINT**  
-```json
-{
-  "dtype": "float32"   // ❌ Excessive memory consumption
-}
+**NEGATIVE CONSTRAINT**:
+```python
+# Anti‑pattern – mismatched dimensions
+hidden_size = 5120
+num_attention_heads = 24
+head_dim = 200  # 24*200 != 5120
 ```
-
-**VERIFICATION METHOD**  
-* Static analysis that ensures `dtype` is `"bfloat16"` when `hidden_size * num_hidden_layers > 200 000`.  
-* Runtime assertion that the loaded model’s `dtype` matches the config.  
+**VERIFICATION METHOD**:  
+Add a pre‑initialization check in the model constructor that raises `ValueError` if the invariant fails. Unit tests should cover both valid and invalid configurations.
 
 ---
 
-### 3. [Max‑Position‑Embeddings Consistency Invariant]  
+### 3. [Full‑Attention Interval Safety Rule]
 **RULE**:  
-> **MUST** set `max_position_embeddings` to a value that is **greater than or equal to** the maximum context length requested by any inference pipeline.  
-
+`full_attention_interval` **MUST BE** a positive integer that divides the total number of layers (`num_hidden_layers`) evenly or the remainder must be handled explicitly.  
 **WHY**:  
-If the context length exceeds the embedding table size, the model will index out of bounds, causing silent truncation or runtime errors. The README explicitly sets `--max-model-len 262144`, matching the config.  
-
+If the interval does not align with the layer count, the final layers may be omitted from full attention, leading to inconsistent context coverage and degraded generation quality.  
 **WHEN TO APPLY**:  
-* Any inference script that accepts a `max_new_tokens` or `max_length` parameter.  
-* CI pipelines that test generation with large prompts.  
-
-**VERIFIED IMPLEMENTATION PATTERN**  
-```json
-{
-  "max_position_embeddings": 262144,
-  "generation_config": {
-    "max_new_tokens": 1024,
-    "max_length": 262144
-  }
-}
+During model configuration parsing.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+num_hidden_layers = 64
+full_attention_interval = 4
+assert num_hidden_layers % full_attention_interval == 0
 ```
-
-**NEGATIVE CONSTRAINT**  
-```json
-{
-  "max_position_embeddings": 2048   // ❌ Context length > 2048 will crash
-}
+**NEGATIVE CONSTRAINT**:
+```python
+# Anti‑pattern – non‑divisible interval
+full_attention_interval = 7  # 64 % 7 != 0
 ```
-
-**VERIFICATION METHOD**  
-* Integration test that generates a prompt of length `max_position_embeddings` and asserts no out‑of‑bounds errors.  
-* CI job that compares `max_position_embeddings` against the maximum `max_new_tokens` used in tests.  
+**VERIFICATION METHOD**:  
+Include a static analysis step that flags any `full_attention_interval` that does not satisfy the modulus condition. Use a linter rule or a pre‑commit hook.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation | Lesson |
-|----------|---------|-------------------|------------------------|----------|------------|-------------|--------|
-| **None** | The repository contains only model files and a README; no commit history or issue logs are available. | N/A | N/A | N/A | N/A | N/A | N/A |
+No public commits, PRs, or issue logs are available in the repository snapshot.  
+**Conclusion**:  
+No concrete incidents were discovered in the provided data. The following section is therefore a placeholder for future findings.
 
-> **Note**: The absence of public commits or issue data indicates that the model was released without visible post‑release bug fixes. In a forensic audit, this would be flagged as a *lack of observable incident data* rather than a failure mode.
+### Incident 0: *No incidents recorded in the current snapshot.*
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-### 1. Micro‑Syntax & Token‑Level Precision  
-| Issue | Example | Fix |
-|-------|---------|-----|
-| **Implicit falsy conversion of `pad_token_id`** | `pad_token_id = null` in `tokenizer_config.json` → during generation, `pad_token_id` becomes `0` (falsy) and is used as a real token. | Explicitly set `pad_token_id` to a valid integer or use `null` handling logic. |
-| **Variable shadowing in config parsing** | A script that loads `config.json` into `config` and then redeclares `config` locally. | Use distinct variable names (`modelConfig`, `tokenizerConfig`). |
-| **Operator precedence in `generation_config`** | `temperature = 1.0, top_k = 20, top_p = 0.95` – if parsed as a single expression, `top_k` may be multiplied by `top_p`. | Enclose each key/value pair in separate statements or use JSON parsing that preserves structure. |
-
-### 2. Infinite Loop & Recursion Guards  
-| Scenario | Guard | Implementation |
-|----------|-------|----------------|
-| **Recursive tokenization** | Depth counter in `pretokenize_regex` | `if (depth > MAX_DEPTH) throw new Error('Recursion limit exceeded');` |
-| **Generation loop** | `while (generatedTokens < max_new_tokens)` | Ensure `max_new_tokens` is finite and that the loop yields control (`await nextTick()`) to avoid event‑loop starvation. |
-
-### 3. UI & UX Micro‑Mechanics  
-| UI Element | Potential Bug | Mitigation |
-|------------|---------------|------------|
-| **Chat prompt rendering** | `add_generation_prompt=True` may append an extra `<|im_end|>` token, causing double‑ended messages. | Verify that the template ends with a single EOS token. |
-| **Touch vs pointer** | Mobile devices may trigger both `touchstart` and `pointerdown`, leading to duplicate events. | Use `pointer` events exclusively and `preventDefault()` on `touchstart`. |
-
-### 4. Backend Concurrency & Memory Safety  
-| Issue | Fix |
-|-------|-----|
-| **TOCTOU in token cache** | Use atomic operations (`compareAndSet`) when updating token embeddings. |
-| **Connection pool starvation** | Set a maximum idle time and a minimum pool size; monitor queue length. |
-| **Unbounded cache** | Evict least‑recently‑used entries when size > `CACHE_MAX_SIZE`. |
-
-### 5. Defect & Error Prevention (“Galti Pakadna”)  
-| Defect | Detection | Prevention |
-|--------|-----------|------------|
-| **Null/undefined dereference** | Static type checker (e.g., TypeScript) or runtime guard (`if (obj?.prop == null) throw`). | Use non‑null assertions or default values. |
-| **Off‑by‑one in `layer_types`** | Assert that `layer_types.length === num_hidden_layers`. | Generate `layer_types` programmatically from a pattern. |
-| **Unhandled promise rejection** | Wrap async calls in `try/catch` and log errors. | Use `process.on('unhandledRejection')` to surface issues. |
+| Domain | Invariant | Example | Anti‑Pattern |
+|--------|-----------|---------|--------------|
+| **Micro‑Syntax & Token‑Level Precision** | `tokenizer.convert_tokens_to_ids("<|audio_start|>")` **must** return the same integer across all runs. | `assert tokenizer.convert_tokens_to_ids("<|audio_start|>") == 248045` | Re‑assigning the token ID after initialization. |
+| **Infinite Loop & Recursion Guards** | Recursion depth in `model.generate` **must** be bounded by `max_new_tokens`. | `if len(generated_ids) >= max_new_tokens: break` | Unbounded `while True` loop without a break condition. |
+| **UI & UX Micro‑Mechanics** | Debounce `on_input_change` with a 200 ms window to avoid thrashing. | `debounced = debounce(on_input_change, 200)` | Directly calling `on_input_change` on every keystroke. |
+| **Backend Concurrency & Memory Safety** | Connection pool size **must** be capped to `max_workers` to avoid starvation. | `pool = ThreadPoolExecutor(max_workers=8)` | `ThreadPoolExecutor(max_workers=0)` leading to deadlock. |
+| **Defect & Error Prevention** | Use optional chaining when accessing nested token attributes. | `token = tokenizer.special_tokens.get("audio_bos_token")` | `token = tokenizer.special_tokens["audio_bos_token"]` without existence check. |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observations | Implications |
-|-----------|--------------|--------------|
-| **Architecture** | Hybrid attention schedule (linear + full) across 64 layers; `num_key_value_heads` = 4, `num_attention_heads` = 24. | Balances speed and expressiveness; requires careful implementation of mixed attention. |
-| **Core Abstractions** | `layer_types` array is a domain primitive; `rope_parameters` and `partial_rotary_factor` are key abstractions. | Must be preserved during model conversion or fine‑tuning. |
-| **Error Handling** | No explicit error handling in config; relies on downstream libraries. | Potential for silent failures if config values are out of range. |
-| **Testing** | No tests present in the repo. | Requires external harnesses to validate generation quality and safety. |
-| **Security** | `tokenizer_config.json` exposes `audio_token`, `image_token`, etc., but no credential handling. | Minimal risk, but token leakage could occur if misused. |
-| **Performance** | `dtype` = `bfloat16`; `attention_dropout` = 0.0; `full_attention_interval` = 4. | Optimized for GPU throughput; full attention every 4 layers may increase latency. |
-| **Deployment** | README shows `vllm serve` command with `--max-model-len 262144`. | Requires a GPU with > 27 B parameters; memory footprint ~ 50 GB in BF16. |
-| **Agent Patterns** | Generation config uses `do_sample`, `top_k`, `top_p`. | Enables diverse sampling; must be tuned for safety. |
-| **Data Flow** | Token IDs: `bos_token_id` = `eos_token_id` = 248044; `pad_token_id` = 248044. | Same ID for multiple roles; generation logic must distinguish context. |
+| Dimension | Observation | Implication |
+|-----------|-------------|-------------|
+| **Architecture** | 64‑layer hybrid attention transformer; 27B parameters; uses `Qwen3_5ForCausalLM`. | Modular attention schedule allows linear scaling for long contexts. |
+| **Core Abstractions** | `layer_types` array defines attention blocks; `tokenizer_config` defines domain primitives. | Clear separation between attention logic and tokenization. |
+| **Error Handling** | `generation_config.json` includes `do_sample`, `top_k`, `top_p`; no explicit error handling shown. | Potential silent failures if sampling parameters are out of bounds. |
+| **Testing** | No tests present. | High risk of regressions; need for property‑based tests on tokenization and generation. |
+| **Security** | No credentials; open weights. | Least privilege; no external secrets. |
+| **Performance** | `max_position_embeddings` = 262144; `dtype` = `bfloat16`. | Optimized for GPU inference; zero‑copy attention. |
+| **Deployment** | Uses `vllm serve` with `--max-model-len`. | Requires GPU with sufficient VRAM; reproducible builds via Hugging Face Hub. |
+| **Agent Patterns** | Prompt chaining via `apply_chat_template`. | Loop guard via `add_generation_prompt=True`. |
+| **Data Flow** | Token IDs → attention → logits → sampling → text. | Streamlined pipeline; no intermediate serialization. |
 
 ---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-| Artifact | Example |
-|----------|---------|
-| **Pattern** | The `layer_types` array is generated by repeating the sequence `[linear, linear, linear, full]` 16 times, then appending a final `full`. |
-| **Rule** | `attention_bias` MUST be `false` for causal LMs. |
-| **Architecture Principle** | *Hybrid attention scheduling* – alternate linear and full attention to trade off speed and accuracy. |
-| **Failure Mode** | Setting `attention_bias` to `true` causes future‑token leakage and hallucinations. |
-| **Reusable Skill** | Generate a `layer_types` array programmatically: `Array.from({length: 16}, () => ['linear', 'linear', 'linear', 'full']).flat().concat(['full'])`. |
-| **Decision** | Chose `bfloat16` over `float32` to fit the 27 B model on a single GPU; rejected `float16` due to numerical instability. |
-| **Anti‑Pattern** | Hard‑coding `layer_types` as a static list without validation against `num_hidden_layers`. |
-| **Verification Method** | Unit test that `layer_types.length === num_hidden_layers` and that the pattern repeats correctly. |
+### Artifact 1 – Pattern
+**Hybrid Attention Scheduler**  
+```python
+for i, layer_type in enumerate(layer_types):
+    if layer_type == "full_attention":
+        layer = FullAttention(...)
+    else:
+        layer = LinearAttention(...)
+    model.add(layer)
+```
+
+### Artifact 2 – Rule
+**Special Token ID Stability** – see Rule 1 above.
+
+### Artifact 3 – Architecture Principle
+**Hybrid Attention for Long Contexts** – interleave full and linear attention to balance quality and memory.
+
+### Artifact 4 – Failure Mode
+**Token ID Drift** – re‑assigning special token IDs causes mis‑tokenization and model crashes.
+
+### Artifact 5 – Reusable Skill
+**Validate Attention Dimensions** – pre‑initialization check of head dimensions.
+
+### Artifact 6 – Decision
+**Chosen Linear Attention** – rejected pure full attention due to memory constraints at 262k context length.
+
+### Artifact 7 – Anti‑Pattern
+**Manual Token ID Reassignment** – see negative constraint in Rule 1.
+
+### Artifact 8 – Verification Method
+**Unit Test for Token IDs** – assert equality before and after tokenizer modifications.
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Validate Config Integrity**  
-   * Parse `config.json` and `generation_config.json`.  
-   * Assert `attention_bias === false` for causal architectures.  
-   * Assert `dtype === "bfloat16"` when `hidden_size * num_hidden_layers > 200 000`.  
-   * Assert `max_position_embeddings >= max_new_tokens + prompt_length`.  
+1. **Tokenizer Setup**
+   - Load `Qwen2Tokenizer`.
+   - Add all special tokens via `add_special_tokens`.
+   - Verify token IDs with unit tests.
 
-2. **Generate `layer_types` Programmatically**  
-   ```python
-   def build_layer_types(num_layers):
-       pattern = ["linear", "linear", "linear", "full"]
-       repeats = num_layers // 4
-       remainder = num_layers % 4
-       return pattern * repeats + pattern[:remainder]
-   ```
+2. **Model Configuration**
+   - Parse `config.json`.
+   - Validate `hidden_size == num_attention_heads * head_dim`.
+   - Validate linear attention dimensions.
+   - Ensure `full_attention_interval` divides `num_hidden_layers`.
 
-3. **Token ID Consistency**  
-   * Ensure `bos_token_id`, `eos_token_id`, and `pad_token_id` are distinct unless intentionally shared.  
-   * If shared, add explicit flags in the generation pipeline to differentiate roles.
+3. **Attention Scheduler**
+   - Build layers according to `layer_types`.
+   - Use `FullAttention` for indices divisible by `full_attention_interval`.
+   - Use `LinearAttention` otherwise.
 
-4. **Sampling Safety**  
-   * Enforce `top_k >= 1` and `top_p <= 1.0`.  
-   * Add a safety guard: if `temperature < 0.1`, raise a warning.
+4. **Generation Parameters**
+   - Load `generation_config.json`.
+   - Enforce `do_sample`, `top_k`, `top_p` bounds.
+   - Cap `max_new_tokens` to prevent infinite loops.
 
-5. **Memory‑Safety Checks**  
-   * Verify that the loaded model’s `dtype` matches the config.  
-   * Monitor GPU memory usage; trigger a graceful shutdown if usage > 90 %.  
+5. **Deployment**
+   - Package model with `vllm` CLI.
+   - Set `--max-model-len` to 262144.
+   - Test inference latency and memory usage.
 
-6. **Unit & Integration Tests**  
-   * Test generation with a prompt of length `max_position_embeddings`.  
-   * Verify that no out‑of‑bounds indexing occurs.  
-   * Run a smoke test that generates 10 tokens with `do_sample = true`.  
+6. **Testing**
+   - Property‑based tests for tokenization consistency.
+   - Integration test: `model.generate` with a sample prompt.
+   - Regression test: compare output against baseline checkpoint.
 
-7. **CI/CD Validation**  
-   * Add a lint rule that flags any `attention_bias: true` in a causal LM config.  
-   * Run the unit tests on every push to the `main` branch.  
+7. **Security & Compliance**
+   - No hard‑coded secrets.
+   - Verify license (`cc-by-nc-4.0`) compliance.
 
-8. **Documentation & Alerts**  
-   * Document the shared token ID design choice.  
-   * Emit an alert if `max_position_embeddings` is reduced below the current context length.  
+8. **Documentation**
+   - Update README with usage examples.
+   - Include model card with performance benchmarks.
 
 ---

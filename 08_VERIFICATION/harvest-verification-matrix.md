@@ -8310,3 +8310,5 @@
 | `CYCLE-20261108-LJ85` | `2026-11-08T15:28:19.349Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2468b056...`) |
 | `CYCLE-20261108-LKPP` | `2026-11-08T15:28:21.277Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`10512f9a...`) |
 | `CYCLE-20261108-LLRI` | `2026-11-08T15:28:22.638Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5af40da8...`) |
+| `CYCLE-20261108-UER8` | `2026-11-08T15:35:13.460Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`38d57757...`) |
+| `CYCLE-20261108-UEWB` | `2026-11-08T15:35:13.643Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`162b65de...`) |
