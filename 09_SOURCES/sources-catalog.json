@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "7bc19e0f7119b93d1422dfb97844e9f3061225c7e823757797f8c7d8267ee5bf",
-    "lastHarvestedAt": "2026-11-05T01:47:33.900Z",
+    "contentHash": "8a8e7e1ca8f1469639f8064266340c5de219ba6567be262a0723298880a255d6",
+    "lastHarvestedAt": "2026-11-08T17:42:43.931Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "6fea18ef",
+    "sourceVersion": "633ccf2e",
     "license": "Apache-2.0",
-    "contentHash": "0a1e3e78ef532e60bffeb1457cbbef1b9e0c3df5bc64001f7a15c2d2abddf96e",
-    "lastHarvestedAt": "2026-11-07T20:49:12.741Z",
+    "contentHash": "1f329c73419736806b12a15742892947a838876bd5f51147f9a3d05f74438cd5",
+    "lastHarvestedAt": "2026-11-08T17:42:50.417Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {

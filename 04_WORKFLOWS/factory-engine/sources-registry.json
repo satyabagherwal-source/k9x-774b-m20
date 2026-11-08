@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T17:35:49.041Z",
-    "lastVerified": "2026-11-08T17:35:49.041Z",
+    "lastChecked": "2026-11-08T17:42:53.020Z",
+    "lastVerified": "2026-11-08T17:42:53.020Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -152,12 +152,12 @@
     "revisionIdentifier": "308b2766"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T17:06:11.255Z",
-    "lastVerified": "2026-11-08T17:06:11.255Z",
+    "lastChecked": "2026-11-08T17:42:43.022Z",
+    "lastVerified": "2026-11-08T17:42:43.022Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -166,7 +166,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3fd42218"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1558,9 +1559,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-08T11:55:37.500Z",
+    "lastChecked": "2026-11-08T17:42:38.210Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-08T11:55:37.500Z"
+    "lastVerified": "2026-11-08T17:42:38.210Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2743,12 +2744,12 @@
     "lastVerified": "2026-11-06T21:06:39.139Z"
   },
   "goodrain-rainbond": {
-    "name": "goodrain/rainbond",
+    "name": "rainbond",
     "officialUrl": "https://github.com/goodrain/rainbond",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T21:36:31.147Z",
-    "lastVerified": "2026-11-07T21:36:31.147Z",
+    "lastChecked": "2026-11-08T17:42:35.601Z",
+    "lastVerified": "2026-11-08T17:42:35.601Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goodrain-rainbond",
@@ -2757,7 +2758,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bbb1e5bd"
   },
   "caviraoss-longmemory": {
     "name": "LongMemory",
@@ -3135,13 +3137,13 @@
     "officialUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T01:47:32.882Z",
-    "lastVerified": "2026-11-05T01:47:32.882Z",
+    "lastChecked": "2026-11-08T17:42:30.622Z",
+    "lastVerified": "2026-11-08T17:42:30.622Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "7bc19e0f7119b93d1422dfb97844e9f3061225c7e823757797f8c7d8267ee5bf",
-    "promotedRulesCount": 0,
+    "contentHash": "8a8e7e1ca8f1469639f8064266340c5de219ba6567be262a0723298880a255d6",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -5942,14 +5944,14 @@
     "officialUrl": "https://github.com/apache/shardingsphere",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-07T20:49:10.791Z",
-    "lastVerified": "2026-11-07T20:49:10.791Z",
+    "lastChecked": "2026-11-08T17:42:48.630Z",
+    "lastVerified": "2026-11-08T17:42:48.630Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "0a1e3e78ef532e60bffeb1457cbbef1b9e0c3df5bc64001f7a15c2d2abddf96e",
+    "contentHash": "1f329c73419736806b12a15742892947a838876bd5f51147f9a3d05f74438cd5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7249,9 +7251,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-11-07T05:36:54.076Z",
+    "lastChecked": "2026-11-08T17:42:28.029Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-11-07T05:36:54.076Z"
+    "lastVerified": "2026-11-08T17:42:28.029Z"
   },
   "hf-bingsu-adetailer": {
     "name": "Bingsu/adetailer",
@@ -10797,12 +10799,12 @@
     "lastVerified": "2026-11-06T22:21:06.073Z"
   },
   "touchlab-kermit": {
-    "name": "touchlab/Kermit",
+    "name": "Kermit",
     "officialUrl": "https://github.com/touchlab/Kermit",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-05T11:53:15.973Z",
-    "lastVerified": "2026-11-05T11:53:15.973Z",
+    "lastChecked": "2026-11-08T17:42:33.018Z",
+    "lastVerified": "2026-11-08T17:42:33.018Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-touchlab-kermit",
@@ -10811,7 +10813,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "44bd2980"
   },
   "lucky-media-astro-seo": {
     "name": "astro-seo",

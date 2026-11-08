@@ -8352,3 +8352,5 @@ Every entry in this ledger must capture:
 | `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `32c0714d` | Multi-dimensional audit evidence | 2026-11-08T17:35:42.689Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `4880fb84` | Multi-dimensional audit evidence | 2026-11-08T17:35:44.656Z |
 | `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-08T17:35:46.509Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-08T17:42:43.931Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `633ccf2e` | Multi-dimensional audit evidence | 2026-11-08T17:42:50.417Z |
