@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T00:49:13.335Z",
+  "last_updated": "2026-11-08T00:56:12.826Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8586,13 +8586,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "6e0042e3",
-      "content_hash": "6b421145df60e92f03fe5572a485731245bc9bd835ed9eff991683fa45118c30",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "deefd0e0",
+      "content_hash": "bb8b367b7adee588b430653de44a0bb48c7dba8ef220d0671e51cbb3ebf92244",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -8715,7 +8715,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:22:55.643Z",
+      "verified_at": "2026-11-08T00:56:01.075Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11958,14 +11958,19 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "467d1ca5",
-      "content_hash": "8f9b8869d79156aa415ef1a44864e8b0da394c46f5e097b1dd5b69f0dcc31ec4",
+      "source_version": "d4eea3f2",
+      "content_hash": "d777ead09026db0a086a9884b71998286bfff92dcd23fe90b351e8cbaa56d1c7",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Do not wrap the total list length statistic on overflow (#28457)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Batch the Ready To Merge fixes from Robinho-MR/duckdb (#28420)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12054,7 +12059,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:47:50.928Z",
+      "verified_at": "2026-11-08T00:56:12.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14281,11 +14286,16 @@
       "slug": "tiangolo-fastapi",
       "platform": "github",
       "source_url": "https://github.com/tiangolo/fastapi",
-      "source_version": "5cb6272e",
-      "content_hash": "678a8753077b3aba32687efef3dd0a55658f6d07d41d7f9b571438e4e8a010c4",
+      "source_version": "8f9f47de",
+      "content_hash": "faca089e506cde77bbe8ab4c73ccc15d6d6b7e39615adc17198cede6d037f660",
       "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "🐛 Fix AI coding agent notice links in previews (#16700)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1664,
           "title": "Isolated Context-Manager Exit Limiters in Hybrid Threadpools",
@@ -14372,7 +14382,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:04:25.950Z",
+      "verified_at": "2026-11-08T00:56:04.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74502,13 +74512,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "1d40319b",
-      "content_hash": "c9723899223bca77d2608049cbf660f4a4e4fdac520aa1f4ffe52a17d13588c0",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "1b0f754b",
+      "content_hash": "79b199c25695e27b4d12b115c9980fc30d360ac37ddf80b8adc16d6ead528667",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -74558,6 +74568,11 @@
         {
           "number": null,
           "title": "Merge pull request #4647 from aleo-labs-protocol/dependabot/github_actions/stagi",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4648 from aleo-labs-protocol/ci/gauntlet-gate-users",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -74686,7 +74701,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:46:36.428Z",
+      "verified_at": "2026-11-08T00:56:11.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

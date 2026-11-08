@@ -1983,10 +1983,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/tiangolo/fastapi",
-    "sourceVersion": "5cb6272e",
+    "sourceVersion": "8f9f47de",
     "license": "MIT",
-    "contentHash": "678a8753077b3aba32687efef3dd0a55658f6d07d41d7f9b571438e4e8a010c4",
-    "lastHarvestedAt": "2026-11-04T09:04:26.049Z",
+    "contentHash": "faca089e506cde77bbe8ab4c73ccc15d6d6b7e39615adc17198cede6d037f660",
+    "lastHarvestedAt": "2026-11-08T00:56:04.256Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "pallets-flask": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "885ef69f",
+    "sourceVersion": "deefd0e0",
     "license": "MIT",
-    "contentHash": "e41776c33e0a0d7b6b8aef6ff19470f2b4cef4bfc48855b5496a8080782436e1",
-    "lastHarvestedAt": "2026-11-05T21:32:49.469Z",
+    "contentHash": "bb8b367b7adee588b430653de44a0bb48c7dba8ef220d0671e51cbb3ebf92244",
+    "lastHarvestedAt": "2026-11-08T00:56:01.187Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "3f12f64e",
+    "sourceVersion": "1b0f754b",
     "license": "Apache-2.0",
-    "contentHash": "75c430c11062987affb624b650a1afa99d2258bd5eeec9bc8ca4f24555e335fc",
-    "lastHarvestedAt": "2026-11-07T20:42:33.528Z",
+    "contentHash": "79b199c25695e27b4d12b115c9980fc30d360ac37ddf80b8adc16d6ead528667",
+    "lastHarvestedAt": "2026-11-08T00:56:11.515Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "467d1ca5",
+    "sourceVersion": "d4eea3f2",
     "license": "MIT",
-    "contentHash": "8f9b8869d79156aa415ef1a44864e8b0da394c46f5e097b1dd5b69f0dcc31ec4",
-    "lastHarvestedAt": "2026-11-06T14:47:51.030Z",
+    "contentHash": "d777ead09026db0a086a9884b71998286bfff92dcd23fe90b351e8cbaa56d1c7",
+    "lastHarvestedAt": "2026-11-08T00:56:12.918Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {

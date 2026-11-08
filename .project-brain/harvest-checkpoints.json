@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T00:49:13.450Z",
+  "last_updated": "2026-11-08T00:56:12.934Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "c9723899223bca77d2608049cbf660f4a4e4fdac520aa1f4ffe52a17d13588c0",
-      "verified_at": "2026-11-07T22:46:36.600Z",
+      "content_hash": "79b199c25695e27b4d12b115c9980fc30d360ac37ddf80b8adc16d6ead528667",
+      "verified_at": "2026-11-08T00:56:11.524Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:46:36.600Z"
+      "last_updated": "2026-11-08T00:56:11.524Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "678a8753077b3aba32687efef3dd0a55658f6d07d41d7f9b571438e4e8a010c4",
-      "verified_at": "2026-11-04T09:04:26.057Z",
+      "content_hash": "faca089e506cde77bbe8ab4c73ccc15d6d6b7e39615adc17198cede6d037f660",
+      "verified_at": "2026-11-08T00:56:04.265Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T09:04:26.057Z"
+      "last_updated": "2026-11-08T00:56:04.265Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "6b421145df60e92f03fe5572a485731245bc9bd835ed9eff991683fa45118c30",
-      "verified_at": "2026-11-07T20:22:55.733Z",
+      "content_hash": "bb8b367b7adee588b430653de44a0bb48c7dba8ef220d0671e51cbb3ebf92244",
+      "verified_at": "2026-11-08T00:56:01.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:22:55.733Z"
+      "last_updated": "2026-11-08T00:56:01.196Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "8f9b8869d79156aa415ef1a44864e8b0da394c46f5e097b1dd5b69f0dcc31ec4",
-      "verified_at": "2026-11-06T14:47:51.046Z",
+      "content_hash": "d777ead09026db0a086a9884b71998286bfff92dcd23fe90b351e8cbaa56d1c7",
+      "verified_at": "2026-11-08T00:56:12.933Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:47:51.046Z"
+      "last_updated": "2026-11-08T00:56:12.933Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",

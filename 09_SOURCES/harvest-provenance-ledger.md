@@ -8162,3 +8162,7 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `39886c0c` | Multi-dimensional audit evidence | 2026-11-08T00:49:00.315Z |
 | `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `5914e90e` | Multi-dimensional audit evidence | 2026-11-08T00:49:08.046Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `537a6b7e` | Multi-dimensional audit evidence | 2026-11-08T00:49:13.440Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `deefd0e0` | Multi-dimensional audit evidence | 2026-11-08T00:56:01.187Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `8f9f47de` | Multi-dimensional audit evidence | 2026-11-08T00:56:04.256Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `1b0f754b` | Multi-dimensional audit evidence | 2026-11-08T00:56:11.515Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `d4eea3f2` | Multi-dimensional audit evidence | 2026-11-08T00:56:12.918Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `467d1ca5`  
+> **Source Version**: `d4eea3f2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:47:49.445Z  
+> **Timestamp**: 2026-11-08T00:56:11.280Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:47:49.147Z  
+> **Harvest Timestamp**: 2026-11-08T00:56:10.278Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42852 stars
+- **Stars / Engagement**: 42902 stars
 
 ---
 
@@ -2004,13 +2004,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28460** (2026-11-06): **CI: make alpha track main**
-  *Symptoms*: ### Summary  - publish the global latest alpha pointer only from successful main alpha runs - publish `release/<line>/latest_alpha_version.txt` from main and release branches.  Related: duckdb/duckdb-install-scripts#8
-  **Post-Mortem & Fix Analysis**:
-  > Thanks!
+- **Issue #28496** (2026-11-06): **Fix glue extension build after LazyMultiFileList takes Context**
+  *Symptoms*: Adds a glue patch so `HiveMultiFileList` passes `context.GetContext()` to `LazyMultiFileList`, which now takes `optional_ptr<Context>`. Fixes the `Build Linux (cloud, linux_amd64)` extension build failure on main (e.g. in #28470).  The glue patches were not updated in #28417, and the extension build is skipped on PRs, so it was not caught there. Verified by applying patches 0001-0003 to the pinned glue revision and compiling `hive_multi_file_reader.cpp` against main's headers.
 
-- **Issue #28457** (2026-11-06): **Do not wrap the total list length statistic on overflow**
-  *Symptoms*: Follow-up to #28408. The total list length statistic is accumulated with an unchecked `+=` in `ListStats::Merge` and `ListStats::MergeInLengths`. When the sum exceeds `uint64_t`, the total wraps silently and consumers of `ListStats::TotalListLength` read a small but "known" value. The statistic is meant for cardinality and memory estimates (for example the average list length for UNNEST estimates in the in-flight #28299), where a wrapped total produces arbitrarily wrong results without any indication that the statistic is invalid.  The total already has an unknown sentinel, the `has_total_list_length` flag, which `Merge` uses for `EXPAND_BOUNDS` and `ResetAdditiveStatistics` uses after deletes. The fix follows that idiom: both accumulation sites now use `TryAddOperator` and mark the total as unknown when the sum overflows. The min/max bounds are unaffected, they cannot overflow. Clamping to `NumericLimits<uint64_t>::Maximum()` was rejected because a clamped value would still be read as a real total by average-length estimates.  The per-vector sums that feed `MergeInLengths` (`ListColumnData::Append`) count elements of an in-memory vector and cannot overflow, so they stay unchecked.  Tests: - `test/common/test_list_stats.cpp` exercises `Merge` and `MergeInLengths` at the `uint64_t` boundary: sums below and exactly at the maximum stay known, one element past the maximum turns the total unknown while the bounds survive. The magnitudes are unreachable through SQL, a real table wi
+- **Issue #28470** (2026-11-06): **Skip slow persistent part of variant_stats_merge_decimal under alternative verify**
+  *Symptoms*: The No String Inline / Destroy Unpinned Blocks job timed out (300s, 4 retries exhausted) on `variant_stats_merge_decimal.test` in https://github.com/duckdb/duckdb/actions/runs/42082273268/job/127474458470. The persistent part (200k-row inserts, checkpoint, restart) is too slow with DESTROY_UNPINNED_BLOCKS. Add `require no_alternative_verify` before it; the in-memory checks still run.  Other flakes in that run (`cte_runtime_filter_sibling_dependencies`, `csv_quoted_buffer_boundary`) recovered on retry and are not addressed here. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2027,186 +2025,463 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55506bf8` (2026-11-06)
-**Commit Message**: Do not wrap the total list length statistic on overflow (#28457)
+### Incident Patch 1: `f32c9494` (2026-11-06)
+**Commit Message**: Batch the Ready To Merge fixes from Robinho-MR/duckdb (#28420)
 
-Follow-up to #28408. The total list length statistic is accumulated with
-an unchecked `+=` in `ListStats::Merge` and `ListStats::MergeInLengths`.
-When the sum exceeds `uint64_t`, the total wraps silently and consumers
-of `ListStats::TotalListLength` read a small but "known" value. The
-statistic is meant for cardinality and memory estimates (for example the
-average list length for UNNEST estimates in the in-flight #28299), where
-a wrapped total produces arbitrarily wrong results without any
-indication that the statistic is invalid.
+Batches the fork PRs labeled `Ready To Merge` in
+https://github.com/Robinho-MR/duckdb/pulls that are not yet in `main`,
+on top of the current head of `main`.
 
-The total already has an unknown sentinel, the `has_total_list_length`
-flag, which `Merge` uses for `EXPAND_BOUNDS` and
-`ResetAdditiveStatistics` uses after deletes. The fix follows that
-idiom: both accumulation sites now use `TryAddOperator` and mark the
-total as unknown when the sum overflows. The min/max bounds are
-unaffected, they cannot overflow. Clamping to
-`NumericLimits<uint64_t>::Maximum()` was rejected because a clamped
-value would still be read as a real total by average-length estimates.
+Each PR is squashed into a single commit on top of `main`, with the PR
+title as the commit message. Robinho-MR/duckdb#273,
+Robinho-MR/duckdb#274 and Robinho-MR/duckdb#275 each add a hidden
+`[storage][.]` test case at the end of
+`test/sql/storage/wal_torn_write.cpp`; the conflicts were resolved by
+keeping all three.
 
-The per-vector sums that feed `MergeInLengths`
-(`ListColumnData::Append`) count elements o
+## Changes applied (15 PRs)
 
-**File**: `src/storage/statistics/list_stats.cpp` (modified, +13/-2)
+- Robinho-MR/duckdb#286: Throw DataCorruptionException for unregistered
+metadata block pointer
+- Robinho-MR/duckdb#282: Throw a corruption error for unknown WAL entry
+type
+- Robinho-MR/duckdb#280: Skip memcpy calls for empty DELTA_BYTE_ARRAY
+values
+- Robinho-MR/duckdb#279: Clamp accepted completion length to edit buffer
+- Robinho-MR/duckdb#278: Bound AcceptSearch history copy to buffer size
+- Robinho-MR/duckdb#276: Fix stack buffer overflow in linenoise
+EditSwapCharacter
+- Robinho-MR/duckdb#275: Validate catalog information of WAL entries
+during replay
+- Robinho-MR/duckdb#274: Reject encrypted WAL version for an unencrypte
+
+**File**: `data/csv/test/invalid_utf_nested.csv` (added, +6/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+#include "duckdb/common/operator/add.hpp"
- #include "duckdb/common/vector/list_vector.hpp"
- #include "duckdb/storage/statistics/list_stats.hpp"
- #include "duckdb/storage/statistics/base_statistics.hpp"
-@@ -111,7 +112,12 @@ void ListStats::MergeInLengths(BaseStatistics &stats, idx_t min_length, idx_t ma
- 	auto &data = GetDataUnsafe(stats);
- 	data.min_list_length = MinValue<uint64_t>(data.min_list_length, min_length);
- 	data.max_list_length = MaxValue<uint64_t>(data.max_list_length, max_length);
--	data.total_list_length += total_length;
-+	if (!TryAddOperator::Operation<uint64_t, uint64_t, uint64_t>(data.total_list_length, total_length,
-+	                                                             data.total_list_length)) {
-+		// the sum of the lengths overflows - the total is no longer known
-+		data.has_total_list_length = false;
-+		data.total_list_length = 0;
-+	}
- }
+@@ -0,0 +1,6 @@
++a,b
++�,�
++[a],[b]
++�,[c]
++[d],�
++[e],[f]
+```
+
+**File**: `extension/core_functions/aggregate/nested/binned_histogram.cpp` (modified, +10/-1)
+```diff
+@@ -318,7 +318,16 @@ void HistogramBinFinalizeFunction(Vector &state_vector, AggregateFinalizeInputDa
+ 		if (state.counts->back() > 0 && supports_other_bucket) {
+ 			// add overflow bucket ("others")
+ 			// set bin boundary to NULL for overflow bucket
+-			keys.SetValue(current_offset, OtherBucketValue(keys.GetType()));
++			auto other_value = OtherBucketValue(keys.GetType());
++			for (idx_t bin_idx = list_entry.offset; bin_idx < current_offset; bin_idx++) {
++				if (Value::NotDistinctFrom(keys.GetValue(bin_idx), other_value)) {
++					throw InvalidInputException(
++					    "Histogram bin %s collides with the key of the \"other values\" bucket, "
++					    "which has entries - use a different bin value",
++					    other_value.ToSQLString());
++				}
++			}
++			keys.SetValue(current_offset, other_value);
+ 			count_entries[current_offset] = state.counts->back();
+ 			current_offset++;
+ 		}
+```
+
+**File**: `extension/json/json_functions/json_transform.cpp` (modified, +1/-2)
+```diff
+@@ -984,8 +984,7 @@ static bool TransformObjectToMap(yyjson_val *objects[], yyjson_alc *alc, Vector
  
- ListStatsData ListStats::GetLengthData(const BaseStatistics &stats) {
-@@ -165,7 +171,12 @@ void ListStats::Merge(BaseStatistics &stats, const BaseStatistics &other, StatsM
- 		list_data.has_total_list_length = false;
- 	} else {
- 		list_data.has_total_list_length = list_data.has_total_list_length && other_data.has_total_list_length;
--		list_data.total_list_length += other_data.total_list_length;
-+		if (!TryAddOperator::Operation<uint64_t, uint64_t, uint64_t>(
-+		        list_data.total_list_length, other_data.total_list_length, list_data.total_list_length)) {
-+			// the sum of the totals overflows - the total is no longer known
-+			list_data.has_total_list_length = false;
-+			list_data.total_list_length = 0;
-+		}
+ 	// Transform keys
+ 	if (!JSONTransform::Transform(keys, alc, MapVector::GetKeys(result), list_size, options, nullptr)) {
+-		throw ConversionException(
+-		    StringUtil::Format("%s. Cannot default to NULL, because map keys cannot be NULL", options.error_message));
++		success = false;
  	}
  
- 	auto &child_stats = ListStats::GetChildStats(stats);
+ 	// Transform values
+```
+
+**File**: `extension/parquet/decoder/delta_byte_array_decoder.cpp` (modified, +5/-4)
+```diff
+@@ -115,12 +115,13 @@ void DeltaByteArrayDecoder::InitializePage() {
+ 			output += sizeof(uint32_t);
+ 		}
+ 
+-		memcpy(output, prev_value.data(), prefix_len);
+ 		block.available(suffix_len);
+-		memcpy(output + prefix_len, block.ptr, suffix_len);
++		if (value_len > 0) {
++			memcpy(output, prev_value.data(), prefix_len);
++			memcpy(output + prefix_len, block.ptr, suffix_len);
++			memcpy(prev_value.data(), output, value_len);
++		}
+ 		block.inc(suffix_len);
+-
+-		memcpy(prev_value.data(), output, value_len);
+ 		prev_len = value_len;
+ 		output += value_len;
+ 	}
+```
+
+**File**: `src/execution/operator/csv_scanner/scanner/string_value_scanner.cpp` (modified, +3/-5)
+```diff
+@@ -749,11 +749,9 @@ bool LineError::HandleErrors(StringValueResult &result) {
+ 				    result.current_line_position.begin.GetGlobalPosition(result.requested_size, first_nl),
+ 				    line_pos.GetGlobalPosition(result.requested_size), result.path);
+ 			}
+-			// the file types are those of the projected columns
+-			auto &file_types = result.csv_file_scan->file_types;
+-			if (cur_error.chunk_idx < file_types.size() &&
+-			    !StringValueScanner::CanDirectlyCast(file_types[cur_error.chunk_idx], result.icu_loaded)) {
+-				result.number_of_rows--;
++			// the value is invalid: make it NULL so that casting the column does not report a second error for it
++			if (cur_error.chunk_idx < result.validity_mask.size()) {
++				result.validity_mask[cur_error.chunk_idx]->SetInvalid(static_cast<idx_t>(result.number_of_rows));
+ 			}
+ 			break;
+ 		}
+```
+
+**File**: `src/function/scalar/operator/decimal_division.cpp` (modified, +74/-43)
+```diff
+@@ -40,9 +40,63 @@ struct DecimalDivBindData : public FunctionData {
+ //   hugeint_t -- otherwise
+ //===--------------------------------------------------------------------===//
+ 
++template <class T>
++static constexpr uint8_t DecimalTierWidth() {
++	if constexpr (std::is_same_v<T, int16_t>) {
++		return Decimal::MAX_WIDTH_INT16;
++	} else if constexpr (std::is_same_v<T, int32_t>) {
++		return Decimal::MAX_WIDTH_INT32;
++	} else if constexpr (std::is_same_v<T, int64_t>) {
++		return Decimal::MAX_WIDTH_INT64;
++	} else {
++		return Decimal::MAX_WIDTH_DECIMAL;
++	}
++}
++
++template <class SOURCE_TYPE, class INPUT_TYPE>
++static void WidenDecimal(Vector &input, Vector &widened, idx_t count) {
++	if constexpr (sizeof(SOURCE_TYPE) < sizeof(INPUT_TYPE)) {
++		auto widen = [](SOURCE_TYPE value) {
++			return INPUT_TYPE(value);
++		};
++		UnaryExecutor::Execute<SOURCE_TYPE, INPUT_TYPE>(input, widened, count, widen);
++	} else {
++		throw InternalException("decimal_division: argument is wider than the compute tier");
++	}
++}
++
++//! Bring an argument to the physical type of the wider argument; a decimal keeps its integer value at the same scale
++template <class INPUT_TYPE>
++static Vector &GetDecimalInput(Vector &input, idx_t count, unique_ptr<Vector> &widened) {
++	auto source_physical = input.GetType().InternalType();
++	if (source_physical == GetTypeId<INPUT_TYPE>()) {
++		return input;
++	}
++	auto scale = DecimalType::GetScale(input.GetType());
++	widened = make_uniq<Vector>(LogicalType::DECIMAL(DecimalTierWidth<INPUT_TYPE>(), scale), count);
++	switch (source_physical) {
++	case PhysicalType::INT16:
++		WidenDecimal<int16_t, INPUT_TYPE>(input, *widened, count);
++		break;
++	case PhysicalType::INT32:
++		WidenDecimal<int32_t, INPUT_TYPE>(input, *widened, count);
++		break;
++	case PhysicalType::INT64:
++		WidenDecimal<int64_t, INPUT_TYPE>(input, *widened, count);
++		break;
++	default:
++		throw InternalException("decimal_division: unexpected argument physical type");
++	}
++	return *widened;
++}
++
+ template <class INPUT_TYPE, class RESULT_TYPE, class COMPUTE_TYPE>
+ static void DecimalDivExecute(DataChunk &args, ExpressionState &state, Vector &result) {
+ 	auto &bind_data = state.expr.Cast<BoundFunctionExpression>().BindInfo()->Cast<DecimalDivBindData>();
++	unique_ptr<Vector> lhs_widened;
++	unique_ptr<Vector> rhs_widened;
++	auto &lhs = GetDecimalInput<INPUT_TYPE>(args.data[0], args.size(), lhs_widened);
++	auto &rhs = GetDecimalInput<INPUT_TYPE>(args.data[1], args.size(), rhs_widened);
+ 
+ 	bool scale_divisor = bind_data.scale_exp < 0;
+ 	uint32_t abs_exp = UnsafeNumericCast<uint32_t>(AbsValue(bind_data.scale_exp));
+@@ -56,7 +110,7 @@ static void DecimalDivExecute(DataChunk &args, ExpressionState &state, Vector &r
+ 	auto result_width = DecimalType::GetWidth(result.GetType());
+ 
+ 	BinaryExecutor::Execute<INPUT_TYPE, INPUT_TYPE, RESULT_TYPE>(
+-	    args.data[0], args.data[1], result, args.size(), [&](INPUT_TYPE a, INPUT_TYPE b) -> RESULT_TYPE {
++	    lhs, rhs, result, args.size(), [&](INPUT_TYPE a, INPUT_TYPE b) -> RESULT_TYPE {
+ 		    if (b == INPUT_TYPE(0)) {
+ 			    throw InvalidInputException("decimal_division: division by zero");
+ 		    }
+@@ -160,6 +214,8 @@ static scalar_function_t GetDecimalDivExecuteFunction(PhysicalType result_physic
+ // Bind function
+ //===--------------------------------------------------------------------===//
+ 
++static void SelectDecimalDivFunction(BoundScalarFunction &bound_function);
++
+ // Result width and scale for e1 / e2 (SQL Server semantics):
+ //   result_scale = max(6, s1 + p2 + 1)
+ //   result_width = p1 - s1 + s2 + result_scale
+@@ -173,6 +229,9 @@ static void DecimalDivisionResolveTypes(ResolveScalarFunctionTypesInput &input)
+ 	if (!lhs_type.GetDecimalProperties(p1, s1) || !rhs_type.GetDecimalProperties(p2, s2)) {
+ 		throw InvalidInputException("decimal_division: both arguments must be DECIMAL");
+ 	}
++	// an integer argument is an implicit DECIMAL(p, 0): bind on its canonical DECIMAL type
++	auto lhs_decimal_type = lhs_type.id() == LogicalTypeId::DECIMAL ? lhs_type : LogicalType::DECIMAL(p1, s1);
++	auto rhs_decimal_type = rhs_type.id() == LogicalTypeId::DECIMAL ? rhs_type : LogicalType::DECIMAL(p2, s2);
+ 
+ 	uint32_t result_scale;
+ 	if (input.GetArgumentCount() == 3) {
+@@ -209,50 +268,22 @@ static void DecimalDivisionResolveTypes(ResolveScalarFunctionTypesInput &input)
+ 		    result_width, Decimal::MAX_WIDTH_DECIMAL);
+ 	}
+ 
+-	PhysicalType result_physical;
+-	if (result_width <= Decimal::MAX_WIDTH_INT16) {
+-		result_physical = PhysicalType::INT16;
+-	} else if (result_width <= Decimal::MAX_WIDTH_INT32) {
+-		result_physical = PhysicalType::INT32;
+-	} else if (result_width <= Decimal::MAX_WIDTH_INT64) {
+-		result_physical = PhysicalType::INT64;
+-	} else {
+-		result_physical = PhysicalType::INT128;
+-	}
+-
+ 	bound_function.SetReturnType(LogicalType::DECIMAL(result_width, result_scale));
++	// keep the argument types: a narrower argument is widened at execution, so binding again yields the same types
++	bound_function.GetArguments()
+```
+
+**File**: `src/optimizer/rule/struct_extract_struct_pack_folding.cpp` (modified, +4/-1)
+```diff
+@@ -36,7 +36,10 @@ unique_ptr<Expression> StructExtractStructPackFoldingRule::Apply(LogicalOperator
+ 	}
+ 	// struct_extract(struct_pack(e0, .., en), ki) is equivalent to ei
+ 	auto result = std::move(packed_children[extract_data.index]);
+-	return BoundCastExpression::AddCastToType(GetContext(), std::move(result), extract.Function().GetReturnType());
++	auto &return_type = extract.GetReturnType();
++	// AddCastToType skips the cast when only the collation differs - keep the collation of the extract
++	auto cast = BoundCastExpression::AddCastToType(GetContext(), std::move(result), return_type);
++	return Expression::PreserveReturnType(return_type, std::move(cast));
+ }
+ 
+ } // namespace duckdb
+```
+
+**File**: `src/planner/sql_export/sql_export_dml.cpp` (modified, +5/-0)
+```diff
+@@ -314,6 +314,11 @@ static LogicalPlanSQLExportResult ExportMergeNode(LogicalMergeInto &op, LogicalP
+ 					set_info->columns.push_back(op.table.GetColumns().GetColumn(bound_action->columns[i]).Name());
+ 					set_info->expressions.push_back(std::move(value.GetValue()));
+ 				}
++				if (set_info->columns.empty()) {
++					// an update without assignments is expressed as DO NOTHING
++					action->action_type = MergeActionType::MERGE_DO_NOTHING;
++					break;
++				}
+ 				action->update_info = std::move(set_info);
+ 				break;
+ 			}
+```
+
+---
+
+### Incident Patch 2: `f3581650` (2026-11-06)
+**Commit Message**: Do not wrap the total string length statistic on overflow (#28462)
+
+Sibling of #28457, which fixed the same mechanism for the total list
+length statistic and noted this site. `StringStats::Merge` accumulates
+`total_string_length` with an unchecked `+=`. When the sum exceeds
+`uint64_t`, the total wraps silently and consumers of
+`StringStats::TotalStringLength` read a small but "known" value.
+
+The total already has an unknown sentinel, the `has_total_string_length`
+flag, which `Merge` uses for `EXPAND_BOUNDS` and
+`ResetAdditiveStatistics` uses after updates and deletes. The fix
+follows that idiom: the accumulation site uses `TryAddOperator` and
+marks the total as unknown when the sum overflows. The min/max string
+length bounds are unaffected.
+
+This is the only merge-level accumulation site, the
+`StatsWriter<string_t>` overload of `Merge` funnels into the same code.
+The per-value sums in `StatsWriter<string_t>::Update` and
+`UpdateRepeated` count bytes of strings actually fed through a writer
+with a bounded lifetime (one append batch, one compression state per
+column per row group, or one update segment), the same class as the
+unguarded `ListColumnData::Append` feeder in #28457, so the
+
+**File**: `src/storage/statistics/string_stats.cpp` (modified, +7/-2)
+```diff
+@@ -1,6 +1,7 @@
+ #include "duckdb/storage/statistics/string_stats.hpp"
+ #include "duckdb/common/types/value.hpp"
+ 
++#include "duckdb/common/operator/add.hpp"
+ #include "duckdb/common/serializer/deserializer.hpp"
+ #include "duckdb/common/serializer/serializer.hpp"
+ #include "duckdb/common/typedefs.hpp"
+@@ -661,8 +662,12 @@ void StringStats::Merge(BaseStatistics &stats, const StringStatsData &other_data
+ 		string_data.has_total_string_length = false;
+ 	} else {
+ 		string_data.has_total_string_length = string_data.has_total_string_length && other_data.has_total_string_length;
+-		if (string_data.has_total_string_length) {
+-			string_data.total_string_length += other_data.total_string_length;
++		if (string_data.has_total_string_length &&
++		    !TryAddOperator::Operation<uint64_t, uint64_t, uint64_t>(
++		        string_data.total_string_length, other_data.total_string_length, string_data.total_string_length)) {
++			// the sum of the totals overflows - the total is no longer known
++			string_data.has_total_string_length = false;
++			string_data.total_string_length = 0;
+ 		}
+ 	}
+ }
 ```
 
 **File**: `test/common/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -26,6 +26,7 @@ add_library_unity(
-   test_http_retry_budget.cpp
-   test_httplib_header_length.cpp
-   test_httplib_sigpipe.cpp
-+  test_list_stats.cpp
-   test_literal.cpp
-   test_lru_cache.cpp
-   test_minmax_n_heap.cpp
+@@ -42,6 +42,7 @@ add_library_unity(
+   test_pipeline_broadcast_exchange.cpp
+   test_recursive_cte_metrics.cpp
+   test_scalar_executor.cpp
++  test_string_stats.cpp
+   test_logical_type_is_complete.cpp
+   test_logical_type_immutable.cpp
+   test_type_visitor.cpp
 ```
 
-**File**: `test/common/test_list_stats.cpp` (added, +83/-0)
+**File**: `test/common/test_string_stats.cpp` (added, +79/-0)
 ```diff
-@@ -0,0 +1,83 @@
+@@ -0,0 +1,79 @@
 +#include "catch.hpp"
 +#include "duckdb/common/limits.hpp"
 +#include "duckdb/storage/statistics/base_statistics.hpp"
-+#include "duckdb/storage/statistics/list_stats.hpp"
++#include "duckdb/storage/statistics/string_stats.hpp"
 +
 +using namespace duckdb; // NOLINT
 +
-+TEST_CASE("Total list length statistics do not wrap on overflow", "[statistics]") {
-+	const auto max_total = NumericLimits<uint64_t>::Maximum();
-+	auto list_type = LogicalType::LIST(LogicalType::INTEGER);
++//! Build string stats data that only carries length information, as a disjoint data set for MERGE_STATS
++static StringStatsData LengthStats(uint32_t min_length, uint32_t max_length, uint64_t total_length) {
++	StringStatsData data;
++	data.min_type = StringStatsType::EMPTY_STATS;
++	data.max_type = StringStatsType::EMPTY_STATS;
++	data.has_unicode = false;
++	data.has_max_string_length = true;
++	data.max_string_length = max_length;
++	data.has_min_string_length = true;
++	data.min_string_length = min_length;
++	data.has_total_string_length = true;
++	data.total_string_length = total_length;
++	return data;
++}
 +
-+	SECTION("MergeInLengths sums totals and invalidates the total on overflow") {
-+		auto stats = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(stats, 2, 4, 6);
-+		ListStats::MergeInLengths(stats, 1, 8, 10);
-+		REQUIRE(ListStats::MinListLength(stats).GetIndex() == 1);
-+		REQUIRE(ListStats::MaxListLength(stats).GetIndex() == 8);
-+		REQUIRE(ListStats::TotalListLength(stats).GetIndex() == 16);
++TEST_CASE("Total string length statistics do not wrap on overflow", "[statistics]") {
++	const auto max_total = NumericLimits<uint64_t>::Maximum();
++
++	SECTION("Merge sums totals and invalidates the total on overflow") {
++		auto stats = StringStats::CreateEmpty(LogicalType::VARCHAR);
++		StringStats::Merge(stats, LengthStats(2, 4, 6));
++		StringStats::Merge(stats, LengthStats(1, 8, 10));
++		REQUIRE(StringStats::MinStringLength(stats).GetIndex() == 1);
++		REQUIRE(StringStats::MaxStringLength(stats) == 8);
++		REQUIRE(StringStats::TotalStringLength(stats).GetIndex() == 16);
 +
 +		// summing up to the maximum keeps the total known
-+		ListStats::MergeInLengths(stats, 1, 8, max_total - 16);
-+		REQUIRE(ListStats::TotalListLength(stats).GetIndex() == max_total);
++		StringStats::Merge(stats, LengthStats(1, 8, max_total - 16));
++		REQUIRE(StringStats::TotalStringLength(stats).GetIndex() == max_total);
 +
-+		// one more element overflows - the total becomes unknown, the bounds remain
-+		ListStats::MergeInLengths(stats, 1, 8, 1);
-+		REQUIRE(!ListStats::TotalListLength(stats).IsValid());
-+		REQUIRE(ListStats::MinListLength(stats).GetIndex() == 1);
-+		REQUIRE(ListStats::MaxListLength(stats).GetIndex() == 8);
++		// one more byte overflows - the total becomes unknown, the bounds remain
++		StringStats::Merge(stats, LengthStats(1, 8, 1));
++		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
++		REQUIRE(StringStats::MinStringLength(stats).GetIndex() == 1);
++		REQUIRE(StringStats::MaxStringLength(stats) == 8);
 +
 +		// the total stays unknown for subsequent merges
-+		ListStats::MergeInLengths(stats, 1, 8, 42);
-+		REQUIRE(!ListStats::TotalListLength(stats).IsValid());
-+	}
-+
-+	SECTION("Merge sums totals that stay in range") {
-+		auto left = ListStats::CreateEmpty(list_type);
-+		auto right = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(left, 2, 4, 100);
-+		ListStats::MergeInLengths(right, 3, 7, 11);
-+		ListStats::Merge(left, right);
-+		REQUIRE(ListStats::MinListLength(left).GetIndex() == 2);
-+		REQUIRE(ListStats::MaxListLength(left).GetIndex() == 7);
-+		REQUIRE(ListStats::TotalListLength(left).GetIndex() == 111);
++		StringStats::Merge(stats, LengthStats(1, 8, 42));
++		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
 +	}
 +
 +	SECTION("Merge keeps a total that lands exactly on the maximum") {
-+		auto left = ListStats::CreateEmpty(list_type);
-+		auto right = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(left, 2, 4, max_total - 11);
-+		ListStats::MergeInLengths(right, 3, 7, 11);
-+		ListStats::Merge(left, right);
-+		REQUIRE(ListStats::TotalListLength(left).GetIndex() == max_total);
++		auto stats = StringStats::CreateEmpty(LogicalType::VARCHAR);
++		StringStats::Merge(stats, LengthStats(2, 4, max_total - 11));
++		StringStats::Merge(stats, LengthStats(3, 7, 11));
++		REQUIRE(StringStats::TotalStringLength(stats).GetIndex() == max_total);
 +	}
 +
 +	SECTION("Merge with an unknown total keeps the total unknown") {
-+		auto left = ListStats::CreateEmpty(list_type);
-+		auto right = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(left, 2, 4, 100);
-+		ListStats::MergeInLengths(right, 3, 7, 11);
-+		ListStats::ResetTotalListLength(right);
-+		ListStats::Merge(left, right);
-+		REQUIRE(!ListStats::TotalListLength(left).IsValid());
-+		REQUIRE(ListStats::MinListLength(left).GetIndex() == 2);
-+		REQUIRE(ListStats::MaxListLength(left).GetIndex() == 7);
++		auto stats = StringStats::CreateEmpty(LogicalType::VARCHAR);
++		StringStats::Merge(stats, LengthStats(2, 4, 100));
++		auto unknown_total = LengthStats(3, 7, 0);
++		unknown_total.has_total_string_length = false;
++		StringStats::Merge(stats, unknown_total);
++		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
++		REQUIRE(StringStats::MinStringLength(stats).GetIndex() == 2);
++		REQUIRE(StringStats::MaxStringLength(stats) == 7);
 +
 +		// merging a known total into an unknown one stays unknown
-+		auto known = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(known, 1, 9, 5);
-+		ListStats::Merge(left, known);
-+		REQUIRE(!ListStats::TotalListLength(left).IsValid());
++		StringStats::Merge(stats, LengthStats(1, 9, 5));
++		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
 +	}
 +
 +	SECTION("Merge invalidates the total on overflow and keeps the bounds") {
-+		auto left = ListStats::CreateEmpty(list_type);
-+		auto right = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(left, 2, 4, max_total - 10);
-+		ListStats::MergeInLengths(right, 3, 7, 11);
-+		ListStats::Merge(left, right);
-+		REQUIRE(!ListStats::TotalListLength(left).IsValid());
-+		REQUIRE(ListStats::MinListLength(left).GetIndex() == 2);
-+		REQUIRE(ListStats::MaxListLength(left).GetIndex() == 7);
++		auto stats = StringStats::CreateEmpty(LogicalType::VARCHAR);
++		StringStats::Merge(stats, LengthStats(2, 4, max_total - 10));
++		StringStats::Merge(stats, LengthStats(3, 7, 11));
++		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
++		REQUIRE(StringStats::MinStringLength(stats).GetIndex() == 2);
++		REQUIRE(StringStats::MaxStringLength(stats) == 7);
 +	}
 +}
 ```
 
-**File**: `test/sql/storage/list_length_stats.test` (modified, +25/-0)
+**File**: `test/configs/force_storage_restart.json` (modified, +1/-0)
 ```diff
-@@ -108,3 +108,28 @@ query II
- SELECT s.min_list_length, s.max_list_length FROM (SELECT stats([1, 2, 3]::INT[3]::INT[]) s)
- ----
- 3	3
+@@ -147,6 +147,7 @@
+         "test/sql/storage/list_length_stats_checkpoint.test",
+         "test/sql/optimizer/statistics/list_length_stats_propagation.test",
+         "test/sql/storage/total_string_length_repeated_insert.test",
++        "test/sql/storage/total_string_length_multi_row_group.test",
+         "test/sql/storage/compression/dictionary/total_string_length_dictionary.test"
+       ]
+     },
+```
+
+**File**: `test/configs/stats_dependent_tests.json` (modified, +1/-0)
+```diff
+@@ -60,6 +60,7 @@
+         "test/sql/storage/extended_string_stats.test",
+         "test/sql/storage/min_string_length_too_large.test_slow",
+         "test/sql/storage/total_string_length_repeated_insert.test",
++        "test/sql/storage/total_string_length_multi_row_group.test",
+         "test/sql/storage/compression/dictionary/total_string_length_dictionary.test",
+         "test/sql/storage/compression/dict_fsst/repeated_string_stats.test",
+         "test/sql/types/geo/geometry_from_wkb_stats.test",
+```
+
+**File**: `test/sql/storage/total_string_length_multi_row_group.test` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++# name: test/sql/storage/total_string_length_multi_row_group.test
++# description: Test that total string length merges exactly across row groups, a checkpoint, and a restart
++# group: [storage]
 +
-+# totals merge correctly across multiple row groups
-+statement ok
-+CREATE TABLE multi_rg(l INT[]);
++load {TEST_DIR}/total_string_length_multi_row_group.db readwrite v2.0.0
 +
 +statement ok
-+INSERT INTO multi_rg SELECT range(i % 7) FROM range(250000) t(i);
++CREATE TABLE multi_rg(s VARCHAR);
 +
 +statement ok
-+INSERT INTO multi_rg SELECT range(i % 11) FROM range(50000) t(i);
++INSERT INTO multi_rg SELECT repeat('x', i % 7) FROM range(250000) t(i);
++
++statement ok
++INSERT INTO multi_rg SELECT repeat('y', i % 11) FROM range(50000) t(i);
 +
 +query III
-+SELECT s.min_list_length, s.max_list_length, s.total_list_length = (SELECT sum(len(l)) FROM multi_rg) FROM (SELECT stats(l) s FROM multi_rg LIMIT 1)
++SELECT s.min_string_length, s.max_string_length, s.total_string_length = (SELECT sum(strlen(s)) FROM multi_rg) FROM (SELECT stats(s) s FROM multi_rg LIMIT 1)
 +----
 +0	10	true
 +
@@ -2216,357 +2491,157 @@ The per-vector sums that feed `MergeInLengths`
 +restart
 +
 +query III
-+SELECT s.min_list_length, s.max_list_length, s.total_list_length = (SELECT sum(len(l)) FROM multi_rg) FROM (SELECT stats(l) s FROM multi_rg LIMIT 1)
++SELECT s.min_string_length, s.max_string_length, s.total_string_length = (SELECT sum(strlen(s)) FROM multi_rg) FROM (SELECT stats(s) s FROM multi_rg LIMIT 1)
 +----
 +0	10	true
 ```
 
 ---
 
-### Incident Patch 2: `0f6f8258` (2026-11-06)
-**Commit Message**: Do not wrap the total list length statistic on overflow
+### Incident Patch 3: `87a4c14b` (2026-11-06)
+**Commit Message**: Fix: do not treat TUPLE casts as throw-able in CastCanThrow (#28441)
 
-ListStats::Merge and ListStats::MergeInLengths accumulated
-total_list_length with an unchecked +=. A sum past uint64_t wrapped
-silently and consumers of ListStats::TotalListLength read a small but
-known-looking total. Both sites now use TryAddOperator and mark the
-total as unknown via the existing has_total_list_length sentinel when
-the sum overflows. The min/max bounds are unaffected.
+## What does this PR fix?
+Fixes #28385.
 
-The overflow magnitudes are unreachable through SQL, so the boundary is
-exercised by a C++ test on the statistics API. A multi-row-group section
-in list_length_stats.test pins that normal totals still merge exactly
-across row groups, a checkpoint, and a restart.
+BoundCastExpression::CastCanThrow (used to decide whether a filter can
+be
+pushed through a cast) classified every TUPLE cast as fallible. A TUPLE
+is an
+unnamed STRUCT: same physical layout, positional child matching, and the
+same
+shared struct cast operators (TupleCastSwitch routes TUPLE->TUPLE and
+TUPLE->STRUCT to the identical StructToStructCast), so a TUPLE cast
+cannot
+throw whenever the equivalent STRUCT cast cannot.
 
-**File**: `src/storage/statistics/list_stats.cpp` (modified, +13/-2)
+NestedCastCanThrow special-cased STRUCT (and accepted only a STRUCT
+target), so
+TUPLE fell through to the default: return true branch and filters such
+as
+
+    SELECT ... WHERE CAST(t AS TUPLE(BIGINT)) = row(1::BIGINT)
+
+were never pushed down, while the same filter over a named STRUCT was.
+CastIsInvertible in the same file already groups STRUCT and TUPLE.
+
+## Description
+Handle TUPLE alongside STRUCT in NestedCastCanThrow: recurse into the
+child
+casts and only report the cast as throw-able when the target is not a
+STRUCT/TUPLE or a child cast can throw.
+
+## Checklist
+- [x] I have added tests that prove my fix is effective or that my
+feature works
+(test/sql
+
+**File**: `src/planner/expression/bound_cast_expression.cpp` (modified, +4/-1)
 ```diff
-@@ -1,3 +1,4 @@
-+#include "duckdb/common/operator/add.hpp"
- #include "duckdb/common/vector/list_vector.hpp"
- #include "duckdb/storage/statistics/list_stats.hpp"
- #include "duckdb/storage/statistics/base_statistics.hpp"
-@@ -111,7 +112,12 @@ void ListStats::MergeInLengths(BaseStatistics &stats, idx_t min_length, idx_t ma
- 	auto &data = GetDataUnsafe(stats);
- 	data.min_list_length = MinValue<uint64_t>(data.min_list_length, min_length);
- 	data.max_list_length = MaxValue<uint64_t>(data.max_list_length, max_length);
--	data.total_list_length += total_length;
-+	if (!TryAddOperator::Operation<uint64_t, uint64_t, uint64_t>(data.total_list_length, total_length,
-+	                                                             data.total_list_length)) {
-+		// the sum of the lengths overflows - the total is no longer known
-+		data.has_total_list_length = false;
-+		data.total_list_length = 0;
-+	}
- }
- 
- ListStatsData ListStats::GetLengthData(const BaseStatistics &stats) {
-@@ -165,7 +171,12 @@ void ListStats::Merge(BaseStatistics &stats, const BaseStatistics &other, StatsM
- 		list_data.has_total_list_length = false;
- 	} else {
- 		list_data.has_total_list_length = list_data.has_total_list_length && other_data.has_total_list_length;
--		list_data.total_list_length += other_data.total_list_length;
-+		if (!TryAddOperator::Operation<uint64_t, uint64_t, uint64_t>(
-+		        list_data.total_list_length, other_data.total_list_length, list_data.total_list_length)) {
-+			// the sum of the totals overflows - the total is no longer known
-+			list_data.has_total_list_length = false;
-+			list_data.total_list_length = 0;
-+		}
- 	}
- 
- 	auto &child_stats = ListStats::GetChildStats(stats);
+@@ -308,8 +308,11 @@ static bool NestedCastCanThrow(const LogicalType &source_type, const LogicalType
+ 		}
+ 		return BoundCastExpression::CastCanThrow(ListOrArrayChildType(source_type), ListOrArrayChildType(target_type),
+ 		                                         false);
++	// TUPLE is an unnamed STRUCT - same physical layout, positional child matching, and the same shared struct
++	// cast operators, so it can throw exactly when a STRUCT of the same children can.
++	case LogicalTypeId::TUPLE:
+ 	case LogicalTypeId::STRUCT: {
+-		if (target_type.id() != LogicalTypeId::STRUCT) {
++		if (target_type.id() != LogicalTypeId::STRUCT && target_type.id() != LogicalTypeId::TUPLE) {
+ 			return true;
+ 		}
+ 		// Pair the fields as the cast executes them: positionally for unnamed structs, by name otherwise.
 ```
 
-**File**: `test/common/CMakeLists.txt` (modified, +1/-0)
+**File**: `test/configs/v1_storage.json` (modified, +2/-1)
 ```diff
-@@ -26,6 +26,7 @@ add_library_unity(
-   test_http_retry_budget.cpp
-   test_httplib_header_length.cpp
-   test_httplib_sigpipe.cpp
-+  test_list_stats.cpp
-   test_literal.cpp
-   test_lru_cache.cpp
-   test_minmax_n_heap.cpp
+@@ -87,7 +87,8 @@
+       "paths": [
+         "test/sql/sql_export/empty_aggregate_state.test",
+         "test/sql/sql_export/mark_condition_shapes.test",
+-        "test/sql/types/variant/variant_struct_field_subquery.test"
++        "test/sql/types/variant/variant_struct_field_subquery.test",
++        "test/sql/optimizer/tuple_cast_pushdown.test"
+       ]
+     }
+   ]
 ```
 
-**File**: `test/common/test_list_stats.cpp` (added, +65/-0)
+**File**: `test/configs/v1_storage_block_size_16kB.json` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,65 @@
-+#include "catch.hpp"
-+#include "duckdb/common/limits.hpp"
-+#include "duckdb/storage/statistics/base_statistics.hpp"
-+#include "duckdb/storage/statistics/list_stats.hpp"
-+
-+using namespace duckdb; // NOLINT
-+
-+TEST_CASE("Total list length statistics do not wrap on overflow", "[statistics]") {
-+	const auto max_total = NumericLimits<uint64_t>::Maximum();
-+	auto list_type = LogicalType::LIST(LogicalType::INTEGER);
-+
-+	SECTION("MergeInLengths sums totals and invalidates the total on overflow") {
-+		auto stats = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(stats, 2, 4, 6);
-+		ListStats::MergeInLengths(stats, 1, 8, 10);
-+		REQUIRE(ListStats::MinListLength(stats).GetIndex() == 1);
-+		REQUIRE(ListStats::MaxListLength(stats).GetIndex() == 8);
-+		REQUIRE(ListStats::TotalListLength(stats).GetIndex() == 16);
-+
-+		// summing up to the maximum keeps the total known
-+		ListStats::MergeInLengths(stats, 1, 8, max_total - 16);
-+		REQUIRE(ListStats::TotalListLength(stats).GetIndex() == max_total);
-+
-+		// one more element overflows - the total becomes unknown, the bounds remain
-+		ListStats::MergeInLengths(stats, 1, 8, 1);
-+		REQUIRE(!ListStats::TotalListLength(stats).IsValid());
-+		REQUIRE(ListStats::MinListLength(stats).GetIndex() == 1);
-+		REQUIRE(ListStats::MaxListLength(stats).GetIndex() == 8);
-+
-+		// the total stays unknown for subsequent merges
-+		ListStats::MergeInLengths(stats, 1, 8, 42);
-+		REQUIRE(!ListStats::TotalListLength(stats).IsValid());
-+	}
-+
-+	SECTION("Merge sums totals that stay in range") {
-+		auto left = ListStats::CreateEmpty(list_type);
-+		auto right = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(left, 2, 4, 100);
-+		ListStats::MergeInLengths(right, 3, 7, 11);
-+		ListStats::Merge(left, right);
-+		REQUIRE(ListStats::MinListLength(left).GetIndex() == 2);
-+		REQUIRE(ListStats::MaxListLength(left).GetIndex() == 7);
-+		REQUIRE(ListStats::TotalListLength(left).GetIndex() == 111);
-+	}
-+
-+	SECTION("Merge keeps a total that lands exactly on the maximum") {
-+		auto left = ListStats::CreateEmpty(list_type);
-+		auto right = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(left, 2, 4, max_total - 11);
-+		ListStats::MergeInLengths(right, 3, 7, 11);
-+		ListStats::Merge(left, right);
-+		REQUIRE(ListStats::TotalListLength(left).GetIndex() == max_total);
-+	}
-+
-+	SECTION("Merge invalidates the total on overflow and keeps the bounds") {
-+		auto left = ListStats::CreateEmpty(list_type);
-+		auto right = ListStats::CreateEmpty(list_type);
-+		ListStats::MergeInLengths(left, 2, 4, max_total - 10);
-+		ListStats::MergeInLengths(right, 3, 7, 11);
-+		ListStats::Merge(left, right);
-+		REQUIRE(!ListStats::TotalListLength(left).IsValid());
-+		REQUIRE(ListStats::MinListLength(left).GetIndex() == 2);
-+		REQUIRE(ListStats::MaxListLength(left).GetIndex() == 7);
-+	}
-+}
+@@ -83,7 +83,8 @@
+       "paths": [
+         "test/sql/sql_export/empty_aggregate_state.test",
+         "test/sql/sql_export/mark_condition_shapes.test",
+-        "test/sql/types/variant/variant_struct_field_subquery.test"
++        "test/sql/types/variant/variant_struct_field_subquery.test",
++        "test/sql/optimizer/tuple_cast_pushdown.test"
+       ]
+     }
+   ]
 ```
 
-**File**: `test/sql/storage/list_length_stats.test` (modified, +25/-0)
+**File**: `test/sql/optimizer/tuple_cast_pushdown.test` (added, +49/-0)
 ```diff
-@@ -108,3 +108,28 @@ query II
- SELECT s.min_list_length, s.max_list_length FROM (SELECT stats([1, 2, 3]::INT[3]::INT[]) s)
- ----
- 3	3
+@@ -0,0 +1,49 @@
++# name: test/sql/optimizer/tuple_cast_pushdown.test
++# description: TUPLE casts with non-throwing children are not throw-able, so filters over them push down
++# group: [optimizer]
 +
-+# totals merge correctly across multiple row groups
-+statement ok
-+CREATE TABLE multi_rg(l INT[]);
++# TUPLE is an unnamed STRUCT - same physical layout, positional child matching, and the same shared struct
++# cast operators. A TUPLE cast with non-throwing children cannot throw, just like the equivalent STRUCT cast,
++# so a filter built on it must be pushed down to the scan (CastCanThrow used to classify every TUPLE cast as
++# fallible, which blocked the pushdown).
 +
 +statement ok
-+INSERT INTO multi_rg SELECT range(i % 7) FROM range(250000) t(i);
++CREATE TABLE tt_tuple AS SELECT row(range::INTEGER) AS t, struct_pack(a := range::INTEGER) AS s FROM range(1000);
 +
-+statement ok
-+INSERT INTO multi_rg SELECT range(i % 11) FROM range(50000) t(i);
-+
-+query III
-+SELECT s.min_list_length, s.max_list_length, s.total_list_length = (SELECT sum(len(l)) FROM multi_rg) FROM (SELECT stats(l) s FROM multi_rg LIMIT 1)
++# TUPLE(BIGINT) <- row(INTEGER): INTEGER -> BIGINT cannot throw, so the filter must be pushed to the scan
++query II
++EXPLAIN SELECT * FROM (SELECT t FROM tt_tuple) p WHERE CAST(p.t AS TUPLE(BIGINT)) = row(1::BIGINT);
 +----
-+0	10	true
++physical_plan	<REGEX>:(?s).*Seq Scan.*Filters:.*CAST\(t AS TUPLE\(BIGINT\)\).*
 +
-+statement ok
-+CHECKPOINT
-+
-+restart
-+
-+query III
-+SELECT s.min_list_length, s.max_list_length, s.total_list_length = (SELECT sum(len(l)) FROM multi_rg) FROM (SELECT stats(l) s FROM multi_rg LIMIT 1)
++# the equivalent filter over a named STRUCT was already pushed down
++query II
++EXPLAIN SELECT * FROM (SELECT s FROM tt_tuple) p WHERE CAST(p.s AS STRUCT(a BIGINT)) = struct_pack(a := 1::BIGINT);
 +----
-+0	10	true
-```
-
----
-
-### Incident Patch 3: `19872eef` (2026-11-06)
-**Commit Message**: Fix: do not deduplicate INTERVAL constants that are only equal after normalization (#28331)
-
-# What changes?
-
-Fixes #28308
-
-`BoundConstantExpression::Equals`/`Hash` compared interval constants by
-**normalized** value — both `Value::Hash` (via the `Hash(interval_t)`
-kernel) and `ValueOperations::DistinctFrom` normalize months/days/micros
-first, and `INTERVAL 1 MONTH` normalizes to `INTERVAL 30 DAY`. So any
-deduplication keyed on expression equality merged the two spellings even
-though they are different expressions:
-
-```sql
-CREATE TABLE t AS SELECT DATE '2008-05-17' AS d;
-SELECT d + INTERVAL 30 DAY, d + INTERVAL 1 MONTH FROM t;
--- both columns returned 2008-06-16 instead of 2008-06-16 / 2008-06-17
-```
-
-This affected both the common subexpression optimizer (plain
-projections) and duplicate-aggregate elimination in the binder (`max(d +
-INTERVAL 30 DAY)` vs `max(d + INTERVAL 1 MONTH)`); `INTERVAL 360 DAY` vs
-`INTERVAL 1 YEAR` and `INTERVAL 1 DAY` vs `INTERVAL 24 HOUR` (DST) are
-the same class of bug.
-
-The fix compares/hashes INTERVAL constants by their raw `(months, days,
-micros)` fields, the same approach Parquet dictionary encoding took for
-this exact collision in #27246 (`interval_n
-
-**File**: `src/include/duckdb/common/types/interval.hpp` (modified, +7/-0)
-```diff
-@@ -50,6 +50,13 @@ struct interval_t { // NOLINT
- 		return !(*this == right);
- 	}
- 
-+	//! True when the raw (months, days, micros) fields are identical, without normalizing first. Unlike operator==
-+	//! (which falls back to a normalized comparison, so INTERVAL 1 MONTH == INTERVAL 30 DAY), this is a strict
-+	//! field-wise test: two intervals that are only equal after normalization are not the same here.
-+	inline bool SameFields(const interval_t &right) const {
-+		return months == right.months && days == right.days && micros == right.micros;
-+	}
++physical_plan	<REGEX>:(?s).*Seq Scan.*Filters:.*CAST\(s AS STRUCT\(a BIGINT\)\).*
 +
- 	inline bool operator>(const interval_t &right) const {
- 		const auto &left = *this;
- 		int64_t lmonths, ldays, lmicros;
-```
-
-**File**: `src/planner/expression/bound_constant_expression.cpp` (modified, +21/-2)
-```diff
-@@ -32,8 +32,17 @@ string BoundConstantExpression::ToString() const {
- 
- //! Two constants are the same expression if their values have the same representation. VARIANT values compare by
- //! meaning - 1::TINYINT and 1::INTEGER are equal - but as constants they are different: variant_typeof tells them
--//! apart, and they hash differently. Vectors compare a VARIANT as the STRUCT it is stored as.
-+//! apart, and they hash differently. Vectors compare a VARIANT as the STRUCT it is stored as. INTERVALs that are
-+//! only not distinct after normalization (e.g. INTERVAL 1 MONTH vs INTERVAL 30 DAY) can have different effects in
-+//! expressions - DATE '2008-05-17' + INTERVAL 1 MONTH is 2008-06-17, but + INTERVAL 30 DAY is 2008-06-16 - so
-+//! they compare by their raw (months, days, micros) fields, not by normalized equality.
- static bool SameRepresentation(const Value &left, const Value &right) {
-+	if (left.type().id() == LogicalTypeId::INTERVAL) {
-+		if (left.IsNull() || right.IsNull()) {
-+			return left.IsNull() == right.IsNull();
-+		}
-+		return left.GetValueUnsafe<interval_t>().SameFields(right.GetValueUnsafe<interval_t>());
-+	}
- 	if (!TypeVisitor::Contains(left.type(), LogicalTypeId::VARIANT)) {
- 		return !ValueOperations::DistinctFrom(left, right);
- 	}
-@@ -47,11 +56,21 @@ bool BoundConstantExpression::Equals(const BaseExpression &other_p) const {
- 		return false;
- 	}
- 	auto &other = other_p.Cast<BoundConstantExpression>();
--	return value.type() == other.value.type() && SameRepresentation(value, other.value);
-+	if (value.type() != other.value.type()) {
-+		return false;
-+	}
-+	return SameRepresentation(value, other.value);
- }
- 
- hash_t BoundConstantExpression::Hash() const {
- 	hash_t result = Expression::Hash();
-+	if (value.type().id() == LogicalTypeId::INTERVAL && !value.IsNull()) {
-+		// Hash by the raw (months, days, micros) fields: Value::Hash normalizes first, which would put intervals
-+		// that are only equal after normalization in the same bucket and make Equals the deciding factor
-+		auto interval = value.GetValueUnsafe<interval_t>();
-+		return CombineHash(duckdb::Hash(interval.months) ^ duckdb::Hash(interval.days) ^ duckdb::Hash(interval.micros),
-+		                   result);
-+	}
- 	return CombineHash(value.Hash(), result);
- }
- 
-```
-
-**File**: `test/sql/types/interval/test_interval_no_normalize_dedup.test` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+# name: test/sql/types/interval/test_interval_no_normalize_dedup.test
-+# description: intervals that are only equal after normalization must not be merged as common expressions
-+# group: [interval]
-+
-+# INTERVAL 1 MONTH and INTERVAL 30 DAY compare equal (normalized), but d + INTERVAL 1 MONTH and
-+# d + INTERVAL 30 DAY have different results when the month length is not 30 days.
-+# Expression deduplication (common subexpressions, duplicate aggregates) must not merge them.
-+
-+
-+statement ok
-+CREATE TABLE t AS SELECT DATE '2008-05-17' AS d;
-+
-+# 30 days vs 1 month
-+query TT
-+SELECT d + INTERVAL 30 DAY AS plus_30_days, d + INTERVAL 1 MONTH AS plus_1_month FROM t;
-+----
-+2008-06-16 00:00:00	2008-06-17 00:00:00
-+
-+query TT
-+SELECT d + INTERVAL 1 MONTH AS plus_1_month, d + INTERVAL 30 DAY AS plus_30_days FROM t;
-+----
-+2008-06-17 00:00:00	2008-06-16 00:00:00
-+
-+# aggregates: duplicate-aggregate elimination in the binder must not merge them either
-+query TT
-+SELECT max(d + INTERVAL 30 DAY) AS plus_30_days, max(d + INTERVAL 1 MONTH) AS plus_1_month FROM t;
-+----
-+2008-06-16 00:00:00	2008-06-17 00:00:00
-+
-+query TT
-+SELECT max(d + INTERVAL 1 MONTH) AS plus_1_month, max(d + INTERVAL 30 DAY) AS plus_30_days FROM t;
-+----
-+2008-06-17 00:00:00	2008-06-16 00:00:00
-+
-+# 360 days vs 1 year
-+query TT
-+SELECT d + INTERVAL 360 DAY AS plus_360_days, d + INTERVAL 1 YEAR AS plus_1_year FROM t;
-+----
-+2009-05-12 00:00:00	2009-05-17 00:00:00
-+
-+# 24 hours vs 1 day
-+query TT
-+SELECT d + INTERVAL 1 DAY AS plus_1_day, d + INTERVAL 24 HOUR AS plus_24_hours FROM t;
-+----
-+2008-05-18 00:00:00	2008-05-18 00:00:00
-+
-+# identical raw fields must still be deduplicated: same spelling twice
-+query TT
-+SELECT d + INTERVAL 30 DAY AS a, d + INTERVAL 30 DAY AS b FROM t;
-+----
-+2008-06-16 00:00:00	2008-06-16 00:00:00
-+
-+# ... including via normalized-equal spellings with the same raw fields (0 months 30 days)
-+query TT
-+SELECT d + INTERVAL 30 DAY AS a, d + INTERVAL '0 months 30 days 00:00:00.000000' AS b FROM t;
-+----
-+2008-06-16 00:00:00	2008-06-16 00:00:00
-+
-+# interval literals themselves: normalized equality is preserved
++# results are correct with the pushed filter
 +query I
-+SELECT 11 WHERE INTERVAL 30 DAY = INTERVAL '1 month';
++SELECT count(*) FROM (SELECT t FROM tt_tuple) p WHERE CAST(p.t AS TUPLE(BIGINT)) = row(1::BIGINT);
 +----
-+11
++1
 +
-+# CSE with the same interval constant across subqueries
-+query TT
-+SELECT (SELECT d + INTERVAL 1 MONTH FROM t), (SELECT d + INTERVAL 30 DAY FROM t);
++query I
++SELECT count(*) FROM (SELECT s FROM tt_tuple) p WHERE CAST(p.s AS STRUCT(a BIGINT)) = struct_pack(a := 1::BIGINT);
 +----
-+2008-06-17 00:00:00	2008-06-16 00:00:00
++1
++
++# negative control: a TUPLE cast with a throwing child (VARCHAR -> INTEGER) still cannot be pushed down,
++# it must stay in a Filter node above the scan
++statement ok
++CREATE TABLE tt_bad AS SELECT row(range::VARCHAR) AS t FROM range(1000);
++
++query II
++EXPLAIN SELECT * FROM (SELECT t FROM tt_bad) p WHERE CAST(p.t AS TUPLE(BIGINT)) = row(1::BIGINT);
++----
++physical_plan	<REGEX>:(?s).*Filter.*Expression:.*CAST\(t AS TUPLE\(BIGINT\)\).*
++
++query I
++SELECT count(*) FROM (SELECT t FROM tt_bad) p WHERE CAST(p.t AS TUPLE(BIGINT)) = row(1::BIGINT);
++----
++1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28460** (2026-11-06): CI: make alpha track main (@smvv)
-- **PR #28457** (2026-11-06): Do not wrap the total list length statistic on overflow (@kryonix)
-- **PR #28455** (2026-11-06): Reject EXPORT_STATE on DISTINCT aggregates instead of exporting the non-distinct state (@h4nsmuller)
-- **PR #28453** (2026-11-06): Internal #10729: Window Predicate Fusion (@hawkfish)
-- **PR #28429** (2026-11-06): Round HUGEINT and UHUGEINT casts to DOUBLE and FLOAT once (@evertlammerts)
-- **PR #28427** (2026-11-06): Expose read files for statistics to extensions (@Tmonster)
+- **PR #28496** (closed): Fix glue extension build after LazyMultiFileList takes Context (@Robinho-MR)
+- **PR #28470** (2026-11-06): Skip slow persistent part of variant_stats_merge_decimal under alternative verify (@Robinho-MR)
+- **PR #28469** (2026-11-06): Bind again at EXECUTE when an untyped parameter meets an incomplete function argument type (@Robinho-MR)
+- **PR #28468** (2026-11-06): Report a failed write of a persistent secret file (to backport to v2.0) (@Robinho-MR)
+- **PR #28464** (2026-11-06): Make CatalogTransaction db a reference (@Robinho-MR)
+- **PR #28462** (2026-11-06): Do not wrap the total string length statistic on overflow (@kryonix)
 
 ---
 
@@ -2586,41 +2661,37 @@ this exact collision in #27246 (`interval_n
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Do not wrap the total list length statistic on overflow (#28457)
+## X. Batch the Ready To Merge fixes from Robinho-MR/duckdb (#28420)
 
 **RULE**:
-When implementing operations in `src/storage/statistics/list_stats.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `extension/core_functions/aggregate/nested/binned_histogram.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `55506bf8`: Do not wrap the total list length statistic on overflow (#28457). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f32c9494`: Batch the Ready To Merge fixes from Robinho-MR/duckdb (#28420). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/statistics/list_stats.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `extension/core_functions/aggregate/nested/binned_histogram.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include "duckdb/common/operator/add.hpp"
-	if (!TryAddOperator::Operation<uint64_t, uint64_t, uint64_t>(data.total_list_length, total_length,
-	                                                             data.total_list_length)) {
-		// the sum of the lengths overflows - the total is no longer known
-		data.has_total_list_length = false;
-		data.total_list_length = 0;
-	}
-		if (!TryAddOperator::Operation<uint64_t, uint64_t, uint64_t>(
-		        list_data.total_list_length, other_data.total_list_length, list_data.total_list_length)) {
-			// the sum of the totals overflows - the total is no longer known
-			list_data.has_total_list_length = false;
-			list_data.total_list_length = 0;
-		}
+			auto other_value = OtherBucketValue(keys.GetType());
+			for (idx_t bin_idx = list_entry.offset; bin_idx < current_offset; bin_idx++) {
+				if (Value::NotDistinctFrom(keys.GetValue(bin_idx), other_value)) {
+					throw InvalidInputException(
+					    "Histogram bin %s collides with the key of the \"other values\" bucket, "
+					    "which has entries - use a different bin value",
+					    other_value.ToSQLString());
+				}
+			}
+			keys.SetValue(current_offset, other_value);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-	data.total_list_length += total_length;
-		list_data.total_list_length += other_data.total_list_length;
+			keys.SetValue(current_offset, OtherBucketValue(keys.GetType()));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55506bf8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f32c9494` are properly handled with clean fallback behavior.

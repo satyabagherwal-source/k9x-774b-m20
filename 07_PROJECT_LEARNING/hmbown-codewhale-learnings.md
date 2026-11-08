@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `885ef69f`  
+> **Source Version**: `deefd0e0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T21:32:49.021Z  
+> **Timestamp**: 2026-11-08T00:55:59.903Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T21:32:48.134Z  
+> **Harvest Timestamp**: 2026-11-08T00:55:58.667Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41157 stars
+- **Stars / Engagement**: 41160 stars
 
 ---
 
@@ -1824,11 +1824,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7136** (2026-10-29): **The persistent "update available" header chip is never rendered — `app.update_available` is written and never read**
-  *Symptoms*: ### Before you start  - [X] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  saw no notification  ### Steps to reproduce 复现步骤  Using codewhale  - the update available notification for 0.10.2 was not given  ### Codewhale version 版本  codewhale 0.10.1  ### Where did it happen? 在哪里出现？  TUI (terminal interface)  ### Operating system 操作系统  Linux  ### How did you get Codewhale? 获取方式  Official script ([codewhale.net/install.sh](<http://codewhale.net/install.sh>))  ### Provider and model 提供商和模型  *No response*  ### Terminal and shell 终端  *No response*  ### codewhale doctor (optional)  ```text ```  ### Logs, screenshots, anything else (optional)  # The persistent "update available" header chip is never rendered — `app.update_available` is written and never read  **Labels:** `bug`  **Surface:** TUI (terminal interface)  **Version:** `codewhale 0.10.1 (fead51eeea0f)`  **OS:** Linux (Linux Mint 22.2, x86-64)  **Confirmed present in:** `v0.10.1` tag and `HEAD` (`687a38c6e`, 2026-10-28) — 281 commits after the tag, still unreproduced.  ---  ## What happened  A newer release was available and Codewhale never told me — or told me only for twelve seconds, at startup, four days before I noticed.  Running `0.10.1` with `0.10.2` published:  | Fact | Value | | -- | -- | | Installed | `codewhale 0.10.1 (fead51eeea0f)`, `/usr/local/bin/codewhale`, 8 Oct | | `v0.10.2` published | 2026-10-24T17:31:14Z | | Session started | 2026-10-25T04:27:16Z | | Updat
+- **Issue #7234** (2026-11-07): **fix(fork): cut saved histories that carry workspace drift notices**
+  *Symptoms*:   No-Issue: fifth instance of the engine-owned history-envelope boundary class; no separate tracker issue exists. 
 
-- **Issue #7123** (2026-10-29): **Display overflow of the chain of thought**
-  *Symptoms*: ### Before you start  - [x] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  Some content within the chain of thought may spill over the boundaries of the chain-of-thought card and appear as regular content.   **This is the chain-of-thought in a collapsed state.** <img width="887" height="189" alt="Image" src="https://github.com/user-attachments/assets/bb3c8c61-56bb-4913-bd8f-d3c3314a9573" />  **This is the chain of thought in its expanded state. A single sentence has been split into two parts: the first half appears inside the chain of thought, while the second half appears outside of it; together, they form one continuous sentence.** <img width="916" height="233" alt="Image" src="https://github.com/user-attachments/assets/935c37bd-77c5-46a3-9c3d-c956be2acfef" />  ### Steps to reproduce 复现步骤  Just use it as normal.  ### Codewhale version 版本  0.10.3  ### Where did it happen? 在哪里出现？  TUI (terminal interface)  ### Operating system 操作系统  Windows  ### How did you get Codewhale? 获取方式  Official script (codewhale.net/install.sh)  ### Provider and model 提供商和模型  _No response_  ### Terminal and shell 终端  Windows Terminal  ### codewhale doctor (optional)  ```text  ```  ### Logs, screenshots, anything else (optional)  _No response_
+- **Issue #7231** (2026-11-07): **fix(net): go direct when a local proxy disappears**
+  *Symptoms*: ## What and why  reqwest snapshots `HTTP_PROXY` / `HTTPS_PROXY` / `ALL_PROXY` when a client is built, and Codewhale builds its engine HTTP clients once per session. A session started behind a local proxy (Clash, v2rayN, sing-box on `127.0.0.1:…`) therefore kept dialing that port after the proxy was closed: every request failed with a connect error, including requests to providers that need no proxy at all, and the only recovery was restarting Codewhale.  `codewhale_net::proxy::install_loopback_proxy()` installs a `reqwest::Proxy::custom` route for ambient **loopback** proxies:  - `no_proxy()` runs first, so the custom route is the only proxy source. `no_proxy()` clears every proxy registered before it, so the order matters: a request the callback declines cannot fall back to the address reqwest read when the client was built. - A background thread probes each configured loopback proxy on its own port. While a port refuses connections, requests that would use it go direct; when it answers again, proxy routing resumes. A live `HTTP_PROXY` therefore does not keep a dead `HTTPS_PROXY` in the path. - Only a definite `ECONNREFUSED` from every resolved address moves a proxy to direct. A timeout, an fd limit or a resolver failure leaves the previous state alone: routing a session direct on that evidence would put traffic on a network path the operator deliberately avoided. - While the port answers, routing is unchanged: `ALL_PROXY` / `HTTP_PROXY` / `HTTPS_PROXY` precedence, `NO_PROXY
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1845,474 +1845,396 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `885ef69f` (2026-11-05)
-**Commit Message**: fix(app-server): neutralize repository-defined git filter drivers on status reads (P12 slice 2)
+### Incident Patch 1: `549ff01e` (2026-11-07)
+**Commit Message**: fix(release): handle Windows cleanup and align kit lock [skip ci]
 
-GET /v1/workspace/status and the git status detail spawned `git status
---porcelain=v1` with only core.fsmonitor and core.hooksPath disabled, so a
-repository-configured clean or process filter executed (observed on native-v36:
-filter-clean and filter-process markers written), and a failing process filter
-made git exit nonzero so the route silently reported dirty=false with zero counts
-on a dirty repository. Status reads now go through Git::status_command, which
-enumerates filter drivers with `git config --show-scope` and neutralizes any
-driver with a definition in a non-global/system scope (local, worktree, other),
-including a local redefinition of a global driver; drivers defined only in the
-user's global or system config, such as Git LFS, keep working. If the scoped probe
-fails it falls back to the all-scope neutralizer (fail closed). --ignore-submodules
-=dirty stops a repo-controlled submodule from running its own drivers. Status runs
-once in collect_workspace_status (it ran twice). A git failure no longer reads as
-clean: WorkspaceStatusResponse and GitStatusDetailResponse gain
-status
+Strip Windows PowerShell's UTF8 BOM before parsing normal cleanup
+receipts. Run the existing bounded exact-private-path cleanup fallback
+on failures even when its controller has already exited, verify its
+returned path and zero remaining Terminal processes, and retain the
+original failure result.
 
-**File**: `crates/app-server/src/runtime_api/git.rs` (modified, +37/-4)
+Use Cargo's conservative offline update for the standalone vendored
+kit lock: app-server-protocol0.10.3 and its declared chrono edge. Root
+Cargo.lock and runtime Rust sources are unchanged from4ba0c656ac9c.
+
+Verified on the frozen4ba+these2paths: existing standalone kit themes
+14passed/0failed; surfaces3passed/0failed, both locked/offline with
+source unchanged and disk guard retained. Node syntax and diff checks
+exit0. Independent review confirms both Windows findings are closed.
+Actual PowerShell/Windows execution remains pending finalCI.
+
+Mac4ba CLI build and strict HTTP admission/recovery observations passed;
+Linux4ba-equivalent CLI build passed with full4270source invariants.
+Those executables retain their exact4ba identity and scope; this commit
+is not a claim that they were rebuilt from the later script/kit-lock
+meta
+
+**File**: `scripts/release/windows-terminal-clipboard.mjs` (modified, +15/-11)
 ```diff
-@@ -217,6 +217,22 @@ fn run_git_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
-     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
- }
- 
-+fn status_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
-+    let output = Git::status_command(workspace)
-+        .map_err(|error| ApiError::internal(format!("git is unavailable: {error}")))?
-+        .args(args)
-+        .output()
-+        .map_err(|error| ApiError::internal(format!("failed to run git: {error}")))?;
-+    if !output.status.success() {
-+        return Err(ApiError::internal(format!(
-+            "git {} failed: {}",
-+            args.first().copied().unwrap_or(""),
-+            String::from_utf8_lossy(&output.stderr).trim()
-+        )));
+@@ -120,7 +120,7 @@ try {
+   receipt.stash = { path: stashFile, sha256: createHash('sha256').update(stashBytes).digest('hex'), records: 1, exactDraftMatch: true, normalization: 'CRLF to LF only' };
+   assert.equal(await desktopClosed, 0, desktopError);
+   assert.equal(desktopError, '', 'no desktop errors');
+-  receipt.cleanup = JSON.parse(await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8'));
++  receipt.cleanup = JSON.parse((await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8')).replace(/^\uFEFF/, ''));
+   assert.equal(receipt.cleanup.terminal, terminal, 'cleanup used the owned Terminal path');
+   assert.equal(receipt.cleanup.remaining, 0, 'owned Terminal processes are gone');
+   receipt.result = 'passed';
+@@ -135,18 +135,22 @@ try {
+         await fs.writeFile(path.join(evidence, 'cancel'), 'retire owned Terminal');
+         await Promise.race([desktopClosed, delay(5000)]);
+       } catch (error) { receipt.desktop.cancelError = String(error); }
+-      if (desktop.exitCode === null && desktop.signalCode === null) {
+-        try {
+-          const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+-            '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
+-          { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
+-          receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
+-        } catch (error) {
+-          receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
+-        }
+-        receipt.desktop.killRequestedAt = new Date().toISOString(); desktop.kill();
 +    }
-+    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
-+}
-+
- // ---------------------------------------------------------------------------
- // GET /v1/git — status detail
- // ---------------------------------------------------------------------------
-@@ -252,6 +268,8 @@ pub(super) struct GitStatusDetailResponse {
-     head: Option<String>,
-     /// Full HEAD commit id; null on an unborn branch.
-     head_oid: Option<String>,
-+    /// True when `git status` could not be read: the counts are unknown.
-+    status_unavailable: bool,
-     /// Opaque token for the whole index (every stage entry, repository-wide).
-     index_token: Option<String>,
-     /// Opaque token for the whole tree: HEAD, the index and every row.
-@@ -289,6 +307,7 @@ fn collect_git_status_detail(workspace: &FsPath) -> Result<GitStatusDetailRespon
-         detached: false,
-         head: status.head,
-         head_oid: None,
-+        status_unavailable: status.status_unavailable,
-         index_token: None,
-         revision: None,
-         ahead: status.ahead,
-@@ -388,13 +407,13 @@ fn status_rows(
-     frame: &RepoFrame,
- ) -> Result<(Vec<GitFileEntry>, bool), ApiError> {
-     let mut complete = true;
--    let mut rows = match run_git_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-+    let mut rows = match status_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-         Ok(porcelain) => parse_porcelain(&porcelain),
-         Err(_) => {
-             // One broken submodule can abort all of Git's porcelain output.
-             // Recover ordinary rows, then inspect gitlinks individually so
-             // only the unreadable submodule is shown as unknown/unguardable.
--            let porcelain = run_git_sync(
-+            let porcelain = status_sync(
-                 workspace,
-                 &["status", "--porcelain=v1", "-z", "--ignore-submodules=all"],
-             )?;
-@@ -407,7 +426,7 @@ fn status_rows(
-                     continue;
-                 }
-                 rows.retain(|row| normalized_row_path(&row.path) != path);
--                match run_git_sync(
-+                match status_sync(
-                     &frame.toplevel,
-                     &[
-                         "--literal-pathspecs",
-@@ -2229,6 +2248,7 @@ pub(super) async fn git_branch(
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use codewhale_engine::test_support::{EnvVarGuard, lock_test_env};
-     use std::fs;
- 
-     thread_local! {
-@@ -2811,9 +2831,22 @@ mod tests {
-     #[cfg(unix)]
-     #[test]
-     fn status_and_guards_respect_clean_filters() {
-+        let _env_lock = lock_test_env();
-         let tmp = repo();
-         let ws = tmp.path();
--        git(ws, &["config", "filter.up.clean", "tr a-z A-Z"]);
-+        let global = tempfile::tempdir().unwrap();
-+        let global_config = global.path().join("gitconfig");
-+        git(
-+            ws,
-+            &[
-+                "config",
-+                "--file",
-+                global_config.to_str().unwrap(),
-+                "filter.up.clean",
-+                "tr a-z A-Z",
-+            ],
-+        );
-+        let _global = EnvVarGuard::set("GIT_CONFIG_GLOBAL", &global_config);
-         fs::write(ws.join(".gitattributes"), "*.txt filter=up\n").unwrap();
-         git(ws, &["add", ".gitattributes"]);
-         // The tracked file is unchanged since the initial commit. Apply the
++    if (receipt.result !== 'passed') {
++      try {
++        const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
++          '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
++        { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
++        receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
++        assert.equal(receipt.desktop.fallbackCleanup.terminal, terminal, 'fallback cleanup used the owned Terminal path');
++        assert.equal(receipt.desktop.fallbackCleanup.remaining, 0, 'fallback cleanup retired the owned Terminal');
++      } catch (error) {
++        receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
+       }
+     }
++    if (desktop.exitCode === null && desktop.signalCode === null) {
++      receipt.desktop.killRequestedAt = new Date().toISOString(); desktop.kill();
++    }
+     await desktopClosed;
+   }
+   await fs.writeFile(path.join(evidence, 'receipt.json'), JSON.stringify(receipt, null, 2));
 ```
 
-**File**: `crates/app-server/src/runtime_api/workspace.rs` (modified, +44/-23)
+**File**: `vendor/codewhale-ratatui/Cargo.lock` (modified, +3/-2)
 ```diff
-@@ -131,6 +131,9 @@ pub(super) struct WorkspaceStatusResponse {
-     pub(super) branch: Option<String>,
-     pub(super) head: Option<String>,
-     pub(super) dirty: bool,
-+    /// True when `git status` could not be read, so `dirty` and the
-+    /// staged/unstaged/untracked counts are unknown rather than zero.
-+    pub(super) status_unavailable: bool,
-     pub(super) staged: usize,
-     pub(super) unstaged: usize,
-     pub(super) untracked: usize,
-@@ -148,11 +151,10 @@ pub(super) struct WorkspaceGitMetadata {
- }
+@@ -100,8 +100,9 @@ dependencies = [
  
- /// Status is several blocking `git` spawns, so it runs off the async workers
--/// (#6149) like every other git read on this surface. It deliberately keeps
--/// normal Git filters and untracked settings rather than the full review
--/// command, so its counts match `git status` and the operator writes (see
--/// `git.rs`), but it never runs a repository-configured helper: fsmonitor and
--/// hooks are off, as on every read-only review path (see `run_git`).
-+/// (#6149) like every other git read on this surface. It keeps normal
-+/// untracked settings rather than the full review diff flags, but it never
-+/// runs a repository-configured helper: fsmonitor, hooks and clean/process
-+/// filters are off, as on every read-only review path (see `run_status`).
- pub(super) async fn workspace_status(
-     State(state): State<RuntimeApiState>,
- ) -> Result<Json<WorkspaceStatusResponse>, ApiError> {
-@@ -238,6 +240,7 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
-         branch: None,
-         head: None,
-         dirty: false,
-+        status_unavailable: false,
-         staged: 0,
-         unstaged: 0,
-         untracked: 0,
-@@ -254,12 +257,16 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
-     };
- 
-     status.git_repo = true;
--    let metadata = workspace_git_metadata(workspace, &head);
--    status.branch = metadata.branch;
--    status.head = metadata.head;
--    status.dirty = metadata.dirty;
--
--    if let Some(porcelain) = run_git(workspace, &["status", "--porcelain=v1"]) {
-+    let (branch, short_head) = branch_and_head(&head);
-+    status.branch = branch;
-+    status.head = short_head;
-+
-+    let porcelain = run_status(workspace);
-+    status.status_unavailable = porcelain.is_none();
-+    status.dirty = porcelain
-+        .as_deref()
-+        .is_some_and(|porcelain| !porcelain.trim().is_empty());
-+    if let Some(porcelain) = porcelain {
-         for line in porcelain.lines() {
-             if line.starts_with("??") {
-                 status.untracked += 1;
-@@ -278,7 +285,7 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
-     }
- 
-     if let Some(counts) = run_git(
--        workspace,
-+        Git::review_base(workspace),
-         &["rev-list", "--left-right", "--count", "@{upstream}...HEAD"],
-     ) {
-         let mut parts = counts.split_whitespace();
-@@ -298,8 +305,8 @@ pub(super) fn collect_workspace_git_metadata(workspace: &FsPath) -> WorkspaceGit
-     }
- }
- 
--fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMetadata {
--    let (branch, short_id) = match head.id {
-+fn branch_and_head(head: &GitHead) -> (Option<String>, Option<String>) {
-+    match head.id {
-         Some(_) => (
-             head.branch.clone().or_else(|| {
-                 head.short_id()
-@@ -308,11 +315,17 @@ fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMet
-             head.short_id().map(str::to_string),
-         ),
-         None => (None, None),
--    };
-+    }
-+}
-+
-+fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMetadata {
-+    let (branch, head) = branch_and_head(head);
-+    let porcelain = run_status(workspace);
-     WorkspaceGitMetadata {
-         branch,
--        head: short_id,
--        dirty: run_git(workspace, &["status", "--porcelain=v1"])
-+        head,
-+        dirty: porcelain
-+            .as_deref()
-             .is_some_and(|porcelain| !porcelain.trim().is_empty()),
-     }
- }
-@@ -329,12 +342,20 @@ fn read_workspace_head(workspace: &FsPath) -> Option<GitHead> {
-     }
- }
- 
--/// Read-only git for status and metadata. `Git::review_base` disables
--/// `core.fsmonitor`, `core.hooksPath`, lazy fetch and replace objects: a
--/// status poll must not execute a helper the repository's config names.
--fn run_git(workspace: &FsPath, args: &[&str]) -> Option<String> {
--    let mut command = Git::review_base(workspace).ok()?;
--    let output = command.args(args).output().ok()?;
-+/// `git status` through [`Git::status_command`]: besides fsmonitor and hooks
-+/// it neutralizes every clean/process filter driver the repository itself
-+/// configures (never the user's global or system ones, such as Git LFS),
-+/// and submodules are compared without a child status inside them. `None`
-+/// means git could not be read, never a clean tree.
-+fn run_status(workspace: &FsPath) -> Option<String> {
-+    run_git(
-+        Git::status_command(wor
-```
-
-**File**: `crates/dependencies/src/lib.rs` (modified, +46/-4)
-```diff
-@@ -1161,6 +1161,27 @@ impl Git {
-     /// Configured filters otherwise execute even when those flags are present.
-     pub fn review_command(workspace: &Path) -> anyhow::Result<Command> {
-         let overrides = Self::review_filter_overrides(workspace)?;
-+        Self::with_filter_overrides(workspace, overrides)
-+    }
-+
-+    /// Like [`Self::review_command`] for status reads, which must keep the
-+    /// user's own filters (Git LFS in global or system config) working so
-+    /// files they manage do not look modified. Only filter drivers that
-+    /// repository-controlled config (local or worktree scope, including files
-+    /// it includes) defines are neutralized. If the scoped probe fails, this
-+    /// falls back to neutralizing every driver.
-+    pub fn status_command(workspace: &Path) -> anyhow::Result<Command> {
-+        let overrides = match Self::filter_overrides(workspace, true) {
-+            Ok(overrides) => overrides,
-+            Err(_) => Self::review_filter_overrides(workspace)?,
-+        };
-+        Self::with_filter_overrides(workspace, overrides)
-+    }
-+
-+    fn with_filter_overrides(
-+        workspace: &Path,
-+        overrides: Vec<(String, &'static str)>,
-+    ) -> anyhow::Result<Command> {
-         let mut command = Self::review_base(workspace)?;
-         let mut count = 2;
-         for (key, value) in overrides {
-@@ -1254,12 +1275,22 @@ impl Git {
-     /// apply them through `GIT_CONFIG_KEY_n`/`GIT_CONFIG_VALUE_n`.
-     pub fn review_filter_overrides(
-         workspace: &Path,
-+    ) -> anyhow::Result<Vec<(String, &'static str)>> {
-+        Self::filter_overrides(workspace, false)
-+    }
-+
-+    fn filter_overrides(
-+        workspace: &Path,
-+        repository_only: bool,
-     ) -> anyhow::Result<Vec<(String, &'static str)>> {
-         use anyhow::{Context, bail};
- 
-         let mut command = Self::review_base(workspace)?;
-+        command.arg("config");
-+        if repository_only {
-+            command.arg("--show-scope");
-+        }
-         command.args([
--            "config",
-             "--null",
-             "--name-only",
-             "--get-regexp",
-@@ -1276,11 +1307,22 @@ impl Git {
-             bail!("Cannot safely inspect Git review configuration");
-         }
-         let mut filters = std::collections::BTreeSet::new();
--        for key in output
-+        let mut fields = output
-             .stdout
-             .split(|byte| *byte == 0)
--            .filter(|key| !key.is_empty())
--        {
-+            .filter(|field| !field.is_empty());
-+        while let Some(field) = fields.next() {
-+            let key = if repository_only {
-+                let key = fields
-+                    .next()
-+                    .context("Git review filter scope has no key")?;
-+                if matches!(field, b"global" | b"system") {
-+                    continue;
-+                }
-+                key
-+            } else {
-+                field
-+            };
-             let key =
-                 std::str::from_utf8(key).context("Git review filter name is not valid UTF-8")?;
-             let (driver, _) = key
+ [[package]]
+ name = "codewhale-app-server-protocol"
+-version = "0.10.2"
++version = "0.10.3"
+ dependencies = [
++ "chrono",
+  "serde",
+  "serde_json",
+ ]
+@@ -110,8 +111,8 @@ dependencies = [
+ name = "codewhale-protocol"
+ version = "0.10.3"
+ dependencies = [
+- "codewhale-app-server-protocol",
+  "chrono",
++ "codewhale-app-server-protocol",
+  "serde",
+  "serde_json",
+  "uuid",
 ```
 
 ---
 
-### Incident Patch 2: `e9fdd250` (2026-11-05)
-**Commit Message**: fix(engine): session loads observe under the shared read lock and create no storage
+### Incident Patch 2: `92c26895` (2026-11-07)
+**Commit Message**: docs(changelog): record today's plugin stage and Windows release fixes
 
-Since 20f8244aafd every snapshot/checkpoint load took the exclusive
-write-admission lock to mint an optional write receipt, which creates the
-late-usage sidecar directory and lock leaf, so a pure read wrote to disk and
-could fail on read-only storage. Loads now observe the session/checkpoint pair
-under the shared, non-creating read lock (with_session_observation, which returns
-None for a tombstoned session); an absent lock leaf is read unlocked, and when no
-observation can be taken the existing degrade path returns the transcript without
-a write receipt (the commit message of 20f8244aafd states receipts are optional).
-save/rename/archive/delete/capture_session_write_source/resume_session and the
-admitted branches are unchanged, and publish_session_inner still refuses a value
-with no captured native producer, so a session loaded without a receipt cannot
-publish until a caller captures one under write admission. One behavior
-difference: a read no longer runs ledger sync/retirement on a deletion marker; it
-returns NotFound and the next writer cleans up. A first-ever save racing a read
-before the lock 
+Root asked for every change landed today to have a 0.10.3 note. Three
+landed without one: 91fd65705a (stages appearing during a registry load
+now take the restage checks), 67de548a97 (Windows import floor: ARM64
+pairs qualified by the native probe, x64 pairs recorded as documented
+contracts) and 549ff01ebb (terminal-clipboard harness BOM and cleanup
+fallback, vendored kit lock). Lint, style, test-table, ratchet and website
+docs commits change no product behavior and get no entry.
 
-**File**: `crates/engine/src/session_manager.rs` (modified, +15/-2)
+Only these three lines are committed; another session's uncommitted
+CHANGELOG text stays in the working copy.
+
+Verified: scripts/sync-changelog.sh --check up to date on the committed
+pair.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -3112,6 +3112,19 @@ impl SessionManager {
-         write().map(Some)
+@@ -283,6 +283,7 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Plugin stages created during a registry load are checked:** a plugin whose staged copy appears while the registry is loading now goes through the same restage lock, receipt and policy checks as any other stage instead of being left unstaged; invalid bytes are still refused and stay in the failure cache.
+ - **Host-provided model clients:** keep configured session isolation and
+   approval deadlines when optional credential preflight fails.
+ - **Runtime SDK exports:** include the existing thread-scoped Git, snapshot,
+@@ -553,6 +554,8 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Maintenance
+ 
++- **Windows release harness:** the terminal-clipboard check strips Windows PowerShell's UTF-8 BOM before parsing cleanup receipts and still runs the bounded private-path cleanup fallback after its controller has exited; the vendored terminal kit lock follows Protocol 0.10.3.
++- **Windows release import floor:** the 10 ARM64 import pairs that the native export probe resolved on Windows 11 ARM64 are qualified, and 12 x64 pairs are recorded as documented API contracts until a native x64 export probe exists. The Windows 10 build 14393 floor, the guard and the x86 profile are unchanged; the next frozen candidate's import job is the real check.
+ - MCP regression fixtures retain private extension-host roots and wait for their own workers to finish, preventing parallel checks from borrowing a deleted fixture home. Production connection and credential policy is unchanged.
+ - **Independent terminal kit candidate 0.2.0:** its workflow totals use `u64`, and its existing avatar API reexports the shared Protocol contract. All local consumers pin 0.2.0. Protocol 0.10.3 must be published and verified before the kit, followed by the dependent Engine packages; each publication retains its separate approval.
+ - **`codewhale-plugins` crate:** plugin discovery, review, install and marketplace parsing move out of `codewhale-tui` into a new crate; MCP server config types move to `codewhale-mcp`, and the skill parse core and recommendations to `codewhale-skill-install`. Review and trust behavior is unchanged. (S19, #5316)
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +3/-0)
+```diff
+@@ -283,6 +283,7 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Plugin stages created during a registry load are checked:** a plugin whose staged copy appears while the registry is loading now goes through the same restage lock, receipt and policy checks as any other stage instead of being left unstaged; invalid bytes are still refused and stay in the failure cache.
+ - **Host-provided model clients:** keep configured session isolation and
+   approval deadlines when optional credential preflight fails.
+ - **Runtime SDK exports:** include the existing thread-scoped Git, snapshot,
+@@ -553,6 +554,8 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Maintenance
+ 
++- **Windows release harness:** the terminal-clipboard check strips Windows PowerShell's UTF-8 BOM before parsing cleanup receipts and still runs the bounded private-path cleanup fallback after its controller has exited; the vendored terminal kit lock follows Protocol 0.10.3.
++- **Windows release import floor:** the 10 ARM64 import pairs that the native export probe resolved on Windows 11 ARM64 are qualified, and 12 x64 pairs are recorded as documented API contracts until a native x64 export probe exists. The Windows 10 build 14393 floor, the guard and the x86 profile are unchanged; the next frozen candidate's import job is the real check.
+ - MCP regression fixtures retain private extension-host roots and wait for their own workers to finish, preventing parallel checks from borrowing a deleted fixture home. Production connection and credential policy is unchanged.
+ - **Independent terminal kit candidate 0.2.0:** its workflow totals use `u64`, and its existing avatar API reexports the shared Protocol contract. All local consumers pin 0.2.0. Protocol 0.10.3 must be published and verified before the kit, followed by the dependent Engine packages; each publication retains its separate approval.
+ - **`codewhale-plugins` crate:** plugin discovery, review, install and marketplace parsing move out of `codewhale-tui` into a new crate; MCP server config types move to `codewhale-mcp`, and the skill parse core and recommendations to `codewhale-skill-install`. Review and trust behavior is unchanged. (S19, #5316)
+```
+
+---
+
+### Incident Patch 3: `062b885d` (2026-11-08)
+**Commit Message**: fix(tui): park the hidden cursor at the focused modal input for IMEs
+
+Refs #2323. Input methods place their candidate and preedit window at
+the terminal cursor. With a modal open (for example /config search or
+its value editor) the TUI hides the cursor but left it wherever the
+frame happened to end, usually the composer underneath, so the Pinyin
+candidate window appeared far from the field being typed into.
+Committed-text routing was already fixed by f9210a4428; this is the
+remaining position half.
+
+When a frame draws no visible cursor, the frame loop now moves the
+still-hidden cursor to the top modal's input anchor. ModalView gains
+input_anchor() (default None); ConfigView records its search caret or
+its editor value caret during render; any other modal falls back to the
+bottom-left cell inside its occupied region. Nothing becomes visible;
+only the position an IME reads changes.
+
+Verification: the batch's six commits were tested as one change on Boat farm VMs
+(Linux x86_64), shipping only `git diff <base> <final>`, so no other
+session's uncommitted files took part. cargo test --locked --lib with
+filters over config, runtime, engine, app-server, tui and cli on base
+3631a174f6: 459 
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
+```diff
+@@ -309,6 +309,12 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **IME candidate window under modals:** the hidden terminal cursor now
++  follows the caret in `/config` search and its value editor, so the
++  input-method candidate window can appear there instead of over the
++  composer. Real Pinyin input on macOS and Windows is not yet confirmed.
++  Thanks [@cmdcorp6534](https://github.com/cmdcorp6534) for the report
++  (Refs #2323).
+ - **Sub-agents beside an older session:** while a Codewhale 0.10.2 session
+   still uses a folder's older delegated-agent store, a 0.10.3 session in the
+   same folder keeps working sub-agents with private state that is not saved,
+@@ -625,6 +631,7 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Contributors
+ 
++- **[@cmdcorp6534](https://github.com/cmdcorp6534)** — reported the Chinese input-method candidate window appearing away from the field being typed into ([#2323](https://github.com/codewhale-hq/Codewhale/issues/2323)).
+ - **[@Asteria1028](https://github.com/Asteria1028)** — reported pasted clipboard images piling up with no way to remove them ([#7221](https://github.com/codewhale-hq/Codewhale/issues/7221)).
+ - **[@zhuowp](https://github.com/zhuowp)** (git author `z27014`) — added bounded HTTP rate-limit recovery and corrected retry deadlines, quota guidance and recovery receipts ([#7220](https://github.com/codewhale-hq/Codewhale/pull/7220)).
+ - **[@printf033](https://github.com/printf033)** — enabled exclusive rename on Android so Fleet publication does not fall back to SELinux-denied hard links (`fbe9f24ee`).
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +7/-0)
+```diff
+@@ -309,6 +309,12 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **IME candidate window under modals:** the hidden terminal cursor now
++  follows the caret in `/config` search and its value editor, so the
++  input-method candidate window can appear there instead of over the
++  composer. Real Pinyin input on macOS and Windows is not yet confirmed.
++  Thanks [@cmdcorp6534](https://github.com/cmdcorp6534) for the report
++  (Refs #2323).
+ - **Sub-agents beside an older session:** while a Codewhale 0.10.2 session
+   still uses a folder's older delegated-agent store, a 0.10.3 session in the
+   same folder keeps working sub-agents with private state that is not saved,
+@@ -625,6 +631,7 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Contributors
+ 
++- **[@cmdcorp6534](https://github.com/cmdcorp6534)** — reported the Chinese input-method candidate window appearing away from the field being typed into ([#2323](https://github.com/codewhale-hq/Codewhale/issues/2323)).
+ - **[@Asteria1028](https://github.com/Asteria1028)** — reported pasted clipboard images piling up with no way to remove them ([#7221](https://github.com/codewhale-hq/Codewhale/issues/7221)).
+ - **[@zhuowp](https://github.com/zhuowp)** (git author `z27014`) — added bounded HTTP rate-limit recovery and corrected retry deadlines, quota guidance and recovery receipts ([#7220](https://github.com/codewhale-hq/Codewhale/pull/7220)).
+ - **[@printf033](https://github.com/printf033)** — enabled exclusive rename on Android so Fleet publication does not fall back to SELinux-denied hard links (`fbe9f24ee`).
+```
+
+**File**: `crates/tui/src/tui/ui/frame.rs` (modified, +10/-1)
+```diff
+@@ -2331,9 +2331,18 @@ pub(crate) fn draw_app_frame_inner(
+             terminal.clear()?;
+         }
+         let mut cursor_pos = None;
+-        terminal.draw(|f| cursor_pos = render(f, app, config))?;
++        let mut frame_area = ratatui::layout::Rect::default();
++        terminal.draw(|f| {
++            frame_area = f.area();
++            cursor_pos = render(f, app, config);
++        })?;
+         app.pet_watch.present(terminal.backend_mut())?;
+         finish_frame_cursor(terminal, cursor_pos)?;
++        if cursor_pos.is_none()
++            && let Some(anchor) = app.view_stack.cursor_anchor(frame_area)
++        {
++            terminal.set_cursor_position(anchor)?;
++        }
+         Ok(())
+     });
+     if resized.is_some() {
+```
+
+**File**: `crates/tui/src/tui/views/mod.rs` (modified, +60/-0)
+```diff
+@@ -1247,6 +1247,9 @@ pub trait ModalView: std::any::Any {
+     fn occupied_region(&self, area: Rect) -> Rect {
+         area
+     }
++    fn input_anchor(&self) -> Option<(u16, u16)> {
++        None
++    }
+     fn update_subagents(&mut self, _agents: &[SubAgentResult]) -> bool {
+         false
+     }
+@@ -1368,6 +1371,22 @@ impl ViewStack {
+         self.views.last().map(|view| view.kind())
      }
  
-+    fn with_session_observation<T>(
-+        &self,
-+        session_id: &str,
-+        observe: impl FnOnce() -> io::Result<T>,
-+    ) -> io::Result<Option<T>> {
-+        self.with_session_read_lock(session_id, |path| {
-+            if Self::late_usage_is_deleted(path)? {
-+                return Ok(None);
-+            }
-+            observe().map(Some)
++    pub fn cursor_anchor(&self, area: Rect) -> Option<(u16, u16)> {
++        let view = self.views.last()?;
++        view.input_anchor().or_else(|| {
++            let region = view.occupied_region(area);
++            (region.width > 0 && region.height > 0).then(|| {
++                (
++                    region
++                        .x
++                        .saturating_add(1)
++                        .min(region.right().saturating_sub(1)),
++                    region.bottom().saturating_sub(2).max(region.y),
++                )
++            })
 +        })
 +    }
 +
-     /// Run an out-of-band rewrite of a session's files (`scrub-secrets`)
-     /// under the same per-session lock every save takes, so it cannot
-     /// interleave with a save, and while holding the session's live lease, so
-@@ -4900,7 +4913,7 @@ impl SessionManager {
-             let observation = if admission_held {
-                 capture()
-             } else {
--                self.with_session_write_admission(id, capture)
-+                self.with_session_observation(id, capture)
-                     .and_then(|observation| {
-                         observation.ok_or_else(Self::retired_session_write_error)
-                     })
-@@ -5453,7 +5466,7 @@ impl SessionManager {
-         let observation = if admission_held {
-             capture()
-         } else {
--            self.with_session_write_admission(id, capture)
-+            self.with_session_observation(id, capture)
-                 .and_then(|observation| observation.ok_or_else(Self::retired_session_write_error))
-         };
-         match observation {
-```
-
----
-
-### Incident Patch 3: `f11f7c42` (2026-11-05)
-**Commit Message**: test(engine): fix the 201-round backstop, LRU and RLM batch-pin fixtures
-
-productive_tool_results_do_not_hit_no_user_input_backstop, enforce_lru_capacity_does_not_loop_when_all_threads_are_active (its fixed child id was already terminal in the shared temp-dir sub-agent store from an earlier run; it now uses a unique child name) and rlm::bridge llm_batch_dispatch_pins_configured_child_model are repaired as stale fixtures; no product code, caps or accounting semantics changed.
-
-Verified (local, source only): full workspace nextest run after these edits: 19068 run, 19063 passed, 5 failed (67 -> 37 -> 11 -> 8 -> 5 across the series). Still failing and unresolved, stated plainly: child_host child_cancelled_dispatched_open_keeps_unknown_origin (now 2 vs 1 unpriced turns after the fixture fix) and child_step_timeout (usage receipt settle times out), the auto_review guardian missing-coverage receipt check (2 vs 1), event_capacity_cancelled_repl_child (provider source admission fails with the writer's attempted fixture, reverted), and session_manager late_usage_reads_do_not_create_accounting_storage (product decision: reads now create the sidecar directory since 20f8244aafd). The partial ed
-
-**File**: `crates/engine/src/core/engine/tests/test_cases_07.rs` (modified, +10/-6)
-```diff
-@@ -1525,19 +1525,23 @@ async fn productive_tool_results_do_not_hit_no_user_input_backstop() {
-     let usage_owner = format!("productive-backstop:{}", uuid::Uuid::new_v4());
-     crate::cost_status::register_runtime_usage_sink(&usage_owner, std::sync::Arc::new(|_| true));
-     let mut engine_config = deterministic_engine_config(workspace.path());
--    engine_config.compaction.runtime_cost_owner = Some(usage_owner);
-+    engine_config.compaction.runtime_cost_owner = Some(usage_owner.clone());
-     let (engine, handle) = Engine::new_with_model_client(
-         engine_config,
-         &Config::default(),
-         client,
-     );
-     let task = tokio::spawn(engine.run());
-+    let mut op = external_user_message_op(
-+        "Read every distinct fixture, then report completion.",
-+        AppMode::Agent,
-+        &Config::default(),
-+    );
-+    if let Op::SendMessage(spec) = &mut op {
-+        spec.compaction.runtime_cost_owner = Some(usage_owner);
+     pub(crate) fn remove_owned_evidence_pagers(&mut self) {
+         let top = self.top_identity();
+         self.views.retain_mut(|view| {
+@@ -2252,6 +2271,7 @@ pub struct ConfigView {
+     /// Selection-anchored scroll actually used by the last render; keeps the
+     /// panel scroll rail truthful when the stored scroll predates a resize.
+     last_render_scroll: Cell<usize>,
++    last_input_anchor: Cell<Option<(u16, u16)>>,
+     /// Exact painted cells of each list row; a click selects a row only when
+     /// it lands inside one of these rects.
+     last_row_hitboxes: RefCell<Vec<(Rect, usize)>>,
+@@ -2998,6 +3018,7 @@ impl ConfigView {
+             locale: app.ui_locale,
+             last_visible_rows: Cell::new(0),
+             last_render_scroll: Cell::new(0),
++            last_input_anchor: Cell::new(None),
+             last_row_hitboxes: RefCell::new(Vec::new()),
+             last_choice_hitboxes: RefCell::new(Vec::new()),
+             last_editor_controls: RefCell::new(Vec::new()),
+@@ -4204,6 +4225,10 @@ impl ModalView for ConfigView {
+         ModalKind::Config
+     }
+ 
++    fn input_anchor(&self) -> Option<(u16, u16)> {
++        self.last_input_anchor.get()
 +    }
-     handle
--        .send(external_user_message_op(
--            "Read every distinct fixture, then report completion.",
--            AppMode::Agent,
--            &Config::default(),
--        ))
-+        .send(op)
-         .await
-         .expect("send productive tool trajectory");
++
+     fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+         self
+     }
+@@ -4447,7 +4472,9 @@ impl ModalView for ConfigView {
  
-```
-
-**File**: `crates/engine/src/rlm/bridge.rs` (modified, +3/-2)
-```diff
-@@ -984,12 +984,13 @@ mod tests {
- 
-         match response {
-             RpcResponse::Batch(batch) => {
--                let texts: Vec<_> = batch
-+                let mut texts: Vec<_> = batch
-                     .results
-                     .iter()
-                     .map(|result| result.text.as_str())
-                     .collect();
--                assert_eq!(texts, ["one", "two", "three"]);
-+                texts.sort_unstable();
-+                assert_eq!(texts, ["one", "three", "two"]);
-                 assert!(batch.results.iter().all(|result| result.error.is_none()));
-             }
-             other => panic!("expected batch response, got {other:?}"),
-```
-
-**File**: `crates/engine/src/runtime_threads/tests.rs` (modified, +1/-1)
-```diff
-@@ -8433,7 +8433,7 @@ fn enforce_lru_capacity_does_not_loop_when_all_threads_are_active() {
-             .with_store_transaction(|workers| {
-                 workers
-                     .insert_test_running_direct_child_in_origin(
--                        "lru_child",
-+                        &format!("lru_child_{}", Uuid::new_v4().simple()),
-                         &std::env::temp_dir(),
-                         &std::env::temp_dir(),
-                         "thr_a",
+         let inner =
+             render_underwater_surface(area, buf, self.tr(MessageId::ConfigModalTitle).to_string());
++        self.last_input_anchor.set(None);
+         let mut choice_rail = None;
++        let mut value_line_row = None;
+         let (lines, footer) = if let Some(edit) = self.editing.as_ref() {
+             *self.last_choice_hitboxes.borrow_mut() = Vec::new();
+             *self.last_editor_controls.borrow_mut() = Vec::new();
+@@ -4605,6 +4632,7 @@ impl ModalView for ConfigView {
+                     )));
+                 }
+             } else {
++                value_line_row = Some(lines.len());
+                 lines.push(render_config_editor_value_line(edit, self.locale));
+                 if spacious {
+                     lines.push(Line::from(""));
+@@ -4643,6 +4671,27 @@ impl ModalView for ConfigView {
+             .style(Style::default().fg(palette::TEXT_PRIMARY))
+             .scroll((0, 0))
+             .render(body, buf);
++        if let (Some(edit), Some(row)) = (self.editing.as_ref(), value_line_row)
++            && let Ok(row) = u16::try_from(row)
++            && row < body.height
++            && body.width > 0
++        {
++            use codewhale_tui_kit::ui_text::text_display_width;
++            let caret = if edit.select_all {
++                edit.buffer.len()
++            } else {
++                edit.cursor
++            };
++            let typed: String = edit.buffer.iter().take(caret).collect();
++            let offset = text_display_width(&self.tr(MessageId::ConfigEditNewLabel))
++                .saturating_add(text_display_width(&typed));
++            let x = body
++                .x
++                .saturating_add(u16::try_from(offset).unwrap_or(u16::MAX))
++                .min(body.right().saturating_sub(1));
++            self.last_input_anchor
++                .set(Some((x, body.y.saturating_add(row))));
++        }
+         if let Some((rail, total, offset, visible)) = choice_rail {
+             render_panel_scroll_rail(rail, buf, total, offset, visible, true);
+         }
+@@ -5620,6 +5669,17 @@ impl ConfigView {
+                 },
+                 buf,
+             );
++            if header.width > 0 {
++                use codewhale_tui_kit::ui_text::text_display_width;
++                let offset = text_display_width(&self.tr(MessageId::ConfigSearchLabel))
++                    .saturating_add(text_display_width(&self.filter));
++                let x = header
++                    .x
++                    .saturating_add(u16::try_from(offset).unwrap_or(u16::MAX))
++                    .min(header.right().saturating_sub(1));
++                self.last_input_anchor
++                    .set(Some(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7219** (closed): fix(workspace): exempt the home state directory from link confinement (@SparkofSpike)
-- **PR #7204** (closed): fix(ci): qualify session ownership and terminal regressions after #7138 (@zhuowp)
-- **PR #7202** (2026-11-03): fix(runtime): remove the isolated test state root at process exit (@Lstarsky0)
-- **PR #7201** (2026-11-03): fix(tui): keep escaped characters and named delimiters in math (@Lstarsky0)
-- **PR #7200** (2026-11-03): fix(tui): resolve /save and /load paths against the workspace (@Lstarsky0)
-- **PR #7199** (2026-11-03): fix(engine): read text files that start with BM as text (@Lstarsky0)
+- **PR #7246** (2026-11-07): chore(deps): bump similar from 3.2.0 to 3.2.1 (@dependabot[bot])
+- **PR #7245** (2026-11-07): chore(deps): bump rusqlite from 0.40.2 to 0.41.1 (@dependabot[bot])
+- **PR #7244** (2026-11-07): chore(deps): bump rmcp from 3.7.0 to 3.8.0 (@dependabot[bot])
+- **PR #7243** (2026-11-07): chore(deps): bump unicode-normalization from 0.1.25 to 0.1.26 (@dependabot[bot])
+- **PR #7242** (2026-11-07): chore(deps): bump actions/setup-java from 4.7.1 to 6.1.0 (@dependabot[bot])
+- **PR #7241** (2026-11-07): chore(deps): bump webpki-roots from 1.0.10 to 1.0.11 (@dependabot[bot])
 
 ---
 
@@ -2332,57 +2254,47 @@ Verified (local, source only): full workspace nextest run after these edits: 190
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. app-server): neutralize repository-defined git filter drivers on status reads (P
+## X. release): handle Windows cleanup and align kit lock [skip ci]
 
 **RULE**:
-When implementing operations in `crates/app-server/src/runtime_api/git.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/release/windows-terminal-clipboard.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `885ef69f`: app-server): neutralize repository-defined git filter drivers on status reads (P12 slice 2). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `549ff01e`: release): handle Windows cleanup and align kit lock [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/app-server/src/runtime_api/git.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/release/windows-terminal-clipboard.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-fn status_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
-    let output = Git::status_command(workspace)
-        .map_err(|error| ApiError::internal(format!("git is unavailable: {error}")))?
-        .args(args)
-        .output()
-        .map_err(|error| ApiError::internal(format!("failed to run git: {error}")))?;
-    if !output.status.success() {
-        return Err(ApiError::internal(format!(
-            "git {} failed: {}",
-            args.first().copied().unwrap_or(""),
-            String::from_utf8_lossy(&output.stderr).trim()
-        )));
+  receipt.cleanup = JSON.parse((await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8')).replace(/^\uFEFF/, ''));
     }
-    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
-}
-
-    /// True when `git status` could not be read: the counts are unknown.
-    status_unavailable: bool,
-        status_unavailable: status.status_unavailable,
-    let mut rows = match status_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-            let porcelain = status_sync(
-                match status_sync(
-    use codewhale_engine::test_support::{EnvVarGuard, lock_test_env};
-        let _env_lock = lock_test_env();
-        let global = tempfile::tempdir().unwrap();
-        let global_config = global.path().join("gitconfig");
-        git(
+    if (receipt.result !== 'passed') {
+      try {
+        const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+          '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
+        { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
+        receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
+        assert.equal(receipt.desktop.fallbackCleanup.terminal, terminal, 'fallback cleanup used the owned Terminal path');
+        assert.equal(receipt.des
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let mut rows = match run_git_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-            let porcelain = run_git_sync(
-                match run_git_sync(
-        git(ws, &["config", "filter.up.clean", "tr a-z A-Z"]);
+  receipt.cleanup = JSON.parse(await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8'));
+      if (desktop.exitCode === null && desktop.signalCode === null) {
+        try {
+          const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+            '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
+          { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
+          receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
+        } catch (error) {
+          receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
+        }
+    
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `885ef69f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `549ff01e` are properly handled with clean fallback behavior.
