@@ -8247,3 +8247,5 @@ Every entry in this ledger must capture:
 | `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `5f8ac2e9` | Multi-dimensional audit evidence | 2026-11-08T06:12:24.435Z |
 | `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-08T06:12:30.521Z |
 | `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-08T06:19:02.586Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `e55f946d` | Multi-dimensional audit evidence | 2026-11-08T06:25:38.181Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T06:25:44.887Z |

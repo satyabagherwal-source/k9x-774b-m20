@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T06:19:02.601Z",
+  "last_updated": "2026-11-08T06:25:44.904Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12336,14 +12336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "content_hash": "2b8ee8eea002869a093a21b2dd24adb04575d355cf9efb17bac5a79410f3281e",
-      "verified_at": "2026-11-05T05:32:21.423Z",
+      "content_hash": "926952b65d00a977709eff52b3b2cc52399762fa5b28e5dc69393f7ce57e3827",
+      "verified_at": "2026-11-08T06:25:38.189Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:32:21.423Z"
+      "last_updated": "2026-11-08T06:25:38.189Z"
     },
     "ivanvorobei/SwiftUI": {
       "repository": "ivanvorobei/SwiftUI",
@@ -16266,14 +16266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-      "content_hash": "44a1dcd4b63e51e98b6ae8932e479fbd083f6586665032012ebf92725d58f63c",
-      "verified_at": "2026-11-04T19:55:31.936Z",
+      "content_hash": "18de81b65bdf8f1b16835161c4c4fa2a9293322b38046f871020ffb7667a0a95",
+      "verified_at": "2026-11-08T06:25:44.903Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:55:31.936Z"
+      "last_updated": "2026-11-08T06:25:44.903Z"
     },
     "Gaurav-Gosain/tuios": {
       "repository": "Gaurav-Gosain/tuios",

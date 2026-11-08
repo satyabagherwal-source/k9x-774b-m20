@@ -8238,3 +8238,5 @@
 | `CYCLE-20261108-QMEK` | `2026-11-08T06:12:24.428Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5e86c532...`) |
 | `CYCLE-20261108-QR3P` | `2026-11-08T06:12:30.517Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`14428100...`) |
 | `CYCLE-20261108-Z5MG` | `2026-11-08T06:19:02.584Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`b6cd20bd...`) |
+| `CYCLE-20261108-7MV6` | `2026-11-08T06:25:38.178Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`926952b6...`) |
+| `CYCLE-20261108-7S1G` | `2026-11-08T06:25:44.884Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`18de81b6...`) |

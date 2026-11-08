@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T06:19:02.590Z",
-  "total_cycles_completed": 8203,
-  "total_learnings_persisted": 8203,
-  "total_rules_promoted": 7912,
+  "last_updated": "2026-11-08T06:25:44.901Z",
+  "total_cycles_completed": 8205,
+  "total_learnings_persisted": 8205,
+  "total_rules_promoted": 7916,
   "history": [
-    {
-      "timestamp": "2026-11-07T18:09:42.595Z",
-      "repository": "shoutem/ui",
-      "learningId": "learn-github-shoutem-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T18:09:50.255Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T18:17:08.534Z",
       "repository": "callstack/agent-device",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T06:19:02.590Z",
       "repository": "XHToken/Spark-X2.6-4B-GGUF",
       "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:25:38.186Z",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:25:44.901Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

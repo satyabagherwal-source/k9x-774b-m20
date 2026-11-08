@@ -8203,10 +8203,10 @@
     "repository": "modelcontextprotocol/kotlin-sdk",
     "platform": "github",
     "sourceUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
-    "sourceVersion": "d38499e8",
+    "sourceVersion": "e55f946d",
     "license": "NOASSERTION",
-    "contentHash": "2b8ee8eea002869a093a21b2dd24adb04575d355cf9efb17bac5a79410f3281e",
-    "lastHarvestedAt": "2026-11-05T05:32:21.409Z",
+    "contentHash": "926952b65d00a977709eff52b3b2cc52399762fa5b28e5dc69393f7ce57e3827",
+    "lastHarvestedAt": "2026-11-08T06:25:38.181Z",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
   },
   "ivanvorobei-swiftui": {
@@ -10825,8 +10825,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
     "license": "Open-Source",
-    "contentHash": "44a1dcd4b63e51e98b6ae8932e479fbd083f6586665032012ebf92725d58f63c",
-    "lastHarvestedAt": "2026-11-04T19:55:31.927Z",
+    "contentHash": "18de81b65bdf8f1b16835161c4c4fa2a9293322b38046f871020ffb7667a0a95",
+    "lastHarvestedAt": "2026-11-08T06:25:44.887Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb"
   },
   "gaurav-gosain-tuios": {
