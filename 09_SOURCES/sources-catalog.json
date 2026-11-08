@@ -575,8 +575,8 @@
     "sourceUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "ea0132bc06f1e1ba5b85ff72a63a91b45346ed350f1259742f42c57361737811",
-    "lastHarvestedAt": "2026-11-05T02:01:51.050Z",
+    "contentHash": "c298544fe118bffd248a2cb28cf5bb812a3186a76d8e946adddf5fa5dd92106a",
+    "lastHarvestedAt": "2026-11-08T17:59:03.141Z",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "e4e3b80f",
+    "sourceVersion": "03070c56",
     "license": "GPL-3.0",
-    "contentHash": "ac495028a115061844e1a863916ffa2825df5bb670a27112e7fa56dc07c94c1c",
-    "lastHarvestedAt": "2026-11-07T05:50:49.667Z",
+    "contentHash": "bca4a4dd81e7919695e0da2618b99854951540804e54f362c07d207bf8e3210a",
+    "lastHarvestedAt": "2026-11-08T17:59:05.536Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

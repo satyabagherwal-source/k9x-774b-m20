@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source**: github ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
-> **Source Version**: `e4e3b80f`  
+> **Source Version**: `03070c56`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:50:48.709Z  
+> **Timestamp**: 2026-11-08T17:59:04.082Z  
 > **Learning ID**: `learn-github-topgrade-rs-topgrade`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:50:46.458Z  
+> **Harvest Timestamp**: 2026-11-08T17:59:04.075Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Upgrade all the things
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 4750 stars
+- **Stars / Engagement**: 4754 stars
 
 ---
 
@@ -1472,11 +1472,13 @@ impl<'a> ExecutionContext<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2490** (2026-11-06): **ci(lint_pr): use pull_request instead of pull_request_target**
-  *Symptoms*: Committed via https://github.com/asottile/all-repos
+- **Issue #2500** (2026-11-08): **fix(tailscale): gate Tailscale step to Windows and macOS**
+  *Symptoms*: ## What does this PR do?  Closes #2478.  On Arch-based distributions (`Distribution::Arch` and `Distribution::Omarchy`), `tailscale update` deliberately refuses to run and exits with status 1 (`"individual package updates are not supported on Arch-based distros, only full-system updates are"`), because Tailscale is updated through `pacman -Syu`. This PR skips `run_tailscale` with `SkipStep` on Arch-based distributions.  ## Standards checklist  - [x] I have read `CONTRIBUTING.md` - [x] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [ ] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps (not a dry-run). - [x] If this PR introduces new user-facing messages, they are translated  ### AI involvement  AI assisted in drafting the patch and PR description.  <!-- Magic marker that you used the PR template; DO NOT EDIT OR REMOVE THIS COMMENT! --> 
 
-- **Issue #2489** (2026-11-06): **feat(tailscale): pass --yes when assume_yes is set**
-  *Symptoms*: ## What does this PR do?  The Tailscale step ran `tailscale update` without `--yes`, so it stopped at a confirmation prompt even with `assume_yes = true`. This passes `--yes` when `yes` is set for the step, the same way the Opam and Conda steps do.  Closes #2488  ## Standards checklist  - [x] I have read `CONTRIBUTING.md` - [x] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [ ] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps. - [x] If this PR introduces new user-facing messages, they are translated  I only checked this with a dry run (Fedora 44, Tailscale 1.104.2 from the RPM repo), not a real update:  ```txt $ topgrade --dry-run --yes tailscale --only tailscale ―― 08:08:33 - Tailscale ―― Dry running: /usr/bin/sudo /usr/bin/tailscale update --yes ―― 08:08:33 - Summary ―― Tailscale: OK ```  `cargo fmt`, `cargo clippy`, and `cargo test` pass.  ### AI involvement  An AI agent (Claude) wrote the code change and this description at my direction.  <!-- Magic marker that you used the PR template; DO NOT EDIT OR REMOVE THIS COMMENT! -->
+- **Issue #2497** (2026-11-07): **feat(microsoft_store): add support for the `store` CLI**
+  *Symptoms*: Closes #1667
+  **Post-Mortem & Fix Analysis**:
+  > ```console $ cargo run -- --only microsoft_store --yes microsoft_store    Compiling windows v0.62.2    Compiling sysinfo v0.38.4    Compiling system_shutdown v4.1.0    Compiling jetbrains-toolbox-updater v6.0.1    Compiling topgrade v17.15.0 (C:\Users\Gideon\topgrade)     Finished `dev` profile [unoptimized + debuginfo] target(s) in 37.83s      Running `target\debug\topgrade.exe --only microsoft_store --yes microsoft_store`  ── 13:05:24 - Microsoft Store (`store` CLI) ────────────────────────────────────  ── Updates started (8) ─────────────────────────────────────────────────────────────────────────────  🔄 Started installation of 8 Store update(s)…  ┌─────────────────────────┬───────────────────────┬─────────────────┬────────────┐ │ Name                    │ Publisher             │ Version         │ Date       │ ├─────────────────────────┼───────────────────────┼─────────────────┼────────────┤ │ Get Help                │ Microsoft Corporation │ 10.2409.42492.0 │ 20
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1493,48 +1495,148 @@ impl<'a> ExecutionContext<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4e3b80f` (2026-11-06)
-**Commit Message**: ci(lint_pr): use pull_request instead of pull_request_target (#2490)
+### Incident Patch 1: `03070c56` (2026-11-08)
+**Commit Message**: fix(tailscale): gate Tailscale step to Windows and macOS (#2500)
 
-**File**: `.github/workflows/lint_pr.yml` (modified, +1/-1)
+**File**: `src/step.rs` (modified, +5/-1)
 ```diff
-@@ -1,7 +1,7 @@
- name: 'Lint PR'
+@@ -704,7 +704,11 @@ impl Step {
+                 #[cfg(target_os = "openbsd")]
+                 runner.execute(*self, "OpenBSD Upgrade", || openbsd::upgrade_openbsd(ctx))?
+             }
+-            Tailscale => runner.execute(*self, "Tailscale", || generic::run_tailscale(ctx))?,
++            Tailscale =>
++            {
++                #[cfg(any(target_os = "windows", target_os = "macos"))]
++                runner.execute(*self, "Tailscale", || generic::run_tailscale(ctx))?
++            }
+             Tldr => runner.execute(*self, "tldr", || generic::run_tldr(ctx))?,
+             Tlmgr => runner.execute(*self, "tlmgr", || generic::run_tlmgr_update(ctx))?,
+             Tmux =>
+```
+
+**File**: `src/steps/generic.rs` (modified, +1/-0)
+```diff
+@@ -3267,6 +3267,7 @@ pub fn run_lucidlink(ctx: &ExecutionContext) -> Result<()> {
+     sudo.execute(ctx, &lucidlink)?.arg("update").status_checked()
+ }
  
- on:
--  pull_request_target: # zizmor: ignore[dangerous-triggers] this is the only way, and we're not running user code
-+  pull_request:
-     types:
-       - opened
-       - edited
++#[cfg(any(target_os = "windows", target_os = "macos"))]
+ pub fn run_tailscale(ctx: &ExecutionContext) -> Result<()> {
+     let tailscale = require("tailscale")?;
+ 
 ```
 
 ---
 
-### Incident Patch 2: `b8c7d8cf` (2026-11-06)
-**Commit Message**: feat(tailscale): pass --yes when assume_yes is set (#2489)
+### Incident Patch 2: `90077b0e` (2026-11-07)
+**Commit Message**: feat(linux): add Omarchy support (#2494)
 
-**File**: `src/steps/generic.rs` (modified, +4/-1)
+**File**: `src/steps/os/linux.rs` (modified, +17/-0)
 ```diff
-@@ -3273,5 +3273,8 @@ pub fn run_tailscale(ctx: &ExecutionContext) -> Result<()> {
-     print_separator("Tailscale");
- 
-     let sudo = ctx.require_sudo()?;
--    sudo.execute(ctx, &tailscale)?.arg("update").status_checked()
-+    sudo.execute(ctx, &tailscale)?
-+        .arg("update")
-+        .arg_if(ctx.config().yes(Step::Tailscale), "--yes")
-+        .status_checked()
+@@ -84,6 +84,7 @@ pub enum Distribution {
+     Gentoo,
+     NILRT,
+     OpenMandriva,
++    Omarchy,
+     OpenSuseTumbleweed,
+     PCLinuxOS,
+     Suse,
+@@ -120,6 +121,7 @@ impl Distribution {
+             Some("void") => Distribution::Void,
+             Some("debian") | Some("pureos") | Some("Deepin") | Some("linuxmint") => Distribution::Debian,
+             Some("arch") | Some("manjaro-arm") | Some("garuda") | Some("artix") | Some("cachyos") => Distribution::Arch,
++            Some("omarchy") => Distribution::Omarchy,
+             Some("solus") => Distribution::Solus,
+             Some("gentoo") | Some("funtoo") => Distribution::Gentoo,
+             Some("exherbo") => Distribution::Exherbo,
+@@ -195,6 +197,7 @@ impl Distribution {
+             Distribution::Chimera => upgrade_chimera_linux(ctx),
+             Distribution::Wolfi => upgrade_wolfi_linux(ctx),
+             Distribution::Arch => archlinux::upgrade_arch_linux(ctx),
++            Distribution::Omarchy => upgrade_omarchy(ctx),
+             Distribution::CentOS | Distribution::Fedora => upgrade_redhat(ctx),
+             Distribution::FedoraImmutable => upgrade_fedora_immutable(ctx),
+             Distribution::ClearLinux => upgrade_clearlinux(ctx),
+@@ -323,6 +326,15 @@ fn upgrade_nobara(ctx: &ExecutionContext) -> Result<()> {
+     ctx.execute(&nobara_sync).status_checked()
  }
+ 
++fn upgrade_omarchy(ctx: &ExecutionContext) -> Result<()> {
++    let omarchy = require("omarchy")?;
++
++    ctx.execute(&omarchy)
++        .arg("update")
++        .arg_if(ctx.config().yes(Step::System), "-y")
++        .status_checked()
++}
++
+ fn upgrade_nilrt(ctx: &ExecutionContext) -> Result<()> {
+     let opkg = require("opkg")?;
+     let sudo = ctx.require_sudo()?;
+@@ -1474,6 +1486,11 @@ mod tests {
+         test_template(include_str!("os_release/garuda"), Distribution::Arch);
+     }
+ 
++    #[test]
++    fn test_omarchy() {
++        test_template(include_str!("os_release/omarchy"), Distribution::Omarchy);
++    }
++
+     #[test]
+     fn test_pureos() {
+         test_template(include_str!("os_release/pureos"), Distribution::Debian);
+```
+
+**File**: `src/steps/os/os_release/omarchy` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++NAME="Omarchy"
++PRETTY_NAME="Omarchy"
++ID=omarchy
++ID_LIKE=arch
++BUILD_ID=rolling
++ANSI_COLOR="38;2;23;147;209"
++HOME_URL="https://omarchy.org/"
++DOCUMENTATION_URL="https://learn.omacom.io/2/the-omarchy-manual"
++SUPPORT_URL="https://omarchy.org/discord"
++BUG_REPORT_URL="https://github.com/basecamp/omarchy/issues"
++LOGO=archlinux-logo
+```
+
+---
+
+### Incident Patch 3: `5977a280` (2026-11-07)
+**Commit Message**: fix(waydroid): skip when Waydroid is not initialized (#2484)
+
+**File**: `src/steps/os/linux.rs` (modified, +7/-3)
+```diff
+@@ -1113,9 +1113,13 @@ pub fn run_waydroid(ctx: &ExecutionContext) -> Result<()> {
+     // Session:        STOPPED
+     // Vendor type:    MAINLINE
+     // ```
+-    let session = status
+-        .stdout
+-        .lines()
++    let mut lines = status.stdout.lines().peekable();
++    if let Some(line) = lines.peek()
++        && line.starts_with("Waydroid is not initialized")
++    {
++        return Err(SkipStep(line.to_string()).into());
++    }
++    let session = lines
+         .find(|line| line.contains("Session:"))
+         .ok_or_else(|| eyre!(output_changed_message!("waydroid status", "should contain `Session:`")))?;
+     let is_container_running = session.contains("RUNNING");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2490** (2026-11-06): ci(lint_pr): use pull_request instead of pull_request_target (@GideonBear)
-- **PR #2489** (2026-11-06): feat(tailscale): pass --yes when assume_yes is set (@rcdailey)
-- **PR #2487** (2026-11-05): style(stack): use Stack as step name (@scop)
-- **PR #2486** (2026-11-05): style(snap): output step name as Snap (@scop)
-- **PR #2485** (2026-11-05): style(winget): use official product spelling/case throughout (@scop)
-- **PR #2477** (2026-11-03): chore(deps): update self_update to v1 (@GideonBear)
+- **PR #2500** (2026-11-08): fix(tailscale): gate Tailscale step to Windows and macOS (@ElNeMeR70)
+- **PR #2497** (2026-11-07): feat(microsoft_store): add support for the `store` CLI (@GideonBear)
+- **PR #2495** (2026-11-07): docs(pr template): explicitly request a wet run when the code is tested (@GideonBear)
+- **PR #2494** (2026-11-07): feat(linux): add Omarchy support (@aliammari1)
+- **PR #2493** (closed): feat(arch): add Omarchy update support (@aliammari1)
+- **PR #2492** (2026-11-07): feat(pre_sudo): run pre_sudo before self-update (@GideonBear)
 
 ---
 
@@ -1554,28 +1656,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(lint_pr): use pull_request instead of pull_request_target (#2490)
+## X. tailscale): gate Tailscale step to Windows and macOS (#2500)
 
 **RULE**:
-When implementing operations in `.github/workflows/lint_pr.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/step.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4e3b80f`: ci(lint_pr): use pull_request instead of pull_request_target (#2490). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `03070c56`: tailscale): gate Tailscale step to Windows and macOS (#2500). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint_pr.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/step.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  pull_request:
+            Tailscale =>
+            {
+                #[cfg(any(target_os = "windows", target_os = "macos"))]
+                runner.execute(*self, "Tailscale", || generic::run_tailscale(ctx))?
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  pull_request_target: # zizmor: ignore[dangerous-triggers] this is the only way, and we're not running user code
+            Tailscale => runner.execute(*self, "Tailscale", || generic::run_tailscale(ctx))?,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4e3b80f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `03070c56` are properly handled with clean fallback behavior.

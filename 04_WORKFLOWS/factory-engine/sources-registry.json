@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T17:51:57.918Z",
-    "lastVerified": "2026-11-08T17:51:57.918Z",
+    "lastChecked": "2026-11-08T17:59:14.187Z",
+    "lastVerified": "2026-11-08T17:59:14.187Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T17:29:11.721Z",
+    "lastChecked": "2026-11-08T17:59:14.174Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T17:29:11.721Z"
+    "lastVerified": "2026-11-08T17:59:14.174Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1727,9 +1727,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-08T13:06:13.582Z",
+    "lastChecked": "2026-11-08T17:59:09.173Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-08T13:06:13.582Z"
+    "lastVerified": "2026-11-08T17:59:09.173Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -2901,8 +2901,8 @@
     "officialUrl": "https://github.com/easegress-io/easegress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T21:55:45.766Z",
-    "lastVerified": "2026-11-07T21:55:45.766Z",
+    "lastChecked": "2026-11-08T17:59:06.767Z",
+    "lastVerified": "2026-11-08T17:59:06.767Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-easegress-io-easegress",
@@ -3296,12 +3296,12 @@
     "officialUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T02:01:49.973Z",
-    "lastVerified": "2026-11-05T02:01:49.973Z",
+    "lastChecked": "2026-11-08T17:59:01.842Z",
+    "lastVerified": "2026-11-08T17:59:01.842Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "ea0132bc06f1e1ba5b85ff72a63a91b45346ed350f1259742f42c57361737811",
+    "contentHash": "c298544fe118bffd248a2cb28cf5bb812a3186a76d8e946adddf5fa5dd92106a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6081,12 +6081,12 @@
     "revisionIdentifier": "dcd065d9"
   },
   "apple-foundationdb": {
-    "name": "apple/foundationdb",
+    "name": "foundationdb",
     "officialUrl": "https://github.com/apple/foundationdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-07T21:03:27.844Z",
-    "lastVerified": "2026-11-07T21:03:27.844Z",
+    "lastChecked": "2026-11-08T17:59:11.756Z",
+    "lastVerified": "2026-11-08T17:59:11.756Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apple-foundationdb",
@@ -6095,7 +6095,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7e7611f8"
   },
   "gotham-rs-gotham": {
     "name": "gotham",
@@ -7385,14 +7386,14 @@
     "officialUrl": "https://github.com/topgrade-rs/topgrade",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T05:50:46.458Z",
-    "lastVerified": "2026-11-07T05:50:46.458Z",
+    "lastChecked": "2026-11-08T17:59:04.075Z",
+    "lastVerified": "2026-11-08T17:59:04.075Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "ac495028a115061844e1a863916ffa2825df5bb670a27112e7fa56dc07c94c1c",
+    "contentHash": "bca4a4dd81e7919695e0da2618b99854951540804e54f362c07d207bf8e3210a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10851,9 +10852,9 @@
   "aakira-napier": {
     "name": "Napier",
     "officialUrl": "https://github.com/AAkira/Napier",
-    "lastChecked": "2026-11-05T12:07:00.771Z",
+    "lastChecked": "2026-11-08T17:59:04.221Z",
     "revisionIdentifier": "50835e2e",
-    "lastVerified": "2026-11-05T12:07:00.771Z"
+    "lastVerified": "2026-11-08T17:59:04.221Z"
   },
   "santifer-santifer-irepair": {
     "name": "santifer-irepair",

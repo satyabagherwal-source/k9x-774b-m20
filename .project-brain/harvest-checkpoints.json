@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T17:51:55.330Z",
+  "last_updated": "2026-11-08T17:59:05.547Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -725,14 +725,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "ea0132bc06f1e1ba5b85ff72a63a91b45346ed350f1259742f42c57361737811",
-      "verified_at": "2026-11-05T02:01:51.059Z",
+      "content_hash": "c298544fe118bffd248a2cb28cf5bb812a3186a76d8e946adddf5fa5dd92106a",
+      "verified_at": "2026-11-08T17:59:03.151Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T02:01:51.059Z"
+      "last_updated": "2026-11-08T17:59:03.151Z"
     },
     "PSRben/VisionHOPE": {
       "repository": "PSRben/VisionHOPE",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "ac495028a115061844e1a863916ffa2825df5bb670a27112e7fa56dc07c94c1c",
-      "verified_at": "2026-11-07T05:50:49.674Z",
+      "content_hash": "bca4a4dd81e7919695e0da2618b99854951540804e54f362c07d207bf8e3210a",
+      "verified_at": "2026-11-08T17:59:05.546Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:50:49.674Z"
+      "last_updated": "2026-11-08T17:59:05.546Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",

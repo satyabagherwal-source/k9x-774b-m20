@@ -8357,3 +8357,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-11-08T17:49:24.843Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `bc650f91` | Multi-dimensional audit evidence | 2026-11-08T17:49:32.151Z |
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `6448181d` | Multi-dimensional audit evidence | 2026-11-08T17:51:55.323Z |
+| `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-08T17:59:03.141Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `03070c56` | Multi-dimensional audit evidence | 2026-11-08T17:59:05.536Z |
