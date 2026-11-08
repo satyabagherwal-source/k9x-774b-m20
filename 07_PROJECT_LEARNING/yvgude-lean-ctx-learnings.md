@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `ffe6e95c`  
+> **Source Version**: `a0fbfe77`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:23:22.771Z  
+> **Timestamp**: 2026-11-08T16:01:12.250Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:23:22.765Z  
+> **Harvest Timestamp**: 2026-11-08T16:01:12.073Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3928 stars
+- **Stars / Engagement**: 3935 stars
 
 ---
 
@@ -2511,458 +2511,1159 @@ impl HiveStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ffe6e95c` (2026-11-05)
-**Commit Message**: Merge pull request #2193 from yvgude/fix/3122-exec-race
+### Incident Patch 1: `1f3e7a72` (2026-11-08)
+**Commit Message**: fix(server): never block tool dispatch on observation persistence; request ledger (#2196, #2197) (#2209)
 
-test(lifecycle): wait for exec before recording a stand-in's identity (3.12.2 prebuild)
+* fix(server): never block tool dispatch on observation persistence; request ledger in doctor and /v1/health (#2196, #2197)
 
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +5/-5)
+- Serving processes hand compatibility observations to a bounded writer
+  thread (queue 4096, drop + count when full); validation stays on the
+  caller, queued observations are flushed at exit and after HTTP/daemon stop.
+- FileUnifiedLedger appends parse only records past the last validated tip
+  instead of re-reading the whole ledger under the exclusive lock; a replaced,
+  truncated or diverged file falls back to a full scan.
+- New request ledger (admitted/completed/errored/refused/abandoned/pending,
+  oldest pending method and stage, last completion, last initialize,
+  observation counters), shown per server by `lean-ctx doctor` and served at
+  GET /v1/health. Ages appear only there, so tool output stays byte-stable.
+- LOCK_ORDERING rows for LEDGER and VALIDATED_TIPS.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(request-ledger): withdraw snapshot and flush observations on every shutdown path
+
+Address review on #2209: HTTP /v1/shutdown, ser
+
+**File**: `rust/LOCK_ORDERING.md` (modified, +2/-0)
 ```diff
-@@ -16053,11 +16053,11 @@
-    "size": 40782
-   },
-   {
--   "blob": "c440fc9d82daa9fe5cbedf1fed65addff2e30f96",
-+   "blob": "5ef642bd2f0523c8d7159261a13ac469cb89061f",
-    "mode": "100644",
-    "path": "rust/crates/lean-ctx/src/cli/dispatch/mcp_instances.rs",
--   "sha256": "4ff365c946497e49113c6adf5503e6cae7248e948924ee4fbdccfb446eeb658f",
--   "size": 10672
-+   "sha256": "b54bd886e82d52f41a39b5ef28e1ad3c8584d198bb2cf55478c6ad3392693cb9",
-+   "size": 11365
-   },
-   {
-    "blob": "010c46be112355a7adb704ba6ab65de240686cbe",
-@@ -32928,7 +32928,7 @@
-  ],
-  "manifest_sha256": "805b64f589b49fadc68295fb26f3f302e36899b147a8b13266470b46b7ad1323",
-  "schema": 1,
-- "source_commit": "de76ec3a1f76b05db847441ee41395ae9db5027c",
-+ "source_commit": "f54099a9db2f3460181fef1be8b08ea82de36f72",
-  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
-- "tree_sha256": "3abbe732f8ebf5751ae835881bd9e3d4ef63d8033e31268a9cf59da0d111d4e1"
-+ "tree_sha256": "71077f17e087a40cfeb974357dd7b9a495183ea2bc4c793c4ebddb73444eece2"
- }
+@@ -167,6 +167,8 @@ All `std::sync::Mutex` unless noted otherwise.
+ | L140 | `REFRESHING` | `core/bm25_cache.rs:104` | `Mutex<Vec<PathBuf>>` | Roots whose background BM25 reload is running, so a stale entry starts at most one reload per root; held only to check, push or remove a root, never across the reload; independent leaf lock, never nested |
+ | L141 | `QUEUE` | `core/hive/background.rs:36` | `Mutex<Option<Queue>>` (with `WAKE: Condvar`) | Hive background request queue (pending lease, renew, release and task calls) and the answers waiting per caller; the worker takes a job and releases the lock before running it, so no Hive request runs under it; independent leaf lock, never nested |
+ | L142 | `RUNNING` | `core/phase_timing.rs:19` | `Mutex<BTreeMap<u64, (&'static str, Instant)>>` | Phase timers still running, one entry per guard, so `current()` names the newest; held only to insert, remove or read one entry; independent leaf lock, never nested |
++| L143 | `LEDGER` | `core/request_ledger.rs:134` | `Mutex<Ledger>` | Request ledger of a serving process (#2197): pending requests by id with method and stage, last tool completion, last initialize; held only to insert, update, remove or copy entries, released before `phase_timing::current()` (L142) or any I/O; independent leaf lock, never nested |
++| L144 | `VALIDATED_TIPS` | `core/ocla/unified_ledger.rs:273` | `Mutex<Vec<ValidatedTip>>` | Per ledger path, the prefix of the unified savings ledger this process already validated (#2196), so an append parses only newer records; taken only while the ledger's OS file lock is held, to copy, replace or drop one entry, never across I/O; independent leaf lock, never nested |
+ 
+ ### CLI cache transaction file lock
+ 
 ```
 
-**File**: `rust/crates/lean-ctx/src/cli/dispatch/mcp_instances.rs` (modified, +14/-2)
+**File**: `rust/crates/lean-ctx-server/src/server/server_handler.rs` (modified, +24/-4)
 ```diff
-@@ -167,13 +167,25 @@ mod tests {
+@@ -85,6 +85,9 @@ impl ServerHandler for LeanCtxServer {
+         request: InitializeRequestParams,
+         context: RequestContext<RoleServer>,
+     ) -> Result<InitializeResult, ErrorData> {
++        // #2197: kept apart from tool completions in the request ledger.
++        let ledger_entry = lean_ctx::core::request_ledger::begin("initialize");
++        ledger_entry.stage(lean_ctx::core::request_ledger::Stage::Handler);
+         let name = request.client_info.name.clone();
+         tracing::info!("MCP client connected: {:?}", name);
+         *self.client_name.write().await = name.clone();
+@@ -401,16 +404,18 @@ impl ServerHandler for LeanCtxServer {
+         // The initialize `instructions` field is that same steering block
+         // delivered over a different channel, so the central policy predicate
+         // must govern this surface too.
+-        if suppress_initialize_instructions(client_caps.client_id.as_str()) {
+-            Ok(result)
++        let result = if suppress_initialize_instructions(client_caps.client_id.as_str()) {
++            result
+         } else {
+             let instructions = lean_ctx::instructions::build_instructions_with_client_and_session(
+                 CrpMode::effective(),
+                 &name,
+                 &session,
+             );
+-            Ok(result.with_instructions(instructions))
+-        }
++            result.with_instructions(instructions)
++        };
++        ledger_entry.finish(lean_ctx::core::request_ledger::Outcome::Completed);
++        Ok(result)
      }
  
-     fn long_running(program: &str, arguments: &[&str]) -> Child {
--        Command::new(program)
-+        let child = Command::new(program)
-             .args(arguments)
-             .stdin(Stdio::null())
-             .stdout(Stdio::null())
-             .stderr(Stdio::null())
-             .spawn()
--            .expect("process starts")
-+            .expect("process starts");
-+        // `spawn` returns after fork; until the child has exec'd, its identity
-+        // is still this test binary, and a record taken then never matches the
-+        // live process again (release prebuild, 3.12.2). Wait for the exec.
-+        let own = process::identity(std::process::id()).map(|identity| identity.executable);
-+        let deadline = Instant::now() + Duration::from_secs(10);
-+        while Instant::now() < deadline {
-+            match process::identity(child.id()) {
-+                Some(identity) if Some(&identity.executable) != own.as_ref() => break,
-+                _ => std::thread::sleep(Duration::from_millis(10)),
+     async fn list_tools(
+@@ -739,6 +744,10 @@ impl ServerHandler for LeanCtxServer {
+         // In flight until this call returns — the idle policy never releases
+         // or exits under a running call.
+         let _activity = crate::server::mcp_idle::begin_call();
++        // #2197: admitted until exactly one outcome is recorded; a future the
++        // client cancels drops this guard and counts as abandoned.
++        let ledger_entry =
++            lean_ctx::core::request_ledger::begin(&format!("tools/call:{}", request.name.as_ref()));
+         restore_tool_meta(&mut request, &context.meta);
+ 
+         let progress_token = request
+@@ -771,6 +780,7 @@ impl ServerHandler for LeanCtxServer {
+         // delivery so the proxy can tell which call these bytes answered.
+         let host_call_id = crate::server::call_identity::host_call_id(request.meta.as_ref());
+ 
++        ledger_entry.stage(lean_ctx::core::request_ledger::Stage::Handler);
+         // #1781: scope the request's cancellation token for the whole dispatch
+         // so a tool that waits on a child process can observe an abandoned call
+         // instead of holding its blocking-pool slot until its own soft cap.
+@@ -788,30 +798,40 @@ impl ServerHandler for LeanCtxServer {
+             // boundary inside a string, a parse error): the log line names
+             // the event only (AP10-R4).
+             tracing::error!("call_tool panicked (tool_panic)");
++            ledger_entry.stage(lean_ctx::core::request_ledger::Stage::Finalizing);
+ 
+             if let Ok(mut detector) =
+                 tokio::time::timeout(std::time::Duration::from_secs(1), loop_detector.write()).await
+             {
+                 detector.record_error_outcome(&tool_name_for_panic, &args_fp_for_panic);
+             }
+ 
++            ledger_entry.finish(lean_ctx::core::request_ledger::Outcome::Errored);
+             return Ok(CallToolResult::error(vec![ContentBlock::text(
+                 "ERROR: lean-ctx internal error. The MCP server is still running. \
+                  Please retry or use a different approach."
+                     .to_string(),
+             )]));
+         };
++        ledger_entry.stage(lean_ctx::core::request_ledger::Stage::Finalizing);
+         // #1265: If the client cancelled this request while the tool was
+         // executing, drop the result instead of replying to a stale ID.
+         if ct.is_cancelled() {
+             tracing::warn!(
+                 "tool '{tool_name_for_panic}' completed after client cancellation — dropping result"
+             );
++            ledger_entry.finish(lean_ctx::core::request_ledger::Outcome::Abandoned);
+             return Err(ErrorData::internal_error(
+                 "request was cancelled by client",
+                 None,
+             ));
+         }
++        ledger_entry.finish(match &result {
++            Ok(done) if done.is_error != Some(true) => {
++                lean_ctx::core::request_ledger::Outcome::Completed
 +            }
-+        }
-+        child
++            _ => lean_ctx::core::request_ledger::Outcome::Errored,
++        });
+         result
      }
  
-     fn record(directory: &Path, child: &Child, change: impl FnOnce(&mut Instance)) -> PathBuf {
+```
+
+**File**: `rust/crates/lean-ctx/src/cli/dispatch/server.rs` (modified, +3/-0)
+```diff
+@@ -106,6 +106,9 @@ pub(super) fn run_mcp_server() -> Result<()> {
+     let result = rt.block_on(async {
+         core::logging::init_mcp_logging();
+         core::protocol::set_mcp_context(true);
++        // Observations never block dispatch; the request ledger publishes
++        // for `lean-ctx doctor` (#2196, #2197).
++        core::request_ledger::start_serving("mcp-stdio");
+ 
+         tracing::info!(
+             "lean-ctx v{} MCP server starting",
+```
+
+**File**: `rust/crates/lean-ctx/src/doctor/mod.rs` (modified, +109/-0)
+```diff
+@@ -212,6 +212,34 @@ impl Scoreboard {
+     }
+ }
+ 
++/// A pending request older than this is flagged in doctor's request lines.
++const STUCK_REQUEST_AFTER: std::time::Duration = std::time::Duration::from_secs(30);
++
++/// Doctor's request-ledger lines (#2197), one per running server process:
++/// counters, the oldest pending request with its age and stage, and the last
++/// tool completion. Pure; advisory (never scored).
++fn request_ledger_outcomes(
++    snapshots: &[lean_ctx::core::request_ledger::RequestLedgerSnapshot],
++    now_ms: u64,
++) -> Vec<Outcome> {
++    snapshots
++        .iter()
++        .map(|snapshot| {
++            let stuck = snapshot
++                .oldest_pending_age(now_ms)
++                .is_some_and(|age| age >= STUCK_REQUEST_AFTER);
++            let colour = if stuck { YELLOW } else { DIM };
++            Outcome {
++                ok: !stuck,
++                line: format!(
++                    "{BOLD}Requests{RST}  {colour}{}{RST}",
++                    snapshot.render(now_ms)
++                ),
++            }
++        })
++        .collect()
++}
++
+ /// Daemon diagnostics that are not checks of their own: the systemd unit
+ /// state and linger (Linux) and a crash-looping MCP server. Returned rather
+ /// than printed, so the caller decides between text and JSON.
+@@ -677,6 +705,15 @@ fn run_inner(json: bool) -> u32 {
+         board.note(&note);
+     }
+ 
++    // Request ledgers of running servers (#2197): read from the files their
++    // publisher threads keep, so a saturated worker still answers here.
++    for outcome in request_ledger_outcomes(
++        &lean_ctx::core::request_ledger::published_snapshots(),
++        lean_ctx::core::request_ledger::epoch_ms(),
++    ) {
++        board.info(&outcome);
++    }
++
+     // Providers (advisory — presence/health varies per environment, not scored)
+     let provider_outcome = provider_outcome();
+     board.info(&provider_outcome);
+@@ -1109,6 +1146,78 @@ fn config_migration_pause_outcome(config: &std::path::Path) -> Option<Outcome> {
+ mod tests {
+     use super::is_active_shell_impl;
+     use super::{DaemonAutostart, daemon_outcome, unrecorded_services_outcome};
++    use super::{request_ledger_outcomes, strip_ansi};
++
++    /// #2197: doctor names each running server's counters, its oldest
++    /// pending request with age and stage, and its last tool completion, and
++    /// flags a request pending past the stuck threshold.
++    #[test]
++    fn request_ledger_lines_show_counters_oldest_pending_and_last_completion() {
++        use lean_ctx::core::request_ledger::{
++            CompletionRecord, Outcome as RequestOutcome, PendingRequest, RequestLedgerSnapshot,
++            Stage,
++        };
++        let now = 1_000_000_000;
++        let snapshot = RequestLedgerSnapshot {
++            pid: 4242,
++            kind: "http".into(),
++            generation: "gen".into(),
++            started_at_ms: now - 600_000,
++            snapshot_at_ms: now - 1_000,
++            admitted: 40,
++            completed: 36,
++            errored: 1,
++            refused: 2,
++            abandoned: 1,
++            pending: 2,
++            untracked_pending: 0,
++            oldest_pending: Some(PendingRequest {
++                method: "tools/call:ctx_read".into(),
++                stage: Stage::Handler,
++                admitted_at_ms: now - 74_000,
++                age_ms: None,
++            }),
++            last_tool_completion: Some(CompletionRecord {
++                method: "tools/call:ctx_search".into(),
++                outcome: RequestOutcome::Completed,
++                finished_at_ms: now - 3_000,
++                duration_ms: 12,
++                age_ms: None,
++            }),
++            last_initialize: None,
++            current_phase: None,
++            observations: lean_ctx::core::events::DetachedObservationStats::default(),
++        };
++        let lines = request_ledger_outcomes(std::slice::from_ref(&snapshot), now);
++        assert_eq!(lines.len(), 1);
++        let line = strip_ansi(&lines[0].line);
++        assert!(!lines[0].ok, "a 74 s pending request is flagged: {line}");
++        assert!(line.contains("pid 4242 (http), up 10m"), "{line}");
++        assert!(
++            line.contains(
++                "admitted 40 · completed 36 · errored 1 · refused 2 · abandoned 1 · pending 2"
++            ),
++            "{line}"
++        );
++        assert!(
++            line.contains("oldest pending tools/call:ctx_read 74s in handler"),
++            "{line}"
++        );
++        assert!(
++            line.contains("last tool completion 3s ago (completed, 12ms)"),
++            "{line}"
++        );
++        assert!(line.contains("last initialize none yet"), "{line}");
++
++        let idle = RequestLedgerSnapshot {
++            pending: 0,
++            oldest_pending: None,
++            ..snapshot
++        };
++        let lines = request_ledger_outcomes(&[idle], now);
++        assert!(lines[0].ok);
++        assert!(strip_ansi(&lines[0].line).contains("oldes
+```
+
+**File**: `rust/crates/lean-ctx/src/http_server/mod.rs` (modified, +53/-9)
+```diff
+@@ -300,18 +300,32 @@ async fn rate_limit_middleware(
+     req: Request<axum::body::Body>,
+     next: Next,
+ ) -> Response {
++    if is_diagnostic_path(req.uri().path()) {
++        return next.run(req).await;
++    }
+     if !state.rate.allow().await {
++        lean_ctx::core::request_ledger::refused();
+         return StatusCode::TOO_MANY_REQUESTS.into_response();
+     }
+     next.run(req).await
+ }
+ 
++/// Health routes answer from counters, never from the work queue: they must
++/// stay reachable exactly when every request slot is taken (#2197).
++fn is_diagnostic_path(path: &str) -> bool {
++    matches!(path, "/health" | "/v1/health")
++}
++
+ async fn concurrency_middleware(
+     State(state): State<AppState>,
+     mut req: Request<axum::body::Body>,
+     next: Next,
+ ) -> Response {
++    if is_diagnostic_path(req.uri().path()) {
++        return next.run(req).await;
++    }
+     let Ok(permit) = state.concurrency.clone().try_acquire_owned() else {
++        lean_ctx::core::request_ledger::refused();
+         return StatusCode::TOO_MANY_REQUESTS.into_response();
+     };
+     let permit = Arc::new(permit);
+@@ -325,9 +339,29 @@ async fn health() -> impl IntoResponse {
+     (StatusCode::OK, "ok\n")
+ }
+ 
++/// `GET /v1/health`: liveness plus the request ledger (#2197) — counters,
++/// the oldest pending request's method, stage and age, and the last tool
++/// completion. Method names only; no arguments, paths or content.
++async fn v1_health() -> impl IntoResponse {
++    let snapshot = lean_ctx::core::request_ledger::snapshot()
++        .with_ages(lean_ctx::core::request_ledger::epoch_ms());
++    Json(serde_json::json!({ "status": "ok", "requests": snapshot }))
++}
++
++/// Persist queued observations and remove the published request snapshot
++/// (#2196, #2197). Blocking work, so it runs off the async workers.
++async fn finish_serving() {
++    let _ = tokio::task::spawn_blocking(|| {
++        lean_ctx::core::request_ledger::finish_serving(Duration::from_secs(5));
++    })
++    .await;
++}
++
+ async fn v1_shutdown() -> impl IntoResponse {
+     tokio::spawn(async {
+         tokio::time::sleep(Duration::from_millis(100)).await;
++        // `process::exit` runs no destructors or exit hooks.
++        finish_serving().await;
+         std::process::exit(0);
+     });
+     (StatusCode::OK, "shutting down\n")
+@@ -1096,6 +1130,7 @@ fn build_router(
+ 
+     Router::new()
+         .route("/health", get(health))
++        .route("/v1/health", get(v1_health))
+         .route(
+             "/ocla/v1/delivery/scoped",
+             axum::routing::post(scoped_delivery::execute),
+@@ -1175,6 +1210,9 @@ pub async fn serve(cfg: HttpServerConfig) -> Result<()> {
+     let receipt_authority =
+         lean_ctx_server::server::native_receipts::load_configured_host_authority()
+             .map_err(anyhow::Error::msg)?;
++    // Observations never block dispatch; the request ledger publishes for
++    // `lean-ctx doctor` and `/v1/health` (#2196, #2197).
++    lean_ctx::core::request_ledger::start_serving("http");
+     // Apply the `LEAN_CTX_KERNEL_*` switches once, so kernel health
+     // (`/v1/kernel/health`) reports the configuration this server runs with.
+     lean_ctx::core::context_kernel::startup::initialize();
+@@ -1214,13 +1252,14 @@ pub async fn serve(cfg: HttpServerConfig) -> Result<()> {
+         cfg.project_root.display()
+     );
+ 
+-    axum::serve(listener, app)
++    let served = axum::serve(listener, app)
+         .with_graceful_shutdown(async move {
+             let _ = tokio::signal::ctrl_c().await;
+         })
+         .await
+-        .context("http server")?;
+-    Ok(())
++        .context("http server");
++    finish_serving().await;
++    served
+ }
+ 
+ /// Serve the daemon over a platform-independent IPC channel (UDS on Unix,
+@@ -1230,6 +1269,9 @@ pub async fn serve_ipc(cfg: HttpServerConfig, addr: lean_ctx::ipc::DaemonAddr) -
+     let receipt_authority =
+         lean_ctx_server::server::native_receipts::load_configured_host_authority()
+             .map_err(anyhow::Error::msg)?;
++    // Observations never block dispatch; the request ledger publishes for
++    // `lean-ctx doctor` (#2196, #2197).
++    lean_ctx::core::request_ledger::start_serving("daemon");
+     lean_ctx::core::context_kernel::startup::initialize();
+ 
+     lean_ctx::core::telemetry_send::spawn_daemon_telemetry();
+@@ -1251,13 +1293,14 @@ pub async fn serve_ipc(cfg: HttpServerConfig, addr: lean_ctx::ipc::DaemonAddr) -
+                 cfg.project_root.display()
+             );
+ 
+-            axum::serve(listener, app.into_make_service())
++            let served = axum::serve(listener, app.into_make_service())
+                 .with_graceful_shutdown(async move {
+                     let _ = tokio::signal::ctrl_c().await;
+                 })
+                 .await
+-                .context("ipc server")?;
+-            Ok(())
++                .context("ipc server");
++            finish_serving().await;
++            served
+         }
+         #[cfg(windows)]
+         lean_ctx:
+```
+
+**File**: `rust/src/core/context_os/context_bus.rs` (modified, +46/-3)
+```diff
+@@ -267,6 +267,14 @@ pub struct ContextBus {
+     inner: Arc<Inner>,
+ }
+ 
++/// A legacy event that passed storage admission, with the exact payload it is
++/// stored as. Built by [`ContextBus::admit_legacy_observation`].
++#[derive(Clone, Debug)]
++pub(crate) struct AdmittedLegacyObservation {
++    pub(crate) event: LeanCtxEvent,
++    pub(crate) payload_json: String,
++}
++
+ const STREAM_CHANNEL_SIZE: usize = 256;
+ const MAX_SUBSCRIBERS_PER_CHANNEL: usize = 64;
+ /// Bound the write-side version cache. Each entry is re-derivable from the DB via
+@@ -539,18 +547,53 @@ impl ContextBus {
+         producer_instance: &str,
+         event: &LeanCtxEvent,
+     ) -> Result<i64, ObservationPersistenceError> {
++        let payload = Self::admit_legacy_observation(event)?;
++        self.append_admitted_legacy_observation(producer_instance, &payload)
++    }
++
++    /// The storage admission half of [`Self::append_legacy_observation`]: the
++    /// payload a legacy event is stored as, once admission keeps it verbatim.
++    /// Runs on the producer's thread, under the producer's policy view, so a
++    /// detached writer (`events::emit_compatibility` in a serving process)
++    /// persists exactly what the producer admitted.
++    pub(crate) fn admit_legacy_observation(
++        event: &LeanCtxEvent,
++    ) -> Result<AdmittedLegacyObservation, ObservationPersistenceError> {
+         let payload_json = serde_json::to_string(event)?;
+         let _: LeanCtxEvent = serde_json::from_str(&payload_json)?;
+         super::observation::admit_payload(&payload_json)?;
++        Ok(AdmittedLegacyObservation {
++            event: event.clone(),
++            payload_json,
++        })
++    }
++
++    /// The write half of [`Self::append_legacy_observation`] for a payload
++    /// [`Self::admit_legacy_observation`] already admitted.
++    pub(crate) fn append_admitted_legacy_observation(
++        &self,
++        producer_instance: &str,
++        admitted: &AdmittedLegacyObservation,
++    ) -> Result<i64, ObservationPersistenceError> {
+         self.insert_local_observation(
+             LocalObservationSource::Legacy,
+             producer_instance,
+-            event.id,
+-            &event.timestamp,
+-            &payload_json,
++            admitted.event.id,
++            &admitted.event.timestamp,
++            &admitted.payload_json,
+         )
+     }
+ 
++    /// Holds the observation writer as a long transaction would, so a test can
++    /// show that a producer does not wait for it.
++    #[cfg(test)]
++    pub(crate) fn hold_observation_writer(&self) -> std::sync::MutexGuard<'_, Connection> {
++        self.inner
++            .write_conn
++            .lock()
++            .unwrap_or_else(std::sync::PoisonError::into_inner)
++    }
++
+     fn insert_local_observation(
+         &self,
+         source: LocalObservationSource,
+```
+
+**File**: `rust/src/core/context_os/mod.rs` (modified, +1/-0)
+```diff
+@@ -6,6 +6,7 @@ pub use shared_sessions::{SharedSessionKey, SharedSessionStore};
+ 
+ mod context_bus;
+ pub mod observation;
++pub(crate) use context_bus::AdmittedLegacyObservation;
+ pub use context_bus::{
+     ConsistencyLevel, ContextBus, ContextEventKindV1, ContextEventV1, FilteredSubscription,
+     TopicFilter,
+```
+
+**File**: `rust/src/core/events.rs` (modified, +276/-9)
+```diff
+@@ -398,37 +398,247 @@ fn append_jsonl_at(path: &std::path::Path, event: &LeanCtxEvent) -> std::io::Res
+ ///
+ /// This compatibility adapter deliberately never appends to `events.jsonl`;
+ /// that journal remains an immutable historical read source.
++///
++/// In a serving process (after [`enable_detached_observations`]) the write is
++/// handed to a dedicated writer thread: a tool handler never waits on the
++/// observation lock or SQLite (#2196), and when the bounded queue is full the
++/// observation is dropped and counted instead of blocking dispatch. Storage
++/// admission still runs here, on the producer's thread and policy view.
+ pub fn emit_compatibility(kind: EventKind) -> u64 {
+-    match try_emit(kind) {
++    let result = if DETACHED_ENABLED.load(Ordering::Acquire) {
++        emit_detached(kind)
++    } else {
++        try_emit(kind)
++    };
++    match result {
+         Ok(id) => id,
+         Err(error) => {
+-            tracing::warn!("canonical legacy observation persistence failed: {error}");
++            log_persistence_failure(&error);
+             0
+         }
+     }
+ }
+ 
+ /// [`emit_compatibility`] that reports why persistence failed instead of
+-/// collapsing the failure into id `0`.
++/// collapsing the failure into id `0`. Always synchronous.
+ pub(crate) fn try_emit(
+     kind: EventKind,
+ ) -> Result<u64, crate::core::context_os::ObservationPersistenceError> {
+-    let id = next_event_id();
++    persist_admitted(&admit(kind)?)
++}
++
++fn admit(
++    kind: EventKind,
++) -> Result<
++    crate::core::context_os::AdmittedLegacyObservation,
++    crate::core::context_os::ObservationPersistenceError,
++> {
+     let event = LeanCtxEvent {
+-        id,
++        id: next_event_id(),
+         timestamp: chrono::Local::now()
+             .format("%Y-%m-%dT%H:%M:%S%.3f")
+             .to_string(),
+         kind,
+     };
++    crate::core::context_os::ContextBus::admit_legacy_observation(&event)
++}
++
++fn persist_admitted(
++    admitted: &crate::core::context_os::AdmittedLegacyObservation,
++) -> Result<u64, crate::core::context_os::ObservationPersistenceError> {
+     crate::core::context_os::try_runtime().and_then(|runtime| {
+-        runtime.bus.append_legacy_observation(
++        runtime.bus.append_admitted_legacy_observation(
+             crate::core::context_os::observation::producer_instance(),
+-            &event,
++            admitted,
+         )
+     })?;
+-    bus().record(event);
+-    Ok(id)
++    bus().record(admitted.event.clone());
++    Ok(admitted.event.id)
++}
++
++/// A withheld observation is the gateway working as configured, not a fault:
++/// at warn level it flooded the worker log (765 lines in 5 minutes, #2196).
++fn log_persistence_failure(error: &crate::core::context_os::ObservationPersistenceError) {
++    if matches!(
++        error,
++        crate::core::context_os::ObservationPersistenceError::Withheld
++    ) {
++        tracing::debug!("canonical legacy observation persistence skipped: {error}");
++    } else {
++        tracing::warn!("canonical legacy observation persistence failed: {error}");
++    }
++}
++
++// --- Detached persistence for serving processes (#2196) ---
++
++/// Observations a serving process may have waiting for the writer thread.
++const DETACHED_QUEUE_CAPACITY: usize = 4_096;
++
++static DETACHED_ENABLED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
++static DETACHED_QUEUED: AtomicU64 = AtomicU64::new(0);
++static DETACHED_PERSISTED: AtomicU64 = AtomicU64::new(0);
++static DETACHED_FAILED: AtomicU64 = AtomicU64::new(0);
++static DETACHED_DROPPED: AtomicU64 = AtomicU64::new(0);
++
++enum DetachedMessage {
++    Persist(crate::core::context_os::AdmittedLegacyObservation),
++    Flush(std::sync::mpsc::SyncSender<()>),
++}
++
++/// Counters of the detached observation writer, for doctor and health.
++#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
++pub struct DetachedObservationStats {
++    pub enabled: bool,
++    pub queued: u64,
++    pub persisted: u64,
++    pub failed: u64,
++    pub dropped: u64,
++}
++
++pub fn detached_observation_stats() -> DetachedObservationStats {
++    DetachedObservationStats {
++        enabled: DETACHED_ENABLED.load(Ordering::Acquire),
++        queued: DETACHED_QUEUED.load(Ordering::Relaxed),
++        persisted: DETACHED_PERSISTED.load(Ordering::Relaxed),
++        failed: DETACHED_FAILED.load(Ordering::Relaxed),
++        dropped: DETACHED_DROPPED.load(Ordering::Relaxed),
++    }
++}
++
++/// Route [`emit_compatibility`] through the detached writer for the rest of
++/// this process. Called once by a serving process before it accepts requests;
++/// one-shot CLI commands keep synchronous persistence.
++pub fn enable_detached_observations() {
++    if detached_sender().is_some() {
++        DETACHED_ENABLED.store(true, Ordering::Release);
++    }
++}
++
++fn detached_sender() -> Option<&'static std::sync::mpsc::SyncSender<DetachedMessage>> {
++    static SENDER: OnceLock<Option<std::sync::mpsc::SyncSender<DetachedMessage>>>
 ```
 
 ---
 
-### Incident Patch 2: `d4523af0` (2026-11-04)
-**Commit Message**: release: 3.12.2 (governor setup hotfix, GHSA-483j-9vcj-2gxx, Hive opens, #2190)
+### Incident Patch 2: `a0fbfe77` (2026-11-08)
+**Commit Message**: fix(pathjail): document the IDE allow-dirs single flight as L145, fix cache test race (#2195) (#2211)
 
-Exported from the private source de32bc8cdb.
+* fix(pathjail): probe IDE allow-dirs outside the cache lock (#2195)
+
+The allow-dir cache held its mutex across the editor-registry probe
+(filesystem and PATH lookups for ~40 editors), so a slow probe on a
+network home or stalled mount blocked every concurrent path check. The
+lock now only guards copying the cached list out and storing a fresh
+one. Document the lock as L145 in LOCK_ORDERING.md.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-1)
-```diff
-@@ -312,9 +312,10 @@ jobs:
-         shell: bash
-         run: |
-           umask 077
--          if [[ "${{ runner.os }}" == "macOS" ]]; then
-+          if [[ "${{ runner.os }}" == "macOS" && -x "${CARGO_HOME}/bin/cargo" ]]; then
-             CARGO="${CARGO_HOME}/bin/cargo"
-           else
-+            # Newer macOS images install rustup's proxies outside CARGO_HOME.
-             CARGO="cargo"
-           fi
-           if [[ "${{ runner.os }}" == "Windows" ]]; then
-```
+* fix(pathjail): single-flight refresh for IDE allow-dirs cache (#2195)
 
-**File**: `.github/workflows/release.yml` (modified, +10/-1)
+Serve the stale list while one caller refreshes an expired entry, stamp
+entries with the probe start and never let an older probe overwrite a
+newer one. Clear the refresh claim on drop so a panicking probe cannot
+pin the stale list. Serialize the remaining cache test on test_env_lock
+and add regression tests for stale-while-revalidate and the store order.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(pathjail): bound refresh claims and order probes per home (#2195)
+
+Take over a refresh claim older than the TTL so a hung probe cannot pin
+the stale allow-l
+
+**File**: `rust/LOCK_ORDERING.md` (modified, +1/-0)
 ```diff
-@@ -1203,7 +1203,16 @@ jobs:
-       - name: Publish the verified draft
-         env:
-           GH_TOKEN: ${{ github.token }}
--        run: gh release edit "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --draft=false --latest
-+        # GitHub can answer a 5xx after it applied the edit (3.12.1); the edit
-+        # is idempotent, so a retry only confirms it. Success = not a draft.
-+        run: |
-+          for attempt in 1 2 3 4; do
-+            gh release edit "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --draft=false --latest && exit 0
-+            draft="$(gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --json isDraft --jq .isDraft || echo unknown)"
-+            [[ "$draft" == "false" ]] && { echo "::warning::release edit errored but the release is published"; exit 0; }
-+            sleep $((attempt * 15))
-+          done
-+          echo "::error::could not publish the draft"; exit 1
+@@ -169,6 +169,7 @@ All `std::sync::Mutex` unless noted otherwise.
+ | L142 | `RUNNING` | `core/phase_timing.rs:19` | `Mutex<BTreeMap<u64, (&'static str, Instant)>>` | Phase timers still running, one entry per guard, so `current()` names the newest; held only to insert, remove or read one entry; independent leaf lock, never nested |
+ | L143 | `LEDGER` | `core/request_ledger.rs:134` | `Mutex<Ledger>` | Request ledger of a serving process (#2197): pending requests by id with method and stage, last tool completion, last initialize; held only to insert, update, remove or copy entries, released before `phase_timing::current()` (L142) or any I/O; independent leaf lock, never nested |
+ | L144 | `VALIDATED_TIPS` | `core/ocla/unified_ledger.rs:273` | `Mutex<Vec<ValidatedTip>>` | Per ledger path, the prefix of the unified savings ledger this process already validated (#2196), so an append parses only newer records; taken only while the ledger's OS file lock is held, to copy, replace or drop one entry, never across I/O; independent leaf lock, never nested |
++| L145 | `HOME_ALLOW_DIRS_CACHE` | `core/pathjail.rs:422` | `Mutex<Option<(PathBuf, Instant, Vec<PathBuf>)>>` | IDE allow-dirs of one home with a 300 s TTL (#2195); only reached when IDE dirs are opt-in enabled. Held across the editor-registry probe on purpose as its single flight: every waiter needs the same list, so it never multiplies the probe nor serves an expired list. Any lock its callees (opencode config, detect resolvers, PATH lookups) take nests under L145 and must be recorded here |
  
-   jetbrains-plugin:
-     # Build the JetBrains/IntelliJ plugin and attach it to the GitHub Release as a
-```
-
-**File**: `CHANGELOG.md` (modified, +49/-1)
-```diff
-@@ -6,8 +6,56 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ ### CLI cache transaction file lock
  
- ## [Unreleased]
- 
--### Fixed
-+### Added
-+
-+- **LeanCTX | Hive is open.** `lean-ctx hive connect` and `hive link` connect an instance to
-+  hive.leanctx.com (or a self-hosted Hive), and `hive` is back in help, suggestions and
-+  completions; 3.12.0 and 3.12.1 shipped the connector switched off.
-+
-+### Security
- 
-+- **Write destinations stay inside the project without a Workspace (GHSA-483j-9vcj-2gxx).**
-+  `ctx_package save`, `ctx_pack export`, the `ctx_edit`/`ctx_patch` backups, `ctx_checkpoint
-+  restore` and the `ctx_knowledge` export wrote to the path the model passed, so an absolute or
-+  `../` path left the project in the default configuration. A write destination now goes
-+  through the path jail with or without a Workspace; reads are unchanged. Reported by
-+  kasparovabi.
-+
-+### Fixed
-+
-+- **A directory granted with `lean-ctx allow-path` is walkable (#2190).** `ctx_search`,
-+  `ctx_tree` and `ctx_glob` refused a granted folder below a protected home location such as
-+  `~/Library` although `ctx_read` read its files. A walk inside a granted directory now runs;
-+  a grant never makes home, a filesystem root or a privacy-guarded home folder walkable.
-+- **A dogfood or release-candidate build updates to its release.** The update check read
-+  `3.12.1-dogfood.9` as 3.12.9 and answered "already up to date"; a prerelease now sorts
-+  before its release, as in SemVer.
-+- **Updates no longer switch an existing setup to the governor, and 3.12.1's switch is
-+  undone.** The 3.12.1 update moved every unpinned Claude Code, CodeBuddy, Cursor, Codex,
-+  Gemini and Copilot CLI setup to the governor without the lean-ctx MCP server. An update or
-+  setup refresh now keeps the MCP, hybrid or replace setup it finds. A host that 3.12.1 switched
-+  automatically (a `*.pre-governor-<version>.bak` backup or an interrupted migration, and no
-+  governor pin) gets its previous mode back on the next `lean-ctx setup`, `lean-ctx update` or
-+  `init --agent <host>`. The mode is read from the backup and pinned. `init --agent <host>
-+  --mode governor|governor-mcp` now pins that choice too, so the repair leaves it alone.
-+- **New Claude Code installs get `governor-mcp`.** Governor hooks plus the lean-ctx MCP server
-+  with deferred tools, so Hive, the agent bus and knowledge work from the first session. New
-+  installs of the other hosts get the standard MCP setup.
-+- **Claude Code always keeps a search tool.** The standard setup denied native Grep/Glob even
-+  when `~/.claude.json` had no lean-ctx MCP server. That happened after the 3.12.1 migration,
-+  when a server or daemon of the previous build re-rendered the standard hooks, and sessions
-+  then had neither native search nor `ctx_search`. The deny is now written only together with
-+  the MCP entry, and a refresh removes it when the entry is missing. `lean-ctx doctor` reports
-+  a pinned standard mode or a native-tool deny without the MCP server, with the repair command.
-+- **An older binary no longer overwrites a newer setup.** Every explicit setup and init records
-+  its version. The silent hook refresh of a server or daemon still running from before an update
-+  leaves the setup alone when a newer build wrote it.
-+- **A host pin selects the mode of later refreshes.** `[governor] pinned.<host>` (written by
-+  `init --agent <host> --mode <m>`) is honoured by every setup and refresh path, not only by the
-+  governor default.
-+- **`gain` and the cockpit count the governor's applied savings.** Applied R1.bash, R2 and R4
-+  decisions are recorded as `governor:<rule>` savings; shadow decisions still count nothing.
-+  R1.read already did.
- - **Test processes of every LeanCTX crate stay off production endpoints.** The guard that
-   sends test traffic to a loopback sink recognised only the Engine's own unit tests and
-   processes cargo launched for the Engine or `lean-ctx` package. Since the crate split, the
 ```
 
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +136/-129)
+**File**: `rust/src/core/pathjail.rs` (modified, +23/-12)
 ```diff
-@@ -184,11 +184,11 @@
-    "size": 1605
-   },
-   {
--   "blob": "8178bbdcf572506ff490615dde345a97e29b6b9e",
-+   "blob": "657aefd74d71f3ef885205866f0bac4f4915b44a",
-    "mode": "100644",
-    "path": ".github/workflows/ci.yml",
--   "sha256": "828f77ecc3d6d172a7bf30cc109670af87944304ad9a3d419dda0a2c2d9cc0c4",
--   "size": 46655
-+   "sha256": "adfe71e30bd19082d30c369c2cb8219912741951413c29e206029546b64ac14e",
-+   "size": 46765
-   },
-   {
-    "blob": "75f0a8c31e05c2ead623063c320d5783b406aee0",
-@@ -233,11 +233,11 @@
-    "size": 3699
-   },
-   {
--   "blob": "14d8a0606170c9328101ff51ddcf16ddedceb9a2",
-+   "blob": "3bfe07e9a438bc84af8edb1df3ac171f1e717a77",
-    "mode": "100644",
-    "path": ".github/workflows/release.yml",
--   "sha256": "1e8dcaaf051fb4d37f432756096b7324266ce44ec0c151c1c8875137a2ce868d",
--   "size": 84978
-+   "sha256": "25412dd2826f0493f3b211c377942cf5cf7decb3f5697cfbf6c8738d9ecc38d3",
-+   "size": 85565
-   },
-   {
-    "blob": "75a4d6a3ea3e0e6bf69efff80c68bc5cca72e7b4",
-@@ -331,11 +331,11 @@
-    "size": 1033
-   },
-   {
--   "blob": "c9fdc270931bba41b4f402eeaa7b475a6af46e95",
-+   "blob": "2fc1be75c80a3e436d27d7b351a3c2eb6a6e5ecf",
-    "mode": "100644",
-    "path": "CHANGELOG.md",
--   "sha256": "833539f2b2c576a24b204486f654759223865e3f51bd6c6d55f3905b76178268",
--   "size": 1216375
-+   "sha256": "9e539f44953284c81ccbecd9dfadf0796727823c30538ba5563ddaa366d01a10",
-+   "size": 1219915
-   },
-   {
-    "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
-@@ -436,11 +436,11 @@
-    "size": 525
-   },
-   {
--   "blob": "1a43bc6fd158be0198bda72668d8c2e9bf1ed44b",
-+   "blob": "7c0502ae5cd6267c35c256b445f1dc99a18678eb",
-    "mode": "100644",
-    "path": "PUBLISH_MANIFEST.toml",
--   "sha256": "e9e923ead0330e9ebe42cf73ab0f6f9bbbed81099953cdf17e8ce112ef426083",
--   "size": 258380
-+   "sha256": "805b64f589b49fadc68295fb26f3f302e36899b147a8b13266470b46b7ad1323",
-+   "size": 258438
-   },
-   {
-    "blob": "b50ec9ee68e230777b65ff932e22735417a8e540",
-@@ -450,10 +450,10 @@
-    "size": 38306
-   },
-   {
--   "blob": "25fc786e4fdc0fdf19370e7634f4201767392ba2",
-+   "blob": "f04fefb3a8dff3c0cc59e8e4c862e3e62239fd1d",
-    "mode": "100644",
-    "path": "SBOM.cdx.json",
--   "sha256": "c86a714c4ad681434e52c475261330297ca1fa74ed54c6637b17567a25fcb8fe",
-+   "sha256": "f81caf6a3fc7ca4afea4e7a9cf9dd9218351054aa26b880b1dce469ac6456795",
-    "size": 687888
-   },
-   {
-@@ -464,10 +464,10 @@
-    "size": 32425
-   },
-   {
--   "blob": "1e469b210359b3301245846fade9b24336760537",
-+   "blob": "a39760398db5390c1d7399e6434325ac0cc09dcc",
-    "mode": "100644",
-    "path": "THIRD_PARTY_NOTICES",
--   "sha256": "fdf3c5f98521928cda39ba844278809b5fe841670d7e87790261b95e5c0dc95e",
-+   "sha256": "bc5157a267362bf62cd31153e55401fe219fd7ae5693892df93e9ddb2d4bc977",
-    "size": 330302
-   },
-   {
-@@ -513,10 +513,10 @@
-    "size": 593
-   },
-   {
--   "blob": "7d2e1e46c0e0350acadcb950fa4f0806ad7db5bb",
-+   "blob": "b6638fc1abe7daf0c3c302d43474bef4ff7f1001",
-    "mode": "100644",
-    "path": "aur/lean-ctx/PKGBUILD",
--   "sha256": "bdd1b648332be46db0cedfd3d541e0b10a977a71a2153aa47125c3e527609d70",
-+   "sha256": "d03b5a428f3491d9029f12faed4d8a6a30625f57d30e7c953f9882406122c018",
-    "size": 2096
-   },
-   {
-@@ -1605,10 +1605,10 @@
-    "size": 4024
-   },
-   {
--   "blob": "5a17b1fdd7e7019556fe81daa94b2ccdc18bf71a",
-+   "blob": "e39e170e52e353d6ca8d8236b4ec9199459c5805",
-    "mode": "100644",
-    "path": "docs/contracts/delivery-evidence-v1.json",
--   "sha256": "69c7633dfe33696156bb6588310afda444b2cccaf616fe2728e4c2aab4a896d4",
-+   "sha256": "16b47b3e44a3d21df82bb79ccf2fa2929cf08d30c70bd28a6860c151f1162ff8",
-    "size": 6734
-   },
-   {
-@@ -2424,10 +2424,10 @@
-    "size": 671
-   },
-   {
--   "blob": "379421e3e954d5ad3f06957fe1292dbd64cef752",
-+   "blob": "49d068e4b53f3005e1e781ca070b6ec99ad776fd",
-    "mode": "100644",
-    "path": "docs/contracts/team-seat-value-v1/frozen-hashes.json",
--   "sha256": "6d7d7543053f54a0d063f3f6e3ef2b67b6452175655eb3d01e0317a7c126888f",
-+   "sha256": "3bf150d57d921b3522e2debd7035e11070cf06b498c35a4583ed66b457092802",
-    "size": 3887
-   },
-   {
-@@ -3194,11 +3194,11 @@
-    "size": 5291
-   },
-   {
--   "blob": "a2664be50b991d4786f436f347f3f51129088ba6",
-+   "blob": "a479dbab138357465cbb93e7a109e1ef8c51b920",
-    "mode": "100644",
-    "path": "docs/reference/generated/mcp-tools.md",
--   "sha256": "170e340975ed1e50da31753fae22dce336c0e8a0cd6a3023ca70f7848fbd30c0",
--   "size": 22281
-+   "sha256": "2f7a374eb7f30ef9077b584b89b8371307b06e4a1dff05ef3cf0f08e687a3a56",
-+   "size": 22820
-   },
-   {
-    "blob": "b07e4a82faa703c5eb4f3ede20b051e9e4c7b5cc",
-@@ -3901,18 +3901,18 @@
-    "size": 193663
-   },
-   {
--   "blob": "d1c6793d13b0f32a6a875d86238349a30a6f0b57",
-+   "blob": "ac474bf4aa273114caee4d008479cdfc5c8eb98f",
-    "mode": "100644",
-    "path": "legal/third-party-assets.toml",
--   "sha256": "e0e23ba3409222c534ca6f2b60047753e9435f0d5b6a99169b7beac21b2715ac",
-+   "sha256": "127f610654f874638558d0ed6d8bd827607e675507c755be49659b4351bb7dd4",
-    "size": 3792
-   },
-  
-```
-
-**File**: `PUBLISH_MANIFEST.toml` (modified, +1/-0)
-```diff
-@@ -721,6 +721,7 @@ new_paths = [
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/routes/worker_retire.error.not_found.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/routes/worker_retire.error.not_owned.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/routes/worker_retire.request.json",
-+  "rust/crates/lean-ctx-hooks/src/hooks/setup_writer.rs",
-   "integrations/claude-code-mod/tests/pick-session.test.ts",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/vectors/screening_exceptions.vectors.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/web/organisation-instances-revoke.json",
-```
-
-**File**: `SBOM.cdx.json` (modified, +8/-8)
-```diff
-@@ -16952,7 +16952,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5",
-         "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3"
-       ],
--      "ref": "path+file://./rust#lean-ctx-engine@3.12.1"
-+      "ref": "path+file://./rust#lean-ctx-engine@3.12.2"
-     },
+@@ -392,18 +392,16 @@ fn home_allow_dirs(home: &Path, ide_dirs_allowed: bool) -> Vec<PathBuf> {
+     }
+     // The editor registry probes the filesystem and PATH for ~40 editors; the
+     // jail runs on every path check, so resolve once per process and refresh
+-    // on a TTL (#2195).
+-    type Entry = Option<(PathBuf, std::time::Instant, Vec<PathBuf>)>;
+-    static CACHE: std::sync::OnceLock<std::sync::Mutex<Entry>> = std::sync::OnceLock::new();
+-    const TTL: std::time::Duration = std::time::Duration::from_secs(300);
+-
+-    let mut guard = CACHE
+-        .get_or_init(|| std::sync::Mutex::new(None))
+-        .lock()
+-        .unwrap_or_else(std::sync::PoisonError::into_inner);
+-    if let Some((cached_home, at, dirs)) = guard.as_ref()
++    // on a TTL (#2195). The lock is held across the probe on purpose: it is
++    // the single flight. Every caller that reaches it has IDE dirs enabled
++    // (opt-in) and needs this list, so waiting for one probe costs no more
++    // than probing itself, never multiplies the probe I/O, and never serves
++    // an expired allow-list. The TTL runs from when the list is stored.
++    // Lock ordering: L145.
++    let mut cache = lock_home_allow_dirs();
++    if let Some((cached_home, stored_at, dirs)) = cache.as_ref()
+         && cached_home == home
+-        && at.elapsed() < TTL
++        && stored_at.elapsed() < HOME_ALLOW_DIRS_TTL
      {
-       "dependsOn": [
-@@ -20832,14 +20832,14 @@
-   ],
-   "metadata": {
-     "component": {
--      "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.1",
-+      "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.2",
-       "components": [
-         {
--          "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.1 bin-target-0",
-+          "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.2 bin-target-0",
-           "name": "lean_ctx",
--          "purl": "pkg:cargo/lean-ctx-engine@3.12.1?download_url=file://.#src/lib.rs",
-+          "purl": "pkg:cargo/lean-ctx-engine@3.12.2?download_url=file://.#src/lib.rs",
-           "type": "library",
--          "version": "3.12.1"
-+          "version": "3.12.2"
-         }
-       ],
-       "description": "LeanCTX | OSS library: the open-source runtime for the Context Gateway for AI agents behind the lean-ctx CLI, MCP server and proxy integrations.",
-@@ -20859,10 +20859,10 @@
-         }
-       ],
-       "name": "lean-ctx-engine",
--      "purl": "pkg:cargo/lean-ctx-engine@3.12.1?download_url=file://.",
-+      "purl": "pkg:cargo/lean-ctx-engine@3.12.2?download_url=file://.",
-       "scope": "required",
-       "type": "library",
--      "version": "3.12.1"
-+      "version": "3.12.2"
-     },
-     "properties": [
-       {
-@@ -20871,7 +20871,7 @@
-       },
-       {
-         "name": "leanctx:cargo-lock-sha256",
--        "value": "51d03d76fc7ecadd77f622efcd7add3da53f5d53f2973c1c2efca72b49293515"
-+        "value": "f6f1ffbfb6268065c7da0f50461fe3d8da6cd4532aaf53697bce002a9c3e0775"
-       }
-     ],
-     "tools": [
-```
-
-**File**: `THIRD_PARTY_NOTICES` (modified, +5/-5)
-```diff
-@@ -2,16 +2,16 @@
- Schema: leanctx.third-party-notices/v1
- Status: GENERATED AND APPROVED
- Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
--Content-Digest: sha256:81fb0e0afb341ba0179d18f3a219a90fa676885c51b852288e62692e80345754
-+Content-Digest: sha256:ff359347607ff49d04169805af92e77fcfc09a59a43cb8d28fb78f98bfd12b2a
- Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
- Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
- Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
--Cargo.lock SHA-256: 51d03d76fc7ecadd77f622efcd7add3da53f5d53f2973c1c2efca72b49293515
-+Cargo.lock SHA-256: f6f1ffbfb6268065c7da0f50461fe3d8da6cd4532aaf53697bce002a9c3e0775
- Cargo metadata inventory SHA-256: ecf8f62963d7200572a0d8925e71534384c3a8d18ca26cf96ecd4147ba383123
--SBOM.cdx.json SHA-256: c86a714c4ad681434e52c475261330297ca1fa74ed54c6637b17567a25fcb8fe
-+SBOM.cdx.json SHA-256: f81caf6a3fc7ca4afea4e7a9cf9dd9218351054aa26b880b1dce469ac6456795
- SBOM components: 558
--Asset manifest SHA-256: e0e23ba3409222c534ca6f2b60047753e9435f0d5b6a99169b7beac21b2715ac
--npm package-lock.json SHA-256: bf393664d199c189c280f2556107743f0c61963228bbc65706111b3d24bd2230
-+Asset manifest SHA-256: 127f610654f874638558d0ed6d8bd827607e675507c755be49659b4351bb7dd4
-+npm package-lock.json SHA-256: 29ddc11be191ab696ad7953593bab94b93f0724653645c00994ad5d8ee794fae
- Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
- Cargo graph packages: 618
- Third-party Cargo packages: 599
-```
-
-**File**: `aur/lean-ctx/PKGBUILD` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- # Maintainer: Yves Gugger <yves@pounce.ch>
- pkgname=lean-ctx
--pkgver=3.12.0
-+pkgver=3.12.1
- pkgrel=1
- pkgdesc="LeanCTX | OSS — open-source Context Gateway for AI Systems. Context selection, supported controls, and evidence through local integration paths."
- arch=('x86_64' 'aarch64')
-@@ -12,7 +12,7 @@ makedepends=('cargo' 'gcc')
- # resolver finds it — no manual install, no runtime download.
- depends=('gcc-libs' 'onnxruntime')
- source=("$pkgname-$pkgver.tar.gz::https://github.com/yvgude/lean-ctx/releases/download/v$pkgver/lean-ctx-$pkgver-source.tar.gz")
--sha256sums=('a1009099b7933ddb8948d6511a38c4f9addfcfbc60c0a54161adea174e32bfb5')
-+sha256sums=('7667029e063b924e48015e8d93fb0a66bfcdc528817b98ac53cc3d700ae69b2b')
+         return dirs.clone();
+     }
+@@ -412,10 +410,23 @@ fn home_allow_dirs(home: &Path, ide_dirs_allowed: bool) -> Vec<PathBuf> {
+     let mut out = Vec::new();
+     let targets = crate::core::editor_registry::build_targets(home);
+     collect_ide_allow_dirs(home, &targets, &mut out);
+-    *guard = Some((home.to_path_buf(), std::time::Instant::now(), out.clone()));
++    *cache = Some((home.to_path_buf(), std::time::Instant::now(), out.clone()));
+     out
+ }
  
- prepare() {
-   cd "$pkgname-$pkgver/rust"
++const HOME_ALLOW_DIRS_TTL: std::time::Duration = std::time::Duration::from_secs(300);
++
++/// The IDE allow-dirs of one home: (home, stored at, dirs).
++type HomeAllowDirsCache = Option<(PathBuf, std::time::Instant, Vec<PathBuf>)>;
++
++static HOME_ALLOW_DIRS_CACHE: std::sync::Mutex<HomeAllowDirsCache> = std::sync::Mutex::new(None);
++
++fn lock_home_allow_dirs() -> std::sync::MutexGuard<'static, HomeAllowDirsCache> {
++    HOME_ALLOW_DIRS_CACHE
++        .lock()
++        .unwrap_or_else(std::sync::PoisonError::into_inner)
++}
++
+ #[cfg(test)]
+ static HOME_ALLOW_DIRS_BUILDS: std::sync::atomic::AtomicUsize =
+     std::sync::atomic::AtomicUsize::new(0);
+```
+
+**File**: `rust/src/core/pathjail_tests.rs` (modified, +27/-1)
+```diff
+@@ -238,6 +238,9 @@ fn ide_allow_dirs_are_registry_derived_and_skip_home() {
+ // never appears here.
+ #[test]
+ fn ide_config_dirs_are_excluded_by_default() {
++    // home_allow_dirs shares one process-wide cache and build counter with
++    // home_allow_dirs_is_cached_per_home: serialize and start/leave it empty.
++    let _fresh = FreshHomeAllowDirsCache::new();
+     let home = tempfile::tempdir().unwrap();
+     for d in [".lean-ctx", ".cursor", ".codex"] {
+         std::fs::create_dir_all(home.path().join(d)).unwrap();
+@@ -1062,9 +1065,30 @@ fn cursor_agent_output_opens_only_for_the_own_workspace() {
+     assert!(is_read_only_path(&app_log), "writes stay denied");
+ }
+ 
++/// Holds `test_env_lock` and an empty home-allow-dirs cache for one test, and
++/// empties the cache again on drop (also when the test panics), so no test
++/// inherits another's entry.
++struct FreshHomeAllowDirsCache {
++    _env: crate::core::data_dir::TestEnvGuard,
++}
++
++impl FreshHomeAllowDirsCache {
++    fn new() -> Self {
++        let env = crate::core::data_dir::test_env_lock();
++        *lock_home_allow_dirs() = None;
++        Self { _env: env }
++    }
++}
++
++impl Drop for FreshHomeAllowDirsCache {
++    fn drop(&mut self) {
++        *lock_home_allow_dirs() = None;
++    }
++}
++
+ #[test]
+ fn home_allow_dirs_is_cached_per_home() {
+-    let _env = crate::core::data_dir::test_env_lock();
++    let _fresh = FreshHomeAllowDirsCache::new();
+     let home_a = tempfile::tempdir().unwrap();
+     let home_b = tempfile::tempdir().unwrap();
+     let builds = || HOME_ALLOW_DIRS_BUILDS.load(std::sync::atomic::Ordering::SeqCst);
+@@ -1085,4 +1109,6 @@ fn home_allow_dirs_is_cached_per_home() {
+ 
+     home_allow_dirs(home_b.path(), true);
+     assert_eq!(builds(), before + 2, "a different home is recomputed");
++    home_allow_dirs(home_b.path(), true);
++    assert_eq!(builds(), before + 2, "the other home is stored and served");
+ }
+```
+
+---
+
+### Incident Patch 3: `178952e3` (2026-11-08)
+**Commit Message**: fix(cockpit): start on Windows without console flashes and name the failure (#2203) (#2207)
+
+* fix(cockpit): start the Cockpit on Windows without console flashes and name the failure (#2203)
+
+Runtimes ran with a cleared environment and no SystemRoot, so on Windows
+Winsock could not load and the Cockpit never bound its loopback port.
+prepare_binary now sets SystemRoot from GetSystemWindowsDirectoryW and
+starts runtimes with CREATE_NO_WINDOW. A server started only for a
+failed open is stopped instead of retrying hidden. StartFailed names the
+cause via --foreground logs, source builds are no longer told to install,
+and the terminal hint appears once.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(cockpit): check the Windows runtime environment without the private TEMP workspace (#2203)
+
+The private workspace under %TEMP% enforces its own owner checks, which a
+CI runner's TEMP does not satisfy. The environment is now built by
+runtime_command, which the test checks directly. Also adds the missing
+SAFETY comments on the PATH restore in the find_on_path test (#2199),
+which failed the test clippy pass.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored
+
+**File**: `rust/crates/lean-ctx/src/cli/dispatch/network/cockpit_start.rs` (modified, +62/-3)
+```diff
+@@ -100,6 +100,10 @@ pub(crate) fn open(view: Option<&str>, rest: &[String]) -> Outcome {
+             .and_then(|p| p.trim().parse().ok())
+     });
+     let (plan, record) = launch::plan_now(requested);
++    let started = matches!(
++        plan,
++        launch::Plan::Replace { .. } | launch::Plan::Start { .. }
++    );
+     let (port, base_path) = match plan {
+         launch::Plan::Reuse {
+             port,
+@@ -147,6 +151,14 @@ pub(crate) fn open(view: Option<&str>, rest: &[String]) -> Outcome {
+         }
+     };
+     if let Some(reason) = warm(port, &base_path) {
++        // Nothing is opened, so a server started for this request is not
++        // left behind: hidden, it would retry the Cockpit on every later
++        // request it receives (#2203).
++        if started
++            && let Some(record) = launch::read_record().filter(|r| r.port == port && r.detached)
++        {
++            launch::stop_instance(&record);
++        }
+         return Outcome::Unavailable(reason);
+     }
+     let token = dashboard::load_saved_token();
+@@ -256,16 +268,22 @@ pub(crate) fn opened_line(view: Option<&str>, port: u16, base_path: &str) -> Str
+     }
+ }
+ 
+-/// The one line when the Cockpit runtime cannot be served.
++/// The one line when the Cockpit runtime cannot be served: the reason and
++/// the action for it. The terminal alternative is [`TERMINAL_HINT`], added
++/// once by the caller.
+ pub(crate) fn unavailable_line(reason: CockpitUnavailable) -> &'static str {
+     match reason {
+-        CockpitUnavailable::NotInstalled | CockpitUnavailable::SourceBuild => {
++        CockpitUnavailable::NotInstalled => {
+             "Cockpit not installed \u{2014} lean-ctx cockpit install"
+         }
+         other => other.message(),
+     }
+ }
+ 
++/// The terminal alternative after a Cockpit that could not be opened. Plain
++/// `lean-ctx gain` would try to open the Cockpit again first.
++pub(crate) const TERMINAL_HINT: &str = "In the terminal: lean-ctx gain --terminal";
++
+ /// `lean-ctx cockpit stop`: end this data dir's background server by its
+ /// recorded PID. The exit code.
+ pub(crate) fn stop() -> i32 {
+@@ -371,9 +389,50 @@ mod tests {
+             "Opened the Cockpit \u{2192} http://localhost:3334/c/"
+         );
+         assert_eq!(
+-            unavailable_line(CockpitUnavailable::SourceBuild),
++            unavailable_line(CockpitUnavailable::NotInstalled),
+             "Cockpit not installed \u{2014} lean-ctx cockpit install"
+         );
+         assert!(unavailable_line(CockpitUnavailable::Disabled).contains("cockpit install"));
+     }
++
++    const ALL: [CockpitUnavailable; 5] = [
++        CockpitUnavailable::NotInstalled,
++        CockpitUnavailable::VerificationFailed,
++        CockpitUnavailable::StartFailed,
++        CockpitUnavailable::Disabled,
++        CockpitUnavailable::SourceBuild,
++    ];
++
++    /// #2203: `lean-ctx cockpit` printed "…; in the terminal: lean-ctx gain"
++    /// and then "In the terminal: lean-ctx gain --terminal". The reason line
++    /// names no terminal command; the hint follows exactly once.
++    #[test]
++    fn the_terminal_alternative_is_named_once() {
++        for reason in ALL {
++            let line = unavailable_line(reason);
++            assert!(!line.contains("lean-ctx gain"), "{reason:?}: {line}");
++            let output = format!("{line}\n{TERMINAL_HINT}");
++            assert_eq!(output.matches("lean-ctx gain").count(), 1, "{output}");
++        }
++        assert_eq!(TERMINAL_HINT, "In the terminal: lean-ctx gain --terminal");
++    }
++
++    /// #2203: a Cockpit that did not start was reported as "retried
++    /// automatically" with no way to see why. The line says what happened
++    /// and names a command that shows the cause; a source build is not told
++    /// to run an install it cannot do.
++    #[test]
++    fn each_reason_names_what_happened_and_an_action_that_works() {
++        let start = unavailable_line(CockpitUnavailable::StartFailed);
++        assert!(start.contains("installed but did not start"), "{start}");
++        assert!(start.contains("lean-ctx cockpit --foreground"), "{start}");
++        assert!(!start.contains("retried"), "{start}");
++        let source = unavailable_line(CockpitUnavailable::SourceBuild);
++        assert!(source.starts_with("Source build"), "{source}");
++        assert!(!source.contains("cockpit install"), "{source}");
++        for reason in ALL {
++            let line = unavailable_line(reason);
++            assert!(line.contains("lean-ctx ") || reason == CockpitUnavailable::SourceBuild);
++        }
++    }
+ }
+```
+
+**File**: `rust/crates/lean-ctx/src/cli/dispatch/network/mod.rs` (modified, +1/-1)
+```diff
+@@ -426,7 +426,7 @@ pub(crate) fn cmd_cockpit(rest: &[String], view: Option<&str>) {
+             }
+             cockpit_start::Outcome::Unavailable(reason) => {
+                 eprintln!("{}", cockpit_start::unavailable_line(reason));
+-                eprintln!("\x1b[2mIn the terminal: lean-ctx gain --terminal\x1b[0m");
++                eprintln!("\x1b[2m{}\x1b[0m", cockpit_start::TERMINAL_HINT);
+                 std::process::exit(1);
+             }
+             cockpit_start::Outcome::Failed(message) => {
+```
+
+**File**: `rust/src/core/intelligence_runtime/cockpit.rs` (modified, +24/-7)
+```diff
+@@ -106,7 +106,9 @@ impl CockpitUnavailable {
+         }
+     }
+ 
+-    /// One line for a user who opens the Cockpit while it cannot be served.
++    /// One line for a user who opens the Cockpit while it cannot be served:
++    /// the reason and the one action that helps. The terminal alternative is
++    /// added once by the caller (CLI line, unavailable page), never here.
+     pub const fn message(self) -> &'static str {
+         match self {
+             Self::NotInstalled => {
+@@ -116,13 +118,13 @@ impl CockpitUnavailable {
+                 "The installed Cockpit did not verify and was not started. Reinstall it with: lean-ctx cockpit install"
+             }
+             Self::StartFailed => {
+-                "The Cockpit did not start. It is retried automatically; in the terminal: lean-ctx gain"
++                "The Cockpit is installed but did not start. See why: lean-ctx cockpit --foreground (it logs the cause)"
+             }
+             Self::Disabled => {
+                 "The Cockpit is deactivated. Activate it again with: lean-ctx cockpit install"
+             }
+             Self::SourceBuild => {
+-                "Source build: the Cockpit ships with official installs (install.sh, Homebrew, npm, AUR); in the terminal: lean-ctx gain"
++                "Source build: the Cockpit ships with official installs (install.sh, Homebrew, npm, AUR)"
+             }
+         }
+     }
+@@ -665,9 +667,10 @@ pub(super) fn handshake(
+         .stdout(Stdio::piped())
+         // Nothing the Cockpit writes there is shown; it could repeat a token.
+         .stderr(Stdio::null());
+-    let child = command
+-        .spawn()
+-        .map_err(|_| CockpitUnavailable::StartFailed)?;
++    let child = command.spawn().map_err(|error| {
++        tracing::warn!("cockpit not started: the process could not be spawned: {error}");
++        CockpitUnavailable::StartFailed
++    })?;
+     let mut process = Process {
+         child,
+         stdin: None,
+@@ -704,7 +707,18 @@ pub(super) fn handshake(
+         process.port = port;
+         Ok(process)
+     } else {
++        let exited = process.child.try_wait().ok().flatten();
+         process.stop(Duration::ZERO);
++        if let Some(status) = exited {
++            tracing::warn!(
++                "cockpit not started: it exited ({status}) before naming its loopback port"
++            );
++        } else {
++            tracing::warn!(
++                "cockpit not started: it did not name its loopback port within {} s",
++                deadline.as_secs()
++            );
++        }
+         Err(CockpitUnavailable::StartFailed)
+     }
+ }
+@@ -856,7 +870,10 @@ fn start(
+     let cockpit_token = hex::encode(token);
+     let start_line = start_line(launch, &cockpit_token).ok_or(CockpitUnavailable::StartFailed)?;
+     let (prepared, command) = super::health::prepare_binary(&package.binary, &root, EXECUTABLE)
+-        .map_err(|_| CockpitUnavailable::StartFailed)?;
++        .map_err(|error| {
++            tracing::warn!("cockpit not started: its private copy was not prepared ({error:?})");
++            CockpitUnavailable::StartFailed
++        })?;
+     match handshake(command, &start_line, HANDSHAKE) {
+         Ok(process) => Ok(Running {
+             process,
+```
+
+**File**: `rust/src/core/intelligence_runtime/health.rs` (modified, +89/-13)
+```diff
+@@ -228,12 +228,27 @@ pub(super) fn prepare_binary(
+     // Execute bytes authenticated above, not the separately mutable installed
+     // inode. This is private process hygiene, not a hostile same-UID sandbox.
+     install::write_new(&executable, binary, true)?;
+-    let mut command = Command::new(&executable);
++    let command = runtime_command(&executable, &directory)?;
++    Ok((
++        Prepared {
++            workspace: temporary,
++            #[cfg(target_os = "linux")]
++            executable: executable_directory,
++        },
++        command,
++    ))
++}
++
++/// The runtime's process: its private directory as working directory, home
++/// and temporary directory, and a cleared environment with only what the OS
++/// itself needs.
++fn runtime_command(executable: &Path, directory: &Path) -> Result<Command> {
++    let mut command = Command::new(executable);
+     command
+-        .current_dir(&directory)
++        .current_dir(directory)
+         .env_clear()
+-        .env("HOME", &directory)
+-        .env("TMPDIR", &directory);
++        .env("HOME", directory)
++        .env("TMPDIR", directory);
+     // libdbus discovers the logged-in user's Secret Service through this
+     // standard location. Never inherit a caller-selected remote D-Bus address.
+     #[cfg(target_os = "linux")]
+@@ -243,15 +258,42 @@ pub(super) fn prepare_binary(
+         command.env("XDG_RUNTIME_DIR", format!("/run/user/{uid}"));
+     }
+     #[cfg(windows)]
+-    command.env("TEMP", &directory).env("TMP", &directory);
+-    Ok((
+-        Prepared {
+-            workspace: temporary,
+-            #[cfg(target_os = "linux")]
+-            executable: executable_directory,
+-        },
+-        command,
+-    ))
++    {
++        use std::os::windows::process::CommandExt as _;
++        // Winsock resolves its service providers under %SystemRoot%: with a
++        // cleared environment a runtime cannot open any socket (WSAStartup
++        // fails with WSAEPROVIDERFAILEDINIT), so the Cockpit never binds its
++        // loopback port (#2203). The value comes from the OS, not from the
++        // caller's environment.
++        command
++            .env("TEMP", directory)
++            .env("TMP", directory)
++            .env("SystemRoot", windows_directory()?);
++        // The runtimes are console programs. Started from a process without a
++        // console (the detached Cockpit server), each start would otherwise
++        // open, and on exit close, a console window of its own (#2203).
++        command.creation_flags(CREATE_NO_WINDOW);
++    }
++    Ok(command)
++}
++
++/// `CreateProcessW` flag: the child gets no console window.
++#[cfg(windows)]
++const CREATE_NO_WINDOW: u32 = windows_sys::Win32::System::Threading::CREATE_NO_WINDOW;
++
++/// The Windows directory as the OS reports it (the value of `%SystemRoot%`).
++#[cfg(windows)]
++fn windows_directory() -> std::io::Result<std::ffi::OsString> {
++    use std::os::windows::ffi::OsStringExt as _;
++    use windows_sys::Win32::System::SystemInformation::GetSystemWindowsDirectoryW;
++    let mut buffer = vec![0_u16; 32_768];
++    // SAFETY: buffer is writable for the exact advertised WCHAR capacity.
++    let length =
++        unsafe { GetSystemWindowsDirectoryW(buffer.as_mut_ptr(), buffer.len() as u32) } as usize;
++    if length == 0 || length >= buffer.len() {
++        return Err(std::io::Error::last_os_error());
++    }
++    Ok(std::ffi::OsString::from_wide(&buffer[..length]))
+ }
+ 
+ /// Exact supported descriptions only; unknown capability sets never execute.
+@@ -494,6 +536,40 @@ pub(super) fn supports_protection(package: &VerifiedPackage) -> bool {
+ mod tests {
+     use super::*;
+ 
++    /// #2203: a runtime started with a cleared environment and no
++    /// `SystemRoot` cannot open a socket on Windows, so the Cockpit never
++    /// named its port. The OS value is set, nothing else is inherited.
++    #[cfg(windows)]
++    #[test]
++    fn a_windows_runtime_gets_the_system_root_and_nothing_inherited() {
++        // The environment alone: the private workspace beside %TEMP% has its
++        // own owner checks, which a CI runner's TEMP does not satisfy.
++        let directory = tempfile::tempdir().unwrap();
++        let command = runtime_command(
++            &directory.path().join("leanctx-cockpit.exe"),
++            directory.path(),
++        )
++        .unwrap();
++        let envs: std::collections::BTreeMap<String, Option<String>> = command
++            .get_envs()
++            .map(|(name, value)| {
++                (
++                    name.to_string_lossy().to_ascii_uppercase(),
++                    value.map(|value| value.to_string_lossy().into_owned()),
++                )
++            })
++            .collect();
++        let system_root = windows_directory().unwrap().to_string_lossy().into_owned();
++        assert_eq!(
++            envs.get("SYSTEMROOT"),
++            Some(&Some(system_root.clone())),
++            "{envs:?}"
++        );
++        assert!(std::path::Path::new(&system_root).join("System3
+```
+
+**File**: `rust/src/core/pathutil.rs` (modified, +2/-0)
+```diff
+@@ -746,7 +746,9 @@ mod tests {
+         let found = find_on_path("leanctx-fop-probe");
+         let missing = find_on_path("leanctx-fop-definitely-missing");
+         match old {
++            // SAFETY: serialized by test_env_lock; restores the saved PATH.
+             Some(v) => unsafe { std::env::set_var("PATH", v) },
++            // SAFETY: serialized by test_env_lock; PATH was unset before.
+             None => unsafe { std::env::remove_var("PATH") },
+         }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2193** (2026-11-05): test(lifecycle): wait for exec before recording a stand-in's identity (3.12.2 prebuild) (@yvgude)
-- **PR #2191** (2026-11-04): release: 3.12.2 (hotfix) (@yvgude)
-- **PR #2188** (2026-11-04): fix(telemetry): test processes of every LeanCTX crate stay off production endpoints (@yvgude)
-- **PR #2187** (2026-11-04): release: 3.12.1 long-session elision opt-in (@yvgude)
-- **PR #2185** (2026-11-03): release: 3.12.1 flaky-test hardening (@yvgude)
-- **PR #2183** (2026-11-03): release: 3.12.1 (@yvgude)
+- **PR #2211** (2026-11-08): fix(pathjail): document the IDE allow-dirs single flight as L145, fix cache test race (#2195) (@yvgude)
+- **PR #2210** (2026-11-08): feat(agents): add Muse Code agent target (#2198) (@yvgude)
+- **PR #2209** (2026-11-08): fix(server): never block tool dispatch on observation persistence; request ledger (#2196, #2197) (@yvgude)
+- **PR #2208** (2026-11-08): fix(shell): curl/wget output files after an unfollowable cd (#2201); honour excluded_commands in the hook rewrite (#2194) (@yvgude)
+- **PR #2207** (2026-11-08): fix(cockpit): start on Windows without console flashes and name the failure (#2203) (@yvgude)
+- **PR #2206** (2026-11-07): fix(shell): honour functions defined in the hook's brace group (#2202) (@yvgude)
 
 ---
 
@@ -2982,36 +3683,29 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #2193 from yvgude/fix/3122-exec-race
+## X. server): never block tool dispatch on observation persistence; request ledger (#
 
 **RULE**:
-When implementing operations in `PUBLIC-EXPORT-RECEIPT.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/LOCK_ORDERING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ffe6e95c`: Merge pull request #2193 from yvgude/fix/3122-exec-race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f3e7a72`: server): never block tool dispatch on observation persistence; request ledger (#2196, #2197) (#2209). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `PUBLIC-EXPORT-RECEIPT.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/LOCK_ORDERING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-   "blob": "5ef642bd2f0523c8d7159261a13ac469cb89061f",
-   "sha256": "b54bd886e82d52f41a39b5ef28e1ad3c8584d198bb2cf55478c6ad3392693cb9",
-   "size": 11365
- "source_commit": "f54099a9db2f3460181fef1be8b08ea82de36f72",
- "tree_sha256": "71077f17e087a40cfeb974357dd7b9a495183ea2bc4c793c4ebddb73444eece2"
+| L143 | `LEDGER` | `core/request_ledger.rs:134` | `Mutex<Ledger>` | Request ledger of a serving process (#2197): pending requests by id with method and stage, last tool completion, last initialize; held only to insert, update, remove or copy entries, released before `phase_timing::current()` (L142) or any I/O; independent leaf lock, never nested |
+| L144 | `VALIDATED_TIPS` | `core/ocla/unified_ledger.rs:273` | `Mutex<Vec<ValidatedTip>>` | Per ledger path, the prefix of the unified savings ledger this process already validated (#2196), so an append parses only newer records; taken only while the ledger's OS file lock is held, to copy, replace or drop one entry, never across I/O; independent leaf lock, never nested |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-   "blob": "c440fc9d82daa9fe5cbedf1fed65addff2e30f96",
-   "sha256": "4ff365c946497e49113c6adf5503e6cae7248e948924ee4fbdccfb446eeb658f",
-   "size": 10672
- "source_commit": "de76ec3a1f76b05db847441ee41395ae9db5027c",
- "tree_sha256": "3abbe732f8ebf5751ae835881bd9e3d4ef63d8033e31268a9cf59da0d111d4e1"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ffe6e95c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f3e7a72` are properly handled with clean fallback behavior.

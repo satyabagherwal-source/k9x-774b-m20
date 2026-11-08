@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T15:49:51.477Z",
+  "last_updated": "2026-11-08T16:01:20.082Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -560,14 +560,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "content_hash": "6cf68b75b3d36b7483df22318d7591cdc46bf915b6c03753092bf3dd72ab45b7",
-      "verified_at": "2026-11-05T00:14:57.730Z",
+      "content_hash": "3a748063bd1a51aac1eed81c8bb00059e84ee1d5832388fe70c56659e697bf9b",
+      "verified_at": "2026-11-08T16:01:20.081Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:14:57.730Z"
+      "last_updated": "2026-11-08T16:01:20.081Z"
     },
     "Comfy-Org/Qwen-Image-2.1": {
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "8c46193c75f339c9607b30f8f587f77044c9f889ef38e0346df46763965305a5",
-      "verified_at": "2026-11-05T11:23:23.284Z",
+      "content_hash": "8a773acb4dcffa96d39b5bc1bddc38945a90165845929502f87080c53ae70baf",
+      "verified_at": "2026-11-08T16:01:13.873Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:23:23.284Z"
+      "last_updated": "2026-11-08T16:01:13.873Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",
@@ -13101,14 +13101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yshrsmz-buildkonfig",
-      "content_hash": "09ca74908b2702a5aeeffa66aae4725c8af956058fa8182e92a225a115255e13",
-      "verified_at": "2026-11-02T15:29:48.982Z",
+      "content_hash": "8cbf7c151b75f56fe856e9478fab1bfd309d64f5e77140d4fe72b74009c91f42",
+      "verified_at": "2026-11-08T16:01:17.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:29:48.982Z"
+      "last_updated": "2026-11-08T16:01:17.441Z"
     },
     "aliarifsoydas/sitemap-checker": {
       "repository": "aliarifsoydas/sitemap-checker",

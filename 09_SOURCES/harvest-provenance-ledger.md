@@ -8326,3 +8326,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ad9b5734` | Multi-dimensional audit evidence | 2026-11-08T15:42:39.976Z |
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-08T15:49:45.620Z |
 | `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `77a8d8a3` | Multi-dimensional audit evidence | 2026-11-08T15:49:51.459Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `a0fbfe77` | Multi-dimensional audit evidence | 2026-11-08T16:01:13.854Z |
+| `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `61e46413` | Multi-dimensional audit evidence | 2026-11-08T16:01:17.431Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-08T16:01:20.062Z |

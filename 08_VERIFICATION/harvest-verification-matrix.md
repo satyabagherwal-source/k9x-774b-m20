@@ -8317,3 +8317,6 @@
 | `CYCLE-20261108-3ZA4` | `2026-11-08T15:42:39.964Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3af5332f...`) |
 | `CYCLE-20261108-D3PR` | `2026-11-08T15:49:45.615Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`0f683e98...`) |
 | `CYCLE-20261108-D87Z` | `2026-11-08T15:49:51.455Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b72e4090...`) |
+| `CYCLE-20261108-RURE` | `2026-11-08T16:01:13.850Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8a773acb...`) |
+| `CYCLE-20261108-RXIR` | `2026-11-08T16:01:17.427Z` | `yshrsmz/BuildKonfig` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8cbf7c15...`) |
+| `CYCLE-20261108-RZJ6` | `2026-11-08T16:01:20.034Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`3a748063...`) |

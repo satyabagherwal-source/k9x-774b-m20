@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-PI0W",
-    "timestamp": "2026-11-05T22:40:17.792Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "3f2cced68baca6fab53150831cf369684fde491264d1542741f0b885887536c7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-Z7VW",
-    "timestamp": "2026-11-05T22:47:51.212Z",
-    "repository": "a2ui-project/a2ui",
-    "learningId": "learn-github-a2ui-project-a2ui",
-    "contentHash": "b4c2fc4b9fb77f079f8dad115145b927a7fea35fe5aff1ba5a6ae8f0d9be009e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-ZCOG",
-    "timestamp": "2026-11-05T22:47:57.424Z",
-    "repository": "Diffuspace/Clover-35B-A3B-Preview",
-    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-    "contentHash": "fc18345a4a8e641b582bc0fefeb6affa2673d80dfe0d9c9a955e6075c14200a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-ZDRO",
     "timestamp": "2026-11-05T22:47:58.836Z",
     "repository": "moby/buildkit",
@@ -7492,6 +7447,51 @@
     "contentHash": "b72e4090ba6c00b6da00d968e88baa53ed9d6eb876e204acaf3f96c1f50a649f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-RURE",
+    "timestamp": "2026-11-08T16:01:13.850Z",
+    "repository": "yvgude/lean-ctx",
+    "learningId": "learn-github-yvgude-lean-ctx",
+    "contentHash": "8a773acb4dcffa96d39b5bc1bddc38945a90165845929502f87080c53ae70baf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-RXIR",
+    "timestamp": "2026-11-08T16:01:17.427Z",
+    "repository": "yshrsmz/BuildKonfig",
+    "learningId": "learn-github-yshrsmz-buildkonfig",
+    "contentHash": "8cbf7c151b75f56fe856e9478fab1bfd309d64f5e77140d4fe72b74009c91f42",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-RZJ6",
+    "timestamp": "2026-11-08T16:01:20.034Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "3a748063bd1a51aac1eed81c8bb00059e84ee1d5832388fe70c56659e697bf9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

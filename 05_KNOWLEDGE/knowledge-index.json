@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T15:49:51.367Z",
+  "last_updated": "2026-11-08T16:01:19.913Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32417,10 +32417,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "6cf68b75b3d36b7483df22318d7591cdc46bf915b6c03753092bf3dd72ab45b7",
+      "content_hash": "3a748063bd1a51aac1eed81c8bb00059e84ee1d5832388fe70c56659e697bf9b",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Image Token Boundary Integrity",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Cross‑Modal Hidden Size Consistency",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Unified Precision Enforcement",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 339,
           "title": "**Special Token Integrity Rule**",
@@ -32662,7 +32677,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-11-05T00:14:57.583Z",
+      "verified_at": "2026-11-08T16:01:19.871Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65306,11 +65321,16 @@
       "slug": "yshrsmz-buildkonfig",
       "platform": "github",
       "source_url": "https://github.com/yshrsmz/BuildKonfig",
-      "source_version": "ef37d507",
-      "content_hash": "09ca74908b2702a5aeeffa66aae4725c8af956058fa8182e92a225a115255e13",
+      "source_version": "61e46413",
+      "content_hash": "8cbf7c151b75f56fe856e9478fab1bfd309d64f5e77140d4fe72b74009c91f42",
       "dossier_path": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): update dependency com.android.tools.build:gradle to v9.5.0 (#380)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2759,
           "title": "deps): update dependency org.jetbrains.kotlin:kotlin-gradle-plugin to v2.4.21 (#",
@@ -65352,7 +65372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:29:48.869Z",
+      "verified_at": "2026-11-08T16:01:17.294Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65615,11 +65635,16 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "ffe6e95c",
-      "content_hash": "8c46193c75f339c9607b30f8f587f77044c9f889ef38e0346df46763965305a5",
+      "source_version": "a0fbfe77",
+      "content_hash": "8a773acb4dcffa96d39b5bc1bddc38945a90165845929502f87080c53ae70baf",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "server): never block tool dispatch on observation persistence; request ledger (#",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2185,
           "title": "opencode): explain an unbound session; rules name only offered tools",
@@ -65666,7 +65691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T11:23:23.198Z",
+      "verified_at": "2026-11-08T16:01:13.719Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

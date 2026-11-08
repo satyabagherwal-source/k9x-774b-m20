@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "6cf68b75b3d36b7483df22318d7591cdc46bf915b6c03753092bf3dd72ab45b7",
-    "lastHarvestedAt": "2026-11-05T00:14:57.714Z",
+    "contentHash": "3a748063bd1a51aac1eed81c8bb00059e84ee1d5832388fe70c56659e697bf9b",
+    "lastHarvestedAt": "2026-11-08T16:01:20.062Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "ffe6e95c",
+    "sourceVersion": "a0fbfe77",
     "license": "Apache-2.0",
-    "contentHash": "8c46193c75f339c9607b30f8f587f77044c9f889ef38e0346df46763965305a5",
-    "lastHarvestedAt": "2026-11-05T11:23:23.270Z",
+    "contentHash": "8a773acb4dcffa96d39b5bc1bddc38945a90165845929502f87080c53ae70baf",
+    "lastHarvestedAt": "2026-11-08T16:01:13.854Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
@@ -8703,10 +8703,10 @@
     "repository": "yshrsmz/BuildKonfig",
     "platform": "github",
     "sourceUrl": "https://github.com/yshrsmz/BuildKonfig",
-    "sourceVersion": "ef37d507",
+    "sourceVersion": "61e46413",
     "license": "Apache-2.0",
-    "contentHash": "09ca74908b2702a5aeeffa66aae4725c8af956058fa8182e92a225a115255e13",
-    "lastHarvestedAt": "2026-11-02T15:29:48.973Z",
+    "contentHash": "8cbf7c151b75f56fe856e9478fab1bfd309d64f5e77140d4fe72b74009c91f42",
+    "lastHarvestedAt": "2026-11-08T16:01:17.431Z",
     "learningId": "learn-github-yshrsmz-buildkonfig"
   },
   "aliarifsoydas-sitemap-checker": {

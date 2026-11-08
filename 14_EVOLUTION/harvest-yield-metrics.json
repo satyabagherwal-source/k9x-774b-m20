@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T15:49:51.465Z",
-  "total_cycles_completed": 8282,
-  "total_learnings_persisted": 8282,
-  "total_rules_promoted": 8067,
+  "last_updated": "2026-11-08T16:01:20.075Z",
+  "total_cycles_completed": 8285,
+  "total_learnings_persisted": 8285,
+  "total_rules_promoted": 8072,
   "history": [
-    {
-      "timestamp": "2026-11-07T22:16:07.817Z",
-      "repository": "joreilly/PeopleInSpace",
-      "learningId": "learn-github-joreilly-peopleinspace",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T22:16:16.238Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T22:23:35.264Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T22:23:44.811Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1382,27 @@
       "repository": "prof18/feed-flow",
       "learningId": "learn-github-prof18-feed-flow",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:01:13.869Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:01:17.438Z",
+      "repository": "yshrsmz/BuildKonfig",
+      "learningId": "learn-github-yshrsmz-buildkonfig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:01:20.075Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
