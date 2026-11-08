@@ -8258,3 +8258,6 @@
 | `CYCLE-20261108-JO2G` | `2026-11-08T07:30:58.840Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5f22feef...`) |
 | `CYCLE-20261108-JQHC` | `2026-11-08T07:31:01.968Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`3b125315...`) |
 | `CYCLE-20261108-RNNN` | `2026-11-08T08:05:11.171Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`10a97d86...`) |
+| `CYCLE-20261108-FX7N` | `2026-11-08T08:24:03.299Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`65e30cd5...`) |
+| `CYCLE-20261108-H3LH` | `2026-11-08T08:24:58.229Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`eec1463a...`) |
+| `CYCLE-20261108-H84I` | `2026-11-08T08:25:04.098Z` | `SwiftWebUI/SwiftWebUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`19aa7b34...`) |

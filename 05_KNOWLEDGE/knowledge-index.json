@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T08:05:11.036Z",
+  "last_updated": "2026-11-08T08:25:03.999Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12728,8 +12728,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "ddc51e35",
-      "content_hash": "f98625a0d0b2e84f59b865977f455d41b7e2ed62a0b67efc5c9edefc301aedb8",
+      "source_version": "19a7196c",
+      "content_hash": "65e30cd5468adb168dd37b92ed46df5e2eaf3772aa4aefa20efed5541243a643",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -12737,6 +12737,21 @@
           "number": null,
           "title": "Merge pull request #7352 from kumbung01/fix-nrf-timer-frequency",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Invariant Hardware Register Subtraction Clamping",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Physical Memory Subsystem Address-Space Validation for DMA",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Idle Event Polling and Exclusive-Bus Interference Mitigation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2076,
@@ -12814,7 +12829,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:13:44.117Z",
+      "verified_at": "2026-11-08T08:24:03.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23885,10 +23900,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
       "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "6fc2251ed8204842ddd2fc2c57e910ed7552f2644bd6225e58fac06b893bac31",
+      "content_hash": "eec1463aa609d52869d0ac220f6b9e8a1e0a62646f528380e17dc207d2ebe45b",
       "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Asymmetric Truncation Invariant for Cross-Encoder Tokenization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Output Activation Invariant for Ranking vs Classification Calibration",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dynamic Length-Sorted Mini-Batching Invariant for $O(N^2)$ Self-Attention",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 998,
           "title": "Cross-Encoder Input Concatenation & Truncation Invariant",
@@ -24285,7 +24315,7 @@
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv42syia",
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2"
       ],
-      "verified_at": "2026-11-04T21:11:15.217Z",
+      "verified_at": "2026-11-08T08:24:58.100Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58113,11 +58143,26 @@
       "slug": "swiftwebui-swiftwebui",
       "platform": "github",
       "source_url": "https://github.com/SwiftWebUI/SwiftWebUI",
-      "source_version": "2a5fe83a",
-      "content_hash": "435bc9f7fbaa08148d80f8400f93a60588d12e65ec5f1de17e1ca43ec522bacf",
+      "source_version": "b0b6be06",
+      "content_hash": "19aa7b3443e7851ca4fcaeee6bcd57b64ce93e8a457b4a324bf829b852beea55",
       "dossier_path": "07_PROJECT_LEARNING/swiftwebui-swiftwebui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/swiftwebui-swiftwebui-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Pointer Lifetime Encapsulation Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Retroactive Protocol Conformance Disambiguation Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hierarchical Invalidation Tree Pruning Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2663,
           "title": "Use `@resultBuilder` for ViewBuilder",
@@ -58129,7 +58174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:59:35.814Z",
+      "verified_at": "2026-11-08T08:25:03.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

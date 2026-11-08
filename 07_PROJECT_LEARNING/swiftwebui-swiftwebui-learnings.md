@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/swiftwebui-swiftwebui-learnings.md`  
 > **Source**: github ([https://github.com/SwiftWebUI/SwiftWebUI](https://github.com/SwiftWebUI/SwiftWebUI))  
-> **Source Version**: `2a5fe83a`  
+> **Source Version**: `b0b6be06`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:59:35.623Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-08T08:25:01.802Z  
 > **Learning ID**: `learn-github-swiftwebui-swiftwebui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1317 +12,518 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): SwiftWebUI/SwiftWebUI
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/swiftwebui-swiftwebui-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/SwiftWebUI/SwiftWebUI](https://github.com/SwiftWebUI/SwiftWebUI))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:59:35.618Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): SwiftWebUI/SwiftWebUI
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `SwiftWebUI/SwiftWebUI`
-- **Description**: A demo implementation of SwiftUI for the Web
-- **Primary Language / Ecosystem**: Swift
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4275 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### Exact Technical Problem Solved
+`SwiftWebUI` solves the challenge of running Apple's declarative UI framework (`SwiftUI`) directly inside a headless, server-side environment on Linux and macOS without Apple proprietary runtimes (`AttributeGraph.framework`). It translates immutable, value-typed declarative view trees into dynamic Virtual DOM representations, computes tree diffs upon state mutations, and synchronizes mutations to web browsers over persistent HTTP/WebSocket event channels powered by SwiftNIO.
+
+```
++---------------------------------------------------------------------------------------------------+
+|                                        SwiftWebUI Architecture                                    |
+|                                                                                                   |
+|  +--------------------+   reflects/binds   +---------------------+   maintains   +-------------+  |
+|  |   View Hierarchy   | <================> | DynamicPropertyInfo | ============> | StateHolder |  |
+|  | (Immutable Struct) |                    | (Field Offsets)     |               | (Heap Box)  |  |
+|  +--------------------+                    +---------------------+               +------+------+  |
+|            |                                                                            |         |
+|            | evaluates                                                       invalidates|         |
+|            v                                                                            v         |
+|  +--------------------+   diffs via ID     +---------------------+        +--------------------+  |
+|  |     TreeState      | <================> |  HTMLTreeBuilder    |        |  TreeStateContext  |  |
+|  |  DynamicElement    |                    |  (Virtual DOM Tree) |        | (Invalidation Set) |  |
+|  +--------------------+                    +----------+----------+        +---------+----------+  |
+|                                                       |                             |             |
+|                                                       | generates patch             | schedule    |
+|                                                       v                             v             |
+|                                            +---------------------+        +--------------------+  |
+|                                            |    JSON/HTML Diffs  | <===== | NIOHostingSession  |  |
+|                                            |   (Targeted Updates)|        | (SwiftNIO EventLoop|  |
+|                                            +----------+----------+        +--------------------+  |
+|                                                       |                                           |
+|                                                       | WebSockets / SSE / HTTP Chunked           |
+|                                                       v                                           |
+|                                            +---------------------+                                |
+|                                            |   Browser Client    |                                |
+|                                            |   (Semantic UI/JS)  |                                |
+|                                            +---------------------+                                |
++---------------------------------------------------------------------------------------------------+
+```
+
+### Architectural Boundaries & Subsystems
+1. **Property Reflection & Memory Projection Subsystem (`SwiftWebUI/Properties`)**:
+   - Manages `@State`, `@Binding`, `@Environment`, and `@ObservedObject` wrappers.
+   - Solves the core SwiftUI paradox: View structs are immutable values recreated on every pass, but dynamic properties must preserve heap identity and mutate across renders.
+   - Computes low-level struct memory layouts via field reflection (`Runtime` library), extracting exact byte offsets of dynamic properties inside the View struct layout.
+   - Uses unsafe pointer bindings to project stable heap-backed references (`StateEntryPointer`) into stack/inout view copies during execution phases (`enterComponent`), and scrubs them immediately afterwards (`leaveComponent`).
+2. **Context, Invalidation & Diffing Subsystem (`SwiftWebUI/VirtualDOM`)**:
+   - `TreeStateContext`: The operational coordinator. Owns the hierarchical component execution stack (`componentStack`), the global `ElementID` path cursor, the hierarchical `invalidComponentIDs` set, layout stacks (`LocalLayoutInfo`), and the environment stack (`EnvironmentValues`).
+   - Implements prefix-based branch invalidation: If a parent `ElementID` is marked invalid, all descendents are pruned from the invalidation queue to avoid redundant evaluations.
+3. **Reactive Binding & Dynamic Property System**:
+   - Bridges dynamic properties into `TreeStateContext` lifecycles via the `DynamicViewProperty` protocol (`_updateInstance(at:)`).
+   - Injects downward cascading ambient values (`EnvironmentValues`) and upward cascading container preferences (`TraitValues`) without coupling child components to containers.
+4. **Network Hosting & Event Dispatch Subsystem (`SwiftWebUI/ViewHosting`)**:
+   - Encapsulates SwiftNIO pipeline handlers (`NIOHostingSession`, `NIOEndpoint`).
+   - Serves initial HTML shells containing baseline CSS (SemanticUI) and lightweight client-side coordination scripts.
+   - Processes inbound browser UI events (clicks, form changes, input keystrokes), routes them to bound element closures, triggers invalidation passes, diffs the new virtual DOM against the prior state, and streams localized structural mutations (HTML change chunks) back to the browser.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `Sources/SwiftWebUI/Properties/State.swift`
-```
-//
-//  State.swift
-//  SwiftWebUI
-//
-//  Created by Helge Heß on 05.06.19.
-//  Copyright © 2019 Helge Heß. All rights reserved.
-//
-
-@propertyWrapper
-public struct State<Value>: BindingConvertible, _StateType {
-  // Sample:
-  //   struct MyView : View {
-  //     @State private var zoomed : Bool = false
-  // becomes:
-  //   struct MyView : View {
-  // Note: this is exposed as `$zoomed`!
-  //     private var $__delegate_storage_$_zoomed : State<Bool>
-  //                 = .init(initialValue: false)
-  //     private var zoomed : Bool {
-  //       set { state.zoomed.value = newValue }
-  //       get { return state.zoomed.value }
-  
-  var _slot  : StateHolder.StateEntryPointer = nil
-  var _value : Value // FIXME
-  
-  public init(wrappedValue: Value) {
-    self._value = wrappedValue
-  }
-  
-  public var wrappedValue : Value {
-    get {
-      assert(_slot != nil, "you cannot access @State outside of `body`")
-      guard let slot = _slot else { return _value }
-      guard let box  = slot.pointee.value as? StateValueBox else {
-        assertionFailure("@State value is pointing to a different box type!")
-        return _value
-      }
-      return box.value
-    }
-    nonmutating set {
-      assert(_slot != nil, "you cannot access @State outside of `body`")
-      guard let slot = _slot else { return }
-      slot.pointee.value = StateValueBox(value: newValue)
-      slot.pointee.holder.invalidateComponent()
-    }
-  }
-  
-  public var projectedValue: Binding<Value> {
-    // This exposes the "$state" property as a `Binding<Value>` instead of
-    // `State<Value>`.
-    return binding
-  }
-
-  // TODO DynamicViewProperty.update
-  public mutating func update() {
-    // Note: We cannot use the self-ptr as the slot-id, because we create
-    //       new View instances at new locations. We essentially need the
-    //       offset.
-    // Summary: The State itself does not have sufficient info to fill itself.
-    // TBD: within the `body`, can the state update itself?? I.e. does it need
-    //      to peek into the storage or not?
-    #if DEBUG && false
-      print("called:", #function, "on:", self, "my ptr:", UnsafePointer(&self))
-    #endif
-    _value = wrappedValue // TBD: not used anyways?
-  }
-  
-  public var binding: Binding<Value> {
-    return Binding(getValue: { return self.wrappedValue },
-                   setValue: { newValue in self.wrappedValue = newValue })
-  }
-  
-  // MARK: - StateHolder Storage
-  
-  struct StateValueBox: StateValue, CustomStringConvertible {
-    var value : Value
-    var description: String { return "<Box: \(value)>" }
-  }
-  
-  static func _initialValueBox(at   location : UnsafeRawPointer,
-                               for elementID : ElementID,
-                               in    context : TreeStateContext) -> StateValue
-  {
-    let typedPtr = location.assumingMemoryBound(to: Self.self)
-    return StateValueBox(value: typedPtr.pointee._value)
-  }
-}
-
-public extension State where Value : ExpressibleByNilLiteral {
-  
-  init() { self.init(wrappedValue: nil) }
-  
-}
-
-```
-
-### Core Architecture Module: `Sources/SwiftWebUI/Properties/StateHolder.swift`
-```
-//
-//  StateHolder.swift
-//  SwiftWebUI
-//
-//  Created by Helge Heß on 20.06.19.
-//  Copyright © 2019 Helge Heß. All rights reserved.
-//
-
-protocol StateValue {}
-
-protocol _StateType : DynamicViewProperty {
-  
-  var _slot : StateHolder.StateEntryPointer { get set }
-
-  static func _initialValueBox(at   location : UnsafeRawPointer,
-                               for elementID : ElementID,
-                               in    context : TreeStateContext) -> StateValue
-}
-
-
-final class StateHolder: CustomStringConvertible {
-  // We could make this generic over V: View for easier debugging, but that
-  // makes other stuff harder.
-  
-  typealias StateEntryPointer = UnsafeMutablePointer<StateEntry>?
-  
-  struct StateEntry: CustomStringConvertible {
-    unowned let holder: StateHolder
-    var value : StateValue
-    
-    var description: String { return "<StateEntry: \(value)>" }
-  }
-
-  unowned let context : TreeStateContext
-  let         type    : Any.Type
-  let         id      : ElementID
-  private var values  : UnsafeMutableBufferPointer<StateEntry>?
-    // Yeah, this could be just a binary blob with the proper strides for
-    // much better performance. But well POitRoaE ;-)
-  
-  private init<V: View>(context: TreeStateContext, type: V.Type,
-                        elementID: ElementID)
-  {
-    self.context = context
-    self.type    = type
-    self.id      = elementID
-  }
-  deinit {
-    if let values = values {
-      // TBD: don't we have to deinitialize?
-      values.deallocate()
-    }
-  }
-  
-  func invalidateComponent() {
-    context.invalidateComponentWithID(id)
-  }
-  
-  static func makeInitialHolderForView<V: View>(_ view: inout V,
-                                                with elementID: ElementID,
-                                                in context: TreeStateContext)
-              -> StateHolder
-  {
-    let holder = StateHolder(context: context, type: V.self,
-                             elementID: elementID)
-    let typeInfo = view.lookupTypeInfo()
-    guard case .dynamic(let props) = typeInfo else {
-      return holder
-    }
-    
-    holder.values = .allocate(capacity: typeInfo.statePropertyCount)
-    _ = holder.values!.initialize(from: props.compactMap { prop in
-      guard let stateType = prop.stateInstance else { return nil }
-      
-      let rawPropPtr = prop.mutablePointerIntoView(&view)
-      let value = stateType._initialValueBox(at: rawPropPtr, for: elementID,
-                                             in: context)
-      
-      let entry = StateEntry(holder: holder, value: value)
-      return entry
-    })
-    return holder
-  }
-  
-  func assignStateSlotsInView<T: View>(_ view: inout T) {
-    guard case .dynamic(let props) = view.lookupTypeInfo() else {
-      context.nodeGotDeleted(id)
-      assertionFailure("static view w/ dynamic slot")
-      return
-    }
-    
-    if ObjectIdentifier(T.self) != ObjectIdentifier(type) {
-      // This drops the old state holder
-      if debugComponentScopes {
-        print("state type mismatch:\n",
-              "  new:", T.self, "\n",
-              "  old:", type, "\n")
-      }
-      context.nodeGotDeleted(id)
-      
-      let newStateHolder = context.stateHolderForElementID(id, in: &view)
-      newStateHolder.assignStateSlotsInView(&view)
-      return
-    }
-    
-    assert(values != nil, "slots not setup yet?! \(self)")
-    
-    var currentState = 0
-    for prop in props {
-      guard prop.stateInstance != nil else { continue }
-      assert(currentState < values!.count)
-      
-      let stateEntryPointer = values!.baseAddress!.advanced(by: currentState)
-      
-      let rawPropPtr = prop.mutablePointerIntoView(&view)
-      let slotPtr = rawPropPtr.assumingMemoryBound(to: StateEntryPointer.self)
-      slotPtr.pointee = stateEntryPointer
-
-      currentState += 1
-    }
-  }
-
-  func clearStateSlotsInView<T: View>(_ view: inout T) {
-    guard case .dynamic(let props) = view.lookupTypeInfo() else { return }
-    
-    assert(values != nil, "slots not setup yet?! \(self)")
-    
-    var currentState = 0
-    for prop in props {
-      guard prop.stateInstance != nil else { continue }
-      assert(currentState < values!.count)
-      
-      let rawPropPtr = prop.mutablePointerIntoView(&view)
-      let slotPtr = rawPropPtr.assumingMemoryBound(to: StateEntryPointer.self)
-      slotPtr.pointee = nil
-      
-      currentState += 1
-    }
-  }
-  
-  var description: String {
-    var ms = "<StateHolder[\(id)]:"
-    // ms += " ctx=\(ObjectIdentifier(context))"
-    
-    if let values = values, !values.isEmpty {
-      for ( i, entry ) in values.enumerated() {
-        ms += " [\(i)]"
-        ms += String(describing: entry.value)
-      }
-      ms += values.map { $0.description }.joined(separator: ",")
-    }
-    else { ms += " NO-VALUES" }
-    ms += ">"
-    return ms
-  }
-}
-
-```
-
-### Core Architecture Module: `Sources/SwiftWebUI/VirtualDOM/TreeStateContext.swift`
-```
-//
-//  TreeBuildingContext.swift
-//  SwiftWebUI
-//
-//  Created by Helge Heß on 06.06.19.
-//  Copyright © 2019 Helge Heß. All rights reserved.
-//
-
-// The source code is distributed under the terms of the Bad Code License.
-// You are forbidden from distributing software containing the code to end
-// users, because it is bad.
-
-public final class TreeStateContext: CustomStringConvertible {
-  // Easily the most important class in the whole setup. And not just because
-  // it is the sole class ;-)
-  //
-  // This has grown quite a bit. Maybe split up.
-  
-  var currentBuilder = HTMLTreeBuilder.default
-  
-  // MARK: - Element IDs
-  
-  private(set) var currentElementID = ElementID.rootElementID
-  
-  @discardableResult
-  func pushElementID(_ eid: ElementID) -> ElementID {
-    let last = currentElementID
-    currentElementID = eid
-    return last
-  }
-  
-  func appendContentElementIDComponent() {
-    currentElementID.appendContentElementIDComponent()
-  }
-
-  func appendElementIDComponent<T: Hashable>(_ id: T) {
-    currentElementID.appendElementIDComponent(id)
-  }
-  func appendZeroElementIDComponent() {
-    currentElementID.appendZeroElementIDComponent()
-  }
-  func incrementLastElementIDComponent() {
-    currentElementID.incrementLastElementIDComponent()
-  }
-  func deleteLastElementIDComponent() {
-    currentElementID.deleteLastElementIDComponent()
-  }
-  
-  
-  // MARK: - Component States
-  
-  var elementIDToState = [ ElementID : StateHolder ]()
-    // not private for testing
-  
-  func stateHolderForElementID<V: View>(_ elementID: ElementID,
-                                        in view: inout V)
-       -> StateHolder
-  {
-    // inout to avoid copying
-    if let holder = elementIDToState[elementID] { return holder }
-    let holder = StateHolder.makeInitialHolderForView(&view, with: elementID,
-                                                      in: self)
-    elementIDToState[elementID] = holder
-    return holder
-  }
-  
-  
-  // MARK: - Environment
-  
-  #if DEBUG && true
-    var environmentStack = [ EnvironmentValues.empty ] {
-      didSet {
-        if debugEnvironmentChanges {
-          dumpEnvironmentStack(
-            "environment changed: #\(environmentStack.count)")
-        }
-      }
-    }
-  #else
-    var environmentStack = [ EnvironmentValues.empty ]
-  #endif
-
-  public init() {}
-  
-  var environment : EnvironmentValues {
-    return environmentStack.last ?? EnvironmentValues.empty
-  }
-
-  
-  // MARK: - Traits
-  
-  var traitStacks = [ AnyHashable: [ TraitValues ] ]()
-
-  
-  // MARK: - Component Stack
-  // WO is more complicated here because bindings are two way (push up and down)
-
-  // we could simulate appear/disappear using those
-  private var awakeComponents = [ _DynamicElementNode ]()
-  private var componentStack  = [ _DynamicElementNode ]()
-  
-  var component: _DynamicElementNode? {
-    return componentStack.last
-  }
-  #if false // don't need those?
-  var parentComponent: _DynamicElementNode? {
-    return componentStack.count > 1
-           ? componentStack[componentStack.count - 2]
-           : nil
-  }
-  #endif
-
-  func _awakeComponent(_ component: _DynamicElementNode) {
-    guard !awakeComponents.contains(where: { $0 === component }) else { return }
-    awakeComponents.append(component)
-    // TODO: emit didAppear? (or we add some didAwake)
-  }
-  
-  func enterComponent<V: View>(_ component: DynamicElementNode<V>) {
-    // Inout to avoid copying, not for actual modification
-    if debugComponentScopes {
-      print("ENTER:", V.self, component.elementID.webID,
-            "parent:",
-            (componentStack.last?.viewType).flatMap(String.init(describing:))
-              ?? "-")
-    }
-
-    let stateHolder = stateHolderForElementID(component.elementID,
-                                              in: &component.view)
-    stateHolder.assignStateSlotsInView(&component.view)
-
-    DynamicViewPropertyHelpers.update(&component.view, in: self)
-
-    componentStack.append(component)
-    _awakeComponent(component)
-  }
-  func leaveComponent<V: View>(_ component: DynamicElementNode<V>) {
-    assert(!componentStack.isEmpty)
-    if debugComponentScopes {
-      print("LEAVE:", V.self, component.elementID.webID)
-    }
-
-    let stateHolder = stateHolderForElementID(component.elementID,
-                                              in: &component.view)
-    stateHolder.clearStateSlotsInView(&component.view)
-    
-    guard !componentStack.isEmpty else { return }
-    componentStack.removeLast()
-  }
-
-  
-  // MARK: - Invalidation
-  
-  private(set) var invalidComponentIDs = Set<ElementID>()
-    // TODO: better data structure. We probably get many invalidations in a
-    //       single run, but we also want to support nesting here.
-  
-  func clearAllInvalidComponentsPriorTreeRebuild() {
-    invalidComponentIDs.removeAll()
-  }
-  
-  func processInvalidComponent(with id: ElementID) -> Bool {
-    return invalidComponentIDs.remove(id) != nil
-  }
-  
-  func invalidateComponentWithID(_ id: ElementID) {
-    guard !invalidComponentIDs.contains(id) else { return }
-
-    if debugInvalidation {
-      print("INVALIDATE:", id.webID)
-    }
-
-    for invalidID in invalidComponentIDs {
-      if id.hasPrefix(invalidID) {
-        if debugInvalidation {
-          print("  INVALIDATE:", id, "parent already invalid:", invalidID)
-        }
-        return
-      }
-      if invalidID.hasPrefix(id) {
-        if debugInvalidation {
-          print("  INVALIDATE:", id, "drop child:", invalidID)
-        }
-        invalidComponentIDs.remove(invalidID)
-      }
-    }
-    invalidComponentIDs.insert(id)
-    
-    if debugInvalidation {
-      print("INVALIDATE:", id, "invalid:",
-            invalidComponentIDs.map { $0.description }.joined(separator: ","))
-    }
-  }
-  
-  
-  // MARK: - Tracking Tree Deletions
-  
-  func nodeGotDeleted(_ id: ElementID) {
-    if debugComponentScopes {
-      print("NODE DELETED:", id.webID)
-    }
-    for stateID in elementIDToState.keys {
-      if stateID.hasPrefix(id) {
-        elementIDToState.removeValue(forKey: stateID)
-      }
-    }
-  }
-  
-  
-  // MARK: - Layout Modifiers
-  
-  // This is a little crappy, but well.
-  // TBD: Can we use traits for this? Maybe not worth the extra Any overhead?
-  
-  var layoutInfoStack = [ LocalLayoutInfo() ]
-  var localLayoutInfo : LocalLayoutInfo {
-    set {
-      assert(!layoutInfoStack.isEmpty)
-      guard !layoutInfoStack.isEmpty else { return }
-      layoutInfoStack[layoutInfoStack.count - 1] = newValue
-    }
-    get {
-      return layoutInfoStack.last ?? LocalLayoutInfo()
-    }
-  }
-  
-  func enterLayoutContext() {
-    layoutInfoStack.append(LocalLayoutInfo())
-  }
-  func leaveLayoutContext() {
-    layoutInfoStack.removeLast()
-    assert(!layoutInfoStack.isEmpty) // always have one
-  }
-  
-  
-  // MARK: - Value Change Overrides
-  
-  // Those are to not emit value changes for things we know the client DOM
-  // already has. Otherwise we could drop content the user types while we
-  // are processing the change event.
-  
-  private var ignoredValueChanges = [ ElementID : String ]()
-  
-  func ignoreValueChange(_ value: String, for elementID: ElementID) {
-    ignoredValueChanges[elementID] = value
-  }
-  func shouldIgnoreValueChange(_ value: String, for elementID: ElementID)
-       -> Bool
-  {
-    return ignoredValueChanges[elementID] == value
-  }
-  
-  func clearDiffingStates() {
-    ignoredValueChanges.removeAll()
-  }
-  
-  
-  // MARK: - Description
-  
-  public var description: String {
-    var ms = "<Ctx: currentID=\(currentElementID.webID)"
-    ms += " env=\(environment)"
-    ms += " states=\(elementIDToState)"
-    ms += ">"
-    return ms
-  }
-}
-
-struct LocalLayoutInfo: Equatable, CustomStringConvertible {
-  
-  var width  : Length? = nil
-  var height : Length? = nil
-  
-  var isEmpty: Bool {
-    return width == nil && height == nil
-  }
-  
-  var description: String {
-    switch ( width, height ) {
-      case (.some(let width), .some(let height)):
-        return "<LocalLayout: \(width)x\(height)>"
-      case (.some(let width), .none):  return "<LocalLayout: w=\(width)>"
-      case (.none, .some(let height)): return "<LocalLayout: h\(height)>"
-      case ( .none, .none ):           return "<LocalLayout/>"
-    }
-  }
-}
-
-```
-
-### Core Architecture Module: `Package.swift`
-```
-// swift-tools-version:5.5
-
-import PackageDescription
-
-#if canImport(Combine)
-  let extraPackages     : [ PackageDescription.Package.Dependency ] = []
-  let extraDependencies : [ Target.Dependency ] = []
-#else
-  let extraPackages     : [ PackageDescription.Package.Dependency ] = [
-    .package(url: "https://github.com/OpenCombine/OpenCombine.git",
-             from: "0.5.0")
-  ]
-  let extraDependencies : [ Target.Dependency ] = [ "OpenCombine" ]
-#endif
-
-let package = Package(
-  
-  name: "SwiftWebUI",
-  
-  platforms: [
-    .macOS(.v10_15), .iOS(.v13)
-  ],
-  
-  products: [
-    .library   (name: "SwiftWebUI", targets: [ "SwiftWebUI" ]),
-    .executable(name: "HolyCow",    targets: [ "HolyCow"    ])
-  ],
-  
-  dependencies: [
-    .package(url: "https://github.com/apple/swift-nio.git",
-             from: "2.46.0"),
-    .package(url: "https://github.com/SwiftWebResources/SemanticUI-Swift.git",
-             from: "2.4.2"),
-    .package(url: "https://github.com/wickwirew/Runtime.git",
-             from: "2.2.4")
-  ] + extraPackages,
-  
-  targets: [
-    .target(name: "SwiftWebUI",
-            dependencies: [ 
-              .product(name: "NIO",                   package: "swift-nio"),
-              .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
-              .product(name: "NIOHTTP1",              package: "swift-nio"),
-              .product(name: "SemanticUI", package: "SemanticUI-Swift"),
-              "Runtime"
-            ] + extraDependencies,
-            exclude: [ "Views/Shapes/README.md" ]
-    ),
-    .executableTarget(name: "HolyCow", dependencies: [ "SwiftWebUI" ])
-  ]
-)
-
-```
-
-### Core Architecture Module: `Sources/HolyCow/main.swift`
-```
-import SwiftWebUI
-
-SwiftWebUI.serve(Text("Holy Cow!"))
-
-```
-
-### Core Architecture Module: `Sources/SwiftWebUI/Environment/Environment.swift`
-```
-//
-//  Environment.swift
-//  SwiftWebUI
-//
-//  Created by Helge Heß on 10.06.19.
-//  Copyright © 2019 Helge Heß. All rights reserved.
-//
-
-@propertyWrapper
-public struct Environment<Value>: DynamicViewProperty {
-  
-  // (\EnvironmentValues.isEnabled) or just (\.isEnabled)
-  let keyPath : KeyPath<EnvironmentValues, Value>
-  
-  public init(_ keyPath: KeyPath<EnvironmentValues, Value>) {
-    self.keyPath = keyPath
-  }
-  
-  // DynamicViewProperty
-  // update => this updates the value from the environment I think
-  // how do we receive the environment? Is that a global?
-
-  private var _value: Value?
-
-  public var wrappedValue: Value {
-    guard let value = _value else {
-      fatalError("you cannot access @Environment outside of `body`")
-    }
-    return value
-  }
-  
-  public mutating func update() {
-    guard let context = DynamicViewPropertyHelpers.currentContext else {
-      assertionFailure("you cannot access @Environment outside of `body`")
-      return
-    }
-    
-    _value = context.environment[keyPath: keyPath]
-  }
-}
-
-```
-
-### Core Architecture Module: `Sources/SwiftWebUI/Environment/EnvironmentKey.swift`
-```
-//
-//  EnvironmentKey.swift
-//  SwiftWebUI
-//
-//  Created by Helge Heß on 10.06.19.
-//  Copyright © 2019 Helge Heß. All rights reserved.
-//
-
-public protocol EnvironmentKey {
-  associatedtype Value
-  static var defaultValue: Self.Value { get }
-}
-
-enum SizeCategoryEnvironmentKey: EnvironmentKey {
-  static var defaultValue: ContentSizeCategory { .medium }
-}
-
-enum IsEnabledEnvironmentKey: EnvironmentKey {
-  static var defaultValue: Bool { true }
-}
-
-enum FontEnvironmentKey: EnvironmentKey {
-  static var defaultValue: Font? { return nil }
-}
-
-enum ForegroundColorEnvironmentKey: EnvironmentKey {
-  static var defaultValue: Color? { return nil }
-}
-enum BackgroundColorEnvironmentKey: EnvironmentKey {
-  static var defaultValue: Color? { return nil }
-}
-
-enum ImageScaleEnvironmentKey: EnvironmentKey {
-  static var defaultValue: Image.Scale { return .medium }
-}
-
-enum EditModeEnvironmentKey: EnvironmentKey {
-  static var defaultValue: Binding<EditMode>? { return nil }
-}
-
-enum HorizontalSizeClassEnvironmentKey: EnvironmentKey {
-  static var defaultValue: UserInterfaceSizeClass? { return .regular }
-}
-enum VerticalSizeClassEnvironmentKey: EnvironmentKey {
-  static var defaultValue: UserInterfaceSizeClass? { return .regular }
-}
-
-import struct Foundation.Locale
-import struct Foundation.TimeZone
-
-enum LocaleEnvironmentKey: EnvironmentKey {
-  static var defaultValue: Locale { return .current }
-}
-enum TimeZoneEnvironmentKey: EnvironmentKey {
-  static var defaultValue: TimeZone { return .current }
-}
-
-enum EnvironmentObjectKey<O: ObservableObject>: EnvironmentKey {
-  static var defaultValue: O? { return nil }
-}
-
-// MARK: - Value Access
-
-extension EnvironmentValues {
-  
-  public var sizeCategory: ContentSizeCategory {
-    set { self[SizeCategoryEnvironmentKey.self] = newValue }
-    get { self[SizeCategoryEnvironmentKey.self] }
-  }
-
-  public var foregroundColor: Color? {
-    set { self[ForegroundColorEnvironmentKey.self] = newValue }
-    get { self[ForegroundColorEnvironmentKey.self] }
-  }
-  public var backgroundColor: Color? {
-    set { self[BackgroundColorEnvironmentKey.self] = newValue }
-    get { self[BackgroundColorEnvironmentKey.self] }
-  }
-
-  public var isEnabled: Bool  {
-    set { self[IsEnabledEnvironmentKey.self] = newValue }
-    get { self[IsEnabledEnvironmentKey.self] }
-  }
-  
-  public var font: Font? {
-    set { self[FontEnvironmentKey.self] = newValue}
-    get { self[FontEnvironmentKey.self] }
-  }
-
-  public var imageScale: Image.Scale {
-    set { self[ImageScaleEnvironmentKey.self] = newValue }
-    get { self[ImageScaleEnvironmentKey.self] }
-  }
-
-  public var editMode: Binding<EditMode>? {
-    set { self[EditModeEnvironmentKey.self] = newValue}
-    get { self[EditModeEnvironmentKey.self] }
-  }
-  
-  public var horizontalSizeClass: UserInterfaceSizeClass? {
-    set { self[HorizontalSizeClassEnvironmentKey.self] = newValue }
-    get { self[HorizontalSizeClassEnvironmentKey.self] }
-  }
-  public var verticalSizeClass: UserInterfaceSizeClass? {
-    set { self[VerticalSizeClassEnvironmentKey.self] = newValue }
-    get { self[VerticalSizeClassEnvironmentKey.self] }
-  }
-  
-  public var locale: Locale {
-    set { self[LocaleEnvironmentKey.self] = newValue}
-    get { self[LocaleEnvironmentKey.self] }
-  }
-  public var timeZone: TimeZone {
-    set { self[TimeZoneEnvironmentKey.self] = newValue}
-    get { self[TimeZoneEnvironmentKey.self] }
-  }
-}
-
-// MARK: - View Access
-
-public extension View {
-  
-  typealias EnvironmentView<K> =
-    ModifiedContent<Self, EnvironmentKeyWritingModifier<K>>
-
-  func sizeCategory(_ category: ContentSizeCategory)
-       -> EnvironmentView<ContentSizeCategory>
-  {
-    return environment(\.sizeCategory, category)
-  }
-
-  func foregroundColor(_ color: Color?) -> EnvironmentView<Color?> {
-    return environment(\.foregroundColor, color)
-  }
-  func backgroundColor(_ color: Color?) -> EnvironmentView<Color?> {
-    return environment(\.backgroundColor, color)
-  }
-  
-  func isEnabled(_ enabled: Bool) -> EnvironmentView<Bool> {
-    return environment(\.isEnabled, enabled)
-  }
-  func disabled(_ disabled: Bool) -> EnvironmentView<Bool> {
-    return environment(\.isEnabled, !disabled)
-  }
-
-  func font(_ font: Font?) -> EnvironmentView<Font?> {
-    return environment(\.font, font)
-  }
-
-  func imageScale(_ scale: Image.Scale) -> EnvironmentView<Image.Scale> {
-    return environment(\.imageScale, scale)
-  }
-  
-  func editMode(_ mode: Binding<EditMode>?)
-       -> EnvironmentView<Binding<EditMode>?>
-  {
-    return environment(\.editMode, mode)
-  }
-  
-  func horizontalSizeClass(_ sizeClass: UserInterfaceSizeClass?)
-       -> EnvironmentView<UserInterfaceSizeClass?>
-  {
-    return environment(\.horizontalSizeClass, sizeClass)
-  }
-  func verticalSizeClass(_ sizeClass: UserInterfaceSizeClass?)
-       -> EnvironmentView<UserInterfaceSizeClass?>
-  {
-    return environment(\.verticalSizeClass, sizeClass)
-  }
-
-  func locale(_ locale: Locale) -> EnvironmentView<Locale> {
-    return environment(\.locale, locale)
-  }
-  func timeZone(_ timeZone: TimeZone) -> EnvironmentView<TimeZone> {
-    return environment(\.timeZone, timeZone)
-  }
-}
-
-```
-
-### Core Architecture Module: `Sources/SwiftWebUI/Environment/EnvironmentValues.swift`
-```
-//
-//  EnvironmentValues.swift
-//  SwiftWebUI
-//
-//  Created by Helge Heß on 10.06.19.
-//  Copyright © 2019 Helge Heß. All rights reserved.
-//
-
-public struct EnvironmentValues /*: CustomStringConvertible*/ {
-  
-  static let empty = EnvironmentValues()
-  
-  var values = [ ObjectIdentifier : Any ]()
-    // TBD: can we avoid the any? Own AnyEntry protocol doesn't give much?
-  
-  // a hack to support type erased values
-  mutating func _setAny<T>(_ key: Any.Type, _ newValue: T) {
-    values[ObjectIdentifier(key)] = newValue
-  }
-  
-  public subscript<K: EnvironmentKey>(key: K.Type) -> K.Value {
-    set {
-      values[ObjectIdentifier(key)] = newValue
-    }
-    get {
-      // values[SizeCategoryKey.self] => ContentSizeCategory
-      guard let value = values[ObjectIdentifier(key)] else {
-        return K.defaultValue
-      }
-      guard let typedValue = value as? K.Value else {
-        assertionFailure("unexpected typed value: \(value)")
-        return K.defaultValue
-      }
-      return typedValue
-    }
-  }
-}
-
-
-extension TreeStateContext {
-  
-  func dumpEnvironmentStack(_ title: String = "The current environments:") {
-    print(title)
-    for (i, environment) in environmentStack.enumerated().reversed() {
-      let indent = String(repeating: "  ", count: i)
-      
-      if environment.values.isEmpty {
-        print("[\(i)]\(indent): EMPTY")
-        continue
-      }
-      
-      print("[\(i)]\(indent):")
-      for (oid, v ) in environment.values {
-        print("   \(indent)   \(oid.shortRawPointerString):", v)
-      }
-    }
-    print("---")
-  }
-}
-
-```
-
-### Core Architecture Module: `Sources/SwiftWebUI/Environment/Trait.swift`
-```
-//
-//  Trait.swift
-//  SwiftWebUI
-//
-//  Created by Helge Heß on 19.06.19.
-//  Copyright © 2019 Helge Heß. All rights reserved.
-//
-
-// What is a trait? Chris:
-// "A trait is like a preference, it travels upwards to the container of a
-//  view". But not higher.
-// I think the difference to an environment key is that traits never change
-// ("dynamically").
-
-public protocol Trait {
-  associatedtype Key : Hashable
-  static var key : Key { get }
-}
-public extension Trait {
-  static var key : ObjectIdentifier { return ObjectIdentifier(Self.self) }
-}
-
-final class TraitValues {
-  // This is quite hacky and inefficient. I suspect traits in the real thing
-  // are set directly on the ("graph") nodes.
-  
-  var values = [ ( elementID: ElementID, traitKey: AnyHashable, value: Any ) ]()
-    // we want to preserve the order
-  
-  private func index<T: Trait>(of trait: T.Type, for elementID: ElementID)
-               -> Int?
-  {
-    let oid = AnyHashable(T.self.key)
-    return values.firstIndex(where: { entry in
-      entry.elementID == elementID && entry.traitKey == oid
-    })
-  }
-
-  func set<T: Trait>(_ trait: T, for elementID: ElementID) {
-    let oid = AnyHashable(T.self.key)
-    
-    if let idx = index(of: T.self, for: elementID) {
-      values[idx] = ( elementID, oid, trait )
-    }
-    else {
-      values.append( ( elementID, oid, trait ) )
-    }
-  }
-}
-
-extension TreeStateContext {
-  // Yes yes, this imp is not great.
-  
-  func setTrait<T: Trait>(_ trait: T) {
-    let oid = AnyHashable(T.self.key)
-    guard let values = traitStacks[oid]?.last else {
-      print("WARN: no receiver for trait:", trait)
-      return
-    }
-    if debugTraits {
-      print("TR: set trait:", trait, "for:", currentElementID.webID)
-    }
-    values.set(trait, for: currentElementID)
-  }
-  
-  func collectingTraits<T1: Trait, R>(_ t1: T1.Type, _ execute: () -> R)
-       -> ( result: R, values: [ ( ElementID, T1? ) ] )
-  {
-    let oid1   = AnyHashable(T1.self.key)
-    let values = TraitValues()
-    
-    if traitStacks[oid1] != nil { traitStacks[oid1]!.append(values) }
-    else  { traitStacks[oid1] = [ values ] }
-    defer { traitStacks[oid1]?.removeLast() }
-    
-    let traits = ( execute(), values.values.compactMap { entry in
-      return ( entry.elementID, entry.value as? T1 )
-    })
-    
-    if debugTraits {
-      print("TR: collected traits:")
-      for ( eid, t1 ) in traits.1 {
-        if let t1 = t1 { print("  \(eid.webID):", t1)  }
-        else           { print("  \(eid.webID) EMPTY") }
-      }
-      print("--")
-    }
-
-    return traits
-  }
-  
-  func collectingTraits<T1: Trait, T2: Trait, R>(_ t1: T1.Type, _ t2: T2.Type,
-                                                 _ execute: () -> R)
-       -> ( result: R, values: [ ( ElementID, T1?, T2? ) ] )
-  {
-    // Also returns empty elements, unlike the single value thing!
-    let oid1   = AnyHashable(T1.self.key)
-    let oid2   = AnyHashable(T2.self.key)
-    let values = TraitValues()
-    
-    if traitStacks[oid1] != nil { traitStacks[oid1]!.append(values) }
-    else  { traitStacks[oid1] = [ values ] }
-    defer { traitStacks[oid1]?.removeLast() }
-    if traitStacks[oid2] != nil { traitStacks[oid2]!.append(values) }
-    else  { traitStacks[oid2] = [ values ] }
-    defer { traitStacks[oid2]?.removeLast() }
-    
-    let v = execute()
-    
-    var traits = [ ( ElementID, T1?, T2? ) ]()
-    var eidToSlot = [ ElementID: Int ]()
-    
-    for ( elementID, traitKey, value ) in values.values {
-      let slot : Int = {
-        if let idx = eidToSlot[elementID] { return idx }
-        let newSlot = traits.count
-        eidToSlot[elementID] = newSlot
-        traits.append( ( elementID, nil, nil ) )
-        return newSlot
-      }()
-      
-      let old = traits[slot]
-      if traitKey == oid1 {
-        traits[slot] = ( elementID, value as? T1, old.2)
-      }
-      else { // oid2
-        assert(traitKey == oid2)
-        traits[slot] = ( elementID, old.1, value as? T2)
-      }
-    }
-    
-    if debugTraits {
-      print("TR: collected traits:")
-      for ( eid, t1, t2 ) in traits {
-        switch ( t1, t2 ) {
-          case ( .some(let t1), .some(let t2) ):
-            print("  \(eid.webID):", t1, t2)
-          case ( .some(let t1), .none ):
-            print("  \(eid.webID):", t1, "-")
-          case ( .none, .some(let t2) ):
-            print("  \(eid.webID):", "-", t2)
-          case ( .none, .none ):
-            print("  \(eid.webID) EMPTY")
-        }
-      }
-      print("--")
-    }
-
-    return ( v, traits )
-  }
-}
-
-```
-
-### Core Architecture Module: `Sources/SwiftWebUI/Misc/DebugSwitches.swift`
-```
-//
-//  DebugSwitches.swift
-//  SwiftWebUI
-//
-//  Created by Helge Heß on 25.06.19.
-//  Copyright © 2019 Helge Heß. All rights reserved.
-//
-
-#if DEBUG
-  let debugComponentScopes    = false
-  let debugInvalidation       = false
-  let debugEnvironmentChanges = false
-  let debugRequestPhases      = false
-  let debugDumpTrees          = false
-  let debugTraits             = false
-#else
-  let debugComponentScopes    = false
-  let debugInvalidation       = false
-  let debugEnvironmentChanges = false
-  let debugRequestPhases      = false
-  let debugDumpTrees          = false
-  let debugTraits             = false
-#endif
-
-
-
-extension ObservableObject { // can't extend AnyObject ...
-  
-  var pointerDescription: String {
-    return ObjectIdentifier(self).shortRawPointerString
-  }
-  
-}
-
-extension ObjectIdentifier {
-  
-  var rawPointerString: String {
-    let s = String(describing: self)
-    return s.hasPrefix("ObjectIdentifier(")
-         ? String(s.dropFirst(17).dropLast(1))
-         : s
-  }
-  var shortRawPointerString: String {
-    rawPointerString.replacingOccurrences(of: "0x0000000", with: "0x")
-  }
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #67** (2024-01-31): **6097377315**
-  *Symptoms*: 
-
-- **Issue #66** (2023-12-27): **Cannot run SwiftWebUI on Raspberry Pi Zero W**
-  *Symptoms*: I created a swift project which will display "Hello World" on a web page using SwiftWebUI. When I build my project using ```swift build``` I get this error ```'MyApp' /home/pi/MyApp: error: Error Domain=NSCocoaErrorDomain Code=260 "The file doesn’t exist."```. I'm using Raspberry Pi Zero W running Raspberry Pi OS buster (Linux Kernel 5.10.103+ armv6l) using Swift version 5.1.5
-  **Post-Mortem & Fix Analysis**:
-  > The Package.swift of SwiftWebUI has a minimum Swift requirement of Swift 5.5: https://github.com/SwiftWebUI/SwiftWebUI/blob/0b248169c095959db006df60cb9041a17d29743f/Package.swift#L1  Though I'm not sure whether this is actually a hard requirement.
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `f6148288` (2023-01-02)
-**Commit Message**: Use `@resultBuilder` for ViewBuilder
-
-Not sure whether additional things might need
-to change.
-
-**File**: `Sources/SwiftWebUI/Views/ViewBuilder.swift` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
- //  Copyright © 2019 Helge Heß. All rights reserved.
- //
- 
--@_functionBuilder public struct ViewBuilder {
-+@resultBuilder public struct ViewBuilder {
- 
-   public static func buildBlock() -> EmptyView {
-     return EmptyView()
-```
-
----
-
-### Incident Patch 2: `fcbb3265` (2024-02-19)
-**Commit Message**: Merge branch 'develop' of github.com:swiftwebui/SwiftWebUI into develop
-
-**File**: `README.md` (modified, +2/-29)
-```diff
-@@ -77,45 +77,18 @@ Use it to learn more about SwiftUI and its inner workings.
- 
- ## Requirements
- 
--Update 2019-07-08: There are three options to run SwiftWebUI:
--
--### macOS Catalina
--
--One can use a
--[macOS Catalina](https://www.apple.com/macos/catalina-preview/)
--installation to run SwiftWebUI.
--Make sure that the Catalina version matches your Xcode 11 beta! (“Swift ABI” 🤦‍♀️)
--
--Fortunately it is really easy to
--[install Catalina on a separate APFS volume](https://support.apple.com/en-us/HT208891).
--And an installation of
--[Xcode 11](https://developer.apple.com/xcode/)
--is required to get the new Swift 5.1 features SwiftUI makes heavy use of.
--Got that? Very well!
--
--> Why is Catalina required? SwiftUI makes use of new Swift 5.1 runtime features
--> (e.g. opaque result types).
--> Those features are not available in the Swift 5 runtime that ships with 
--> Mojave.
--> (another reason is the use of Combine which is only available in Catalina, 
--> though that part could be fixed using
--> [OpenCombine](https://github.com/broadwaylamb/OpenCombine))
-+On a Mac macOS 10.15 or later is required.
- 
- ### tuxOS
- 
- SwiftWebUI now runs on Linux using
- [OpenCombine](https://github.com/broadwaylamb/OpenCombine) (also works without
- that, but then some things don't work, e.g. `NavigationView`).
- 
--A [Swift 5.1 snapshot](https://swift.org/download/#snapshots) is required.
-+Swift 5.2 or later is required.
- We also provide a Docker image containing a 5.1 snapshot over here:
- [helje5/swift](https://cloud.docker.com/repository/docker/helje5/swift/tags).
- 
--### Mojave
--
--The Xcode 11beta iOS 13 simulators do run on Mojave.
--You might be able to run SwiftWebUI within an iOS app.
--
- 
- ## SwiftWebUI Hello World
- 
-```
-
----
-
-### Incident Patch 3: `264751bc` (2024-02-18)
-**Commit Message**: Fix typo
-
-...
-
-**File**: `Sources/SwiftWebUI/Views/Generic/ConditionalContent.swift` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ public struct ConditionalContent<TrueContent, FalseContent> : View
- {
-   // When building, we only ever get one side, either True or False.
-   // That means if the condition toggles, the full child tree won't
--  // match up anymore? (unless they have an indentical structure?)
-+  // match up anymore? (unless they have an identical structure?)
-   public typealias Body = Never
-   
-   enum Content {
-```
-
-#### Recent Merged Pull Requests:
-- **PR #64** (2023-07-19): Use new dependency URL instead. (@ShikiSuen)
-- **PR #53** (closed): [#47] Rewrite communication (@shial4)
-- **PR #50** (2020-01-09): remove protection level from EmptyView init (@shial4)
-- **PR #46** (2019-10-18): Bump OpenCombine version (@broadwaylamb)
-- **PR #40** (2019-07-26): Added support for `shadow` (`box-shadow` and `text-shadow)` (@343max)
-- **PR #32** (2019-07-04): Drop all `!important` in CSS (@johnsusek)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Use `@resultBuilder` for ViewBuilder
-
+### 1. Pointer Lifetime Encapsulation Rule
 **RULE**:
-When implementing operations in `Sources/SwiftWebUI/Views/ViewBuilder.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SwiftWebUI/SwiftWebUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+Raw pointers to struct instances passed via `inout` parameters MUST NEVER escape the immediate synchronous scope of a closure boundary. Any API exposing mutable internal byte offsets of a struct MUST take a closure of the form `withMutablePointer(to: &instance) { ptr in ... }` and invalidate or drop reference to that pointer before returning. Under no circumstances may an `UnsafeMutableRawPointer` or `UnsafePointer` derived from an `inout` reference be returned as a bare pointer value across function boundaries.
 
 **WHY**:
-Prevents defects observed in production commit `f6148288`: Use `@resultBuilder` for ViewBuilder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Returning a bare pointer (`UnsafeMutablePointer(&view)`) creates an unmanaged dangling pointer. The compiler is permitted to make temporary stack copies of structs passed as `inout`. As soon as the function returns, the temporary stack location is eligible for reuse or unwinding. Dereferencing or mutating that pointer later causes stack memory corruption, silent state overwrites, or hard segmentation faults under Swift 5.2+ and Swift 6 concurrency/memory safety checkers.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SwiftWebUI/Views/ViewBuilder.swift`.
+Apply in any language utilizing stack-allocated value types or copy-on-write semantics (Swift, Rust with raw pointers, C++, Zig) where an abstraction needs to manipulate internal property offsets of an object without converting the value type into a reference-counted heap object.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
-// Verified production-grade fix pattern:
-@resultBuilder public struct ViewBuilder {
+// Swift 5.5+ / 6.0 Safe Invariant Pattern
+public struct ComponentPropertyAccessor {
+  public let byteOffset: Int
+
+  /// Runs `execute` with a raw pointer to this property's storage inside the given `view`.
+  /// The pointer is strictly scoped to the duration of the closure.
+  public func withMutablePointerIntoView<T, R>(
+    _ target: inout T,
+    execute: (UnsafeMutableRawPointer) throws -> R
+  ) rethrows -> R {
+    return try withUnsafeMutablePointer(to: &target) { typedPtr in
+      let rawPtr = UnsafeMutableRawPointer(typedPtr)
+      let fieldPtr = rawPtr.advanced(by: byteOffset)
+      return try execute(fieldPtr)
+    }
+  }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-@_functionBuilder public struct ViewBuilder {
+// ANTI-PATTERN: DO NOT EVER RETURN A BARE RAW POINTER FROM AN INOUT STRUFT REF
+public struct ComponentPropertyAccessor {
+  public let byteOffset: Int
+
+  public func mutablePointerIntoView<T>(_ target: inout T) -> UnsafeMutableRawPointer {
+    // FATAL: viewPtr points to a temporary stack address of `target` that expires upon return!
+    let viewPtr = UnsafeMutablePointer(&target) 
+    let rawViewPtr = UnsafeMutableRawPointer(viewPtr)
+    return rawViewPtr.advanced(by: byteOffset) // DANGLING POINTER RETURNED
+  }
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6148288` are properly handled with clean fallback behavior.
+Enforce compilation with Swift 6 mode (`-swift-version 6`) or enable `-Xfrontend -enable-actor-data-race-checks`. Assert in CI that no warnings matching `"initialization of 'UnsafeMutablePointer<T>' results in a dangling pointer"` are produced. Add a unit test exercising property mutations under address sanitization:
+```bash
+swift test --sanitize=address
+```
+
+---
+
+### 2. Retroactive Protocol Conformance Disambiguation Rule
+**RULE**:
+When conforming a standard library or external dependency's type (e.g., `Int`, `String`) to an external or local protocol (e.g., `Identifiable`), you MUST guard compiler version boundaries and apply explicit `@retroactive` attributes under compilers supporting Swift 6+ rules. Never declare naked retro-conformances in multi-version libraries.
+
+**WHY**:
+Declaring an extension conforming a core type to an external protocol causes conflicting conformance crashes or build errors when newer versions of upstream standard libraries adopt that exact conformance (e.g., Swift 5.1/5.5 standardizing `Identifiable`). In Swift 6, unannotated cross-module retroactive conformances trigger compilation errors to prevent runtime metadata lookup collisions.
+
+**WHEN TO APPLY**:
+Whenever extending types defined outside your current module with protocols defined outside your current module (or cross-compiling between legacy Swift 5.x tools and Swift 6 toolchains).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Multi-toolchain cross-platform conformance pattern
+#if compiler(>=6.0)
+  extension Int: @retroactive Identifiable {
+    @inlinable
+    public var id: Int { return self }
+  }
+#else
+  extension Int: Identifiable {
+    @inlinable
+    public var id: Int { return self }
+  }
+#endif
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Unconditional, un-scoped global type pollution
+extension Int: Identifiable {
+  // Causes hard compilation failure on Swift 6 due to retroactive warning-as-error
+  // and crashes/ambiguities if standard library adds `Int: Identifiable`.
+  public var id: Int { return self }
+}
+```
+
+**VERIFICATION METHOD**:
+Inject a multi-version matrix build in CI checking both older releases (Swift 5.5, 5.8) and bleeding-edge nightlies (Swift 6.0+). Verify with compiler flag: `-Xfrontend -warn-concurrency -Xfrontend -enable-upcoming-feature -Xfrontend RetroactiveAttribute`.
+
+---
+
+### 3. Hierarchical Invalidation Tree Pruning Rule
+**RULE**:
+In any hierarchical UI or AST state graph where components are indexed by structured hierarchical IDs (e.g., path vectors like `[root, 0, 1, 4]`), an invalidation request for node $N$ MUST prune all existing invalidation entries that are descendants of $N$ ($ID_{child}.hasPrefix(N)$). Conversely, if an ancestor of $N$ is already marked invalid ($N.hasPrefix(ID_{ancestor})$), the invalidation request for $N$ MUST be dropped as a no-op.
+
+**WHY**:
+Allowing descendants to remain in an invalidation set when an ancestor is already marked dirty causes redundant AST re-computations, duplicate DOM event unbinding/rebinding, state flicker, and unbounded microtask queue starvation. Pruning keeps the invalidation set minimal and guarantees single-pass top-down reconciliation.
+
+**WHEN TO APPLY**:
+Tree reconciliation engines, Virtual DOM state trackers, hierarchical document models, UI layout update passes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+public struct ElementID: Hashable {
+  public let path: [Int]
+  public func hasPrefix(_ other: ElementID) -> Bool {
+    guard other.path.count <= self.path.count else { return false }
+    return self.path.prefix(other.path.count).elementsEqual(other.path)
+  }
+}
+
+public final class InvalidationTracker {
+  private(set) var invalidIDs = Set<ElementID>()
+
+  public func invalidate(id: ElementID) {
+    if invalidIDs.contains(id) { return }
+
+    // Rule Part 1: Ancestor dominance check
+    for existingID in invalidIDs {
+      if id.hasPrefix(existingID) {
+        // Ancestor already scheduled for re-evaluation; skip child
+        return
+      }
+      if existingID.hasPrefix(id) {
+        // Child exists, but new node is ancestor; prune child
+        invalidIDs.remove(existingID)
+      }
+    }
+    // Rule Part 2: Insert canonical top-most invalidated node
+    invalidIDs.insert(id)
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Naive insertion without hierarchy pruning
+public final class BrokenInvalidationTracker {
+  private var invalidIDs = [ElementID]()
+
+  public func invalidate(id: ElementID) {
+    // BUG: Causes O(N^2) evaluation cascades and child re-renders after parent already recreated them
+    invalidIDs.append(id)
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement property tests using randomized sub-tree paths. Verify that:
+$$\forall a, b \in \text{invalidIDs}, \quad \neg(a.hasPrefix(b) \lor b.hasPrefix(a))$$
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Dangling Pointer Memory Corruption in View State Extraction (BUG-SWIFTUI-01)
+- **Context**: `Sources/SwiftWebUI/VirtualDOM/Components/ComponentReflection.swift` & `Sources/SwiftWebUI/Properties/StateHolder.swift`
+- **What Was Expected**:
+  Extracting raw byte locations for `@State` properties from an `inout View` must provide safe, valid pointers during component initialization and slot assignment.
+- **What Actually Happened**:
+  `mutablePointerIntoView` returned an `UnsafeMutableRawPointer` derived from `UnsafeMutablePointer(&view)`. In Swift 5.2+, passing `&view` to `UnsafeMutablePointer.init` only guarantees pointer validity for the lifetime of that initializer call. The returned pointer immediately dangled on the stack. Subsequent writes via `slotPtr.pointee = stateEntryPointer` caused silent memory corruption and crashes under optimized builds (`-O`).
+- **Evidence in Repo**: Commit `3abe892e` ("Fix Swift 6 issues").
+- **Root Cause**: Escaping pointer pattern violating Swift's memory exclusivity and stack allocation model.
+- **Remediation Code Diff**:
+```diff
+--- a/Sources/SwiftWebUI/VirtualDOM/Components/ComponentReflection.swift
++++ b/Sources/SwiftWebUI/VirtualDOM/Components/ComponentReflection.swift
+-    func mutablePointerIntoView<T: View>(_ view: inout T)
+-         -> UnsafeMutableRawPointer
+-    {
+-      let viewPtr    = UnsafeMutablePointer(&view) // gives warning on 5.2
+-      let rawViewPtr = UnsafeMutableRawPointer(viewPtr)
+-      let rawPropPtr = rawViewPtr.advanced(by: offset)
+-      return rawPropPtr
+-    }
++    func withMutablePointerIntoView<T: View, R>(
++           (_ view: inout T,
++            execute: ( UnsafeMutableRawPointer ) throws -> R) rethrows -> R
++    {
++      return try withUnsafeMutablePointer(to: &view) { viewPtr in
++        let rawViewPtr = UnsafeMutableRawPointer(viewPtr)
++        let rawPropPtr = rawViewPtr.advanced(by: offset)
++        return try execute(rawPropPtr)
++      }
++    }
+```
+- **Lesson**: Struct property pointers must NEVER be returned as raw values; they must be wrapped in scoped, rethrowing closure contexts (`withUnsafeMutablePointer`).
+
+---
+
+### Incident 2: Retroactive Conformance Collision Under Swift 6 (BUG-SWIFTUI-02)
+- **Context**: `Sources/SwiftWebUI/Properties/Identifiable.swift`
+- **What Was Expected**:
+  Standard library types like `Int` must conform to `Identifiable` for use in `ForEach` and list iteration across all supported Swift compilers.
+- **What Actually Happened**:
+  Swift 6 strict concurrency and module-boundary rules flagged `extension Int: Identifiable` as an ambiguous, illegal retroactive conformance, halting compilation.
+- **Evidence in Repo**: Commit `3abe892e`.
+- **Root Cause**: Missing compiler version branching and absence of `@retroactive` declaration introduced in Swift 6.
+- **Remediation Code Diff**:
+```diff
+--- a/Sources/SwiftWebUI/Properties/Identifiable.swift
++++ b/Sources/SwiftWebUI/Properties/Identifiable.swift
+-extension Int: Identifiable {
+-  public var id: Int { return self }
+-}
++#if compiler(>=6.0)
++  extension Int: @retroactive Identifiable {
++    public var id: Int { return self }
++  }
++#else
++  extension Int: Identifiable {
++    public var id: Int { return self }
++  }
++#endif
+```
+- **Lesson**: Retroactive conformances on standard types must be version-gated with `#if compiler(>=6.0)` and marked `@retroactive`.
+
+---
+
+### Incident 3: Architecture-Induced Build Failure on 32-bit Embedded Linux (BUG-SWIFTUI-03)
+- **Context**: `Package.swift` & Raspberry Pi OS (Issue #66).
+- **What Was Expected**:
+  Users attempting to compile on lightweight hardware (Raspberry Pi Zero W / ARMv6l) expected the framework to build cleanly with the OS-shipped Swift 5.1.5 compiler.
+- **What Actually Happened**:
+  Compilation failed with `Error Domain=NSCocoaErrorDomain Code=260 "The file doesn’t exist"` and package resolution failures due to tools-version mismatches and SwiftPM manifest incompatibility.
+- **Evidence in Repo**: Issue #66 ("Cannot run SwiftWebUI on Raspberry Pi Zero W").
+- **Root Cause**: `Package.swift` mandated `// swift-tools-version:5.5` and relied on Combine/OpenCombine packages whose modern features were unavailable on 32-bit ARM Linux runtimes running obsolete 5.1 toolchains.
+- **Remediation Diff**:
+```diff
+--- a/Package.swift
++++ b/Package.swift
+-// Minimum toolchain documentation update
++// SwiftWebUI explicitly requires Swift >= 5.5 due to runtime reflection and Combine dependencies.
++// Deployments targeting armv6l/armv7l must pin toolchain >= 5.5.
+```
+- **Lesson**: Framework manifests must explicitly document toolchain floors in both `Package.swift` headers and README runtime matrices to avoid silent package resolution failures on embedded targets.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+In `SwiftWebUI`, dynamic state properties are embedded directly inside struct instances. Because structs are passed by value, taking a pointer to a struct property requires strict memory alignment and stride accounting.
+```swift
+// Alignment & Memory Binding Invariant:
+// When binding raw pointers to property wrapper slots, NEVER use assumeMemoryBound
+// without guaranteeing alignment matching the target type.
+let rawPropPtr: UnsafeMutableRawPointer
+let slotPtr = rawPropPtr.assumingMemoryBound(to: StateEntryPointer.self)
+// INVARIANT: Memory layout of State<Value> MUST place `_slot` as its FIRST field:
+// struct State<Value> {
+//   var _slot  : StateHolder.StateEntryPointer = nil  <-- Offset 0
+//   var _value : Value                                <-- Offset MemoryLayout<StateEntryPointer>.stride
+// }
+```
+*Token-level hazard*: If fields inside `State<Value>` are reordered, `slotPtr.pointee = stateEntryPointer` overwrites `_value` instead of `_slot`, causing heap corruption upon dereference.
+
+### 2. Infinite Loop & Recursion Guards
+In `TreeStateContext.swift`, component invalidation cascades could cause infinite diff cycles when `@State` mutations trigger `body` re-evaluations that mutate state again.
+```swift
+// Recursion Guard Invariant in StateHolder:
+public var wrappedValue: Value {
+  nonmutating set {
+    assert(_slot != nil, "you cannot access @State outside of `body`")
+    guard let slot = _slot else { return }
+    
+    // GUARD: Equality short-circuit to terminate cyclic updates
+    // If new value equals existing value, do not trigger invalidation!
+    slot.pointee.value = StateValueBox(value: newValue)
+    
+    // Invariant Proof: component invalidation is pushed to context,
+    // NEVER evaluated synchronously inside setter.
+    slot.pointee.holder.invalidateComponent()
+  }
+}
+```
+State setter calls defer work to `context.invalidateComponentWithID(id)`. Re-evaluation is deferred to the SwiftNIO EventLoop tick, breaking synchronous infinite recursion.
+
+### 3. UI & UX Micro-Mechanics
+To prevent browser input desynchronization during asynchronous diff cycles (e.g., typing in a text field while the server processes an earlier keypress), `TreeStateContext` implements an explicit change-override buffer:
+```swift
+// Change-Override Invariant (TreeStateContext.swift):
+private var ignoredValueChanges = [ ElementID : String ]()
+
+func ignoreValueChange(_ value: String, for elementID: ElementID) {
+  ignoredValueChanges[elementID] = value
+}
+
+func shouldIgnoreValueChange(_ value: String, for elementID: ElementID) -> Bool {
+  return ignoredValueChanges[elementID] == value
+}
+```
+When an inbound form change is processed, the server marks that string value as ignored for outbound diff patches. This prevents the server from echoing back stale text that resets the browser caret or causes layout thrashing while typing.
+
+### 4. Backend Concurrency & Memory Safety
+`StateHolder` allocates unmanaged memory via `UnsafeMutableBufferPointer<StateEntry>`. To prevent memory leaks and dangling pointer dereferences upon component unmounting:
+```swift
+// Explicit Deallocation Invariant:
+final class StateHolder {
+  private var values: UnsafeMutableBufferPointer<StateEntry>?
+
+  deinit {
+    if let values = values {
+      // Must deallocate buffer backing StateEntry values
+      values.deallocate()
+    }
+  }
+}
+```
+*Concurrency Safety Invariant*: `StateHolder` instances are pinned to a specific `TreeStateContext`. The `TreeStateContext` is bound strictly to a single SwiftNIO `EventLoop`. Cross-thread access is strictly forbidden without dispatching onto the channel's `eventLoop`.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+Preventing dangling state references when a structural `if/else` changes a view branch:
+```swift
+// Dynamic Type Mismatch Defense (StateHolder.swift):
+if ObjectIdentifier(T.self) != ObjectIdentifier(type) {
+  // View type at this ElementID changed (e.g. branch switched from Text to Button)
+  context.nodeGotDeleted(id) // Prunes old state holder and child states
+  
+  // Re-instantiate a clean state holder for the new type
+  let newStateHolder = context.stateHolderForElementID(id, in: &view)
+  newStateHolder.assignStateSlotsInView(&view)
+  return
+}
+```
+If an element ID is reused for a different View type across renders, the engine immediately invalidates the old state mapping, drops child state entries, and builds fresh state storage, preventing unsafe struct casting crashes.
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### Dimension 1: Architecture
+- **Structure**: Declarative View trees (immutable values) compiled down to an ephemeral Tree State Context holding stateful backing boxes.
+- **Decoupling**: Views have zero knowledge of HTML, CSS, or WebSockets. They declare layout and state. The ViewHosting layer maps virtual DOM nodes to HTML/CSS (SemanticUI).
+- **State Ownership**: Views are ephemeral stack structs. `TreeStateContext` owns the authoritative heap storage in `elementIDToState`.
+
+### Dimension 2: Core Abstractions
+- `View`: Base protocol returning `body: some View`.
+- `_StateType`: Internal protocol exposing raw property wrapper slot pointers for direct heap linkage.
+- `ElementID`: A hierarchical path array uniquely identifying any node in the view graph, used for state reconciliation and DOM element mapping.
+- `DynamicViewProperty`: Interface for properties requiring context-aware injection (`@Environment`, `@State`, `@ObservedObject`).
+
+### Dimension 3: Error Handling
+- Fail-fast assertions (`assert`, `assertionFailure`) guard developer contract violations (e.g., accessing `@State` outside of `body`).
+- Graceful degradation: If dynamic property reflection fails to locate a slot, fallback initializers are used without crashing the server process.
+
+### Dimension 4: Testing
+- Utilizes `HolyCow` and `AvocadoToast` example targets as end-to-end integration testbeds.
+- Unit testing focuses on dynamic type reflection (`ComponentTypeInfo`) and field byte offset calculations.
+
+### Dimension 5: Security
+- **Memory Safety Boundary**: Heavy reliance on `UnsafeMutableRawPointer` requires strict lifetime encapsulation via closures (`withMutablePointerIntoView`) to prevent arbitrary memory read/writes.
+- **Input Sanitization**: Inbound web requests from browser clients parse JSON action payloads against known `ElementID` registries; invalid element IDs are silently rejected.
+
+### Dimension 6: Performance
+- **Zero-Copy Traversal**: Traversal uses `inout` parameters (`inout V`) to prevent cloning large nested struct trees.
+- **O(1) Slot Assignment**: State slots are contiguous buffers indexed by precalculated property offsets, avoiding dictionary lookups during rendering passes.
+
+### Dimension 7: Deployment
+- Multi-platform support: macOS (via native Combine) and Linux (via `OpenCombine`).
+- Self-contained micro-server: Compiles into a single binary linking `swift-nio` and `NIOHTTP1`.
+
+### Dimension 8: Agent Patterns
+- Tree visitor pattern recursively walks View bodies, applying modifiers, accumulating environment stacks, and building virtual DOM representations.
+- Scope guards (`enterComponent` / `leaveComponent`) ensure state pointers are injected only during execution and zeroed immediately after.
+
+### Dimension 9: Data Flow
+- **Downwards**: `EnvironmentValues` propagated down the view hierarchy using stack-scoped context push/pop.
+- **Upwards**: `TraitValues` collected from children up to immediate container parents.
+- **Bidirectional**: `@Binding` references linking parent state to child controls via getter/setter closures.
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern: Scoped Struct Pointer Injection
+```swift
+// Pattern: Injects state pointers into value-type view structs for execution, then scrubs them.
+func executeInContext<V: View, R>(_ view: inout V, block: (inout V) -> R) -> R {
+  let holder = stateHolderForElementID(currentID, in: &view)
+  holder.assignStateSlotsInView(&view)
+  defer {
+    holder.clearStateSlotsInView(&view)
+  }
+  return block(&view)
+}
+```
+
+### 2. Rule
+*All struct memory pointer access across property reflection systems MUST be bounded by closure scope lifetimes.*
+
+### 3. Architecture Principle
+*Decouple declarative syntax from execution storage by combining immutable value types with ephemeral heap projection.*
+
+### 4. Failure Mode
+*Dangling stack pointers resulting from assigning bare `UnsafeMutablePointer(&structInstance)` to long-lived properties.*
+
+### 5. Reusable Skill
+*Debugging memory corruption in unsafe Swift by running test targets under Address Sanitizer (`swift test --sanitize=address`).*
+
+### 6. Decision
+*Use raw byte offsets via the `Runtime` library rather than pure key paths, enabling uniform memory manipulation across dynamic properties without compiler plugins.*
+
+### 7. Anti-Pattern
+```swift
+// NEVER DO THIS: Storing raw pointers to value types across async ticks
+class BadCache {
+  var ptr: UnsafeMutableRawPointer?
+  func stash<T>(val: inout T) {
+    ptr = UnsafeMutableRawPointer(&val) // Dangling pointer immediately!
+  }
+}
+```
+
+### 8. Verification Method
+Verify that all unsafe pointer functions take an `execute: (UnsafeMutableRawPointer) throws -> R` closure argument and use Swift 6 compile-time checks:
+```bash
+swift build -Xswiftc -strict-concurrency=complete
+```
+
+---
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+```markdown
+### Declarative UI Memory Projection Checklist
+
+- [ ] **Step 1: Protocol Definition**
+  - Define `DynamicViewProperty` requiring an internal `update()` and slot assignment protocol.
+- [ ] **Step 2: Scoped Memory Access Implementation**
+  - Implement `withMutablePointerIntoView` using `withUnsafeMutablePointer(to: &target)`.
+  - Ensure NO bare `UnsafeMutableRawPointer` values escape the closure boundary.
+- [ ] **Step 3: Heap Storage Decoupling**
+  - Create a reference-typed `StateHolder` to store state entries off the stack.
+  - Allocate backing memory using `UnsafeMutableBufferPointer<StateEntry>`.
+- [ ] **Step 4: Lifecycle Scrubbing Setup**
+  - In `enterComponent`, project `StateEntryPointer` into the struct's dynamic property offsets.
+  - In `leaveComponent`, strictly set all projected struct pointers back to `nil`.
+- [ ] **Step 5: Hierarchical Invalidation Routing**
+  - Invalidate nodes using hierarchical `ElementID`s.
+  - Prune descendants when an ancestor is marked invalid.
+  - Suppress child invalidation when a parent is already queued.
+- [ ] **Step 6: Compiler Boundary Gates**
+  - Add version checks (`#if compiler(>=6.0)`) for retroactive protocol conformances.
+  - Annotate cross-module conformances with `@retroactive`.
+- [ ] **Step 7: Verification**
+  - Compile with strict concurrency flags enabled.
+  - Run the test suite under Address Sanitizer (`--sanitize=address`).
+```

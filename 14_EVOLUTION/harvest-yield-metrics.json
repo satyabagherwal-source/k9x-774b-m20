@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T08:05:11.181Z",
-  "total_cycles_completed": 8223,
-  "total_learnings_persisted": 8223,
-  "total_rules_promoted": 7944,
+  "last_updated": "2026-11-08T08:25:04.107Z",
+  "total_cycles_completed": 8226,
+  "total_learnings_persisted": 8226,
+  "total_rules_promoted": 7953,
   "history": [
-    {
-      "timestamp": "2026-11-07T19:37:17.948Z",
-      "repository": "scrapinghub/dateparser",
-      "learningId": "learn-github-scrapinghub-dateparser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T19:37:21.468Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T19:47:44.327Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T19:47:49.582Z",
       "repository": "amir1376/ab-download-manager",
@@ -1403,6 +1382,27 @@
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T08:24:03.320Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T08:24:58.239Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T08:25:04.107Z",
+      "repository": "SwiftWebUI/SwiftWebUI",
+      "learningId": "learn-github-swiftwebui-swiftwebui",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

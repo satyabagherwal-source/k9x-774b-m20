@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T08:05:11.185Z",
+  "last_updated": "2026-11-08T08:25:04.111Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -96,14 +96,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "6fc2251ed8204842ddd2fc2c57e910ed7552f2644bd6225e58fac06b893bac31",
-      "verified_at": "2026-11-04T21:11:15.350Z",
+      "content_hash": "eec1463aa609d52869d0ac220f6b9e8a1e0a62646f528380e17dc207d2ebe45b",
+      "verified_at": "2026-11-08T08:24:58.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:11:15.350Z"
+      "last_updated": "2026-11-08T08:24:58.243Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "f98625a0d0b2e84f59b865977f455d41b7e2ed62a0b67efc5c9edefc301aedb8",
-      "verified_at": "2026-11-06T22:13:44.247Z",
+      "content_hash": "65e30cd5468adb168dd37b92ed46df5e2eaf3772aa4aefa20efed5541243a643",
+      "verified_at": "2026-11-08T08:24:03.323Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:13:44.247Z"
+      "last_updated": "2026-11-08T08:24:03.323Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -12501,14 +12501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-swiftwebui-swiftwebui",
-      "content_hash": "435bc9f7fbaa08148d80f8400f93a60588d12e65ec5f1de17e1ca43ec522bacf",
-      "verified_at": "2026-10-19T15:59:35.880Z",
+      "content_hash": "19aa7b3443e7851ca4fcaeee6bcd57b64ce93e8a457b4a324bf829b852beea55",
+      "verified_at": "2026-11-08T08:25:04.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:59:35.880Z"
+      "last_updated": "2026-11-08T08:25:04.110Z"
     },
     "leetcode-mafia/cheetah": {
       "repository": "leetcode-mafia/cheetah",

@@ -8267,3 +8267,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-08T07:30:58.844Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `34bbba0f` | Multi-dimensional audit evidence | 2026-11-08T07:31:01.972Z |
 | `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-08T08:05:11.175Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `19a7196c` | Multi-dimensional audit evidence | 2026-11-08T08:24:03.303Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-08T08:24:58.233Z |
+| `learn-github-swiftwebui-swiftwebui` | `https://github.com/SwiftWebUI/SwiftWebUI` | `b0b6be06` | Multi-dimensional audit evidence | 2026-11-08T08:25:04.102Z |
