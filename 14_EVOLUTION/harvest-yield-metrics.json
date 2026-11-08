@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T16:33:43.483Z",
-  "total_cycles_completed": 8293,
-  "total_learnings_persisted": 8293,
-  "total_rules_promoted": 8081,
+  "last_updated": "2026-11-08T16:51:11.662Z",
+  "total_cycles_completed": 8294,
+  "total_learnings_persisted": 8294,
+  "total_rules_promoted": 8084,
   "history": [
-    {
-      "timestamp": "2026-11-07T22:53:03.004Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T23:06:23.418Z",
       "repository": "avajs/ava",
@@ -1403,6 +1396,13 @@
       "repository": "gluesql/gluesql",
       "learningId": "learn-github-gluesql-gluesql",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:51:11.662Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

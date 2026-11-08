@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-R3ZK",
-    "timestamp": "2026-11-05T23:09:32.528Z",
-    "repository": "makecindy/cindy",
-    "learningId": "learn-github-makecindy-cindy",
-    "contentHash": "21c397d3a844de368427daa883e69ec8e222e47c7ad705379053e4d3b07d9671",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-R6DC",
     "timestamp": "2026-11-05T23:09:35.616Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7492,6 +7477,21 @@
     "contentHash": "49642f5b42efb0ce40570c466014bffb476fb7b3ef0ffbf7dc73f139f696c469",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-K3VD",
+    "timestamp": "2026-11-08T16:51:11.641Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+    "contentHash": "6ec9627a87dfb8e097b78c8be5421130368a026a941378fe9b3da61017f79da3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

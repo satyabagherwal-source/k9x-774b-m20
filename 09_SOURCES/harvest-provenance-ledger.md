@@ -8337,3 +8337,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-08T16:33:29.998Z |
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `eb34c40c` | Multi-dimensional audit evidence | 2026-11-08T16:33:39.103Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `0230eea7` | Multi-dimensional audit evidence | 2026-11-08T16:33:43.477Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-08T16:51:11.645Z |

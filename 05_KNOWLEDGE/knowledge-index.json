@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T16:33:43.378Z",
+  "last_updated": "2026-11-08T16:51:11.548Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24828,10 +24828,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "70c3b9359e1db10cdb9768bd0ee06d21265600e23f9c5595fbde5e7b4040f3d2",
+      "content_hash": "6ec9627a87dfb8e097b78c8be5421130368a026a941378fe9b3da61017f79da3",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Causal Encoder-Decoder KV Projection Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Static Attention Mode Assignment for KV Sharing",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "SWA Bounded Replay Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 292,
           "title": "CED KV Projection Invariant",
@@ -24948,7 +24963,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-11-05T01:00:46.155Z",
+      "verified_at": "2026-11-08T16:51:11.511Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
