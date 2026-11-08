@@ -8355,3 +8355,4 @@
 | `CYCLE-20261108-ONUT` | `2026-11-08T18:18:43.013Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`8b6f1b94...`) |
 | `CYCLE-20261108-OZDC` | `2026-11-08T18:18:57.936Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`24dd2c69...`) |
 | `CYCLE-20261108-0K1G` | `2026-11-08T18:27:57.940Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`11c85175...`) |
+| `CYCLE-20261108-EDKV` | `2026-11-08T18:38:42.751Z` | `PrunaAI/P-H3-Image-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`56e4fe3c...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T18:27:57.850Z",
+  "last_updated": "2026-11-08T18:38:42.657Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -183881,16 +183881,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
       "source_version": "hf-prunaai-p-h3-image-comfy",
-      "content_hash": "dce9b9247c55fe1c5ed06fc1e676d4dfbd6178e8a6dca066c6715ca5395178ed",
+      "content_hash": "56e4fe3c6a32388e6e0eef561287ab6296f1a3bc05e63d1e66506c977283a3d8",
       "dossier_path": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Preserving VAE Precision In Quantized Single-File Checkpoints",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Strict Safetensors Memory-Map Boundary Zero-Copy Serialization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Asymmetric Quantization Zero-Point Clamping Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:32:58.422Z",
+      "verified_at": "2026-11-08T18:38:42.636Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

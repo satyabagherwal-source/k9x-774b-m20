@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T18:28:08.798Z",
-    "lastVerified": "2026-11-08T18:28:08.798Z",
+    "lastChecked": "2026-11-08T18:38:45.342Z",
+    "lastVerified": "2026-11-08T18:38:45.342Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T17:59:14.174Z",
+    "lastChecked": "2026-11-08T18:35:02.573Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T17:59:14.174Z"
+    "lastVerified": "2026-11-08T18:35:02.573Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2109,8 +2109,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T14:19:36.170Z",
-    "lastVerified": "2026-11-08T14:19:36.170Z",
+    "lastChecked": "2026-11-08T18:34:57.609Z",
+    "lastVerified": "2026-11-08T18:34:57.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -3172,8 +3172,8 @@
     "officialUrl": "https://github.com/openkruise/kruise",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T22:30:14.959Z",
-    "lastVerified": "2026-11-07T22:30:14.959Z",
+    "lastChecked": "2026-11-08T18:34:55.076Z",
+    "lastVerified": "2026-11-08T18:34:55.076Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openkruise-kruise",
@@ -6379,12 +6379,12 @@
     "revisionIdentifier": "439ea266"
   },
   "citusdata-citus": {
-    "name": "citusdata/citus",
+    "name": "citus",
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-07T21:36:36.049Z",
-    "lastVerified": "2026-11-07T21:36:36.049Z",
+    "lastChecked": "2026-11-08T18:35:00.116Z",
+    "lastVerified": "2026-11-08T18:35:00.116Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -6393,7 +6393,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ff5d19c2"
   },
   "dicklesworthstone-destructive_command_guard": {
     "name": "Dicklesworthstone/destructive_command_guard",
@@ -7724,8 +7725,8 @@
     "officialUrl": "https://github.com/crate-ci/typos",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T06:24:14.317Z",
-    "lastVerified": "2026-11-07T06:24:14.317Z",
+    "lastChecked": "2026-11-08T18:34:47.598Z",
+    "lastVerified": "2026-11-08T18:34:47.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-ci-typos",
@@ -10973,9 +10974,9 @@
   "oblador-hush": {
     "name": "hush",
     "officialUrl": "https://github.com/oblador/hush",
-    "lastChecked": "2026-11-05T12:36:31.020Z",
+    "lastChecked": "2026-11-08T18:34:52.581Z",
     "revisionIdentifier": "2e96f4f7",
-    "lastVerified": "2026-11-05T12:36:31.020Z"
+    "lastVerified": "2026-11-08T18:34:52.581Z"
   },
   "scrapy-plugins-scrapy-selenium": {
     "name": "scrapy-selenium",
@@ -13966,13 +13967,13 @@
     "officialUrl": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T02:32:57.438Z",
-    "lastVerified": "2026-11-05T02:32:57.438Z",
+    "lastChecked": "2026-11-08T18:34:50.206Z",
+    "lastVerified": "2026-11-08T18:34:50.206Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-    "contentHash": "dce9b9247c55fe1c5ed06fc1e676d4dfbd6178e8a6dca066c6715ca5395178ed",
-    "promotedRulesCount": 0,
+    "contentHash": "56e4fe3c6a32388e6e0eef561287ab6296f1a3bc05e63d1e66506c977283a3d8",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

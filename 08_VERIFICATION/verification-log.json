@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-EB9C",
-    "timestamp": "2026-11-06T13:27:23.520Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "bf930d4b4758720baf0f36646074106f215d97f47b80390d76d60aad98e94f49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-EDOH",
     "timestamp": "2026-11-06T13:27:26.657Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7477,21 @@
     "contentHash": "11c85175ddff27f7eafaa885478afe97dfffe7fee70c78e052296a052943e8bc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-EDKV",
+    "timestamp": "2026-11-08T18:38:42.751Z",
+    "repository": "PrunaAI/P-H3-Image-Comfy",
+    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+    "contentHash": "56e4fe3c6a32388e6e0eef561287ab6296f1a3bc05e63d1e66506c977283a3d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
