@@ -905,8 +905,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "3343ba0b062c78a9efc21c20e2a60bba04e84d42ca472c73061d834b2ee980b6",
-    "lastHarvestedAt": "2026-11-05T05:39:02.708Z",
+    "contentHash": "6c7beec61d75bcf89d5c6d4fcb6eee9ca0de490d03ee2151a48dfb4306fe8070",
+    "lastHarvestedAt": "2026-11-08T23:12:44.418Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct"
   },
   "hf-openai-gpt-oss-120b": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "9ac008f9",
+    "sourceVersion": "4bd28b57",
     "license": "AGPL-3.0",
-    "contentHash": "57ea91bd5268151a652c3a16e277a4d19a2b5c6a4d7bc6bf884d3d8aca4b35b0",
-    "lastHarvestedAt": "2026-11-08T01:55:00.884Z",
+    "contentHash": "1616cbd63970b75d6ff1851b4fddc9835804dac0050fe3a2062edadf82b09e15",
+    "lastHarvestedAt": "2026-11-08T23:12:42.995Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "1ebb9379",
+    "sourceVersion": "7299fdcc",
     "license": "Apache-2.0",
-    "contentHash": "a1caf76d46126efeaa6e7a9230c8ab9e19b496b462445f655b2f1611233e56e7",
-    "lastHarvestedAt": "2026-11-07T21:55:46.377Z",
+    "contentHash": "34d9ef05bba70dfed3818b84850c8b09a9ff5e23864f671c06a03c7ed0bf094f",
+    "lastHarvestedAt": "2026-11-08T23:12:31.804Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {

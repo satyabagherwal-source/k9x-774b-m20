@@ -8424,3 +8424,6 @@
 | `CYCLE-20261108-PQZT` | `2026-11-08T22:59:29.897Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5cbb5fd3...`) |
 | `CYCLE-20261108-PZE2` | `2026-11-08T22:59:40.778Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b53c219c...`) |
 | `CYCLE-20261108-UZMG` | `2026-11-08T23:03:34.360Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`4ca7e58b...`) |
+| `CYCLE-20261108-6IBD` | `2026-11-08T23:12:31.801Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`34d9ef05...`) |
+| `CYCLE-20261108-6QY7` | `2026-11-08T23:12:42.991Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`1616cbd6...`) |
+| `CYCLE-20261108-6S1R` | `2026-11-08T23:12:44.415Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 498, Rule null` | Yes (`6c7beec6...`) |

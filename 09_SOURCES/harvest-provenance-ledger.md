@@ -8433,3 +8433,6 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `81da1e95` | Multi-dimensional audit evidence | 2026-11-08T22:59:29.900Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e97cfe9b` | Multi-dimensional audit evidence | 2026-11-08T22:59:40.781Z |
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-08T23:03:34.363Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `7299fdcc` | Multi-dimensional audit evidence | 2026-11-08T23:12:31.804Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `4bd28b57` | Multi-dimensional audit evidence | 2026-11-08T23:12:42.995Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-08T23:12:44.418Z |

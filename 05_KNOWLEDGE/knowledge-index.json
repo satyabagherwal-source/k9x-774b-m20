@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T23:03:34.251Z",
+  "last_updated": "2026-11-08T23:12:44.334Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2417,8 +2417,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "1ebb9379",
-      "content_hash": "a1caf76d46126efeaa6e7a9230c8ab9e19b496b462445f655b2f1611233e56e7",
+      "source_version": "7299fdcc",
+      "content_hash": "34d9ef05bba70dfed3818b84850c8b09a9ff5e23864f671c06a03c7ed0bf094f",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -2430,6 +2430,11 @@
         {
           "number": null,
           "title": "GH-55269: [Archery] Pass the sender and recipient to the token expiration report",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2488,7 +2493,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:55:46.243Z",
+      "verified_at": "2026-11-08T23:12:31.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28660,10 +28665,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "3343ba0b062c78a9efc21c20e2a60bba04e84d42ca472c73061d834b2ee980b6",
+      "content_hash": "6c7beec61d75bcf89d5c6d4fcb6eee9ca0de490d03ee2151a48dfb4306fe8070",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Immutable Weight Artifact Integrity & Schema Validation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "KV-Cache Memory Budget & Overflow Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 412,
           "title": "Grouped Query Attention (GQA) Dimensional Integrity",
@@ -28684,6 +28699,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney",
           "verified_at": "2026-10-12T03:07:21.663Z"
+        },
+        {
+          "number": 498,
+          "title": "Tokenizer-Model Alignment Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 552,
@@ -28799,7 +28819,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-11-05T05:39:02.629Z",
+      "verified_at": "2026-11-08T23:12:44.313Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76064,8 +76084,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "9ac008f9",
-      "content_hash": "57ea91bd5268151a652c3a16e277a4d19a2b5c6a4d7bc6bf884d3d8aca4b35b0",
+      "source_version": "4bd28b57",
+      "content_hash": "1616cbd63970b75d6ff1851b4fddc9835804dac0050fe3a2062edadf82b09e15",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -76180,7 +76200,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:55:00.769Z",
+      "verified_at": "2026-11-08T23:12:42.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84175,14 +84195,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 498,
       "title": "Tokenizer-Model Alignment Invariant",
-      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
-      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+      "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T22:12:42.797Z"
+      "verified_at": "2026-11-08T23:12:44.313Z"
     },
     "rule-499": {
       "learning_id": "rule-499",

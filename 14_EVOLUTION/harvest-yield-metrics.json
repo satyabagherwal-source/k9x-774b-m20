@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T23:03:34.368Z",
-  "total_cycles_completed": 8389,
-  "total_learnings_persisted": 8389,
-  "total_rules_promoted": 8188,
+  "last_updated": "2026-11-08T23:12:44.431Z",
+  "total_cycles_completed": 8392,
+  "total_learnings_persisted": 8392,
+  "total_rules_promoted": 8192,
   "history": [
-    {
-      "timestamp": "2026-11-08T05:26:23.216Z",
-      "repository": "vanniktech/gradle-maven-publish-plugin",
-      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T05:26:32.528Z",
-      "repository": "KRAFTON/Raon-1-mini-preview",
-      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T05:33:11.243Z",
-      "repository": "GitLiveApp/firebase-kotlin-sdk",
-      "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T05:33:14.139Z",
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-08T23:03:34.368Z",
       "repository": "openai/gpt-oss-120b",
       "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:12:31.819Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:12:43.000Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:12:44.431Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

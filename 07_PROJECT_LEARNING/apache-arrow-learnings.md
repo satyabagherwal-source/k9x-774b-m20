@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `1ebb9379`  
+> **Source Version**: `7299fdcc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:55:44.912Z  
+> **Timestamp**: 2026-11-08T23:12:30.573Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:55:43.306Z  
+> **Harvest Timestamp**: 2026-11-08T23:12:30.455Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1400,241 +1400,182 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1ebb9379` (2026-11-06)
-**Commit Message**: GH-55269: [Archery] Pass the sender and recipient to the token expiration report (#55270)
+### Incident Patch 1: `7299fdcc` (2026-11-08)
+**Commit Message**: GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521)
 
-archery crossbow notify-token-expiration currently fails because TokenExpirationEmailReport is called with a positional argument, while its constructor expects keyword arguments.
+### Rationale for this change
 
-The command also needs to pass sender_name, sender_email, and recipient_email to the report so that the generated email has the correct headers. The sibling nightly-report command already does this correctly.
+While reading the Substrait relation conversion I noticed that `GetEmitInfo` and `ProcessEmitProject` take the `emit.output_mapping` values straight from the plan and use them to index `input_schema->field(map_id)` and the project expression vector, with no range check. `Schema::field` only has debug assertions, so a deserialised plan carrying an out-of-bounds or negative mapping index reads past the end of those vectors (and in the project case moves an out-of-bounds `compute::Expression`). This is reachable from the public `DeserializePlan` entry point, which parses untrusted plan bytes, and it applies to essentially every relation kind that goes through the emit path. The neighbouring `ProcessExtensionEmit` already range-checks the same index, so the two emit helpers were simply missing the equivalent guard.
 
-## Changes
+### What changes are included in this PR?
 
-Pass report, sender_name, sender_email, and recipient_email as keyword arguments.
+A range check on `map_id` in both `GetEmitInfo` and `ProcessEmitProject` that returns `Status::Invalid` for negative or out-of-bounds indices, matching the existing check in `ProcessExtensionEmit`. For a ProjectRel the em
 
-Add a regression test for notify-token-expiration that checks the generated email headers.
-
-## Testing
-
-Confirmed the new test fails before the fix and passes afterward.
-
-Verified that the generated email contains the expected sender and recipient.
-
-Ran the Archery test suite. The new test passes; 26 existing failures remain due to missing Docker on my local machine.
-
-flake8 passes for both modified files.
-
-No real email was sent during testing.
-
-Closes #55269.
-
-## AI disclosure
-
-AI assisted with the code and  test. I reviewed the changes and verified the reported behavior and test results before submitting the PR.
-*
-
-**File**: `dev/archery/archery/crossbow/cli.py` (modified, +6/-1)
+**File**: `cpp/src/arrow/engine/substrait/relation_internal.cc` (modified, +6/-0)
 ```diff
-@@ -680,7 +680,12 @@ def __init__(self, token_expiration_date, days_left):
-     if not token_expiration_date:
-         token_expiration_date = 'ALREADY_EXPIRED'
-     report = TokenExpirationReport(token_expiration_date, days_left)
--    email_report = TokenExpirationEmailReport(report)
-+    email_report = TokenExpirationEmailReport(
-+        report=report,
-+        sender_name=sender_name,
-+        sender_email=sender_email,
-+        recipient_email=recipient_email
-+    )
- 
-     if send:
-         ReportUtils.send_email(
+@@ -85,6 +85,9 @@ Result<EmitInfo> GetEmitInfo(const RelMessage& rel,
+   FieldVector emit_fields(emit_size);
+   for (int i = 0; i < emit_size; i++) {
+     int32_t map_id = emit.output_mapping(i);
++    if (map_id < 0 || map_id >= input_schema->num_fields()) {
++      return Status::Invalid("Out of bounds emit index ", map_id);
++    }
+     proj_field_refs[i] = compute::field_ref(FieldRef(map_id));
+     emit_fields[i] = input_schema->field(map_id);
+   }
+@@ -111,6 +114,9 @@ Result<DeclarationInfo> ProcessEmitProject(
+         std::vector<compute::Expression> emit_proj_exprs(emit_size);
+         for (int i = 0; i < emit_size; i++) {
+           int32_t map_id = emit.output_mapping(i);
++          if (map_id < 0 || map_id >= input_schema->num_fields()) {
++            return Status::Invalid("Out of bounds emit index ", map_id);
++          }
+           emit_fields[i] = input_schema->field(map_id);
+           emit_proj_exprs[i] = std::move(proj_options.expressions[map_id]);
+         }
 ```
 
-**File**: `dev/archery/archery/crossbow/tests/test_crossbow_cli.py` (modified, +26/-0)
+**File**: `cpp/src/arrow/engine/substrait/serde_test.cc` (modified, +68/-0)
 ```diff
-@@ -15,6 +15,9 @@
- # specific language governing permissions and limitations
- # under the License.
+@@ -3147,6 +3147,74 @@ TEST(SubstraitRoundTrip, ReadRelWithEmit) {
+                        /*include_columns=*/{}, conversion_options);
+ }
  
-+from datetime import date, timedelta
-+from unittest import mock
++void CheckInvalidEmitIndex(const std::string& rel_json) {
++  std::string substrait_json = R"({
++  "version": { "major_number": 9999, "minor_number": 9999, "patch_number": 9999 },
++  "relations": [{
++    "rel": )" + rel_json + R"(
++  }]
++  })";
 +
- from click.testing import CliRunner
- import pytest
- 
-@@ -41,3 +44,26 @@ def invoke(*args):
- 
-     result = invoke('submit', '--no-fetch', '--no-push', '-g', 'wheel')
-     assert result.exit_code == 0
++  ASSERT_OK_AND_ASSIGN(auto buf,
++                       internal::SubstraitFromJSON("Plan", substrait_json,
++                                                   /*ignore_unknown_fields=*/false));
++  auto dummy_schema =
++      schema({field("A", int32()), field("B", int32()), field("C", int32())});
++  ConversionOptions conversion_options;
++  conversion_options.named_table_provider =
++      AlwaysProvideSameTable(TableFromJSON(dummy_schema, {"[[1, 2, 3]]"}));
++  std::shared_ptr<ExtensionIdRegistry> sp_ext_id_reg = MakeExtensionIdRegistry();
++  ExtensionIdRegistry* ext_id_reg = sp_ext_id_reg.get();
++  ExtensionSet ext_set(ext_id_reg);
++  EXPECT_THAT(
++      DeserializePlans(
++          *buf, [] { return kNullConsumer; }, ext_id_reg, &ext_set, conversion_options),
++      Raises(StatusCode::Invalid, HasSubstr("Out of bounds emit index")));
++}
 +
++TEST(Substrait, ReadRelWithOutOfBoundsEmit) {
++  for (const char* mapping : {"[0, 3]", "[-1, 1]"}) {
++    ARROW_SCOPED_TRACE("outputMapping: ", mapping);
++    CheckInvalidEmitIndex(R"({
++      "read": {
++        "common": {"emit": {"outputMapping": )" +
++                          std::string(mapping) + R"(}},
++        "base_schema": {
++          "names": ["A", "B", "C"],
++          "struct": {"types": [{"i32": {}}, {"i32": {}}, {"i32": {}}]}
++        },
++        "namedTable": {"names": ["A"]}
++      }
++    })");
++  }
++}
 +
-+def test_crossbow_notify_token_expiration(monkeypatch):
-+    # The report carries the From/To headers, so the sender and recipient
-+    # options have to reach it: send_email() only passes the rendered message
-+    # on to smtplib. Dropping them left this command raising before it ever
-+    # built a message.
-+    queue = mock.MagicMock()
-+    queue.token_expiration_date.return_value = date.today() + timedelta(days=7)
-+    monkeypatch.setattr('archery.crossbow.cli.Queue',
-+                        mock.MagicMock(return_value=queue))
-+    monkeypatch.setattr('archery.crossbow.cli.Repo', mock.MagicMock())
++TEST(Substrait, ProjectRelWithOutOfBoundsEmit) {
++  // The project emits the 3 input fields plus 1 expression, so 4 is out of range
++  for (const char* mapping : {"[0, 4]", "[-1, 3]"}) {
++    ARROW_SCOPED_TRACE("outputMapping: ", mapping);
++    CheckInvalidEmitIndex(R"({
++      "project": {
++        "common": {"emit": {"outputMapping": )" +
++                          std::string(mapping) + R"(}},
++        "expressions": [
++          {"selection": {"directReference": {"structField": {"field": 0}},
++                         "rootReference": {}}}
++        ],
++        "input": {
++          "read": {
++            "base_schema": {
++              "names": ["A", "B", "C"],
++              "struct": {"types": [{"i32": {}}, {"i32": {}}, {"i32": {}}]}
++            },
++            "namedTable": {"names": ["A"]}
++          }
++        }
++      }
++    })");
++  }
++}
 +
-+    result = CliRunner().invoke(crossbow, [
-+        'notify-token-expiration',
-+        '--sender-name', 'Crossbow Reporter',
-+        '--sender-email', 'sender@arrow.apache.org',
-+        '--recipient-email', 'recipient@arrow.apache.org',
-+    ])
-+
-+    assert result.exit_code == 0, result.exception
-+    assert 'From: Crossbow Reporter <sender@arrow.apache.org>' in result.output
-+    assert 'To: recipient@arrow.apache.org' in result.output
+ TEST(SubstraitRoundTrip, FilterRelWithEmit) {
+   auto dummy_schema = schema({field("A", int32()), field("B", int32()),
+                               field("C", int32()), field("D", int32())});
 ```
 
 ---
 
-### Incident Patch 2: `8eca5234` (2026-11-06)
-**Commit Message**: GH-32723: [C++][Parquet] Concatenate chunked children of nested columns (#55351)
+### Incident Patch 2: `19f5e06a` (2026-11-08)
+**Commit Message**: GH-55356: [C++] Compare mtime at second precision in `GetFileInfoSelector` test (#55433)
 
 ### Rationale for this change
-Adresses part of issue #32723. 
-Using the parquet ReadTable functions fails on list of dicts, if they contain more than one row group.
-In such case, the data is in a chunked array. A NotImplemented guards stops this from being read.
+#55356 - `TestS3FSGeneric.GetFileInfoSelector` fails with AWS SDK 1.11.900 and newer.
+See https://github.com/aws/aws-sdk-cpp/pull/3934
+`ListObjectsV2` results keep milliseconds while `HeadObject`'s `Last-Modified` header only has seconds.
 
 ### What changes are included in this PR?
-This PR is a minimal fix that addresses this in the case when the chunks can be combined into a single array.
-It does not address the overflow issues, and the preexisting arrow::Concatenate will throw on that. The error is propagated.
+Floor the listing `mtime` from milliseconds to seconds in `GetFileInfoSelector` test when the single file `mtime` has only seconds.
 
 ### Are these changes tested?
-One test case is added for this specific situation. It fails without the fix in reader.cc.
-No regressions on `parquet-arrow-reader-writer-test` found, which I also tested. 
-On macOS.
+Locally on macOS arm64 with AWS SDK 1.11.900 and MinIO.
 
 ### Are there any user-facing changes?
-The users will be able to read a few more parquet files that were previously rejected.
+No.
 
 ### Was AI used for this PR?
 
-Yes. 
+**PR code and description written by:**
 
-Claude (Opus and Sonnet 5.5) was used for compiling information from existing issues and propose a solution. I decided to do a minimal fix, not addressing the overflow problems, to make sure I under
+- [X] Human
+- [X] AI
 
-**File**: `cpp/src/parquet/arrow/arrow_reader_writer_test.cc` (modified, +43/-0)
+**Reviewed before submission by:**
+
+- [X] Human
+- [ ] AI
+- [ ] Not reviewed
+
+* GitHub Issue: #55356
+
+Lead-authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
+Co-authored-by: tadeja <[REDACTED_EMAIL]>
+Co-authored-by: Rok Mihevc <[REDACTED_EMAIL]>
+Signed-off-by: Sutou Kouhei <[REDACTED_EMAIL]>
+
+**File**: `cpp/src/arrow/filesystem/test_util.cc` (modified, +5/-0)
 ```diff
-@@ -3453,6 +3453,49 @@ TEST(ArrowReadWrite, ListWithNoValues) {
-   CheckSimpleRoundtrip(table, 2, props_store_schema);
- }
- 
-+TEST(ArrowReadWrite, NestedDictionaryMultipleRowGroups) {
-+  // GH-45087: reading several row groups at once yields one chunk per row group
-+  // for a nested dictionary leaf, and the chunks have different dictionaries.
-+  using ::arrow::field;
-+
-+  auto dict_type = ::arrow::dictionary(::arrow::int32(), ::arrow::utf8());
-+  for (const auto& type : {list(dict_type), ::arrow::large_list(dict_type)}) {
-+    ARROW_SCOPED_TRACE("type = ", type->ToString());
-+    auto array =
-+        ::arrow::ArrayFromJSON(type, R"([["a"], ["b", "a"], ["c", "a"], ["b"]])");
-+    auto table = ::arrow::Table::Make(::arrow::schema({field("root", type)}), {array});
-+    auto props_store_schema = ArrowWriterProperties::Builder().store_schema()->build();
-+    CheckSimpleRoundtrip(table, /*row_group_size=*/2, props_store_schema);
+@@ -811,6 +811,11 @@ void GenericFileSystemTest::TestGetFileInfoSelector(FileSystem* fs) {
+   ASSERT_OK_AND_ASSIGN(info, fs->GetFileInfo("AB"));
+   AssertFileInfo(info, "AB", FileType::Directory, first_dir_time);
+   ASSERT_OK_AND_ASSIGN(info, fs->GetFileInfo("AB/CD/ghi"));
++  // aws-sdk-cpp >= 1.11.900 keeps ms in S3 listings, but HeadObject only has seconds
++  if (info.mtime() == std::chrono::floor<std::chrono::seconds>(info.mtime()) &&
++      first_file_time == std::chrono::floor<std::chrono::milliseconds>(first_file_time)) {
++    first_file_time = std::chrono::floor<std::chrono::seconds>(first_file_time);
 +  }
-+}
-+
-+TEST(ArrowReadWrite, NestedDictionaryDifferentDictionariesPerRowGroup) {
-+  using ::arrow::field;
-+
-+  auto type = list(::arrow::dictionary(::arrow::int32(), ::arrow::utf8()));
-+  // One input chunk per row group, each with its own dictionary.
-+  auto chunk1 = ::arrow::ArrayFromJSON(type, R"([["a"], ["b", "a"]])");
-+  auto chunk2 = ::arrow::ArrayFromJSON(type, R"([["c", "a"], ["b"]])");
-+  auto schema = ::arrow::schema({field("root", type)});
-+  auto input = Table::Make(
-+      schema, {std::make_shared<::arrow::ChunkedArray>(ArrayVector{chunk1, chunk2})});
-+
-+  auto props_store_schema = ArrowWriterProperties::Builder().store_schema()->build();
-+  std::shared_ptr<Table> result;
-+  ASSERT_NO_FATAL_FAILURE(DoSimpleRoundtrip(input, /*use_threads=*/false,
-+                                            /*row_group_size=*/2, {}, &result,
-+                                            props_store_schema));
-+  ASSERT_OK(result->ValidateFull());
-+  ::arrow::AssertSchemaEqual(*schema, *result->schema(), /*check_metadata=*/false);
-+
-+  // Compare the decoded strings, so the order of the merged dictionary does not matter.
-+  auto expected = ::arrow::ChunkedArrayFromJSON(
-+      list(::arrow::utf8()), {R"([["a"], ["b", "a"], ["c", "a"], ["b"]])"});
-+  ASSERT_OK_AND_ASSIGN(auto decoded,
-+                       ::arrow::compute::Cast(result->column(0), list(::arrow::utf8())));
-+  ::arrow::AssertChunkedEqual(*expected, *decoded.chunked_array());
-+}
-+
- TEST(ArrowReadWrite, Map) {
-   using ::arrow::field;
-   using ::arrow::map;
-```
-
-**File**: `cpp/src/parquet/arrow/reader.cc` (modified, +14/-9)
-```diff
-@@ -87,20 +87,23 @@ namespace bit_util = arrow::bit_util;
- namespace parquet::arrow {
- namespace {
+   AssertFileInfo(info, "AB/CD/ghi", FileType::File, first_file_time, 15);
  
--::arrow::Result<std::shared_ptr<ArrayData>> ChunksToSingle(const ChunkedArray& chunked) {
-+::arrow::Result<std::shared_ptr<ArrayData>> ChunksToSingle(const ChunkedArray& chunked,
-+                                                           MemoryPool* pool) {
-   switch (chunked.num_chunks()) {
-     case 0: {
-       ARROW_ASSIGN_OR_RAISE(std::shared_ptr<Array> array,
--                            ::arrow::MakeArrayOfNull(chunked.type(), 0));
-+                            ::arrow::MakeArrayOfNull(chunked.type(), 0, pool));
-       return array->data();
-     }
-     case 1:
-       return chunked.chunk(0)->data();
--    default:
--      // ARROW-3762(wesm): If item reader yields a chunked array, we reject as
--      // this is not yet implemented
--      return Status::NotImplemented(
--          "Nested data conversions not implemented for chunked array outputs");
-+    default: {
-+      // GH-32723: A leaf reader can yield several chunks, e.g. one per row group for
-+      // dictionaries. Concatenate fails if the merged data overflows the type.
-+      ARROW_ASSIGN_OR_RAISE(std::shared_ptr<Array> array,
-+                            ::arrow::Concatenate(chunked.chunks(), pool));
-+      return array->data();
-+    }
-   }
- }
- 
-@@ -670,7 +673,8 @@ class ListReader : public ColumnReaderImpl {
-           validity_buffer->Resize(bit_util::BytesForBits(validity_io.values_read)));
-       validity_buffer->ZeroPadding();
-     }
--    ARROW_ASSIGN_OR_RAISE(std::shared_ptr<ArrayData> item_chunk, ChunksToSingle(**out));
-+    ARROW_ASSIGN_OR_RAISE(std::shared_ptr<ArrayData> item_chunk,
-+                          ChunksToSingle(**out, ctx_->pool));
- 
-     std::vector<std::shared_ptr<Buffer>> buffers{
-         validity_io.null_count > 0 ? validity_buffer : nullptr, offsets_buffer};
-@@ -922,7 +926,8 @@ Status StructReader::BuildArray(int64_t length_upper_bound,
-   for (auto& child : children_) {
-     std::shared_ptr<ChunkedArray> field;
-     RETURN_NOT_OK(child->BuildArray(validity_io.values_read, &field));
--    ARROW_ASSIGN_OR_RAISE(std::shared_ptr<ArrayData> array_data, ChunksToSingle(*field));
-+    ARROW_ASSIGN_OR_RAISE(std::shared_ptr<ArrayData> array_data,
-+                          ChunksToSingle(*field, ctx_->pool));
-     children_array_data.push_back(std::move(array_data));
-   }
- 
+   // Doesn't exist
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #55438** (closed): GH-55429: [C++] Avoid unavailable libc++ utilities in CRAN builds (@JonSnow1807)
 - **PR #55437** (closed): GH-55428: [C++][S3] Preserve retryable errors when ranged-read buffers overflow (@JonSnow1807)
 - **PR #55436** (closed): Gh 48269 enable flight sql test msvc (@alinaliBQ)
+- **PR #55433** (2026-11-08): GH-55356: [C++] Compare mtime at second precision in `GetFileInfoSelector` test (@tadeja)
 - **PR #55422** (closed): GH-55418: [Python] Accept tuple of arrays in RecordBatch.from_arrays (@ump45nose)
-- **PR #55414** (closed): EXP: Emscripten toolchain upgrade (@tadeja)
-- **PR #55407** (2026-11-05): GH-55406: [C++][Parquet] Test AES-CTR plaintext footer example file (@adamreeve)
+- **PR #55417** (2026-11-07): GH-55416: [CI][C++] Update Emscripten to 5.0.3 (@tadeja)
 
 ---
 
@@ -1654,33 +1595,33 @@ Claude (Opus and Sonnet 5.5) was used for compiling information from existing is
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55269: [Archery] Pass the sender and recipient to the token expiration report
+## X. GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521)
 
 **RULE**:
-When implementing operations in `dev/archery/archery/crossbow/cli.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/src/arrow/engine/substrait/relation_internal.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1ebb9379`: GH-55269: [Archery] Pass the sender and recipient to the token expiration report (#55270). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7299fdcc`: GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/archery/archery/crossbow/cli.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/engine/substrait/relation_internal.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    email_report = TokenExpirationEmailReport(
-        report=report,
-        sender_name=sender_name,
-        sender_email=sender_email,
-        recipient_email=recipient_email
-    )
+    if (map_id < 0 || map_id >= input_schema->num_fields()) {
+      return Status::Invalid("Out of bounds emit index ", map_id);
+    }
+          if (map_id < 0 || map_id >= input_schema->num_fields()) {
+            return Status::Invalid("Out of bounds emit index ", map_id);
+          }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    email_report = TokenExpirationEmailReport(report)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1ebb9379` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7299fdcc` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `9ac008f9`  
+> **Source Version**: `4bd28b57`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:54:59.538Z  
+> **Timestamp**: 2026-11-08T23:12:42.709Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:54:57.359Z  
+> **Harvest Timestamp**: 2026-11-08T23:12:42.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41753 stars
+- **Stars / Engagement**: 41813 stars
 
 ---
 
@@ -1495,1300 +1495,555 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bee7385` (2026-11-07)
-**Commit Message**: feat(ui): align the file tree with the host implementation (#7198)
+### Incident Patch 1: `4bd28b57` (2026-11-08)
+**Commit Message**: feat(ui): align the scope switcher with the console design (#7228)
 
-* feat(ui): compile icons with SVGR and ship the file-type set
+* feat(ui): align the scope switcher with the console design
 
-Icons were loaded two different ways — the five colour icons as `?inline`
-images and newer monochrome ones through CSS masks — so a consumer got an
-`<img>` for some icons and a `<span>` for others, and the base64 payload grew
-the bundle by a third on top of the SVG size.
+The component still carried the geometry of an earlier draft and a single
+`level` object holding 23 fields of four different kinds. Rework both, using
+the console design and the host implementation as the reference.
 
-Load every icon through `@rsbuild/plugin-svgr` instead: each one becomes an
-inline `<svg>` component that takes standard SVG props, inherits
-`currentColor`, and needs no `data:` allowlist in a Content Security Policy.
-The icons entry now accepts `SVGProps` and describes itself with
-`aria-label`, so `alt` is gone from the public contract.
+Visual alignment:
 
-The file-type icon set moves in as artwork plus data: `svg/file-type/` holds
-one SVG per icon vendored from `@pierre/trees` (Apache-2.0), and
-`file-type-rules.json` carries the name and extension rules that pick one,
-together with each icon's brand colour for light and dark backgrounds.
-`getFileTypeIcon` resolves a file name to the component and colour.
+- The row is 32px tall with no outline; each level is its own 32px tall,
+  16px radius pill with 8px horizontal padding and an 8px icon-to-label gap.
+  Labels are 13px at weight 500.
+- A level paints its outline in the primary colour on hover, focus and expand,
+  and keeps a transparent outline at rest so nothing shifts when it appears.
+- The panel is 272px wide with 8px padding, a 12px radius and a 1px
+  `#edeef2` outline; rows are 44px tall with a 2px gap, so two hover tints
+  never merge into one shape.
+- A selected row bolds its label and keeps the label colour: the design
+  separates selection by weight and tint, not by colour. Search hits are
+  tinted in the primary colour rather than highlighted in yellow.
+- The list caps at 288px and scrolls inside the panel. A host `renderPanel`
+  shares the same cap, so taking ov
 
-The docs demos and both `icons.mdx` pages follow the new contract, and the
-rslint config keeps th
-
-**File**: `frontend/docs/docs/_demos/file-tree-basic.tsx` (modified, +656/-110)
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/README.md` (removed, +0/-9)
 ```diff
-@@ -1,139 +1,685 @@
+@@ -1,9 +0,0 @@
+-# Scope switcher example assets
+-
+-Unmodified SVG exports from the user-provided [OpenViking Console design](https://www.figma.com/design/ecpd1ZGHKRYibm1ODKEpM6/OpenViking-Console?node-id=10325-138037), under the repository license.
+-
+-- `space.svg`: `I10325:138037;9343:425924`, 14 × 14.
+-- `user.svg`: `I10325:138037;9343:425954`, 14 × 14.
+-- `library-0.svg` through `library-7.svg`: the two masks and six original layers of `I10325:138037;9343:425894`. Composed at 14 × 14 in `scope-switcher-icons.tsx`, preserving each SVG's intrinsic dimensions.
+-
+-These are host-provided example icons; the reusable component still accepts `icon` as a React node.
+```
+
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-0.svg` (removed, +0/-11)
+```diff
+@@ -1,11 +0,0 @@
+-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+-<g id="Group">
+-<path id="Vector" d="M14 0H0V14H14V0Z" fill="url(#paint0_radial_0_144)"/>
+-</g>
+-<defs>
+-<radialGradient id="paint0_radial_0_144" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(7 7) scale(7)">
+-<stop offset="0.984375" stop-color="white"/>
+-<stop offset="1" stop-color="white" stop-opacity="0"/>
+-</radialGradient>
+-</defs>
+-</svg>
+```
+
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-1.svg` (removed, +0/-5)
+```diff
+@@ -1,5 +0,0 @@
+-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+-<g id="clip-oreo-5f6o93">
+-<path id="Vector" d="M14 7C14 3.13401 10.866 0 7 0C3.13401 0 0 3.13401 0 7C0 10.866 3.13401 14 7 14C10.866 14 14 10.866 14 7Z" fill="black"/>
+-</g>
+-</svg>
+```
+
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-2.svg` (removed, +0/-5)
+```diff
+@@ -1,5 +0,0 @@
+-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14.0131" height="14.0131" viewBox="0 0 14.0131 14.0131" fill="none" xmlns="http://www.w3.org/2000/svg">
+-<g id="Group">
+-<path id="Vector" d="M10.4541 0H3.55906C1.59345 0 0 1.59345 0 3.55906V10.4541C0 12.4197 1.59345 14.0131 3.55906 14.0131H10.4541C12.4197 14.0131 14.0131 12.4197 14.0131 10.4541V3.55906C14.0131 1.59345 12.4197 0 10.4541 0Z" fill="#031A05"/>
+-</g>
+-</svg>
+```
+
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-3.svg` (removed, +0/-30)
+```diff
+@@ -1,30 +0,0 @@
+-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="17.6006" height="17.6006" viewBox="0 0 17.6006 17.6006" fill="none" xmlns="http://www.w3.org/2000/svg">
+-<g id="Group" opacity="0.42">
+-<g id="Vector" opacity="0.38" filter="url(#filter0_f_0_136)">
+-<path d="M5.35258 2.05623H12.2476C14.0682 2.05623 15.5441 3.53215 15.5441 5.35279V12.2478C15.5441 14.0684 14.0682 15.5444 12.2476 15.5444H5.35258C3.53194 15.5444 2.05602 14.0684 2.05602 12.2478V5.35279C2.05602 3.53215 3.53194 2.05623 5.35258 2.05623Z" stroke-width="0.30625" stroke="white"/>
+-</g>
+-<g id="Vector_2" opacity="0.24" filter="url(#filter1_f_0_136)">
+-<path d="M5.35281 2.23125H12.2478C13.9718 2.23125 15.3694 3.62882 15.3694 5.35281V12.2478C15.3694 13.9718 13.9718 15.3694 12.2478 15.3694H5.35281C3.62882 15.3694 2.23125 13.9718 2.23125 12.2478V5.35281C2.23125 3.62882 3.62882 2.23125 5.35281 2.23125Z" stroke-width="0.525" stroke="#FFDFDA"/>
+-</g>
+-<g id="Vector_3" opacity="0.18" filter="url(#filter2_f_0_136)">
+-<path d="M5.35281 2.66875H12.2478C13.7302 2.66875 14.9319 3.87045 14.9319 5.35281V12.2478C14.9319 13.7302 13.7302 14.9319 12.2478 14.9319H5.35281C3.87045 14.9319 2.66875 13.7302 2.66875 12.2478V5.35281C2.66875 3.87045 3.87045 2.66875 5.35281 2.66875Z" stroke-width="0.875" stroke="#FFBE74"/>
+-</g>
+-</g>
+-<defs>
+-<filter id="filter0_f_0_136" x="1.42164" y="1.42186" width="14.7569" height="14.7569" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+-<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+-<feGaussianBlur stdDeviation="0.240625" result="effect1_foregroundBlur_0_136"/>
+-</filter>
+-<filter id="filter1_f_0_136" x="0.56875" y="0.56875" width="16.4631" height="16.4631" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+-<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+-<feGaussianBlur stdDeviation="0.7" result="effect1_foregroundBlur_0_136"/>
+-</filter>
+-<filter id="filter2_f_0_136" x="0" y="0" width="17.6006" height="17.6006" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+-<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+-<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_136"/>
+-</filter>
+-</defs>
+-</svg>
+```
+
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-4.svg` (removed, +0/-5)
+```diff
+@@ -1,5 +0,0 @@
+-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="15.3497" height="16.3494" viewBox="0 0 15.3497 16.3494" fill="none" xmlns="http://www.w3.org/2000/svg">
+-<g id="Group">
+-<path id="Vector" d="M11.7906 0H3.55906C1.59345 0 0 1.59345 0 3.55906V12.7903C0 14.7559 1.59345 16.3494 3.55906 16.3494H11.7906C13.7562 16.3494 15.3497 14.7559 15.3497 12.7903V3.55906C15.3497 1.59345 13.7562 0 11.7906 0Z" fill="#FFAAAA"/>
+-</g>
+-</svg>
+```
+
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-5.svg` (removed, +0/-30)
+```diff
+@@ -1,30 +0,0 @@
+-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="18.9372" height="19.9369" viewBox="0 0 18.9372 19.9369" fill="none" xmlns="http://www.w3.org/2000/svg">
+-<g id="Group" opacity="0.36">
+-<g id="Vector" opacity="0.38" filter="url(#filter0_f_0_128)">
+-<path d="M5.35282 2.05623H13.5844C15.405 2.05623 16.881 3.53215 16.881 5.35279V14.584C16.881 16.4047 15.405 17.8806 13.5844 17.8806H5.35282C3.53218 17.8806 2.05626 16.4047 2.05626 14.584V5.35279C2.05626 3.53215 3.53218 2.05623 5.35282 2.05623Z" stroke-width="0.30625" stroke="white"/>
+-</g>
+-<g id="Vector_2" opacity="0.24" filter="url(#filter1_f_0_128)">
+-<path d="M5.35281 2.23125H13.5844C15.3084 2.23125 16.7059 3.62882 16.7059 5.35281V14.5841C16.7059 16.3081 15.3084 17.7056 13.5844 17.7056H5.35281C3.62882 17.7056 2.23125 16.3081 2.23125 14.5841V5.35281C2.23125 3.62882 3.62882 2.23125 5.35281 2.23125Z" stroke-width="0.525" stroke="#FFDFDA"/>
+-</g>
+-<g id="Vector_3" opacity="0.18" filter="url(#filter2_f_0_128)">
+-<path d="M5.35281 2.66875H13.5844C15.0667 2.66875 16.2684 3.87045 16.2684 5.35281V14.5841C16.2684 16.0664 15.0667 17.2681 13.5844 17.2681H5.35281C3.87045 17.2681 2.66875 16.0664 2.66875 14.5841V5.35281C2.66875 3.87045 3.87045 2.66875 5.35281 2.66875Z" stroke-width="0.875" stroke="#FFBE74"/>
+-</g>
+-</g>
+-<defs>
+-<filter id="filter0_f_0_128" x="1.42189" y="1.42186" width="16.0934" height="17.0931" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+-<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+-<feGaussianBlur stdDeviation="0.240625" result="effect1_foregroundBlur_0_128"/>
+-</filter>
+-<filter id="filter1_f_0_128" x="0.56875" y="0.56875" width="17.7997" height="18.7994" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+-<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+-<feGaussianBlur stdDeviation="0.7" result="effect1_foregroundBlur_0_128"/>
+-</filter>
+-<filter id="filter2_f_0_128" x="0" y="0" width="18.9372" height="19.9369" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+-<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+-<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_128"/>
+-</filter>
+-</defs>
+-</svg>
+```
+
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-6.svg` (removed, +0/-18)
+```diff
+@@ -1,18 +0,0 @@
+-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="19.7901" height="18.6675" viewBox="0 0 19.7901 18.6675" fill="none" xmlns="http://www.w3.org/2000/svg">
+-<g id="Group">
+-<g id="Vector" opacity="0.922" filter="url(#filter0_f_0_126)">
+-<path d="M17.5588 9.33373C17.5588 5.41114 14.1276 2.23125 9.89505 2.23125C5.66245 2.23125 2.23125 5.41114 2.23125 9.33373C2.23125 13.2563 5.66245 16.4362 9.89505 16.4362C14.1276 16.4362 17.5588 13.2563 17.5588 9.33373Z" fill="url(#paint0_linear_0_126)"/>
+-</g>
+-</g>
+-<defs>
+-<filter id="filter0_f_0_126" x="5.90506e-08" y="1.11646e-08" width="19.7901" height="18.6675" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+-<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+-<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_126"/>
+-</filter>
+-<linearGradient id="paint0_linear_0_126" x1="2.23125" y1="2.23125" x2="2.23125" y2="16.4362" gradientUnits="userSpaceOnUse">
+-<stop stop-color="#FEE9F5"/>
+-<stop offset="1" stop-color="#F8F8F8"/>
+-</linearGradient>
+-</defs>
+-</svg>
+```
+
+---
+
+### Incident Patch 2: `14ce455d` (2026-11-08)
+**Commit Message**: feat(ui): 实现文件预览组件并建立包级主题基线 (#7225)
+
+* chore(ui): 清空 file-preview 实现，保留入口与样式占位
+
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+* feat(ui): 实现文件预览组件
+
+外壳（页签行、逐段可点面包屑、视图切换、编辑）自绘，正文交给
+FileViewerCore 按格式渲染，支持文本、文档、图片与音视频。
+
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+* refactor(ui): 复用图标集并收窄文件预览的主题变量
+
+页签图标改用 getFileTypeIcon，未命中时由图标集回退，不再维护本地映射。
+主题变量加 --ov-ui-file-preview- 前缀并集中声明，避免与包内其他组件冲突。
+
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+* fix(ui): 构建时不再清空 dist
+
+`rslib build` 默认 `cleanDistPath: 'auto'`，每次构建前清空 `dist/`，重建
+期间产物短暂消失。文档站的 dev server 正盯着这个目录，一旦在那几毫秒里
+解析模块就报「找不到模块」，且文件回来后不会自动恢复。
+
+产物文件名稳定、就地覆盖，因此改为不清空；需要干净构建时用新增的
+`npm run clean:lib`。
+
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+* feat(ui): 建立包级主题基线并让各组件从基线取色
+
+组件此前各自定义颜色：文件树用中灰加透明度、文件预览另起一套、作用域选择
+与文件浏览器又用第三套 `--ov-ui-color-*`，其中主色默认值还分成蓝色与紫色
+两种。宿主想统一换肤时无从下手。
+
+新增 `packages/react/src/theme.css`，一套 `--ov-ui-color-*` 变量覆盖主色、
+文字、边框、底色、语义色与浮层，取值对齐 OpenViking 控制台的设计规范
+（Arco 主题包 `theme-ve-o-aml-design`，只取色值不引入其组件样式）。声明在
+各组件的根选择器上而非 `:root`，库仍不修改宿主的全局样式。
+
+文件树、文件预览、作用域选择、TUI、AgentConnect、文件浏览器与模块占位视图
+的颜色全部改为从基线派生，组件私有变量只保留几何量与组件独有语义。旧的
+三套并行变量名一并清除。各样式入口（整包、分类、单组件）都先引基线，保证
+独立消费时也有默认值。
+
+暗色只认宿主放在 `<html>` 上的 `.dark` 类，不读 `prefers
+
+**File**: `docs/en/api/26-mcp-live-context.md` (modified, +1/-1)
+```diff
+@@ -177,7 +177,7 @@ With `wait=false`, the registration result may also contain the underlying catal
+ 
+ ### List, inspect, and check status
+ 
+-Without `target_uri`, `GET /api/v1/mcps` merges user and shared servers and identifies each entry with `root_uri`. `GET /api/v1/mcps/{name}` and status default to the user space; pass `target_uri=viking://agent/tools` for a same-named shared server. A connection failure still has a successful HTTP envelope, but `result.status` is `error`.
++Without `target_uri`, `GET /api/v1/mcps` merges user and shared servers and identifies each entry with `root_uri`. `GET /api/v1/mcps/{name}` and `GET /api/v1/mcps/status?name=...` default to the user space; pass `target_uri=viking://agent/tools` for a same-named shared server. A connection failure still has a successful HTTP envelope, but `result.status` is `error`.
+ 
+ **SDK and CLI**
+ 
+```
+
+**File**: `docs/zh/api/26-mcp-live-context.md` (modified, +1/-1)
+```diff
+@@ -176,7 +176,7 @@ ov mcps add -p viking://agent/tools --wait '{"mcpServers":{"weather":{"url":"htt
+ 
+ ### 列出、查看和检查状态
+ 
+-`GET /api/v1/mcps` 未指定 `target_uri` 时合并用户空间和共享空间的 Server，每项用 `root_uri` 标识所属空间。`GET /api/v1/mcps/{name}` 和状态接口默认操作用户空间；使用同名共享 Server 时必须指定 `target_uri=viking://agent/tools`。连接失败仍是成功的 HTTP 响应，但 `result.status` 为 `error`。
++`GET /api/v1/mcps` 未指定 `target_uri` 时合并用户空间和共享空间的 Server，每项用 `root_uri` 标识所属空间。`GET /api/v1/mcps/{name}` 和 `GET /api/v1/mcps/status?name=...` 默认操作用户空间；使用同名共享 Server 时必须指定 `target_uri=viking://agent/tools`。连接失败仍是成功的 HTTP 响应，但 `result.status` 为 `error`。
+ 
+ **SDK 与 CLI**
+ 
+```
+
+**File**: `frontend/.gitignore` (modified, +4/-0)
+```diff
+@@ -3,6 +3,10 @@
+ 
+ node_modules/
+ dist/
++
++# Playwright CLI 的会话快照与日志，不属于源码。
++# Playwright CLI session snapshots and logs, not source.
++.playwright-cli/
+ doc_build/
+ .rspress/
+ .rspress-cache/
+```
+
+**File**: `frontend/AGENTS.md` (modified, +5/-1)
+```diff
+@@ -19,11 +19,15 @@
+ - React 源码的 `components/` 放独立视图组件，`modules/` 放按业务能力划分的 Hook 与组合视图，不提供完整页面。模块 Hook 暴露可独立消费的数据、状态与操作，组合视图复用 Hook 并组装组件；宿主差异通过服务契约、参数、回调与插槽接入。当前先提供四个模块的占位组件、基础类型与样式入口，便于宿主接入布局；真实业务与 Hook 随后迁入，占位状态和 API 范围须在示例与文档中明确。可独立部署的微应用放在 `apps/`，例如 `apps/workbench-embed/`，消费公开模块与组件，管理挂载、卸载、样式隔离和宿主通信。
+ - 每个组件、业务模块或区块独占一个 kebab-case 目录，入口文件与目录同名。实现、样式、测试及私有子组件就近放置，例如 `components/<模块>/<模块>.tsx` 和同目录的 `<模块>.css`。模块私有的 Hook、类型和工具留在模块内，不提前提升到公共目录。
+ - 根入口与子路径分别维护公开导出；组件子路径为 `@openviking/react/components/<组件>`，业务模块为 `@openviking/react/modules/<模块>`，从模块入口分别导出 Hook 与组合视图。不提供 `components`、`modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放；各入口共享实现，避免重复创建 Provider、Context 或状态对象。同步维护 Rslib 入口和声明路径。
++- 被多个组件共用的内部代码放在 `src/shared/`，**不设公开入口**：不进包根导出、不进子路径、不写进 `package.json` 的 `exports`。只有出现第二个真实消费者时才提升到这里；单个组件用到的东西留在该组件目录内。共享代码不得反向依赖 `components/`、`modules/` 或任何宿主契约。
+ - 目录按实际内容创建，不预建空目录，也不为单个简单模块增加不必要的转发层。
+ 
+ ## 样式与交互
+ 
+ - 库样式局部化，类名使用 `ov-` 前缀加 BEM 命名（块 `.ov-file-tree`，元素 `.ov-file-tree__row`，修饰 `.ov-file-preview__button--primary`），主题变量使用 `--ov-ui-` 前缀。消费者无需额外扫描库源码生成 Tailwind CSS，也不承担库的全局 reset；库样式不修改应用的 `html`、`body`、`:root` 或 `.dark`。
++- **颜色一律取自主题基线，不要在组件里另写色值。** 包级基线在 `packages/react/src/theme.css`，是一套 `--ov-ui-color-*` 变量（主色、文字、边框、底色、语义色、浮层），取值来自 OpenViking 控制台的设计规范。新写或改动样式时先看基线里有没有对应语义的变量；有就直接用，没有就先往基线里补一条，再在组件里引用。不要在组件 CSS 里写 `#5252ff`、`rgb(0 0 0 / 8%)` 这类字面值——它们不会跟随宿主主题切换，也无法被宿主统一覆盖。
++- 组件私有变量用 `--ov-ui-<组件>-*` 前缀，值从基线派生（`--ov-ui-file-preview-accent: var(--ov-ui-color-primary)`），不要重复定义一份色值。只有纯几何量（行高、圆角、缩进）或组件独有的语义（如文件树的层级竖线）才在组件里直接赋值。
++- 暗色只认宿主放在 `<html>` 上的 `.dark` 类，不读 `prefers-color-scheme`：系统偏好与宿主实际呈现的主题可能不一致，跟系统走会让组件底色与周围文字对不上。
+ - 文档站的全局样式、布局和主题覆盖只作用于文档站。CSS 同时提供整包 `style.css`、分类 `components/style.css` / `modules/style.css` 和单模块 `<分类>/<模块>/style.css` 入口；JS 不隐式加载样式。各 CSS 入口共用样式源码并可独立消费，模块 CSS 包含当前占位视图及后续组合视图所需组件样式；单独使用 Hook 无需 CSS。保留构建中的 CSS 副作用声明。
+ - 复用模块使用实例内状态和引用。持久化、请求缓存等需要跨实例共享的行为通过明确的 Adapter 接入，避免用全局 DOM ID、事件或 singleton Store 隐式关联实例与账号。
+ - 公开组件提供可替换的默认文案，动态文案通过类型化参数传入。宿主在接入层映射 i18next 或 Starling。状态通过可见文本表达；可操作控件使用合适的语义、键盘行为和焦点样式。
+@@ -32,7 +36,7 @@
+ 
+ - 顶部导航以 Guide、Components 和 OpenViking docs 外链为基础。Guide 承载入门、安装、样式与集成说明；Components 承载视图组件。出现实际内容后再增加 Modules 和 Patterns，分别对应业务 Hook 与组合视图，以及纯视图组合示例；独立 API 栏目在内容需要时再引入。
+ - 文档按语言组织在 `docs/docs/en/` 和 `docs/docs/zh/`，各语言内按 `guide/`、`components/`、`modules/`、`patterns/` 分类。业务模块归入 Modules，不把所有模块都归入 Components。
+-- 英文为默认语言，保留 `/ui/` 下的原有地址；简体中文使用 `/ui/zh/`。新增或修改文档时同步维护两种语言的页面、导航和侧边栏，保持对应页面路径一致，以支持原位语言切换。可运行示例共用 `docs/docs/_demos/`，不要为翻译复制实现；组件文案仍由调用者定制。
++- 简体中文为默认语言，使用 `/ui/` 下的地址；英文使用 `/ui/en/`。新增或修改文档时同步维护两种语言的页面、导航和侧边栏，保持对应页面路径一致，以支持原位语言切换。可运行示例共用 `docs/docs/_demos/`，不要为翻译复制实现；组件文案仍由调用者定制。
+ - 模块分类入口指向该分类的 `index.mdx` 概览，而不是首个模块；侧边栏按路由前缀隔离，仅列出当前分类的概览与详情，并按职责分组。新增分类时同时提供真实内容、概览和导航，不创建空栏目或占位页面。
+ - 示例从 `@openviking/react` 的公开导出及样式入口导入，不通过相对路径绕过接口。外部 TSX 示例是可运行代码与源码展示的同一事实源。
+ - 开发与正式文档均通过包导出消费实际库产物。开发模式由官方 workspace 插件启动 Rslib watch；不使用源码 alias 或 TypeScript paths 绕过产物解析，以发现缺失导出、CSS 和打包资源等问题。
+```
+
+**File**: `frontend/README.md` (modified, +2/-1)
+```diff
+@@ -16,7 +16,7 @@ npm run dev
+ 
+ Open the `/ui/` URL printed by Rspress. The official workspace development plugin starts the library's Rslib watcher before the documentation server, so no manual library build is required. Demos consume the built package exports and update when the watcher rebuilds them.
+ 
+-The navigation language menu switches between English at `/ui/` and Simplified Chinese at `/ui/zh/`. Existing English URLs remain unchanged.
++The navigation language menu switches between Simplified Chinese at `/ui/` and English at `/ui/en/`.
+ 
+ ```bash
+ npm run lint           # Check formatting, lint rules, and types for all workspaces
+@@ -34,6 +34,7 @@ npm run preview        # Serve the built documentation at /ui/
+ - `packages/react/src/modules/{file-browser,console,task-center}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
+ - `packages/react/src/client`: the framework-neutral request client, exported from `@openviking/react/client` — a `fetch`-based `createOvClient` plus the contract modules depend on (`OvClient`, `OvRequestOptions`, `OvClientError`).
+ - `packages/react/src/{hooks,utils}`: reserved internal shared code, without public subpaths. Module-private helpers stay within their module.
++- `packages/react/src/shared`: internal shared code used by more than one component, with no public entry — not exported from the root, any subpath, or `package.json`. Currently holds the `tooltip` surface that `file-preview` renders into `document.body`.
+ - `docs`: Rspress with `@rspress/plugin-preview`, external TSX demos, source viewing/copying, and hand-written props tables.
+ - `docs/docs/en` and `docs/docs/zh`: matching English and Simplified Chinese pages, with localized navigation.
+ - `docs/docs/_demos`: runnable examples using the public package exports.
+```
+
+**File**: `frontend/docs/docs/_demos/file-preview-basic.tsx` (modified, +228/-24)
+```diff
+@@ -1,69 +1,273 @@
  import { useState } from 'react';
--import { FileTree } from '@openviking/react/components/file-tree';
-+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 +import { useLang } from '@rspress/core/runtime';
-+import {
-+  resolveFileTreeInfoKey,
-+  resolveInfoCopy,
-+  showsInlineDescription,
-+} from '@openviking/react/components/file-tree';
- import type {
-   FileTreeEntryRow,
-   FileTreeRow,
- } from '@openviking/react/components/file-tree';
-+import {
-+  ChevronRightIcon,
-+  FolderIcon,
-+  FolderOpenIcon,
-+  getFileTypeColor,
-+  getFileTypeIcon,
-+  resolveFileTypeIconKey,
-+} from '@openviking/react/icons';
- import '@openviking/react/components/file-tree/style.css';
+ import { FilePreview } from '@openviking/react/components/file-preview';
+-import type { FilePreviewTab } from '@openviking/react/components/file-preview';
++import type {
++  FilePreviewActions,
++  FilePreviewTab,
++} from '@openviking/react/components/file-preview';
++import { getFileTypeIcon } from '@openviking/react/icons';
+ import '@openviking/react/components/file-preview/style.css';
  
--/** Directories and the rows revealed when they are expanded. */
--const childrenOf: Record<string, FileTreeRow[]> = {
--  resources: [
--    {
--      kind: 'entry',
--      id: 'resources/guide.md',
--      uri: 'viking://resources/guide.md',
--      name: 'guide.md',
--      type: 'file',
--      depth: 1,
--      levelLabel: 'L1',
--    },
--    {
--      kind: 'entry',
--      id: 'resources/spec.pdf',
--      uri: 'viking://resources/spec.pdf',
--      name: 'spec.pdf',
--      type: 'file',
--      depth: 1,
--    },
--    {
--      kind: 'load-more',
--      id: 'load-more:resources',
--      parentId: 'resources',
--      depth: 1,
-+/** `path: children`; a trailing `/` marks a directory, `null` marks a file. */
-+interface Spec {
-+  [name: string]: Spec | null;
-+}
-+interface Node {
-+  uri: string;
-+  name: string;
-+  type: 'directory' | 'file';
-+  children?: Node[];
-+}
-+
-+const USER = 'viking://user/alice';
-+const MEMORIES = `${USER}/memories`;
-+const WIKI = 'viking://resources/project-wiki';
-+const ARCHIVE = 'viking://resources/archive';
-+const PAGE = 3;
-+
-+const SPEC: Spec = {
-+  [`${USER}/`]: {
-+    'memories/': {
-+      'profile.md': null,
-+      'identity.md': null,
-+      'soul.md': null,
-+      'preferences/': {},
-+      'entities/': {},
-+      'events/': {},
-+      'cases/': {},
-+      'trajectories/': {},
-+      'experiences/': {},
-     },
--  ],
--  memories: [
--    {
--      kind: 'entry',
--      id: 'memories/profile.md',
--      uri: 'viking://memories/profile.md',
--      name: 'profile.md',
--      type: 'file',
--      depth: 1,
-+    'peers/': { 'claude-code/': {}, 'cursor/': {}, 'trae/': {} },
-+    'privacy/': { 'keys.json': null },
-+    'resources/': { 'handbook.pdf': null, 'notes.md': null },
-+    'sessions/': { '2026-11-07.jsonl': null },
-+    'settings/': { 'user_config.json': null },
-+    'skills/': { 'wiki-compile/': { 'SKILL.md': null, 'references/': {} } },
-+    'tools/': { 'mcp.json': null },
-+  },
-+  'viking://resources/': {
-+    'project-wiki/': {
-+      'entity/': { 'starfield.md': null, 'incident.md': null },
-+      'method/': { 'release.md': null },
-+      'index.md': null,
-     },
--  ],
--  skills: [{ kind: 'empty', id: 'empty:skills', parentId: 'skills', depth: 1 }],
-+    'archive/': Object.fromEntries(
-+      Array.from({ length: 9 }, (_, i) => [`service_000${i + 1}.md`, null]),
-+    ),
-+    'empty-notes/': {},
-+  },
-+  'viking://agent/': { 'skills/': {}, 'tools/': {} },
-+  'viking://system/': {},
- };
- 
--const topLevel: FileTreeRow[] = [
--  {
--    kind: 'entry',
--    id: 'resources',
--    uri: 'viking://resources',
--    name: 'resources',
--    type: 'directory',
--    depth: 0,
--    hasChildren: true,
--    description: 'Imported documents',
-+function entries(spec: Spec, parent = ''): Node[] {
-+  return Object.entries(spec).flatMap(([key, value]) => {
-+    const isDir = key.endsWith('/');
-+    const path = key.replace(/\/$/, '');
-+    const uri = path.includes('://') ? path : `${parent}/${path}`;
-+    const node: Node = {
-+      uri,
-+      name: uri.slice(uri.lastIndexOf('/') + 1),
-+      type: isDir ? 'directory' : 'file',
-+    };
-+    if (isDir && value) node.children = entries(value, uri);
-+    return [node];
-+  });
-+}
-+
-+const TREE = entries(SPEC);
-+const BY_URI = new Map<string, Node>();
-+const walk = (nodes: Node[]) =>
-+  nodes.forEach((n) => {
-+    BY_URI.set(n.uri, n);
-+    if (n.children) walk(n.children);
-+  });
-+walk(TREE);
-+const childrenOf = (uri: string) => BY_URI.get(uri)?.children ?? [];
-+
-+/** Row-end indicator: the Agent experience board, or a Wiki root with its conflict state. */
-+type Indicator =
-+  { kind: 'experience' } | { kind: 'wiki'; pendingConflicts: boolean };
-+
-+const INDICATORS: Record<string, Indicator> = {
-+  [`${MEMORIES}/experiences`]: { kind: 'experience' },
-+  [WIKI]: { kind: 'wiki', pendingConflicts: false },
-+  [ARCHIVE]: { kind: 'wiki', pendingConflicts: true },
-+};
-+
+-const markdown = `# LLM Wiki
 +/**
-+ * Demo copy. The docs site renders this demo under both locales, so the strings
-+ * follow the page language instead of being fixed English.
-+ *
 + * 示例文案。文档站中英文页面共用这份示例，因此文案跟随页面语言。
++ *
++ * Demo copy. Both language pages share this demo, so the copy follows the page
++ * language.
 + */
 +const COPY = {
 +  en: {
-+    loading: 'Loading…',
-+    loadMore: 'Load more',
-+    empty: 'This folder is empty',
-+    expand: 'Expand',
-+    collapse: 'Collapse',
-+    experience: 'Contains an experience board',
-```
-
-**File**: `frontend/docs/docs/_demos/icons-basic.tsx` (modified, +2/-2)
-```diff
-@@ -42,8 +42,8 @@ export default function IconsExample() {
-         ))}
-       </div>
-       <p className="ov-demo-row">
--        <PdfIcon width={24} height={24} alt="PDF" />
--        <span>Standalone icon with alt=&quot;PDF&quot;</span>
-+        <PdfIcon width={24} height={24} aria-label="PDF" />
-+        <span>Standalone icon with aria-label=&quot;PDF&quot;</span>
-       </p>
-     </div>
-   );
-```
-
-**File**: `frontend/docs/docs/en/components/file-tree.mdx` (modified, +71/-42)
-```diff
-@@ -2,16 +2,26 @@
++    markdown: `# LLM Wiki
  
- A flattened file tree. The host owns the tree state and passes the visible rows in order; the component renders them and reports successful operations.
+ Compile heterogeneous knowledge sources into durable, connected knowledge.
  
--This is a placeholder implementation: it renders every documented row type and honours the public props, so consumers can integrate against the API before the full view lands. Styling, iconography and interaction details will change, and the view will be rewritten against this contract.
-+This is a placeholder: it renders a fixed-size empty shell and consumes no props. The props contract below is the final shape; the view will be written against it.
+ ## Objective
  
- ## Basic usage
+ Turn the supplied sources into reusable pages instead of a pile of summaries.
+-`;
  
--Expand a directory to reveal its children. Rows come from `rows`; selection and expansion are controlled by the consumer.
-+Rows come from `rows`; expansion is controlled by the consumer. The example keeps its own expanded set, flattens the tree into `FileTreeRow[]` and renders it, showing all five row kinds and the built-in directory copy in action.
- 
- ```tsx file="../../_demos/file-tree-basic.tsx" preview
- 
- ```
- 
-+The example demonstrates three host responsibilities:
-+
-+- **Async loading**: expanding a directory shows a `Loading…` row for 400 ms before the children appear — `FileTreeLoadingRow`.
-+- **Paging**: each page loads three children; while more remain, `Load more` appears and appends one page per click — `FileTreeLoadMoreRow`. `archive` holds nine files and loads in three pages.
-+- **Row-end icons**: the mutually exclusive marks rendered by `renderDashboard`. `memories/experiences` shows the Agent experience board icon. `project-wiki` is a Wiki root: its leading folder is replaced by a book icon and the row ends with a green board icon. `archive` is a Wiki root too but has pending conflicts, so its icon turns orange and gains an exclamation mark.
-+
-+Names like `memories`, `peers` and `privacy` are followed by their built-in description.
-+
-+The component itself is still a placeholder shell (fixed 280 × 320), so the example renders the rows against the contract rather than mounting `<FileTree />` — that way the data shape and copy are visible.
-+
- ## How rows work
- 
- The tree never inspects parent/child relationships. The host flattens its own state into an ordered list:
-@@ -27,9 +37,61 @@ Emit only the ones your data source needs. A host that returns all children at o
- ## Slots and host content
- 
- - `slots.toolbar` — search, import sources, refresh. The component does not know what is inside.
-+- `slots.spinner` — replaces the spinner shown while a directory loads its children, rendered at 12 × 12. Omitted uses the built-in `FileTreeSpinner` (a CSS ring with no icon asset behind it).
- - `renderDashboard` — the row-end indicator, for example a dashboard entry.
- - `renderRowTooltip` — hover content; the component handles the delay and positioning.
- 
-+## Directory copy
-+
-+The component derives a directory's meaning from the structure of its `uri` and ships built-in description and trigger copy. A host gets descriptions without passing anything; override copy key by key through `labels.info`.
-+
-+Matching looks only at the path shape, never the node type. Both `viking://user/{id}/memories` and `viking://user/{id}/memories/` match `memories`; `viking://resources` matches `sharedResources`, while `viking://resources/docs` does not — built-in copy covers fixed levels only, and deeper nodes are the host's call.
-+
-+| Group            | Keys                                                                                                       |
-+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-+| User scope       | `userRoot`, `memories`, `peers`, `privacy`, `userResources`, `sessions`, `skills`                          |
-+| Long-term memory | `profile`, `preferences`, `entities`, `events`, `identity`, `soul`, `cases`, `trajectories`, `experiences` |
-+| Shared and roots | `sharedResources`, `agentRoot`, `memoryRoot`, `resourceRoot`, `sessionRoot`, `systemRoot`                  |
-+
-+The nine long-term-memory keys describe themselves in the tooltip only: the directory names already say what they are, and an inline line would crowd out siblings.
-+
-+**Copy precedence**: when a row carries `description`, the host's value wins and the built-in one is not used; the built-in copy applies only when it is absent, so a host can always take full control.
-+
-+```tsx
-+<FileTree
-+  rows={rows}
-+  labels={{
-+    info: {
-+      description: { userRoot: 'Current user' },
-+      triggerBehavior: {
-+        memories: 'Distilled whenever a session is committed',
-+      },
-+      field: {
-+        description: 'Description',
-+        triggerBehavior: 'Trigger',
-+        path: 'Path',
-+      },
+-const dashboard = (
+-  <div style={{ padding: 16, color: '#8f959e', fontSize: 13 }}>
+-    A content tab renders whatever the host passes — a dashboard, a graph, a
+-    summary. The component does not know what it is.
+-  </div>
+-);
++See [the compile notes](viking://system/compile/notes.md) and [a relative page](./sibling.md).
++`,
++    dashboard:
++      'A content tab renders whatever the host passes — a dashboard, a graph, a summary. The component does not know what it is.',
++    dashboardTitle: 'Dashboard',
++    hint: 'Switch tabs, copy the path or the content, or toggle preview and source.',
++    contentCopied: 'Content copied',
++    pathCopied: 'Path copied',
++    permissionTag: 'Can manage',
++    parentOpened: (path: string) => `Simulated parent navigation: ${path}`,
++    linkOpened: (uri: string) => `Simulated link navigation: ${uri}`,
++    saved: 'Content saved',
++    cancelled: 'Editing cancelled',
++    previewLabel: 'File preview',
++    labels: {
++      copyPath: 'Copy path',
 +    },
-+  }}
-+/>
-+```
++    // 动作按钮由示例自己渲染，文案也归示例，不经过组件的 labels。
++    actions: {
++      copyContent: 'Copy content',
++      preview: 'Preview',
++      source: 'Source',
++      edit: 'Edit',
++      save: 'Save',
++      cancel: 'Cancel',
++    },
++  },
++  zh: {
++    markdown: `# LLM Wiki
 +
-+Both `labels.info.description` and `triggerBehavior` are `Partial<Record<FileTreeInfoKey, string>>`, so only the keys you change need writing. An empty string hides that key.
++把异构的知识来源编译成可长期使用、彼此关联的知识。
 +
-+The matching rules and c
-```
-
-**File**: `frontend/docs/docs/en/components/icons.mdx` (modified, +15/-13)
-```diff
-@@ -4,7 +4,7 @@ File-type icons are available from the public `@openviking/react/icons` entry. T
- 
- ## Live example
- 
--Use the size controls to resize the five decorative icons. The separate PDF icon demonstrates a meaningful `alt` label at 24 × 24 pixels.
-+Use the size controls to resize the five decorative icons. The separate PDF icon demonstrates a meaningful `aria-label` at 24 × 24 pixels.
- 
- ```tsx file="../../_demos/icons-basic.tsx" preview
- 
-@@ -22,30 +22,32 @@ Use the size controls to resize the five decorative icons. The separate PDF icon
- 
- ## Props
- 
--Each component renders an `img` and accepts its standard non-ref props, except `src` and `srcSet`, which are owned by the component.
-+Each component renders an inline `svg` and accepts standard SVG props, except `children`.
- 
--| Property    | Type               | Default | Description                                    |
--| ----------- | ------------------ | ------- | ---------------------------------------------- |
--| `width`     | `number \| string` | `16`    | Image width.                                   |
--| `height`    | `number \| string` | `16`    | Image height.                                  |
--| `alt`       | `string`           | `''`    | Accessible description; empty for decoration.  |
--| `className` | `string`           | —       | Adds a class to the image element.             |
--| Other props | Image attributes   | —       | Standard image attributes, including `aria-*`. |
-+| Property     | Type               | Default | Description                                             |
-+| ------------ | ------------------ | ------- | ------------------------------------------------------- |
-+| `width`      | `number \| string` | `16`    | Icon width.                                             |
-+| `height`     | `number \| string` | `16`    | Icon height.                                            |
-+| `aria-label` | `string`           | —       | Accessible description; omit for decoration.            |
-+| `className`  | `string`           | —       | Adds a class to the SVG element.                        |
-+| Other props  | SVG attributes     | —       | Standard SVG attributes, including `aria-*` and `role`. |
- 
- ```tsx
- import { PdfIcon } from '@openviking/react/icons';
- 
- export default function Example() {
--  return <PdfIcon width={24} height={24} className="file-icon" alt="PDF" />;
-+  return (
-+    <PdfIcon width={24} height={24} className="file-icon" aria-label="PDF" />
++## 目标
++
++把素材变成可复用的页面，而不是一堆摘要。
++
++参见 [编译说明](viking://system/compile/notes.md) 与 [同目录页面](./sibling.md)。
++`,
++    dashboard:
++      '内容页签原样渲染宿主传入的节点——可以是看板、图谱或摘要，组件不关心它是什么。',
++    dashboardTitle: '看板',
++    hint: '切换页签、复制路径或正文，或在预览与源码之间切换。',
++    contentCopied: '正文已复制',
++    pathCopied: '路径已复制',
++    permissionTag: '可管理',
++    parentOpened: (path: string) => `已模拟跳转到上级：${path}`,
++    linkOpened: (uri: string) => `已模拟打开链接：${uri}`,
++    saved: '正文已保存',
++    cancelled: '已取消编辑',
++    previewLabel: '文件预览',
++    labels: {
++      copyPath: '复制路径',
++    },
++    actions: {
++      copyContent: '复制正文',
++      preview: '预览',
++      source: '源码',
++      edit: '编辑',
++      save: '保存',
++      cancel: '取消',
++    },
++  },
++};
++
++const diagramSvg =
++  'data:image/svg+xml;charset=utf-8,' +
++  encodeURIComponent(
++    '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="140">' +
++      '<rect width="240" height="140" fill="#eef2f8"/>' +
++      '<rect x="20" y="24" width="80" height="36" rx="6" fill="#2563c5"/>' +
++      '<rect x="140" y="24" width="80" height="36" rx="6" fill="#7aa7e8"/>' +
++      '<rect x="80" y="88" width="80" height="30" rx="6" fill="#a9c4ef"/>' +
++      '</svg>',
 +  );
- }
- ```
  
- ## Accessibility
- 
--Leave `alt` empty when adjacent text already identifies the file type. For an icon that conveys information on its own, supply a descriptive `alt` value in the application's language. Icons are non-interactive; applications own button semantics, keyboard interaction, and focus styles when placing an icon inside a control.
-+Omit `aria-label` when adjacent text already identifies the file type; the SVG stays `aria-hidden` so it is not announced twice. For an icon that conveys information on its own, supply a descriptive `aria-label` in the application's language. Icons are non-interactive; applications own button semantics, keyboard interaction, and focus styles when placing an icon inside a control.
- 
- ## Assets and styling
- 
--SVGs are embedded in the built JavaScript as data URLs. No separate SVG request or stylesheet import is needed for these icons. Applications with a Content Security Policy must allow `data:` in `img-src` to display them.
-+Icons ship as inline SVG elements inside the built JavaScript. There is no separate asset request, no stylesheet import, and no Content Security Policy entry to add.
- 
--Use `width`, `height`, `className`, or `style` to size and position the image. Its SVG colors are fixed artwork; changing CSS `color` does not recolor it.
-+Use `width`, `height`, `className`, or `style` to size and position the icon. Its colors are fixed artwork; changing CSS `color` does not recolor it.
-```
-
-**File**: `frontend/docs/docs/en/guide/getting-started.mdx` (modified, +2/-2)
-```diff
-@@ -69,8 +69,8 @@ Theme colors can be adjusted on a containing element, or a specific class can be
-   --ov-ui-row-hover: rgb(0 0 0 / 6%);
- }
- 
--.my-workbench .ov-file-tree__row {
--  height: 32px;
-+.my-workbench .ov-file-tree {
-+  width: 320px;
- }
- ```
- 
-```
-
-**File**: `frontend/docs/docs/env.d.ts` (modified, +8/-0)
-```diff
-@@ -1,5 +1,13 @@
- declare module '*.css' {}
+ export default function FilePreviewBasic() {
++  const lang = useLang() === 'zh' ? 'zh' : 'en';
++  const t = COPY[lang];
+   const [activeHint, setActiveHint] = useState('');
+-  const [content, setContent] = useState(markdown);
++  // 正文按语言分别保存：切换语言时展示该语言的初始正文，编辑过的内容不丢。
++  const [drafts, setDrafts] = useState<Partial<Record<string, string>>>({});
++  const content = drafts[lang] ?? t.markdown;
++  const setContent = (value: string) =>
++    setDrafts((current) => ({ ...current, [lang]: value }));
 +
- declare module '*.svg' {
-   const src: string;
-   export default src;
- }
-+
-+declare module '*.svg?react' {
-+  import type { FunctionComponent, SVGProps } from 'react';
-+
-+  const ReactComponent: FunctionComponent<SVGProps<SVGSVGElement>>;
-+  export default ReactComponent;
-+}
-```
-
-**File**: `frontend/docs/docs/zh/components/file-tree.mdx` (modified, +67/-44)
-```diff
-@@ -2,16 +2,26 @@
- 
- 展平后的文件树。树状态由宿主持有，宿主按顺序传入可见行；组件负责渲染并通知成功的操作。
- 
--当前为占位实现：渲染全部文档化的行类型并遵守公开 props，方便消费方先按 API 接入。样式、图标与交互细节仍会调整，视图后续按本文契约重写。
-+当前为占位组件：只渲染一个固定尺寸的空壳，不消费 props。下方的 props 契约是最终形态，真实视图后续按本文实现。
- 
- ## 基础用法
- 
--展开目录查看子节点。行来自 `rows`；选中与展开由使用方控制。
-+行来自 `rows`，展开由使用方控制。下面的示例自己维护展开集合，把树状态展平成 `FileTreeRow[]` 并渲染，演示五种行类型与内置目录说明的实际效果。
- 
- ```tsx file="../../_demos/file-tree-basic.tsx" preview
- 
- ```
- 
-+示例演示三种宿主职责：
-+
-+- **异步加载**：展开目录先出现 `Loading…` 行，400ms 后换成子节点，对应 `FileTreeLoadingRow`。
-+- **分页加载**：每次只加载 3 个子节点，还有剩余时出现 `Load more`，点一次追加一页，对应 `FileTreeLoadMoreRow`。`archive` 有 9 个文件，分三页加载完。
-+- **行尾图标**：`renderDashboard` 渲染的互斥标记。`memories/experiences` 显示 Agent 经验看板图标；`project-wiki` 是 Wiki 根目录，行首用书本图标替代文件夹，行尾显示绿色看板图标；`archive` 同样按 Wiki 处理，但有待确认冲突，图标变成橙色并带感叹号。
-+
-+目录名后跟着的是内置说明，`memories`、`peers`、`privacy` 等都有。
-+
-+组件本体仍是占位空壳（固定 280 × 320），所以示例没有直接渲染 `<FileTree />`，而是按契约渲染行——这样能看到数据结构与文案的实际形状。
-+
- ## 行的组织方式
- 
- 组件不感知父子关系，宿主把自己的状态展平成有序列表：
-@@ -27,9 +37,55 @@
- ## 插槽与宿主内容
- 
- - `slots.toolbar` —— 搜索、导入来源、刷新。组件不知道里面有什么。
-+- `slots.spinner` —— 替换目录加载子节点时的转圈，按 12 × 12 显示。省略时用内置的 `FileTreeSpinner`（纯 CSS 圆环，不依赖图标资源）。
- - `renderDashboard` —— 行尾指示器，例如看板入口。
- - `renderRowTooltip` —— 悬停内容，延迟与定位由组件处理。
- 
-+## 目录说明
-+
-+组件按行 `uri` 的路径结构判定目录语义，内置一份说明与触发行为文案。宿主不需要传任何字段就能拿到说明；需要改文案时用 `labels.info` 逐键覆盖。
-+
-+判定只看路径形状，与节点类型无关。`viking://user/{id}/memories` 与 `viking://user/{id}/memories/` 都命中 `memories`；`viking://resources` 命中 `sharedResources`，而 `viking://resources/docs` 不再命中——内置说明只覆盖固定层级，更深层的节点由宿主自己决定。
-+
-+| 分组       | 键                                                                                                         |
-+| ---------- | ---------------------------------------------------------------------------------------------------------- |
-+| 用户作用域 | `userRoot`、`memories`、`peers`、`privacy`、`userResources`、`sessions`、`skills`                          |
-+| 长期记忆   | `profile`、`preferences`、`entities`、`events`、`identity`、`soul`、`cases`、`trajectories`、`experiences` |
-+| 共享与根级 | `sharedResources`、`agentRoot`、`memoryRoot`、`resourceRoot`、`sessionRoot`、`systemRoot`                  |
-+
-+长期记忆下的九个键只在浮层里显示说明：这些目录的名称本身已经说明用途，行内再挂一行字会挤掉同级节点。
-+
-+**文案优先级**：行上给了 `description` 时用宿主的，内置说明不生效；没给才用内置。这样宿主始终能完全接管。
-+
-+```tsx
-+<FileTree
-+  rows={rows}
-+  labels={{
-+    info: {
-+      description: { userRoot: '当前用户' },
-+      triggerBehavior: { memories: '提交会话时自动沉淀' },
-+      field: { description: '说明', triggerBehavior: '触发行为', path: '路径' },
-+    },
-+  }}
-+/>
-+```
-+
-+`labels.info.description` 与 `triggerBehavior` 都是 `Partial<Record<FileTreeInfoKey, string>>`，只写要改的键。传空字符串表示该键不显示。
-+
-+判定与文案也以纯函数形式从组件子路径导出，宿主可以复用同一套规则组装自己的视图：
-+
-+```ts
-+import {
-+  resolveFileTreeInfoKey,
-+  showsInlineDescription,
-+  resolveInfoCopy,
-+} from '@openviking/react/components/file-tree';
-+
-+resolveFileTreeInfoKey('viking://user/alice/memories/profile.md'); // 'profile'
-+showsInlineDescription('profile'); // false，只在浮层显示
-+resolveInfoCopy('memories', { description: { memories: '自定义' } });
-+```
-+
- ## 一次性效果
- 
- 高亮属于页面层效果，不是树的属性。三种方式可选，也可组合：
-@@ -56,7 +112,7 @@ treeRef.current?.scrollToRow('resources', { block: 'center' });
- | `loadingFallback`         | `ReactNode`                               | —      | 首次加载期间替代行列表显示。                 |
- | `errorFallback`           | `ReactNode`                               | —      | 存在整树级错误行时显示。                     |
- | `emptyFallback`           | `ReactNode`                               | —      | `rows` 为空时显示。                          |
--| `slots`                   | `FileTreeSlots`                           | —      | `toolbar` 插槽，渲染在行列表上方。           |
-+| `slots`                   | `FileTreeSlots`                           | —      | `toolbar` 与 `spinner` 插槽。                |
- | `labels`                  | `FileTreeLabels`                          | 英文   | 可替换文案。                                 |
- | `getRowAttributes`        | `(row) => HTMLAttributes<HTMLDivElement>` | —      | 按行追加属性，`className` 会与组件类名合并。 |
- | `renderDashboard`         | `(row) => ReactNode`                      | —      | 行尾指示器，返回 `null` 不显示。             |
-@@ -75,49 +131,16 @@ import '@openviking/react/components/file-tree/style.css';
- 
- ## 无障碍
- 
--使用 `role="tree"` 与 `role="treeitem"`，并输出 `aria-level`、`aria-selected`、`aria-expanded`。方向键在行间移动，左右键展开与折叠，回车与空格选中。状态通过可见文本表达，不只依赖颜色。
--
--## 类名
--
--类名带 `ov-` 前缀。块名为 `ov-file-tree`，元素使用 `ov-file-tree__<元素>`。
--
--| 类名                        | 元素       | 用途                           |
--| --------------------------- | ---------- | ------------------------------ |
--| `ov-file-tree`              | 根节点     | 纵向布局与基础排版。           |
--| `ov-file-tree__toolbar`     | 工具栏插槽 | 行区域上方的宿主工具栏。       |
--| `ov-file-tree__body`        | 滚动区域   | 承载行的滚动容器。             |
--| `ov-file-tree__rows`        | 行容器     | 行的纵向排列。                 |
--| `ov-file-tree__row`         | 行         | 单行条目，带 `data-selected`。 |
--| `ov-file-tree__row:hover`   | 行         | 悬停背景。                     |
--| `ov-file-tree__toggle`      | 展开按钮   | 展开与折叠控件。               |
--| `ov-file-tree__chev
-```
-
-**File**: `frontend/docs/docs/zh/components/icons.mdx` (modified, +18/-13)
-```diff
-@@ -4,7 +4,7 @@
- 
- ## 可运行示例
- 
--通过尺寸按钮调整五个装饰性图标。单独的 PDF 图标演示有意义的 `alt` 描述，尺寸为 24 × 24 像素。中英文文档共用同一份示例，示例说明使用英文；应用可自行提供本地化的 `alt` 文案。
-+通过尺寸按钮调整五个装饰性图标。单独的 PDF 图标演示有意义的 `aria-label` 描述，尺寸为 24 × 24 像素。中英文文档共用同一份示例，示例说明使用英文；应用可自行提供本地化的 `aria-label` 文案。
- 
- ```tsx file="../../_demos/icons-basic.tsx" preview
- 
-@@ -22,32 +22,37 @@
- 
- ## 属性
- 
--每个组件渲染为 `img`，接收不含 ref 的标准图片属性；`src` 和 `srcSet` 由组件管理，不对调用方开放。
-+每个组件渲染为内联 `svg`，接收不含 `children` 的标准 SVG 属性。
- 
--| 属性        | 类型               | 默认值 | 说明                                 |
--| ----------- | ------------------ | ------ | ------------------------------------ |
--| `width`     | `number \| string` | `16`   | 图片宽度。                           |
--| `height`    | `number \| string` | `16`   | 图片高度。                           |
--| `alt`       | `string`           | `''`   | 无障碍描述；装饰性图标使用空字符串。 |
--| `className` | `string`           | —      | 为图片元素添加类名。                 |
--| 其他属性    | 图片属性           | —      | 标准图片属性，包括 `aria-*`。        |
-+| 属性         | 类型               | 默认值 | 说明                                       |
-+| ------------ | ------------------ | ------ | ------------------------------------------ |
-+| `width`      | `number \| string` | `16`   | 图标宽度。                                 |
-+| `height`     | `number \| string` | `16`   | 图标高度。                                 |
-+| `aria-label` | `string`           | —      | 无障碍描述；装饰性图标省略，SVG 保持隐藏。 |
-+| `className`  | `string`           | —      | 为 SVG 元素添加类名。                      |
-+| 其他属性     | SVG 属性           | —      | 标准 SVG 属性，包括 `aria-*` 与 `role`。   |
- 
- ```tsx
- import { PdfIcon } from '@openviking/react/icons';
- 
- export default function Example() {
-   return (
--    <PdfIcon width={24} height={24} className="file-icon" alt="PDF 文档" />
-+    <PdfIcon
-+      width={24}
-+      height={24}
-+      className="file-icon"
-+      aria-label="PDF 文档"
-+    />
-   );
- }
- ```
- 
- ## 无障碍
- 
--相邻文字已经说明文件类型时，保留空 `alt`，避免重复播报。图标独立传达信息时，提供应用语言下的描述。图标本身不具有交互行为；放入操作控件时，由应用负责按钮语义、键盘交互和焦点样式。
-+相邻文字已经说明文件类型时省略 `aria-label`，SVG 保持 `aria-hidden`，避免重复播报。图标独立传达信息时，提供应用语言下的 `aria-label`。图标本身不具有交互行为；放入操作控件时，由应用负责按钮语义、键盘交互和焦点样式。
- 
- ## 资源与样式
- 
--SVG 以 data URL 内联到构建后的 JavaScript 中，无需单独请求 SVG，也无需为这些图标导入样式表。应用使用内容安全策略时，须在 `img-src` 中允许 `data:`。
-+图标以内联 SVG 元素的形式打包进 JavaScript，没有独立资源请求，也不需要为它们导入样式表或配置内容安全策略。
- 
--通过 `width`、`height`、`className` 或 `style` 调整图片的尺寸与位置。SVG 使用固定配色，修改 CSS `color` 不会改变图标颜色。
-+通过 `width`、`height`、`className` 或 `style` 调整尺寸与位置。SVG 使用固定配色，修改 CSS `color` 不会改变图标颜色。
-```
-
----
-
-### Incident Patch 2: `a17f9745` (2026-11-07)
-**Commit Message**: feat(ui): add independently subscribed scope selectors and cascade hook (#7163)
-
-* feat(ui): add independently subscribed scope cascade selectors
-
-* fix(ui): address scope selector review feedback
-
-* docs(ui): reserve room for async scope dropdown
-
-* docs(ui): explain scope focus effect cleanup
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/README.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+# Scope switcher example assets
-+
-+Unmodified SVG exports from the user-provided [OpenViking Console design](https://www.figma.com/design/ecpd1ZGHKRYibm1ODKEpM6/OpenViking-Console?node-id=10325-138037), under the repository license.
-+
-+- `space.svg`: `I10325:138037;9343:425924`, 14 × 14.
-+- `user.svg`: `I10325:138037;9343:425954`, 14 × 14.
-+- `library-0.svg` through `library-7.svg`: the two masks and six original layers of `I10325:138037;9343:425894`. Composed at 14 × 14 in `scope-switcher-icons.tsx`, preserving each SVG's intrinsic dimensions.
-+
-+These are host-provided example icons; the reusable component still accepts `icon` as a React node.
-```
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-0.svg` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<g id="Group">
-+<path id="Vector" d="M14 0H0V14H14V0Z" fill="url(#paint0_radial_0_144)"/>
-+</g>
-+<defs>
-+<radialGradient id="paint0_radial_0_144" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(7 7) scale(7)">
-+<stop offset="0.984375" stop-color="white"/>
-+<stop offset="1" stop-color="white" stop-opacity="0"/>
-+</radialGradient>
-+</defs>
-+</svg>
-```
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-1.svg` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<g id="clip-oreo-5f6o93">
-+<path id="Vector" d="M14 7C14 3.13401 10.866 0 7 0C3.13401 0 0 3.13401 0 7C0 10.866 3.13401 14 7 14C10.866 14 14 10.866 14 7Z" fill="black"/>
-+</g>
-+</svg>
-```
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-2.svg` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14.0131" height="14.0131" viewBox="0 0 14.0131 14.0131" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<g id="Group">
-+<path id="Vector" d="M10.4541 0H3.55906C1.59345 0 0 1.59345 0 3.55906V10.4541C0 12.4197 1.59345 14.0131 3.55906 14.0131H10.4541C12.4197 14.0131 14.0131 12.4197 14.0131 10.4541V3.55906C14.0131 1.59345 12.4197 0 10.4541 0Z" fill="#031A05"/>
-+</g>
-+</svg>
-```
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-3.svg` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="17.6006" height="17.6006" viewBox="0 0 17.6006 17.6006" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<g id="Group" opacity="0.42">
-+<g id="Vector" opacity="0.38" filter="url(#filter0_f_0_136)">
-+<path d="M5.35258 2.05623H12.2476C14.0682 2.05623 15.5441 3.53215 15.5441 5.35279V12.2478C15.5441 14.0684 14.0682 15.5444 12.2476 15.5444H5.35258C3.53194 15.5444 2.05602 14.0684 2.05602 12.2478V5.35279C2.05602 3.53215 3.53194 2.05623 5.35258 2.05623Z" stroke-width="0.30625" stroke="white"/>
-+</g>
-+<g id="Vector_2" opacity="0.24" filter="url(#filter1_f_0_136)">
-+<path d="M5.35281 2.23125H12.2478C13.9718 2.23125 15.3694 3.62882 15.3694 5.35281V12.2478C15.3694 13.9718 13.9718 15.3694 12.2478 15.3694H5.35281C3.62882 15.3694 2.23125 13.9718 2.23125 12.2478V5.35281C2.23125 3.62882 3.62882 2.23125 5.35281 2.23125Z" stroke-width="0.525" stroke="#FFDFDA"/>
-+</g>
-+<g id="Vector_3" opacity="0.18" filter="url(#filter2_f_0_136)">
-+<path d="M5.35281 2.66875H12.2478C13.7302 2.66875 14.9319 3.87045 14.9319 5.35281V12.2478C14.9319 13.7302 13.7302 14.9319 12.2478 14.9319H5.35281C3.87045 14.9319 2.66875 13.7302 2.66875 12.2478V5.35281C2.66875 3.87045 3.87045 2.66875 5.35281 2.66875Z" stroke-width="0.875" stroke="#FFBE74"/>
-+</g>
-+</g>
-+<defs>
-+<filter id="filter0_f_0_136" x="1.42164" y="1.42186" width="14.7569" height="14.7569" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-+<feGaussianBlur stdDeviation="0.240625" result="effect1_foregroundBlur_0_136"/>
-+</filter>
-+<filter id="filter1_f_0_136" x="0.56875" y="0.56875" width="16.4631" height="16.4631" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-+<feGaussianBlur stdDeviation="0.7" result="effect1_foregroundBlur_0_136"/>
-+</filter>
-+<filter id="filter2_f_0_136" x="0" y="0" width="17.6006" height="17.6006" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-+<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_136"/>
-+</filter>
-+</defs>
-+</svg>
-```
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-4.svg` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="15.3497" height="16.3494" viewBox="0 0 15.3497 16.3494" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<g id="Group">
-+<path id="Vector" d="M11.7906 0H3.55906C1.59345 0 0 1.59345 0 3.55906V12.7903C0 14.7559 1.59345 16.3494 3.55906 16.3494H11.7906C13.7562 16.3494 15.3497 14.7559 15.3497 12.7903V3.55906C15.3497 1.59345 13.7562 0 11.7906 0Z" fill="#FFAAAA"/>
-+</g>
-+</svg>
-```
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-5.svg` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="18.9372" height="19.9369" viewBox="0 0 18.9372 19.9369" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<g id="Group" opacity="0.36">
-+<g id="Vector" opacity="0.38" filter="url(#filter0_f_0_128)">
-+<path d="M5.35282 2.05623H13.5844C15.405 2.05623 16.881 3.53215 16.881 5.35279V14.584C16.881 16.4047 15.405 17.8806 13.5844 17.8806H5.35282C3.53218 17.8806 2.05626 16.4047 2.05626 14.584V5.35279C2.05626 3.53215 3.53218 2.05623 5.35282 2.05623Z" stroke-width="0.30625" stroke="white"/>
-+</g>
-+<g id="Vector_2" opacity="0.24" filter="url(#filter1_f_0_128)">
-+<path d="M5.35281 2.23125H13.5844C15.3084 2.23125 16.7059 3.62882 16.7059 5.35281V14.5841C16.7059 16.3081 15.3084 17.7056 13.5844 17.7056H5.35281C3.62882 17.7056 2.23125 16.3081 2.23125 14.5841V5.35281C2.23125 3.62882 3.62882 2.23125 5.35281 2.23125Z" stroke-width="0.525" stroke="#FFDFDA"/>
-+</g>
-+<g id="Vector_3" opacity="0.18" filter="url(#filter2_f_0_128)">
-+<path d="M5.35281 2.66875H13.5844C15.0667 2.66875 16.2684 3.87045 16.2684 5.35281V14.5841C16.2684 16.0664 15.0667 17.2681 13.5844 17.2681H5.35281C3.87045 17.2681 2.66875 16.0664 2.66875 14.5841V5.35281C2.66875 3.87045 3.87045 2.66875 5.35281 2.66875Z" stroke-width="0.875" stroke="#FFBE74"/>
-+</g>
-+</g>
-+<defs>
-+<filter id="filter0_f_0_128" x="1.42189" y="1.42186" width="16.0934" height="17.0931" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-+<feGaussianBlur stdDeviation="0.240625" result="effect1_foregroundBlur_0_128"/>
-+</filter>
-+<filter id="filter1_f_0_128" x="0.56875" y="0.56875" width="17.7997" height="18.7994" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-+<feGaussianBlur stdDeviation="0.7" result="effect1_foregroundBlur_0_128"/>
-+</filter>
-+<filter id="filter2_f_0_128" x="0" y="0" width="18.9372" height="19.9369" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-+<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_128"/>
-+</filter>
-+</defs>
-+</svg>
-```
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-6.svg` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="19.7901" height="18.6675" viewBox="0 0 19.7901 18.6675" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<g id="Group">
-+<g id="Vector" opacity="0.922" filter="url(#filter0_f_0_126)">
-+<path d="M17.5588 9.33373C17.5588 5.41114 14.1276 2.23125 9.89505 2.23125C5.66245 2.23125 2.23125 5.41114 2.23125 9.33373C2.23125 13.2563 5.66245 16.4362 9.89505 16.4362C14.1276 16.4362 17.5588 13.2563 17.5588 9.33373Z" fill="url(#paint0_linear_0_126)"/>
-+</g>
-+</g>
-+<defs>
-+<filter id="filter0_f_0_126" x="5.90506e-08" y="1.11646e-08" width="19.7901" height="18.6675" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-+<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_126"/>
-+</filter>
-+<linearGradient id="paint0_linear_0_126" x1="2.23125" y1="2.23125" x2="2.23125" y2="16.4362" gradientUnits="userSpaceOnUse">
-+<stop stop-color="#FEE9F5"/>
-+<stop offset="1" stop-color="#F8F8F8"/>
-+</linearGradient>
-+</defs>
-+</svg>
-```
-
----
-
-### Incident Patch 3: `9ac008f9` (2026-11-07)
-**Commit Message**: feat(ui): implement the file tree view against its contract (#7201)
-
-* feat(ui): implement the file tree view against its contract
-
-The component shipped as a fixed shell after the placeholder view was removed,
-so `<FileTree rows={...} />` rendered nothing. Everything the contract
-describes — rows, indentation, guides, icons, keyboard, loading and paging
-states — had been written into the docs example instead, where no consumer
-could reuse it.
-
-The view now lives in the component. It renders the five row kinds, indents by
-`depth` with a guide per ancestor level, cross-fades the folder icon between
-its collapsed and open states, runs arrow-key navigation plus Enter/Space
-selection, and reports each operation through `operations` before firing the
-matching `on…` notification. `renderRowIcon` is new so a host can supply a
-type icon per file; omitting it falls back to the generic document icon.
-
-Directory copy resolves at render time: a row's own `description` wins,
-including an explicit empty string, and the built-in copy for the fixed
-`viking://` levels is the fallback. Previously the helpers were only
-re-exported, so passing `labels.info` had no visible effect.
-
-Theme variables are 
-
-**File**: `frontend/docs/docs/_demos/file-tree-basic.tsx` (modified, +32/-276)
-```diff
-@@ -1,19 +1,9 @@
- import { useState } from 'react';
- import type { ComponentPropsWithoutRef, ReactNode } from 'react';
- import { useLang } from '@rspress/core/runtime';
-+import { FileTree } from '@openviking/react/components/file-tree';
-+import type { FileTreeRow } from '@openviking/react/components/file-tree';
- import {
--  resolveFileTreeInfoKey,
--  resolveInfoCopy,
--  showsInlineDescription,
--} from '@openviking/react/components/file-tree';
--import type {
--  FileTreeEntryRow,
--  FileTreeRow,
--} from '@openviking/react/components/file-tree';
--import {
--  ChevronRightIcon,
--  FolderIcon,
--  FolderOpenIcon,
-   getFileTypeColor,
-   getFileTypeIcon,
-   resolveFileTypeIconKey,
-@@ -211,51 +201,17 @@ function flatten(nodes: Node[], depth: number, s: State): FileTreeRow[] {
-   });
- }
- 
--const MUTED = { color: '#8f959e' } as const;
--const INDENT = 20;
--const CHEVRON_SIZE = 16;
--const ROW = {
--  height: 'var(--ov-ui-file-tree-row-height, 32px)',
--  display: 'flex',
--  alignItems: 'center',
--  gap: 6,
--  paddingRight: 8,
--  borderRadius: 'var(--ov-ui-file-tree-row-radius, 4px)',
--} as const;
--/** Guide through one ancestor level; the 1px bleed joins consecutive rows. */
--const GUIDE = {
--  position: 'absolute',
--  top: -1,
--  bottom: -1,
--  width: 1,
--  background: 'var(--ov-ui-file-tree-guide, #e5e6eb)',
--  pointerEvents: 'none',
--} as const;
- const CENTER = {
-   display: 'inline-flex',
-   alignItems: 'center',
-   justifyContent: 'center',
- } as const;
--const ICON = {
--  ...CENTER,
--  color: 'var(--ov-ui-file-tree-icon, #3f3f51)',
--  width: 16,
--  height: 16,
--} as const;
--const FOLDER = { position: 'relative', width: 14, height: 14 } as const;
--const LAYER = {
--  ...FOLDER,
--  position: 'absolute',
--  inset: 0,
--  transition: 'opacity 220ms',
--} as const;
- const BARE_BUTTON = {
-   padding: 0,
-   border: 0,
-   background: 'none',
-   cursor: 'pointer',
- } as const;
--const CHEVRON = { ...CENTER, ...BARE_BUTTON, width: 16, height: 16 } as const;
- const INDICATOR = {
-   ...CENTER,
-   ...BARE_BUTTON,
-@@ -279,8 +235,6 @@ const CONFLICT_MARK_D =
-   'M8.12525 5.16248C8.3636 5.05726 8.63591 5.0573 8.87427 5.16248C9.03672 5.23421 9.15691 5.36705 9.26587 5.5199C9.37554 5.67377 9.49733 5.88273 9.64771 6.141L11.2776 8.9408C11.4279 9.19896 11.5506 9.40737 11.6301 9.5785C11.7091 9.7484 11.7651 9.91933 11.7463 10.0961C11.7189 10.3552 11.5817 10.5903 11.3704 10.7426C11.2265 10.8461 11.0499 10.8827 10.8626 10.8998C10.6738 10.9169 10.4313 10.9164 10.1311 10.9164H6.86939C6.56887 10.9164 6.32581 10.917 6.13697 10.8998C5.94954 10.8827 5.77304 10.8462 5.62916 10.7426C5.4178 10.5902 5.28064 10.3551 5.25318 10.0961C5.23446 9.91932 5.29137 9.74839 5.37037 9.5785C5.44995 9.40742 5.57168 9.19884 5.72193 8.9408L7.35279 6.14002C7.50292 5.88219 7.62412 5.67363 7.73365 5.5199C7.84252 5.36711 7.96286 5.23426 8.12525 5.16248Z';
- const CONFLICT_DOT_D =
-   'M8.24986 8.33335V7.00001C8.24986 6.86199 8.36185 6.75009 8.49986 6.75001C8.63793 6.75001 8.74986 6.86194 8.74986 7.00001V8.33335C8.74986 8.47142 8.63793 8.58335 8.49986 8.58335C8.36185 8.58327 8.24986 8.47137 8.24986 8.33335ZM8.76711 9.36655C8.76711 9.50443 8.65532 9.61628 8.51744 9.61655L8.48358 9.61688C8.41725 9.61696 8.35345 9.59049 8.3065 9.54363C8.25961 9.49678 8.23329 9.43317 8.23326 9.36688V9.33335C8.23326 9.19528 8.34519 9.08335 8.48326 9.08335H8.51711C8.65516 9.08337 8.76711 9.19529 8.76711 9.33335V9.36655Z';
--const BOOK_D =
--  'M8.05556 7.55556C8.05556 6.31099 8.05556 5.68871 8.29776 5.21335C8.51082 4.79522 8.85077 4.45526 9.26891 4.24221C9.74427 4 10.3666 4 11.6111 4H11.8333C12.4556 4 12.7668 4 13.0044 4.1211C13.2135 4.22763 13.3835 4.39761 13.49 4.60668C13.6111 4.84436 13.6111 5.1555 13.6111 5.77778V10.5556C13.6111 11.1778 13.6111 11.489 13.49 11.7267C13.3835 11.9357 13.2135 12.1057 13.0044 12.2122C12.7668 12.3333 12.4556 12.3333 11.8333 12.3333H11.0695C10.3738 12.3333 10.026 12.3333 9.71022 12.4292C9.43069 12.5141 9.17064 12.6533 8.94494 12.8388C8.69001 13.0483 8.49705 13.3378 8.11114 13.9166L8.05556 14L7.99997 13.9166C7.61406 13.3378 7.4211 13.0483 7.16617 12.8388C6.94048 12.6533 6.68043 12.5141 6.40089 12.4292C6.08514 12.3333 5.73728 12.3333 5.04157 12.3333H4.27778C3.6555 12.3333 3.34436 12.3333 3.10668 12.2122C2.89761 12.1057 2.72763 11.9357 2.6211 11.7267C2.5 11.489 2.5 11.1778 2.5 10.5556V5.77778C2.5 5.1555 2.5 4.84436 2.6211 4.60668C2.72763 4.39761 2.89761 4.22763 3.10668 4.1211C3.34436 4 3.6555 4 4.27778 4H4.5C5.74456 4 6.36684 4 6.8422 4.24221C7.26034 4.45526 7.6003 4.79522 7.81335 5.21335C8.05556 5.68871 8.05556 6.31099 8.05556 7.55556ZM8.05556 14V7.55556';
- const EXPERIENCE_D = [
-   'M5.25 1.75H2.33333C2.01117 1.75 1.75 2.01117 1.75 2.33333V6.41667C1.75 6.73883 2.01117 7 2.33333 7H5.25C5.57217 7 5.83333 6.73883 5.83333 6.41667V2.33333C5.83333 2.01117 5.57217 1.75 5.25 1.75Z',
-   'M11.6667 1.75H8.75C8.42783 1.75 8.16667 2.01117 8.16667 2.33333V4.08333C8.16667 4.4055 8.42783 4.66667 8.75 4.66667H11.6667C11.9888 4.66667 12.25 4.4055 12.25 4.08333V2.33333C12.25 2.01117 11.9888 1.
-```
-
-**File**: `frontend/docs/docs/en/components/file-tree.mdx` (modified, +5/-4)
-```diff
-@@ -2,7 +2,7 @@
- 
- A flattened file tree. The host owns the tree state and passes the visible rows in order; the component renders them and reports successful operations.
- 
--This is a placeholder: it renders a fixed-size empty shell and consumes no props. The props contract below is the final shape; the view will be written against it.
-+The component renders the host-flattened row list and handles selection, expansion, paging and keyboard interaction. Toolbars, search and import flows belong to the page layer and are injected through slots.
- 
- ## Basic usage
- 
-@@ -20,7 +20,7 @@ The example demonstrates three host responsibilities:
- 
- Names like `memories`, `peers` and `privacy` are followed by their built-in description.
- 
--The component itself is still a placeholder shell (fixed 280 × 320), so the example renders the rows against the contract rather than mounting `<FileTree />` — that way the data shape and copy are visible.
-+The example mounts `<FileTree />` directly, keeping only the tree data and the expansion and paging state the host owns.
- 
- ## How rows work
- 
-@@ -39,7 +39,7 @@ Emit only the ones your data source needs. A host that returns all children at o
- - `slots.toolbar` — search, import sources, refresh. The component does not know what is inside.
- - `slots.spinner` — replaces the spinner shown while a directory loads its children, rendered at 12 × 12. Omitted uses the built-in `FileTreeSpinner` (a CSS ring with no icon asset behind it).
- - `renderDashboard` — the row-end indicator, for example a dashboard entry.
--- `renderRowTooltip` — hover content; the component handles the delay and positioning.
-+- `renderRowTooltip` — hover content; the component handles the delay and positioning. When omitted the component renders a built-in tooltip from the row `uri` (description, trigger copy, path).
- 
- ## Directory copy
- 
-@@ -122,6 +122,7 @@ treeRef.current?.scrollToRow('resources', { block: 'center' });
- | `labels`                  | `FileTreeLabels`                          | English  | Replaceable copy.                                                              |
- | `getRowAttributes`        | `(row) => HTMLAttributes<HTMLDivElement>` | —        | Extra attributes per row; `className` is merged.                               |
- | `renderDashboard`         | `(row) => ReactNode`                      | —        | Row-end indicator; `null` hides it.                                            |
-+| `renderRowIcon`           | `(row) => ReactNode`                      | —        | Leading icon of a file row; the generic file icon when omitted.                |
- | `renderRowTooltip`        | `(row) => ReactNode`                      | —        | Hover content; `null` hides it.                                                |
- | `onSelect`                | `(row: FileTreeEntryRow) => void`         | —        | Called after selection succeeds; not called on failure.                        |
- | `onToggleExpand`          | `(row: FileTreeEntryRow) => void`         | —        | Called after expansion or collapse succeeds; not called on failure.            |
-@@ -141,7 +142,7 @@ The tree uses `role="tree"` with `role="treeitem"` rows and reports `aria-level`
- 
- ## Styling
- 
--Class names are prefixed with `ov-`. The block is `ov-file-tree`; elements use `ov-file-tree__<element>`. The placeholder outputs only the root element and a fixed size; row, toolbar and state-view class names and theme tokens are settled with the real view. The stylesheet has its own entry:
-+Class names are prefixed with `ov-`. The block is `ov-file-tree`; elements use `ov-file-tree__<element>`. Theme tokens are declared on the root element and can be overridden as a set or one by one. The stylesheet has its own entry:
- 
- ```tsx
- import '@openviking/react/components/file-tree/style.css';
-```
-
-**File**: `frontend/docs/docs/zh/components/file-tree.mdx` (modified, +5/-4)
-```diff
-@@ -2,7 +2,7 @@
- 
- 展平后的文件树。树状态由宿主持有，宿主按顺序传入可见行；组件负责渲染并通知成功的操作。
- 
--当前为占位组件：只渲染一个固定尺寸的空壳，不消费 props。下方的 props 契约是最终形态，真实视图后续按本文实现。
-+组件渲染宿主展平后的行列表，并处理选中、展开、分页与键盘交互。工具栏、搜索与导入流程属于页面层，通过插槽注入。
- 
- ## 基础用法
- 
-@@ -20,7 +20,7 @@
- 
- 目录名后跟着的是内置说明，`memories`、`peers`、`privacy` 等都有。
- 
--组件本体仍是占位空壳（固定 280 × 320），所以示例没有直接渲染 `<FileTree />`，而是按契约渲染行——这样能看到数据结构与文案的实际形状。
-+示例直接挂载 `<FileTree />`，只保留树数据与展开、分页状态这些宿主该持有的部分。
- 
- ## 行的组织方式
- 
-@@ -39,7 +39,7 @@
- - `slots.toolbar` —— 搜索、导入来源、刷新。组件不知道里面有什么。
- - `slots.spinner` —— 替换目录加载子节点时的转圈，按 12 × 12 显示。省略时用内置的 `FileTreeSpinner`（纯 CSS 圆环，不依赖图标资源）。
- - `renderDashboard` —— 行尾指示器，例如看板入口。
--- `renderRowTooltip` —— 悬停内容，延迟与定位由组件处理。
-+- `renderRowTooltip` —— 悬停内容，延迟与定位由组件处理。省略时组件按 `uri` 渲染内置浮层（说明、触发行为、路径）。
- 
- ## 目录说明
- 
-@@ -116,6 +116,7 @@ treeRef.current?.scrollToRow('resources', { block: 'center' });
- | `labels`                  | `FileTreeLabels`                          | 英文   | 可替换文案。                                 |
- | `getRowAttributes`        | `(row) => HTMLAttributes<HTMLDivElement>` | —      | 按行追加属性，`className` 会与组件类名合并。 |
- | `renderDashboard`         | `(row) => ReactNode`                      | —      | 行尾指示器，返回 `null` 不显示。             |
-+| `renderRowIcon`           | `(row) => ReactNode`                      | —      | 文件行的行首图标；省略时用通用文件图标。     |
- | `renderRowTooltip`        | `(row) => ReactNode`                      | —      | 悬停内容，返回 `null` 不显示。               |
- | `onSelect`                | `(row: FileTreeEntryRow) => void`         | —      | 选中成功后触发；失败时不触发。               |
- | `onToggleExpand`          | `(row: FileTreeEntryRow) => void`         | —      | 展开或折叠成功后触发；失败时不触发。         |
-@@ -135,7 +136,7 @@ import '@openviking/react/components/file-tree/style.css';
- 
- ## 样式
- 
--类名带 `ov-` 前缀，块名为 `ov-file-tree`，元素使用 `ov-file-tree__<元素>`。占位组件只输出根节点与固定尺寸；行、工具栏与状态视图的类名和主题变量随真实视图确定。样式通过独立入口引入：
-+类名带 `ov-` 前缀，块名为 `ov-file-tree`，元素使用 `ov-file-tree__<元素>`。主题变量集中在根节点声明，宿主可整组或逐条覆盖。样式通过独立入口引入：
- 
- ```tsx
- import '@openviking/react/components/file-tree/style.css';
-```
-
-**File**: `frontend/packages/react/src/components/file-tree/README.md` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@ English / [中文](README_CN.md)
- 
- A directory tree for resource browsing. The host flattens its tree state into an ordered list of rows and supplies async execution through `operations`; the component renders, handles keyboard interaction and notifies after an operation succeeds.
- 
--> **This is currently a placeholder.** It renders a fixed-size empty shell and consumes no props, so the package can be published while the API is under review. The view will be written against this contract.
-+It renders the five row kinds, indents by depth with a guide per ancestor level, and handles keyboard navigation; selection, expansion, paging and retry run through `operations`.
- 
- ```tsx
- import { FileTree } from '@openviking/react/components/file-tree';
-@@ -72,7 +72,7 @@ The cost is that the host writes a "tree state → row array" transform. What th
- 
- ## Theme
- 
--Styles are scoped and never modify the application's global styles. Theme variables are settled together with the real view; the placeholder only defines the root block.
-+Styles are scoped and never modify the application's global styles. Theme tokens are declared on the root element and default to theme-neutral values, so the tree reads correctly on both light and dark backgrounds.
- 
- ## Docs and development
- 
-```
-
-**File**: `frontend/packages/react/src/components/file-tree/README_CN.md` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
- 
- 面向资源浏览的目录树。宿主把树状态展平成有序行列表传进来，通过 `operations` 提供异步执行能力；组件负责渲染、键盘交互，并在操作成功后通知。
- 
--> **当前是占位组件。** 只渲染一个固定尺寸的空壳，不消费 props，API 评审期间包仍可发布。真实视图后续按本文契约实现。
-+组件渲染五种行类型，按 `depth` 缩进并绘制祖先连线，处理键盘导航；选中、展开、分页与重试通过 `operations` 执行。
- 
- ```tsx
- import { FileTree } from '@openviking/react/components/file-tree';
-@@ -72,7 +72,7 @@ type FileTreeRow =
- 
- ## 主题
- 
--样式局部化，不修改应用的全局样式。主题变量随真实视图一起确定；占位组件只定义根块。
-+样式局部化，不修改应用的全局样式。主题变量在根节点声明，默认值取主题无关的中性色，浅色与暗色背景上都能正常阅读。
- 
- ## 文档与开发
- 
-```
-
-**File**: `frontend/packages/react/src/components/file-tree/file-tree-body.tsx` (added, +84/-0)
-```diff
-@@ -0,0 +1,84 @@
-+import type { ReactNode } from 'react';
-+
-+import { FileTreeRowView } from './file-tree-entry-row.js';
-+import { FileTreeStateRow } from './file-tree-state-row.js';
-+import type {
-+  FileTreeRowContext,
-+  ResolvedLabels,
-+} from './file-tree-row-context.js';
-+import type { FileTreeErrorRow, FileTreeRow } from './types.js';
-+
-+/** 整树级失败：只有一个错误行且没有归属父节点。 */
-+function isWholeTreeError(rows: readonly FileTreeRow[]) {
-+  if (rows.length !== 1) return false;
-+  const [row] = rows;
-+  return row?.kind === 'error' && !row.parentId;
-+}
-+
-+export interface FileTreeBodyProps {
-+  rows: readonly FileTreeRow[];
-+  isReady: boolean;
-+  text: ResolvedLabels;
-+  loadingFallback?: ReactNode;
-+  errorFallback?: ReactNode;
-+  emptyFallback?: ReactNode;
-+  ctx: FileTreeRowContext;
-+}
-+
-+/**
-+ * 树内容区：首次加载、整树失败、空态与正常行列表。
-+ *
-+ * The tree body: first load, whole-tree failure, empty state, and the row list.
-+ */
-+export function FileTreeBody({
-+  rows,
-+  isReady,
-+  text,
-+  loadingFallback,
-+  errorFallback,
-+  emptyFallback,
-+  ctx,
-+}: FileTreeBodyProps) {
-+  if (!isReady) {
-+    return (
-+      <div className="ov-file-tree__state">
-+        {loadingFallback ?? (
-+          <span className="ov-file-tree__muted">{text.loading}</span>
-+        )}
-+      </div>
-+    );
-+  }
-+
-+  if (isWholeTreeError(rows)) {
-+    const message = (rows[0] as FileTreeErrorRow).message ?? text.error;
-+    return (
-+      <div className="ov-file-tree__state">
-+        {errorFallback ?? (
-+          <span className="ov-file-tree__muted">{message}</span>
-+        )}
-+      </div>
-+    );
-+  }
-+
-+  if (rows.length === 0) {
-+    return (
-+      <div className="ov-file-tree__state">
-+        {emptyFallback ?? (
-+          <span className="ov-file-tree__muted">{text.empty}</span>
-+        )}
-+      </div>
-+    );
-+  }
-+
-+  return (
-+    <div role="group" className="ov-file-tree__rows">
-+      {rows.map((row) =>
-+        row.kind === 'entry' ? (
-+          <FileTreeRowView key={row.id} row={row} ctx={ctx} />
-+        ) : (
-+          <FileTreeStateRow key={row.id} row={row} ctx={ctx} />
-+        ),
-+      )}
++  const dashboard = (
++    <div style={{ padding: 16, color: '#8f959e', fontSize: 13 }}>
++      {t.dashboard}
 +    </div>
 +  );
-+}
-```
-
-**File**: `frontend/packages/react/src/components/file-tree/file-tree-entry-row.tsx` (added, +191/-0)
-```diff
-@@ -0,0 +1,191 @@
-+import type { KeyboardEvent, MouseEvent } from 'react';
 +
-+import {
-+  FileTreeChevron,
-+  FileTreeFileIcon,
-+  FileTreeFolderIcon,
-+} from './file-tree-icons.js';
-+import {
-+  resolveFileTreeInfoKey,
-+  showsInlineDescription,
-+} from './file-tree-info.js';
-+import { resolveInfoCopy } from './file-tree-info-labels.js';
-+import { FileTreeTooltipSurface } from './file-tree-tooltip-surface.js';
-+import type { FileTreeRowContext } from './file-tree-row-context.js';
-+import { Guides, rowStyle } from './file-tree-row-shared.js';
-+import type { FileTreeEntryRow } from './types.js';
-+import { FILE_TREE_ROW_ATTRIBUTE } from './types.js';
-+
-+/**
-+ * 一条条目行：展开箭头、图标、名称、行内说明、行尾指示器与悬停浮层。
-+ *
-+ * One entry row: chevron, icon, name, inline description, the row-end indicator
-+ * and the hover tooltip.
-+ */
-+export function FileTreeRowView({
-+  row,
-+  ctx,
-+}: {
-+  row: FileTreeEntryRow;
-+  ctx: FileTreeRowContext;
-+}) {
-+  const {
-+    text,
-+    selectedId,
-+    tooltipRowId,
-+    getRowAttributes,
-+    renderDashboard,
-+    renderRowTooltip,
-+    renderRowIcon,
-+    onSelect,
-+    onToggleExpand,
-+    onOpenRetentionSettings,
-+    onRowKeyDown,
-+    onRowEnter,
-+    onRowLeave,
-+  } = ctx;
-+
-+  const isDirectory = row.type === 'directory';
-+  const canExpand = isDirectory && row.hasChildren !== false;
-+  const isExpanded = Boolean(row.expanded);
-+  const isSelected = selectedId === row.id;
-+  const extra = getRowAttributes?.(row) ?? {};
-+  const {
-+    className: extraClassName,
-+    style: extraStyle,
-+    ...extraAttributes
-+  } = extra;
-+  const dashboard = renderDashboard?.(row) ?? null;
-+  // 宿主给了 description 就用它（含显式空串）；否则按 uri 取内置说明。
-+  const infoKey = resolveFileTreeInfoKey(row.uri);
-+  const description =
-+    row.description ??
-+    (infoKey && showsInlineDescription(infoKey)
-+      ? resolveInfoCopy(infoKey, ctx.infoLabels).description
-+      : undefined);
-+
-+  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-+    // 点展开箭头时不再冒泡触发选中。The chevron handles its own click.
-+    if ((event.target as HTMLElement).closest('[data-role="toggle"]')) return;
-+    if (row.disabled) return;
-+    onSelect?.(row);
++  // 图标由宿主决定：组件不按文件名推断类型，这里用包的图标集按格式取一个。
++  // The host decides the icon: the component never infers a type from the file
++  // name, so the demo picks one per format from the package icon set.
++  const tabIcon = (fileName: string) => {
++    const Icon = getFileTypeIcon(fileName);
++    return <Icon width={14} height={14} />;
 +  };
 +
-+  const handleToggle = (event: MouseEvent<HTMLButtonElement>) => {
-+    event.stopPropagation();
-+    onToggleExpand?.(row);
-+  };
-+
-+  return (
-+    <div
-+      role="treeitem"
-+      tabIndex={0}
-+      aria-level={row.depth + 1}
-+      aria-selected={isSelected}
-+      aria-expanded={canExpand ? isExpanded : undefined}
-+      aria-disabled={row.disabled || undefined}
-+      {...extraAttributes}
-+      {...{ [FILE_TREE_ROW_ATTRIBUTE]: row.id }}
-+      className={['ov-file-tree__row', extraClassName]
-+        .filter(Boolean)
-+        .join(' ')}
-+      data-selected={isSelected || undefined}
-+      data-disabled={row.disabled || undefined}
-+      data-kind={row.kind}
-+      style={{ ...rowStyle(row.depth), ...extraStyle }}
-+      onClick={handleClick}
-+      onKeyDown={(event: KeyboardEvent<HTMLDivElement>) =>
-+        onRowKeyDown(event, row)
-+      }
-+      onMouseEnter={() => onRowEnter(row.id)}
-+      onMouseLeave={onRowLeave}
-+      onFocus={() => onRowEnter(row.id)}
-+      onBlur={onRowLeave}
-+    >
-+      {/* 每一级祖先画一条竖线，上下各溢出 1px 让相邻行接上。 */}
-+      <Guides depth={row.depth} />
-+
-+      {canExpand ? (
++  // 组件不内置复制、下载、视图切换与编辑按钮，这些由宿主用 `actions` 上下文
++  // 自己渲染。示例演示一个最小实现。
++  // The component ships no copy, download, view-switch or edit buttons; the host
++  // renders them from the `actions` context. This is a minimal implementation.
++  const renderActions = (actions: FilePreviewActions) => (
++    <>
++      {actions.canCopyContent ? (
 +        <button
 +          type="button"
-+          data-role="toggle"
-+          className="ov-file-tree__toggle"
-+          aria-label={
-+            isExpanded
-+              ? text.collapse.replace('{name}', row.name)
-+              : text.expand.replace('{name}', row.name)
-+          }
-+          tabIndex={-1}
-+          disabled={!onToggleExpand || row.disabled}
-+          onClick={handleToggle}
++          className="ov-file-preview__button"
++          disabled={actions.busy}
++          onClick={() => void actions.copyContent()}
 +        >
-+          {row.busy ? (
-+            (ctx.renderSpinner?.() ?? (
-+              <span className="ov-file-tree__spinner" />
-+            ))
-+          ) : (
-+            <FileTreeChevron open={isExpanded} />
-+          )}
++          {t.actions.copyContent}
 +        </button>
-+      ) : (
-+        <span aria-hidden="true" className="ov-file-tree__toggle-spacer" />
-+      )}
-+
-+      <span className="ov-file-tree__icon-slot">
-+        {isDirectory ? (
-+          <FileTreeFolderIcon open={isExpanded} />
-+        ) : (
-+          (renderRowIcon?.(row) ?? <FileTreeFileIcon />)
-+        )}
-+      </span>
-+
-+      <span className="ov-file-tree__label-group">
-+        <span className="ov-file-tree__label" title={row.name}>
-+          {row.name}
-+        </span>
-+        {description ? (
-+          <span className="ov-file-tree__description">{description}</span>
-+        ) : null}
-+      </span>
-+
-+      {row.busy && !canExpand ? (
-+        <span className="ov-file-tree__spinner" />
 +      ) : null}
-+
-+      {row.expiresAt ? (
-+        <span className="ov-file-tree__expiry">
-+          {onOpenRetentionSettings ? (
-+            <button
-+              type="button"
-+              className="ov-file-tree__expiry-action"
-+              onClick={(event) => {
-+                event.stopPropagation();
-+             
++      {actions.canSwitchView ? (
++ 
 ```
 
-**File**: `frontend/packages/react/src/components/file-tree/file-tree-icons.tsx` (added, +38/-0)
+**File**: `frontend/docs/docs/_demos/file-tree-basic.tsx` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,38 @@
-+import {
-+  ChevronRightIcon,
-+  DocumentIcon,
-+  FolderIcon,
-+  FolderOpenIcon,
-+} from '../../icons/index.js';
+@@ -327,7 +327,8 @@ export default function FileTreeBasic() {
+     [MEMORIES]: childrenOf(MEMORIES).slice(0, PAGE),
+   }));
+   const [loading, setLoading] = useState<ReadonlySet<string>>(new Set());
+-  const [selected, setSelected] = useState<string>();
++  // 默认选中一行，进页面就能看到选中态，不必先点一下。
++  const [selected, setSelected] = useState<string>(`${MEMORIES}/profile.md`);
+ 
+   /** Fetches one more page of children, showing the loading row meanwhile. */
+   const loadPage = (uri: string) => {
+```
+
+**File**: `frontend/docs/docs/en/components/file-preview.mdx` (modified, +72/-35)
+```diff
+@@ -19,7 +19,9 @@ Pass at least one tab. A file tab carries `source`; a content tab carries a node
+ | `kind: 'file'`    | The component   | A file, its source, a document |
+ | `kind: 'content'` | The host, as-is | Dashboards, graphs, summaries  |
+ 
+-Both share the shell — tab row, path breadcrumb, copy path and the header slots. They differ in how the body arrives, and in that the preview/source switch is a file-tab capability: a content tab renders whatever views it needs inside `content`.
++Both share the shell — tab row, path breadcrumb, copy path and the header action area. They differ in how the body arrives, and in that the preview/source switch is a file-tab capability: a content tab renders whatever views it needs inside `content`.
 +
-+/**
-+ * 文件夹图标。展开态与收起态叠放在一起交叉淡入，和宿主一致。
-+ *
-+ * The folder icon. The open and collapsed states sit stacked and cross-fade,
-+ * matching the host tree.
-+ */
-+export function FileTreeFolderIcon({ open }: { open: boolean }) {
-+  return (
-+    <span className="ov-file-tree__folder">
-+      <FolderIcon className="ov-file-tree__folder-layer" data-open={!open} />
-+      <FolderOpenIcon className="ov-file-tree__folder-layer" data-open={open} />
-+    </span>
-+  );
-+}
-+
-+/** 宿主没有提供 `renderRowIcon` 时的文件图标。Fallback file icon. */
-+export function FileTreeFileIcon() {
-+  return <DocumentIcon className="ov-file-tree__file-icon" />;
-+}
-+
-+/** 展开箭头，展开时旋转 90°。The expand chevron, rotated when open. */
-+export function FileTreeChevron({ open }: { open: boolean }) {
-+  return (
-+    <ChevronRightIcon
-+      className="ov-file-tree__chevron"
-+      data-expanded={open || undefined}
-+      width={12}
-+      height={12}
-+    />
-+  );
-+}
++**The component ships no action buttons of its own.** Copy body, copy path, download, the preview/source switch and editing all carry host product semantics and copy; built in they could be neither trimmed nor restyled. Copy path is the exception — any file with a `source.path` needs it under every host, so it stays in the shell at the end of the breadcrumb. Everything else is rendered by the host in `slots.actions`, which receives a `FilePreviewActions` context: the current view mode, editing state, which capabilities are available, and the methods that change them. The state stays with the component.
+ 
+ The active tab is owned by the component. To switch from outside, use the ref handle:
+ 
+@@ -40,11 +42,11 @@ previewRef.current?.setActiveTab('dashboard');
+ 
+ ## States
+ 
+-Loading, failure and unsupported formats are not props — the component decides them from the content and the file name. All three can be replaced through `slots`:
++Loading, failure and unsupported formats are not props: this component decides loading and failure, while whether a format can be previewed is the base component's call. All three can be replaced through `slots`:
+ 
+ - `slots.loadingFallback`
+ - `slots.errorFallback`
+-- `slots.unsupportedFallback`
++- `slots.unsupportedFallback` — handed to the base, which then owns the whole unsupported state, so the download entry it would otherwise offer no longer appears
+ 
+ The host supplies asynchronous `editing.save` and optional `editing.loadContent` capabilities. `loadContent` returns the full text; `undefined` abandons the edit, and rejection shows a read error. A failed save retains the draft and shows an error. `editing.onSave` only reports a successful save; `editing.onCancel` reports a discarded draft. Saving prevents duplicate submissions and tab changes until completion.
+ 
+@@ -62,37 +64,54 @@ Execution capabilities and notifications are separate. Operation resolution trig
+ 
+ Shared by both kinds:
+ 
+-| Property             | Type                         | Default   | Description                                                                  |
+-| -------------------- | ---------------------------- | --------- | ---------------------------------------------------------------------------- |
+-| `key`                | `string`                     | Required  | Unique tab key.                                                              |
+-| `title`              | `ReactNode`                  | File name | What the tab row shows. Required for content tabs.                           |
+-| `icon`               | `ReactNode`                  | By format | Tab icon.                                                                    |
+-| `labels`             | `Partial<FilePreviewLabels>` | —         | Overrides the outer copy for this tab.                                       |
+-| `disabled`           | `boolean`                    | `false`   | Disables the tab.                                                            |
+-| `onOpenParent`       | `(path: string) => void`     | —         | Called after the parent directory opens successfully; not called on failure. |
+-| `onCopyPath`         | `(path: string) => void`     | —         | Called after path copying succeeds.                                          |
+-| `showViewModeSwitch` | `boolean`                    | `true`    | Preview/source switch; file tabs only.                                       |
+-| `slots`              | `FilePreviewHeaderSlots`     | —         | `actions`, `titleExtra`.                                                     |
++| Property       | Type                         | Default   | Description                                                                  |
++| -------------- | ---------------------------- | --------- | ---------------------------------------------------------------------------- |
++| `key`          | `string`                     | Required  | Unique tab key.                                                              |
++| `title`        | `ReactNode`                  | File name | What the tab row shows. Required for content tabs.                           |
++| `icon`         | `ReactNode`                  | —         | Tab icon, supplied by the host;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7201** (2026-11-07): feat(ui): implement the file tree view against its contract (@LaamGinghong)
-- **PR #7199** (2026-11-07): docs(vika): English references and simpler BYOM diagram (@openviking-superagent)
-- **PR #7198** (2026-11-07): feat(ui): align the file tree with the host implementation (@LaamGinghong)
-- **PR #7197** (2026-11-07): docs(vika): English quickstart and working pinned install command (@openviking-superagent)
-- **PR #7194** (2026-11-07): docs: show BYOM and agent runtime in SuperAgent diagram (@openviking-superagent)
-- **PR #7192** (2026-11-07): docs: shorten SuperAgent homepage introduction (@openviking-superagent)
+- **PR #7242** (2026-11-08): docs(vika): link the Windows x64 preview package from README and install guide (@ZaynJarvis)
+- **PR #7241** (2026-11-08): fix(vika): retry moving extracted Windows preview into place (@ZaynJarvis)
+- **PR #7240** (2026-11-08): fix(vika): load System.IO.Compression in Windows preview scripts (@ZaynJarvis)
+- **PR #7239** (2026-11-08): feat(vika): add Windows preview artifacts to release workflow (@openviking-superagent)
+- **PR #7236** (2026-11-08): feat(vika): use native PowerShell for Windows Durable tools (@openviking-superagent)
+- **PR #7228** (2026-11-08): feat(ui): align the scope switcher with the console design (@LaamGinghong)
 
 ---
 
@@ -2802,125 +2057,3 @@ Theme variables are
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. ui): align the file tree with the host implementation (#7198)
-
-**RULE**:
-When implementing operations in `frontend/docs/docs/_demos/file-tree-basic.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `1bee7385`: ui): align the file tree with the host implementation (#7198). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/docs/docs/_demos/file-tree-basic.tsx`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-import type { ComponentPropsWithoutRef, ReactNode } from 'react';
-import { useLang } from '@rspress/core/runtime';
-import {
-  resolveFileTreeInfoKey,
-  resolveInfoCopy,
-  showsInlineDescription,
-} from '@openviking/react/components/file-tree';
-import {
-  ChevronRightIcon,
-  FolderIcon,
-  FolderOpenIcon,
-  getFileTypeColor,
-  getFileTypeIcon,
-  resolveFileTypeIconKey,
-} from '@openviking/react/icons';
-/** `path: children`; a trailing `/` marks a directory, `null` marks a file. */
-interface Spec {
-  [name: string]: Spec | null;
-}
-interface Node {
-  uri: string;
-  name: string;
-  type: 'directory' | 'file';
-  children?: Node[];
-}
-
-const USER = 'viking://user/alice';
-const MEMORIES = `${USER}/memories`;
-const WIKI = 'viking://resources/project-wiki';
-const ARCHIVE = 'viking://resources/archive';
-const PAGE = 3;
-
-const SPEC: Spec = {
-  [`${USER}/`]: {
-    'memories/': {
-      'profile.md': null,
-      'identity.md': null,
-      'soul.md': null,
-      'preferences/': {},
-      'entities/': {},
-      'events/': {},
-      'cases/': {},
-      'trajectories/': {},
-      'experiences/': {},
-    'peers/': { 'claude-code/': {}, 'cursor/': {}, 'trae/': {} },
-    'privacy/': { 'keys.json': null }
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Anti-pattern to NEVER write (induced failure mode):
-import { FileTree } from '@openviking/react/components/file-tree';
-/** Directories and the rows revealed when they are expanded. */
-const childrenOf: Record<string, FileTreeRow[]> = {
-  resources: [
-    {
-      kind: 'entry',
-      id: 'resources/guide.md',
-      uri: 'viking://resources/guide.md',
-      name: 'guide.md',
-      type: 'file',
-      depth: 1,
-      levelLabel: 'L1',
-    },
-    {
-      kind: 'entry',
-      id: 'resources/spec.pdf',
-      uri: 'viking://resources/spec.pdf',
-      name: 'spec.pdf',
-      type: 'file',
-      depth: 1,
-    },
-    {
-      kind: 'load-more',
-      id: 'load-more:resources',
-      parentId: 'resources',
-      depth: 1,
-  ],
-  memories: [
-    {
-      kind: 'entry',
-      id: 'memories/profile.md',
-      uri: 'viking://memories/profile.md',
-      name: 'profile.md',
-      type: 'file',
-      depth: 1,
-  ],
-  skills: [{ kind: 'empty', id: 'empty:skills', parentId: 'skills', depth: 1 }],
-const topLevel: FileTreeRow[] = [
-  {
-    kind: 'entry',
-    id: 'resources',
-    uri: 'viking://resources',
-    name: 'resources',
-    type: 'directory',
-    depth: 0,
-    hasChildren: true,
-    description: 'Imported documents',
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bee7385` are properly handled with clean fallback behavior.

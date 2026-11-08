@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-68SN",
-    "timestamp": "2026-11-06T21:45:00.167Z",
-    "repository": "actix/actix-web",
-    "learningId": "learn-github-actix-actix-web",
-    "contentHash": "d89e08ae2269a2aee132ee51dcd03f4fe29280a289a8642e8c97bd9a9b0bb7f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-6DT1",
-    "timestamp": "2026-11-06T21:45:06.661Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "5f422a81bde5a51f13052cdd8d0c9cc6314b380dd19d5ff9614375f5eaf92e93",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-FG61",
-    "timestamp": "2026-11-06T21:52:09.625Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "fd7e3f174294c95c528128e79caf02247888fb884df10dd46c11a725ae454883",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-OV3K",
     "timestamp": "2026-11-06T21:59:28.880Z",
     "repository": "software-mansion/react-native-reanimated",
@@ -7490,6 +7445,51 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-openai-gpt-oss-120b",
     "contentHash": "4ca7e58b32372b50861b8858fb380f2e36eb8c29ab316b3cecf39d8519db1e35",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-6IBD",
+    "timestamp": "2026-11-08T23:12:31.801Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "34d9ef05bba70dfed3818b84850c8b09a9ff5e23864f671c06a03c7ed0bf094f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-6QY7",
+    "timestamp": "2026-11-08T23:12:42.991Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "1616cbd63970b75d6ff1851b4fddc9835804dac0050fe3a2062edadf82b09e15",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-6S1R",
+    "timestamp": "2026-11-08T23:12:44.415Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "6c7beec61d75bcf89d5c6d4fcb6eee9ca0de490d03ee2151a48dfb4306fe8070",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
