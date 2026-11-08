@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T20:13:20.117Z",
+  "last_updated": "2026-11-08T20:21:47.933Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30897,7 +30897,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "2221b75f8f773dcf919db222fdb7cc1b74f2a40382abc259ccef06891db2b8e6",
+      "content_hash": "7e037497be83e5f8e6e13a54111ed523b6bbac60327f11b6769816ae83c94253",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "promoted_rules": [
@@ -30960,7 +30960,7 @@
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv494roa",
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v"
       ],
-      "verified_at": "2026-11-05T03:39:48.813Z",
+      "verified_at": "2026-11-08T20:21:30.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46948,8 +46948,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "4ac649be",
-      "content_hash": "5d38e97a72905c0b64df44ff76e661429095a0193d2a75ff7a7c6d06ef09d9eb",
+      "source_version": "a3b77fdf",
+      "content_hash": "aa19150b9d9de966ebfc56efa4fd53a21a9545ac4295fe6ad57cbc48a0b73d96",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47046,6 +47046,11 @@
         {
           "number": null,
           "title": "Require grammar docs to track proposals",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Use Nucleoid examples in ARC prompts",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47339,7 +47344,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:58:54.784Z",
+      "verified_at": "2026-11-08T20:21:47.906Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53590,11 +53595,16 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "3fe45f53",
-      "content_hash": "f7129c4f03e72c06d5527458eb6e277fac48a29622fa8d1adc39b7d0cd071824",
+      "source_version": "c9c4ede1",
+      "content_hash": "7851a9d5283c14288c568cd6e8dbb3b7b46ef8d89a857d917cc7a95b40c43206",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2838,
           "title": "Paywalls) Intro Offer Eligibility checks were not resumable and sometimes slow (",
@@ -53631,7 +53641,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T13:40:19.379Z",
+      "verified_at": "2026-11-08T20:21:37.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

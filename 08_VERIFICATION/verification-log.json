@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-0G6U",
-    "timestamp": "2026-11-06T14:40:35.574Z",
-    "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-    "contentHash": "dad55ccf239eb9c3be791c7ea8f0409a0ca0ba2784bd883d5f14c40d15b73d8c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-0KZG",
-    "timestamp": "2026-11-06T14:40:41.788Z",
-    "repository": "kumahq/kuma",
-    "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "02bcdb6f0765c95eb95bd5deb6ecd8425f2cfa6f61d386cf59aa369c7508fd73",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-0MZM",
-    "timestamp": "2026-11-06T14:40:44.386Z",
-    "repository": "DefGuard/defguard",
-    "learningId": "learn-github-defguard-defguard",
-    "contentHash": "f8717d261030d46afea040e2c8e04b7d2eec61c0a838ba28560b254539e1dd4c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-0OE1",
     "timestamp": "2026-11-06T14:40:46.201Z",
     "repository": "dragonflydb/dragonfly",
@@ -7492,6 +7447,51 @@
     "contentHash": "94753537632d13cb1069e2395f26220c4bf64628361ffc433fa23822841a6f23",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-2KSU",
+    "timestamp": "2026-11-08T20:21:30.702Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+    "contentHash": "7e037497be83e5f8e6e13a54111ed523b6bbac60327f11b6769816ae83c94253",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-2QBM",
+    "timestamp": "2026-11-08T20:21:37.858Z",
+    "repository": "RevenueCat/purchases-ios",
+    "learningId": "learn-github-revenuecat-purchases-ios",
+    "contentHash": "7851a9d5283c14288c568cd6e8dbb3b7b46ef8d89a857d917cc7a95b40c43206",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-2Y69",
+    "timestamp": "2026-11-08T20:21:48.033Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "aa19150b9d9de966ebfc56efa4fd53a21a9545ac4295fe6ad57cbc48a0b73d96",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `4ac649be`  
+> **Source Version**: `a3b77fdf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T16:58:53.011Z  
+> **Timestamp**: 2026-11-08T20:21:46.154Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,14 +17,14 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T16:58:53.003Z  
+> **Harvest Timestamp**: 2026-11-08T20:21:46.147Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `NucleoidAI/Nucleoid`
-- **Description**: Synthesized Logic Language for World Models 🌱🐋🌍
+- **Description**: World Model 🌱🐋🌍
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
 - **Stars / Engagement**: 771 stars
@@ -1201,7 +1201,7 @@ export async function instances({
 }) {
   milestone.segmenting_training_objects();
 
-  const response = await llm.generate({
+  const { instances } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
     messages: [
@@ -1225,13 +1225,6 @@ export async function instances({
       },
     ],
   });
-
-  const instances = response.instances.map(
-    ({ input_instance_matrix, output_instance_matrix }) => ({
-      input_instance_matrix: Matrix.normalize(input_instance_matrix),
-      output_instance_matrix: Matrix.normalize(output_instance_matrix),
-    })
-  );
 
   milestone.training_objects_segmented({ instances });
 
@@ -1646,105 +1639,528 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `351416af` (2026-11-08)
-**Commit Message**: Require grammar docs to track proposals
+### Incident Patch 1: `a3b77fdf` (2026-11-08)
+**Commit Message**: Use Nucleoid examples in ARC prompts
 
-Update proposal guidance to keep `docs/grammar.md` aligned with syntax changes and report the change or its absence in the handoff.
+Replace the grammar file with Nucleoid examples in LLM system messages and add puzzle d037b0a7 to the batch runner.
 
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +5/-1)
+**File**: `arc/nucleoid.md` (added, +116/-0)
 ```diff
-@@ -53,6 +53,9 @@ You draft and prototype exactly one added or updated NUC revision. Follow
-   unpaired new behavior still needs executed assertions/expected returns and
-   coverage. Never invent before-counts.
- - Keep affected reference, synthesized sources, and rendered exports in sync.
-+- Update `docs/grammar.md` in the same candidate whenever the change alters
-+  what the lexer or parser accepts, under the skill's
-+  [grammar rule](../skills/nuc-proposal/SKILL.md#update-the-grammar).
- - Run the relevant development checks, but do not run `evaluate_proposal`,
-   write an acceptance report, or decide Accepted, Automatic-Accepted or
-   Rejected. Under the caller's
-@@ -92,7 +95,8 @@ Return the proposal path and Git blob revision, baseline revision and artifact
- path, execution mode, confirmed proposal category and selection rationale when
- applicable,
- runtime applicability and supporting rationale, expected token ran/skipped policy,
--candidate worktree, changed files, development and syntax-compatibility checks,
-+candidate worktree, changed files, the `docs/grammar.md` change or why there is
-+none, development and syntax-compatibility checks,
- any supplied frozen rubric path/blob pin, any hint and how it was used or set
- aside, and any blockers. Do not populate the independent evaluator's
- assessment.
+@@ -0,0 +1,116 @@
++# Every human is mortal. Socrates is a human.
++class Human:
++    pass
++
++$Human.mortal = true
++
++socrates = Human()
++socrates.mortal
++
++# Area follows changes to a rectangle's dimensions.
++class Rectangle(this.width, this.height)
++
++$Rectangle.area = $Rectangle.width * $Rectangle.height
++
++rectangle = Rectangle(3, 4)
++rectangle.width = 5
++rectangle.area
++
++# Find the names of students with passing scores.
++class Student(this.name, this.score)
++
++alice = Student("Alice", 80)
++bob = Student("Bob", 50)
++
++passing = Student.filter(student => student.score >= 60)
++passing.map(student => student.name)
++
++# Derive department payroll from related employees.
++class Department(this.name)
++class Employee(this.department, this.salary)
++
++$Department.payroll = Employee.filter(e => e.department == $Department).sum(e => e.salary)
++
++engineering = Department("Engineering")
++alice = Employee(engineering, 100)
++bob = Employee(engineering, 120)
++
++alice.salary = 150
++engineering.payroll
++
++# Subtype rules retain precedence when a parent rule changes.
++class Employee(this.salary)
++class Manager extends Employee
++
++$Employee.bonus = $Employee.salary * 0.1
++$Manager.bonus = $Manager.salary * 0.2
++
++worker = Employee(100)
++manager = Manager(100)
++
++# Every task must have at least one suitably skilled worker.
++class Task(this.skill)
++class Worker(this.skill)
++
++review = Task("review")
++build = Task("build")
++reviewer = Worker("review")
++
++canCover = all t in Task: any w in Worker: w.skill == t.skill
++
++builder = Worker("build")
++canCover
++
++# Explain how a particular input contributes to a result.
++price = 10
++quantity = 3
++shipping = 5
++subtotal = price * quantity
++total = subtotal + shipping
++
++trace = total |> why |> path(price)
++
++price = 12
++trace.map(step => [step.node, step.holds])
++
++# Explore a hypothetical change without changing the real model.
++price = 10
++quantity = 3
++total = price * quantity
++
++forecast = suppose quantity = 4: total
++changed = suppose quantity = 4:
++(model |> diff).map(step => step.node)
++
++# := captures once; object references still point to live objects.
++class Item(this.price)
++item = Item(10)
++
++livePrice = item.price
++capturedPrice := item.price
++capturedItem := item
++
++item.price = 20
++
++# Read stored history through read-only version selectors.
++balance = 100
++balance = 120
++balance = 90
++
++# Declare a relationship before its input properties exist.
++class Order
++$Order.total = $Order.price * $Order.quantity
++
++order = Order()
++before := order.total
++
++order.price = 10
++order.quantity = 3
++
++# An empty population satisfies all, but not any.
++class Check(this.passed)
++
++allPassed = all check in Check: check.passed
++hasFailure = any check in Check: not check.passed
++empty := [allPassed, hasFailure]
++
 ```
 
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +15/-4)
+**File**: `arc/run-puzzles.ps1` (modified, +1/-0)
 ```diff
-@@ -265,6 +265,17 @@ documents, never generated JSONL or exported Rust tests. When their sources
- change, regenerate using `UPDATE_DATASET=1 cargo test --test dataset` and
- `UPDATE_SPEC_TESTS=1 cargo build`.
+@@ -50,6 +50,7 @@ $puzzleIds = @(
+     'e9afcf9a'
+     '6fa7a44f'
+     'd631b094'
++    'd037b0a7'
+ )
  
-+## Update the grammar
-+
-+Keep `docs/grammar.md`, the grammar taken from the lexer and parser, in step
-+with every candidate. When a proposal changes what the lexer or parser accepts,
-+such as a token, keyword, alias, contextual word, rule, lookahead, lowering,
-+limit or layout rule, update the affected rules, notes and tables in the same
-+candidate. Keep the file's PEG notation and syntax-tree node comments, and
-+check each changed rule against the candidate parser. A proposal that leaves
-+the accepted syntax unchanged leaves the file as it is. Either way, the handoff
-+states the grammar change or why there is none.
-+
- ## Check and hand off
+ $bun = (Get-Command bun -CommandType Application -ErrorAction Stop).Source
+```
+
+**File**: `arc/src/lib/llm.ts` (modified, +1/-4)
+```diff
+@@ -26,10 +26,7 @@ export async function generate({
+   if (grammar) {
+     messages.unshift({
+       role: "system",
+-      content: readFileSync(
+-        join(__dirname, "..", "..", "..", "docs", "nucleoid.g4"),
+-        "utf8"
+-      ),
++      content: readFileSync(join(__dirname, "..", "..", "nucleoid.md"), "utf8"),
+     });
+   }
  
- Run the affected development tests, `cargo fmt --check`, and
-@@ -284,10 +295,10 @@ Return the proposal path and Git blob revision (`git hash-object` on the
- proposal), accepted baseline revision and path, execution mode, confirmed
- proposal category and selection rationale when applicable, runtime applicability
- and supporting rationale, any hint and how it was used or set aside, candidate
--worktree, changed files, development and syntax-compatibility checks, and
--explicit blockers. State the expected token
--policy, without claiming an unevaluated gate passed. Freeze the candidate after
--handoff.
-+worktree, changed files, the `docs/grammar.md` change or why there is none,
-+development and syntax-compatibility checks, and explicit blockers. State the
-+expected token policy, without claiming an unevaluated gate passed. Freeze the
-+candidate after handoff.
- Include the caller-frozen rubric path and Git blob pin when supplied, without
- claiming a usefulness score; only the independent evaluator may create the
- assessment after its checks. Keep scoring artifacts outside the repository.
 ```
 
 ---
 
-### Incident Patch 2: `b8475e4c` (2026-11-08)
-**Commit Message**: Revert "Remove empty visualizer few-shot overrides"
+### Incident Patch 2: `2344adaa` (2026-11-08)
+**Commit Message**: Replace PEG grammar with ANTLR4 reference
 
-This reverts commit e059f4bca5192c8b076202f5fb7496e0af6b1b85.
+Replace docs/grammar.md with docs/nucleoid.g4 and update the proposal workflow, ARC LLM context, and syntax summary to use the ANTLR4 grammar.
 
-**File**: `arc/src/visualizer.ts` (modified, +3/-0)
+**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +2/-2)
 ```diff
-@@ -14,6 +14,7 @@ export async function instances({
-   const response = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
-+    few_shot: () => "",
-     messages: [
-       {
-         role: "assistant",
-@@ -100,6 +101,7 @@ export async function value({
-   const { implementation } = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
-+    few_shot: () => "",
-     messages: [
-       {
-         role: "assistant",
-@@ -171,6 +173,7 @@ export async function output_instance_matrix({
-   const response = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
-+    few_shot: () => "",
-     messages: [
-       {
-         role: "assistant",
+@@ -53,7 +53,7 @@ You draft and prototype exactly one added or updated NUC revision. Follow
+   unpaired new behavior still needs executed assertions/expected returns and
+   coverage. Never invent before-counts.
+ - Keep affected reference, synthesized sources, and rendered exports in sync.
+-- Update `docs/grammar.md` in the same candidate whenever the change alters
++- Update `docs/nucleoid.g4` in the same candidate whenever the change alters
+   what the lexer or parser accepts, under the skill's
+   [grammar rule](../skills/nuc-proposal/SKILL.md#update-the-grammar).
+ - Run the relevant development checks, but do not run `evaluate_proposal`,
+@@ -95,7 +95,7 @@ Return the proposal path and Git blob revision, baseline revision and artifact
+ path, execution mode, confirmed proposal category and selection rationale when
+ applicable,
+ runtime applicability and supporting rationale, expected token ran/skipped policy,
+-candidate worktree, changed files, the `docs/grammar.md` change or why there is
++candidate worktree, changed files, the `docs/nucleoid.g4` change or why there is
+ none, development and syntax-compatibility checks,
+ any supplied frozen rubric path/blob pin, any hint and how it was used or set
+ aside, and any blockers. Do not populate the independent evaluator's
+```
+
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +10/-9)
+```diff
+@@ -267,14 +267,15 @@ change, regenerate using `UPDATE_DATASET=1 cargo test --test dataset` and
+ 
+ ## Update the grammar
+ 
+-Keep `docs/grammar.md`, the grammar taken from the lexer and parser, in step
+-with every candidate. When a proposal changes what the lexer or parser accepts,
+-such as a token, keyword, alias, contextual word, rule, lookahead, lowering,
+-limit or layout rule, update the affected rules, notes and tables in the same
+-candidate. Keep the file's PEG notation and syntax-tree node comments, and
+-check each changed rule against the candidate parser. A proposal that leaves
+-the accepted syntax unchanged leaves the file as it is. Either way, the handoff
+-states the grammar change or why there is none.
++Keep `docs/nucleoid.g4`, the ANTLR4 syntax reference taken from the lexer and
++parser, in step with every candidate. When a proposal changes what the lexer
++or parser accepts, such as a token, keyword, alias, contextual word, rule,
++lookahead, lowering, limit or layout rule, update the affected rules and
++implementation-contract comments in the same candidate. Keep valid ANTLR4
++notation and syntax-tree node comments, and check each changed rule against
++the candidate parser. A proposal that leaves the accepted syntax unchanged
++leaves the file as it is. Either way, the handoff states the grammar change or
++why there is none.
+ 
+ ## Check and hand off
+ 
+@@ -295,7 +296,7 @@ Return the proposal path and Git blob revision (`git hash-object` on the
+ proposal), accepted baseline revision and path, execution mode, confirmed
+ proposal category and selection rationale when applicable, runtime applicability
+ and supporting rationale, any hint and how it was used or set aside, candidate
+-worktree, changed files, the `docs/grammar.md` change or why there is none,
++worktree, changed files, the `docs/nucleoid.g4` change or why there is none,
+ development and syntax-compatibility checks, and explicit blockers. State the
+ expected token policy, without claiming an unevaluated gate passed. Freeze the
+ candidate after handoff.
+```
+
+**File**: `arc/src/lib/llm.ts` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ export async function generate({
+     messages.unshift({
+       role: "system",
+       content: readFileSync(
+-        join(__dirname, "..", "..", "..", "docs", "grammar.md"),
++        join(__dirname, "..", "..", "..", "docs", "nucleoid.g4"),
+         "utf8"
+       ),
+     });
+```
+
+**File**: `docs/README.md` (modified, +3/-1)
+```diff
+@@ -3784,7 +3784,9 @@ Full detail: [NUC 9](nuc-0009.md).
+ 
+ ## 14. Syntax Summary
+ 
+-The complete grammar, as the parser accepts it, is in [grammar.md](grammar.md).
++The ANTLR4 syntax reference is in [nucleoid.g4](nucleoid.g4). Its comments
++record the runtime-specific token-source and contextual parsing requirements;
++the Rust parser remains the implementation of those requirements.
+ 
+ ```
+ name = expression                      variable assignment
+```
+
+**File**: `docs/grammar.md` (removed, +0/-673)
+```diff
+@@ -1,673 +0,0 @@
+-# Nucleoid Grammar
+-
+-This is the complete grammar of Nucleoid source text as the Rust
+-implementation accepts it, taken from the lexer in `src/lang/ast/lexer/` and
+-the recursive-descent parser in `src/lang/ast/parser/`. Rules name the
+-syntax-tree node they build. `nucleoid.spec.md` is normative for behaviour, and
+-the [Syntax Summary](README.md#14-syntax-summary) lists the same forms
+-informally, with the NUC that introduced each one.
+-
+-## Contents
+-
+-1. [Notation](#1-notation)
+-2. [Lexical Structure](#2-lexical-structure)
+-3. [Programs and Suites](#3-programs-and-suites)
+-4. [Statements](#4-statements)
+-5. [Functions and Classes](#5-functions-and-classes)
+-6. [Expressions](#6-expressions)
+-7. [Parser Behaviour](#7-parser-behaviour)
+-
+-## 1. Notation
+-
+-The grammar uses PEG notation in the style of Python's
+-[grammar specification](https://docs.python.org/3/reference/grammar.html).
+-
+-```
+-rule ::= e        definition
+-e1 e2             sequence
+-e1 | e2           ordered choice: the first alternative that matches is taken
+-e?  e*  e+        optional, zero or more, one or more
+-( e )             grouping
+-&e                lookahead: e must come next; nothing is consumed
+-!e                negative lookahead: e must not come next; nothing is consumed
+-'if'  '=>'        a keyword or operator token
+-"while"           a contextual word: a NAME token with exactly this spelling
+-NAME  NEWLINE     a token class produced by the lexer
+-# text            a comment: the syntax-tree node built, or a note
+-```
+-
+-- The parser chooses an alternative by looking ahead at its leading tokens and
+-  at any lookahead the grammar shows, then commits to it: a later mismatch is a
+-  syntax error, not a reason to try the next alternative.
+-- Rules marked *tentative* are the exceptions. The parser tries them in full,
+-  and when they do not match it consumes nothing and continues with the next
+-  alternative.
+-- Lexical rules (section 2) use regular-expression character classes.
+-
+-## 2. Lexical Structure
+-
+-### 2.1 Characters, Whitespace and Comments
+-
+-- Tokens are ASCII. Other characters may appear only inside strings, templates,
+-  regular expressions and comments; anywhere else they are the syntax error
+-  `Unexpected character`.
+-- Space, tab, form feed and carriage return separate tokens. A line feed ends a
+-  line.
+-- `#` starts a comment that runs to the end of the line.
+-- The C-style comments option (`--c-style-comments`, or
+-  `SyntaxOptions { c_style_comments: true }`) adds `//` line comments and
+-  `/* ... */` block comments. A block comment ends at the first `*/`, does not
+-  nest, and is an error when unterminated. Without the option `/` keeps its
+-  operator and regular-expression readings, so `//` is an empty regular
+-  expression.
+-
+-### 2.2 Tokens
+-
+-```
+-NAME          ::= [A-Za-z_][A-Za-z0-9_]*           # that is not a reserved keyword
+-CLASS_REF     ::= '$' [A-Za-z_][A-Za-z0-9_]*       # $Person
+-NUMBER        ::= [0-9]+ ('.' [0-9]+)? EXPONENT?
+-                | '.' [0-9]+ EXPONENT?
+-EXPONENT      ::= [eE] [+-]? [0-9]+
+-VERSION_INDEX ::= [0-9]+                           # only directly after '@'
+-STRING        ::= '"' ([^"\\] | ESCAPE)* '"'
+-                | "'" ([^'\\] | ESCAPE)* "'"
+-TEMPLATE      ::= '`' ([^`\\] | ESCAPE)* '`'
+-ESCAPE        ::= '\' [^\n]
+-REGEX         ::= '/' REGEX_CHAR* '/' [A-Za-z]*     # only in operand position
+-REGEX_CHAR    ::= [^/\\[\n] | '\' . | '[' ([^\]\\\n] | '\' .)* ']'
+-```
+-
+-- Each token is the longest match at its position, so `===`, `**=` and `??`
+-  are single tokens.
+-- In a STRING, `\n`, `\t`, `\r` and `\0` stand for line feed, tab, carriage
+-  return and NUL, and any other escaped character stands for itself. Strings
+-  may contain raw line breaks.
+-- In a TEMPLATE, `\n` and `\t` are escapes and any other escaped character
+-  stands for itself, so `\${` writes a literal `${`. `${ ... }` holds an
+-  interpolated expression (section 6.6). Templates may contain raw line breaks.
+-- Numbers have no sign, radix prefix or digit separator: `-1` is unary minus
+-  applied to `1`.
+-- A number directly after `@` must be plain digits with no letter, digit or
+-  underscore after them. It becomes VERSION_INDEX; anything else is the error
+-  `Expected a non-negative integer, 'first', 'last', or 'previous' after '@'`.
+-- `/` starts a REGEX only in operand position, that is, when the previous token
+-  is not a NAME, CLASS_REF, NUMBER, VERSION_INDEX, STRING, TEMPLATE, REGEX,
+-  `)`, `]`, `}` or `this`, and only when the literal closes on the same line.
+-  Flags after the closing slash are accepted and ignored. Elsewhere `/` and
+-  `/=` are operators.
+-
+-### 2.3 Keywords and Contextual Words
+-
+-Reserved keywords cannot be used as names:
+-
+-```
+-and       catch     class     def       delete    else      false
+-for       function  if        in        new       not       null
+-of        or        pass      return    super     this      throw
+-true      try       
+```
+
+**File**: `docs/nucleoid.g4` (added, +855/-0)
+```diff
+@@ -0,0 +1,855 @@
++// Copyright 2020 Nucleoid. Licensed under Apache-2.0; see ../LICENSE.
++
++grammar nucleoid;
++
++/*
++ * Action-free ANTLR4 syntax reference for the Rust lexer and parser.
++ * nucleoid.spec.md remains normative for behavior.
++ *
++ * A generated parser is not a replacement for the Rust implementation:
++ * its token source must supply INDENT, DEDENT, VERSION_INDEX and REGEX.
++ * ANTLR prediction does not enforce the Rust parser's committed lookahead.
++ * Contextual decisions, tentative parses, lowerings and limits described
++ * below remain part of the implementation contract, not ANTLR actions.
++ *
++ * Token-source contract:
++ * - Tokens outside literals and comments are ASCII.
++ * - Scan operand-position regular expressions and optional C-style comments
++ *   before ordinary tokenization. A regular expression must close on its
++ *   line; otherwise '/' and '/=' keep their operator readings. Its flags
++ *   are accepted and ignored. Operand position excludes a preceding name,
++ *   class reference, literal, ')', ']', '}' or 'this' token.
++ * - C-style comments require SyntaxOptions.c_style_comments. Line comments
++ *   start with '//'; block comments end at the first star-slash, do not nest,
++ *   and fail when unterminated. Without that option, '//' is an empty regular
++ *   expression in operand position, not a comment.
++ * - Directly after '@', plain adjacent digits become VERSION_INDEX. Reject
++ *   a following letter, digit or underscore and reject other number forms.
++ * - Replace physical NEWLINEs with logical layout tokens. Parentheses and
++ *   brackets suppress layout; braces do not. Ignore blank/comment-only
++ *   lines. Before each subsequent logical line emit NEWLINE, then INDENT
++ *   for an increased width or DEDENT for each closed level. A tab has width
++ *   4; other whitespace has width 1 and comments have width 0. A width
++ *   between open levels closes to the shallower level without error.
++ * - Finish with the pending NEWLINE, all remaining DEDENTs, then EOF.
++ *
++ * WHITESPACE and COMMENT stay on the hidden channel so a token-source
++ * adapter can inspect layout. REGEX_LITERAL records the scanner's pattern;
++ * it is a fragment, deliberately not an unconditional '/' lexer rule.
++ */
++
++tokens { INDENT, DEDENT, VERSION_INDEX, REGEX }
++
++program
++    : separator* (statement separator*)* EOF
++    ;
++
++// parse_expression skips leading separators and ignores trailing tokens.
++expressionInput
++    : separator* expression remainingTokens EOF
++    ;
++
++separator
++    : NEWLINE
++    | SEMI
++    | INDENT
++    | DEDENT
++    ;
++
++lineSeparator
++    : NEWLINE
++    | SEMI
++    ;
++
++suite
++    : COLON suiteBody
++    ;
++
++suiteBody
++    : indentedBlock
++    | inlineSuite
++    ;
++
++// A trailing ';' in an inline suite is valid only before NEWLINE or EOF,
++// never immediately before 'else' or 'catch'.
++inlineSuite
++    : statement (SEMI statement)* SEMI?
++    ;
++
++indentedStart
++    : INDENT
++    | NEWLINE lineSeparator* INDENT
++    ;
++
++indentedBlock
++    : indentedStart lineSeparator* (statement lineSeparator*)* blockEnd
++    ;
++
++blockEnd
++    : DEDENT
++    | EOF
++    ;
++
++body
++    : suite
++    | indentedBlock
++    ;
++
++block
++    : LBRACE separator* (statement separator*)* RBRACE
++    ;
++
++// Statements need no separator where the preceding production ends.
++// At statement start, '{' is a block or pattern, never an object literal.
++// Destructuring and whileStmt are tentative; other recognized statement
++// headers commit even if a later token fails to match.
++statement
++    : destructuring
++    | whileStmt
++    | enumStmt
++    | ifStmt
++    | forStmt
++    | classStmt
++    | functionDecl
++    | tryStmt
++    | PASS                              // Stmt::Pass
++    | returnStmt
++    | THROW expression                  // Stmt::Throw
++    | DELETE expression                 // Stmt::Delete
++    | block                             // Stmt::Block
++    | typeDeclaration
++    | assertStmt
++    | supposeStmt
++    | valueAssignment
++    | expression                        // Stmt::Assign or Stmt::Expression
++    ;
++
++returnStmt
++    : RETURN expression?                // Stmt::Return
++    ;
++
++// The following token must be NEWLINE, ';', DEDENT or EOF.
++typeDeclaration
++    : name COLON name                   // Stmt::Declaration
++    ;
++
++// A third comma is an error.
++assertStmt
++    : ASSERT COLON expression COMMA expression
++    ;
++
++// A premise is tentative: it ends exactly at ':' and cannot be a colon
++// statement or end in the word 'lambda'. Otherwise 'suppose' stays a name.
++supposeStmt
++    : (conditional ASSIGN)? SUPPOSE premise? suite
++    ;
++
++premise
++    : clauseExpression
++    ;
++
++valueAssignment
++    : path VALUE_ASSIGN expression      // Stmt::ValueAssign
++    ;
++
++// Only at a statement boundary; require NEWLINE, ';', DEDENT, '}', EOF,
++// 'else' or 'catch' after the value. At most 128 targets are accepted.
++destructuring
++    : (objectPattern | unpackingPattern) ASSIG
 ```
 
 #### Recent Merged Pull Requests:
@@ -1773,32 +2189,78 @@ This reverts commit e059f4bca5192c8b076202f5fb7496e0af6b1b85.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require grammar docs to track proposals
+## X. Use Nucleoid examples in ARC prompts
 
 **RULE**:
-When implementing operations in `.claude/agents/nuc-proposal.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/nucleoid.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `351416af`: Require grammar docs to track proposals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3b77fdf`: Use Nucleoid examples in ARC prompts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/nuc-proposal.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/nucleoid.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Update `docs/grammar.md` in the same candidate whenever the change alters
-  what the lexer or parser accepts, under the skill's
-  [grammar rule](../skills/nuc-proposal/SKILL.md#update-the-grammar).
-candidate worktree, changed files, the `docs/grammar.md` change or why there is
-none, development and syntax-compatibility checks,
+# Every human is mortal. Socrates is a human.
+class Human:
+    pass
+
+$Human.mortal = true
+
+socrates = Human()
+socrates.mortal
+
+# Area follows changes to a rectangle's dimensions.
+class Rectangle(this.width, this.height)
+
+$Rectangle.area = $Rectangle.width * $Rectangle.height
+
+rectangle = Rectangle(3, 4)
+rectangle.width = 5
+rectangle.area
+
+# Find the names of students with passing scores.
+class Student(this.name, this.score)
+
+alice = Student("Alice", 80)
+bob = Student("Bob", 50)
+
+passing = Student.filter(student => student.score >= 60)
+passing.map(student => student.name)
+
+# Derive department payroll from related employees.
+class Department(this.name)
+class Employee(this.department, this.salary)
+
+$Department.payroll = Employee.filter(e => e.department == $Department).sum(e => e.salary)
+
+engineering = Department("Engineering")
+alice = Employee(engineering, 100)
+bob = Employee(engineering, 120)
+
+alice.salary = 150
+engineering.payroll
+
+# Subtype rules retain precedence when a parent rule changes.
+class Employee(this.salary)
+class Manager extends Employee
+
+$Employee.bonus = $Employee.salary * 0.1
+$Manager.bonus = $Manager.salary * 0.2
+
+worker = Employee(100)
+manager = Manager(100)
+
+# Ev
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-candidate worktree, changed files, development and syntax-compatibility checks,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `351416af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3b77fdf` are properly handled with clean fallback behavior.

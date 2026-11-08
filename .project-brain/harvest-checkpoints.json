@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T20:13:20.225Z",
+  "last_updated": "2026-11-08T20:21:48.047Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -950,14 +950,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-0-6b",
-      "content_hash": "2221b75f8f773dcf919db222fdb7cc1b74f2a40382abc259ccef06891db2b8e6",
-      "verified_at": "2026-11-05T03:39:48.955Z",
+      "content_hash": "7e037497be83e5f8e6e13a54111ed523b6bbac60327f11b6769816ae83c94253",
+      "verified_at": "2026-11-08T20:21:30.716Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:39:48.955Z"
+      "last_updated": "2026-11-08T20:21:30.716Z"
     },
     "google-t5/t5-small": {
       "repository": "google-t5/t5-small",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "5d38e97a72905c0b64df44ff76e661429095a0193d2a75ff7a7c6d06ef09d9eb",
-      "verified_at": "2026-11-08T16:58:54.933Z",
+      "content_hash": "aa19150b9d9de966ebfc56efa4fd53a21a9545ac4295fe6ad57cbc48a0b73d96",
+      "verified_at": "2026-11-08T20:21:48.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:58:54.933Z"
+      "last_updated": "2026-11-08T20:21:48.046Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -13866,14 +13866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-revenuecat-purchases-ios",
-      "content_hash": "f7129c4f03e72c06d5527458eb6e277fac48a29622fa8d1adc39b7d0cd071824",
-      "verified_at": "2026-11-05T13:40:19.461Z",
+      "content_hash": "7851a9d5283c14288c568cd6e8dbb3b7b46ef8d89a857d917cc7a95b40c43206",
+      "verified_at": "2026-11-08T20:21:37.876Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:40:19.461Z"
+      "last_updated": "2026-11-08T20:21:37.876Z"
     },
     "reflection/Beam-1.0-501B-A23B": {
       "repository": "reflection/Beam-1.0-501B-A23B",

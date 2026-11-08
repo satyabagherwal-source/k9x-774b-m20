@@ -8375,3 +8375,6 @@
 | `CYCLE-20261108-IKOV` | `2026-11-08T20:05:57.439Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`1485b169...`) |
 | `CYCLE-20261108-RT25` | `2026-11-08T20:13:08.189Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`664a590b...`) |
 | `CYCLE-20261108-S2C3` | `2026-11-08T20:13:20.211Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`94753537...`) |
+| `CYCLE-20261108-2KSU` | `2026-11-08T20:21:30.702Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`7e037497...`) |
+| `CYCLE-20261108-2QBM` | `2026-11-08T20:21:37.858Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7851a9d5...`) |
+| `CYCLE-20261108-2Y69` | `2026-11-08T20:21:48.033Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aa19150b...`) |
