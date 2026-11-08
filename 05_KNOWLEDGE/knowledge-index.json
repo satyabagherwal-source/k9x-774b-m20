@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T19:31:12.650Z",
+  "last_updated": "2026-11-08T19:38:51.339Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31824,10 +31824,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "825560c27bb8d169b2317e94992354f034d7435fe013438f64787dcf49bde9d4",
+      "content_hash": "d528e8934abbd8e264ef215b47e1478216b1da235762047b87ab4f797455b3b9",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "The Tokenizer-Model Dimensional Consistency Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 297,
           "title": "The Pooling Strategy Contract",
@@ -31921,7 +31926,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-11-05T03:02:48.199Z",
+      "verified_at": "2026-11-08T19:38:51.300Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88920,14 +88925,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 858,
       "title": "The Attention-Masked Mean Pooling Invariant",
-      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
-      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T16:19:27.385Z"
+      "verified_at": "2026-11-08T19:38:51.300Z"
     },
     "rule-859": {
       "learning_id": "rule-859",

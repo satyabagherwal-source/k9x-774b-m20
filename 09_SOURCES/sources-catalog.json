@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "825560c27bb8d169b2317e94992354f034d7435fe013438f64787dcf49bde9d4",
-    "lastHarvestedAt": "2026-11-05T03:02:48.312Z",
+    "contentHash": "d528e8934abbd8e264ef215b47e1478216b1da235762047b87ab4f797455b3b9",
+    "lastHarvestedAt": "2026-11-08T19:38:51.456Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {

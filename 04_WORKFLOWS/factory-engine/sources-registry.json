@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T15:21:44.772Z",
-    "lastVerified": "2026-11-08T15:21:44.772Z",
+    "lastChecked": "2026-11-08T19:38:47.411Z",
+    "lastVerified": "2026-11-08T19:38:47.411Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T19:31:15.358Z",
-    "lastVerified": "2026-11-08T19:31:15.358Z",
+    "lastChecked": "2026-11-08T19:38:54.017Z",
+    "lastVerified": "2026-11-08T19:38:54.017Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -464,8 +464,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T18:46:01.023Z",
-    "lastVerified": "2026-11-08T18:46:01.023Z",
+    "lastChecked": "2026-11-08T19:38:52.448Z",
+    "lastVerified": "2026-11-08T19:38:52.448Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -3517,9 +3517,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-07T23:34:12.566Z",
+    "lastChecked": "2026-11-08T19:38:44.923Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-07T23:34:12.566Z"
+    "lastVerified": "2026-11-08T19:38:44.923Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -3815,13 +3815,13 @@
     "officialUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T03:02:47.273Z",
-    "lastVerified": "2026-11-05T03:02:47.273Z",
+    "lastChecked": "2026-11-08T19:38:39.917Z",
+    "lastVerified": "2026-11-08T19:38:39.917Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "825560c27bb8d169b2317e94992354f034d7435fe013438f64787dcf49bde9d4",
-    "promotedRulesCount": 0,
+    "contentHash": "d528e8934abbd8e264ef215b47e1478216b1da235762047b87ab4f797455b3b9",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -6652,12 +6652,12 @@
     "lastVerified": "2026-11-08T06:12:21.472Z"
   },
   "greptimeteam-greptimedb": {
-    "name": "GreptimeTeam/greptimedb",
+    "name": "greptimedb",
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T22:23:46.663Z",
-    "lastVerified": "2026-11-07T22:23:46.663Z",
+    "lastChecked": "2026-11-08T19:38:49.928Z",
+    "lastVerified": "2026-11-08T19:38:49.928Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
@@ -6666,7 +6666,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2fefad6a"
   },
   "ataraxy-labs-sem": {
     "name": "sem",
@@ -7965,9 +7966,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-11-07T18:24:36.586Z",
+    "lastChecked": "2026-11-08T19:38:37.346Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-11-07T18:24:36.586Z"
+    "lastVerified": "2026-11-08T19:38:37.346Z"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "name": "unsloth/embeddinggemma-2-GGUF",
@@ -11064,9 +11065,9 @@
   "johnbean393-sidekick": {
     "name": "Sidekick",
     "officialUrl": "https://github.com/johnbean393/Sidekick",
-    "lastChecked": "2026-11-05T13:13:33.809Z",
+    "lastChecked": "2026-11-08T19:38:42.344Z",
     "revisionIdentifier": "83b3e6e0",
-    "lastVerified": "2026-11-05T13:13:33.809Z"
+    "lastVerified": "2026-11-08T19:38:42.344Z"
   },
   "webrecorder-browsertrix-crawler": {
     "name": "webrecorder/browsertrix-crawler",

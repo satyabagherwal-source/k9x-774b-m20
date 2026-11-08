@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T19:31:12.757Z",
-  "total_cycles_completed": 8330,
-  "total_learnings_persisted": 8330,
-  "total_rules_promoted": 8123,
+  "last_updated": "2026-11-08T19:38:51.462Z",
+  "total_cycles_completed": 8331,
+  "total_learnings_persisted": 8331,
+  "total_rules_promoted": 8125,
   "history": [
-    {
-      "timestamp": "2026-11-08T01:25:32.572Z",
-      "repository": "argoproj/argo-events",
-      "learningId": "learn-github-argoproj-argo-events",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T01:36:02.514Z",
       "repository": "meshtastic/Meshtastic-Android",
@@ -1403,6 +1396,13 @@
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T19:38:51.462Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
