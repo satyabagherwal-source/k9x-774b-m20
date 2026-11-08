@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-CV4H",
-    "timestamp": "2026-11-05T12:14:36.689Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "f8c5a65ef5c131f1c16a520da855fdb520d0b1068ea85fa7178ee74fd56bba7a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-CXBG",
-    "timestamp": "2026-11-05T12:14:39.532Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "299db654ef8488ce08de1752876454f4ac9052488aa7c7269210e527f7940ccf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-CXL9",
-    "timestamp": "2026-11-05T12:14:39.885Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "f9a3a8353e3d339c6c99cef800beea30d9997c96d7fcd9ce9bf17359a4a38f50",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-NHTB",
     "timestamp": "2026-11-05T12:22:52.655Z",
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -7490,6 +7445,51 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "d777ead09026db0a086a9884b71998286bfff92dcd23fe90b351e8cbaa56d1c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-OZUU",
+    "timestamp": "2026-11-08T01:03:12.774Z",
+    "repository": "pointfreeco/swift-composable-architecture",
+    "learningId": "learn-github-pointfreeco-swift-composable-architecture",
+    "contentHash": "67387360e56a3ffc02b75c2f7a768776ec53cb9856373bbfe22c8a0668370b90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-OZWT",
+    "timestamp": "2026-11-08T01:03:12.845Z",
+    "repository": "ajeetdsouza/zoxide",
+    "learningId": "learn-github-ajeetdsouza-zoxide",
+    "contentHash": "e177815030e916992524bbee977f0bed468161718af76bf2d4c923fbb8702f06",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-P6QH",
+    "timestamp": "2026-11-08T01:03:21.689Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "8289bea8a253091aa6bf4d8f2cd0db563dcbeffe4c8fbaeb284ec0c8c1300484",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

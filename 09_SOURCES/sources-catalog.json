@@ -2663,10 +2663,10 @@
     "repository": "ajeetdsouza/zoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/ajeetdsouza/zoxide",
-    "sourceVersion": "f0b31631",
+    "sourceVersion": "c21f5473",
     "license": "MIT",
-    "contentHash": "c800bd2238a6790c8707c98ab6de741d05e4bfdbcfb0ddcf844fd8c38f0d033b",
-    "lastHarvestedAt": "2026-10-25T11:31:38.830Z",
+    "contentHash": "e177815030e916992524bbee977f0bed468161718af76bf2d4c923fbb8702f06",
+    "lastHarvestedAt": "2026-11-08T01:03:12.849Z",
     "learningId": "learn-github-ajeetdsouza-zoxide"
   },
   "react-native-elements-react-native-elements": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "f0e48548",
+    "sourceVersion": "46ab3dad",
     "license": "Apache-2.0",
-    "contentHash": "93f348b14df3720c82cc293ba879d740e94239e382a27f61fddcdd4cff732aac",
-    "lastHarvestedAt": "2026-11-06T14:57:27.574Z",
+    "contentHash": "8289bea8a253091aa6bf4d8f2cd0db563dcbeffe4c8fbaeb284ec0c8c1300484",
+    "lastHarvestedAt": "2026-11-08T01:03:21.692Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -7733,10 +7733,10 @@
     "repository": "pointfreeco/swift-composable-architecture",
     "platform": "github",
     "sourceUrl": "https://github.com/pointfreeco/swift-composable-architecture",
-    "sourceVersion": "9ac5a9dc",
+    "sourceVersion": "bf66bd83",
     "license": "MIT",
-    "contentHash": "d41f09d65ebfc55fa5c4638492508d2a0343848d74fa66378f89fbbf598bcbce",
-    "lastHarvestedAt": "2026-11-05T00:29:44.225Z",
+    "contentHash": "67387360e56a3ffc02b75c2f7a768776ec53cb9856373bbfe22c8a0668370b90",
+    "lastHarvestedAt": "2026-11-08T01:03:12.799Z",
     "learningId": "learn-github-pointfreeco-swift-composable-architecture"
   },
   "pola-rs-polars": {

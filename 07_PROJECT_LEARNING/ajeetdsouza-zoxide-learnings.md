@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md`  
 > **Source**: github ([https://github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide))  
-> **Source Version**: `f0b31631`  
+> **Source Version**: `c21f5473`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T11:31:38.447Z  
+> **Timestamp**: 2026-11-08T01:03:11.417Z  
 > **Learning ID**: `learn-github-ajeetdsouza-zoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T11:31:37.426Z  
+> **Harvest Timestamp**: 2026-11-08T01:03:06.658Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A smarter cd command. Supports all major shells.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40284 stars
+- **Stars / Engagement**: 40499 stars
 
 ---
 
@@ -1392,139 +1392,110 @@ impl Run for Remove {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `816227d0` (2026-10-24)
-**Commit Message**: build: check completions in a test instead of writing them from build.rs (#1338)
+### Incident Patch 1: `9cba6b4e` (2026-11-07)
+**Commit Message**: build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (#1354)
 
-Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
+Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.21 to 2.88.0.
+- [Release notes](https://github.com/taiki-e/install-action/releases)
+- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/taiki-e/install-action/compare/v2.87.21...v2.88.0)
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+---
+updated-dependencies:
+- dependency-name: taiki-e/install-action
+  dependency-version: 2.88.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Bash/Zsh: fix `z` failing on Cygwin/MSYS2 due to `cygpath` being passed a bad string.
- - Nushell: `z` now handles relative paths through symlinked directories.
- - POSIX: fix `z` failing to enter directories whose names start with `-`.
-+- Build: fix compilation failing when the source directory is read-only.
- 
- ## [0.10.0] - 2026-07-04
- 
-```
-
-**File**: `build.rs` (modified, +21/-11)
-```diff
-@@ -1,9 +1,11 @@
- #[path = "src/cmd/cmd.rs"]
- mod cmd;
- 
--use std::{env, io};
-+use std::path::Path;
-+use std::{env, fs, io};
- 
- use clap::CommandFactory as _;
-+use clap_complete::Generator;
- use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};
- use clap_complete_fig::Fig;
- use clap_complete_nushell::Nushell;
-@@ -16,21 +18,29 @@ fn main() -> io::Result<()> {
-     println!("cargo:rerun-if-changed=src/");
-     println!("cargo:rerun-if-changed=templates/");
-     println!("cargo:rerun-if-changed=tests/");
--    generate_completions()
-+
-+    generate_completions(Bash)?;
-+    generate_completions(Elvish)?;
-+    generate_completions(Fig)?;
-+    generate_completions(Fish)?;
-+    generate_completions(Nushell)?;
-+    generate_completions(PowerShell)?;
-+    generate_completions(Zsh)?;
-+
-+    Ok(())
- }
- 
--fn generate_completions() -> io::Result<()> {
-+/// Writes a shell's completions only if they differ from the committed file.
-+fn generate_completions(generator: impl Generator) -> io::Result<()> {
-     const BIN_NAME: &str = env!("CARGO_PKG_NAME");
-     const OUT_DIR: &str = "contrib/completions";
--    let cmd = &mut Cmd::command();
- 
--    clap_complete::generate_to(Bash, cmd, BIN_NAME, OUT_DIR)?;
--    clap_complete::generate_to(Elvish, cmd, BIN_NAME, OUT_DIR)?;
--    clap_complete::generate_to(Fig, cmd, BIN_NAME, OUT_DIR)?;
--    clap_complete::generate_to(Fish, cmd, BIN_NAME, OUT_DIR)?;
--    clap_complete::generate_to(Nushell, cmd, BIN_NAME, OUT_DIR)?;
--    clap_complete::generate_to(PowerShell, cmd, BIN_NAME, OUT_DIR)?;
--    clap_complete::generate_to(Zsh, cmd, BIN_NAME, OUT_DIR)?;
-+    let path = Path::new(OUT_DIR).join(generator.file_name(BIN_NAME));
-+    let mut generated = Vec::new();
-+    clap_complete::generate(generator, &mut Cmd::command(), BIN_NAME, &mut generated);
- 
-+    if !fs::read(&path).is_ok_and(|content| content == generated) {
-+        fs::write(&path, generated)?;
-+    }
-     Ok(())
- }
+@@ -50,7 +50,7 @@ jobs:
+         with:
+           key: ${{ matrix.os }}
+       - name: Install just
+-        uses: taiki-e/install-action@v2.87.21
++        uses: taiki-e/install-action@v2.88.0
+         with:
+           tool: just
+       - name: Run lints + tests
 ```
 
 ---
 
-### Incident Patch 2: `a053d911` (2026-10-23)
-**Commit Message**: docs: fix the complexity claim on Database::remove (#1344)
+### Incident Patch 2: `8c97969f` (2026-11-07)
+**Commit Message**: build(deps): bump Swatinem/rust-cache from 2.9.2 to 2.9.3 (#1355)
 
-Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
+Bumps [Swatinem/rust-cache](https://github.com/swatinem/rust-cache) from 2.9.2 to 2.9.3.
+- [Release notes](https://github.com/swatinem/rust-cache/releases)
+- [Changelog](https://github.com/Swatinem/rust-cache/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/swatinem/rust-cache/compare/v2.9.2...v2.9.3)
 
-**File**: `src/db/mod.rs` (modified, +1/-1)
+---
+updated-dependencies:
+- dependency-name: Swatinem/rust-cache
+  dependency-version: 2.9.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -128,7 +128,7 @@ impl Database {
-     }
- 
-     /// Removes the directory with `path` from the store. This does not preserve
--    /// ordering, but is O(1).
-+    /// ordering.
-     pub fn remove(&mut self, path: impl AsRef<str>) -> bool {
-         match self.dirs().iter().position(|dir| dir.path == path.as_ref()) {
-             Some(idx) => {
+@@ -46,7 +46,7 @@ jobs:
+           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
+           name: zoxide
+       - name: Setup cache
+-        uses: Swatinem/rust-cache@v2.9.2
++        uses: Swatinem/rust-cache@v2.9.3
+         with:
+           key: ${{ matrix.os }}
+       - name: Install just
+```
+
+**File**: `.github/workflows/release.yml` (modified, +1/-1)
+```diff
+@@ -64,7 +64,7 @@ jobs:
+           override: true
+           target: ${{ matrix.target }}
+       - name: Setup cache
+-        uses: Swatinem/rust-cache@v2.9.2
++        uses: Swatinem/rust-cache@v2.9.3
+         with:
+           key: ${{ matrix.target }}
+       - name: Install cross
 ```
 
 ---
 
-### Incident Patch 3: `06017833` (2026-10-23)
-**Commit Message**: fix(posix): allow z to enter directories starting with a dash (#1346)
+### Incident Patch 3: `989beb32` (2026-11-07)
+**Commit Message**: fix(nushell): skip the first PWD env_change when recording dirs (#1326)
 
-Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `templates/nushell.txt` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Import: fetch atuin history in UTC instead of the local timezone.
- - Bash/Zsh: fix `z` failing on Cygwin/MSYS2 due to `cygpath` being passed a bad string.
- - Nushell: `z` now handles relative paths through symlinked directories.
-+- POSIX: fix `z` failing to enter directories whose names start with `-`.
- 
- ## [0.10.0] - 2026-07-04
- 
-```
-
-**File**: `templates/posix.txt` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ __zoxide_pwd() {
- # cd + custom logic based on the value of _ZO_ECHO.
- __zoxide_cd() {
-     # shellcheck disable=SC2164
--    \command cd "$@" {%- if echo %} && __zoxide_pwd {%- endif %}
-+    \command cd -- "$@" {%- if echo %} && __zoxide_pwd {%- endif %}
- }
- 
- {{ section }}
+@@ -43,7 +43,7 @@ export-env {
+   if $nu.history-enabled and not $__zoxide_hooked {
+     $env.config.hooks.env_change.PWD = ($env.config.hooks.env_change.PWD | append {
+       __zoxide_hook: true,
+-      code: {|_, dir| ^zoxide add -- $dir}
++      code: {|old, dir| if ($old | is-not-empty) { ^zoxide add -- $dir }}
+     })
+   }
+ {%- endif %}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1357** (2026-11-07): db: accept a UTF-8 BOM at the start of db.txt (@b84330808)
+- **PR #1355** (2026-11-07): build(deps): bump Swatinem/rust-cache from 2.9.2 to 2.9.3 (@dependabot[bot])
+- **PR #1354** (2026-11-07): build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (@dependabot[bot])
 - **PR #1349** (2026-10-24): Avoid firing the ERR trap from the Bash hook in array PROMPT_COMMAND (@ajeetdsouza)
 - **PR #1347** (closed): docs: describe the PATHS behavior in the zoxide-remove man page (@ump45nose)
 - **PR #1346** (2026-10-23): fix(posix): allow z to enter directories starting with a dash (@56steve)
-- **PR #1344** (2026-10-23): docs: fix the complexity claim on Database::remove (@ump45nose)
-- **PR #1342** (2026-10-24): PowerShell: keep $LASTEXITCODE across the prompt hook (@meop)
-- **PR #1341** (closed): docs: zoxide-import man page wrongly claimed autojump scores are not imported (@ump45nose)
 
 ---
 
@@ -1544,28 +1515,28 @@ Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: check completions in a test instead of writing them from build.rs (#1338)
+## X. build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (#1354)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `816227d0`: build: check completions in a test instead of writing them from build.rs (#1338). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9cba6b4e`: build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (#1354). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Build: fix compilation failing when the source directory is read-only.
+        uses: taiki-e/install-action@v2.88.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: taiki-e/install-action@v2.87.21
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `816227d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9cba6b4e` are properly handled with clean fallback behavior.

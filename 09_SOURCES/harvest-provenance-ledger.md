@@ -8166,3 +8166,6 @@ Every entry in this ledger must capture:
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `8f9f47de` | Multi-dimensional audit evidence | 2026-11-08T00:56:04.256Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `1b0f754b` | Multi-dimensional audit evidence | 2026-11-08T00:56:11.515Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `d4eea3f2` | Multi-dimensional audit evidence | 2026-11-08T00:56:12.918Z |
+| `learn-github-pointfreeco-swift-composable-architecture` | `https://github.com/pointfreeco/swift-composable-architecture` | `bf66bd83` | Multi-dimensional audit evidence | 2026-11-08T01:03:12.799Z |
+| `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `c21f5473` | Multi-dimensional audit evidence | 2026-11-08T01:03:12.849Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `46ab3dad` | Multi-dimensional audit evidence | 2026-11-08T01:03:21.692Z |

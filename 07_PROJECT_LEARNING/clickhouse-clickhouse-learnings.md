@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `f0e48548`  
+> **Source Version**: `46ab3dad`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:57:26.160Z  
+> **Timestamp**: 2026-11-08T01:03:20.068Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:56:35.205Z  
+> **Harvest Timestamp**: 2026-11-08T01:03:20.062Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50780 stars
+- **Stars / Engagement**: 50803 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #129586** (2026-11-07): **toDecimalString(Decimal, 0) leaves a trailing decimal point when the scale is above 0**
+  *Symptoms*: ### Describe what's wrong  `toDecimalString(x, 0)` on a `Decimal` with a scale above 0 returns the whole part followed by a bare `.`, for example `1.` instead of `1`. The same call on an integer, a `Float`, or a `Decimal` with scale 0 returns no point. The documentation says the result has exactly the specified number of fractional digits, so with 0 there should be no point.  ### Does it reproduce on the most recent release?  Yes. Reproduces on master, version 26.11.1.1436.  ### How to reproduce  ```sql SELECT     toDecimalString(toDecimal32(1.2, 1), 0),     toDecimalString(toDecimal32(1.5, 1), 0),     toDecimalString(toDecimal32(-1.2, 1), 0),     toDecimalString(toDecimal64(-0.4, 1), 0),     toDecimalString(toDecimal32(5, 0), 0),     toDecimalString(1.5, 0); ```  Output on 26.11.1.1436:  ``` 1.	2.	-1.	-0.	5	2 ```  It happens for every `Decimal` width (`Decimal32`, `Decimal64`, `Decimal128`, `Decimal256`).  ### Expected behavior  ``` 1	2	-1	-0	5	2 ```  The `-0` for `-0.4` is a separate question. `toDecimalString(-0.4, 0)` on a `Float` also returns `-0`, so it is left as is here.  ### Additional context  In `src/IO/WriteHelpers.h`, `writeText(Decimal<T>, ...)` rounds the value to `fractional_length` digits and sets `rounded_scale = fractional_length`, which is 0 here. The check that decides whether to write the fractional part still tests the original `scale` instead of `rounded_scale`, so `writeDecimalFractional` is called with zero digits and writes only the point.   <!-- ch
+
 - **Issue #129521** (2026-11-06): **A `DataLakeCatalog` (Iceberg REST) catalog that returns an empty namespace entry aborts the ClickHouse server with `LOGICAL_ERROR`**
   *Symptoms*: :detective: When a `DataLakeCatalog` database with `catalog_type = 'rest'` lists namespaces, `RestCatalog::parseNamespaces` throws `LOGICAL_ERROR` if any entry in the catalog's `namespaces` array is an empty array:  ```cpp // src/Databases/DataLake/RestCatalog.cpp:1519-1521 auto current_namespace_array = namespaces_object->get(static_cast<int>(i)).extract<Poco::JSON::Array::Ptr>(); if (current_namespace_array->size() == 0)     throw DB::Exception(DB::ErrorCodes::LOGICAL_ERROR, "Expected namespace array to be non-empty"); ```  `LOGICAL_ERROR` aborts debug and sanitizer builds (and is a critical error on release). The catalog HTTP endpoint is an external, often untrusted input, so a malformed or malicious REST catalog can crash the server with a one-line response. `SHOW TABLES`, and any operation that lists namespaces, triggers it.  **How to reproduce**  Point a `DataLakeCatalog` at any REST catalog whose `GET /v1/namespaces` returns an entry that is an empty array, e.g.:  ```json {"namespaces": [["good_ns"], []]} ```  ```sql CREATE DATABASE c ENGINE = DataLakeCatalog('http://<rest-catalog>/v1') SETTINGS catalog_type = 'rest', warehouse = 's3://wh', storage_endpoint = 'http://<minio>/wh';  SHOW TABLES FROM c; -- <Fatal> : Logical error: 'Expected namespace array to be non-empty'.  -> server aborts (debug/sanitizer) ```  Reproduced deterministically (2/2) on master `26.11.1.1406` against a mock REST catalog returning `{"namespaces": [[""], [], ["a", ""]]}`.  **Root cause / fix**
-
-- **Issue #129022** (2026-11-03): **Merges of Wide parts issue a prefetch for every column stream, ignoring `filesystem_prefetches_limit`**
-  *Symptoms*: During a merge, `MergeTreeReaderWide::readRows` calls `prefetchForAllColumns`, which calls `prefetch` on every `.bin` stream of every column in every source part. The only check is `remote_filesystem_read_prefetch` (default 1), which merges get from the global context.  `SELECT` queries skip these prefetches when the number of columns exceeds `filesystem_prefetches_limit` (default 200). Merges don't have this limit: `MergeTreeReaderSettings::createForMergeMutation` does not copy `filesystem_prefetches_limit`, so it stays 0 (unlimited).  This happens in horizontal merges too, where `MergeTask` passes `prefetch=false`, because the per-column `prefetch` in `readRows` doesn't depend on that flag.  ### Proposal  Apply `filesystem_prefetches_limit` (or a separate MergeTree setting) to merges and mutations in `createForMergeMutation`, or disable the per-column `prefetch` in `readRows` for merges. The next-column prefetch in vertical merges (`vertical_merge_remote_filesystem_prefetch`) is a separate mechanism and should stay as is.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,272 +1338,407 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `216beefe` (2026-11-06)
-**Commit Message**: Merge pull request #129017 from duongynhi000005-oss/fix-125860-query-condition-cache-time-conditions-signed-overflow
+### Incident Patch 1: `fcdc923b` (2026-11-07)
+**Commit Message**: Merge pull request #129946 from groeneai/fix-case-interval-keyword-reading-exponential
 
-Fix signed integer overflow in `QueryConditionCache` time condition floor division
+Fix exponential parsing of nested CASE and INTERVAL used as identifiers or function names
 
-**File**: `src/Interpreters/Cache/QueryConditionCacheTimeConditions.cpp` (modified, +1/-1)
+**File**: `src/Parsers/ExpressionListParsers.cpp` (modified, +21/-5)
 ```diff
-@@ -124,7 +124,7 @@ std::optional<Int64> constantValueInSeconds(const IDataType & type, const Field
-                 return std::nullopt;
-             Int64 multiplier = DecimalUtils::scaleMultiplier<DateTime64>(decimal.getScale());
-             /// Floor division.
--            return ticks >= 0 ? ticks / multiplier : -((-ticks + multiplier - 1) / multiplier);
-+            return ticks / multiplier - (ticks % multiplier < 0 ? 1 : 0);
-         }
-         default:
-             return std::nullopt;
-```
-
----
-
-### Incident Patch 2: `6b959f5a` (2026-11-06)
-**Commit Message**: Merge pull request #128237 from yackushevas/fix-storage-kafka2-lock-znonode-race
-
-Fix ZNONODE race when reading StorageKafka2 topic partition locks
-
-**File**: `src/Storages/Kafka/KeeperHandlingConsumer.cpp` (modified, +19/-1)
-```diff
-@@ -289,9 +289,27 @@ KeeperHandlingConsumer::getLockedTopicPartitions()
-     auto lock_nodes = keeper->getChildren(keeper_path / "topic_partition_locks");
-     std::unordered_set<String> replicas_with_lock;
+@@ -1008,6 +1008,9 @@ struct ParserExpressionImpl
+     ParserQualifiedColumnsMatcher qualified_columns_matcher_parser;
+     ParserSubquery subquery_parser;
  
-+    Strings lock_paths;
-+    lock_paths.reserve(lock_nodes.size());
-     for (const auto & lock_name : lock_nodes)
-+        lock_paths.push_back(keeper_path / "topic_partition_locks" / lock_name);
++    /// Positions of CASE and INTERVAL tokens whose keyword reading failed; only the identifier reading is tried there.
++    std::unordered_set<const char *> failed_keyword_readings;
 +
-+    /// Locks are released and re-acquired as replicas rebalance. A lock listed by
-+    /// getChildren() may already be gone by the time we read it; such a lock is held
-+    /// by no one, so skip it instead of failing the whole polling round. Batched tryGet
-+    /// also replaces N sequential synchronous gets with a single round-trip.
-+    auto lock_responses = keeper->tryGet(lock_paths);
-+
-+    for (size_t i = 0; i < lock_nodes.size(); ++i)
-     {
--        replicas_with_lock.insert(keeper->get(keeper_path / "topic_partition_locks" / lock_name));
-+        const auto & lock_response = lock_responses[i];
-+        if (lock_response.error == Coordination::Error::ZNONODE)
-+            continue;
-+        if (lock_response.error != Coordination::Error::ZOK)
-+            throw Coordination::Exception::fromPath(lock_response.error, lock_paths[i]);
-+        replicas_with_lock.insert(lock_response.data);
-+
-+        const auto & lock_name = lock_nodes[i];
-         auto base = lock_name.substr(0, lock_name.size() - 5); // drop ".lock"
-         auto sep = base.rfind('_');
-         if (sep == String::npos)
-```
-
----
-
-### Incident Patch 3: `3cd0dd7a` (2026-11-06)
-**Commit Message**: Merge pull request #128292 from groeneai/groeneai/grpc-pretty-squash-race
-
-Fix a data race on the gRPC output buffer with the `Pretty` squash thread
-
-**File**: `src/Processors/Formats/IOutputFormat.h` (modified, +4/-0)
-```diff
-@@ -43,6 +43,10 @@ class IOutputFormat : public IProcessor
-     void flush();
-     void setAutoFlush() { auto_flush = true; }
+     bool parse(std::unique_ptr<Layer> start, IParser::Pos & pos, ASTPtr & node, Expected & expected);
  
-+    /// Locks the writing methods. A format can also write from a background thread under this lock (`Pretty` formats
-+    /// write the squashed blocks there), so the owner of the output buffer holds it to access the buffer between the calls.
-+    std::unique_lock<std::mutex> lockWriting() { return std::unique_lock(writing_mutex); }
-+
-     /// Value for rows_before_limit_at_least field.
-     virtual void setRowsBeforeLimit(size_t /*rows_before_limit*/) {}
+     using Layers = std::vector<std::unique_ptr<Layer>>;
+@@ -3640,11 +3643,13 @@ bool ParserExpressionImpl::parse(std::unique_ptr<Layer> start, IParser::Pos & po
+         if (layers.size() == 1 && layers.back()->getResult(node))
+             return true;
  
-```
-
-**File**: `src/Server/GRPCServer.cpp` (modified, +43/-34)
-```diff
-@@ -877,6 +877,7 @@ namespace
-         void addTotalsToResult(const Block & totals);
-         void addExtremesToResult(const Block & extremes);
-         void addProfileInfoToResult(const ProfileInfo & info);
-+        void addOutputToResult(bool final);
-         void sendResult();
-         void throwIfFailedToSendResult();
-         void sendException(const Exception & exception);
-@@ -1492,8 +1493,6 @@ namespace
-             compressing_write_buffer = write_buffer.get();
-         }
- 
--        auto has_output = [&] { return (nested_write_buffer->position() != output.data()) || (compressing_write_buffer && compressing_write_buffer->offset()); };
+-        layers.pop_back();
 -
-         output_format_processor = query_context->getOutputFormat(output_format, *write_buffer, header);
-         Stopwatch after_send_progress;
+         /// We try to check whether there was a checkpoint
+-        while (!layers.empty() && !layers.back()->saved_checkpoint)
++        bool popped_keyword_layer = false;
++        do
++        {
++            popped_keyword_layer = dynamic_cast<IntervalLayer *>(layers.back().get()) || dynamic_cast<CaseLayer *>(layers.back().get());
+             layers.pop_back();
++        } while (!layers.empty() && !layers.back()->saved_checkpoint);
  
-@@ -1538,9 +1537,7 @@ namespace
-                 }
+         if (layers.empty())
+             return false;
+@@ -3655,6 +3660,10 @@ bool ParserExpressionImpl::parse(std::unique_ptr<Layer> start, IParser::Pos & po
+         auto saved_checkpoint = layers.back()->saved_checkpoint.value();
+         layers.back()->saved_checkpoint.reset();
  
-                 call_responder->takeLogsFromQueue();
--
--                if (has_output() || result.has_progress() || call_responder->hasUnsentLogs())
--                    sendResult();
-+                sendResult();
- 
-                 throwIfFailedToSendResult();
-                 if (!check_for_cancel())
-@@ -1563,7 +1560,7 @@ namespace
-                 addProgressToResult();
-                 call_responder->takeLogsFromQueue();
- 
--                if (has_output() || result.has_progress() || call_responder->hasUnsentLogs())
-+                if (result.has_progress() || call_responder->hasUnsentLogs())
-                     sendResult();
- 
-                 throwIfFailedToSendResult();
-@@ -1599,6 +1596,8 @@ namespace
- 
-     void Call::onException(const Exception & exception)
-     {
-+        /// Stops the format's writing thread before the output buffer is finalized.
-+        output_format_processor.reset();
-         io.onException();
- 
-         LOG_ERROR(log, getExceptionMessageAndPattern(exception, send_exception_with_stacktrace));
-@@ -1855,6 +1854,43 @@ namespace
-         stats.set_rows_before_aggregation(info.getRowsBeforeAggregation());
++        /// A keyword layer reads nothing below itself, so if it failed unfinished it fails wherever this position is reached.
++        if (popped_keyword_layer)
++            failed_keyword_readings.insert(saved_checkpoint.first->begin);
++
+         pos = saved_checkpoint.first;
+         layers.back()->current_checkpoint = saved_checkpoint.second;
      }
+@@ -3967,13 +3976,20 @@ Action ParserExpressionImpl::tryParseOperand(Layers & layers, IParser::Pos & pos
+     auto current_checkpoint = layers.back()->current_checkpoint;
+     layers.back()->current_checkpoint = Checkpoint::None;
  
-+    void Call::addOutputToResult(bool final)
+-    if (current_checkpoint != Checkpoint::Interval && parseOperator(pos, toStringView(Keyword::INTERVAL), expected))
++    /// Skipping a failed keyword reading leaves no checkpoint, as trying it again and restoring would.
++    const bool keyword_reading_failed = failed_keyword_readings.contains(old_pos->begin);
++    if (keyword_reading_failed)
++        layers.back()->saved_checkpoint.reset();
++
++    if (current_checkpoint != Checkpoint::Interval && !keyword_reading_failed
++        && parseOperator(pos, toStringView(Keyword::INTERVAL), expected))
+     {
+         layers.back()->saved_checkpoint = {old_pos, Checkpoint::Interval};
+         layers.push_back(std::make_unique<IntervalLayer>());
+         return Action::OPERAND;
+     }
+-    if (current_checkpoint != Checkpoint::Case && parseOperator(pos, toStringView(Keyword::CASE), expected))
++    if (current_checkpoint != Checkpoint::Case && !keyword_reading_failed
++        && parseOperator(pos, toStringView(Keyword::CASE), expected))
+     {
+         layers.back()->saved_checkpoint = {old_pos, Checkpoint::Case};
+         layers.push_back(std::make_unique<CaseLayer>());
+```
+
+**File**: `tests/queries/0_stateless/05565_case_interval_keyword_reading_exponential.reference` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++31
++31
++1
++1
++SELECT case(multiIf(1, 2, NULL)), caseWithExpression((case(1)), 1, 2, NULL), `interval`(toIntervalDay(1)), toIntervalDay((`interval`(1))), toIntervalDay(1) + `interval`
+```
+
+**File**: `tests/queries/0_stateless/05565_case_interval_keyword_reading_exponential.sql` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++-- CASE and INTERVAL used as identifiers or function names inside deep nesting.
++
++SELECT (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + 1)))))))))))))))))))))))))))))) FROM (SELECT 1 AS `interval`);
++SELECT (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + 1)))))))))))))))))))))))))))))) FROM (SELECT 1 AS `case`);
++
++SELECT length(formatQuery('SELECT ' || repeat('case(', 30) || '1' || repeat(')', 30))) > 0;
++SELECT length(formatQuery('SELECT ' || repeat('interval(', 30) || '1' || repeat(')', 30))) > 0;
++
++SELECT formatQuery('SELECT ' || repeat('CASE(', 30)); -- { serverError SYNTAX_ERROR }
++SELECT defaultValueOfTypeName('SimpleAggregateFunction(any(' || repeat('CASE(', 30)); -- { serverError SYNTAX_ERROR }
++
++SELECT formatQuerySingleLine('SELECT case(CASE WHEN 1 THEN 2 END), CASE (case(1)) WHEN 1 THEN 2 END, interval(INTERVAL 1 DAY), INTERVAL (interval(1)) DAY, INTERVAL 1 DAY + interval');
+```
+
+---
+
+### Incident Patch 2: `0a8bedc9` (2026-11-07)
+**Commit Message**: Merge pull request #129947 from groeneai/fix-drop-database-dependency-graph-uaf
+
+Fix heap-use-after-free in TablesDependencyGraph::addDependencies during DROP DATABASE
+
+**File**: `src/Databases/TablesDependencyGraph.cpp` (modified, +19/-3)
+```diff
+@@ -117,9 +117,25 @@ void TablesDependencyGraph::addDependencies(const StorageID & table_id, const st
+ {
+     auto * table_node = addOrUpdateNode(table_id);
+ 
+-    std::unordered_set<Node *> new_dependency_nodes;
++    /// Adding a dependency removes a node from the graph if it gives the name of that node to another node.
++    std::vector<NodeSharedPtr> node_holders;
++    node_holders.reserve(dependencies.size() + 1);
++    node_holders.push_back(*nodes.find(table_node));
+     for (const auto & dependency : dependencies)
+-        new_dependency_nodes.emplace(addOrUpdateNode(dependency));
 +    {
-+        /// The output format can write to the buffer from another thread, and a failed write cancels the buffer,
-+        /// so the buffer is checked and copied under the format's writing lock.
-+        std::unique_lock<std::mutex> writing_lock;
-+        if (output_format_processor)
-+            writing_lock = output_format_processor->lockWriting();
-+
-+        /// A canceled buffer holds incomplete output which can be neither finalized nor sent.
-+        if (!write_buffer || write_buffer->isCanceled())
-+            return;
-+
-+        size_t output_size = 0;
-+        if (final)
-+        {
-+            if (compressing_write_buffer)
-+                LOG_DEBUG(log, "Compressing final {} bytes", compressing_write_buffer->offset());
-+            write_buffer->finalize();
-+            output_size = output.size();
-+        }
-+        else
-+        {
-+            if (compressing_write_buffer && compressing_write_buffer->offset())
-+            {
-+                LOG_DEBUG(log, "Compressing {} bytes", compressing_write_buffer->offset());
-+                compressing_write_buffer->sync();
-+            }
-+            output_size = nested_write_buffer->position() - output.data();
-+        }
-+
-+        if (output_size)
-+        {
-+            result.mutable_output()->assign(output.data(), output_size);
-+            nested_write_buffer->restart(); /// We're going to reuse the same buffer again for next block of data.
-+        }
++        auto * dependency_node = addOrUpdateNode(dependency);
++        node_holders.push_back(*nodes.find(dependency_node));
++        if (!nodes.contains(table_node))
++            table_node = dependency_node; /// It has the name `table_node` had, so it's the node of `table_id` now.
 +    }
 +
-     void CallResponder::addLogsToResult(InternalTextLogsQueue & logs_queue, GRPCResult & result)
-     {
-         static_assert(::clickhouse::grpc::LOG_NONE        == 0);
-@@ -1911,34 +1947,7 @@ namespace
-         if (!send_final_message && !isOutputStreaming(call_type))
-             return;
++    std::unordered_set<Node *> new_dependency_nodes;
++    for (size_t i = 1; i < node_holders.size(); ++i)
++    {
++        /// A removed node gave its name to the node of a later dependency, which is in the set.
++        if (nodes.contains(node_holders[i].get()))
++            new_dependency_nodes.emplace(node_holders[i].get());
++    }
  
--        /// Copy output to `result.output`, with optional compressing.
--        /// A canceled buffer holds incomplete output which can be neither finalized nor sent.
--        if (write_buffer && !write_buffer->isCanceled())
+     if (table_node->dependencies == new_dependency_nodes)
+         return;
+@@ -398,7 +414,7 @@ void TablesDependencyGraph::removeNode(Node * node)
+     chassert(it != nodes.end());
+     nodes.erase(it);
+ 
+-    nodes_sorted_by_level_lazy.clear();
++    setNeedRecalculateLevels();
+ }
+ 
+ 
+```
+
+**File**: `src/Databases/tests/gtest_tables_dependency_graph.cpp` (modified, +61/-0)
+```diff
+@@ -98,3 +98,64 @@ TEST(TablesDependencyGraph, AddDependencyWhenTableNodeIsRemoved)
+     EXPECT_EQ(dependencies[0].getFullTableName(), "db.mv2");
+     EXPECT_EQ(dependencies[0].uuid, uuid);
+ }
++
++/// `DROP DATABASE` adds the dependencies of a dictionary on `x` from two graphs which disagree on the UUID of `x`.
++/// The second one takes the name `x` from the node of the first one, which is removed.
++TEST(TablesDependencyGraph, AddDependenciesWhenDependencyNodeIsRemoved)
++{
++    TablesDependencyGraph graph("test");
++
++    UUID x_uuid = UUIDHelpers::generateV4();
++    UUID stale_x_uuid = UUIDHelpers::generateV4();
++    UUID y_uuid = UUIDHelpers::generateV4();
++    graph.addDependencies(StorageID{"db", "x", x_uuid}, std::vector<StorageID>{});
++    graph.addDependencies(StorageID{"db", "y", y_uuid}, std::vector<StorageID>{StorageID{"db", "x"}, StorageID{"db", "x", stale_x_uuid}});
++
++    EXPECT_EQ(graph.getNumberOfTables(), 2u);
++    auto dependencies = graph.getDependencies(StorageID{"db", "y", y_uuid});
++    ASSERT_EQ(dependencies.size(), 1u);
++    EXPECT_EQ(dependencies[0].getFullTableName(), "db.x");
++    EXPECT_EQ(dependencies[0].uuid, stale_x_uuid);
++    EXPECT_EQ(graph.getNumberOfDependents(StorageID{"db", "x", stale_x_uuid}), 1u);
++
++    auto sorted = graph.getTablesSortedByDependency();
++    ASSERT_EQ(sorted.size(), 2u);
++    EXPECT_EQ(sorted[0].getFullTableName(), "db.x");
++    EXPECT_EQ(sorted[1].getFullTableName(), "db.y");
++}
++
++/// The same as `AddDependencyWhenTableNodeIsRemoved` for `addDependencies`.
++TEST(TablesDependencyGraph, AddDependenciesWhenTableNodeIsRemoved)
++{
++    TablesDependencyGraph graph("test");
++
++    UUID uuid = UUIDHelpers::generateV4();
++    graph.addDependencies(StorageID{"db", "mv", uuid}, std::vector<StorageID>{StorageID{"db", "mv2"}});
++    graph.addDependencies(StorageID{"db", "mv2"}, std::vector<StorageID>{StorageID{"db", "mv2", uuid}});
++
++    EXPECT_EQ(graph.getNumberOfTables(), 1u);
++    auto dependencies = graph.getDependencies(StorageID{"db", "mv2", uuid});
++    ASSERT_EQ(dependencies.size(), 1u);
++    EXPECT_EQ(dependencies[0].getFullTableName(), "db.mv2");
++    EXPECT_EQ(dependencies[0].uuid, uuid);
++}
++
++/// A node removed by `addOrUpdateNode` invalidates the levels even if the dependencies of the table stay the same.
++TEST(TablesDependencyGraph, AddDependenciesRecalculatesLevelsAfterNodeRemoval)
++{
++    TablesDependencyGraph graph("test");
++
++    UUID uuid = UUIDHelpers::generateV4();
++    graph.addDependencies(StorageID{"db", "t"}, std::vector<StorageID>{StorageID{"db", "d_old", uuid}});
++    graph.addDependencies(StorageID{"db", "d_new"}, std::vector<StorageID>{});
++    ASSERT_EQ(graph.getTablesSortedByDependency().size(), 3u);
++
++    /// The node with `uuid` takes the name `d_new`, and the node of `d_new` is removed.
++    graph.addDependencies(StorageID{"db", "t"}, std::vector<StorageID>{StorageID{"db", "d_new"}, StorageID{"db", "d_new", uuid}});
++
++    EXPECT_EQ(graph.getNumberOfTables(), 2u);
++    auto sorted = graph.getTablesSortedByDependency();
++    ASSERT_EQ(sorted.size(), 2u);
++    EXPECT_EQ(sorted[0].getFullTableName(), "db.d_new");
++    EXPECT_EQ(sorted[1].getFullTableName(), "db.t");
++}
+```
+
+**File**: `tests/queries/0_stateless/05565_drop_database_stale_dependency_uuid.reference` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++0
+```
+
+**File**: `tests/queries/0_stateless/05565_drop_database_stale_dependency_uuid.sql` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++-- The referential dependency graph keeps the UUID of the view `x` after `x` is dropped and created again.
++
++DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
++CREATE DATABASE {CLICKHOUSE_DATABASE_1:Identifier} ENGINE = Atomic;
++USE {CLICKHOUSE_DATABASE_1:Identifier};
++
++CREATE TABLE src (k UInt64, v String) ENGINE = MergeTree ORDER BY k;
++CREATE VIEW x AS SELECT k, v FROM src;
++ALTER TABLE x MODIFY COMMENT 'c';
++CREATE DICTIONARY y (k UInt64, v String) PRIMARY KEY k SOURCE(CLICKHOUSE(TABLE 'x')) LAYOUT(FLAT()) LIFETIME(0);
++
++SET check_table_dependencies = 0; -- The dictionary `y` depends on `x`.
++DROP TABLE x SYNC;
++SET check_table_dependencies = 1;
++CREATE TABLE x (k UInt64, v String) ENGINE = MergeTree ORDER BY k;
++
++SET send_logs_level = 'error'; -- The dependency graphs warn about the stale UUID.
++DROP DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
++SELECT count() FROM system.databases WHERE name = {CLICKHOUSE_DATABASE_1:String};
+```
+
+---
+
+### Incident Patch 3: `fc19ce21` (2026-11-07)
+**Commit Message**: Merge pull request #129986 from ClickHouse/revert-122871-dev-sliceHasImplAnyAll-sve
+
+Revert "Search long integer slices in 512-byte chunks on AArch64 in `hasAll` and `hasAny`"
+
+**File**: `src/Functions/GatherUtils/sliceHasImplAnyAll.h` (modified, +0/-39)
+```diff
+@@ -79,9 +79,6 @@ inline ALWAYS_INLINE bool hasNull(const UInt8 * null_map, size_t null_map_size)
+ 
+ /// Searches `value` in blocks of 128 bytes. A block is a few whole-vector comparisons and one test of the combined mask,
+ /// so the search exits early without a branch per element. A 32-byte vector is one AVX2 register or two NEON registers.
+-///
+-/// On AArch64, long slices of 4 and 8-byte elements are searched in chunks of 512 bytes by a plain loop instead, which the
+-/// compiler unrolls to 8 or 16 NEON comparisons per iteration.
+ template <bool has_null_map, typename T>
+ ALWAYS_INLINE bool sliceContains(const NumericArraySlice<T> & slice, const UInt8 * null_map, T value)
+ {
+@@ -134,42 +131,6 @@ ALWAYS_INLINE bool sliceContains(const NumericArraySlice<T> & slice, const UInt8
+         return anyLaneSet(found & significant);
+     };
+ 
+-#if defined(__aarch64__)
+-    if constexpr (sizeof(T) >= 4)
+-    {
+-        /// Larger chunks were not faster and do more work when the value is near the front.
+-        static constexpr size_t chunk = 512 / sizeof(T);
+-        auto chunk_contains = [&](size_t begin) ALWAYS_INLINE
 -        {
--            size_t output_size = 0;
--            if (send_final_message)
+-            bool found = false;
+-            /// Sanitizer instrumentation of the loads prevents vectorization, and a requested but failed one is an error
+-            /// (`-Wpass-failed`).
+-#if !defined(SANITIZER)
+-#pragma clang loop vectorize(enable) vectorize_width(16) interleave_count(2)
+-#endif
+-            for (size_t i = begin; i < begin + chunk; ++i)
+-                found |= (slice.data[i] == value) & (!has_null_map || !null_map[i]);
+-            return found;
+-        };
+-
+-        if (slice.size >= lanes + chunk)
+-        {
+-            if (vector_contains(0))
+-                return true;
+-
+-            size_t i = lanes;
+-            for (; i + chunk <= slice.size; i += chunk)
 -            {
--                if (compressing_write_buffer)
--                    LOG_DEBUG(log, "Compressing final {} bytes", compressing_write_buffer->offset());
--                write_buffer->finalize();
--                output_size = output.size();
--            }
--            else
--            {
--                if (compressing_write_buffer && compressing_write_buffer->offset())
--                {
--                    LOG_DEBUG(log, "Compressing {} bytes", compressing_write_buffer->offset());
--                    compressing_write_buffer->sync();
--                }
--                output_size = nested_write_buffer->position() - output.data();
+-                if (chunk_contains(i))
+-                    return true;
 -            }
 -
--            if (output_size)
--            {
--                result.mutable_output()->assign(output.data(), output_size);
--                nested_write_buffer->restart(); /// We're going to reuse the sa
+-            /// The last chunk overlaps the previous one.
+-            return i < slice.size && chunk_contains(slice.size - chunk);
+-        }
+-    }
+-#endif
+-
+     if (slice.size < lanes)
+     {
+         bool found = false;
 ```
 
-**File**: `tests/queries/0_stateless/05473_grpc_pretty_squash_output.reference` (added, +4/-0)
+**File**: `tests/queries/0_stateless/05493_has_all_has_any_chunked_search.reference` (removed, +0/-8)
 ```diff
-@@ -0,0 +1,4 @@
-+0 1 2 3
-+0 1 2 3
-+395
-+1
+@@ -1,8 +0,0 @@
+-Int32	Nullable	7600	7026	0	7026	0	0	0
+-Int32	not Nullable	3800	3784	0	3784	0	0	0
+-UInt32	Nullable	7600	7026	0	7026	0	0	0
+-UInt32	not Nullable	3800	3784	0	3784	0	0	0
+-Int64	Nullable	7600	7026	0	7026	0	0	0
+-Int64	not Nullable	3800	3784	0	3784	0	0	0
+-UInt64	Nullable	7600	7026	0	7026	0	0	0
+-UInt64	not Nullable	3800	3784	0	3784	0	0	0
 ```
 
-**File**: `tests/queries/0_stateless/05473_grpc_pretty_squash_output.sh` (added, +41/-0)
+**File**: `tests/queries/0_stateless/05493_has_all_has_any_chunked_search.sql` (removed, +0/-73)
 ```diff
-@@ -0,0 +1,41 @@
-+#!/usr/bin/env bash
-+# Tags: no-fasttest
-+# Tag no-fasttest: In fasttest, ENABLE_LIBRARIES=0, so the grpc library is not built
-+
-+CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CURDIR"/../shell_config.sh
-+
-+# `Pretty` formats write the squashed blocks from a background thread, into the output buffer of the gRPC call,
-+# while the call reads and sends that buffer between the blocks.
-+python3 - "$CURDIR/../../../utils/grpc-client/pb2" <<'EOF'
-+import os
-+import re
-+import sys
-+sys.path.insert(0, sys.argv[1])
-+import grpc
-+import clickhouse_grpc_pb2
-+import clickhouse_grpc_pb2_grpc
-+
-+settings = {"max_block_size": "1", "max_threads": "1", "output_format_pretty_squash_consecutive_ms": "1", "interactive_delay": "10000"}
-+query = "SELECT number FROM numbers(4) WHERE sleepEachRow(0.05) = 0 FORMAT PrettyCompactNoEscapes"
-+
-+def values(output):
-+    return " ".join(re.findall(r"│\s+(\d+)\s+│", output.decode()))
-+
-+with grpc.insecure_channel(f"localhost:{os.environ.get('CLICKHOUSE_PORT_GRPC', '9100')}") as channel:
-+    stub = clickhouse_grpc_pb2_grpc.ClickHouseStub(channel)
-+    query_info = clickhouse_grpc_pb2.QueryInfo(query=query, settings=settings)
-+    print(values(stub.ExecuteQuery(query_info, timeout=60).output))
-+    print(values(b"".join(result.output for result in stub.ExecuteQueryWithStreamOutput(query_info, timeout=60))))
-+    # The exception arrives while the writer may still hold a squashed chunk.
-+    query = "SELECT number FROM numbers(4) WHERE if(number < 2, sleepEachRow(0.05) = 0, throwIf(number = 2) = 0) FORMAT PrettyCompactNoEscapes"
-+    codes = set()
-+    for squash_ms in range(1, 6):
-+        for _ in range(4):
-+            query_info = clickhouse_grpc_pb2.QueryInfo(
-+                query=query, settings={**settings, "output_format_pretty_squash_consecutive_ms": str(squash_ms)})
-+            codes.add(stub.ExecuteQuery(query_info, timeout=60).exception.code)
-+    print(*sorted(codes))
-+    print(stub.ExecuteQuery(clickhouse_grpc_pb2.QueryInfo(query="SELECT 1"), timeout=60).output.decode(), end="")
-+EOF
+@@ -1,73 +0,0 @@
+--- `hasAll` and `hasAny` of 4 and 8-byte integer arrays long enough to be searched in chunks of 512 bytes (on AArch64),
+--- compared with `has`. One value is placed at every position of arrays whose lengths are around the chunk
+--- boundaries, including a last chunk that overlaps the previous one, or is missing, or is at a null.
+-
+-DROP TABLE IF EXISTS arrays;
+-CREATE TABLE arrays (a Array(Nullable(Int64)), v Int64) ENGINE = Memory;
+-
+-INSERT INTO arrays
+-SELECT
+-    arrayMap(i -> if(with_nulls AND i % 7 = 3, NULL, toInt64(i * 2 + 1)), range(first_length)) AS a,
+-    -- `position = first_length` is a value that is not in the array.
+-    if(position < first_length, position * 2 + 1, 0) AS v
+-FROM
+-(
+-    SELECT first_length, position, with_nulls
+-    FROM
+-    (
+-        SELECT arrayJoin([67, 68, 69, 131, 132, 133, 135, 136, 137, 199, 263, 264, 265, 392, 393, 1000]) AS first_length
+-    )
+-    ARRAY JOIN range(first_length + 1) AS position
+-    ARRAY JOIN [0, 1] AS with_nulls
+-);
+-
+-SELECT 'Int32', 'Nullable', count(),
+-    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
+-    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
+-    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
+-    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
+-FROM (SELECT CAST(a, 'Array(Nullable(Int32))') AS x, CAST(v, 'Int32') AS y FROM arrays);
+-SELECT 'Int32', 'not Nullable', count(),
+-    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
+-    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
+-    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
+-    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
+-FROM (SELECT CAST(a, 'Array(Int32)') AS x, CAST(v, 'Int32') AS y FROM arrays WHERE NOT has(a, NULL));
+-SELECT 'UInt32', 'Nullable', count(),
+-    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
+-    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
+-    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
+-    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
+-FROM (SELECT CAST(a, 'Array(Nullable(UInt32))') AS x, CAST(v, 'UInt32') AS y FROM arrays);
+-SELECT 'UInt32', 'not Nullable', count(),
+-    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
+-    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
+-    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
+-    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
+-FROM (SELECT CAST(a, 'Array(UInt32)') AS x, CAST(v, 'UInt32') AS y FROM arrays WHERE NOT has(a, NULL));
+-SELECT 'Int64', 'Nullable', count(),
+-    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
+-    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
+-    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
+-    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
+-FROM (SELECT CAST(a, 'Array(Nullable(Int64))') AS x, CAST(v, 'Int64') AS y FROM arrays);
+-SELECT 'Int64', 'not Nullable', count(),
+-    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
+-    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
+-    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
+-    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
+-FROM (SELECT CAST(a, 'Array(Int64)') AS x, CAST(v, 'Int64') AS y FROM arrays WHERE NOT has(a, NULL));
+-SELECT 'UInt64', 'Nullable', count(),
+-    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
+-    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
+-    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
+-    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
+-FROM (SELECT CAST(a, 'Array(Nullable(UInt64))') AS x, CAST(v, 'UInt64') AS y FROM arrays);
+-SELECT 'UInt64', 'not Nullable', count(),
+-    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
+-    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #129719** (2026-11-06): Backport #129112 to 26.10: Introspection uses main binary offsets only; disable gRPC library logs (@robot-ch-test-poll2)
-- **PR #129716** (2026-11-06): Fail the Fast test when a test the PR adds takes more than 15 s (7.5 s for no-parallel) (@groeneai)
-- **PR #129711** (closed): fix: `toString` claims injectivity for every type: DST fold splits one GROUP BY key (@xixi-box)
-- **PR #129708** (2026-11-06): Backport #129559 to 26.10: Remove HTTP debug log with a heap address (@robot-clickhouse-ci-2)
-- **PR #129707** (2026-11-06): Backport #129559 to 26.9: Remove HTTP debug log with a heap address (@robot-clickhouse-ci-2)
-- **PR #129704** (2026-11-06): Backport #129607 to 26.10: Update libhdfs3 to not expose thread addresses to the NameNode (@robot-ch-test-poll)
+- **PR #130030** (2026-11-08): Backport #129205 to 26.10: Check access rights of table functions in DESCRIBE as in SELECT (@robot-ch-test-poll3)
+- **PR #130029** (2026-11-08): Backport #129205 to 26.9: Check access rights of table functions in DESCRIBE as in SELECT (@robot-ch-test-poll3)
+- **PR #130013** (2026-11-08): Backport #117174 to 26.8: Fix lightweight update pruning of empty partitions (@robot-ch-test-poll2)
+- **PR #130009** (2026-11-08): Backport #129205 to 26.8: Check access rights of table functions in DESCRIBE as in SELECT (@robot-ch-test-poll2)
+- **PR #129986** (2026-11-07): Revert "Search long integer slices in 512-byte chunks on AArch64 in `hasAll` and `hasAny`" (@alexey-milovidov)
+- **PR #129985** (closed): Fix the AArch64 debug build of `hasAll` and `hasAny` (@groeneai)
 
 ---
 
@@ -1623,28 +1758,52 @@ Fix a data race on the gRPC output buffer with the `Pretty` squash thread
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #129017 from duongynhi000005-oss/fix-125860-query-condition-c
+## X. Merge pull request #129946 from groeneai/fix-case-interval-keyword-reading-expon
 
 **RULE**:
-When implementing operations in `src/Interpreters/Cache/QueryConditionCacheTimeConditions.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Parsers/ExpressionListParsers.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `216beefe`: Merge pull request #129017 from duongynhi000005-oss/fix-125860-query-condition-cache-time-conditions-signed-overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fcdc923b`: Merge pull request #129946 from groeneai/fix-case-interval-keyword-reading-exponential. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Interpreters/Cache/QueryConditionCacheTimeConditions.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Parsers/ExpressionListParsers.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            return ticks / multiplier - (ticks % multiplier < 0 ? 1 : 0);
+    /// Positions of CASE and INTERVAL tokens whose keyword reading failed; only the identifier reading is tried there.
+    std::unordered_set<const char *> failed_keyword_readings;
+
+        bool popped_keyword_layer = false;
+        do
+        {
+            popped_keyword_layer = dynamic_cast<IntervalLayer *>(layers.back().get()) || dynamic_cast<CaseLayer *>(layers.back().get());
+        } while (!layers.empty() && !layers.back()->saved_checkpoint);
+        /// A keyword layer reads nothing below itself, so if it failed unfinished it fails wherever this position is reached.
+        if (popped_keyword_layer)
+            failed_keyword_readings.insert(saved_checkpoint.first->begin);
+
+    /// Skipping a failed keyword reading leaves no checkpoint, as trying it again and restoring would.
+    const bool keyword_reading_failed = failed_keyword_readings.contains(old_pos->begin);
+    if (keyword_reading_failed)
+        layers.back()->saved_checkpoint.reset();
+
+    if (current_checkpoint != Checkpoint::Interval && !keyword_reading_failed
+        && parseOperator(pos, toStringView(Keyword::INTERVAL), expected))
+    if (current_checkpoint != Checkpoint::Case && !keyword_reading_failed
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            return ticks >= 0 ? ticks / multiplier : -((-ticks + multiplier - 1) / multiplier);
+        layers.pop_back();
+
+        while (!layers.empty() && !layers.back()->saved_checkpoint)
+    if (current_checkpoint != Checkpoint::Interval && parseOperator(pos, toStringView(Keyword::INTERVAL), expected))
+    if (current_checkpoint != Checkpoint::Case && parseOperator(pos, toStringView(Keyword::CASE), expected))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `216beefe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fcdc923b` are properly handled with clean fallback behavior.
