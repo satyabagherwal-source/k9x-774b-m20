@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T21:16:42.044Z",
-  "total_cycles_completed": 8357,
-  "total_learnings_persisted": 8357,
-  "total_rules_promoted": 8152,
+  "last_updated": "2026-11-08T21:24:47.844Z",
+  "total_cycles_completed": 8361,
+  "total_learnings_persisted": 8361,
+  "total_rules_promoted": 8158,
   "history": [
-    {
-      "timestamp": "2026-11-08T03:28:15.918Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T03:28:24.681Z",
-      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T03:35:46.614Z",
-      "repository": "momenbasel/PureMac",
-      "learningId": "learn-github-momenbasel-puremac",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T03:35:51.404Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T03:35:55.774Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-08T21:16:42.044Z",
       "repository": "hmlongco/Factory",
       "learningId": "learn-github-hmlongco-factory",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T21:24:36.328Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T21:24:41.185Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T21:24:47.069Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T21:24:47.844Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

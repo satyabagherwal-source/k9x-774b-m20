@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-G4UG",
-    "timestamp": "2026-11-06T15:20:46.984Z",
-    "repository": "koderover/zadig",
-    "learningId": "learn-github-koderover-zadig",
-    "contentHash": "8e516164a8110a56d61e3cd2679b04cea24dae9ec39f39c9336418adb498f18a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-G6KU",
-    "timestamp": "2026-11-06T15:20:49.230Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "fadbdc5ca5cdde26d53f8008bce3426adea234dade208e0f3d191a2bc502576e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-GA0A",
-    "timestamp": "2026-11-06T15:20:53.674Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "5631f6dfdf8d1c2c2199ffb843fb1daf4fd15bb73b0e91434317e878a808f7d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-OWNJ",
-    "timestamp": "2026-11-06T15:27:36.271Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "a5369f969d79759d5a6afd2e8c3f2cb77bff10dbdb25a2df7f1db1d7aaf503d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-OX2M",
     "timestamp": "2026-11-06T15:27:36.814Z",
     "repository": "pubkey/rxdb",
@@ -7490,6 +7430,66 @@
     "repository": "hmlongco/Factory",
     "learningId": "learn-github-hmlongco-factory",
     "contentHash": "0cb83928fcbfbe8f0b21ebcb6c77a7908ad6ead0fcdf8b3baf95366ae0349c25",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-BPSX",
+    "timestamp": "2026-11-08T21:24:36.321Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-BTJT",
+    "timestamp": "2026-11-08T21:24:41.177Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "ddb2d18d5a306ac872f6d365e76eb7a4d3f9666355a9542974531c03be6e362e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-BY38",
+    "timestamp": "2026-11-08T21:24:47.060Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "6ae481b2646d116e137ed1b0ca27bb06b2f4f56673971ff53c998dfd92086aaa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-BYMS",
+    "timestamp": "2026-11-08T21:24:47.764Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "bcd89c4e28849f274f60b79f1d00ea3818dd8f480c6a126067b4b4da2a0f79ba",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

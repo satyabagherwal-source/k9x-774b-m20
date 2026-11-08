@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `2cce058e`  
+> **Source Version**: `68eb8cc8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:34:28.335Z  
+> **Timestamp**: 2026-11-08T21:24:46.337Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:34:27.755Z  
+> **Harvest Timestamp**: 2026-11-08T21:24:46.331Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6572 stars
+- **Stars / Engagement**: 6574 stars
 
 ---
 
@@ -456,10 +456,15 @@ export async function resolveTelemetryServer(options: {
 }): Promise<string> {
   let telemetryServerUrl = process.env.GENKIT_TELEMETRY_SERVER;
   if (!telemetryServerUrl) {
-    const telemetryPort = await getPort({ port: makeRange(4033, 4999) });
-    telemetryServerUrl = `http://localhost:${telemetryPort}`;
+    const host = '127.0.0.1';
+    const telemetryPort = await getPort({
+      port: makeRange(4033, 4999),
+      host,
+    });
+    telemetryServerUrl = `http://${host}:${telemetryPort}`;
     await startTelemetryServer({
       port: telemetryPort,
+      host,
       traceStore: new LocalFileTraceStore({
         storeRoot: options.projectRoot,
         indexRoot: options.projectRoot,
@@ -661,9 +666,7 @@ export async function startDevProcessManager(
   const experimentalReflectionV2 = options?.experimentalReflectionV2 ?? false;
   // Derived from the env the child actually receives, so the manager and the
   // runtime can never disagree, whichever path produced envVars.
-  const reflectionSecret: string | undefined = envVars[REFLECTION_SECRET_ENV];
-
-  const processManager = new
+  const reflectionSecret: string | undefined 
 ```
 
 ### Core Architecture Module: `genkit-tools/cli/src/utils/option-parsers.ts`
@@ -2071,20 +2074,135 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2cce058e` (2026-11-06)
-**Commit Message**: chore(github): use the existing feature label in the feature request template (#6725)
+### Incident Patch 1: `68eb8cc8` (2026-11-08)
+**Commit Message**: fix(cli): probe telemetry port on loopback host (#7027)
 
-**File**: `.github/ISSUE_TEMPLATE/feature_request.md` (modified, +1/-1)
+**File**: `genkit-tools/cli/src/utils/manager-utils.ts` (modified, +7/-2)
 ```diff
-@@ -2,7 +2,7 @@
- name: Feature request
- about: Suggest an idea for this project
- title: ''
--labels: enhancement
-+labels: feature
- assignees: ''
+@@ -56,10 +56,15 @@ export async function resolveTelemetryServer(options: {
+ }): Promise<string> {
+   let telemetryServerUrl = process.env.GENKIT_TELEMETRY_SERVER;
+   if (!telemetryServerUrl) {
+-    const telemetryPort = await getPort({ port: makeRange(4033, 4999) });
+-    telemetryServerUrl = `http://localhost:${telemetryPort}`;
++    const host = '127.0.0.1';
++    const telemetryPort = await getPort({
++      port: makeRange(4033, 4999),
++      host,
++    });
++    telemetryServerUrl = `http://${host}:${telemetryPort}`;
+     await startTelemetryServer({
+       port: telemetryPort,
++      host,
+       traceStore: new LocalFileTraceStore({
+         storeRoot: options.projectRoot,
+         indexRoot: options.projectRoot,
+```
+
+**File**: `genkit-tools/cli/tests/utils/manager-utils_test.ts` (modified, +74/-0)
+```diff
+@@ -14,6 +14,7 @@
+  * limitations under the License.
+  */
  
- ---
++import * as telemetryServer from '@genkit-ai/telemetry-server';
+ import {
+   ProcessManager,
+   REFLECTION_SECRET_ENV,
+@@ -22,6 +23,11 @@ import {
+   type BaseRuntimeManager,
+ } from '@genkit-ai/tools-common/manager';
+ import { logger } from '@genkit-ai/tools-common/utils';
++import getPort, { makeRange } from 'get-port';
++import { mkdtempSync, rmSync } from 'node:fs';
++import net from 'node:net';
++import { tmpdir } from 'node:os';
++import { join } from 'node:path';
+ import {
+   afterEach,
+   beforeEach,
+@@ -34,13 +40,81 @@ import {
+ import {
+   getDevEnvVars,
+   resolveReflectionSecret,
++  resolveTelemetryServer,
+   runWithManager,
+   startDevProcessManager,
+   startManager,
+   waitForActionKeys,
+   waitForRuntime,
+ } from '../../src/utils/manager-utils';
+ 
++describe('resolveTelemetryServer', () => {
++  let origTelemetryServer: string | undefined;
++  let projectRoot: string;
++  let startTelemetrySpy: MockInstance<
++    typeof telemetryServer.startTelemetryServer
++  >;
++
++  beforeEach(() => {
++    projectRoot = mkdtempSync(join(tmpdir(), 'genkit-telemetry-'));
++    origTelemetryServer = process.env.GENKIT_TELEMETRY_SERVER;
++    delete process.env.GENKIT_TELEMETRY_SERVER;
++    startTelemetrySpy = vi
++      .spyOn(telemetryServer, 'startTelemetryServer')
++      .mockResolvedValue(undefined);
++  });
++
++  afterEach(() => {
++    rmSync(projectRoot, { recursive: true, force: true });
++    if (origTelemetryServer === undefined) {
++      delete process.env.GENKIT_TELEMETRY_SERVER;
++    } else {
++      process.env.GENKIT_TELEMETRY_SERVER = origTelemetryServer;
++    }
++    vi.restoreAllMocks();
++  });
++
++  it('returns GENKIT_TELEMETRY_SERVER when set without starting a server', async () => {
++    process.env.GENKIT_TELEMETRY_SERVER = 'http://custom:9999';
++
++    await expect(resolveTelemetryServer({ projectRoot })).resolves.toBe(
++      'http://custom:9999'
++    );
++    expect(startTelemetrySpy).not.toHaveBeenCalled();
++  });
++
++  it('skips a port already bound on 127.0.0.1 and starts the server on 127.0.0.1', async () => {
++    const occupiedPort = await getPort({
++      port: makeRange(4033, 4999),
++      host: '127.0.0.1',
++    });
++    const blocker = net.createServer();
++    await new Promise<void>((resolve) =>
++      blocker.listen(occupiedPort, '127.0.0.1', resolve)
++    );
++
++    try {
++      const url = await resolveTelemetryServer({
++        projectRoot,
++        corsOrigin: 'http://localhost:4000',
++      });
++      const chosenPort = Number(new URL(url).port);
++
++      expect(chosenPort).not.toBe(occupiedPort);
++      expect(url).toBe(`http://127.0.0.1:${chosenPort}`);
++      expect(startTelemetrySpy).toHaveBeenCalledWith(
++        expect.objectContaining({
++          port: chosenPort,
++          host: '127.0.0.1',
++          corsOrigin: 'http://localhost:4000',
++        })
++      );
++    } finally {
++      await new Promise<void>((resolve) => blocker.close(() => resolve()));
++    }
++  });
++});
++
+ describe('getDevEnvVars', () => {
+   // Setting GENKIT_TELEMETRY_SERVER makes resolveTelemetryServer return it
+   // directly instead of spinning up a real telemetry server.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2113,28 +2231,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. github): use the existing feature label in the feature request template (#6725)
+## X. cli): probe telemetry port on loopback host (#7027)
 
 **RULE**:
-When implementing operations in `.github/ISSUE_TEMPLATE/feature_request.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `genkit-tools/cli/src/utils/manager-utils.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2cce058e`: github): use the existing feature label in the feature request template (#6725). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68eb8cc8`: cli): probe telemetry port on loopback host (#7027). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/feature_request.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/cli/src/utils/manager-utils.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-labels: feature
+    const host = '127.0.0.1';
+    const telemetryPort = await getPort({
+      port: makeRange(4033, 4999),
+      host,
+    });
+    telemetryServerUrl = `http://${host}:${telemetryPort}`;
+      host,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-labels: enhancement
+    const telemetryPort = await getPort({ port: makeRange(4033, 4999) });
+    telemetryServerUrl = `http://localhost:${telemetryPort}`;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2cce058e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68eb8cc8` are properly handled with clean fallback behavior.

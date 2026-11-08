@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "1c7e369e61700631f435ec19df7b4ba57b6069463086b5e603714302a004bfc5",
-    "lastHarvestedAt": "2026-11-05T04:28:56.263Z",
+    "contentHash": "ddb2d18d5a306ac872f6d365e76eb7a4d3f9666355a9542974531c03be6e362e",
+    "lastHarvestedAt": "2026-11-08T21:24:41.180Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "a0c210aa",
+    "sourceVersion": "274eaf91",
     "license": "Apache-2.0",
-    "contentHash": "d6cc03750e5f13a68baaaa124a98e4ef654c97d8af25f510f2033474b88498c7",
-    "lastHarvestedAt": "2026-11-08T17:06:08.379Z",
+    "contentHash": "6ae481b2646d116e137ed1b0ca27bb06b2f4f56673971ff53c998dfd92086aaa",
+    "lastHarvestedAt": "2026-11-08T21:24:47.063Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "2cce058e",
+    "sourceVersion": "68eb8cc8",
     "license": "Apache-2.0",
-    "contentHash": "fef57faeaba411cb71ce4286cfbd0fbcd7f4760a0de1bb4ed09fb072547ab6ea",
-    "lastHarvestedAt": "2026-11-08T00:34:29.842Z",
+    "contentHash": "bcd89c4e28849f274f60b79f1d00ea3818dd8f480c6a126067b4b4da2a0f79ba",
+    "lastHarvestedAt": "2026-11-08T21:24:47.840Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "d1896a07",
+    "sourceVersion": "7f971edd",
     "license": "Apache-2.0",
-    "contentHash": "4c179bcd562aba48e322b4675252673d73746bf89f43bef633c519fdb1a30565",
-    "lastHarvestedAt": "2026-11-07T20:42:08.020Z",
+    "contentHash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
+    "lastHarvestedAt": "2026-11-08T21:24:36.324Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

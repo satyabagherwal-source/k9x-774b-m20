@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T21:16:41.952Z",
+  "last_updated": "2026-11-08T21:24:47.648Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5314,8 +5314,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "d1896a07",
-      "content_hash": "4c179bcd562aba48e322b4675252673d73746bf89f43bef633c519fdb1a30565",
+      "source_version": "7f971edd",
+      "content_hash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -5333,6 +5333,11 @@
           "number": null,
           "title": "Bit-Width and Size-Class Invariance in Generated Meta-Programming",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "useWhile): detect and fix infinite for loops (#12788)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2484,
@@ -5415,7 +5420,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:42:07.905Z",
+      "verified_at": "2026-11-08T21:24:36.247Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15925,8 +15930,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "2cce058e",
-      "content_hash": "fef57faeaba411cb71ce4286cfbd0fbcd7f4760a0de1bb4ed09fb072547ab6ea",
+      "source_version": "68eb8cc8",
+      "content_hash": "bcd89c4e28849f274f60b79f1d00ea3818dd8f480c6a126067b4b4da2a0f79ba",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -15938,6 +15943,11 @@
         {
           "number": null,
           "title": "github): use the existing feature label in the feature request template (#6725)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cli): probe telemetry port on loopback host (#7027)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16021,7 +16031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:34:29.726Z",
+      "verified_at": "2026-11-08T21:24:47.632Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28752,10 +28762,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
       "source_version": "hf-meta-llama-meta-llama-3-8b",
-      "content_hash": "1c7e369e61700631f435ec19df7b4ba57b6069463086b5e603714302a004bfc5",
+      "content_hash": "ddb2d18d5a306ac872f6d365e76eb7a4d3f9666355a9542974531c03be6e362e",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "KV Cache Memory Leak Prevention in Streaming Inference",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 378,
+          "title": "Tokenizer Determinism & Unicode Normalization",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 409,
           "title": "Tensor Precision & Memory Layout Integrity",
@@ -28776,6 +28796,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx",
           "verified_at": "2026-10-12T02:39:57.212Z"
+        },
+        {
+          "number": 509,
+          "title": "Weight Serialization Integrity & Memory Safety",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 779,
@@ -28856,7 +28881,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv49vwk3",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx"
       ],
-      "verified_at": "2026-11-05T04:28:56.181Z",
+      "verified_at": "2026-11-08T21:24:41.045Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72558,15 +72583,15 @@
       "learning_id": "rule-378",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 378,
-      "title": "Tokenizer Determinism & Unicode Normalization Invariant (Harvested from meta-llama/Llama-3.1-8B-Instruct)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer Determinism & Unicode Normalization",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "source_version": "hf-meta-llama-meta-llama-3-8b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-11-08T21:24:41.045Z"
     },
     "rule-379": {
       "learning_id": "rule-379",
@@ -75693,13 +75718,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "a0c210aa",
-      "content_hash": "f5a79e573ee5d9be66760dfd31902345b2db94d540bf6143863756c6ea4f3e10",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "274eaf91",
+      "content_hash": "6ae481b2646d116e137ed1b0ca27bb06b2f4f56673971ff53c998dfd92086aaa",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -75759,6 +75784,11 @@
         {
           "number": null,
           "title": "Merge pull request #4642 from aleo-labs-protocol/ci/run-simple-node-example-test",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4652 from aleo-labs-protocol/load-test-inherit-secrets",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -75887,7 +75917,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T19:31:08.850Z",
+      "verified_at": "2026-11-08T21:24:46.973Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84168,15 +84198,15 @@
       "learning_id": "rule-509",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 509,
-      "title": "Weight Serialization Integrity & Memory Safety (Harvested from black-forest-labs/FLUX.1-dev)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Weight Serialization Integrity & Memory Safety",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "source_version": "hf-meta-llama-meta-llama-3-8b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.812Z"
+      "verified_at": "2026-11-08T21:24:41.045Z"
     },
     "rule-510": {
       "learning_id": "rule-510",

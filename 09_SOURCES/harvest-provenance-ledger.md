@@ -8401,3 +8401,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-08T21:16:35.276Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `c50612d6` | Multi-dimensional audit evidence | 2026-11-08T21:16:36.903Z |
 | `learn-github-hmlongco-factory` | `https://github.com/hmlongco/Factory` | `5f4ea2bf` | Multi-dimensional audit evidence | 2026-11-08T21:16:42.038Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `7f971edd` | Multi-dimensional audit evidence | 2026-11-08T21:24:36.324Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-08T21:24:41.180Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `274eaf91` | Multi-dimensional audit evidence | 2026-11-08T21:24:47.063Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `68eb8cc8` | Multi-dimensional audit evidence | 2026-11-08T21:24:47.840Z |
