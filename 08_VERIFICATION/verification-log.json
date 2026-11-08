@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-GT8Q",
-    "timestamp": "2026-11-05T19:45:34.730Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "719eee9fc41f7823806f66fe2d7406a1be95ad286cf00f5a9a941af03acecc86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-Q7BQ",
-    "timestamp": "2026-11-05T19:52:52.886Z",
-    "repository": "kube-rs/kube",
-    "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "31e8f199005376520054cf9023a3ce4fe658b8fdbef8a114897c6fd116c597dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-ZM8E",
     "timestamp": "2026-11-05T20:00:12.110Z",
     "repository": "TypeWhisper/typewhisper-mac",
@@ -7490,6 +7460,36 @@
     "repository": "Qwen/Qwen-Image-2.1",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1",
     "contentHash": "a4b6fa3c78dcaec7ae5999af54c558782be20f47837951e31dda34c34b325769",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-QOTB",
+    "timestamp": "2026-11-08T13:40:21.407Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "006c787c11a916246a2c0f91a771f0a3823b354c4b2f3904810593ae7c47901b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-X9RH",
+    "timestamp": "2026-11-08T13:45:28.493Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "11979ec87d346050a7d8bb6792925b35d23537ad186a698fa8cacacd3bdc872e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

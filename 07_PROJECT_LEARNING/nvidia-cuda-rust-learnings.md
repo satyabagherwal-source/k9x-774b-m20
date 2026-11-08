@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `87851900`  
+> **Source Version**: `367bc0f8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:06:46.264Z  
+> **Timestamp**: 2026-11-08T13:40:20.015Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:01:19.853Z  
+> **Harvest Timestamp**: 2026-11-08T13:40:14.959Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4003 stars
+- **Stars / Engagement**: 4011 stars
 
 ---
 
@@ -2279,685 +2279,312 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87851900` (2026-11-06)
-**Commit Message**: refactor(cute-rs-preview): rename ctm-rs to cutlass-primitives (#1751)
+### Incident Patch 1: `367bc0f8` (2026-11-07)
+**Commit Message**: feat(cutile-kernels): fix v0.5.0 docs, refresh Grout kernels, share MoE, and add fused QKV (#1746)
 
-Renames `cuda-oxide/cute-rs-preview/ctm-rs` to `cutlass-primitives` (`use cutlass_primitives as prims;` in kernel and example code, matching CuTeDSL 4.7) and updates all references, guards, lockfiles, and `cuda-oxide-book`.
+## Summary
 
-Signed-off-by: Nihal Pasham <[REDACTED_EMAIL]>
+Refresh `cutile-kernels` from Grout and provide shared NVFP4 MoE and
+fused QKV implementations. Each workload has one host-side example in
+`cutile-examples` that imports the shared kernels for validation and
+timing. Update the kernel catalog, example instructions, Tile book,
+compiler READMEs, and umbrella docs to reflect the current layout and
+CUDA 13.5 support.
 
-**File**: `.github/workflows/unit-tests.yml` (modified, +3/-3)
+## Kernels and examples
+
+- Import 11 missing Grout entries: vector add/SiLU, embedding, RoPE,
+KV-cache update, head-major attention, baseline GEMM, split-K
+prefill/merge, and persistent RMSNorm. Source: [Grout
+23ae5a3](https://github.com/elibol/grout/blob/23ae5a3e78dc39e242918824839ba8a35e4adce9/src/kernels.rs).
+Preserve existing corpus implementations and adapt imports to current
+safety and structured-control-flow requirements.
+- Move all six existing NVFP4 MoE kernels, unchanged, into
+`experimental::nvfp4_moe`. Preserve Emmet Zhang et al.'s attribution;
+the example imports the library.
+- Add `experimental::fused_qkv`: FP16 QKV projection, per-head FP32 Q/K
+RMSNorm, E4M3FN conversion, Q output, and paged K/V sca
+
+**File**: `README.md` (modified, +6/-0)
 ```diff
-@@ -63,7 +63,7 @@ jobs:
-           - package: dialect-nvvm
-           - package: mir-importer
-           # CuTe types, semantic IR, and MLIR export need no CUDA toolkit.
--          # cute-rs and ctm-rs compile host metadata through cuda-host, so
-+          # cute-rs and cutlass-primitives compile host metadata through cuda-host, so
-           # they run in rust-unit-tests-cuda.
-           - package: cute-layout
-           - package: dialect-cute
-@@ -152,8 +152,8 @@ jobs:
-           - package: cuda-oxide-codegen
-           # Facade macro tests compile host metadata through cuda-host.
-           - package: cute-rs
--          - package: ctm-rs
--          - package: ctm-rs
-+          - package: cutlass-primitives
-+          - package: cutlass-primitives
-             test_args: --all-targets --features host
-           # launch_requires_unsafe trybuild fixture dev-depends on
-           # cuda-host/cuda-core, which transitively pull cuda-bindings.
+@@ -80,6 +80,10 @@ and cuda-oxide each have a book with installation instructions, guides, and
+ reference material. The runtime crates (cuda-bindings, cuda-core, cuda-async)
+ are documented in the cutile-rs book.
+ 
++For reusable Tile kernels, including fused QKV and NVFP4 MoE, see the
++[`cutile-kernels` catalog](cutile-rs/cutile-kernels/README.md) and
++[runnable examples](cutile-rs/cutile-examples/README.md).
++
+ ## Contributing
+ 
+ See [CONTRIBUTING.md](CONTRIBUTING.md) for commit sign-off requirements, pull requests, and CI. Both components build on stable Rust and pin their toolchains in their respective `rust-toolchain.toml` files (with `rustc-dev` and `llvm-tools` for `cuda-oxide`, managed via `cargo oxide`); each book covers its own setup.
+@@ -92,3 +96,5 @@ host crates. Every published crate declares `license = "Apache-2.0"`.
+ 
+ Third-party attributions are listed in
+ [`cuda-oxide/THIRD_PARTY_NOTICES`](./cuda-oxide/THIRD_PARTY_NOTICES).
++The TileGym-derived [fused QKV kernel](cutile-rs/cutile-kernels/src/experimental/qkv.rs)
++retains its MIT license and notice in the source.
 ```
 
-**File**: `cuda-oxide/AGENTS.md` (modified, +11/-11)
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/tilelib_relu/README.md` (modified, +37/-0)
 ```diff
-@@ -12,16 +12,16 @@ under `cute-rs-preview/`, [`cute-rs-preview/AGENTS.md`](cute-rs-preview/AGENTS.m
- up or pass one off as the other:
+@@ -10,6 +10,10 @@ program here proves the ABI on any CUDA 13.4 machine, through a generated
+ CUDA C++ caller that declares the implementations the way the Tile compiler
+ would.
  
++cuTile Rust can consume these libraries too, through `#[cutile::foreign]`
++unsafe declarations and host-configured library paths. See
++[Calling from cuTile Rust](#calling-from-cutile-rust) below.
++
  ```text
--┌─────────────────────────────────────┬──────────────────────────────────────────────┐
--│  1. Native SIMT (`cuda_device`)     │  2. CuTe in Rust (`cute-rs` + `ctm-rs`)      │
--├─────────────────────────────────────┼──────────────────────────────────────────────┤
--│  • Explicit per-thread / per-warp   │  • CUTLASS CuTe's layout algebra, partitions,│
--│    control (`thread`, `warp`,       │    TMA transfers, pipelines, and Tensor Core │
--│    `SharedArray`, `tcgen05_*`).     │    MMA ops encoded in Rust's type system.    │
--│  • Compiles via `dialect-mir` ──►   │  • Compiles via `dialect-cute` ──►           │
--│    LLVM / libNVVM ──► PTX.          │    `cutlass-mlir` (CUTLASS 4.7 compiler).    │
--│  • Lives in `models/*` & `examples` │  • Lives in `cute-rs-preview/`               │
--└─────────────────────────────────────┴──────────────────────────────────────────────┘
-+┌─────────────────────────────────────┬────────────────────────────────────────────────────┐
-+│  1. Native SIMT (`cuda_device`)     │  2. CuTe in Rust (`cute-rs` + `cutlass-primitives`)│
-+├─────────────────────────────────────┼────────────────────────────────────────────────────┤
-+│  • Explicit per-thread / per-warp   │  • CUTLASS CuTe's layout algebra, partitions,      │
-+│    control (`thread`, `warp`,       │    TMA transfers, pipelines, and Tensor Core       │
-+│    `SharedArray`, `tcgen05_*`).     │    MMA ops encoded in Rust's type system.          │
-+│  • Compiles via `dialect-mir` ──►   │  • Compiles via `dialect-cute` ──►                 │
-+│    LLVM / libNVVM ──► PTX.          │    `cutlass-mlir` (CUTLASS 4.7 compiler).          │
-+│  • Lives in `models/*` & `examples` │  • Lives in `cute-rs-preview/`                     │
-+└─────────────────────────────────────┴────────────────────────────────────────────────────┘
+ src/main.rs: #[tile_export] relu, scale_in_place, warp_sum
+     |
+@@ -98,6 +102,39 @@ SUCCESS: 3/3 tile exports verified through the native ABI
+ 
+ Without nvcc it prints `skipping: nvcc not found` and exits 0.
+ 
++## Calling from cuTile Rust
++
++After `cargo oxide tilelib` packages the `#[tile_export]` functions, declare
++their interfaces with `#[cutile::foreign] unsafe fn` inside a
++`#[cutile::module]`. Match the library's names, concrete tile shapes, element
++types, and input/output access modes, then configure the generated `.tilelib`
++on the host with `TileLibrarySpec`. The
++[cuTile Rust tile-library guide](https://github.com/NVIDIA/cuda-rust/blob/main/cutile-rs/cutile-book/guide/tile-libraries.md)
++explains declarations, unsafe calls, and host configuration.
++
++Use matching CUDA 13.5 preview tooling for the library and caller; the
++library descriptors and caller bytecode must match the assembler's preview
++version. The execution validation recorded in
++[#1556](https://github.com/NVIDIA/cuda-rust/pull/1556) used the Tile C++ caller.
++This example does not yet include an Oxide-to-cuTile Rust execution test.
++
++## Current export limitations
++
++- Exports are non-generic free functions with concrete, one-dimensional tile
++  shapes. Static libraries are supported; on-demand linkage providers are not.
++- Supported element types are `f16`, `f32`, `f64`, and signed/unsigned 8-, 16-,
++  32-, and 64-bit integers; `bf16` is not accepted by `#[tile_export]`.
++- All operands of an export must have the same per-invocation element count
++  (footprint). Parameters use scalars, references, or references to fixed-size
++  arrays; returns are scalar or unit, with at least one output required.
++  Written operands (`out`/`inout`) must form one contiguous run.
++- Synchronization is `none` or `warp`; warp exports need whole groups of
++  `32 * footprint` elements. Callees cannot allocate shared memory; the export
++  description has no scratch-buffer support.
++
++References in the SIMT implementation access its tile fragments; they do not
++add support for arbitrary pointer operands to cuTile Rust foreign declarations.
++
+ ## What PASS proves
+ 
+ - The wrapper `#[tile_export]` generates has the calling convention the Tile
+```
+
+**File**: `cutile-rs/CHANGELOG.md` (modified, +17/-0)
+```diff
+@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+ 
+ ## [Unreleased]
+ 
++### Added
++
++- Refresh `cutile-kernels` from Grout with split-K prefill/merge, persistent
++  RMSNorm, and the remaining baseline and single-token variants. NVFP4 MoE
++  routing, quantization, FC1/FC2, and finalization kernels now live in the
++  reusable corpus and are shared by the example. Peak performance requires
++  the CUDA Toolkit 13.5 Tile IR assembler (#1746).
++- Add a reusable fused QKV projection, Q/K RMSNorm, FP8 conversion and paged
++  KV-scatter kernel, with a correctness example and opt-in CUDA graph benchmark
++  sweep. The initial schedule is not B200-tuned (#1746).
++
++### Documentation
++
++- Link the Tile library provider catalog and CUDA Oxide export workflow;
++  refresh kernel/example discovery, workspace paths, CUDA 13.5 setup, and
++  bytecode-version negotiation instructions (#1746).
++
+ ## [0.5.0] - 2026-11-04
+ 
+ CUDA 13.5 tile-library calls and GPU communication, a shared Tile/SIMT host
+```
+
+**File**: `cutile-rs/Cargo.lock` (modified, +2/-0)
+```diff
+@@ -609,6 +609,7 @@ dependencies = [
+  "cutile",
+  "cutile-compiler",
+  "cutile-ir",
++ "cutile-kernels",
+  "tokio",
+ ]
+ 
+@@ -628,6 +629,7 @@ version = "0.5.0"
+ dependencies = [
+  "cutile",
+  "cutile-compiler",
++ "cutile-ir",
+ ]
+ 
+ [[package]]
+```
+
+**File**: `cutile-rs/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -91,6 +91,7 @@ cutile-compiler = { path = "cutile-compiler", version = "=0.5.0" }
+ cutile-macro = { path = "cutile-macro", version = "=0.5.0" }
+ cutile = { path = "cutile", version = "=0.5.0" }
+ cutile-ir = { path = "cutile-ir", version = "=0.5.0" }
++cutile-kernels = { path = "cutile-kernels", version = "=0.5.0" }
+ 
+ # Lint policy shared by every workspace crate (`[lints] workspace = true`).
+ [workspace.lints.rust]
+```
+
+**File**: `cutile-rs/README.md` (modified, +13/-3)
+```diff
+@@ -71,11 +71,16 @@ grid `(8, 1, 1)`: 1024÷128 = 8 tiles.
+ 
+ - Run a similar example via `cargo run -p cutile-examples --example saxpy`.
+ - [More kernel and host API examples](https://github.com/NVIDIA/cuda-rust/tree/main/cutile-rs/cutile-examples/examples).
++- [Reusable kernel catalog](cutile-kernels/README.md), including fused QKV and
++  NVFP4 MoE, with [runnable examples](cutile-examples/README.md).
+ - For NVIDIA Nsight Compute, Nsight Systems, and cuda-gdb workflows, see
+   [Debugging and Profiling](https://nvidia.github.io/cuda-rust/cutile/latest/guide/debugging-and-profiling.html).
+ 
+ ## Setup
+ 
++Run the Cargo, Nix, and script commands below from `cutile-rs/`. It is a
++separate workspace from the shared host crates at the monorepo root.
++
+ ### Requirements
+ 
+ - **Rust:** stable 1.89+ (no nightly required).
+@@ -95,7 +100,9 @@ GPU and emitted Tile IR requirements for cuTile Rust:
+ For DGX Spark / GB10 (`sm_121`), see the
+ [DGX Spark tutorial](https://nvidia.github.io/cuda-rust/cutile/latest/tutorials/12-dgx-spark-inference.html).
+ 
+-CUDA **13.3 is recommended**. FP4 packing and block-scaled MMA require 13.3.
++CUDA **13.5 is recommended** for the latest Tile IR compiler optimizations.
++FP4 packing and block-scaled MMA require Tile IR 13.3 or newer; the minimum
++requirements in the tables remain unchanged.
+ GPUs below `sm_80` (such as `sm_70` and `sm_75`) are unsupported.
+ 
+ ### Feature requirements
+@@ -142,12 +149,12 @@ rustup default stable
+ 
+ #### CUDA
+ 
+-Install CUDA 13.3 for your OS by following the official instructions:
++Install CUDA 13.5 for your OS by following the official instructions:
+ https://developer.nvidia.com/cuda-downloads
+ 
+ ### Configure Environment
+ 
+-Set `CUDA_TOOLKIT_PATH` (or `CUDA_HOME`, consulted second) to your CUDA 13.3
++Set `CUDA_TOOLKIT_PATH` (or `CUDA_HOME`, consulted second) to your CUDA 13.5
+ install directory for a reproducible setup. If neither is set, cuTile
+ searches standard CUDA 13.5/13.4/13.3/13.2 install locations such as
+ `/usr/local/cuda-13.5`, `/usr/local/cuda-13.4`, `/usr/local/cuda-13.3`, `/usr/local/cuda-13.2`, `/usr/local/cuda-13`,
+@@ -197,6 +204,9 @@ nix develop
  ```
  
- * **Hard rule for `cute-rs` kernels (`cute-rs-preview/`):** CuTe’s layout
-@@ -121,7 +121,7 @@ When adding or modifying compiler passes (`mir-importer`, `mir-transforms`,
- Real-world deployments (such as [speakrs](https://avencera.com/blog/writing-gpu-kernels-in-rust-speakrs-60x-faster-than-pyannote))
- and Blackwell SOTA benchmarks highlight four practical rules for agents:
+ The flake automatically locates host NVIDIA driver libraries on both NixOS and non-NixOS systems.
++It currently pins an older nightly and CUDA 13.3 independently of the workspace's
++stable `rust-toolchain.toml`. For CUDA 13.5 performance evaluation, use the
++explicit toolkit setup above and record the compiler selected in your environment.
  
--1. **Prefer typed `cuda_device` / `ctm_rs` / `cute_rs` operations over opaque `ptx_asm!`.**
-+1. **Prefer typed `cuda_device` / `cutlass_primitives` / `cute_rs` operations over opaque `ptx_asm!`.**
-    * Opaque `ptx_asm!` hides address arithmetic and memory effects from LLVM
-      (causing Loop Strength Reduction to hoist base pointers and lose immediate
-      offsets, or forcing overly conservative memory clobbers across
+ ## Tests
+ - cuTile IR: `cargo test --package cutile-ir`
 ```
 
-**File**: `cuda-oxide/Cargo.lock` (modified, +12/-12)
+**File**: `cutile-rs/cutile-benchmarks/README.md` (modified, +4/-4)
 ```diff
-@@ -370,17 +370,6 @@ dependencies = [
-  "typenum",
- ]
+@@ -4,7 +4,7 @@ Criterion benchmarks for selected cuTile Rust kernels and workloads.
  
--[[package]]
--name = "ctm-rs"
--version = "0.3.0"
--dependencies = [
-- "cuda-core",
-- "cuda-device",
-- "cuda-host",
-- "thiserror 2.0.21",
-- "trybuild",
--]
--
- [[package]]
- name = "cuda-artifact-finalizer"
- version = "0.3.0"
-@@ -491,10 +480,10 @@ dependencies = [
- name = "cuda-macros"
- version = "0.3.0"
- dependencies = [
-- "ctm-rs",
-  "cuda-core",
-  "cuda-device",
-  "cuda-host",
-+ "cutlass-primitives",
-  "oxide-tile-export",
-  "proc-macro2",
-  "quote",
-@@ -572,6 +561,17 @@ dependencies = [
-  "trybuild",
- ]
+ ## Quick start
  
-+[[package]]
-+name = "cutlass-primitives"
-+version = "0.3.0"
-+dependencies = [
-+ "cuda-core",
-+ "cuda-device",
-+ "cuda-host",
-+ "thiserror 2.0.21",
-+ "trybuild",
-+]
-+
- [[package]]
- name = "dashmap"
- version = "6.2.1"
+-Run these from the repository root:
++Run these from the `cutile-rs/` workspace:
+ 
+ ```bash
+ # Smoke test: verify all benchmarks execute (fast, discards results)
+@@ -25,19 +25,19 @@ don't pollute criterion baselines. Use it in CI or during development to
+ catch compilation and runtime errors without waiting for full measurements.
+ 
+ ```bash
+-./scripts/test_benchmarks.sh   # from the repository root
++./scripts/test_benchmarks.sh   # from cutile-rs/
+ # or equivalently:
+ cargo bench -p cutile-benchmarks --features smoke-test
+ ```
+ 
+ ## GPU clock locking
+ 
+ For reproducible results, lock GPU clocks before benchmarking. The clock
+-scripts live in `cutile-benchmarks/scripts/` (not the repository-root
++scripts live in `cutile-benchmarks/scripts/` (not the workspace's
+ `scripts/` directory used above):
+ 
+ ```bash
+-./cutile-benchmarks/scripts/setclock.sh     # lock clocks (from the repository root)
++./cutile-benchmarks/scripts/setclock.sh     # lock clocks (from cutile-rs/)
+ cargo bench -p cutile-benchmarks
+ ./cutile-benchmarks/scripts/resetclock.sh   # restore defaults
+ ```
 ```
 
-**File**: `cuda-oxide/Cargo.toml` (modified, +2/-2)
+**File**: `cutile-rs/cutile-book/README.md` (modified, +9/-6)
 ```diff
-@@ -4,7 +4,7 @@ members = [
-     # CuTe frontend and semantic IR shared by every CuTe backend.
-     "cute-rs-preview/cute-layout",
-     "cute-rs-preview/cute-rs",
--    "cute-rs-preview/ctm-rs",
-+    "cute-rs-preview/cutlass-primitives",
-     "cute-rs-preview/dialect-cute",
-     # Core crates
-     "crates/cuda-target-spec",
-@@ -75,7 +75,7 @@ llvm-export = { path = "crates/llvm-export" }
- pliron-mlir-interop = { version = "=0.1.0" }
- cuda-oxide-mlir-export = { path = "crates/cuda-oxide-mlir-export" }
- cute-layout = { path = "cute-rs-preview/cute-layout" }
--ctm-rs = { path = "cute-rs-preview/ctm-rs" }
-+cutlass-primitives = { path = "cute-rs-preview/cutlass-primitives" }
- dialect-cute = { path = "cute-rs-preview/dialect-cute" }
- dialect-mir = { path = "crates/dialect-mir" }
- dialect-iket = { path = "crates/dialect-iket" }
-```
-
-**File**: `cuda-oxide/Justfile` (modified, +2/-2)
-```diff
-@@ -92,8 +92,8 @@ test:
- # Run the CUDA-toolkit-dependent packages (no driver required)
- test-cuda:
-     cargo test --all-targets \
--        -p cuda-oxide-codegen -p cuda-macros -p cuda-host -p cute-rs -p ctm-rs
--    cargo test -p ctm-rs --all-targets --features host
-+        -p cuda-oxide-codegen -p cuda-macros -p cuda-host -p cute-rs -p cutlass-primitives
-+    cargo test -p cutlass-primitives --all-targets --features host
+@@ -4,7 +4,7 @@ orphan: true
  
- # Mirror unit-tests.yml's third job, `generated-intrinsics`: the three gates a
- # change under crates/cuda-intrinsics-gen has to pass. Nothing else here ran
-```
-
-**File**: `cuda-oxide/README.md` (modified, +1/-1)
-```diff
-@@ -306,7 +306,7 @@ cargo oxide run gemm_sol_final
- | `cuda-device`       | Device intrinsics (`thread::*`, `warp::*`, barriers)                      |
- | `cute-layout`       | CuTe-style layout algebra and coordinate mapping |
- | `cute-rs`           | Typed CuTe tensors, tiles, copies, pipelines, and MMA operations |
--| `ctm-rs`            | Typed instruction-level CUDA primitives |
-+| `cutlass-primitives`            | Typed instruction-level CUDA primitives |
- | `cuda-intrinsics`   | Generated low-level CUDA intrinsic declarations                           |
- | `cuda-host`         | Typed module loading, launch helpers, LTOIR loader                        |
- | `cuda-macros`       | Proc macros (`#[cuda_module]`, `#[kernel]`, `gpu_printf!`)                |
-```
-
-**File**: `cuda-oxide/crates/cuda-device/README.md` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
+ # The cuTile Rust Book
  
- `#![no_std]` device-side intrinsics and abstractions for writing CUDA kernels in Rust. This crate provides everything that runs on the GPU: thread identification, memory abstractions, synchronization, warp primitives, tensor cores, TMA, atomics, and debug facilities.
+-Source for the cuTile Rust Book. To build and serve it locally:
++Source for the cuTile Rust Book. From `cutile-rs/cutile-book/`, build and serve it locally:
  
--The separate [`ctm-rs`](../../cute-rs-preview/ctm-rs) crate provides typed CUTLASS-style
-+The separate [`cutlass-primitives`](../../cute-rs-preview/cutlass-primitives) crate provides typed CUTLASS-style
- PTX-level programming over the existing NVVM dialect. Its initial validated
- subset targets two-CTA FP16/FP32 operations on SM100a and block-scaled MXFP4 operations on SM120a.
+ ```
+ make setup
+@@ -20,22 +20,25 @@ For local development, use the single-version book build:
+ make livehtml
+ ```
  
-```
-
-**File**: `cuda-oxide/crates/cuda-macros/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ reserved-oxide-symbols = { workspace = true }
- oxide-tile-export = { workspace = true }
+-or, from the repository root:
++or, from `cutile-rs/`:
  
- [dev-dependencies]
--ctm-rs = { workspace = true }
-+cutlass-primitives = { workspace = true }
- trybuild = "1"
- # Dev-only cycle (cargo allows it): the launch_requires_unsafe compile-fail
- # test type-checks a real cuda_launch! expansion, which needs the host-side
-```
-
----
-
-### Incident Patch 2: `433a4e46` (2026-11-06)
-**Commit Message**: feat(cargo-oxide): opt-in CUDA_OXIDE_LINKER=wild host linker (#1641)
-
-Adds opt-in support for linking host ELF binaries with the wild linker via `CUDA_OXIDE_LINKER=wild` (or `[env] CUDA_OXIDE_LINKER = "wild"` in `.cargo/cuda-oxide.toml`), plus a `cargo oxide doctor` check, unit tests, README docs, and `cuda-oxide-book` documentation.
-
-Signed-off-by: deepakshirkem <[REDACTED_EMAIL]>
-Signed-off-by: Nihal Pasham <[REDACTED_EMAIL]>
-
-**File**: `cuda-oxide/crates/cargo-oxide/README.md` (modified, +13/-0)
-```diff
-@@ -130,6 +130,19 @@ request one independently finalized cubin per declared device crate with
- final-output mode, so it cannot be combined with `--emit-nvvm-ir`,
- `emit-ltoir` or `tilelib`.
+ ```
+ scripts/run_book.sh serve
+ ```
  
-+`CUDA_OXIDE_LINKER=wild` (or `[env] CUDA_OXIDE_LINKER = "wild"` in
-+`.cargo/cuda-oxide.toml`) links host crates with the
-+[wild](https://github.com/wild-linker/wild) linker instead of rustc's
-+default. cargo-oxide passes `-Clinker=clang -Clink-arg=--ld-path=<wild>`, so
-+`clang` and `wild` must both be on `PATH`; install wild with
-+`cargo install wild-linker`. These flags come after any user `RUSTFLAGS`, so
-+they take precedence over an existing `-Clinker`. Unset, empty, or `default`
-+keeps rustc's default linker, and any other value is an error. Device code is
-+unaffected: device payloads are still finalized by libNVVM and nvJitLink, and
-+only host ELF links change. `cargo oxide doctor` reports whether `wild` is
-+installed and fails if `CUDA_OXIDE_LINKER=wild` is set without it or if
-+`CUDA_OXIDE_LINKER` is set to an unsupported value.
-+
- ## Commands
+ GitHub Pages uses the versioned site build instead. To run the same build entry
+-point locally, run from the repository root:
++point locally, run from `cutile-rs/`:
  
- ### `cargo oxide list [--json]`
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/codegen_env.rs` (modified, +123/-7)
-```diff
-@@ -235,6 +235,116 @@ pub(super) fn codegen_option_names(flags: &[String]) -> Vec<String> {
-     names
- }
+ ```
+ scripts/build_versioned_book.sh
+ ```
  
-+/// Selects an alternative host linker for the final link of host binaries.
-+/// Currently only `wild` is supported; unset, empty, or `default` keeps
-+/// rustc's default linker.
-+pub(super) const HOST_LINKER_ENV: &str = "CUDA_OXIDE_LINKER";
-+
-+/// rustc flags for the host linker requested via [`HOST_LINKER_ENV`].
-+///
-+/// Reads the process environment and `.cargo/cuda-oxide.toml` `[env]` and
-+/// returns an error on an invalid value or a missing `wild`; the decision
-+/// itself lives in [`host_linker_rustflags_for`] so it can be tested without
-+/// either.
-+pub(super) fn host_linker_rustflags(ctx: &Context) -> Result<Vec<String>, String> {
-+    let value = inherited_or_configured_env(ctx, HOST_LINKER_ENV);
-+    host_linker_rustflags_for(value.as_deref().map(std::ffi::OsStr::new), || {
-+        super::toolkit::find_executable("wild", &[])
-+    })
-+}
-+
-+/// [`host_linker_rustflags`] with the environment value and the `wild`
-+/// lookup injected.
-+///
-+/// wild is driven through clang's `--ld-path`, the setup wild documents for
-+/// Rust; GCC has no equivalent option. The path is resolved up front so a
-+/// missing `wild` fails here with a clear message instead of an obscure
-+/// link error later.
-+pub(super) fn host_linker_rustflags_for(
-+    value: Option<&std::ffi::OsStr>,
-+    find_wild: impl FnOnce() -> Option<std::path::PathBuf>,
-+) -> Result<Vec<String>, String> {
-+    let Some(value) = value else {
-+        return Ok(Vec::new());
-+    };
-+    match value.to_str().map(str::trim) {
-+        Some("" | "default") => Ok(Vec::new()),
-+        Some("wild") => {
-+            let wild = find_wild().ok_or_else(|| {
-+                format!(
-+                    "{HOST_LINKER_ENV}=wild, but `wild` was not found on PATH.\n\
-+                     Install it with `cargo install wild-linker`, or unset {HOST_LINKER_ENV}."
-+                )
-+            })?;
-+            Ok(vec![
-+                "-Clinker=clang".to_string(),
-+                format!("-Clink-arg=--ld-path={}", wild.display()),
-+            ])
-+        }
-+        _ => Err(format!(
-+            "unsupported {HOST_LINKER_ENV} value {value:?}; expected `wild` or `default`."
-+        )),
-+    }
-+}
-+
-+/// Apply [`HOST_LINKER_ENV`] flags to a host-only Cargo invocation.
-+///
-+/// When no alternative host linker is requested (`None`, empty, or `default`),
-+/// the command's rustflags are left untouched so Cargo still reads any
-+/// `.cargo/config.toml` `build.rustflags`. When `wild` is requested, project
-+/// `extra-rustflags` and existing `CARGO_ENCODED_RUSTFLAGS` or `RUSTFLAGS` are
-+/// preserved ahead of the `wild` flags in `CARGO_ENCODED_RUSTFLAGS`.
-+pub(super) fn apply_host_linker_rustflags(cmd: &mut Command, ctx: &Context) -> Result<(), String> {
-+    let existing_encoded = std::env::var("CARGO_ENCODED_RUSTFLAGS").ok();
-+    let existing = std::env::var("RUSTFLAGS").ok();
-+    apply_host_linker_rustflags_with_existing(
-+        cmd,
-+        &ctx.config.extra_rustflags,
-+        &host_linker_rustflags(ctx)?,
-+        existing_encoded.as_deref(),
-+        existing.as_deref(),
-+    );
-+    Ok(())
-+}
-+
-+/// [`apply_host_linker_rustflags`] with resolved linker and inherited flags injected.
-+pub(super) fn apply_host_linker_rustflags_with_existing(
-+    cmd: &mut Command,
-+    configured_rustflags: &[String],
-+    linker_rustflags: &[String],
-+    existing_encoded_rustflags: Option<&str>,
-+    existing_rustflags: Option<&str>,
-+) {
-+    if linker_rustflags.is_empty() {
-+        return;
-+    }
-+    let mut flags = configured_rustflags.to_vec();
-+    if let Some(existing) = existing_encoded_rustflags {
-+        flags.extend(
-+            existing
-+                .split(ENCODED_RUSTFLAGS_SEPARATOR)
-+                .filter(|flag| !flag.is_empty())
-+                .map(str::to_string),
-+        );
-+    } else if let Some(existing) = existing_rustflags {
-+        flags.extend(existing.split_whitespace().map(str::to_string));
-+    }
-+    flags.extend(linker_rustflags.iter().cloned());
-+    cmd.env(
-+        "CARGO_ENCODED_RUSTFLAGS",
-+        flags.join(&ENCODED_RUSTFLAGS_SEPARATOR.to_string()),
-+    )
-+    .env_remove("RUSTFLAGS");
-+}
-+
-+/// Apply [`HOST_LINKER_ENV`] flags to a host-only Cargo invocation, exiting on error.
-+pub(super) fn apply_host_linker_rustflags_or_exit(cmd: &mut Command, ctx: &Context) {
-+    apply_host_linker_rustflags(cmd, ctx).unwrap_or_else(|error| {
-+        eprintln!("Error: {error}");
-+        std::process::exit(1);
-+    });
-+}
-+
- /// Construct boundary-preserving rustc flags for Cargo.
- ///
- /// `RUSTFLAGS` is whitespace-split by Cargo, which corrupts a single flag
-@@ -244,24 +354,26 @@ fn build_encoded_rustflags(
-     ctx: &Context,
-     profile: CodegenProfilePolicy,
-     device_cfgs: &[String],
--) -> String {
-+) -> Result<String, String> {
-     let existing_encoded = std::env::var("CARGO_ENCODED_RUSTFLAGS").ok();
-     let
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/doctor.rs` (modified, +47/-1)
-```diff
-@@ -364,7 +364,7 @@ pub(super) fn backend_source_check(
- /// backend `.so` (informational), CUDA headers (`cuda.h`), CUDA toolkit
- /// (`nvcc`, libNVVM, nvJitLink, libdevice), LLVM (`llc`), clang/libclang,
- /// the NVIDIA driver / GPU (informational), and optionally `cuda-gdb` /
--/// `compute-sanitizer`.
-+/// `compute-sanitizer` / the `wild` host linker.
- /// Exits non-zero if any required check fails.
- ///
- /// Doctor itself needs neither the CUDA toolkit nor a driver: every check
-@@ -794,6 +794,52 @@ pub fn doctor(ctx: &Context) {
-         }
-     }
+-The generated GitHub Pages site is written to `_site/`.
++The generated Tile site is written to `cutile-rs/_site/`. For the combined
++CUDA Rust site, run `bash docs/build_all_docs.sh` from the monorepo root;
++its output is `docs/build/html/`.
  
-+    // 11. wild (optional) -- uses the same env/config resolution and parser as
-+    // `CUDA_OXIDE_LINKER`, so doctor and the build always agree on both missing
-+    // `wild` and unsupported values.
-+    let configured_linker =
-+        super::codegen_env::inherited_or_configured_env(ctx, super::codegen_env::HOST_LINKER_ENV);
-+    let found_wild = super::toolkit::find_executable("wild", &[]);
-+    let linker_check = super::codegen_env::host_linker_rustflags_for(
-+        configured_linker.as_deref().map(std::ffi::OsStr::new),
-+        || found_wild.clone(),
-+    );
-+    print!("wild linker (optional)... ");
-+    match (found_wild, linker_check) {
-+        (_, Err(err))
-+            if configured_linker
-+                .as_deref()
-+                .is_some_and(|value| value.trim() == "wild") =>
-+        {
-+            println!(
-+                "✗ not found, but {}=wild is set",
-+                super::codegen_env::HOST_LINKER_ENV
-+            );
-+            eprintln!("  Install it with `cargo install wild-linker`.");
-+            let _ = err;
-+            ok = false;
-+        }
-+        (_, Err(err)) => {
-+            println!("✗ {err}");
-+            ok = false;
-+        }
-+        (Some(path), Ok(_)) => match Command::new(&path).arg("--version").output() {
-+            Ok(output) if output.status.success() => {
-+                let version = String::from_utf8_lossy(&output.stdout);
-+                if let Some(line) = version.lines().next() {
-+                    println!("✓ {} ({})", line.trim(), path.display());
-+                } else {
-+                    println!("✓ {}", path.display());
-+                }
-+            }
-+            _ => println!("✓ {}", path.display()),
-+        },
-+        (None, Ok(_)) => println!(
-+            "- not found (only needed for {}=wild)",
-+            super::codegen_env::HOST_LINKER_ENV
-+        ),
-+    }
-+
-     println!();
-     if ok {
-         println!("✅ Environment looks good!");
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/host_cargo.rs` (modified, +2/-0)
-```diff
-@@ -38,6 +38,7 @@ pub(super) fn run_host_cargo(
+ ## Related Documentation
  
-     apply_config_env(&mut cmd, ctx);
-     apply_ld_library_path(&mut cmd, ctx);
-+    apply_host_linker_rustflags_or_exit(&mut cmd, ctx);
- 
-     if cargo_subcommand == "run" {
-         if let Some(bin) = bin {
-@@ -152,6 +153,7 @@ pub(super) fn build_host_cargo(
- 
-     apply_config_env(&mut cmd, ctx);
-     apply_ld_library_path(&mut cmd, ctx);
-+    apply_host_linker_rustflags_or_exit(&mut cmd, ctx);
- 
-     if let Some(bin) = bin {
-         println!("Building host crate {} (bin: {})...", example, bin);
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/tests.rs` (modified, +126/-0)
-```diff
-@@ -6696,3 +6696,129 @@ fn the_smoketest_greps_the_summary_markers_this_command_prints() {
-     assert!(!DESCRIPTIONS_WRITTEN_MARKER.contains(LIBRARY_SKIPPED_MARKER));
-     assert!(!LIBRARY_WRITTEN_MARKER.contains(LIBRARY_SKIPPED_MARKER));
- }
-+
-+/// Unset, empty, or `default` values leave rustc's default host linker untouched.
-+#[test]
-+fn test_host_linker_unset_or_default_keeps_rustc_linker() {
-+    for value in [None, Some(""), Some("default"), Some("  default  ")] {
-+        let flags = host_linker_rustflags_for(value.map(OsStr::new), || {
-+            panic!("wild lookup must not run for {value:?}")
-+        });
-+        assert_eq!(flags, Ok(Vec::new()), "value {value:?}");
-+    }
-+}
-+
-+/// `CUDA_OXIDE_LINKER=wild` emits `-Clinker=clang` and `-Clink-arg=--ld-path=<wild>`.
-+#[test]
-+fn test_host_linker_wild_uses_clang_ld_path() {
-+    let flags = host_linker_rustflags_for(Some(OsStr::new(" wild ")), || {
-+        Some(PathBuf::from("/opt/bin/wild"))
-+    });
-+    assert_eq!(
-+        flags,
-+        Ok(vec![
-+            "-Clinker=clang".to_string(),
-+            "-Clink-arg=--ld-path=/opt/bin/wild".to_string(),
-+        ])
-+    );
-+}
-+
-+/// Requesting `wild` when `wild` is absent from `PATH` returns an actionable install error.
-+#[test]
-+fn test_host_linker_wild_missing_is_an_error() {
-+    let err = host_linker_rustflags_for(Some(OsStr::new("wild")), || None).unwrap_err();
-+    assert!(err.contains("`wild` was not found on PATH"), "{err}");
-+    assert!(err.contains("cargo install wild-linker"), "{err}");
-+}
-+
-+/// Unsupported `CUDA_OXIDE_LINKER` values fail before probing `PATH` for `wild`.
-+#[test]
-+fn test_host_linker_rejects_unsupported_value() {
-+    let err = host_linker_rustflags_for(Some(OsStr::new("mold")), || {
-+        panic!("wild lookup must not run for an unsupported value")
-+    })
-+    .unwrap_err();
-+    assert!(err.contains("unsupported CUDA_OXIDE_LINKER value"), "{err}");
-+}
-+
-+/// Explicit host-linker flags follow user `RUSTFLAGS` so `CUDA_OXIDE_LINKER=wild` wins.
-+#[test]
-+fn test_host_linker_flags_follow_user_rustflags() {
-+    let linker = host_linker_rustflags_for(Some(OsStr::new("wild")), || {
-+        Some(PathBuf::from("/opt/bin/wild"))
-+    })
-+    .unwrap();
-+    let rustflags = build_encoded_rustflags_with_existing(
-+        Path::new("/tmp/librustc_codegen_cuda.so"),
-+        CargoPassthroughSubcommand::Test.codegen_profile(false),
-+        &[],
-+        &linker,
-+        None,
-+        Some("-Clinker=gcc"),
-+    );
-+    let flags = decoded_rustflags(&rustflags);
-+    let user = flags
-+        .iter()
-+        .position(|flag| *flag == "-Clinker=gcc")
-+        .unwrap();
-+    let ours = flags
-+        .iter()
-+        .position(|flag| *flag == "-Clinker=clang")
-+        .unwrap();
-+    assert!(user < ours, "{flags:?}");
-+}
-+
-+/// Host-only Cargo invocations leave `CARGO_ENCODED_RUSTFLAGS` untouched when `wild` is not active,
-+/// and append the `wild` flags after project and user rustflags when active.
-+#[test]
-+fn test_apply_host_linker_rustflags_with_existing_preserves_precedence() {
-+    let mut default_cmd = Command::new("cargo");
-+    apply_host_linker_rustflags_with_existing(
-+        &mut default_cmd,
-+        &["-Ctarget-cpu=native".to_string()],
-+        &[],
-+        None,
-+        Some("-Clinker=gcc"),
-+    );
-+    assert!(
-+        command_env(&default_cmd, "CARGO_ENCODED_RUSTFLAGS").is_none(),
-+        "default linker must not override host cargo rustflags"
-+    );
-+
-+    let linker = host_linker_rustflags_for(Some(OsStr::new("wild")), || {
-+        Some(PathBuf::from("/opt/bin/wild"))
-+    })
-+    .unwrap();
-+    let mut wild_cmd = Command::new("cargo");
-+    apply_host_linker_rustflags_with_existing(
-+        &mut wild_cmd,
-+        &["-Ctarget-cpu=native".to_string()],
-+        &linker,
-+        None,
-+        Some("-Clinker=gcc"),
-+    );
-+    let encoded = command_env(&wild_cmd, "CARGO_ENCODED_RUSTFLAGS")
-+        .expect("wild linker must set CARGO_ENCODED_RUSTFLAGS on host cargo");
-+    let flags = decoded_rustflags(&encoded);
-+    assert_eq!(
-+        flags,
-+        vec![
-+            "-Ctarget-cpu=native",
-+            "-Clinker=gcc",
-+            "-Clinker=clang",
-+            "-Clink-arg=--ld-path=/opt/bin/wild",
-+        ]
-+    );
-+}
-+
-+/// Invalid `CUDA_OXIDE_LINKER` in `.cargo/cuda-oxide.toml` `[env]` returns `Err` instead of
-+/// aborting the process.
-+#[test]
-+fn test_host_linker_reads_project_config_env_and_returns_err() {
-+    let ctx = test_context(OxideConfig {
-+        env: vec![("CUDA_OXIDE_LINKER".to_string(), "mold".to_string())],
-+        ..Default::default()
-+    });
-+    let err = host_linker_rustflags(&ctx).unwrap_err();
-+    assert!(err.contains("unsupported CUDA_OXIDE_LINKER value"), "{err}");
-+}
-```
-
-**File**: `cuda-oxide/cuda-oxide-book/getting-started/installation.md` (modified, +13/-1)
-```diff
-@@ -398,6 +398,17 @@ cargo oxide emit-ltoir my_kernels --arch sm_90
- 
- Every command takes `--help`, which lists the flags each one accepts.
- 
-+### Optional host linker (`CUDA_OXIDE_LINKER=wild`)
-+
-+To link host ELF binaries with the [Wild linker](https://github.com/wild-linker/wild) instead of `rustc`'s default linker (`rust-lld`), install `wild` and set `CUDA_OXIDE_LINKER=wild`:
-+
-+```bash
-+cargo install wild-linker
-+CUDA_OXIDE_LINKER=wild cargo oxide run vecadd
-+```
-+
-+You can also set `[env] CUDA_OXIDE_LINKER = "wild"` in `.cargo/cuda-oxide.toml`. `cargo-oxide` resolves `wild` on `PATH` and appends `-Clinker=clang -Clink-arg=--ld-path=<wild>` after user `RUSTFLAGS`. Device code generation and `.oxart` payload finalization (`libNVVM` / `nvJitLink`) are unaffected. Unset, empty, or `default` keeps `rustc`'s default linker, and any other value is an error.
-+
- ---
- 
- ## Verifying your installation
-@@ -410,7 +421,8 @@ cargo oxide doctor
- 
- `cargo oxide doctor` validates your Rust toolchain, CUDA headers (`cuda.h`),
- CUDA toolkit (including libNVVM / nvJitLink / libdevice for kernels that use
--math intrinsics), LLVM installation, NVIDIA driver / GPU, and codegen backend
-+math intrinsics), LLVM installation, NVIDIA driver / GPU, codegen backend, and
-+optional tools (`cuda-gdb`, `compute-sanitizer`, and the `wild` host linker)
- in one shot.
- 
- `cargo-oxide` itself does not need the CUDA toolkit or an NVIDIA driver to
-```
-
-**File**: `cuda-oxide/cuda-oxide-book/gpu-programming/error-handling-and-debugging.md` (modified, +21/-19)
-```diff
-@@ -490,19 +490,20 @@ cargo oxide doctor
- 
- Doctor checks:
- 
--| Check           | What it verifies                                    |
--|:----------------|:----------------------------------------------------|
--| Rust toolchain  | Pinned compiler (`1.99.1`) with required components |
--| Codegen backend | `librustc_codegen_cuda.so` built                    |
--| CUDA headers    | `cuda.h` present under the toolkit root             |
--| CUDA toolkit    | `nvcc` found and version compatible                 |
--| libNVVM         | `libnvvm.so` loadable (libdevice math kernels)      |
--| nvJitLink       | `libnvJitLink.so` loadable (same)                   |
--| libdevice       | `libdevice.10.bc` discoverable (same)               |
--| LLVM            | `llc` (21+) available for PTX generation            |
--| Driver / GPU    | `nvidia-smi` reports a GPU and its compute cap      |
--| cuda-gdb        | Optional; only needed for `cargo oxide debug`       |
--| compute-sanitizer | Optional; only needed for `cargo oxide sanitize`  |
-+| Check             | What it verifies                                     |
-+|:------------------|:-----------------------------------------------------|
-+| Rust toolchain    | Pinned compiler (`1.99.1`) with required components  |
-+| Codegen backend   | `librustc_codegen_cuda.so` built                     |
-+| CUDA headers      | `cuda.h` present under the toolkit root              |
-+| CUDA toolkit      | `nvcc` found and version compatible                  |
-+| libNVVM           | `libnvvm.so` loadable (libdevice math kernels)       |
-+| nvJitLink         | `libnvJitLink.so` loadable (same)                    |
-+| libdevice         | `libdevice.10.bc` discoverable (same)                |
-+| LLVM              | `llc` (21+) available for PTX generation             |
-+| Driver / GPU      | `nvidia-smi` reports a GPU and its compute cap       |
-+| cuda-gdb          | Optional; only needed for `cargo oxide debug`        |
-+| compute-sanitizer | Optional; only needed for `cargo oxide sanitize`     |
-+| wild linker       | Optional; only needed for `CUDA_OXIDE_LINKER=wild`   |
- 
- The libNVVM / nvJitLink / libdevice checks fire only when a kernel calls
- CUDA libdevice math (`sin`, `cos`, `exp`, `pow`, `sqrt`, ...). If your
-@@ -567,12 +568,13 @@ This prints the full pipeline output:
- 
- For more targeted inspection:
- 
--| Variable                       | Effect                            |
--|:-------------------------------|:----------------------------------|
--| `CUDA_OXIDE_VERBOSE=1`         | Verbose compiler output           |
--| `CUDA_OXIDE_SHOW_RUSTC_MIR=1`  | Dump the rustc MIR before import  |
--| `CUDA_OXIDE_DEBUG=line-tables` | Emit source line-table metadata   |
--| `CUDA_OXIDE_DEBUG=full`        | Emit full metadata for basic locals and args |
-+| Variable                       | Effect                                        |
-+|:-------------------------------|:----------------------------------------------|
-+| `CUDA_OXIDE_VERBOSE=1`         | Verbose compiler output                       |
-+| `CUDA_OXIDE_SHOW_RUSTC_MIR=1`  | Dump the rustc MIR before import              |
-+| `CUDA_OXIDE_DEBUG=line-tables` | Emit source line-table metadata               |
-+| `CUDA_OXIDE_DEBUG=full`        | Emit full metadata for basic locals and args  |
-+| `CUDA_OXIDE_LINKER=wild`       | Link host crates with the `wild` ELF linker   |
- 
- ## Profiling with Nsight Compute
- 
+-- **API Docs**: Run `cargo doc --open` from the project root
+-- **Examples**: See the `cutile-examples/` directory
++- **API Docs**: Run `cargo doc -p cutile --no-deps --open` from `cutile-rs/`
++- **Examples**: See the [example guide](https://github.com/NVIDIA/cuda-rust/blob/main/cutile-rs/cutile-examples/README.md)
++- **Reusable kernels**: See the [kernel catalog](https://github.com/NVIDIA/cuda-rust/blob/main/cutile-rs/cutile-kernels/README.md)
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1751** (2026-11-06): refactor(cute-rs-preview): rename ctm-rs to cutlass-primitives (@nihalpasham)
 - **PR #1748** (closed): fix(mir-importer): reject statics that wrap shared storage (@arpanpathak)
+- **PR #1746** (2026-11-07): feat(cutile-kernels): fix v0.5.0 docs, refresh Grout kernels, share MoE, and add fused QKV (@elibol)
 - **PR #1745** (2026-11-05): release(v0.5.0): CUDA 13.5 communication and tile-library support (@elibol)
 - **PR #1744** (closed): feat(cutile): CUDA 13.5 communication and tile-library support (@elibol)
 - **PR #1742** (2026-11-04): fix(cuda-host): serialize host-callback-gated GPU tests in shared_launch_lifetimes (NVBug 7043934) (@nihalpasham)
-- **PR #1741** (2026-11-04): feat(mir-importer): emit host-style { data_ptr, length } DWARF structs for slice and str fat pointers (@nihalpasham)
 
 ---
 
@@ -2977,32 +2604,33 @@ Signed-off-by: Nihal Pasham <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cute-rs-preview): rename ctm-rs to cutlass-primitives (#1751)
+## X. cutile-kernels): fix v0.5.0 docs, refresh Grout kernels, share MoE, and add fuse
 
 **RULE**:
-When implementing operations in `.github/workflows/unit-tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87851900`: cute-rs-preview): rename ctm-rs to cutlass-primitives (#1751). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `367bc0f8`: cutile-kernels): fix v0.5.0 docs, refresh Grout kernels, share MoE, and add fused QKV (#1746). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/unit-tests.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          # cute-rs and cutlass-primitives compile host metadata through cuda-host, so
-          - package: cutlass-primitives
-          - package: cutlass-primitives
+For reusable Tile kernels, including fused QKV and NVFP4 MoE, see the
+[`cutile-kernels` catalog](cutile-rs/cutile-kernels/README.md) and
+[runnable examples](cutile-rs/cutile-examples/README.md).
+
+The TileGym-derived [fused QKV kernel](cutile-rs/cutile-kernels/src/experimental/qkv.rs)
+retains its MIT license and notice in the source.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-          # cute-rs and ctm-rs compile host metadata through cuda-host, so
-          - package: ctm-rs
-          - package: ctm-rs
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87851900` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `367bc0f8` are properly handled with clean fallback behavior.

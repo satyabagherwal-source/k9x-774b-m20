@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T13:15:39.625Z",
+  "last_updated": "2026-11-08T13:45:28.518Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -380,14 +380,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "bdbee4ddec6c9c98490ad7b5b9d4608b90da22d1f50c63971e32cbfe69b8c67f",
-      "verified_at": "2026-11-04T22:34:41.038Z",
+      "content_hash": "11979ec87d346050a7d8bb6792925b35d23537ad186a698fa8cacacd3bdc872e",
+      "verified_at": "2026-11-08T13:45:28.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:34:41.038Z"
+      "last_updated": "2026-11-08T13:45:28.517Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "9ea0bc8a383777064667e28d6133cfbb097cd766692dfd5dd4f0a565f5708ff3",
-      "verified_at": "2026-11-07T02:06:47.836Z",
+      "content_hash": "006c787c11a916246a2c0f91a771f0a3823b354c4b2f3904810593ae7c47901b",
+      "verified_at": "2026-11-08T13:40:21.429Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T02:06:47.836Z"
+      "last_updated": "2026-11-08T13:40:21.429Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

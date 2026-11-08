@@ -8285,3 +8285,5 @@
 | `CYCLE-20261108-EU7E` | `2026-11-08T12:35:09.290Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`347a3458...`) |
 | `CYCLE-20261108-OEN3` | `2026-11-08T13:10:35.295Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`0c40fa4d...`) |
 | `CYCLE-20261108-UXGC` | `2026-11-08T13:15:39.612Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a4b6fa3c...`) |
+| `CYCLE-20261108-QOTB` | `2026-11-08T13:40:21.407Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`006c787c...`) |
+| `CYCLE-20261108-X9RH` | `2026-11-08T13:45:28.493Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`11979ec8...`) |

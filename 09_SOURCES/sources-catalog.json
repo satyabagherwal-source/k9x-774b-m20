@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "bdbee4ddec6c9c98490ad7b5b9d4608b90da22d1f50c63971e32cbfe69b8c67f",
-    "lastHarvestedAt": "2026-11-04T22:34:41.029Z",
+    "contentHash": "11979ec87d346050a7d8bb6792925b35d23537ad186a698fa8cacacd3bdc872e",
+    "lastHarvestedAt": "2026-11-08T13:45:28.497Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "87851900",
+    "sourceVersion": "367bc0f8",
     "license": "Apache-2.0",
-    "contentHash": "9ea0bc8a383777064667e28d6133cfbb097cd766692dfd5dd4f0a565f5708ff3",
-    "lastHarvestedAt": "2026-11-07T02:06:47.821Z",
+    "contentHash": "006c787c11a916246a2c0f91a771f0a3823b354c4b2f3904810593ae7c47901b",
+    "lastHarvestedAt": "2026-11-08T13:40:21.411Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

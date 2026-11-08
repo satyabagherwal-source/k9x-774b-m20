@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T13:15:39.513Z",
+  "last_updated": "2026-11-08T13:45:28.409Z",
   "total_verified_learnings": 1238,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23267,10 +23267,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
       "source_version": "hf-contrastive-lm-clm-v0.1-8b",
-      "content_hash": "bdbee4ddec6c9c98490ad7b5b9d4608b90da22d1f50c63971e32cbfe69b8c67f",
+      "content_hash": "11979ec87d346050a7d8bb6792925b35d23537ad186a698fa8cacacd3bdc872e",
       "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Decoupled Embedding Caching for High-Throughput Ranking",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Bidirectional Context for Verifier Heads",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Typed Query Primitives for Contrastive Scoring",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 271,
           "title": "The Versioned Cache Invariant",
@@ -23342,7 +23357,7 @@
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7"
       ],
-      "verified_at": "2026-11-04T22:34:40.895Z",
+      "verified_at": "2026-11-08T13:45:28.372Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46986,14 +47001,19 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "87851900",
-      "content_hash": "9ea0bc8a383777064667e28d6133cfbb097cd766692dfd5dd4f0a565f5708ff3",
+      "source_version": "367bc0f8",
+      "content_hash": "006c787c11a916246a2c0f91a771f0a3823b354c4b2f3904810593ae7c47901b",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "cute-rs-preview): rename ctm-rs to cutlass-primitives (#1751)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cutile-kernels): fix v0.5.0 docs, refresh Grout kernels, share MoE, and add fuse",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47082,7 +47102,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T02:06:47.688Z",
+      "verified_at": "2026-11-08T13:40:21.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

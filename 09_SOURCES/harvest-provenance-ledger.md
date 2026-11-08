@@ -8294,3 +8294,5 @@ Every entry in this ledger must capture:
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `1992a18d` | Multi-dimensional audit evidence | 2026-11-08T12:35:09.294Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `11443aa0` | Multi-dimensional audit evidence | 2026-11-08T13:10:35.299Z |
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-08T13:15:39.616Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `367bc0f8` | Multi-dimensional audit evidence | 2026-11-08T13:40:21.411Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-08T13:45:28.497Z |
