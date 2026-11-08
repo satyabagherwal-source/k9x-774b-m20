@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T02:49:43.193Z",
-  "total_cycles_completed": 8148,
-  "total_learnings_persisted": 8148,
-  "total_rules_promoted": 7828,
+  "last_updated": "2026-11-08T02:57:04.491Z",
+  "total_cycles_completed": 8151,
+  "total_learnings_persisted": 8151,
+  "total_rules_promoted": 7832,
   "history": [
-    {
-      "timestamp": "2026-11-07T03:56:15.826Z",
-      "repository": "fb55/htmlparser2",
-      "learningId": "learn-github-fb55-htmlparser2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T03:56:18.604Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T03:56:24.952Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T04:03:15.065Z",
       "repository": "inikulin/parse5",
@@ -1403,6 +1382,27 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:56:53.401Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:57:03.699Z",
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:57:04.491Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

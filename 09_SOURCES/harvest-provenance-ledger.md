@@ -8192,3 +8192,6 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `eba8be50` | Multi-dimensional audit evidence | 2026-11-08T02:40:49.250Z |
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-08T02:49:36.468Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `95605c7a` | Multi-dimensional audit evidence | 2026-11-08T02:49:43.184Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `bb183265` | Multi-dimensional audit evidence | 2026-11-08T02:56:53.391Z |
+| `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-08T02:57:03.672Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1b0f754b` | Multi-dimensional audit evidence | 2026-11-08T02:57:04.485Z |

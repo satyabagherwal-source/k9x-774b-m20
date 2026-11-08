@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T02:49:43.190Z",
+  "last_updated": "2026-11-08T02:56:53.399Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4105,6 +4105,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
+    },
+    {
+      "id": "CD-R6ON",
+      "directive_title": "ssh): keep idle built-in SSH sessions alive through short stalls (#893)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kuddev/pebrel",
+      "source_commit": "bb183265",
+      "date_staged": "2026-11-08",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kuddev-pebrel"
     }
   ]
 }

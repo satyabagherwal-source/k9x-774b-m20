@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `97d3bfe5`  
+> **Source Version**: `bb183265`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T02:55:10.187Z  
+> **Timestamp**: 2026-11-08T02:56:53.037Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T02:55:09.175Z  
+> **Harvest Timestamp**: 2026-11-08T02:56:52.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3711 stars
+- **Stars / Engagement**: 3724 stars
 
 ---
 
@@ -1458,11 +1458,11 @@ export function register(on) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #839** (2026-10-31): **[Bug] Windows 下 Shift+Enter 在未协商扩展键盘协议的应用里退化为普通回车（CodeBuddy Code 无法换行）**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 专业版 25H2，Build 26300，单显示器，100% 缩放  ### Pebrel version / 版本号  2.3.1 (7311e07)  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Gemini CLI / other AI agent — 其他 AI agent  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Keyboard / IME / mouse / shortcuts / clipboard — 键盘、输入法、鼠标、快捷键、剪贴板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 新开一个标签页，在 PowerShell 7 里运行下面的探针脚本，它会把 stdin 收到的原始字节写入 keyhex.txt 2. 运行 `pebrel ctl run --pane <id> --command "node <探针脚本路径>"` 3. 运行 `pebrel ctl send-key --pane <id> --key enter --shift` 4. 读取 keyhex.txt，得到 `0d`（普通回车）；对照组 `pebrel ctl send-key --pane <id> --key j --control` 得到 `0a` 5. 同一台机器、同一个 CLI，在 Windows Terminal 里配置终端级键位后 Shift+Enter 正常换行  探针脚本：  ```js const fs = require('fs'); fs.writeFileSync('keyhex.txt', 'start\n'); process.stdin.setRawMode(true); process.stdin.resume(); process.stdin.on('data', b => fs.appendFileSync('keyhex.txt', Buffer.from(b).toString('hex') + '\n')); setTimeout(() => process.exit(0), 12000); ```   ### Expected behavior / 期望结果  应用应该收到可区分的 Shift+Enter 输入（xterm 惯例是 `ESC CR`，即 `\x1b\r`），从而插入换行而不是提交。  建议修复（任选其一）：  1. 当 pane 内的应用未启用 9001 / kitty 键盘
+- **Issue #870** (2026-11-07): **[Bug] 文件管理器图标乱码**
+  *Symptoms*: ### Operating system / 操作系统  macOS  ### OS version and display / 系统版本与显示  macos 26.0  ### Pebrel version / 版本号  2.4.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  zsh  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  File tree / drag-and-drop upload — 文件树、拖拽上传  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  <img width="425" height="293" alt="Image" src="https://github.com/user-attachments/assets/b79f6e67-9b1c-4eef-a239-ebc55bc004fb" />  ### Expected behavior / 期望结果  图标显示  ### Actual behavior / 实际结果  无  ### Logs / screenshots / 日志或截图  无  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
-- **Issue #821** (2026-10-31): **[Bug] Settings search ignores the UI language: Japanese queries find nothing except section names**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 25H2  ### Pebrel version / 版本号  2.3.1 (release). The same code is on current `main`.  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Not sure / 不确定  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Settings / theme / layout / blur — 设置页、主题、布局、模糊背景  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. Set the UI language to Japanese. 2. Open Settings and type フォント (font), 不透明度 (opacity), プロキシ (proxy) or ショートカット (shortcut) in the settings search box. 3. Open the keymap page and type the Japanese name of an action shown in the list, for example コピー (copy).  ### Expected behavior / 期望结果  The search goes to the page that owns the setting (Appearance for フォント, Network for プロキシ, and so on), like "font" in English or "字体" in Chinese. On the keymap page, the rows whose Japanese action label matches are shown.  ### Actual behavior / 实际结果  Settings search does not work in Japanese. A Japanese query only matches the page names shown in the navigation (for example 外観). Words for the settings on a page are not matched. A few queries match by accident because Japanese and Chinese share the kanji (背景, 
+- **Issue #868** (2026-11-07): **[Bug] 打字时鼠标光标每一次都会闪烁**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 23 H2  ### Pebrel version / 版本号  2.4.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  fish, nushell  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Keyboard / IME / mouse / shortcuts / clipboard — 键盘、输入法、鼠标、快捷键、剪贴板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 鼠标光标移入终端 2. 每一次打字鼠标光标都会闪烁  ### Expected behavior / 期望结果  与Windows Terminal类似, 第一次键入后, 鼠标光标隐藏, 移动鼠标后, 鼠标光标出现  ### Actual behavior / 实际结果  每一次打字鼠标光标都会闪烁  ### Logs / screenshots / 日志或截图  <img width="916" height="358" alt="Image" src="https://github.com/user-attachments/assets/a34ddf26-6397-4fb3-a4a3-7ca6ed6d3faf" />  ### Non-default settings / 改过的设置  1. 使用monolisa字体 2. 开启平滑光标 3. 背景不透明度改为95%  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1479,67 +1479,90 @@ export function register(on) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `97d3bfe5` (2026-11-04)
-**Commit Message**: Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions
+### Incident Patch 1: `da3250ac` (2026-11-07)
+**Commit Message**: fix(ssh): keep idle built-in SSH sessions alive through short stalls (#893)
 
-Bring the published v2.4.0 release branch back to main in reviewable
-segments; this part adds the release commits up to b4552072.
+The built-in russh client used a 15 s keepalive with max 3, so about one
+minute of server or network silence ended an idle pane with "SSH connection
+ended without an exit status". The managed OpenSSH launch already uses
+ServerAliveInterval=30 / ServerAliveCountMax=6. Both paths now share these
+values as constants. The transport disconnect reason is now logged.
 
-**File**: `architecture/notes/nebula_app/gpui_shell/workspace/remote_files/2026-11-02-batch-selection-and-transfers.md` (added, +60/-0)
+Adds a paused-clock regression that relays the production client through a
+silent TCP path. With the new budget, 150 s of silence survives and 300 s
+still ends the pane.
+
+Closes #816
+
+Co-authored-by: YinBuLiao <[REDACTED_EMAIL]>
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+Co-authored-by: Kuddev <[REDACTED_EMAIL]>
+
+**File**: `architecture/notes/nebula_app/ssh_session/2026-11-05-shared-keepalive-budget.md` (added, +71/-0)
 ```diff
-@@ -0,0 +1,60 @@
-+# SFTP selection and batch transfer ownership
+@@ -0,0 +1,71 @@
++# Share the SSH keepalive budget between built-in and OpenSSH launches
 +
 +## Status
 +
-+Proposed with the SFTP sidebar interaction update.
++Accepted (#816).
 +
 +## Context
 +
-+The remote sidebar previously retained one selected path. Adding Ctrl/Shift
-+selection also requires downloads, remote copies and native file drags to carry
-+the complete selection through their existing asynchronous handoffs.
++An idle built-in SSH pane ended with "SSH connection ended without an exit
++status" after hours, while a parallel standalone OpenSSH client session to the
++same host stayed connected. The managed OpenSSH launch has used
++`ServerAliveInterval=30` / `ServerAliveCountMax=6` since v0.7.0 to survive NAT
++idle timeouts. The built-in russh client instead used a 15 s interval with a
++maximum of 3. russh counts every unanswered timer tick and fails the transport
++with `KeepaliveTimeout` once the count exceeds the maximum. A server or path
++that is silent for about one minute therefore ended the pane.
 +
 +## Evidence
 +
-+`SftpController::start_job` advances the controller generation and retires the
-+previous job. Calling the single-entry transfer once per selected row would
-+therefore cancel earlier entries. Native export likewise owns one download plan
-+and one temporary-directory lease for the lifetime of the drag.
++A scratch russh 0.62.2 client with the old 15 s × 3 policy lost its channel
++after about 60 s when the server was stalled for 90–100 s. Servers were stalled
++with SIGSTOP on a local macOS sshd and with `docker pause` on an Ubuntu 22.04
++OpenSSH 8.9 container. OpenSSH with default settings survived the same stall
++and echoed afterwards. Forcing a rekey every three seconds against OpenSSH 10.2
++and 8.9 kept the session alive, which rules out key re-exchange as the cause.
 +
 +## Decision
 +
-+The browser retains path-based selections, anchors and focused rows in its
-+existing per-pane snapshots. Display order supplies range selection. A refresh
-+retains surviving paths; changing directories clears the selection. Mouse-down
-+on an already selected row defers collapsing the group until a click is confirmed.
-+
-+Actions capture the ordered entries and existing pane/destination/generation
-+target before opening a picker or confirming conflicts. One controller job plans
-+the complete download or copy batch, using the existing concurrency and entry
-+limits. Native export receives the same batch. Duplicate download names reserve
-+the other incoming roots before choosing a replacement name.
-+
-+Keyboard commands belong to the remote list's focus context. Hover actions stop
-+their gestures from reaching the row's selection and double-click navigation.
++`ssh::SERVER_ALIVE_INTERVAL` (30 s) and `ssh::SERVER_ALIVE_COUNT_MAX` (6) are
++the single keepalive budget. The OpenSSH arguments and the russh
++`keepalive_interval` / `keepalive_max` are both derived from these constants.
++A path that is silent for up to about 3.5 minutes no longer ends the pane, and
++probes still refresh NAT state. The client handler logs the russh disconnect
++reason. Transport errors are logged at warning level so that a future report
++can distinguish a keepalive timeout from a socket error. A received disconnect
++is logged at info level.
 +
 +## Rejected alternatives
 +
-+- Starting a controller job per selected row cancels earlier jobs.
-+- Storing row indices selects different files when a listing is replaced.
-+- Changing the local tree's selection model expands this remote-only change.
++- `keepalive_max = 0` (probes never fatal): on Unix, a dead link would be
++  detected only after the TCP retransmission timeout of about 15 minutes.
++- Removing probes, which matches OpenSSH defaults: this would regress the
++  v0.7.0 fix for NAT idle drops.
++- Honoring user ssh_config `ServerAlive*` through `ssh -G`: `-G` prints 0
++  whether or not the value was set, so explicit configuration cannot be
++  detected.
 +
 +## Consequences
 +
-+No persisted format, authentication policy or worker model changes. The existing
-+transfer target validation still rejects results from stale pickers and dialogs.
-+Selection stays independent of the batch already being transferred.
++Dead links are detected after about 210 s instead of about 60 s. `test_connect`
++keeps keepalive disabled. The mobile transport (`mobile/ssh`) has its own
++policy and is not changed. An outage longer than the budget, or an OS that
++aborts the socket while a probe is unacknowledged, can still end the session.
++The new log line identifies that case.
 +
 +## Validation
 +
-+The supplied HTML was inspected in Chromium, including hover and range selection.
-+Formatting and architecture checks cover the source change. Native compilation,
-+application visual acceptance and regression tests were not run at the user's request.
++`ssh_session::lifecycle::tests::keepalive` places a gated TCP relay between the
++production client and the loopback server, and pauses the tokio clock. An idle
++shell survives 150 s of silence and still answers a ping. The test fails with
++the old 15 s × 3 values. A 300 s silence still ends the pane. tokio
++`test-util` is enabled as a dev-only feature for the paused clock.
 +
 +## Supersedes
 +
@@ -1547,721 +1570,618 @@ segments; this part adds the release commits up to b4552072.
 +
 +## Revisit when
 +
-+The browser supports selection across directories or concurrent transfer jobs.
++A report includes the logged disconnect reason, user ssh_config `ServerAlive*`
++values need to be honored, or russh changes how it counts keepalive ticks.
 ```
 
-**File**: `nebula_app/i18n/en-US.json` (modified, +7/-2)
+**File**: `nebula_app/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -1110,7 +1110,9 @@
-     "choose_files": "Choose files to upload",
-     "choose_upload_directory": "Choose a folder to upload",
-     "choose_download_directory": "Choose the download folder",
--    "drag_hint": "Drop files here to upload; drag an item to File Explorer to download."
-+    "drag_hint": "Drop files here to upload; drag an item to File Explorer to download.",
-+    "completed": "Transfer completed",
-+    "copied_items": "Copied {count} remote items"
-   },
-   "hosts": {
-     "copied": "Created host copy: {name}",
-@@ -1651,7 +1653,10 @@
-     "reading": "Reading the remote directory…",
-     "empty": "This directory is empty.",
-     "error_retry": "{error} (click Reload in the top-right to retry)",
--    "busy_other": "Another host is transferring: {destination}"
-+    "busy_other": "Another host is transferring: {destination}",
-+    "items": "{count} items",
-+    "selected_items": "{count} items selected",
-+    "clear_selection": "Clear selection (Esc)"
-   },
-   "backup_flow": {
-     "password_notice": "Pebrel keeps this password in memory only for the current run and never writes it to disk. You will be asked again for the first backup after restarting. If you forget it, existing backups cannot be unlocked.",
-```
-
-**File**: `nebula_app/i18n/zh-CN.json` (modified, +7/-2)
-```diff
-@@ -1110,7 +1110,9 @@
-     "choose_files": "选择要上传的文件",
-     "choose_upload_directory": "选择要上传的文件夹",
-     "choose_download_directory": "选择下载位置",
--    "drag_hint": "拖入文件即可上传；拖到资源管理器即可下载。"
-+    "drag_hint": "拖入文件即可上传；拖到资源管理器即可下载。",
-+    "completed": "传输完成",
-+    "copied_items": "已复制 {count} 个远端项目"
-   },
-   "hosts": {
-     "copied": "已创建主机副本：{name}",
-@@ -1651,7 +1653,10 @@
-     "reading": "正在读取远端目录…",
-     "empty": "此目录为空。",
-     "error_retry": "{error}（点右上角重新读取）",
--    "busy_other": "另一主机正在传输：{destination}"
-+    "busy_other": "另一主机正在传输：{destination}",
-+    "items": "{count} 项",
-+    "selected_items": "已选 {count} 项",
-+    "clear_selection": "清空选择（Esc）"
-   },
-   "backup_flow": {
-     "password_notice": "Pebrel 不把这个密码写到磁盘，只在本次运行期间留在内存里，下次启动后第一次备份时再问。忘了它，已有的备份就解不开了。",
-```
-
-**File**: `nebula_app/i18n/zh-TW.json` (modified, +7/-2)
-```diff
-@@ -615,7 +615,9 @@
-     "choose_files": "選擇要上傳的檔案",
-     "choose_upload_directory": "選擇要上傳的資料夾",
-     "choose_download_directory": "選擇下載位置",
--    "drag_hint": "將檔案拖進來即可上傳；拖至檔案總管即可下載。"
-+    "drag_hint": "將檔案拖進來即可上傳；拖至檔案總管即可下載。",
-+    "completed": "傳輸完成",
-+    "copied_items": "已複製 {count} 個遠端項目"
-   },
-   "hosts": {
-     "search": "搜尋名稱、位址、群組、標籤或備註",
-@@ -1030,7 +1032,10 @@
-     "reading": "正在讀取遠端目錄…",
-     "empty": "此目錄為空。",
-     "error_retry": "{error}（點選右上角重新讀取）",
--    "busy_other": "另一主機正在傳輸：{destination}"
-+    "busy_other": "另一主機正在傳輸：{destination}",
-+    "items": "{count} 個項目",
-+    "selected_items": "已選取 {count} 個項目",
-+    "clear_selection": "清除選取（Esc）"
-   },
-   "terminal.ssh_disconnected": "連線已中斷，按 R 重新連線。",
-   "terminal.ssh_reconnect": "重新連線 (R)",
-```
-
-**File**: `nebula_app/src/gpui_shell/widgets/switch.rs` (modified, +14/-7)
-```diff
-@@ -22,12 +22,18 @@ pub struct NebulaSwitch {
-     key: SharedString,
-     checked: bool,
-     disabled: bool,
-+    small: bool,
-     on_click: Option<Rc<dyn Fn(&bool, &mut Window, &mut App)>>,
- }
+@@ -175,6 +175,8 @@ serde_json = "1"
+ clap_complete = "4.2.3"
+ rand = "0.10"
+ rsa = "0.10.0-rc.18"
++# 暂停的 tokio 时钟让 SSH keepalive 回归在毫秒内跑完分钟级静默。
++tokio = { version = "1", features = ["test-util"] }
  
- impl NebulaSwitch {
-     pub fn new(key: impl Into<SharedString>) -> Self {
--        Self { key: key.into(), checked: false, disabled: false, on_click: None }
-+        Self { key: key.into(), checked: false, disabled: false, small: false, on_click: None }
-+    }
+ [target.'cfg(not(windows))'.dependencies]
+ xdg = "3.0.0"
+```
+
+**File**: `nebula_app/src/ssh.rs` (modified, +14/-1)
+```diff
+@@ -104,6 +104,14 @@ const VALUE_OPTS: &[u8] = b"bcDEeFIiJLlmOopQRSWw";
+ /// forward): never inject into, never worth auto-saving as a host.
+ const NO_SESSION_FLAGS: &[u8] = b"NnfGTVW";
+ 
++/// Keepalive policy for every SSH link Pebrel owns: the managed OpenSSH launch
++/// below and the built-in client in `ssh_session`. Probes keep NAT/firewall
++/// state alive; the link is declared dead only after this many probes in a row
++/// go unanswered (≈3.5 min), so a short network stall does not end an idle
++/// session that plain OpenSSH would have kept.
++pub(crate) const SERVER_ALIVE_INTERVAL: std::time::Duration = std::time::Duration::from_secs(30);
++pub(crate) const SERVER_ALIVE_COUNT_MAX: usize = 6;
 +
-+    pub fn small(mut self) -> Self {
-+        self.small = true;
-+        self
+ /// How long a typed `ssh` session must live before OSC 133;D confirms it as
+ /// a real connection worth auto-saving in the sidebar (fast failures — DNS,
+ /// connection refused, an aborted auth prompt — die well under this).
+@@ -752,7 +760,12 @@ pub fn run(mut args: Vec<String>) -> i32 {
+             // trade accepted here, since a dead-by-default link is the bug
+             // being fixed.
+             if !args.iter().any(|arg| arg.contains("ServerAliveInterval")) {
+-                cmd.args(["-o", "ServerAliveInterval=30", "-o", "ServerAliveCountMax=6"]);
++                cmd.args([
++                    "-o".to_owned(),
++                    format!("ServerAliveInterval={}", SERVER_ALIVE_INTERVAL.as_secs()),
++                    "-o".to_owned(),
++                    format!("ServerAliveCountMax={SERVER_ALIVE_COUNT_MAX}"),
++                ]);
+             }
+             // The bootstrap contains quotes and `$` — passing it straight
+             // through Windows `Command` arg-escaping → ssh.exe → the remote
+```
+
+**File**: `nebula_app/src/ssh_session.rs` (modified, +22/-2)
+```diff
+@@ -596,6 +596,24 @@ impl client::Handler for ClientHandler {
+             },
+         }
+     }
++
++    // A pane only sees its channel vanish; keep the transport cause
++    // (keepalive timeout, socket error, server disconnect) in the log.
++    async fn disconnected(
++        &mut self,
++        reason: client::DisconnectReason<Self::Error>,
++    ) -> Result<(), Self::Error> {
++        match reason {
++            client::DisconnectReason::ReceivedDisconnect(info) => {
++                info!("SSH 连接 {}:{} 已关闭: {info:?}", self.host, self.port);
++                Ok(())
++            },
++            client::DisconnectReason::Error(error) => {
++                warn!("SSH 连接 {}:{} 异常断开: {error:?}", self.host, self.port);
++                Err(error)
++            },
++        }
++    }
+ }
+ 
+ pub(crate) fn runtime() -> io::Result<&'static tokio::runtime::Runtime> {
+@@ -783,10 +801,12 @@ async fn authenticated_route<H: SshEventHost>(
+         evict_pooled_session(&key, &existing).await;
      }
  
-     pub fn checked(mut self, checked: bool) -> Self {
-@@ -80,10 +86,11 @@ impl RenderOnce for NebulaSwitch {
-         let muted = cx.theme().muted_foreground;
-         let white = gpui::hsla(0.0, 0.0, 1.0, 1.0);
-         let checked = self.checked;
-+        let small = self.small;
-         let group = SharedString::from(format!("switch-hit-{}", self.key));
-         let track = div()
--            .w(px(40.0))
--            .h(px(22.0))
-+            .w(px(if small { 28.0 } else { 40.0 }))
-+            .h(px(if small { 16.0 } else { 22.0 }))
-             .relative()
-             .flex_shrink_0()
-             .rounded(px(11.0))
-@@ -97,9 +104,9 @@ impl RenderOnce for NebulaSwitch {
-             track.bg(primary.opacity(t)).border_color(border.blend(primary.opacity(t))).child(
-                 div()
-                     .absolute()
--                    .left(px(4.0 + 16.0 * t))
--                    .top(px(4.0 - 2.0 * t))
--                    .size(px(12.0 + 4.0 * t))
-+                    .left(px(if small { 3.0 + 12.0 * t } else { 4.0 + 16.0 * t }))
-+                    .top(px(if small { 3.0 } else { 4.0 - 2.0 * t }))
-+                    .size(px(if small { 10.0 } else { 12.0 + 4.0 * t }))
-                     .rounded_full()
-                     .bg(muted.blend(white.opacity(t))),
-             )
-@@ -127,7 +134,7 @@ impl RenderOnce for NebulaSwitch {
-             .toggled(checked)
-             .disabled(self.disabled)
-             .custom(ButtonCustomVariant::new(cx))
--            .w(px(44.0))
-+            .w(px(if small { 32.0 } else { 44.0 }))
-             .h(px(32.0))
-             .px_0()
-             .rounded(px(6.0))
++    // Same budget as the managed OpenSSH launch. 15 s × 3 ended idle panes
++    // after one minute of server silence that OpenSSH survives (#816).
+     let config = Arc::new(client::Config {
+         inactivity_timeout: None,
+-        keepalive_interval: Some(Duration::from_secs(15)),
+-        keepalive_max: 3,
++        keepalive_interval: Some(crate::ssh::SERVER_ALIVE_INTERVAL),
++        keepalive_max: crate::ssh::SERVER_ALIVE_COUNT_MAX,
+         ..Default::default()
+     });
+     report_stage(progress, SshStage::Connect);
 ```
 
-**File**: `nebula_app/src/gpui_shell/workspace/details_panel.rs` (modified, +5/-1)
+**File**: `nebula_app/src/ssh_session/lifecycle/tests.rs` (modified, +1/-0)
 ```diff
-@@ -365,7 +365,11 @@ impl NebulaWorkspace {
-             .relative()
-             .w(px(width))
-             .h_full()
--            .pb(px(crate::gpui_shell::theme::PaneCardStyle::current(cx).margin.bottom))
-+            .pb(px(if remote && matches!(self.side_panel.view, PanelView::Files) {
-+                0.0
-+            } else {
-+                crate::gpui_shell::theme::PaneCardStyle::current(cx).margin.bottom
-+            }))
-             .child(self.render_details_header(width, window, cx))
-             .child(div().flex_1().min_h_0().w_full().child(panel).with_animation(
-                 ("details-content", self.details_panel.transition),
+@@ -1360,4 +1360,5 @@ fn ssh_echo_keeps_draining_while_a_large_input_waits_for_window_space() {
+     });
+ }
+ 
++mod keepalive;
+ mod sftp;
 ```
 
-**File**: `nebula_app/src/gpui_shell/workspace/keyboard_bindings.rs` (modified, +17/-0)
+**File**: `nebula_app/src/ssh_session/lifecycle/tests/keepalive.rs` (added, +113/-0)
 ```diff
-@@ -66,6 +66,23 @@ pub(super) fn gpui_binding_combo(combo: &str) -> String {
- /// 注册工作区快捷键；在 `gpui_component::init` 之后调用一次。
- pub(super) fn init(cx: &mut App) {
-     cx.bind_keys(default_workspace_bindings());
-+    let modifier = if crate::platform::Platform::current() == crate::platform::Platform::MacOS {
-+        "cmd"
-+    } else {
-+        "ctrl"
-+    };
-+    cx.bind_keys([
-+        KeyBinding::new(
-+            &format!("{modifier}-shift-u"),
-+            remote_files::UploadFiles,
-+            Some(remote_files::KEY_CONTEXT),
-+        ),
-+        KeyBinding::new(
-+            &format!("{modifier}-shift-d"),
-+            remote_files::DownloadSelection,
-+            Some(remote_files::KEY_CONTEXT),
-+        ),
-+    ]);
-     // 平台判定复用已有入口；共享表不意味着给其他平台注册 ⌘ 快捷键。
-     if crate::platform::Platform::current() == crate::platform::Platform::MacOS {
-         bind_macos_command_keys(cx);
-```
-
-**File**: `nebula_app/src/gpui_shell/workspace/remote_files.rs` (modified, +540/-257)
-```diff
-@@ -23,8 +23,11 @@
- mod drag;
- #[cfg(all(test, feature = "gpui-test-support"))]
- mod follow_tests;
-+mod interaction;
-+mod selection;
- mod target;
- mod transfers;
-+use selection::Selection;
- use target::RemoteTransferTarget;
- 
- use gpui::AppContext as _;
-@@ -45,19 +48,19 @@ use crate::ssh_sftp::{
-     SftpSnapshot, SftpTransferOptions,
- };
- 
--use super::file_tree::{DRAWER_TEXT_INSET, ROW_PITCH, ROW_WASH_H, ROW_WASH_INSET};
- use super::{NebulaWorkspace, workspace_ui_language};
- 
--/// 工具栏与说明文字沿用本地树的抽屉内边距。
--const TEXT_INSET: f32 = DRAWER_TEXT_INSET;
-+const TEXT_INSET: f32 = 12.0;
-+pub(super) const KEY_CONTEXT: &str = "RemoteFiles";
-+gpui::actions!(remote_files, [UploadFiles, DownloadSelection]);
- 
- #[derive(Clone)]
- struct RemoteDirectorySnapshot {
-     destination: String,
-     path: String,
-     entries: Vec<SftpEntry>,
-     error: Option<String>,
--    selected: Option<String>,
-+    selection: Selection,
-     shell_cwd: Option<String>,
-     retry_path: Option<String>,
- }
-@@ -99,7 +102,8 @@ pub(super) struct RemoteBrowser {
-     error: Option<String>,
-     /// 导航世代号。晚发早到的响应靠它被丢弃。
-     generation: u64,
--    selected: Option<String>,
-+    selection: Selection,
-+    focus_handle: Option<gpui::FocusHandle>,
-     /// 当前唯一的传输控制器。任务可以跨 pane 切换继续跑，但只有目的地与当前
-     /// pane 一致时才把完成结果写回列表，避免 A 主机的结果覆盖 B 主机。
-     transfer: Option<SftpController>,
-@@ -116,13 +120,13 @@ pub(super) struct RemoteBrowser {
- #[derive(Clone)]
- struct RemoteClipboard {
-     source_destination: String,
--    entry: SftpEntry,
-+    entries: Vec<SftpEntry>,
- }
- 
- #[derive(Clone)]
- enum PendingRemoteTransfer {
-     Upload(Vec<PathBuf>),
--    Download { entry: SftpEntry, local_directory: PathBuf },
-+    Download { entries: Vec<SftpEntry>, local_directory: PathBuf },
-     Copy(RemoteClipboard),
- }
- 
-@@ -152,7 +156,7 @@ impl RemoteBrowser {
-                 path: self.path.clone(),
-                 entries: self.entries.clone(),
-                 error: self.error.clone(),
--                selected: self.selected.clone(),
-+                selection: self.selection.clone(),
-                 // A switch cancels unfinished navigation. Reobserve the pane
-                 // cwd when it returns rather than treating its old listing as
-                 // already synchronized with the cancelled target.
-@@ -195,7 +199,7 @@ impl RemoteBrowser {
-             self.path = snapshot.path;
-             self.entries = snapshot.entries;
-             self.error = snapshot.error;
--            self.selected = snapshot.selected;
-+            self.selection = snapshot.selection;
-             self.shell_cwd = snapshot.shell_cwd;
-             self.retry_path = snapshot.retry_path;
-             return true;
-@@ -206,7 +210,7 @@ impl RemoteBrowser {
-         self.path.clear();
-         self.entries.clear();
-         self.error = None;
--        self.selected = None;
-+        self.selection.clear();
-         self.shell_cwd = None;
-         self.retry_path = None;
-         false
-@@ -227,7 +231,7 @@ impl RemoteBrowser {
-             self.entries.clear();
-             self.error = None;
-             self.loading = false;
--            self.selected = None;
-+            self.selection.clear();
-             self.shell_cwd = None;
-             self.retry_path = None;
-             self.pending_path = None;
-@@ -247,7 +251,7 @@ impl RemoteBrowser {
-         self.entries.clear();
-         self.error = None;
-         self.loading = false;
--        self.selected = None;
-+        self.selection.clear();
-         self.shell_cwd = None;
-         self.retry_path = None;
-         self.pending_path = None;
-@@ -429,10 +433,20 @@ impl NebulaWorkspace {
-                 workspace.remote_browser.following_cwd = false;
-                 match listed {
-                     Some(Ok(entries)) => {
-+                        let same_directory = workspace.remote_browser.path == path;
-                         workspace.remote_browser.entries = entries;
-                         workspace.remote_browser.path = path.clone();
-                         workspace.remote_browser.error = None;
--                        workspace.remote_browser.selected = None;
-+                        if same_directory {
-+                            let rows = workspace.remote_rows();
-+                            let paths: Vec<_> = rows.iter().map(|row| row.path.as_str()).collect();
-+                            workspace.remote_browser.selection.retain(&paths);
-+                        } else {
-+                            workspace.remote_browser.selection.clear();
-+                            workspace
-+                                .remote_files_scroll
-+                                .scroll_to_item(0, gpui::ScrollStrategy::Top);
-+                        }
-                         workspace.remote_browser.retry_path = None;
-                     },
-                     Some(Err(message)) => {
-@@ -469,9 +483,13 @@ impl NebulaWorkspace {
-         self.navigate_remote(path, cx);
-     }
- 
--    fn selected_remote_entry(&self) -> Option<SftpE
+@@ -0,0 +1,113 @@
++use tokio::io::{AsyncReadExt, AsyncWriteExt};
++use tokio::net::tcp::{OwnedReadHalf, OwnedWriteHalf};
++
++use super::*;
++
++/// A path that stays connected but carries nothing while closed, like a
++/// stalled Wi-Fi link or router. OpenSSH keeps an idle session over it (#816).
++struct SilentPath {
++    open: watch::Sender<bool>,
++    task: tokio::task::JoinHandle<()>,
++}
++
++impl Drop for SilentPath {
++    fn drop(&mut self) {
++        self.task.abort();
++    }
++}
++
++impl SilentPath {
++    async fn in_front_of(fixture: &Fixture) -> (Self, ResolvedRoute) {
++        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let port = listener.local_addr().unwrap().port();
++        let server = fixture.route.destination.port;
++        let known_hosts = fixture.route.known_hosts_path.clone().unwrap();
++        for (_, key) in
++            russh::keys::known_hosts::known_host_keys_path("127.0.0.1", server, &known_hosts)
++                .unwrap()
++        {
++            russh::keys::known_hosts::learn_known_hosts_path("127.0.0.1", port, &key, &known_hosts)
++                .unwrap();
++        }
++        let (open, gate) = watch::channel(true);
++        let task = tokio::spawn(async move {
++            let (client, _) = listener.accept().await.unwrap();
++            let upstream = tokio::net::TcpStream::connect(("127.0.0.1", server)).await.unwrap();
++            let (client_read, client_write) = client.into_split();
++            let (upstream_read, upstream_write) = upstream.into_split();
++            tokio::join!(
++                forward(client_read, upstream_write, gate.clone()),
++                forward(upstream_read, client_write, gate),
++            );
++        });
++        let destination = format!("fixture@127.0.0.1:{port}");
++        let route = ResolvedRoute {
++            destination: SshDestination::parse(&destination).unwrap(),
++            profile: crate::ssh_profiles::SshProfiles::default().for_destination(&destination),
++            transport: RouteTransport::Direct,
++            known_hosts_path: Some(known_hosts),
++        };
++        (Self { open, task }, route)
++    }
++}
++
++async fn forward(mut from: OwnedReadHalf, mut to: OwnedWriteHalf, mut open: watch::Receiver<bool>) {
++    let mut buffer = vec![0; 16 * 1024];
++    while let Ok(read @ 1..) = from.read(&mut buffer).await {
++        if open.wait_for(|open| *open).await.is_err()
++            || to.write_all(&buffer[..read]).await.is_err()
++        {
++            return;
++        }
++    }
++}
++
++/// Open an idle shell through the production client config, silence the path
++/// for `silence` (virtual time), then report whether the pane is still usable.
++fn idle_shell_survives(silence: Duration) -> bool {
++    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
++    runtime.block_on(async {
++        let fixture = Fixture::new(Mode::Open).await;
++        let (path, route) = SilentPath::in_front_of(&fixture).await;
++        let (acquired, mut channel, token, events) =
++            tokio::time::timeout(Duration::from_secs(10), async {
++                let acquired = authenticated_route(&route, None::<&NoopSshEventHost>, false, true)
++                    .await
++                    .unwrap();
++                let events = Events::default();
++                let (channel, token) =
++                    open_shell(&acquired, size(), None, None, &events).await.unwrap();
++                (acquired, channel, token, events)
++            })
++            .await
++            .expect("loopback shell should open");
++        let terminal = terminal(&events);
++        let (input_tx, mut input) = mpsc::unbounded_channel();
++        let outage = async {
++            tokio::time::pause();
++            path.open.send_replace(false);
++            tokio::time::sleep(silence).await;
++            path.open.send_replace(true);
++            tokio::time::resume();
++            let answered =
++                tokio::time::timeout(Duration::from_secs(5), acquired.session.send_ping()).await;
++            let _ = input_tx.send(Msg::Shutdown);
++            matches!(answered, Ok(Ok(()))) && !acquired.session.is_closed()
++        };
++        let (pumped, answered) =
++            tokio::join!(pump(&mut channel, token, size(), &terminal, &events, &mut input), outage);
++        fixture.forget(&acquired.session).await;
++        pumped.is_ok() && answered
++    })
++}
++
++#[test]
++fn idle_shell_outlives_a_silent_network_that_openssh_survives() {
++    // The previous 15 s × 3 budget ended this pane after about one minute.
++    assert!(idle_shell_survives(Duration::from_secs(150)));
++}
++
++#[test]
++fn keepalive_still_ends_a_pane_whose_server_never_answers() {
++    assert!(!idle_shell_survives(Duration::from_secs(300)));
++}
 ```
 
 ---
 
-### Incident Patch 2: `888e9f2b` (2026-11-04)
-**Commit Message**: Merge 2.4.0 release part 1/7: PowerShell pointer editing and provider navigation
+### Incident Patch 2: `14885627` (2026-11-07)
+**Commit Message**: fix(files): keep the m glyph so macOS loads the symbol font (#892)
 
-Bring the published v2.4.0 release branch back to main in reviewable
-segments; this part adds the release commits up to 42167bff.
+* fix(files): keep the m glyph so macOS loads the symbol font
 
-**File**: `architecture/notes/nebula_terminal/tty/2026-11-01-legacy-powershell-pointer.md` (added, +65/-0)
+GPUI's macOS text system skips any added face without an 'm' glyph.
+The Pebrel Symbols subset had no Latin glyphs, so macOS never registered
+it and every file-tree icon rendered as a missing glyph box.
+
+Keep Maple's unchanged 'm' in the subset, regenerate the face, and add
+regressions for the glyph and for resolving icons through the macOS
+text system.
+
+Closes #870
+
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+* Move macOS font test into platform module
+
+Co-authored-by: YinBuLiao <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: YinBuLiao <[REDACTED_EMAIL]>
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+Co-authored-by: copilot-swe-agent[bot] <[REDACTED_EMAIL]>
+Co-authored-by: Kuddev <[REDACTED_EMAIL]>
+
+**File**: `THIRD-PARTY-NOTICES` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,65 @@
-+# Legacy PSReadLine pointer eligibility
+@@ -421,4 +421,5 @@ Normal NF CN Regular font (SIL Open Font License 1.1). The original copyright
+ and license metadata are retained in the font; see licenses/LICENSE-PEBREL-SYMBOLS.
+ Source: https://github.com/subframe7536/maple-font
+ Regeneration: python scripts/build_symbol_font.py (requires fontTools).
++It also keeps Maple's unchanged `m` glyph, required by GPUI's macOS font loader.
+ The complete Maple face remains unchanged and separately selectable.
+```
+
+**File**: `architecture/notes/nebula_app/font_install/2026-11-05-symbol-face-macos-m-glyph.md` (added, +63/-0)
+```diff
+@@ -0,0 +1,63 @@
++# Symbol face keeps `m` for the macOS GPUI loader
 +
 +## Status
 +
-+Implemented; real PSReadLine 2.0 and 2.4.5 Unix PTY checks passed. Windows
-+ConPTY and desktop acceptance of this change remain unverified.
++Implemented for issue #870. macOS desktop visual acceptance remains separate from
++the focused text-system regression.
 +
 +## Context
 +
-+The Windows default shell is Windows PowerShell. Its in-box PSReadLine can be
-+older than 2.1. The initial pointer adapter excluded the entire editor because
-+older PSReadLine can lose surrogate pairs after native editing. Consequently
-+even clicking inside an ASCII command such as `ls` did nothing.
++On macOS every icon drawn with the `Pebrel Symbols` family rendered as a missing
++glyph box: file-tree chevrons, folder and file icons, and other interface icons.
++The regression shipped with the independent symbol face introduced in
++[restore-text-metrics-and-symbol-fallback](../gpui_shell/terminal/2026-10-25-restore-text-metrics-and-symbol-fallback.md).
 +
 +## Evidence
 +
-+The public `GetBufferState`, `SetCursorPosition` and undoable `Delete` APIs exist
-+in [PSReadLine 1.2](https://github.com/PowerShell/PSReadLine/blob/v1.2/PSReadLine/PublicAPI.cs)
-+and [2.0](https://github.com/PowerShell/PSReadLine/blob/v2.0.0/PSReadLine/PublicAPI.cs).
-+The existing adapter already checks owned key chords without depending on the
-+newer `Get-PSReadLineKeyHandler -Chord` parameter.
-+
-+Loading the actual 2.0 module into a real Unix PTY verifies native ASCII/CJK
-+cursor movement, insertion, range deletion and undo in Windows and Emacs modes.
-+A buffer containing a surrogate pair can be queried and rejected without
-+mutating it. These are Unix editor checks, not proof of Windows input transport.
++- The checked-in face covers every icon code point used by
++  `display::side_panel::icons`; coverage was not the cause.
++- The pinned GPUI macOS text system (`gpui_macos/src/text_system.rs`, Zed rev
++  `1e716d16`) skips any added face without an `m` glyph, logging
++  "has no 'm' character and was not loaded". The symbol subset deliberately had
++  no Latin glyphs, so the family was never registered and `font_id` returned
++  "no font found".
++- A headless `MacTextSystem` test reproduced that error before the change and
++  resolves the family afterwards.
 +
 +## Decision
 +
-+Allow the owned bridge on PSReadLine 1.2 or newer. For versions before 2.1,
-+reject pointer snapshots containing any surrogate code unit. Preserve the
-+strict UTF-8, binding ownership, native snapshot, nonce and stale-buffer checks.
-+The native editor remains the only input buffer and edit authority.
++- `scripts/build_symbol_font.py` adds Maple's original `m` to the subset. Outline
++  and advance are unchanged; the face grows by one glyph and 180 bytes.
++- Regenerate the checked-in face from the pinned source; regeneration remains
++  byte-reproducible with fontTools 4.60.2.
 +
 +## Rejected alternatives
 +
-+- Requiring users to install a new shell or module for ASCII clicks.
-+- Removing the Unicode boundary and risking silent loss of existing emoji.
-+- Sending approximate arrow counts or replacing the editor buffer from a mirror.
++- Register complete Maple on macOS: reintroduces the 20 MB face the symbol subset
++  exists to avoid.
++- Patch the GPUI fork's loader: widens the fork for a property the asset can
++  satisfy, and other GPUI backends could add similar checks.
++- Rename the face to the loader's `Segoe Fluent Icons` exception: misleading and
++  violates the independent-name requirement.
++- Replace icons with SVGs: a broad UI change unrelated to the regression.
 +
 +## Consequences
 +
-+Legacy editors can advertise pointer support for BMP input. Emoji-containing
-+buffers retain normal terminal selection without native pointer mutation.
-+Modern editors retain their existing Unicode behavior. No network access,
-+module installation, persistence format or per-keystroke I/O is added.
++The symbol family now contains one Latin glyph. It stays last in configured
++fallback chains, so it can supply `m` only when every earlier font lacks it.
++The other Latin/CJK absence assertions remain in force.
 +
 +## Validation
 +
-+`scripts.tests.test_powershell_pointer` runs the actual 2.0 module when
-+`NEBULA_TEST_PSREADLINE_LEGACY` names its manifest; an absent module is an explicit
-+skip. It also checks the modern editor, races, ownership, redraw and re-source.
-+`nebula_terminal/tests/native_pointer.rs` checks the in-box Windows module's
-+actual bindings. That Windows test has not been executed on this Linux host.
++`font_install` tests assert the `m` glyph and advance match Maple, and on macOS
++load the bundled bytes into the platform text system and resolve the file-tree
++icon glyphs. Both failed before the asset change.
 +
 +## Supersedes
 +
-+Only the blanket 2.1 minimum in
-+[the original pointer decision](2026-10-31-powershell-native-pointer.md).
-+Its transport and lifecycle contracts remain unchanged.
++None. The symbol-ownership decision of the linked note remains in force.
 +
 +## Revisit when
 +
-+Native Windows acceptance finds an additional legacy limitation, or the
-+supported Windows baseline guarantees a newer PSReadLine.
++GPUI's macOS loader no longer requires `m`, or interface icons move off the
++symbol font.
 ```
 
-**File**: `nebula_app/src/gpui_shell/settings_pane.rs` (modified, +1/-0)
+**File**: `assets/fonts/README.md` (modified, +6/-4)
 ```diff
-@@ -1571,6 +1571,7 @@ impl SettingsPane {
-             nav = nav.child(
-                 div()
-                     .id(("settings-nav", ix))
-+                    .debug_selector(move || format!("settings-nav-{ix}"))
-                     .px(px(10.0))
-                     .ml_1()
-                     .mr_1()
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/navigation.rs` (modified, +1/-1)
-```diff
-@@ -67,7 +67,7 @@ pub(super) fn section_label(index: usize, language: crate::display::UiLanguage)
- }
+@@ -7,9 +7,11 @@ chain or theme editor draft explicitly needs it. Selecting another font does not
+ registered native face; a fresh process avoids that registration entirely.
  
- pub(super) fn is_nav_section_visible(index: usize) -> bool {
--    index < SECTION_IDS.len()
-+    index < SECTION_IDS.len() && index != 3
- }
+ `PebrelSymbols-Regular.ttf` is an independently named, OFL-licensed derivative
+-containing the original private-use icons and standard power symbols. It has no
+-Latin or CJK text glyphs. Geometry-rendered Powerline separators remain on the
+-terminal's existing geometry path. Other prompt and interface icons use this
++containing the original private-use icons and standard power symbols. Its only
++text glyph is Maple's unchanged `m`, which GPUI's macOS loader requires before it
++registers any face; it has no other Latin or CJK text glyphs. Geometry-rendered
++Powerline separators remain on the terminal's existing geometry path. Other
++prompt and interface icons use this
+ small face instead of implicitly requiring the complete Maple font.
  
- pub(super) fn visible_nav_sections() -> impl Iterator<Item = usize> {
+ Regenerate it offline with `python scripts/build_symbol_font.py`, after installing
+@@ -18,6 +20,6 @@ dependency. The source hash is checked before conversion; copyright/license
+ metadata, glyph outlines and advances are retained, and reserved font names are
+ replaced. See `licenses/LICENSE-PEBREL-SYMBOLS` and `THIRD-PARTY-NOTICES`.
+ 
+-The complete face is 20,563,672 bytes; the generated symbol face is 1,941,228 bytes
++The complete face is 20,563,672 bytes; the generated symbol face is 1,941,408 bytes
+ with the fontTools version used for this revision. These are font-file sizes,
+ not a claim about process RSS or native font-cache allocations.
 ```
 
-**File**: `nebula_app/src/gpui_shell/settings_pane/search_header.rs` (modified, +3/-0)
+**File**: `nebula_app/src/font_install.rs` (modified, +11/-0)
 ```diff
-@@ -132,7 +132,10 @@ pub(super) fn matching_sections(query: &str, language: crate::display::UiLanguag
+@@ -417,6 +417,17 @@ mod tests {
+         }
      }
  
-     let tokens = query.split_whitespace().collect::<Vec<_>>();
-+    // Keep prediction/model configuration reachable by deliberate search while
-+    // hiding the provider entry from the default sidebar. Route IDs stay stable.
-     let mut matches = visible_nav_sections()
-+        .chain(std::iter::once(3))
-         .filter_map(|index| {
-             let message = SECTION_SEARCH_TERMS[index];
-             let haystack = format!(
++    /// GPUI's macOS loader skips every face without an `m` glyph, so the
++    /// symbol family must keep Maple's `m` or macOS icons render as tofu (#870).
++    #[test]
++    fn symbol_face_keeps_the_m_glyph_required_by_the_macos_loader() {
++        let symbols = ttf_parser::Face::parse(SYMBOL_FONT_BYTES, 0).unwrap();
++        let original = ttf_parser::Face::parse(REQUIRED_FONT_BYTES, 0).unwrap();
++        let glyph = symbols.glyph_index('m').expect("macOS GPUI rejects faces without 'm'");
++        let old = original.glyph_index('m').unwrap();
++        assert_eq!(symbols.glyph_hor_advance(glyph), original.glyph_hor_advance(old));
++    }
++
+     fn sys(name: &str, monospaced: bool) -> SystemFontFamily {
+         SystemFontFamily { name: name.to_owned(), monospaced }
+     }
 ```
 
-**File**: `nebula_app/src/gpui_shell/settings_pane/tests.rs` (modified, +45/-5)
+**File**: `nebula_app/src/platform/fonts.rs` (modified, +18/-0)
 ```diff
-@@ -466,9 +466,12 @@ fn ctrl_wheel_font_zoom_setting_is_searchable_and_has_a_visible_switch(
+@@ -79,4 +79,22 @@ mod tests {
+         let families = super::file_families(&font).unwrap();
+         assert!(families.iter().any(|name| name == crate::font_install::REQUIRED_FONT_FAMILY));
+     }
++
++    #[cfg(target_os = "macos")]
++    #[test]
++    fn macos_text_system_resolves_symbol_icons_from_the_bundled_face() {
++        use gpui::PlatformTextSystem as _;
++
++        let text_system = gpui_platform::current_platform(true).text_system();
++        text_system
++            .add_fonts(vec![std::borrow::Cow::Borrowed(crate::font_install::SYMBOL_FONT_BYTES)])
++            .unwrap();
++        let font_id = text_system
++            .font_id(&gpui::font(crate::font_install::SYMBOL_FONT_FAMILY))
++            .expect("macOS must load the bundled symbol family");
++        for code in [0xf114, 0xf115, 0xeab6, 0xeab4, 0xea7b] {
++            let ch = char::from_u32(code).unwrap();
++            assert!(text_system.glyph_for_char(font_id, ch).is_some(), "missing U+{code:04X}");
++        }
++    }
  }
- 
- #[test]
--fn settings_nav_exposes_prediction_providers_without_changing_stable_routes() {
-+fn settings_nav_hides_providers_without_changing_stable_routes() {
-     let visibility: Vec<_> = (0..SECTION_IDS.len()).map(is_nav_section_visible).collect();
--    assert_eq!(visibility, vec![true; SECTION_IDS.len()]);
-+    assert_eq!(
-+        visibility,
-+        vec![true, true, true, false, true, true, true, true, true, true, true, true]
+```
+
+**File**: `scripts/build_symbol_font.py` (modified, +2/-0)
+```diff
+@@ -28,6 +28,8 @@ def main() -> None:
+         if 0xE000 <= cp <= 0xF8FF or 0xF0000 <= cp <= 0xFFFFD
+         or 0x100000 <= cp <= 0x10FFFD or 0x23FB <= cp <= 0x23FE or cp == 0x2B58
+     }
++    # GPUI 的 macOS 加载器会跳过没有 `m` 字形的字体；只保留这一个文字字形。
++    symbols.add(ord("m"))
+     options = subset.Options()
+     options.name_IDs = ["*"]
+     options.name_languages = ["*"]
+```
+
+---
+
+### Incident Patch 3: `a88b9465` (2026-11-06)
+**Commit Message**: fix(ssh): omit the PTY marker without a remote terminal (#858)
+
+* fix(ssh): omit the PTY marker without a remote terminal
+
+A JumpServer (KoKo) direct login runs the startup wrapper without a
+remote terminal. tty then prints "not a tty", the identity filter keeps
+that malformed marker verbatim by design, and the pane shows
+PEBREL_PTY_<token>=not a tty:<pid>.
+
+Emit the marker only when tty succeeds. The filter contract is
+unchanged, and such a pane gets no PTY identity, as before.
+
+Closes #856
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Share one unix gate for the startup script tests
+
+The new marker test pushed the platform cfg count over its budget.
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Kuddev <[REDACTED_EMAIL]>
+Co-authored-by: Kuddev <[REDACTED_EMAIL]>
+
+**File**: `nebula_app/src/ssh_session/resume.rs` (modified, +6/-1)
+```diff
+@@ -142,7 +142,12 @@ pub(super) fn startup(
+     target: Option<&ResumeTarget>,
+     cwd: Option<&str>,
+ ) -> String {
+-    let mut script = format!("printf '\\036PEBREL_PTY_{token}=%s:%s\\037' \"$(tty)\" \"$$\"; ");
++    // tty prints "not a tty" when startup has no terminal, as reported for JumpServer direct
++    // connections. The filter shows malformed markers verbatim, so send one only on success.
++    let mut script = format!(
++        "if pebrel_tty=$(tty 2>/dev/null); then \
++         printf '\\036PEBREL_PTY_{token}=%s:%s\\037' \"$pebrel_tty\" \"$$\"; fi; "
 +    );
-     assert!(!is_nav_section_visible(SECTION_IDS.len()));
-     assert!(!is_nav_section_visible(usize::MAX));
-     assert_eq!(
-@@ -490,10 +493,49 @@ fn settings_nav_exposes_prediction_providers_without_changing_stable_routes() {
-     );
+     if let Some(target) = target {
+         script.push_str(&target.attach());
+     }
+```
+
+**File**: `nebula_app/src/ssh_session/resume/tests.rs` (modified, +1/-37)
+```diff
+@@ -86,40 +86,4 @@ fn endpoint_metadata_is_bounded_validated_and_literal() {
  }
  
-+#[cfg(feature = "gpui-test-support")]
-+#[gpui::test]
-+fn hidden_provider_navigation_keeps_prediction_search_reachable(cx: &mut gpui::TestAppContext) {
-+    cx.update(|cx| {
-+        gpui_component::init(cx);
-+        cx.set_global(crate::gpui_shell::config::Settings::load(ThemeName::Nord));
-+    });
-+    let mut pane = None;
-+    let (_, cx) = cx.add_window_view(|window, cx| {
-+        let view = cx.new(|cx| SettingsPane::new(window, cx));
-+        pane = Some(view.clone());
-+        gpui_component::Root::new(view, window, cx)
-+    });
-+    let pane = pane.unwrap();
-+    cx.simulate_resize(gpui::size(px(1200.0), px(900.0)));
-+    cx.update(|window, cx| {
-+        let _ = window.draw(cx);
-+    });
-+    assert!(cx.debug_bounds("settings-nav-3").is_none());
-+    let origin = pane.read_with(cx, |pane, _| pane.active_section);
-+    for (query, visible) in [("prediction", true), ("", false)] {
-+        cx.update(|window, cx| {
-+            pane.update(cx, |pane, cx| {
-+                pane.settings_search_input
-+                    .update(cx, |input, cx| input.replace_all(query, window, cx));
-+            });
-+        });
-+        cx.run_until_parked();
-+        cx.update(|window, cx| {
-+            let _ = window.draw(cx);
-+        });
-+        assert_eq!(cx.debug_bounds("settings-nav-3").is_some(), visible);
-+        assert_eq!(
-+            pane.read_with(cx, |pane, _| pane.active_section),
-+            if visible { 3 } else { origin }
+ #[cfg(unix)]
+-#[test]
+-fn vanished_target_or_attach_failure_runs_default_shell_and_cwd_is_never_input() {
+-    use std::os::unix::fs::PermissionsExt;
+-    use std::process::Command;
+-
+-    let probe = Command::new("sh").args(["-c", &probe_command()]).output().unwrap();
+-    assert!(probe.status.success());
+-    assert_eq!(probe.stdout, PROBE_REPLY.as_bytes());
+-
+-    let directory = tempfile::tempdir().unwrap();
+-    let binary = directory.path().join("client's executable");
+-    std::fs::write(&binary, "#!/bin/sh\ncase \"$2\" in\ndisplay-message) printf '100:200\\n';;\nselect-window|select-pane) exit ${REJECT_SELECTION:-0};;\nattach-session) printf 'ATTACH_FAILED\\n'; exit 1;;\n*) exit 1;;\nesac\n").unwrap();
+-    std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o700)).unwrap();
+-    let shell = directory.path().join("default shell");
+-    std::fs::write(&shell, "#!/bin/sh\nprintf 'DEFAULT:%s:%s\\n' \"$1\" \"$PWD\"\n").unwrap();
+-    std::fs::set_permissions(&shell, std::fs::Permissions::from_mode(0o700)).unwrap();
+-    let endpoint = Endpoint { executable: binary.to_str().unwrap().into(), socket: String::new() };
+-    let target =
+-        ResumeTarget::parse("/dev/pts/3\t$1\t100:200\t@3\t%4", "/dev/pts/3", &endpoint).unwrap();
+-    for (identity, reject) in [("0:0", "0"), ("100:200", "1"), ("100:200", "0")] {
+-        let mut target = target.clone();
+-        target.identity = identity.into();
+-        let output = Command::new("sh")
+-            .args(["-c", &startup(TOKEN, None, Some(&target), directory.path().to_str())])
+-            .env("SHELL", &shell)
+-            .env("REJECT_SELECTION", reject)
+-            .output()
+-            .unwrap();
+-        assert!(output.status.success());
+-        let output = String::from_utf8(output.stdout).unwrap();
+-        assert!(
+-            output.ends_with(&format!("DEFAULT:-l:{}\n", directory.path().display())),
+-            "{output}"
+-        );
+-        assert_eq!(output.contains("ATTACH_FAILED"), identity == "100:200" && reject == "0");
+-    }
+-}
++mod startup;
+```
+
+**File**: `nebula_app/src/ssh_session/resume/tests/startup.rs` (added, +88/-0)
+```diff
+@@ -0,0 +1,88 @@
++//! Run the startup script in a real shell.
++
++use super::*;
++
++#[test]
++fn vanished_target_or_attach_failure_runs_default_shell_and_cwd_is_never_input() {
++    use std::os::unix::fs::PermissionsExt;
++    use std::process::Command;
++
++    let probe = Command::new("sh").args(["-c", &probe_command()]).output().unwrap();
++    assert!(probe.status.success());
++    assert_eq!(probe.stdout, PROBE_REPLY.as_bytes());
++
++    let directory = tempfile::tempdir().unwrap();
++    let binary = directory.path().join("client's executable");
++    std::fs::write(&binary, "#!/bin/sh\ncase \"$2\" in\ndisplay-message) printf '100:200\\n';;\nselect-window|select-pane) exit ${REJECT_SELECTION:-0};;\nattach-session) printf 'ATTACH_FAILED\\n'; exit 1;;\n*) exit 1;;\nesac\n").unwrap();
++    std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o700)).unwrap();
++    let shell = directory.path().join("default shell");
++    std::fs::write(&shell, "#!/bin/sh\nprintf 'DEFAULT:%s:%s\\n' \"$1\" \"$PWD\"\n").unwrap();
++    std::fs::set_permissions(&shell, std::fs::Permissions::from_mode(0o700)).unwrap();
++    let endpoint = Endpoint { executable: binary.to_str().unwrap().into(), socket: String::new() };
++    let target =
++        ResumeTarget::parse("/dev/pts/3\t$1\t100:200\t@3\t%4", "/dev/pts/3", &endpoint).unwrap();
++    for (identity, reject) in [("0:0", "0"), ("100:200", "1"), ("100:200", "0")] {
++        let mut target = target.clone();
++        target.identity = identity.into();
++        let output = Command::new("sh")
++            .args(["-c", &startup(TOKEN, None, Some(&target), directory.path().to_str())])
++            .env("SHELL", &shell)
++            .env("REJECT_SELECTION", reject)
++            .output()
++            .unwrap();
++        assert!(output.status.success());
++        let output = String::from_utf8(output.stdout).unwrap();
++        assert!(
++            output.ends_with(&format!("DEFAULT:-l:{}\n", directory.path().display())),
++            "{output}"
 +        );
++        assert_eq!(output.contains("ATTACH_FAILED"), identity == "100:200" && reject == "0");
 +    }
 +}
 +
- #[test]
- fn settings_nav_starts_with_application_then_frequent_options() {
-     let visible: Vec<_> = visible_nav_sections().collect();
--    assert_eq!(visible, vec![0, 1, 2, 10, 6, 7, 3, 4, 5, 11, 8, 9]);
-+    assert_eq!(visible, vec![0, 1, 2, 10, 6, 7, 4, 5, 11, 8, 9]);
-     let zh_labels: Vec<_> = visible
-         .iter()
-         .map(|index| section_label(*index, crate::display::UiLanguage::ZhCn))
-@@ -507,7 +549,6 @@ fn settings_nav_starts_with_application_then_frequent_options() {
-             "Agents",
-             "交互",
-             "按键映射",
--            "API 供应商",
-             "SSH",
-             "网络",
-             "手机远程",
-@@ -528,7 +569,6 @@ fn settings_nav_starts_with_application_then_frequent_options() {
-             "Agents",
-             "Interaction",
-             "Key Bindings",
--            "API Providers",
-             "SSH",
-             "Network",
-             "Phone Remote",
-```
-
-**File**: `nebula_terminal/src/tty/pointer.ps1` (modified, +9/-1)
-```diff
-@@ -2,9 +2,12 @@
- function global:Test-PebrelPointerBinding {
-     try {
-         if (-not $global:PebrelCompletionInputReady -or
--            (Get-Module PSReadLine).Version -lt [Version]'2.1.0' -or
-+            (Get-Module PSReadLine).Version -lt [Version]'1.2.0' -or
-             (Get-PSReadLineOption).EditMode -eq 'Vi') { return $false }
-         $bindings = @(Get-PSReadLineKeyHandler -ErrorAction Stop)
-+        # The editor can retain child chords after a user replaces their prefix.
-+        # Such children are no longer reachable through the native dispatcher.
-+        if ($bindings | Where-Object { $_.Key -in 'Ctrl+Shift+F10','Shift+Ctrl+F10' }) { return $false }
-         $query = @($bindings | Where-Object { $_.Key -in 'Ctrl+Shift+F12','Shift+Ctrl+F12' })
-         if ($query.Count -ne 1 -or $query[0].Function -ne $global:PebrelEditorHandlerName) { return $false }
-         foreach ($digit in 0..9) {
-@@ -56,6 +59,11 @@ function global:Invoke-PebrelPointerAction {
-         try {
-             $utf8 = New-Object Text.UTF8Encoding($false, $true)
-             if (-not (Test-PebrelPointerBinding) -or $utf8.GetByteCount($line) -gt 4096) { throw 'Unsupported editor' }
-+            # In-box PSReadLine has native cursor/delete APIs too. Its old
-+            # renderer can lose surrogate pairs after an edit, so reject only
-+            # affected buffers rather than disabling all ASCII/CJK pointer edits.
-+            if ((Get-Module PSReadLine).Version -lt [Version]'2.1.0' -and
-+                $line -match '[\uD800-\uDFFF]') { throw 'Unsupported Unicode buffer' }
-             $bytes = $utf8.GetByteCount($line.Substring(0, $cursor))
-             $global:PebrelPointerSnapshot = @{ Line=$line; Cursor=$cursor; Token=$global:PebrelShellToken; Anchor=$null }
-             Send-PebrelPointerValue 'pebrel_pointer' "$owner`n$unit`n$bytes`n$line"
-```
-
-**File**: `nebula_terminal/tests/native_pointer.rs` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+//! Check the actual in-box PSReadLine key maps, including the legacy API.
-+#![cfg(windows)]
-+
 +#[test]
-+fn in_box_powershell_advertises_owned_pointer_bindings() {
-+    let editor = include_str!("../src/tty/completion.ps1");
-+    let pointer = include_str!("../src/tty/pointer.ps1");
-+    let command = format!(
-+        r#"
-+$ErrorActionPreference = 'Stop'
-+Import-Module PSReadLine
-+$global:PebrelShellToken = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('pwsh:fixture'))
-+$editorSetup = {{
-+{editor}
-+}}
-+$pointerSetup = {{
-+{pointer}
-+}}
-+foreach ($mode in 'Windows','Emacs') {{
-+    Set-PSReadLineOption -EditMode $mode
-+    & $editorSetup
-+    & $pointerSetup
-+    if (-not (Test-PebrelPointerBinding)) {{ throw "Native pointer unavailable in $mode" }}
-+    & $editorSetup
-+    & $pointerSetup
-+    if (-not (Test-PebrelPointerBinding)) {{ throw 'Reload revoked native pointer' }}
-+    Set-PSReadLineKeyHandler -Chord 'Ctrl+Shift+F10,1' -Function BeginningOfLine
-+    if (Test-PebrelPointerBinding) {{ throw 'Changed user key was claimed' }}
-+    & $pointerSetup
-+    if (Test-PebrelPointerBinding) {{ throw 'Reload replaced user key' }}
-+    Set-PSReadLineKeyHandler -Chord 'Ctrl+Shift+F10,1' -BriefDescription $global:PebrelPointerHandlerName -ScriptBlock {{ }}
-+    if (-not (Test-PebrelPointerBinding)) {{ throw 'Restored child chord unavailable' }}
-+    Set-PSReadLineKeyHandler -Chord Ctrl+Shift+F10 -Function BeginningOfLine
-+    if (Test-PebrelPointerBinding) {{ throw 'Changed prefix was claimed' }}
-+    & $pointerSetup
-+    if (Test-PebrelPointerBinding) {{ throw 'Reload replaced user prefix' }}
-+}}
-+Set-PSReadLineOption -EditMode Vi
-+if (Test-PebrelPointerBinding) {{ throw 'Unsupported Vi map was advertised' }}
-+[Console]::Write('NATIVE_POINTER_BINDINGS_OK')
-+"#
++fn startup_reports_a_named_terminal_and_sends_no_marker_without_one() {
++    use std::fs::File;
++    use std::os::fd::{AsRawFd, FromRawFd};
++    use std::os::unix::fs::PermissionsExt;
++    use std::process::{Command, Stdio};
++
++    let directory = tempfile::tempdir().unwrap();
++    let shell = directory.path().join("default shell");
++    std::fs::write(&shell, "#!/bin/sh\nprintf 'DEFAULT\\n'\n").unwrap();
++    std::fs::set_permissions(&shell, std::fs::Permissions::from_mode(0o700)).unwrap();
++    let (mut controller, mut terminal) = (0, 0);
++    assert_eq!(
++        unsafe {
++            libc::openpty(
++                &mut controller,
++                &mut terminal,
++                std::ptr::null_mut(),
++                std::ptr::null_mut(),
++                std::ptr::null_mut(),
++            )
++        },
++        0
 +    );
-+    let program =
-+        std::env::var_os("PEBREL_TEST_POWERSHELL").unwrap_or_else(|| "powershell.exe".into());
-+    let output = std::process::Command::new(program)
-+        .args(["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", &command])
-+        .env("POWERSHELL_TELEMETRY_OPTOUT", "1")
-+        .output()
-+        .expect("start in-box PowerShell with its native PSReadLine");
-+    assert!(
-+        output.status.success(),
-+        "PSReadLine pointer checks failed: {} {}",
-+        String::from_utf8_lossy(&output.stdout),
-+        String::from_utf8_lossy(&output.stderr),
-+    );
-+    assert!(String::from_utf8_lossy(&output.stdout).contains("NATIVE_POINTER_BINDINGS_OK"));
++    let _controller = unsafe { File::from_raw_fd(controller) };
++    let terminal = unsafe { File::from_raw_fd(terminal) };
++    let mut name = [0; 1024];
++    assert_eq!(unsafe { libc::ttyname_r(terminal.as_raw_fd(), name.as_mut_ptr(), name.len()) }, 0);
++    let name = unsafe { std::ffi::CStr::from_ptr(name.as_ptr()) }.to_str().unwrap().to_owned();
++    // The JumpServer report shows tty failing during startup; null stdin reproduces that.
++    for (stdin, tty) in [(Stdio::from(terminal), Some(name)), (Stdio::null(), None)] {
++        let output = Command::new("sh")
++            .args(["-c", &startup(TOKEN, None, None, None)])
++            .env("SHELL", &shell)
++            .stdin(stdin)
++            .output()
++            .unwrap();
++        assert!(output.status.success());
++        let identity = Arc::new(Mutex::new(None));
++        let mut filter = IdentityInput::new(TOKEN, identity.clone());
++        let mut visible = filter.feed(&output.stdout).into_owned();
++        visible.extend(filter.finish());
++        assert_eq!(String::from_utf8(visible).unwrap(), "DEFAULT\n");
++        assert_eq!(identity.lock().unwrap().as_ref().map(|value| value.tty.clone()), tty);
++    }
 +}
 ```
 
-**File**: `scripts/tests/test_powershell_pointer.py` (modified, +52/-7)
-```diff
-@@ -45,10 +45,16 @@ def wait(self, marker: bytes) -> bytes:
- 
- @unittest.skipUnless(os.name == "posix", "requires Unix PTYs")
- class PowerShellPointerTests(unittest.TestCase):
--    def start(self, mode: str = "Emacs", before: str = "") -> PowerShellSession:
-+    def start(self, mode: str = "Emacs", before: str = "", *, legacy: bool = False) -> PowerShellSession:
-         program = os.environ.get("NEBULA_TEST_PWSH") or shutil.which("pwsh")
-         if not program:
-             self.skipTest("pwsh is not installed")
-+        module = os.environ.get("NEBULA_TEST_PSREADLINE_LEGACY") if legacy else None
-+        if legacy and not module:
-+            self.skipTest("NEBULA_TEST_PSREADLINE_LEGACY is not configured")
-+        import_module = "Import-Module " + ("'" + module.replace("'", "''") + "'" if module else "PSReadLine")
-+        if legacy:
-+            import_module += "\nif ((Get-Module PSReadLine).Version -ge [Version]'2.1.0') { throw 'Fixture requires a legacy editor' }"
-         temporary = tempfile.TemporaryDirectory(prefix="pebrel-pwsh-pointer-")
-         self.addCleanup(temporary.cleanup)
-         home = Path(temporary.name)
-@@ -61,8 +67,9 @@ def start(self, mode: str = "Emacs", before: str = "") -> PowerShellSession:
-         bootstrap = home / "bootstrap.ps1"
-         bootstrap.write_text((root.parents[2] / "nebula_app/res/shell/powershell.ps1").read_text(encoding="utf-8"), encoding="utf-8")
-         script.write_text(
--            "Import-Module PSReadLine\n"
--            "Set-PSReadLineOption -HistorySaveStyle SaveNothing -PredictionSource None\n"
-+            import_module + "\n"
-+            "Set-PSReadLineOption -HistorySaveStyle SaveNothing\n"
-+            "if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('PredictionSource')) { Set-PSReadLineOption -PredictionSource None }\n"
-             f"Set-PSReadLineOption -EditMode {mode}\n"
-             "$global:PebrelShellToken=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('pwsh:fixture'))\n"
-             "function prompt { 'PS> ' }\n" + before + "\n" +
-@@ -71,16 +78,22 @@ def start(self, mode: str = "Emacs", before: str = "") -> PowerShellSession:
-             "function global:PSConsoleHostReadLine {\n"
-             "  [Console]::Write(\"$([char]27)]1337;SetUserVar=qa_ready=eA==$([char]7)\")\n"
-             "  & $global:QaOriginalReadLine\n"
--            "}\n", encoding="utf-8",
-+            "}\n" + (
-+                # Bypass ConsoleHost's preloaded editor and run the imported
-+                # legacy module's real ReadLine on this PTY instead.
-+                "while ($true) { [Console]::Write((prompt)); $null = PSConsoleHostReadLine }\n"
-+                if legacy else ""
-+            ), encoding="utf-8",
-         )
-         # .NET's named mutexes (including PSReadLine history initialization)
-         # require a real temporary directory on macOS even with SaveNothing.
-         # Keep it inside this fixture instead of inheriting the runner's home.
-         runtime_temp = home / "tmp"
-         runtime_temp.mkdir()
-+        environment = {"TMPDIR": str(runtime_temp) + os.sep}
-         session = PowerShellSession(
--            program, home, ["-NoLogo", "-NoProfile", "-NoExit", "-File", str(script)],
--            {"TMPDIR": str(runtime_temp) + os.sep},
-+            program, home, ["-NoLogo", "-NoProfile", "-NonInteractive" if legacy else "-NoExit", "-File", str(script)],
-+            environment,
-         )
-         self.addCleanup(session.close)
-         import fcntl
-@@ -137,6 +150,38 @@ def test_native_unicode_moves_range_delete_and_one_undo(self) -> None:
-                 os.write(session.master, b"\x18\x15" if mode == "Emacs" else b"\x1a")
-                 self.assertEqual(self.snapshot(session)[1], changed)
- 
-+    def test_legacy_editor_moves_ascii_and_cjk_and_preserves_undo(self) -> None:
-+        for mode in ("Emacs", "Windows"):
-+            with self.subTest(mode=mode):
-+                session = self.start(mode, legacy=True)
-+                self.assertIn(b"SetUserVar=pebrel_pointer_ready=", session.output)
-+                os.write(session.master, "ls 中文".encode())
-+                self.assertEqual(self.query(session)[3], "ls 中文")
-+                self.action(session, 1 + 1)
-+                self.assertEqual(self.snapshot(session), (1, "ls 中文"))
-+                os.write(session.master, b"X")
-+                self.assertEqual(self.snapshot(session), (2, "lXs 中文"))
-+                self.query(session)
-+                self.action(session, 4098 + 4)
-+                self.action(session, 8195 + 6)
-+                self.assertEqual(self.snapshot(session), (4, "lXs "))
-+                os.write(session.master, b"\x18\x15" if mode == "Emacs" else b"\x1a")
-+                self.assertEqual(self.snapshot(session)[1], "lXs 中文")
-+
-+    def test_legacy_editor_rejects_surrogates_without_moving_or_deleting(self) -> None:
-+        session = self.start("Windows", before=(
-+            "Set-PSReadLineKeyHandler -Chord Ctrl+o -Scrip
-```
-
 #### Recent Merged Pull Requests:
-- **PR #881** (closed): Merge 2.4.0 release (7/7): scoped release workflow and final 2.4.0 notes (@Kuddev)
-- **PR #880** (closed): Merge 2.4.0 release (6/7): SFTP previews, settings polish and 2.4.0 metadata (@Kuddev)
-- **PR #879** (closed): Merge 2.4.0 release (5/7): explicit client states and tab activity icons (@Kuddev)
-- **PR #878** (closed): Merge 2.4.0 release (4/7): GLSL effects and SSH agent hooks (@Kuddev)
-- **PR #876** (closed): Merge 2.4.0 release (2/7): SFTP sidebar layout and batch file interactions (@Kuddev)
-- **PR #875** (2026-11-04): Merge 2.4.0 release (1/7): PowerShell pointer editing and provider navigation (@Kuddev)
+- **PR #895** (2026-11-07): fix(windows): pin GPUI DirectWrite face attribution fix (@YinBuLiao)
+- **PR #894** (2026-11-07): fix(windows): keep the typing-hidden pointer hidden until real mouse motion (@YinBuLiao)
+- **PR #893** (2026-11-07): fix(ssh): keep idle built-in SSH sessions alive through short stalls (@YinBuLiao)
+- **PR #892** (2026-11-07): fix(files): keep the m glyph so macOS loads the symbol font (@YinBuLiao)
+- **PR #891** (2026-11-06): fix(terminal): cancel unsupported ZMODEM rz/sz sessions (@YinBuLiao)
+- **PR #890** (2026-11-06): Fix 2.4.0 follow-up failures and merge reviewed contributor fixes (@Kuddev)
 
 ---
 
@@ -2281,49 +2201,47 @@ segments; this part adds the release commits up to 42167bff.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions
+## X. ssh): keep idle built-in SSH sessions alive through short stalls (#893)
 
 **RULE**:
-When implementing operations in `architecture/notes/nebula_app/gpui_shell/workspace/remote_files/2026-11-02-batch-selection-and-transfers.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `architecture/notes/nebula_app/ssh_session/2026-11-05-shared-keepalive-budget.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `97d3bfe5`: Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da3250ac`: ssh): keep idle built-in SSH sessions alive through short stalls (#893). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_app/gpui_shell/workspace/remote_files/2026-11-02-batch-selection-and-transfers.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_app/ssh_session/2026-11-05-shared-keepalive-budget.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# SFTP selection and batch transfer ownership
+# Share the SSH keepalive budget between built-in and OpenSSH launches
 
 ## Status
 
-Proposed with the SFTP sidebar interaction update.
+Accepted (#816).
 
 ## Context
 
-The remote sidebar previously retained one selected path. Adding Ctrl/Shift
-selection also requires downloads, remote copies and native file drags to carry
-the complete selection through their existing asynchronous handoffs.
+An idle built-in SSH pane ended with "SSH connection ended without an exit
+status" after hours, while a parallel standalone OpenSSH client session to the
+same host stayed connected. The managed OpenSSH launch has used
+`ServerAliveInterval=30` / `ServerAliveCountMax=6` since v0.7.0 to survive NAT
+idle timeouts. The built-in russh client instead used a 15 s interval with a
+maximum of 3. russh counts every unanswered timer tick and fails the transport
+with `KeepaliveTimeout` once the count exceeds the maximum. A server or path
+that is silent for about one minute therefore ended the pane.
 
 ## Evidence
 
-`SftpController::start_job` advances the controller generation and retires the
-previous job. Calling the single-entry transfer once per selected row would
-therefore cancel earlier entries. Native export likewise owns one download plan
-and one temporary-directory lease for the lifetime of the drag.
+A scratch russh 0.62.2 client with the old 15 s × 3 policy lost its channel
+after about 60 s when the server was stalled for 90–100 s. Servers were stalled
+with SIGSTOP on a local macOS sshd and with `docker pause` on an Ubuntu 22.04
+OpenSSH 8.9 container. OpenSSH with default settings survived the same stall
+and echoed afterwards. Forcing a rekey every three seconds against OpenSSH 10.2
+and 8.9 kept the session alive, which rules out key re-exchange as the cause.
 
 ## Decision
-
-The browser retains path-based selections, anchors and focused rows in its
-existing per-pane snapshots. Display order supplies range selection. A refresh
-retains surviving paths; changing directories clears the selection. Mouse-down
-on an already selected row defers collapsing the group until a click is confirmed.
-
-Actions capture the ordered entries and existing pane/destination/generation
-target before opening a picker or confirming conflicts. One controller job plans
-the complete download or copy batch, using the exis
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2333,4 +2251,4 @@ the complete download or copy batch, using the exis
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `97d3bfe5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da3250ac` are properly handled with clean fallback behavior.

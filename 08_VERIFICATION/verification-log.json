@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-Y706",
-    "timestamp": "2026-11-05T13:27:11.094Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "0a82d4049276a1709e44f39345675fcbf2459cbc252829e1c690c10f3597bd36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-6GZG",
-    "timestamp": "2026-11-05T13:33:37.276Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "716a55d12a1039b74072f0bbc5ca71c58cbf7f12deb33dd7f607f0d40b705b5c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-6PA4",
-    "timestamp": "2026-11-05T13:33:48.028Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "366b72e2fea8307fe8c343b45a4d8c3ad21e7ad884c9bf7987da6b56e7f44f90",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-F3AU",
     "timestamp": "2026-11-05T13:40:19.446Z",
     "repository": "RevenueCat/purchases-ios",
@@ -7492,6 +7447,51 @@
     "contentHash": "17757edc699c703998948140c1a8b828d023f25b59da33ab4ab27897a1fc6564",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-R6OB",
+    "timestamp": "2026-11-08T02:56:53.387Z",
+    "repository": "Kuddev/pebrel",
+    "learningId": "learn-github-kuddev-pebrel",
+    "contentHash": "4f84cdd4e49118dc6703b03bfb4d99eddefa85afdae658dbb96ba44805905b13",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-RELV",
+    "timestamp": "2026-11-08T02:57:03.667Z",
+    "repository": "moonshotai/Kimi-K3.1-Pro",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+    "contentHash": "5c7b5bac5d87cd3284382d6cac7f607c82e42df594918c378b4380ed3547c604",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-RF8H",
+    "timestamp": "2026-11-08T02:57:04.481Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "8fb132811524e7caf49ff06dccd1218faea4e86c859898234a91f99aff48a3e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

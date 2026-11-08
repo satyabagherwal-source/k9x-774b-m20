@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T02:49:43.066Z",
+  "last_updated": "2026-11-08T02:57:04.388Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38445,8 +38445,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "97d3bfe5",
-      "content_hash": "2f35cd1fd8c82792c5cf3acc00adcaddd695e5b836ec1379933b9ac333615142",
+      "source_version": "bb183265",
+      "content_hash": "4f84cdd4e49118dc6703b03bfb4d99eddefa85afdae658dbb96ba44805905b13",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -38486,7 +38486,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:55:10.356Z",
+      "verified_at": "2026-11-08T02:56:53.235Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74587,13 +74587,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "1b0f754b",
-      "content_hash": "79b199c25695e27b4d12b115c9980fc30d360ac37ddf80b8adc16d6ead528667",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "8fb132811524e7caf49ff06dccd1218faea4e86c859898234a91f99aff48a3e8",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -74776,7 +74776,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:56:11.388Z",
+      "verified_at": "2026-11-08T02:57:04.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167874,14 +167874,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6101,
       "title": "Hybrid Attention Layer Partitioning Invariant",
-      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
-      "source_version": "hf-moonshotai-kimi-k3",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+      "source_version": "hf-moonshotai-kimi-k3.1-pro",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T06:18:09.573Z"
+      "verified_at": "2026-11-08T02:57:03.520Z"
     },
     "rule-6102": {
       "learning_id": "rule-6102",
@@ -179158,10 +179158,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
       "source_version": "hf-moonshotai-kimi-k3.1-pro",
-      "content_hash": "79306e4f53c6a4f97730ae77b23504c19b7faab5a4e1d2d520636907504edc55",
+      "content_hash": "5c7b5bac5d87cd3284382d6cac7f607c82e42df594918c378b4380ed3547c604",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "MoE Latent Normalization Stability Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multimodal Placeholder Token Injection Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 6101,
+          "title": "Hybrid Attention Layer Partitioning Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 6833,
           "title": "Hybrid Attention Layer Mapping Invariant",
@@ -179183,7 +179198,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T16:34:27.303Z",
+      "verified_at": "2026-11-08T02:57:03.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
