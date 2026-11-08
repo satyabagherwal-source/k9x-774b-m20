@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T20:38:41.585Z",
-  "total_cycles_completed": 8347,
-  "total_learnings_persisted": 8347,
-  "total_rules_promoted": 8144,
+  "last_updated": "2026-11-08T20:45:46.467Z",
+  "total_cycles_completed": 8349,
+  "total_learnings_persisted": 8349,
+  "total_rules_promoted": 8148,
   "history": [
-    {
-      "timestamp": "2026-11-08T02:49:43.193Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T02:56:53.401Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T02:57:03.699Z",
       "repository": "moonshotai/Kimi-K3.1-Pro",
@@ -1403,6 +1389,20 @@
       "repository": "agent-of-empires/agent-of-empires",
       "learningId": "learn-github-agent-of-empires-agent-of-empires",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:45:39.781Z",
+      "repository": "0xCUB3/wBlock",
+      "learningId": "learn-github-0xcub3-wblock",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:45:46.467Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

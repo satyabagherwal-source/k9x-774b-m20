@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T20:38:41.589Z",
+  "last_updated": "2026-11-08T20:45:46.470Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1025,14 +1025,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-amazon-chronos-2",
-      "content_hash": "fd809f993f6887eb95fb28bbd0750e957880b35e6235940889588f9a1b39a909",
-      "verified_at": "2026-11-05T03:53:34.156Z",
+      "content_hash": "5d4af4930b771a8cdd08f1b216401893ec4ed3e2df69f29f6e8553737ca06537",
+      "verified_at": "2026-11-08T20:45:46.470Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:53:34.156Z"
+      "last_updated": "2026-11-08T20:45:46.470Z"
     },
     "CompVis/stable-diffusion-v1-4": {
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -13956,14 +13956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-0xcub3-wblock",
-      "content_hash": "5e8298b1474491c60850529633a765376d2a6e162052b8f26dcdbf9c9434ed00",
-      "verified_at": "2026-11-05T14:02:36.878Z",
+      "content_hash": "f12dda7ecaf0305094d42859a11f158296126705a8759670e97a6ed17cb7dd0d",
+      "verified_at": "2026-11-08T20:45:39.784Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:02:36.879Z"
+      "last_updated": "2026-11-08T20:45:39.784Z"
     },
     "ArchiveBox/ArchiveBox": {
       "repository": "ArchiveBox/ArchiveBox",

@@ -8391,3 +8391,5 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `b97aa44c` | Multi-dimensional audit evidence | 2026-11-08T20:31:31.215Z |
 | `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-08T20:38:39.629Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `16c57ac4` | Multi-dimensional audit evidence | 2026-11-08T20:38:41.579Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `f593637b` | Multi-dimensional audit evidence | 2026-11-08T20:45:39.775Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-08T20:45:46.453Z |

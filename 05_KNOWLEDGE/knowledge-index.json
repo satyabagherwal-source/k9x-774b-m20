@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T20:38:41.486Z",
+  "last_updated": "2026-11-08T20:45:46.357Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34,11 +34,16 @@
       "slug": "0xcub3-wblock",
       "platform": "github",
       "source_url": "https://github.com/0xCUB3/wBlock",
-      "source_version": "9e5ec865",
-      "content_hash": "5e8298b1474491c60850529633a765376d2a6e162052b8f26dcdbf9c9434ed00",
+      "source_version": "f593637b",
+      "content_hash": "f12dda7ecaf0305094d42859a11f158296126705a8759670e97a6ed17cb7dd0d",
       "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "apply): commit the applied state as the run ends, not after cleanup (#1087)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3636,
           "title": "popup): show why the popup failed to load",
@@ -80,7 +85,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:02:36.744Z",
+      "verified_at": "2026-11-08T20:45:39.673Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19848,10 +19853,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "fd809f993f6887eb95fb28bbd0750e957880b35e6235940889588f9a1b39a909",
+      "content_hash": "5d4af4930b771a8cdd08f1b216401893ec4ed3e2df69f29f6e8553737ca06537",
       "dossier_path": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Patch-Based Sequence Compression for Long-Context Time Series",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5283,
           "title": "Patch-Based Sequence Compression for Long-Context Efficiency",
@@ -19860,12 +19870,17 @@
         {
           "number": 5284,
           "title": "Quantile Regression for Probabilistic Forecasting",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": "EXISTING",
           "title": "Arcsinh Normalization for Scale Invariance",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": null,
+          "title": "Robust Scale Invariance via Arcsinh Transformation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 7095,
@@ -19901,7 +19916,7 @@
         "learn-huggingface-hf-amazon-chronos-2-mv49o8cx",
         "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n"
       ],
-      "verified_at": "2026-11-05T03:53:34.045Z",
+      "verified_at": "2026-11-08T20:45:46.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156758,7 +156773,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T12:46:42.999Z"
+      "verified_at": "2026-11-08T20:45:46.326Z"
     },
     "rule-5285": {
       "learning_id": "rule-5285",

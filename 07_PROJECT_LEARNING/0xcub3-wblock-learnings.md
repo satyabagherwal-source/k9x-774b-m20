@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source**: github ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
-> **Source Version**: `9e5ec865`  
+> **Source Version**: `f593637b`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T14:02:36.071Z  
+> **Timestamp**: 2026-11-08T20:45:38.559Z  
 > **Learning ID**: `learn-github-0xcub3-wblock`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T14:02:35.275Z  
+> **Harvest Timestamp**: 2026-11-08T20:45:38.393Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3191 stars
+- **Stars / Engagement**: 3210 stars
 
 ---
 
@@ -1945,7 +1945,7 @@ fn compile_scope(r: &NetworkRule, v: SafariVersion, out: &mut Emitted) -> Result
 use crate::ast::{DomainMatcher, Pattern, PatternKind};
 
 /// uBO separator class.
-const SEPARATOR: &str = "[^a-zA-Z0-9_.%-]";
+pub(crate) const SEPARATOR: &str = "[^a-zA-Z0-9_.%-]";
 /// Hostname anchor (`||`), the expression Apple recommends.
 const HOST_START: &str = "^[^:]+://+([^:/]+\\.)?";
 /// What follows a host in a top-level URL. WHATWG URLs always have a path, so
@@ -2222,7 +2222,7 @@ impl Translator<'_> {
     fn atom(&mut self, depth: u32) -> Option<(String, bool)> {
         let c = self.next()?;
         Some(match c {
-            b'^' if self.pos == 1 => ("^".into(), fal
+            b'^' if self.pos == 1 => ("^".
 ```
 
 
@@ -2231,11 +2231,11 @@ impl Translator<'_> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1080** (2026-11-04): **[BUG] Stevo’s AI Blocklist failing on github.com**
-  *Symptoms*: ### Describe the bug  Filters for “Stevo’s AI Blocklist” are failing to hide items on github.com for the mobile version of wBlock.  ### To reproduce  Steps to reproduce the behavior: 1. Either add “Stevo’s AI Blocklist”, or add the following as a custom list  <details> <summary>Click to expand</summary>   ``` ! === GitHub === ! Copilot network requests ! * Prevents Copilot-generated commit messages  ||api.individual.githubcopilot.com/$xhr,domain=github.com  ! -- https://github.com/ (Any logged-in GitHub page) ! Header - "Chat with Copilot" icon next to search bar github.com##[data-testid="top-bar-actions"] > .hide-md:has([data-component="ActionMenu.Button"][class*=" CopilotMenu__"]) ! Header - Search bar - Copilot autocomplete suggestion github.com##[data-component="ActionList.Group"]:has([data-testid="quick-search-suggestion"][href="/copilot"]) github.com##[data-component="ActionList.Divider"]:has(+ [data-component="ActionList.Group"] [data-testid="quick-search-suggestion"][href="/copilot"]) ! Header - Profile icon - Feature Preview - Organization Custom Instructions ! * Only applies if feature is already disabled github.com##[id$="-tab-copilot_chat_custom_instructions"]:has(.octicon-eye-closed) ! Left sidebar (≡) - Copilot button github.com##[data-testid="side-nav-menu-item-COPILOT"] ! Left sidebar (≡) - MCP Registry github.com##[data-component="NavList.Item"][href="/mcp"] ! Command Palette - Copilot ! * "Command Palette" is enabled via "Feature Preview". Opens with Ctrl+K 
+- **Issue #1094** (2026-11-08): **[BUG]**
+  *Symptoms*: ### Describe the bug  When Dark Reader is enabled through the wBlock beta user script, some areas of the page stay white instead of going dark. The search bar in the ask anything in google ai chat is also white while the rest of the page is black.  The Dark Reader OLED mode doesn't apply unless light mode is turned on, which leaves white spots on the page when the dark reader oled is on.  Device: iPhone 15 Pro iOS: 27.0.1 Browser: Safari wBlock: most update version   ### To reproduce  1. Install the wBlock beta and enable the Dark Reader user script Oled  <img width="590" height="1278" alt="Image" src="https://github.com/user-attachments/assets/1130438d-3912-444b-9fd7-851de12f6dba" />  2. Turn light mode in google via safari  3. Open any website (I tested with [google search) 4. Notice white areas on the page and in the “ask me anything “ google search 5. Turn on Dark Reader's OLED mode and see that it only works when light mode is on when dark mode is on doesnt even work   ### Expected behavior  i expect the oled mode to display with out light mode being on on regular dark mode   ### Screenshot or video  <img width="590" height="1278" alt="Image" src="https://github.com/user-attachments/assets/d315e12b-d4ac-4832-9456-a8fdfa864adb" />  ### Environment  Most updated version of wblock from app store  ios 27.0.1   Iphone 15 pro   ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I ha
 
-- **Issue #1073** (2026-11-03): **[BUG] Generic cosmetic filters not working**
-  *Symptoms*: ### Describe the bug  Generic cosmetic filters from Fanboy's Annoyances List don't seem to be applied on iOS.  ### To reproduce  Steps to reproduce the behavior: 1. Add the custom list `https://secure.fanboy.co.nz/fanboy-annoyance.txt` 2. Go to `https://www.it-connect.tech/proton-apologizes-and-says-its-internal-ai-tools-will-soon-be-open-source/` on iOS 3. Scroll down the page and a back to top button appears.  I have tried keeping the total rules under 150,000 but the issue still applies.   ### Expected behavior  The button should be hidden. On desktop with a Firefox-like browser, the button is hidden. It should be hidden by `##[aria-label="Back to top"]`.  Unclear to me if its a limitation of MV3.  ### Screenshot or video  [![IMG-1424.png](https://i.postimg.cc/BbXTpPmX/IMG-1424.png)](https://postimg.cc/p5M5XrbH)  ### Environment  - OS: iOS 18 - wBlock Version: 3.2.3   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [x] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBloc
+- **Issue #1086** (2026-11-06): **Apply fails on wBlock 2 (under the 150k limit); "Source Rules" count doesn't update after disabling cosmetic filtering.**
+  *Symptoms*: ### Describe the bug  A persistent reload failure that still happens after fully disabling cosmetic filtering. Apply ends with "Process completed with errors" / "Failed to reload wBlock 2." The failure survives retries, even though wBlock 2 is under the limit: 138,626 / 150,000 after disabling cosmetic filtering (144,599 before). Log (17:30:30-31, Filter Apply) 	•	"Failed to reload content blocker" 	•	"Reload phase had failures; continuing with advanced rules processing" 	•	targets 5, activeTargets 5, failedTargets 1 (wBlock 2), retriedTargets 1 	•	totalAttempts 9, avgAttempts 1.80 (consistent with wBlock 2 taking ~5 attempts) 	•	reloadDurationMs 25897; slowestTarget wBlock 1@7826ms 	•	source: AppFilterManager+ApplyPipeline.swift:899 and :1060 	•	No underlying NSError domain/code is logged. Capacity, before vs after disabling cosmetic filtering  	•	Total: 676,214 -> 654,863 	•	Element hiding: 21,351 -> 0 	•	wBlock Scripts: 20,003 -> 13,681 	•	Network rules: 654,863 -> 654,863 	•	Slots 1-5 before: 122,217 / 144,599 / 144,332 / 133,611 / 131,455 	•	Slots 1-5 after: 116,417 / 138,626 / 144,323 / 130,051 / 125,446  1.	The failure doesn't look tied to the rule-count limit. wBlock 2 (92%) fails while wBlock 3 (96%) reloads fine, and wBlock 1 has the fewest rules yet is the slowest (7.8 s). That points to compile timeout, memory pressure, or rule composition rather than raw count. 	2.	"Source Rules" stays at 707,712 after disabling cosmetic filtering, so the source-to-Safari gap gro
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2252,394 +2252,452 @@ impl Translator<'_> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c426d8f6` (2026-11-05)
-**Commit Message**: fix(reload): repair rules only when WebKit rejected them
+### Incident Patch 1: `3781122d` (2026-11-07)
+**Commit Message**: fix(apply): commit the applied state as the run ends, not after cleanup (#1087)
 
-A reload that times out or is interrupted went on to the rule repair,
-which compiles the whole blocker inside the app first. On an iPad 6
-with nearly every list on, that compile ran the app out of memory in
-WebKit's DFA minimizer and crashed it (TestFlight 1555). The repair
-now runs only for WKErrorDomain 6 with no underlying error, which is
-how WebKit reports rules it refuses.
+Keeping the run open through cleanup stopped Apply flashing but showed the raw status line in the update banner. The applied state is now committed when the result comes in, and a failed cleanup marks changes pending again instead.
 
-**File**: `wBlockCoreService/wBlockCoreService.swift` (modified, +22/-4)
+**File**: `wBlock/AppFilterManager+ApplyPipeline.swift` (modified, +12/-9)
 ```diff
-@@ -408,16 +408,21 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
-         /// Why the reload failed, in a form that can be shown in the app log.
-         /// nil on success or when the reload was skipped.
-         public let failureReason: String?
-+        /// Safari's WebKit compiled the rules and rejected them, the one
-+        /// failure that dropping the offending rules can fix.
-+        public let rulesRejected: Bool
+@@ -1078,6 +1078,13 @@ extension AppFilterManager {
+             : "\(advancedRulesByTarget.count) targets combined"
+         await MainActor.run {
+             self.progress = 1.0
++            // The applied state is committed as the run ends, so pending
++            // changes never outlive it and Apply can't flash (#1088). Ending
++            // later showed the raw status line in the update banner (#1087).
++            if allReloadsSuccessful && advancedEngineSucceeded && !self.hasError {
++                self.commitApplySnapshot(runSnapshot)
++            }
++            self.isLoading = false
  
-         public init(
-             success: Bool,
-             skipped: Bool = false,
-             disabledInSafari: Bool = false,
-             attempts: Int,
-             durationMs: Int,
--            failureReason: String? = nil
-+            failureReason: String? = nil,
-+            rulesRejected: Bool = false
-         ) {
-             self.success = success
-+            self.rulesRejected = rulesRejected
-             self.skipped = skipped
-             self.disabledInSafari = disabledInSafari
-             self.attempts = attempts
-@@ -936,8 +941,10 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
+             // Hard failure already presented (e.g. advanced engine). Keep that terminal state.
+             if self.applyProgressViewModel.state.mode == .failed {
+@@ -1138,20 +1145,16 @@ extension AppFilterManager {
+                 appliedFilters: runSnapshot.filters,
+                 disabledScriptIDs: disabledScriptIDs
              )
-             totalAttempts += reload.attempts
-             // A rule this Safari's WebKit rejects fails the whole blocker. Drop
--            // such rules and reload once more before reporting a failure.
--            if !reload.success, enabledInSafari != false, !repairedOutput,
-+            // such rules and reload once more before reporting a failure. Only
-+            // a rejection: after a timeout, compiling the whole blocker again in
-+            // the app ran an iPad 6 out of memory and crashed it.
-+            if !reload.success, reload.rulesRejected, enabledInSafari != false, !repairedOutput,
-                await repairRejectedRules(outputURL: outputURL, containerURL: containerURL, targetRulesFilename: targetRulesFilename),
-                let repaired = try? readReloadSnapshot(markerURL: markerURL, outputURL: outputURL, appGroupURL: containerURL),
-                repaired.outputDigest != nil
-@@ -1165,6 +1172,14 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
-         return result
+-            if cleanupSucceeded {
+-                await MainActor.run {
++            await MainActor.run {
++                if cleanupSucceeded {
+                     self.lastApplySucceeded = true
+                     self.persistUpgradeRebuildSignature()
+                     self.clearFailedUpgradeRebuildSignature()
+-                    self.commitApplySnapshot(runSnapshot)
++                } else {
++                    // Leftover downloads of turned-off lists need another apply.
++                    self.markNonSelectionChangesPending()
+                 }
+             }
+-        }
+-        // The run ends once the applied state is committed. Ending it at the
+-        // result left pending changes set for the cleanup, so the toolbar
+-        // flashed Apply before going back to Update (#1088).
+-        await MainActor.run { self.isLoading = false }
+-        if applySucceeded {
+             await refreshAppliedSourceRuleCounts(
+                 for: allSelectedFilters,
+                 admittedCountsByFilterID: appliedSourceRuleCountsByFilterID
+```
+
+---
+
+### Incident Patch 2: `17af8839` (2026-11-07)
+**Commit Message**: fix(onboarding): use native toggles and a segmented picker for every choice (#1088)
+
+Pick lists now draw the same control as the available-updates review, a checkbox on macOS and a switch on iOS, grouped in one box per list. Blocking level is a segmented control. Annoyances Info shares the rows.
+
+**File**: `wBlock/ApplyChangesProgressView.swift` (modified, +1/-33)
+```diff
+@@ -225,23 +225,8 @@ struct ApplyChangesProgressView: View {
      }
  
-+    /// WKErrorDomain 6 with no underlying error is WebKit refusing the rules
-+    /// themselves; with one (such as NSPOSIXErrorDomain 2) the file could not
-+    /// be read. Timeouts and interrupted loads are neither.
-+    static func isRuleRejection(_ error: Error) -> Bool {
-+        let error = error as NSError
-+        return error.domain == "WKErrorDomain" && error.code == 6 && error.userInfo[NSUnderlyingErrorKey] == nil
-+    }
-+
-     private static func reloadWithRetryRaw(
-         identifier: String,
-         maxRetries: Int,
-@@ -1181,6 +1196,7 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
+     /// One update per native toggle: a checkbox on macOS, a switch on iOS.
+-    /// Type matches the filter rows on the main list.
+     private func updateToggle(_ title: String, subtitle: String, isOn: Bool, toggle: @escaping () -> Void) -> some View {
+-        Toggle(isOn: Binding(get: { isOn }, set: { _ in toggle() })) {
+-            VStack(alignment: .leading, spacing: 4) {
+-                Text(verbatim: title)
+-                    .fontWeight(.medium)
+-                if !subtitle.isEmpty {
+-                    Text(verbatim: subtitle)
+-                        .font(.caption)
+-                        .foregroundStyle(.secondary)
+-                        .lineLimit(2)
+-                }
+-            }
+-        }
+-        #if os(macOS)
+-        .toggleStyle(UpdateRowCheckboxStyle())
+-        #endif
++        SelectableRow(title: Text(verbatim: title), subtitle: subtitle, isSelected: isOn, action: toggle)
+     }
+ 
+     private var reviewToolbar: some View {
+@@ -602,20 +587,3 @@ struct FinishedResultDismissal: NSViewRepresentable {
+ }
+ #endif
+ 
+-#if os(macOS)
+-/// A checkbox centered on its two-line label, toggled by a click anywhere on
+-/// the row (#1034).
+-private struct UpdateRowCheckboxStyle: ToggleStyle {
+-    func makeBody(configuration: Configuration) -> some View {
+-        HStack(spacing: 8) {
+-            Toggle(isOn: configuration.$isOn) { configuration.label }
+-                .toggleStyle(.checkbox)
+-                .labelsHidden()
+-            configuration.label.accessibilityHidden(true)
+-            Spacer(minLength: 0)
+-        }
+-        .contentShape(Rectangle())
+-        .onTapGesture { configuration.isOn.toggle() }
+-    }
+-}
+-#endif
+```
+
+**File**: `wBlock/FilterCategoryInfoView.swift` (modified, +12/-15)
+```diff
+@@ -115,25 +115,22 @@ struct RecommendedNamesList: View {
+     }
+ }
+ 
+-/// One card per choice, naming the lists it turns on.
++/// One native toggle per choice, naming the lists it turns on.
+ struct AnnoyanceChoicePicker: View {
+     @Binding var selection: Set<AnnoyanceChoice>
+ 
+     var body: some View {
+-        VStack(alignment: .leading, spacing: 10) {
+-            ForEach(AnnoyanceChoice.allCases) { choice in
+-                let isSelected = selection.contains(choice)
+-                SelectableRow(
+-                    title: Text(LocalizedStringKey(choice.title)),
+-                    caption: ListFormatter.localizedString(byJoining: choice.filterNames.map {
+-                        LocalizedStrings.text($0, comment: "Filter list name")
+-                    }),
+-                    subtitle: choice.subtitle,
+-                    isSelected: isSelected,
+-                    style: .card
+-                ) {
+-                    if isSelected { selection.remove(choice) } else { selection.insert(choice) }
+-                }
++        SelectableRowGroup(data: AnnoyanceChoice.allCases) { choice in
++            let isSelected = selection.contains(choice)
++            SelectableRow(
++                title: Text(LocalizedStringKey(choice.title)),
++                caption: ListFormatter.localizedString(byJoining: choice.filterNames.map {
++                    LocalizedStrings.text($0, comment: "Filter list name")
++                }),
++                subtitle: choice.subtitle,
++                isSelected: isSelected
++            ) {
++                if isSelected { selection.remove(choice) } else { selection.insert(choice) }
+             }
+         }
+     }
+```
+
+**File**: `wBlock/OnboardingView.swift` (modified, +28/-32)
+```diff
+@@ -452,26 +452,32 @@ struct OnboardingView: View {
+         .padding(.vertical, 36)
+     }
+ 
+-    private var blockingLevelStep: some View {
+-        VStack(alignment: .leading, spacing: 14) {
+-            ForEach(BlockingLevel.allCases) { level in
+-                blockingLevelCard(for: level)
+-            }
+-        }
++    /// The level the stored string names, matched as earlier builds wrote it.
++    private var blockingLevel: Binding<BlockingLevel?> {
++        Binding(
++            get: {
++                let stored = selectedBlockingLevel.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
++                return BlockingLevel.allCases.first { $0.rawValue.lowercased() == stored }
++            },
++            set: { selectedBlockingLevel = $0?.rawValue ?? "" }
++        )
+     }
+ 
+-    private func blockingLevelCard(for level: BlockingLevel) -> some View {
+-        let isSelected =
+-            selectedBlockingLevel.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+-            == level.rawValue.lowercased()
+-
+-        return SelectableRow(
+-            title: Text(LocalizedStringKey(level.rawValue)),
+-            subtitle: blockingLevelDescription(level),
+-            isSelected: isSelected,
+-            style: .card
+-        ) {
+-            selectedBlockingLevel = level.rawValue
++    /// A native segmented control, like the system's own pickers (#1088).
++    private var blockingLevelStep: some View {
++        VStack(alignment: .leading, spacing: 10) {
++            Picker("Blocking Level", selection: blockingLevel) {
++                ForEach(BlockingLevel.allCases) { level in
++                    Text(LocalizedStringKey(level.rawValue)).tag(Optional(level))
++                }
++            }
++            .pickerStyle(.segmented)
++            .labelsHidden()
++            if let level = blockingLevel.wrappedValue {
++                Text(blockingLevelDescription(level))
++                    .font(.subheadline)
++                    .foregroundStyle(.secondary)
++            }
+         }
+     }
+ 
+@@ -536,7 +542,7 @@ struct OnboardingView: View {
+                 VStack(alignment: .leading, spacing: 10) {
+                     Text(LocalizedStrings.text("Regional", comment: "Filter list category"))
+                         .font(.headline)
+-                    ForEach(ForeignFilterOrganizer.sortedFilters(regionalFilters)) { filter in
++                    SelectableRowGroup(data: ForeignFilterOrganizer.sortedFilters(regionalFilters)) { filter in
+                         regionalToggle(for: filter)
+                     }
+                 }
+@@ -580,15 +586,7 @@ struct OnboardingView: View {
+     }
+ 
+     private func userscriptList(_ scripts: [OnboardingUserScriptItem]) -> some View {
+-        VStack(spacing: 0) {
+-            ForEach(Array(scripts.enumerated()), id: \.element.id) { index, script in
+-                userscriptCard(for: script)
+-                if index < scripts.count - 1 {
+-                    Divider().padding(.leading, 44)
+-                }
+-            }
+-        }
+-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
++        SelectableRowGroup(data: scripts) { userscriptCard(for: $0) }
+     }
+ 
+     private func regionalToggle(for filter: FilterList) -> some View {
+@@ -599,8 +597,7 @@ struct OnboardingView: View {
+             title: Text(filter.localizedDisplayName),
+             caption: languages,
+             subtitle: filter.localizedDisplayDescription,
+-            isSelected: isSelected,
+-            style: .card
++            isSelected: isSelected
+         ) {
+             if isSelected {
+                 selectedRegionalFilters.remove(filter.id)
+@@ -874,8 +871,7 @@ struct OnboardingView: View {
+             title: Text(script.name),
+             subtitle: script.description,
+             badge: script.isBeta ? Text("Beta") : nil,
+-            isSelected: isSelected,
+-            style: .groupedRow
++            isSelected: isSelected
+         ) {
+             if isSelected {
+                 selectedUserscripts.remove(script.id)
+```
+
+**File**: `wBlock/SelectionIndicator.swift` (modified, +65/-113)
+```diff
+@@ -1,139 +1,91 @@
+ import SwiftUI
+ 
+-/// A shape-rendered selection mark that avoids SF Symbol circle-outline artifacts.
+-struct SelectionIndicator: View {
+-    let isSelected: Bool
+-    var size: CGFloat = 20
+-
+-    var body: some View {
+-        ZStack {
+-            Circle()
+-                .fill(isSelected ? Color.accentColor : Color.clear)
+-            Circle()
+-                .strokeBorder(
+-                    Color.secondary.opacity(isSelected ? 0 : 0.7),
+-                    lineWidth: 1.5
+-                )
+-
+-            if isSelected {
+-                Image(systemName: "checkmark")
+-                    .font(.system(size: size * 0.5, weight: .bold))
+-                    .foregroundStyle(.white)
+-            }
+-        }
+-        .frame(width: size, height: size)
+-        .animation(.easeInOut(duration: 0.15), value: isSelected)
+-        .accessibilityHidden(true)
+-    }
+-}
+-
+-/// Shared tappable selection row used by onboarding pick lists and the
+-/// apply-updates review sheet. Every selection list renders through this row
+-/// so spacing, typography, and accessibility stay consistent.
++/// One choice in a pick list, drawn with the native control as in the
++/// available-updates review (#1088): a checkbox on macOS, a switch on iOS.
++/// Onboarding, Annoyances Info, and the review share it.
+ struct SelectableRow: View {
+-    enum Style {
+-        /// Bare row for use inside a `List` section.
+-        case listRow
+-        /// Row inside a shared grouped material container.
+-        case groupedRow
+-        /// Standalone material card.
+-        case card
+-    }
+-
+     let title: Text
+     /// A short line under the title, such as the languages a list covers.
+     var caption: String = ""
+     var subtitle: String = ""
+     var badge: Text? = nil
+     let isSelected: Bool
+-    var style: Style = .listRow
+     let action: () -> Void
+ 
+     var body: some View {
+-        Button(action: action) {
+-            HStack(alignment: .top, spacing: 12) {
+-                SelectionIndicator(isSelected: isSelected, size: indicatorSize)
+-
+-                VStack(alignment: .leading, spacing: 3) {
+-                    HStack(spacing: 6) {
+-                        title
+-                            .font(titleFont)
+-                            .foregroundStyle(.primary)
+-                            .multilineTextAlignment(.leading)
+-
+-                        if let badge {
+-                            badge
+-                                .font(.caption2)
+-                                .fontWeight(.medium)
+-                                .padding(.horizontal, 6)
+-                                .padding(.vertical, 2)
+-                                .background(Color.orange.opacity(0.15))
+-                                .foregroundStyle(.orange)
+-                                .cornerRadius(4)
+-                        }
+-                    }
+-
+-                    if !caption.isEmpty {
+-                        Text(caption)
+-                            .font(.caption.weight(.medium))
+-                            .foregroundStyle(.secondary)
+-                            .multilineTextAlignment(.leading)
+-                    }
+-
+-                    if !subtitle.isEmpty {
+-                        Text(subtitle)
+-                            .font(.caption)
+-                            .foregroundStyle(.secondary)
+-                            .lineLimit(2)
+-                            .multilineTextAlignment(.leading)
++        Toggle(isOn: Binding(get: { isSelected }, set: { _ in action() })) {
++            VStack(alignment: .leading, spacing: 3) {
++                HStack(spacing: 6) {
++                    title
++                        .fontWeight(.medium)
++                        .foregroundStyle(.primary)
++                        .multilineTextAlignment(.leading)
++                    if let badge {
++                        badge
++                            .font(.caption2)
++                            .fontWeight(.medium)
++                            .padding(.horizontal, 6)
++                            .padding(.vertical, 2)
++                            .background(Color.orange.opacity(0.15))
++                            .foregroundStyle(.orange)
++                            .cornerRadius(4)
+                     }
+                 }
+-
+-                Spacer(minLength: 0)
++                if !caption.isEmpty {
++                    Text(caption)
++                        .font(.caption.weight(.medium))
++                        .foregroundStyle(.secondary)
++                        .multilineTextAlignment(.leading)
++                }
++                if !subtitle.isEmpty {
++                    Text(subtitle)
++                        .font(.caption)
++                        .foregroundStyle(.secondary)
++                        .lineLimit(2)
++                        .multilineTextAlignment(.leading)
++                }
+             }
+-            .frame(maxWidth: .infinity, alignment: .leading)
+-          
+```
+
+**File**: `wBlock/ar.lproj/Localizable.strings` (modified, +1/-0)
+```diff
+@@ -1083,3 +1083,4 @@ To re-enable these filters, disable other large filters and apply changes again.
+ "Choose the annoyances to hide. You can change this later in Annoyances Info." = "اختر الإزعاجات التي تريد إخفاءها. يمكنك تغيير ذلك لاحقًا من معلومات الإزعاجات.";
+ "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments." = "يحظر إعلانات YouTube ومشغّله على الويب ويشغّل الفيديو في مشغّل Safari الأصلي، مع الفصول وصورة داخل صورة والتشغيل في الخلفية ووضع الصوت فقط. يتضمن SponsorBlock الذي يتخطى المقاطع المموّلة.";
+ "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info." = "يحظر مشغّلات الفيديو الخارجية على المواقع الأخرى ويشغّل الفيديو بعناصر تحكم Safari الأصلية، مضيفًا صورة داخل صورة تلقائيًا والتشغيل في الخلفية والترجمات والفصول ومعلومات قيد التشغيل.";
++"Blocking Level" = "مستوى الحظر";
+```
+
+**File**: `wBlock/de.lproj/Localizable.strings` (modified, +1/-0)
+```diff
+@@ -1083,3 +1083,4 @@ Um diese Filter wieder zu aktivieren, deaktiviere andere große Filter und wende
+ "Choose the annoyances to hide. You can change this later in Annoyances Info." = "Wähle, welche Belästigungen ausgeblendet werden. Du kannst das später in den Infos zu Belästigungen ändern.";
+ "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments." = "Blockiert YouTubes Werbung und Web-Player und spielt Videos im nativen Player von Safari ab, mit Kapiteln, Bild-in-Bild, Wiedergabe im Hintergrund und Nur-Audio-Modus. Enthält SponsorBlock, das gesponserte Abschnitte überspringt.";
+ "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info." = "Blockiert Video-Player von Drittanbietern auf anderen Websites und spielt Videos mit den nativen Steuerelementen von Safari ab, inklusive automatischem Bild-in-Bild, Wiedergabe im Hintergrund, Untertiteln, Kapiteln und Infos unter „Jetzt läuft“.";
++"Blocking Level" = "Blockierstufe";
+```
+
+**File**: `wBlock/el.lproj/Localizable.strings` (modified, +1/-0)
+```diff
+@@ -1083,3 +1083,4 @@ To re-enable these filters, disable other large filters and apply changes again.
+ "Choose the annoyances to hide. You can change this later in Annoyances Info." = "Επιλέξτε ποιες ενοχλήσεις θα κρύβονται. Μπορείτε να το αλλάξετε αργότερα στις πληροφορίες της κατηγορίας Ενοχλήσεις.";
+ "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments." = "Αποκλείει τις διαφημίσεις και το web player του YouTube και παίζει τα βίντεο στο εγγενές player του Safari, με κεφάλαια, εικόνα σε εικόνα, αναπαραγωγή στο παρασκήνιο και λειτουργία μόνο ήχου. Περιλαμβάνει το SponsorBlock, που παραλείπει τα χορηγούμενα τμήματα.";
+ "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info." = "Αποκλείει players βίντεο τρίτων σε άλλους ιστότοπους και παίζει τα βίντεο με τα εγγενή χειριστήρια του Safari, προσθέτοντας αυτόματη εικόνα σε εικόνα, αναπαραγωγή στο παρασκήνιο, υπότιτλους, κεφάλαια και πληροφορίες «Τώρα παίζει».";
++"Blocking Level" = "Επίπεδο αποκλεισμού";
+```
+
+**File**: `wBlock/en.lproj/Localizable.strings` (modified, +1/-0)
+```diff
+@@ -1092,3 +1092,4 @@ To re-enable these filters, disable other large filters and apply changes again.
+ "Choose the annoyances to hide. You can change this later in Annoyances Info." = "Choose the annoyances to hide. You can change this later in Annoyances Info.";
+ "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments." = "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments.";
+ "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info." = "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info.";
++"Blocking Level" = "Blocking Level";
+```
+
+---
+
+### Incident Patch 3: `4d00f496` (2026-11-08)
+**Commit Message**: fix(mac): keep the Other heading when its section regains lists (#1092)
+
+A drag-only section that gains rows is no longer flagged drag-only, so it was left out of the heights noted after the update and AppKit kept its 0.01 pt concealed height. Sections whose concealed state changed are now noted too.
+
+**File**: `wBlock/MacReorderableList.swift` (modified, +10/-1)
+```diff
+@@ -714,9 +714,18 @@ struct MacReorderableList: NSViewRepresentable {
+             !(dragging && revealsDropTargets) && node.children.isEmpty && section(for: node)?.revealsOnlyWhileDragging == true
          }
  
-         var lastFailureReason: String?
-+        var rulesRejected = false
-         for attempt in 1...maxRetries {
-             if Task.isCancelled {
-                 return ReloadAttemptResult(
-@@ -1201,6 +1217,7 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
-             }
-             if case .failure(let error) = result {
-                 lastFailureReason = LogErrorDescriber.describe(error)
-+                rulesRejected = isRuleRejection(error)
-             }
- 
-             // A timed-out attempt means Safari is not answering reload requests at
-@@ -1236,7 +1253,8 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
-             success: false,
-             attempts: maxRetries,
-             durationMs: elapsedMs(),
--            failureReason: lastFailureReason
-+            failureReason: lastFailureReason,
-+            rulesRejected: rulesRejected
-         )
-     }
- 
-```
-
----
-
-### Incident Patch 2: `f0492eaf` (2026-11-04)
-**Commit Message**: fix(engine): stop $genericblock from crashing Safari's rule compiler
-
-AdGuard Base has @@||adguardpartner.com^$genericblock. wbe copied that
-host into every generic block as unless-domain, 75k rules once EasyList
-and the uBO filters share the Ads blocker, and WebKit's NFA-to-DFA step
-crashed ContentBlockerLoader on that set. Arjun's crash reports match the
-local repro frame for frame.
-
-A genericblock host is now one ignore-previous-rules on the host's pages,
-in a new tier between the generic and the specific blocks. It leaves out
-documents so the page keeps its hides. Calibration case k90 checks that
-in WKWebView.
-
-The `^` right after a plain `||host^` now emits [/:?#], since a URL's host
-is always followed by one of those. WebKit compiles the ~60k host blocks
-about 10% faster.
-
-**File**: `Packages/wblock-engine/crates/wbe/src/compile/mod.rs` (modified, +15/-8)
-```diff
-@@ -25,18 +25,23 @@ pub enum Tier {
-     SpecificHide = 2,
-     /// `$elemhide` (and `$specifichide`, widened): cancels all hides.
-     ElemHideException = 3,
--    Block = 4,
--    Exception = 5,
-+    /// Blocks with no page domains, which `$genericblock` lifts.
-+    GenericBlock = 4,
-+    /// `$genericblock`: cancels the generic blocks before it on the page's
-+    /// subresources, leaving its hides and the blocks after it in place.
-+    GenericBlockException = 5,
-+    Block = 6,
-+    Exception = 7,
-     /// `$important` with `$denyallow`: the block, then its exclusions.
--    ImportantDenyallowBlock = 6,
-+    ImportantDenyallowBlock = 8,
-     /// The exclusions of an important `$denyallow` block. Each cancels only
-     /// the blocks before it, so they sit ahead of every other important block.
--    ImportantDenyallowException = 7,
--    ImportantBlock = 8,
-+    ImportantDenyallowException = 9,
-+    ImportantBlock = 10,
-     /// AdGuard `$important` exceptions override important blocks.
--    ImportantException = 9,
-+    ImportantException = 11,
-     /// `@@...$document`: cancels everything on the page.
--    DocumentException = 10,
-+    DocumentException = 12,
- }
- 
- #[derive(Debug, Clone, Serialize, Deserialize)]
-@@ -127,11 +132,13 @@ impl std::io::Write for Count {
- }
- 
- /// Tiers in output order.
--const TIERS: [Tier; 11] = [
-+const TIERS: [Tier; 13] = [
-     Tier::GenericHide,
-     Tier::GenericHideException,
-     Tier::SpecificHide,
-     Tier::ElemHideException,
-+    Tier::GenericBlock,
-+    Tier::GenericBlockException,
-     Tier::Block,
-     Tier::Exception,
-     Tier::ImportantDenyallowBlock,
-```
-
-**File**: `Packages/wblock-engine/crates/wbe/src/compile/network.rs` (modified, +78/-54)
-```diff
-@@ -36,13 +36,11 @@ pub(crate) struct Context {
-     strict: StrictHosts,
-     bad: Vec<NetworkRule>,
-     bad_bodies: FxHashSet<String>,
--    generic_exceptions: Vec<NetworkRule>,
- }
- 
- impl Context {
-     pub(crate) fn add(&mut self, rule: &NetworkRule) {
-         self.strict.add(rule);
--        if !rule.badfilter && genericblock_host(rule).is_some() { self.generic_exceptions.push(rule.clone()); }
-         if rule.badfilter {
-             let bad = unlabeled(rule);
-             self.bad_bodies.insert(bad.pattern.body.clone());
-@@ -53,15 +51,14 @@ impl Context {
-     pub(crate) fn merge(&mut self, other: Context) {
-         self.strict.hosts.extend(other.strict.hosts);
-         self.strict.parents.extend(other.strict.parents);
--        self.generic_exceptions.extend(other.generic_exceptions);
-         self.bad.extend(other.bad);
-         self.bad_bodies.extend(other.bad_bodies);
-     }
- }
- 
--/// Safari has no network-only ignore action. Hostname genericblock exceptions
--/// are represented by exclusions on generic triggers, leaving cosmetic and
--/// specific network rules untouched (including their own exceptions).
-+/// The host of a `$genericblock` exception Safari can represent: one
-+/// ignore-previous-rules on that host's pages, between the generic and the
-+/// specific blocks.
- fn genericblock_host(r: &NetworkRule) -> Option<String> {
-     (r.exception && r.scope.contains(ExceptionScope::GENERICBLOCK) && r.types.is_empty()
-         && r.negated_types.is_empty() && r.from.is_empty() && r.to.is_empty()
-@@ -154,14 +151,7 @@ fn compile_rule(
-     }
-     let party = party(r.party, exception)?;
-     let urls = urls(r, exception)?;
--    let mut from = std::borrow::Cow::Borrowed(&r.from);
--    if !exception && !r.important && r.from.include.is_empty() {
--        for rule in &ctx.generic_exceptions {
--            if ctx.bad.contains(&unlabeled(rule)) { continue; }
--            from.to_mut().exclude.push(DomainMatcher::Hostname(genericblock_host(rule).unwrap()));
--        }
--    }
--    let conds = domain_conds(&from, v, exception)?;
-+    let conds = domain_conds(&r.from, v, exception)?;
-     let types = effective_types(r);
-     // uBO also strict-blocks top-level navigation for an untyped filter whose
-     // match ends at the hostname (traffic.js, `shouldStrictBlock`), so such a
-@@ -188,6 +178,8 @@ fn compile_rule(
-         (true, if r.important { Tier::ImportantException } else { Tier::Exception })
-     } else if r.important {
-         (false, Tier::ImportantBlock)
-+    } else if r.from.include.is_empty() {
-+        (false, Tier::GenericBlock)
-     } else {
-         (false, Tier::Block)
-     };
-@@ -270,6 +262,30 @@ fn compile_denyallow(
- /// `$specifichide` is widened to `$elemhide`, which also cancels generic
- /// hides.
- fn compile_scope(r: &NetworkRule, v: SafariVersion, out: &mut Emitted) -> Result<(), String> {
-+    let generic = r.scope.contains(ExceptionScope::GENERICBLOCK);
-+    if let Some(host) = genericblock_host(r).filter(|_| generic) {
-+        // Copying the host into every generic block as unless-domain made
-+        // WebKit's NFA-to-DFA step crash ContentBlockerLoader (EasyList, uBO
-+        // filters and AdGuard Base in one blocker). Documents and frames are
-+        // left out: an ignore on the page's document load would also cancel
-+        // its hides, so generic blocks of subframes stay.
-+        let cond = Cond::IfDomain(vec![format!("*{host}")]);
-+        for (types, context) in type_triggers(DEFAULT_TYPES.difference(ResourceTypes::FRAME), v) {
-+            emit(
-+                out,
-+                Tier::GenericBlockException,
-+                &Trigger {
-+                    url: ".*",
-+                    case_sensitive: false,
-+                    types: Some(&types),
-+                    load_type: None,
-+                    load_context: context,
-+                    cond: Some(&cond),
-+                },
-+                true,
-+            );
-+        }
-+    }
-     let remaining = r.scope.difference(ExceptionScope::GENERICBLOCK);
-     let tier = if remaining.contains(ExceptionScope::DOC) {
-         Tier::DocumentException
-@@ -278,7 +294,7 @@ fn compile_scope(r: &NetworkRule, v: SafariVersion, out: &mut Emitted) -> Result
-     } else if remaining.contains(ExceptionScope::GHIDE) {
-         Tier::GenericHideException
-     } else {
--        return if genericblock_host(r).is_some() { Ok(()) } else {
-+        return if generic && genericblock_host(r).is_some() { Ok(()) } else {
-             Err("genericblock: only unconstrained hostname page exceptions can be represented without canceling cosmetics".into())
-         };
-     };
-@@ -976,7 +992,7 @@ mod tests {
-         check(
-             &[net("||ads.example.com^")],
-             V15,
--            r#"[{"trigger":{"url-filter":"^[^:]+://+([^:/]+\\.)?ads\\.example\\.com[^a-zA-Z0-9_.%-]"},"action":{"type":"block"}}]"#,
-+            r#"[{"trigger":{"url-filter":"^[^:]+://+([^:/]+\\.)?ads\\.example\\.com[/:?#]"},"action":{"type":"block
-```
-
-**File**: `Packages/wblock-engine/crates/wbe/src/compile/regex.rs` (modified, +19/-4)
-```diff
-@@ -32,12 +32,27 @@ pub fn url_filter(p: &Pattern) -> Option<String> {
-             .filter(|r| webkit_accepts(r));
-     }
-     let mut out = String::new();
-+    let mut body = p.body.as_str();
-     match p.kind {
--        PatternKind::Hostname => out.push_str(HOST_START),
-+        PatternKind::Hostname => {
-+            out.push_str(HOST_START);
-+            // A `^` right after a plain host ends the host, which in a URL is
-+            // always followed by one of HOST_END. The narrower class makes the
-+            // ~60k `||host^` blocks of EasyList and AdGuard Base compile 12%
-+            // faster in WebKit.
-+            let host = body.split_once('^').filter(|(h, _)| {
-+                !h.is_empty() && h.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'.')
-+            });
-+            if let Some((host, rest)) = host {
-+                literal(host, &mut out)?;
-+                out.push_str(HOST_END);
-+                body = rest;
-+            }
-+        }
-         PatternKind::Left => out.push('^'),
-         _ => {}
-     }
--    literal(&p.body, &mut out)?;
-+    literal(body, &mut out)?;
-     if p.right_anchored {
-         out.push('$');
-     }
-@@ -443,7 +458,7 @@ mod emitted_filter_tests {
-     fn webkit_accepts_checks_structure() {
-         for ok in [
-             ".*",
--            "^[^:]+://+([^:/]+\\.)?ads\\.com[^a-zA-Z0-9_.%-]",
-+            "^[^:]+://+([^:/]+\\.)?ads\\.com[/:?#]",
-             "a[\\]]b",
-             "[-a]",
-             "x?$",
-@@ -491,7 +506,7 @@ mod tests {
-                 right_anchored: false
-             })
-             .unwrap(),
--            "^[^:]+://+([^:/]+\\.)?ads\\.com[^a-zA-Z0-9_.%-]path"
-+            "^[^:]+://+([^:/]+\\.)?ads\\.com[/:?#]path"
-         );
-     }
- 
-```
-
-**File**: `Packages/wblock-engine/harness/sim/calibrate-expected.json` (modified, +12/-0)
-```diff
-@@ -501,6 +501,18 @@
-         "a": false
-       },
-       "hidden": []
-+    },
-+    {
-+      "id": "k90",
-+      "pageReached": true,
-+      "reached": {
-+        "a": true,
-+        "b": false
-+      },
-+      "hidden": [
-+        "A",
-+        "B"
-+      ]
-     }
-   ]
- }
-```
-
-**File**: `Packages/wblock-engine/harness/sim/calibration-cases.ts` (modified, +15/-0)
-```diff
-@@ -362,4 +362,19 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
-         rules: [block('lib', { 'if-frame-url': ['frame/f58'] })],
-         resources: [frameDoc('f', 'first', 'frame/f58.html'), script('a', 'first', CHILD_IN_LIB, 'f')],
-     },
-+    {
-+        id: 'k90', what: '$genericblock: a page-scoped ignore over subresource types lifts earlier blocks and keeps the page hides',
-+        rules: [
-+            css('.*', '.cs-A'),
-+            css('.*', '.cs-B', { 'if-domain': ['*app.localtest.me'] }),
-+            block('lib/a'),
-+            ignorePrevious('.*', {
-+                'resource-type': ['image', 'style-sheet', 'script', 'font', 'media', 'ping', 'fetch', 'websocket', 'other'],
-+                'if-domain': ['*app.localtest.me'],
-+            }),
-+            block('lib/b', { 'if-domain': ['*app.localtest.me'] }),
-+        ],
-+        resources: [script('a', 'third', 'lib/a.js'), script('b', 'third', 'lib/b.js')],
-+        hide: ['A', 'B', 'C'],
-+    },
- ];
-```
-
----
-
-### Incident Patch 3: `9e5ec865` (2026-11-05)
-**Commit Message**: fix(engine): bump output version so saved blockers rebuild
-
-The $genericblock fix and the any-character repeat cap both change
-Safari output for the same input, so outputs saved by the older engine
-must not be reused.
-
-**File**: `Packages/wblock-engine/crates/wbe/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ pub use parse::parse_line;
- /// Version of everything the engine writes: Safari JSON, runtime rules, and
- /// the serialized per-page engine. Bump it whenever any of them changes for
- /// the same input, so callers discard outputs cached by an older engine.
--pub const OUTPUT_VERSION: u32 = 17;
-+pub const OUTPUT_VERSION: u32 = 18;
- 
- /// The registrable domain (eTLD+1) of `host`, or `None` for a public suffix
- /// or an invalid name.
++        /// Sections drawn concealed at the last note. A section that just
++        /// gained rows is no longer drag-only, but AppKit still holds its
++        /// concealed height until told, which left Other's rows under the
++        /// section above with no heading (#1092, #1097).
++        private var concealedSections: Set<Node.ID> = []
++
+         private func noteConcealableSections() {
+             guard let outline else { return }
+-            let rows = IndexSet(roots.filter { section(for: $0)?.revealsOnlyWhileDragging == true }
++            let concealed = Set(roots.filter(isConcealed).map(\.id))
++            let changed = concealed.symmetricDifference(concealedSections)
++            concealedSections = concealed
++            let rows = IndexSet(roots.filter { changed.contains($0.id) || section(for: $0)?.revealsOnlyWhileDragging == true }
+                 .map { outline.row(forItem: $0) }.filter { $0 >= 0 })
+             guard !rows.isEmpty else { return }
+             for row in rows {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2668,52 +2726,47 @@ must not be reused.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reload): repair rules only when WebKit rejected them
+## X. apply): commit the applied state as the run ends, not after cleanup (#1087)
 
 **RULE**:
-When implementing operations in `wBlockCoreService/wBlockCoreService.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wBlock/AppFilterManager+ApplyPipeline.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c426d8f6`: reload): repair rules only when WebKit rejected them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3781122d`: apply): commit the applied state as the run ends, not after cleanup (#1087). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlockCoreService/wBlockCoreService.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlock/AppFilterManager+ApplyPipeline.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        /// Safari's WebKit compiled the rules and rejected them, the one
-        /// failure that dropping the offending rules can fix.
-        public let rulesRejected: Bool
-            failureReason: String? = nil,
-            rulesRejected: Bool = false
-            self.rulesRejected = rulesRejected
-            // such rules and reload once more before reporting a failure. Only
-            // a rejection: after a timeout, compiling the whole blocker again in
-            // the app ran an iPad 6 out of memory and crashed it.
-            if !reload.success, reload.rulesRejected, enabledInSafari != false, !repairedOutput,
-    /// WKErrorDomain 6 with no underlying error is WebKit refusing the rules
-    /// themselves; with one (such as NSPOSIXErrorDomain 2) the file could not
-    /// be read. Timeouts and interrupted loads are neither.
-    static func isRuleRejection(_ error: Error) -> Bool {
-        let error = error as NSError
-        return error.domain == "WKErrorDomain" && error.code == 6 && error.userInfo[NSUnderlyingErrorKey] == nil
-    }
-
-        var rulesRejected = false
-                rulesRejected = isRuleRejection(error)
-            failureReason: lastFailureReason,
- 
+            // The applied state is committed as the run ends, so pending
+            // changes never outlive it and Apply can't flash (#1088). Ending
+            // later showed the raw status line in the update banner (#1087).
+            if allReloadsSuccessful && advancedEngineSucceeded && !self.hasError {
+                self.commitApplySnapshot(runSnapshot)
+            }
+            self.isLoading = false
+            await MainActor.run {
+                if cleanupSucceeded {
+                } else {
+                    // Leftover downloads of turned-off lists need another apply.
+                    self.markNonSelectionChangesPending()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            failureReason: String? = nil
-            // such rules and reload once more before reporting a failure.
-            if !reload.success, enabledInSafari != false, !repairedOutput,
-            failureReason: lastFailureReason
+            if cleanupSucceeded {
+                await MainActor.run {
+                    self.commitApplySnapshot(runSnapshot)
+        }
+        // The run ends once the applied state is committed. Ending it at the
+        // result left pending changes set for the cleanup, so the toolbar
+        // flashed Apply before going back to Update (#1088).
+        await MainActor.run { self.isLoading = false }
+        if applySucceeded {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c426d8f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3781122d` are properly handled with clean fallback behavior.
