@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T03:08:03.609Z",
+  "last_updated": "2026-11-08T03:15:00.437Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -114944,10 +114944,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "664864a7176502d6cc6cbb02f0eee8435e84b505b28723066ef58e3e48d70b99",
+      "content_hash": "062ace715cd44c764a876b8cb30e114cdf2490931d9599ca9791a1fc75d7b44f",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "NVFP4 Dequantization Boundary & Precision Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Distributed MoE All-to-All Communication Synchronization Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2733,
           "title": "Quantization Scale Factor Precision Invariant",
@@ -115004,7 +115014,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T16:43:12.792Z",
+      "verified_at": "2026-11-08T03:15:00.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127681,15 +127691,15 @@
       "learning_id": "rule-3579",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3579,
-      "title": "MoE Expert Routing Determinism",
-      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
-      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "title": "MoE Expert Routing Determinism & Load Balancing Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-05T22:47:57.356Z"
+      "verified_at": "2026-11-08T03:15:00.416Z"
     },
     "rule-3580": {
       "learning_id": "rule-3580",
