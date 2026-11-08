@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T23:36:22.545Z",
+  "last_updated": "2026-11-08T23:43:50.461Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1220,14 +1220,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "c3884ebd0767ee027d5fed89e7d7ded5ef4120b32577780fef3964eae230860f",
-      "verified_at": "2026-11-05T06:07:38.673Z",
+      "content_hash": "e638337310463f925d6ed7c816edff0d0f5244a7688b37c1a96ba9edfdd2fad7",
+      "verified_at": "2026-11-08T23:43:48.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:07:38.673Z"
+      "last_updated": "2026-11-08T23:43:48.013Z"
     },
     "bigscience/bloom": {
       "repository": "bigscience/bloom",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "6ae481b2646d116e137ed1b0ca27bb06b2f4f56673971ff53c998dfd92086aaa",
-      "verified_at": "2026-11-08T21:24:47.071Z",
+      "content_hash": "b3c2809d029c22cacd86f3618d002191303b72219c7d63e4b15ff38ab80079df",
+      "verified_at": "2026-11-08T23:43:48.138Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:24:47.071Z"
+      "last_updated": "2026-11-08T23:43:48.139Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -9906,14 +9906,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-run-llama-llama_index",
-      "content_hash": "ae503e7eab28ad66943c5aec41d725bf04d541c5163af626b63d5eb50564001e",
-      "verified_at": "2026-11-04T20:02:47.051Z",
+      "content_hash": "41404ce11f8f936806ade39ca792045e88e5139133ffca3125545a10e71a4dba",
+      "verified_at": "2026-11-08T23:43:50.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:02:47.051Z"
+      "last_updated": "2026-11-08T23:43:50.460Z"
     },
     "vercel-labs/opensrc": {
       "repository": "vercel-labs/opensrc",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T23:36:22.442Z",
+  "last_updated": "2026-11-08T23:43:50.356Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -54514,11 +54514,16 @@
       "slug": "run-llama-llama_index",
       "platform": "github",
       "source_url": "https://github.com/run-llama/llama_index",
-      "source_version": "444fdf06",
-      "content_hash": "ae503e7eab28ad66943c5aec41d725bf04d541c5163af626b63d5eb50564001e",
+      "source_version": "fe107aab",
+      "content_hash": "41404ce11f8f936806ade39ca792045e88e5139133ffca3125545a10e71a4dba",
       "dossier_path": "07_PROJECT_LEARNING/run-llama-llama_index-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/run-llama-llama_index-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docs: update Arize agent evaluation guide URL (#24017)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2222,
           "title": "openai-like): support `llama-index-llms-openai` `0.8.x` (#23249)",
@@ -54535,7 +54540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:02:46.923Z",
+      "verified_at": "2026-11-08T23:43:50.332Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75883,13 +75888,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "274eaf91",
-      "content_hash": "6ae481b2646d116e137ed1b0ca27bb06b2f4f56673971ff53c998dfd92086aaa",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "0d7daaab",
+      "content_hash": "b3c2809d029c22cacd86f3618d002191303b72219c7d63e4b15ff38ab80079df",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -75954,6 +75959,11 @@
         {
           "number": null,
           "title": "Merge pull request #4652 from aleo-labs-protocol/load-test-inherit-secrets",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4641 from aleo-labs-protocol/feat/fuzz-helpers-feature",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -76082,7 +76092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:24:46.973Z",
+      "verified_at": "2026-11-08T23:43:47.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -935,8 +935,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "c3884ebd0767ee027d5fed89e7d7ded5ef4120b32577780fef3964eae230860f",
-    "lastHarvestedAt": "2026-11-05T06:07:38.663Z",
+    "contentHash": "e638337310463f925d6ed7c816edff0d0f5244a7688b37c1a96ba9edfdd2fad7",
+    "lastHarvestedAt": "2026-11-08T23:43:47.990Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium"
   },
   "hf-bigscience-bloom": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "a0c210aa",
+    "sourceVersion": "0d7daaab",
     "license": "Apache-2.0",
-    "contentHash": "f5a79e573ee5d9be66760dfd31902345b2db94d540bf6143863756c6ea4f3e10",
-    "lastHarvestedAt": "2026-11-08T19:31:08.971Z",
+    "contentHash": "b3c2809d029c22cacd86f3618d002191303b72219c7d63e4b15ff38ab80079df",
+    "lastHarvestedAt": "2026-11-08T23:43:48.118Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -6553,10 +6553,10 @@
     "repository": "run-llama/llama_index",
     "platform": "github",
     "sourceUrl": "https://github.com/run-llama/llama_index",
-    "sourceVersion": "444fdf06",
+    "sourceVersion": "fe107aab",
     "license": "MIT",
-    "contentHash": "ae503e7eab28ad66943c5aec41d725bf04d541c5163af626b63d5eb50564001e",
-    "lastHarvestedAt": "2026-11-04T20:02:47.033Z",
+    "contentHash": "41404ce11f8f936806ade39ca792045e88e5139133ffca3125545a10e71a4dba",
+    "lastHarvestedAt": "2026-11-08T23:43:50.451Z",
     "learningId": "learn-github-run-llama-llama_index"
   },
   "vercel-labs-opensrc": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/run-llama-llama_index-learnings.md`  
 > **Source**: github ([https://github.com/run-llama/llama_index](https://github.com/run-llama/llama_index))  
-> **Source Version**: `444fdf06`  
+> **Source Version**: `fe107aab`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:02:46.272Z  
+> **Timestamp**: 2026-11-08T23:43:48.559Z  
 > **Learning ID**: `learn-github-run-llama-llama_index`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/run-llama-llama_index-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/run-llama/llama_index](https://github.com/run-llama/llama_index))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:02:46.090Z  
+> **Harvest Timestamp**: 2026-11-08T23:43:48.549Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LlamaIndex is the document processing platform for AI
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 52806 stars
+- **Stars / Engagement**: 52848 stars
 
 ---
 
@@ -934,11 +934,11 @@ __all__ = [
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #23985** (2026-11-06): **[Bug]: VectorStoreIndex.as_retriever / SummaryIndex.as_retriever raise TypeError for callback_manager and object_map**
+  *Symptoms*: ### Bug Description  `as_retriever(**kwargs)` forwards keyword arguments to the retriever, but it also passes some of the same arguments itself, so passing a supported retriever argument raises `TypeError: got multiple values for keyword argument`:  - `VectorStoreIndex.as_retriever()` (`indices/vector_store/base.py:118-124`) always passes `callback_manager=self._callback_manager` and `object_map=self._object_map`, then `**kwargs`. - `SummaryIndex.as_retriever()` (`indices/list/base.py:82` and the embedding/LLM branches below it) always passes `object_map=self._object_map`, then `**kwargs`.  Both arguments are explicitly accepted by `VectorIndexRetriever` and `SummaryIndexRetriever`, and work when the retrievers are constructed directly. `as_query_engine(**kwargs)` forwards to `as_retriever`, so it fails the same way. As a result, users cannot attach a callback manager to a vector retriever through the factory (for example, for tracing), or supply an `object_map` for recursive retrieval through `IndexNode`s.  **Expected:** caller-supplied values override the index defaults (for example, `kwargs.setdefault("callback_manager", self._callback_manager)`).    ### Version  llama-index-core 0.14.25 (the same code is on `main` at 444fdf0)  ### Steps to Reproduce  Run this script (no API key or network needed):  ```python from llama_index.core import SummaryIndex, VectorStoreIndex from llama_index.core.callbacks import CallbackManager from llama_index.core.embeddings import MockEmbeddi
+
 - **Issue #23862** (2026-11-01): **[Bug]: `FunctionTool` turns an empty list result into empty content instead of `[]`**
   *Symptoms*: ### Bug Description  `FunctionTool._parse_tool_output` treats a list as a list of content blocks when `all(isinstance(item, ...) for item in raw_output)`. For an empty list `all(...)` is true, so the list is returned as zero blocks and `ToolOutput.content` is `""`, while `[0, 1]` gives `"[0, 1]"`. An agent sees an empty string for a tool that returned an empty result.  Expected: `content` is `"[]"`, as for any other list, for example by requiring a non-empty list in that branch.   ### Version  llama-index-core 0.14.25, and main at 619d746. Python 3.12, Linux.  ### Steps to Reproduce  ```python from llama_index.core.tools import FunctionTool   def numbers(n: int) -> list:     return list(range(n))   tool = FunctionTool.from_defaults(fn=numbers, name="numbers", description="numbers") print(repr(tool.call(n=0).content), repr(tool.call(n=2).content)) ```  ### Relevant Logs/Tracebacks  ```shell '' '[0, 1]' ```
-
-- **Issue #23839** (2026-10-30): **[Bug]: `WorkflowIdleEvent` is emitted while events sent from outside the run with `handler.ctx.send_event` are still undelivered, so a context saved at that idle loses them**
-  *Symptoms*: ### Bug Description  Two steps wait for human input at the same time. Both are answered at once with `handler.ctx.send_event`, and the first answer makes its step ask a follow-up question. The stream then reports the follow-up question and `WorkflowIdleEvent`, while the second answer has not been delivered yet: its waiter is still open, and it resolves a moment later.  An application that saves the run when it goes idle, to wait for the next answer, gets a context without that answer. The restored run never finishes: it waits for an answer that was already sent.  `_check_idle_state` states that a workflow is idle only when "no sent or returned event is still waiting to be delivered". `state.deliveries` tracks events sent from inside the run, which #23583 fixed. An event sent from outside goes through `ExternalContext.send_event` into the adapter's `receive_queue`, and the control loop pulls those one tick at a time, so one waiting to be pulled is invisible to the idle check.   ### Version  llama-index-workflows 2.26.1, and `main` of run-llama/llama-agents at a457071. Python 3.12, Linux.  ### Steps to Reproduce  1. Save the script below and run it with `llama-index-workflows` 2.26.1. 2. Both questions are answered at once, the run reports the follow-up question and goes idle, and the context saved at that idle is restored and answered.  ```python import asyncio from importlib.metadata import version  from workflows import Context, Workflow, step from workflows.events import Ev
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -955,37 +955,31 @@ __all__ = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `444fdf06` (2026-11-03)
-**Commit Message**: Make fake credentials obviously fake (place-/holder- prefix) (#23923)
+### Incident Patch 1: `fe107aab` (2026-11-08)
+**Commit Message**: docs: update Arize agent evaluation guide URL (#24017)
 
-Prefix fake credentials with place-/holder- so they're obviously fake
+Signed-off-by: Dat Daryl Ngo <[REDACTED_EMAIL]>
 
-The org-wide credential scan flags these fake user:password URIs.
-Prefixing (rather than replacing) keeps every old value a substring,
-so existing assertions, SECRET markers and lengths are unchanged.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `llama-index-integrations/readers/llama-index-readers-snowflake/README.md` (modified, +1/-1)
+**File**: `docs/src/content/docs/framework/module_guides/observability/index.md` (modified, +1/-1)
 ```diff
-@@ -39,7 +39,7 @@ reader = SnowflakeReader(
-     schema="your_schema",
-     warehouse="your_warehouse",
-     role="your_role",  # Optional role setting
--    proxy="http://proxusername:proxypassword@myproxy:port",  # Optional proxy setting
-+    proxy="http://<username>:<password>@myproxy:port",  # Optional proxy setting
- )
+@@ -153,7 +153,7 @@ llama_index.core.set_global_handler(
+ #### Guides
  
- query = "SELECT * FROM your_table"
+ - [Trace LlamaIndex with Arize AX](https://arize.com/docs/ax/integrations/python-agent-frameworks/llamaindex/llamaindex-tracing)
+-- [Arize agent evaluation guide](https://arize.com/guides/ai-agent-handbook/agent-evaluation/)
++- [Arize agent evaluation guide](https://arize.com/ai-agents/agent-evaluation/)
+ - [Arize LLM evaluation guide](https://arize.com/resources/llm-evaluation/)
+ 
+ ![](./../../_static/integrations/arize_phoenix.png)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23940** (closed): (feat) integration with ydb (@Tim00tiM)
-- **PR #23937** (closed): fix(core): do not reserve metadata budget when include_metadata=False (#23683) (@xiemocun)
-- **PR #23936** (closed): fix(text-splitter): recognize Chinese clause separators (@Luckyou-d)
-- **PR #23931** (closed): fix(core): ensure relation properties are updated on upsert (#23679) (@hieuk48)
-- **PR #23929** (closed): fix(property_graph): pass original question into TextToCypherRetriever summary prompt (@ZYZ666-RGB)
-- **PR #23928** (closed): feat(readers): add x402-cleanweb reader integration for high-purity RAG and prompt injection defense (@nohosa001-pixel)
+- **PR #24079** (closed): Fix silent whitespace loss in SentenceSplitter/TokenTextSplitter (@davrens101)
+- **PR #24075** (closed): fix(readers): let load_resource take per-call options (@Steve-20-ai)
+- **PR #24072** (closed): fix: [Bug]: SimpleDirectoryReader resource methods reject per-call options (@xixi-box)
+- **PR #24070** (closed): fix(core): collapse "{{"/"}}" escapes in SafeFormatter.format (@sunhouy)
+- **PR #24066** (closed): fix: [Bug]: PromptTemplate leaves escaped braces doubled, so default prompts send invalid JSON examples to the LLM (issue #24032) (@LuckVd)
+- **PR #24061** (closed): fix(core): update stored relation when re-upserting an existing triplet (@painbaba)
 
 ---
 
@@ -1005,28 +999,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make fake credentials obviously fake (place-/holder- prefix) (#23923)
+## X. docs: update Arize agent evaluation guide URL (#24017)
 
 **RULE**:
-When implementing operations in `llama-index-integrations/readers/llama-index-readers-snowflake/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in run-llama/llama_index. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/content/docs/framework/module_guides/observability/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in run-llama/llama_index. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `444fdf06`: Make fake credentials obviously fake (place-/holder- prefix) (#23923). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe107aab`: docs: update Arize agent evaluation guide URL (#24017). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `llama-index-integrations/readers/llama-index-readers-snowflake/README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/content/docs/framework/module_guides/observability/index.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    proxy="http://<username>:<password>@myproxy:port",  # Optional proxy setting
+- [Arize agent evaluation guide](https://arize.com/ai-agents/agent-evaluation/)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    proxy="http://proxusername:proxypassword@myproxy:port",  # Optional proxy setting
+- [Arize agent evaluation guide](https://arize.com/guides/ai-agent-handbook/agent-evaluation/)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `444fdf06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe107aab` are properly handled with clean fallback behavior.

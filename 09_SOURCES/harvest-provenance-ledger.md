@@ -8442,3 +8442,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `84fa81e9` | Multi-dimensional audit evidence | 2026-11-08T23:29:17.486Z |
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-11-08T23:36:20.874Z |
 | `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `d0e358e1` | Multi-dimensional audit evidence | 2026-11-08T23:36:22.535Z |
+| `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-08T23:43:47.990Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `0d7daaab` | Multi-dimensional audit evidence | 2026-11-08T23:43:48.118Z |
+| `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `fe107aab` | Multi-dimensional audit evidence | 2026-11-08T23:43:50.451Z |
