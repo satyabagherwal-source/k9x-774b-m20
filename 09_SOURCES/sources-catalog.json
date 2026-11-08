@@ -10705,8 +10705,8 @@
     "sourceUrl": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
     "sourceVersion": "hf-nanbeige-nanbeige4.3-33b",
     "license": "Open-Source",
-    "contentHash": "fe63a84485f05d2c4172865102829deae27eb021b11bdc141c79928146c23ad1",
-    "lastHarvestedAt": "2026-11-04T19:33:52.527Z",
+    "contentHash": "d838f1bbb0addd66dcb745d9be6d2efba79c080a96a3f08c2664d71ba6b3ceec",
+    "lastHarvestedAt": "2026-11-08T06:05:13.967Z",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b"
   },
   "kajisho5-ffmpeg-skill": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T04:54:55.774Z",
+  "last_updated": "2026-11-08T06:05:13.982Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4149,6 +4149,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-unsloth-flint-gguf"
+    },
+    {
+      "id": "CD-HE9Q",
+      "directive_title": "Tokenizer Special Token Normalization Boundary",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Nanbeige/Nanbeige4.3-33B",
+      "source_commit": "hf-nanbeige-",
+      "date_staged": "2026-11-08",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-nanbeige-nanbeige4-3-33b"
     }
   ]
 }

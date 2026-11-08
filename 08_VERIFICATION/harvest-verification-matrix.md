@@ -8234,3 +8234,4 @@
 | `CYCLE-20261108-VLCM` | `2026-11-08T05:48:16.726Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`43006cc7...`) |
 | `CYCLE-20261108-6VB8` | `2026-11-08T05:57:02.852Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`547f7fd8...`) |
 | `CYCLE-20261108-6Z7A` | `2026-11-08T05:57:07.894Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6766` | Yes (`c42effbc...`) |
+| `CYCLE-20261108-HE97` | `2026-11-08T06:05:13.963Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`d838f1bb...`) |

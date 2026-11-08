@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T05:57:07.822Z",
+  "last_updated": "2026-11-08T06:05:13.870Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -140233,16 +140233,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
       "source_version": "hf-nanbeige-nanbeige4.3-33b",
-      "content_hash": "6f75363f5b7b6edd85731b001e09393311f05f2132d642f16e7b4e238d968c92",
+      "content_hash": "d838f1bbb0addd66dcb745d9be6d2efba79c080a96a3f08c2664d71ba6b3ceec",
       "dossier_path": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "GQA Dimensional Consistency Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "RoPE Base Frequency & Context Length Coupling",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:26:04.053Z",
+      "verified_at": "2026-11-08T06:05:13.836Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

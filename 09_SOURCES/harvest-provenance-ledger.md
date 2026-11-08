@@ -8243,3 +8243,4 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `8f6e050c` | Multi-dimensional audit evidence | 2026-11-08T05:48:16.739Z |
 | `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-08T05:57:02.856Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `857c3163` | Multi-dimensional audit evidence | 2026-11-08T05:57:07.898Z |
+| `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-08T06:05:13.967Z |

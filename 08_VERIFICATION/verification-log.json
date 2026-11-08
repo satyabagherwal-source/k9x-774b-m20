@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-TLEJ",
-    "timestamp": "2026-11-05T17:07:33.403Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "9d36bfc04f5d6a72e967579ae2f1d244de09baa608159cf9dbc8fc36abea6e30",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-2YU9",
     "timestamp": "2026-11-05T17:14:50.721Z",
     "repository": "LiquidAI/LFM3-Omni-2B",
@@ -7492,6 +7477,21 @@
     "contentHash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-HE97",
+    "timestamp": "2026-11-08T06:05:13.963Z",
+    "repository": "Nanbeige/Nanbeige4.3-33B",
+    "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+    "contentHash": "d838f1bbb0addd66dcb745d9be6d2efba79c080a96a3f08c2664d71ba6b3ceec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
