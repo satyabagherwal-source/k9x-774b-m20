@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T04:03:01.816Z",
+  "last_updated": "2026-11-08T04:10:01.062Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -58366,11 +58366,16 @@
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "ea1eb4c2",
-      "content_hash": "06141b594a7c3b20b6a54e524e4c222acdbf8e9ff6f2ae1883af33f70a2bfe73",
+      "source_version": "0e554abd",
+      "content_hash": "7e9adbf97599ebdef0576a3b0d86e0859d74a128d1416b0192045ad626f6f349",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docs(security): send vulnerability reports to [REDACTED_EMAIL] (#4097)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2587,
           "title": "linux): translate the SSH field checks and connection write errors (#3586)",
@@ -58407,7 +58412,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:27:44.337Z",
+      "verified_at": "2026-11-08T04:10:01.042Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128252,7 +128257,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/RecursiveSI/flint",
       "source_version": "hf-recursivesi-flint",
-      "content_hash": "55eadb8c7f8df9e5a4ab0a3887ae2b28ef1722356acb92db676770a60a059e63",
+      "content_hash": "b1215a7c4bcd40867fc2d5be0ff3f6fb17a3f0128de0dedab983aace68bf7158",
       "dossier_path": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
       "promoted_rules": [
@@ -128312,7 +128317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:45:11.337Z",
+      "verified_at": "2026-11-08T04:09:48.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

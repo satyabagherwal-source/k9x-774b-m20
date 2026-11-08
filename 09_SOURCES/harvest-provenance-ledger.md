@@ -8215,3 +8215,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T03:55:59.674Z |
 | `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-08T04:02:56.579Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `9b71df9a` | Multi-dimensional audit evidence | 2026-11-08T04:03:01.935Z |
+| `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-08T04:09:48.868Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `0e554abd` | Multi-dimensional audit evidence | 2026-11-08T04:10:01.142Z |

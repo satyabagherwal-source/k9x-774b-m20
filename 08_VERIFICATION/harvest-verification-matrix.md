@@ -8206,3 +8206,5 @@
 | `CYCLE-20261108-V706` | `2026-11-08T03:55:59.670Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`50a2eea2...`) |
 | `CYCLE-20261108-44OW` | `2026-11-08T04:02:56.576Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`e893f517...`) |
 | `CYCLE-20261108-48TO` | `2026-11-08T04:03:01.932Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2ea3285f...`) |
+| `CYCLE-20261108-CYTD` | `2026-11-08T04:09:48.865Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | Yes (`b1215a7c...`) |
+| `CYCLE-20261108-D8AA` | `2026-11-08T04:10:01.138Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e9adbf9...`) |
