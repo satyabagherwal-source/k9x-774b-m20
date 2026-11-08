@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "e56a1e7bb50b6dffba1abb8d7937f9f5e00b40a541e2c01befddbf599a971d6d",
-    "lastHarvestedAt": "2026-11-05T00:49:02.410Z",
+    "contentHash": "94edaebb487012752b2f27cee126ec7e7f0341cbcad4568e192a004ef5f9daaa",
+    "lastHarvestedAt": "2026-11-08T16:33:29.998Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "6f6a1545",
+    "sourceVersion": "eb34c40c",
     "license": "Apache-2.0",
-    "contentHash": "0f8e3631028174fa4e43191a14f5b44834556dd548534e2b18b84d9792defabf",
-    "lastHarvestedAt": "2026-11-07T20:42:11.517Z",
+    "contentHash": "46e27ebd06413587039646ed3903a6deb594a758074d5f629430d0248b5ad4f3",
+    "lastHarvestedAt": "2026-11-08T16:33:39.103Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "85975331",
+    "sourceVersion": "0230eea7",
     "license": "Apache-2.0",
-    "contentHash": "ccbb1bb53e3a281d5adae9985965e2fcffff4990d1ce3412cad756e75406a941",
-    "lastHarvestedAt": "2026-11-07T19:47:56.580Z",
+    "contentHash": "49642f5b42efb0ce40570c466014bffb476fb7b3ef0ffbf7dc73f139f696c469",
+    "lastHarvestedAt": "2026-11-08T16:33:43.477Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {

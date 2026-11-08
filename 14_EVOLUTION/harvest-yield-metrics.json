@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T16:26:25.296Z",
-  "total_cycles_completed": 8290,
-  "total_learnings_persisted": 8290,
-  "total_rules_promoted": 8079,
+  "last_updated": "2026-11-08T16:33:43.483Z",
+  "total_cycles_completed": 8293,
+  "total_learnings_persisted": 8293,
+  "total_rules_promoted": 8081,
   "history": [
-    {
-      "timestamp": "2026-11-07T22:46:36.597Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T22:46:38.365Z",
-      "repository": "Qwen/Qwen3-Embedding-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T22:52:58.649Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T22:53:03.004Z",
       "repository": "tw93/Mole",
@@ -1403,6 +1382,27 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:33:30.003Z",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:33:39.111Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:33:43.483Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

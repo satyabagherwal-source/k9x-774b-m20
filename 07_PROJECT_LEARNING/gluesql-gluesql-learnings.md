@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `85975331`  
+> **Source Version**: `0230eea7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T19:47:54.775Z  
+> **Timestamp**: 2026-11-08T16:33:41.686Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T19:47:54.658Z  
+> **Harvest Timestamp**: 2026-11-08T16:33:41.679Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3134 stars
+- **Stars / Engagement**: 3136 stars
 
 ---
 
@@ -2058,736 +2058,598 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85975331` (2026-11-06)
-**Commit Message**: Fix redb schema migration with storage format v4 (#2056)
+### Incident Patch 1: `0230eea7` (2026-11-08)
+**Commit Message**: Align transaction variable names in the redb I/O error test (#2067)
 
-Adding Expr::Regex in v0.20.0 shifted bincode variant indices, while
-the existing redb upgrade retained v0.19.0 schema bytes. A v3 database
-can therefore contain both historical and current schema encodings.
+Rename both write transaction variables from tx to txn in
+begin_write_after_io_error to match the rest of redb-storage.
+This covers metadata initialization and the simulated commit failure.
+No test behavior changes.
 
-Introduce storage format v4 with migration paths from v1, v2, and v3.
-Restore historical schemas, compare both interpretations for v3, and
-reject ambiguous or unrecoverable schemas. Validate referenced row
-tables before upgrading, and commit logical payload changes together
-with the storage version metadata.
-
-Keep historical types and conversions within their migration modules
-and preserve typed error causes. Add focused unit tests, released
-database fixtures, and redb-owned structure checks that flag changes
-to persisted core types for compatibility review.
-
-**File**: `Cargo.lock` (modified, +3/-0)
+**File**: `storages/redb-storage/tests/begin_write_error.rs` (modified, +6/-6)
 ```diff
-@@ -1232,10 +1232,13 @@ dependencies = [
- name = "gluesql-redb-storage"
+@@ -73,22 +73,22 @@ fn begin_write_after_io_error() {
+         .expect("create database");
+ 
+     {
+-        let tx = db.begin_write().expect("begin write for metadata");
+-        let mut table = tx.open_table(META_TABLE).expect("open metadata table");
++        let txn = db.begin_write().expect("begin write for metadata");
++        let mut table = txn.open_table(META_TABLE).expect("open metadata table");
+         table
+             .insert("storage_format_version", &REDB_STORAGE_FORMAT_VERSION)
+             .expect("insert storage format version");
+         drop(table);
+-        tx.commit().expect("commit metadata");
++        txn.commit().expect("commit metadata");
+     }
+ 
+     fail_flag.store(true, Ordering::SeqCst);
+-    let tx = db.begin_write().expect("begin write");
++    let txn = db.begin_write().expect("begin write");
+     {
+-        let mut table = tx.open_table(TABLE).expect("open table");
++        let mut table = txn.open_table(TABLE).expect("open table");
+         table.insert(&0, &0).expect("insert");
+     }
+-    let _ = tx.commit().expect_err("commit should fail");
++    let _ = txn.commit().expect_err("commit should fail");
+ 
+     let mut storage = RedbStorage::from_database(db).expect("from_database should validate format");
+     let err = storage.begin(true).expect_err("begin should fail");
+```
+
+---
+
+### Incident Patch 2: `60570422` (2026-11-08)
+**Commit Message**: Remove deprecated Sled storage (#2066)
+
+Remove the Sled crate, dependencies, feature, exports, CLI selection and
+upgrade path, examples, and CI commands. Remove index conflict errors
+that no remaining backend uses.
+
+Use Redb in shared CLI argument tests and the Tester reference link.
+Update current documentation and navigation, retaining historical release
+notes and archived articles.
+
+**File**: `.github/workflows/rust.yml` (modified, +1/-6)
+```diff
+@@ -48,7 +48,7 @@ jobs:
+           cargo test -p gluesql-macros --verbose
+           cargo test -p gluesql-core --verbose
+           cargo test -p gluesql-cli --verbose
+-          cargo test -p gluesql --lib --bins --tests --examples --verbose --no-default-features --features "gluesql_memory_storage gluesql_sled_storage gluesql-redb-storage"
++          cargo test -p gluesql --lib --bins --tests --examples --verbose --no-default-features --features "gluesql_memory_storage gluesql-redb-storage"
+ 
+   run_storage_tests:
+     name: Run storage tests
+@@ -65,9 +65,6 @@ jobs:
+           cargo test -p gluesql-parquet-storage --verbose
+           cargo test -p gluesql-file-storage --verbose
+           cargo test -p gluesql-redb-storage --verbose
+-          cargo test -p gluesql_sled_storage --verbose -- --skip sled_transaction_timeout
+-          cargo test -p gluesql_sled_storage sled_transaction_timeout --verbose -- --test-threads=1
+-          cargo test -p gluesql_sled_storage --benches
+ 
+   run_mongostorage_tests:
+     name: Run MongoStorage tests
+@@ -135,7 +132,5 @@ jobs:
+           cargo run --package gluesql --example hello_world
+           cargo run --package gluesql --example api_usage
+           cargo run --package gluesql --example memory_storage_usage
+-          cargo run --package gluesql --example sled_multi_threaded
+-          cargo run --package gluesql --example using_config
+           cargo run --package gluesql --example hello_query_builder
+           cargo run --package gluesql --example parameter_binding
+```
+
+**File**: `Cargo.lock` (modified, +10/-309)
+```diff
+@@ -104,7 +104,7 @@ dependencies = [
+  "arrow-data",
+  "arrow-schema",
+  "chrono",
+- "half 2.4.1",
++ "half",
+  "hashbrown 0.14.5",
+  "num",
+ ]
+@@ -115,7 +115,7 @@ version = "43.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "bdbe439e077f484e5000b9e1d47b5e4c0d15f2b311a8f5bcc682553d5d67a722"
+ dependencies = [
+- "half 2.4.1",
++ "half",
+  "num",
+ ]
+ 
+@@ -131,7 +131,7 @@ dependencies = [
+  "arrow-schema",
+  "arrow-select",
+  "chrono",
+- "half 2.4.1",
++ "half",
+  "lexical-core",
+  "num",
+ ]
+@@ -144,7 +144,7 @@ checksum = "d4f4f4a3c54614126a71ab91f6631c9743eb4643d6e9318b74191da9dc6e028b"
+ dependencies = [
+  "arrow-buffer",
+  "arrow-schema",
+- "half 2.4.1",
++ "half",
+  "num",
+ ]
+ 
+@@ -417,12 +417,6 @@ version = "1.7.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8318a53db07bb3f8dca91a600466bdb3f2eaadeedfdbcf02e1accbad9271ba50"
+ 
+-[[package]]
+-name = "cast"
+-version = "0.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "37b2a672a2cb129a2e41c10b1224bb368f9f37a2b16b612598138befd7b37eb5"
+-
+ [[package]]
+ name = "cc"
+ version = "1.2.23"
+@@ -461,17 +455,6 @@ dependencies = [
+  "windows-targets 0.52.6",
+ ]
+ 
+-[[package]]
+-name = "clap"
+-version = "2.34.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a0610544180c38b88101fecf2dd634b174a62eef6946f84dfc6a7127512b381c"
+-dependencies = [
+- "bitflags 1.3.2",
+- "textwrap 0.11.0",
+- "unicode-width",
+-]
+-
+ [[package]]
+ name = "clap"
+ version = "3.2.25"
+@@ -486,7 +469,7 @@ dependencies = [
+  "once_cell",
+  "strsim",
+  "termcolor",
+- "textwrap 0.16.1",
++ "textwrap",
+ ]
+ 
+ [[package]]
+@@ -582,67 +565,6 @@ dependencies = [
+  "cfg-if",
+ ]
+ 
+-[[package]]
+-name = "criterion"
+-version = "0.3.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b01d6de93b2b6c65e17c634a26653a29d107b3c98c607c765bf38d041531cd8f"
+-dependencies = [
+- "atty",
+- "cast",
+- "clap 2.34.0",
+- "criterion-plot",
+- "csv",
+- "itertools 0.10.5",
+- "lazy_static",
+- "num-traits",
+- "oorandom",
+- "plotters",
+- "rayon",
+- "regex",
+- "serde",
+- "serde_cbor",
+- "serde_derive",
+- "serde_json",
+- "tinytemplate",
+- "walkdir",
+-]
+-
+-[[package]]
+-name = "criterion-plot"
+-version = "0.4.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2673cc8207403546f45f5fd319a974b1e6983ad1a3ee7e6041650013be041876"
+-dependencies = [
+- "cast",
+- "itertools 0.10.5",
+-]
+-
+-[[package]]
+-name = "crossbeam-deque"
+-version = "0.8.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "613f8cc01fe9cf1a3eb3d7f488fd2fa8388403e97039e2f73692932e291a770d"
+-dependencies = [
+- "crossbeam-epoch",
+- "crossbeam-utils",
+-]
+-
+-[[package]]
+-name = "crossbeam-epoch"
+-version = "0.9.18"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5b82ac4a3c2ca9c3460964f020e1402edd5753411d7737aa39c3714ad1b5420e"
+-dependencies = [
+- "crossbeam-utils",
+-]
+-
+-[[package]]
+-name = "crossbeam-utils"
+-version = "0.8.20"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "22ec99545bb0ed0ea7bb9b8e1e9122ea386ff8a48c0922e43f36d45ab09e0e80"
+-
+ [[package]]
+ name = "crunchy"
+ version = "0.2.2"
+@@ -915,16 +837,6 @@ dependencies = [
+  "percent-encoding",
+ ]
+ 
+-[[package]]
+-name = "fs2"
+-version = "0.4.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9564fc758e15025b46aa6643b1b77d047d1a56a1aea6e01002ac0c7026876213"
+-dependencies = [
+- "libc",
+- "winapi",
+-]
+-
+ [[package]]
+ name = "funty"
+ version = "2.0.0"
+@@ -1002,15 +914,6 @@ dependencies = [
+  "slab",
+ ]
+ 
+-[[package]]
+-name = "fxhash"
+-version = "0.2.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c"
+-dependencies = [
+- "byteorder",
+-]
+-
+ [[package]]
+ name = "generic-array"
+ version = "0.14.7"
+@@ -1065,15 +968,14 @@ dependencies = [
+  "gluesql-shared-memory-storage",
+  "gluesql-test-suite",
+  "gluesql_memory_storage",
+- "gluesql_sled_storage",
+ ]
+ 
+ [[package]]
+ name = "gluesql-cli"
  version = "0.20.0"
  dependencies = [
-+ "bigdecimal",
-  "bincode",
+  "anyhow",
+- "clap 3.2.25",
++ "clap",
+  "edit",
   "gluesql-core",
-  "gluesql-test-suite",
-+ "ordered-float 4.2.2",
-  "redb",
-+ "rust_decimal",
+  "gluesql-csv-storage",
+@@ -1082,7 +984,6 @@ dependencies = [
+  "gluesql-parquet-storage",
+  "gluesql-redb-storage",
+  "gluesql_memory_storage",
+- "gluesql_sled_storage",
+  "rustyline",
+  "rustyline-derive",
+  "strum_macros 0.25.3",
+@@ -1112,7 +1013,7 @@ dependencies = [
+  "hex",
+  "im",
+  "iter-enum",
+- "itertools 0.12.1",
++ "itertools",
+  "md-5",
+  "ordered-float 4.2.2",
+  "pretty_assertions",
+@@ -1294,26 +1195,6 @@ dependencies = [
   "serde",
-  "thiserror 2.0.3",
-  "uuid",
+ ]
+ 
+-[[package]]
+-name = "gluesql_sled_storage"
+-version = "0.20.0"
+-dependencies = [
+- "bincode",
+- "criterion",
+- "gluesql-core",
+- "gluesql-test-suite",
+- "iter-enum",
+- "serde",
+- "sled",
+- "thiserror 1.0.63",
+-]
+-
+-[[package]]
+-name = "half"
+-version = "1.8.3"
+-source = "registry+https://github.com/rust-lang/crate
 ```
 
-**File**: `storages/redb-storage/Cargo.toml` (modified, +3/-0)
+**File**: `Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -16,6 +16,9 @@ bincode = "1.3.3"
- uuid = { version = "1.11.0", features = ["v7"] }
- 
- [dev-dependencies]
-+bigdecimal = { version = "0.4.10", features = ["serde", "string-only"] }
-+ordered-float = { version = "4", features = ["serde"] }
-+rust_decimal = { version = "1", features = ["serde-str"] }
- test-suite.workspace = true
- 
- [lints]
+@@ -32,7 +32,6 @@ cli = { package = "gluesql-cli", path = "./cli", version = "0.20.0" }
+ test-suite = { package = "gluesql-test-suite", path = "./test-suite", version = "0.20.0" }
+ gluesql_memory_storage = { path = "./storages/memory-storage", version = "0.20.0" }
+ gluesql-shared-memory-storage = { path = "./storages/shared-memory-storage", version = "0.20.0" }
+-gluesql_sled_storage = { path = "./storages/sled-storage", version = "0.20.0" }
+ gluesql-redb-storage = { path = "./storages/redb-storage", version = "0.20.0" }
+ gluesql-json-storage = { path = "./storages/json-storage", version = "0.20.0" }
+ gluesql-csv-storage = { path = "./storages/csv-storage", version = "0.20.0" }
 ```
 
-**File**: `storages/redb-storage/src/bincode_layout.rs` (added, +706/-0)
+**File**: `cli/Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -0,0 +1,706 @@
-+//! Expected layouts of the current core types persisted by redb.
-+//!
-+//! Review storage compatibility before changing these declarations. Compatible
-+//! changes only need a declaration update; incompatible changes also need a
-+//! migration. Keep one current baseline here; historical types belong to migration.
-+//! These checks cover type structure, not changes to custom Serde implementations
-+//! or the comparison-key encoding.
-+
-+mod macros;
-+mod serde_metadata;
-+
-+use {
-+    self::macros::{enum_layout, struct_layout},
-+    bigdecimal::BigDecimal,
-+    gluesql_core::{
-+        ast::{
-+            Aggregate, AggregateFunction, BinaryOperator, ColumnDef, ColumnUniqueOption,
-+            CountArgExpr, DataType, DateTimeField, Dictionary, Expr, ForeignKey, Function, Join,
-+            JoinConstraint, JoinOperator, Literal, OrderByExpr, Projection, Query,
-+            ReferentialAction, Select, SelectItem, SetExpr, TableAlias, TableFactor,
-+            TableWithJoins, TrimWhereField, UnaryOperator, Values,
-+        },
-+        chrono::{NaiveDate, NaiveDateTime, NaiveTime},
-+        data::{Interval, Key, Point, Schema, SchemaIndex, SchemaIndexOrd, Value},
-+    },
-+    ordered_float::OrderedFloat,
-+    rust_decimal::Decimal,
-+    std::{collections::BTreeMap, net::IpAddr},
-+};
-+
-+// Schema and column definitions
-+
-+struct_layout! {
-+    schema_layout: Schema {
-+        table_name: String,
-+        column_defs: Option<Vec<ColumnDef>>,
-+        indexes: Vec<SchemaIndex>,
-+        engine: Option<String>,
-+        foreign_keys: Vec<ForeignKey>,
-+        comment: Option<String>,
-+    }
-+}
-+
-+struct_layout! {
-+    schema_index_layout: SchemaIndex {
-+        name: String,
-+        expr: Expr,
-+        order: SchemaIndexOrd,
-+        created: NaiveDateTime,
-+    }
-+}
-+
-+enum_layout! {
-+    schema_index_ord_layout: SchemaIndexOrd {
-+        Asc,
-+        Desc,
-+        Both,
-+    }
-+}
-+
-+struct_layout! {
-+    column_def_layout: ColumnDef {
-+        name: String,
-+        data_type: DataType,
-+        nullable: bool,
-+        default: Option<Expr>,
-+        unique: Option<ColumnUniqueOption>,
-+        comment: Option<String>,
-+    }
-+}
-+
-+struct_layout! {
-+    column_unique_option_layout: ColumnUniqueOption {
-+        is_primary: bool,
-+    }
-+}
-+
-+struct_layout! {
-+    foreign_key_layout: ForeignKey {
-+        name: String,
-+        referencing_column_name: String,
-+        referenced_table_name: String,
-+        referenced_column_name: String,
-+        on_delete: ReferentialAction,
-+        on_update: ReferentialAction,
-+    }
-+}
-+
-+enum_layout! {
-+    referential_action_layout: ReferentialAction {
-+        NoAction,
-+    }
-+}
-+
-+// Expressions and scalar types
-+
-+enum_layout! {
-+    expr_layout: Expr {
-+        Identifier(value: String),
-+        CompoundIdentifier {
-+            alias: String,
-+            ident: String,
-+        },
-+        IsNull(value: Box<Expr>),
-+        IsNotNull(value: Box<Expr>),
-+        InList {
-+            expr: Box<Expr>,
-+            list: Vec<Expr>,
-+            negated: bool,
-+        },
-+        InSubquery {
-+            expr: Box<Expr>,
-+            subquery: Box<Query>,
-+            negated: bool,
-+        },
-+        Between {
-+            expr: Box<Expr>,
-+            negated: bool,
-+            low: Box<Expr>,
-+            high: Box<Expr>,
-+        },
-+        Like {
-+            expr: Box<Expr>,
-+            negated: bool,
-+            pattern: Box<Expr>,
-+        },
-+        ILike {
-+            expr: Box<Expr>,
-+            negated: bool,
-+            pattern: Box<Expr>,
-+        },
-+        Regex {
-+            expr: Box<Expr>,
-+            negated: bool,
-+            pattern: Box<Expr>,
-+            case_sensitive: bool,
-+        },
-+        BinaryOp {
-+            left: Box<Expr>,
-+            op: BinaryOperator,
-+            right: Box<Expr>,
-+        },
-+        UnaryOp {
-+            op: UnaryOperator,
-+            expr: Box<Expr>,
-+        },
-+        Nested(value: Box<Expr>),
-+        Literal(value: Literal),
-+        Value(value: Value),
-+        TypedString {
-+            data_type: DataType,
-+            value: String,
-+        },
-+        Function(value: Box<Function>),
-+        Aggregate(value: Box<Aggregate>),
-+        Exists {
-+            subquery: Box<Query>,
-+            negated: bool,
-+        },
-+        Subquery(value: Box<Query>),
-+        Case {
-+            operand: Option<Box<Expr>>,
-+            when_then: Vec<(Expr, Expr)>,
-+            else_result: Option<Box<Expr>>,
-+        },
-+        ArrayIndex {
-+            obj: Box<Expr>,
-+            indexes: Vec<Expr>,
-+        },
-+        Interval {
-+            expr: Box<Expr>,
-+            leading_field: Option<DateTimeField>,
-+            last_field: Option<DateTimeField>,
-+        },
-+        Array {
-+            elem: Vec<Expr>,
-+        },
-+    }
-+}
-+
-+enum_layout! {
-+    function_layout: Function {
-+        Abs(value: Expr),
-+        AddMonth {
-+            expr: Expr,
-+       
+@@ -9,7 +9,6 @@ documentation.workspace = true
+ 
+ [dependencies]
+ gluesql-core.workspace = true
+-gluesql_sled_storage.workspace = true
+ gluesql_memory_storage.workspace = true
+ gluesql-json-storage.workspace = true
+ gluesql-csv-storage.workspace = true
 ```
 
-**File**: `storages/redb-storage/src/bincode_layout/macros.rs` (added, +113/-0)
+**File**: `cli/src/lib.rs` (modified, +4/-24)
 ```diff
-@@ -0,0 +1,113 @@
-+//! Generate independent layout tests from a single expected declaration.
-+
-+macro_rules! enum_layout {
-+    (
-+        $test:ident: $target:ident {
-+            $(
-+                $variant:ident
-+                $( ( $( $arg:ident : $arg_type:ty ),* $(,)? ) )?
-+                $( { $( $field:ident : $field_type:ty ),* $(,)? } )?
-+            ),+ $(,)?
-+        }
-+    ) => {
-+        #[test]
-+        fn $test() {
-+            use $target as Target;
-+            fn field_types(value: Target) {
-+                match value {
-+                    $(
-+                        Target::$variant
-+                        $( ( $( $arg ),* ) )?
-+                        $( { $( $field ),* } )? => {
-+                            $( $( let _: $arg_type = $arg; )* )?
-+                            $( $( let _: $field_type = $field; )* )?
-+                        }
-+                    ),+
-+                }
-+            }
-+            let _: fn(Target) = field_types;
-+            let expected = [
-+                $(
-+                    (
-+                        stringify!($variant),
-+                        $crate::bincode_layout::macros::enum_layout!(
-+                            @shape
-+                            $( ( $( $arg : $arg_type ),* ) )?
-+                            $( { $( $field : $field_type ),* } )?
-+                        ),
-+                    )
-+                ),+
-+            ];
-+            assert_eq!(
-+                $crate::bincode_layout::serde_metadata::enum_layout::<Target>(),
-+                expected,
-+                "{} changed; review redb storage compatibility before updating this declaration",
-+                stringify!($target),
-+            );
-+        }
-+    };
-+    (@shape) => {
-+        $crate::bincode_layout::serde_metadata::Shape::Unit
-+    };
-+    (@shape ()) => {
-+        $crate::bincode_layout::serde_metadata::Shape::Tuple(0)
-+    };
-+    (@shape ($arg:ident : $arg_type:ty)) => {
-+        $crate::bincode_layout::serde_metadata::Shape::Newtype
-+    };
-+    (@shape ($( $arg:ident : $arg_type:ty ),+)) => {
-+        $crate::bincode_layout::serde_metadata::Shape::Tuple(
-+            [$( stringify!($arg) ),+].len()
-+        )
-+    };
-+    (@shape { $( $field:ident : $field_type:ty ),* }) => {
-+        $crate::bincode_layout::serde_metadata::Shape::Struct(
-+            &[$( stringify!($field) ),*]
-+        )
-+    };
-+}
-+
-+macro_rules! struct_layout {
-+    ($test:ident: $target:ident { $( $field:ident : $field_type:ty ),* $(,)? }) => {
-+        #[test]
-+        fn $test() {
-+            use $target as Target;
-+            fn field_types(value: Target) {
-+                let Target { $( $field ),* } = value;
-+                $( let _: $field_type = $field; )*
-+            }
-+            let _: fn(Target) = field_types;
-+            let expected = $crate::bincode_layout::serde_metadata::Shape::Struct(
-+                &[$( stringify!($field) ),*]
-+            );
-+            assert_eq!(
-+                $crate::bincode_layout::serde_metadata::struct_layout::<Target>(),
-+                expected,
-+                "{} changed; review redb storage compatibility before updating this declaration",
-+                stringify!($target),
-+            );
-+        }
-+    };
-+
-+    ($test:ident: $target:ident ( $field:ident : $field_type:ty $(,)? )) => {
-+        #[test]
-+        fn $test() {
-+            use $target as Target;
-+            fn field_types(value: Target) {
-+                let Target($field) = value;
-+                let _: $field_type = $field;
-+            }
-+            let _: fn(Target) = field_types;
-+            let expected = $crate::bincode_layout::serde_metadata::Shape::Newtype;
-+            assert_eq!(
-+                $crate::bincode_layout::serde_metadata::struct_layout::<Target>(),
-+                expected,
-+                "{} changed; review redb storage compatibility before updating this declaration",
-+                stringify!($target),
-+            );
-+        }
-+    };
-+
-+}
-+
-+pub(super) use {enum_layout, struct_layout};
-```
-
-**File**: `storages/redb-storage/src/bincode_layout/serde_metadata.rs` (added, +155/-0)
-```diff
-@@ -0,0 +1,155 @@
-+//! Read the metadata emitted by Serde derives without constructing sample values.
-+
-+use serde::de::{self, DeserializeOwned, DeserializeSeed, EnumAccess, VariantAccess, Visitor};
-+
-+type Error = de::value::Error;
-+const CAPTURED: &str = "layout metadata captured";
-+
-+#[derive(Debug, PartialEq, Eq)]
-+pub(super) enum Shape {
-+    Unit,
-+    Newtype,
-+    Tuple(usize),
-+    Struct(&'static [&'static str]),
-+}
-+
-+// Stopping before field values is intentional: the metadata is all we need.
-+fn captured<T>(result: &Result<T, Error>) {
-+    assert!(
-+        matches!(result, Err(error) if error.to_string() == CAPTURED),
-+        "expected the metadata reader to stop before reading field values"
-+    );
-+}
-+
-+struct EnumProbe<'a> {
-+    index: u32,
-+    names: &'a mut Option<&'static [&'static str]>,
-+    shape: &'a mut Option<Shape>,
-+}
-+
-+impl<'de> de::Deserializer<'de> for EnumProbe<'_> {
-+    type Error = Error;
-+
-+    fn deserialize_any<V: Visitor<'de>>(self, _: V) -> Result<V::Value, Error> {
-+        Err(de::Error::custom("expected an externally tagged enum"))
-+    }
-+
-+    fn deserialize_enum<V: Visitor<'de>>(
-+        self,
-+        _: &'static str,
-+        names: &'static [&'static str],
-+        visitor: V,
-+    ) -> Result<V::Value, Error> {
-+        *self.names = Some(names);
-+        visitor.visit_enum(self)
-+    }
-+
-+    serde::forward_to_deserialize_any! {
-+        bool i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char str string
-+        bytes byte_buf option unit unit_struct newtype_struct seq tuple
-+        tuple_struct map struct identifier ignored_any
-+    }
-+}
-+
-+impl<'de> EnumAccess<'de> for EnumProbe<'_> {
-+    type Error = Error;
-+    type Variant = Self;
-+
-+    fn variant_seed<T: DeserializeSeed<'de>>(self, seed: T) -> Result<(T::Value, Self), Error> {
-+        let variant = seed.deserialize(de::value::U32Deserializer::<Error>::new(self.index))?;
-+        Ok((variant, self))
-+    }
-+}
-+
-+impl<'de> VariantAccess<'de> for EnumProbe<'_> {
-+    type Error = Error;
-+
-+    fn unit_variant(self) -> Result<(), Error> {
-+        *self.shape = Some(Shape::Unit);
-+        Err(de::Error::custom(CAPTURED))
-+    }
-+
-+    fn newtype_variant_seed<T: DeserializeSeed<'de>>(self, _: T) -> Result<T::Value, Error> {
-+        *self.shape = Some(Shape::Newtype);
-+        Err(de::Error::custom(CAPTURED))
-+    }
-+
-+    fn tuple_variant<V: Visitor<'de>>(self, len: usize, _: V) -> Result<V::Value, Error> {
-+        *self.shape = Some(Shape::Tuple(len));
-+        Err(de::Error::custom(CAPTURED))
-+    }
-+
-+    fn struct_variant<V: Visitor<'de>>(
-+        self,
-+        fields: &'static [&'static str],
-+        _: V,
-+    ) -> Result<V::Value, Error> {
-+        *self.shape = Some(Shape::Struct(fields));
-+        Err(de::Error::custom(CAPTURED))
-+    }
-+}
-+
-+fn enum_variant<T: DeserializeOwned>(index: u32) -> (&'static [&'static str], Shape) {
-+    let mut names = None;
-+    let mut shape = None;
-+    captured(&T::deserialize(EnumProbe {
-+        index,
-+        names: &mut names,
-+        shape: &mut shape,
-+    }));
-+    (
-+        names.expect("enum variant names"),
-+        shape.expect("enum variant shape"),
-+    )
-+}
-+
-+pub(super) fn enum_layout<T: DeserializeOwned>() -> Vec<(&'static str, Shape)> {
-+    let (names, first) = enum_variant::<T>(0);
-+    let mut variants = vec![(names[0], first)];
-+    for (index, name) in names.iter().enumerate().skip(1) {
-+        let index = u32::try_from(index).expect("Serde enum variant index fits u32");
-+        let (_, shape) = enum_variant::<T>(index);
-+        variants.push((*name, shape));
-+    }
-+    variants
-+}
-+
-+struct StructProbe<'a>(&'a mut Option<Shape>);
-+
-+impl<'de> de::Deserializer<'de> for StructProbe<'_> {
-+    type Error = Error;
-+
-+    fn deserialize_any<V: Visitor<'de>>(self, _: V) -> Result<V::Value, Error> {
-+        Err(de::Error::custom("expected a struct"))
-+    }
-+
-+    fn deserialize_struct<V: Visitor<'de>>(
-+        self,
-+        _: &'static str,
-+        fields: &'static [&'static str],
-+        _: V,
-+    ) -> Result<V::Value, Error> {
-+        *self.0 = Some(Shape::Struct(fields));
-+        Err(de::Error::custom(CAPTURED))
-+    }
-+
-+    fn deserialize_newtype_struct<V: Visitor<'de>>(
-+        self,
-+        _: &'static str,
-+        _: V,
-+    ) -> Result<V::Value, Error> {
-+        *self.0 = Some(Shape::Newtype);
-+        Err(de::Error::custom(CAPTURED))
-+    }
-+
-+    serde::forward_to_deserialize_any! {
-+        bool i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char str string
-+        bytes byte_buf option unit unit_struct seq tuple tuple_struct map enum identifier ignored_any
-+    }
-+}
-+
-+pub(super) fn struct_layout<T: DeserializeOwned>() -> Shape {
-+    let mut shape = None;
-+    captured(&T::deserialize(StructProbe(&mut shape)));
-+    shape.expect("struct shape")
-+}
-```
-
-**File**: `storages/redb-storage/src/error.rs` (modified, +11/-13)
-```diff
-@@ -1,39 +1,37 @@
--use {gluesql_core::error::Error, thiserror::Error as ThisError};
-+use {crate::migration::MigrationError, gluesql_core::error::Error, thiserror::Error as ThisError};
+@@ -1,5 +1,4 @@
+ #![deny(clippy::str_to_string)]
+-#![allow(deprecated)]
  
- #[derive(ThisError, Debug)]
- pub enum StorageError {
-     #[error("nested transaction is not supported")]
-     NestedTransactionNotSupported,
-+
-     #[error("transaction not found")]
-     TransactionNotFound,
-+
-     #[error("cannot create table with reserved name: {0}")]
-     ReservedTableName(String),
--    #[error(
--        "[RedbStorage] migration required (found v{found}, expected v{expected}); migrate redb-storage data to the latest format before opening"
--    )]
--    MigrationRequired { found: u32, expected: u32 },
--    #[error("[RedbStorage] unsupported format version v{0}")]
--    UnsupportedFormatVersion(u32),
--    #[error("[RedbStorage] unsupported newer format version v{0}")]
--    UnsupportedNewerFormatVersion(u32),
--    #[error("[RedbStorage] invalid storage format metadata: missing format version key")]
--    MissingFormatVersionMetadata,
--    #[error("[RedbStorage] failed to parse v1 row payload in table '{0}'")]
--    InvalidV1RowPayload(String),
-+
-+    #[error(transparent)]
-+    Migration(#[from] MigrationError),
- 
-     #[error(transparent)]
-     Glue(#[from] Error),
- 
-     #[error(transparent)]
-     RedbDatabase(#[from] redb::DatabaseError),
-+
-     #[error(transparent)]
-     RedbStorage(#[from] redb::StorageError),
-+
-     #[error(transparent)]
-     RedbTable(#[from] redb::TableError),
-+
-     #[error(transparent)]
-     RedbTransaction(Box<redb::TransactionError>),
-+
-     #[error(transparent)]
-     RedbCommit(#[from] redb::CommitError),
-+
-     #[error(transparent)]
-     RedbUpgrade(#[from] redb::UpgradeError),
- 
-```
-
-**File**: `storages/redb-storage/src/lib.rs` (modified, +3/-0)
-```diff
-@@ -4,6 +4,9 @@ mod core;
- mod error;
- mod migration;
- 
-+#[cfg(test)]
-+mod bincode_layout;
-+
- pub use migration::{MigrationReport, REDB_STORAGE_FORMAT_VERSION, migrate_to_latest};
- 
- use {
-```
-
-**File**: `storages/redb-storage/src/migration.rs` (modified, +496/-80)
-```diff
-@@ -1,25 +1,35 @@
-+mod decode;
-+mod error;
-+mod schema_rewrites;
- mod v1_to_v2;
- mod v2_to_v3;
-+mod v2_to_v4;
-+mod v3_to_v4;
-+
-+pub(super) use error::MigrationError;
- 
- use {
-     crate::{
-         core::{SCHEMA_TABLE_NAME, STORAGE_META_TABLE_NAME},
-         error::StorageError,
+ mod cli;
+ mod command;
+@@ -21,7 +20,6 @@ use {
+     gluesql_memory_storage::MemoryStorage,
+     gluesql_parquet_storage::ParquetStorage,
+     gluesql_redb_storage::RedbStorage,
+-    gluesql_sled_storage::SledStorage,
+     std::{
+         fmt::Debug,
+         fs::File,
+@@ -30,12 +28,6 @@ use {
      },
--    gluesql_core::error::{Error, Result},
-+    gluesql_core::error::Result,
-     redb::{Database, ReadTransaction, ReadableTable, TableDefinition, WriteTransaction},
-+    schema_rewrites::SchemaRewrites,
+ };
+ 
+-const SLED_STORAGE_DEPRECATION_WARNING: &str = "[warning] sled-storage is deprecated and will be removed in v0.21.0; use redb-storage for new persistent-storage deployments";
+-
+-fn warn_sled_storage_deprecated() {
+-    eprintln!("{SLED_STORAGE_DEPRECATION_WARNING}");
+-}
+-
+ #[derive(Parser, Debug)]
+ #[clap(name = "gluesql", about, version)]
+ struct Args {
+@@ -54,7 +46,6 @@ struct Args {
+     dump: Option<PathBuf>,
+ 
+     /// Storage type to store data; defaults to memory.
+-    /// sled is deprecated and will be removed in v0.21.0; use redb for new deployments.
+     #[clap(short, long, value_parser)]
+     storage: Option<Storage>,
+ 
+@@ -74,7 +65,6 @@ struct Args {
+ #[derive(clap::ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]
+ enum Storage {
+     Memory,
+-    Sled,
+     Redb,
+     Json,
+     Csv,
+@@ -144,17 +134,6 @@ pub fn run() -> Result<()> {
+         (Some(_), Some(Storage::Memory)) => {
+             panic!("failed to load memory-storage: it should be without path");
+         }
+-        (Some(path), Some(Storage::Sled)) => {
+-            warn_sled_storage_deprecated();
+-            println!("[sled-storage] connected to {}", path.display());
+-
+-            run(
+-                SledStorage::new(path).expect("failed to load sled-storage"),
+-                Some(path),
+-                execute,
+-                dump,
+-            )?;
+-        }
+         (Some(path), Some(Storage::Redb)) => {
+             println!("[redb-storage] connected to {}", path.display());
+ 
+@@ -346,13 +325,14 @@ mod tests {
+             "gluesql",
+             "--upgrade",
+             "--storage",
+-            "sled",
++            "redb",
+             "--path",
+             "./tmp",
+             "--execute",
+             "query.sql",
+-        ]);
+-        assert!(args.is_err());
++        ])
++        .unwrap_err();
++        assert_eq!(args.kind(), ErrorKind::ArgumentConflict);
+     }
+ 
+     #[test]
+```
+
+**File**: `cli/src/upgrade.rs` (modified, +5/-29)
+```diff
+@@ -1,9 +1,8 @@
+ use {
+-    crate::{Storage, warn_sled_storage_deprecated},
++    crate::Storage,
+     anyhow::{Result, bail},
+     gluesql_file_storage::migrate_to_latest as migrate_file_storage_to_latest,
+     gluesql_redb_storage::migrate_to_latest as migrate_redb_storage_to_latest,
+-    gluesql_sled_storage::migrate_to_latest as migrate_sled_storage_to_latest,
      std::path::Path,
  };
  
- /// `GlueSQL`'s redb storage format version.
- ///
- /// This is stored in the `__GLUESQL_META__` table and is independent of both
- /// the redb crate version and redb's internal file format version. Storage
--/// format v3 keeps the v2 row serialization and requires redb file format v3.
--pub const REDB_STORAGE_FORMAT_VERSION: u32 = 3;
-+/// format v4 uses the current core bincode schema layout, keeps the v2 row
-+/// serialization and requires redb file format v3.
-+pub const REDB_STORAGE_FORMAT_VERSION: u32 = 4;
+@@ -22,17 +21,6 @@ pub(super) fn run_upgrade(
+     };
  
- const V1_REDB_STORAGE_FORMAT_VERSION: u32 = 1;
- const V2_REDB_STORAGE_FORMAT_VERSION: u32 = 2;
-+const V3_REDB_STORAGE_FORMAT_VERSION: u32 = 3;
- 
- #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
- pub struct MigrationReport {
-@@ -40,6 +50,7 @@ enum DetectedStorageFormatVersion {
-     V1,
-     V2,
-     V3,
-+    V4,
-     UnsupportedNewer(u32),
-     Unsupported(u32),
- }
-@@ -54,37 +65,44 @@ pub(super) fn initialize_storage_format_version(db: &Database) -> StorageResult<
- 
- pub(super) fn ensure_storage_format_version_supported(db: &Database) -> StorageResult<()> {
-     match detect_storage_format_version(db)? {
--        DetectedStorageFormatVersion::V1 => Err(StorageError::MigrationRequired {
-+        DetectedStorageFormatVersion::V1 => Err(MigrationError::MigrationRequired {
-             found: V1_REDB_STORAGE_FORMAT_VERSION,
-             expected: REDB_STORAGE_FORMAT_VERSION,
--        }),
--        DetectedStorageFormatVersion::V2 => Err(StorageError::MigrationRequired {
-+        }
-+        .into()),
-+        DetectedStorageFormatVersion::V2 => Err(MigrationError::MigrationRequired {
-             found: V2_REDB_STORAGE_FORMAT_VERSION,
-             expected: REDB_STORAGE_FORMAT_VERSION,
--        }),
--        DetectedStorageFormatVersion::V3 => Ok(()),
-+        }
-+        .into()),
-+        DetectedStorageFormatVersion::V3 => Err(MigrationError::MigrationRequired {
-+            found: V3_REDB_STORAGE_FORMAT_VERSION,
-+            expected: REDB_STORAGE_FORMAT_VERSION,
-+        }
-+        .into()),
-+        DetectedStorageFormatVersion::V4 => Ok(()),
-         DetectedStorageFormatVersion::UnsupportedNewer(version) => {
--            Err(StorageError::UnsupportedNewerFormatVersion(version))
-+            Err(MigrationError::UnsupportedNewerFormatVersion(version).into())
+     match storage {
+-        Storage::Sled => {
+-            warn_sled_storage_deprecated();
+-            let report = migrate_sled_storage_to_latest(path)?;
+-            print_upgrade_report(
+-                "sled",
+-                path,
+-                report.migrated_tables,
+-                report.unchanged_tables,
+-                report.rewritten_rows,
+-            );
+-        }
+         Storage::Redb => {
+             let report = migrate_redb_storage_to_latest(path)?;
+             print_upgrade_report(
+@@ -54,7 +42,7 @@ pub(super) fn run_upgrade(
+             );
          }
-         DetectedStorageFormatVersion::Unsupported(version) => {
--            Err(StorageError::UnsupportedFormatVersion(version))
-+            Err(MigrationError::UnsupportedFormatVersion(version).into())
+         _ => {
+-            bail!("--upgrade is supported only for storage types: sled, redb, file");
++            bail!("--upgrade is supported only for storage types: redb, file");
          }
      }
+ 
+@@ -81,7 +69,6 @@ mod tests {
+         crate::Storage,
+         gluesql_file_storage::FileStorage,
+         gluesql_redb_storage::RedbStorage,
+-        gluesql_sled_storage::SledStorage,
+         std::{
+             fs,
+             path::{Path, PathBuf},
+@@ -101,7 +88,7 @@ mod tests {
+     #[test]
+     fn upgrade_rejects_unsupported_storage() {
+         let actual = run_upgrade(Some(Path::new("./tmp")), Some(Storage::Json), false, false);
+-        let expected = "--upgrade is supported only for storage types: sled, redb, file";
++        let expected = "--upgrade is supported only for storage types: redb, file";
+ 
+         assert_eq!(
+             actual
+@@ -113,7 +100,7 @@ mod tests {
+ 
+     #[test]
+     fn upgrade_rejects_execute_or_dump() {
+-        let actual = run_upgrade(Some(Path::new("./tmp")), Some(Storage::Sled), true, false);
++        let actual = run_upgrade(Some(Path::new("./tmp")), Some(Storage::Redb), true, false);
+         let expected = "--upgrade cannot be used with --execute or --dump";
+ 
+         assert_eq!(
+@@ -124,7 +111,7 @@ mod tests {
+ 
+     #[test]
+     fn upgrade_requires_path_and_storage() {
+-        let actual = run_upgrade(None, Some(Storage::Sled), false, false);
++        let actual = run_upgrade(None, Some(Storage::Redb), false, false);
+         let expected = "both --path and --storage should be specified with --upgrade";
+ 
+         assert_eq!(
+@@ -133,17 +120,6 @@ mod tests {
+         );
+     }
+ 
+-    #[test]
+-    fn upgrade_accepts_sled_storage() {
+-        let path = test_path("sled");
+-        SledStorage::new(&path).expect("failed to initialize sled storage for upgrade test");
+-
+-        let actual = run_upgrade(Some(path.as_path()), Some(Storage::Sled), false, false);
+-
+-        assert!(actual.is_ok(), "sled upgrade should succeed: {actual:?}");
+-        let _ = fs::remove_dir_all(path);
+-    }
+-
+     #[test]
+     fn upgrade_accepts_redb_storage() {
+         let path = test_path("redb.db");
+```
+
+**File**: `core/src/store/index.rs` (modified, +0/-12)
+```diff
+@@ -21,20 +21,8 @@ pub enum IndexError {
+     #[error("index name does not exist: {0}")]
+     IndexNameDoesNotExist(String),
+ 
+-    #[error("conflict - table not found: {0}")]
+-    ConflictTableNotFound(String),
+-
+-    #[error("conflict - update failed - index value")]
+-    ConflictOnEmptyIndexValueUpdate,
+-
+-    #[error("conflict - delete failed - index value")]
+-    ConflictOnEmptyIndexValueDelete,
+-
+     #[error("conflict - scan failed - index value")]
+     ConflictOnEmptyIndexValueScan,
+-
+-    #[error("conflict - index sync - delete index data")]
+-    ConflictOnIndexDataDeleteSync,
  }
  
- pub fn migrate_to_latest<P: AsRef<Path>>(filename: P) -> Result<MigrationReport> {
-     let path = filename.as_ref();
-     if !path.exists() {
--        return Err(Error::StorageMsg(format!(
--            "[RedbStorage] storage path '{}' does not exist",
--            path.display()
--        )));
-+        return Err(
-+            StorageError::Migration(MigrationError::StoragePathDoesNotExist(path.to_path_buf()))
-+                .into(),
-+        );
-     }
-     if !path.is_file() {
--        return Err(Error::StorageMsg(format!(
--            "[RedbStorage] storage path '{}' is not a file",
--            path.display()
--        )));
-+        return Err(StorageError::Migration(MigrationError::StoragePathNotFile(
-+            path.to_path_buf(),
-+        ))
-+        .into());
-     }
+ pub trait Index {
+```
+
+**File**: `docs/docs/getting-started/cli.md` (modified, +2/-12)
+```diff
+@@ -22,7 +22,7 @@ Once you have installed the GlueSQL CLI, you can use it to interact with your da
  
-     let mut db = Database::open(path).map_err(StorageError::from)?;
-@@ -93,79 +111,69 @@ pub fn migrate_to_latest<P: AsRef<Path>>(filename: P) -> Result<MigrationReport>
+ ```
+ $ gluesql [--execute ~/sql_path] [--storage=memory]
+-$ gluesql [--execute ~/sql_path] --path ~/data_path --storage={redb | json | csv | parquet | file | sled}
++$ gluesql [--execute ~/sql_path] --path ~/data_path --storage={redb | json | csv | parquet | file}
+ ```
  
- fn migrate_database_to_latest(db: &mut Database) -> StorageResult<MigrationReport> {
-     match detect_storage_format_version(db)? {
--        DetectedStorageFormatVersion::V1 => {
--            // Phase 1: rewrite rows from GlueSQL v1 serialisation to v2 format.
--            let mut report = MigrationReport::default();
--            let txn = db.begin_write()?;
--            let table_names = list_user_table_names(&txn)?;
--            report.migrated_tables = table_names.len();
+ ### --execute
+@@ -43,7 +43,7 @@ gluesql --path ~/mydatabase --storage=redb
+ 
+ ### --storage
+ 
+-This option allows you to specify the storage engine you want to use for your database. By default, GlueSQL uses the [`memory`](../storages/supported-storages/memory-storage) storage engine. For persistent storage, use [`redb`](../storages/supported-storages/redb-storage). The other path-backed storages are `json`, `csv`, `parquet`, and `file`. The [`sled`](../storages/supported-storages/sled-storage) option is deprecated as of v0.20.0 and will be removed in v0.21.0. Storage engines other than `memory` must be used with `--path`. For example, you can use the following command to specify the `json` storage engine:
++This option allows you to specify the storage engine you want to use for your database. By default, GlueSQL uses the [`memory`](../storages/supported-storages/memory-storage) storage engine. For persistent storage, use [`redb`](../storages/supported-storages/redb-storage). The other path-backed storages are `json`, `csv`, `parquet`, and `file`. Storage engines other than `memory` must be used with `--path`. For example, you can use the following command to specify the `json` storage engine:
+ 
+ ```
+ gluesql --path ~/mydatabase --storage=json
+@@ -254,13 +254,3 @@ gluesql --storage=redb --path ~/restored.redb --execute ./dump.sql
+ 
+ When moving between storage types, choose a destination that supports the
+ features used by the exported SQL, such as indexes.
 -
--            for table_name in &table_names {
--                let rewritten_rows = v1_to_v2::migrate_table_rows(&txn, table_name)?;
--                report.rewritten_rows += rewritten_rows;
--            }
+-To export an existing Sled database before Sled Storage is removed, select it
+-explicitly:
 -
--            txn.commit()?;
+-```sh
+-gluesql --storage=sled --path ~/glue_data --dump ./dump.sql
+-```
 -
--            // Phase 2: upgrade redb internal file format v2 → v3.
--            v2_to_v3::migrate(db)?;
--
--            // Phase 3: record GlueSQL storage version 3.
--            let txn = db.begin_write()?;
--            write_storage_format_v
+-Sled Storage remains deprecated. SQL dump is available for the other storage
+-types as well.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2067** (2026-11-08): Align transaction variable names in the redb I/O error test (@panarch)
+- **PR #2066** (2026-11-08): Remove deprecated Sled storage (@panarch)
+- **PR #2065** (2026-11-08): Decouple CLI SQL dump from Sled storage (@panarch)
+- **PR #2063** (2026-11-08): Add index support to RedbStorage (@panarch)
 - **PR #2062** (2026-11-04): Expand review policies for testing and code structure (@panarch)
 - **PR #2061** (2026-11-04): Move CREATE INDEX validation into the planner (@panarch)
-- **PR #2060** (2026-11-04): Apply table alias column names when copying CTAS schemas (@chiliec)
-- **PR #2057** (2026-11-04): Move CTAS column default planning out of the executor (@panarch)
-- **PR #2056** (2026-11-06): Fix redb schema migration with storage format v4 (@panarch)
-- **PR #2053** (2026-11-03): Plan custom functions before execution (@panarch)
 
 ---
 
@@ -2807,30 +2669,38 @@ to persisted core types for compatibility review.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. redb schema migration with storage format v4 (#2056)
+## X. Align transaction variable names in the redb I/O error test (#2067)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `storages/redb-storage/tests/begin_write_error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85975331`: redb schema migration with storage format v4 (#2056). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0230eea7`: Align transaction variable names in the redb I/O error test (#2067). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `storages/redb-storage/tests/begin_write_error.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "bigdecimal",
- "ordered-float 4.2.2",
- "rust_decimal",
+        let txn = db.begin_write().expect("begin write for metadata");
+        let mut table = txn.open_table(META_TABLE).expect("open metadata table");
+        txn.commit().expect("commit metadata");
+    let txn = db.begin_write().expect("begin write");
+        let mut table = txn.open_table(TABLE).expect("open table");
+    let _ = txn.commit().expect_err("commit should fail");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        let tx = db.begin_write().expect("begin write for metadata");
+        let mut table = tx.open_table(META_TABLE).expect("open metadata table");
+        tx.commit().expect("commit metadata");
+    let tx = db.begin_write().expect("begin write");
+        let mut table = tx.open_table(TABLE).expect("open table");
+    let _ = tx.commit().expect_err("commit should fail");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85975331` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0230eea7` are properly handled with clean fallback behavior.

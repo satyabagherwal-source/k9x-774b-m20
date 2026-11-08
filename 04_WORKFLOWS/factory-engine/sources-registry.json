@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T16:26:30.078Z",
-    "lastVerified": "2026-11-08T16:26:30.078Z",
+    "lastChecked": "2026-11-08T16:33:46.087Z",
+    "lastVerified": "2026-11-08T16:33:46.087Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -259,8 +259,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T16:01:23.300Z",
-    "lastVerified": "2026-11-08T16:01:23.300Z",
+    "lastChecked": "2026-11-08T16:33:41.351Z",
+    "lastVerified": "2026-11-08T16:33:41.351Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -936,9 +936,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-08T08:45:04.501Z",
+    "lastChecked": "2026-11-08T16:33:36.253Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-08T08:45:04.501Z"
+    "lastVerified": "2026-11-08T16:33:36.253Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -2186,14 +2186,14 @@
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T20:39:27.262Z",
-    "lastVerified": "2026-11-07T20:39:27.262Z",
+    "lastChecked": "2026-11-08T16:33:37.671Z",
+    "lastVerified": "2026-11-08T16:33:37.671Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
-    "contentHash": "0f8e3631028174fa4e43191a14f5b44834556dd548534e2b18b84d9792defabf",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 16,
+    "contentHash": "46e27ebd06413587039646ed3903a6deb594a758074d5f629430d0248b5ad4f3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2791,12 +2791,12 @@
     "officialUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T00:48:36.063Z",
-    "lastVerified": "2026-11-05T00:48:36.063Z",
+    "lastChecked": "2026-11-08T16:33:28.795Z",
+    "lastVerified": "2026-11-08T16:33:28.795Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "e56a1e7bb50b6dffba1abb8d7937f9f5e00b40a541e2c01befddbf599a971d6d",
+    "contentHash": "94edaebb487012752b2f27cee126ec7e7f0341cbcad4568e192a004ef5f9daaa",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5472,14 +5472,14 @@
     "officialUrl": "https://github.com/gluesql/gluesql",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T19:47:54.658Z",
-    "lastVerified": "2026-11-07T19:47:54.658Z",
+    "lastChecked": "2026-11-08T16:33:41.679Z",
+    "lastVerified": "2026-11-08T16:33:41.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gluesql-gluesql",
-    "contentHash": "ccbb1bb53e3a281d5adae9985965e2fcffff4990d1ce3412cad756e75406a941",
+    "contentHash": "49642f5b42efb0ce40570c466014bffb476fb7b3ef0ffbf7dc73f139f696c469",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6789,9 +6789,9 @@
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
     "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
-    "lastChecked": "2026-11-07T04:29:29.088Z",
+    "lastChecked": "2026-11-08T16:33:26.264Z",
     "revisionIdentifier": "1e910a8c",
-    "lastVerified": "2026-11-07T04:29:29.088Z"
+    "lastVerified": "2026-11-08T16:33:26.264Z"
   },
   "hf-intfloat-multilingual-e5-small": {
     "name": "intfloat/multilingual-e5-small",
@@ -10662,9 +10662,9 @@
   "touchlab-droidconkotlin": {
     "name": "DroidconKotlin",
     "officialUrl": "https://github.com/touchlab/DroidconKotlin",
-    "lastChecked": "2026-11-05T10:58:00.602Z",
+    "lastChecked": "2026-11-08T16:33:31.355Z",
     "revisionIdentifier": "27f3e87c",
-    "lastVerified": "2026-11-05T10:58:00.602Z"
+    "lastVerified": "2026-11-08T16:33:31.355Z"
   },
   "m0ntydad0n-pseo-engine-oss": {
     "name": "pseo-engine-oss",

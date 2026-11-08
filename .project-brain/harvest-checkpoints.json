@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T16:26:25.300Z",
+  "last_updated": "2026-11-08T16:33:43.487Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -620,14 +620,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "e56a1e7bb50b6dffba1abb8d7937f9f5e00b40a541e2c01befddbf599a971d6d",
-      "verified_at": "2026-11-05T00:49:02.419Z",
+      "content_hash": "94edaebb487012752b2f27cee126ec7e7f0341cbcad4568e192a004ef5f9daaa",
+      "verified_at": "2026-11-08T16:33:30.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:49:02.419Z"
+      "last_updated": "2026-11-08T16:33:30.007Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "0f8e3631028174fa4e43191a14f5b44834556dd548534e2b18b84d9792defabf",
-      "verified_at": "2026-11-07T20:42:11.538Z",
+      "content_hash": "46e27ebd06413587039646ed3903a6deb594a758074d5f629430d0248b5ad4f3",
+      "verified_at": "2026-11-08T16:33:39.114Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:42:11.538Z"
+      "last_updated": "2026-11-08T16:33:39.114Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "ccbb1bb53e3a281d5adae9985965e2fcffff4990d1ce3412cad756e75406a941",
-      "verified_at": "2026-11-07T19:47:56.598Z",
+      "content_hash": "49642f5b42efb0ce40570c466014bffb476fb7b3ef0ffbf7dc73f139f696c469",
+      "verified_at": "2026-11-08T16:33:43.486Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:47:56.598Z"
+      "last_updated": "2026-11-08T16:33:43.486Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",

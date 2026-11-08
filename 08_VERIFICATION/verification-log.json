@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-8JAG",
-    "timestamp": "2026-11-05T22:55:05.896Z",
-    "repository": "citusdata/citus",
-    "learningId": "learn-github-citusdata-citus",
-    "contentHash": "3d3addf16809328c4c58ad1463ca91f98d5247623ebd9b9c56baaaa3d2a56509",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-HOSY",
-    "timestamp": "2026-11-05T23:02:12.946Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "433c190f2c7ba39a067f12e93aa8f3cdd4b6da9f124ba34a9ca13b3b372234c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-QZ8E",
-    "timestamp": "2026-11-05T23:09:26.366Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "4e9907f4e3e383b10bfb7843e8855f8ad5dd8b7aa35794cca58d138a4b045f67",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-R3ZK",
     "timestamp": "2026-11-05T23:09:32.528Z",
     "repository": "makecindy/cindy",
@@ -7492,6 +7447,51 @@
     "contentHash": "b48ae4a5f110bc0fb35102e2e0fc7678b20490ffb8d26061faa9882b71807d80",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-XCP6",
+    "timestamp": "2026-11-08T16:33:29.994Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "94edaebb487012752b2f27cee126ec7e7f0341cbcad4568e192a004ef5f9daaa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-XJQ1",
+    "timestamp": "2026-11-08T16:33:39.097Z",
+    "repository": "higress-group/higress",
+    "learningId": "learn-github-higress-group-higress",
+    "contentHash": "46e27ebd06413587039646ed3903a6deb594a758074d5f629430d0248b5ad4f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-XN3L",
+    "timestamp": "2026-11-08T16:33:43.473Z",
+    "repository": "gluesql/gluesql",
+    "learningId": "learn-github-gluesql-gluesql",
+    "contentHash": "49642f5b42efb0ce40570c466014bffb476fb7b3ef0ffbf7dc73f139f696c469",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

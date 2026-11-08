@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T16:26:25.189Z",
+  "last_updated": "2026-11-08T16:33:43.378Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16394,14 +16394,19 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "85975331",
-      "content_hash": "ccbb1bb53e3a281d5adae9985965e2fcffff4990d1ce3412cad756e75406a941",
+      "source_version": "0230eea7",
+      "content_hash": "49642f5b42efb0ce40570c466014bffb476fb7b3ef0ffbf7dc73f139f696c469",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "redb schema migration with storage format v4 (#2056)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Align transaction variable names in the redb I/O error test (#2067)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16425,7 +16430,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:47:56.463Z",
+      "verified_at": "2026-11-08T16:33:43.354Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26489,7 +26494,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "e56a1e7bb50b6dffba1abb8d7937f9f5e00b40a541e2c01befddbf599a971d6d",
+      "content_hash": "94edaebb487012752b2f27cee126ec7e7f0341cbcad4568e192a004ef5f9daaa",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [
@@ -26600,7 +26605,7 @@
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
       ],
-      "verified_at": "2026-11-05T00:49:02.291Z",
+      "verified_at": "2026-11-08T16:33:29.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34274,8 +34279,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "6f6a1545",
-      "content_hash": "0f8e3631028174fa4e43191a14f5b44834556dd548534e2b18b84d9792defabf",
+      "source_version": "eb34c40c",
+      "content_hash": "46e27ebd06413587039646ed3903a6deb594a758074d5f629430d0248b5ad4f3",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -34293,6 +34298,11 @@
           "number": null,
           "title": "Verification-Before-Publication OCI Layer Byte Check",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "plugins/wasm-go/extensions/frontend-gray/util/utils.go:337 - nil rule dereferenc",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1705,
@@ -34330,7 +34340,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:42:11.393Z",
+      "verified_at": "2026-11-08T16:33:38.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

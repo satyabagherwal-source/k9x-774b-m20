@@ -8325,3 +8325,6 @@
 | `CYCLE-20261108-8XGS` | `2026-11-08T16:14:30.508Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a3bf1b0f...`) |
 | `CYCLE-20261108-F2B2` | `2026-11-08T16:19:16.718Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`cb75faeb...`) |
 | `CYCLE-20261108-O8ZF` | `2026-11-08T16:26:25.275Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4088, Rule null, Rule null` | Yes (`b48ae4a5...`) |
+| `CYCLE-20261108-XCP6` | `2026-11-08T16:33:29.994Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`94edaebb...`) |
+| `CYCLE-20261108-XJQ1` | `2026-11-08T16:33:39.097Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`46e27ebd...`) |
+| `CYCLE-20261108-XN3L` | `2026-11-08T16:33:43.473Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`49642f5b...`) |
