@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/parthjadhav-app-store-screenshots-learnings.md`  
 > **Source**: github ([https://github.com/ParthJadhav/app-store-screenshots](https://github.com/ParthJadhav/app-store-screenshots))  
-> **Source Version**: `5386f227`  
+> **Source Version**: `e889033b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:07:46.544Z  
+> **Timestamp**: 2026-11-08T03:07:51.831Z  
 > **Learning ID**: `learn-github-parthjadhav-app-store-screenshots`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/parthjadhav-app-store-screenshots-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ParthJadhav/app-store-screenshots](https://github.com/ParthJadhav/app-store-screenshots))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:07:46.537Z  
+> **Harvest Timestamp**: 2026-11-08T03:07:51.051Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: end to end app store screenshot creation using AI
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7443 stars
+- **Stars / Engagement**: 7839 stars
 
 ---
 
@@ -83,6 +83,13 @@ export type RenderedSlide = {
 };
 
 const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+/**
+ * Wait two animation frames, so React's render and the browser's layout and
+ * paint of a just-mounted node settle before it is captured. One frame is
+ * occasionally not enough on slower machines.
+ */
+export const waitForPaint = () => nextFrame().then(nextFrame);
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -287,6 +294,25 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** A file-name-safe version of `s`. */
+export function slugify(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "screenshots";
+}
+
+/** Save `blob` through the browser's download prompt. */
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
 ```
 
 ### Core Architecture Module: `skills/app-store-screenshots/template/e2e-army/chrome-provider.ts`
@@ -439,7 +465,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import { projectValidationError } from "@/lib/project-validation";
+import { projectValidationError } from "@/lib/project-schema";
 import { rejectCrossSiteWrite } from "@/lib/request-guard";
 import { readJsonBody } from "@/lib/request-body";
 
@@ -529,27 +555,16 @@ async function writeProject(body: unknown, expected: string | null) {
 
 ### Core Architecture Module: `skills/app-store-screenshots/template/src/app/api/upload-font/route.ts`
 ```
-import { createHash } from "node:crypto";
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import { NextResponse } from "next/server";
+import { saveAsset } from "@/lib/asset-files";
 import { rejectCrossSiteWrite } from "@/lib/request-guard";
 import type { ImportedFont } from "@/lib/types";
 import { decodeBase64, readJsonBody } from "@/lib/request-body";
-import { writeAsset } from "@/lib/write-asset";
+import { FONT_EXTENSION, UPLOADED_ASSETS, UPLOAD_ERRORS } from "@/lib/uploaded-assets";
 
 export const dynamic = "force-dynamic";
 
-const FONT_DIR_REL = path.join("public", "fonts", "imported");
-const PUBLIC_PREFIX = "/fonts/imported";
-const MAX_FONT_BYTES = 16 * 1024 * 1024;
-
-const FONT_EXT: Record<ImportedFont["format"], string> = {
-  woff2: "woff2",
-  woff: "woff",
-  truetype: "ttf",
-  opentype: "otf",
-};
+const MAX_FONT_BYTES = UPLOADED_ASSETS.font.maxBytes;
 
 // The stored format and extension come from the file's magic bytes, never
 // from the caller-supplied filename or MIME type.
@@ -598,7 +613,7 @@ export async function POST(req: Request) {
   if (blocked) {
     return NextResponse.json({ ok: false, error: blocked.error }, { status: blocked.status });
   }
-  const input = await readJsonBody(req, 23 * 1024 * 1024);
+  const input = await readJsonBody(req, UPLOADED_ASSETS.font.maxRequestBytes);
   if (input.response) return input.response;
   const body = input.value as { data?: unknown } | null;
   if (typeof body?.data !== "string" || !body.data) {
@@ -606,27 +621,20 @@ export async function POST(req: Request) {
   }
   // Reject oversized payloads before decoding (base64 is ~4/3 of the byte size).
   if (body.data.length > Math.ceil(MAX_FONT_BYTES / 3) * 4) {
-    return NextResponse.json({ ok: false, error: "Font file is too large (16MB maximum)." }, { status: 413 });
+    return NextResponse.json({ ok: false, error: UPLOAD_ERRORS.fontTooLarge }, { status: 413 });
   }
   const bytes = decodeBase64(body.data);
   if (!bytes) return NextResponse.json({ ok: false, error: "Invalid base64 font data" }, { status: 400 });
   if (bytes.byteLength > MAX_FONT_BYTES) {
-    return NextResponse.json({ ok: false, error: "Font file is too large (16MB maximum)." }, { status: 413 });
+    return NextResponse.json({ ok: false, error: UPLOAD_ERRORS.fontTooLarge }, { status: 413 });
   }
   const format = sniffFontFormat(bytes);
   if (!format || !hasFontStructure(bytes, format)) {
     return NextResponse.json({ ok: false, error: "Use a WOFF2, WOFF, TTF, or OTF font file." }, { status: 400 });
   }
 
-  const hash = createHash("sha1").update(bytes).digest("hex").slice(0, 16);
-  const filename = `${hash}.${FONT_EXT[format]}`;
-  const absDir = path.join(process.cwd(), FONT_DIR_REL);
-  const absFile = path.join(absDir, filename);
-
   try {
-    await fs.mkdir(absDir, { recursive: true });
-    await writeAsset(absFile, bytes);
-    const font: ImportedFont = { src: `${PUBLIC_PREFIX}/${filename}`, format };
+    const font: ImportedFont = { src: await saveAsset("font", bytes, FONT_EXTENSION[format]), format };
     return NextResponse.json({ ok: true, font });
   } catch (e) {
     return NextResponse.json(
@@ -662,759 +670,331 @@ export async function POST(req: Request) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bee50b7b` (2026-09-26)
-**Commit Message**: fix: font menu offers only real fonts, undo skips navigation, tidy toolbar
+### Incident Patch 1: `e889033b` (2026-11-07)
+**Commit Message**: Merge pull request #55 from ParthJadhav/refactor/untangle-codebase
 
-Fonts
-- "Classic Serif" rendered exactly like "Editorial Serif" (both Georgia):
-  keep one "Georgia" entry and migrate saved classic-serif projects to it.
-- "Import a font" was a selectable font before anything was imported and
-  its @font-face stub in globals.css requested non-existent
-  custom-screenshot-font.* files (404s). The stub is gone; the imported font
-  is only listed once it exists (under its file name), and "Import font…"
-  is an action at the bottom of the font menu instead of an extra toolbar
-  button. Errors surface as toasts.
-- The imported font's @font-face is registered in <head> rather than as a
-  <style> inside every canvas, so html-to-image embeds it from
-  document.styleSheets; a copy cloned into the export SVG pointed at a URL
-  the SVG image can't load. Thumbnails and the feature graphic now use the
-  selected font too.
+Untangle the template editor
 
-Undo/redo
-- Cmd/Ctrl+Z and Shift+Cmd/Ctrl+Z only defer to text fields and
-  contenteditable text; sliders, colour pickers and buttons no longer block
-  them, while arrow keys etc. still keep their meaning in any input.
-- Switching platform, device, orientation or lo
-
-**File**: `skills/app-store-screenshots/template/src/app/globals.css` (modified, +0/-10)
+**File**: `docs/retrospectives/navigation.md` (modified, +4/-4)
 ```diff
-@@ -2,16 +2,6 @@
- @tailwind components;
- @tailwind utilities;
+@@ -93,14 +93,14 @@ All source paths in this table are relative to `skills/app-store-screenshots/tem
+ | --- | --- | --- |
+ | App entry / editor orchestration | `src/app/page.tsx`, `src/components/editor/screenshot-editor.tsx` | Deck selection, edits, toolbar wiring, `exportAll`/`generateBundle` |
+ | Selection, pan, zoom, Fit | `src/components/editor/preview-stage.tsx` — `PreviewStage`, `panToActiveScreen` | Canvas-origin selection suppresses auto-pan; sidebar-origin selection recenters |
+-| Connected/isolated composition, transforms | `src/components/editor/slide-canvas.tsx` | Preview, thumbnails and exported crops must agree |
++| Connected/isolated composition, transforms | `src/components/editor/slide-canvas.tsx`, default placements in `src/lib/layouts.ts` | Preview, thumbnails and exported crops must agree |
+ | Inspector fields / overlays | `src/components/editor/inspector.tsx`, `image-element-canvas.tsx` | Editor patches persist in the project state |
+-| Hydration, save/retry/conflicts, undo | `src/lib/storage.ts` — `useProject`, `loadFromFile`, `saveToFile` | `/api/project` route and `project-validation.ts` |
++| Hydration, save/retry/conflicts, undo | `src/lib/storage.ts` — `useProject`, `loadFromFile`, `saveToFile` | `/api/project` route and `project-schema.ts` |
+ | Export preparation and image/font loading | `src/lib/export-assets.ts`, `image-cache.ts`, `typography.ts` | `screenshot-editor.tsx` coordinates preparation and ZIP construction |
+ | Crop/render/blank-image detection | `src/lib/export-render.ts` — `renderSlide` | Connected DOM composition in `slide-canvas.tsx` |
+ | RGB PNG encoding / worker fallback | `src/lib/png-rgb.ts`, `png-encode.ts`, `png-worker.ts` | Distinguish rendering failures from encoding failures |
+-| Upload validation / serving | `src/app/api/{upload,upload-font}/route.ts` | `request-body.ts`, `request-guard.ts`, `write-asset.ts`, `serve-asset.ts`, runtime serving routes |
+-| Device sizes, themes, font choices | `src/lib/constants.ts`, `types.ts` | Starter JSON vs. reset/fallback `defaults.ts` |
++| Upload validation / serving | `src/app/api/{upload,upload-font}/route.ts` | `request-body.ts`, `request-guard.ts`, `uploaded-assets.ts`, `asset-files.ts`, runtime serving routes |
++| Device sizes, frames, themes, font choices | `src/lib/devices.ts`, `frame-assets.ts`, `constants.ts`, `types.ts` | Starter JSON vs. reset/fallback `defaults.ts` |
+ | Generation/migration behavior | Repo `skills/app-store-screenshots/SKILL.md` | Style index, `_QUALITY_BAR.md`, selected style, `copy-ideas.md` |
+ | Verification, after the new suite lands | `package.json`, `e2e.config.ts`, `docs/testing/e2e.md` | `tests/`, `tests/harness/`, `e2e-army/`; root scripts become wrappers |
  
--@font-face {
--  font-family: "CustomScreenshotFont";
--  src:
--    url("/fonts/imported/custom-screenshot-font.woff2") format("woff2"),
--    url("/fonts/imported/custom-screenshot-font.woff") format("woff"),
--    url("/fonts/imported/custom-screenshot-font.ttf") format("truetype"),
--    url("/fonts/imported/custom-screenshot-font.otf") format("opentype");
--  font-display: swap;
--}
--
- @layer base {
-   :root {
-     --background: 240 14% 99%;
 ```
 
-**File**: `skills/app-store-screenshots/template/src/components/editor/font-importer.tsx` (modified, +40/-40)
+**File**: `skills/app-store-screenshots/SKILL.md` (modified, +7/-3)
 ```diff
-@@ -1,13 +1,14 @@
- "use client";
- import * as React from "react";
--import { Upload } from "lucide-react";
--import { Button } from "@/components/ui/button";
-+import { toast } from "sonner";
-+import { cleanFontName } from "@/lib/clean-imported-font";
- import type { ImportedFont } from "@/lib/types";
+@@ -688,7 +688,7 @@ Every Apple TV and Apple Watch size below was read from App Store Connect's own
+ | CarPlay | iPhone slots (landscape) | 2868×1320, 2778×1284, 2622×1206, 2436×1125 | 2868×1320 |
  
-+export type FontImporterHandle = { open: () => void };
-+
- type Props = {
--  disabled: boolean;
--  importedFont?: ImportedFont;
-   onImported: (font: ImportedFont) => void;
-+  onUploadingChange?: (uploading: boolean) => void;
+ - **Every export is a downscale of the canvas.** Where a slot's aspect differs slightly (Watch 422×514 → 312×390), the exporter scales to cover and trims a few edge pixels instead of stretching the frame. Keep text and the device away from the outermost ~3% on the watch.
+-- **CarPlay has no App Store screenshot slot.** A CarPlay app ships inside its iPhone app, so a CarPlay shot is uploaded **into the iPhone slot**, in landscape (iPhone slots accept both orientations). The `carplay` device is a head-unit frame on a landscape 6.9" iPhone canvas for exactly that. Head units vary by vehicle; the frame uses Apple's CarPlay Simulator "Standard" 800×480 preset (5:3). Change `CARPLAY_RATIO` in `src/lib/constants.ts` for another preset (Minimum 748×456, Widescreen 1920×720, Portrait 900×1200, Video Playback 1920×1080).
++- **CarPlay has no App Store screenshot slot.** A CarPlay app ships inside its iPhone app, so a CarPlay shot is uploaded **into the iPhone slot**, in landscape (iPhone slots accept both orientations). The `carplay` device is a head-unit frame on a landscape 6.9" iPhone canvas for exactly that. Head units vary by vehicle; the frame uses Apple's CarPlay Simulator "Standard" 800×480 preset (5:3). Change `FRAME_ASPECT.carplay` in `src/lib/frame-assets.ts` for another preset (Minimum 748×456, Widescreen 1920×720, Portrait 900×1200, Video Playback 1920×1080).
+ - **TV, Watch and CarPlay frames are contained.** Phones and tablets deliberately bleed off the canvas edge; a cropped TV, watch face or head unit reads as a mistake, so these devices always stay fully inside the canvas.
+ - **Layouts:** `split-landscape` (caption left, device right) is the strongest layout for the wide TV and CarPlay canvases. On the watch, keep headlines to two or three short words per line — the canvas is only 422 px wide.
+ - **Screenshots:** use real captures at native resolution — Apple TV 3840×2160 or 1920×1080 from the tvOS simulator, Apple Watch from the watchOS simulator, CarPlay from the CarPlay Simulator (or Xcode's I/O → External Displays → CarPlay).
+@@ -794,7 +794,7 @@ Every Apple TV and Apple Watch size below was read from App Store Connect's own
+ 
+ ## Project Migration
+ 
+-The current editor saves `schemaVersion: 3` (v3 adds the iPhone Duo and creative decks). The migration recipe above still writes `schemaVersion: 2`, which the editor accepts and upgrades to v3 on its next save, adding the new decks without touching existing ones. Existing projects made by earlier versions of this skill usually have no `schemaVersion` and may still store string `label` / `headline` values. Do not hand-edit those projects unless the JSON is invalid. On load, `src/lib/storage.ts`:
++The current editor saves `schemaVersion: 3` (v3 adds the iPhone Duo and creative decks). The migration recipe above still writes `schemaVersion: 2`, which the editor accepts and upgrades to v3 on its next save, adding the new decks without touching existing ones. Existing projects made by earlier versions of this skill usually have no `schemaVersion` and may still store string `label` / `headline` values. Do not hand-edit those projects unless the JSON is invalid. On load, `src/lib/storage.ts` (through `src/lib/project-schema.ts`):
+ 
+ 1. Converts legacy string copy to localized `{ "en": "..." }` objects.
+ 2. Sanitizes existing element transforms.
+@@ -849,10 +849,14 @@ project/
+     │   │   └── device-frames.tsx       # Phone, IPad, AppleTV, AppleWatch, CarPlayScreen, MacWindow, Android
+     │   └── ui/                         # Minimal ShadCN primitives (button, select, etc.)
+     └── lib/
+-        ├── constants.ts                # Canvas sizes, export sizes, themes, screenshot fonts, frame ratios
++        ├── constants.ts                # Themes and screenshot fonts
++        ├── devices.ts                  # Every target: canvas size, export sizes, platform, orientations
++        ├── frame-assets.ts             # Frame aspects and sizes, Apple bezel measurement
++        ├── layouts.ts                  # Layout names and default element placements
+         ├── defaults.ts                 # Initial slide decks per device
+         ├── types.ts                    # Slide / ProjectState / Theme types
+         ├── storage.ts                  # useProject() — autosave + undo/redo history
++        ├── project-schema.ts           # Project JSON validation and migration on load
+         ├── image-cache.ts              # preloadImages + img() helper
+         ├── contrast.ts                 # Readable caption colours on custom backgrounds
+         ├── export-render.ts            # Slide → PNG; waits for every screenshot to paint
+```
+
+**File**: `skills/app-store-screenshots/template/README.md` (modified, +6/-3)
+```diff
+@@ -166,16 +166,19 @@ The toolbar arrows, `⌘Z` / `Ctrl+Z` and `⇧⌘Z` / `Ctrl+Shift+Z` (or `Ctrl+Y
+ 
+ | Where | What |
+ |-------|------|
+-| `src/lib/constants.ts` | Canvas dimensions, export sizes, frame ratios, themes, screenshot fonts, locales |
++| `src/lib/devices.ts` | Every target: canvas dimensions, export sizes, platform, orientations, creative safe areas |
++| `src/lib/frame-assets.ts` | Frame aspects, how wide each device is placed, and Apple bezel measurement |
++| `src/lib/layouts.ts` | Layout names and default placements of the caption, devices and magnifier |
++| `src/lib/constants.ts` | Themes and screenshot fonts |
+ | `app-store-screenshots.json` | Canonical starter project: app name, current device, connected-canvas mode, slide copy, screenshots, and transforms |
+ | `src/lib/defaults.ts` | Fallback/reset state used when no project file or local cache exists |
+-| `src/components/editor/slide-canvas.tsx` | Add new layouts and connected-canvas element rendering |
++| `src/components/editor/slide-canvas.tsx` | Draws each layout's elements and the connected canvas |
+ | `src/components/editor/device-frames.tsx` | Tweak device chrome (bezel radii, camera dots) |
+ | `src/app/layout.tsx` | Swap the font (`next/font/google`) |
+ 
+ ## Notes
+ 
+-- `mockup.png` is the iPhone bezel overlay; replacing it requires re-measuring the `PHONE_SCREEN` constants. Apple's own bezels in `public/frames/` are measured automatically and replace the built-in frames (see [iPhone Duo](#iphone-duo), Real bezels).
++- `mockup.png` is the iPhone bezel overlay; replacing it requires re-measuring `PHONE_SCREEN` in `src/lib/frame-assets.ts`. Apple's own bezels in `public/frames/` are measured automatically and replace the built-in frames (see [iPhone Duo](#iphone-duo), Real bezels).
+ - Image preloading converts every static path to a base64 data URI before exports run, and export retries paths that were previously missing. `export-render.ts` then waits for those images to paint in the render (see Exporting).
+ - Reset via the toolbar's circular arrow icon clears in-memory state and reloads the default screens. To wipe disk state too, delete `app-store-screenshots.json`.
+ - **Persistence model** — the canonical state lives in `app-store-screenshots.json` (git-tracked). On load, the editor reads localStorage first, then reconciles with the file; if the file endpoint is unavailable, autosave is blocked so stale cache cannot overwrite disk. File saves are serialized and atomic. Each editor sends the revision it loaded, so a newer save from another tab or an on-disk edit produces a conflict instead of an overwrite. Your unsaved work stays open: export or copy it before reloading. **Retry save** retries transient failures; it does not override conflicts. Leaving with unsaved edits triggers the browser's warning.
+```
+
+**File**: `skills/app-store-screenshots/template/src/app/api/project/route.ts` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ import { promises as fs } from "node:fs";
+ import path from "node:path";
+ import { createHash, randomUUID } from "node:crypto";
+ import { NextResponse } from "next/server";
+-import { projectValidationError } from "@/lib/project-validation";
++import { projectValidationError } from "@/lib/project-schema";
+ import { rejectCrossSiteWrite } from "@/lib/request-guard";
+ import { readJsonBody } from "@/lib/request-body";
+ 
+```
+
+**File**: `skills/app-store-screenshots/template/src/app/api/upload-font/route.ts` (modified, +7/-25)
+```diff
+@@ -1,24 +1,13 @@
+-import { createHash } from "node:crypto";
+-import { promises as fs } from "node:fs";
+-import path from "node:path";
+ import { NextResponse } from "next/server";
++import { saveAsset } from "@/lib/asset-files";
+ import { rejectCrossSiteWrite } from "@/lib/request-guard";
+ import type { ImportedFont } from "@/lib/types";
+ import { decodeBase64, readJsonBody } from "@/lib/request-body";
+-import { writeAsset } from "@/lib/write-asset";
++import { FONT_EXTENSION, UPLOADED_ASSETS, UPLOAD_ERRORS } from "@/lib/uploaded-assets";
+ 
+ export const dynamic = "force-dynamic";
+ 
+-const FONT_DIR_REL = path.join("public", "fonts", "imported");
+-const PUBLIC_PREFIX = "/fonts/imported";
+-const MAX_FONT_BYTES = 16 * 1024 * 1024;
+-
+-const FONT_EXT: Record<ImportedFont["format"], string> = {
+-  woff2: "woff2",
+-  woff: "woff",
+-  truetype: "ttf",
+-  opentype: "otf",
+-};
++const MAX_FONT_BYTES = UPLOADED_ASSETS.font.maxBytes;
+ 
+ // The stored format and extension come from the file's magic bytes, never
+ // from the caller-supplied filename or MIME type.
+@@ -67,35 +56,28 @@ export async function POST(req: Request) {
+   if (blocked) {
+     return NextResponse.json({ ok: false, error: blocked.error }, { status: blocked.status });
+   }
+-  const input = await readJsonBody(req, 23 * 1024 * 1024);
++  const input = await readJsonBody(req, UPLOADED_ASSETS.font.maxRequestBytes);
+   if (input.response) return input.response;
+   const body = input.value as { data?: unknown } | null;
+   if (typeof body?.data !== "string" || !body.data) {
+     return NextResponse.json({ ok: false, error: "Choose a font file first." }, { status: 400 });
+   }
+   // Reject oversized payloads before decoding (base64 is ~4/3 of the byte size).
+   if (body.data.length > Math.ceil(MAX_FONT_BYTES / 3) * 4) {
+-    return NextResponse.json({ ok: false, error: "Font file is too large (16MB maximum)." }, { status: 413 });
++    return NextResponse.json({ ok: false, error: UPLOAD_ERRORS.fontTooLarge }, { status: 413 });
+   }
+   const bytes = decodeBase64(body.data);
+   if (!bytes) return NextResponse.json({ ok: false, error: "Invalid base64 font data" }, { status: 400 });
+   if (bytes.byteLength > MAX_FONT_BYTES) {
+-    return NextResponse.json({ ok: false, error: "Font file is too large (16MB maximum)." }, { status: 413 });
++    return NextResponse.json({ ok: false, error: UPLOAD_ERRORS.fontTooLarge }, { status: 413 });
+   }
+   const format = sniffFontFormat(bytes);
+   if (!format || !hasFontStructure(bytes, format)) {
+     return NextResponse.json({ ok: false, error: "Use a WOFF2, WOFF, TTF, or OTF font file." }, { status: 400 });
+   }
+ 
+-  const hash = createHash("sha1").update(bytes).digest("hex").slice(0, 16);
+-  const filename = `${hash}.${FONT_EXT[format]}`;
+-  const absDir = path.join(process.cwd(), FONT_DIR_REL);
+-  const absFile = path.join(absDir, filename);
+-
+   try {
+-    await fs.mkdir(absDir, { recursive: true });
+-    await writeAsset(absFile, bytes);
+-    const font: ImportedFont = { src: `${PUBLIC_PREFIX}/${filename}`, format };
++    const font: ImportedFont = { src: await saveAsset("font", bytes, FONT_EXTENSION[format]), format };
+     return NextResponse.json({ ok: true, font });
+   } catch (e) {
+     return NextResponse.json(
+```
+
+**File**: `skills/app-store-screenshots/template/src/app/api/upload/route.ts` (modified, +11/-23)
+```diff
+@@ -1,20 +1,15 @@
+-import { createHash } from "node:crypto";
+-import { promises as fs } from "node:fs";
+-import path from "node:path";
+ import { NextResponse } from "next/server";
+-import { rejectCrossSiteWrite, sniffImageType } from "@/lib/request-guard";
+ import sharp from "sharp";
++import { saveAsset } from "@/lib/asset-files";
++import { rejectCrossSiteWrite, sniffImageType } from "@/lib/request-guard";
+ import { decodeBase64, readJsonBody } from "@/lib/request-body";
+-import { writeAsset } from "@/lib/write-asset";
++import { UPLOADED_ASSETS, UPLOAD_ERRORS } from "@/lib/uploaded-assets";
+ 
+ export const dynamic = "force-dynamic";
+ 
+-const UPLOAD_DIR_REL = path.join("public", "screenshots", "uploaded");
+-const PUBLIC_PREFIX = "/screenshots/uploaded";
+-
++const { types, maxBytes, maxPixels } = UPLOADED_ASSETS.image;
+ const MIME_EXT: Record<string, string> = {
+-  "image/png": "png",
+-  "image/jpeg": "jpg",
++  ...Object.fromEntries(Object.entries(types).map(([ext, mime]) => [mime, ext])),
+   "image/jpg": "jpg",
  };
  
- const MAX_FONT_BYTES = 16 * 1024 * 1024;
-@@ -22,57 +23,56 @@ async function fileToBase64(file: File): Promise<string> {
-   return dataUrl.slice(dataUrl.indexOf(",") + 1);
- }
- 
--export function FontImporter({ disabled, importedFont, onImported }: Props) {
-+// Hidden file input behind the toolbar's "Import font…" menu item. The server
-+// validates the file by its magic bytes and stores it under
-+// public/fonts/imported/<hash>.<ext>.
-+export const FontImporter = React.forwardRef<FontImporterHandle, Props>(function FontImporter(
-+  { onImported, onUploadingChange },
-+  ref,
-+) {
-   const inputRef = React.useRef<HTMLInputElement>(null);
--  const [uploading, setUploading] = React.useState(false);
--  const [error, setError] = React.useState<string | null>(null);
-+  React.useImperativeHandle(ref, () => ({ open: () => inputRef.current?.click() }), []);
- 
-   async function importFont(file: File) {
--    setUploading(true);
--    setError(null);
-+    onUploadingChange?.(true);
-     try {
-       if (file.size > MAX_FONT_BYTES) throw new Error("Font file is too large (16MB maximum).");
-       const response = await fetch("/api/upload-font", {
-         method: "POST",
-         headers: { "content-type": "application/json" },
-         body: JSON.stringify({ data: await fileToBase64(file) }),
-       });
--      const data = (await response.json()) as { ok: boolean; error?: string; font?: ImportedFont };
-+      const data = (await response.json().catch(() => ({ ok: false }))) as {
-+        ok: boolean;
-+        error?: string;
-+        font?: ImportedFont;
-+      };
-       if (!data.ok || !data.font) throw new Error(data.error || "Could not import that font.");
--      onImported(data.font);
-+      const name = cleanFontName(file.name.replace(/\.[^.]+$/, ""));
-+      onImported({ ...data.font, ...(name ? { name } : {}) });
-+      toast.success(`Imported ${name ?? "font"}`);
-     } catch (caught) {
--      setError(caught instanceof Error ? caught.message : "Could not import that font.");
-+      toast.error("Font import failed", {
-+        description: caught instanceof Error ? caught.message : "Could not import that font.",
-+      });
-     } finally {
--      setUploading(false);
-+      onUploadingChange?.(false);
-     }
+@@ -32,7 +27,7 @@ export async function POST(req: Request) {
+   if (blocked) {
+     return NextResponse.json({ ok: false, error: blocked.error }, { status: blocked.status });
    }
- 
-   return (
--    <span className="flex items-center gap-1.5">
--      <input
--        ref={inputRef}
--        type="file"
--        accept=".woff2,.woff,.ttf,.otf,font/woff2,font/woff,font/ttf,font/otf"
--        className="sr-only"
--        onChange={(event) => {
--          const file = event.target.files?.[0];
--          if (file) void importFont(file);
--          event.target.value = "";
--        }}
--      />
--      <Button
--        type="button"
--        variant="ghost"
--        size="sm"
--        className="h-8 gap-1 px-2 text-xs"
--        disabled={disabled || uploading}
--        onClick={() => inputRef.current?.click()}
--        title="Import a WOFF2, WOFF, TTF, or OTF font"
--      >
--        <Upload className="h-3.5 w-3.5" />
--        {uploading ? "Importing" : importedFont ? "Replace font" : "Import font"}
--      </Button>
--      {error && <span className="max-w-32 truncate text-[10px] text-destructive" title={error}>{error}</span>}
--    </span>
-+    <input
-+      ref={inputRef}
-+      type="file"
-+      accept=".woff2,.woff,.ttf,.otf,font/woff2,font/woff,font/ttf,font/otf"
-+      className="sr-only"
-+      tabIndex={-1}
-+      aria-hidden
-+      onChange={(event) => {
-+        const file = event.target.files?.[0];
-+        if (file) void importFont(file);
-+        event.target.value = "";
-+      }}
-+    />
-   );
--}
-+});
-```
-
-**File**: `skills/app-store-screenshots/template/src/components/editor/preview-stage.tsx` (modified, +0/-3)
-```diff
-@@ -24,7 +24,6 @@ type Props = {
-   appName?: string;
-   appIcon?: string;
-   fontFamily: string;
--  fontFaceCss?: string;
-   connectedCanvas: boolean;
-   selectedElement: SelectedElement | null;
-   onActiveSlideChange: (id: string) => void;
-@@ -47,7 +46,6 @@ export function PreviewStage({
-   appName,
-   appIcon,
-   fontFamily,
--  fontFaceCss,
-   connectedCanvas,
-   selectedElement,
-   onActiveSlideChange,
-@@ -143,7 +141,6 @@ export function PreviewStage({
-               appName={appName}
-               appIcon={appIcon}
-               fontFamily={fontFamily}
--              fontFaceCss={fontFaceCss}
-               connectedCanvas={connectedCanvas}
-               editable
-               previewScale={scale}
-```
-
-**File**: `skills/app-store-screenshots/template/src/components/editor/screenshot-editor.tsx` (modified, +50/-30)
-```diff
-@@ -6,6 +6,7 @@ import {
-   DEFAULT_SCREENSHOT_FONT_ID,
-   getExportSizes,
-   hasTheme,
-+  IMPORTED_FONT_FAMILY,
-   SCREENSHOT_FONTS,
-   supportsLandscape,
-   themeById,
-@@ -22,6 +23,7 @@ import type {
-   ElementId,
-   ElementTransform,
-   ImageElement,
-+  ImportedFont,
-   SelectedElement,
-   Slide,
- } from "@/lib/types";
-@@ -45,12 +47,9 @@ export function ScreenshotEditor() {
-   const activeSlide =
-     currentSlides.find((s) => s.id === activeSlideId) || currentSlides[0] || null;
-   const theme = themeById(state.themeId);
--  const fontFamily = state.fontId === "self-hosted" && state.importedFont
--    ? '"ImportedScreenshotFont", Georgia, serif'
--    : SCREENSHOT_FONTS[state.fontId || DEFAULT_SCREENSHOT_FONT_ID].family;
--  const fontFaceCss = state.importedFont
--    ? `@font-face { font-family: "ImportedScreenshotFont"; src: url("${state.importedFont.src}") format("${state.importedFont.format}"); font-display: swap; }`
--    : undefined;
-+  const fontId = state.fontId || DEFAULT_SCREENSHOT_FONT_ID;
-+  const fontFamily = SCREENSHOT_FONTS[fontId].family;
-+  useImportedFontFace(state.importedFont);
- 
-   React.useEffect(() => {
-     if (selectedElement && selectedElement.slideId !== activeSlide?.id) {
-@@ -67,7 +66,7 @@ export function ScreenshotEditor() {
- 
-   React.useEffect(() => {
-     if (!supportsLandscape(state.device) && state.orientation !== "portrait") {
--      setState((p) => ({ ...p, orientation: "portrait" }));
-+      setState((p) => ({ ...p, orientation: "portrait" }), { history: false });
-     }
-   }, [state.device, state.orientation, setState]);
- 
-@@ -338,11 +337,9 @@ export function ScreenshotEditor() {
-   React.useEffect(() => {
-     function onKey(e: KeyboardEvent) {
-       const target = e.target as HTMLElement | null;
--      const inEditable =
--        target &&
--        (target.tagName === "INPUT" ||
--          target.tagName === "TEXTAREA" ||
--          (target as HTMLElement).isContentEditable);
-+      const inTextField = isTextEditable(target);
-+      const inControl =
-+        inTextField || (!!target && (target.tagName === "INPUT" || target.tagName === "SELECT"));
-       if (exporting) return;
- 
-       if (e.key === "Escape") {
-@@ -351,21 +348,19 @@ export function ScreenshotEditor() {
-         return;
-       }
- 
--      // Let focused inputs and contenteditable text keep their native undo,
--      // redo, selection, and deletion behavior.
--      if (inEditable) return;
--
--      if ((e.metaKey || e.ctrlKey) && (e.key === "z" || e.key === "Z")) {
-+      // Undo/redo belongs to the text field while one is focused.
-+      const mod = e.metaKey || e.ctrlKey;
-+      if (mod && !e.altKey && (e.key === "z" || e.key === "Z" || e.key === "y" || e.key === "Y")) {
-+        if (inTextField) return;
-         e.preventDefault();
--        if (e.shiftKey) redo();
-+        if (e.key === "y" || e.key === "Y" || e.shiftKey) redo();
-         else undo();
-         return;
-       }
--      if ((e.metaKey || e.ctrlKey) && (e.key === "y" || e.key === "Y")) {
--        e.preventDefault();
--        redo();
--        return;
--      }
-+
-+      // Arrow keys, deletion etc. keep their native meaning inside any input.
-+      if (inControl) return;
-+
-       if (!currentSlides.length) return;
-       const idx = activeSlide ? currentSlides.findIndex((s) => s.id === activeSlide.id) : -1;
-       if (e.key === "ArrowDown" || (e.key === "j" && !e.metaKey && !e.ctrlKey)) {
-@@ -450,7 +445,7 @@ export function ScreenshotEditor() {
-       try {
-         // fonts.ready only covers faces already requested; explicitly load an
-         // imported font so a not-yet-used face can't export as the fallback.
--        if (state.fontId === "self-hosted") await document.fonts.load(`64px ${fontFamily}`);
-+        if (fontId === "self-hosted") await document.fonts.load(`64px ${fontFamily}`);
-         await document.fonts.ready;
-       } catch {
-         /* ignore */
-@@ -604,17 +599,17 @@ export function ScreenshotEditor() {
-         setThemeId={(v) => setState((p) => ({ ...p, themeId: v }))}
-         connectedCanvas={state.connectedCanvas}
-         setConnectedCanvas={(v) => setState((p) => ({ ...p, connectedCanvas: v }))}
--        fontId={state.fontId || DEFAULT_SCREENSHOT_FONT_ID}
-+        fontId={fontId}
-         setFontId={(v) => setState((p) => ({ ...p, fontId: v }))}
-         importedFont={state.importedFont}
-         setImportedFont={(importedFont) => setState((p) => ({ ...p, fontId: "self-hosted", importedFont }))}
-         locale={state.locale}
--        setLocale={(v) => setState((p) => ({ ...p, locale: v }))}
-+        setLocale={(v) => setState((p) => ({ ...p, locale: v }), { history: false })}
-         locales={state.locales}
-         device={state.device}
--        setDevice={(v) => setState((p) => ({ ...p, device: v }))}
-+        setDevice={(v) => setState((p) => ({ ...p, device: v }), { history: false })}
-         orientation={state.orientation}
--        setOrientation={(v) => setState((p) => ({ ...p, orientation: v }))}
-+        
-```
-
-**File**: `skills/app-store-screenshots/template/src/components/editor/sidebar.tsx` (modified, +3/-0)
-```diff
-@@ -30,6 +30,7 @@ type Props = {
-   locale: string;
-   appName?: string;
-   appIcon?: string;
-+  fontFamily?: string;
-   connectedCanvas: boolean;
-   disabled?: boolean;
-   onReorder: (next: Slide[]) => void;
-@@ -48,6 +49,7 @@ export function Sidebar({
-   locale,
-   appName,
-   appIcon,
-+  fontFamily,
-   connectedCanvas,
-   disabled,
-   onReorder,
-@@ -96,6 +98,7 @@ export function Sidebar({
-                   locale={locale}
-                   appName={appName}
-                   appIcon={appIcon}
-+                  fontFamily={fontFamily}
-                   connectedCanvas={connectedCanvas}
-                   onSelect={() => onSelect(slide.id)}
-                   onDelete={() => onDelete(slide.id)}
-```
-
-**File**: `skills/app-store-screenshots/template/src/components/editor/slide-canvas.tsx` (modified, +12/-16)
-```diff
-@@ -129,7 +129,6 @@ type Props = {
-   appName?: string;
-   appIcon?: string;
-   fontFamily?: string;
--  fontFaceCss?: string;
-   editable?: boolean;
-   edit?: EditHandlers;
-   selectedElementId?: ElementId | null;
-@@ -158,7 +157,6 @@ type DeckCanvasProps = {
-   appName?: string;
-   appIcon?: string;
-   fontFamily?: string;
--  fontFaceCss?: string;
-   connectedCanvas?: boolean;
-   editable?: boolean;
-   edit?: DeckEditHandlers;
-@@ -559,7 +557,6 @@ export function SlideCanvas({
-   appName,
-   appIcon,
-   fontFamily,
--  fontFaceCss,
-   editable,
-   edit,
-   selectedElementId = null,
-@@ -570,16 +567,18 @@ export function SlideCanvas({
- 
-   if (slide.layout === "feature-graphic" || device === "feature-graphic") {
-     return (
--      <FeatureGraphicCanvas
--        slide={slide}
--        cW={cW}
--        theme={theme}
--        locale={locale}
--        appName={appName}
--        appIcon={appIcon}
--        editable={editable}
--        edit={edit}
--      />
-+      <div style={{ width: "100%", height: "100%", fontFamily }}>
-+        <FeatureGraphicCanvas
-+          slide={slide}
-+          cW={cW}
-+          theme={theme}
-+          locale={locale}
-+          appName={appName}
-+          appIcon={appIcon}
-+          editable={editable}
-+          edit={edit}
-+        />
-+      </div>
+-  const input = await readJsonBody(req, 12 * 1024 * 1024);
++  const input = await readJsonBody(req, UPLOADED_ASSETS.image.maxRequestBytes);
+   if (input.response) return input.response;
+   const body = input.value as { dataUrl?: string } | null;
+   if (!body?.dataUrl || typeof body.dataUrl !== "string") {
+@@ -58,26 +53,19 @@ export async function POST(req: Request) {
+       { status: 400 },
      );
    }
+-  if (parsed.bytes.byteLength > 8 * 1024 * 1024) {
+-    return NextResponse.json({ ok: false, error: "Image too large (>8MB)" }, { status: 413 });
++  if (parsed.bytes.byteLength > maxBytes) {
++    return NextResponse.json({ ok: false, error: UPLOAD_ERRORS.imageTooLarge }, { status: 413 });
+   }
  
-@@ -600,7 +599,6 @@ export function SlideCanvas({
-         fontFamily,
-       }}
-     >
--      {fontFaceCss && <style>{fontFaceCss}</style>}
-       <SlideBackground slide={slide} cW={cW} cH={cH} theme={theme} />
-       <SlideElements
-         slide={slide}
-@@ -633,7 +631,6 @@ export function DeckCanvas({
-   appName,
-   appIcon,
-   fontFamily,
--  fontFaceCss,
-   connectedCanvas = true,
-   editable,
-   edit,
-@@ -656,7 +653,6 @@ export function DeckCanvas({
-         fontFamily,
-       }}
-     >
--      {fontFaceCss && <style>{fontFaceCss}</style>}
-       {slides.map((slide, index) => {
-         const screenX = index * cW;
-         const active = activeSlideId === slide.id;
+   try {
+     // Decode pixels too: valid headers alone still accept truncated images.
+-    await sharp(parsed.bytes, { limitInputPixels: 64 * 1024 * 1024, failOn: "warning" }).stats();
++    await sharp(parsed.bytes, { limitInputPixels: maxPixels, failOn: "warning" }).stats();
+   } catch {
+-    return NextResponse.json({ ok: false, error: "Image is corrupt or exceeds 64 megapixels" }, { status: 400 });
++    return NextResponse.json({ ok: false, error: UPLOAD_ERRORS.imageCorrupt }, { status: 400 });
+   }
+ 
+-  const hash = createHash("sha1").update(parsed.bytes).digest("hex").slice(0, 16);
+-  const filename = `${hash}.${ext}`;
+-  const absDir = path.join(process.cwd(), UPLOAD_DIR_REL);
+-  const absFile = path.join(absDir, filename);
+-
+   try {
+-    await fs.mkdir(absDir, { recursive: true });
+-    await writeAsset(absFile, parsed.bytes);
+-    return NextResponse.json({ ok: true, path: `${PUBLIC_PREFIX}/${filename}` });
++    return NextResponse.json({ ok: true, path: await saveAsset("image", parsed.bytes, ext) });
+   } catch (e) {
+     return NextResponse.json(
+       { ok: false, error: e instanceof Error ? e.message : String(e) },
 ```
 
-**File**: `skills/app-store-screenshots/template/src/components/editor/slide-thumb.tsx` (modified, +4/-0)
+**File**: `skills/app-store-screenshots/template/src/app/fonts/imported/[filename]/route.ts` (modified, +2/-2)
 ```diff
-@@ -21,6 +21,7 @@ type Props = {
-   locale: string;
-   appName?: string;
-   appIcon?: string;
-+  fontFamily?: string;
-   connectedCanvas: boolean;
-   onSelect: () => void;
-   onDelete: () => void;
-@@ -41,6 +42,7 @@ export function SlideThumb({
-   locale,
-   appName,
-   appIcon,
-+  fontFamily,
-   connectedCanvas,
-   onSelect,
-   onDelete,
-@@ -116,6 +118,7 @@ export function SlideThumb({
-                 locale={locale}
-                 appName={appName}
-                 appIcon={appIcon}
-+                fontFamily={fontFamily}
-                 connectedCanvas
-                 editable={false}
-               />
-@@ -128,6 +131,7 @@ export function SlideThumb({
-                 locale={locale}
-                 appName={appName}
-                 appIcon={appIcon}
-+                fontFamily={fontFamily}
-                 editable={false}
-               />
-             )}
+@@ -1,8 +1,8 @@
+-import { serveAsset } from "@/lib/serve-asset";
++import { serveAsset } from "@/lib/asset-files";
+ 
+ export const dynamic = "force-dynamic";
+ 
+ export async function GET(_req: Request, context: { params: Promise<{ filename: string }> }) {
+   const { filename } = await context.params;
+-  return serveAsset("fonts/imported", filename, { woff2: "font/woff2", woff: "font/woff", ttf: "font/ttf", otf: "font/otf" });
++  return serveAsset("font", filename);
+ }
 ```
 
-**File**: `skills/app-store-screenshots/template/src/components/editor/toolbar.tsx` (modified, +50/-19)
+**File**: `skills/app-store-screenshots/template/src/app/frames/[filename]/route.ts` (modified, +3/-15)
 ```diff
-@@ -1,6 +1,6 @@
- "use client";
- import * as React from "react";
--import { AlertTriangle, Check, Cloud, Download, Redo2, RotateCcw, Undo2, UnfoldHorizontal } from "lucide-react";
-+import { AlertTriangle, Check, Cloud, Download, Redo2, RotateCcw, Undo2, UnfoldHorizontal, Upload } from "lucide-react";
- import { Button } from "@/components/ui/button";
- import {
-   Dialog,
-@@ -14,12 +14,14 @@ import {
-   Select,
-   SelectContent,
-   SelectItem,
-+  SelectSeparator,
-   SelectTrigger,
-   SelectValue,
- } from "@/components/ui/select";
- import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
- import {
-   DEVICE_LABEL,
-+  IMPORTED_FONT_FAMILY,
-   PLATFORM_DEVICES,
-   SCREENSHOT_FONTS,
-   THEMES,
-@@ -28,7 +30,9 @@ import {
- } from "@/lib/constants";
- import { detectPlatform } from "@/lib/defaults";
- import type { Device, ImportedFont, Orientation, Platform, ScreenshotFontId, Theme } from "@/lib/types";
--import { FontImporter } from "./font-importer";
-+import { FontImporter, type FontImporterHandle } from "./font-importer";
-+
-+const IMPORT_FONT_ACTION = "__import-font__";
+@@ -1,6 +1,5 @@
+-import { promises as fs } from "node:fs";
+-import path from "node:path";
+ import { NextResponse } from "next/server";
++import { servePublicFile } from "@/lib/asset-files";
+ import { FRAME_FILES } from "@/lib/frame-assets";
  
- type Props = {
-   appName: string;
-@@ -82,12 +86,23 @@ export function Toolbar(props: Props) {
-   const platformDevices = PLATFORM_DEVICES[platform];
-   const activeTheme = themeById(props.themeId);
- 
-+  const fontImporter = React.useRef<FontImporterHandle>(null);
-+  const [importingFont, setImportingFont] = React.useState(false);
-+  // "Imported font" is only a choice once a file has actually been imported.
-+  const fontIds = (Object.keys(SCREENSHOT_FONTS) as ScreenshotFontId[]).filter(
-+    (id) => id !== "self-hosted" || !!props.importedFont,
-+  );
-+  const fontLabel = (id: ScreenshotFontId) =>
-+    id === "self-hosted" && props.importedFont?.name ? props.importedFont.name : SCREENSHOT_FONTS[id].name;
-+  const fontPreviewFamily = (id: ScreenshotFontId) =>
-+    id === "self-hosted" ? `"${IMPORTED_FONT_FAMILY}", sans-serif` : SCREENSHOT_FONTS[id].family;
-+
-   return (
-     <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b bg-card/40 px-4 py-2">
-       <Input
-         value={props.appName}
-         onChange={(e) => props.setAppName(e.target.value)}
--        className="h-8 w-40 border-dashed text-sm font-semibold focus-visible:border-input focus-visible:border-solid focus-visible:bg-background"
-+        className="h-8 w-36 border-dashed text-sm font-semibold focus-visible:border-input focus-visible:border-solid focus-visible:bg-background"
-         placeholder="App name"
-         aria-label="App name"
-         title="App name (click to edit)"
-@@ -115,7 +130,7 @@ export function Toolbar(props: Props) {
-       </Button>
- 
-       <Select value={activeTheme.id} onValueChange={props.setThemeId} disabled={props.busy}>
--        <SelectTrigger className="h-8 w-48 text-xs" title="Theme" aria-label="Theme">
-+        <SelectTrigger className="h-8 w-40 text-xs" title="Theme" aria-label="Theme">
-           <SelectValue>
-             <ThemeOption theme={activeTheme} />
-           </SelectValue>
-@@ -129,19 +144,35 @@ export function Toolbar(props: Props) {
-         </SelectContent>
-       </Select>
- 
--      <Select value={props.fontId} onValueChange={(fontId) => props.setFontId(fontId as ScreenshotFontId)} disabled={props.busy}>
--        <SelectTrigger className="h-8 w-44 text-xs" aria-label="Screenshot font">
--          <SelectValue placeholder="Font" />
-+      <Select
-+        value={props.fontId}
-+        onValueChange={(fontId) => {
-+          if (fontId === IMPORT_FONT_ACTION) fontImporter.current?.open();
-+          else props.setFontId(fontId as ScreenshotFontId);
-+        }}
-+        disabled={props.busy || importingFont}
-+      >
-+        <SelectTrigger className="h-8 w-36 text-xs" title="Screenshot font" aria-label="Screenshot font">
-+          <SelectValue placeholder="Font">
-+            <span className="truncate">{importingFont ? "Importing font…" : fontLabel(props.fontId)}</span>
-+          </SelectValue>
-         </SelectTrigger>
-         <SelectContent>
--          {Object.entries(SCREENSHOT_FONTS).map(([id, font]) => (
--            <SelectItem key={id} value={id}>{font.name}</SelectItem>
-+          {fontIds.map((id) => (
-+            <SelectItem key={id} value={id}>
-+              <span style={{ fontFamily: fontPreviewFamily(id) }}>{fontLabel(id)}</span>
-+            </SelectItem>
-           ))}
-+          <SelectSeparator />
-+          <SelectItem value={IMPORT_FONT_ACTION}>
-+            <span className="flex items-center gap-1.5">
-+              <Upload className="h-3.5 w-3.5" />
-+              {props.importedFont ? "Replace imported font…" : "Import font…"}
-+            </span>
-+          </SelectItem>
-         </SelectContent>
-       </Select>
--      {props.fontId === "self-hosted" && (
--        <FontImporter disabled={props.busy} importedFont={props.importedFont} onImported={props.setImportedFont} />
--      )}
-+      <FontImporter ref={fontImporter} onImported={props.setImportedFont} onUploadingChange={setImport
+ export const dynamic = "force-dynamic";
+@@ -13,17 +12,6 @@ export async function GET(_req: Request, context: { params: Promise<{ filename:
+   if (!filename.endsWith(".png") || !(FRAME_FILES as readonly string[]).includes(name)) {
+     return new NextResponse(null, { status: 404 });
+   }
+-  try {
+-    const bytes = await fs.readFile(path.join(process.cwd(), "public", "frames", filename));
+-    return new NextResponse(new Uint8Array(bytes), { headers: {
+-      "Content-Type": "image/png",
+-      "Content-Length": String(bytes.length),
+-      // The URL carries ?v=<mtime>, so a replaced file gets a new URL.
+-      "Cache-Control": "public, max-age=31536000, immutable",
+-      "X-Content-Type-Options": "nosniff",
+-    } });
+-  } catch (error) {
+-    if ((error as NodeJS.ErrnoException).code === "ENOENT") return new NextResponse(null, { status: 404 });
+-    return NextResponse.json({ ok: false, error: "Frame could not be read" }, { status: 500 });
+-  }
++  // The URL carries ?v=<mtime>, so a replaced file gets a new URL.
++  return servePublicFile(`frames/${filename}`, "image/png");
+ }
 ```
 
 ---
 
-### Incident Patch 2: `edc42f6a` (2026-10-15)
-**Commit Message**: fix(template): size rounded magnifier corners from the lens's shorter side
+### Incident Patch 2: `6ba2bbe5` (2026-11-07)
+**Commit Message**: Reject a non-string imported font format on load, as main did
 
-A fixed canvas-relative radius changed every existing square lens. Taking
-14% of the shorter side keeps square lenses as they were and still gives
-wide lenses round corners.
+Object.hasOwn coerces its key, so format: ["woff2"] passed the new check.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `skills/app-store-screenshots/template/src/components/editor/scene-layers.tsx` (modified, +7/-3)
+**File**: `skills/app-store-screenshots/template/src/lib/uploaded-assets.ts` (modified, +1/-1)
 ```diff
-@@ -363,28 +363,32 @@ export function DeviceDepth({
- 
- /**
-  * A loupe showing part of the screenshot at `zoom`× the size it appears on the
-- * device. `screenWidth` is the device's on-canvas screen width in canvas px.
-+ * device. `screenWidth` is the device's on-canvas screen width in canvas px;
-+ * `shortSide` is the lens's shorter side in canvas px.
-  */
- export function CalloutLoupe({
-   callout,
-   src,
-   screenWidth,
-+  shortSide,
-   cW,
-   accent,
-   hideEmpty,
- }: {
-   callout: Callout;
-   src: string;
-   screenWidth: number;
-+  shortSide: number;
-   cW: number;
-   accent: string;
-   hideEmpty?: boolean;
- }) {
-   const resolved = img(src);
-   const border = Math.max(3, cW * 0.009);
-   // A % radius resolves against width and height separately, so a wide lens
--  // got stretched elliptical corners. A canvas-relative px radius stays round.
--  const radius = callout.shape === "circle" ? "50%" : `${cW * 0.035}px`;
-+  // got stretched elliptical corners. A px radius from the shorter side stays
-+  // round and matches the old 14% on a square lens.
-+  const radius = callout.shape === "circle" ? "50%" : `${shortSide * 0.14}px`;
-   // An export without a screenshot shouldn't ship an empty lens.
-   if (!resolved && hideEmpty) return null;
-   return (
-```
-
-**File**: `skills/app-store-screenshots/template/src/components/editor/slide-canvas.tsx` (modified, +1/-0)
-```diff
-@@ -1424,6 +1424,7 @@ function SlideElements({
-           callout={callout}
-           src={screenshot}
-           screenWidth={deviceWidth * SCREEN_WIDTH_FRACTION}
-+          shortSide={Math.min(rect.width, rect.height)}
-           cW={cW}
-           accent={theme.accent}
-           hideEmpty={hideEmpty}
-```
-
----
-
-### Incident Patch 3: `24ffb4cd` (2026-09-26)
-**Commit Message**: fix: verify image overlays in exports without false "missing" warnings
-
-The exporter decides an image painted when its inner 60% differs from a
-blanked baseline. Overlay PNGs with a see-through middle (ring logos,
-badges) never differ there, and the iPhone mockup's middle is always
-covered by the screen layer, so any slide with an empty iPhone or such an
-overlay burned the 8s timeout and warned about a missing screenshot.
-
-Images whose own centre is transparent, and frames marked
-data-export-check="full", are now checked over their full box; images with
-no visible pixels are skipped. Overlays keep being embedded and verified
-exactly like device screenshots.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `skills/app-store-screenshots/template/src/components/editor/device-frames.tsx` (modified, +3/-0)
-```diff
-@@ -16,9 +16,12 @@ export function Phone({ src, alt = "", style, hideEmpty }: FrameProps) {
-   const resolved = img(src);
-   return (
-     <div style={{ position: "relative", aspectRatio: "1022 / 2082", ...style }}>
-+      {/* The screen layer covers the bezel's centre, so the exporter checks the
-+          whole mockup (its visible bezel) rather than its hidden middle. */}
-       <img
-         src={img("/mockup.png")}
-         alt=""
-+        data-export-check="full"
-         style={{ display: "block", width: "100%", height: "100%" }}
-         draggable={false}
-       />
-```
-
-**File**: `skills/app-store-screenshots/template/src/lib/export-render.ts` (modified, +44/-4)
-```diff
-@@ -88,6 +88,32 @@ function fingerprint(source: HTMLCanvasElement, boxes: Box[], scratch: CanvasRen
-   });
+@@ -63,7 +63,7 @@ export function cleanImportedFont(value: unknown): ImportedFont | undefined {
+   if (!value || typeof value !== "object") return undefined;
+   const font = value as Partial<ImportedFont>;
+   if (typeof font.src !== "string" || !IMPORTED_FONT_SRC.test(font.src)) return undefined;
+-  if (!font.format || !Object.hasOwn(FONT_EXTENSION, font.format)) return undefined;
++  if (typeof font.format !== "string" || !Object.hasOwn(FONT_EXTENSION, font.format)) return undefined;
+   const name = cleanFontName(font.name);
+   return { src: font.src, format: font.format, ...(name ? { name } : {}) };
  }
- 
-+// Does the image have visible pixels in its inner 60% ("opaque-center"), only
-+// nearer its edges ("edges-only"), or none at all ("empty")? Sampled from the
-+// decoded image itself at fingerprint resolution.
-+function alphaCoverage(
-+  image: HTMLImageElement,
-+  scratch: CanvasRenderingContext2D,
-+): "opaque-center" | "edges-only" | "empty" {
-+  const w = image.naturalWidth;
-+  const h = image.naturalHeight;
-+  if (!w || !h) return "opaque-center";
-+  const hasAlpha = (sx: number, sy: number, sw: number, sh: number) => {
-+    scratch.clearRect(0, 0, FINGERPRINT_SIZE, FINGERPRINT_SIZE);
-+    scratch.drawImage(image, sx, sy, sw, sh, 0, 0, FINGERPRINT_SIZE, FINGERPRINT_SIZE);
-+    const data = scratch.getImageData(0, 0, FINGERPRINT_SIZE, FINGERPRINT_SIZE).data;
-+    for (let i = 3; i < data.length; i += 4) if (data[i] > 8) return true;
-+    return false;
-+  };
-+  try {
-+    if (hasAlpha(w * 0.2, h * 0.2, w * 0.6, h * 0.6)) return "opaque-center";
-+    return hasAlpha(0, 0, w, h) ? "edges-only" : "empty";
-+  } catch {
-+    // Unreadable (e.g. tainted) images keep the original inner-box check.
-+    return "opaque-center";
-+  }
-+}
-+
- export async function renderSlide(
-   el: HTMLElement,
-   width: number,
-@@ -104,18 +130,33 @@ export async function renderSlide(
-   );
-   await Promise.all(visible.map((image) => image.decode().catch(() => undefined)));
- 
-+  const { ctx: scratch } = createContext(FINGERPRINT_SIZE, FINGERPRINT_SIZE, true);
-+
-   // Inner 60% of each visible image, in canvas pixels. The inset keeps bezels,
--  // rounded corners and overlapping frames out of the comparison.
-+  // rounded corners and overlapping frames out of the comparison. An image
-+  // whose own centre is see-through (the iPhone mockup around an empty screen,
-+  // a ring-shaped logo overlay) would look "missing" there even when painted,
-+  // so those are checked over their full box instead, as are frames marked
-+  // data-export-check="full" whose middle is covered by the screen layer.
-+  // Images with no visible pixels at all are skipped.
-   const boxes: Box[] = visible
-     .map((image) => {
-+      const coverage = alphaCoverage(image, scratch);
-+      if (coverage === "empty") return null;
-+      const inset = coverage === "opaque-center" && image.dataset.exportCheck !== "full" ? 0.2 : 0;
-       const r = image.getBoundingClientRect();
-       const left = Math.max(r.left, root.left);
-       const top = Math.max(r.top, root.top);
-       const w = (Math.min(r.right, root.right) - left) * sx;
-       const h = (Math.min(r.bottom, root.bottom) - top) * sy;
--      return { x: (left - root.left) * sx + w * 0.2, y: (top - root.top) * sy + h * 0.2, w: w * 0.6, h: h * 0.6 };
-+      return {
-+        x: (left - root.left) * sx + w * inset,
-+        y: (top - root.top) * sy + h * inset,
-+        w: w * (1 - inset * 2),
-+        h: h * (1 - inset * 2),
-+      };
-     })
--    .filter((b) => b.w >= 2 && b.h >= 2);
-+    .filter((b): b is Box => !!b && b.w >= 2 && b.h >= 2);
- 
-   const svg = await toSvg(el, {
-     width,
-@@ -126,7 +167,6 @@ export async function renderSlide(
-   });
- 
-   const { canvas, ctx } = createContext(width, height);
--  const { ctx: scratch } = createContext(FINGERPRINT_SIZE, FINGERPRINT_SIZE, true);
-   const draw = (image: HTMLImageElement) => {
-     ctx.fillStyle = backgroundColor;
-     ctx.fillRect(0, 0, width, height);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55** (2026-11-07): Untangle the template editor (@ParthJadhav)
+- **PR #54** (2026-11-07): docs: add Product Hunt launch badge (@ParthJadhav)
 - **PR #48** (2026-10-16): docs: add repository achievement badges (@ParthJadhav)
 - **PR #46** (2026-10-09): Tell the two iPhone Duo displays apart, and measure bezels faster (@ParthJadhav)
 - **PR #44** (2026-10-09): Add iPhone Duo and App Store creative targets, with Apple bezel support (@ParthJadhav)
 - **PR #43** (closed): Cursor/cloud agent 1791302156373 v0x3p (@yanclogic)
-- **PR #42** (closed): docs: give the screenshot skill one source for copy, frames, and migr… (@yanclogic)
-- **PR #40** (2026-10-15): fix(template): keep rounded magnifier corners round on wide lenses (@jeffsteinmetz)
 
 ---
 
@@ -1428,3 +1008,40 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #55 from ParthJadhav/refactor/untangle-codebase
+
+**RULE**:
+When implementing operations in `docs/retrospectives/navigation.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ParthJadhav/app-store-screenshots. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e889033b`: Merge pull request #55 from ParthJadhav/refactor/untangle-codebase. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/retrospectives/navigation.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+| Connected/isolated composition, transforms | `src/components/editor/slide-canvas.tsx`, default placements in `src/lib/layouts.ts` | Preview, thumbnails and exported crops must agree |
+| Hydration, save/retry/conflicts, undo | `src/lib/storage.ts` — `useProject`, `loadFromFile`, `saveToFile` | `/api/project` route and `project-schema.ts` |
+| Upload validation / serving | `src/app/api/{upload,upload-font}/route.ts` | `request-body.ts`, `request-guard.ts`, `uploaded-assets.ts`, `asset-files.ts`, runtime serving routes |
+| Device sizes, frames, themes, font choices | `src/lib/devices.ts`, `frame-assets.ts`, `constants.ts`, `types.ts` | Starter JSON vs. reset/fallback `defaults.ts` |
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+| Connected/isolated composition, transforms | `src/components/editor/slide-canvas.tsx` | Preview, thumbnails and exported crops must agree |
+| Hydration, save/retry/conflicts, undo | `src/lib/storage.ts` — `useProject`, `loadFromFile`, `saveToFile` | `/api/project` route and `project-validation.ts` |
+| Upload validation / serving | `src/app/api/{upload,upload-font}/route.ts` | `request-body.ts`, `request-guard.ts`, `write-asset.ts`, `serve-asset.ts`, runtime serving routes |
+| Device sizes, themes, font choices | `src/lib/constants.ts`, `types.ts` | Starter JSON vs. reset/fallback `defaults.ts` |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e889033b` are properly handled with clean fallback behavior.

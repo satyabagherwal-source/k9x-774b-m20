@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T02:57:04.388Z",
+  "last_updated": "2026-11-08T03:08:03.609Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49153,17 +49153,23 @@
       "slug": "parthjadhav-app-store-screenshots",
       "platform": "github",
       "source_url": "https://github.com/ParthJadhav/app-store-screenshots",
-      "source_version": "5386f227",
-      "content_hash": "99a266da4e43411c67269dbd35e5d0ce38ee31a23eb10cff386edac6b2885932",
+      "source_version": "e889033b",
+      "content_hash": "e68cb05d5383419a5dbeef5a4e1178a24bf6f992071ff78aec1194a75b9f66a2",
       "dossier_path": "07_PROJECT_LEARNING/parthjadhav-app-store-screenshots-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/parthjadhav-app-store-screenshots-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #55 from ParthJadhav/refactor/untangle-codebase",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:07:46.646Z",
+      "verified_at": "2026-11-08T03:07:53.538Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65517,14 +65523,19 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "971a3271",
-      "content_hash": "e00c5ccf826ac7b7758e3482956ca8fb91cce43d89c86b8349afb2bffb25a4b2",
+      "source_version": "accccc85",
+      "content_hash": "8abbb3eed6c21000ed1d760a33b6e10afb4b8ff136bcc0e8dec94256e95f1b67",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "iOS: version 1.0.1, since Apple has closed 1.0 (#1240)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ui: test sessions carry no wait",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65588,7 +65599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:39:51.883Z",
+      "verified_at": "2026-11-08T03:07:49.183Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179131,16 +179142,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
       "source_version": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
-      "content_hash": "6ce8819c213a529a606368fcd108227d9fcfc83d9297b2178bf5d0f5c4d07e43",
+      "content_hash": "85e6352a78dfee54d32b1d1d5fc5285053d6d20849e274c65ab73da2ba7d1d12",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Selective Quantization Boundary Enforcement",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Group Size Invariant for Dynamic Activation Quantization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T16:34:17.467Z",
+      "verified_at": "2026-11-08T03:08:03.585Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

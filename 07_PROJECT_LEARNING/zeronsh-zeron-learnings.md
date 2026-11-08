@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `971a3271`  
+> **Source Version**: `accccc85`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:39:50.631Z  
+> **Timestamp**: 2026-11-08T03:07:47.907Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:39:49.249Z  
+> **Harvest Timestamp**: 2026-11-08T03:07:46.428Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3459 stars
+- **Stars / Engagement**: 3473 stars
 
 ---
 
@@ -1741,11 +1741,11 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1240** (2026-11-05): **iOS: version 1.0.1, since Apple has closed 1.0**
-  *Symptoms*: TestFlight failed on the new icons because Apple refuses new builds on version 1.0: "must contain a higher version than that of the previously approved version [1.0]" and "The train version '1.0' is closed for new build submissions."  This changes `MARKETING_VERSION` to 1.0.1 for every target. Nothing else changes.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796510020&installation_model_id=425430&pr_number=1240&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1240&signature=f23d49554394e35203ac629dfc73b42be8a0e6b6c89b925686f0017c3dbe9655"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img alt="Autofix with [code]smith" src="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark-3x.png" width="190" height="28"></picture></a> <sup><a href="https://app.blacksmith.sh/zeronsh/codesmith/zeron/pr/1240?autoLogin=true&ref=codesmith_pr_footer">Open in [code]smith</a> · Need help on this PR? Tag <code>@codesmith-bot</code> with what you need.</sup>  <!-- codesmith:autofix:disabled --> <!-- /codesmith:footer -->
+- **Issue #1284** (2026-11-08): **iOS: Activity on the Sessions page, Sleep, and Settings → Activity (1.0.2)**
+  *Symptoms*: Brings Activity to the iOS app, as the desktop app has it since #1262, and bumps the app to 1.0.2 for a TestFlight build.  **What it adds (with Activity on; off by default)** - Sessions page: Pinned, then one Activity list; Working, Asleep and Archived folded at the foot (Archived shows 10, then "Show N more"). Waiting is drawn exactly as Working; a woke chat shows "Woke" with an alarm glyph; an asleep chat says when it wakes. - Sleep from a swipe or the long-press menu (In 1 Hour, In 3 Hours, This Evening, Tomorrow, Next Week, Custom… with the system date picker). Wake, and Stop Waiting for a chat waiting on a process. - Settings → Activity: the switch, folding working chats, and auto-archive of idle chats with the desktop's exclusions. While Activity is on, a working or waiting chat can't be archived. - Rust core: session rows carry the sleep state and whether a wait is on a process; `ChatIndicator::Waiting` reaches the phone; `sleepSession` and `stopWaiting` calls.  **Tests:** 6 Activity UI flows and 15 Swift unit tests pass in light and dark; `cargo test -p zeron-client` passes. The existing iOS suites show no new failures (the 7 that fail on base still fail the same way).  **What behaves differently with Activity off:** the Sessions "…" menu gains an Activity toggle and "Activity Settings…"; Settings → Sessions gains an Activity row. Nothing else.  Cherry-picked from `zeron/ios-activity` (on `zeron/zgx`) onto main; both picks applied cleanly.  🤖 Generated with [Claude C
 
-- **Issue #1239** (2026-11-05): **The new app icon on iOS and Android**
-  *Symptoms*: The new Zeron icon on mobile, to match the desktop beta.  - **iOS:** light, dark and tinted icons, and the new mark on the sign-in screen. - **Android:** flat ink on ivory in light mode and ivory on ink in dark, with the mark and tile as separate layers so launchers can animate them. The sign-in screen uses the same mark.  **Checked so far:** the iOS asset catalog compiles with `actool`. The Android XML parses and nothing still refers to the removed resources. Android hasn't been compiled locally, because this Mac has no Android SDK, so CI is the first compile for it and for the iOS Swift edit.  **Not checked:** neither icon has been seen on a real device.  Merging publishes Android, since pushes to main release it. TestFlight is a separate manual run.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796505090&installation_model_id=425430&pr_number=1239&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1239&signature=ecff1730d04c7bce682f6734fdf0389dcbe3b72e6f900b2cc7bdef540d7b056b"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img alt="Autofix with [code]smith" src
+- **Issue #1282** (2026-11-08): **edge: an oversize checkpoint is refused before it's read**
+  *Symptoms*: Engines from before checkpoint parts post a long chat's whole snapshot (35 MB and more) as one checkpoint, get 413, and post it again a few seconds later. The edge read every byte of each before refusing it.  **Change:** `/chat2/{id}/checkpoint` and `/checkpoint-part` read their bodies through `readCapped` (new `edge/src/read-capped.ts`): - a declared `content-length` past the cap gets 413 before any byte is read; - a body with no declared length is read only until it passes the cap, then cancelled; - a body within the cap is read as before.  **Checks:** `tsc` clean; `npm test` passes (new `src/read-capped.test.ts`: a declared-oversize body is refused with at most a couple of chunks pulled; an undeclared one stops just past the cap; bodies within the cap come back whole). The one flaky workerd test (`usernames` public-card rate limit) also fails intermittently on main.  **Rollback:** revert this PR (CI redeploys main), or `wrangler rollback` to the previous version.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796687297&installation_model_id=425430&pr_number=1282&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1282&signature=bcc3eee8e2c8e124733418377c8d27da5b762e6c69381531b1afa782169a76ae"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/cod
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,250 +1762,281 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `971a3271` (2026-11-05)
-**Commit Message**: iOS: version 1.0.1, since Apple has closed 1.0 (#1240)
+### Incident Patch 1: `c0695e35` (2026-11-07)
+**Commit Message**: ui: test sessions carry no wait
 
-App Store Connect refuses new builds on a version it has approved.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-**File**: `apps/ios/Zeron.xcodeproj/project.pbxproj` (modified, +8/-8)
+**File**: `crates/ui/examples/macos-resource-profile.rs` (modified, +1/-0)
 ```diff
-@@ -465,7 +465,7 @@
- 					"$(inherited)",
- 					"@executable_path/Frameworks",
- 				);
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -504,7 +504,7 @@
- 					"$(inherited)",
- 					"@executable_path/Frameworks",
- 				);
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -524,7 +524,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				GENERATE_INFOPLIST_FILE = YES;
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.tests;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -542,7 +542,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				GENERATE_INFOPLIST_FILE = YES;
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.uitests;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -562,7 +562,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				GENERATE_INFOPLIST_FILE = YES;
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.tests;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -580,7 +580,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				GENERATE_INFOPLIST_FILE = YES;
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.uitests;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -606,7 +606,7 @@
- 					"@executable_path/Frameworks",
- 					"@executable_path/../../Frameworks",
- 				);
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.LiveActivity;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SKIP_INSTALL = YES;
-@@ -633,7 +633,7 @@
- 					"@executable_path/Frameworks",
- 					"@executable_path/../../Frameworks",
- 				);
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.LiveActivity;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SKIP_INSTALL = YES;
+@@ -152,6 +152,7 @@ fn main() -> anyhow::Result<()> {
+                             terminal_activity: None,
+                             running_subagents: 0,
+                             background_tasks: Vec::new(),
++                            waiting: None,
+                             chat_id: "profile".into(),
+                             device_id: "local".into(),
+                             status: if streaming {
+```
+
+**File**: `crates/ui/src/transcript.rs` (modified, +1/-0)
+```diff
+@@ -15553,6 +15553,7 @@ mod tests {
+                             terminal_activity: None,
+                             running_subagents: 0,
+                             background_tasks: Vec::new(),
++                            waiting: None,
+                             chat_id: "chat".into(),
+                             device_id: "test".into(),
+                             status: zeron_proto::SessionStatus::Working,
 ```
 
 ---
 
-### Incident Patch 2: `2a2212c7` (2026-11-05)
-**Commit Message**: The new app icon on iOS and Android (#1239)
+### Incident Patch 2: `f6d5d063` (2026-11-06)
+**Commit Message**: Provider update rig: isolated and runnable on Linux
 
-iOS gets its light, dark and tinted icons. Android goes flat, ink on ivory in
-light mode and ivory on ink in dark, its mark and tile separate layers again so
-launchers can animate them. The sign-in screens carry the new mark.
+Every provider but the target is pinned away: discovery searches /usr/local/bin,
+and the engine checks every provider before the rig can disable any. npm comes
+from the registry, since a distribution's can't be copied, and without its builtin
+config, which says prefix=/usr/local. system_git only checks, as the README says.
+pnpm lives where pnpm setup puts it on each system. Adds Linux results, and repairs
+the README's double-encoded punctuation.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SignInScreen.kt` (modified, +6/-2)
+**File**: `scripts/provider-update-rig/README.md` (modified, +47/-15)
 ```diff
-@@ -3,6 +3,7 @@ package sh.zeron.android.ui
- import android.net.Uri
- import androidx.browser.customtabs.CustomTabsIntent
- import androidx.compose.foundation.Image
-+import androidx.compose.foundation.background
- import androidx.compose.foundation.layout.Arrangement
- import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.Spacer
-@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.draw.clip
- import androidx.compose.ui.platform.LocalContext
-+import androidx.compose.ui.res.colorResource
- import androidx.compose.ui.res.painterResource
- import androidx.compose.ui.text.style.TextAlign
- import androidx.compose.ui.unit.dp
-@@ -49,9 +51,11 @@ fun SignInScreen(model: AppModel) {
-         verticalArrangement = Arrangement.Center,
-     ) {
-         Image(
--            painterResource(R.mipmap.ic_launcher_foreground),
-+            painterResource(R.drawable.ic_launcher_foreground),
-             null,
--            Modifier.size(148.dp).clip(MaterialShapes.Cookie12Sided.toShape()),
-+            Modifier.size(148.dp)
-+                .clip(MaterialShapes.Cookie12Sided.toShape())
-+                .background(colorResource(R.color.icon_background)),
-         )
-         Spacer(Modifier.height(32.dp))
-         Text("Zeron", style = MaterialTheme.typography.displayMedium)
+@@ -2,16 +2,18 @@
+ 
+ Proves that updating an agent CLI from Zeron updates it through whatever
+ installed it (npm, pnpm, bun, Homebrew, WinGet, Scoop, the CLI's own
+-updaterâ€¦), on a throwaway engine that can't touch anything real.
++updater…), on a throwaway engine that can't touch anything real.
+ 
+ Each run starts the real `zeron-engine` binary with:
+ 
+ - its own port (`ZERON_IPC_PORT`, never 27654) and data dir (`ZERON_DATA_DIR`),
+ - a fake `HOME` and XDG dirs inside the run's folder,
+ - a Finder-like `PATH` (`/usr/bin:/bin:/usr/sbin:/sbin` plus the sandbox's
+   node), and `ZERON_NO_LOGIN_SHELL=1`, so it can't borrow the shell's PATH,
+-- every provider disabled except the one under test,
+-- that provider pointed at a sandboxed install (`PI_EXECUTABLE=â€¦` and so on).
++- every provider disabled except the one under test, and pinned to a path
++  that doesn't exist (discovery also searches `/usr/local/bin`, and the engine
++  checks every provider as it starts, before the rig can disable any),
++- that provider pointed at a sandboxed install (`PI_EXECUTABLE=…` and so on).
+ 
+ It then runs `CheckHarnessUpdates`, then `ApplyHarnessUpdate` while watching
+ `WatchHarnessUpdates`, printing each phase with a timestamp, and finally
+@@ -34,8 +36,9 @@ cargo build --manifest-path scripts/provider-update-rig/rigclient/Cargo.toml
+ 
+ ## macOS and Linux
+ 
+-Needs `node` and `bun` on PATH (they're copied, never modified) and network
+-access to registry.npmjs.org and cursor.com.
++Needs `node`, `npm` and `bun` on PATH (`node` and `bun` are copied, nothing is
++modified) and network access to registry.npmjs.org and cursor.com. The rig's
++own promises are tested by `python3 scripts/provider-update-rig/rig_test.py`.
+ 
+ ```sh
+ export RIG_DIR=$(mktemp -d)/rig
+@@ -55,11 +58,11 @@ minutes per engine. Results on macOS (Apple silicon, 2026-11-06):
+ | Scenario | What it is | before | after |
+ |---|---|---|---|
+ | `npm_nvm` | Pi installed by an nvm Node's npm; no nvm on PATH | updated 1.4.0â†’1.5.0 in 4.2 s | updated in 5.1 s |
+-| `pnpm_global` | Pi from `pnpm add -g`; no `PNPM_HOME` in the engine's env | **failed in 0.5 s**: "Run pnpm setupâ€¦" | updated in 3.1 s |
++| `pnpm_global` | Pi from `pnpm add -g`; no `PNPM_HOME` in the engine's env | **failed in 0.5 s**: "Run pnpm setup…" | updated in 3.1 s |
+ | `bun_global` | Pi from `bun add -g` | **failed**: bun wrote a second copy to `~/.cache/.bun` (it follows `XDG_CACHE_HOME`), the launcher stayed on 1.4.0 | updated in 1.5 s |
+ | `hermes_channel` | Hermes on a release channel (fake, real `--check` wording) | **check failed**: "no recognizable verdict" | updated in 0.06 s |
+ | `grok_fails` | updater touches its install, then fails (fake) | failed, then a second view opened and **the error was gone in 0.12 s** (back to "available") | failed; still "failed" with its reason after a second view opened |
+-| `grok_prompt` | updater asks `[y/N]` and waits (fake) | **stuck "installing"** (it would have waited 30 minutes) | failed in 10.0 s: grok stopped to ask "â€¦Replace it? [y/N]" |
++| `grok_prompt` | updater asks `[y/N]` and waits (fake) | **stuck "installing"** (it would have waited 30 minutes) | failed in 10.0 s: grok stopped to ask "…Replace it? [y/N]" |
+ | `cursor_native` | cursor-agent two releases behind (fake updater, real release feed) | "manual-action-required", no update offered | offered 2026.11.05, updated in 0.25 s |
+ 
+ ### Linux only (personal-metal)
+@@ -83,13 +86,42 @@ minutes per engine. Results on macOS (Apple silicon, 2026-11-06):
+    ```
+    Expect `canApply=False` and `manual=sudo apt install --only-upgrade git`
+    (or `sudo dnf upgrade git` / `sudo pacman -S git`). The `before` engine
+-   says `canApply=True` (it would have run the CLI's own updater).
++   says `canApply=True` and `failed`: `git` has no `update`, like a CLI whose
++   distribution stripped its updater.
+ 4. If Linuxbrew is installed and has any formula with a `bin/` (for
+    example `jq`), check it read-only: start the `after` engine as in the
+    rig, with `GROK_EXECUTABLE=/home/linuxbrew/.linuxbrew/bin/jq`, and run
+-   `CheckHarnessUpdates`. Expect no "manages â€¦, not â€¦" error (the brew
++   `CheckHarnessUpdates`. Expect no "manages …, not …" error (the brew
+    owns its prefix). Don't apply.
+ 
++On a shared machine, run every rig command inside a read-only root, so a
++mistake can't reach anything real and `pkill` sees only the rig's processes:
++
++```sh
++bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --bind "$R" "$R" \
++  --unshare-pid --die-with-parent --new-session <command>
++```
++
++### Results on Linux (personal-metal, Ubuntu, 2026-11-06)
++
++`before` is `zeron/zgx` 48a0dcbc, `after` this branch. Both ran in that read-only
++root, and `after` is the build with the system-package fix. Times are to the
++APPLY RESULT.
++
++| Scenario | before | after |
++|---|---|---|
++| Unit tests | n/a | `harness_updates` 83 pass, `cmd_shim` 6 pass. On the pushed branch 2 failed on Linux: one read this machine's real `/
 ```
 
-**File**: `apps/android/app/src/main/res/drawable/ic_launcher_foreground.xml` (added, +13/-0)
+**File**: `scripts/provider-update-rig/rig.py` (modified, +50/-20)
 ```diff
-@@ -0,0 +1,13 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<!-- Written by scripts/make-app-icons.py. -->
-+<vector xmlns:android="http://schemas.android.com/apk/res/android"
-+    android:width="108dp"
-+    android:height="108dp"
-+    android:viewportWidth="108"
-+    android:viewportHeight="108">
-+    <group android:translateX="18.0013" android:translateY="18.0013" android:scaleX="0.07031" android:scaleY="0.07031">
-+        <path
-+            android:fillColor="@color/icon_foreground"
-+            android:pathData="M289.41,369.31 L289.36,384.72 L289.24,390.73 L289.04,395.26 L288.75,399.03 L288.38,402.30 L287.92,405.20 L287.38,407.83 L286.76,410.22 L286.05,412.42 L285.25,414.44 L284.36,416.32 L283.38,418.06 L282.30,419.67 L281.13,421.16 L279.85,422.54 L278.47,423.82 L276.98,424.99 L275.37,426.07 L273.63,427.05 L271.76,427.94 L269.73,428.74 L267.53,429.45 L265.14,430.07 L262.51,430.61 L259.61,431.07 L256.34,431.44 L252.58,431.73 L248.04,431.93 L242.03,432.05 L226.62,432.09 L211.21,432.05 L205.20,431.93 L200.67,431.73 L196.90,431.44 L193.64,431.07 L190.73,430.61 L188.11,430.07 L185.72,429.45 L183.52,428.74 L181.49,427.94 L179.61,427.05 L177.88,426.07 L176.27,424.99 L174.77,423.82 L173.39,422.54 L172.12,421.16 L170.94,419.67 L169.87,418.06 L168.89,416.32 L168.00,414.44 L167.20,412.42 L166.49,410.22 L165.86,407.83 L165.32,405.20 L164.87,402.30 L164.50,399.03 L164.21,395.26 L164.00,390.73 L163.88,384.72 L163.84,369.31 L163.88,353.90 L164.00,347.89 L164.21,343.36 L164.50,339.59 L164.87,336.33 L165.32,333.42 L165.86,330.80 L166.49,328.40 L167.20,326.21 L168.00,324.18 L168.89,322.30 L169.87,320.56 L170.94,318.95 L172.12,317.46 L173.39,316.08 L174.77,314.80 L176.27,313.63 L177.88,312.56 L179.61,311.57 L181.49,310.68 L183.52,309.89 L185.72,309.17 L188.11,308.55 L190.73,308.01 L193.64,307.56 L196.90,307.19 L200.67,306.90 L205.20,306.69 L211.21,306.57 L226.62,306.53 L242.03,306.57 L248.04,306.69 L252.58,306.90 L256.34,307.19 L259.61,307.56 L262.51,308.01 L265.14,308.55 L267.53,309.17 L269.73,309.89 L271.76,310.68 L273.63,311.57 L275.37,312.56 L276.98,313.63 L278.47,314.80 L279.85,316.08 L281.13,317.46 L282.30,318.95 L283.38,320.56 L284.36,322.30 L285.25,324.18 L286.05,326.21 L286.76,328.40 L287.38,330.80 L287.92,333.42 L288.38,336.33 L288.75,339.59 L289.04,343.36 L289.24,347.89 L289.36,353.90 Z M432.09,369.31 L432.05,384.72 L431.93,390.73 L431.73,395.26 L431.44,399.03 L431.07,402.30 L430.61,405.20 L430.07,407.83 L429.45,410.22 L428.74,412.42 L427.94,414.44 L427.05,416.32 L426.07,418.06 L424.99,419.67 L423.82,421.16 L422.54,422.54 L421.16,423.82 L419.67,424.99 L418.06,426.07 L416.32,427.05 L414.44,427.94 L412.42,428.74 L410.22,429.45 L407.83,430.07 L405.20,430.61 L402.30,431.07 L399.03,431.44 L395.26,431.73 L390.73,431.93 L384.72,432.05 L369.31,432.09 L353.90,432.05 L347.89,431.93 L343.36,431.73 L339.59,431.44 L336.33,431.07 L333.42,430.61 L330.80,430.07 L328.40,429.45 L326.21,428.74 L324.18,427.94 L322.30,427.05 L320.56,426.07 L318.95,424.99 L317.46,423.82 L316.08,422.54 L314.80,421.16 L313.63,419.67 L312.56,418.06 L311.57,416.32 L310.68,414.44 L309.89,412.42 L309.17,410.22 L308.55,407.83 L308.01,405.20 L307.56,402.30 L307.19,399.03 L306.90,395.26 L306.69,390.73 L306.57,384.72 L306.53,369.31 L306.57,353.90 L306.69,347.89 L306.90,343.36 L307.19,339.59 L307.56,336.33 L308.01,333.42 L308.55,330.80 L309.17,328.40 L309.89,326.21 L310.68,324.18 L311.57,322.30 L312.56,320.56 L313.63,318.95 L314.80,317.46 L316.08,316.08 L317.46,314.80 L318.95,313.63 L320.56,312.56 L322.30,311.57 L324.18,310.68 L326.21,309.89 L328.40,309.17 L330.80,308.55 L333.42,308.01 L336.33,307.56 L339.59,307.19 L343.36,306.90 L347.89,306.69 L353.90,306.57 L369.31,306.53 L384.72,306.57 L390.73,306.69 L395.26,306.90 L399.03,307.19 L402.30,307.56 L405.20,308.01 L407.83,308.55 L410.22,309.17 L412.42,309.89 L414.44,310.68 L416.32,311.57 L418.06,312.56 L419.67,313.63 L421.16,314.80 L422.54,316.08 L423.82,317.46 L424.99,318.95 L426.07,320.56 L427.05,322.30 L427.94,324.18 L428.74,326.21 L429.45,328.40 L430.07,330.80 L430.61,333.42 L431.07,336.33 L431.44,339.59 L431.73,343.36 L431.93,347.89 L432.05,353.90 Z M574.78,369.31 L574.74,384.72 L574.62,390.73 L574.41,395.26 L574.13,399.03 L573.75,402.30 L573.30,405.20 L572.76,407.83 L572.14,410.22 L571.43,412.42 L570.63,414.44 L569.74,416.32 L568.76,418.06 L567.68,419.67 L566.51,421.16 L565.23,422.54 L563.85,423.82 L562.36,424.99 L560.75,426.07 L559.01,427.05 L557.13,427.94 L555.11,428.74 L552.91,429.45 L550.51,430.07 L547.89,430.61 L544.98,431.07 L541.72,431.44 L537.95,431.73 L533.42,431.93 L527.41,432.05 L512.00,432.09 L496.59,432.05 L490.58,431.93 L486.05,431.73 L482.28,431.44 L479.02,431.07 L476.11,430.61 L473.49,430.07 L471.09,429.45 L468.89,428.74 L466.87,427.94 L464.99,427.05 L463.25,426.07 L461.64,424.99 L460.15,423.82 L458.77,422.54 L457.49,421.16 L456.32,419.67 L455.24,418.06 L454.26,416.32 L453.37,414.44 L452.57,412.42 L451.86,410.22 L451.24,407.83 L450.70,405.20 L450.25,402.30 L449.87,399.03 L449.59,395.26 L449.38
+@@ -22,6 +22,10 @@
+ PI_OLD = "1.4.0"
+ ALL = ["claude-code", "codex", "cursor", "devin", "grok", "hermes", "pi", "opencode",
+        "antigravity", "muse", "fx"]
++PINS = {"claude-code": "CLAUDE_CODE_EXECUTABLE", "codex": "CODEX_EXECUTABLE", "cursor": "CURSOR_SDK_SHIM_EXECUTABLE",
++        "devin": "DEVIN_EXECUTABLE", "grok": "GROK_EXECUTABLE", "hermes": "HERMES_EXECUTABLE", "pi": "PI_EXECUTABLE",
++        "opencode": "OPENCODE_EXECUTABLE", "antigravity": "ANTIGRAVITY_ACP_EXECUTABLE", "muse": "MUSE_EXECUTABLE",
++        "fx": "FX_EXECUTABLE"}
+ 
+ 
+ def free_port():
+@@ -54,9 +58,14 @@ def npm_nvm(home):
+     return "pi", {"PI_EXECUTABLE": f"{prefix}/bin/pi"}, f"{prefix}/bin/pi", 240, {}
+ 
+ 
++def pnpm_home_under(platform=sys.platform):
++    """Where `pnpm setup` puts PNPM_HOME on this system, under HOME."""
++    return "Library/pnpm" if platform == "darwin" else ".local/share/pnpm"
++
++
+ def pnpm_global(home):
+     """Pi installed with `pnpm add -g` (PNPM_HOME set in the user's shell only)."""
+-    pnpm_home = os.path.join(home, "Library/pnpm")
++    pnpm_home = os.path.join(home, pnpm_home_under())
+     os.makedirs(pnpm_home)
+     env = {"HOME": home, "PNPM_HOME": pnpm_home, "PATH": f"{pnpm_home}:{SYSNODE}:{GUI_PATH}"}
+     run([PNPM, "add", "-g", f"{PI}@{PI_OLD}"], env)
+@@ -145,7 +154,7 @@ def cursor_native(home):
+ def system_git(home):
+     """Linux: a CLI the distribution's package manager owns. `git` stands in
+     (its `version` answers like Grok's); nothing is applied, only checked."""
+-    return "grok", {"GROK_EXECUTABLE": "/usr/bin/git"}, "/usr/bin/git", 3, {}
++    return "grok", {"GROK_EXECUTABLE": "/usr/bin/git"}, "/usr/bin/git", 3, {"check_only": True}
+ 
+ 
+ SCENARIOS = {f.__name__: f for f in [npm_nvm, pnpm_global, bun_global, hermes_channel,
+@@ -157,6 +166,24 @@ def client(*args, timeout=None):
+     return r.stdout.strip() + (("\n" + r.stderr.strip()) if r.returncode else "")
+ 
+ 
++def engine_env(home, data, port, path, harness, extra_env, root):
++    """The engine's whole environment. Every provider but the target is pinned
++    to a path that doesn't exist: discovery also searches fixed places such as
++    /usr/local/bin, and the engine checks every provider as it starts, before
++    the rig can disable any. A target with no pin of its own (cursor_native) is
++    found by discovery under the fake HOME."""
++    pins = {var: os.path.join(root, "not-installed", h) for h, var in PINS.items() if h != harness}
++    return {
++        "HOME": home, "PATH": path, "TMPDIR": os.environ.get("TMPDIR", "/tmp"),
++        "ZERON_DATA_DIR": data, "ZERON_IPC_PORT": str(port), "ZERON_NO_LOGIN_SHELL": "1",
++        "ZERON_WORKOS_CLIENT_ID": "", "ZERON_EDGE_URL": "http://127.0.0.1:1",
++        "ZERON_DISABLE_NOTIFICATIONS": "1", "ZERON_AUTO_UPDATE": "0",
++        "XDG_CONFIG_HOME": f"{home}/.config", "XDG_DATA_HOME": f"{home}/.local/share",
++        "XDG_CACHE_HOME": f"{home}/.cache", "RUST_LOG": "warn",
++        **pins, **extra_env,
++    }
++
++
+ def scenario(engine, label, name):
+     root = os.path.join(S, "runs", f"{label}-{name}")
+     shutil.rmtree(root, ignore_errors=True)
+@@ -167,15 +194,7 @@ def scenario(engine, label, name):
+     print(f"\n=== {label} :: {name} ({harness}) — setup {time.time()-t0:.1f}s")
+     port = free_port()
+     path = ":".join(p for p in [extra.get("PATH_EXTRA"), SYSNODE, GUI_PATH] if p)
+-    env = {
+-        "HOME": home, "PATH": path, "TMPDIR": os.environ.get("TMPDIR", "/tmp"),
+-        "ZERON_DATA_DIR": data, "ZERON_IPC_PORT": str(port), "ZERON_NO_LOGIN_SHELL": "1",
+-        "ZERON_WORKOS_CLIENT_ID": "", "ZERON_EDGE_URL": "http://127.0.0.1:1",
+-        "ZERON_DISABLE_NOTIFICATIONS": "1", "ZERON_AUTO_UPDATE": "0",
+-        "XDG_CONFIG_HOME": f"{home}/.config", "XDG_DATA_HOME": f"{home}/.local/share",
+-        "XDG_CACHE_HOME": f"{home}/.cache", "RUST_LOG": "warn",
+-        **extra_env,
+-    }
++    env = engine_env(home, data, port, path, harness, extra_env, root)
+     log = open(os.path.join(root, "engine.log"), "w")
+     proc = subprocess.Popen([engine], env=env, cwd=root, stdout=log, stderr=log, start_new_session=True)
+     try:
+@@ -192,6 +211,10 @@ def scenario(engine, label, name):
+                   f"error={(row.get('error') or {}).get('message')} manual={row.get('manualCommand')}")
+         except Exception:
+             print(f"check ({time.time()-t:.1f}s): {out}")
++        if extra.get("check_only"):
++            print("status after the check:")
++            print(client("watch", str(port), data, "WatchHarnessUpdates", "{}", "1", harness))
++            return
+         print(f"apply (watching {secs}s):")
+         print(client("applywatch", str(port), data, harness, str(secs)))
+         if extra.get("view_after"):
+@@ -215,27 +238,34 @@ def scenario(engine, label, name):
+ 
+ 
+ def setup():
+-    """Copies of node+npm (from the `node` on PATH) and bun, and pnpm installed
+-    with that npm, all under RIG_DIR/tools. Reads the real tools, writes only there."""
++    """Copies of node and 
 ```
 
-**File**: `apps/android/app/src/main/res/drawable/ic_launcher_inset.xml` (removed, +0/-4)
+**File**: `scripts/provider-update-rig/rig_test.py` (added, +36/-0)
 ```diff
-@@ -1,4 +0,0 @@
--<?xml version="1.0" encoding="utf-8"?>
--<inset xmlns:android="http://schemas.android.com/apk/res/android"
--    android:drawable="@mipmap/ic_launcher_foreground"
--    android:inset="-6%" />
-```
-
-**File**: `apps/android/app/src/main/res/mipmap-anydpi/ic_launcher.xml` (modified, +2/-1)
-```diff
-@@ -1,5 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-     <background android:drawable="@color/icon_background" />
--    <foreground android:drawable="@drawable/ic_launcher_inset" />
-+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
- </adaptive-icon>
-```
-
-**File**: `apps/android/app/src/main/res/values-night/colors.xml` (modified, +2/-0)
-```diff
-@@ -1,4 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <resources>
-     <color name="launch_background">#060606</color>
-+    <color name="icon_background">#141418</color>
-+    <color name="icon_foreground">#F4F1EA</color>
- </resources>
-```
-
-**File**: `apps/android/app/src/main/res/values/colors.xml` (modified, +2/-1)
-```diff
-@@ -1,5 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <resources>
-     <color name="launch_background">#F3F3F5</color>
--    <color name="icon_background">#12052B</color>
-+    <color name="icon_background">#F4F1EA</color>
-+    <color name="icon_foreground">#141418</color>
- </resources>
-```
-
-**File**: `apps/android/icons/zeron.svg` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 940" fill="#000000"><rect x="0" y="600" width="100" height="100" rx="16"/><rect x="0" y="720" width="100" height="100" rx="16"/><rect x="240" y="840" width="100" height="100" rx="16"/><rect x="240" y="720" width="100" height="100" rx="16"/><rect x="120" y="840" width="100" height="100" rx="16"/><rect x="120" y="600" width="100" height="100" rx="16"/><rect x="240" y="600" width="100" height="100" rx="16"/><rect x="0" y="480" width="100" height="100" rx="16"/><rect x="0" y="360" width="100" height="100" rx="16"/><rect x="480" y="840" width="100" height="100" rx="16"/><rect x="480" y="720" width="100" height="100" rx="16"/><rect x="120" y="360" width="100" height="100" rx="16"/><rect x="120" y="240" width="100" height="100" rx="16"/><rect x="240" y="360" width="100" height="100" rx="16"/><rect x="600" y="720" width="100" height="100" rx="16"/><rect x="480" y="600" width="100" height="100" rx="16"/><rect x="360" y="360" width="100" height="100" rx="16"/><rect x="240" y="240" width="100" height="100" rx="16"/><rect x="600" y="600" width="100" height="100" rx="16"/><rect x="720" y="600" width="100" height="100" rx="16"/><rect x="720" y="480" width="100" height="100" rx="16"/><rect x="240" y="120" width="100" height="100" rx="16"/><rect x="600" y="380" width="100" height="100" rx="16"/><rect x="720" y="240" width="100" height="100" rx="16"/><rect x="720" y="0" width="100" height="100" rx="16"/><rect x="480" y="240" width="100" height="100" rx="16"/><rect x="480" y="0" width="100" height="100" rx="16"/><rect x="120" y="480" width="100" height="100" rx="16"/><rect x="240" y="480" width="100" height="100" rx="16"/><rect x="360" y="840" width="100" height="100" rx="16"/><rect x="360" y="720" width="100" height="100" rx="16"/><rect x="360" y="600" width="100" height="100" rx="16"/><rect x="360" y="480" width="100" height="100" rx="16"/><rect x="120" y="720" width="100" height="100" rx="16"/></svg>
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 780"><path fill="#000000" d="M167.41,247.31 L167.36,262.72 L167.24,268.73 L167.04,273.26 L166.75,277.03 L166.38,280.30 L165.92,283.20 L165.38,285.83 L164.76,288.22 L164.05,290.42 L163.25,292.44 L162.36,294.32 L161.38,296.06 L160.30,297.67 L159.13,299.16 L157.85,300.54 L156.47,301.82 L154.98,302.99 L153.37,304.07 L151.63,305.05 L149.76,305.94 L147.73,306.74 L145.53,307.45 L143.14,308.07 L140.51,308.61 L137.61,309.07 L134.34,309.44 L130.58,309.73 L126.04,309.93 L120.03,310.05 L104.62,310.09 L89.21,310.05 L83.20,309.93 L78.67,309.73 L74.90,309.44 L71.64,309.07 L68.73,308.61 L66.11,308.07 L63.72,307.45 L61.52,306.74 L59.49,305.94 L57.61,305.05 L55.88,304.07 L54.27,302.99 L52.77,301.82 L51.39,300.54 L50.12,299.16 L48.94,297.67 L47.87,296.06 L46.89,294.32 L46.00,292.44 L45.20,290.42 L44.49,288.22 L43.86,285.83 L43.32,283.20 L42.87,280.30 L42.50,277.03 L42.21,273.26 L42.00,268.73 L41.88,262.72 L41.84,247.31 L41.88,231.90 L42.00,225.89 L42.21,221.36 L42.50,217.59 L42.87,214.33 L43.32,211.42 L43.86,208.80 L44.49,206.40 L45.20,204.21 L46.00,202.18 L46.89,200.30 L47.87,198.56 L48.94,196.95 L50.12,195.46 L51.39,194.08 L52.77,192.80 L54.27,191.63 L55.88,190.56 L57.61,189.57 L59.49,188.68 L61.52,187.89 L63.72,187.17 L66.11,186.55 L68.73,186.01 L71.64,185.56 L74.90,185.19 L78.67,184.90 L83.20,184.69 L89.21,184.57 L104.62,184.53 L120.03,184.57 L126.04,184.69 L130.58,184.90 L134.34,185.19 L137.61,185.56 L140.51,186.01 L143.14,186.55 L145.53,187.17 L147.73,187.89 L149.76,188.68 L151.63,189.57 L153.37,190.56 L154.98,191.63 L156.47,192.80 L157.85,194.08 L159.13,195.46 L160.30,196.95 L161.38,198.56 L162.36,200.30 L163.25,202.18 L164.05,204.21 L164.76,206.40 L165.38,208.80 L165.92,211.42 L166.38,214.33 L166.75,217.59 L167.04,221.36 L167.24,225.89 L167.36,231.90 Z M310.09,247.31 L310.05,262.72 L309.93,268.73 L309.73,273.26 L309.44,277.03 L309.07,280.30 L308.61,283.20 L308.07,285.83 L307.45,288.22 L306.74,290.42 L305.94,292.44 L305.05,294.32 L304.07,296.06 L302.99,297.67 L301.82,299.16 L300.54,300.54 L299.16,301.82 L297.67,302.99 L296.06,304.07 L294.32,305.05 L292.44,305.94 L290.42,306.74 L288.22,307.45 L285.83,308.07 L283.20,308.61 L280.30,309.07 L277.03,309.44 L273.26,309.73 L268.73,309.93 L262.72,310.05 L247.31,310.09 L231.90,310.05 L225.89,309.93 L221.36,309.73 L217.59,309.44 L214.33,309.07 L211.42,308.61 L208.80,308.07 L206.40,307.45 L204.21,306.74 L202.18,305.94 L200.30,305.05 L198.56,304.07 L196.95,302.99 L195.46,301.82 L194.08,300.54 L192.80,299.16 L191.63,297.67 L190.56,296.06 L189.57,294.32 L188.68,292.44 L187.89,290.42 L187.17,288.22 L186.55,285.83 L186.01,283.20 L185.56,280.30 L185.19,277.03 L184.90,273.26 L184.69,268.73 L184.57,262.72 L184.53,247.31 L184.57,231.90 L184.69,225.89 L184.90,221.36 L185.19,217.59 L185.56,214.33 L186.01,211.42 L186.55,208.80 L187.17,206.40 L187.89,204.21 L188.68,202.18 L189.57,200.30 L190.56,198.56 L191.63,196.95 L192.80,195.46 L194.08,194.08 L195.46,192.80 L196.95,191.63 L198.56,190
-```
-
-**File**: `apps/ios/Zeron/Assets.xcassets/AppIcon.appiconset/Contents.json` (modified, +28/-1)
-```diff
-@@ -5,7 +5,34 @@
-       "idiom" : "universal",
-       "platform" : "ios",
-       "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [
-+        {
-+          "appearance" : "luminosity",
-+          "value" : "dark"
-+        }
-+      ],
-+      "filename" : "AppIcon1024-dark.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [
-+        {
-+          "appearance" : "luminosity",
-+          "value" : "tinted"
-+        }
-+      ],
-+      "filename" : "AppIcon1024-tinted.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-     }
-   ],
--  "info" : { "author" : "xcode", "version" : 1 }
-+  "info" : {
-+    "author" : "xcode",
-+    "version" : 1
-+  }
- }
+@@ -0,0 +1,36 @@
++#!/usr/bin/env python3
++"""The rig's own promises: python3 scripts/provider-update-rig/rig_test.py"""
++import os, sys, tempfile, unittest
++
++os.environ.setdefault("RIG_DIR", tempfile.gettempdir())
++os.environ.setdefault("RIGCLIENT", "/nonexistent/rigclient")
++sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
++import rig
++
++
++class RigIsolation(unittest.TestCase):
++    def test_every_other_provider_is_pinned_inside_the_run(self):
++        env = rig.engine_env("/run/home", "/run/data", 1234, "/usr/bin", "pi",
++                             {"PI_EXECUTABLE": "/run/home/pi"}, "/run")
++        self.assertEqual(env["PI_EXECUTABLE"], "/run/home/pi")
++        self.assertEqual(sorted(rig.PINS), sorted(rig.ALL))
++        for harness, var in rig.PINS.items():
++            if harness != "pi":
++                self.assertTrue(env[var].startswith("/run/not-installed/"), var)
++
++    def test_a_target_found_by_discovery_is_not_pinned_away(self):
++        env = rig.engine_env("/run/home", "/run/data", 1234, "/usr/bin", "cursor", {}, "/run")
++        self.assertNotIn(rig.PINS["cursor"], env)
++        self.assertIn(rig.PINS["claude-code"], env)
++
++    def test_pnpm_lives_where_pnpm_setup_puts_it(self):
++        self.assertEqual(rig.pnpm_home_under("linux"), ".local/share/pnpm")
++        self.assertEqual(rig.pnpm_home_under("darwin"), "Library/pnpm")
++
++    def test_the_system_package_row_never_applies(self):
++        with tempfile.TemporaryDirectory() as home:
++            self.assertTrue(rig.system_git(home)[4].get("check_only"))
++
++
++if __name__ == "__main__":
++    unittest.main()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1240** (2026-11-05): iOS: version 1.0.1, since Apple has closed 1.0 (@wingleeio)
-- **PR #1239** (2026-11-05): The new app icon on iOS and Android (@wingleeio)
-- **PR #1236** (closed): zgx: the model picker's reasoning and stars from the keys (@gaelcado)
-- **PR #1231** (closed): zgx sidebar: labels that don't fit fade, and the foot's rows share one edge (@gaelcado)
-- **PR #1229** (closed): zgx: the title bar's controls sit on the traffic lights' line (@gaelcado)
-- **PR #1228** (closed): zgx: a test that a new chat's composer holds its place as the page resizes (@gaelcado)
+- **PR #1284** (2026-11-08): iOS: Activity on the Sessions page, Sleep, and Settings → Activity (1.0.2) (@wingleeio)
+- **PR #1282** (2026-11-08): edge: an oversize checkpoint is refused before it's read (@wingleeio)
+- **PR #1280** (2026-11-07): edge: a chat2 checkpoint past one request's most can come in parts (@wingleeio)
+- **PR #1274** (2026-11-07): Add iOS App Store link to landing page (@SinaKhalili)
+- **PR #1271** (2026-11-07): Zeron 0.2.138 (@wingleeio)
+- **PR #1264** (2026-11-06): Limit background Git scans to viewed chats (@xzebra)
 
 ---
 
@@ -2025,42 +2056,28 @@ Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS: version 1.0.1, since Apple has closed 1.0 (#1240)
+## X. ui: test sessions carry no wait
 
 **RULE**:
-When implementing operations in `apps/ios/Zeron.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ui/examples/macos-resource-profile.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `971a3271`: iOS: version 1.0.1, since Apple has closed 1.0 (#1240). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0695e35`: ui: test sessions carry no wait. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/ios/Zeron.xcodeproj/project.pbxproj`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ui/examples/macos-resource-profile.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
+                            waiting: None,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `971a3271` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0695e35` are properly handled with clean fallback behavior.

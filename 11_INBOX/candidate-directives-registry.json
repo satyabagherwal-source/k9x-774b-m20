@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T02:56:53.399Z",
+  "last_updated": "2026-11-08T03:08:03.718Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4116,6 +4116,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kuddev-pebrel"
+    },
+    {
+      "id": "CD-5JWL",
+      "directive_title": "Runtime Dependency Version Locking for Non-Standard Formats",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "source_commit": "hf-nvidia-de",
+      "date_staged": "2026-11-08",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4"
     }
   ]
 }

@@ -8195,3 +8195,6 @@ Every entry in this ledger must capture:
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `bb183265` | Multi-dimensional audit evidence | 2026-11-08T02:56:53.391Z |
 | `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-08T02:57:03.672Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1b0f754b` | Multi-dimensional audit evidence | 2026-11-08T02:57:04.485Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `accccc85` | Multi-dimensional audit evidence | 2026-11-08T03:07:49.302Z |
+| `learn-github-parthjadhav-app-store-screenshots` | `https://github.com/ParthJadhav/app-store-screenshots` | `e889033b` | Multi-dimensional audit evidence | 2026-11-08T03:07:53.665Z |
+| `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T03:08:03.703Z |

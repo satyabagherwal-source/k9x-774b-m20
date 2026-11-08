@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T22:53:02.650Z",
-    "lastVerified": "2026-11-07T22:53:02.650Z",
+    "lastChecked": "2026-11-08T03:07:52.854Z",
+    "lastVerified": "2026-11-08T03:07:52.854Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T02:57:07.077Z",
-    "lastVerified": "2026-11-08T02:57:07.077Z",
+    "lastChecked": "2026-11-08T03:08:06.326Z",
+    "lastVerified": "2026-11-08T03:08:06.326Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T02:32:49.957Z",
+    "lastChecked": "2026-11-08T03:07:57.781Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T02:32:49.957Z"
+    "lastVerified": "2026-11-08T03:07:57.781Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -750,9 +750,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-06T20:59:18.305Z",
+    "lastChecked": "2026-11-08T03:07:55.429Z",
     "revisionIdentifier": "222b2e44",
-    "lastVerified": "2026-11-06T20:59:18.305Z"
+    "lastVerified": "2026-11-08T03:07:55.429Z"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -2616,14 +2616,14 @@
     "officialUrl": "https://github.com/zeronsh/zeron",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T23:39:49.249Z",
-    "lastVerified": "2026-11-05T23:39:49.249Z",
+    "lastChecked": "2026-11-08T03:07:46.428Z",
+    "lastVerified": "2026-11-08T03:07:46.428Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "e00c5ccf826ac7b7758e3482956ca8fb91cce43d89c86b8349afb2bffb25a4b2",
+    "contentHash": "8abbb3eed6c21000ed1d760a33b6e10afb4b8ff136bcc0e8dec94256e95f1b67",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4969,9 +4969,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-06T21:59:24.975Z",
+    "lastChecked": "2026-11-08T03:07:50.403Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-06T21:59:24.975Z"
+    "lastVerified": "2026-11-08T03:07:50.403Z"
   },
   "skyzh-mini-lsm": {
     "name": "skyzh/mini-lsm",
@@ -9225,11 +9225,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "parthjadhav-app-store-screenshots": {
-    "name": "app-store-screenshots",
+    "name": "ParthJadhav/app-store-screenshots",
     "officialUrl": "https://github.com/ParthJadhav/app-store-screenshots",
-    "lastChecked": "2026-11-05T02:25:42.902Z",
-    "revisionIdentifier": "5386f227",
-    "lastVerified": "2026-11-05T02:25:42.902Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-08T03:07:51.051Z",
+    "lastVerified": "2026-11-08T03:07:51.051Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-parthjadhav-app-store-screenshots",
+    "contentHash": "e68cb05d5383419a5dbeef5a4e1178a24bf6f992071ff78aec1194a75b9f66a2",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openmoss-team-moss-image-base": {
     "name": "OpenMOSS-Team/MOSS-Image-Base",
@@ -13769,13 +13779,13 @@
     "officialUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T16:34:16.980Z",
-    "lastVerified": "2026-11-04T16:34:16.980Z",
+    "lastChecked": "2026-11-08T03:07:45.462Z",
+    "lastVerified": "2026-11-08T03:07:45.462Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-    "contentHash": "6ce8819c213a529a606368fcd108227d9fcfc83d9297b2178bf5d0f5c4d07e43",
-    "promotedRulesCount": 0,
+    "contentHash": "85e6352a78dfee54d32b1d1d5fc5285053d6d20849e274c65ab73da2ba7d1d12",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

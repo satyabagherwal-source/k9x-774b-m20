@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-F3AU",
-    "timestamp": "2026-11-05T13:40:19.446Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "f7129c4f03e72c06d5527458eb6e277fac48a29622fa8d1adc39b7d0cd071824",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-F7XE",
-    "timestamp": "2026-11-05T13:40:25.442Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "0f1bb7272473bbb6d120e216e703bf060f258102d8edc535bd3e730b5cf16d77",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-F83F",
-    "timestamp": "2026-11-05T13:40:25.659Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-facebook-sam3",
-    "contentHash": "8eb09a744d98b17aac2e1c2e78f9992d6cff39964b3bd2335d87dba7fa44ec69",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-OLO7",
     "timestamp": "2026-11-05T13:47:43.159Z",
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -7492,6 +7447,51 @@
     "contentHash": "8fb132811524e7caf49ff06dccd1218faea4e86c859898234a91f99aff48a3e8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-58S3",
+    "timestamp": "2026-11-08T03:07:49.299Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "8abbb3eed6c21000ed1d760a33b6e10afb4b8ff136bcc0e8dec94256e95f1b67",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-5C51",
+    "timestamp": "2026-11-08T03:07:53.653Z",
+    "repository": "ParthJadhav/app-store-screenshots",
+    "learningId": "learn-github-parthjadhav-app-store-screenshots",
+    "contentHash": "e68cb05d5383419a5dbeef5a4e1178a24bf6f992071ff78aec1194a75b9f66a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-5JW3",
+    "timestamp": "2026-11-08T03:08:03.699Z",
+    "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+    "contentHash": "85e6352a78dfee54d32b1d1d5fc5285053d6d20849e274c65ab73da2ba7d1d12",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "971a3271",
+    "sourceVersion": "accccc85",
     "license": "MIT",
-    "contentHash": "e00c5ccf826ac7b7758e3482956ca8fb91cce43d89c86b8349afb2bffb25a4b2",
-    "lastHarvestedAt": "2026-11-05T23:39:52.018Z",
+    "contentHash": "8abbb3eed6c21000ed1d760a33b6e10afb4b8ff136bcc0e8dec94256e95f1b67",
+    "lastHarvestedAt": "2026-11-08T03:07:49.302Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -7963,10 +7963,10 @@
     "repository": "ParthJadhav/app-store-screenshots",
     "platform": "github",
     "sourceUrl": "https://github.com/ParthJadhav/app-store-screenshots",
-    "sourceVersion": "5386f227",
+    "sourceVersion": "e889033b",
     "license": "MIT",
-    "contentHash": "99a266da4e43411c67269dbd35e5d0ce38ee31a23eb10cff386edac6b2885932",
-    "lastHarvestedAt": "2026-10-19T12:07:46.716Z",
+    "contentHash": "e68cb05d5383419a5dbeef5a4e1178a24bf6f992071ff78aec1194a75b9f66a2",
+    "lastHarvestedAt": "2026-11-08T03:07:53.665Z",
     "learningId": "learn-github-parthjadhav-app-store-screenshots"
   },
   "juanpe-about-swiftui": {
@@ -11885,8 +11885,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
     "sourceVersion": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
     "license": "Open-Source",
-    "contentHash": "6ce8819c213a529a606368fcd108227d9fcfc83d9297b2178bf5d0f5c4d07e43",
-    "lastHarvestedAt": "2026-11-04T16:34:17.604Z",
+    "contentHash": "85e6352a78dfee54d32b1d1d5fc5285053d6d20849e274c65ab73da2ba7d1d12",
+    "lastHarvestedAt": "2026-11-08T03:08:03.703Z",
     "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4"
   },
   "hf-moonshotai-kimi-k3.1-pro": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T02:57:04.495Z",
+  "last_updated": "2026-11-08T03:08:03.724Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "e00c5ccf826ac7b7758e3482956ca8fb91cce43d89c86b8349afb2bffb25a4b2",
-      "verified_at": "2026-11-05T23:39:52.028Z",
+      "content_hash": "8abbb3eed6c21000ed1d760a33b6e10afb4b8ff136bcc0e8dec94256e95f1b67",
+      "verified_at": "2026-11-08T03:07:49.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T23:39:52.028Z"
+      "last_updated": "2026-11-08T03:07:49.312Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -11976,14 +11976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-parthjadhav-app-store-screenshots",
-      "content_hash": "99a266da4e43411c67269dbd35e5d0ce38ee31a23eb10cff386edac6b2885932",
-      "verified_at": "2026-10-19T12:07:46.722Z",
+      "content_hash": "e68cb05d5383419a5dbeef5a4e1178a24bf6f992071ff78aec1194a75b9f66a2",
+      "verified_at": "2026-11-08T03:07:53.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:07:46.722Z"
+      "last_updated": "2026-11-08T03:07:53.675Z"
     },
     "Juanpe/About-SwiftUI": {
       "repository": "Juanpe/About-SwiftUI",
@@ -17886,14 +17886,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-      "content_hash": "6ce8819c213a529a606368fcd108227d9fcfc83d9297b2178bf5d0f5c4d07e43",
-      "verified_at": "2026-11-04T16:34:17.613Z",
+      "content_hash": "85e6352a78dfee54d32b1d1d5fc5285053d6d20849e274c65ab73da2ba7d1d12",
+      "verified_at": "2026-11-08T03:08:03.723Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T16:34:17.613Z"
+      "last_updated": "2026-11-08T03:08:03.723Z"
     },
     "moonshotai/Kimi-K3.1-Pro": {
       "repository": "moonshotai/Kimi-K3.1-Pro",
