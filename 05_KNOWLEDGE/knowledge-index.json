@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T05:48:16.637Z",
+  "last_updated": "2026-11-08T05:57:07.822Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7534,8 +7534,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "2af367f7",
-      "content_hash": "844d6bac0c5a9d456005091ae2d9f474d0b6af4a95a45814f7bd2ba859c60d8d",
+      "source_version": "857c3163",
+      "content_hash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7772,7 +7772,7 @@
         {
           "number": 6766,
           "title": "images: update cilium-{runtime,builder}",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 6852,
@@ -7805,7 +7805,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:15:44.170Z",
+      "verified_at": "2026-11-08T05:57:07.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136067,10 +136067,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
       "source_version": "hf-huggingfacebio-carbon-x",
-      "content_hash": "ec32290447adfe81003f138e8b92be5706dd8aa934c17232276db4083c7a2eee",
+      "content_hash": "547f7fd802977f97270204d3529b15f3390eb5dc9edc730bf8037757f832ac96",
       "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Tokenizer Consistency Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Model‑Tokenizer Hyper‑Parameter Alignment Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Generation Configuration Trust Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 351,
           "title": "Consistent Special‑Token Alignment",
@@ -136137,7 +136152,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:22:52.728Z",
+      "verified_at": "2026-11-08T05:57:02.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178453,13 +178468,13 @@
       "rule_number": 6766,
       "title": "images: update cilium-{runtime,builder}",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "30de12cd",
+      "source_version": "857c3163",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T07:49:14.651Z"
+      "verified_at": "2026-11-08T05:57:07.802Z"
     },
     "rule-6767": {
       "learning_id": "rule-6767",

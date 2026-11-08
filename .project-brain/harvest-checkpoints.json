@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T05:48:16.749Z",
+  "last_updated": "2026-11-08T05:57:07.913Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "844d6bac0c5a9d456005091ae2d9f474d0b6af4a95a45814f7bd2ba859c60d8d",
-      "verified_at": "2026-11-08T02:15:44.282Z",
+      "content_hash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
+      "verified_at": "2026-11-08T05:57:07.912Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:15:44.282Z"
+      "last_updated": "2026-11-08T05:57:07.912Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -16026,14 +16026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
-      "content_hash": "ec32290447adfe81003f138e8b92be5706dd8aa934c17232276db4083c7a2eee",
-      "verified_at": "2026-11-04T19:22:52.866Z",
+      "content_hash": "547f7fd802977f97270204d3529b15f3390eb5dc9edc730bf8037757f832ac96",
+      "verified_at": "2026-11-08T05:57:02.872Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:22:52.866Z"
+      "last_updated": "2026-11-08T05:57:02.872Z"
     },
     "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF": {
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",

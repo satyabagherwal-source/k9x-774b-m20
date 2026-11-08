@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T05:48:19.344Z",
-    "lastVerified": "2026-11-08T05:48:19.344Z",
+    "lastChecked": "2026-11-08T05:57:10.447Z",
+    "lastVerified": "2026-11-08T05:57:10.447Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -462,8 +462,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T05:26:27.871Z",
-    "lastVerified": "2026-11-08T05:26:27.871Z",
+    "lastChecked": "2026-11-08T05:57:07.845Z",
+    "lastVerified": "2026-11-08T05:57:07.845Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1997,14 +1997,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T02:15:42.343Z",
-    "lastVerified": "2026-11-08T02:15:42.343Z",
+    "lastChecked": "2026-11-08T05:57:07.319Z",
+    "lastVerified": "2026-11-08T05:57:07.319Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "844d6bac0c5a9d456005091ae2d9f474d0b6af4a95a45814f7bd2ba859c60d8d",
+    "contentHash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2624,9 +2624,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-07T02:22:03.170Z",
+    "lastChecked": "2026-11-08T05:57:05.370Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-07T02:22:03.170Z"
+    "lastVerified": "2026-11-08T05:57:05.370Z"
   },
   "zeronsh-zeron": {
     "name": "zeronsh/zeron",
@@ -4101,8 +4101,8 @@
     "officialUrl": "https://github.com/svenstaro/miniserve",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T19:16:35.968Z",
-    "lastVerified": "2026-11-06T19:16:35.968Z",
+    "lastChecked": "2026-11-08T05:56:52.802Z",
+    "lastVerified": "2026-11-08T05:56:52.802Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-svenstaro-miniserve",
@@ -6460,9 +6460,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-07T03:29:34.488Z",
+    "lastChecked": "2026-11-08T05:57:00.295Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-07T03:29:34.488Z"
+    "lastVerified": "2026-11-08T05:57:00.295Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -9710,9 +9710,9 @@
   "vanniktech-emoji": {
     "name": "Emoji",
     "officialUrl": "https://github.com/vanniktech/Emoji",
-    "lastChecked": "2026-11-05T04:57:30.448Z",
+    "lastChecked": "2026-11-08T05:56:57.851Z",
     "revisionIdentifier": "69e998da",
-    "lastVerified": "2026-11-05T04:57:30.448Z"
+    "lastVerified": "2026-11-08T05:56:57.851Z"
   },
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",
@@ -13233,12 +13233,12 @@
     "officialUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T19:22:44.245Z",
-    "lastVerified": "2026-11-04T19:22:44.245Z",
+    "lastChecked": "2026-11-08T05:56:55.412Z",
+    "lastVerified": "2026-11-08T05:56:55.412Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-    "contentHash": "ec32290447adfe81003f138e8b92be5706dd8aa934c17232276db4083c7a2eee",
+    "contentHash": "547f7fd802977f97270204d3529b15f3390eb5dc9edc730bf8037757f832ac96",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

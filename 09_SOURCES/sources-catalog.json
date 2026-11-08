@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "2af367f7",
+    "sourceVersion": "857c3163",
     "license": "Apache-2.0",
-    "contentHash": "844d6bac0c5a9d456005091ae2d9f474d0b6af4a95a45814f7bd2ba859c60d8d",
-    "lastHarvestedAt": "2026-11-08T02:15:44.274Z",
+    "contentHash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
+    "lastHarvestedAt": "2026-11-08T05:57:07.898Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -10665,8 +10665,8 @@
     "sourceUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceVersion": "hf-huggingfacebio-carbon-x",
     "license": "Open-Source",
-    "contentHash": "ec32290447adfe81003f138e8b92be5706dd8aa934c17232276db4083c7a2eee",
-    "lastHarvestedAt": "2026-11-04T19:22:52.846Z",
+    "contentHash": "547f7fd802977f97270204d3529b15f3390eb5dc9edc730bf8037757f832ac96",
+    "lastHarvestedAt": "2026-11-08T05:57:02.856Z",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x"
   },
   "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {

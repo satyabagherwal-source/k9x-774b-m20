@@ -8232,3 +8232,5 @@
 | `CYCLE-20261108-M4KE` | `2026-11-08T05:40:55.070Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de94b8a1...`) |
 | `CYCLE-20261108-VHKQ` | `2026-11-08T05:48:11.834Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 876, Rule null` | Yes (`8f0c7664...`) |
 | `CYCLE-20261108-VLCM` | `2026-11-08T05:48:16.726Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`43006cc7...`) |
+| `CYCLE-20261108-6VB8` | `2026-11-08T05:57:02.852Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`547f7fd8...`) |
+| `CYCLE-20261108-6Z7A` | `2026-11-08T05:57:07.894Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6766` | Yes (`c42effbc...`) |

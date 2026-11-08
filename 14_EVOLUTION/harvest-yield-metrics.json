@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T05:48:16.745Z",
-  "total_cycles_completed": 8197,
-  "total_learnings_persisted": 8197,
-  "total_rules_promoted": 7900,
+  "last_updated": "2026-11-08T05:57:07.902Z",
+  "total_cycles_completed": 8199,
+  "total_learnings_persisted": 8199,
+  "total_rules_promoted": 7904,
   "history": [
-    {
-      "timestamp": "2026-11-07T17:48:03.435Z",
-      "repository": "kubernetes-sigs/aws-load-balancer-controller",
-      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T17:48:09.628Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T17:57:51.072Z",
       "repository": "HelixDB/helix-db",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T05:48:16.745Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:57:02.870Z",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:57:07.902Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

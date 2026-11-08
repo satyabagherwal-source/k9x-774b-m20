@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-T8FM",
-    "timestamp": "2026-11-05T17:07:16.594Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-    "contentHash": "d457e1df6229522eca0379cd8d08e0d64b42fed03e6e7359f31e5b92d4f80f01",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-TALV",
-    "timestamp": "2026-11-05T17:07:19.411Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "2e68b4feb6cf2d74bef683db89092b8b9fddb4c9bd194d173a8390cc2f717a67",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-TLEJ",
     "timestamp": "2026-11-05T17:07:33.403Z",
     "repository": "doobidoo/mcp-memory-service",
@@ -7490,6 +7460,36 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "43006cc78b6fb9ae3847ac68e7d240d12349bc19ed56d3c05556170054c262c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-6VB8",
+    "timestamp": "2026-11-08T05:57:02.852Z",
+    "repository": "HuggingFaceBio/Carbon-X",
+    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+    "contentHash": "547f7fd802977f97270204d3529b15f3390eb5dc9edc730bf8037757f832ac96",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-6Z7A",
+    "timestamp": "2026-11-08T05:57:07.894Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

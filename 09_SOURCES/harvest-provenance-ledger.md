@@ -8241,3 +8241,5 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `d8be20b2` | Multi-dimensional audit evidence | 2026-11-08T05:40:55.074Z |
 | `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-08T05:48:11.838Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `8f6e050c` | Multi-dimensional audit evidence | 2026-11-08T05:48:16.739Z |
+| `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-08T05:57:02.856Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `857c3163` | Multi-dimensional audit evidence | 2026-11-08T05:57:07.898Z |

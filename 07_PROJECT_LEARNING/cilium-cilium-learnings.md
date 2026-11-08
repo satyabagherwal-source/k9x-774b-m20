@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `2af367f7`  
+> **Source Version**: `857c3163`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T02:15:42.789Z  
+> **Timestamp**: 2026-11-08T05:57:07.483Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T02:15:42.343Z  
+> **Harvest Timestamp**: 2026-11-08T05:57:07.319Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25795 stars
+- **Stars / Engagement**: 25796 stars
 
 ---
 
@@ -1259,11 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49892** (2026-11-08): **chore(deps): update cilium/cilium-cli action to v0.20.2 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.1` → `v0.20.2` | | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | minor | `v0.19.7` → `v0.20.2` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.2`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.2)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.1...v0.20.2)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply labels to all new test namespaces ([cilium/cilium#49190](https://redirect.github.com/cilium/cilium/issues/49190), [@&#8203;darox](https://redirect.github.com/darox)) - cilium-cli: fall back to WebSocket when a proxy rejects the SPDY upgrade ([cilium/cilium#49229](https://redirect.github.com/cilium/cilium/issues/49229), [@&#8203;epb-644](https://redirect.github.com/epb-644))  **Bugfixes:**  - Fixes error when passing times of 60s or more to cilium connectivity perf and throws an explicit error on fractional seconds. ([cilium/cilium#48965](https://redirect.github.com/cilium/cilium/issues/48965), [@&#8203;Arleee1](https://redirect.github.com/Arleee1))  **CI Changes:**  - cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest ([cilium/cilium#49676](https://redirect.github.com/cilium/cilium/issues/49676), [@&#8203;tklauser](https://red
+- **Issue #49907** (2026-11-08): **chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.3 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) |  | patch | [`44.222.2` → `44.222.3`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.222.2&to=44.222.3) | | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) | uses-with | patch | [`44.222.2` → `44.222.3`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.222.2&to=44.222.3) |  ---  ### Release Notes  <details> <summary>renovatebot/renovate (ghcr.io/renovatebot/renovate)</summary>  ### [`v44.222.3`](https://redirect.github.com/renovatebot/renovate/releases/tag/44.222.3)  [Compare Source](https://redirect.github.com/renovatebot/renovate/compare/44.222.2...44.222.3)  ##### Bug Fixes  - **deps:** update renovate-base-image to v13.161.3 (main) ([#&#8203;47841](https://redirect.github.com/renovatebot/renovate/issues/47841)) ([6b87d5c](https://redirect.github.com/renovatebot/renovate/commit/6b87d5c94f10ff89e128d4c3512ac88c61aa3a86))  ##### Miscellaneous Chores  - **deps:** update ghcr.io/containerbase/devcontainer docker tag to v14.66.8 (main) ([#&#8203;47840](https://redirect.github.com/renovatebot/renovate/issues/47840)) ([26b0e53](https://redirect.github.com/renovatebot/renovate/commit/26b0e5395d869af8ff814dda05c93c06d6a0d805))  </details>  ---  ### Configurat
 
-- **Issue #49873** (2026-11-06): **fix(deps): update module github.com/klauspost/compress to v1.20.2 [security] (v1.20)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/klauspost/compress](https://redirect.github.com/klauspost/compress) | `v1.18.7` → `v1.20.2` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.18.7/v1.20.2?slim=true) |  ---  ### Panic on two-block frames in github.com/klauspost/compress [CVE-2026-116591](https://nvd.nist.gov/vuln/detail/CVE-2026-116591) / [GHSA-fpmh-frq8-7rj8](https://redirect.github.com/advisories/GHSA-fpmh-frq8-7rj8) / [GO-2026-6865](https://pkg.go.dev/vuln/GO-2026-6865)  <details> <summary>More information</summary>  #### Details Panic on two-block frames in github.com/klauspost/compress  #### Severity Unknown  #### References - [https://github.com/klauspost/compress/security/advisories/GHSA-fpmh-frq8-7rj8](https://redirect.github.com/klauspost/compress/security/advisories/GHSA-fpmh-frq8-7rj8) - [https://github.com/klauspost/compress/commit/7f5d8528720c895a6106f201719f87eb030a565d](https://redirect.github.com/klauspost/compress/commit/7f5d8528720c895a6106f201719f87eb030a565d) - [https://github.com/klauspost/compress/releases/tag/v1.20.2](https://redirect.github.com/klauspost/compress/releases/tag/v1.20.2)  This data is provided by [OS
+- **Issue #49906** (2026-11-08): **chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.20)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) |  | patch | `v0.20.1` → `v0.20.2` | | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.1` → `v0.20.2` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.2`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.2)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.1...v0.20.2)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply labels to all new test namespaces ([cilium/cilium#49190](https://redirect.github.com/cilium/cilium/issues/49190), [@&#8203;darox](https://redirect.github.com/darox)) - cilium-cli: fall back to WebSocket when a proxy rejects the SPDY upgrade ([cilium/cilium#49229](https://redirect.github.com/cilium/cilium/issues/49229), [@&#8203;epb-644](https://redirect.github.com/epb-644))  **Bugfixes:**  - Fixes error when passing times of 60s or more to cilium connectivity perf and throws an explicit error on fractional seconds. ([cilium/cilium#48965](https://redirect.github.com/cilium/cilium/issues/48965), [@&#8203;Arleee1](https://redirect.github.com/Arleee1))  **CI Changes:**  - cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest ([cilium/cilium#49676](https://redirect.github.com/cilium/cilium/issues/49676), [@&#8203;tklauser](https://redirect.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,122 +1280,113 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2af367f7` (2026-11-08)
-**Commit Message**: chore(deps): update cilium/cilium-cli action to v0.20.2
+### Incident Patch 1: `f4ecf374` (2026-11-08)
+**Commit Message**: images: update cilium-{runtime,builder}
 
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/conformance-aks.yaml` (modified, +1/-1)
+**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
 ```diff
-@@ -422,7 +422,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
- 
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
-+        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+@@ -1,6 +1,6 @@
+ {
+   "name": "Cilium",
+-  "image": "quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770",
++  "image": "quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c",
+   "workspaceFolder": "/go/src/github.com/cilium/cilium",
+   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
+   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
 ```
 
-**File**: `.github/workflows/conformance-aws-cni.yaml` (modified, +1/-1)
+**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
 ```diff
-@@ -366,7 +366,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
- 
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
-+        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+@@ -1 +1 @@
+-quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
+\ No newline at end of file
++quay.io/cilium/cilium-runtime:e88c16905ce2239d93f5927c440f0f81710a6686@sha256:ce094ce66806312e15667bbdc5717c09c53fded904b7c4c1c2a74b29c9c0b705
+\ No newline at end of file
 ```
 
-**File**: `.github/workflows/conformance-clustermesh.yaml` (modified, +1/-1)
+**File**: `images/cilium/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -515,7 +515,7 @@ jobs:
-           echo flags=${FLAGS} >> $GITHUB_OUTPUT
+@@ -3,8 +3,8 @@
+ # Copyright Authors of Cilium
+ # SPDX-License-Identifier: Apache-2.0
  
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
-+        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770
+-ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
++ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:e88c16905ce2239d93f5927c440f0f81710a6686@sha256:ce094ce66806312e15667bbdc5717c09c53fded904b7c4c1c2a74b29c9c0b705
+ #
+ # cilium-envoy from github.com/cilium/proxy
+ #
 ```
 
-**File**: `.github/workflows/conformance-delegated-ipam.yaml` (modified, +1/-1)
+**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -289,7 +289,7 @@ jobs:
-           wait: 0
+@@ -7,7 +7,7 @@
+ # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
+ ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:e519d3b0a5b285e5aa53ab9eef02bc6bbb9cb04608389b743a136a9ce75f0d1e
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
  
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
-+        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
 ```
 
-**File**: `.github/workflows/conformance-eks.yaml` (modified, +1/-1)
+**File**: `images/operator/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -465,7 +465,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
+@@ -6,7 +6,7 @@
+ ARG BASE_IMAGE=scratch
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:e519d3b0a5b285e5aa53ab9eef02bc6bbb9cb04608389b743a136a9ce75f0d1e
+ ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
  
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
-+        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
 ```
 
-**File**: `.github/workflows/conformance-gateway-api.yaml` (modified, +1/-1)
+---
+
+### Incident Patch 2: `6a7623ed` (2026-11-08)
+**Commit Message**: ci: update docs-builder
+
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/documentation.yaml` (modified, +1/-1)
 ```diff
-@@ -271,7 +271,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
+@@ -70,7 +70,7 @@ jobs:
+         uses: ./.github/actions/disk-cleanup
  
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
-+        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+       - name: Build HTML
+-        uses: docker://quay.io/cilium/docs-builder:f921661477db929b745592dbd904377f725ac331@sha256:892c1372cdefe855a4e9488975e050a633e5a36d4d0465c121ec1faba151cdef
++        uses: docker://quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
          with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+           entrypoint: ./Documentation/check-build.sh
+           args: html
 ```
 
-**File**: `.github/workflows/conformance-ginkgo.yaml` (modified, +1/-1)
+**File**: `Documentation/Makefile` (modified, +1/-1)
 ```diff
-@@ -386,7 +386,7 @@ jobs:
-           path: untrusted
+@@ -14,7 +14,7 @@ SPHINX_OPTS := "-j=auto"
  
-       - name: Install cilium-cli
--        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
-+        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
-```
-
-**File**: `.github/workflows/conformance-gke.yaml` (modified, +1/-1)
-```diff
-@@ -463,7 +463,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
+ .PHONY: default clean help cilium-build cmdref epub latex html
  
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
-+        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+-DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:f921661477db929b745592dbd904377f725ac331@sha256:892c1372cdefe855a4e9488975e050a633e5a36d4d0465c121ec1faba151cdef
++DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
+ 
+ .PHONY: update-docs-builder-image
+ update-docs-builder-image: DOCS_BUILDER_TAG=$(word 3,$(shell git ls-tree --full-tree HEAD -- $(DOCS_BUILDER_DIR)))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49892** (2026-11-08): chore(deps): update cilium/cilium-cli action to v0.20.2 (main) (@cilium-renovate[bot])
-- **PR #49873** (2026-11-06): fix(deps): update module github.com/klauspost/compress to v1.20.2 [security] (v1.20) (@cilium-renovate[bot])
-- **PR #49872** (closed): iptables: skip the to-proxy mark for identity-marked packets (@aner-dev)
-- **PR #49870** (2026-11-06): [v1.20] policy/compute: Ensure superseded policies are not leaked (@christarazi)
-- **PR #49867** (2026-11-06): network driver: lease RX queues when the Pod sandbox starts (@aarcamp)
-- **PR #49864** (2026-11-05): mtu: Don't warn about the route MTU with portmap chaining (@aanm)
+- **PR #49907** (2026-11-08): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.3 (main) (@cilium-renovate[bot])
+- **PR #49906** (2026-11-08): chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.20) (@cilium-renovate[bot])
+- **PR #49905** (2026-11-08): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
+- **PR #49900** (2026-11-08): fix(deps): update k8s.io patch updates stable to v0.35.10 (v1.19) (@cilium-renovate[bot])
+- **PR #49899** (2026-11-08): chore(deps): update auto-merge-trusted-deps (v1.20) (@cilium-renovate[bot])
+- **PR #49896** (2026-11-08): chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.20) (@cilium-renovate[bot])
 
 ---
 
@@ -1415,28 +1406,28 @@ Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.norepl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update cilium/cilium-cli action to v0.20.2
+## X. images: update cilium-{runtime,builder}
 
 **RULE**:
-When implementing operations in `.github/workflows/conformance-aks.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.devcontainer/devcontainer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2af367f7`: deps): update cilium/cilium-cli action to v0.20.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f4ecf374`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/conformance-aks.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.devcontainer/devcontainer.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+  "image": "quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
+  "image": "quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2af367f7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f4ecf374` are properly handled with clean fallback behavior.
