@@ -725,8 +725,8 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "7cd42a5b9df843c0bd3a8ca11b895ab39c1400b1dde7851b66bcec53a0ba842c",
-    "lastHarvestedAt": "2026-11-05T03:13:29.832Z",
+    "contentHash": "2144473e74bfeed1664391e24a4cbae242982e7178d02166f0a006a5153daf08",
+    "lastHarvestedAt": "2026-11-08T19:49:21.733Z",
     "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "cd2be24b",
+    "sourceVersion": "6220b0f1",
     "license": "Apache-2.0",
-    "contentHash": "ba8bf79e148cc0548d99910b6d2e010127169909b6dca6b3ff2cf90ee09809aa",
-    "lastHarvestedAt": "2026-11-07T22:30:28.528Z",
+    "contentHash": "7a6c8475f19847ea94908b3fcfc81a3e9182f24c93a9013cd8acfba84f799ebc",
+    "lastHarvestedAt": "2026-11-08T19:45:31.271Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -9153,10 +9153,10 @@
     "repository": "duongductrong/Snapzy",
     "platform": "github",
     "sourceUrl": "https://github.com/duongductrong/Snapzy",
-    "sourceVersion": "77d3d3fe",
+    "sourceVersion": "13c02b4c",
     "license": "BSD-3-Clause",
-    "contentHash": "13854db72430ddf20cdf9cd9e24c1f9e75c61d1e3b87fea66bb74fa18715e2bd",
-    "lastHarvestedAt": "2026-10-30T10:30:47.825Z",
+    "contentHash": "32ce289fab711615bf23bebf456f65221d22dcb8d38c31c3c0465250c6ffbb9e",
+    "lastHarvestedAt": "2026-11-08T19:50:27.646Z",
     "learningId": "learn-github-duongductrong-snapzy"
   },
   "scrapy-plugins-scrapy-deltafetch": {

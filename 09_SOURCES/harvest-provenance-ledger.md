@@ -8375,3 +8375,6 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `a0c210aa` | Multi-dimensional audit evidence | 2026-11-08T19:31:08.971Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `9ed384be` | Multi-dimensional audit evidence | 2026-11-08T19:31:12.752Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-08T19:38:51.456Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `6220b0f1` | Multi-dimensional audit evidence | 2026-11-08T19:45:31.271Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-08T19:49:21.733Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `13c02b4c` | Multi-dimensional audit evidence | 2026-11-08T19:50:27.646Z |

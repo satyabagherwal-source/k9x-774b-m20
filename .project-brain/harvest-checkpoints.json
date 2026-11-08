@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T19:38:51.466Z",
+  "last_updated": "2026-11-08T19:50:27.653Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "7cd42a5b9df843c0bd3a8ca11b895ab39c1400b1dde7851b66bcec53a0ba842c",
-      "verified_at": "2026-11-05T03:13:29.838Z",
+      "content_hash": "2144473e74bfeed1664391e24a4cbae242982e7178d02166f0a006a5153daf08",
+      "verified_at": "2026-11-08T19:49:21.739Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:13:29.838Z"
+      "last_updated": "2026-11-08T19:49:21.739Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "ba8bf79e148cc0548d99910b6d2e010127169909b6dca6b3ff2cf90ee09809aa",
-      "verified_at": "2026-11-07T22:30:28.535Z",
+      "content_hash": "7a6c8475f19847ea94908b3fcfc81a3e9182f24c93a9013cd8acfba84f799ebc",
+      "verified_at": "2026-11-08T19:45:31.285Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:30:28.535Z"
+      "last_updated": "2026-11-08T19:45:31.285Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -13776,14 +13776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duongductrong-snapzy",
-      "content_hash": "13854db72430ddf20cdf9cd9e24c1f9e75c61d1e3b87fea66bb74fa18715e2bd",
-      "verified_at": "2026-10-30T10:30:47.831Z",
+      "content_hash": "32ce289fab711615bf23bebf456f65221d22dcb8d38c31c3c0465250c6ffbb9e",
+      "verified_at": "2026-11-08T19:50:27.653Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:30:47.831Z"
+      "last_updated": "2026-11-08T19:50:27.653Z"
     },
     "scrapy-plugins/scrapy-deltafetch": {
       "repository": "scrapy-plugins/scrapy-deltafetch",

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-RCCP",
-    "timestamp": "2026-11-06T14:05:31.081Z",
-    "repository": "mattermost/mattermost",
-    "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "27692df7c49b12b651d7eb9f1e94830196b25bc7e2dbffb662229bcf8aeb78e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-RD1S",
-    "timestamp": "2026-11-06T14:05:31.984Z",
-    "repository": "webAI-Official/TwIL-8B",
-    "learningId": "learn-huggingface-webai-official-twil-8b",
-    "contentHash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-H9V9",
-    "timestamp": "2026-11-06T14:25:40.917Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "e6dc9f9a912f77f31d7fc05e72b3888dc5ce6fcf0131deb09f510ae3c28f4516",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-HB20",
     "timestamp": "2026-11-06T14:25:42.456Z",
     "repository": "NervJS/taro",
@@ -7492,6 +7447,51 @@
     "contentHash": "d528e8934abbd8e264ef215b47e1478216b1da235762047b87ab4f797455b3b9",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-SAKK",
+    "timestamp": "2026-11-08T19:45:31.268Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "7a6c8475f19847ea94908b3fcfc81a3e9182f24c93a9013cd8acfba84f799ebc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-X8E2",
+    "timestamp": "2026-11-08T19:49:21.722Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "2144473e74bfeed1664391e24a4cbae242982e7178d02166f0a006a5153daf08",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-YN98",
+    "timestamp": "2026-11-08T19:50:27.644Z",
+    "repository": "duongductrong/Snapzy",
+    "learningId": "learn-github-duongductrong-snapzy",
+    "contentHash": "32ce289fab711615bf23bebf456f65221d22dcb8d38c31c3c0465250c6ffbb9e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

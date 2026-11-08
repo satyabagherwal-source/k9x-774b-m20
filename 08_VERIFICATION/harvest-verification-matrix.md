@@ -8366,3 +8366,6 @@
 | `CYCLE-20261108-9T7R` | `2026-11-08T19:31:08.967Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5a79e57...`) |
 | `CYCLE-20261108-9W4S` | `2026-11-08T19:31:12.748Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d4f3a1e6...`) |
 | `CYCLE-20261108-JQ2K` | `2026-11-08T19:38:51.452Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 858, Rule null` | Yes (`d528e893...`) |
+| `CYCLE-20261108-SAKK` | `2026-11-08T19:45:31.268Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7a6c8475...`) |
+| `CYCLE-20261108-X8E2` | `2026-11-08T19:49:21.722Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`2144473e...`) |
+| `CYCLE-20261108-YN98` | `2026-11-08T19:50:27.644Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`32ce289f...`) |

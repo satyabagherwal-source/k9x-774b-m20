@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T19:38:51.339Z",
+  "last_updated": "2026-11-08T19:50:27.573Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12196,11 +12196,16 @@
       "slug": "duongductrong-snapzy",
       "platform": "github",
       "source_url": "https://github.com/duongductrong/Snapzy",
-      "source_version": "77d3d3fe",
-      "content_hash": "13854db72430ddf20cdf9cd9e24c1f9e75c61d1e3b87fea66bb74fa18715e2bd",
+      "source_version": "13c02b4c",
+      "content_hash": "32ce289fab711615bf23bebf456f65221d22dcb8d38c31c3c0465250c6ffbb9e",
       "dossier_path": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Keep the app responsive while OCR runs (#708)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2826,
           "title": "Fixed capture remapped and consumed keystrokes (#539)",
@@ -12232,7 +12237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:30:47.765Z",
+      "verified_at": "2026-11-08T19:50:27.557Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26036,10 +26041,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "7cd42a5b9df843c0bd3a8ca11b895ab39c1400b1dde7851b66bcec53a0ba842c",
+      "content_hash": "2144473e74bfeed1664391e24a4cbae242982e7178d02166f0a006a5153daf08",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Numerically Stable Binary Logit Thresholding for Sequence Discriminators",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dimension Decoupling Invariant for Embedding and Encoder Projections",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Special Token Immutability & Generator-Discriminator Index Alignment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 407,
           "title": "Discriminative Head Output Normalization Invariant",
@@ -26098,7 +26118,7 @@
         "learn-huggingface-hf-google-electra-base-discriminator-mv48xaja",
         "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt"
       ],
-      "verified_at": "2026-11-05T03:13:29.729Z",
+      "verified_at": "2026-11-08T19:49:21.627Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65290,8 +65310,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "cd2be24b",
-      "content_hash": "ba8bf79e148cc0548d99910b6d2e010127169909b6dca6b3ff2cf90ee09809aa",
+      "source_version": "6220b0f1",
+      "content_hash": "7a6c8475f19847ea94908b3fcfc81a3e9182f24c93a9013cd8acfba84f799ebc",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -65303,6 +65323,11 @@
         {
           "number": null,
           "title": "[NEW RBO] Fix double-counted filter selectivity (#58429)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Reduce serverless test CPU with batched writes and cluster reuse (#58549)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65391,7 +65416,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:30:28.454Z",
+      "verified_at": "2026-11-08T19:45:31.201Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
