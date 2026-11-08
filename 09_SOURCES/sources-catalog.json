@@ -305,8 +305,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "5986e129ecfdbd47cb8280d43fcbfc6bf3f1e0ad16a000244c8ad2fb79fb8f3f",
-    "lastHarvestedAt": "2026-11-04T22:20:03.255Z",
+    "contentHash": "5acdb1cda1f6086c62f9e8bd14678d2af377f908dc349def8fadc5c80911865b",
+    "lastHarvestedAt": "2026-11-08T12:26:19.786Z",
     "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
@@ -3533,10 +3533,10 @@
     "repository": "LLPhant/LLPhant",
     "platform": "github",
     "sourceUrl": "https://github.com/LLPhant/LLPhant",
-    "sourceVersion": "6305ae46",
+    "sourceVersion": "1992a18d",
     "license": "MIT",
-    "contentHash": "3767525e06428ba80ac04e13fd2f00315861377e0d6eb6773d52a7ec4cf8fcc9",
-    "lastHarvestedAt": "2026-10-26T13:51:49.855Z",
+    "contentHash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
+    "lastHarvestedAt": "2026-11-08T12:35:09.294Z",
     "learningId": "learn-github-llphant-llphant"
   },
   "ant-design-pro-components": {

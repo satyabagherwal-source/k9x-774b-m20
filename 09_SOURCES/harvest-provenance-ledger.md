@@ -8290,3 +8290,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-08T11:13:50.443Z |
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-08T11:42:10.107Z |
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-08T11:59:52.763Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-08T12:26:19.786Z |
+| `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `1992a18d` | Multi-dimensional audit evidence | 2026-11-08T12:35:09.294Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T11:59:52.781Z",
-  "total_cycles_completed": 8246,
-  "total_learnings_persisted": 8246,
-  "total_rules_promoted": 8009,
+  "last_updated": "2026-11-08T12:35:09.300Z",
+  "total_cycles_completed": 8248,
+  "total_learnings_persisted": 8248,
+  "total_rules_promoted": 8015,
   "history": [
-    {
-      "timestamp": "2026-11-07T20:49:07.540Z",
-      "repository": "LiquidAI/LFM3-1.7B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:49:10.184Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T20:49:12.745Z",
       "repository": "apache/shardingsphere",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T11:59:52.781Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T12:26:19.802Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T12:35:09.300Z",
+      "repository": "LLPhant/LLPhant",
+      "learningId": "learn-github-llphant-llphant",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

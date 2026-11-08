@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-79UD",
-    "timestamp": "2026-11-05T19:38:09.685Z",
-    "repository": "open-policy-agent/gatekeeper",
-    "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "4c26ae80f4f40ac4d407e2a25351d03e7c856e9e7594c6070d2d8030a23f0962",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-7BE7",
-    "timestamp": "2026-11-05T19:38:11.695Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "e8d49f67161e790727076b0df1ff1f3acc2dab0d9a5b5c6a60685507839b18cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-GIHJ",
     "timestamp": "2026-11-05T19:45:20.791Z",
     "repository": "max-sixty/worktrunk",
@@ -7490,6 +7460,36 @@
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
     "contentHash": "05584a521ee2d79d55cad92615372c0d594cd925994bab693271e7b6673e9e7a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-3HMU",
+    "timestamp": "2026-11-08T12:26:19.782Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr",
+    "contentHash": "5acdb1cda1f6086c62f9e8bd14678d2af377f908dc349def8fadc5c80911865b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-EU7E",
+    "timestamp": "2026-11-08T12:35:09.290Z",
+    "repository": "LLPhant/LLPhant",
+    "learningId": "learn-github-llphant-llphant",
+    "contentHash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

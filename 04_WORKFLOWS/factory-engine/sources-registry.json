@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T11:59:55.368Z",
-    "lastVerified": "2026-11-08T11:59:55.368Z",
+    "lastChecked": "2026-11-08T12:35:11.917Z",
+    "lastVerified": "2026-11-08T12:35:11.917Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T10:47:19.849Z",
+    "lastChecked": "2026-11-08T12:21:46.426Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T10:47:19.849Z"
+    "lastVerified": "2026-11-08T12:21:46.426Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -406,12 +406,12 @@
     "lastVerified": "2026-11-06T13:07:45.997Z"
   },
   "nginx-kubernetes-ingress": {
-    "name": "nginx/kubernetes-ingress",
+    "name": "kubernetes-ingress",
     "officialUrl": "https://github.com/nginx/kubernetes-ingress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T17:40:45.728Z",
-    "lastVerified": "2026-11-07T17:40:45.728Z",
+    "lastChecked": "2026-11-08T12:21:38.975Z",
+    "lastVerified": "2026-11-08T12:21:38.975Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nginx-kubernetes-ingress",
@@ -420,7 +420,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b8f388c7"
   },
   "openziti-zrok": {
     "name": "zrok",
@@ -1236,13 +1237,13 @@
     "officialUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T22:20:02.270Z",
-    "lastVerified": "2026-11-04T22:20:02.270Z",
+    "lastChecked": "2026-11-08T12:21:34.400Z",
+    "lastVerified": "2026-11-08T12:21:34.400Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "5986e129ecfdbd47cb8280d43fcbfc6bf3f1e0ad16a000244c8ad2fb79fb8f3f",
-    "promotedRulesCount": 0,
+    "contentHash": "5acdb1cda1f6086c62f9e8bd14678d2af377f908dc349def8fadc5c80911865b",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1627,9 +1628,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-08T05:26:22.900Z",
+    "lastChecked": "2026-11-08T12:21:41.421Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-08T05:26:22.900Z"
+    "lastVerified": "2026-11-08T12:21:41.421Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4162,11 +4163,21 @@
     "lastVerified": "2026-11-08T01:09:48.659Z"
   },
   "llphant-llphant": {
-    "name": "LLPhant",
+    "name": "LLPhant/LLPhant",
     "officialUrl": "https://github.com/LLPhant/LLPhant",
-    "lastChecked": "2026-11-07T05:50:54.353Z",
-    "revisionIdentifier": "6305ae46",
-    "lastVerified": "2026-11-07T05:50:54.353Z"
+    "sourceType": "github",
+    "technology": "PHP",
+    "lastChecked": "2026-11-08T12:21:48.362Z",
+    "lastVerified": "2026-11-08T12:21:48.362Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-llphant-llphant",
+    "contentHash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -5520,9 +5531,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-06T23:27:03.499Z",
+    "lastChecked": "2026-11-08T12:21:31.418Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-06T23:27:03.499Z"
+    "lastVerified": "2026-11-08T12:21:31.418Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -10228,9 +10239,9 @@
   "ehpanda-team-ehpanda": {
     "name": "EhPanda",
     "officialUrl": "https://github.com/EhPanda-Team/EhPanda",
-    "lastChecked": "2026-11-05T07:51:56.199Z",
+    "lastChecked": "2026-11-08T12:21:36.448Z",
     "revisionIdentifier": "37b97996",
-    "lastVerified": "2026-11-05T07:51:56.199Z"
+    "lastVerified": "2026-11-08T12:21:36.448Z"
   },
   "hf-liconstudio-minimax-h3-vbvr": {
     "name": "LiconStudio/Minimax-H3-VBVR",

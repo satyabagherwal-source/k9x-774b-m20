@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T11:59:52.786Z",
+  "last_updated": "2026-11-08T12:35:09.309Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -350,14 +350,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "5986e129ecfdbd47cb8280d43fcbfc6bf3f1e0ad16a000244c8ad2fb79fb8f3f",
-      "verified_at": "2026-11-04T22:20:03.265Z",
+      "content_hash": "5acdb1cda1f6086c62f9e8bd14678d2af377f908dc349def8fadc5c80911865b",
+      "verified_at": "2026-11-08T12:26:19.806Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:20:03.265Z"
+      "last_updated": "2026-11-08T12:26:19.806Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
@@ -5421,14 +5421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-llphant-llphant",
-      "content_hash": "3767525e06428ba80ac04e13fd2f00315861377e0d6eb6773d52a7ec4cf8fcc9",
-      "verified_at": "2026-10-26T13:51:49.869Z",
+      "content_hash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
+      "verified_at": "2026-11-08T12:35:09.308Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:51:49.869Z"
+      "last_updated": "2026-11-08T12:35:09.308Z"
     },
     "ant-design/pro-components": {
       "repository": "ant-design/pro-components",
