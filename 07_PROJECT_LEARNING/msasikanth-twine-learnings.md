@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source**: github ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
-> **Source Version**: `f10bb41f`  
+> **Source Version**: `baf8d83c`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:00:11.561Z  
+> **Timestamp**: 2026-11-08T00:34:21.084Z  
 > **Learning ID**: `learn-github-msasikanth-twine`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:00:11.260Z  
+> **Harvest Timestamp**: 2026-11-08T00:34:20.522Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Twine: A multiplatform RSS reader built using Kotlin and Compose
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2440 stars
+- **Stars / Engagement**: 2442 stars
 
 ---
 
@@ -673,659 +673,62 @@ object PermissionRequestBridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `563cc519` (2026-11-01)
-**Commit Message**: Improve readability parsing stability and add timeouts
+### Incident Patch 1: `baf8d83c` (2026-11-04)
+**Commit Message**: Update CHANGELOG
 
-- Add a 15-second timeout to the readability pipeline on Android and iOS, falling back to raw content if parsing fails or times out.
-- Refactor `ReadabilityRunner` implementations to isolate parsing logic into `awaitParsedContent` and improve `WebView` resource management and cleanup.
-- Enhance error handling in the JavaScript bridge on Android to capture script or promise failures.
-- Update `ReaderPageViewModel` to provide the original content as a fallback when parsing fails.
-- Only trigger the loading state in `ReaderPageViewModel` if content needs to be fetched or parsed.
-
-fixes: #1974
-
-**File**: `shared/src/androidMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt` (modified, +106/-38)
+**File**: `shared/src/commonMain/composeResources/files/changelog.md` (modified, +20/-13)
 ```diff
-@@ -20,24 +20,34 @@ package dev.sasikanth.rss.reader.reader.readability
- import android.annotation.SuppressLint
- import android.content.Context
- import android.webkit.JavascriptInterface
-+import android.webkit.WebResourceError
-+import android.webkit.WebResourceRequest
- import android.webkit.WebView
- import android.webkit.WebViewClient
-+import co.touchlab.kermit.Logger
- import dev.sasikanth.rss.reader.core.model.local.ReadabilityResult
- import dev.sasikanth.rss.reader.di.scopes.AppScope
- import dev.sasikanth.rss.reader.reader.redability.ReadabilityRunner
- import dev.sasikanth.rss.reader.reader.redability.ReaderHTML
- import dev.sasikanth.rss.reader.util.DispatchersProvider
- import dev.sasikanth.rss.reader.utils.asJSString
-+import java.util.concurrent.atomic.AtomicBoolean
-+import kotlin.coroutines.cancellation.CancellationException
- import kotlin.coroutines.resumeWithException
-+import kotlin.time.Duration.Companion.seconds
-+import kotlinx.coroutines.NonCancellable
- import kotlinx.coroutines.suspendCancellableCoroutine
- import kotlinx.coroutines.sync.Mutex
- import kotlinx.coroutines.sync.Semaphore
- import kotlinx.coroutines.sync.withLock
- import kotlinx.coroutines.sync.withPermit
- import kotlinx.coroutines.withContext
-+import kotlinx.coroutines.withTimeoutOrNull
- import kotlinx.serialization.json.Json
- import me.tatarka.inject.annotations.Inject
+@@ -1,21 +1,28 @@
+ ## Features
  
-+private val PARSE_TIMEOUT = 15.seconds
-+
- @Inject
- @AppScope
- class AndroidReadabilityRunner(
-@@ -65,50 +75,107 @@ class AndroidReadabilityRunner(
-         val webView = getOrCreateWebView()
+-- **Better YouTube Support**: Video posts now show proper high resolution thumbnails, open directly in the YouTube app, and get a dedicated action bar in the reader.
+-- **Smarter Feed Links**: Pasting a Reddit, Mastodon, or YouTube link when adding a feed now resolves it to the right feed automatically, including YouTube handle links.
++- **New Add Feed Flow**: Adding a feed is now a two-step sheet. After entering a link, you can rename the feed, pick its icon, set up notifications, choose whether to always fetch the full article, and add it to groups.
++- **Default Source on Startup**: Pick a feed or group to open automatically when the app starts. You can set this in behavior settings, and the picker includes search.
++- **Feed List Filters**: New "Unread only" and "Hide grouped feeds" options in the feeds list help keep long lists tidy.
++- **OPML Import During Onboarding**: Import your existing subscriptions straight from the onboarding screen.
++- **Classic App Icon**: Added a new "Classic" app icon option.
++- **Tables in Reader**: The reader now renders tables, with better column widths.
++- **Keyboard Navigation**: Move through the post list with the keyboard, with shortcuts working anywhere in the window.
  
-         try {
--          suspendCancellableCoroutine { continuation ->
--            val bridge =
--              object {
--                @JavascriptInterface
--                fun onContentParsed(result: String) {
--                  try {
--                    val parsed = json.decodeFromString<ReadabilityResult>(result)
--                    continuation.resume(parsed) { _, _, _ ->
--                      // no-op
--                    }
--                  } catch (e: Exception) {
--                    continuation.resumeWithException(e)
--                  }
--                }
--              }
--
--            webView.addJavascriptInterface(bridge, "ReaderJSInterface")
--
--            webView.webViewClient =
--              object : WebViewClient() {
--                override fun onPageFinished(view: WebView, url: String) {
--                  val script =
--                    """
--                                parseReaderContent(
--                                    ${link.asJSString}, 
--                                    ${image.asJSString}, 
--                                    ${content.asJSString}
--                                ).then(res => ReaderJSInterface.onContentParsed(JSON.stringify(res)))
--                            """
--                      .trimIndent()
--                  view.evaluateJavascript(script, null)
--                }
--              }
--
--            webView.loadDataWithBaseURL(link, htmlShell, "text/html", "UTF-8", null)
--
--            continuation.invokeOnCancellation { webView.stopLoading() }
-+          withTimeoutOrNull(PARSE_TIMEOUT) {
-+            awaitParsedContent(
-+              webView = webView,
-+              htmlShell = htmlShell,
-+              link = link,
-+              content = content,
-+              image = image,
-+            )
-           }
-+            ?: run {
-+              Logger.e { "Timed out running readability pipeline, falling back to raw content" }
-+              ReadabilityResult(content = content)
-+            }
-+        } catch (e: CancellationException) {
-+          throw e
-+        } catch (e: Exception) {
-+          Logger.e(e) { "Failed to run readability pipeline, falling back to raw content" }
-+          ReadabilityResult(content = content)
-         } finally {
--          returnWebViewToPool(webView)
-+          withContext(NonCancellable) { returnWebViewToPool(webView) }
-         }
-       }
-     }
+ ## Changes
  
-+  private suspend fun awaitParsedContent(
-+    webView: WebView,
-+    htmlShell: String,
-+    link: String?,
-+    content: String,
-+    image: String?,
-+  ): ReadabilityResult = suspendCancellableCoroutine { continuation ->
-+    val isFinished = AtomicBoolean(false)
-+
-+    val bridge =
-+      object {
-+        @JavascriptInterface
-+        fun onContentParsed(result: String) {
-+          if (!isFinished.compareAndSet(false, true)) return
-+          try {
-+            continuation.resume(json.decodeFromString<ReadabilityResult>(result)) { _, _, _ ->
-+              // no-op
-+            }
-+          } catch (e: Exception) {
-+            continuation.resumeWithException(e)
-+          }
-+        }
-+
-+        @JavascriptInterface
-+        fun onContentParseFailed(error: String) {
-+          if (!isFinished.compareAndSet(false, true)) return
-+          continuation.resumeWithException(IllegalStateException(error))
-+        }
-+      }
-+
-+    webView.addJavascriptInterface(bridge, "ReaderJSInterface")
-+
-+    webView.webViewClie
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/reader/page/ReaderPageViewModel.kt` (modified, +3/-3)
-```diff
-@@ -141,13 +141,13 @@ class ReaderPageViewModel(
+-- **Themed App Icons**: App icons now match the color schemes, and can be picked right from the appearance settings.
+-- **Smoother Visuals**: Refined gradients and scrims across the home and reader screens, animated post items in the home feed, and a cleaner background blur transition when swiping through featured posts.
+-- **Performance Improvements**: Faster feed parsing with lower memory usage, plus smoother home screen scrolling and image loading.
+-- **Simpler Add Feed**: Removed the feed preference toggles from the add feed screen.
+-- **No Shorts**: YouTube feeds now come from the channel's uploads playlist, so Shorts stay out of your feed.
++- **Per-Feed Icons**: Choose between the feed's own icon and the website favicon for each feed. The global favicon setting now only sets the default for new feeds.
++- **Smoother Home Navigation**: Added animated transitions when switching sources, plus a back button to return home from a selected source.
++- **More Reliable Reader View**: Better full article extraction, with timeouts and a plain text fallback when parsing fails. Article content you already have is no longer replaced with shorter content.
++- **Better Article Formatting**: Cleaner rendering of review scorecards and fewer empty headings on sites like The Verge.
++- **Share Feedback on Desktop**: Desktop now shows a message when a link is copied to the clipboard instead of shared.
++- **Refreshed Text Fields**: Text fields and login screens have a new look.
++- **Performance Improvements**: Smoother UI and more efficient layouts.
  
-   private fun loadFullArticle() {
-     viewModelScope.launch {
--      _parsingProgress.value = ReaderProcessingProgress.Loading
--
-       val fullArticle = postContentRepository.postContent(readerPost.id).firstOrNull()
-       if (fullArticle != null && !(fullArticle.articleContent.isNullOrBlank())) {
-         return@launch
-       }
+ ## Fixes
  
-+      _parsingProgress.value = ReaderProcessingProgress.Loading
-+
-       val article = fullArticleFetcher.fetch(readerPost.link, readerPost.remoteId).getOrNull()
-       if (article == null) {
-         _parsingProgress.value = ReaderProcessingProgress.Idle
-@@ -180,7 +180,7 @@ class ReaderPageViewModel(
-             )
-           } catch (e: Exception) {
-             Logger.e(e) { "Failed to parse reader content" }
--            ReadabilityResult()
-+            ReadabilityResult(content = content)
-           }
- 
-         onParsingComplete(readabilityResult)
-```
-
-**File**: `shared/src/iosMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt` (modified, +66/-39)
-```diff
-@@ -21,28 +21,35 @@
- 
- package dev.sasikanth.rss.reader.reader.readability
- 
-+import co.touchlab.kermit.Logger
- import dev.sasikanth.rss.reader.core.model.local.ReadabilityResult
- import dev.sasikanth.rss.reader.di.scopes.AppScope
- import dev.sasikanth.rss.reader.reader.redability.ReadabilityRunner
- import dev.sasikanth.rss.reader.reader.redability.ReaderHTML
- import dev.sasikanth.rss.reader.util.DispatchersProvider
- import kotlin.concurrent.AtomicInt
-+import kotlin.coroutines.cancellation.CancellationException
- import kotlin.coroutines.resume
- import kotlin.coroutines.resumeWithException
-+import kotlin.time.Duration.Companion.seconds
- import kotlinx.cinterop.ExperimentalForeignApi
- import kotlinx.cinterop.readValue
-+import kotlinx.coroutines.NonCancellable
- import kotlinx.coroutines.suspendCancellableCoroutine
- import kotlinx.coroutines.sync.Mutex
- import kotlinx.coroutines.sync.Semaphore
- import kotlinx.coroutines.sync.withLock
- import kotlinx.coroutines.sync.withPermit
- import kotlinx.coroutines.withContext
-+import kotlinx.coroutines.withTimeoutOrNull
- import kotlinx.serialization.json.Json
- import me.tatarka.inject.annotations.Inject
- import platform.Foundation.NSURL
- import platform.WebKit.*
- import platform.darwin.NSObject
- 
-+private val PARSE_TIMEOUT = 15.seconds
-+
- @Inject
- @AppScope
- class IosReadabilityRunner(private val dispatchersProvider: DispatchersProvider) :
-@@ -96,53 +103,73 @@ class IosReadabilityRunner(private val dispatchersProvider: DispatchersProvider)
-         val webView = getOrCreateWebView()
- 
-         try {
--          suspendCancellableCoroutine { continuation ->
--            val isFinished = AtomicInt(0)
--
--            // We create the handler and ensure it is held strongly during this scope
--            val handler = ReaderJSHandler { result ->
--              if (result == "READY") {
--                webView.evaluateJavaScript(executionScript) { _, error ->
--                  if (error != null && isFinished.compareAndSet(0, 1)) {
--                    continuation.resumeWithException(
--                      Exception("JS Execution Error: ${error.localizedDescription}")
--                    )
--                  }
--                }
--                return@ReaderJSHandler
--              }
--
--              if (isFinished.compareAndSet(0, 1)) {
--                if (result.startsWith("ERROR:")) {
--                  continuation.resumeWithException(Exception(result))
--                } else {
--                  try {
--                    continuation.resume(json.decodeFromString<ReadabilityResult>(result))
--                  } catch (e: Exception) {
--                    continuation.resumeWithException(e)
--                  }
--                }
--              }
-+          withTimeoutOrNull(PARSE_TIMEOUT) {
-+            awaitParsedContent(webView, htmlShell, link, executionScript)
-+          }
-+            ?: run {
-+              Logger.e { "Timed out running readability pipeline, falling back to raw content" }
-+              ReadabilityResult(content = content)
-             }
-+        } catch (e: CancellationException) {
-+          throw e
-+        } catch (e: Exception) {
-+          Logger.e(e) { "Failed to run readability pipeline, falling back to raw content" }
-+          ReadabilityResult(content = content)
-+        } finally {
-+          withContext(NonCancellable) {
-+            cleanupWebView(webView)
-+            returnWebViewToPool(webView)
-+          }
-+        }
-+      }
-+    }
- 
--            val userController = webView.configuration.userContentController
--            userController.addScriptMessageHandler(handler, "readabilityMessageHandler")
--
--            webView.loadHTMLString(htmlShell, baseURL = link?.let { NSURL.URLWithString(it) })
-+  private suspend fun awaitParsedContent(
-+    webView: WKWebView,
-+    htmlShell: String,
-+    link: String?,
-+    executionScript: String,
-+  ): ReadabilityResult = suspendCancellableCoroutine { continuation ->
-+    val isFinished = AtomicInt(0)
-+
-+    // We create the handler and ensure it is held strongly during this scope
-+    val handler = ReaderJSHandler { result ->
-+      if (result == "READY") {
-+        webView.evaluateJavaScript(executionScript) { _, error ->
-+          if (error != null && isFinished.compareAndSet(0, 1)) {
-+            continuation.resumeWithException(
-+              Exception("JS Execution Error: ${error.localizedDescription}")
-+            )
-+          }
-+        }
-+        return@ReaderJSHandler
-+      }
- 
--            continuation.invokeOnCancellation {
--              isFinished.value = 1
--              webView.stopLoading()
--              cleanupWebView(webView)
--            }
-+      if (isFinished.compareAndSet(0, 1)) {
-+        if (result.startsWith("ERROR:")) {
-+          continuation.resumeWithException(Exception(result))
-+        } else {
-+          try {
-+            continuation.resume(json.decodeFromString<ReadabilityResult>(result))
-+          } catch (e: Exception) {
-+            continuation.r
-```
-
----
-
-### Incident Patch 2: `601a29b2` (2026-11-02)
-**Commit Message**: Use main looper handler for readability script execution
-
-- Replace `webView.post` with a dedicated
-`Handler(Looper.getMainLooper())` in `ReadabilityRunner` to ensure
-content extraction scripts are consistently executed on the main thread
-when a page is ready.
-
-**File**: `shared/src/androidMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt` (modified, +4/-1)
-```diff
-@@ -19,6 +19,8 @@ package dev.sasikanth.rss.reader.reader.readability
- 
- import android.annotation.SuppressLint
- import android.content.Context
-+import android.os.Handler
-+import android.os.Looper
- import android.webkit.JavascriptInterface
- import android.webkit.WebResourceError
- import android.webkit.WebResourceRequest
-@@ -58,6 +60,7 @@ class AndroidReadabilityRunner(
-   private val semaphore = Semaphore(permits = 3)
-   private val pool = ArrayDeque<WebView>()
-   private val poolMutex = Mutex()
-+  private val mainHandler = Handler(Looper.getMainLooper())
-   private val json = Json {
-     ignoreUnknownKeys = true
-     isLenient = true
-@@ -117,7 +120,7 @@ class AndroidReadabilityRunner(
-         @JavascriptInterface
-         fun onPageReady() {
-           if (isFinished.get()) return
--          webView.post {
-+          mainHandler.post {
-             if (isFinished.get()) return@post
-             val script =
-               """
-```
-
----
-
-### Incident Patch 3: `e57be052` (2026-11-01)
-**Commit Message**: Improve source navigation and UI transitions in the home screen
-
-- Add fade and scale animations to `CircularIconButton` when its icon changes.
-- Use `AnimatedVisibility` with slide and fade transitions for the pinned sources and now playing bottom bars.
-- Add support for a back button in `HomeTopAppBar` when a source is active and inline navigation is unavailable, allowing users to return to the home state.
-- Wrap `SourceInfo` in `AnimatedContent` to smoothly animate transitions between different sources in the top app bar.
-- Disable navigation drawer gestures when a source is active to prevent conflicts with back navigation.
-- Update bottom bar visibility logic to only show pinned sources if the active source is among them or if no source is selected.
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/components/Button.kt` (modified, +22/-6)
-```diff
-@@ -23,6 +23,8 @@ import androidx.compose.animation.core.animateFloatAsState
- import androidx.compose.animation.core.spring
- import androidx.compose.animation.fadeIn
- import androidx.compose.animation.fadeOut
-+import androidx.compose.animation.scaleIn
-+import androidx.compose.animation.scaleOut
- import androidx.compose.animation.slideInVertically
- import androidx.compose.animation.slideOutVertically
- import androidx.compose.animation.togetherWith
-@@ -328,12 +330,26 @@ fun CircularIconButton(
-         .graphicsLayer { alpha = animatedAlpha },
-     contentAlignment = Alignment.Center,
-   ) {
--    Icon(
--      modifier = Modifier.requiredSize(20.dp),
--      imageVector = icon,
--      contentDescription = null,
--      tint = contentColor ?: AppTheme.colorScheme.onSurface,
--    )
-+    AnimatedContent(
-+      targetState = icon,
-+      contentAlignment = Alignment.Center,
-+      transitionSpec = {
-+        (fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
-+            scaleIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)))
-+          .togetherWith(
-+            fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
-+              scaleOut(animationSpec = spring(stiffness = Spring.StiffnessMedium))
-+          )
-+      },
-+      label = "CircularIconButtonIcon",
-+    ) { targetIcon ->
-+      Icon(
-+        modifier = Modifier.requiredSize(20.dp),
-+        imageVector = targetIcon,
-+        contentDescription = null,
-+        tint = contentColor ?: AppTheme.colorScheme.onSurface,
-+      )
-+    }
-   }
- }
- 
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/home/ui/HomeScreen.kt` (modified, +36/-20)
-```diff
-@@ -16,7 +16,12 @@
-  */
- package dev.sasikanth.rss.reader.home.ui
- 
-+import androidx.compose.animation.AnimatedVisibility
- import androidx.compose.animation.core.animate
-+import androidx.compose.animation.fadeIn
-+import androidx.compose.animation.fadeOut
-+import androidx.compose.animation.slideInVertically
-+import androidx.compose.animation.slideOutVertically
- import androidx.compose.foundation.gestures.detectDragGestures
- import androidx.compose.foundation.layout.Arrangement
- import androidx.compose.foundation.layout.Box
-@@ -282,7 +287,13 @@ private fun HomeContent(
-       }
-     }
- 
--  val canShowBottomBar = platform !is Platform.Desktop && state.showPinnedSources
-+  val rootSizeClass = LocalRootWindowSizeClass.current
-+  val hasInlineNavigation =
-+    rootSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_LARGE_LOWER_BOUND)
-+  val isActiveSourceInPinnedSources =
-+    state.activeSource == null || feedsState.pinnedSources.any { it.id == state.activeSource.id }
-+  val canShowBottomBar =
-+    platform !is Platform.Desktop && state.showPinnedSources && isActiveSourceInPinnedSources
-   val systemDynamicDarkColors =
-     if (state.themeVariant == ThemeVariant.SystemDynamic) {
-       systemDynamicColorScheme(true)
-@@ -433,19 +444,23 @@ private fun HomeContent(
-   Scaffold(
-     modifier = modifier,
-     bottomBar = {
--      if (canShowBottomBar) {
--        val scaffoldBottomPadding =
--          if (platform == Platform.Desktop) {
--            16.dp
--          } else {
--            0.dp
--          }
-+      val scaffoldBottomPadding =
-+        if (platform == Platform.Desktop) {
-+          16.dp
-+        } else {
-+          0.dp
-+        }
- 
--        val bottomBarModifier =
--          remember(scaffoldBottomPadding) { Modifier.padding(bottom = scaffoldBottomPadding) }
-+      val bottomBarModifier =
-+        remember(scaffoldBottomPadding) { Modifier.padding(bottom = scaffoldBottomPadding) }
- 
--        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
--          AppTheme(useDarkTheme = true, overriddenColorScheme = overriddenDarkColorScheme) {
-+      Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomCenter) {
-+        AppTheme(useDarkTheme = true, overriddenColorScheme = overriddenDarkColorScheme) {
-+          AnimatedVisibility(
-+            visible = canShowBottomBar,
-+            enter = slideInVertically { it } + fadeIn(),
-+            exit = slideOutVertically { it } + fadeOut(),
-+          ) {
-             PinnedSourcesBottomBar(
-               modifier = bottomBarModifier,
-               pinnedSources = feedsState.pinnedSources,
-@@ -465,14 +480,13 @@ private fun HomeContent(
-               },
-             )
-           }
--        }
--      } else if (hasActiveTrack) {
--        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
--          AppTheme(useDarkTheme = true, overriddenColorScheme = overriddenDarkColorScheme) {
--            NowPlayingBottomBar(
--              modifier =
--                Modifier.padding(bottom = if (platform == Platform.Desktop) 16.dp else 0.dp)
--            ) {
-+
-+          AnimatedVisibility(
-+            visible = !canShowBottomBar && hasActiveTrack,
-+            enter = slideInVertically { it } + fadeIn(),
-+            exit = slideOutVertically { it } + fadeOut(),
-+          ) {
-+            NowPlayingBottomBar(modifier = bottomBarModifier) {
-               NowPlayingChip(
-                 playbackState = playbackState,
-                 onPlayPauseClick = onTogglePlayback,
-@@ -514,7 +528,9 @@ private fun HomeContent(
-             listState = postsListState,
-             hasUnreadPosts = latestState.hasUnreadPosts,
-             confirmMarkAllAsRead = latestState.confirmMarkAllAsRead,
-+            showBackButton = !hasInlineNavigation && latestState.activeSource != null,
-             onMenuClicked = onMenuClicked,
-+            onBackClicked = onHomeSelected,
-             onShowPostsSortFilter = { dispatch(HomeEvent.ShowPostsSortFilter(true)) },
-             onMarkPostsAsRead = { dispatch(HomeEvent.MarkPostsAsRead(it)) },
-           )
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/home/ui/HomeTopAppBar.kt` (modified, +63/-25)
-```diff
-@@ -19,6 +19,9 @@ package dev.sasikanth.rss.reader.home.ui
- 
- import androidx.compose.animation.AnimatedContent
- import androidx.compose.animation.AnimatedVisibility
-+import androidx.compose.animation.SizeTransform
-+import androidx.compose.animation.core.Spring
-+import androidx.compose.animation.core.spring
- import androidx.compose.animation.fadeIn
- import androidx.compose.animation.fadeOut
- import androidx.compose.animation.scaleIn
-@@ -30,6 +33,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
- import androidx.compose.foundation.layout.PaddingValues
- import androidx.compose.foundation.layout.Row
- import androidx.compose.foundation.layout.Spacer
-+import androidx.compose.foundation.layout.fillMaxWidth
- import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.layout.padding
- import androidx.compose.foundation.layout.width
-@@ -46,6 +50,7 @@ import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.remember
- import androidx.compose.runtime.setValue
-+import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.draw.drawWithCache
- import androidx.compose.ui.graphics.Color
-@@ -57,6 +62,7 @@ import dev.sasikanth.rss.reader.core.model.local.Feed
- import dev.sasikanth.rss.reader.core.model.local.FeedGroup
- import dev.sasikanth.rss.reader.core.model.local.PostsType
- import dev.sasikanth.rss.reader.core.model.local.Source
-+import dev.sasikanth.rss.reader.resources.icons.ArrowBack
- import dev.sasikanth.rss.reader.resources.icons.ArrowDown
- import dev.sasikanth.rss.reader.resources.icons.MarkAllAsRead
- import dev.sasikanth.rss.reader.resources.icons.Menu
-@@ -68,6 +74,7 @@ import twine.shared.generated.resources.Res
- import twine.shared.generated.resources.appBarAllFeeds
- import twine.shared.generated.resources.buttonCancel
- import twine.shared.generated.resources.buttonConfirm
-+import twine.shared.generated.resources.buttonGoBack
- import twine.shared.generated.resources.markAllAsRead
- import twine.shared.generated.resources.markAllAsReadDialogDesc
- import twine.shared.generated.resources.markAllAsReadDialogTitle
-@@ -88,7 +95,9 @@ internal fun HomeTopAppBar(
-   hasUnreadPosts: Boolean,
-   confirmMarkAllAsRead: Boolean,
-   modifier: Modifier = Modifier,
-+  showBackButton: Boolean = false,
-   onMenuClicked: (() -> Unit)? = null,
-+  onBackClicked: () -> Unit = {},
-   onShowPostsSortFilter: () -> Unit,
-   onMarkPostsAsRead: (Source?) -> Unit,
- ) {
-@@ -127,12 +136,26 @@ internal fun HomeTopAppBar(
-     contentPadding = PaddingValues(start = 0.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
-     title = { SourceInfo(source = source) },
-     navigationIcon = {
--      if (onMenuClicked != null) {
-+      if (showBackButton || onMenuClicked != null) {
-+        val icon = if (showBackButton) TwineIcons.ArrowBack else TwineIcons.Menu
-+        val label =
-+          if (showBackButton) {
-+            stringResource(Res.string.buttonGoBack)
-+          } else {
-+            stringResource(Res.string.moreMenuOptions)
-+          }
-+
-         CircularIconButton(
-           modifier = Modifier.padding(start = 12.dp),
--          icon = TwineIcons.Menu,
--          label = stringResource(Res.string.moreMenuOptions),
--          onClick = onMenuClicked,
-+          icon = icon,
-+          label = label,
-+          onClick = {
-+            if (showBackButton) {
-+              onBackClicked()
-+            } else {
-+              onMenuClicked?.invoke()
-+            }
-+          },
-         )
-       }
-     },
-@@ -219,29 +242,44 @@ internal fun HomeTopAppBar(
- 
- @Composable
- private fun SourceInfo(source: Source?, modifier: Modifier = Modifier) {
--  Column(modifier = modifier.padding(start = 12.dp)) {
--    val title = stringResource(Res.string.screenHome)
--    val subtitle =
--      when (source) {
--        is Feed -> source.name
--        is FeedGroup -> source.name
--        else -> stringResource(Res.string.appBarAllFeeds)
--      }
-+  AnimatedContent(
-+    modifier = modifier.fillMaxWidth().padding(start = 12.dp),
-+    targetState = source,
-+    contentKey = { it?.id },
-+    contentAlignment = Alignment.CenterStart,
-+    transitionSpec = {
-+      fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium))
-+        .togetherWith(fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)))
-+        .using(SizeTransform(clip = false))
-+    },
-+    label = "SourceInfo",
-+  ) { targetSource ->
-+    Column(modifier = Modifier.fillMaxWidth()) {
-+      val title =
-+        when (targetSource) {
-+          is Feed -> targetSource.name
-+          is FeedGroup -> targetSource.name
-+          else -> stringResource(Res.string.screenHome)
-+        }
- 
--    Text(
--      text = title,
--      style = MaterialTheme.typography.titleMedium,
--      color = AppTheme.colorScheme.onSurface,
--      maxLines = 1,
--    )
-+      Text(
-+        modifier = Modifier.basicMarquee(),
-+        text = title,
-+        style = Mater
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/main/ui/MainScreen.kt` (modified, +1/-0)
-```diff
-@@ -340,6 +340,7 @@ internal fun MainScreen(
-       ModalNavigationDrawer(
-         modifier = modifier,
-         drawerState = drawerState,
-+        gesturesEnabled = drawerState.isOpen || !hasActiveSource,
-         drawerContent = {
-           ModalDrawerSheet(
-             // Full-width on phones; partial overlay (Gmail-style) on foldables/expanded.
+-- Fixed feeds that nested media inside items showing only a single post.
+-- Fixed missing images in feeds that put the image URL in the element text.
+-- Fixed full article fetching failing on sites that block browser-like requests.
+-- Fixed reading history not being recorded when posts were marked as read while scrolling or paging through the reader.
+-- Fixed missing channel images for some YouTube feeds.
+-- Added a fallback message when adding a feed fails without a reason.
++- Fixed opened posts not always being marked as read.
++- Fixed back press not clearing the selected source on the home screen.
++- Fixed the reader jumping to the wrong post when the post list changed in the background.
++- Fixed feeds failing to load when extra elements appeared before the channel tag.
++- Fixed feeds served with less common XML content types not being recognized.
++- Fixed the navigation drawer opening on swipe in Search, Discover, Bookmarks, and Settings.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1985** (2026-11-05): [300.121.*] Pre-release merge (@tramline-github[bot])
 - **PR #1983** (2026-11-04): [300.120.*] Pre-release merge (@tramline-github[bot])
 - **PR #1982** (2026-11-03): [300.119.*] Pre-release merge (@tramline-github[bot])
 - **PR #1981** (2026-11-02): [300.118.*] Pre-release merge (@tramline-github[bot])
 - **PR #1980** (2026-11-02): [300.117.*] Pre-release merge (@tramline-github[bot])
 - **PR #1978** (2026-11-02): [300.116.*] Pre-release merge (@tramline-github[bot])
-- **PR #1977** (2026-11-02): Use row-value comparisons in post position queries (@sergeich)
 
 ---
 
@@ -1345,86 +748,46 @@ when a page is ready.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Improve readability parsing stability and add timeouts
+## X. Update CHANGELOG
 
 **RULE**:
-When implementing operations in `shared/src/androidMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/src/commonMain/composeResources/files/changelog.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `563cc519`: Improve readability parsing stability and add timeouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `baf8d83c`: Update CHANGELOG. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/androidMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/composeResources/files/changelog.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import co.touchlab.kermit.Logger
-import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.coroutines.cancellation.CancellationException
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.withTimeoutOrNull
-private val PARSE_TIMEOUT = 15.seconds
-
-          withTimeoutOrNull(PARSE_TIMEOUT) {
-            awaitParsedContent(
-              webView = webView,
-              htmlShell = htmlShell,
-              link = link,
-              content = content,
-              image = image,
-            )
-            ?: run {
-              Logger.e { "Timed out running readability pipeline, falling back to raw content" }
-              ReadabilityResult(content = content)
-            }
-        } catch (e: CancellationException) {
-          throw e
-        } catch (e: Exception) {
-          Logger.e(e) { "Failed to run readability pipeline, falling back to raw content" }
-          ReadabilityResult(content = content)
-          withContext(NonCancellable) { returnWebViewToPool(webView) }
-  private suspend fun awaitParsedContent(
-    webView: WebView,
-    
+- **New Add Feed Flow**: Adding a feed is now a two-step sheet. After entering a link, you can rename the feed, pick its icon, set up notifications, choose whether to always fetch the full article, and add it to groups.
+- **Default Source on Startup**: Pick a feed or group to open automatically when the app starts. You can set this in behavior settings, and the picker includes search.
+- **Feed List Filters**: New "Unread only" and "Hide grouped feeds" options in the feeds list help keep long lists tidy.
+- **OPML Import During Onboarding**: Import your existing subscriptions straight from the onboarding screen.
+- **Classic App Icon**: Added a new "Classic" app icon option.
+- **Tables in Reader**: The reader now renders tables, with better column widths.
+- **Keyboard Navigation**: Move through the post list with the keyboard, with shortcuts working anywhere in the window.
+- **Per-Feed Icons**: Choose between the feed's own icon and the website favicon for each feed. The global favicon setting now only sets the default for new feeds.
+- **Smoother Home Navigation**: Added animated transitions when switching sources, plus a back button to return home from a selected source.
+- **More Rel
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-          suspendCancellableCoroutine { continuation ->
-            val bridge =
-              object {
-                @JavascriptInterface
-                fun onContentParsed(result: String) {
-                  try {
-                    val parsed = json.decodeFromString<ReadabilityResult>(result)
-                    continuation.resume(parsed) { _, _, _ ->
-                      // no-op
-                    }
-                  } catch (e: Exception) {
-                    continuation.resumeWithException(e)
-                  }
-                }
-              }
-
-            webView.addJavascriptInterface(bridge, "ReaderJSInterface")
-
-            webView.webViewClient =
-              object : WebViewClient() {
-                override fun onPageFinished(view: WebView, url: String) {
-                  val script =
-                    """
-                                parseReaderContent(
-                                    ${link.asJSString}, 
-                                    ${image.asJSString}, 
-                                    ${content.asJSString}
-                                ).then(res => ReaderJSInterface.onContentParsed(JSON.stringify(res)))
-                         
+- **Better YouTube Support**: Video posts now show proper high resolution thumbnails, open directly in the YouTube app, and get a dedicated action bar in the reader.
+- **Smarter Feed Links**: Pasting a Reddit, Mastodon, or YouTube link when adding a feed now resolves it to the right feed automatically, including YouTube handle links.
+- **Themed App Icons**: App icons now match the color schemes, and can be picked right from the appearance settings.
+- **Smoother Visuals**: Refined gradients and scrims across the home and reader screens, animated post items in the home feed, and a cleaner background blur transition when swiping through featured posts.
+- **Performance Improvements**: Faster feed parsing with lower memory usage, plus smoother home screen scrolling and image loading.
+- **Simpler Add Feed**: Removed the feed preference toggles from the add feed screen.
+- **No Shorts**: YouTube feeds now come from the channel's uploads playlist, so Shorts stay out of your feed.
+- Fixed feeds that nested media inside items showing only a single post.
+- Fixed missing images in feeds that put the image URL in the element text.
+- Fixed full article fetching failing on sites that block browser
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `563cc519` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `baf8d83c` are properly handled with clean fallback behavior.

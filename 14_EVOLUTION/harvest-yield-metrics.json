@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T00:27:10.885Z",
-  "total_cycles_completed": 8110,
-  "total_learnings_persisted": 8110,
-  "total_rules_promoted": 7782,
+  "last_updated": "2026-11-08T00:34:29.848Z",
+  "total_cycles_completed": 8113,
+  "total_learnings_persisted": 8113,
+  "total_rules_promoted": 7787,
   "history": [
-    {
-      "timestamp": "2026-11-06T23:11:55.622Z",
-      "repository": "salvo-rs/salvo",
-      "learningId": "learn-github-salvo-rs-salvo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T23:12:02.569Z",
-      "repository": "Pika-Labs/Pika-H3-Flex",
-      "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T23:12:03.085Z",
-      "repository": "encoredev/encore",
-      "learningId": "learn-github-encoredev-encore",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T23:12:07.135Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-08T00:27:10.885Z",
       "repository": "ducaale/xh",
       "learningId": "learn-github-ducaale-xh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T00:34:21.606Z",
+      "repository": "msasikanth/twine",
+      "learningId": "learn-github-msasikanth-twine",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T00:34:28.803Z",
+      "repository": "speridlabs/idol",
+      "learningId": "learn-huggingface-speridlabs-idol",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T00:34:29.848Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

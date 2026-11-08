@@ -8145,3 +8145,6 @@
 | `CYCLE-20261108-ZURH` | `2026-11-08T00:15:40.157Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dae872a7...`) |
 | `CYCLE-20261108-88RW` | `2026-11-08T00:22:11.564Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a5bc991...`) |
 | `CYCLE-20261108-ENQ1` | `2026-11-08T00:27:10.873Z` | `ducaale/xh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`18be4ac7...`) |
+| `CYCLE-20261108-NW2K` | `2026-11-08T00:34:21.596Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2956` | Yes (`8762b449...`) |
+| `CYCLE-20261108-O1MH` | `2026-11-08T00:34:28.793Z` | `speridlabs/idol` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`dcfa8042...`) |
+| `CYCLE-20261108-O2FI` | `2026-11-08T00:34:29.838Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fef57fae...`) |

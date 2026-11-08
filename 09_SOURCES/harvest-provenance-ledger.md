@@ -8154,3 +8154,6 @@ Every entry in this ledger must capture:
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `b74dc9e9` | Multi-dimensional audit evidence | 2026-11-08T00:15:40.169Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `25119216` | Multi-dimensional audit evidence | 2026-11-08T00:22:11.566Z |
 | `learn-github-ducaale-xh` | `https://github.com/ducaale/xh` | `8b21cc07` | Multi-dimensional audit evidence | 2026-11-08T00:27:10.881Z |
+| `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `baf8d83c` | Multi-dimensional audit evidence | 2026-11-08T00:34:21.601Z |
+| `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-08T00:34:28.797Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `2cce058e` | Multi-dimensional audit evidence | 2026-11-08T00:34:29.842Z |

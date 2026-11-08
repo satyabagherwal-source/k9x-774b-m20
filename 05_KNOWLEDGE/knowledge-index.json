@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T00:27:10.818Z",
+  "last_updated": "2026-11-08T00:34:29.751Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15710,14 +15710,19 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "63fba09b",
-      "content_hash": "e6dc9f9a912f77f31d7fc05e72b3888dc5ce6fcf0131deb09f510ae3c28f4516",
+      "source_version": "2cce058e",
+      "content_hash": "fef57faeaba411cb71ce4286cfbd0fbcd7f4760a0de1bb4ed09fb072547ab6ea",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "ci(py): parallelize pytest, skip Rich tracebacks in tests, and add CI gate (#709",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "github): use the existing feature label in the feature request template (#6725)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15801,7 +15806,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:25:40.800Z",
+      "verified_at": "2026-11-08T00:34:29.726Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44167,8 +44172,8 @@
       "slug": "msasikanth-twine",
       "platform": "github",
       "source_url": "https://github.com/msasikanth/twine",
-      "source_version": "f10bb41f",
-      "content_hash": "5ba56753b6b13e826e724e06a0ed81e22f86bdf21527af4122416214f29ef086",
+      "source_version": "baf8d83c",
+      "content_hash": "8762b44902ab0c261fe4b3fd10e7bfe50e40eb70bfcbd64dabffa8f9ef41ddb7",
       "dossier_path": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "promoted_rules": [
@@ -44176,6 +44181,11 @@
           "number": 2485,
           "title": "Bundle SQLite native libraries for macOS App Store builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2956,
+          "title": "Update CHANGELOG",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 4345,
@@ -44198,7 +44208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:00:12.112Z",
+      "verified_at": "2026-11-08T00:34:21.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118144,15 +118154,15 @@
       "learning_id": "rule-2956",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2956,
-      "title": "Update CHANGELOG for the @direction fixes",
-      "source_url": "https://github.com/digitalbazaar/pyld",
-      "source_version": "b69c22fb",
+      "title": "Update CHANGELOG",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "baf8d83c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T01:11:48.185Z"
+      "verified_at": "2026-11-08T00:34:21.475Z"
     },
     "rule-2957": {
       "learning_id": "rule-2957",
@@ -165052,10 +165062,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/idol",
       "source_version": "hf-speridlabs-idol",
-      "content_hash": "6d4ba37b9ce02a9f518b07970b75070d8e549606e3eb8a87513c353e65776dad",
+      "content_hash": "dcfa8042ff4f483b1191fb6dba2249fdd3203a621a1509604c7723a969c9b1d3",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Fixed-Length Latent Sequence Invariant for Real-Time 3D Generation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Gated Dependency Pre-Check Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Decoupled Geometry-Appearance Decoding Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5923,
           "title": "Hierarchical Spatial Decoupling for High-Resolution 3D Generation",
@@ -165082,7 +165107,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:35:29.056Z",
+      "verified_at": "2026-11-08T00:34:28.680Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
