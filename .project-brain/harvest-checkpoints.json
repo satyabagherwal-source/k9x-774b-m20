@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T01:10:04.464Z",
+  "last_updated": "2026-11-08T01:17:54.962Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "a8e6a7b8d0c33428a3a7b0500a285516f4b2c327599c6ed409a4e8a1aff04956",
-      "verified_at": "2026-11-06T21:59:36.007Z",
+      "content_hash": "e43a5dc6a9d897b6a3045465e5e906174817805b7132dce49081bb9e3a7301d1",
+      "verified_at": "2026-11-08T01:17:53.895Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T21:59:36.007Z"
+      "last_updated": "2026-11-08T01:17:53.895Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -11706,14 +11706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
-      "content_hash": "c851d753c3e082f69725fc54a32b157af62f5ecd7fe8037777d9ea5692f96446",
-      "verified_at": "2026-11-05T00:48:47.342Z",
+      "content_hash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
+      "verified_at": "2026-11-08T01:17:54.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:48:47.342Z"
+      "last_updated": "2026-11-08T01:17:54.961Z"
     },
     "zed-industries/zed": {
       "repository": "zed-industries/zed",

@@ -8171,3 +8171,5 @@ Every entry in this ledger must capture:
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `46ab3dad` | Multi-dimensional audit evidence | 2026-11-08T01:03:21.692Z |
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `0b076ca5` | Multi-dimensional audit evidence | 2026-11-08T01:09:50.382Z |
 | `learn-github-tursodatabase-libsql` | `https://github.com/libsql/libsql` | `a1d031cb` | Multi-dimensional audit evidence | 2026-11-08T01:10:04.449Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `9b71df9a` | Multi-dimensional audit evidence | 2026-11-08T01:17:53.863Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `bf7f6dc2` | Multi-dimensional audit evidence | 2026-11-08T01:17:54.950Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `2709799d`  
+> **Source Version**: `9b71df9a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:13:18.624Z  
+> **Timestamp**: 2026-11-08T01:17:52.249Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:13:18.035Z  
+> **Harvest Timestamp**: 2026-11-08T01:17:50.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25180 stars
+- **Stars / Engagement**: 25186 stars
 
 ---
 
@@ -1428,13 +1428,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11528** (2026-11-06): **core/dialect: import names instead of spelling out their paths**
-  *Symptoms*: The Dialect module had no `use` block and wrote every type as a full path, such as `crate::Result` and `crate::schema::Schema`, in the trait and in its tests. Every later edit to the file copied that style, so new trait methods kept spreading paths like `crate::namespace::NamespaceId` through signatures that other files write with a plain import.  Import the names at the top of the module and in the test module, and refer to them by name. Doc links to items the module does not otherwise use keep their full path. No behavior changes.  Note: #11482 adds methods to this file and will need a small mechanical conflict resolution in `core/dialect/mod.rs` once this lands.
+- **Issue #11571** (2026-11-07): **tursopg: read hex, octal and binary literals that do not fit in int4**
+  *Symptoms*: ## Problem  `SELECT 0o20000000000` and `SELECT 0b11111111111111111111111111111111` crash tursopg with "entered unreachable code" in `parse_numeric_literal`.  PostgreSQL's parser keeps the text of an integer literal that does not fit in int4, so the translator gets the string "0o20000000000" and passes it on as a numeric literal. Turso's numeric literal parser reads only decimal and hex text, so octal and binary text falls through to `unreachable!()`. Hex text gets through but is read the SQLite way: `SELECT 0x8000000000000000` wraps around to -9223372036854775808, and a hex literal above 64 bits is an error. CREATE SEQUENCE options read the same text as decimal, so `START 0o20000000000` is refused as not supported.  ## Fix  The PostgreSQL translator writes a hex, octal or binary literal in decimal digits before passing it on, both for expressions and for CREATE SEQUENCE options. The digits are converted one at a time, so a literal of any length gives the exact decimal value. A value that does not fit in i64 then becomes a float, as a decimal literal of the same size already does. `core/` is not changed.  ## Tests  Added cases to `pg-sqltests/select.sqltest` for the SQL from the issue, for hex literals above i64, and for a sequence that starts at an octal literal. Each fails on `main` (the first one crashes the tursopg server) and passes with this change.  Fixes #11432  --- 🤖 Opened with [Superhuman](https://github.com/gaurav0107/superhuman), an open-source contribution agent
 
-- **Issue #11494** (2026-11-05): **docs: mark WITH RECURSIVE supported and MVCC production ready**
-  *Symptoms*: COMPAT.md listed WITH RECURSIVE as not yet supported. It works, and returns the same rows as SQLite for counting recursion, tree walks over joined tables, and UNION-deduplicated recursion.  docs/manual.md warned that the `mvcc` journal mode is not production ready. It is production ready, so the warning is removed.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **degrade performance by 38.5%**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/docs%2Frecursive-cte-and-mvcc-status?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **97 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime inst
+- **Issue #11566** (2026-11-07): **core/time: return an error for a time blob whose seconds overflow**
+  *Symptoms*: ## Problem  `SELECT time_fmt_iso(x'01800000000000000000000000')` panics with "attempt to subtract with overflow" in a debug build, and the process aborts because the panic happens inside a scalar function that cannot unwind.  Every time function that takes a time blob decodes it with `Time::try_from(Vec<u8>)`. That reads the seconds count from bytes 1-8 and subtracts the number of seconds between year 1 and 1970 with a plain `-`. When the blob's seconds count is close to `i64::MIN`, the subtraction overflows.  ## Fix  Use `checked_sub` and return `TimeError::InvalidFormat` when it overflows. That is the error ("invalid datetime format") the function already returns when the seconds value is outside the range chrono accepts, so a crafted blob now gets an error instead of a crash, in `time_fmt_iso` and in every other time function that reads a blob.  ## Tests  Added a case to the time sqltests with the SQL from the issue. It aborts the test runner on `main` and passes with this change.  Fixes #11438  --- 🤖 Opened with [Superhuman](https://github.com/gaurav0107/superhuman), an open-source contribution agent.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1451,259 +1449,136 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2709799d` (2026-11-06)
-**Commit Message**: Merge 'core/dialect: import names instead of spelling out their paths' from Pekka Enberg
+### Incident Patch 1: `9b71df9a` (2026-11-07)
+**Commit Message**: Merge 'core/time: return an error for a time blob whose seconds overflow' from Gaurav Dubey
 
-The Dialect module had no `use` block and wrote every type as a full
-path, such as `crate::Result` and `crate::schema::Schema`, in the trait
-and in its tests. Every later edit to the file copied that style, so new
-trait methods kept spreading paths like `crate::namespace::NamespaceId`
-through signatures that other files write with a plain import.
+## Problem
 
-Import the names at the top of the module and in the test module, and
-refer to them by name. Doc links to items the module does not otherwise
-use keep their full path. No behavior changes.
+`SELECT time_fmt_iso(x'01800000000000000000000000')` panics with
+"attempt to subtract with overflow" in a debug build, and the process
+aborts because the panic happens inside a scalar function that cannot
+unwind.
 
-Note: #11482 adds methods to this file and will need a small mechanical
-conflict resolution in `core/dialect/mod.rs` once this lands.
+Every time function that takes a time blob decodes it with
+`Time::try_from(Vec<u8>)`. That reads the seconds count from bytes 1-8
+and subtracts the number of seconds between year 1 and 1970 with a plain
+`-`. When the blob's seconds count is close to `i64::MIN`, the
+subtraction overflows.
 
-Closes #11528
+## Fix
 
-**File**: `core/dialect/mod.rs` (modified, +127/-183)
+Use `checked_sub` and return `TimeError::InvalidFormat` when it
+overflows. That is the error ("invalid datetime format") the function
+already returns when the seconds value is outside the range chrono
+accepts, so a crafted blob now gets an error instead of a crash, in
+`time_fmt_iso` and in every other time function that reads a blob.
+
+## Tests
+
+Added a case to the time sqltests with the SQL from the issue. It aborts
+the test runner on `main` and passes with this change.
+
+Fixes #11438
+
+--- 🤖 Opened with
+[Superhuman](https://github.com/gaurav0107/superhuman), an open-source
+con
+
+**File**: `core/time/internal.rs` (modified, +5/-1)
 ```diff
-@@ -17,6 +17,10 @@ pub mod engine;
+@@ -577,8 +577,12 @@ impl TryFrom<Vec<u8>> for Time {
+             | (value[10] as u32) << 16
+             | (value[9] as u32) << 24;
  
- pub(crate) use engine::EngineDialect;
- 
-+use crate::schema::{BTreeTable, Schema};
-+use crate::{Connection, Func, LimboError, OpenOptions, Result, Value};
-+use turso_parser::ast::{Cmd, CreateTableBody, QualifiedName, Stmt};
++        let seconds = seconds
++            .checked_sub(3600 * 24 * DAYS_BEFORE_EPOCH)
++            .ok_or(TimeError::InvalidFormat)?;
 +
- /// Prefix the PostgreSQL frontend puts before the `CREATE TABLE` text it
- /// stores in `sqlite_schema`.
- pub const POSTGRES_TABLE_SQL_PREFIX: &str = "/* turso_frontend:postgres */ ";
-@@ -36,7 +40,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// reject an open whose dialect differs from the already-open instance.
-     fn name(&self) -> &'static str;
+         Ok(Self {
+-            inner: DateTime::from_timestamp(seconds - (3600 * 24 * DAYS_BEFORE_EPOCH), nanoseconds)
++            inner: DateTime::from_timestamp(seconds, nanoseconds)
+                 .ok_or(TimeError::InvalidFormat)?
+                 .to_utc(),
+         })
+```
+
+**File**: `sqlite/conformance/turso-sqltests/time.sqltest` (modified, +7/-0)
+```diff
+@@ -355,6 +355,13 @@ expect {
+     2011-11-18T15:56:35Z
+ }
  
--    fn format_error(&self, error: crate::LimboError) -> crate::LimboError {
-+    fn format_error(&self, error: LimboError) -> LimboError {
-         error.into_sqlite_error()
-     }
- 
-@@ -48,7 +52,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// connection compilation state changes. Implementations must accept the
-     /// canonical SQLite text produced by the engine AST formatter because
-     /// engine-generated and AST-only statements use that representation.
--    fn parse(&self, sql: &str) -> crate::Result<(Option<turso_parser::ast::Cmd>, usize)>;
-+    fn parse(&self, sql: &str) -> Result<(Option<Cmd>, usize)>;
- 
-     /// Parse a `sqlite_schema` `type='table'` row's SQL into a table
-     /// definition.
-@@ -57,11 +61,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// `sqlite_sequence`) are plain SQLite text and carry no frontend
-     /// marker, so every implementation must fall back to SQLite parsing
-     /// for text it does not recognize as its own.
--    fn parse_table_sql(
--        &self,
--        sql: &str,
--        root_page: i64,
--    ) -> crate::Result<crate::schema::BTreeTable>;
-+    fn parse_table_sql(&self, sql: &str, root_page: i64) -> Result<BTreeTable>;
- 
-     /// Decode a storage-backed table's persisted SQL into its `CREATE TABLE`
-     /// AST.
-@@ -72,7 +72,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// [`Dialect::format_rewritten_table_sql`]. Internal engine tables use
-     /// plain SQLite text, so implementations must retain the same SQLite
-     /// fallback required by [`Dialect::parse_table_sql`].
--    fn parse_table_sql_ast(&self, sql: &str) -> crate::Result<turso_parser::ast::Stmt>;
-+    fn parse_table_sql_ast(&self, sql: &str) -> Result<Stmt>;
- 
-     /// Recover SQL that can be prepared to recreate a persisted table.
-     ///
-@@ -82,7 +82,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// persisted statement originally qualified the source database. Unmarked
-     /// internal engine tables must retain the SQLite fallback used by the
-     /// schema parsing methods.
--    fn table_sql_for_replay(&self, sql: &str) -> crate::Result<String>;
-+    fn table_sql_for_replay(&self, sql: &str) -> Result<String>;
- 
-     /// Produce the SQL text to store in `sqlite_schema` for a
-     /// `CREATE TABLE`.
-@@ -95,19 +95,19 @@ pub trait Dialect: Send + Sync + 'static {
-     fn format_table_sql(
-         &self,
-         input: &str,
--        tbl_name: &turso_parser::ast::QualifiedName,
--        body: &turso_parser::ast::CreateTableBody,
--    ) -> crate::Result<String>;
-+        tbl_name: &QualifiedName,
-+        body: &CreateTableBody,
-+    ) -> Result<String>;
- 
-     /// Produce stored SQL after the engine rewrites a `CREATE TABLE` AST.
-     ///
-     /// Schema rewrites cannot reuse the original frontend text because it no
-     /// longer describes the rewritten table. Dialects that need syntax beyond
-     /// a marker around canonical SQL can override this to render their native
-     /// table definition from the rewritten AST.
--    fn format_rewritten_table_sql(&self, stmt: &turso_parser::ast::Stmt) -> crate::Result<String> {
--        let turso_parser::ast::Stmt::CreateTable { tbl_name, body, .. } = stmt else {
--            return Err(crate::LimboError::InternalError(
-+    fn format_rewritten_table_sql(&self, stmt: &Stmt) -> Result<String> {
-+        let Stmt::CreateTable { tbl_name, body, .. } = stmt else {
-+            return Err(LimboError::InternalError(
-                 "format_rewritten_table_sql requires CREATE TABLE".to_string(),
-             ));
-         };
-@@ -117,21 +117,17 @@ pub trait Dialect: Send + Sync + 'static {
-     /// Install the dialect's catalog tables into a freshly constructed
-     /// schema.
-     ///
--    /// Called by [`crate::schema::Schema::with_options`] on every schema
-+    /// Called by [`Schema::with_options`] on every schema
-     /// construction and rebuild, so catalog tables survive rebuilds
-     /// structurally instead of being re-registered by hand. The SQLite
-     /// dialect registers the standard built-in catalog here; other
-     /// dialects typically compose with it via
-     /// [`engine::register_builtin_catalog`] and then add their own tables
-     /// (constructed with [`crate::VirtualTable::new_internal`], which
-     /// requires no connection).
--    fn register_catalog(
--        &self,
--        schema:
++test time_fmt_iso_seconds_out_of_range {
++    SELECT time_fmt_iso(x'01800000000000000000000000');
++}
++expect error {
++    invalid datetime format
++}
++
+ test time_fmt_datetime {
+     SELECT time_fmt_datetime(time_date(2011, 11, 18, 15, 56, 35), 3*3600);
+     SELECT time_fmt_datetime(time_date(2011, 11, 18, 15, 56, 35));
 ```
 
 ---
 
-### Incident Patch 2: `8be7c127` (2026-11-06)
-**Commit Message**: core/dialect: import names instead of spelling out their paths
+### Incident Patch 2: `6339f34e` (2026-11-07)
+**Commit Message**: core/time: return an error for a time blob whose seconds overflow
 
-The Dialect module had no `use` block and wrote every type as a full
-path, such as `crate::Result` and `crate::schema::Schema`, in the trait
-and in its tests. Every later edit to the file copied that style, so new
-trait methods kept spreading paths like `crate::namespace::NamespaceId`
-through signatures that other files write with a plain import.
+Time functions read the seconds count from bytes 1-8 of a time blob and
+subtract the number of seconds between year 1 and 1970. A blob whose
+seconds count is close to i64::MIN overflowed that subtraction, which
+panicked in debug builds and aborted the process, because the panic
+happened inside a scalar function that cannot unwind.
 
-Import the names at the top of the module and in the test module, and
-refer to them by name. Doc links to items the module does not otherwise
-use keep their full path so they stay resolvable without an import that
-code never reads. No behavior changes.
+Use checked_sub and return the same "invalid datetime format" error that
+an out-of-range seconds value already gives.
 
-**File**: `core/dialect/mod.rs` (modified, +127/-183)
+Fixes #11438
+
+**File**: `core/time/internal.rs` (modified, +5/-1)
 ```diff
-@@ -17,6 +17,10 @@ pub mod engine;
+@@ -577,8 +577,12 @@ impl TryFrom<Vec<u8>> for Time {
+             | (value[10] as u32) << 16
+             | (value[9] as u32) << 24;
  
- pub(crate) use engine::EngineDialect;
- 
-+use crate::schema::{BTreeTable, Schema};
-+use crate::{Connection, Func, LimboError, OpenOptions, Result, Value};
-+use turso_parser::ast::{Cmd, CreateTableBody, QualifiedName, Stmt};
++        let seconds = seconds
++            .checked_sub(3600 * 24 * DAYS_BEFORE_EPOCH)
++            .ok_or(TimeError::InvalidFormat)?;
 +
- /// Prefix the PostgreSQL frontend puts before the `CREATE TABLE` text it
- /// stores in `sqlite_schema`.
- pub const POSTGRES_TABLE_SQL_PREFIX: &str = "/* turso_frontend:postgres */ ";
-@@ -36,7 +40,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// reject an open whose dialect differs from the already-open instance.
-     fn name(&self) -> &'static str;
+         Ok(Self {
+-            inner: DateTime::from_timestamp(seconds - (3600 * 24 * DAYS_BEFORE_EPOCH), nanoseconds)
++            inner: DateTime::from_timestamp(seconds, nanoseconds)
+                 .ok_or(TimeError::InvalidFormat)?
+                 .to_utc(),
+         })
+```
+
+**File**: `sqlite/conformance/turso-sqltests/time.sqltest` (modified, +7/-0)
+```diff
+@@ -355,6 +355,13 @@ expect {
+     2011-11-18T15:56:35Z
+ }
  
--    fn format_error(&self, error: crate::LimboError) -> crate::LimboError {
-+    fn format_error(&self, error: LimboError) -> LimboError {
-         error.into_sqlite_error()
-     }
- 
-@@ -48,7 +52,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// connection compilation state changes. Implementations must accept the
-     /// canonical SQLite text produced by the engine AST formatter because
-     /// engine-generated and AST-only statements use that representation.
--    fn parse(&self, sql: &str) -> crate::Result<(Option<turso_parser::ast::Cmd>, usize)>;
-+    fn parse(&self, sql: &str) -> Result<(Option<Cmd>, usize)>;
- 
-     /// Parse a `sqlite_schema` `type='table'` row's SQL into a table
-     /// definition.
-@@ -57,11 +61,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// `sqlite_sequence`) are plain SQLite text and carry no frontend
-     /// marker, so every implementation must fall back to SQLite parsing
-     /// for text it does not recognize as its own.
--    fn parse_table_sql(
--        &self,
--        sql: &str,
--        root_page: i64,
--    ) -> crate::Result<crate::schema::BTreeTable>;
-+    fn parse_table_sql(&self, sql: &str, root_page: i64) -> Result<BTreeTable>;
- 
-     /// Decode a storage-backed table's persisted SQL into its `CREATE TABLE`
-     /// AST.
-@@ -72,7 +72,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// [`Dialect::format_rewritten_table_sql`]. Internal engine tables use
-     /// plain SQLite text, so implementations must retain the same SQLite
-     /// fallback required by [`Dialect::parse_table_sql`].
--    fn parse_table_sql_ast(&self, sql: &str) -> crate::Result<turso_parser::ast::Stmt>;
-+    fn parse_table_sql_ast(&self, sql: &str) -> Result<Stmt>;
- 
-     /// Recover SQL that can be prepared to recreate a persisted table.
-     ///
-@@ -82,7 +82,7 @@ pub trait Dialect: Send + Sync + 'static {
-     /// persisted statement originally qualified the source database. Unmarked
-     /// internal engine tables must retain the SQLite fallback used by the
-     /// schema parsing methods.
--    fn table_sql_for_replay(&self, sql: &str) -> crate::Result<String>;
-+    fn table_sql_for_replay(&self, sql: &str) -> Result<String>;
- 
-     /// Produce the SQL text to store in `sqlite_schema` for a
-     /// `CREATE TABLE`.
-@@ -95,19 +95,19 @@ pub trait Dialect: Send + Sync + 'static {
-     fn format_table_sql(
-         &self,
-         input: &str,
--        tbl_name: &turso_parser::ast::QualifiedName,
--        body: &turso_parser::ast::CreateTableBody,
--    ) -> crate::Result<String>;
-+        tbl_name: &QualifiedName,
-+        body: &CreateTableBody,
-+    ) -> Result<String>;
- 
-     /// Produce stored SQL after the engine rewrites a `CREATE TABLE` AST.
-     ///
-     /// Schema rewrites cannot reuse the original frontend text because it no
-     /// longer describes the rewritten table. Dialects that need syntax beyond
-     /// a marker around canonical SQL can override this to render their native
-     /// table definition from the rewritten AST.
--    fn format_rewritten_table_sql(&self, stmt: &turso_parser::ast::Stmt) -> crate::Result<String> {
--        let turso_parser::ast::Stmt::CreateTable { tbl_name, body, .. } = stmt else {
--            return Err(crate::LimboError::InternalError(
-+    fn format_rewritten_table_sql(&self, stmt: &Stmt) -> Result<String> {
-+        let Stmt::CreateTable { tbl_name, body, .. } = stmt else {
-+            return Err(LimboError::InternalError(
-                 "format_rewritten_table_sql requires CREATE TABLE".to_string(),
-             ));
-         };
-@@ -117,21 +117,17 @@ pub trait Dialect: Send + Sync + 'static {
-     /// Install the dialect's catalog tables into a freshly constructed
-     /// schema.
-     ///
--    /// Called by [`crate::schema::Schema::with_options`] on every schema
-+    /// Called by [`Schema::with_options`] on every schema
-     /// construction and rebuild, so catalog tables survive rebuilds
-     /// structurally instead of being re-registered by hand. The SQLite
-     /// dialect registers the standard built-in catalog here; other
-     /// dialects typically compose with it via
-     /// [`engine::register_builtin_catalog`] and then add their own tables
-     /// (constructed with [`crate::VirtualTable::new_internal`], which
-     /// requires no connection).
--    fn register_catalog(
--        &self,
--        schema:
++test time_fmt_iso_seconds_out_of_range {
++    SELECT time_fmt_iso(x'01800000000000000000000000');
++}
++expect error {
++    invalid datetime format
++}
++
+ test time_fmt_datetime {
+     SELECT time_fmt_datetime(time_date(2011, 11, 18, 15, 56, 35), 3*3600);
+     SELECT time_fmt_datetime(time_date(2011, 11, 18, 15, 56, 35));
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11571** (2026-11-07): tursopg: read hex, octal and binary literals that do not fit in int4 (@gaurav0107)
+- **PR #11566** (2026-11-07): core/time: return an error for a time blob whose seconds overflow (@gaurav0107)
+- **PR #11548** (2026-11-06): serverless/go: expose typed HTTP response errors (@pedrocarlo)
 - **PR #11528** (2026-11-06): core/dialect: import names instead of spelling out their paths (@penberg)
-- **PR #11494** (2026-11-05): docs: mark WITH RECURSIVE supported and MVCC production ready (@glommer)
-- **PR #11472** (closed): core: refuse unnamed columns and guessed primary key forms in custom-type code (@jussisaurio)
-- **PR #11471** (closed): core: allow custom types and domains only in the main database (@jussisaurio)
-- **PR #11467** (2026-11-05): core/translate: return a row once when an IN list spells its value twice (@turso-github-handyman[bot])
-- **PR #11463** (2026-11-05): core/translate: reject an outer aggregate in an aggregate's argument (@turso-github-handyman[bot])
+- **PR #11510** (closed): core/translate: keep SQLite's group order for DISTINCT with GROUP BY (@abrahamperz)
+- **PR #11497** (closed): Fix PHP callbacks, read-only access, and cleanup (stacked on #8498) (@HundredBillion)
 
 ---
 
@@ -1723,61 +1598,32 @@ code never reads. No behavior changes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/dialect: import names instead of spelling out their paths' from Pekk
+## X. Merge 'core/time: return an error for a time blob whose seconds overflow' from G
 
 **RULE**:
-When implementing operations in `core/dialect/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/time/internal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2709799d`: Merge 'core/dialect: import names instead of spelling out their paths' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9b71df9a`: Merge 'core/time: return an error for a time blob whose seconds overflow' from Gaurav Dubey. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/time/internal.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::schema::{BTreeTable, Schema};
-use crate::{Connection, Func, LimboError, OpenOptions, Result, Value};
-use turso_parser::ast::{Cmd, CreateTableBody, QualifiedName, Stmt};
+        let seconds = seconds
+            .checked_sub(3600 * 24 * DAYS_BEFORE_EPOCH)
+            .ok_or(TimeError::InvalidFormat)?;
 
-    fn format_error(&self, error: LimboError) -> LimboError {
-    fn parse(&self, sql: &str) -> Result<(Option<Cmd>, usize)>;
-    fn parse_table_sql(&self, sql: &str, root_page: i64) -> Result<BTreeTable>;
-    fn parse_table_sql_ast(&self, sql: &str) -> Result<Stmt>;
-    fn table_sql_for_replay(&self, sql: &str) -> Result<String>;
-        tbl_name: &QualifiedName,
-        body: &CreateTableBody,
-    ) -> Result<String>;
-    fn format_rewritten_table_sql(&self, stmt: &Stmt) -> Result<String> {
-        let Stmt::CreateTable { tbl_name, body, .. } = stmt else {
-            return Err(LimboError::InternalError(
-    /// Called by [`Schema::with_options`] on every schema
+            inner: DateTime::from_timestamp(seconds, nanoseconds)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    fn format_error(&self, error: crate::LimboError) -> crate::LimboError {
-    fn parse(&self, sql: &str) -> crate::Result<(Option<turso_parser::ast::Cmd>, usize)>;
-    fn parse_table_sql(
-        &self,
-        sql: &str,
-        root_page: i64,
-    ) -> crate::Result<crate::schema::BTreeTable>;
-    fn parse_table_sql_ast(&self, sql: &str) -> crate::Result<turso_parser::ast::Stmt>;
-    fn table_sql_for_replay(&self, sql: &str) -> crate::Result<String>;
-        tbl_name: &turso_parser::ast::QualifiedName,
-        body: &turso_parser::ast::CreateTableBody,
-    ) -> crate::Result<String>;
-    fn format_rewritten_table_sql(&self, stmt: &turso_parser::ast::Stmt) -> crate::Result<String> {
-        let turso_parser::ast::Stmt::CreateTable { tbl_name, body, .. } = stmt else {
-            return Err(crate::LimboError::InternalError(
-    /// Called by [`crate::schema::Schema::with_options`] on every schema
-    fn register_catalog(
-        &self,
-        schema:
+            inner: DateTime::from_timestamp(seconds - (3600 * 24 * DAYS_BEFORE_EPOCH), nanoseconds)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2709799d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9b71df9a` are properly handled with clean fallback behavior.

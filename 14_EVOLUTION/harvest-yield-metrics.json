@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T01:10:04.461Z",
-  "total_cycles_completed": 8127,
-  "total_learnings_persisted": 8127,
-  "total_rules_promoted": 7799,
+  "last_updated": "2026-11-08T01:17:54.957Z",
+  "total_cycles_completed": 8129,
+  "total_learnings_persisted": 8129,
+  "total_rules_promoted": 7801,
   "history": [
-    {
-      "timestamp": "2026-11-07T02:24:36.967Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T02:24:41.077Z",
-      "repository": "scrapy-plugins/scrapy-zyte-api",
-      "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T02:31:59.235Z",
       "repository": "ntex-rs/ntex",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T01:10:04.461Z",
       "repository": "tursodatabase/libsql",
       "learningId": "learn-github-tursodatabase-libsql",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T01:17:53.873Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T01:17:54.957Z",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

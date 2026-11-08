@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "2709799d",
+    "sourceVersion": "9b71df9a",
     "license": "MIT",
-    "contentHash": "2909e8b0bd1b3e9546772b5ee4ff1a95b7817934b3e925d457a777e48fa7560e",
-    "lastHarvestedAt": "2026-11-06T15:13:20.728Z",
+    "contentHash": "e43a5dc6a9d897b6a3045465e5e906174817805b7132dce49081bb9e3a7301d1",
+    "lastHarvestedAt": "2026-11-08T01:17:53.863Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "564bd77c",
+    "sourceVersion": "bf7f6dc2",
     "license": "Apache-2.0",
-    "contentHash": "c851d753c3e082f69725fc54a32b157af62f5ecd7fe8037777d9ea5692f96446",
-    "lastHarvestedAt": "2026-11-05T00:48:47.334Z",
+    "contentHash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
+    "lastHarvestedAt": "2026-11-08T01:17:54.950Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {

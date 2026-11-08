@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T01:10:07.053Z",
-    "lastVerified": "2026-11-08T01:10:07.053Z",
+    "lastChecked": "2026-11-08T01:17:57.518Z",
+    "lastVerified": "2026-11-08T01:17:57.518Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T00:49:09.121Z",
+    "lastChecked": "2026-11-08T01:17:46.308Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T00:49:09.121Z"
+    "lastVerified": "2026-11-08T01:17:46.308Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1456,9 +1456,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-07T21:03:20.818Z",
+    "lastChecked": "2026-11-08T01:17:41.299Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-07T21:03:20.818Z"
+    "lastVerified": "2026-11-08T01:17:41.299Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -1638,8 +1638,8 @@
     "officialUrl": "https://github.com/cachix/devenv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T22:01:09.480Z",
-    "lastVerified": "2026-11-05T22:01:09.480Z",
+    "lastChecked": "2026-11-08T01:17:31.321Z",
+    "lastVerified": "2026-11-08T01:17:31.321Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cachix-devenv",
@@ -4177,9 +4177,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-06T19:23:46.090Z",
+    "lastChecked": "2026-11-08T01:17:38.789Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-06T19:23:46.090Z"
+    "lastVerified": "2026-11-08T01:17:38.789Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -7807,14 +7807,14 @@
     "officialUrl": "https://github.com/tursodatabase/limbo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T15:13:18.035Z",
-    "lastVerified": "2026-11-06T15:13:18.035Z",
+    "lastChecked": "2026-11-08T01:17:50.645Z",
+    "lastVerified": "2026-11-08T01:17:50.645Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "2909e8b0bd1b3e9546772b5ee4ff1a95b7817934b3e925d457a777e48fa7560e",
+    "contentHash": "e43a5dc6a9d897b6a3045465e5e906174817805b7132dce49081bb9e3a7301d1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8803,14 +8803,14 @@
     "officialUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-05T00:48:46.228Z",
-    "lastVerified": "2026-11-05T00:48:46.228Z",
+    "lastChecked": "2026-11-08T01:17:41.449Z",
+    "lastVerified": "2026-11-08T01:17:41.449Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "c851d753c3e082f69725fc54a32b157af62f5ecd7fe8037777d9ea5692f96446",
+    "contentHash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12681,12 +12681,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "expressjs-express": {
-    "name": "expressjs/express",
+    "name": "express",
     "officialUrl": "https://github.com/expressjs/express",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-04T09:32:56.527Z",
-    "lastVerified": "2026-11-04T09:32:56.527Z",
+    "lastChecked": "2026-11-08T01:17:33.829Z",
+    "lastVerified": "2026-11-08T01:17:33.829Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-expressjs-express",
@@ -12695,7 +12695,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "43fca52d"
   },
   "unjs-nitro": {
     "name": "nitrojs/nitro",

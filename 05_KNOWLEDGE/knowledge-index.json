@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T01:10:04.365Z",
+  "last_updated": "2026-11-08T01:17:54.847Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55636,11 +55636,16 @@
       "slug": "simonschubert-linuxcommandlibrary",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-      "source_version": "b2852d43",
-      "content_hash": "9da528aae8a94a5e368734404a47a96b0641f50bcd548785894783a0002c3d4c",
+      "source_version": "bf7f6dc2",
+      "content_hash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #133 from mvanhorn/fix/131-commands-tab-default-detail",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2511,
           "title": "External Intent Platform Boundary Isolation Rule",
@@ -55677,7 +55682,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:43:56.413Z",
+      "verified_at": "2026-11-08T01:17:54.812Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61062,13 +61067,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "65a31536",
-      "content_hash": "a8e6a7b8d0c33428a3a7b0500a285516f4b2c327599c6ed409a4e8a1aff04956",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "9b71df9a",
+      "content_hash": "e43a5dc6a9d897b6a3045465e5e906174817805b7132dce49081bb9e3a7301d1",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -61078,6 +61083,11 @@
         {
           "number": null,
           "title": "Merge 'core: implement stored generated columns' from Glauber Costa",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge 'core/time: return an error for a time blob whose seconds overflow' from G",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61231,7 +61241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:59:35.876Z",
+      "verified_at": "2026-11-08T01:17:53.719Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
