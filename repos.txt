@@ -4958,3 +4958,7 @@ https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-hereti
 # --- Automatically Discovered by AI Scout Engine [2026-11-08T22:19:31.431Z] ---
 # [HUGGINGFACE-AI-MODELS] Scantist/GLM-5.3-SLIM-GGUF (13130 score) - Verified Hugging Face Model: Scantist/GLM-5.3-SLIM-GGUF (1113 likes, 4938 downlo
 https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-08T22:26:04.379Z] ---
+# [MOBILE-CROSS-PLATFORM] wquguru/cicada (1310 score) - 知了 Cicada · 任何会议和直播的实时字幕、同声传译、AI 会议纪要，Mac、Windows、Linux、Android 免费开源。Live subtit
+https://github.com/wquguru/cicada

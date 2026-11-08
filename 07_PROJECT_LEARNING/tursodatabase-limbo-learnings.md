@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `9b71df9a`  
+> **Source Version**: `e520c28d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:17:52.249Z  
+> **Timestamp**: 2026-11-08T22:26:27.784Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:17:50.645Z  
+> **Harvest Timestamp**: 2026-11-08T22:26:27.779Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25186 stars
+- **Stars / Engagement**: 25196 stars
 
 ---
 
@@ -1428,11 +1428,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11571** (2026-11-07): **tursopg: read hex, octal and binary literals that do not fit in int4**
-  *Symptoms*: ## Problem  `SELECT 0o20000000000` and `SELECT 0b11111111111111111111111111111111` crash tursopg with "entered unreachable code" in `parse_numeric_literal`.  PostgreSQL's parser keeps the text of an integer literal that does not fit in int4, so the translator gets the string "0o20000000000" and passes it on as a numeric literal. Turso's numeric literal parser reads only decimal and hex text, so octal and binary text falls through to `unreachable!()`. Hex text gets through but is read the SQLite way: `SELECT 0x8000000000000000` wraps around to -9223372036854775808, and a hex literal above 64 bits is an error. CREATE SEQUENCE options read the same text as decimal, so `START 0o20000000000` is refused as not supported.  ## Fix  The PostgreSQL translator writes a hex, octal or binary literal in decimal digits before passing it on, both for expressions and for CREATE SEQUENCE options. The digits are converted one at a time, so a literal of any length gives the exact decimal value. A value that does not fit in i64 then becomes a float, as a decimal literal of the same size already does. `core/` is not changed.  ## Tests  Added cases to `pg-sqltests/select.sqltest` for the SQL from the issue, for hex literals above i64, and for a sequence that starts at an octal literal. Each fails on `main` (the first one crashes the tursopg server) and passes with this change.  Fixes #11432  --- 🤖 Opened with [Superhuman](https://github.com/gaurav0107/superhuman), an open-source contribution agent
+- **Issue #11577** (2026-11-08): **bindings/rust: expose the progress handler on Connection**
+  *Symptoms*: The core connection already has a step-based progress handler (`sqlite3_progress_handler` semantics), and the C bindings expose it, but the Rust bindings and the SDK kit don't. A Rust caller can only stop a running statement from outside today: `interrupt()` from another thread, or a wall-clock `set_query_timeout`.  This adds `Connection::set_progress_handler(ops, Option<F>)` to the Rust bindings, forwarding through `TursoConnection::set_progress_handler` in the SDK kit. The signature follows rusqlite's `progress_handler`.  Because the callback runs on the thread executing the statement, it stops statements that never yield, such as a scan over cached pages. A caller can tie it to a cancellation signal by checking a token on every call; this is how Android's `SQLiteConnection` implements `CancellationSignal`. We use it to cancel a search query as soon as the user types another character.  Test: `test_progress_handler_interrupts_when_it_returns_true` checks three things: a handler that returns false runs without stopping the statement; flipping the flag it reads from another thread interrupts a runaway statement with `Error::Interrupt`; and removing the handler lets the next statement run normally. 
 
-- **Issue #11566** (2026-11-07): **core/time: return an error for a time blob whose seconds overflow**
-  *Symptoms*: ## Problem  `SELECT time_fmt_iso(x'01800000000000000000000000')` panics with "attempt to subtract with overflow" in a debug build, and the process aborts because the panic happens inside a scalar function that cannot unwind.  Every time function that takes a time blob decodes it with `Time::try_from(Vec<u8>)`. That reads the seconds count from bytes 1-8 and subtracts the number of seconds between year 1 and 1970 with a plain `-`. When the blob's seconds count is close to `i64::MIN`, the subtraction overflows.  ## Fix  Use `checked_sub` and return `TimeError::InvalidFormat` when it overflows. That is the error ("invalid datetime format") the function already returns when the seconds value is outside the range chrono accepts, so a crafted blob now gets an error instead of a crash, in `time_fmt_iso` and in every other time function that reads a blob.  ## Tests  Added a case to the time sqltests with the SQL from the issue. It aborts the test runner on `main` and passes with this change.  Fixes #11438  --- 🤖 Opened with [Superhuman](https://github.com/gaurav0107/superhuman), an open-source contribution agent.
+- **Issue #11576** (2026-11-08): **core/dialect: centralize shared SQLite behavior in Dialect defaults**
+  *Symptoms*: #11356  ## Description  Move the shared SQLite parsing, schema handling, catalog registration, table formatting, and builtin function resolution into Dialect trait defaults.  Reduce EngineDialect and SqliteDialect to their dialect names while keeping PostgreSQL-specific overrides in PostgresDialect.  Also remove the production turso_sqlite dependency from turso_pg and call the core table formatter directly. Keep turso_sqlite only for SQLite-specific tests.
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Autofixer reviews pull requests from outside contributors on its own. The review of `ebfe20f95959` is [here](https://github.com/tursodatabase/turso/pull/11576#pullrequestreview-5814403163).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer started this review on its own, as it does for pull requests from outside contributors. Push a fix to get a re-review (up to 3 reviews in all); a pull request whose blocking findings stay unaddressed for 7 days is closed. Maintainers: add `autofixer: no-review` to stop these reviews, or `autofixer: review-requested` to review it as requested.</sub>  <!-- autofixer:contributor-review:ebfe20f95959155011f3282cda33f0fcd505801a --> <!-- autofixer:contributor-review-recommends:ebfe20f95959155011f3282cda33f0fcd505801a --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1449,136 +1451,64 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b71df9a` (2026-11-07)
-**Commit Message**: Merge 'core/time: return an error for a time blob whose seconds overflow' from Gaurav Dubey
+### Incident Patch 1: `9ce98599` (2026-11-08)
+**Commit Message**: Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' from app/turso-github-handyman
 
-## Problem
+Fix for #7741.
 
-`SELECT time_fmt_iso(x'01800000000000000000000000')` panics with
-"attempt to subtract with overflow" in a debug build, and the process
-aborts because the panic happens inside a scalar function that cannot
-unwind.
+<!-- autofixer:host-part --> Fixes #7741
 
-Every time function that takes a time blob decodes it with
-`Time::try_from(Vec<u8>)`. That reads the seconds count from bytes 1-8
-and subtracts the number of seconds between year 1 and 1970 with a plain
-`-`. When the blob's seconds count is close to `i64::MIN`, the
-subtraction overflows.
+<sub>Opened by Autofixer. To ask for a change, mention @turso-github-
+handyman in a comment.</sub>
 
-## Fix
+Co-authored-by: avinassh <[REDACTED_EMAIL]>
 
-Use `checked_sub` and return `TimeError::InvalidFormat` when it
-overflows. That is the error ("invalid datetime format") the function
-already returns when the seconds value is outside the range chrono
-accepts, so a crafted blob now gets an error instead of a crash, in
-`time_fmt_iso` and in every other time function that reads a blob.
+Closes #11504
 
-## Tests
-
-Added a case to the time sqltests with the SQL from the issue. It aborts
-the test runner on `main` and passes with this change.
-
-Fixes #11438
-
---- 🤖 Opened with
-[Superhuman](https://github.com/gaurav0107/superhuman), an open-source
-con
-
-**File**: `core/time/internal.rs` (modified, +5/-1)
+**File**: `core/storage/btree.rs` (modified, +18/-1)
 ```diff
-@@ -577,8 +577,12 @@ impl TryFrom<Vec<u8>> for Time {
-             | (value[10] as u32) << 16
-             | (value[9] as u32) << 24;
+@@ -9385,7 +9385,11 @@ fn find_free_slot(
+ pub fn btree_init_page(page: &PageRef, page_type: PageType, offset: usize, usable_space: usize) {
+     // setup btree page
+     let contents = page.get_contents();
+-    contents.overflow_cells.clear();
++    turso_assert!(
++        contents.overflow_cells.is_empty(),
++        "btree_init_page: page still has overflow cells from an earlier insert or balance",
++        { "page_id": page.get().id(), "overflow_count": contents.overflow_cells.len() }
++    );
+     tracing::debug!(
+         "btree_init_page(id={}, offset={}, usable_space={})",
+         page.get().id(),
+@@ -11520,6 +11524,19 @@ mod tests {
+         payload: crate::alloc::Vec<u8>,
+     }
  
-+        let seconds = seconds
-+            .checked_sub(3600 * 24 * DAYS_BEFORE_EPOCH)
-+            .ok_or(TimeError::InvalidFormat)?;
++    #[test]
++    #[should_panic(expected = "page still has overflow cells")]
++    fn btree_init_page_rejects_page_with_overflow_cells() {
++        let page = get_page(2);
++        let page_contents = page.get_contents();
++        let payload = [1u8; 3000];
++        insert_into_cell(page_contents, &payload, 0, 4096).unwrap();
++        insert_into_cell(page_contents, &payload, 1, 4096).unwrap();
++        assert_eq!(page_contents.overflow_cells.len(), 1);
 +
-         Ok(Self {
--            inner: DateTime::from_timestamp(seconds - (3600 * 24 * DAYS_BEFORE_EPOCH), nanoseconds)
-+            inner: DateTime::from_timestamp(seconds, nanoseconds)
-                 .ok_or(TimeError::InvalidFormat)?
-                 .to_utc(),
-         })
-```
-
-**File**: `sqlite/conformance/turso-sqltests/time.sqltest` (modified, +7/-0)
-```diff
-@@ -355,6 +355,13 @@ expect {
-     2011-11-18T15:56:35Z
- }
- 
-+test time_fmt_iso_seconds_out_of_range {
-+    SELECT time_fmt_iso(x'01800000000000000000000000');
-+}
-+expect error {
-+    invalid datetime format
-+}
++        btree_init_page(&page, PageType::TableLeaf, 0, 4096);
++    }
 +
- test time_fmt_datetime {
-     SELECT time_fmt_datetime(time_date(2011, 11, 18, 15, 56, 35), 3*3600);
-     SELECT time_fmt_datetime(time_date(2011, 11, 18, 15, 56, 35));
-```
-
----
-
-### Incident Patch 2: `6339f34e` (2026-11-07)
-**Commit Message**: core/time: return an error for a time blob whose seconds overflow
-
-Time functions read the seconds count from bytes 1-8 of a time blob and
-subtract the number of seconds between year 1 and 1970. A blob whose
-seconds count is close to i64::MIN overflowed that subtraction, which
-panicked in debug builds and aborted the process, because the panic
-happened inside a scalar function that cannot unwind.
-
-Use checked_sub and return the same "invalid datetime format" error that
-an out-of-range seconds value already gives.
-
-Fixes #11438
-
-**File**: `core/time/internal.rs` (modified, +5/-1)
-```diff
-@@ -577,8 +577,12 @@ impl TryFrom<Vec<u8>> for Time {
-             | (value[10] as u32) << 16
-             | (value[9] as u32) << 24;
- 
-+        let seconds = seconds
-+            .checked_sub(3600 * 24 * DAYS_BEFORE_EPOCH)
-+            .ok_or(TimeError::InvalidFormat)?;
-+
-         Ok(Self {
--            inner: DateTime::from_timestamp(seconds - (3600 * 24 * DAYS_BEFORE_EPOCH), nanoseconds)
-+            inner: DateTime::from_timestamp(seconds, nanoseconds)
-                 .ok_or(TimeError::InvalidFormat)?
-                 .to_utc(),
-         })
-```
-
-**File**: `sqlite/conformance/turso-sqltests/time.sqltest` (modified, +7/-0)
-```diff
-@@ -355,6 +355,13 @@ expect {
-     2011-11-18T15:56:35Z
- }
- 
-+test time_fmt_iso_seconds_out_of_range {
-+    SELECT time_fmt_iso(x'01800000000000000000000000');
-+}
-+expect error {
-+    invalid datetime format
-+}
-+
- test time_fmt_datetime {
-     SELECT time_fmt_datetime(time_date(2011, 11, 18, 15, 56, 35), 3*3600);
-     SELECT time_fmt_datetime(time_date(2011, 11, 18, 15, 56, 35));
+     #[test]
+     fn test_drop_1() {
+         let (db, _temp_dir) = get_database();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11577** (2026-11-08): bindings/rust: expose the progress handler on Connection (@KaiserKarel)
+- **PR #11576** (2026-11-08): core/dialect: centralize shared SQLite behavior in Dialect defaults (@Surajsuthar)
 - **PR #11571** (2026-11-07): tursopg: read hex, octal and binary literals that do not fit in int4 (@gaurav0107)
 - **PR #11566** (2026-11-07): core/time: return an error for a time blob whose seconds overflow (@gaurav0107)
-- **PR #11548** (2026-11-06): serverless/go: expose typed HTTP response errors (@pedrocarlo)
-- **PR #11528** (2026-11-06): core/dialect: import names instead of spelling out their paths (@penberg)
-- **PR #11510** (closed): core/translate: keep SQLite's group order for DISTINCT with GROUP BY (@abrahamperz)
-- **PR #11497** (closed): Fix PHP callbacks, read-only access, and cleanup (stacked on #8498) (@HundredBillion)
+- **PR #11561** (2026-11-08): core: count changes() and total_changes() like SQLite (@Raviikumar001)
+- **PR #11559** (closed): core: count changes like SQLite for CREATE INDEX, OR FAIL and vtab writes (@1AbdullahButt)
 
 ---
 
@@ -1598,32 +1528,45 @@ Fixes #11438
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/time: return an error for a time blob whose seconds overflow' from G
+## X. Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' 
 
 **RULE**:
-When implementing operations in `core/time/internal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/storage/btree.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b71df9a`: Merge 'core/time: return an error for a time blob whose seconds overflow' from Gaurav Dubey. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ce98599`: Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/time/internal.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/storage/btree.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let seconds = seconds
-            .checked_sub(3600 * 24 * DAYS_BEFORE_EPOCH)
-            .ok_or(TimeError::InvalidFormat)?;
+    turso_assert!(
+        contents.overflow_cells.is_empty(),
+        "btree_init_page: page still has overflow cells from an earlier insert or balance",
+        { "page_id": page.get().id(), "overflow_count": contents.overflow_cells.len() }
+    );
+    #[test]
+    #[should_panic(expected = "page still has overflow cells")]
+    fn btree_init_page_rejects_page_with_overflow_cells() {
+        let page = get_page(2);
+        let page_contents = page.get_contents();
+        let payload = [1u8; 3000];
+        insert_into_cell(page_contents, &payload, 0, 4096).unwrap();
+        insert_into_cell(page_contents, &payload, 1, 4096).unwrap();
+        assert_eq!(page_contents.overflow_cells.len(), 1);
 
-            inner: DateTime::from_timestamp(seconds, nanoseconds)
+        btree_init_page(&page, PageType::TableLeaf, 0, 4096);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            inner: DateTime::from_timestamp(seconds - (3600 * 24 * DAYS_BEFORE_EPOCH), nanoseconds)
+    contents.overflow_cells.clear();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b71df9a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ce98599` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T22:19:48.829Z",
-  "total_verified_learnings": 1240,
+  "last_updated": "2026-11-08T22:26:29.051Z",
+  "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -31349,7 +31349,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "e2f490906c87c6ba5697045958af7d0af562a6a1c5f64e16447638787b9c5d0e",
+      "content_hash": "6118b3223b12b5c78c6c1b88687246af4daf45ed43943e47b6d0ec5a07ca7910",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "promoted_rules": [
@@ -31387,7 +31387,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4ajtgj",
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64"
       ],
-      "verified_at": "2026-11-05T05:04:27.122Z",
+      "verified_at": "2026-11-08T22:26:15.691Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58374,11 +58374,16 @@
       "slug": "stikdebug-stikdebug",
       "platform": "github",
       "source_url": "https://github.com/StikDebug/StikDebug",
-      "source_version": "1c3801b8",
-      "content_hash": "036a511db9eee46a413288295e84defbba92213d461b503c84a0c44aaa4c07b9",
+      "source_version": "0393dcaf",
+      "content_hash": "9fc771b0c7021e9606927476747c5e65baee4fa4165b473d2ed183d344fac0e5",
       "dossier_path": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "diagnose connection failures with targeted guidance",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2896,
           "title": "merge pairing and DDI cleanup",
@@ -58400,7 +58405,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T15:46:42.542Z",
+      "verified_at": "2026-11-08T22:26:19.719Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62233,13 +62238,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "9b71df9a",
-      "content_hash": "2ea3285f4ea72e8727d664752e8730581e5b4cea0b42be753af5a16130016f8f",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "e520c28d",
+      "content_hash": "2abfe730cb94e9f9b4bc8aa6ac6ae3671f0318351658312a441e481d38a2d163",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -62254,6 +62259,11 @@
         {
           "number": null,
           "title": "Merge 'core/time: return an error for a time blob whose seconds overflow' from G",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use'",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62407,7 +62417,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:03:01.796Z",
+      "verified_at": "2026-11-08T22:26:29.035Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -188032,6 +188042,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-08T22:19:48.808Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-wquguru-cicada": {
+      "learning_id": "learn-github-wquguru-cicada",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "wquguru/cicada",
+      "repository": "wquguru/cicada",
+      "slug": "wquguru-cicada",
+      "platform": "github",
+      "source_url": "https://github.com/wquguru/cicada",
+      "source_version": "7b143086",
+      "content_hash": "c65e2ece084fc9416838af1b675b7f1a73961ab0dd07e8c6d09ee0f5feee8d21",
+      "dossier_path": "07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "site): text aimed at the sensitive-content check can't talk a key past it",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-08T22:26:15.036Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

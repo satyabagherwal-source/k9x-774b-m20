@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T22:19:49.088Z",
+  "last_updated": "2026-11-08T22:26:29.159Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1130,14 +1130,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "content_hash": "e2f490906c87c6ba5697045958af7d0af562a6a1c5f64e16447638787b9c5d0e",
-      "verified_at": "2026-11-05T05:04:27.235Z",
+      "content_hash": "6118b3223b12b5c78c6c1b88687246af4daf45ed43943e47b6d0ec5a07ca7910",
+      "verified_at": "2026-11-08T22:26:15.792Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:04:27.235Z"
+      "last_updated": "2026-11-08T22:26:15.792Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "2ea3285f4ea72e8727d664752e8730581e5b4cea0b42be753af5a16130016f8f",
-      "verified_at": "2026-11-08T04:03:01.943Z",
+      "content_hash": "2abfe730cb94e9f9b4bc8aa6ac6ae3671f0318351658312a441e481d38a2d163",
+      "verified_at": "2026-11-08T22:26:29.158Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:03:01.943Z"
+      "last_updated": "2026-11-08T22:26:29.158Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -14301,14 +14301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stikdebug-stikdebug",
-      "content_hash": "036a511db9eee46a413288295e84defbba92213d461b503c84a0c44aaa4c07b9",
-      "verified_at": "2026-11-03T15:46:42.635Z",
+      "content_hash": "9fc771b0c7021e9606927476747c5e65baee4fa4165b473d2ed183d344fac0e5",
+      "verified_at": "2026-11-08T22:26:19.816Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T15:46:42.635Z"
+      "last_updated": "2026-11-08T22:26:19.816Z"
     },
     "remarkjs/remark": {
       "repository": "remarkjs/remark",
@@ -18389,6 +18389,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-08T22:19:49.087Z"
+    },
+    "wquguru/cicada": {
+      "repository": "wquguru/cicada",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-wquguru-cicada",
+      "content_hash": "c65e2ece084fc9416838af1b675b7f1a73961ab0dd07e8c6d09ee0f5feee8d21",
+      "verified_at": "2026-11-08T22:26:15.138Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-08T22:26:15.138Z"
     }
   },
   "repos": {

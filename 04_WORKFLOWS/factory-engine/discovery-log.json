@@ -20704,5 +20704,20 @@
     "downloads": 4938,
     "qualityScore": 13130,
     "discoveredAt": "2026-11-08T22:17:23.418Z"
+  },
+  {
+    "name": "cicada",
+    "fullName": "wquguru/cicada",
+    "url": "https://github.com/wquguru/cicada",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "知了 Cicada · 任何会议和直播的实时字幕、同声传译、AI 会议纪要，Mac、Windows、Linux、Android 免费开源。Live subtitles, interpreting and meeting notes for any call or stream, on Mac, Windows, Linux and Android.",
+    "stars": 1903,
+    "forks": 328,
+    "openIssues": 5,
+    "language": "Swift",
+    "qualityScore": 1310,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-08T22:24:18.677Z"
   }
 ]

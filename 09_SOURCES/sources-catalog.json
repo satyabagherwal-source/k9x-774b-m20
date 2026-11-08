@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "e2f490906c87c6ba5697045958af7d0af562a6a1c5f64e16447638787b9c5d0e",
-    "lastHarvestedAt": "2026-11-05T05:04:27.227Z",
+    "contentHash": "6118b3223b12b5c78c6c1b88687246af4daf45ed43943e47b6d0ec5a07ca7910",
+    "lastHarvestedAt": "2026-11-08T22:26:15.785Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "9b71df9a",
+    "sourceVersion": "e520c28d",
     "license": "MIT",
-    "contentHash": "e43a5dc6a9d897b6a3045465e5e906174817805b7132dce49081bb9e3a7301d1",
-    "lastHarvestedAt": "2026-11-08T01:17:53.863Z",
+    "contentHash": "2abfe730cb94e9f9b4bc8aa6ac6ae3671f0318351658312a441e481d38a2d163",
+    "lastHarvestedAt": "2026-11-08T22:26:29.151Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -9503,10 +9503,10 @@
     "repository": "StikDebug/StikDebug",
     "platform": "github",
     "sourceUrl": "https://github.com/StikDebug/StikDebug",
-    "sourceVersion": "1c3801b8",
+    "sourceVersion": "0393dcaf",
     "license": "AGPL-3.0",
-    "contentHash": "036a511db9eee46a413288295e84defbba92213d461b503c84a0c44aaa4c07b9",
-    "lastHarvestedAt": "2026-11-03T15:46:42.627Z",
+    "contentHash": "9fc771b0c7021e9606927476747c5e65baee4fa4165b473d2ed183d344fac0e5",
+    "lastHarvestedAt": "2026-11-08T22:26:19.809Z",
     "learningId": "learn-github-stikdebug-stikdebug"
   },
   "remarkjs-remark": {
@@ -12218,5 +12218,15 @@
     "contentHash": "e244e905d405d519fbaa2a9dd811bd370c26dc68048b0b8a17e184ee9779d917",
     "lastHarvestedAt": "2026-11-08T22:19:49.079Z",
     "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf"
+  },
+  "wquguru-cicada": {
+    "repository": "wquguru/cicada",
+    "platform": "github",
+    "sourceUrl": "https://github.com/wquguru/cicada",
+    "sourceVersion": "7b143086",
+    "license": "Apache-2.0",
+    "contentHash": "c65e2ece084fc9416838af1b675b7f1a73961ab0dd07e8c6d09ee0f5feee8d21",
+    "lastHarvestedAt": "2026-11-08T22:26:15.129Z",
+    "learningId": "learn-github-wquguru-cicada"
   }
 }

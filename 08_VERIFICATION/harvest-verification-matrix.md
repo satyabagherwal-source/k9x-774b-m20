@@ -8412,3 +8412,7 @@
 | `CYCLE-20261108-1T32` | `2026-11-08T22:12:53.246Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`599e77db...`) |
 | `CYCLE-20261108-AOTI` | `2026-11-08T22:19:47.622Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`6d6e27b1...`) |
 | `CYCLE-20261108-APTN` | `2026-11-08T22:19:48.923Z` | `Scantist/GLM-5.3-SLIM-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`e244e905...`) |
+| `CYCLE-20261108-IZTI` | `2026-11-08T22:26:15.126Z` | `wquguru/cicada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c65e2ece...`) |
+| `CYCLE-20261108-J0BP` | `2026-11-08T22:26:15.781Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`6118b322...`) |
+| `CYCLE-20261108-J3FA` | `2026-11-08T22:26:19.798Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9fc771b0...`) |
+| `CYCLE-20261108-JAN0` | `2026-11-08T22:26:29.148Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2abfe730...`) |

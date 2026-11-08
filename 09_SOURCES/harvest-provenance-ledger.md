@@ -8421,3 +8421,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-08T22:12:53.250Z |
 | `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-08T22:19:47.626Z |
 | `learn-huggingface-scantist-glm-5-3-slim-gguf` | `https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF` | `hf-scantis` | Multi-dimensional audit evidence | 2026-11-08T22:19:49.079Z |
+| `learn-github-wquguru-cicada` | `https://github.com/wquguru/cicada` | `7b143086` | Multi-dimensional audit evidence | 2026-11-08T22:26:15.129Z |
+| `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-08T22:26:15.785Z |
+| `learn-github-stikdebug-stikdebug` | `https://github.com/StikDebug/StikDebug` | `0393dcaf` | Multi-dimensional audit evidence | 2026-11-08T22:26:19.809Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `e520c28d` | Multi-dimensional audit evidence | 2026-11-08T22:26:29.151Z |

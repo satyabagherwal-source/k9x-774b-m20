@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T22:19:49.084Z",
-  "total_cycles_completed": 8377,
-  "total_learnings_persisted": 8377,
-  "total_rules_promoted": 8175,
+  "last_updated": "2026-11-08T22:26:29.156Z",
+  "total_cycles_completed": 8381,
+  "total_learnings_persisted": 8381,
+  "total_rules_promoted": 8178,
   "history": [
-    {
-      "timestamp": "2026-11-08T04:26:52.338Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T04:26:53.912Z",
-      "repository": "InternScience/Sage-A1.5",
-      "learningId": "learn-huggingface-internscience-sage-a1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T04:33:48.352Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T04:33:53.351Z",
-      "repository": "jacklandrin/OnlySwitch",
-      "learningId": "learn-github-jacklandrin-onlyswitch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T04:33:56.538Z",
       "repository": "Qwen/Qwen3-14B",
@@ -1403,6 +1375,34 @@
       "repository": "Scantist/GLM-5.3-SLIM-GGUF",
       "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:26:15.135Z",
+      "repository": "wquguru/cicada",
+      "learningId": "learn-github-wquguru-cicada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:26:15.789Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:26:19.813Z",
+      "repository": "StikDebug/StikDebug",
+      "learningId": "learn-github-stikdebug-stikdebug",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:26:29.156Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
