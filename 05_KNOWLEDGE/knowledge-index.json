@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T07:31:01.856Z",
+  "last_updated": "2026-11-08T08:05:11.036Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30928,10 +30928,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "e62acb2f8731bfd1a840f60c3d00f97055fe1778e1f7198656d6cda43d9dc595",
+      "content_hash": "10a97d86c3cfa7fa7b5c5c0696ee255281b39308318bd687e2eacb2041dfe95a",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Mask-Aware Pooling with Clamped Divisor Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 372,
           "title": "The Masked Mean Pooling Invariant",
@@ -30955,6 +30960,11 @@
           "number": "EXISTING",
           "title": "L2 Normalization for Cosine Similarity Optimization",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": null,
+          "title": "Hypersphere Unit Normalization Invariant for Dual-Encoder Metric Embeddings",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 997,
@@ -31316,7 +31326,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-11-04T21:00:21.561Z",
+      "verified_at": "2026-11-08T08:05:11.011Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

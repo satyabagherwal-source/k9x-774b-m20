@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T07:31:01.986Z",
+  "last_updated": "2026-11-08T08:05:11.185Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -81,14 +81,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "e62acb2f8731bfd1a840f60c3d00f97055fe1778e1f7198656d6cda43d9dc595",
-      "verified_at": "2026-11-04T21:00:21.677Z",
+      "content_hash": "10a97d86c3cfa7fa7b5c5c0696ee255281b39308318bd687e2eacb2041dfe95a",
+      "verified_at": "2026-11-08T08:05:11.184Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:00:21.677Z"
+      "last_updated": "2026-11-08T08:05:11.184Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",

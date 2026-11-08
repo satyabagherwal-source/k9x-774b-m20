@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-J0W9",
-    "timestamp": "2026-11-05T18:23:19.113Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "33b2f57d9dcb45dee26b0a2db8cb059a8bc45935ad2b1223b8c8134970fdeb8d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-KNU2",
     "timestamp": "2026-11-05T18:24:35.498Z",
     "repository": "nguyenphutrong/quotio",
@@ -7492,6 +7477,21 @@
     "contentHash": "3b125315aead77b6a9b73e8166fd412ee207ae596a3dfe38b6b9868412a7b07d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-RNNN",
+    "timestamp": "2026-11-08T08:05:11.171Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "10a97d86c3cfa7fa7b5c5c0696ee255281b39308318bd687e2eacb2041dfe95a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
