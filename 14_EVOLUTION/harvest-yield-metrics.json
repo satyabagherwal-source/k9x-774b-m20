@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T22:26:29.156Z",
-  "total_cycles_completed": 8381,
-  "total_learnings_persisted": 8381,
-  "total_rules_promoted": 8178,
+  "last_updated": "2026-11-08T22:36:35.055Z",
+  "total_cycles_completed": 8383,
+  "total_learnings_persisted": 8383,
+  "total_rules_promoted": 8179,
   "history": [
-    {
-      "timestamp": "2026-11-08T04:33:56.538Z",
-      "repository": "Qwen/Qwen3-14B",
-      "learningId": "learn-huggingface-qwen-qwen3-14b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T04:42:29.330Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T04:54:55.776Z",
       "repository": "unsloth/flint-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T22:26:29.156Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:36:31.447Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:36:35.055Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

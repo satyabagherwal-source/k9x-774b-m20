@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-JOUY",
-    "timestamp": "2026-11-06T20:59:28.282Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "55cf761bf6e106bd5b612b8f50a445ead5d3e591259f7fd59bf48c01d88ba5b7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-SXW1",
-    "timestamp": "2026-11-06T21:06:39.889Z",
-    "repository": "aome510/spotify-player",
-    "learningId": "learn-github-aome510-spotify-player",
-    "contentHash": "9a0e60b54f70122244e7f878de772fef9016604c4163a313414f24009440bc63",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-T7YU",
     "timestamp": "2026-11-06T21:06:52.950Z",
     "repository": "topoteretes/cognee",
@@ -7490,6 +7460,36 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "2abfe730cb94e9f9b4bc8aa6ac6ae3671f0318351658312a441e481d38a2d163",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-W7D9",
+    "timestamp": "2026-11-08T22:36:31.437Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "a29506c7ea5027b30fdc5b570fa3ca7557219e38c11a023519c492cd312fc528",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-WA5H",
+    "timestamp": "2026-11-08T22:36:35.045Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "209bc7b66719a3c229169beec264062f663b52cdcd5c56322b5d041d60e203a2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

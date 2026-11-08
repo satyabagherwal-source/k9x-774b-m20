@@ -8416,3 +8416,5 @@
 | `CYCLE-20261108-J0BP` | `2026-11-08T22:26:15.781Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`6118b322...`) |
 | `CYCLE-20261108-J3FA` | `2026-11-08T22:26:19.798Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9fc771b0...`) |
 | `CYCLE-20261108-JAN0` | `2026-11-08T22:26:29.148Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2abfe730...`) |
+| `CYCLE-20261108-W7D9` | `2026-11-08T22:36:31.437Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`a29506c7...`) |
+| `CYCLE-20261108-WA5H` | `2026-11-08T22:36:35.045Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`209bc7b6...`) |

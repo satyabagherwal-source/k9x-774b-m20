@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T22:26:29.051Z",
+  "last_updated": "2026-11-08T22:36:34.954Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24927,7 +24927,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "9a074774c42f8b8305fa2ec5752d8f3ab66401c25edf454d0fea2fc9167b34d6",
+      "content_hash": "a29506c7ea5027b30fdc5b570fa3ca7557219e38c11a023519c492cd312fc528",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "promoted_rules": [
@@ -24980,7 +24980,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4anlp3",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx"
       ],
-      "verified_at": "2026-11-05T05:16:25.110Z",
+      "verified_at": "2026-11-08T22:36:31.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49654,8 +49654,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "7ca0042d",
-      "content_hash": "ceaa72f14fc3770936a0ef7484b3c8d5e53139b54f7a28a1d0a3701b3d1f9698",
+      "source_version": "2596ac5d",
+      "content_hash": "209bc7b66719a3c229169beec264062f663b52cdcd5c56322b5d041d60e203a2",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -49667,6 +49667,11 @@
         {
           "number": null,
           "title": "ci: leave the SSH server out of the Linux images (#47981)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "AOT: the Bun side of the rewritten ahead-of-time compiler (#47942)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49735,7 +49740,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:18:16.224Z",
+      "verified_at": "2026-11-08T22:36:34.930Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

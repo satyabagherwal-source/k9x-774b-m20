@@ -885,8 +885,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "9a074774c42f8b8305fa2ec5752d8f3ab66401c25edf454d0fea2fc9167b34d6",
-    "lastHarvestedAt": "2026-11-05T05:16:25.271Z",
+    "contentHash": "a29506c7ea5027b30fdc5b570fa3ca7557219e38c11a023519c492cd312fc528",
+    "lastHarvestedAt": "2026-11-08T22:36:31.441Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro"
   },
   "hf-tongyi-mai-z-image-turbo": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "7ca0042d",
+    "sourceVersion": "2596ac5d",
     "license": "NOASSERTION",
-    "contentHash": "ceaa72f14fc3770936a0ef7484b3c8d5e53139b54f7a28a1d0a3701b3d1f9698",
-    "lastHarvestedAt": "2026-11-07T21:18:16.304Z",
+    "contentHash": "209bc7b66719a3c229169beec264062f663b52cdcd5c56322b5d041d60e203a2",
+    "lastHarvestedAt": "2026-11-08T22:36:35.049Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {

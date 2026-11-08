@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T22:26:29.159Z",
+  "last_updated": "2026-11-08T22:36:35.060Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1145,14 +1145,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "9a074774c42f8b8305fa2ec5752d8f3ab66401c25edf454d0fea2fc9167b34d6",
-      "verified_at": "2026-11-05T05:16:25.280Z",
+      "content_hash": "a29506c7ea5027b30fdc5b570fa3ca7557219e38c11a023519c492cd312fc528",
+      "verified_at": "2026-11-08T22:36:31.450Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:16:25.280Z"
+      "last_updated": "2026-11-08T22:36:31.450Z"
     },
     "Tongyi-MAI/Z-Image-Turbo": {
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "ceaa72f14fc3770936a0ef7484b3c8d5e53139b54f7a28a1d0a3701b3d1f9698",
-      "verified_at": "2026-11-07T21:18:16.310Z",
+      "content_hash": "209bc7b66719a3c229169beec264062f663b52cdcd5c56322b5d041d60e203a2",
+      "verified_at": "2026-11-08T22:36:35.059Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T21:18:16.310Z"
+      "last_updated": "2026-11-08T22:36:35.059Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",

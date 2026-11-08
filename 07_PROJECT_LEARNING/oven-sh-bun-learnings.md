@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `7ca0042d`  
+> **Source Version**: `2596ac5d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:18:15.344Z  
+> **Timestamp**: 2026-11-08T22:36:33.677Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:18:13.999Z  
+> **Harvest Timestamp**: 2026-11-08T22:36:33.669Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96693 stars
+- **Stars / Engagement**: 96713 stars
 
 ---
 
@@ -978,11 +978,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #48056** (2026-11-08): **Transpiler rewrites `return undefined` to `return;` in async generators, skipping the required `Await`**
+  *Symptoms*: ### What version of Bun is running?  1.4.4+38afee6c8  ### What platform is your computer?  Darwin 25.3.0 arm64 arm  ### What steps can reproduce the bug?  In Bun 1.4.4, the transpiler simplifies `return undefined;` and `return void 0;` to `return;` inside `async function*` bodies, dropping the microtask tick required when awaiting a returned expression. Because the runtime transpiles modules before execution, this changes promise resolution order in `bun run` as well as `Bun.Transpiler` and `bun build`.  ```js const log = []; async function* explicit() { return undefined; } async function* implicit() { return; } explicit().next().then(() => log.push("explicit done")); implicit().next().then(() => log.push("implicit done")); Promise.resolve()   .then(() => log.push("tick1"))   .then(() => log.push("tick2"))   .then(() => console.log(log.join(", "))); ```  ### What is the expected behavior?  ```text implicit done, tick1, explicit done, tick2 ```  ### What do you see instead?  ```text explicit done, implicit done, tick1, tick2 ```  ### Additional information  Per ECMA-262 ReturnStatement Evaluation (and test262 `language/statements/async-generator/return-undefined-implicit-and-explicit.js`), `return Expression;` in an async generator must perform `Await` on the expression value even when it evaluates to `undefined`, whereas bare `return;` does not.  Credit: https://ucsbplse.github.io/ 
+
 - **Issue #47894** (2026-11-04): **node:child_process misses spawn event with extra stdio pipe under bun test on macOS (1.4.4)**
   *Symptoms*: ### What version of Bun is running?  `1.4.4+38afee6c8`  ### What platform is your computer?  macOS 27.0.1 (26A434), Darwin arm64.  ### What steps can reproduce the bug?  An extra stdio pipe at FD3 causes a `node:child_process` child to miss its `spawn` event under `bun test`. The child does run and exit: its `exit` event arrives and `exitCode` becomes `0`. This leaves code that awaits `spawn` pending forever.  No dependencies, Effect, module mocks, load generator, or parallel test workers are needed for this reproduction.  `probe.mjs`:  ```js import { spawn } from "child_process";  export async function probe() {   const events = [];   const child = spawn("/bin/sleep", ["1"], {     env: {},     detached: false,     stdio: ["ignore", "ignore", "inherit", "pipe"],   });   child.on("spawn", () => events.push("spawn"));   child.on("exit", () => events.push("exit"));   child.on("error", (error) => events.push(error.code));   await new Promise((resolve) => setTimeout(resolve, 1500));   const result = {     events,     exitCode: child.exitCode,     signalCode: child.signalCode,   };   child.kill();   child.stdio[3]?.destroy();   return result; }  if (import.meta.main) console.log(await probe()); ```  `probe.test.ts`:  ```ts import { expect, test } from "bun:test"; import { probe } from "./probe.mjs";  test("extra stdio child emits spawn before exit", async () => {   const result = await probe();   console.log(result);   expect(result.events).toContain("spawn");   expect(result.event
-
-- **Issue #47830** (2026-11-03): **Bun.serve still buffers without bound for a slow (not stalled) reader of a ReadableStream response**
-  *Symptoms*: ### What version of Bun is running?  1.4.4+38afee6c8  ### What platform is your computer?  Linux 6.8.0-147-generic x86_64  ### What steps can reproduce the bug?  #32469 fixed the case of a client that stops reading: Bun now stops pulling the response stream. A client that keeps reading, but slowly, still lets Bun pull the stream far ahead of the socket and buffer the difference in memory without bound.  Save as `repro.mjs` and run `bun repro.mjs`. It is safe: the body stops at 256 MiB and the run ends after 10 seconds. The client reads 64 KiB every 50 ms, about 1.25 MB/s.  ```js import { connect } from 'node:net';  const CHUNK = new Uint8Array(64 * 1024).fill(65); // 64 KiB const CAP = 256 * 1024 * 1024; let enqueued = 0; let read = 0;  const server = Bun.serve({   port: 0,   hostname: '127.0.0.1',   fetch() {     const stream = new ReadableStream(       {         pull(controller) {           controller.enqueue(CHUNK);           enqueued += CHUNK.byteLength;           if (enqueued >= CAP) controller.close();         },       },       { highWaterMark: 1 },     );     return new Response(stream);   }, });  // A client that keeps reading, slowly: 64 KiB every 50 ms. const socket = connect(server.port, '127.0.0.1'); socket.pause(); socket.write('GET / HTTP/1.1\r\nHost: localhost\r\n\r\n'); setInterval(() => {   const chunk = socket.read(64 * 1024);   if (chunk !== null) read += chunk.length; }, 50);  let t = 0; setInterval(() => {   t += 1;   const rss = (process.memoryUsage().rs
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -999,172 +999,391 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1305ddc` (2026-11-05)
-**Commit Message**: ci: leave the SSH server out of the Linux images (#47981)
+### Incident Patch 1: `2596ac5d` (2026-11-07)
+**Commit Message**: AOT: the Bun side of the rewritten ahead-of-time compiler (#47942)
 
-### What does this PR do?
+The Bun side of the rewritten ahead-of-time compiler. The engine side is oven-sh/WebKit#997, which
+has the design and the numbers, with its follow-ups oven-sh/WebKit#999 and oven-sh/WebKit#1000. This
+is oven-sh/bun#47942 with its follow-ups #48088 and #48112 in it.
 
-The Linux CI images keep the SSH client and no longer have the SSH
-server that the base images come with. The bake removes it, and fails if
-it is still installed. Windows images are unchanged.
+`src/aot`: the lowering writes the program that the engine's new scan, link and walk read. Captured
+values are copied into closures where nothing stores to them later, straight-line blocks are joined,
+and CommonJS and ES module graphs are resolved at build time, cycles included. `bun test --aot`:
+module mocks, spies, hoisted factories, re-evaluated modules and `--rerun-each` behave as they do
+without `--aot` in many more cases. Type errors stop an `--aot` build, in TypeScript only; `bun test
+--aot` prints them as warnings and runs. A computed import no longer embeds data files that its
+written name does not ask for. `bun:ffi`: no limit on the number of open callbacks in compiled
+programs.
 
-### How did you verify your code works?
+What changes for Bun without `--aot`, by folder and file, is listed in the description of the pull
+request; the list below is the short form that the commits carried.
 
-The existing image lint tests pass. The bakes have not been run locally;
-the CI build of this PR runs them.
-
-**File**: `scripts/build/ci-images/CLAUDE.md` (modified, +2/-1)
+**File**: `.gitignore` (modified, +1/-0)
 ```diff
-@@ -80,8 +80,9 @@ A pin has to name something its publisher keeps: a bake that asks for a version
- - **The Windows bake step must be a single command.** With several, Buildkite runs them in a shell, and a cancel ends that shell without `ci-image.ts` or Packer seeing the signal, so Packer's VM is never deleted and keeps holding its cores. As one command, Packer hears the cancel and deletes the VM first; the hosted agent ends the job seconds later, so the VM's network and disk can be left behind.
- - **The system's trusted roots are the distro's without `droppedRoots`.** The `ca-certificates` tool deselects them, and the bake fails if one is still trusted afterwards. Bun and Node.js use lists of their own unless told to read the system's, and those move with their pins.
- - **Debian gives a user who is not root no sbin directory on PATH.** The test runner calls `sysctl` as the agent's user; the core-dumps tool puts `/sbin` on the job PATH.
-+- **Linux machines have the SSH client and no server.** Every base image comes with the server; the `ssh-client` tool removes it, and the bake ends by failing if it is there.
- - **Starting a service during a bake can leave machine identity in the image** (sshd writes host keys). Remove it before the image is taken.
--- **A push cancels the branch's running build**, bakes included. A Linux bake takes 5 to 15 minutes and its snapshot another 20 to 35 to become available; a Windows bake takes about an hour.
-+- **A push cancels the branch's running build**, bakes included. Do not hold commits because they would cancel builds/bakes. A Linux bake takes 5 to 15 minutes and its snapshot another 20 to 35 to become available; a Windows bake takes about an hour.
- 
- ## Testing a change before CI does
- 
+@@ -100,6 +100,7 @@ node_modules_*
+ !test/aot/parallel/**/node_modules/
+ !test/aot/parallel/**/dist/
+ !test/aot/ir/**/node_modules/
++!test/aot/parallel-test-runs/**/node_modules/
+ out
+ out.*
+ outcss
 ```
 
-**File**: `scripts/build/ci-images/spec.ts` (modified, +50/-1)
+**File**: `.prettierignore` (modified, +3/-0)
 ```diff
-@@ -1567,6 +1567,29 @@ function noTmpfs(): Tool {
-   return { name: "no-tmpfs", identity: configuration, steps: [service("tmp.mount", "masked")] };
- }
+@@ -45,6 +45,9 @@ src/js/internal/repl/await.ts
+ src/js/internal/repl/acorn.ts
+ src/js/internal/repl/acorn-walk.ts
  
-+/** The SSH client without the server that the base image comes with. */
-+function sshClient(image: LinuxImage): Tool {
-+  const { distro } = image;
-+  return {
-+    name: "ssh-client",
-+    identity: packageDatabase,
-+    steps: [
-+      ...(distro === "alpine"
-+        ? [apkAdd(["openssh-client-default"]), service("sshd", "disabled"), apkDel(["openssh", "openssh-server-pam"])]
-+        : [
-+            ...(distro === "ubuntu"
-+              ? [comment("Its removal restarts the server, so it goes first."), aptPurge(["ec2-instance-connect"])]
-+              : []),
-+            aptPurge(["openssh-server", "openssh-sftp-server"]),
-+          ]),
-+      remove(text`/etc/ssh/${glob("ssh_host_*")}`),
-+      comment("cloud-init would make the server's host keys and write its configuration."),
-+      directory("/etc/cloud/cloud.cfg.d"),
-+      writeFile("/etc/cloud/cloud.cfg.d/99-ssh.cfg", ["ssh_genkeytypes: []", "ssh_pwauth: null"]),
-+    ],
++# one statement a line: test/aot/tools/answers-test-from-source.ts erases the types line by line and joins the lines
++test/aot/answers
++
+ # each line is a constructor as somebody may write it, and where its tokens stand is what is tested
+ test/aot/parallel/errors/error-out-of-making-this-*
+ test/aot/parallel/errors/error-at-shorthand-property-names-the-property.js
+```
+
+**File**: `Cargo.lock` (modified, +8/-0)
+```diff
+@@ -181,6 +181,7 @@ dependencies = [
+  "bun_sema_driver",
+  "bun_sema_parser",
+  "bun_sema_standalone",
++ "bun_sort_by_number",
+  "bun_sys",
+  "bun_threading",
+  "bun_trim",
+@@ -210,6 +211,7 @@ dependencies = [
+  "bun_core",
+  "bun_removable_features",
+  "bun_sema",
++ "bun_sort_by_number",
+  "smallvec",
+ ]
+ 
+@@ -1738,6 +1740,7 @@ dependencies = [
+  "bun_core",
+  "bun_paths",
+  "bun_sema_standalone",
++ "bun_sort_by_number",
+  "bun_threading",
+  "bun_wyhash",
+  "bun_zstd",
+@@ -1866,6 +1869,10 @@ dependencies = [
+ name = "bun_simdutf_sys"
+ version = "0.0.0"
+ 
++[[package]]
++name = "bun_sort_by_number"
++version = "0.0.0"
++
+ [[package]]
+ name = "bun_sourcemap"
+ version = "0.0.0"
+@@ -2012,6 +2019,7 @@ dependencies = [
+  "bun_paths",
+  "bun_perf",
+  "bun_resolver",
++ "bun_sema_standalone",
+  "bun_sourcemap",
+  "bun_sys",
+  "bun_threading",
+```
+
+**File**: `Cargo.toml` (modified, +2/-0)
+```diff
+@@ -64,6 +64,7 @@ members = [
+   "src/event_loop",
+   "src/executable",
+   "src/exe_format",
++  "src/sort_by_number",
+   "src/trim",
+   "src/trim/removable_features",
+   "src/highway",
+@@ -443,6 +444,7 @@ bun_dns = { path = "src/dns" }
+ bun_dotenv = { path = "src/dotenv" }
+ bun_event_loop = { path = "src/event_loop" }
+ bun_exe_format = { path = "src/exe_format" }
++bun_sort_by_number = { path = "src/sort_by_number" }
+ bun_trim = { path = "src/trim" }
+ bun_removable_features = { path = "src/trim/removable_features" }
+ bun_highway = { path = "src/highway" }
+```
+
+**File**: `bench/compiler/generate.ts` (added, +1688/-0)
+```diff
+@@ -0,0 +1,1688 @@
++// Writes one application in several languages and dresses, for run.ts to time their compilers on.
++//
++//   bun bench/compiler/generate.ts <folder> <modules> <dress>
++//
++// The application is a service of <modules> features. A feature has a record, a parser and a printer of text with an error path, JSON in and out, a registry over a map,
++// an interface with a few implementations, routes in a shared HTTP router, and a subcommand for a shared command line parser. It uses two earlier features.
++// `describe(index)` says what a feature looks like: how many fields of which types, how many shapes, which numbers. Every writer below renders that one description in the idiom of its language.
++// Every program prints the same number: `bun bench/compiler/run.ts --check` holds them to it.
++//
++// Dresses: typed (.ts) | erased (the same as .js, no types) | mixed (every other feature .js) | packages-typed (features as packages in node_modules: .js with .d.ts) | packages-untyped | go | rust
++import { mkdirSync, writeFileSync } from "node:fs";
++import { dirname, join } from "node:path";
++
++export type FieldType = "int" | "text" | "flag" | "texts" | "maybeInt";
++export interface Field {
++  name: string;
++  type: FieldType;
++}
++export interface Feature {
++  index: number;
++  fields: Field[];
++  shapes: { name: string; extra: number }[];
++  limits: [number, number];
++  weights: [number, number, number];
++  uses: number[];
++  rows: string[];
++  badRow: string;
++}
++
++export const modulus = 1000003;
++
++// A small generator of numbers that gives the same ones everywhere.
++function numbers(seed: number) {
++  let state = (seed * 2654435761 + 12345) >>> 0;
++  return (below: number) => {
++    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
++    return (state >>> 8) % below;
 +  };
 +}
 +
- /**
-  * What a build and a test job would otherwise download each time: dependency
-  * sources for scripts/build/download.ts, the Docker images the tests use, and
-@@ -1702,6 +1725,16 @@ function cleanup(image: LinuxImage): Tool {
-   };
- }
- 
-+/** Last, so that no tool can bring the server back as a dependency. */
-+function noSshServer(image: LinuxImage): Tool {
-+  const servers = ["/usr/sbin/sshd", ...(image.distro === "alpine" ? ["/usr/sbin/sshd.pam"] : [])];
++export function describe(index: number): Feature {
++  const next = numbers(index + 1);
++  const types: FieldType[] = ["int", "text", "flag", "texts", "maybeInt"];
++  const fields: Field[] = [
++    { name: "id", type: "int" },
++    { name: "name", type: "text" },
++  ];
++  for (let extra = 0, count = 2 + next(5); extra < count; extra++)
++    fields.push({ name: `f${extra}`, type: types[next(types.length)] });
++  const shapes = Array.from({ length: 2 + next(3) }, (_, shape) => ({ name: `Shape${shape}`, extra: next(9) }));
++  const cell = (field: Field, row: number) => {
++    switch (field.type) {
++      case "int":
++        return field.name === "id" ? String(row + 1) : String(next(1000));
++      case "text":
++        return field.name === "name" ? `n${index}x${row}` : `t${next(100)}`;
++      case "flag":
++        return next(2) ? "1" : "0";
++      case "texts":
++        return Array.from({ length: next(3) }, () => `g${next(10)}`).join("|");
++      case "maybeInt":
++        return next(2) ? String(next(50)) : "";
++    }
++  };
++  const rows = Array.from({ length: 3 }, (_, row) => fields.map(field => cell(field, row)).join(","));
 +  return {
-+    name: "no-ssh-server",
-+    identity: configuration,
-+    steps: servers.map(server => failIfExists(server, "the SSH server is installed")),
++    index,
++    fields,
++    shapes,
++    limits: [10 + next(10), 100 + next(50)],
++    weights: [1 + next(5), 2 + next(7), 3 + next(11)],
++    // A tree, not a row: feature n on feature n - 1 would be a chain of imports as long as the program, which no application has and which lets `go build` compile one package at a time.
++    uses: index === 0 ? [] : [...new Set([index >> 1, index >> 3])],
++    rows,
++    badRow: next(2) ? "x," + rows[0].split(",").slice(1).join(",") : "1,short",
 +  };
 +}
 +
- // ---- Windows only
- 
- function windowsSystem(): Tool {
-@@ -2068,10 +2101,12 @@ export function tools(image: Image): readonly Tool[] {
-     age(image),
-     coreDumps(image),
-     ...(apt ? [noTmpfs()] : []),
-+    sshClient(image),
-     prefetch(image),
-     agentService(),
-     recordImage(image),
-     cleanup(image),
-+    noSshServer(image),
-   ];
- }
- 
-@@ -2431,6 +2466,9 @@ const failUnlessNotEmpty =
-       ? [`if (-not ${renderValue(value, c)}) { throw ${renderValue(text`bootstrap: ${message}`, c, true)} }`]
-       : [`[ -n ${renderValue(value, c)} ] || { echo ${renderValue(text`bootstrap: ${message}`, c)} >&2; exit 1; }`];
- 
-+const failIfExists = (path: Value, message: Value): Step =>
-+  ifExists(path, [c => [`echo ${renderValue(text`bootstrap: ${message}`, c)} >&2`, "exit 1"]]);
++type Files = Record<string, string>;
 +
- const ifExists =
-   (path: Value, steps: Step[]): Step =>
-   c =>
-@@ -2777,6 +2815,16 @@ const apkAdd =
-     `apk add --no-cache --no-interactive --no-progress ${names.join(" ")}`,
-   ];
- 
-+/** Removes the packages with their configuration. */
-+const aptPurge =
-+  (names: readonly string[]): Step =>
-+  () => [`apt-get purge --yes ${names.join(" ")}`];
++// ---------------------------------------------------------------------------------------------------------------------------------------------------- TypeScript and JavaScript
 +
-+/** Removes the packages, and what was only there for them. */
-+const apkDel =
-+  (names: readonly string[]): Step =>
-+  () => [`apk del --no-interactive --no-progress ${names.join(" ")}`];
-+
- const brewInstall =
-   (names: readonly string[], options: { formula?: boolean } = {}): Step =>
-   () => [`brew install --quiet ${options.formula ? "--formula " : ""}${names.join(" ")}`];
-@@ -2843,7 +2891,7 @@ const addUserToGroup =
-   (user: string, group: string): Step =>
-   c => [isAlpine(c) ? `addgroup ${user} ${group}` : `usermod -aG ${group} ${user}`];
- 
--/** `enabled`: starts with the machine. `started`: running now. `masked`, `disabled`: systemd only. */
-+/** `enabled`, `disabled`: whether it starts with the machine. `started`: running now. `masked`: systemd only. */
- const service =
-   (name: string, state: "enabled" | "started" | "masked" | "disabled"): Step =>
-   c => {
-@@ -2852,6 +2900,7 @@ const service =
-         `systemctl ${{ enabled: "enable", started: "start", masked: "mask", disabled: "disable" }[state]} ${name}`,
-       ];
-     if (state === "enabled") return [`rc-update add ${name} default`];
-+    if (state === "disabled") return [`rc-update del ${name} default`];
-     if (state === "started") return [`rc-service ${name} start`];
-     throw new Error(`OpenRC has no "${state}"`);
-   };
++function script(feature: Feature, typed: boolean, pathOf: (what: string) => string): string {
++  const { index, fields, shapes, limits, weights, uses } = feature;
++  const T = (text: string) => (typed ? text : "");
++  const typeOf: Record<FieldType, string> = {
++    int: "number",
++    text: "string",
++    flag: "boolean",
++    texts: "string[]",
++    maybeInt: "number",
++  };
++  const parseCell = (field: Field, position: number) => {
++    const part = `parts[${position}]`;
++    switch (field.type) {
++      case "int":
++        return `${field.name}: integer(${part}, line)`;
++      case "text":
++        return `${field.name}: ${part}`;
++      case "flag":
++        return `${field.name}: ${part} === "1"`;
++      case "texts":
++        return `${field.name}: ${part} === "" ? [] : ${part}.split("|")`;
++      case "maybeInt":
++        return `${field.name}: ${part} === "" ? undefined : integer(${part}, line)`;
++    }
++  };
++  const printCell = (field: Field) => {
++    switch (field.type) {
++      case "int":
++      case "text":
++        return `item.${field.name}`;
++      case "flag":
++        return `item.${field.name} ? "1" : "0"`;
++      case "texts":
++        return `item.${field.name}.join("|")`;
++      case "maybeInt":
++        return `item.${field.name} ?? ""`;
++    }
++  };
++ 
 ```
 
-**File**: `test/cli/install/redacted-config-logs.test.ts` (modified, +10/-1)
+**File**: `bench/compiler/run.ts` (added, +423/-0)
 ```diff
-@@ -1234,7 +1234,16 @@ describe.concurrent("the userinfo of a git URL is masked as a whole", () => {
-       }),
-     });
- 
--    const env = { ...bunEnv, GIT_CONFIG_NOSYSTEM: "1", GIT_ASKPASS: "false", GIT_TERMINAL_PROMPT: "0" };
-+    const env = {
-+      ...bunEnv,
-+      GIT_CONFIG_NOSYSTEM: "1",
-+      GIT_CONFIG_COUNT: "1",
-+      // With curl 8.23 git forgets the URL's user after the first answer, so it has to ask before it.
-+      GIT_CONFIG_KEY_0: "http.proactiveAuth",
-+      GIT_CONFIG_VALUE_0: "basic",
-+      GIT_ASKPASS: "false",
-+      GIT_TERMINAL_PROMPT: "0",
-+    };
-     const { out, err, exitCode } = await run(String(dir), env, ["install"]);
-     expect(err).toContain(`could not read Password for 'http://***@127.0.0.1:${server.port}'`);
-     expect(out + err).not.toContain(word);
+@@ -0,0 +1,423 @@
++// How many lines a second does `bun build --compile --aot` compile, on ordinary application code?
++//
++//   bun bench/compiler/run.ts                                  every scenario at 10,000, 100,000, 1,000,000 and 5,000,000 lines, three runs each: the table
++//   bun bench/compiler/run.ts --sizes=10000 --runs=1           smaller
++//   bun bench/compiler/run.ts --scenarios=typed,go-cold        some of them, by their names in the table. A name that is not among them ends the run
++//   bun bench/compiler/run.ts --commands                       prints the command of every scenario that would run, and runs none
++//   bun bench/compiler/run.ts --bun=<path>                     another Bun than the one that runs this script
++//   bun bench/compiler/run.ts --check                          builds every program at the smallest size, runs it, and fails unless every one was built, ended with 0 and printed the same number
++//   bun bench/compiler/run.ts --json=<file>                    every number of every run, too
++//   bun bench/compiler/run.ts --cores=0-15                     under taskset (Linux)
++//
++// One application (./generate.ts) in every dress. A size is the number of lines of its typed TypeScript form; every other form is the same application with as many features, and has the lines it has.
++// Every number comes from this script: the mean of all runs, none left out. CPU seconds and peak memory are the operating system's for the compiler's process and its children.
++// Instructions are counted where `perf` is there. Lines are physical lines of the files that the compiler is given; what it reads besides (declaration files, its own library, Go's standard library) stands in its own column.
++// Bun's compiler counts those lines in every build and prints the counts under `--explain=statistics`. Cargo and `bun build --compile` without `--aot` don't tell, so their cells are empty.
++// Below the table, the closing line of the last run of each `bun build --compile --aot` is printed as is: how many lines the compiler says it compiled, and how long it says that took.
++// Not a test, and CI does not run it.
++import { spawnSync } from "bun";
++import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
++import { loadavg, tmpdir } from "node:os";
++import { join } from "node:path";
++import { generate, write } from "./generate";
++
++const option = (name: string, fallback: string) =>
++  process.argv.find(word => word.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
++const has = (name: string) => process.argv.includes(`--${name}`);
++const bun = option("bun", process.execPath);
++const sizes = option("sizes", "10000,100000,1000000,5000000").split(",").map(Number);
++const runs = Number(option("runs", "3"));
++const cores = option("cores", "");
++const wanted = option("scenarios", "");
++const which = (tool: string) => Bun.which(tool);
++const perf = process.platform === "linux" ? which("perf") : null;
++
++interface Scenario {
++  name: string;
++  dress: string;
++  /** What has to be on the machine. */
++  needs?: string;
++  /** Run once before the timed command of every run, untimed. */
++  prepare?: (folder: string) => string[][];
++  command: (folder: string) => string[];
++  environment?: (folder: string) => Record<string, string>;
++  executable: string;
++  entry?: (entry: string) => string;
++}
++
++const aot = (entry: string, ...flags: string[]) => [
++  bun,
++  "build",
++  "--compile",
++  "--aot",
++  "--explain=statistics",
++  ...flags,
++  entry,
++  "--outfile",
++  "app",
++];
++// On Windows Bun and cargo write `<name>.exe`. Go writes the name that it is given, so it is given that one.
++const onThisSystem = (executable: string) => (process.platform === "win32" ? `${executable}.exe` : executable);
++const builtIn = (folder: string, { executable }: Scenario) => join(folder, onThisSystem(executable));
++const open = `\nif (process.argv.length > 90) await import(process.argv[90]);\n`;
++const evaluates = `\nif (process.argv.length > 90) eval(process.argv[90]);\n`;
++const scenarios: Scenario[] = [
++  { name: "typed", dress: "typed", command: () => aot("main.ts"), executable: "app" },
++  { name: "typed on one thread", dress: "typed", command: () => aot("main.ts", "--aot-threads=1"), executable: "app" },
++  { name: "erased", dress: "erased", command: () => aot("main.js"), executable: "app" },
++  {
++    name: "erased on one thread",
++    dress: "erased",
++    command: () => aot("main.js", "--aot-threads=1"),
++    executable: "app",
++  },
++  { name: "mixed", dress: "mixed", command: () => aot("main.ts"), executable: "app" },
++  {
++    name: "bundled",
++    dress: "typed",
++    prepare: () => [[bun, "build", "--target=bun", "main.ts", "--outfile", "bundle.js"]],
++    command: () => aot("bundle.js"),
++    executable: "app",
++  },
++  {
++    name: "bundled and minified",
++    dress: "typed",
++    prepare: () => [[bun, "build", "--target=bun", "--minify", "main.ts", "--outfile", "bu
+```
+
+**File**: `completions/bun-cli.json` (modified, +9/-8)
+```diff
+@@ -4675,16 +4675,9 @@
+           "required": false,
+           "multiple": false
+         },
+-        {
+-          "name": "aot-log-type-mismatches",
+-          "description": "With --aot: the executable logs every value that doesn't match its declared type",
+-          "hasValue": false,
+-          "required": false,
+-          "multiple": false
+-        },
+         {
+           "name": "explain",
+-          "description": "With --aot: list the code that compiled to a slow path and how to fix it, worst first. Other reports: json, guards, guards-json, trim, missed-optimizations, allocations",
++          "description": "With --aot: list the code that compiled to a slow path and how to fix it, worst first. Other reports: json, guards, guards-json, trim, allocations",
+           "hasValue": true,
+           "valueType": "val",
+           "required": false,
+@@ -4704,6 +4697,14 @@
+           "required": false,
+           "multiple": false
+         },
++        {
++          "name": "aot-harden",
++          "description": "With --aot: make a bug in the compiler harder to turn into a memory bug. Takes proof-checks, ignore-told-ranges. Runs slower",
++          "hasValue": true,
++          "valueType": "val",
++          "required": false,
++          "multiple": true
++        },
+         {
+           "name": "no-compile-function-source",
+           "description": "With --aot: don't embed function source code. fn.toString() returns [native code], and an eval() or new Function() call the compiler didn't find at build time throws",
+```
+
+**File**: `completions/bun.bash` (modified, +1/-1)
+```diff
+@@ -201,7 +201,7 @@ _bun_completions() {
+             COMPREPLY=( $(compgen -W "--bun --package --no-install --cwd --env-file --minimum-release-age --trust --verbose --silent --help -p -h" -- "${cur_word}") );
+             return;;
+         compile)
+-            COMPREPLY=( $(compgen -f -W "--outfile --target --define --env --asset --external --minify --sourcemap --tsconfig-override --compile-exec-argv --disallow-code-generation-from-strings --explain --aot-log-type-mismatches --aot-huge-heap --aot-allow-code-from-disk --obfuscate --compile-inspector --compile-in-place --no-compile-function-source --no-aot --trim --trim-locales --library --outdir --no-script --cwd --help -h" -- "${cur_word}") );
++            COMPREPLY=( $(compgen -f -W "--outfile --target --define --env --asset --external --minify --sourcemap --tsconfig-override --compile-exec-argv --disallow-code-generation-from-strings --explain --aot-huge-heap --aot-allow-code-from-disk --aot-harden --obfuscate --compile-inspector --compile-in-place --no-compile-function-source --no-aot --trim --trim-locales --library --outdir --no-script --cwd --help -h" -- "${cur_word}") );
+             return;;
+         check)
+             COMPREPLY=( $(compgen -f -W "--project --pretty --build --no-pretty --all --threads --timing --cwd --no-script --aot --explain --define --help -p -b -h" -- "${cur_word}") );
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #48112** (2026-11-07): AOT: more fixes, stacked on #48088 (@Jarred-Sumner)
+- **PR #48088** (2026-11-07): AOT: fixes behind #47942: silent wrong answers, an abort, right programs refused; docs (@Jarred-Sumner)
 - **PR #48050** (2026-11-07): Check the xwin archive's sha256; ignore `bin` paths that contain a NUL (@dylan-conway)
 - **PR #48041** (closed): fix(aot): retain runtime for external scripts when run is kept (@vincentkoc)
 - **PR #48012** (closed): test(aot): build the 17 ways of a-spy-that-no-file-names-still-spies in 8 projects and count the exports each build opens (@robobun)
 - **PR #48009** (closed): test(aot): one command per test in a-package-that-stores-a-loader-function-is-asked-by-every-layer.test.ts, and a require that shows a missed store in three layers (@robobun)
-- **PR #47981** (2026-11-05): ci: leave the SSH server out of the Linux images (@dylan-conway)
-- **PR #47969** (closed): fix(aot): keep process main live across compiled tests (@vincentkoc)
 
 ---
 
@@ -1184,29 +1403,28 @@ the CI build of this PR runs them.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: leave the SSH server out of the Linux images (#47981)
+## X. AOT: the Bun side of the rewritten ahead-of-time compiler (#47942)
 
 **RULE**:
-When implementing operations in `scripts/build/ci-images/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1305ddc`: ci: leave the SSH server out of the Linux images (#47981). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2596ac5d`: AOT: the Bun side of the rewritten ahead-of-time compiler (#47942). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/build/ci-images/CLAUDE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Linux machines have the SSH client and no server.** Every base image comes with the server; the `ssh-client` tool removes it, and the bake ends by failing if it is there.
-- **A push cancels the branch's running build**, bakes included. Do not hold commits because they would cancel builds/bakes. A Linux bake takes 5 to 15 minutes and its snapshot another 20 to 35 to become available; a Windows bake takes about an hour.
+!test/aot/parallel-test-runs/**/node_modules/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **A push cancels the branch's running build**, bakes included. A Linux bake takes 5 to 15 minutes and its snapshot another 20 to 35 to become available; a Windows bake takes about an hour.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1305ddc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2596ac5d` are properly handled with clean fallback behavior.

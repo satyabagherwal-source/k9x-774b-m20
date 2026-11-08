@@ -8425,3 +8425,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-08T22:26:15.785Z |
 | `learn-github-stikdebug-stikdebug` | `https://github.com/StikDebug/StikDebug` | `0393dcaf` | Multi-dimensional audit evidence | 2026-11-08T22:26:19.809Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `e520c28d` | Multi-dimensional audit evidence | 2026-11-08T22:26:29.151Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-08T22:36:31.441Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `2596ac5d` | Multi-dimensional audit evidence | 2026-11-08T22:36:35.049Z |
