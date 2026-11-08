@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T01:46:17.510Z",
+  "last_updated": "2026-11-08T01:56:32.875Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "26a2a33327e7698d06196f893879a0ba2e53d7c0b7574bea5532444f5913f3cc",
-      "verified_at": "2026-11-06T19:02:22.868Z",
+      "content_hash": "57ea91bd5268151a652c3a16e277a4d19a2b5c6a4d7bc6bf884d3d8aca4b35b0",
+      "verified_at": "2026-11-08T01:55:00.893Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T19:02:22.868Z"
+      "last_updated": "2026-11-08T01:55:00.893Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "e98f3da0a76b72100aceef53916a9047a79517aeee24781251ad78b4169c9d90",
-      "verified_at": "2026-11-06T20:52:15.590Z",
+      "content_hash": "238c1b485f1da73c830ef7bd19c6121e51004bc9051bbb19680b29401665c662",
+      "verified_at": "2026-11-08T01:56:32.875Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T20:52:15.590Z"
+      "last_updated": "2026-11-08T01:56:32.875Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",

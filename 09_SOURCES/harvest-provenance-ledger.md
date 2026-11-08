@@ -8178,3 +8178,5 @@ Every entry in this ledger must capture:
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `4b2503d2` | Multi-dimensional audit evidence | 2026-11-08T01:36:02.508Z |
 | `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `8dc08d28` | Multi-dimensional audit evidence | 2026-11-08T01:46:12.873Z |
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `92c959b6` | Multi-dimensional audit evidence | 2026-11-08T01:46:17.503Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `9ac008f9` | Multi-dimensional audit evidence | 2026-11-08T01:55:00.884Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `a31ceb62` | Multi-dimensional audit evidence | 2026-11-08T01:56:32.866Z |

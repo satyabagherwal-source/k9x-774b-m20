@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `b8e88959`  
+> **Source Version**: `9ac008f9`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T19:02:20.943Z  
+> **Timestamp**: 2026-11-08T01:54:59.538Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T19:02:15.167Z  
+> **Harvest Timestamp**: 2026-11-08T01:54:57.359Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41697 stars
+- **Stars / Engagement**: 41753 stars
 
 ---
 
@@ -1495,1773 +1495,1300 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `756e27fd` (2026-11-06)
-**Commit Message**: feat(ui): settle the module props and drop the user-usage module (#7126)
+### Incident Patch 1: `1bee7385` (2026-11-07)
+**Commit Message**: feat(ui): align the file tree with the host implementation (#7198)
 
-* refactor(ui): remove the user-usage module
+* feat(ui): compile icons with SVGR and ship the file-type set
 
-The current design has no usage page under the personal terminal: every
-usage-related frame lives under the ROOT Key or Admin Key groups, and the
-普通 user group contains none. An earlier review had concluded the
-opposite, but that was against an older design; the current one does not
-support it.
+Icons were loaded two different ways — the five colour icons as `?inline`
+images and newer monochrome ones through CSS masks — so a consumer got an
+`<img>` for some icons and a `<span>` for others, and the base64 payload grew
+the bundle by a third on top of the SVG size.
 
-Removing it the way resource-import was removed: the directory, the
-package and Rslib entries, the stylesheet aggregation, the root exports,
-the docs pages in both locales, the sidebar entries, the demo and the
-index rows.
+Load every icon through `@rsbuild/plugin-svgr` instead: each one becomes an
+inline `<svg>` component that takes standard SVG props, inherits
+`currentColor`, and needs no `data:` allowlist in a Content Security Policy.
+The icons entry now accepts `SVGProps` and describes itself with
+`aria-label`, so `alt` is gone from the public contract.
 
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+The file-type icon set moves in as artwork plus data: `svg/file-type/` holds
+one SVG per icon vendored from `@pierre/trees` (Apache-2.0), and
+`file-type-rules.json` carries the name and extension rules that pick one,
+together with each icon's brand colour for light and dark backgrounds.
+`getFileTypeIcon` resolves a file name to the component and colour.
 
-* refactor(ui): inline the module placeholders
+The docs demos and both `icons.mdx` pages follow the new contract, and the
+rslint config keeps th
 
-`modules/shared/` existed so four modules could share one placeholder
-component and stylesheet. With one module gone and the remaining three
-each about to grow their own view, the shared layer cost a directory and
-an indirection without saving anything: each module now renders its own
-container and owns its stylesheet.
-
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-* feat(ui): settle the file-browser props
-
-Three decisions from the design review:
-
-- The too
-
-**File**: `frontend/README.md` (modified, +2/-2)
+**File**: `frontend/docs/docs/_demos/file-tree-basic.tsx` (modified, +656/-110)
 ```diff
-@@ -31,7 +31,7 @@ npm run preview        # Serve the built documentation at /ui/
+@@ -1,139 +1,685 @@
+ import { useState } from 'react';
+-import { FileTree } from '@openviking/react/components/file-tree';
++import type { ComponentPropsWithoutRef, ReactNode } from 'react';
++import { useLang } from '@rspress/core/runtime';
++import {
++  resolveFileTreeInfoKey,
++  resolveInfoCopy,
++  showsInlineDescription,
++} from '@openviking/react/components/file-tree';
+ import type {
+   FileTreeEntryRow,
+   FileTreeRow,
+ } from '@openviking/react/components/file-tree';
++import {
++  ChevronRightIcon,
++  FolderIcon,
++  FolderOpenIcon,
++  getFileTypeColor,
++  getFileTypeIcon,
++  resolveFileTypeIconKey,
++} from '@openviking/react/icons';
+ import '@openviking/react/components/file-tree/style.css';
  
- - `packages/react`: `@openviking/react` package, Rslib library build with declaration generation, `ov-` prefixed BEM class names, and React peer dependencies.
- - `packages/react/src/components/{file-tree,file-preview,tui,scope-switcher,agent-connect}`: reusable views with public props types. All five ship placeholder views and will be rewritten against their reviewed contracts; file-tree and file-preview have their shell and interaction in place, while tui, scope-switcher and agent-connect render a fixed-size shell only. See the [module map](./packages/react/README.md#module-map).
--- `packages/react/src/modules/{file-browser,console,task-center,user-usage}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
-+- `packages/react/src/modules/{file-browser,console,task-center}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
- - `packages/react/src/client`: the framework-neutral request client, exported from `@openviking/react/client` — a `fetch`-based `createOvClient` plus the contract modules depend on (`OvClient`, `OvRequestOptions`, `OvClientError`).
- - `packages/react/src/{hooks,utils}`: reserved internal shared code, without public subpaths. Module-private helpers stay within their module.
- - `docs`: Rspress with `@rspress/plugin-preview`, external TSX demos, source viewing/copying, and hand-written props tables.
-@@ -54,7 +54,7 @@ Library output is `packages/react/dist/`; documentation output is `docs/doc_buil
+-/** Directories and the rows revealed when they are expanded. */
+-const childrenOf: Record<string, FileTreeRow[]> = {
+-  resources: [
+-    {
+-      kind: 'entry',
+-      id: 'resources/guide.md',
+-      uri: 'viking://resources/guide.md',
+-      name: 'guide.md',
+-      type: 'file',
+-      depth: 1,
+-      levelLabel: 'L1',
+-    },
+-    {
+-      kind: 'entry',
+-      id: 'resources/spec.pdf',
+-      uri: 'viking://resources/spec.pdf',
+-      name: 'spec.pdf',
+-      type: 'file',
+-      depth: 1,
+-    },
+-    {
+-      kind: 'load-more',
+-      id: 'load-more:resources',
+-      parentId: 'resources',
+-      depth: 1,
++/** `path: children`; a trailing `/` marks a directory, `null` marks a file. */
++interface Spec {
++  [name: string]: Spec | null;
++}
++interface Node {
++  uri: string;
++  name: string;
++  type: 'directory' | 'file';
++  children?: Node[];
++}
++
++const USER = 'viking://user/alice';
++const MEMORIES = `${USER}/memories`;
++const WIKI = 'viking://resources/project-wiki';
++const ARCHIVE = 'viking://resources/archive';
++const PAGE = 3;
++
++const SPEC: Spec = {
++  [`${USER}/`]: {
++    'memories/': {
++      'profile.md': null,
++      'identity.md': null,
++      'soul.md': null,
++      'preferences/': {},
++      'entities/': {},
++      'events/': {},
++      'cases/': {},
++      'trajectories/': {},
++      'experiences/': {},
+     },
+-  ],
+-  memories: [
+-    {
+-      kind: 'entry',
+-      id: 'memories/profile.md',
+-      uri: 'viking://memories/profile.md',
+-      name: 'profile.md',
+-      type: 'file',
+-      depth: 1,
++    'peers/': { 'claude-code/': {}, 'cursor/': {}, 'trae/': {} },
++    'privacy/': { 'keys.json': null },
++    'resources/': { 'handbook.pdf': null, 'notes.md': null },
++    'sessions/': { '2026-11-07.jsonl': null },
++    'settings/': { 'user_config.json': null },
++    'skills/': { 'wiki-compile/': { 'SKILL.md': null, 'references/': {} } },
++    'tools/': { 'mcp.json': null },
++  },
++  'viking://resources/': {
++    'project-wiki/': {
++      'entity/': { 'starfield.md': null, 'incident.md': null },
++      'method/': { 'release.md': null },
++      'index.md': null,
+     },
+-  ],
+-  skills: [{ kind: 'empty', id: 'empty:skills', parentId: 'skills', depth: 1 }],
++    'archive/': Object.fromEntries(
++      Array.from({ length: 9 }, (_, i) => [`service_000${i + 1}.md`, null]),
++    ),
++    'empty-notes/': {},
++  },
++  'viking://agent/': { 'skills/': {}, 'tools/': {} },
++  'viking://system/': {},
+ };
  
- ## Target layout
- 
--The workspace currently contains React components, shared SVGs, four business module placeholders, the request client, and documentation. The target also includes framework-neutral libraries, the Client transport, Vue bindings, and deployable micro-apps. Add each planned directory with its first implementation.
-+The workspace currently contains React components, shared SVGs, three business module placeholders, the request client, and documentation. The target also includes framework-neutral libraries, the Client transport, Vue bindings, and deployable micro-apps. Add each planned directory with its first implementation.
- 
- ```text
- frontend/
+-const topLevel: FileTreeRow[] = [
+-  {
+-    kind: 'entry',
+-    id: 'resources',
+-    uri: 'viking://resources',
+-    name: 'resources',
+-    type: 'directory',
+-    depth: 0,
+-    hasChildren: true,
+-    description: 'Imported documents',
++function entries(spec: Spec, parent = ''): Node[] {
++  return Object.entries(spec).flatMap(([key, value]) => {
++    const isDir = key.endsWith('/');
++    const path = key.replace(/\/$/, '');
++    const uri = path.includes('://') ? path : `${parent}/${path}`;
++    const node: Node = {
++      uri,
++      name: uri.slice(uri.lastIndexOf('/') + 1),
++      type: isDir ? 'directory' : 'file',
++    };
++    if (isDir && value) node.children = entries(value, uri);
++    return [node];
++  });
++}
++
++const TREE = entries(SPEC);
++const BY_URI = new Map<string, Node>();
++const walk = (nodes: Node[]) =>
++  nodes.forEach((n) => {
++    BY_URI.set(n.uri, n);
++    if (n.children) walk(n.children);
++  });
++walk(TREE);
++const childrenOf = (uri: string) => BY_URI.get(uri)?.children ?? [];
++
++/** Row-end indicator: the Agent experience board, or a Wiki root with its conflict state. */
++type Indicator =
++  { kind: 'experience' } | { kind: 'wiki'; pendingConflicts: boolean };
++
++const INDICATORS: Record<string, Indicator> = {
++  [`${MEMORIES}/experiences`]: { kind: 'experience' },
++  [WIKI]: { kind: 'wiki', pendingConflicts: false },
++  [ARCHIVE]: { kind: 'wiki', pendingConflicts: true },
++};
++
++/**
++ * Demo copy. The docs site renders this demo under both locales, so the strings
++ * follow the page language instead of being fixed English.
++ *
++ * 示例文案。文档站中英文页面共用这份示例，因此文案跟随页面语言。
++ */
++const COPY = {
++  en: {
++    loading: 'Loading…',
++    loadMore: 'Load more',
++    empty: 'This folder is empty',
++    expand: 'Expand',
++    collapse: 'Collapse',
++    experience: 'Contains an experience board',
 ```
 
-**File**: `frontend/docs/docs/_demos/modules-basic.tsx` (modified, +0/-2)
+**File**: `frontend/docs/docs/_demos/icons-basic.tsx` (modified, +2/-2)
 ```diff
-@@ -1,7 +1,6 @@
- import { FileBrowser } from '@openviking/react/modules/file-browser';
- import { Console } from '@openviking/react/modules/console';
- import { TaskCenter } from '@openviking/react/modules/task-center';
--import { UserUsage } from '@openviking/react/modules/user-usage';
- import '@openviking/react/modules/style.css';
- 
- export default function ModulesBasic() {
-@@ -10,7 +9,6 @@ export default function ModulesBasic() {
-       <FileBrowser />
-       <Console />
-       <TaskCenter />
--      <UserUsage />
+@@ -42,8 +42,8 @@ export default function IconsExample() {
+         ))}
+       </div>
+       <p className="ov-demo-row">
+-        <PdfIcon width={24} height={24} alt="PDF" />
+-        <span>Standalone icon with alt=&quot;PDF&quot;</span>
++        <PdfIcon width={24} height={24} aria-label="PDF" />
++        <span>Standalone icon with aria-label=&quot;PDF&quot;</span>
+       </p>
      </div>
    );
- }
 ```
 
-**File**: `frontend/docs/docs/_demos/user-usage-placeholder.tsx` (removed, +0/-10)
+**File**: `frontend/docs/docs/en/components/file-tree.mdx` (modified, +71/-42)
 ```diff
-@@ -1,10 +0,0 @@
--import { UserUsage } from '@openviking/react/modules/user-usage';
--import '@openviking/react/modules/user-usage/style.css';
--
--export default function UserUsagePlaceholder() {
--  return (
--    <div lang="en">
--      <UserUsage />
--    </div>
--  );
--}
-```
-
-**File**: `frontend/docs/docs/en/modules/console.mdx` (modified, +13/-14)
-```diff
-@@ -20,26 +20,25 @@ The component is a placeholder: it renders the module name and a placeholder mes
+@@ -2,16 +2,26 @@
  
- - Request configuration through the Provider, overridable per module through `requestOptions`.
- - Sign-in, identity switching, routing and permissions.
--- Opening a resource or locating an artifact: the module reports it through `onOpenUri` and `onResourceChange`, and never reaches into another module's private state.
-+- Opening a resource: the module reports it through `onOpenUri`, and never reaches into another module's private state.
- - Entries above the composer and in the toolbar, injected through `slots`.
+ A flattened file tree. The host owns the tree state and passes the visible rows in order; the component renders them and reports successful operations.
  
- ## Props
+-This is a placeholder implementation: it renders every documented row type and honours the public props, so consumers can integrate against the API before the full view lands. Styling, iconography and interaction details will change, and the view will be rewritten against this contract.
++This is a placeholder: it renders a fixed-size empty shell and consumes no props. The props contract below is the final shape; the view will be written against it.
  
- The module exports `ConsoleProps` from the subpath and the root entry, and `ConsoleMode`, `ConsoleLabels` and `ConsoleSlots` from the subpath only.
+ ## Basic usage
  
--| Property           | Type                          | Default        | Description                                                                                                      |
--| ------------------ | ----------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------- |
--| `requestOptions`   | `OvRequestOptions`            | —              | Request configuration override, applied field by field over the nearest Provider.                                |
--| `mode`             | `'conversation' \| 'command'` | —              | The controlled mode. When given, the host owns the mode and the module only reports switch intent.               |
--| `defaultMode`      | `'conversation' \| 'command'` | `conversation` | Initial mode when uncontrolled.                                                                                  |
--| `onModeChange`     | `(mode: ConsoleMode) => void` | —              | Called after the mode changes.                                                                                   |
--| `onOpenUri`        | `(uri: string) => void`       | —              | Called after a resource opens successfully; not called on failure.                                               |
--| `onResourceChange` | `(uri: string) => void`       | —              | Called when the module produces a task or a resource change, so the host can refresh or locate it.               |
--| `slots`            | `ConsoleSlots`                | —              | `toolbar`, `conversationContext` and `commandHelp`.                                                              |
--| `labels`           | `ConsoleLabels`               | —              | Replaceable copy: `conversation`, `command`, `error` and `retry`. An omitted label inherits its English default. |
--| `className`        | `string`                      | —              | Additional container class.                                                                                      |
--| `style`            | `CSSProperties`               | —              | Container style overrides.                                                                                       |
-+| Property         | Type                          | Default        | Description                                                                                                                                     |
-+| ---------------- | ----------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-+| `requestOptions` | `OvRequestOptions`            | —              | Request configuration override, applied field by field over the nearest Provider.                                                               |
-+| `mode`           | `'conversation' \| 'command'` | —              | The controlled mode. When given, the host owns the mode and the module only reports switch intent.                                              |
-+| `defaultMode`    | `'conversation' \| 'command'` | `conversation` | Initial mode when uncontrolled.                                                                                                                 |
-+| `onModeChange`   | `(mode: ConsoleMode) => void` | —              | Called after the mode changes.                                                                                                                  |
-+| `onOpenUri`      | `(uri: string) => void`       | —              | Called after a resource opens successfully; not called on failure.                                                                              |
-+| `slots`          | `ConsoleSlots`                | —              | `toolbar`, `conversationContext` and `commandHelp`.                                                                                             |
-+| `labels`         | `ConsoleLabels`               | —              | Replaceable copy: `conversation`, `command`, `error`, `retry` and the placeholder `description`. An omitted label inherits its English default. |
-+| `c
-```
-
-**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +58/-15)
-```diff
-@@ -1,6 +1,6 @@
- # FileBrowser
+-Expand a directory to reveal its children. Rows come from `rows`; selection and expansion are controlled by the consumer.
++Rows come from `rows`; expansion is controlled by the consumer. The example keeps its own expanded set, flattens the tree into `FileTreeRow[]` and renders it, showing all five row kinds and the built-in directory copy in action.
  
--Directory navigation, search and content preview as one module. The module loads its own data; the host supplies configuration, the controlled current resource, slots and copy.
-+Directory navigation, search and content preview as one module. The module loads its own data; the host supplies configuration, the controlled current resource, the toolbar entries and copy.
- 
- The component is a placeholder: it renders the module name and a placeholder message. The props below are settled, so applications can integrate the container and wire their state now; the composite view and `useFileBrowser` follow.
- 
-@@ -10,34 +10,77 @@ The component is a placeholder: it renders the module name and a placeholder mes
+ ```tsx file="../../_demos/file-tree-basic.tsx" preview
  
  ```
  
-+## Scope
++The example demonstrates three host responsibilities:
 +
-+The module covers the file tree and the file preview only. The command panel belongs to `console`.
++- **Async loading**: expanding a directory shows a `Loading…` row for 400 ms before the children appear — `FileTreeLoadingRow`.
++- **Paging**: each page loads three children; while more remain, `Load more` appears and appends one page per click — `FileTreeLoadMoreRow`. `archive` holds nine files and loads in three pages.
++- **Row-end icons**: the mutually exclusive marks rendered by `renderDashboard`. `memories/experiences` shows the Agent experience board icon. `project-wiki` is a Wiki root: its leading folder is replaced by a book icon and the row ends with a green board icon. `archive` is a Wiki root too but has pending conflicts, so its icon turns orange and gains an exclamation mark.
 +
- ## What the module owns
++Names like `memories`, `peers` and `privacy` are followed by their built-in description.
++
++The component itself is still a placeholder shell (fixed 280 × 320), so the example renders the rows against the contract rather than mounting `<FileTree />` — that way the data shape and copy are visible.
++
+ ## How rows work
  
- - Directory, search, current URI and preview loading, coordinated inside the module: clicking a directory node or a search result moves the selection and loads the preview, and switching resources drops stale requests.
- - Refreshing the affected directory, search results and preview after a save, rename or delete.
- - The layout of the search, directory and preview area.
-+- The search box and refresh control in the toolbar, plus per-row state such as uploading progress, conflicts and retention settings.
-+- The preview tabs. Which tabs a resource has follows from the resource itself, so the host does not supply them.
-+- The search view. Search is a private view inside this module, not a published component or module: it opens from the toolbar or ⌘K, and picking a result moves the tree and loads the preview. Nothing about it is exported, because leaving the tree leaves it without a destination. `console` has its own `@` picker over the same kind of API; that is a separate view, not this one.
+ The tree never inspects parent/child relationships. The host flattens its own state into an ordered list:
+@@ -27,9 +37,61 @@ Emit only the ones your data source needs. A host that returns all children at o
+ ## Slots and host content
  
- ## What the host owns
+ - `slots.toolbar` — search, import sources, refresh. The component does not know what is inside.
++- `slots.spinner` — replaces the spinner shown while a directory loads its children, rendered at 12 × 12. Omitted uses the built-in `FileTreeSpinner` (a CSS ring with no icon asset behind it).
+ - `renderDashboard` — the row-end indicator, for example a dashboard entry.
+ - `renderRowTooltip` — hover content; the component handles the delay and positioning.
  
- - Request configuration through the Provider, overridable per module through `requestOptions`.
- - Sign-in, account scope, routing and permissions.
--- Entries such as connecting an agent or importing resources, injected through `slots.toolbar`. The module embeds no connection dialog, import flow or onboarding.
--- Views with their own loading logic, such as experience dashboards, injected through `slots.previewTabs`.
-+- The toolbar entries: connect an agent, import resources. Compose them with `FileBrowserToolbarButton` inside `toolbarActions` so they match the module's own buttons. Entries can nest inside a popover or dropdown when a click alone is not enough.
-+- Connection dialogs, import flows and onboarding. The module embeds none of them.
++## Directory copy
 +
-+## Toolbar entries
++The component derives a directory's meaning from the structure of its `uri` and ships built-in description and trigger copy. A host gets descriptions without passing anything; override copy key by key through `labels.info`.
 +
-+The module renders the search box, the refresh button and the dividers. The host adds its own entries through `toolbarActions` and uses `FileBrowserToolbarButton` so the styling matches:
++Matching looks only at the path shape, never the node type. Both `viking://user/{id}/memories` and `viking://user/{id}/memories/` match `memories`; `viking://resources` matches `sharedResources`, while `viking://resources/docs` does not — built-in copy covers fixed levels only, and deeper nodes are the host's call.
 +
-+```tsx
-+import {
-+  FileBrowser,
-+  FileBrowserToolbarButton,
-+} from '@openviking/react/modules/file-browser';
++| Group            | Keys                                                                                                       |
++| ---------------- | ---------------------------------------------------------------------------------------------------------- |
++| User scope       | `userRoot`, `memories`, `peers`, `privacy`, `userResources`, `sessions`, `skills`                          |
++| Long-term memory | `profile`, `preferences`, `entities`, `events`, `identity`, `soul`, `cases`, `trajectories`, `experiences` |
++| Shared and roots | `sharedResources`, `agentRoot`, `memoryRoot`, `resourceRoot`, `sessionRoot`, `systemRoot`                  |
 +
-+<FileBrowser
-+  toolbarActions={
-+    <>
-+      <FileBrowserToolbarButton icon={<ConnectIcon />} onClick={connect}>
-+        Connect agent
-+      </FileBrowserToolbarButton>
-+      <FileBrowserToolbarButton icon={<UploadIcon />} onClick={openImport}>
-+        Import resources
-+      </FileBrowserToolbarButton>
-+    </>
-+  }
-+/>;
-+```
++The nine long-term-memory keys describe themselves in the tooltip only: the directory names already say what they are, and an inline line would crowd out siblings.
 +
-+Because `toolbarActions` is a node, an entry that needs a menu wraps its button instead of asking for another prop:
++**Copy precedence**: when a row carries `description`, the host's value wins and the built-in one is not used; the built-in copy applies only when it is absent, so a host can always take full control.
 +
 +```tsx
-+<Popover content={<ResourceMenu />} trigger="hover">
-+  <FileBrowserToolbarButton icon={<UploadIcon />}>
-+    Import resources
-+  </FileBrowserToolbarButton>
-+</Popover>
-+```
-+
-+Dividers between entries come from a CSS adjacent-sibling rule, so how many entries the host passes and how they nest makes no difference.
- 
- ## Props
- 
--The module exports `FileBrowserProps` from the subpath and the root entry, and `FileBrowserLabels` and `FileBrowserSlots` from the subpath only.
-+The module exports `FileBrowserProps` from the subpath and the root entry. `FileBrowserToolbarButton`, `FileBrowserToolbarButtonProps` and `FileBrowserLabels` come from the subpath only.
- 
--| Property         | Type                            | Default | Description                                                                                                                                 |
--| ---------------- | ------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
--| `requestOptions` | `OvRequestOptions`              | —       | Request configuration override, applied field by field over the nearest Provider.                                                           |
--| `uri`            | `string`                        | —       | The controlled current resource URI. When given, the host owns the current resource and the module only reports switch intent.              |
--| `defaultUri`     | `strin
-```
-
-**File**: `frontend/docs/docs/en/modules/index.mdx` (modified, +1/-2)
-```diff
-@@ -9,7 +9,6 @@ No prop carries data. A module loads its own data through a Hook, so the host su
- | [`file-browser`](./file-browser) | `FileBrowser` | File browser.     |
- | [`console`](./console)           | `Console`     | Console.          |
- | [`task-center`](./task-center)   | `TaskCenter`  | Task center.      |
--| [`user-usage`](./user-usage)     | `UserUsage`   | My usage.         |
- 
- ## Preview
- 
-@@ -21,7 +20,7 @@ This example uses the public module entries and the aggregate module stylesheet.
- 
- ## Import and styles
- 
--Import a component and its Props / Labels / Slots types from `@openviking/react/modules/<module>`. The four component bodies and their main Props types are also exported from `@openviking/react`; Labels, Slots and the enum types come from the subpath only.
-+Import a component and its Props / Labels / Slots types from `@openviking/react/modules/<module>`. The three component bodies and their main Props types are also exported from `@openviking/react`; Labels, Slots and the enum types come from the subpath only.
- 
- JavaScript does not load CSS. Import `@openviking/react/modules/<module>/style.css` for one module, `@openviking/react/modules/style.css` for all modules, or `@openviking/react/style.css` for the full library. Each stylesheet works independently. There is no aggregate `@openviking/react/modules` JavaScript entry.
- 
-```
-
-**File**: `frontend/docs/docs/en/modules/task-center.mdx` (modified, +67/-20)
-```diff
-@@ -1,6 +1,6 @@
- # TaskCenter
- 
--Tasks visible to the current identity, their details and execution records. The module loads its own data; the host supplies configuration, the controlled selection, filters, slots and copy.
-+Two task lists in one module: data-source import tasks and knowledge-compile tasks. Each tab has its own data source, columns and schedule semantics. The module loads its own data; the host supplies configuration, the controlled state, column configuration, slots and copy.
- 
- The component is a placeholder: it renders the module name and a placeholder message. The props below are settled, so applications can integrate the container and wire their state now; the composite view and `useTaskCenter` follow.
- 
-@@ -10,35 +10,82 @@ The component is a placeholder: it renders the module name and a placeholder mes
- 
- ```
- 
-+## The two tabs
-+
-+| Tab                | Data source       | Schedule meaning                                                         |
-+| ------------------ | ----------------- | ------------------------------------------------------------------------ |
-+| Data-source import | Scheduled watches | A fixed interval in minutes; the resource is re-imported on that cadence |
-+| Knowledge compile  | Compile targets   | A daily or weekly clock time; the target is recompiled then              |
-+
-+They are different concepts, not one field shown twice. A watch re-imports on an interval; a compile target reruns at a wall-clock time.
-+
- ## What the module owns
- 
--- The task list, its paging, loading and failure states, and the detail of the selected task.
--- Requesting by the status and type filters the host gives.
-+- Each tab's list, its loading, empty and failure states, and the header filters inside that tab.
-+- The schedule column, including its edit control.
-+- Deciding whether the "others' tasks" scope is available, from the current identity.
- 
- ## What the host owns
- 
- - Request configuration through the Provider, overridable per module through `requestOptions`.
- - Sign-in, account scope and permissions.
--- Filter controls and the toolbar, injected through `slots.toolbar`; the host decides which filters exist and passes the resulting `statuses` and `taskTypes`.
--- Extra detail content such as artifacts, injected through `slots.detailExtra`.
-+- Task details: shown by the module in a drawer. The host takes no part in opening a task.
-+- Writing a schedule change. `onSaveScheduleInterval` and `onSaveCompileSchedule` return a Promise: resolve once the write succeeded and the module reloads, reject and the module keeps the edit and shows `labels.saveFailed`. The two are separate because an import task schedules on an interval while a compile target schedules on a daily or weekly clock time.
-+- The toolbar, injected through `slots.toolbar`. Row actions are built in: the detail entry and the schedule edit control.
-+
-+## Columns
-+
-+Omitting `columns` uses each tab's built-in columns in their default order:
-+
-+| Tab                | Built-in columns                                                           |
-+| ------------------ | -------------------------------------------------------------------------- |
-+| Data-source import | name, schedule, source, last execution, created at, path                   |
-+| Knowledge compile  | name, status, conflicts, task type, schedule, updated at, created at, path |
-+
-+Pass `columns.import` or `columns.compile` to reorder, hide or override a column, or to add one:
-+
-+```tsx
-+<TaskCenter
-+  columns={{
-+    compile: [
-+      { key: 'name', width: 280 },
-+      { key: 'schedule' },
-+      { key: 'conflicts', title: 'Conflicts' },
-+      {
-+        key: 'artifacts',
-+        title: 'Artifacts',
-+        render: (row) => <Artifacts uri={row.toUri} />,
++<FileTree
++  rows={rows}
++  labels={{
++    info: {
++      description: { userRoot: 'Current user' },
++      triggerBehavior: {
++        memories: 'Distilled whenever a session is committed',
 +      },
-+    ],
++      field: {
++        description: 'Description',
++        triggerBehavior: 'Trigger',
++        path: 'Path',
++      },
++    },
 +  }}
 +/>
 +```
 +
-+A custom key needs its own `render`; a built-in key falls back to the default cell.
++Both `labels.info.description` and `triggerBehavior` are `Partial<Record<FileTreeInfoKey, string>>`, so only the keys you change need writing. An empty string hides that key.
++
++The matching rules and c
+```
+
+**File**: `frontend/docs/docs/en/components/icons.mdx` (modified, +15/-13)
+```diff
+@@ -4,7 +4,7 @@ File-type icons are available from the public `@openviking/react/icons` entry. T
+ 
+ ## Live example
+ 
+-Use the size controls to resize the five decorative icons. The separate PDF icon demonstrates a meaningful `alt` label at 24 × 24 pixels.
++Use the size controls to resize the five decorative icons. The separate PDF icon demonstrates a meaningful `aria-label` at 24 × 24 pixels.
+ 
+ ```tsx file="../../_demos/icons-basic.tsx" preview
+ 
+@@ -22,30 +22,32 @@ Use the size controls to resize the five decorative icons. The separate PDF icon
  
  ## Props
  
--The module exports `TaskCenterProps` from the subpath and the root entry, and `TaskCenterStatus`, `TaskCenterLabels` and `TaskCenterSlots` from the subpath only.
--
--| Property                | Type                               | Default | Description                                                                                                            |
--| ----------------------- | ---------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
--| `requestOptions`        | `OvRequestOptions`                 | —       | Request configuration override, applied field by field over the nearest Provider.                                      |
--| `selectedTaskId`        | `string`                           | —       | The controlled selected task id. When given, the host owns the selection and the module only reports select intent.    |
--| `defaultSelectedTaskId` | `string`                           | —       | Initial selected task id when uncontrolled. Nothing is selecte
+-Each component renders an `img` and accepts its standard non-ref props, except `src` and `srcSet`, which are owned by the component.
++Each component renders an inline `svg` and accepts standard SVG props, except `children`.
+ 
+-| Property    | Type               | Default | Description                                    |
+-| ----------- | ------------------ | ------- | ---------------------------------------------- |
+-| `width`     | `number \| string` | `16`    | Image width.                                   |
+-| `height`    | `number \| string` | `16`    | Image height.                                  |
+-| `alt`       | `string`           | `''`    | Accessible description; empty for decoration.  |
+-| `className` | `string`           | —       | Adds a class to the image element.             |
+-| Other props | Image attributes   | —       | Standard image attributes, including `aria-*`. |
++| Property     | Type               | Default | Description                                             |
++| ------------ | ------------------ | ------- | ------------------------------------------------------- |
++| `width`      | `number \| string` | `16`    | Icon width.                                             |
++| `height`     | `number \| string` | `16`    | Icon height.                                            |
++| `aria-label` | `string`           | —       | Accessible description; omit for decoration.            |
++| `className`  | `string`           | —       | Adds a class to the SVG element.                        |
++| Other props  | SVG attributes     | —       | Standard SVG attributes, including `aria-*` and `role`. |
+ 
+ ```tsx
+ import { PdfIcon } from '@openviking/react/icons';
+ 
+ export default function Example() {
+-  return <PdfIcon width={24} height={24} className="file-icon" alt="PDF" />;
++  return (
++    <PdfIcon width={24} height={24} className="file-icon" aria-label="PDF" />
++  );
+ }
+ ```
+ 
+ ## Accessibility
+ 
+-Leave `alt` empty when adjacent text already identifies the file type. For an icon that conveys information on its own, supply a descriptive `alt` value in the application's language. Icons are non-interactive; applications own button semantics, keyboard interaction, and focus styles when placing an icon inside a control.
++Omit `aria-label` when adjacent text already identifies the file type; the SVG stays `aria-hidden` so it is not announced twice. For an icon that conveys information on its own, supply a descriptive `aria-label` in the application's language. Icons are non-interactive; applications own button semantics, keyboard interaction, and focus styles when placing an icon inside a control.
+ 
+ ## Assets and styling
+ 
+-SVGs are embedded in the built JavaScript as data URLs. No separate SVG request or stylesheet import is needed for these icons. Applications with a Content Security Policy must allow `data:` in `img-src` to display them.
++Icons ship as inline SVG elements inside the built JavaScript. There is no separate asset request, no stylesheet import, and no Content Security Policy entry to add.
+ 
+-Use `width`, `height`, `className`, or `style` to size and position the image. Its SVG colors are fixed artwork; changing CSS `color` does not recolor it.
++Use `width`, `height`, `className`, or `style` to size and position the icon. Its colors are fixed artwork; changing CSS `color` does not recolor it.
 ```
 
-**File**: `frontend/docs/docs/en/modules/user-usage.mdx` (removed, +0/-44)
+**File**: `frontend/docs/docs/en/guide/getting-started.mdx` (modified, +2/-2)
 ```diff
-@@ -1,44 +0,0 @@
--# UserUsage
+@@ -69,8 +69,8 @@ Theme colors can be adjusted on a containing element, or a specific class can be
+   --ov-ui-row-hover: rgb(0 0 0 / 6%);
+ }
+ 
+-.my-workbench .ov-file-tree__row {
+-  height: 32px;
++.my-workbench .ov-file-tree {
++  width: 320px;
+ }
+ ```
+ 
+```
+
+**File**: `frontend/docs/docs/env.d.ts` (modified, +8/-0)
+```diff
+@@ -1,5 +1,13 @@
+ declare module '*.css' {}
++
+ declare module '*.svg' {
+   const src: string;
+   export default src;
+ }
++
++declare module '*.svg?react' {
++  import type { FunctionComponent, SVGProps } from 'react';
++
++  const ReactComponent: FunctionComponent<SVGProps<SVGSVGElement>>;
++  export default ReactComponent;
++}
+```
+
+**File**: `frontend/docs/docs/zh/components/file-tree.mdx` (modified, +67/-44)
+```diff
+@@ -2,16 +2,26 @@
+ 
+ 展平后的文件树。树状态由宿主持有，宿主按顺序传入可见行；组件负责渲染并通知成功的操作。
+ 
+-当前为占位实现：渲染全部文档化的行类型并遵守公开 props，方便消费方先按 API 接入。样式、图标与交互细节仍会调整，视图后续按本文契约重写。
++当前为占位组件：只渲染一个固定尺寸的空壳，不消费 props。下方的 props 契约是最终形态，真实视图后续按本文实现。
+ 
+ ## 基础用法
+ 
+-展开目录查看子节点。行来自 `rows`；选中与展开由使用方控制。
++行来自 `rows`，展开由使用方控制。下面的示例自己维护展开集合，把树状态展平成 `FileTreeRow[]` 并渲染，演示五种行类型与内置目录说明的实际效果。
+ 
+ ```tsx file="../../_demos/file-tree-basic.tsx" preview
+ 
+ ```
+ 
++示例演示三种宿主职责：
++
++- **异步加载**：展开目录先出现 `Loading…` 行，400ms 后换成子节点，对应 `FileTreeLoadingRow`。
++- **分页加载**：每次只加载 3 个子节点，还有剩余时出现 `Load more`，点一次追加一页，对应 `FileTreeLoadMoreRow`。`archive` 有 9 个文件，分三页加载完。
++- **行尾图标**：`renderDashboard` 渲染的互斥标记。`memories/experiences` 显示 Agent 经验看板图标；`project-wiki` 是 Wiki 根目录，行首用书本图标替代文件夹，行尾显示绿色看板图标；`archive` 同样按 Wiki 处理，但有待确认冲突，图标变成橙色并带感叹号。
++
++目录名后跟着的是内置说明，`memories`、`peers`、`privacy` 等都有。
++
++组件本体仍是占位空壳（固定 280 × 320），所以示例没有直接渲染 `<FileTree />`，而是按契约渲染行——这样能看到数据结构与文案的实际形状。
++
+ ## 行的组织方式
+ 
+ 组件不感知父子关系，宿主把自己的状态展平成有序列表：
+@@ -27,9 +37,55 @@
+ ## 插槽与宿主内容
+ 
+ - `slots.toolbar` —— 搜索、导入来源、刷新。组件不知道里面有什么。
++- `slots.spinner` —— 替换目录加载子节点时的转圈，按 12 × 12 显示。省略时用内置的 `FileTreeSpinner`（纯 CSS 圆环，不依赖图标资源）。
+ - `renderDashboard` —— 行尾指示器，例如看板入口。
+ - `renderRowTooltip` —— 悬停内容，延迟与定位由组件处理。
+ 
++## 目录说明
++
++组件按行 `uri` 的路径结构判定目录语义，内置一份说明与触发行为文案。宿主不需要传任何字段就能拿到说明；需要改文案时用 `labels.info` 逐键覆盖。
++
++判定只看路径形状，与节点类型无关。`viking://user/{id}/memories` 与 `viking://user/{id}/memories/` 都命中 `memories`；`viking://resources` 命中 `sharedResources`，而 `viking://resources/docs` 不再命中——内置说明只覆盖固定层级，更深层的节点由宿主自己决定。
++
++| 分组       | 键                                                                                                         |
++| ---------- | ---------------------------------------------------------------------------------------------------------- |
++| 用户作用域 | `userRoot`、`memories`、`peers`、`privacy`、`userResources`、`sessions`、`skills`                          |
++| 长期记忆   | `profile`、`preferences`、`entities`、`events`、`identity`、`soul`、`cases`、`trajectories`、`experiences` |
++| 共享与根级 | `sharedResources`、`agentRoot`、`memoryRoot`、`resourceRoot`、`sessionRoot`、`systemRoot`                  |
++
++长期记忆下的九个键只在浮层里显示说明：这些目录的名称本身已经说明用途，行内再挂一行字会挤掉同级节点。
++
++**文案优先级**：行上给了 `description` 时用宿主的，内置说明不生效；没给才用内置。这样宿主始终能完全接管。
++
++```tsx
++<FileTree
++  rows={rows}
++  labels={{
++    info: {
++      description: { userRoot: '当前用户' },
++      triggerBehavior: { memories: '提交会话时自动沉淀' },
++      field: { description: '说明', triggerBehavior: '触发行为', path: '路径' },
++    },
++  }}
++/>
++```
++
++`labels.info.description` 与 `triggerBehavior` 都是 `Partial<Record<FileTreeInfoKey, string>>`，只写要改的键。传空字符串表示该键不显示。
++
++判定与文案也以纯函数形式从组件子路径导出，宿主可以复用同一套规则组装自己的视图：
++
++```ts
++import {
++  resolveFileTreeInfoKey,
++  showsInlineDescription,
++  resolveInfoCopy,
++} from '@openviking/react/components/file-tree';
++
++resolveFileTreeInfoKey('viking://user/alice/memories/profile.md'); // 'profile'
++showsInlineDescription('profile'); // false，只在浮层显示
++resolveInfoCopy('memories', { description: { memories: '自定义' } });
++```
++
+ ## 一次性效果
+ 
+ 高亮属于页面层效果，不是树的属性。三种方式可选，也可组合：
+@@ -56,7 +112,7 @@ treeRef.current?.scrollToRow('resources', { block: 'center' });
+ | `loadingFallback`         | `ReactNode`                               | —      | 首次加载期间替代行列表显示。                 |
+ | `errorFallback`           | `ReactNode`                               | —      | 存在整树级错误行时显示。                     |
+ | `emptyFallback`           | `ReactNode`                               | —      | `rows` 为空时显示。                          |
+-| `slots`                   | `FileTreeSlots`                           | —      | `toolbar` 插槽，渲染在行列表上方。           |
++| `slots`                   | `FileTreeSlots`                           | —      | `toolbar` 与 `spinner` 插槽。                |
+ | `labels`                  | `FileTreeLabels`                          | 英文   | 可替换文案。                                 |
+ | `getRowAttributes`        | `(row) => HTMLAttributes<HTMLDivElement>` | —      | 按行追加属性，`className` 会与组件类名合并。 |
+ | `renderDashboard`         | `(row) => ReactNode`                      | —      | 行尾指示器，返回 `null` 不显示。             |
+@@ -75,49 +131,16 @@ import '@openviking/react/components/file-tree/style.css';
+ 
+ ## 无障碍
+ 
+-使用 `role="tree"` 与 `role="treeitem"`，并输出 `aria-level`、`aria-selected`、`aria-expanded`。方向键在行间移动，左右键展开与折叠，回车与空格选中。状态通过可见文本表达，不只依赖颜色。
 -
--Context counts, token usage, retrievals and submissions for the current user. The module loads its own data; the host supplies configuration, the time range, which metrics to show, slots and copy.
+-## 类名
 -
--The component is a placeholder: it renders the module name and a placeholder message. The props below are settled, so applications can integrate the container and wire their state now; the composite view and `useUserUsage` follow.
+-类名带 `ov-` 前缀。块名为 `ov-file-tree`，元素使用 `ov-file-tree__<元素>`。
 -
--## Basic usage
--
--```tsx file="../../_demos/user-usage-placeholder.tsx" preview
--
--```
--
--## What the module owns
--
--- Querying statistics for the current user over the given range and bucket.
--- Loading, empty and failure states.
--
--## What the host owns
--
--- Request configuration through the Provider, overridable per module through `requestOptions`.
--- Sign-in, account scope and the current user.
--- The date-range picker and any other controls, injected through `slots.controls`; the host passes the resulting `startDate`, `endDate` and `bucket`.
--
--Account-wide statistics, member comparisons and billing costs belong to administration, not this module.
--
--## Props
--
--The module exports `UserUsageProps` from the subpath and the root entry, and `UserUsageMetric`, `UserUsageBucket`, `UserUsageLabels` and `UserUsageSlots` from the subpath only.
--
--| Property         | Type                         | Default | Description                                                                                                                    |
--| ---------------- | ---------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
--| `requestOptions` | `OvRequestOptions`           | —       | Request configuration override, applied field by field over the nearest Provider.                                              |
--| `startDate`      | `string`                     | —       | Start date as `YYYY-MM-DD` in the host's local time zone. The module takes the last seven days when omitted.                   |
--| `endDate`        | `string`                     | —       | End date as `YYYY-MM-DD` in the host's local time zone. The module takes today when omitted.                                   |
--| `bucket`         | `'hour' \| 'day' \| 'week'`  | `day`   | Time bucket of the statistics.                                                                                                 |
--| `metrics`        | `readonly UserUsageMetric[]` | —       | Metrics to show: `contexts`, `tokens`, `retrievals` and `submissions`. All four show when omitted.                             |
--| `slots`          | `UserUsageSlots`             | —       | `controls`, `extra` and `emptyState`.                                                                                          |
--| `labels`         | `UserUsageLabels`            | —       | Replaceable copy: `title`, the four metric names, `empty`, `error` and `retry`. An omitted label inherits its English default. |
--| `className`      | `string`                     | —       | Additional container class.                                                                                                    |
--| `style`          | `CSSProperties`              | —       | Container style overrides.                                                                                                     |
--
--Labels are plain text; the host maps its own translation system into these props. No prop carries data — the module loads it.
--
--The placeholder component itself consumes `className`, `style` and `labels.title` only.
+-| 类名                        | 元素       | 用途                           |
+-| --------------------------- | ---------- | ------------------------------ |
+-| `ov-file-tree`              | 根节点     | 纵向布局与基础排版。           |
+-| `ov-file-tree__toolbar`     | 工具栏插槽 | 行区域上方的宿主工具栏。       |
+-| `ov-file-tree__body`        | 滚动区域   | 承载行的滚动容器。             |
+-| `ov-file-tree__rows`        | 行容器     | 行的纵向排列。                 |
+-| `ov-file-tree__row`         | 行         | 单行条目，带 `data-selected`。 |
+-| `ov-file-tree__row:hover`   | 行         | 悬停背景。                     |
+-| `ov-file-tree__toggle`      | 展开按钮   | 展开与折叠控件。               |
+-| `ov-file-tree__chev
+```
+
+**File**: `frontend/docs/docs/zh/components/icons.mdx` (modified, +18/-13)
+```diff
+@@ -4,7 +4,7 @@
+ 
+ ## 可运行示例
+ 
+-通过尺寸按钮调整五个装饰性图标。单独的 PDF 图标演示有意义的 `alt` 描述，尺寸为 24 × 24 像素。中英文文档共用同一份示例，示例说明使用英文；应用可自行提供本地化的 `alt` 文案。
++通过尺寸按钮调整五个装饰性图标。单独的 PDF 图标演示有意义的 `aria-label` 描述，尺寸为 24 × 24 像素。中英文文档共用同一份示例，示例说明使用英文；应用可自行提供本地化的 `aria-label` 文案。
+ 
+ ```tsx file="../../_demos/icons-basic.tsx" preview
+ 
+@@ -22,32 +22,37 @@
+ 
+ ## 属性
+ 
+-每个组件渲染为 `img`，接收不含 ref 的标准图片属性；`src` 和 `srcSet` 由组件管理，不对调用方开放。
++每个组件渲染为内联 `svg`，接收不含 `children` 的标准 SVG 属性。
+ 
+-| 属性        | 类型               | 默认值 | 说明                                 |
+-| ----------- | ------------------ | ------ | ------------------------------------ |
+-| `width`     | `number \| string` | `16`   | 图片宽度。                           |
+-| `height`    | `number \| string` | `16`   | 图片高度。                           |
+-| `alt`       | `string`           | `''`   | 无障碍描述；装饰性图标使用空字符串。 |
+-| `className` | `string`           | —      | 为图片元素添加类名。                 |
+-| 其他属性    | 图片属性           | —      | 标准图片属性，包括 `aria-*`。        |
++| 属性         | 类型               | 默认值 | 说明                                       |
++| ------------ | ------------------ | ------ | ------------------------------------------ |
++| `width`      | `number \| string` | `16`   | 图标宽度。                                 |
++| `height`     | `number \| string` | `16`   | 图标高度。                                 |
++| `aria-label` | `string`           | —      | 无障碍描述；装饰性图标省略，SVG 保持隐藏。 |
++| `className`  | `string`           | —      | 为 SVG 元素添加类名。                      |
++| 其他属性     | SVG 属性           | —      | 标准 SVG 属性，包括 `aria-*` 与 `role`。   |
+ 
+ ```tsx
+ import { PdfIcon } from '@openviking/react/icons';
+ 
+ export default function Example() {
+   return (
+-    <PdfIcon width={24} height={24} className="file-icon" alt="PDF 文档" />
++    <PdfIcon
++      width={24}
++      height={24}
++      className="file-icon"
++      aria-label="PDF 文档"
++    />
+   );
+ }
+ ```
+ 
+ ## 无障碍
+ 
+-相邻文字已经说明文件类型时，保留空 `alt`，避免重复播报。图标独立传达信息时，提供应用语言下的描述。图标本身不具有交互行为；放入操作控件时，由应用负责按钮语义、键盘交互和焦点样式。
++相邻文字已经说明文件类型时省略 `aria-label`，SVG 保持 `aria-hidden`，避免重复播报。图标独立传达信息时，提供应用语言下的 `aria-label`。图标本身不具有交互行为；放入操作控件时，由应用负责按钮语义、键盘交互和焦点样式。
+ 
+ ## 资源与样式
+ 
+-SVG 以 data URL 内联到构建后的 JavaScript 中，无需单独请求 SVG，也无需为这些图标导入样式表。应用使用内容安全策略时，须在 `img-src` 中允许 `data:`。
++图标以内联 SVG 元素的形式打包进 JavaScript，没有独立资源请求，也不需要为它们导入样式表或配置内容安全策略。
+ 
+-通过 `width`、`height`、`className` 或 `style` 调整图片的尺寸与位置。SVG 使用固定配色，修改 CSS `color` 不会改变图标颜色。
++通过 `width`、`height`、`className` 或 `style` 调整尺寸与位置。SVG 使用固定配色，修改 CSS `color` 不会改变图标颜色。
 ```
 
 ---
 
-### Incident Patch 2: `46a5d9d9` (2026-11-06)
-**Commit Message**: fix: tree-sitter process() is a synchronous native call that can stall for… (#7059)
+### Incident Patch 2: `a17f9745` (2026-11-07)
+**Commit Message**: feat(ui): add independently subscribed scope selectors and cascade hook (#7163)
 
-* tree-sitter process() is a synchronous native call that can stall for the
-grammar download timeout. Running it on the SEMANTIC event-loop thread froze
-all concurrent semantic tasks. Wrap extract_skeleton_result in asyncio.to_thread
-so blocking parse/download work executes off the event loop.
+* feat(ui): add independently subscribed scope cascade selectors
 
-* feat(parse): preload tree-sitter grammars in image and bundle proxy manifest
+* fix(ui): address scope selector review feedback
 
-Production containers usually cannot reach GitHub, while the image build
-network can. Avoid on-demand grammar downloads (which block on a 60s
-timeout) by preloading all grammars at build time, and keep on-demand
-downloads working for non-Docker users via an optional proxy manifest.
+* docs(ui): reserve room for async scope dropdown
 
-- Dockerfile: download_all() at build time with a completeness check that
-  fails the image if any language is missing; copy the populated cache into
-  the runtime image and pin OPENVIKING_TREE_SITTER_CACHE_DIR.
-- process_engine: lazily point tree-sitter-language-pack at
-  OPENVIKING_TREE_SITTER_CACHE_DIR before process(); without this the pack
-  looks under <cache>/v<version>/libs and misses the preloaded files.
-- aider_repomap: apply the same cache-
+* docs(ui): explain scope focus effect cleanup
 
-**File**: `Dockerfile` (modified, +33/-0)
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/README.md` (added, +9/-0)
 ```diff
-@@ -48,6 +48,7 @@ ENV CARGO_TARGET_DIR=/cargo-target
- ENV UV_COMPILE_BYTECODE=1
- ENV UV_LINK_MODE=copy
- ENV UV_NO_DEV=1
-+ENV OPENVIKING_TREE_SITTER_CACHE_DIR=/app/.cache/tree-sitter-language-pack
- WORKDIR /app
- 
- # Copy source required for setup.py artifact builds and native extension build.
-@@ -97,6 +98,35 @@ RUN --mount=type=cache,target=/root/.cache/uv,id=uv-${TARGETPLATFORM} \
-             ;; \
-     esac
- 
-+# Preload every tree-sitter grammar at build time. The build network can reach
-+# GitHub, while production usually cannot, so the populated cache is copied into
-+# the runtime image and the first code parse never blocks on a download. Fail the
-+# build if any language is missing instead of shipping an incomplete cache.
-+RUN rm -rf "${OPENVIKING_TREE_SITTER_CACHE_DIR}" \
-+ && mkdir -p "${OPENVIKING_TREE_SITTER_CACHE_DIR}" \
-+ && /app/.venv/bin/python - <<'PY'
-+import os
-+from typing import get_args
+@@ -0,0 +1,9 @@
++# Scope switcher example assets
 +
-+from tree_sitter_language_pack import (
-+    PackConfig,
-+    SupportedLanguage,
-+    configure,
-+    download_all,
-+    downloaded_languages,
-+)
++Unmodified SVG exports from the user-provided [OpenViking Console design](https://www.figma.com/design/ecpd1ZGHKRYibm1ODKEpM6/OpenViking-Console?node-id=10325-138037), under the repository license.
 +
-+cache_dir = os.environ["OPENVIKING_TREE_SITTER_CACHE_DIR"]
-+configure(PackConfig(cache_dir=cache_dir))
-+download_all()
-+missing = sorted(set(get_args(SupportedLanguage)) - set(downloaded_languages()))
-+if missing:
-+    raise SystemExit(
-+        "tree-sitter parser preload incomplete; missing "
-+        f"{len(missing)} languages: {', '.join(missing[:20])}"
-+    )
-+PY
++- `space.svg`: `I10325:138037;9343:425924`, 14 × 14.
++- `user.svg`: `I10325:138037;9343:425954`, 14 × 14.
++- `library-0.svg` through `library-7.svg`: the two masks and six original layers of `I10325:138037;9343:425894`. Composed at 14 × 14 in `scope-switcher-icons.tsx`, preserving each SVG's intrinsic dimensions.
 +
- # Stage 4: runtime
- FROM python:3.13-slim-trixie
- 
-@@ -112,6 +142,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
- WORKDIR /app/.openviking
- 
- COPY --from=py-builder /app/.venv /app/.venv
-+# Grammar cache preloaded in the builder stage; read directly at runtime.
-+COPY --from=py-builder /app/.cache/tree-sitter-language-pack /app/.cache/tree-sitter-language-pack
- # Exercise SVG rendering so missing Python or Cairo runtime dependencies fail the build.
- RUN /app/.venv/bin/python -I - <<'PYCODE'
- import cairosvg
-@@ -132,6 +164,7 @@ RUN mkdir -p /app/.openviking \
-  && chmod +x /usr/local/bin/openviking-entrypoint /usr/local/bin/openviking-pending-health
- ENV HOME="/app" \
-     PATH="/app/.venv/bin:$PATH" \
-+    OPENVIKING_TREE_SITTER_CACHE_DIR="/app/.cache/tree-sitter-language-pack" \
-     OPENVIKING_CONFIG_FILE="/app/.openviking/ov.conf" \
-     OPENVIKING_CLI_CONFIG_FILE="/app/.openviking/ovcli.conf"
- 
++These are host-provided example icons; the reusable component still accepts `icon` as a React node.
 ```
 
-**File**: `MANIFEST.in` (modified, +1/-0)
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-0.svg` (added, +11/-0)
 ```diff
-@@ -14,6 +14,7 @@ graft crates/ragfs
- graft crates/ragfs-python
- recursive-include openviking *.yaml
- recursive-include openviking/scheduling/expiry *.lua
-+recursive-include openviking/parse/parsers/code/ast *.json
- recursive-include openviking_gateway *.json
- 
- # sdist should be source-only: never ship runtime binaries from working tree
+@@ -0,0 +1,11 @@
++<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
++<g id="Group">
++<path id="Vector" d="M14 0H0V14H14V0Z" fill="url(#paint0_radial_0_144)"/>
++</g>
++<defs>
++<radialGradient id="paint0_radial_0_144" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(7 7) scale(7)">
++<stop offset="0.984375" stop-color="white"/>
++<stop offset="1" stop-color="white" stop-opacity="0"/>
++</radialGradient>
++</defs>
++</svg>
 ```
 
-**File**: `docs/zh/guides/01-configuration.md` (modified, +26/-0)
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-1.svg` (added, +5/-0)
 ```diff
-@@ -1073,6 +1073,32 @@ ollama pull guoxuter/ov_intent_analysis_sft:v7_q8
- 需要 GitHub、GitLab 或 Azure DevOps 专属 URL 语义时，应配置到对应的平台字段；
- 其他 Git 主机统一添加到 `code_hosting_domains`。
- 
-+#### 语法包下载与镜像（网络受限 / 离线）
-+
-+`tree-sitter-language-pack.process()` 首次解析某种语言时，会按需从 GitHub Releases 下载语法整包（单个平台包内含全部语言，约 20MB），下载后缓存在本地，之后的解析直接读缓存、不再联网。
-+
-+- **Docker 部署**：镜像在构建阶段已执行 `download_all()` 预热全部语法，并校验所有语言就绪（缺失则镜像构建失败）；生产环境直接命中镜像内缓存，无需也不会访问 GitHub。
-+- **个人本地使用（非 Docker）**：默认仍按需从 GitHub 下载，不会强制预取。如果你的网络无法访问 GitHub，可把环境变量指向 OpenViking 随包内置的代理清单（下载地址已改写为公共代理 `gh-proxy.com`）：
-+
-+```bash
-+# 1. 找到随包安装的代理清单路径
-+python -c "import openviking.parse.parsers.code.ast as m, os; print(os.path.join(os.path.dirname(m.__file__), 'assets', 'parsers.ghproxy.json'))"
-+
-+# 2. 指向它（建议写入 ~/.zshrc / ~/.bashrc）
-+export TREE_SITTER_LANGUAGE_PACK_MANIFEST_URL="file://<上一步输出的绝对路径>"
-+```
-+
-+说明：
-+
-+- 该环境变量只替换**清单文件**地址；清单内各平台整包 URL 已改写为代理地址，整包也会走代理，`sha256` 保持不变。
-+- 想彻底离线，可在能联网时手动预热一次，之后全程使用本地缓存：
-+
-+```bash
-+python -c "from tree_sitter_language_pack import download_all; download_all()"
-+```
-+
-+- 如需使用自建镜像，把环境变量指向你自己的 `parsers.json`（同步改写其中的整包 URL）即可，支持 `http(s)://` 与 `file://`。
-+
- ### pdf
- 
- PDF 解析配置。支持三种策略：`local`（本地 pdfplumber）、`mineru`（远程 MinerU API）、`auto`（先本地、失败回退 MinerU）。
+@@ -0,0 +1,5 @@
++<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
++<g id="clip-oreo-5f6o93">
++<path id="Vector" d="M14 7C14 3.13401 10.866 0 7 0C3.13401 0 0 3.13401 0 7C0 10.866 3.13401 14 7 14C10.866 14 14 10.866 14 7Z" fill="black"/>
++</g>
++</svg>
 ```
 
-**File**: `openviking/parse/parsers/code/ast/aider_repomap.py` (modified, +14/-0)
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-2.svg` (added, +5/-0)
 ```diff
-@@ -7,6 +7,10 @@
- from pathlib import Path
- from typing import Optional
- 
-+from openviking.parse.parsers.code.ast.process_engine import (
-+    _configure_tree_sitter_cache_dir,
-+)
-+
- logger = logging.getLogger(__name__)
- 
- _QUERY_DIR = Path(__file__).with_name("queries") / "tree-sitter-language-pack"
-@@ -127,6 +131,16 @@ def _query_captures(rel_name: str, content: str):
-         raise ValueError(f"missing tags query for language: {lang}")
- 
-     query_lang = _query_language_name(lang)
-+    _configure_tree_sitter_cache_dir()
-+    # get_parser() downloads with the GIL held in the native extension, which
-+    # would freeze the whole process even inside asyncio.to_thread. prefetch()
-+    # performs the same on-demand download without holding the GIL, so run it
-+    # first in this worker thread. Do not swallow failures: the caller
-+    # (_extract_with_grep_ast) catches and falls back to LLM, and catching here
-+    # would make get_parser() retry the same download a second time.
-+    from tree_sitter_language_pack import prefetch
-+
-+    prefetch([query_lang])
-     parser = get_parser(query_lang)
-     language = get_language(query_lang)
-     tree = parser.parse(content.encode("utf-8"))
+@@ -0,0 +1,5 @@
++<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14.0131" height="14.0131" viewBox="0 0 14.0131 14.0131" fill="none" xmlns="http://www.w3.org/2000/svg">
++<g id="Group">
++<path id="Vector" d="M10.4541 0H3.55906C1.59345 0 0 1.59345 0 3.55906V10.4541C0 12.4197 1.59345 14.0131 3.55906 14.0131H10.4541C12.4197 14.0131 14.0131 12.4197 14.0131 10.4541V3.55906C14.0131 1.59345 12.4197 0 10.4541 0Z" fill="#031A05"/>
++</g>
++</svg>
 ```
 
-**File**: `openviking/parse/parsers/code/ast/assets/parsers.ghproxy.json` (added, +1571/-0)
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-3.svg` (added, +30/-0)
 ```diff
-@@ -0,0 +1,1571 @@
-+{
-+  "version": "1.13.3",
-+  "platforms": {
-+    "linux-aarch64": {
-+      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-linux-aarch64.tar.zst",
-+      "sha256": "e4c45c5804c9deb6bc4353962f5478160ca1abb219a745f455a8f56d04b0c1b6",
-+      "size": 18245391
-+    },
-+    "linux-x86_64": {
-+      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-linux-x86_64.tar.zst",
-+      "sha256": "30ffd923ed139943b0ccc60c0451f79ca232467f246372d84d88b2dba4e79122",
-+      "size": 18678016
-+    },
-+    "macos-arm64": {
-+      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-macos-arm64.tar.zst",
-+      "sha256": "d982fa3ab89d9d710e2c002a7cd5a8bf8c8d6a6143ee27c4495e6a0ee70af387",
-+      "size": 20912159
-+    },
-+    "macos-x86_64": {
-+      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-macos-x86_64.tar.zst",
-+      "sha256": "40fd0957a236df1c0d32a1e410b66f6affd71d09146021f1f035f99cc4ee8303",
-+      "size": 18276060
-+    },
-+    "windows-aarch64": {
-+      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-windows-aarch64.tar.zst",
-+      "sha256": "2fc29f7a8ede2e6084b3c20d3a08d0b3e615c92e859b7a014b141b123c24dc5f",
-+      "size": 17671433
-+    },
-+    "windows-x86_64": {
-+      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-windows-x86_64.tar.zst",
-+      "sha256": "142433cbeb0176b37414fc23b6203cc60c85fe1df455e44b95a93772a0e6023a",
-+      "size": 18054899
-+    }
-+  },
-+  "languages": {
-+    "abl": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "actionscript": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "ada": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "agda": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "al": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "angular": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "apex": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "arduino": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "asciidoc": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "asm": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "astro": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "awk": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "bash": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "bass": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "batch": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "beancount": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "bibtex": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "bicep": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "bitbake": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "blade": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "brightscript": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "bsl": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "c": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "c3": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "caddy": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cairo": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "capnp": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cedar": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cedarschema": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cel": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cfml": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "chatito": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "chuck": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "circom": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "clarity": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "clojure": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cmake": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cobol": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "comment": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "commonlisp": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cooklang": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "corn": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cpon": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cpp": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "crystal": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "csharp": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "css": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cst": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "csv": {
-+      "group": "all",
-+      "size": 0
-+    },
-+    "cuda": {
-+      "group
+@@ -0,0 +1,30 @@
++<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="17.6006" height="17.6006" viewBox="0 0 17.6006 17.6006" fill="none" xmlns="http://www.w3.org/2000/svg">
++<g id="Group" opacity="0.42">
++<g id="Vector" opacity="0.38" filter="url(#filter0_f_0_136)">
++<path d="M5.35258 2.05623H12.2476C14.0682 2.05623 15.5441 3.53215 15.5441 5.35279V12.2478C15.5441 14.0684 14.0682 15.5444 12.2476 15.5444H5.35258C3.53194 15.5444 2.05602 14.0684 2.05602 12.2478V5.35279C2.05602 3.53215 3.53194 2.05623 5.35258 2.05623Z" stroke-width="0.30625" stroke="white"/>
++</g>
++<g id="Vector_2" opacity="0.24" filter="url(#filter1_f_0_136)">
++<path d="M5.35281 2.23125H12.2478C13.9718 2.23125 15.3694 3.62882 15.3694 5.35281V12.2478C15.3694 13.9718 13.9718 15.3694 12.2478 15.3694H5.35281C3.62882 15.3694 2.23125 13.9718 2.23125 12.2478V5.35281C2.23125 3.62882 3.62882 2.23125 5.35281 2.23125Z" stroke-width="0.525" stroke="#FFDFDA"/>
++</g>
++<g id="Vector_3" opacity="0.18" filter="url(#filter2_f_0_136)">
++<path d="M5.35281 2.66875H12.2478C13.7302 2.66875 14.9319 3.87045 14.9319 5.35281V12.2478C14.9319 13.7302 13.7302 14.9319 12.2478 14.9319H5.35281C3.87045 14.9319 2.66875 13.7302 2.66875 12.2478V5.35281C2.66875 3.87045 3.87045 2.66875 5.35281 2.66875Z" stroke-width="0.875" stroke="#FFBE74"/>
++</g>
++</g>
++<defs>
++<filter id="filter0_f_0_136" x="1.42164" y="1.42186" width="14.7569" height="14.7569" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
++<feFlood flood-opacity="0" result="BackgroundImageFix"/>
++<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
++<feGaussianBlur stdDeviation="0.240625" result="effect1_foregroundBlur_0_136"/>
++</filter>
++<filter id="filter1_f_0_136" x="0.56875" y="0.56875" width="16.4631" height="16.4631" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
++<feFlood flood-opacity="0" result="BackgroundImageFix"/>
++<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
++<feGaussianBlur stdDeviation="0.7" result="effect1_foregroundBlur_0_136"/>
++</filter>
++<filter id="filter2_f_0_136" x="0" y="0" width="17.6006" height="17.6006" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
++<feFlood flood-opacity="0" result="BackgroundImageFix"/>
++<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
++<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_136"/>
++</filter>
++</defs>
++</svg>
 ```
 
-**File**: `openviking/parse/parsers/code/ast/process_engine.py` (modified, +29/-0)
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-4.svg` (added, +5/-0)
 ```diff
-@@ -2,12 +2,16 @@
- # SPDX-License-Identifier: AGPL-3.0
- """Code skeleton extraction via tree-sitter-language-pack.process()."""
- 
-+import os
-+from functools import lru_cache
- from pathlib import Path
- from typing import Optional
- 
- from tree_sitter_language_pack import (
-+    PackConfig,
-     ProcessConfig,
-     SupportedLanguage,
-+    configure,
-     detect_language_from_path,
-     process,
- )
-@@ -16,6 +20,30 @@
- 
- logger = get_logger(__name__)
- 
-+
-+@lru_cache(maxsize=1)
-+def _configure_tree_sitter_cache_dir() -> None:
-+    """Point tree-sitter-language-pack at the Docker-preloaded grammar cache.
-+
-+    The Docker image preloads grammars into OPENVIKING_TREE_SITTER_CACHE_DIR
-+    (see Dockerfile). Without this, the pack looks under its default
-+    ``<cache>/v<version>/libs`` path and misses the preloaded files, which are
-+    laid out at the configured directory root. This only selects the directory;
-+    a cache miss still downloads on demand, so non-Docker and not-yet-cached
-+    language cases keep working.
-+    """
-+    cache_dir = os.environ.get("OPENVIKING_TREE_SITTER_CACHE_DIR")
-+    if not cache_dir:
-+        return
-+    if not Path(cache_dir).is_dir():
-+        logger.warning("Configured tree-sitter parser cache does not exist: %s", cache_dir)
-+        return
-+    try:
-+        configure(PackConfig(cache_dir=cache_dir))
-+    except Exception as exc:  # pragma: no cover - defensive only
-+        logger.warning("Failed to configure tree-sitter parser cache '%s': %s", cache_dir, exc)
-+
-+
- _CLASS_KINDS = {"class", "struct", "interface", "enum", "trait", "impl", "namespace"}
- _FUNC_KINDS = {"function", "method"}
- 
-@@ -139,6 +167,7 @@ def _detect_process_language(file_name: str) -> Optional[str]:
- 
- 
- def _extract_process_skeleton(file_name: str, content: str, lang: str) -> str:
-+    _configure_tree_sitter_cache_dir()
-     result = process(
-         content,
-         ProcessConfig(language=lang, structure=True, imports=True),
+@@ -0,0 +1,5 @@
++<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="15.3497" height="16.3494" viewBox="0 0 15.3497 16.3494" fill="none" xmlns="http://www.w3.org/2000/svg">
++<g id="Group">
++<path id="Vector" d="M11.7906 0H3.55906C1.59345 0 0 1.59345 0 3.55906V12.7903C0 14.7559 1.59345 16.3494 3.55906 16.3494H11.7906C13.7562 16.3494 15.3497 14.7559 15.3497 12.7903V3.55906C15.3497 1.59345 13.7562 0 11.7906 0Z" fill="#FFAAAA"/>
++</g>
++</svg>
 ```
 
-**File**: `openviking/storage/queuefs/semantic_processor.py` (modified, +1/-1)
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-5.svg` (added, +30/-0)
 ```diff
-@@ -1344,7 +1344,7 @@ def result(summary: str) -> Dict[str, Any]:
-         elif file_type == FILE_TYPE_CODE:
-             from openviking.parse.parsers.code.ast import extract_skeleton_result
- 
--            extraction = extract_skeleton_result(file_name, content)
-+            extraction = await asyncio.to_thread(extract_skeleton_result, file_name, content)
-             if extraction.text:
-                 skeleton_text = extraction.text
-                 max_skeleton_chars = config.semantic.max_skeleton_chars
+@@ -0,0 +1,30 @@
++<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="18.9372" height="19.9369" viewBox="0 0 18.9372 19.9369" fill="none" xmlns="http://www.w3.org/2000/svg">
++<g id="Group" opacity="0.36">
++<g id="Vector" opacity="0.38" filter="url(#filter0_f_0_128)">
++<path d="M5.35282 2.05623H13.5844C15.405 2.05623 16.881 3.53215 16.881 5.35279V14.584C16.881 16.4047 15.405 17.8806 13.5844 17.8806H5.35282C3.53218 17.8806 2.05626 16.4047 2.05626 14.584V5.35279C2.05626 3.53215 3.53218 2.05623 5.35282 2.05623Z" stroke-width="0.30625" stroke="white"/>
++</g>
++<g id="Vector_2" opacity="0.24" filter="url(#filter1_f_0_128)">
++<path d="M5.35281 2.23125H13.5844C15.3084 2.23125 16.7059 3.62882 16.7059 5.35281V14.5841C16.7059 16.3081 15.3084 17.7056 13.5844 17.7056H5.35281C3.62882 17.7056 2.23125 16.3081 2.23125 14.5841V5.35281C2.23125 3.62882 3.62882 2.23125 5.35281 2.23125Z" stroke-width="0.525" stroke="#FFDFDA"/>
++</g>
++<g id="Vector_3" opacity="0.18" filter="url(#filter2_f_0_128)">
++<path d="M5.35281 2.66875H13.5844C15.0667 2.66875 16.2684 3.87045 16.2684 5.35281V14.5841C16.2684 16.0664 15.0667 17.2681 13.5844 17.2681H5.35281C3.87045 17.2681 2.66875 16.0664 2.66875 14.5841V5.35281C2.66875 3.87045 3.87045 2.66875 5.35281 2.66875Z" stroke-width="0.875" stroke="#FFBE74"/>
++</g>
++</g>
++<defs>
++<filter id="filter0_f_0_128" x="1.42189" y="1.42186" width="16.0934" height="17.0931" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
++<feFlood flood-opacity="0" result="BackgroundImageFix"/>
++<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
++<feGaussianBlur stdDeviation="0.240625" result="effect1_foregroundBlur_0_128"/>
++</filter>
++<filter id="filter1_f_0_128" x="0.56875" y="0.56875" width="17.7997" height="18.7994" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
++<feFlood flood-opacity="0" result="BackgroundImageFix"/>
++<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
++<feGaussianBlur stdDeviation="0.7" result="effect1_foregroundBlur_0_128"/>
++</filter>
++<filter id="filter2_f_0_128" x="0" y="0" width="18.9372" height="19.9369" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
++<feFlood flood-opacity="0" result="BackgroundImageFix"/>
++<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
++<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_128"/>
++</filter>
++</defs>
++</svg>
 ```
 
-**File**: `pyproject.toml` (modified, +1/-0)
+**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-6.svg` (added, +18/-0)
 ```diff
-@@ -249,6 +249,7 @@ exclude = ["tests*", "docs*", "examples*"]
- openviking_gateway = ["client-rules.json", "lua/*.lua"]
- "openviking.scheduling.expiry" = ["lua/*.lua"]
- "vikingbot.studio.providers.feishu" = ["icon.png"]
-+"openviking.parse.parsers.code.ast" = ["assets/parsers.ghproxy.json"]
- openviking = [
-     "prompts/templates/**/*.yaml",
-     "system_assets/**/*",
+@@ -0,0 +1,18 @@
++<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="19.7901" height="18.6675" viewBox="0 0 19.7901 18.6675" fill="none" xmlns="http://www.w3.org/2000/svg">
++<g id="Group">
++<g id="Vector" opacity="0.922" filter="url(#filter0_f_0_126)">
++<path d="M17.5588 9.33373C17.5588 5.41114 14.1276 2.23125 9.89505 2.23125C5.66245 2.23125 2.23125 5.41114 2.23125 9.33373C2.23125 13.2563 5.66245 16.4362 9.89505 16.4362C14.1276 16.4362 17.5588 13.2563 17.5588 9.33373Z" fill="url(#paint0_linear_0_126)"/>
++</g>
++</g>
++<defs>
++<filter id="filter0_f_0_126" x="5.90506e-08" y="1.11646e-08" width="19.7901" height="18.6675" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
++<feFlood flood-opacity="0" result="BackgroundImageFix"/>
++<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
++<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_126"/>
++</filter>
++<linearGradient id="paint0_linear_0_126" x1="2.23125" y1="2.23125" x2="2.23125" y2="16.4362" gradientUnits="userSpaceOnUse">
++<stop stop-color="#FEE9F5"/>
++<stop offset="1" stop-color="#F8F8F8"/>
++</linearGradient>
++</defs>
++</svg>
 ```
 
 ---
 
-### Incident Patch 3: `2dffcee2` (2026-11-06)
-**Commit Message**: fix(pathlock): use Redis time to prevent clock-skew takeovers (#6718)
+### Incident Patch 3: `9ac008f9` (2026-11-07)
+**Commit Message**: feat(ui): implement the file tree view against its contract (#7201)
 
-* fix(pathlock): use Redis time to prevent clock-skew takeovers
+* feat(ui): implement the file tree view against its contract
 
-* chore(pathlock): keep server-time fix focused on code and tests
+The component shipped as a fixed shell after the placeholder view was removed,
+so `<FileTree rows={...} />` rendered nothing. Everything the contract
+describes — rows, indentation, guides, icons, keyboard, loading and paging
+states — had been written into the docs example instead, where no consumer
+could reuse it.
 
-* test(pathlock): benchmark Redis server-clock lease overhead
+The view now lives in the component. It renders the five row kinds, indents by
+`depth` with a guide per ancestor level, cross-fades the folder icon between
+its collapsed and open states, runs arrow-key navigation plus Enter/Space
+selection, and reports each operation through `operations` before firing the
+matching `on…` notification. `renderRowIcon` is new so a host can supply a
+type icon per file; omitting it falls back to the generic document icon.
 
-Add an opt-in A/B performance test and document local results to quantify server-time acquisition and renewal costs across batch sizes and concurrency levels.
+Directory copy resolves at render time: a row's own `description` wins,
+including an explicit empty string, and the built-in copy for the fixed
+`viking://` levels is the fallback. Previously the helpers were only
+re-exported, so passing `labels.info` had no visible effect.
 
-* fix(pathlock): preserve live holders during failed Redis handoff
+Theme variables are 
 
-Use Redis time for atomic handoff rollback so client clock skew cannot remove live sibling locks. Add regressions for delayed adoption, expired sources, and concurrent renewals.
-
-**File**: `crates/ragfs/benches/redis_clock_perf.md` (added, +99/-0)
+**File**: `frontend/docs/docs/_demos/file-tree-basic.tsx` (modified, +32/-276)
 ```diff
-@@ -0,0 +1,99 @@
-+# Redis PathLock server-clock perf test
-+
-+Run against a local standalone Redis:
-+
-+```bash
-+REDIS_URL=redis://127.0.0.1:6379 \
-+PATHLOCK_CLOCK_PERF_OUTPUT=/tmp/redis-clock-samples.csv \
-+cargo test --release --locked -p ragfs --features cache --lib \
-+  perf_server_clock -- --ignored --nocapture
-+```
-+
-+The test is ignored during normal test runs. It uses UUID-prefixed scopes and
-+deletes only its own keys after each cycle. It does not change Redis configuration
-+or flush the database. Failed runs may leave test keys with a two-hour TTL.
-+Do not use a production Redis for this manual load test.
-+
-+| Environment variable | Default | Meaning |
-+| --- | ---: | --- |
-+| `REDIS_URL` | required | Redis endpoint |
-+| `PATHLOCK_CLOCK_PERF_ITERATIONS` | 1000 | Measured cycles per worker, phase and round |
-+| `PATHLOCK_CLOCK_PERF_WARMUP` | 100 | Warmup cycles per worker and phase |
-+| `PATHLOCK_CLOCK_PERF_ROUNDS` | 3 | A/B rounds; execution order alternates |
-+| `PATHLOCK_CLOCK_PERF_CONCURRENCY` | 16 | Additional concurrency level besides 1 |
-+| `PATHLOCK_CLOCK_PERF_OUTPUT` | unset | Optional raw sample CSV path |
-+
-+Each cycle acquires fresh holder tokens, refreshes them, then deletes its test
-+scope. Workloads cover one Exact lock, a batch of 20 Exact locks, and one Tree
-+lock, at concurrency 1 and the configured additional level. Concurrent workers
-+use independent account scopes; this measures Redis contention, not logical
-+conflict retries. Scopes have no unrelated tokens or descendants.
-+All workers share one cache runtime and its default `pool_size=32` in-flight
-+command limit, using the same production Redis client configuration.
-+
-+`fixed` runs the production acquisition/refresh Lua with only `server_now_ns()`
-+replaced by a frozen valid timestamp. `server` runs the actual production scripts.
-+Raw CSV uses clock `0` for fixed and `1` for server. Both variants use the same
-+lease, holder encoding, time subtraction, response validation and network calls.
-+The frozen clock is suitable only for this short, isolated benchmark.
-+This comparison isolates Redis TIME and its formatting/normalization; it is
-+**not** a full comparison with the old client-clock implementation.
-+
-+Latency includes the cache runtime, EVALSHA round trip and script-result decoding;
-+request construction, fixture validation and scope deletion are outside the
-+individual acquisition/refresh timers. Warmup excludes connection setup and
-+initial script loading. No manager lifecycle or acquisition metrics are measured.
-+Each phase starts after all workers finish warmup. Summary percentiles use
-+nearest-rank over samples pooled across rounds.
-+
-+`cycle_per_sec` counts complete acquire + refresh + cleanup cycles over phase
-+wall time, including validation and the DEL round trip. It is repeated for the
-+acquire and refresh rows and should not be interpreted as standalone command QPS.
-+No fixed performance thresholds are asserted; Redis errors and malformed or
-+unexpected lock results fail the test.
-+Warmup synchronization has a 60-second deadline so a failed worker cannot leave
-+the test waiting indefinitely. Use reasonable settings for the local endpoint.
-+
-+## Local results (2026-11-05)
-+
-+Apple M5 Pro, macOS 26.5.1 arm64, Rust 1.99.1, Redis 8.10.3 standalone at
-+`127.0.0.1:6379`, DB 0. Existing Redis configuration was retained: AOF disabled,
-+RDB `save = 3600 1 300 100 60 10000`. No control of other local activity was made.
-+Release build, 100 warmup cycles and 1,000 measured cycles per worker per phase,
-+3 rounds, concurrency 1/16. The test passed in 83.10 seconds. Raw CSV contained
-+612,000 validated acquisition/refresh samples: 3,000 per single-worker group and
-+48,000 per 16-worker group. An earlier exploratory run used 30 warmups and 300
-+cycles and had substantially greater between-phase drift.
-+
-+Values below are **fixed → server**, in milliseconds.
-+
-+| Workers | Batch | Kind | Operation | p50 | p99 |
-+| ---: | ---: | --- | --- | --- | --- |
-+| 1 | 1 | Exact | acquire | 0.123958 → 0.126167 | 0.395750 → 0.324417 |
-+| 1 | 1 | Exact | refresh | 0.116708 → 0.119916 | 0.382750 → 0.312917 |
-+| 1 | 20 | Exact | acquire | 0.220958 → 0.220833 | 0.549416 → 0.523916 |
-+| 1 | 20 | Exact | refresh | 0.210917 → 0.208959 | 0.519375 → 0.508625 |
-+| 1 | 1 | Tree | acquire | 0.122833 → 0.123167 | 0.348208 → 0.318542 |
-+| 1 | 1 | Tree | refresh | 0.116500 → 0.118167 | 0.347667 → 0.305458 |
-+| 16 | 1 | Exact | acquire | 0.341208 → 0.358958 | 0.880000 → 0.958084 |
-+| 16 | 1 | Exact | refresh | 0.332667 → 0.351417 | 0.872958 → 0.939709 |
-+| 16 | 20 | Exact | acquire | 1.247542 → 1.306750 | 2.489625 → 2.893625 |
-+| 16 | 20 | Exact | refresh | 1.236708 → 1.293750 | 2.501166 → 2.921958 |
-+| 16 | 1 | Tree | acquire | 0.329667 → 0.342125 | 0.828125 → 0.744916 |
-+| 16 | 1 | Tree | refresh | 0.323333 → 0.336042 | 0.812958 → 0.735250 |
-+
-+At concurrency 16, Exact single-lock cycle throughput was 14,742 → 13,892 cycles/s;
-+Exact batch-20 was 4,239 →
+@@ -1,19 +1,9 @@
+ import { useState } from 'react';
+ import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+ import { useLang } from '@rspress/core/runtime';
++import { FileTree } from '@openviking/react/components/file-tree';
++import type { FileTreeRow } from '@openviking/react/components/file-tree';
+ import {
+-  resolveFileTreeInfoKey,
+-  resolveInfoCopy,
+-  showsInlineDescription,
+-} from '@openviking/react/components/file-tree';
+-import type {
+-  FileTreeEntryRow,
+-  FileTreeRow,
+-} from '@openviking/react/components/file-tree';
+-import {
+-  ChevronRightIcon,
+-  FolderIcon,
+-  FolderOpenIcon,
+   getFileTypeColor,
+   getFileTypeIcon,
+   resolveFileTypeIconKey,
+@@ -211,51 +201,17 @@ function flatten(nodes: Node[], depth: number, s: State): FileTreeRow[] {
+   });
+ }
+ 
+-const MUTED = { color: '#8f959e' } as const;
+-const INDENT = 20;
+-const CHEVRON_SIZE = 16;
+-const ROW = {
+-  height: 'var(--ov-ui-file-tree-row-height, 32px)',
+-  display: 'flex',
+-  alignItems: 'center',
+-  gap: 6,
+-  paddingRight: 8,
+-  borderRadius: 'var(--ov-ui-file-tree-row-radius, 4px)',
+-} as const;
+-/** Guide through one ancestor level; the 1px bleed joins consecutive rows. */
+-const GUIDE = {
+-  position: 'absolute',
+-  top: -1,
+-  bottom: -1,
+-  width: 1,
+-  background: 'var(--ov-ui-file-tree-guide, #e5e6eb)',
+-  pointerEvents: 'none',
+-} as const;
+ const CENTER = {
+   display: 'inline-flex',
+   alignItems: 'center',
+   justifyContent: 'center',
+ } as const;
+-const ICON = {
+-  ...CENTER,
+-  color: 'var(--ov-ui-file-tree-icon, #3f3f51)',
+-  width: 16,
+-  height: 16,
+-} as const;
+-const FOLDER = { position: 'relative', width: 14, height: 14 } as const;
+-const LAYER = {
+-  ...FOLDER,
+-  position: 'absolute',
+-  inset: 0,
+-  transition: 'opacity 220ms',
+-} as const;
+ const BARE_BUTTON = {
+   padding: 0,
+   border: 0,
+   background: 'none',
+   cursor: 'pointer',
+ } as const;
+-const CHEVRON = { ...CENTER, ...BARE_BUTTON, width: 16, height: 16 } as const;
+ const INDICATOR = {
+   ...CENTER,
+   ...BARE_BUTTON,
+@@ -279,8 +235,6 @@ const CONFLICT_MARK_D =
+   'M8.12525 5.16248C8.3636 5.05726 8.63591 5.0573 8.87427 5.16248C9.03672 5.23421 9.15691 5.36705 9.26587 5.5199C9.37554 5.67377 9.49733 5.88273 9.64771 6.141L11.2776 8.9408C11.4279 9.19896 11.5506 9.40737 11.6301 9.5785C11.7091 9.7484 11.7651 9.91933 11.7463 10.0961C11.7189 10.3552 11.5817 10.5903 11.3704 10.7426C11.2265 10.8461 11.0499 10.8827 10.8626 10.8998C10.6738 10.9169 10.4313 10.9164 10.1311 10.9164H6.86939C6.56887 10.9164 6.32581 10.917 6.13697 10.8998C5.94954 10.8827 5.77304 10.8462 5.62916 10.7426C5.4178 10.5902 5.28064 10.3551 5.25318 10.0961C5.23446 9.91932 5.29137 9.74839 5.37037 9.5785C5.44995 9.40742 5.57168 9.19884 5.72193 8.9408L7.35279 6.14002C7.50292 5.88219 7.62412 5.67363 7.73365 5.5199C7.84252 5.36711 7.96286 5.23426 8.12525 5.16248Z';
+ const CONFLICT_DOT_D =
+   'M8.24986 8.33335V7.00001C8.24986 6.86199 8.36185 6.75009 8.49986 6.75001C8.63793 6.75001 8.74986 6.86194 8.74986 7.00001V8.33335C8.74986 8.47142 8.63793 8.58335 8.49986 8.58335C8.36185 8.58327 8.24986 8.47137 8.24986 8.33335ZM8.76711 9.36655C8.76711 9.50443 8.65532 9.61628 8.51744 9.61655L8.48358 9.61688C8.41725 9.61696 8.35345 9.59049 8.3065 9.54363C8.25961 9.49678 8.23329 9.43317 8.23326 9.36688V9.33335C8.23326 9.19528 8.34519 9.08335 8.48326 9.08335H8.51711C8.65516 9.08337 8.76711 9.19529 8.76711 9.33335V9.36655Z';
+-const BOOK_D =
+-  'M8.05556 7.55556C8.05556 6.31099 8.05556 5.68871 8.29776 5.21335C8.51082 4.79522 8.85077 4.45526 9.26891 4.24221C9.74427 4 10.3666 4 11.6111 4H11.8333C12.4556 4 12.7668 4 13.0044 4.1211C13.2135 4.22763 13.3835 4.39761 13.49 4.60668C13.6111 4.84436 13.6111 5.1555 13.6111 5.77778V10.5556C13.6111 11.1778 13.6111 11.489 13.49 11.7267C13.3835 11.9357 13.2135 12.1057 13.0044 12.2122C12.7668 12.3333 12.4556 12.3333 11.8333 12.3333H11.0695C10.3738 12.3333 10.026 12.3333 9.71022 12.4292C9.43069 12.5141 9.17064 12.6533 8.94494 12.8388C8.69001 13.0483 8.49705 13.3378 8.11114 13.9166L8.05556 14L7.99997 13.9166C7.61406 13.3378 7.4211 13.0483 7.16617 12.8388C6.94048 12.6533 6.68043 12.5141 6.40089 12.4292C6.08514 12.3333 5.73728 12.3333 5.04157 12.3333H4.27778C3.6555 12.3333 3.34436 12.3333 3.10668 12.2122C2.89761 12.1057 2.72763 11.9357 2.6211 11.7267C2.5 11.489 2.5 11.1778 2.5 10.5556V5.77778C2.5 5.1555 2.5 4.84436 2.6211 4.60668C2.72763 4.39761 2.89761 4.22763 3.10668 4.1211C3.34436 4 3.6555 4 4.27778 4H4.5C5.74456 4 6.36684 4 6.8422 4.24221C7.26034 4.45526 7.6003 4.79522 7.81335 5.21335C8.05556 5.68871 8.05556 6.31099 8.05556 7.55556ZM8.05556 14V7.55556';
+ const EXPERIENCE_D = [
+   'M5.25 1.75H2.33333C2.01117 1.75 1.75 2.01117 1.75 2.33333V6.41667C1.75 6.73883 2.01117 7 2.33333 7H5.25C5.57217 7 5.83333 6.73883 5.83333 6.41667V2.33333C5.83333 2.01117 5.57217 1.75 5.25 1.75Z',
+   'M11.6667 1.75H8.75C8.42783 1.75 8.16667 2.01117 8.16667 2.33333V4.08333C8.16667 4.4055 8.42783 4.66667 8.75 4.66667H11.6667C11.9888 4.66667 12.25 4.4055 12.25 4.08333V2.33333C12.25 2.01117 11.9888 1.
 ```
 
-**File**: `crates/ragfs/src/lock/cache_clock_perf_tests.rs` (added, +228/-0)
+**File**: `frontend/docs/docs/en/components/file-tree.mdx` (modified, +5/-4)
 ```diff
-@@ -0,0 +1,228 @@
-+//! Manual A/B benchmark: production holder Lua vs the same Lua with frozen time.
-+//! No latency assertions: results depend on the host and Redis configuration.
-+
-+use super::*;
-+use crate::cache_runtime::RedisProviderConfig;
-+use std::io::Write;
-+use tokio::sync::Barrier;
-+
-+fn setting(name: &str, default: usize) -> usize {
-+    let value = std::env::var(name)
-+        .map(|raw| raw.parse().expect("invalid perf setting"))
-+        .unwrap_or(default);
-+    assert!(value > 0, "{name} must be positive");
-+    value
-+}
-+
-+fn clock_variant(script: &'static str, now: u128) -> &'static str {
-+    let start = script.find("local function server_now_ns()").unwrap();
-+    let end = start + script[start..].find("\nend").unwrap() + "\nend".len();
-+    let mut variant = script.to_string();
-+    variant.replace_range(
-+        start..end,
-+        &format!("local function server_now_ns()\n    return \"{now}\"\nend"),
-+    );
-+    assert!(!variant.contains("redis.call(\"TIME\")"));
-+    // ScriptDefinition owns static references; register only two test variants.
-+    Box::leak(variant.into_boxed_str())
-+}
-+
-+#[derive(Default)]
-+struct Samples {
-+    acquire: Vec<f64>,
-+    refresh: Vec<f64>,
-+    seconds: f64,
-+}
-+
-+async fn cycle(
-+    provider: &RedisPathLockProvider,
-+    key: &str,
-+    paths: &[String],
-+    kind: &str,
-+    acquire_id: &str,
-+    refresh_id: &str,
-+) -> (f64, f64) {
-+    let mut args = vec![Bytes::from("v2|perf-owner|holder|"), Bytes::from("3600000")];
-+    for path in paths {
-+        args.extend([Bytes::from(path.clone()), Bytes::from(kind.to_string())]);
-+    }
-+    let start = Instant::now();
-+    let acquired = provider
-+        .execute_array(acquire_id, key.into(), args)
-+        .await
-+        .expect("perf acquire failed");
-+    let acquire_ms = start.elapsed().as_secs_f64() * 1_000.0;
-+    assert_eq!(
-+        RedisPathLockProvider::result_status(&acquired, "perf").unwrap(),
-+        "ok"
-+    );
-+    assert_eq!(acquired.len(), 2 + 4 * paths.len());
-+    for result in acquired[2..].chunks_exact(4) {
-+        assert_eq!(
-+            RedisPathLockProvider::result_string(&result[1], "perf").unwrap(),
-+            "created"
-+        );
-+        let raw = RedisPathLockProvider::result_string(&result[3], "perf").unwrap();
-+        let token = LockTokenCodec::decode(raw).expect("valid acquired token");
-+        assert_eq!(token.holders.len(), 1);
-+    }
-+    let mut args = vec![
-+        Bytes::from("v2|perf-owner|holder|0"),
-+        Bytes::from("3600000"),
-+    ];
-+    args.extend(paths.iter().cloned().map(Bytes::from));
-+    let start = Instant::now();
-+    let refreshed = provider
-+        .execute_array(refresh_id, key.into(), args)
-+        .await
-+        .expect("perf refresh failed");
-+    let refresh_ms = start.elapsed().as_secs_f64() * 1_000.0;
-+    assert_eq!(refreshed.len(), paths.len());
-+    for value in refreshed {
-+        let ScriptValue::Array(result) = value else {
-+            panic!("invalid refresh response");
-+        };
-+        assert_eq!(
-+            RedisPathLockProvider::result_status(&result, "perf").unwrap(),
-+            "ok"
-+        );
-+    }
-+    // Only this test's UUID scope is removed; never FLUSHDB or touch user keys.
-+    provider.runtime.del(&[key.into()]).await.unwrap();
-+    (acquire_ms, refresh_ms)
-+}
-+
-+/// REDIS_URL=redis://127.0.0.1:6379 cargo test --release --locked -p ragfs
-+/// --features cache --lib perf_server_clock -- --ignored --nocapture
-+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
-+#[ignore = "manual real Redis server-clock performance comparison"]
-+async fn perf_server_clock() {
-+    let endpoint = std::env::var("REDIS_URL").expect("set REDIS_URL");
-+    let iterations = setting("PATHLOCK_CLOCK_PERF_ITERATIONS", 1_000);
-+    let warmup = setting("PATHLOCK_CLOCK_PERF_WARMUP", 100);
-+    let rounds = setting("PATHLOCK_CLOCK_PERF_ROUNDS", 3);
-+    let concurrency = setting("PATHLOCK_CLOCK_PERF_CONCURRENCY", 16);
-+    let runtime = CacheRuntime::redis(RedisProviderConfig {
-+        endpoints: vec![endpoint],
-+        command_timeout_ms: 10_000,
-+        ..RedisProviderConfig::default()
-+    })
-+    .await
-+    .unwrap();
-+    let service = format!("clock-perf-{}", uuid::Uuid::new_v4());
-+    let provider =
-+        Arc::new(RedisPathLockProvider::new(runtime.clone(), &service, 3_600.0).unwrap());
-+    let now = super::time_tests::now(&provider).await;
-+    assert_eq!(
-+        ACQUIRE_BATCH_SCRIPT
-+            .matches("local now_ns = server_now_ns()")
-+            .count(),
-+        1
-+    );
-+    assert_eq!(
-+        REFRESH_BATCH_SCRIPT
-+            .matches("local time_ns = server_now_ns()")
-+            .count(),
-+        1
-+    );
-+    const FIXED_ACQUIRE: &str = "pathlock.perf.fixed_acquire.v1";
-+    const FIXED_REFRESH: &str = "pathlock.perf.fixed_refresh.v1";
-+    for (id, script) in [
-+        (FIXED_ACQUIRE, ACQUIRE_BATCH_SCRIPT),
-+        (FIXED_REFRESH, REFRESH_BATCH_SCRIPT),
-+    ] {
-+     
+@@ -2,7 +2,7 @@
+ 
+ A flattened file tree. The host owns the tree state and passes the visible rows in order; the component renders them and reports successful operations.
+ 
+-This is a placeholder: it renders a fixed-size empty shell and consumes no props. The props contract below is the final shape; the view will be written against it.
++The component renders the host-flattened row list and handles selection, expansion, paging and keyboard interaction. Toolbars, search and import flows belong to the page layer and are injected through slots.
+ 
+ ## Basic usage
+ 
+@@ -20,7 +20,7 @@ The example demonstrates three host responsibilities:
+ 
+ Names like `memories`, `peers` and `privacy` are followed by their built-in description.
+ 
+-The component itself is still a placeholder shell (fixed 280 × 320), so the example renders the rows against the contract rather than mounting `<FileTree />` — that way the data shape and copy are visible.
++The example mounts `<FileTree />` directly, keeping only the tree data and the expansion and paging state the host owns.
+ 
+ ## How rows work
+ 
+@@ -39,7 +39,7 @@ Emit only the ones your data source needs. A host that returns all children at o
+ - `slots.toolbar` — search, import sources, refresh. The component does not know what is inside.
+ - `slots.spinner` — replaces the spinner shown while a directory loads its children, rendered at 12 × 12. Omitted uses the built-in `FileTreeSpinner` (a CSS ring with no icon asset behind it).
+ - `renderDashboard` — the row-end indicator, for example a dashboard entry.
+-- `renderRowTooltip` — hover content; the component handles the delay and positioning.
++- `renderRowTooltip` — hover content; the component handles the delay and positioning. When omitted the component renders a built-in tooltip from the row `uri` (description, trigger copy, path).
+ 
+ ## Directory copy
+ 
+@@ -122,6 +122,7 @@ treeRef.current?.scrollToRow('resources', { block: 'center' });
+ | `labels`                  | `FileTreeLabels`                          | English  | Replaceable copy.                                                              |
+ | `getRowAttributes`        | `(row) => HTMLAttributes<HTMLDivElement>` | —        | Extra attributes per row; `className` is merged.                               |
+ | `renderDashboard`         | `(row) => ReactNode`                      | —        | Row-end indicator; `null` hides it.                                            |
++| `renderRowIcon`           | `(row) => ReactNode`                      | —        | Leading icon of a file row; the generic file icon when omitted.                |
+ | `renderRowTooltip`        | `(row) => ReactNode`                      | —        | Hover content; `null` hides it.                                                |
+ | `onSelect`                | `(row: FileTreeEntryRow) => void`         | —        | Called after selection succeeds; not called on failure.                        |
+ | `onToggleExpand`          | `(row: FileTreeEntryRow) => void`         | —        | Called after expansion or collapse succeeds; not called on failure.            |
+@@ -141,7 +142,7 @@ The tree uses `role="tree"` with `role="treeitem"` rows and reports `aria-level`
+ 
+ ## Styling
+ 
+-Class names are prefixed with `ov-`. The block is `ov-file-tree`; elements use `ov-file-tree__<element>`. The placeholder outputs only the root element and a fixed size; row, toolbar and state-view class names and theme tokens are settled with the real view. The stylesheet has its own entry:
++Class names are prefixed with `ov-`. The block is `ov-file-tree`; elements use `ov-file-tree__<element>`. Theme tokens are declared on the root element and can be overridden as a set or one by one. The stylesheet has its own entry:
+ 
+ ```tsx
+ import '@openviking/react/components/file-tree/style.css';
 ```
 
-**File**: `crates/ragfs/src/lock/cache_handoff_tests.rs` (added, +413/-0)
+**File**: `frontend/docs/docs/zh/components/file-tree.mdx` (modified, +5/-4)
 ```diff
-@@ -0,0 +1,413 @@
-+//! Failed handoff rollback must use Redis time and preserve other live holders.
+@@ -2,7 +2,7 @@
+ 
+ 展平后的文件树。树状态由宿主持有，宿主按顺序传入可见行；组件负责渲染并通知成功的操作。
+ 
+-当前为占位组件：只渲染一个固定尺寸的空壳，不消费 props。下方的 props 契约是最终形态，真实视图后续按本文实现。
++组件渲染宿主展平后的行列表，并处理选中、展开、分页与键盘交互。工具栏、搜索与导入流程属于页面层，通过插槽注入。
+ 
+ ## 基础用法
+ 
+@@ -20,7 +20,7 @@
+ 
+ 目录名后跟着的是内置说明，`memories`、`peers`、`privacy` 等都有。
+ 
+-组件本体仍是占位空壳（固定 280 × 320），所以示例没有直接渲染 `<FileTree />`，而是按契约渲染行——这样能看到数据结构与文案的实际形状。
++示例直接挂载 `<FileTree />`，只保留树数据与展开、分页状态这些宿主该持有的部分。
+ 
+ ## 行的组织方式
+ 
+@@ -39,7 +39,7 @@
+ - `slots.toolbar` —— 搜索、导入来源、刷新。组件不知道里面有什么。
+ - `slots.spinner` —— 替换目录加载子节点时的转圈，按 12 × 12 显示。省略时用内置的 `FileTreeSpinner`（纯 CSS 圆环，不依赖图标资源）。
+ - `renderDashboard` —— 行尾指示器，例如看板入口。
+-- `renderRowTooltip` —— 悬停内容，延迟与定位由组件处理。
++- `renderRowTooltip` —— 悬停内容，延迟与定位由组件处理。省略时组件按 `uri` 渲染内置浮层（说明、触发行为、路径）。
+ 
+ ## 目录说明
+ 
+@@ -116,6 +116,7 @@ treeRef.current?.scrollToRow('resources', { block: 'center' });
+ | `labels`                  | `FileTreeLabels`                          | 英文   | 可替换文案。                                 |
+ | `getRowAttributes`        | `(row) => HTMLAttributes<HTMLDivElement>` | —      | 按行追加属性，`className` 会与组件类名合并。 |
+ | `renderDashboard`         | `(row) => ReactNode`                      | —      | 行尾指示器，返回 `null` 不显示。             |
++| `renderRowIcon`           | `(row) => ReactNode`                      | —      | 文件行的行首图标；省略时用通用文件图标。     |
+ | `renderRowTooltip`        | `(row) => ReactNode`                      | —      | 悬停内容，返回 `null` 不显示。               |
+ | `onSelect`                | `(row: FileTreeEntryRow) => void`         | —      | 选中成功后触发；失败时不触发。               |
+ | `onToggleExpand`          | `(row: FileTreeEntryRow) => void`         | —      | 展开或折叠成功后触发；失败时不触发。         |
+@@ -135,7 +136,7 @@ import '@openviking/react/components/file-tree/style.css';
+ 
+ ## 样式
+ 
+-类名带 `ov-` 前缀，块名为 `ov-file-tree`，元素使用 `ov-file-tree__<元素>`。占位组件只输出根节点与固定尺寸；行、工具栏与状态视图的类名和主题变量随真实视图确定。样式通过独立入口引入：
++类名带 `ov-` 前缀，块名为 `ov-file-tree`，元素使用 `ov-file-tree__<元素>`。主题变量集中在根节点声明，宿主可整组或逐条覆盖。样式通过独立入口引入：
+ 
+ ```tsx
+ import '@openviking/react/components/file-tree/style.css';
+```
+
+**File**: `frontend/packages/react/src/components/file-tree/README.md` (modified, +2/-2)
+```diff
+@@ -4,7 +4,7 @@ English / [中文](README_CN.md)
+ 
+ A directory tree for resource browsing. The host flattens its tree state into an ordered list of rows and supplies async execution through `operations`; the component renders, handles keyboard interaction and notifies after an operation succeeds.
+ 
+-> **This is currently a placeholder.** It renders a fixed-size empty shell and consumes no props, so the package can be published while the API is under review. The view will be written against this contract.
++It renders the five row kinds, indents by depth with a guide per ancestor level, and handles keyboard navigation; selection, expansion, paging and retry run through `operations`.
+ 
+ ```tsx
+ import { FileTree } from '@openviking/react/components/file-tree';
+@@ -72,7 +72,7 @@ The cost is that the host writes a "tree state → row array" transform. What th
+ 
+ ## Theme
+ 
+-Styles are scoped and never modify the application's global styles. Theme variables are settled together with the real view; the placeholder only defines the root block.
++Styles are scoped and never modify the application's global styles. Theme tokens are declared on the root element and default to theme-neutral values, so the tree reads correctly on both light and dark backgrounds.
+ 
+ ## Docs and development
+ 
+```
+
+**File**: `frontend/packages/react/src/components/file-tree/README_CN.md` (modified, +2/-2)
+```diff
+@@ -4,7 +4,7 @@
+ 
+ 面向资源浏览的目录树。宿主把树状态展平成有序行列表传进来，通过 `operations` 提供异步执行能力；组件负责渲染、键盘交互，并在操作成功后通知。
+ 
+-> **当前是占位组件。** 只渲染一个固定尺寸的空壳，不消费 props，API 评审期间包仍可发布。真实视图后续按本文契约实现。
++组件渲染五种行类型，按 `depth` 缩进并绘制祖先连线，处理键盘导航；选中、展开、分页与重试通过 `operations` 执行。
+ 
+ ```tsx
+ import { FileTree } from '@openviking/react/components/file-tree';
+@@ -72,7 +72,7 @@ type FileTreeRow =
+ 
+ ## 主题
+ 
+-样式局部化，不修改应用的全局样式。主题变量随真实视图一起确定；占位组件只定义根块。
++样式局部化，不修改应用的全局样式。主题变量在根节点声明，默认值取主题无关的中性色，浅色与暗色背景上都能正常阅读。
+ 
+ ## 文档与开发
+ 
+```
+
+**File**: `frontend/packages/react/src/components/file-tree/file-tree-body.tsx` (added, +84/-0)
+```diff
+@@ -0,0 +1,84 @@
++import type { ReactNode } from 'react';
 +
-+use super::*;
-+use crate::cache_runtime::RedisProviderConfig;
-+use crate::core::{FileSystem, FsContextInner, PathLockContext, WriteFlag, FS_CTX};
-+use crate::lock::manager::{PathLockConfig, PathLockManager};
-+use crate::lock::wrapper::PathLockWrappedFS;
-+use crate::plugins::memfs::MemFileSystem;
-+use std::sync::atomic::AtomicUsize;
++import { FileTreeRowView } from './file-tree-entry-row.js';
++import { FileTreeStateRow } from './file-tree-state-row.js';
++import type {
++  FileTreeRowContext,
++  ResolvedLabels,
++} from './file-tree-row-context.js';
++import type { FileTreeErrorRow, FileTreeRow } from './types.js';
 +
-+const PATH: &str = "/local/account/handoff";
-+const CLOCK_SKEW_NS: u128 = 31_000_000_000;
++/** 整树级失败：只有一个错误行且没有归属父节点。 */
++function isWholeTreeError(rows: readonly FileTreeRow[]) {
++  if (rows.length !== 1) return false;
++  const [row] = rows;
++  return row?.kind === 'error' && !row.parentId;
++}
 +
-+async fn fixture() -> Option<(Arc<CacheRuntime>, Arc<RedisPathLockProvider>)> {
-+    let endpoint = std::env::var("REDIS_URL").ok()?;
-+    let runtime = CacheRuntime::redis(RedisProviderConfig {
-+        endpoints: vec![endpoint],
-+        command_timeout_ms: 2_000,
-+        ..RedisProviderConfig::default()
-+    })
-+    .await
-+    .unwrap();
-+    let provider = Arc::new(
-+        RedisPathLockProvider::new(
-+            runtime.clone(),
-+            &format!("pathlock-handoff-{}", uuid::Uuid::new_v4()),
-+            1.0,
-+        )
-+        .unwrap(),
++export interface FileTreeBodyProps {
++  rows: readonly FileTreeRow[];
++  isReady: boolean;
++  text: ResolvedLabels;
++  loadingFallback?: ReactNode;
++  errorFallback?: ReactNode;
++  emptyFallback?: ReactNode;
++  ctx: FileTreeRowContext;
++}
++
++/**
++ * 树内容区：首次加载、整树失败、空态与正常行列表。
++ *
++ * The tree body: first load, whole-tree failure, empty state, and the row list.
++ */
++export function FileTreeBody({
++  rows,
++  isReady,
++  text,
++  loadingFallback,
++  errorFallback,
++  emptyFallback,
++  ctx,
++}: FileTreeBodyProps) {
++  if (!isReady) {
++    return (
++      <div className="ov-file-tree__state">
++        {loadingFallback ?? (
++          <span className="ov-file-tree__muted">{text.loading}</span>
++        )}
++      </div>
 +    );
-+    Some((runtime, provider))
-+}
++  }
 +
-+fn request() -> PathLockRequest {
-+    PathLockRequest {
-+        path: PATH.into(),
-+        kind: PathLockKind::Tree,
-+    }
-+}
++  if (isWholeTreeError(rows)) {
++    const message = (rows[0] as FileTreeErrorRow).message ?? text.error;
++    return (
++      <div className="ov-file-tree__state">
++        {errorFallback ?? (
++          <span className="ov-file-tree__muted">{message}</span>
++        )}
++      </div>
++    );
++  }
 +
-+async fn cleanup(runtime: &CacheRuntime, provider: &RedisPathLockProvider) {
-+    runtime
-+        .del(&[provider.tokens_key_for_path(PATH).unwrap()])
-+        .await
-+        .unwrap();
-+    runtime.close().await.unwrap();
-+}
++  if (rows.length === 0) {
++    return (
++      <div className="ov-file-tree__state">
++        {emptyFallback ?? (
++          <span className="ov-file-tree__muted">{text.empty}</span>
++        )}
++      </div>
++    );
++  }
 +
-+#[tokio::test]
-+async fn rollback_ignores_client_clock_and_preserves_renewed_sibling() {
-+    let Some((runtime, provider)) = fixture().await else {
-+        return;
-+    };
-+    // The same owner has a sibling and a transferable source at one directory.
-+    for holder in ["sibling", "source"] {
-+        provider
-+            .try_acquire_holders_atomic(&[request()], "a", holder, 0, 0, None)
-+            .await
-+            .unwrap();
-+    }
-+    let source = provider
-+        .read_token(PATH)
-+        .await
-+        .unwrap()
-+        .unwrap()
-+        .holders
-+        .into_iter()
-+        .find(|h| h.id == "source")
-+        .unwrap();
-+    provider
-+        .try_acquire_holders_atomic(&[request()], "a", "consumer", 0, 0, Some("source"))
-+        .await
-+        .unwrap();
-+    assert!(provider
-+        .mutate_holder(PATH, "a", "sibling", 0, 0, false)
-+        .await
-+        .unwrap());
-+    let renewed = provider
-+        .read_token(PATH)
-+        .await
-+        .unwrap()
-+        .unwrap()
-+        .holders
-+        .into_iter()
-+        .find(|h| h.id == "sibling")
-+        .unwrap();
-+
-+    // A client clock 31 seconds ahead would consider both holders expired.
-+    let server_now = time_tests::now(&provider).await;
-+    provider
-+        .replace_holder(
-+            PATH,
-+            "a",
-+            "consumer",
-+            source.clone(),
-+            server_now + CLOCK_SKEW_NS - 1_000_000_000,
-+        )
-+        .await
-+        .unwrap();
-+    let token = provider.read_token(PATH).await.unwrap().unwrap();
-+    assert_eq!(token.holders.len(), 2);
-+    assert!(token.holders.contains(&renewed));
-+    assert!(token.holders.contains(&source));
-+    assert!(matches!(
-+        provider
-+            .try_acquire_holders_atomic(&[request()], "c", "contender", 0, 0, None)
-+            .await,
-+        Err(PathLockError::Conflict { .. })
-+    ));
-+    // Repeating rollback after the consumer disappeared must be a no-op.
-+    provider
-+        .replace_holder(PATH, "a", "consumer", source, u128::MAX)
-+        .await
-+        .unwrap();
-+    assert_eq!(provider.read_token(PATH).await.unwrap(), Some(token));
-+    cleanup(&runtime, &provider).await;
-+}
-+
-+#[tokio::test]
-+async fn rollback_does_not_revive_expired_source_or_touch_new_owner() {
-+    let Some((runtime, provider)) = fixture().await else {
-+        return;
-+    };
-+    let now = time_tests::now(&provider).await;
-+    let expired_source = LockHolder {
-+        id: "source".into(),
-+        kind: PathLockKind::Tree,
-+        time_ns: now - CLOCK_SKEW_NS,
-+    };
-+    for sibling in [true, false] {
-+        let mut current = LockToken::held("a", "consumer", PathLockKind::Exact, now);
-+        if sibling {
-+            current.holders.push(
-+                LockToken::held("a", "sibling", PathLockKind::Exact, now)
-+                    .holders
-+                    .remove(0),
-+            );
-+        }
-+        current.recompute();
-+        time_tests::seed(&provider, PATH, &current).await;
-+        // A slow client clock must not revive an expired Redis source.
-+        provider
-+            .replace_holder(PATH, "a", "consumer", expired_source.clone(), 0)
-+            .await
-+            .unwrap();
-+        let remaining = provider.read_token(PATH).await.unwrap();
-+        if sibling {
-+            let remaining = remaining.unwrap();
-+            assert_eq!(remaining.holders.len(), 1);
-+            assert_eq!(remaining.holders[0].id, "sibling");
-+            assert_eq
-```
-
-**File**: `crates/ragfs/src/lock/cache_provder.rs` (modified, +482/-102)
-```diff
-@@ -22,21 +22,26 @@ use super::provider::{
-     PathLockProvider,
- };
- use super::types::{
--    HandoffRecoveryReason, LockToken, PathLockError, PathLockKind, PathLockRequest, PathLockResult,
-+    HandoffRecoveryReason, LockHolder, LockToken, PathLockError, PathLockKind, PathLockRequest,
-+    PathLockResult,
- };
- 
--const ACQUIRE_BATCH_ID: &str = "pathlock.acquire_batch.v4";
--const ROLLBACK_BATCH_ID: &str = "pathlock.rollback_batch.v1";
--const COMPARE_WRITE_ID: &str = "pathlock.compare_write.v1";
--const COMPARE_REMOVE_ID: &str = "pathlock.compare_remove.v1";
--const REFRESH_ID: &str = "pathlock.refresh.v1";
--const REFRESH_BATCH_ID: &str = "pathlock.refresh_batch.v2";
-+const ACQUIRE_BATCH_ID: &str = "pathlock.acquire_batch.v5";
-+const ROLLBACK_BATCH_ID: &str = "pathlock.rollback_batch.v2";
-+const COMPARE_WRITE_ID: &str = "pathlock.compare_write.v3";
-+const COMPARE_REMOVE_ID: &str = "pathlock.compare_remove.v2";
-+const REFRESH_ID: &str = "pathlock.refresh.v2";
-+const REFRESH_BATCH_ID: &str = "pathlock.refresh_batch.v3";
-+const MUTATE_HOLDER_ID: &str = "pathlock.mutate_holder.v1";
-+const REPLACE_HOLDER_ID: &str = "pathlock.replace_holder.v1";
- // Bound each Lua execution so large leases do not monopolize Redis.
- const REFRESH_BATCH_SIZE: usize = 256;
--const IS_LOCKED_ID: &str = "pathlock.is_locked.v1";
-+const IS_LOCKED_ID: &str = "pathlock.is_locked.v3";
- const SCAN_DESCENDANTS_ID: &str = "pathlock.scan_descendants.v1";
- const READ_MANY_ID: &str = "pathlock.read_many.v1";
--const CREATE_ID: &str = "pathlock.create.v1";
-+const CREATE_ID: &str = "pathlock.create.v3";
-+// Keep both lease_ms and 2 * lease_ms exactly representable by Lua numbers.
-+const MAX_LEASE_MS: u64 = (1_u64 << 52) - 1;
- // Observe requests approaching the default 20ms Redis command timeout.
- const SLOW_ACQUIRE_THRESHOLD: Duration = Duration::from_millis(10);
- 
-@@ -76,6 +81,56 @@ local function decimal_less(left, right)
-     end
-     return left < right
- end
-+
-+-- Subtract decimal strings without converting nanosecond epochs to doubles.
-+-- Match the manager's previous saturating subtraction near the epoch.
-+local function decimal_subtract(left, right)
-+    left = normalize_decimal(left)
-+    right = normalize_decimal(right)
-+    if not left or not right then
-+        return nil
-+    end
-+    if decimal_less(left, right) then
-+        return "0"
-+    end
-+    local digits = {}
-+    local borrow = 0
-+    local j = string.len(right)
-+    for i = string.len(left), 1, -1 do
-+        local digit = tonumber(string.sub(left, i, i)) - borrow
-+        if j > 0 then
-+            digit = digit - tonumber(string.sub(right, j, j))
-+        end
-+        borrow = 0
-+        if digit < 0 then
-+            digit = digit + 10
-+            borrow = 1
-+        end
-+        table.insert(digits, 1, tostring(digit))
-+        j = j - 1
-+    end
-+    return normalize_decimal(table.concat(digits))
-+end
-+
-+local function lease_values(raw)
-+    local normalized = normalize_decimal(raw)
-+    local lease_ms = normalized and tonumber(normalized)
-+    if not lease_ms or lease_ms < 1000 or lease_ms > 4503599627370495 then
-+        return nil
-+    end
-+    -- String arguments avoid Redis/Lua's scientific notation for large values.
-+    return normalized .. "000000", string.format("%.0f", 2 * lease_ms)
-+end
-+
-+local function server_now_ns()
-+    local time = redis.call("TIME")
-+    return normalize_decimal(time[1] .. string.rep("0", 6 - string.len(time[2]))
-+        .. time[2] .. "000")
-+end
-+
-+local function valid_owner(owner)
-+    return owner and owner ~= "" and not string.find(owner, ":", 1, true)
-+end
- local function decode_token(raw, stale_before)
-     if string.sub(raw, 1, 3) == "v2|" then
-         local owner, body = string.match(raw, "^v2|([^|:,]+)|(.+)$")
-@@ -157,9 +212,7 @@ const ACQUIRE_BATCH_SCRIPT: &str = token_script!(
-     r#"
- local key = KEYS[1]
- local owner = ARGV[1]
--local now_ns = ARGV[2]
--local stale_before_ns = ARGV[3]
--local ttl_ms = tonumber(ARGV[4])
-+local lease_ns, ttl_ms = lease_values(ARGV[2])
- -- The holder entrypoint supplies a versioned identity envelope. The legacy
- -- entrypoint remains available for reading/testing drained v1 deployments.
- local holder, source
-@@ -174,15 +227,14 @@ local function is_descendant(path, root)
-     return string.sub(path, 1, string.len(root) + 1) == root .. "/"
- end
- 
--if not owner or owner == "" or string.find(owner, ":", 1, true)
--    or not normalize_decimal(now_ns) or not normalize_decimal(stale_before_ns)
--    or not ttl_ms or ttl_ms <= 0 or (#ARGV - 4) % 2 ~= 0 or #ARGV == 4 then
-+if not valid_owner(owner) or not lease_ns
-+    or (#ARGV - 2) % 2 ~= 0 or #ARGV == 2 then
-     return { "invalid_request", "invalid acquire arguments" }
- end
- 
- local requests = {}
- local includes_tree = false
--for index = 5, #ARGV, 2 do
-+for index = 3, #ARGV, 2 do
-     local path = ARGV[index]
-     local kind = ARGV[index + 1]
-     if not is_normalized_path(path) or (kind ~= "E" and kind ~= "T") then
-@@ -194,6 +246,12 @@ for index = 5
-```
-
-**File**: `crates/ragfs/src/lock/cache_refresh_tests.rs` (modified, +26/-16)
-```diff
-@@ -31,9 +31,8 @@ async fn same_scope_refresh_uses_one_script_for_twenty_paths() {
-         assert_eq!(request.script_id, REFRESH_BATCH_ID);
-         assert_eq!(request.keys.len(), 1);
-         assert_eq!(request.args[0], Bytes::from("owner"));
--        assert_eq!(request.args[1], Bytes::from("200"));
--        assert_eq!(request.args[2], Bytes::from("60000"));
--        assert_eq!(request.args.len(), 23);
-+        assert_eq!(request.args[1], Bytes::from("30000"));
-+        assert_eq!(request.args.len(), 22);
-         observed.fetch_add(1, Ordering::SeqCst);
-         Ok(ScriptValue::Array(vec![status("ok"); 20]))
-     });
-@@ -54,7 +53,7 @@ async fn refresh_groups_scopes_and_preserves_mixed_result_order() {
-     let (runtime, provider) = mock_provider(move |request| {
-         assert_eq!(request.script_id, REFRESH_BATCH_ID);
-         observed.fetch_add(1, Ordering::SeqCst);
--        let results = request.args[3..]
-+        let results = request.args[2..]
-             .iter()
-             .map(|path| {
-                 let path = std::str::from_utf8(path).unwrap();
-@@ -107,7 +106,7 @@ async fn failed_scope_does_not_prevent_other_scopes_refreshing() {
-         }
-         Ok(ScriptValue::Array(vec![
-             status("ok");
--            request.args.len() - 3
-+            request.args.len() - 2
-         ]))
-     });
-     let paths = [
-@@ -128,7 +127,7 @@ async fn large_refresh_is_split_into_bounded_scripts() {
-     let sizes = Arc::new(Mutex::new(Vec::new()));
-     let observed = sizes.clone();
-     let (runtime, provider) = mock_provider(move |request| {
--        let size = request.args.len() - 3;
-+        let size = request.args.len() - 2;
-         observed.lock().unwrap().push(size);
-         Ok(ScriptValue::Array(vec![status("ok"); size]))
-     });
-@@ -156,12 +155,12 @@ async fn malformed_batch_response_never_reports_refresh_success() {
- 
- #[tokio::test]
- async fn batch_invalid_request_is_preserved_for_every_path() {
--    // Inject Lua's early-return shape; every u128 supplied by Rust is a valid time_ns.
-+    // Inject Lua's early-return shape for invalid lease/owner arguments.
-     let (runtime, provider) = mock_provider(|request| {
-         assert_eq!(request.script_id, REFRESH_BATCH_ID);
-         Ok(ScriptValue::Array(vec![
-             ScriptValue::Bytes(b"invalid_request".to_vec()),
--            ScriptValue::Bytes(b"invalid time_ns".to_vec()),
-+            ScriptValue::Bytes(b"invalid refresh arguments".to_vec()),
-         ]))
-     });
-     for size in [2, 1, 3, 20, REFRESH_BATCH_SIZE + 1] {
-@@ -171,7 +170,7 @@ async fn batch_invalid_request_is_preserved_for_every_path() {
-         assert!(
-             results.iter().all(|result| matches!(
-                 result,
--                Err(PathLockError::InvalidRequest(message)) if message == "invalid time_ns"
-+                Err(PathLockError::InvalidRequest(message)) if message == "invalid refresh arguments"
-             )),
-             "batch size {size}: {results:?}"
-         );
-@@ -188,12 +187,12 @@ async fn manager_uses_batch_for_manual_and_background_refresh() {
-             let identity = std::str::from_utf8(&request.args[0]).unwrap();
-             let mut identity = identity.strip_prefix("v2|").unwrap().split('|');
-             let (owner, holder) = (identity.next().unwrap(), identity.next().unwrap());
--            let time = std::str::from_utf8(&request.args[1]).unwrap();
-+            let time = "100"; // Mock server confirmation time, independent of args.
-             let mut results = vec![
-                 ScriptValue::Bytes(b"ok".to_vec()),
-                 ScriptValue::Bytes(b"0".to_vec()),
-             ];
--            for pair in request.args[4..].chunks_exact(2) {
-+            for pair in request.args[2..].chunks_exact(2) {
-                 let kind = std::str::from_utf8(&pair[1]).unwrap();
-                 results.extend([
-                     ScriptValue::Bytes(pair[0].to_vec()),
-@@ -205,7 +204,7 @@ async fn manager_uses_batch_for_manual_and_background_refresh() {
-             Ok(ScriptValue::Array(results))
-         }
-         REFRESH_BATCH_ID => {
--            assert_eq!(request.args.len(), 23);
-+            assert_eq!(request.args.len(), 22);
-             observed.fetch_add(1, Ordering::SeqCst);
-             Ok(ScriptValue::Array(vec![status("ok"); 20]))
-         }
-@@ -309,6 +308,10 @@ async fn redis_batch_preserves_kind_ownership_errors_and_hash_ttl() {
-             .await
-             .unwrap();
-     }
-+    let originals = [
-+        provider.read_token(&paths[3]).await.unwrap().unwrap(),
-+        provider.read_token(&paths[6]).await.unwrap().unwrap(),
-+    ];
-     let results = provider.refresh_tokens(&paths, "owner", u128::MAX).await;
-     assert_eq!(results.len(), paths.len());
-     assert!(matches!(results[0], Err(PathLockError::InvalidToken(_))));
-@@ -321,12 +324,18 @@ async fn redis_batch_preserves_kind_ownership_errors_and_hash_ttl() {
-     for (index, kind) in [(1, PathLockKind::Exact), (4, PathLockKind::Tree)] {
-         
-```
-
-**File**: `crates/ragfs/src/lock/cache_time_tests.rs` (added, +534/-0)
-```diff
-@@ -0,0 +1,534 @@
-+//! Redis server-clock, legacy-token and fixed-TTL regression coverage.
-+
-+use super::*;
-+use crate::cache_runtime::RedisProviderConfig;
-+
-+const TIME_ID: &str = "pathlock.test.server_time.v1";
-+const TTL_ID: &str = "pathlock.test.clock_ttl.v1";
-+const SEED_ID: &str = "pathlock.test.legacy_time.v1";
-+const MATH_ID: &str = "pathlock.test.decimal_time.v1";
-+const MATH_SCRIPT: &str = token_script!(
-+    r#"
-+local difference = decimal_subtract(ARGV[1], ARGV[2])
-+local lease_ns, ttl_ms = lease_values(ARGV[3])
-+return { difference or false, lease_ns or false, ttl_ms or false,
-+    decimal_less(ARGV[1], ARGV[2]) }
-+"#
-+);
-+
-+async fn fixture() -> Option<(Arc<CacheRuntime>, RedisPathLockProvider)> {
-+    let endpoint = std::env::var("REDIS_URL").ok()?;
-+    let runtime = CacheRuntime::redis(RedisProviderConfig {
-+        endpoints: vec![endpoint],
-+        command_timeout_ms: 1_000,
-+        ..RedisProviderConfig::default()
-+    })
-+    .await
-+    .unwrap();
-+    for (id, redis_lua) in [
-+        (TIME_ID, "return redis.call('TIME')"),
-+        (TTL_ID, "return redis.call('PTTL', KEYS[1])"),
-+        (
-+            SEED_ID,
-+            "return redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])",
++  return (
++    <div role="group" className="ov-file-tree__rows">
++      {rows.map((row) =>
++        row.kind === 'entry' ? (
++          <FileTreeRowView key={row.id} row={row} ctx={ctx} />
++        ) : (
++          <FileTreeStateRow key={row.id} row={row} ctx={ctx} />
 +        ),
-+        (MATH_ID, MATH_SCRIPT),
-+    ] {
-+        runtime
-+            .register_script(ScriptDefinition { id, redis_lua })
-+            .unwrap();
-+    }
-+    let provider = RedisPathLockProvider::new(
-+        runtime.clone(),
-+        &format!("pathlock-time-{}", uuid::Uuid::new_v4()),
-+        30.0,
-+    )
-+    .unwrap();
-+    Some((runtime, provider))
++      )}
++    </div>
++  );
 +}
-+
-+fn request(path: &str, kind: PathLockKind) -> PathLockRequest {
-+    PathLockRequest {
-+        path: path.into(),
-+        kind,
-+    }
-+}
-+
-+fn token(owner: &str, time_ns: u128, kind: PathLockKind) -> LockToken {
-+    LockToken {
-+        owner_id: owner.into(),
-+        time_ns,
-+        lock_type: kind,
-+        holders: Vec::new(),
-+    }
-+}
-+
-+pub(super) async fn now(provider: &RedisPathLockProvider) -> u128 {
-+    provider
-+        .runtime
-+        .register_script(ScriptDefinition {
-+            id: TIME_ID,
-+            redis_lua: "return redis.call('TIME')",
-+        })
-+        .unwrap();
-+    let time = provider
-+        .execute_array(TIME_ID, provider.tokens_key_for_path("/").unwrap(), vec![])
-+        .await
-+        .unwrap();
-+    let seconds: u128 = RedisPathLockProvider::result_string(&time[0], "TIME")
-+        .unwrap()
-+        .parse()
-+        .unwrap();
-+    let micros: u128 = RedisPathLockProvider::result_string(&time[1], "TIME")
-+        .unwrap()
-+        .parse()
-+        .unwrap();
-+    seconds * 1_000_000_000 + micros * 1_000
-+}
-+
-+pub(super) async fn seed(provider: &RedisPathLockProvider, path: &str, token: &LockToken) {
-+    provider
-+        .runtime
-+        .register_script(ScriptDefinition {
-+            id: SEED_ID,
-+            redis_lua: "return redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])",
-+        })
-+        .unwrap();
-+    provider
-+        .execute_integer(
-+            SEED_ID,
-+            provider.tokens_key_for_path(path).unwrap(),
-+            vec![
-+                RedisPathLockProvider::bytes(path),
-+                RedisPathLockProvider::bytes(LockTokenCodec::encode(token)),
-+            ],
-+        )
-+        .await
-+        .unwrap();
-+}
-+
-+async fn ttl(provider: &RedisPathLockProvider, path: &str) -> i64 {
-+    provider
-+        .execute_integer(TTL_ID, provider.tokens_key_for_path(path).unwrap(), vec![])
-+        .await
-+        .unwrap()
-+}
-+
-+fn assert_server_time(token: &LockToken, before: u128, after: u128) {
-+    assert!(
-+        (before..=after).contains(&token.time_ns),
-+        "token time {} outside Redis TIME [{before}, {after}]",
-+        token.time_ns
-+    );
-+    assert_eq!(token.time_ns % 1_000, 0);
-+}
-+
-+// Bracket both mutation and PTTL using Redis TIME, accounting for TTL decay
-+// without requiring a scheduler-dependent sleep or identical PTTL values.
-+async fn assert_fixed_ttl(provider: &RedisPathLockProvider, path: &str, before: u128) {
-+    let remaining = ttl(provider, path).await;
-+    let after = now(provider).await;
-+    let target = 2 * provider.lease_ms as i64;
-+    let elapsed_ms = ((after - before).div_ceil(1_000_000)) as i64;
-+    assert!(
-+        remaining > 0 && remaining <= target && remaining >= target - elapsed_ms - 1,
-+        "TTL {remaining}, expected {target} minus at most {elapsed_ms}ms"
-+    );
-+}
-+
-+#[test]
-+fn lease_rounding_and_lua_integer_bound_are_checked_before_access() {
-+    let mock = crate::cache_runtime::MemoryMockProvider::new()
-+        .with_script_handler(|_| panic!("configuration validation must not execute scripts"));
-+    let runtime = CacheRuntime::memory_with_provider(Arc::new(mock));
-+    let provider = RedisPathLockProvider::new(runtime.clone(), "rounding", 1.0001).unwrap();
-+    assert_eq!(provider.lease_ms, 1_001);
-+    for lease in [
-+        0.999,
-+        f64::NAN,
-+        f64::INFINITY,
-+        f64::MAX,
-+
 ```
 
-**File**: `crates/ragfs/src/lock/lost_lease_tests.rs` (modified, +5/-0)
+**File**: `frontend/packages/react/src/components/file-tree/file-tree-entry-row.tsx` (added, +191/-0)
 ```diff
-@@ -1112,6 +1112,11 @@ async fn redis_takeover_denies_writes_and_cleanup_preserves_new_owner() {
-         .compare_and_write_token(path, &old, &replacement)
-         .await
-         .unwrap());
-+    // Redis assigns the takeover confirmation time; cleanup must preserve the
-+    // actual server-written snapshot rather than the requested client token.
-+    let replacement = provider.read_token(path).await.unwrap().unwrap();
-+    assert_eq!(replacement.owner_id, "new-owner");
-+    assert_eq!(replacement.lock_type, old.lock_type);
-     assert_eq!(manager.refresh(&lease).await.unwrap(), "lost");
-     let wrapped = PathLockWrappedFS::new(manager.clone(), fs.clone());
-     let context = Arc::new(FsContextInner::with_pathlock(
+@@ -0,0 +1,191 @@
++import type { KeyboardEvent, MouseEvent } from 'react';
++
++import {
++  FileTreeChevron,
++  FileTreeFileIcon,
++  FileTreeFolderIcon,
++} from './file-tree-icons.js';
++import {
++  resolveFileTreeInfoKey,
++  showsInlineDescription,
++} from './file-tree-info.js';
++import { resolveInfoCopy } from './file-tree-info-labels.js';
++import { FileTreeTooltipSurface } from './file-tree-tooltip-surface.js';
++import type { FileTreeRowContext } from './file-tree-row-context.js';
++import { Guides, rowStyle } from './file-tree-row-shared.js';
++import type { FileTreeEntryRow } from './types.js';
++import { FILE_TREE_ROW_ATTRIBUTE } from './types.js';
++
++/**
++ * 一条条目行：展开箭头、图标、名称、行内说明、行尾指示器与悬停浮层。
++ *
++ * One entry row: chevron, icon, name, inline description, the row-end indicator
++ * and the hover tooltip.
++ */
++export function FileTreeRowView({
++  row,
++  ctx,
++}: {
++  row: FileTreeEntryRow;
++  ctx: FileTreeRowContext;
++}) {
++  const {
++    text,
++    selectedId,
++    tooltipRowId,
++    getRowAttributes,
++    renderDashboard,
++    renderRowTooltip,
++    renderRowIcon,
++    onSelect,
++    onToggleExpand,
++    onOpenRetentionSettings,
++    onRowKeyDown,
++    onRowEnter,
++    onRowLeave,
++  } = ctx;
++
++  const isDirectory = row.type === 'directory';
++  const canExpand = isDirectory && row.hasChildren !== false;
++  const isExpanded = Boolean(row.expanded);
++  const isSelected = selectedId === row.id;
++  const extra = getRowAttributes?.(row) ?? {};
++  const {
++    className: extraClassName,
++    style: extraStyle,
++    ...extraAttributes
++  } = extra;
++  const dashboard = renderDashboard?.(row) ?? null;
++  // 宿主给了 description 就用它（含显式空串）；否则按 uri 取内置说明。
++  const infoKey = resolveFileTreeInfoKey(row.uri);
++  const description =
++    row.description ??
++    (infoKey && showsInlineDescription(infoKey)
++      ? resolveInfoCopy(infoKey, ctx.infoLabels).description
++      : undefined);
++
++  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
++    // 点展开箭头时不再冒泡触发选中。The chevron handles its own click.
++    if ((event.target as HTMLElement).closest('[data-role="toggle"]')) return;
++    if (row.disabled) return;
++    onSelect?.(row);
++  };
++
++  const handleToggle = (event: MouseEvent<HTMLButtonElement>) => {
++    event.stopPropagation();
++    onToggleExpand?.(row);
++  };
++
++  return (
++    <div
++      role="treeitem"
++      tabIndex={0}
++      aria-level={row.depth + 1}
++      aria-selected={isSelected}
++      aria-expanded={canExpand ? isExpanded : undefined}
++      aria-disabled={row.disabled || undefined}
++      {...extraAttributes}
++      {...{ [FILE_TREE_ROW_ATTRIBUTE]: row.id }}
++      className={['ov-file-tree__row', extraClassName]
++        .filter(Boolean)
++        .join(' ')}
++      data-selected={isSelected || undefined}
++      data-disabled={row.disabled || undefined}
++      data-kind={row.kind}
++      style={{ ...rowStyle(row.depth), ...extraStyle }}
++      onClick={handleClick}
++      onKeyDown={(event: KeyboardEvent<HTMLDivElement>) =>
++        onRowKeyDown(event, row)
++      }
++      onMouseEnter={() => onRowEnter(row.id)}
++      onMouseLeave={onRowLeave}
++      onFocus={() => onRowEnter(row.id)}
++      onBlur={onRowLeave}
++    >
++      {/* 每一级祖先画一条竖线，上下各溢出 1px 让相邻行接上。 */}
++      <Guides depth={row.depth} />
++
++      {canExpand ? (
++        <button
++          type="button"
++          data-role="toggle"
++          className="ov-file-tree__toggle"
++          aria-label={
++            isExpanded
++              ? text.collapse.replace('{name}', row.name)
++              : text.expand.replace('{name}', row.name)
++          }
++          tabIndex={-1}
++          disabled={!onToggleExpand || row.disabled}
++          onClick={handleToggle}
++        >
++          {row.busy ? (
++            (ctx.renderSpinner?.() ?? (
++              <span className="ov-file-tree__spinner" />
++            ))
++          ) : (
++            <FileTreeChevron open={isExpanded} />
++          )}
++        </button>
++      ) : (
++        <span aria-hidden="true" className="ov-file-tree__toggle-spacer" />
++      )}
++
++      <span className="ov-file-tree__icon-slot">
++        {isDirectory ? (
++          <FileTreeFolderIcon open={isExpanded} />
++        ) : (
++          (renderRowIcon?.(row) ?? <FileTreeFileIcon />)
++        )}
++      </span>
++
++      <span className="ov-file-tree__label-group">
++        <span className="ov-file-tree__label" title={row.name}>
++          {row.name}
++        </span>
++        {description ? (
++          <span className="ov-file-tree__description">{description}</span>
++        ) : null}
++      </span>
++
++      {row.busy && !canExpand ? (
++        <span className="ov-file-tree__spinner" />
++      ) : null}
++
++      {row.expiresAt ? (
++        <span className="ov-file-tree__expiry">
++          {onOpenRetentionSettings ? (
++            <button
++              type="button"
++              className="ov-file-tree__expiry-action"
++              onClick={(event) => {
++                event.stopPropagation();
++             
 ```
 
-**File**: `crates/ragfs/src/lock/manager.rs` (modified, +12/-51)
+**File**: `frontend/packages/react/src/components/file-tree/file-tree-icons.tsx` (added, +38/-0)
 ```diff
-@@ -24,9 +24,9 @@ use super::provider::{
- };
- use super::resolver::{LockPathResolver, ResolvedExactPaths};
- use super::types::{
--    BorrowedPathLockLease, HandoffRecoveryReason, LockHolder, LockToken, OwnedPathLockLease,
--    PathLockConflict, PathLockError, PathLockHandoffRef, PathLockKind, PathLockLease,
--    PathLockObserveSnapshot, PathLockRequest, PathLockResult,
-+    BorrowedPathLockLease, HandoffRecoveryReason, LockToken, OwnedPathLockLease, PathLockConflict,
-+    PathLockError, PathLockHandoffRef, PathLockKind, PathLockLease, PathLockObserveSnapshot,
-+    PathLockRequest, PathLockResult,
- };
- 
- /// Configuration for the PathLockManager.
-@@ -1251,17 +1251,20 @@ impl PathLockManager {
-                 (AcquisitionChange::Upgraded { previous, .. }, Some(source))
-                     if previous.owner_id == owner =>
-                 {
--                    previous
--                        .holders
--                        .iter()
--                        .find(|h| h.id == source)
--                        .cloned()
-+                    previous.holders.iter().find(|h| h.id == source).cloned()
-                 }
-                 _ => None,
-             };
-             let result = match restored {
-                 Some(restored) => {
--                    self.replace_holder(&item.handle, owner, holder, restored)
-+                    self.provider
-+                        .replace_holder(
-+                            &item.handle,
-+                            owner,
-+                            holder,
-+                            restored,
-+                            Self::now_ns().saturating_sub(self.lock_expire_ns()),
-+                        )
-                         .await
-                 }
-                 None => self
-@@ -1277,48 +1280,6 @@ impl PathLockManager {
-         first_error.map_or(Ok(()), Err)
-     }
- 
--    /// Swap `holder` back to `restored` unless the source has since expired.
--    async fn replace_holder(
--        &self,
--        path: &str,
--        owner: &str,
--        holder: &str,
--        restored: LockHolder,
--    ) -> PathLockResult<()> {
--        for _ in 0..HOLDER_CAS_ATTEMPTS {
--            let Some(current) = self.provider.read_token(path).await? else {
--                return Ok(());
--            };
--            if current.owner_id != owner || !current.holders.iter().any(|h| h.id == holder) {
--                return Ok(());
--            }
--            let stale_before = Self::now_ns().saturating_sub(self.lock_expire_ns());
--            let mut next = current.clone();
--            next.holders
--                .retain(|h| h.id != holder && h.id != restored.id && h.time_ns >= stale_before);
--            if restored.time_ns >= stale_before {
--                next.holders.push(restored.clone());
--            }
--            next.recompute();
--            let changed = if next.holders.is_empty() {
--                self.provider
--                    .compare_and_remove_token(path, &current)
--                    .await?
--            } else {
--                self.provider
--                    .compare_and_write_token(path, &current, &next)
--                    .await?
--            };
--            if changed {
--                return Ok(());
--            }
--        }
--        Err(PathLockError::Busy {
--            lock_path: path.into(),
--            operation: "holder rollback".into(),
--        })
--    }
--
-     /// Add one holder with CAS. Lost races re-read the token, so a concurrent
-     /// same-owner refresh or release never fails acquisition.
-     async fn try_acquire_holder(
+@@ -0,0 +1,38 @@
++import {
++  ChevronRightIcon,
++  DocumentIcon,
++  FolderIcon,
++  FolderOpenIcon,
++} from '../../icons/index.js';
++
++/**
++ * 文件夹图标。展开态与收起态叠放在一起交叉淡入，和宿主一致。
++ *
++ * The folder icon. The open and collapsed states sit stacked and cross-fade,
++ * matching the host tree.
++ */
++export function FileTreeFolderIcon({ open }: { open: boolean }) {
++  return (
++    <span className="ov-file-tree__folder">
++      <FolderIcon className="ov-file-tree__folder-layer" data-open={!open} />
++      <FolderOpenIcon className="ov-file-tree__folder-layer" data-open={open} />
++    </span>
++  );
++}
++
++/** 宿主没有提供 `renderRowIcon` 时的文件图标。Fallback file icon. */
++export function FileTreeFileIcon() {
++  return <DocumentIcon className="ov-file-tree__file-icon" />;
++}
++
++/** 展开箭头，展开时旋转 90°。The expand chevron, rotated when open. */
++export function FileTreeChevron({ open }: { open: boolean }) {
++  return (
++    <ChevronRightIcon
++      className="ov-file-tree__chevron"
++      data-expanded={open || undefined}
++      width={12}
++      height={12}
++    />
++  );
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7149** (2026-11-06): feat(vika): let a Feishu bot read only the chats it is in (@krsish)
-- **PR #7148** (2026-11-06): feat(vika): discover IMAP folders with hierarchy-aware exclusions (@openviking-superagent)
-- **PR #7145** (2026-11-06): feat(vika): monitor multiple IMAP folders with independent cursors (@openviking-superagent)
-- **PR #7144** (2026-11-06): feat(vika): configure email mailbox with compatible identities (@openviking-superagent)
-- **PR #7141** (closed): fix: [Bug]: Upstream connection test reads only 16 KB of /v1/models - truncated 2xx misreported as upstream_key_rejected (@xixi-box)
-- **PR #7140** (2026-11-06): fix(config): 兼容旧添加位置配置，避免升级后启动失败 (@qin-ptr)
+- **PR #7201** (2026-11-07): feat(ui): implement the file tree view against its contract (@LaamGinghong)
+- **PR #7199** (2026-11-07): docs(vika): English references and simpler BYOM diagram (@openviking-superagent)
+- **PR #7198** (2026-11-07): feat(ui): align the file tree with the host implementation (@LaamGinghong)
+- **PR #7197** (2026-11-07): docs(vika): English quickstart and working pinned install command (@openviking-superagent)
+- **PR #7194** (2026-11-07): docs: show BYOM and agent runtime in SuperAgent diagram (@openviking-superagent)
+- **PR #7192** (2026-11-07): docs: shorten SuperAgent homepage introduction (@openviking-superagent)
 
 ---
 
@@ -3281,30 +2808,119 @@ Use Redis time for atomic handoff rollback so client clock skew cannot remove li
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): settle the module props and drop the user-usage module (#7126)
+## X. ui): align the file tree with the host implementation (#7198)
 
 **RULE**:
-When implementing operations in `frontend/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `frontend/docs/docs/_demos/file-tree-basic.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `756e27fd`: ui): settle the module props and drop the user-usage module (#7126). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bee7385`: ui): align the file tree with the host implementation (#7198). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/docs/docs/_demos/file-tree-basic.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- `packages/react/src/modules/{file-browser,console,task-center}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
-The workspace currently contains React components, shared SVGs, three business module placeholders, the request client, and documentation. The target also includes framework-neutral libraries, the Client transport, Vue bindings, and deployable micro-apps. Add each planned directory with its first implementation.
+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+import { useLang } from '@rspress/core/runtime';
+import {
+  resolveFileTreeInfoKey,
+  resolveInfoCopy,
+  showsInlineDescription,
+} from '@openviking/react/components/file-tree';
+import {
+  ChevronRightIcon,
+  FolderIcon,
+  FolderOpenIcon,
+  getFileTypeColor,
+  getFileTypeIcon,
+  resolveFileTypeIconKey,
+} from '@openviking/react/icons';
+/** `path: children`; a trailing `/` marks a directory, `null` marks a file. */
+interface Spec {
+  [name: string]: Spec | null;
+}
+interface Node {
+  uri: string;
+  name: string;
+  type: 'directory' | 'file';
+  children?: Node[];
+}
+
+const USER = 'viking://user/alice';
+const MEMORIES = `${USER}/memories`;
+const WIKI = 'viking://resources/project-wiki';
+const ARCHIVE = 'viking://resources/archive';
+const PAGE = 3;
+
+const SPEC: Spec = {
+  [`${USER}/`]: {
+    'memories/': {
+      'profile.md': null,
+      'identity.md': null,
+      'soul.md': null,
+      'preferences/': {},
+      'entities/': {},
+      'events/': {},
+      'cases/': {},
+      'trajectories/': {},
+      'experiences/': {},
+    'peers/': { 'claude-code/': {}, 'cursor/': {}, 'trae/': {} },
+    'privacy/': { 'keys.json': null }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-- `packages/react/src/modules/{file-browser,console,task-center,user-usage}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
-The workspace currently contains React components, shared SVGs, four business module placeholders, the request client, and documentation. The target also includes framework-neutral libraries, the Client transport, Vue bindings, and deployable micro-apps. Add each planned directory with its first implementation.
+import { FileTree } from '@openviking/react/components/file-tree';
+/** Directories and the rows revealed when they are expanded. */
+const childrenOf: Record<string, FileTreeRow[]> = {
+  resources: [
+    {
+      kind: 'entry',
+      id: 'resources/guide.md',
+      uri: 'viking://resources/guide.md',
+      name: 'guide.md',
+      type: 'file',
+      depth: 1,
+      levelLabel: 'L1',
+    },
+    {
+      kind: 'entry',
+      id: 'resources/spec.pdf',
+      uri: 'viking://resources/spec.pdf',
+      name: 'spec.pdf',
+      type: 'file',
+      depth: 1,
+    },
+    {
+      kind: 'load-more',
+      id: 'load-more:resources',
+      parentId: 'resources',
+      depth: 1,
+  ],
+  memories: [
+    {
+      kind: 'entry',
+      id: 'memories/profile.md',
+      uri: 'viking://memories/profile.md',
+      name: 'profile.md',
+      type: 'file',
+      depth: 1,
+  ],
+  skills: [{ kind: 'empty', id: 'empty:skills', parentId: 'skills', depth: 1 }],
+const topLevel: FileTreeRow[] = [
+  {
+    kind: 'entry',
+    id: 'resources',
+    uri: 'viking://resources',
+    name: 'resources',
+    type: 'directory',
+    depth: 0,
+    hasChildren: true,
+    description: 'Imported documents',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `756e27fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bee7385` are properly handled with clean fallback behavior.

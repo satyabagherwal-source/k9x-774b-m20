@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T01:46:17.507Z",
-  "total_cycles_completed": 8134,
-  "total_learnings_persisted": 8134,
-  "total_rules_promoted": 7806,
+  "last_updated": "2026-11-08T01:56:32.871Z",
+  "total_cycles_completed": 8136,
+  "total_learnings_persisted": 8136,
+  "total_rules_promoted": 7810,
   "history": [
-    {
-      "timestamp": "2026-11-07T02:54:31.933Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T03:01:26.869Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T03:01:28.770Z",
       "repository": "projectdiscovery/nuclei",
@@ -1403,6 +1389,20 @@
       "repository": "thaw-app/Thaw",
       "learningId": "learn-github-thaw-app-thaw",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T01:55:00.890Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T01:56:32.871Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

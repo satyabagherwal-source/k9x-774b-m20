@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T01:46:17.433Z",
+  "last_updated": "2026-11-08T01:56:32.770Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -816,8 +816,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "c4813968",
-      "content_hash": "e98f3da0a76b72100aceef53916a9047a79517aeee24781251ad78b4169c9d90",
+      "source_version": "a31ceb62",
+      "content_hash": "238c1b485f1da73c830ef7bd19c6121e51004bc9051bbb19680b29401665c662",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -825,6 +825,21 @@
           "number": null,
           "title": "sdk): honor generation defaults in TypeScript tool calls (#1154)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Decoupled Transport Header Deadlines from Stream Body Lifecycles in Rate-Limited HTTP Clients",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Monotonic Relative Offsets for Shared Execution Pause Clocks",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Atomic Process Registration Rollback Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1948,
@@ -867,7 +882,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:52:15.504Z",
+      "verified_at": "2026-11-08T01:56:32.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74758,14 +74773,19 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "b8e88959",
-      "content_hash": "26a2a33327e7698d06196f893879a0ba2e53d7c0b7574bea5532444f5913f3cc",
+      "source_version": "9ac008f9",
+      "content_hash": "57ea91bd5268151a652c3a16e277a4d19a2b5c6a4d7bc6bf884d3d8aca4b35b0",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "ui): settle the module props and drop the user-usage module (#7126)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ui): align the file tree with the host implementation (#7198)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -74869,7 +74889,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T19:02:22.731Z",
+      "verified_at": "2026-11-08T01:55:00.769Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

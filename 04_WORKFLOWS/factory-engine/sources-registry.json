@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T01:46:21.979Z",
-    "lastVerified": "2026-11-08T01:46:21.979Z",
+    "lastChecked": "2026-11-08T01:56:35.480Z",
+    "lastVerified": "2026-11-08T01:56:35.480Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T01:17:46.308Z",
+    "lastChecked": "2026-11-08T01:54:56.597Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T01:17:46.308Z"
+    "lastVerified": "2026-11-08T01:54:56.597Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1791,8 +1791,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T21:36:29.420Z",
-    "lastVerified": "2026-11-07T21:36:29.420Z",
+    "lastChecked": "2026-11-08T01:54:51.612Z",
+    "lastVerified": "2026-11-08T01:54:51.612Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -2011,12 +2011,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "metalbear-co-mirrord": {
-    "name": "metalbear-co/mirrord",
+    "name": "mirrord",
     "officialUrl": "https://github.com/metalbear-co/mirrord",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T22:31:38.728Z",
-    "lastVerified": "2026-11-05T22:31:38.728Z",
+    "lastChecked": "2026-11-08T01:54:41.596Z",
+    "lastVerified": "2026-11-08T01:54:41.596Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-metalbear-co-mirrord",
@@ -2025,7 +2025,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7cf43de5"
   },
   "hf-apple-lensvlm-9b": {
     "name": "apple/LensVLM-9B",
@@ -4453,14 +4454,14 @@
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T20:52:13.777Z",
-    "lastVerified": "2026-11-06T20:52:13.777Z",
+    "lastChecked": "2026-11-08T01:54:52.313Z",
+    "lastVerified": "2026-11-08T01:54:52.313Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "e98f3da0a76b72100aceef53916a9047a79517aeee24781251ad78b4169c9d90",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "238c1b485f1da73c830ef7bd19c6121e51004bc9051bbb19680b29401665c662",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8021,14 +8022,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-06T19:02:15.167Z",
-    "lastVerified": "2026-11-06T19:02:15.167Z",
+    "lastChecked": "2026-11-08T01:54:57.359Z",
+    "lastVerified": "2026-11-08T01:54:57.359Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "26a2a33327e7698d06196f893879a0ba2e53d7c0b7574bea5532444f5913f3cc",
+    "contentHash": "57ea91bd5268151a652c3a16e277a4d19a2b5c6a4d7bc6bf884d3d8aca4b35b0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8995,9 +8996,9 @@
   "gao-sun-eul": {
     "name": "eul",
     "officialUrl": "https://github.com/gao-sun/eul",
-    "lastChecked": "2026-11-05T01:22:17.232Z",
+    "lastChecked": "2026-11-08T01:54:46.570Z",
     "revisionIdentifier": "b5c3bd0a",
-    "lastVerified": "2026-11-05T01:22:17.232Z"
+    "lastVerified": "2026-11-08T01:54:46.570Z"
   },
   "tw93-pake": {
     "name": "tw93/Pake",
@@ -12732,9 +12733,9 @@
   "unjs-ufo": {
     "name": "ufo",
     "officialUrl": "https://github.com/unjs/ufo",
-    "lastChecked": "2026-11-04T10:12:21.176Z",
+    "lastChecked": "2026-11-08T01:54:44.080Z",
     "revisionIdentifier": "f06c800d",
-    "lastVerified": "2026-11-04T10:12:21.176Z"
+    "lastVerified": "2026-11-08T01:54:44.080Z"
   },
   "facebook-docusaurus": {
     "name": "meta/docusaurus",

@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "b8e88959",
+    "sourceVersion": "9ac008f9",
     "license": "AGPL-3.0",
-    "contentHash": "26a2a33327e7698d06196f893879a0ba2e53d7c0b7574bea5532444f5913f3cc",
-    "lastHarvestedAt": "2026-11-06T19:02:22.858Z",
+    "contentHash": "57ea91bd5268151a652c3a16e277a4d19a2b5c6a4d7bc6bf884d3d8aca4b35b0",
+    "lastHarvestedAt": "2026-11-08T01:55:00.884Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "c4813968",
+    "sourceVersion": "a31ceb62",
     "license": "Apache-2.0",
-    "contentHash": "e98f3da0a76b72100aceef53916a9047a79517aeee24781251ad78b4169c9d90",
-    "lastHarvestedAt": "2026-11-06T20:52:15.577Z",
+    "contentHash": "238c1b485f1da73c830ef7bd19c6121e51004bc9051bbb19680b29401665c662",
+    "lastHarvestedAt": "2026-11-08T01:56:32.866Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
