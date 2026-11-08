@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T14:24:42.970Z",
-  "total_cycles_completed": 8262,
-  "total_learnings_persisted": 8262,
-  "total_rules_promoted": 8040,
+  "last_updated": "2026-11-08T14:41:46.888Z",
+  "total_cycles_completed": 8264,
+  "total_learnings_persisted": 8264,
+  "total_rules_promoted": 8041,
   "history": [
-    {
-      "timestamp": "2026-11-07T21:18:29.759Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T21:29:22.260Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T21:29:25.292Z",
       "repository": "QwikDev/qwik",
@@ -1403,6 +1389,20 @@
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T14:41:45.599Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T14:41:46.888Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

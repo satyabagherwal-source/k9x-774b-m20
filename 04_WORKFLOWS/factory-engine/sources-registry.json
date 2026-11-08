@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T14:24:45.578Z",
-    "lastVerified": "2026-11-08T14:24:45.578Z",
+    "lastChecked": "2026-11-08T14:41:53.950Z",
+    "lastVerified": "2026-11-08T14:41:53.950Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T13:40:26.896Z",
-    "lastVerified": "2026-11-08T13:40:26.896Z",
+    "lastChecked": "2026-11-08T14:41:53.940Z",
+    "lastVerified": "2026-11-08T14:41:53.940Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1000,9 +1000,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-07T18:42:25.942Z",
+    "lastChecked": "2026-11-08T14:41:46.555Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-07T18:42:25.942Z"
+    "lastVerified": "2026-11-08T14:41:46.555Z"
   },
   "bee-san-ciphey": {
     "name": "Ciphey",
@@ -1768,12 +1768,12 @@
     "officialUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T23:06:12.140Z",
-    "lastVerified": "2026-11-04T23:06:12.140Z",
+    "lastChecked": "2026-11-08T14:41:41.572Z",
+    "lastVerified": "2026-11-08T14:41:41.572Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-    "contentHash": "e82de935d52b700c6133650b6802d6f88d449896a6768235511eb6cb37073b15",
+    "contentHash": "bc4708800f4b3fc6f57c2b22b8ce9250483bdae65903350f312e6078364a479c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2197,8 +2197,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T06:12:23.960Z",
-    "lastVerified": "2026-11-08T06:12:23.960Z",
+    "lastChecked": "2026-11-08T14:41:49.081Z",
+    "lastVerified": "2026-11-08T14:41:49.081Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -4585,9 +4585,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-07T17:40:46.155Z",
+    "lastChecked": "2026-11-08T14:41:51.370Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-07T17:40:46.155Z"
+    "lastVerified": "2026-11-08T14:41:51.370Z"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -5952,14 +5952,14 @@
     "officialUrl": "https://github.com/ntex-rs/ntex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T02:31:54.024Z",
-    "lastVerified": "2026-11-07T02:31:54.024Z",
+    "lastChecked": "2026-11-08T14:41:43.774Z",
+    "lastVerified": "2026-11-08T14:41:43.774Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "8f07f9c0e4d4804922fadf2b444709acf2525152f37f1fc39fa60ac276d21472",
+    "contentHash": "ba834839433faa76a42aeb050f5514ce54c75068433d28ef12069009ccc86ac6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 12,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10391,9 +10391,9 @@
   "kdchang-reactjs101": {
     "name": "reactjs101",
     "officialUrl": "https://github.com/kdchang/reactjs101",
-    "lastChecked": "2026-11-05T09:04:50.055Z",
+    "lastChecked": "2026-11-08T14:41:43.847Z",
     "revisionIdentifier": "9a6f238b",
-    "lastVerified": "2026-11-05T09:04:50.055Z"
+    "lastVerified": "2026-11-08T14:41:43.847Z"
   },
   "mitrovicsinisaa-schemaorg-rs": {
     "name": "schemaorg-rs",

@@ -365,8 +365,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceVersion": "hf-viggle-qwen-image-2.1-viggle-turbo",
     "license": "Open-Source",
-    "contentHash": "e82de935d52b700c6133650b6802d6f88d449896a6768235511eb6cb37073b15",
-    "lastHarvestedAt": "2026-11-04T23:06:13.357Z",
+    "contentHash": "bc4708800f4b3fc6f57c2b22b8ce9250483bdae65903350f312e6078364a479c",
+    "lastHarvestedAt": "2026-11-08T14:41:46.883Z",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "8bf09329",
+    "sourceVersion": "64ddd4a0",
     "license": "Apache-2.0",
-    "contentHash": "8f07f9c0e4d4804922fadf2b444709acf2525152f37f1fc39fa60ac276d21472",
-    "lastHarvestedAt": "2026-11-07T02:31:59.228Z",
+    "contentHash": "ba834839433faa76a42aeb050f5514ce54c75068433d28ef12069009ccc86ac6",
+    "lastHarvestedAt": "2026-11-08T14:41:45.594Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {

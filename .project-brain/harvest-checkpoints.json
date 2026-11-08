@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T14:24:42.974Z",
+  "last_updated": "2026-11-08T14:41:46.892Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "e82de935d52b700c6133650b6802d6f88d449896a6768235511eb6cb37073b15",
-      "verified_at": "2026-11-04T23:06:13.367Z",
+      "content_hash": "bc4708800f4b3fc6f57c2b22b8ce9250483bdae65903350f312e6078364a479c",
+      "verified_at": "2026-11-08T14:41:46.891Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T23:06:13.367Z"
+      "last_updated": "2026-11-08T14:41:46.891Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "8f07f9c0e4d4804922fadf2b444709acf2525152f37f1fc39fa60ac276d21472",
-      "verified_at": "2026-11-07T02:31:59.238Z",
+      "content_hash": "ba834839433faa76a42aeb050f5514ce54c75068433d28ef12069009ccc86ac6",
+      "verified_at": "2026-11-08T14:41:45.610Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T02:31:59.238Z"
+      "last_updated": "2026-11-08T14:41:45.610Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",

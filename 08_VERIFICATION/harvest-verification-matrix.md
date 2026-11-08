@@ -8297,3 +8297,5 @@
 | `CYCLE-20261108-58L4` | `2026-11-08T14:19:39.832Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7ebe422e...`) |
 | `CYCLE-20261108-5E6U` | `2026-11-08T14:19:47.094Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ee8bda1d...`) |
 | `CYCLE-20261108-BQH2` | `2026-11-08T14:24:42.950Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`610c888e...`) |
+| `CYCLE-20261108-XNJQ` | `2026-11-08T14:41:45.591Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ba834839...`) |
+| `CYCLE-20261108-XOJJ` | `2026-11-08T14:41:46.879Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`bc470880...`) |

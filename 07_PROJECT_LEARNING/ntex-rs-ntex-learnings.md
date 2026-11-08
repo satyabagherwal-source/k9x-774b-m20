@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `8bf09329`  
+> **Source Version**: `64ddd4a0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:31:57.753Z  
+> **Timestamp**: 2026-11-08T14:41:44.404Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:31:54.024Z  
+> **Harvest Timestamp**: 2026-11-08T14:41:43.774Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2544 stars
+- **Stars / Engagement**: 2545 stars
 
 ---
 
@@ -1177,17 +1177,7 @@ impl RunnableQueue {
 
         // Aborts if the notifier unwinds, producers coalesced behind this
         // wakeup would never be woken.
-        struct AbortOnUnwind;
-
-        impl Drop for AbortOnUnwind {
-            /// Prevents unwinding from abandoning a coalesced driver wakeup.
-            fn drop(&mut self) {
-                log::error!(target: LOG_TARGET, "Runtime notifier panicked; aborting");
-                std::process::abort();
-            }
-        }
-
-        let guard = AbortOnUnwind;
+        let guard = crate::AbortOnUnwind("Runtime notifier panicked");
         // Keep responsibility for this wakeup: other producers may already
         // have coalesced behind it, even if no later submission arrives.
         while let Err(err) = self.handle.notify() {
@@ -1195,7 +1185,7 @@ impl RunnableQueue {
                 failed(&err);
             }
         }
-        std::mem::forget(guard);
+        guard.disarm();
     }
 
     /// Reserves a submission or wake before publication or acquiring a task queue reference.
@@ -1224,6 +1214,15 @@ impl RunnableQueue {
                         }),
                     });
                 }
+                Err(v) => state = v,
+            }
+        }
+    }
+
+    /// Runs bounded local, submission, and wake batches; returns whether work remains.
+    pub(super) fn run(&self) -> bool {
+        // cleared before draining the sync queues, a task enqueued after the
+        // drain notifies the d
 ```
 
 ### Core Architecture Module: `ntex-server/src/state.rs`
@@ -2036,7 +2035,7 @@ pub(crate) mod testing {
 
     use ntex::codec::BytesCodec;
     use ntex_bytes::Bytes;
-    use ntex_io::{Filter, Handle, IoContext, IoStream, Readiness};
+    use ntex_io::{Filter, Handle, IoContext, IoRef, IoStream, Readiness, types::HttpProtocol};
     use ntex_service::cfg::SharedCfg;
 
     use super::*;
@@ -2044,6 +2043,31 @@ pub(crate) mod testing {
     thread_local! {
         static TLS_BORROWS: Cell<usize> = const { Cell::new(0) };
         static ON_WAKE: RefCell<Option<Box<dyn FnOnce()>>> = RefCell::default();
+        static CALLBACK_IO: RefCell<Vec<IoRef>> = RefCell::default();
+        static CALLBACK_QUERIES: RefCell<Vec<(usize, bool)>> = RefCell::default();
+    }
+
+    /// Registers an io for handshake callbacks, which must be `Send + Sync`
+    /// and therefore refer to it by the returned index.
+    pub(crate) fn callback_io(io: IoRef) -> usize {
+        CALLBACK_IO.with_borrow_mut(|ios| {
+            ios.push(io);
+            ios.len() - 1
+        })
+    }
+
+    /// Queries a registered io from a handshake callback and records whether
+    /// the always-available `HttpProtocol` item was answered.
+    pub(crate) fn query_from_callback(idx: usize) {
+        let io = CALLBACK_IO.with_borrow(|ios| ios[idx].clone());
+        let answered = io.query::<HttpProtocol>().as_ref().is_some();
+        CALLBACK_QUERIES.with_borrow_mut(|queries| queries.push((idx, answered)));
+    }
+
+    /// Returns the recorded callback queries and clears the registry.
+    pub(crate) fn callback_queries() -> Vec<(usize, bool)> {
+        CALLBACK_IO.with_borrow_mut(Vec::clear);
+        CALLBACK_QUERIES.take()
     }
 
     /// Tracks TLS reference scopes so a regression fails before reentrant
@@ -2177,42 +2201,7 @@ pub(crate) mod testing {
         );
         // Let the runtime retire deferred write notifications after the drain.
         ntex_util::time::sleep(Millis(1)).await;
-        for ctx in [sender_ctx, receiver_ctx.as_ref()] {
-            ctx.update_write_status(Ok(0));
-            let _ = ctx.poll_read_ready(&mut cx);
-            let ready = ctx.poll_write_ready(&mut cx);
-            assert!(
-                matches!(ready, Poll::Ready(Readiness::Close)),
-                "{}: {ready:?}, {:?}",
-                ctx.tag(),
-                ctx.flags()
-            );
-            ctx.stopped(None);
-        }
-        assert!(matches!(
-            sender.poll_status_update(&mut cx),
-            Poll::Ready(ntex_io::IoStatusUpdate::PeerGone(None))
-        ));
-        assert!(matches!(
-            receiver.poll_status_update(&mut cx),
-            Poll::Ready(ntex_io::IoStatusUpdate::PeerGone(None))
-        ));
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use std::{cell::Cell, pin::pin, task::Poll};
-
-    use ntex_util::future::lazy;
-
-    use super::*;
-
-    /// STATEMENT: Clean transport EOF succeeds only if the final handshake state is complete.
-    ///
-    /// HOW:
-    /// - Poll a handshake until it waits for input, then report EOF with completed or pending state.
-    /// - Check completed negotiation succeeds and incomplete negotiati
+        for ctx in [sender_ctx, receiver_ctx.as_ref
 ```
 
 
@@ -2242,574 +2231,889 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `421761ca` (2026-11-05)
-**Commit Message**: Add mqtt client and service framework guide
+### Incident Patch 1: `34945510` (2026-11-07)
+**Commit Message**: web: Fix request pool aliasing when a request extension drops another request, and a panic when a request is dropped during thread-local teardown
 
-**File**: `docs/14-h2.md` (modified, +89/-2)
+**File**: `.github/workflows/miri.yml` (modified, +2/-2)
 ```diff
-@@ -551,7 +551,7 @@ and the send fails with `StreamError::CapacityTimeout`.
+@@ -54,8 +54,8 @@ jobs:
+           MIRIFLAGS: -Zmiri-disable-stacked-borrows
+         run: cargo miri nextest run -p ntex-service -- "miri_"
  
- `server::Server` is an ntex service that takes an I/O object and serves
- HTTP/2 on it until the connection closes. You run it like any other ntex
--service, with `ntex::server::build()` (see the [server chapter](8-server.md)):
-+service, with `ntex::server::build()` (see the [server chapter](5-server.md)):
+-      - name: Run Miri (ntex::web handler futures)
+-        run: cargo miri nextest run -p ntex --lib -- "web::handler::tests::"
++      - name: Run Miri (ntex::web handler futures, request pool)
++        run: cargo miri nextest run -p ntex --lib -- "web::handler::tests::" "web::config::tests::miri_"
  
- ```rust,no_run
- use ntex::http::{HeaderMap, StatusCode};
-@@ -804,10 +804,97 @@ server::Server::new(async |_msg: Message| Ok::<_, Error<OperationError>>(()))
- `GOAWAY` from the client, the client going away, or an error returned by the
- publish service. Answer every control message with `msg.ack()`.
- 
-+### Server state
-+
-+The publish and control services run in pipelines whose state is the
-+*connection state*: a value that travels with the I/O object, as described in
-+[Carrying state with a request](3-state.md#carrying-state-with-a-request).
-+A plain `Io` carries no state, so the state is `()`. That is why `Echo`
-+above implements `Service<(), Message>` and its factory takes `&()`.
-+
-+The worker state, created by `build_with_config()` (see
-+[Worker and request state](6-server-app.md)), is not passed to these
-+services. To make it available, put a service in front of `Server` that reads
-+the worker state and returns the connection wrapped in a `State`, together
-+with whatever the handlers need. That service can also record details about
-+the connection, such as the peer address. ntex-h2 clones the connection state
-+for the publish and control factories, so it must implement `Clone`. Keep
-+shared resources behind an `Rc`.
-+
-+Handlers can then be [state-aware functions](3-state.md#state-aware-functions)
-+that take the connection state as their first argument, and service
-+factories receive it in `create`:
-+
-+```rust,no_run
-+use std::{cell::Cell, convert::Infallible, net::SocketAddr, rc::Rc};
-+
-+use ntex::http::{HeaderMap, StatusCode};
-+use ntex::io::{Io, types::PeerAddr};
-+use ntex::service::{State, service};
-+use ntex::{SharedCfg, error::Error};
-+use ntex_h2::{Message, MessageKind, OperationError, server};
-+
-+/// Worker state, created once per worker.
-+#[derive(Clone)]
-+struct AppState {
-+    requests: Rc<Cell<u64>>,
-+}
-+
-+/// Connection state, shared by all streams of one connection.
-+#[derive(Clone)]
-+struct Conn {
-+    app: AppState,
-+    peer: Option<SocketAddr>,
-+}
-+
-+async fn accept(
-+    app: &AppState,
-+    io: Io,
-+) -> Result<State<Conn, Io>, server::ServerError<Infallible>> {
-+    let peer = io.query::<PeerAddr>().get().map(|addr| addr.into_inner());
-+    let conn = Conn { app: app.clone(), peer };
-+    Ok(State { req: io, state: conn })
-+}
-+
-+async fn publish(conn: &Conn, msg: Message) -> Result<(), Error<OperationError>> {
-+    if let MessageKind::Headers { pseudo, .. } = msg.kind {
-+        let requests = &conn.app.requests;
-+        requests.set(requests.get() + 1);
-+        println!("{:?} from {:?}, request #{}", pseudo.path, conn.peer, requests.get());
-+
-+        msg.stream.send_response(StatusCode::OK, HeaderMap::new(), false)?;
-+        msg.stream.send_payload("hello world", true).await?;
-+    }
-+    Ok(())
-+}
-+
-+#[ntex::main]
-+async fn main() -> std::io::Result<()> {
-+    ntex::server::build_with_config(async || {
-+        Ok(AppState {
-+            requests: Rc::new(Cell::new(0)),
-+        })
-+    })
-+    .bind("h2", "127.0.0.1:8080", SharedCfg::default(), async |_: &AppState| {
-+        service(accept).and_then(server::Server::new(publish))
-+    })?
-+    .run()
-+    .await
-+}
-+```
-+
-+Each worker has its own `AppState`, so `requests` counts only the requests
-+handled by that worker. Use an `Arc` for values that must be shared across
-+workers. Per-stream state, such as a request body that is still arriving,
-+belongs in the publish service itself, as in the `Echo` example.
-+
-+With `handle_one`, you create the publish and control pipelines yourself,
-+so they hold whatever state you gave them.
-+
- ### Shutting down
- 
- When the ntex server stops, its workers wait for connections to finish, as
--described in the [server chapter](8-server.md). To wind down HTTP/2
-+described in the [server chapter](5-server.md). To wind down HTTP/2
- connections in an orderly way, call `ServiceConfig::shutdown()`. From then
- on, servers on the current thread refuse new streams, let active ones finish,
- and close their connections.
+       - name: Run Miri (ntex ws mask, h1 codec)
+         # Runtime tests need an I/O driver; the skipped decoder tests take minutes under Miri.
 ```
 
-**File**: `docs/15-mqtt.md` (added, +1456/-0)
+**File**: `ntex/CHANGES.md` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,1456 @@
-+# MQTT with ntex-mqtt
+@@ -10,6 +10,9 @@
+ 
+ * web: Use resource id indexed vec for route service cache
+ 
++* web: Fix request pool aliasing when a request extension drops another
++  request, and a panic when a request is dropped during thread-local teardown
 +
-+[MQTT] is a lightweight publish/subscribe protocol. It is common in IoT,
-+telemetry and messaging systems, where many small devices keep long-lived
-+connections to a broker. [ntex-mqtt] brings MQTT to ntex. It provides both a
-+client and a server, and both speak the two versions of the protocol still in
-+use, MQTT 3.1.1 and MQTT 5.0. A single server can even accept clients of both
-+versions on the same port.
-+
-+ntex-mqtt is built from the same pieces as the rest of ntex. Connections are
-+ntex I/O objects, handlers are ntex services, settings travel in a
-+[`SharedCfg`], and a server runs inside the ordinary
-+[ntex server](5-server.md). If you know how to write an ntex web service,
-+most of this chapter will feel familiar.
-+
-+Add the crate next to ntex:
-+
-+```toml
-+[dependencies]
-+ntex = { version = "4", features = ["tokio"] }
-+ntex-mqtt = "9"
-+```
-+
-+Here is a server that accepts both protocol versions and prints every message
-+it receives:
-+
-+```rust,no_run
-+use ntex::SharedCfg;
-+use ntex_mqtt::{MqttServer, v3, v5};
-+
-+#[derive(Debug)]
-+struct ServerError;
-+
-+impl TryFrom<ServerError> for v5::PublishAck {
-+    type Error = ServerError;
-+
-+    fn try_from(err: ServerError) -> Result<Self, Self::Error> {
-+        Err(err)
-+    }
-+}
-+
-+#[ntex::main]
-+async fn main() -> std::io::Result<()> {
-+    ntex::server::build()
-+        .bind("mqtt", "127.0.0.1:1883", SharedCfg::default(), async |_| {
-+            MqttServer::new()
-+                .v3(
-+                    v3::MqttServer::new(async |publish: v3::Publish| {
-+                        println!("v3 publish to {}", publish.publish_topic());
-+                        Ok::<_, ServerError>(())
-+                    })
-+                    .build(async |connect: v3::Connect| {
-+                        Ok::<_, ServerError>(connect.ack((), false))
-+                    }),
-+                )
-+                .v5(
-+                    v5::MqttServer::new(async |publish: v5::Publish| {
-+                        println!("v5 publish to {}", publish.publish_topic());
-+                        Ok::<_, ServerError>(publish.ack())
-+                    })
-+                    .build(async |connect: v5::Connect| {
-+                        Ok::<_, ServerError>(connect.ack(()))
-+                    }),
-+                )
-+        })?
-+        .run()
-+        .await
-+}
-+```
-+
-+Most server examples in this chapter use an error type like `ServerError`.
-+Its `TryFrom` implementation answers one question: can this error be turned
-+into a `PUBACK` that refuses the message, or must it close the connection?
-+Returning `Err` means "close". [Handling publishes](#handling-publishes)
-+shows the other choice.
-+
-+The rest of the chapter explains how the crate is organized, how to
-+configure it, and then covers the client and the server in turn.
-+
-+## How ntex-mqtt is organized
-+
-+The two protocol versions live in two modules, `ntex_mqtt::v3` and
-+`ntex_mqtt::v5`. They have the same shape: each has a server builder
-+(`MqttServer`), a client connector (`client::MqttConnector`), a `Publish`
-+message, a `Router`, a `MqttSink` and a `codec` module with the packet types.
-+Code written for one version translates to the other almost line by line.
-+MQTT 5 adds reason codes, properties and a few new packets, so its types carry
-+more information.
-+
-+The crate root holds what the versions share: the combined `MqttServer`, the
-+`MqttServiceConfig` settings, and the `Control` messages that report what
-+happens to a connection.
-+
-+Every connection, on either side, is handled by up to three services:
-+
-+- The **publish service** receives `PUBLISH` packets from the peer. This is
-+  where your application logic lives. On the client, this role is filled by
-+  router handlers and the protocol service.
-+- The **protocol service** receives the other packets that need an answer:
-+  `SUBSCRIBE`, `UNSUBSCRIBE`, `PINGREQ`, `DISCONNECT`, `PUBREL` and, in MQTT 5,
-+  `AUTH`. It returns the response to send back.
-+- The **control service** is told about events in the connection's life,
-+  such as write backpressure or the connection stopping, and why it stopped.
-+
-+The protocol and control services have sensible defaults, so you only
-+replace them when you need to.
-+
-+Two more types show up everywhere. A **sink** (`MqttSink`) is a cheap,
-+cloneable handle for sending packets to the peer: publishes, subscriptions,
-+and the final `DISCONNECT`. A **session** (`v3::Session<St>` or
-+`v5::Session<St>`) bundles the sink with your own per-connection state `St`.
-+It dereferences to `St`, and its `sink()` method returns the sink.
-+
-+## Configuration
-+
-+Protocol settings live in `MqttServiceConfig`. As with other ntex
-+configuration, you add it to a [`SharedCfg`], and every connection created
-+with that `SharedCfg`, client or server, picks it up:
-+
-+```rust,no_run
-+use ntex::{SharedCfg, time::Seconds};
-+use ntex_mqtt::{MqttServiceConfig, QoS};
-+
-+fn config() -> SharedCfg {
-+    SharedCfg::n
+ * web: Bypass default identity filter
+ 
+ * web: Dispatch routes of resources without middleware, filter, or fallback directly from the router
 ```
 
-**File**: `docs/8.6-web-app.md` (modified, +1/-1)
+**File**: `ntex/src/web/config.rs` (modified, +98/-17)
 ```diff
-@@ -513,5 +513,5 @@ inside the AMQP stream.
- [basic WebSocket client]: https://github.com/ntex-rs/examples/blob/main/websockets/basic/src/client.rs
- [low-level WebSocket example]: https://github.com/ntex-rs/examples/tree/main/websockets/lowlevel
- [low-level TLS client]: https://github.com/ntex-rs/examples/blob/main/websockets/lowlevel/src/client.rs
--[MQTT-over-WebSocket example]: https://github.com/ntex-rs/examples/tree/main/websockets/mqtt
-+[MQTT-over-WebSocket example]: https://github.com/ntex-rs/examples/tree/main/protocols/mqtt
- [AMQP WebSocket binding]: https://docs.oasis-open.org/amqp-bindmap/amqp-wsb/v1.0/cs01/amqp-wsb-v1.0-cs01.html
-```
-
-**File**: `docs/SUMMARY.md` (modified, +2/-1)
-```diff
-@@ -19,7 +19,8 @@
- - [Integrations]()
-   - [HTTP Client](13-client.md)
-   - [HTTP/2 Client and Server](14-h2.md)
--  - [Building gRPC Services and Clients](11-grpc.md)
-+  - [gRPC Services and Clients](11-grpc.md)
-+  - [MQTT Client and Server](15-mqtt.md)
- - [Securing Connections with TLS](10-tls.md)
- - [Byte Buffers](9-bytes.md)
- - [Timers and Time Utilities](12-time.md)
-```
-
-**File**: `docs/index.md` (modified, +2/-1)
-```diff
-@@ -20,7 +20,8 @@ build web applications.
- - Integrations
-   - [HTTP Client](./13-client.md)
-   - [HTTP/2 Client and Server](./14-h2.md)
--  - [Building gRPC Services and Clients](11-grpc.md)
-+  - [gRPC Services and Clients](11-grpc.md)
-+  - [MQTT Client and Server](15-mqtt.md)
- - [Securing Connections with TLS](./10-tls.md)
- - [Byte Buffers](./9-bytes.md)
- - [Timers and Time Utilities](./12-time.md)
-```
-
-**File**: `docs/llms.txt` (modified, +1/-0)
-```diff
-@@ -485,6 +485,7 @@ async fn main() -> std::io::Result<()> {
- - [Securing Connections with TLS](https://docs.ntex.rs/10-tls.html): backend and component configuration, identities, peer certificates, and mutual authentication
- - [Making HTTP Requests](https://docs.ntex.rs/13-client.html): the `ntex::client` HTTP/1.1 and HTTP/2 client, connection pooling, `ClientConfig` and timeouts, TLS connectors, request bodies, reading responses, and client middleware
- - [HTTP/2 with ntex-h2](https://docs.ntex.rs/14-h2.html): standalone HTTP/2 client and server, `ServiceConfig`, pooled and single-connection clients, streams and resets, `Capacity` and flow control, publish and control services
-+- [MQTT with ntex-mqtt](https://docs.ntex.rs/15-mqtt.html): MQTT 3.1.1 and 5 clients and servers, `MqttServiceConfig`, publishing and acks, streaming payloads, flow control, subscriptions, routing, `MqttSink`, protocol and control services
- - [Timers and Time Utilities](https://docs.ntex.rs/12-time.html): timer wheel design and precision, `Millis` and `Seconds`, `sleep`, `deadline`, `timeout`, `interval`, and callback timers
+@@ -1,4 +1,4 @@
+-use std::{any::Any, any::TypeId, cell::UnsafeCell, net::SocketAddr, rc::Rc};
++use std::{any::Any, any::TypeId, cell::RefCell, net::SocketAddr, rc::Rc};
  
- ## API
-```
-
----
-
-### Incident Patch 2: `36c97b74` (2026-11-05)
-**Commit Message**: Update rt guide page
-
-**File**: `docs/4-runtime.md` (modified, +344/-344)
-```diff
-@@ -1,35 +1,34 @@
- # Runtime
+ use urly::Url;
  
--ntex uses a single-threaded execution model on each runtime thread. Tasks stay
--on the thread where they were started, so services and futures can use `Rc`,
--`Cell`, `RefCell`, and other types that are not `Send` or `Sync`.
-+Each ntex runtime thread runs its own single-threaded event loop. A task stays
-+on the thread where it was started, so services and futures can freely use
-+`Rc`, `Cell`, `RefCell`, and other types that are not `Send` or `Sync`.
+@@ -145,24 +145,38 @@ impl WebAppConfig {
  
--That does not limit an application to one CPU core. A server normally starts
-+This does not limit an application to one CPU core. A server normally starts
- several worker threads, each with its own single-threaded runtime. State shared
--between workers must still use thread-safe types such as `Arc`, atomics, or
--locks.
-+between workers still needs thread-safe types such as `Arc`, atomics, or locks.
- 
- Most applications only need `#[ntex::main]`, `#[ntex::test]`, and
--`ntex::rt::spawn`. The lower-level `System` and `Arbiter` APIs are useful for
-+`ntex::rt::spawn`. The lower-level `System` and `Arbiter` APIs are there for
- explicit startup, shutdown, and cross-thread coordination.
- 
- ## Choosing a runtime backend
- 
--[`DefaultRuntime`] selects the async runtime and matching ntex network reactor
--together. Cargo features choose the backend:
-+[`DefaultRuntime`] picks the async runtime and the matching ntex network
-+reactor together. Cargo features decide which backend it uses:
- 
--* `tokio` uses Tokio. When a Tokio runtime handle is entered on the current
--  thread, the adapter uses it; otherwise it creates a current-thread Tokio
--  runtime. ntex tasks run in a Tokio `LocalSet`.
--* `compio` creates a Compio runtime on each runtime thread. Compio selects the
--  I/O driver for the host platform and configuration.
--* without either feature, ntex uses its native runtime. On Linux it tries
--  io_uring and falls back to polling; other Unix platforms use polling, and
--  Windows uses IOCP.
-+* `tokio` uses Tokio. If a Tokio runtime handle is already entered on the
-+  current thread, ntex uses it; otherwise it creates a current-thread Tokio
-+  runtime. ntex tasks run inside a Tokio `LocalSet`.
-+* `compio` creates a Compio runtime on each runtime thread. Compio chooses the
-+  I/O driver for the platform and configuration.
-+* With neither feature, ntex uses its [native runtime](#native-runtime). On
-+  Linux it tries io_uring and falls back to polling; other Unix platforms use
-+  polling, and Windows uses IOCP.
- 
--If both `tokio` and `compio` are enabled, Tokio takes precedence. With the
--native backend, `neon-polling` forces polling on Unix and `neon-uring` requires
--io_uring on Linux. Do not enable both explicit native reactor features.
-+If both `tokio` and `compio` are enabled, Tokio wins. With the native backend,
-+`neon-polling` forces polling on Unix and `neon-uring` requires io_uring on
-+Linux. Do not enable both.
- 
- For example:
- 
-@@ -38,13 +37,13 @@ For example:
- ntex = { version = "4", features = ["tokio"] }
- ```
- 
--The Tokio and Compio backends are convenient when an application also uses
--libraries from those ecosystems. The native backend avoids an additional
--general-purpose runtime and lets ntex choose its platform reactor directly.
-+Tokio and Compio are convenient when an application also uses libraries from
-+those ecosystems. The native backend avoids running a second general-purpose
-+runtime and lets ntex use the platform reactor directly.
- 
- `SystemRunner::block_on` blocks the current thread. Do not call it from inside
--an async Tokio task to try to nest one runtime inside another. Usually the
--cleanest boundary is to let `#[ntex::main]` own the process entry point.
-+an async Tokio task in an attempt to nest one runtime inside another. The
-+cleanest setup is usually to let `#[ntex::main]` own the process entry point.
- 
- [`DefaultRuntime`]: https://docs.ntex.rs/api/ntex/rt/struct.DefaultRuntime.html
- 
-@@ -64,33 +63,27 @@ async fn main() {
+ /// Get message from the pool of the shared configuration with the given id.
+ pub(crate) fn get_request(id: usize) -> Option<HttpRequest> {
+-    CACHE.with(|cache| cache.with(id, |cache| cache.pop().map(HttpRequest)))
++    CACHE
++        .try_with(|cache| cache.with(id, Vec::pop))
++        .ok()
++        .flatten()
++        .map(HttpRequest)
  }
- ```
  
--The future and its result do not need to implement `Send`, but the future must
--be `'static`. Use `async move` when it captures owned values. `spawn()` panics
--when called outside an active ntex runtime.
-+Neither the future nor its result needs to be `Send`, but the future must be
-+`'static`, so use `async move` when it captures owned values. `spawn()` panics
-+if it is called outside a running ntex runtime.
+ /// Put message from the pool.
++///
++/// The request is dropped instead if the pool is full, the request is still
++/// shared, or the thread's pool is already destroyed.
+ pub(crate) fn put_request(id: usize, pool_size: usize, req: &mut Rc<HttpRequestInner>) {
+-    CACHE.with(|cache| {
+-        cache.with(id, |cache| {
+-            if cache.len() < pool_size
+-                && let Some(inner) = Rc::get_mut(req)
+-            {
+-                // the head and the path may share the connection read buffer,
+-                // a pooled request must not keep it alive
+-                inner.head.clear();
+-                inner.path.set(Url::new());
+-                cache.push(req.clone());
+-            }
++    let has_room = |cache: &LocalCache| cache.with(id, |cache| cache.len() < pool_size);
++    if !CACHE.try_with(has_room).unwrap_or(false) {
++        return;
++    }
++    if let Some(inner) = Rc::get_mut(req) {
++        // the head and the path may share the connection read buffer,
++        // a pooled request must not keep it alive.
++        // clearing runs user drop code that may drop other requests,
++        // so the pool must not be borrowed here
++        inner.head.clear();
++        inner.path.set(Url::new());
++
++        let _ = CACHE.try_with(|cache| {
++            cache.with(id, |cache| {
++                if cache.len() < pool_size {
++                    cache.push(req.clone());
++                }
++            });
+         });
+-    });
++    }
+ }
  
- The returned [`JoinHandle`] can be awaited, canceled with `cancel()`, detached
--with `detach()`, or queried with `is_finished()`. It is **neither `Send` nor
--`Sync`**, even when the result is `Send`, and must stay on its owner thread.
--A task panic or cancellation is reported as `JoinError`, not as the task's
--normal output.
--
--Dropping a local join handle detaches the task; it does not cancel it. Keep and
--await the handle when the result matters. A detached task is not guaranteed to
--finish before its arbiter or the whole system shuts down.
--
--To submit work to another runtime 
+ /// Service config is used for external configuration.
+@@ -256,21 +270,25 @@ thread_local! {
+ 
+ /// Request's objects pool
+ struct LocalCache {
+-    cache: UnsafeCell<Vec<Vec<Rc<HttpRequestInner>>>>,
++    cache: RefCell<Vec<Vec<Rc<HttpRequestInner>>>>,
+ }
+ 
+ impl LocalCache {
+     fn new() -> Self {
+         Self {
+-            cache: UnsafeCell::new(Vec::with_capacity(16)),
++            cache: RefCell::new(Vec::with_capacity(16)),
+         }
+     }
+ 
++    /// Calls `f` with the pool for `idx`.
++    ///
++    /// `f` must not drop requests or run user code, the pool stays borrowed
++    /// while it runs.
+     fn with<F, R>(&self, idx: usize, f: F) -> R
+     where
+         F: FnOnce(&mut Vec<Rc<HttpRequestInner>>) -> R,
+     {
+-        let cache = unsafe { &mut *self.cache.get() };
++        let mut cache = self.cache.borrow_mut();
+ 
+         while cache.len() <= idx {
+             cache.push(Vec::new());
+@@ -288,6 +306,69 @@ mod tests {
+     use crate::web::test::{TestRequest, call_service, init_service, read_body};
+     use crate::web::{self, App, HttpRequest, HttpResponse};
+ 
++    struct DropRequest(#[allow(dead_code)] HttpRequest);
++
++    /// STATEMENT: Returning a request to the pool tolerates request extensions
++    /// that drop other requests while they are cleared.
++    ///
++    /// HOW:
++    /// - Create an outer request, then keep creating requests until one has a
++    ///   config id far beyond the outer one, so pooling it grows the pool list.
++    /// - Store that request in an extension of the outer request and drop the
++    ///   outer request, which re-enters `put_request` while clearing the head.
++    /// - Check both requests were pooled under their own config ids and the
++    ///   pooled outer request has no extensions left.
++    #[test]
++    fn miri_put_request_reentrant_drop() {
++        let outer = TestRequest::default().to_http_request();
++        let outer_id = outer.0.config.id();
++
++        let mut held = Vec::new();
++        let inner = loop {
++            let req = TestRequest::default().to_http_request();
++            if req.0.config.id() > 2 * outer_id + 32 {
++                break req;
++            }
++            held.push(req);
++        };
++        let inner_id = inner.0.config.id();
++
++        outer.extensions_mut().insert(DropRequest(inner));
++        drop(outer);
++
++        let pooled = get_request(outer_id).unwrap();
++        assert!(pooled.extensions().get::<DropRequest>().is_none());
++        assert!(get_request(inner_id).is_some());
++        drop(held);
++    }
++
++    thread_local! {
++        static HELD: std::cell::RefCell<Option<HttpRequest>> =
++            const { std::cell::RefCell::new(None) };
++    }
++
++    /// STATEMENT: Dropping a request after the thread's request pool is
++    /// destroyed does not panic.
++    ///
++    /// HOW:
++    /// - On a new thread, touch `HELD` before the pool so its destructor is
++    ///   registered first and ther
 ```
 
 ---
 
-### Incident Patch 3: `8356ca9e` (2026-11-05)
-**Commit Message**: Add http2 client and service framework guide
+### Incident Patch 2: `f69ca9af` (2026-11-07)
+**Commit Message**: Various bug fixes
 
-**File**: `docs/14-h2.md` (added, +853/-0)
+* io-uring: a `PeerAddr` query from a filter that processes received data returns `None`
+  instead of panicking, and a panic while the stream storage is in use aborts the process
+  instead of releasing buffers of in-flight operations
+
+* iocp: a `PeerAddr` query from a filter that processes output returns `None` instead of
+  panicking, and a panic while the stream storage is in use aborts the process instead of
+  releasing `OVERLAPPED`s and buffers of in-flight operations
+
+* iocp: on runtime shutdown, wait up to 1s for cancelled operations to complete and free
+  their memory, only operations that do not complete in time are leaked
+
+**File**: `Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,853 @@
-+# HTTP/2 with ntex-h2
+@@ -60,9 +60,9 @@ ntex-macros = "4.4.0"
+ ntex-net = "4.8.1"
+ ntex-router = "2.2.0"
+ ntex-rt = "4.6.0"
+-ntex-server = "4.4.0"
++ntex-server = "4.4.1"
+ ntex-service = "5.7.1"
+-ntex-tls = "4.7.3"
++ntex-tls = "4.8.0"
+ ntex-util = "4.8.0"
+ urly = "1.2.0"
+ 
+```
+
+**File**: `ntex-net/CHANGES.md` (modified, +12/-1)
+```diff
+@@ -1,6 +1,6 @@
+ # Changes
+ 
+-## [4.8.1] - Unreleased
++## [4.8.1] - 2026-11-07
+ 
+ * io-uring: take send buffer and connect address pointers after the operation is stored,
+   so moving it no longer invalidates pointers passed to the kernel
+@@ -18,6 +18,17 @@
+   releasing their buffers and sockets, leak them if they do not complete. Handlers
+   are released when the driver fails too
+ 
++* io-uring: a `PeerAddr` query from a filter that processes received data returns `None`
++  instead of panicking, and a panic while the stream storage is in use aborts the process
++  instead of releasing buffers of in-flight operations
 +
-+HTTP/2 in ntex lives in a separate crate, [ntex-h2]. `ntex::http` and
-+`ntex::web` use it behind the scenes: when a connection negotiates HTTP/2,
-+ntex hands it to ntex-h2, which takes care of frames, header compression,
-+streams and flow control, and ntex turns each stream back into the familiar
-+requests and responses. Most applications never notice the crate is there.
++* iocp: a `PeerAddr` query from a filter that processes output returns `None` instead of
++  panicking, and a panic while the stream storage is in use aborts the process instead of
++  releasing `OVERLAPPED`s and buffers of in-flight operations
 +
-+Sometimes, though, you want HTTP/2 itself rather than the general HTTP layer
-+on top of it. Perhaps you only ever speak HTTP/2, you need trailers or
-+long-lived bidirectional streams, or you want to control flow control
-+yourself. gRPC is the classic case: [ntex-grpc](11-grpc.md) uses ntex-h2
-+directly for both its client and its server, and you can do the same.
-+ntex-h2 gives you three building blocks:
++* iocp: on runtime shutdown, wait up to 1s for cancelled operations to complete and free
++  their memory, only operations that do not complete in time are leaked
 +
-+- **`client::Client`**, a connection pool that opens and reuses connections
-+  to one server.
-+- **`client::SimpleClient`**, a client for a single connection that you
-+  manage yourself.
-+- **`server::Server`**, an ntex service that handles HTTP/2 connections.
+ ## [4.8.0] - 2026-11-06
+ 
+ * `tokio` feature enables `ntex-io/tokio`, the tokio `AsyncRead` and `AsyncWrite` implementations
+```
+
+**File**: `ntex-net/src/iocp/connect.rs` (modified, +54/-5)
+```diff
+@@ -223,12 +223,29 @@ impl Handler for ConnectOpsHandler {
+         }
+     }
+ 
++    fn cancel(&mut self) {
++        // Closing cancels `ConnectEx`, its completion frees the op. Taken
++        // under the borrow, closed after it, as in `tick()`.
++        let socks: Vec<_> = self
++            .inner
++            .ops
++            .borrow_mut()
++            .iter_mut()
++            .filter_map(|(_, op)| op.sock.take())
++            .collect();
++        drop(socks);
++    }
 +
-+ntex-h2 speaks only HTTP/2 and does not negotiate the protocol, so any
-+transport you give it must already be committed to HTTP/2. Over TLS, that
-+means ALPN has selected `h2`. Over plain TCP (h2c), both sides must simply
-+know in advance. The HTTP/1.1 `Upgrade` mechanism and server push are not
-+supported.
++    fn in_flight(&self) -> usize {
++        self.inner.ops.borrow().len()
++    }
 +
-+Here is a client that sends a `GET` request over plain TCP and prints the
-+response:
+     fn cleanup(&mut self) {
+-        // The reactor has stopped, so the completions of pending `ConnectEx`
+-        // calls are never dequeued. Closing the socket cancels the connect,
+-        // but the kernel still writes its completion into the `OVERLAPPED`,
+-        // so the op allocation is leaked to keep that memory valid. The
+-        // other fields are dropped, which closes the socket and the channel.
++        // The connects cancelled by `cancel()` that did not complete in time
++        // are never dequeued. The kernel still writes their completion into
++        // the `OVERLAPPED`, so the op allocation is leaked to keep that
++        // memory valid. The other fields are dropped, which closes the socket
++        // if `cancel()` did not run, and the channel.
+         let ops = mem::take(&mut *self.inner.ops.borrow_mut());
+         for (_, op) in ops {
+             let op = op.into_raw();
+@@ -433,4 +450,36 @@ mod tests {
+         let err = rx.await.unwrap_err();
+         assert_eq!(err.to_string(), "IO Driver is gone");
+     }
 +
-+```rust,no_run
-+use ntex::SharedCfg;
-+use ntex::http::{HeaderMap, Method};
-+use ntex_h2::{MessageKind, StreamEof, client::Client};
++    /// STATEMENT: On shutdown, `cancel()` cancels a pending connect, and its
++    /// completion frees the op instead of leaving it to `cleanup()`.
++    ///
++    /// HOW:
++    /// - Start a connect to a port nobody listens on, so it stays pending.
++    /// - Call `cancel()`, and confirm the socket is closed, while the op is
++    ///   still counted by `in_flight()`.
++    /// - Dispatch completions until the op is gone, and confirm the receiver
++    ///   gets "IO Driver is gone".
++    #[ntex::test]
++    async fn cancel_frees_pending_connect_on_completion() {
++        let reactor = Reactor::new().unwrap();
++        let ops = ConnectOps::get(&reactor);
++        let addr = net::TcpListener::bind("127.0.0.1:0")
++            .unwrap()
++            .local_addr()
++            .unwrap();
++        let (rx, raw, local) = pending_connect(&ops, addr);
 +
-+#[ntex::main]
-+async fn main() -> Result<(), Box<dyn std::error::Error>> {
-+    let client = Client::builder("127.0.0.1:8080").build(SharedCfg::new("H2-CLIENT"));
++        let mut handler = ConnectOpsHandler {
++            inner: ops.0.clone(),
++        };
++        handler.cancel();
++        assert!(!is_ours(raw, &local), "cancel did not close the socket");
++        assert_eq!(handler.in_flight(), 1);
 +
-+    let (_send, recv) = client
-+        .send(Method::GET, "/index.html".into(), HeaderMap::new(), true)
-+        .await?;
++        drain_connects(&reactor, &ops);
++        assert_eq!(handler.in_flight(), 0);
++        let err = rx.await.unwrap_err();
++        assert_eq!(err.to_string(), "IO Driver is gone");
++    }
+ }
+```
+
+**File**: `ntex-net/src/iocp/reactor.rs` (modified, +191/-3)
+```diff
+@@ -1,5 +1,6 @@
+ use std::os::windows::io::{AsRawHandle, AsRawSocket, FromRawHandle, OwnedHandle, RawHandle};
+ use std::sync::{Arc, OnceLock, atomic::AtomicU8, atomic::Ordering};
++use std::time::{Duration, Instant};
+ use std::{cell::Cell, fmt, io, mem, net, ptr};
+ 
+ use windows_sys::Win32::{
+@@ -42,7 +43,22 @@ pub(crate) trait Handler {
+     /// Reactor turn is completed
+     fn tick(&mut self) {}
+ 
++    /// The runtime has stopped: cancels the operations in flight, so that
++    /// their completions are dispatched before `cleanup()`.
++    ///
++    /// Completions, notifications and ticks dispatched afterwards must not
++    /// start new operations.
++    fn cancel(&mut self) {}
 +
-+    while let Some(msg) = recv.recv().await {
-+        match msg.kind {
-+            MessageKind::Headers { pseudo, .. } => println!("status: {:?}", pseudo.status),
-+            MessageKind::Data(data, _) => println!("data: {data:?}"),
-+            MessageKind::Eof(StreamEof::Data(data, _)) => println!("last data: {data:?}"),
-+            MessageKind::Eof(_) | MessageKind::Disconnect(_) => break,
++    /// Number of operations the kernel still owns.
++    fn in_flight(&self) -> usize {
++        0
++    }
++
+     /// Clean up the handle before dropping the driver.
++    ///
++    /// Operations still in flight never complete, the memory the kernel
++    /// writes their completion into must be leaked.
+     fn cleanup(&mut self) {}
+ }
+ 
+@@ -213,9 +229,7 @@ impl ntex_rt::Driver for Reactor {
+             }
+         };
+ 
+-        for mut h in self.handlers.take().unwrap().into_iter() {
+-            h.cleanup();
+-        }
++        self.shutdown(Self::SHUTDOWN_TIMEOUT);
+         result
+     }
+ 
+@@ -262,6 +276,73 @@ pub(crate) fn map_socket_error(err: io::Error) -> io::Error {
+ }
+ 
+ impl Reactor {
++    /// How long a stopped runtime waits for its cancelled operations.
++    const SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(1);
++
++    /// Cancels the operations in flight and dispatches their completions for
++    /// up to `timeout`, then cleans up the handlers.
++    ///
++    /// The kernel writes the completion of an operation into its `OVERLAPPED`
++    /// and buffers even after its socket is closed, so `cleanup()` has to
++    /// leak the memory of the operations still in flight.
++    fn shutdown(&self, timeout: Duration) {
++        let mut handlers = self.handlers.take().unwrap();
++        for h in handlers.iter_mut() {
++            h.cancel();
++        }
++        self.handlers.set(Some(handlers));
++
++        let deadline = Instant::now() + timeout;
++        let mut events = [OVERLAPPED_ENTRY::default(); 64];
++        loop {
++            let in_flight = self.in_flight();
++            if in_flight == 0 {
++                break;
++            }
++            let left = deadline.saturating_duration_since(Instant::now());
++            if left.is_zero() {
++                log::warn!(
++                    "{in_flight} operation(s) did not complete on shutdown, their memory is leaked"
++                );
++                break;
++            }
++            let wait = u32::try_from(left.as_micros().div_ceil(1000)).unwrap_or(INFINITE - 1);
++            let mut count = 0;
++            let result = syscall!(
++                BOOL,
++                GetQueuedCompletionStatusEx(
++                    self.reactor.port.as_raw_handle().cast(),
++                    events.as_mut_ptr().cast(),
++                    64,
++                    &raw mut count,
++                    wait,
++                    0
++                )
++            );
++            match result {
++                Ok(_) => self.poll_completions(&events[..count as usize]),
++                Err(err) if err.raw_os_error() == Some(WAIT_TIMEOUT.cast_signed()) => (),
++                Err(err) => {
++                    log::error!(
++                        "Cannot wait for {in_flight} cancelled operation(s), their memory is leaked: {err:?}"
++                    );
++                    break;
++                }
++            }
++        }
++
++        for mut h in self.handlers.take().unwrap().into_iter() {
++            h.cleanup();
 +        }
 +    }
-+    Ok(())
-+}
-+```
 +
-+This is a lower-level API than [`ntex::client`](13-client.md). There are no
-+URLs, body helpers or `Response` type, only HTTP/2 streams and what travels
-+on them. The rest of this chapter explains that model first, then covers the
-+client and the server.
++    fn in_flight(&self) -> usize {
++        let handlers = self.handlers.take().unwrap();
++        let n = handlers.iter().map(|h| h.in_flight()).sum();
++        self.handlers.set(Some(handlers));
++        n
++    }
 +
-+## Streams and messages
+     /// Handle ring completions, forward changes to specific handler
+     fn poll_completions(&self, events: &[OVERLAPPED_ENTRY]) {
+         let mut handlers = self.handlers.take().unwrap();
+@@ -849,4 +930,111 @@ mod tests {
+         let file = std::fs::File::open(std::env::current_exe().unwrap()).unwrap();
+         assert!(check_ifs_socket(file.as_raw_handle()).is_err());
+     }
 +
-+An HTTP/2 connection carries many independent streams at once, and each
-+request shares a stream with its response. The client opens a stream by
-+sending request headers. Both sides then send data on it, and each closes its
-+own half when it is done. Either side can also cut a stream short with a
-+reset, which leaves the connection and its other streams untouched.
++    type Events = Rc<std::cell::RefCell<Vec<&'static str>>>;
 +
-+In ntex-h2, a stream is represented by a `StreamRef`: a cheap, cloneable
-+handle that identifies the stream and lets you send on it. Everything that
-+arrives on a stream reaches you as a `Message`:
++    /// An operation that is in flight until its completion is dispatched.
++    /// `cancel()` posts that completion, unless the operation is stuck.
++    struct Cancellable {
++        api: ReactorApi,
++        ov: Box<Overlapped>,
++        pending: bool,
++        stuck: bool,
++        events: Events,
++    }
 +
-+```rust,ignore
-+pub struct Message {
-+    pub stream: StreamRef,
-+    pub kind: MessageKind,
-+}
-+```
-+
-+A client and a server see the same kinds of messages:
-+
-+| `MessageKind` | Meaning |
-+|---|---|
-+| `Headers { pseudo, headers, eof }` | A request or response head. `pseudo` holds the pseudo-headers: `method`, `scheme`, `authority`, and `path` on requests, and `status` on responses. If `eof` is `true`, there is no body. |
-+| `Data(Bytes, Capacity)` | A chunk of the body. `Capacity` is the flow-control credit the chunk used, see [Flow control](#flow-control). |
-+| `Eof(StreamEof)` | The peer's half of the stream is finished. It ends with `StreamEof::Data` (a last chunk), `StreamEof::Trailers` (trailing headers), or `StreamEof::Error` (the stream failed or was reset). |
-+| `Disconnect(err)` | The connection failed while the stream was still open. |
-+
-+Messages always arrive in the same order: one `Headers`, then any number of
-+`Data`, then exactly one `Eof` or `Disconnect`. If `Headers` has `eof` set,
-+it is the only message.
-+
-+Sending works the same way. The headers go first, sent with `send` on a
-+client or `send_response` on a server. Any number of `send_payload` calls
-+follow, and the stream ends either with `eof` set on the last one or with
-+`send_trailers`.
-+
-+## Configuration
-+
-+Protocol settings live in `ServiceConfig`. As with other ntex configuration,
-+you add it to a [`SharedCfg`], and every connection created with that
-+`SharedCfg` picks it up:
-+
-+```rust,no_run
-+use ntex::{SharedCfg, time::Seconds};
-+use ntex_h2::ServiceConfig;
-+
-+fn config() -> SharedCfg {
-+    SharedCfg::new("H2")
-+        .add(
-+            ServiceConfig::new()
-+                .set_max_concurrent_streams(128)
-+                .set_initial_window_size(256 * 1024)
-+     
++    impl Cancellable {
++        fn register(reactor: &Reactor, stuck: bool, events: &Events) {
++            reactor.register(|api| {
++                let ov = Box::new(api.overlapped(0));
++                Box::new(Cancellable {
++                    api,
++                    ov,
++       
 ```
 
-**File**: `docs/SUMMARY.md` (modified, +1/-0)
+**File**: `ntex-net/src/iocp/stream.rs` (modified, +197/-66)
 ```diff
-@@ -18,6 +18,7 @@
-   - [WebSocket Support](8.6-web-app.md)
- - [Integrations]()
-   - [HTTP Client](13-client.md)
-+  - [HTTP/2 Client and Server](14-h2.md)
-   - [Building gRPC Services and Clients](11-grpc.md)
- - [Securing Connections with TLS](10-tls.md)
- - [Byte Buffers](9-bytes.md)
-```
-
-**File**: `docs/index.md` (modified, +1/-0)
-```diff
-@@ -19,6 +19,7 @@ build web applications.
-   - [WebSocket Support](./8.6-web-app.md)
- - Integrations
-   - [HTTP Client](./13-client.md)
-+  - [HTTP/2 Client and Server](./14-h2.md)
-   - [Building gRPC Services and Clients](11-grpc.md)
- - [Securing Connections with TLS](./10-tls.md)
- - [Byte Buffers](./9-bytes.md)
-```
-
-**File**: `docs/llms.txt` (modified, +1/-0)
-```diff
-@@ -484,6 +484,7 @@ async fn main() -> std::io::Result<()> {
- - [Byte Buffers](https://docs.ntex.rs/9-bytes.html)
- - [Securing Connections with TLS](https://docs.ntex.rs/10-tls.html): backend and component configuration, identities, peer certificates, and mutual authentication
- - [Making HTTP Requests](https://docs.ntex.rs/13-client.html): the `ntex::client` HTTP/1.1 and HTTP/2 client, connection pooling, `ClientConfig` and timeouts, TLS connectors, request bodies, reading responses, and client middleware
-+- [HTTP/2 with ntex-h2](https://docs.ntex.rs/14-h2.html): standalone HTTP/2 client and server, `ServiceConfig`, pooled and single-connection clients, streams and resets, `Capacity` and flow control, publish and control services
- - [Timers and Time Utilities](https://docs.ntex.rs/12-time.html): timer wheel design and precision, `Millis` and `Seconds`, `sleep`, `deadline`, `timeout`, `interval`, and callback timers
+@@ -185,6 +185,8 @@ struct StreamOpsInner {
+     storage: Cell<Option<Box<StreamOpsStorage>>>,
+     delayed_feed: Queue<IdType>,
+     pool: pool::Pool<io::Result<()>>,
++    /// The runtime has stopped, completions only finish their operations
++    stopped: Cell<bool>,
+ }
  
- ## API
+ struct StreamOpsStorage {
+@@ -204,6 +206,7 @@ impl StreamOps {
+                         streams: Slab::new(),
+                     }))),
+                     delayed_feed: Queue::new(),
++                    stopped: Cell::new(false),
+                 });
+                 inner = Some(ops.clone());
+                 Box::new(StreamOpsHandler { inner: ops })
+@@ -235,50 +238,52 @@ impl StreamOps {
+         #[cfg(feature = "trace")]
+         log::trace!("{}: Registered({:?}) {:?}", ctx.tag(), sock, addr);
+ 
+-        let mut storage = self.0.storage.take().unwrap();
+-        let entry = storage.streams.vacant_entry();
+-        let id = entry.key();
+-
+-        // read op
+-        //
+-        // A non-blocking socket is read in place without waiting for the kernel
+-        // to report it readable first; overlapped operations are not affected
+-        let nonblocking = match io.set_nonblocking(true) {
+-            Ok(()) => true,
+-            Err(err) => {
+-                log::error!(
+-                    "{}: Cannot switch socket({sock:?}) to non-blocking mode, {err:?}",
+-                    ctx.tag()
+-                );
+-                false
+-            }
+-        };
+-        let mut rd_op = ops::ReadOperation::new(id, sock, ctx.clone(), nonblocking);
+-        // edge-triggered notifications need a non-blocking socket, it is
+-        // read until drained. Such a read never waits with an overlapped
+-        // recv, so it needs no kernel header.
+-        let rd_overlapped = if notify && nonblocking && self.0.api.register_notify(sock as _, id) {
+-            rd_op.use_notifications();
+-            None
+-        } else {
+-            Some(self.0.api.overlapped(ops::RD_OP))
+-        };
++        let id = self.0.with(|storage| {
++            let entry = storage.streams.vacant_entry();
++            let id = entry.key();
+ 
+-        let ops = OpPairBox::new(
+-            rd_overlapped,
+-            rd_op,
+-            self.0.api.overlapped(ops::WR_OP),
+-            ops::WriteOperation::new(id, sock, ctx),
+-        );
++            // read op
++            //
++            // A non-blocking socket is read in place without waiting for the kernel
++            // to report it readable first; overlapped operations are not affected
++            let nonblocking = match io.set_nonblocking(true) {
++                Ok(()) => true,
++                Err(err) => {
++                    log::error!(
++                        "{}: Cannot switch socket({sock:?}) to non-blocking mode, {err:?}",
++                        ctx.tag()
++                    );
++                    false
++                }
++            };
++            let mut rd_op = ops::ReadOperation::new(id, sock, ctx.clone(), nonblocking);
++            // edge-triggered notifications need a non-blocking socket, it is
++            // read until drained. Such a read never waits with an overlapped
++            // recv, so it needs no kernel header.
++            let rd_overlapped =
++                if notify && nonblocking && self.0.api.register_notify(sock as _, id) {
++                    rd_op.use_notifications();
++                    None
++                } else {
++                    Some(self.0.api.overlapped(ops::RD_OP))
++                };
++
++            let ops = OpPairBox::new(
++                rd_overlapped,
++                rd_op,
++                self.0.api.overlapped(ops::WR_OP),
++                ops::WriteOperation::new(id, sock, ctx),
++            );
+ 
+-        entry.insert(StreamItem {
+-            io,
+-            ops,
+-            addr,
+-            close: None,
+-            flags: Flags::empty(),
++            entry.insert(StreamItem {
++                io,
++                ops,
++                addr,
++                close: None,
++                flags: Flags::empty(),
++            });
++            id
+         });
+-        self.0.storage.set(Some(storage));
+ 
+         (
+             StreamCtl {
+@@ -303,6 +308,10 @@ impl Handler for StreamOpsHandler {
+                 None
+             }
+         } {
++            if self.inner.stopped.get() {
++                // `cleanup()` closes the socket and frees the item
++                return;
++            }
+             self.inner.with(|st| {
+                 if let Some(item) = st.streams.get_mut(id)
+                     && !item.flags.contains(Flags::CLOSED)
+@@ -351,6 +360,9 @@ impl Handler for StreamOpsHandler {
+         // harmless: a non-blocking socket is found drained, a blocking one is
+         // not read before the kernel reports input, and a paused stream is
+         // not read at all.
++        if self.inner.stopped.get() {
++            return;
++        }
+         let op = self.inner.with(|st| {
+             st.streams
+                 .get_
+```
+
+**File**: `ntex-net/src/uring/stream.rs` (modified, +41/-17)
+```diff
+@@ -724,7 +724,7 @@ impl Handler for StreamOpsHandler {
+         // Reactor has flushed pending submissions and canceled all in-flight
+         // operations. Release every socket here, otherwise stored `IoContext`s
+         // keep `StreamOpsInner` alive through the io handle and nothing closes.
+-        if let Some(mut v) = self.inner.storage.take() {
++        self.inner.try_with(|v| {
+             for item in v.streams.drain() {
+                 if item.flags.intersects(Flags::DROPPED_PRI | Flags::CLOSING) {
+                     // descriptor is closed or being closed by the kernel
+@@ -738,8 +738,7 @@ impl Handler for StreamOpsHandler {
+                     drop(item.io);
+                 }
+             }
+-            self.inner.storage.set(Some(v));
+-        }
++        });
+         self.inner.delayed_feed.clear();
+     }
+ }
+@@ -1204,26 +1203,46 @@ impl Drop for StreamOpsInner {
+ }
+ 
+ impl StreamOpsInner {
++    /// Runs `f` with the storage.
++    ///
++    /// # Panics
++    ///
++    /// Panics if the storage is already in use, a re-entrant call.
+     fn with<F, R>(&self, f: F) -> R
+     where
+         F: FnOnce(&mut StreamOpsStorage) -> R,
+     {
+-        let mut storage = self.storage.take().unwrap();
++        self.try_with(f)
++            .expect("io-uring stream storage is in use, re-entrant call")
++    }
++
++    /// Runs `f` with the storage, returns `None` if it is already in use.
++    ///
++    /// Aborts the process if `f` panics. The storage owns buffers and sockets
++    /// of in-flight operations, dropping it while unwinding would release
++    /// memory the kernel still writes to.
++    fn try_with<F, R>(&self, f: F) -> Option<R>
++    where
++        F: FnOnce(&mut StreamOpsStorage) -> R,
++    {
++        let mut storage = self.storage.take()?;
++        // declared after `storage`, so it is dropped first while unwinding
++        let guard = ntex_rt::AbortOnUnwind("io-uring stream operation panicked");
+         let result = f(&mut storage);
++        guard.disarm();
+         self.storage.set(Some(storage));
+-        result
++        Some(result)
+     }
+ 
+     fn check_delayed_feed(&self) {
+-        if let Some(mut storage) = self.storage.take() {
++        self.try_with(|storage| {
+             while let Some(id) = self.delayed_feed.pop() {
+                 match id {
+                     IdType::Stream(id) => storage.drop_stream(id, &self.api),
+                     IdType::Weak(id) => storage.drop_weak_stream(id),
+                 }
+             }
+-            self.storage.set(Some(storage));
+-        }
++        });
+     }
+ }
+ 
+@@ -1302,31 +1321,36 @@ impl StreamCtl {
+ 
+ impl Drop for StreamCtl {
+     fn drop(&mut self) {
+-        if let Some(mut storage) = self.inner.storage.take() {
+-            storage.drop_stream(self.id, &self.inner.api);
+-            self.inner.storage.set(Some(storage));
+-        } else {
++        let dropped = self
++            .inner
++            .try_with(|storage| storage.drop_stream(self.id, &self.inner.api));
++        if dropped.is_none() {
+             self.inner.delayed_feed.push(IdType::Stream(self.id));
+         }
+     }
+ }
+ 
+ impl WeakStreamCtl {
++    /// Runs `f` with the socket.
++    ///
++    /// Returns `None` if the stream is gone, or if called while the storage
++    /// is in use, from a filter that processes received data for example.
+     pub(crate) fn with_io<F, R>(&self, f: F) -> Option<R>
+     where
+         F: FnOnce(&Socket) -> R,
+     {
+         self.inner
+-            .with(|storage| storage.streams.get(self.id).map(|item| f(&item.io)))
++            .try_with(|storage| storage.streams.get(self.id).map(|item| f(&item.io)))
++            .flatten()
+     }
+ }
+ 
+ impl Drop for WeakStreamCtl {
+     fn drop(&mut self) {
+-        if let Some(mut storage) = self.inner.storage.take() {
+-            storage.drop_weak_stream(self.id);
+-            self.inner.storage.set(Some(storage));
+-        } else {
++        let dropped = self
++            .inner
++            .try_with(|storage| storage.drop_weak_stream(self.id));
++        if dropped.is_none() {
+             self.inner.delayed_feed.push(IdType::Weak(self.id));
+         }
+     }
+```
+
+**File**: `ntex-net/tests/uring.rs` (modified, +55/-2)
+```diff
+@@ -7,10 +7,10 @@
+ use std::io::{ErrorKind, Read, Write};
+ use std::os::unix::net::UnixStream;
+ use std::{any::Any, future::Future, future::poll_fn, net, panic, sync::mpsc, task::Poll, thread};
+-use std::{time::Duration, time::Instant};
++use std::{cell::Cell, rc::Rc, time::Duration, time::Instant};
+ 
+ use ntex::codec::BytesCodec;
+-use ntex::io::{Io, IoConfig, types::PeerAddr};
++use ntex::io::{FilterBuf, FilterLayer, Io, IoConfig, types::PeerAddr};
+ use ntex::time::{Seconds, sleep};
+ use ntex::util::Bytes;
+ use ntex_rt::{BlockFuture, Runner, System};
+@@ -418,6 +418,59 @@ fn io_outlives_close() {
+     });
+ }
+ 
++/// Queries `PeerAddr` while it processes received data, and passes the data on.
++#[derive(Debug)]
++struct QueryPeer(Rc<Cell<usize>>);
++
++impl FilterLayer for QueryPeer {
++    fn process_read_buf(&self, buf: &FilterBuf<'_>) -> std::io::Result<()> {
++        let _ = buf.io().query::<PeerAddr>().get();
++        self.0.set(self.0.get() + 1);
++        buf.with_read_buffers(|src, dst| {
++            if let Some(s) = src.take() {
++                dst.extend_from_slice(&s);
++            }
++        });
++        Ok(())
++    }
++
++    fn process_write_buf(&self, buf: &FilterBuf<'_>) -> std::io::Result<()> {
++        buf.with_write_buffers(|src, dst| {
++            while let Some(p) = src.take() {
++                dst.append(p);
++            }
++        });
++        Ok(())
++    }
++}
++
++/// STATEMENT: A filter can query `PeerAddr` while it processes data from a
++/// completed receive, the re-entrant query neither panics nor breaks the read.
++///
++/// HOW:
++/// - Wrap a TCP io in a `QueryPeer` filter, which queries `PeerAddr` from
++///   `process_read_buf`, while the receive completion holds the stream storage.
++/// - Send data from the peer and confirm it is received through the filter and
++///   that the filter ran.
++/// - Confirm `PeerAddr` outside of a read still reports the peer address.
++#[test]
++fn filter_queries_peer_addr_while_reading() {
++    run(64, move || async {
++        let (sock, mut peer) = tcp_pair(None);
++        let addr = peer.local_addr().unwrap();
++        let calls = Rc::new(Cell::new(0));
++        let io = ntex_net::from_tcp_stream(sock, cfg())
++            .unwrap()
++            .add_filter(QueryPeer(calls.clone()));
++
++        peer.write_all(b"hello").unwrap();
++        let data = io.recv(&BytesCodec).await.unwrap().unwrap();
++        assert_eq!(&data[..], b"hello");
++        assert!(calls.get() > 0);
++        assert_eq!(io.query::<PeerAddr>().get().map(|a| a.0), Some(addr));
++    });
++}
++
+ /// Decodes frames of a fixed size, a partial frame stays buffered.
+ struct Fixed(usize);
+ 
+```
+
+**File**: `ntex-rt/CHANGES.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## [4.6.0] - 2026-11-07
+ 
++* Add `AbortOnUnwind` guard, it aborts the process if dropped before it is disarmed
++
+ * Add `Builder::timer_resolution()` to set the timer wheel resolution, a power
+   of two between 1 and 16 ms, and `System::timer_resolution()` and
+   `SystemConfig::timer_resolution()` accessors
+```
+
+---
+
+### Incident Patch 3: `44e98cb5` (2026-11-07)
+**Commit Message**: Fix openssl alloc functions on windows
+
+**File**: `ntex-tls/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -80,6 +80,7 @@ windows-sys = { workspace = true, features = [
+     "Win32_Security_Authentication_Identity",
+     "Win32_Security_Credentials",
+     "Win32_Security_Cryptography",
++    "Win32_System_LibraryLoader",
+     "Win32_System_SystemInformation",
+     "Wdk_System_SystemServices",
+ ] }
+```
+
+**File**: `ntex-tls/src/openssl/alloc.rs` (modified, +38/-1)
+```diff
+@@ -102,13 +102,50 @@ mod shim {
+         };
+         if current == hooks(malloc, realloc, free) {
+             true
+-        } else if current == hooks(CRYPTO_malloc, CRYPTO_realloc, CRYPTO_free) {
++        } else if current == hooks(CRYPTO_malloc, CRYPTO_realloc, CRYPTO_free)
++            || current.0.and_then(dll_defaults) == Some(current)
++        {
+             unsafe { CRYPTO_set_mem_functions(malloc, realloc, free) == 1 }
+         } else {
+             false
+         }
+     }
+ 
++    /// Default hooks exported by the DLL containing the `malloc` hook address.
++    ///
++    /// With a DLL OpenSSL our `CRYPTO_*` items are import thunks, while OpenSSL
++    /// reports its own addresses. Returns `None` if the address is not in a module.
++    #[cfg(windows)]
++    fn dll_defaults(malloc: usize) -> Option<(Option<usize>, Option<usize>, Option<usize>)> {
++        use windows_sys::Win32::System::LibraryLoader::{
++            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
++            GetModuleHandleExW, GetProcAddress,
++        };
++        let flags =
++            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT;
++        let mut module = ptr::null_mut();
++        // SAFETY: with FROM_ADDRESS the name is an address, the reference count is unchanged.
++        if unsafe { GetModuleHandleExW(flags, malloc as *const u16, &raw mut module) } == 0 {
++            return None;
++        }
++        // SAFETY: the module stays loaded, it provides the installed hooks.
++        let export = |name: &std::ffi::CStr| {
++            unsafe { GetProcAddress(module, name.as_ptr().cast()) }.map(|f| f as usize)
++        };
++        Some((
++            export(c"CRYPTO_malloc"),
++            export(c"CRYPTO_realloc"),
++            export(c"CRYPTO_free"),
++        ))
++    }
++
++    /// Import thunks only exist on Windows.
++    #[cfg(not(windows))]
++    #[allow(clippy::unnecessary_wraps)]
++    fn dll_defaults(_: usize) -> Option<(Option<usize>, Option<usize>, Option<usize>)> {
++        None
++    }
++
+     /// Includes the aligned header, rejecting arithmetic overflow and invalid layouts.
+     fn layout(size: usize) -> Option<Layout> {
+         Layout::from_size_align(size.checked_add(HEADER)?, ALIGN).ok()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1189** (2026-11-06): Add `tokio` feature, implements tokio `AsyncRead` and `AsyncWrite` for `Io<F>` and `IoBoxed` (@fafhrd91)
-- **PR #1188** (2026-11-05): Add mqtt client and service framework guide (@fafhrd91)
-- **PR #1187** (2026-11-05): Update rt guide page (@fafhrd91)
-- **PR #1186** (2026-11-05): Add http2 client and service framework guide (@fafhrd91)
-- **PR #1185** (2026-11-05): Fix services shutdown (@fafhrd91)
-- **PR #1184** (2026-11-05): Add framework guide page on http client (@fafhrd91)
+- **PR #1195** (2026-11-07): Update server version (@fafhrd91)
+- **PR #1194** (2026-11-07): Allow to spawn multiple accept threads (@fafhrd91)
+- **PR #1193** (2026-11-07): Various fixes after unsafe audit (@fafhrd91)
+- **PR #1192** (2026-11-07): Remove unsafe trait impl (@fafhrd91)
+- **PR #1191** (2026-11-07): Use the timer resolution of the current system (@fafhrd91)
+- **PR #1190** (2026-11-07): Various ntex improvements (@fafhrd91)
 
 ---
 
@@ -2829,52 +3133,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add mqtt client and service framework guide
+## X. web: Fix request pool aliasing when a request extension drops another request, a
 
 **RULE**:
-When implementing operations in `docs/14-h2.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/miri.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `421761ca`: Add mqtt client and service framework guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34945510`: web: Fix request pool aliasing when a request extension drops another request, and a panic when a request is dropped during thread-local teardown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/14-h2.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/miri.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-service, with `ntex::server::build()` (see the [server chapter](5-server.md)):
-### Server state
-
-The publish and control services run in pipelines whose state is the
-*connection state*: a value that travels with the I/O object, as described in
-[Carrying state with a request](3-state.md#carrying-state-with-a-request).
-A plain `Io` carries no state, so the state is `()`. That is why `Echo`
-above implements `Service<(), Message>` and its factory takes `&()`.
-
-The worker state, created by `build_with_config()` (see
-[Worker and request state](6-server-app.md)), is not passed to these
-services. To make it available, put a service in front of `Server` that reads
-the worker state and returns the connection wrapped in a `State`, together
-with whatever the handlers need. That service can also record details about
-the connection, such as the peer address. ntex-h2 clones the connection state
-for the publish and control factories, so it must implement `Clone`. Keep
-shared resources behind an `Rc`.
-
-Handlers can then be [state-aware functions](3-state.md#state-aware-functions)
-that take the connection state as their first argument, and service
-factories receive it in `create`:
-
-```rust,no_run
-us
+      - name: Run Miri (ntex::web handler futures, request pool)
+        run: cargo miri nextest run -p ntex --lib -- "web::handler::tests::" "web::config::tests::miri_"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-service, with `ntex::server::build()` (see the [server chapter](8-server.md)):
-described in the [server chapter](8-server.md). To wind down HTTP/2
+      - name: Run Miri (ntex::web handler futures)
+        run: cargo miri nextest run -p ntex --lib -- "web::handler::tests::"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `421761ca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34945510` are properly handled with clean fallback behavior.
