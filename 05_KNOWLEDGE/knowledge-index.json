@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T06:59:47.112Z",
+  "last_updated": "2026-11-08T07:08:53.974Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38382,14 +38382,19 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "e42aa54a",
-      "content_hash": "31d90de1970346c45573ddc1d5f3a4b7613d3c73ff784c3cde83fe03476f9112",
+      "source_version": "b82d8418",
+      "content_hash": "495c2bb61ad4a9946d7ea51860f55f529ab399964e9089f78c00ea2e40ce9f8e",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #1287 from kucherenko/docs/readme-who-uses",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "release: cpd-v5.4.3",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38468,7 +38473,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:34:04.706Z",
+      "verified_at": "2026-11-08T07:08:52.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80292,11 +80297,16 @@
       "slug": "tanstack-router",
       "platform": "github",
       "source_url": "https://github.com/TanStack/router",
-      "source_version": "c5320d7c",
-      "content_hash": "371e7545033373f3002c463975bf21c5f1e59e3d6cad9922d583168e23a7b8ed",
+      "source_version": "7dbce080",
+      "content_hash": "31ddab094ed0217ca1902dc6c980d83e5435492e6646136cf15935da40cb3d1c",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "router-devtools-core): restore embedded panel styling (#8888)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 5139,
           "title": "start-plugin-core): skip unchanged server function resolver rebuilds in Rsbuild",
@@ -80313,7 +80323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:32:01.404Z",
+      "verified_at": "2026-11-08T07:08:53.941Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

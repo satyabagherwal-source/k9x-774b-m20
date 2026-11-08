@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T06:59:47.258Z",
+  "last_updated": "2026-11-08T07:08:54.081Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "31d90de1970346c45573ddc1d5f3a4b7613d3c73ff784c3cde83fe03476f9112",
-      "verified_at": "2026-11-06T21:34:04.828Z",
+      "content_hash": "495c2bb61ad4a9946d7ea51860f55f529ab399964e9089f78c00ea2e40ce9f8e",
+      "verified_at": "2026-11-08T07:08:52.766Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T21:34:04.828Z"
+      "last_updated": "2026-11-08T07:08:52.766Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",
@@ -17106,14 +17106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-router",
-      "content_hash": "371e7545033373f3002c463975bf21c5f1e59e3d6cad9922d583168e23a7b8ed",
-      "verified_at": "2026-11-04T20:32:01.517Z",
+      "content_hash": "31ddab094ed0217ca1902dc6c980d83e5435492e6646136cf15935da40cb3d1c",
+      "verified_at": "2026-11-08T07:08:54.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:32:01.517Z"
+      "last_updated": "2026-11-08T07:08:54.080Z"
     },
     "tencent/Hy-SimulMT-30B-A3B-FP8": {
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",

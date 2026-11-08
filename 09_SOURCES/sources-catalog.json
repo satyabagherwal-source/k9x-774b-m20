@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "e42aa54a",
+    "sourceVersion": "b82d8418",
     "license": "MIT",
-    "contentHash": "31d90de1970346c45573ddc1d5f3a4b7613d3c73ff784c3cde83fe03476f9112",
-    "lastHarvestedAt": "2026-11-06T21:34:04.819Z",
+    "contentHash": "495c2bb61ad4a9946d7ea51860f55f529ab399964e9089f78c00ea2e40ce9f8e",
+    "lastHarvestedAt": "2026-11-08T07:08:52.757Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
@@ -11383,10 +11383,10 @@
     "repository": "TanStack/router",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/router",
-    "sourceVersion": "c5320d7c",
+    "sourceVersion": "7dbce080",
     "license": "MIT",
-    "contentHash": "371e7545033373f3002c463975bf21c5f1e59e3d6cad9922d583168e23a7b8ed",
-    "lastHarvestedAt": "2026-11-04T20:32:01.500Z",
+    "contentHash": "31ddab094ed0217ca1902dc6c980d83e5435492e6646136cf15935da40cb3d1c",
+    "lastHarvestedAt": "2026-11-08T07:08:54.071Z",
     "learningId": "learn-github-tanstack-router"
   },
   "hf-tencent-hy-simulmt-30b-a3b-fp8": {

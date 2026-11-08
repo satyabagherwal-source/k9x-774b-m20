@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T06:59:47.254Z",
-  "total_cycles_completed": 8213,
-  "total_learnings_persisted": 8213,
-  "total_rules_promoted": 7929,
+  "last_updated": "2026-11-08T07:08:54.077Z",
+  "total_cycles_completed": 8215,
+  "total_learnings_persisted": 8215,
+  "total_rules_promoted": 7931,
   "history": [
-    {
-      "timestamp": "2026-11-07T18:57:13.868Z",
-      "repository": "Kong/kubernetes-ingress-controller",
-      "learningId": "learn-github-kong-kubernetes-ingress-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T18:57:18.841Z",
-      "repository": "skyzh/mini-lsm",
-      "learningId": "learn-github-skyzh-mini-lsm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T19:09:35.180Z",
       "repository": "open-ani/animeko",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T06:59:47.254Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T07:08:52.763Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T07:08:54.077Z",
+      "repository": "TanStack/router",
+      "learningId": "learn-github-tanstack-router",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

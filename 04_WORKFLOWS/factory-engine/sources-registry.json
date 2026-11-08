@@ -22,14 +22,14 @@
     "officialUrl": "https://github.com/TanStack/router",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T20:32:00.855Z",
-    "lastVerified": "2026-11-04T20:32:00.855Z",
+    "lastChecked": "2026-11-08T07:08:52.448Z",
+    "lastVerified": "2026-11-08T07:08:52.448Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tanstack-router",
-    "contentHash": "371e7545033373f3002c463975bf21c5f1e59e3d6cad9922d583168e23a7b8ed",
+    "contentHash": "31ddab094ed0217ca1902dc6c980d83e5435492e6646136cf15935da40cb3d1c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T06:59:49.842Z",
-    "lastVerified": "2026-11-08T06:59:49.842Z",
+    "lastChecked": "2026-11-08T07:09:01.139Z",
+    "lastVerified": "2026-11-08T07:09:01.139Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T06:33:00.430Z",
-    "lastVerified": "2026-11-08T06:33:00.430Z",
+    "lastChecked": "2026-11-08T07:09:01.129Z",
+    "lastVerified": "2026-11-08T07:09:01.129Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -335,8 +335,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-08T03:28:20.320Z",
-    "lastVerified": "2026-11-08T03:28:20.320Z",
+    "lastChecked": "2026-11-08T07:08:56.201Z",
+    "lastVerified": "2026-11-08T07:08:56.201Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -3261,9 +3261,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-07T03:49:06.639Z",
+    "lastChecked": "2026-11-08T07:08:58.614Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-07T03:49:06.639Z"
+    "lastVerified": "2026-11-08T07:08:58.614Z"
   },
   "clementtsang-bottom": {
     "name": "bottom",
@@ -4708,12 +4708,12 @@
     "officialUrl": "https://github.com/kucherenko/jscpd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T21:29:01.607Z",
-    "lastVerified": "2026-11-06T21:29:01.607Z",
+    "lastChecked": "2026-11-08T07:08:49.828Z",
+    "lastVerified": "2026-11-08T07:08:49.828Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "31d90de1970346c45573ddc1d5f3a4b7613d3c73ff784c3cde83fe03476f9112",
+    "contentHash": "495c2bb61ad4a9946d7ea51860f55f529ab399964e9089f78c00ea2e40ce9f8e",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -7065,12 +7065,12 @@
     "lastVerified": "2026-11-07T20:09:17.497Z"
   },
   "rook-rook": {
-    "name": "rook/rook",
+    "name": "rook",
     "officialUrl": "https://github.com/rook/rook",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T04:44:24.754Z",
-    "lastVerified": "2026-11-07T04:44:24.754Z",
+    "lastChecked": "2026-11-08T07:08:53.791Z",
+    "lastVerified": "2026-11-08T07:08:53.791Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rook-rook",
@@ -7079,7 +7079,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ad6e6fc9"
   },
   "startrail-org-leann": {
     "name": "LEANN",
@@ -9971,9 +9972,9 @@
   "productdevbook-port-killer": {
     "name": "port-killer",
     "officialUrl": "https://github.com/productdevbook/port-killer",
-    "lastChecked": "2026-11-05T06:07:40.088Z",
+    "lastChecked": "2026-11-08T07:08:51.145Z",
     "revisionIdentifier": "2209b0fd",
-    "lastVerified": "2026-11-05T06:07:40.088Z"
+    "lastVerified": "2026-11-08T07:08:51.145Z"
   },
   "lokoe-mehdi-scouter": {
     "name": "scouter",

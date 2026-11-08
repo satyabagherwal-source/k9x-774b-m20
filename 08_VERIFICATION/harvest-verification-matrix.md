@@ -8248,3 +8248,5 @@
 | `CYCLE-20261108-FFXA` | `2026-11-08T06:59:42.046Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`d9af7141...`) |
 | `CYCLE-20261108-FG0S` | `2026-11-08T06:59:42.172Z` | `pingcap/autoflow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pingcap-autoflow-learnings.md` | Yes (`e63145c7...`) |
 | `CYCLE-20261108-FJXJ` | `2026-11-08T06:59:47.239Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ebf7f702...`) |
+| `CYCLE-20261108-R8UP` | `2026-11-08T07:08:52.753Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`495c2bb6...`) |
+| `CYCLE-20261108-R9V7` | `2026-11-08T07:08:54.067Z` | `TanStack/router` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`31ddab09...`) |

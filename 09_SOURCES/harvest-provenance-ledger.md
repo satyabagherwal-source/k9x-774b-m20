@@ -8257,3 +8257,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-08T06:59:42.050Z |
 | `learn-github-pingcap-autoflow` | `https://github.com/pingcap/autoflow` | `01cdf88f` | Multi-dimensional audit evidence | 2026-11-08T06:59:42.175Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `adc282a7` | Multi-dimensional audit evidence | 2026-11-08T06:59:47.249Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `b82d8418` | Multi-dimensional audit evidence | 2026-11-08T07:08:52.757Z |
+| `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `7dbce080` | Multi-dimensional audit evidence | 2026-11-08T07:08:54.071Z |
