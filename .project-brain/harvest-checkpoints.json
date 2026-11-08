@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T02:05:41.252Z",
+  "last_updated": "2026-11-08T02:15:44.282Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3231,14 +3231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autogluon-chronos-2",
-      "content_hash": "c01b2833fa84226bd1cac418f0fafd135e4d9cf275b528a5f7199a7d91733124",
-      "verified_at": "2026-11-04T10:30:23.994Z",
+      "content_hash": "6c71224d24fdae118d176dc717e1ba659a70c06f2b6e9b89168c377c287b226f",
+      "verified_at": "2026-11-08T02:15:41.305Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:30:23.994Z"
+      "last_updated": "2026-11-08T02:15:41.305Z"
     },
     "deeplethe/solid-glass": {
       "repository": "deeplethe/solid-glass",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "396cac133563071e39baae4baa0c5bc007efc6458172b13799982ce24f86163f",
-      "verified_at": "2026-11-05T22:54:53.175Z",
+      "content_hash": "ae8391f5f5a7cb980c98f9e93b8881a2bcd7430de882eb264c9d9beacb246566",
+      "verified_at": "2026-11-08T02:15:34.340Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:54:53.175Z"
+      "last_updated": "2026-11-08T02:15:34.340Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "92f91a70eed14c69a0581e2a00c543e9a623d503ce3c116521206aba10683dc1",
-      "verified_at": "2026-11-07T02:54:31.936Z",
+      "content_hash": "844d6bac0c5a9d456005091ae2d9f474d0b6af4a95a45814f7bd2ba859c60d8d",
+      "verified_at": "2026-11-08T02:15:44.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T02:54:31.936Z"
+      "last_updated": "2026-11-08T02:15:44.282Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",

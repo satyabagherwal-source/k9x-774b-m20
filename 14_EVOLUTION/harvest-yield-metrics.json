@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T02:05:41.242Z",
-  "total_cycles_completed": 8137,
-  "total_learnings_persisted": 8137,
-  "total_rules_promoted": 7813,
+  "last_updated": "2026-11-08T02:15:44.279Z",
+  "total_cycles_completed": 8140,
+  "total_learnings_persisted": 8140,
+  "total_rules_promoted": 7818,
   "history": [
-    {
-      "timestamp": "2026-11-07T03:01:31.300Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T03:02:03.068Z",
-      "repository": "LiquidAI/LFM3-Audio-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T03:14:21.807Z",
-      "repository": "octodns/octodns",
-      "learningId": "learn-github-octodns-octodns",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T03:14:25.382Z",
       "repository": "giancarloerra/SocratiCode",
@@ -1403,6 +1382,27 @@
       "repository": "meta/docusaurus",
       "learningId": "learn-github-meta-docusaurus",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:15:34.337Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:15:41.296Z",
+      "repository": "autogluon/chronos-2",
+      "learningId": "learn-huggingface-autogluon-chronos-2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:15:44.279Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

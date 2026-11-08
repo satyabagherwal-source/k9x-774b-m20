@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T02:05:41.155Z",
+  "last_updated": "2026-11-08T02:15:44.190Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7524,8 +7524,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "05ca843b",
-      "content_hash": "92f91a70eed14c69a0581e2a00c543e9a623d503ce3c116521206aba10683dc1",
+      "source_version": "2af367f7",
+      "content_hash": "844d6bac0c5a9d456005091ae2d9f474d0b6af4a95a45814f7bd2ba859c60d8d",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7542,6 +7542,11 @@
         {
           "number": null,
           "title": "skip endpoints with missing netns during ztunnel initial snapshot",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update cilium/cilium-cli action to v0.20.2",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7790,7 +7795,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T02:54:31.785Z",
+      "verified_at": "2026-11-08T02:15:44.170Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14133,14 +14138,19 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "372d151c",
-      "content_hash": "396cac133563071e39baae4baa0c5bc007efc6458172b13799982ce24f86163f",
+      "source_version": "0544c112",
+      "content_hash": "ae8391f5f5a7cb980c98f9e93b8881a2bcd7430de882eb264c9d9beacb246566",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "security): trace require() bindings of node child_process and fs (#4238)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test(cloud): run the Linux credential store of cloud login in CI (#4316)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14219,7 +14229,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:54:53.060Z",
+      "verified_at": "2026-11-08T02:15:34.237Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81593,10 +81603,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autogluon/chronos-2",
       "source_version": "hf-autogluon-chronos-2",
-      "content_hash": "c01b2833fa84226bd1cac418f0fafd135e4d9cf275b528a5f7199a7d91733124",
+      "content_hash": "6c71224d24fdae118d176dc717e1ba659a70c06f2b6e9b89168c377c287b226f",
       "dossier_path": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Quantile Output Head for Probabilistic Forecasting",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Group Attention for Multivariate Cross-Learning",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1684,
           "title": "Continuous Range Non-Linear Scaling via Invertible Arcsinh",
@@ -81653,6 +81673,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 5283,
+          "title": "Patch-Based Sequence Compression for Long-Context Efficiency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 5946,
           "title": "Temporal Patching Invariant for Long-Context Time Series",
           "status": "PROMOTED_AND_VERIFIED"
@@ -81688,7 +81713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:30:23.873Z",
+      "verified_at": "2026-11-08T02:15:41.167Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155280,14 +155305,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5283,
       "title": "Patch-Based Sequence Compression for Long-Context Efficiency",
-      "source_url": "https://huggingface.co/amazon/chronos-2",
-      "source_version": "hf-amazon-chronos-2",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T12:46:42.999Z"
+      "verified_at": "2026-11-08T02:15:41.167Z"
     },
     "rule-5284": {
       "learning_id": "rule-5284",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `372d151c`  
+> **Source Version**: `0544c112`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:54:52.021Z  
+> **Timestamp**: 2026-11-08T02:15:33.224Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:54:51.783Z  
+> **Harvest Timestamp**: 2026-11-08T02:15:32.100Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5304 stars
+- **Stars / Engagement**: 5314 stars
 
 ---
 
@@ -346,13 +346,73 @@ export const installChildHooks = ({ active, beforeEach, afterEach, report }) => 
 // Generated from tools/mutation-runner/src/runtime/overlay-hook.mjs. Do not edit.
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { registerHooks } from "node:module";
+import { registerHooks, stripTypeScriptTypes } from "node:module";
+import { extname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { compileFunction } from "node:vm";
 
 import { realPath } from "./child.mjs";
 
 const SCRIPT_FORMATS = new Set(["module", "commonjs", "module-typescript", "commonjs-typescript"]);
+const JAVASCRIPT_FORMATS = new Set(["module", "commonjs"]);
+// Node type stripping does not accept JSX, so a `.tsx` file is not here.
+const TYPESCRIPT_EXTENSIONS = new Set([".ts", ".mts", ".cts"]);
+const COMMONJS_PARAMETERS = ["exports", "require", "module", "__filename", "__dirname"];
+const HASHBANG = /^#!.*/;
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
+/**
+ * Calls `stripTypeScriptTypes` without its ExperimentalWarning. The warning
+ * goes to stderr of the process, and a test can assert on that stream.
+ */
+const stripTypes = (code) => {
+  const emitWarning = process.emitWarning;
+  process.emitWarning = () => {};
+  try {
+    const mode = process.features.typescript === "transform" ? "transform" : "strip";
+    return stripTypeScriptTypes(code, { mode });
+  } finally {
+    process.emitWarning = emitWarning;
+  }
+};
+
+/**
+ * Throws when the code does not compile as a CommonJS module. A project loader
+ * that compiles ESM-syntax TypeScript to CommonJS gives format `commonjs`, but
+ * type stripping keeps `import` and `export` in the mutant.
+ */
+const assertCommonJs = (code) => {
+  try {
+    compileFunction(code.replace(HASHBANG, ""), COMMONJS_PARAMETERS);
+  } catch (error) {
+    throw new Error(
+      `the project loader gives format \`commonjs\`, but the mutant does not compile as CommonJS (${error.message})`,
+      { cause: error },
+    );
+  }
+};
+
+/**
+ * Gives the source to serve for an overlay entry, as a Result. A TypeScript
+ * target in a JavaScript format comes from a project loader that compiles
+ * TypeScript before this hook. The hook replaces that output with the
+ * mutant, so the hook strips the types of the mutant. The error names the
+ * syntax that type stripping does not accept, for example an `enum`, or ESM
+ * syntax in a mutant that the project loader gives as CommonJS.
+ */
+const serveTarget = (entry, format) => {
+  const source = readFileSync(entry.target, "utf8");
+  if (!JAVASCRIPT_FORMATS.has(format) || !TYPESCRIPT_EXTENSIONS.has(extname(entry.target))) {
+    return { ok: true, source };
+  }
+  try {
+    const stripped = stripTypes(source);
+    if (format === "commonjs") assertCommonJs(stripped);
+    return { ok: true, source: stripped };
+  } catch (error) {
+    return { ok: false, error: `Cannot serve the mutant of ${entry.source}: ${error.message}` };
+  }
+};
 
 const indexSources = (overlay) => {
   const index = new Map();
@@ -371,8 +431,10 @@ const indexSources = (overlay) => {
  * file. `onLoad(entry)` runs for each served file.
  *
  * A synchronous hook runs in this thread for `import` and `require`. It keeps
- * the format of the original file, so Node strips the types of a TypeScript
- * file as it does without the overlay.
+ * the format of the original file. For a TypeScript file in a TypeScript
+ * format, Node strips the types as it does without the overlay. A project
+ * loader that compiles TypeScript itself gives a JavaScript format, so the
+ * hook strips the types of the mutant (see `serveTarget`).
  */
 export const registerOverlayHook = (overlay, onLoad, onIncomplete) => {
   let sources;
@@ -398,8 +460,13 @@ export const registerOverlayHook = (overlay, onLoad, onIncomplete) => {
       const result = nextLoad(url, context);
       const entry = overlayEntry(url, result);
       if (entry === undefined) return result;
+      const served = serveTarget(entry, result.format);
+      if (!served.ok) {
+        onIncomplete(served.error);
+        return result;
+      }
       onLoad(entry);
-      return { ...result, source: readFileSync(entry.target, "utf8"), shortCircuit: true };
+      return { ...result, source: served.source, shortCircuit: true };
     },
   });
 };
@@ -1214,7 +1281,7 @@ fn format_finding(finding: &Finding<'_>) -> String {
 use std::path::Path;
 use std::process::ExitCode;
 
-use crate::error::emit_error;
+use crate::error::emit_input_error;
 use crate::init;
 use crate::setup_hooks;
 
@@ -1340,9 +1407,8 @@ fn run_hooks_install(
     match target {
         HooksTargetArg::Git => {
             if agent.is_some() || user || gitignore_claude {
-                return emit_error(
+                return emit_input_error(
                     "--agent, --user, and --gitignore-claude are only valid with `fallow hooks install --target agent`",
-                    2,
                     output,
                 );
             }
@@ -1356,9 +1422,8 @@ fn run_hooks_install(
         }
         HooksTargetArg::Agent => {
             if branch.is_some() || prune_baselines {
-                return emit_error(
+                return emit_input_error(
                     "--branch and --prune-baselines are only valid with `fallow hooks install --target git`",
-                    2,
                     output,
                 );
             }
@@ -1399,9 +1464,8 @@ fn run_hooks_uninstall(
     match target {
         HooksTargetArg::Git => {
             if agent.is_some() || user {
-                return emit_error(
+                return emit_input_error(
                     "--agent and --user are only valid with `fallow hooks uninstall --target agent`",
-                    2,
                     output,
                 );
             }
@@ -1445,11 +1509,13 @@ pub use fallow_types::path_util::{
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4245** (2026-11-05): **`fallow mutation` counts `__tests__` helpers and bench files as static test files**
-  *Symptoms*: `fallow mutation` counts two kinds of files as static test files that Vitest does not run:  - a helper module under `__tests__/` that imports the mutated file, for example `src/__tests__/utils.ts`; - a Vitest benchmark file, for example `benchmarks/add.bench.js`.  Vitest does not list these files with its default `include` (`**/*.{test,spec}.?(c|m)[jt]s?(x)`). The run then reports `test-files-not-discovered` and the status `partial`, also when every real test ran.  ## Repro  A Vitest 4.1.11 project with an empty `vitest.config.mjs` and these files:  ```js // src/add.js export const add = (a, b) => a + b;  // src/__tests__/utils.ts import { add } from "../add.js"; export const sum3 = (a, b, c) => add(add(a, b), c);  // src/__tests__/add.test.js import { expect, test } from "vitest"; import { add } from "../add.js"; import { sum3 } from "./utils";  test("add", () => {   expect(add(1, 2)).toBe(3);   expect(sum3(1, 2, 3)).toBe(6); });  // benchmarks/add.bench.js import { bench } from "vitest"; import { add } from "../src/add.js";  bench("add", () => {   add(1, 2); }); ```  `fallow mutation src/add.js --format json --quiet` gives:  ```json "completion": { "status": "partial", "reasons": ["test-files-not-discovered"] }, "errors": [{ "code": "test-files-not-discovered", "message": "the runner does not list 2 static test files, so they did not run: benchmarks/add.bench.js, src/__tests__/utils.ts" }] ```  and `files[0].static_test_files` is `["benchmarks/add.bench.js", "src/__tests__/
+- **Issue #4313** (2026-11-07): **Member called on an element of an array returned by a call is reported unused**
+  *Symptoms*: ### What happened?  `for (const table of all())` with `all(): Table[]` does not credit `table.setVip()`. `all().forEach((table) => table.setVip())` and `all()[0].setVip()` are reported the same way, and so is `const tables = all(); for (const table of tables)`.  ### Reproduction  ```sh mkdir repro27 && cd repro27 echo '{ "name": "repro", "private": true, "type": "module", "main": "src/index.ts" }' > package.json mkdir node_modules src cat > src/table.ts <<'EOF' export class Table {     setVip(): void {} } EOF cat > src/index.ts <<'EOF' import { Table } from "./table.js";  function all(): Table[] {     return [new Table()]; }  for (const table of all()) {     table.setVip(); } EOF fallow dead-code ```  ```   1 entry point detected (1 package.json)  ── Unused Code ─────────────────────────────────────  ● Unused class members (1)   src/table.ts     :2 Table.setVip   Class methods or properties never referenced outside their class   https://fallow.tools/docs/explanations/dead-code/#unused-class-members  ✗ 1 class member (0.01s) <claude-code-hint v="1" type="plugin" value="fallow@claude-plugins-official" /> ```  The contrast: with `const tables: Table[] = [new Table()]; for (const table of tables)`, or a parameter typed `Table[]`, nothing is reported.  ### Expected behavior  Members called on an element of the returned array are credited through the element type, as for a typed array local.  ### Fallow version  3.40.0  ### Operating system  Linux  ### Configuration  None.
+  **Post-Mortem & Fix Analysis**:
+  > classes are really hard to solve completely and I am not sure if fallow will really be able to catch all of them, i think it needs true type information in order to get rid of the rest of them i filed 3 that i think fallow can solve with repros
 
-- **Issue #4233** (2026-11-05): **Graph cache: a new file at a missed resolver candidate path keeps a stale resolution**
-  *Symptoms*: The persisted graph cache can serve a stale import resolution when a new file appears at a path that the resolver tried and did not find.  ## Steps  1. Make a project with `src/index.ts` that has `import { alpha } from './util'`, and `src/util.ts`. 2. Run `fallow dead-code` with the cache on. 3. Add an extensionless file `src/util` (or a `src/util.json`, or a build output file in an ignored directory) that the resolver prefers for `./util`. 4. Run `fallow dead-code` again with the cache on, and once with `--no-cache`.  ## Result  The warm run uses the resolutions of step 2. The `--no-cache` run resolves `./util` to the new file. The two runs report different findings.  ## Cause  The graph cache key covers the discovered source files, the resolver manifests and the install state. It does not cover the paths that the resolver tried and did not find. Discovery does not list an extensionless file or a `.json` file, so the new file does not change the key.  ## Evidence  The read-set oracle in `crates/engine/tests/integration/cache_model/read_set.rs` records these misses. It skips them now (see the module comment), because the key cannot cover them yet.  ## Possible fix  Record the missing candidates that the resolver tried for each specifier, and key on their existence. This needs a bound, because each specifier can try many extensions. 
+- **Issue #4312** (2026-11-07): **Member called on the result of an inherited this.method() is reported unused when the subclass is not exported**
+  *Symptoms*: ### What happened?  Follow-up to #4183. `this.find()?.setVip()` in `class Viewer extends Floor` credits `Table.setVip` when `Viewer` is exported, but not when `Viewer` is a module-local class.  ### Reproduction  ```sh mkdir repro26 && cd repro26 echo '{ "name": "repro", "private": true, "type": "module", "main": "src/index.ts" }' > package.json mkdir node_modules src cat > src/table.ts <<'EOF' export class Table {     setVip(): void {} } EOF cat > src/floor.ts <<'EOF' import { Table } from "./table.js";  export class Floor {     protected find(): Table | undefined {         return new Table();     } } EOF cat > src/index.ts <<'EOF' import { Floor } from "./floor.js";  class Viewer extends Floor {     mark(): void {         this.find()?.setVip();     } }  new Viewer().mark(); EOF fallow dead-code ```  ```   1 entry point detected (1 package.json)  ── Unused Code ─────────────────────────────────────  ● Unused class members (1)   src/table.ts     :2 Table.setVip   Class methods or properties never referenced outside their class   https://fallow.tools/docs/explanations/dead-code/#unused-class-members  ✗ 1 class member (0.01s) <claude-code-hint v="1" type="plugin" value="fallow@claude-plugins-official" /> ```  The contrast: with `export class Viewer`, nothing is reported. A non-exported class that defines `find()` itself also gets the credit.  ### Expected behavior  `Table.setVip` is credited whether or not the subclass is exported.  ### Fallow version  3.40.0  ### Operating syst
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1466,1491 +1532,1349 @@ pub use fallow_types::path_util::{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b78f34c4` (2026-11-05)
-**Commit Message**: fix(security): trace require() bindings of node child_process and fs (#4238)
+### Incident Patch 1: `f4d67d31` (2026-11-06)
+**Commit Message**: test(cloud): run the Linux credential store of cloud login in CI (#4316)
 
-* fix(security): trace require() bindings of node child_process and fs
+* test(cloud): run the Linux credential store of cloud login in CI
 
-`fallow security` gave no candidate for a sink that a destructured
-require() binds, for example
-`const { exec } = require("node:child_process"); exec(cmd)`. The
-detector checks provenance against ES imports only, because core
-releases the require() facts before analysis.
+The Linux paths of the credential store of `fallow cloud login` had no
+test. Only the macOS keychain round trip and the forced file store ran.
 
-The extractor already traced named and require() bindings of node:vm
-to a `node:vm.<member>` path, which proves the provenance on its own.
-The same now applies to node:child_process, node:fs and
-node:fs/promises. The catalogue rows for the bare callees match the
-`node:` paths instead. A parameter that hides the import no longer
-gives a candidate.
+New integration tests run login, `inspect --cloud` and logout with the
+automatic store selection and a mock device flow:
 
-The module list moves to fallow-types, because the policy effect lookup
-reads callee uses as written. It now builds the same `node:` path, so a
-banned-effect rule keeps its match on `exec(cmd)` after a named import.
+- Without a D-Bus session, the key goes to the credentials file. The
+  test asserts mode 0600 for the file and 0700 for its directory.
+- With a D-Bus session and `secret-tool`, the key goes to the Secret
+  Service. The test reads the key back with `secret-tool` and checks
+  that logout removes it. The test is ignored by default, because it
+  needs an unlocked keyring.
 
-The extraction output changes, so CACHE_VERSION goes to 414.
+`scripts/linux-keychain-test.sh` runs both tests. It starts a D-Bus
+session with a temporary gnome-keyring, so it does not touch the
+keyring of the user. With `--docker`, it runs in a Linux container.
+The new `Linux keychain` CI job runs the script when the credential
+store code changes, and on each push to main.
 
-Closes #4226
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* fix(security): report the destination of rename and copyFile for fs bindings
-
-A 
-
-**File**: `changelog.d/fix-security-require-provenance.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+### Fixed
-+
-+- **`fallow security` reports a sink that a destructured `require()` binds.** Before, `const { exec } = require("node:child_process"); exec(cmd)` gave no `command-injection` candidate, and `const { readFileSync } = require("node:fs")` gave no `path-traversal` candidate. The same code with an ES import gave a candidate. Fallow now traces a named binding of `node:child_process`, `node:fs` and `node:fs/promises` to its module, for ES imports, aliased imports (`import { readFile as read }`) and destructured `require()` calls. The same applies to `world-writable-permission` and `insecure-temp-file`, and to `fs.promises.writeFile` and `fs.promises.chmod` on `const fs = require("fs")`. The destination of `rename`, `copyFile` and `copyFileSync` is now also a `path-traversal` candidate for these bindings, when the argument or the module reads untrusted input. In `fallow security`, a parameter that has the same name as the import no longer gives a candidate.
-+
-+  The callee in `evidence` and in `candidate.sink.callee` now names the module, as it already did for `node:vm`. This applies to named imports and to `require()` bindings. For example, `execSync()` and `cp.execSync()` after `const cp = require("child_process")` become `node:child_process.execSync()`. A default or namespace import keeps its written callee, such as `fs.readFile()`. `finding_id` does not change, because it does not include the callee. (Closes [#4226](https://github.com/fallow-rs/fallow/issues/4226))
-```
-
-**File**: `crates/core/src/analyze/policy/mod.rs` (modified, +61/-4)
-```diff
-@@ -8,6 +8,7 @@ use fallow_types::extract::{ImportedName, ModuleInfo};
- use fallow_types::output::IssueAction;
- use fallow_types::output_dead_code::PolicyViolationFinding;
- use fallow_types::results::{PolicyRuleKind, PolicyViolation, PolicyViolationSeverity};
-+use fallow_types::security_sinks::node_binding_module;
- 
- use crate::discover::FileId;
- use crate::graph::ModuleGraph;
-@@ -719,11 +720,67 @@ fn effect_for_callee(
-     if written.is_some() {
-         return written;
-     }
--    let canonical = canonical_callee_path(module, callee_path)?;
--    catalogue_matchers()
-+    [
-+        canonical_callee_path(module, callee_path),
-+        node_binding_callee_path(module, callee_path),
-+    ]
-+    .into_iter()
-+    .flatten()
-+    .find_map(|path| {
-+        catalogue_matchers()
-+            .iter()
-+            .find(|matcher| matcher_matches_callee(matcher, module, &path, declared_deps))
-+            .map(|matcher| matcher.effect)
-+    })
-+}
-+
-+/// The `node:<module>.<member>` path of a callee whose leading identifier an
-+/// ES import or a `require()` binds to a module in
-+/// [`NODE_BINDING_MODULES`](fallow_types::security_sinks::NODE_BINDING_MODULES).
-+/// The extractor writes the same path for a sink site, and the catalogue
-+/// rows of those modules match only that path.
-+fn node_binding_callee_path(module: &ModuleInfo, callee_path: &str) -> Option<String> {
-+    let (head, rest) = match callee_path.split_once('.') {
-+        Some((head, rest)) => (head, Some(rest)),
-+        None => (callee_path, None),
-+    };
-+    // `fs.promises.<member>` takes the path of an `fs/promises` import, as in
-+    // the extractor.
-+    let join = |root: String, member: Option<&str>| -> Option<String> {
-+        let path = match (member, rest) {
-+            (Some(member), Some(rest)) => format!("{root}.{member}.{rest}"),
-+            (Some(member), None) => format!("{root}.{member}"),
-+            (None, Some(rest)) => format!("{root}.{rest}"),
-+            (None, None) => return None,
-+        };
-+        Some(match path.strip_prefix("node:fs.promises.") {
-+            Some(member) => format!("node:fs.{member}"),
-+            None => path,
-+        })
-+    };
-+    if let Some(import) = module
-+        .imports
-         .iter()
--        .find(|matcher| matcher_matches_callee(matcher, module, &canonical, declared_deps))
--        .map(|matcher| matcher.effect)
-+        .find(|import| import.local_name == head && !import.is_type_only)
-+    {
-+        let root = node_binding_module(&import.source)?;
-+        return match &import.imported_name {
-+            ImportedName::Named(imported) => join(root, Some(imported)),
-+            ImportedName::Namespace | ImportedName::Default => join(root, None),
-+            ImportedName::SideEffect => None,
-+        };
-+    }
-+    let call = module.require_calls.iter().find(|call| {
-+        !call.is_type_only
-+            && (call.local_name.as_deref() == Some(head)
-+                || call.destructured_names.iter().any(|name| name == head))
-+    })?;
-+    let root = node_binding_module(&call.source)?;
-+    if call.local_name.as_deref() == Some(head) {
-+        join(root, None)
-+    } else {
-+        join(root, Some(head))
-+    }
- }
- 
- fn matcher_matches_callee(
-```
-
-**File**: `crates/core/src/analyze/policy/tests.rs` (modified, +78/-0)
-```diff
-@@ -1347,3 +1347,81 @@ fn scope_glob_single_star_stays_within_one_segment() {
-     assert!(matches("src/a.ts"));
-     assert!(!matches("src/nested/a.ts"));
- }
-+
-+/// Run one `banned-effect` rule over a module and return the matched texts.
-+fn banned_effect_matches(effect: EffectKind, module: ModuleInfo) -> Vec<String> {
-+    let root = PathBuf::from("/tmp/policy-test");
-+    let config = make_config(
-+        root.clone(),
-+        vec![pack(vec![banned_effect("no-effect", &[effect])])],
-+        Severity::Warn,
-+    );
-+    let graph = build_graph(&root, &["src/app.ts"]);
-+    let suppressions = SuppressionContext::empty();
-+    let line_offsets = FxHashMap::default();
-+    find_policy_violations(&graph, &[module], &config, &suppressions, &line_offsets)
-+        .into_iter()
-+        .map(|violation| violation.matched)
-+        .collect()
-+}
-+
-+#[test]
-+fn banned_effect_matches_a_named_node_module_import() {
-+    let module = module(
-+        0,
-+        vec![callee("exec", 0)],
-+        vec![import(
-+            "node:child_process",
-+            ImportedName::Named("exec".to_string()),
-+            "exec",
-+            false,
-+        )],
-+    );
-+
-+    assert_eq!(
-+        banned_effect_matches(EffectKind::Shell, module),
-+        ["shell: exec"]
-+    );
-+}
-+
-+#[test]
-+fn banned_effect_matches_a_destructured_node_module_require() {
-+    let mut shell = module(0, vec![callee("execSync", 0)], Vec::new());
-+    shell
-+        .require_calls
-+        .push(require_call("child_process", None, &["execSync"]));
-+    let mut storage = module(0, vec![callee("unlinkSync", 0)], Vec::new());
-+    storage
-+        .require_calls
-+        .push(require_call("node:fs", None, &["unlinkSync"]));
-+
-+    assert_eq!(
-+        banned_effect_matches(EffectKind::Shell, shell),
-+        ["shell: execSync"]
-+    );
-+    assert_eq!(
-+        banned_effect_matches(EffectKind::Storage, storage),
-+        ["storage: unlinkSync"]
-+    );
-+}
-+
-+#[test]
-+fn banned_effect_ignores_a_local_with_the_name_of_a_node_module_member() {
-+    let module = module(0, vec![callee("exec", 0)], Vec::new());
-+
-+    assert!(banned_effect_matches(EffectKind::Shell, module).is_empty());
-+}
-+
-+#[test]
-+fn banned_effect_matches_fs_promises_on_a_module_import() {
-+    let module = module(
-+        0,
-+        vec![callee("fs.promises.rm", 0)],
-+        vec![import("node:fs", ImportedName::Default, "fs", false)],
-+    );
-+
-+    assert_eq!(
-+        banned_effect_matches(EffectKind::Storage, module),
-+        ["storage: fs.promises.rm"]
-+    );
-+}
-```
-
-**File**: `crates/core/tests/integration_test/security_catalogue_categories.rs` (modified, +21/-1)
-```diff
-@@ -1366,7 +1366,23 @@ fn llm_call_injection_langchain_invoke_does_not_fire() {
- 
- // ── catalogue gaps: callee variants of existing categories ───────────────────
- 
--const CATALOGUE_GAP_SINKS: [(&str, &str, u32); 16] = [
-+const CATALOGUE_GAP_SINKS: [(&str, &str, u32); 24] = [
-+    ("src/cjs-fs-rename-destination.ts", "path-traversal", 22),
-+    ("src/cjs-fs-promises-temp.ts", "insecure-temp-file", 377),
-+    (
-+        "src/cjs-fs-promises-chmod.ts",
-+        "world-writable-permission",
-+        732,
-+    ),
-+    ("src/cjs-destructured-exec.ts", "command-injection", 78),
-+    ("src/cjs-module-exec.ts", "command-injection", 78),
-+    ("src/cjs-destructured-fs.ts", "path-traversal", 22),
-+    ("src/fs-aliased-import.ts", "path-traversal", 22),
-+    (
-+        "src/cjs-destructured-chmod.ts",
-+        "world-writable-permission",
-+        732,
-+    ),
-     ("src/exec-file.ts", "command-injection", 78),
-     ("src/shelljs.ts", "command-injection", 78),
-     ("src/ssti-handlebars.ts", "ssti", 1336),
-@@ -1434,6 +1450,10 @@ fn catalogue_gap_lookalikes_do_not_fire() {
-             "src/exec-file-tooling.ts",
-             "execFile of a computed binary without untrusted input is not a candidate",
-         ),
-+        (
-+            "src/exec-local-shadow.ts",
-+            "a parameter that hides the exec import is not a shell call",
-+        ),
-         (
-             "src/fs-build-path.ts",
-             "a computed path without untrusted input is not a candidate",
-```
-
-**File**: `crates/extract/src/cache/types.rs` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ use crate::MemberKind;
- /// extraction semantics change, and give the reason in the commit message and
- /// the CHANGELOG. A stale version serves old extraction results from a warm
- /// cache. The `assert_cached_type_size!` guards below catch shape changes.
--pub(super) const CACHE_VERSION: u32 = 413;
-+pub(super) const CACHE_VERSION: u32 = 414;
- 
- /// Duplication token cache version. Bump it when duplicate tokenization,
- /// normalization, or the on-disk token cache schema changes, and give the
-```
-
-**File**: `crates/extract/src/tests/js_ts/callee_uses.rs` (modified, +4/-2)
-```diff
-@@ -88,8 +88,10 @@ fn coexists_with_security_sink_capture() {
-         "callee-use capture should coexist with sink capture"
-     );
-     assert!(
--        info.security_sinks.iter().any(|s| s.callee_path == "exec"),
--        "security sink capture should be unaffected"
-+        info.security_sinks
-+            .iter()
-+            .any(|s| s.callee_path == "node:child_process.exec"),
-+        "security sink capture should trace the named import"
-     );
- }
- 
-```
-
-**File**: `crates/extract/src/visitor/tests.rs` (modified, +7/-4)
-```diff
-@@ -13220,7 +13220,7 @@ fn security_sink_arg_via_conditional_expression_collects_source_paths() {
-     let sink = info
-         .security_sinks
-         .iter()
--        .find(|s| s.callee_path == "execSync");
-+        .find(|s| s.callee_path == "node:child_process.execSync");
-     assert!(
-         sink.is_some(),
-         "execSync with conditional arg should be captured: {:#?}",
-@@ -13245,7 +13245,10 @@ fn security_sink_arg_via_await_expression_collects_source_paths() {
-         }
-         ",
-     );
--    let sink = info.security_sinks.iter().find(|s| s.callee_path == "exec");
-+    let sink = info
-+        .security_sinks
-+        .iter()
-+        .find(|s| s.callee_path == "node:child_process.exec");
-     assert!(
-         sink.is_some(),
-         "exec with await-wrapped arg should be captured: {:#?}",
-@@ -13268,7 +13271,7 @@ fn security_sink_arg_via_unary_expression_collects_source_paths() {
-     let sink = info
-         .security_sinks
-         .iter()
--        .find(|s| s.callee_path == "execSync");
-+        .find(|s| s.callee_path == "node:child_process.execSync");
-     assert!(
-         sink.is_some(),
-         "execSync with source-backed arg should be captured"
-@@ -13294,7 +13297,7 @@ fn security_sink_ident_collected_through_template_literal_expression() {
-     let sink = info
-         .security_sinks
-         .iter()
--        .find(|s| s.callee_path == "execSync");
-+        .find(|s| s.callee_path == "node:child_process.execSync");
-     assert!(
-         sink.is_some(),
-         "execSync with template-literal arg should be captured"
-```
-
-**File**: `crates/extract/src/visitor/visit_impl_security_sinks.rs` (modified, +22/-27)
-```diff
-@@ -8,7 +8,7 @@ use fallow_types::extract::{
-     SecurityControlSite, SinkArgKind, SinkLiteralValue, SinkShape, SinkSite,
-     SkippedSecurityCalleeExpressionKind, SkippedSecurityCalleeReason, SkippedSecurityCalleeSite,
- };
--use fallow_types::security_sinks::JSX_SPREAD_SINK_PROPS;
-+use fallow_types::security_sinks::{JSX_SPREAD_SINK_PROPS, node_binding_module};
- 
- use super::super::ModuleInfoExtractor;
- use super::visit_security_controls::security_control_kind_for_callee;
-@@ -63,11 +63,6 @@ enum SinkBinding {
-     ScriptElement,
- }
- 
--/// Node.js built-in modules whose named and CommonJS bindings resolve to a
--/// `node:<module>.<member>` callee path. The `node:` root is not a valid
--/// identifier, so the path proves the import provenance on its own.
--const NODE_BINDING_MODULES: &[&str] = &["vm"];
--
- /// Properties of a `<script>` element whose value the browser loads or runs
- /// as code.
- const SCRIPT_ELEMENT_CODE_PROPERTIES: &[&str] = &["src", "text", "textContent", "innerText"];
-@@ -158,15 +153,6 @@ fn set_sink_binding(
-     }
- }
- 
--/// The `node:` path of an import source when the module is in
--/// [`NODE_BINDING_MODULES`] (`vm` and `node:vm` both give `node:vm`).
--fn node_binding_module(source: &str) -> Option<String> {
--    let module = source.strip_prefix("node:").unwrap_or(source);
--    NODE_BINDING_MODULES
--        .contains(&module)
--        .then(|| format!("node:{module}"))
--}
--
- /// Whether `expr` is `<object>.createElement("script")`.
- fn is_create_script_element_call(expr: &Expression<'_>) -> bool {
-     let Expression::CallExpression(call) = unwrap_static_expr(expr) else {
-@@ -370,7 +356,7 @@ fn is_string_code_callee(callee_path: &str) -> bool {
- fn is_chmod_literal_callee(callee_path: &str) -> bool {
-     matches!(
-         callee_path,
--        "fs.chmod" | "fs.chmodSync" | "fs.promises.chmod" | "chmod" | "chmodSync"
-+        "fs.chmod" | "fs.chmodSync" | "fs.promises.chmod" | "node:fs.chmod" | "node:fs.chmodSync"
-     )
- }
- 
-@@ -384,11 +370,11 @@ fn is_temp_file_literal_callee(callee_path: &str) -> bool {
-             | "fs.createWriteStream"
-             | "fs.promises.writeFile"
-             | "fs.promises.appendFile"
--            | "writeFile"
--            | "writeFileSync"
--            | "appendFile"
--            | "appendFileSync"
--            | "createWriteStream"
-+            | "node:fs.writeFile"
-+            | "node:fs.writeFileSync"
-+            | "node:fs.appendFile"
-+            | "node:fs.appendFileSync"
-+            | "node:fs.createWriteStream"
-     )
- }
- 
-@@ -1217,9 +1203,12 @@ impl ModuleInfoExtractor {
-     /// On top of [`Self::static_callee_path`], this maps a global-object prefix
-     /// on a code-executing global (`window.eval`) and a local alias of one
-     /// (`const e = eval; e(code)`) to the bare global. A binding of a Node.js
--    /// built-in module in [`NODE_BINDING_MODULES`] resolves to its `node:`
--    /// path (`runInNewContext(code)` after `import { runInNewContext } from
--    /// "vm"` becomes `node:vm.runInNewContext`).
-+    /// built-in module in
-+    /// [`NODE_BINDING_MODULES`](fallow_types::security_sinks::NODE_BINDING_MODULES)
-+    /// resolves to its `node:` path (`runInNewContext(code)` after
-+    /// `import { runInNewContext } from "vm"` becomes
-+    /// `node:vm.runInNewContext`). `fs.promises.<member>` on a module binding
-+    /// becomes `node:fs.<member>`, the path of an `fs/promises` import.
-     fn security_callee_path(&self, expr: &Expression<'_>) -> Option<String> {
-         let path = normalize_global_code_exec_path(self.static_callee_path(expr)?);
-         let (root, rest) = match path.split_once('.') {
-@@ -1230,7 +1219,13 @@ impl ModuleInfoExtractor {
-             (Some(SinkBinding::CodeExec(target) | SinkBinding::NodeModuleMember(target)), None) => {
-                 Some(target.clone())
-             }
--            (Some(SinkBinding::NodeModule(module)), Some(rest)) => Some(format!("{module}.{rest}")),
-+            (Some(SinkBinding::NodeModule(module)), Some(rest)) => {
-+                let rest = match rest.strip_prefix("promises.") {
-+                    Some(member) if module == "node:fs" => member,
-+                    _ => rest,
-+                };
-+                Some(format!("{module}.{rest}"))
-+            }
-             _ => None,
-         };
-         Some(resolved.unwrap_or(path))
-@@ -1521,7 +1516,7 @@ impl ModuleInfoExtractor {
- 
-     /// The sink binding that a value gives to `name`: an alias of a
-     /// code-executing global or of a Node.js module binding, a `require()` of
--    /// a module in [`NODE_BINDING_MODULES`], or a new `<script>` element.
-+    /// a module in [`NODE_BINDING_MODULES`](fallow_types::security_sinks::NODE_BINDING_MODULES), or a new `<script>` element.
-     fn sink_binding_of_value(&self, name: &str, value: &Expression<'_>) -> Option<SinkBinding> {
-         if is_create_script_element_call(value) {
-             return Some(SinkBinding::ScriptElement);
-@@ -1553,7 +1548,7 @@ impl ModuleInfoExtr
-```
-
----
-
-### Incident Patch 2: `78ab1c08` (2026-11-05)
-**Commit Message**: fix(graph): refuse the graph cache when a probed path changes (#4255)
-
-* fix(graph): refuse the graph cache when a probed path changes
-
-The persisted graph cache reused an import resolution after a new file appeared at a path that the resolver tried and did not find. Discovery does not list an extensionless file, a .json file, or build output in an ignored directory, so the manifest did not change. For example, a new file src/util changes the target of ./util from src/util.ts.
-
-Resolution now records each path below the root that it checks and does not find. The resolver payload stores these paths, grouped by directory, and the resolved targets that discovery does not list. restore_resolved_project refuses the payload when a stored missed path exists or a stored target is gone.
-
-The read-set oracle no longer skips missing module candidates.
-
-Closes #4233
+Refs #4002
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* test(graph): skip the probe tests that need a temp directory under Miri
+* test(cloud): fail the Linux keychain s
 
-Miri isolation blocks file system calls. The other temp directory tests of the crate use the same mark.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* fix(graph): check small probe lists without th
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-0)
+**File**: `.github/workflows/ci.yml` (modified, +45/-1)
 ```diff
-@@ -236,6 +236,7 @@ jobs:
-               - 'crates/api/src/similar_code/transport.rs'
-               - 'crates/api/src/type_aware/client/mod.rs'
-               - 'crates/api/tests/integration/common.rs'
-+              - 'crates/graph/src/missed_probes.rs'
-               - 'crates/graph/src/resolve/fallbacks.rs'
-               - 'crates/graph/src/resolve/specifier.rs'
-               - 'crates/graph/src/resolve/tests.rs'
+@@ -56,6 +56,7 @@ jobs:
+       viz: ${{ steps.filter.outputs.viz }}
+       mutation-runner: ${{ steps.filter.outputs.mutation-runner }}
+       similar-code-sidecar: ${{ steps.filter.outputs.similar-code-sidecar }}
++      linux-keychain: ${{ steps.filter.outputs.linux-keychain }}
+       # A failed or skipped selector step never publishes partial output.
+       heavy-runner: ${{ steps.heavy-runner.outcome == 'success' && steps.heavy-runner.outputs.runner || 'ubuntu-26.04' }}
+       miri-runner: ${{ steps.miri-runner.outcome == 'success' && steps.miri-runner.outputs.runner || 'ubuntu-26.04' }}
+@@ -369,6 +370,21 @@ jobs:
+               - '.github/actions/setup-rust/**'
+               - '.github/workflows/ci.yml'
+               - 'scripts/workflow-policy.test.mjs'
++            # `linux-keychain` gates the credential store tests of `fallow
++            # cloud login` with a real Secret Service. The `check` job cannot
++            # run them, because it has no D-Bus session and no keyring.
++            linux-keychain:
++              - 'crates/cli/src/coverage/credentials.rs'
++              - 'crates/cli/src/coverage/login.rs'
++              - 'crates/cli/tests/integration/cloud_login_linux_keychain_tests.rs'
++              - 'crates/cli/tests/integration/inspect_cloud_tests.rs'
++              - 'crates/cli/tests/integration/main.rs'
++              - 'crates/cli/tests/common/**'
++              - 'scripts/linux-keychain-test.sh'
++              - 'rust-toolchain.toml'
++              - '.github/actions/setup-rust/**'
++              - '.github/workflows/ci.yml'
++              - 'scripts/workflow-policy.test.mjs'
+ 
+       # The Blacksmith trial selectors run here, not in jobs of their own, so
+       # Check, Lint and contracts, and Miri wait for no extra runner. The
+@@ -1558,6 +1574,34 @@ jobs:
+       - name: Clippy
+         run: cargo clippy --locked --manifest-path tools/similar-code-sidecar/Cargo.toml --target-dir target --all-targets -- -D warnings
+ 
++  linux-keychain:
++    name: Linux keychain
++    needs: changes
++    if: needs.changes.outputs.linux-keychain == 'true' || (github.event_name == 'push' && needs.changes.outputs.main-full != 'false')
++    runs-on: ubuntu-26.04
++    timeout-minutes: 30
++    permissions:
++      contents: read
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++
++      - uses: ./.github/actions/setup-rust
++        with:
++          cache-key: linux-keychain
++
++      - name: Install the Secret Service
++        run: |
++          sudo apt-get update -qq
++          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends dbus gnome-keyring libsecret-tools
++
++      # The script runs the 0600 file fallback without a D-Bus session, then
++      # the Secret Service round trip in a D-Bus session with a temporary
++      # gnome-keyring. Both use a mock device flow.
++      - name: Run the credential store tests
++        run: sh scripts/linux-keychain-test.sh
++
+   test-gitlab-ci:
+     name: Test GitLab CI scripts
+     needs: changes
+@@ -1837,7 +1881,7 @@ jobs:
+   ci-ok:
+     name: CI
+     if: always()
+-    needs: [changes, docker, check, check-lint, napi, drift, windows-rust, windows-drift, windows-type-aware, doc, typos, js-lint, npm-package, action-current, fallow-self-analyze, vscode, vscode-package-targets, vscode-target-host, zed, test-gitlab-ci, audit, deny, cargo-fallow, zizmor, msrv, miri, skills-vendor, viz-frontend, mutation-runner-floor, similar-code-sidecar]
++    needs: [changes, docker, check, check-lint, napi, drift, windows-rust, windows-drift, windows-type-aware, doc, typos, js-lint, npm-package, action-current, fallow-self-analyze, vscode, vscode-package-targets, vscode-target-host, zed, test-gitlab-ci, audit, deny, cargo-fallow, zizmor, msrv, miri, skills-vendor, viz-frontend, mutation-runner-floor, similar-code-sidecar, linux-keychain]
+     runs-on: ubuntu-26.04
+     timeout-minutes: 5
+     permissions: {}
 ```
 
-**File**: `changelog.d/fix-graph-cache-missed-candidates.md` (added, +3/-0)
+**File**: `crates/cli/tests/integration/cloud_login_linux_keychain_tests.rs` (added, +157/-0)
 ```diff
-@@ -0,0 +1,3 @@
-+### Fixed
+@@ -0,0 +1,157 @@
++#![allow(
++    clippy::unwrap_used,
++    clippy::expect_used,
++    reason = "integration tests keep fixture setup concise"
++)]
 +
-+- **The graph cache now misses when a file appears at a path that import resolution tried and did not find.** Before this fix, a warm run could keep a stale import target after a new extensionless file, a new `.json` file, or new build output in an ignored directory. For example, a new file `src/util` changes the target of `./util` from `src/util.ts`, but discovery does not list it. The graph cache now stores the paths that resolution checked and did not find, and the resolved targets that discovery does not list. A warm run rebuilds the graph when one of these paths appears or is removed. (#4233)
-```
-
-**File**: `crates/core/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -1222,7 +1222,7 @@ fn restore_cached_resolved_project(
-         // debug for the reason `CacheRejection::discarded_existing_work`
-         // documents.
-         tracing::debug!(
--            "Graph cache decoded but its resolver payload no longer maps to the discovered files"
-+            "Graph cache decoded but its resolver payload no longer maps to the project files"
-         );
-         Some(CacheRejection::FileSetChanged)
-     })
-```
-
-**File**: `crates/engine/tests/integration/cache_model/read_set.rs` (modified, +18/-30)
-```diff
-@@ -14,12 +14,6 @@
- //! The oracle skips these paths:
- //!
- //! - an existing directory, and a missing path below an existing file;
--//! - a missing module candidate: a path that the resolver tries for a
--//!   specifier, with an extension or as an extensionless file, that is not a
--//!   config or install file. The key does not record these probes yet, so
--//!   a new non-source file at such a path (a `.json` file, an extensionless
--//!   file, or build output in an ignored directory) can change a resolution
--//!   with no change to the key (#4233);
- //! - a path below `__fallow_ws_self_resolve__`, the directory name that the
- //!   resolver uses for a synthetic importer of a workspace package.
- //!
-@@ -205,35 +199,16 @@ fn perturbation_for(path: &Path, kinds: &FxHashSet<ReadKind>) -> Option<Perturba
-     if path.ancestors().skip(1).any(Path::is_file) {
-         return None;
-     }
--    if kinds.contains(&ReadKind::Dir) {
--        return Some(Perturbation::CreateDir);
--    }
--    is_config_name(path).then_some(Perturbation::CreateFile)
-+    Some(if kinds.contains(&ReadKind::Dir) {
-+        Perturbation::CreateDir
-+    } else {
-+        Perturbation::CreateFile
-+    })
- }
- 
- /// The directory name of the synthetic importer for a workspace package.
- const SELF_RESOLVE_DIR: &str = "__fallow_ws_self_resolve__";
- 
--/// True for the name of a config or install file that a resolver reads,
--/// as opposed to a module candidate.
--fn is_config_name(path: &Path) -> bool {
--    let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
--        return false;
--    };
--    let json = path.extension().is_some_and(|extension| {
--        extension.eq_ignore_ascii_case("json") || extension.eq_ignore_ascii_case("jsonc")
--    });
--    let tsconfig = json && (name.starts_with("tsconfig") || name.starts_with("jsconfig"));
--    tsconfig
--        || matches!(
--            name,
--            "package.json" | "deno.json" | "deno.jsonc" | ".pnp.cjs" | ".pnp.data.json"
--        )
--        || INSTALL_STATE_FILES
--            .iter()
--            .any(|state| Path::new(state).file_name() == Some(name.as_ref()))
--}
--
- /// Apply `perturbation` again and compare a warm run with a cache-free run.
- fn stale_after(
-     project: &Project,
-@@ -414,3 +389,16 @@ fn graph_cache_key_covers_bun_reads() {
- fn graph_cache_key_covers_deno_reads() {
-     assert_key_covers_read_set("deno project", &DENO, &[]);
- }
++//! `fallow cloud login`, `inspect --cloud` and `logout` with the automatic
++//! credential store on Linux, against a mock device flow.
++//!
++//! The store selection runs as on a user machine: `FALLOW_CREDENTIAL_STORE`
++//! is not set. A host without a D-Bus session uses the credentials file with
++//! mode 0600. A host with a D-Bus session and `secret-tool` uses the Secret
++//! Service. The Secret Service test needs an unlocked keyring, so it is
++//! ignored by default. `scripts/linux-keychain-test.sh` starts a D-Bus
++//! session with `gnome-keyring` and runs both tests.
 +
-+#[test]
-+fn graph_cache_key_covers_reads_of_files_that_discovery_does_not_list() {
-+    assert_key_covers_read_set(
-+        "node workspace with files at missed candidate paths",
-+        &NODE,
-+        &[
-+            Step::ToggleExtensionlessUtil,
-+            Step::ToggleDataJson,
-+            Step::ToggleBuildOutput,
-+        ],
-+    );
-+}
-```
-
-**File**: `crates/engine/tests/integration/cache_model/sequences.rs` (modified, +15/-0)
-```diff
-@@ -130,6 +130,21 @@ const REGRESSIONS: &[Regression] = &[
-         template: &ANGULAR,
-         steps: &[Step::SwapAngularMain],
-     },
-+    Regression {
-+        name: "extensionless file at a missed candidate path (#4233)",
-+        template: &NODE,
-+        steps: &[Step::ToggleExtensionlessUtil, Step::ToggleExtensionlessUtil],
-+    },
-+    Regression {
-+        name: "json file at a missed candidate path (#4233)",
-+        template: &NODE,
-+        steps: &[Step::ToggleDataJson, Step::ToggleDataJson],
-+    },
-+    Regression {
-+        name: "build output in an ignored directory (#4233)",
-+        template: &NODE,
-+        steps: &[Step::ToggleBuildOutput, Step::ToggleBuildOutput],
-+    },
- ];
- 
- /// The facts of one sequence run.
-```
-
-**File**: `crates/engine/tests/integration/cache_model/templates.rs` (modified, +30/-1)
-```diff
-@@ -72,6 +72,16 @@ pub enum Step {
-     SwapAngularIncludePath,
-     /// Point the `main` entry of `angular.json` to the other file.
-     SwapAngularMain,
-+    /// Add or remove the extensionless file `src/util`. The resolver tries
-+    /// this path for `./util` before `src/util.ts`, and discovery does not
-+    /// list it.
-+    ToggleExtensionlessUtil,
-+    /// Add or remove `src/data.json`, the target of the unresolved import
-+    /// `./data`. Discovery does not list a `.json` file.
-+    ToggleDataJson,
-+    /// Add or remove `dist/gen.js`, the target of the unresolved import
-+    /// `../dist/gen`. The default ignore patterns exclude `dist`.
-+    ToggleBuildOutput,
- }
- 
- const SOURCE_STEPS: [Step; 7] = [
-@@ -88,7 +98,7 @@ const CLONE_A: &str = "export const sumA = (items: number[]): number => {\n  let
- const CLONE_B: &str = "export const sumB = (items: number[]): number => {\n  let total = 0;\n  for (const item of items) {\n    total += item * 2;\n    total -= 1;\n  }\n  return total;\n};\n";
- const CLONE_B_BROKEN: &str = "export const sumB = (items: number[]): number => {\n  let total = 0;\n  while (items.length>0) {\n    total = items.pop() ?? 10;\n    break;\n  }\n  return total;\n};\n";
- 
--const ENTRY_ALPHA: &str = "import { db } from '#db';\nimport { alias } from '@alias';\nimport { alpha } from './util';\nimport { value } from '@demo/lib/src/util';\nimport { nested } from '../nested/entry';\nimport asset from 'plain-pkg/build/missing.mjs?url';\n\nexport const run = (): unknown[] => [db, alias, alpha(), value, nested, asset];\n";
-+const ENTRY_ALPHA: &str = "import { db } from '#db';\nimport { alias } from '@alias';\nimport { alpha } from './util';\nimport { value } from '@demo/lib/src/util';\nimport { nested } from '../nested/entry';\nimport asset from 'plain-pkg/build/missing.mjs?url';\nimport data from './data';\nimport { gen } from '../dist/gen';\n\nexport const run = (): unknown[] => [db, alias, alpha(), value, nested, asset, data, gen];\n";
- const BUN_ENTRY_ALPHA: &str = "import { alpha } from './util';\nimport asset from 'plain-pkg/build/missing.mjs?url';\n\nexport const run = (): unknown[] => [alpha(), asset];\n";
- const DENO_ENTRY_ALPHA: &str = "import { db } from 'db';\nimport { alpha } from './src/util.ts';\n\nexport const run = (): unknown[] => [db, alpha()];\n";
- 
-@@ -168,6 +178,9 @@ pub const NODE: Template = Template {
-         Step::ToggleProduction,
-         Step::ToggleIgnoreOrphan,
-         Step::ToggleCondition,
-+        Step::ToggleExtensionlessUtil,
-+        Step::ToggleDataJson,
-+        Step::ToggleBuildOutput,
-     ],
- };
- 
-@@ -204,6 +217,7 @@ pub const BUN: Template = Template {
-         Step::NodeModulesNoise,
-         Step::ToggleProduction,
-         Step::ToggleIgnoreOrphan,
-+        Step::ToggleExtensionlessUtil,
-     ],
- };
- 
-@@ -379,6 +393,14 @@ fn swap_in_file(project: &mut Project, file: &str, from: &str, to: &str, keep_mt
-     }
- }
- 
-+fn toggle_file(project: &mut Project, file: &str, content: &str) {
-+    if project.exists(file) {
-+        project.remove(file);
-+    } else {
-+        project.write(file, content);
-+    }
-+}
-+
- fn toggle_option(values: &mut Vec<String>, value: &str) {
-     if let Some(index) = values.iter().position(|existing| existing == value) {
-         values.remove(index);
-@@ -476,6 +498,13 @@ pub fn apply(project: &mut Project, step: Step) {
-                 false,
-             );
-         }
-+        Step::ToggleExtensionlessUtil => {
-+            toggle_file(project, "src/util", "export const alpha = () => 3;\n");
-+        }
-+        Step::ToggleDataJson => toggle_file(project, "src/data.json", "{\"data\": 1}\n"),
-+        Step::ToggleBuildOutput => {
-+            toggle_file(project, "dist/gen.js", "export const gen = 1;\n");
-+        }
-         manifest => apply_manifest_step(project, manifest),
-     }
- }
-```
-
-**File**: `crates/graph/src/cache/mod.rs` (modified, +116/-2)
-```diff
-@@ -40,7 +40,7 @@ pub use store::{GRAPH_CACHE_FILE, GraphCacheStore};
- /// Never reuse a version number that a published build wrote, even from a
- /// development commit. Git history and the CHANGELOG record the reason for
- /// each bump.
--pub const GRAPH_CACHE_VERSION: u32 = 102;
-+pub const GRAPH_CACHE_VERSION: u32 = 103;
- 
- /// Cached form of a resolved target.
- ///
-@@ -401,6 +401,63 @@ impl CachedResolvedReplacedModuleTarget {
- pub struct CachedResolvedProject {
-     modules: Vec<CachedResolvedModule>,
-     replaced_module_targets: Vec<CachedResolvedReplacedModuleTarget>,
-+    /// The paths that the resolution checked and did not find (see
-+    /// [`ResolvedProject::missed_probes`]).
-+    missed_probes: crate::missed_probes::MissedProbes,
-+    /// The resolved targets below the root that are not discovered files
-+    /// and not below `node_modules`, root-relative and sorted.
-+    external_targets: Vec<String>,
-+}
-+
-+impl CachedResolvedProject {
-+    /// True when the files that the cached resolution depends on, but that
-+    /// discovery does not list, changed: a file now exists at a path that the
-+    /// resolution checked and did not find, or a resolved target outside the
-+    /// discovered files is gone. Discovery does not list an extensionless
-+    /// file, a `.json` file, or a file in an ignored directory, so the
-+    /// manifest cannot show these changes.
-+    #[must_use]
-+    fn probed_paths_changed(&self, root: &Path) -> bool {
-+        let start = std::time::Instant::now();
-+        let changed = self.missed_probes.any_exists(root)
-+            || crate::missed_probes::any_missing(root, &self.external_targets);
-+        tracing::debug!(
-+            missed_probes = self.missed_probes.len(),
-+            external_targets = self.external_targets.len(),
-+            elapsed_ms = start.elapsed().as_secs_f64() * 1000.0,
-+            changed,
-+            "checked the probed paths of the graph cache"
-+        );
-+        changed
-+    }
-+}
-+
-+/// The root-relative paths of the [`ResolveResult::ExternalFile`] targets
-+/// below `root` and not below `node_modules`.
-+fn external_targets(root: &Path, resolved: &ResolvedProject) -> Vec<String> {
-+    // The resolver can spell a target with the canonical root. Most projects
-+    // have no external target, so the root is canonicalized only on demand.
-+    let canonical_root = std::cell::OnceCell::new();
-+    let mut targets: Vec<String> = resolved
-+        .modules
-+        .iter()
-+        .flat_map(ResolvedModule::all_resolved_source_edges)
-+        .filter_map(|edge| match edge.target() {
-+            ResolveResult::ExternalFile(path) => crate::missed_probes::project_relative(root, path)
-+                .or_else(|| {
-+                    canonical_root
-+                        .get_or_init(|| dunce::canonicalize(root).ok())
-+                        .as_deref()
-+                        .and_then(|canonical| {
-+                            crate::missed_probes::project_relative(canonical, path)
-+                        })
-+                }),
-+            _ => None,
-+        })
-+        .collect();
-+    targets.sort_unstable();
-+    targets.dedup();
-+    targets
- }
- 
- /// Convert a resolved project into the compact graph-cache resolver payload.
-@@ -425,6 +482,8 @@ pub fn cache_resolved_project(
-     Some(CachedResolvedProject {
-         modules,
-         replaced_module_targets,
-+        missed_probes: resolved.missed_probes.clone(),
-+        external_targets: external_targets(root, resolved),
-     })
- }
- 
-@@ -433,14 +492,19 @@ pub fn cache_resolved_project(
- /// Returns `None` if the payload no longer aligns with the current parse result.
- /// A normal graph-cache manifest hit should keep these aligned; this extra check
- /// keeps corrupt or hand-edited cache files on the safe miss path.
-+///
-+/// Also returns `None` when a file that the cached resolution probed, and that
-+/// discovery does not list, appeared or was removed. The caller restores the
-+/// payload only after the manifest compare, so a run that misses on the
-+/// manifest pays no file system call for the probes.
- #[must_use]
- pub fn restore_resolved_project(
-     root: &Path,
-     modules: &[fallow_types::extract::ModuleInfo],
-     files: &[DiscoveredFile],
-     cached: &CachedResolvedProject,
- ) -> Option<ResolvedProject> {
--    if modules.len() != cached.modules.len() {
-+    if modules.len() != cached.modules.len() || cached.probed_paths_changed(root) {
-         return None;
-     }
- 
-@@ -463,6 +527,7 @@ pub fn restore_resolved_project(
-         modules: resolved_modules,
-         replaced_module_targets,
-         work: crate::resolve::ResolveWork::default(),
-+        missed_probes: cached.missed_probes.clone(),
-     })
- }
- 
-@@ -1129,6 +1194,55 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    #[cfg_attr(miri, ignore = "tempdir is blocked by Miri isolation")]
-+    fn a_changed_probed_path_takes_the_cache_miss_path() {
-+        let temp = tempfile::tempdir().unwrap();
-+        let r
-```
-
-**File**: `crates/graph/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -16,6 +16,7 @@
- 
- pub mod cache;
- pub mod graph;
-+pub mod missed_probes;
- pub mod project;
- pub mod read_trace;
- pub mod resolve;
-```
-
----
-
-### Incident Patch 3: `37d90e8a` (2026-11-05)
-**Commit Message**: fix(agent): refuse to write through a symlink that leaves the project (#4254)
-
-* fix(agent): refuse to write through a symlink in the project
-
-A cloned repository can commit .mcp.json, .claude/ or another harness
-path as a symlink to a file outside the project. agent install and
-uninstall then merged the MCP entry into that outside file. With
---force they also copied its content into a backup in the working tree
-and overwrote it.
-
-In project scope, every agent step now checks the path and each
-directory below the project root. When one of them is a symlink, or the
-path leaves the root, the step does not write, back up or delete. The
-row is skipped with the new symlinked_path reason. hooks install
---target agent exits 2 with an error for the same paths. User scope
-still follows symlinks, because dotfile managers link files in the home
-directory.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* fix(agent): allow symlinks that stay inside the project
-
-The first guard refused every symlink below the project root. That broke
-normal links such as CLAUDE.md -> AGENTS.md and .claude/skills ->
-../.agents/skills. The guard now refuses a path only when a component
-resolves outside the c
-
-**File**: `changelog.d/fix-setup-refuse-symlinked-config.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Security
-+
-+- **`agent install`, `hooks install`, `init` and their uninstall commands no longer write through a symlink that leaves the project.** A cloned repository could commit a project file such as `.mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`, a skill directory, `AGENTS.md`, `.husky/pre-commit` or `.gitignore` as a symlink to a file outside the project. Fallow then wrote, backed up or deleted that outside file, and `--force` copied its content into the working tree. Fallow now refuses a project path when the path, or a directory on the way to it, is a symlink that resolves outside the project root or a dangling link. `agent install` reports the row as `skipped` with the new reason `symlinked_path`. `hooks install` and `init` exit with code 2. A link that stays inside the project, such as `CLAUDE.md -> AGENTS.md` or `.claude/skills -> ../.agents/skills`, still works. `--user` targets and `.git/hooks` still follow symlinks. The skill step also reads `node_modules/fallow/skills` only from files inside the fallow package, so a link in the package cannot copy an outside file into the project.
-```
-
-**File**: `crates/cli/src/agent_install/guide.rs` (modified, +32/-0)
-```diff
-@@ -66,6 +66,9 @@ fn install_agents_guide(ctx: &Ctx) -> StepReport {
-     let path = ctx.root.join(AGENTS_FILE);
-     let base =
-         StepReport::new(None, Step::Guide, StepStatus::Written, Scope::Shared).path(ctx, &path);
-+    if let Some(link) = ctx.symlink_on([path.as_path()]) {
-+        return base.symlinked(ctx, &link);
-+    }
-     let existing = match read_optional_text(&path) {
-         Ok(existing) => existing,
-         Err(error) => return failed(ctx, &path, error),
-@@ -114,6 +117,14 @@ fn install_claude_import(ctx: &Ctx) -> StepReport {
-         Scope::Shared,
-     )
-     .path(ctx, &path);
-+    if let Some(link) = ctx.symlink_on([path.as_path()]) {
-+        return base.symlinked(ctx, &link);
-+    }
-+    if claude_file_is_agents_file(ctx) {
-+        return base
-+            .with_status(StepStatus::Unchanged)
-+            .detail(CLAUDE_LINKS_TO_AGENTS);
-+    }
-     let existing = match read_optional_text(&path) {
-         Ok(existing) => existing,
-         Err(error) => return failed(ctx, &path, error),
-@@ -167,6 +178,9 @@ fn uninstall_agents_guide(ctx: &Ctx) -> StepReport {
-     let path = ctx.root.join(AGENTS_FILE);
-     let base =
-         StepReport::new(None, Step::Guide, StepStatus::Removed, Scope::Shared).path(ctx, &path);
-+    if let Some(link) = ctx.symlink_on([path.as_path()]) {
-+        return base.symlinked(ctx, &link);
-+    }
-     let existing = match read_optional_text(&path) {
-         Ok(Some(existing)) => existing,
-         Ok(None) => {
-@@ -205,6 +219,14 @@ fn uninstall_claude_import(ctx: &Ctx) -> StepReport {
-         Scope::Shared,
-     )
-     .path(ctx, &path);
-+    if let Some(link) = ctx.symlink_on([path.as_path()]) {
-+        return base.symlinked(ctx, &link);
-+    }
-+    if claude_file_is_agents_file(ctx) {
-+        return base
-+            .with_status(StepStatus::Unchanged)
-+            .detail(CLAUDE_LINKS_TO_AGENTS);
-+    }
-     let existing = match read_optional_text(&path) {
-         Ok(Some(existing)) => existing,
-         Ok(None) => {
-@@ -243,6 +265,16 @@ fn uninstall_claude_import(ctx: &Ctx) -> StepReport {
-     }
- }
- 
-+const CLAUDE_LINKS_TO_AGENTS: &str =
-+    "CLAUDE.md links to AGENTS.md; Claude Code reads the guide through the link";
-+
-+/// Whether `CLAUDE.md` and `AGENTS.md` resolve to one file. An import block
-+/// would then land in `AGENTS.md` and make it import itself.
-+fn claude_file_is_agents_file(ctx: &Ctx) -> bool {
-+    let resolve = |name: &str| dunce::canonicalize(ctx.root.join(name)).ok();
-+    resolve(CLAUDE_FILE).is_some_and(|claude| resolve(AGENTS_FILE) == Some(claude))
-+}
-+
- fn import_block() -> String {
-     format!(
-         "{}\n{IMPORT_LINE}\n{}\n",
-```
-
-**File**: `crates/cli/src/agent_install/hooks.rs` (modified, +19/-1)
-```diff
-@@ -5,7 +5,7 @@
- use super::{Ctx, Harness, Mode, Reason, Scope, Step, StepReport, StepStatus};
- use crate::setup_hooks::{
-     AgentsBlockReport, AgentsOutcome, GateReport, HookAgentArg, ScriptOutcome, SettingsOutcome,
--    SetupHooksOptions, execute_agent_hooks,
-+    SetupHooksOptions, execute_agent_hooks, symlinked_hook_target,
- };
- 
- pub fn install(ctx: &Ctx, harnesses: &[Harness]) -> Vec<StepReport> {
-@@ -38,6 +38,24 @@ fn run(ctx: &Ctx, harness: Harness) -> Vec<StepReport> {
-         gitignore_claude: ctx.gitignore_claude,
-         uninstall: ctx.mode == Mode::Uninstall,
-     };
-+    match symlinked_hook_target(&opts, ctx.mode) {
-+        Ok(Some(target)) => {
-+            return vec![
-+                StepReport::new(Some(harness), Step::Hooks, StepStatus::Skipped, ctx.scope())
-+                    .path(ctx, &target.path)
-+                    .symlinked(ctx, &target.link),
-+            ];
-+        }
-+        Ok(None) => {}
-+        Err(message) => {
-+            return vec![StepReport::failed(
-+                Some(harness),
-+                Step::Hooks,
-+                ctx.scope(),
-+                message,
-+            )];
-+        }
-+    }
-     let report = match execute_agent_hooks(&opts, ctx.mode) {
-         Ok(Some(report)) => report,
-         Ok(None) => return Vec::new(),
-```
-
-**File**: `crates/cli/src/agent_install/mcp.rs` (modified, +9/-0)
-```diff
-@@ -410,6 +410,9 @@ fn json_step(
-         StepStatus::Removed
-     };
-     let base = StepReport::new(Some(harness), Step::Mcp, status, scope).path(ctx, path);
-+    if let Some(link) = ctx.symlink_on([path, backup_path(path).as_path()]) {
-+        return base.symlinked(ctx, &link);
-+    }
-     let outcome = merge_json_server(path, "mcpServers", entry, ctx.dry_run, ctx.force);
-     outcome_report(base, outcome, ctx, path, Reason::InvalidJson)
- }
-@@ -430,6 +433,9 @@ fn approval_step(ctx: &Ctx, mode: Mode) -> StepReport {
-             .reason(Reason::ApprovalNotRequested)
-             .detail("pass --approve to pre-approve the project MCP server for yourself");
-     }
-+    if let Some(link) = ctx.symlink_on([path.as_path(), backup_path(&path).as_path()]) {
-+        return base.symlinked(ctx, &link);
-+    }
-     if is_git_tracked(&ctx.root, CLAUDE_LOCAL_SETTINGS) {
-         return base
-             .with_status(StepStatus::Skipped)
-@@ -469,6 +475,9 @@ fn codex_step(ctx: &Ctx, path: &Path, command: Option<&McpCommand>) -> StepRepor
-     } else {
-         base
-     };
-+    if let Some(link) = ctx.symlink_on([path, backup_path(path).as_path()]) {
-+        return base.symlinked(ctx, &link);
-+    }
-     let outcome = merge_codex(path, command, ctx.dry_run, ctx.force);
-     outcome_report(base, outcome, ctx, path, Reason::InvalidToml)
- }
-```
-
-**File**: `crates/cli/src/agent_install/mod.rs` (modified, +37/-1)
-```diff
-@@ -140,14 +140,17 @@ pub enum Reason {
-     NotAnObject,
-     /// Fallow markers exist but not as a start-then-end pair.
-     ManagedBlockMalformed,
-+    /// In project scope, the path or a directory on the way to it is a
-+    /// symlink that resolves outside the project root, or a dangling link.
-+    SymlinkedPath,
- }
- 
- impl Reason {
-     #[cfg_attr(
-         not(test),
-         expect(dead_code, reason = "read by the documentation drift test")
-     )]
--    pub const ALL: [Self; 15] = [
-+    pub const ALL: [Self; 16] = [
-         Self::SkillNameTaken,
-         Self::SkillNotEmbedded,
-         Self::McpEntryUnavailable,
-@@ -163,6 +166,7 @@ impl Reason {
-         Self::InvalidToml,
-         Self::NotAnObject,
-         Self::ManagedBlockMalformed,
-+        Self::SymlinkedPath,
-     ];
- 
-     pub const fn as_str(self) -> &'static str {
-@@ -182,6 +186,7 @@ impl Reason {
-             Self::InvalidToml => "invalid_toml",
-             Self::NotAnObject => "not_an_object",
-             Self::ManagedBlockMalformed => "managed_block_malformed",
-+            Self::SymlinkedPath => "symlinked_path",
-         }
-     }
- }
-@@ -257,6 +262,21 @@ impl StepReport {
-         self
-     }
- 
-+    /// Turn the row into a skip because its path goes through the symlink
-+    /// `link`, which resolves outside the project root. The row keeps its own
-+    /// path, and `detail` names the link.
-+    pub fn symlinked(mut self, ctx: &Ctx, link: &Path) -> Self {
-+        self.status = StepStatus::Skipped;
-+        self.reason = Some(Reason::SymlinkedPath);
-+        self.detail = Some(format!(
-+            "{} {}; {}",
-+            display_path(&ctx.root, ctx.home.as_deref(), link),
-+            crate::setup_hooks::symlink_guard::OUTSIDE_LINK,
-+            crate::setup_hooks::symlink_guard::OUTSIDE_LINK_REMEDY
-+        ));
-+        self
-+    }
-+
-     pub fn failed(
-         harness: Option<Harness>,
-         step: Step,
-@@ -346,6 +366,19 @@ impl Ctx {
-         }
-     }
- 
-+    /// In project scope, the first symlink on the way from the root to one
-+    /// of `paths` that resolves outside the root. Always `None` under
-+    /// `--user`, because dotfile managers
-+    /// link the files in the home directory.
-+    pub fn symlink_on<'a>(&self, paths: impl IntoIterator<Item = &'a Path>) -> Option<PathBuf> {
-+        if self.user {
-+            return None;
-+        }
-+        paths
-+            .into_iter()
-+            .find_map(|path| crate::setup_hooks::symlinked_component(&self.root, path))
-+    }
-+
-     pub const fn scope(&self) -> Scope {
-         if self.user {
-             Scope::Local
-@@ -814,3 +847,6 @@ fn render_step(step: &StepReport, dry_run: bool) -> String {
- 
- #[cfg(test)]
- mod tests;
-+
-+#[cfg(all(test, unix))]
-+mod symlink_tests;
-```
-
-**File**: `crates/cli/src/agent_install/skill.rs` (modified, +86/-16)
-```diff
-@@ -17,6 +17,7 @@ use crate::setup_hooks::read_optional_text;
- 
- include!(concat!(env!("OUT_DIR"), "/embedded_skill.rs"));
- 
-+const NODE_MODULES_PACKAGE: &str = "node_modules/fallow";
- const NODE_MODULES_SKILLS: &str = "node_modules/fallow/skills";
- 
- /// One skill that the npm package ships and `agent install` writes.
-@@ -143,8 +144,25 @@ pub fn install(ctx: &Ctx, harnesses: &[Harness]) -> Vec<StepReport> {
-     };
-     targets
-         .into_iter()
--        .map(|target| match Source::resolve(&ctx.root, target.skill) {
--            Ok(source) => install_one(ctx, &target, &source),
-+        .map(|target| {
-+            if let Some(link) = symlink_in(ctx, &target) {
-+                return StepReport::new(
-+                    target.harness,
-+                    Step::Skill,
-+                    StepStatus::Skipped,
-+                    target.scope,
-+                )
-+                .path(ctx, &target.dir)
-+                .symlinked(ctx, &link);
-+            }
-+            install_resolved(ctx, &target)
-+        })
-+        .collect()
-+}
-+
-+fn install_resolved(ctx: &Ctx, target: &Target) -> StepReport {
-+    match Source::resolve(&ctx.root, target.skill) {
-+            Ok(source) => install_one(ctx, target, &source),
-             Err(reason) => {
-                 StepReport::new(target.harness, Step::Skill, StepStatus::Skipped, target.scope)
-                     .path(ctx, &target.dir)
-@@ -153,8 +171,7 @@ pub fn install(ctx: &Ctx, harnesses: &[Harness]) -> Vec<StepReport> {
-                         "install or upgrade the fallow npm package so the skill ships with the binary, or build fallow from a full checkout",
-                     )
-             }
--        })
--        .collect()
-+    }
- }
- 
- pub fn uninstall(ctx: &Ctx, harnesses: &[Harness]) -> Vec<StepReport> {
-@@ -181,25 +198,40 @@ enum Source {
- 
- impl Source {
-     fn resolve(root: &Path, skill: &'static ReleasedSkill) -> Result<Self, Reason> {
--        let shipped = root.join(skill.node_modules_dir());
--        if let Ok(Some(text)) = read_optional_text(&shipped.join("SKILL.md"))
--            && let Some(frontmatter) = frontmatter_block(&text)
--        {
--            let openai_yaml = read_optional_text(&shipped.join("agents").join("openai.yaml"))
--                .ok()
--                .flatten();
--            return Ok(Self::Stub {
--                skill,
--                frontmatter: frontmatter.to_string(),
--                openai_yaml,
--            });
-+        if let Some(stub) = Self::shipped(root, skill) {
-+            return Ok(stub);
-         }
-         skill
-             .embedded()
-             .map(Self::Embedded)
-             .ok_or(Reason::SkillNotEmbedded)
-     }
- 
-+    /// The stub source from `node_modules/fallow`, or `None` when the package
-+    /// has no usable `SKILL.md`. pnpm and `npm link` make the package directory
-+    /// a link, so the check resolves it first and then accepts only files whose
-+    /// real path stays inside it. A file that links out of the package could
-+    /// otherwise copy any readable file into the working tree.
-+    fn shipped(root: &Path, skill: &'static ReleasedSkill) -> Option<Self> {
-+        let package = dunce::canonicalize(root.join(NODE_MODULES_PACKAGE)).ok()?;
-+        let shipped = root.join(skill.node_modules_dir());
-+        let PackageFile::Text(text) = read_package_file(&package, &shipped.join("SKILL.md")) else {
-+            return None;
-+        };
-+        let frontmatter = frontmatter_block(&text)?;
-+        let openai_yaml =
-+            match read_package_file(&package, &shipped.join("agents").join("openai.yaml")) {
-+                PackageFile::Missing => None,
-+                PackageFile::Text(yaml) => Some(yaml),
-+                PackageFile::Refused => return None,
-+            };
-+        Some(Self::Stub {
-+            skill,
-+            frontmatter: frontmatter.to_string(),
-+            openai_yaml,
-+        })
-+    }
-+
-     const fn flavor(&self) -> Flavor {
-         match self {
-             Self::Stub { .. } => Flavor::Stub,
-@@ -245,6 +277,30 @@ impl Source {
-     }
- }
- 
-+enum PackageFile {
-+    Missing,
-+    Text(String),
-+    /// The file resolves outside the package, dangles, or cannot be read.
-+    Refused,
-+}
-+
-+fn read_package_file(package: &Path, path: &Path) -> PackageFile {
-+    if path.symlink_metadata().is_err() {
-+        return PackageFile::Missing;
-+    }
-+    let Ok(real) = dunce::canonicalize(path) else {
-+        return PackageFile::Refused;
-+    };
-+    if !real.starts_with(package) {
-+        return PackageFile::Refused;
-+    }
-+    match read_optional_text(&real) {
-+        Ok(Some(text)) => PackageFile::Text(text),
-+        Ok(None) => PackageFile::Missing,
-+        Err(_) => PackageFile::Refused,
-+    }
-+}
-+
- fn marker_line(flavor: Flavor) -> String {
-     format!(
-         "<!-- {MARKER_PREFIX} {MARKER_VERSION} skill={} version={} -->",
-@@ -448,6 +504,17 @@ fn managed_files(skill: &ReleasedSkill) -> Vec<String> {
-     files
- }
- 
-+/// The fi
-```
-
-**File**: `crates/cli/src/agent_install/symlink_tests.rs` (added, +389/-0)
-```diff
-@@ -0,0 +1,389 @@
-+//! A cloned repository can commit a symlink where fallow writes a harness
-+//! file. In project scope every step must leave the link target alone and
-+//! report a skipped row. In user scope a symlinked dotfile is normal.
-+
-+use std::os::unix::fs::symlink;
++use std::os::unix::fs::PermissionsExt as _;
 +use std::path::Path;
++use std::process::Command;
 +
-+use super::*;
++use crate::common::{CommandOutput, parse_json};
++use crate::inspect_cloud_tests::{
++    DEVICE_START, DEVICE_TOKEN, Env, INSPECT_JSON, file_context_body, project, run_with, serve,
++};
 +
-+fn ctx(root: &Path, mode: Mode) -> Ctx {
-+    Ctx {
-+        root: root.to_path_buf(),
-+        home: None,
-+        user: false,
-+        dry_run: false,
-+        force: false,
-+        approve: false,
-+        gitignore_claude: false,
-+        mode,
++/// The key that the mock device flow issues in [`DEVICE_TOKEN`].
++const ISSUED_KEY: &str = "fallow_read_k1_fromlogin";
++const LOGIN: &[&str] = &[
++    "cloud",
++    "login",
++    "--machine-name",
++    "ci-box",
++    "--format",
++    "json",
++];
++const LOGOUT: &[&str] = &["cloud", "logout", "--format", "json"];
++
++/// Use the automatic store. `with_dbus` keeps the D-Bus session of the test
++/// process, else the command gets no D-Bus session.
++fn automatic_store(with_dbus: bool) -> impl Fn(&mut Command) {
++    move |command: &mut Command| {
++        command.env_remove("FALLOW_CREDENTIAL_STORE");
++        if !with_dbus {
++            command.env_remove("DBUS_SESSION_BUS_ADDRESS");
++        }
 +    }
 +}
 +
-+fn command() -> mcp::McpCommand {
-+    mcp::McpCommand {
-+        command: "fallow-mcp".to_string(),
-+        args: Vec::new(),
-+        source: mcp::McpSource::Path,
-+    }
++/// The key that the Secret Service holds for `account`, or `None`.
++fn secret_service_key(account: &str) -> Option<String> {
++    let output = Command::new("secret-tool")
++        .args(["lookup", "service", "fallow-cloud", "account", account])
++        .output()
++        .expect("run secret-tool");
++    let key = String::from_utf8(output.stdout).unwrap();
++    (output.status.success() && !key.trim().is_empty()).then(|| key.trim().to_owned())
 +}
 +
-+fn row<'a>(steps: &'a [StepReport], path: &str) -> &'a StepReport {
-+    steps
-+        .iter()
-+        .find(|s| s.path.as_deref() == Some(path))
-+        .unwrap_or_else(|| panic!("no row for {path} in {steps:?}"))
++fn mode(path: &Path) -> u32 {
++    std::fs::metadata(path).unwrap().permissions().mode() & 0o777
 +}
 +
-+fn assert_symlink_skip(step: &StepReport) {
-+    assert_eq!(step.status, StepStatus::Skipped, "{step:?}");
-+    assert_eq!(
-+        step.reason.map(Reason::as_str),
-+        Some("symlinked_path"),
-+        "{step:?}"
-+    );
-+}
-+
-+/// The row keeps its own `path`, and `detail` names the symlink.
-+fn assert_detail_names(step: &StepReport, link: &str) {
-+    let detail = step.detail.as_deref().unwrap_or_default();
++/// `inspect --cloud` passed and sent the key of the login in `request`.
++fn assert_inspect_sent_the_issued_key(inspect: &CommandOutput, request: &str) {
++    assert_eq!(inspect.code, 0, "stderr={}", inspect.stderr);
++    assert_eq!(parse_json(inspect)["evidence"]["cloud"]["status"], "ok");
 +    assert!(
-+        detail.starts_with(&format!("{link} is a symlink")),
-+        "{step:?}"
++        request
++            .to_ascii_lowercase()
++            .contains(&format!("authorization: bearer {ISSUED_KEY}")),
++        "inspect sends the stored key: {request}"
 +    );
 +}
 +
-+fn entries(dir: &Path) -> Vec<String> {
-+    let mut names: Vec<String> = std::fs::read_dir(dir)
-+        .unwrap()
-+        .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
-+        .collect();
-+    names.sort();
-+    names
-+}
-+
 +#[test]
-+fn forced_mcp_install_does_not_write_or_copy_a_symlinked_mcp_json() {
-+    let root = tempfile::tempdir().unwrap();
-+    let outside = tempfile::tempdir().unwrap();
-+    let secret = outside.path().join("secret.json");
-+    std::fs::write(&secret, "token = not json").unwrap();
-+    symlink(&secret, root.path().join(".mcp.json")).unwrap();
-+
-+    let forced = Ctx {
-+        force: true,
-+        ..ctx(root.path(), Mode::Install)
++fn cloud_login_without_a_dbus_session_stores_the_key_in_a_0600_file() {
++    let (dir, home) = project();
++    let (endpoint, captured, handle) = serve(vec![
++        (200, DEVICE_START.to_owned()),
++        (200, DEVICE_TOKEN.to_owned()),
++        (200, file_context_body()),
++    ]);
++    let env = Env {
++        api_url: Some(&endpoint),
++        api_key: None,
++        home: home.path(),
 +    };
-+    let steps = mcp::install(&forced, &[Harness::Claude], Some(&command()));
 +
-+    assert_eq!(
-+        std::fs::read_to_string(&secret).unwrap(),
-+        "token = not json"
++    let login = run_with(LOGIN, dir.path(), &env, automatic_store(false));
++    assert_eq!(login.code, 0, "stderr={}", login.stderr);
++    assert_eq!(parse_json(&login)["store"], "credentials_file");
++
++    let config = home.path().join(".config").join("fallow");
++    let credentials = config.join("credentials");
++    assert_eq!(mode(&credentials), 0o600, "credentials file mode");
++    assert_eq!(mode(&config), 0o700, "credentials directory mode");
++    let stored: serde_json::Value =
++        serde_json::from_str(&std::fs::read_to_string(&credentials).unwrap()).unwrap();
++    assert_eq!(stored["keys"][&endpoint], ISSUED_KEY);
++
++    let inspect = run_with(INSPECT_JSON, dir.path(), &env, automatic_store(false));
++    handle.join().expect("server joins");
++    assert_inspect_sent_the_issued_key(&inspect, &captured.lock().unwrap()[2]);
++
++    let logout = run_with(LOGOUT, dir.path(), &env, automatic_store(false));
++    assert_eq!(logout.code, 0, "stderr={}", logout.stderr);
++    let removed = parse_json(&logout);
++    assert_eq!(removed["removed_from_credentials_file"], true);
++    assert_eq!(removed["removed_from_keychain"], false);
++    assert!(!credentials.exists(), "logout removes the last key");
++}
++
++#[test]
++#[ignore = "needs an unlocked Secret Service; run scripts/linux-keychain-test.sh"]
++fn cloud_login_with_a_secret_service_stores_the_key_in_the_keyring() {
++    assert!(
++        std::env::var_os("DBUS_SESSION_BUS_ADDRESS").is_some(),
++        "run this test in a D-Bus session with an unlocked keyring"
 +    );
-+    assert_eq!(entries(root.path()), vec![".mcp.json".to_string()]);
-+    assert_symlink_skip(row(&steps, ".mcp.json"));
-+}
-+
-+#[test]
-+fn mcp_uninstall_does_not_edit_a_symlinked_mcp_json() {
-+    let root = tempfile::tempdir().unwrap();
-+    let outside = tempfile::tempdir().unwrap();
-+    let target = outside.path().join("mcp.json");
-+    let body = "{\n  \"mcpServers\": {\n    \"fallow\": { \"command\": \"fallow-mcp\", \"args\": [] },\n    \"other\": { \"command\": \"x\" }\n  }\n}\n";
-+    std::fs::write(&target, body).unwrap();
-+    symlink(&target, root.path().join(".mcp.json")).unwrap();
-+
-+    let steps = mcp::uninstall(&ctx(root.path(), Mode::Uninstall), &[Harness::Claude]);
-+
-+    assert_eq!(std::fs::read_to_string(&target).unwrap(), body);
-+    assert_symlink_skip(row(&steps, ".mcp.json"));
-+}
-+
-+#[test]
-+fn mcp_install_does_not_follow_a_symlinked_parent_directory() {
-+    let root = tempfile::tempdir().unwrap();
-+    let outside = tempfile::tempdir().unwrap();
-+    symlink(outside.path(), root.path().join(".cursor")).unwrap();
-+    symlink(outside.path(), root.path().join(".codex")).unwrap();
-+
-+    let steps = mcp::install(
-+        &ctx(root.path(), Mode::Install),
-+        &[Harness::Cursor, Harness::Codex],
-+        Some(&command()),
-+    );
-+
-+    assert!(entries(outside.path()).is_empty());
-+    assert_symlink_skip(row(&steps, ".cursor/mcp.json"));
-+    assert_symlink_skip(row(&steps, ".codex/config.toml"));
-+}
-+
-+#[test]
-+fn mcp_install_does_not_write_through_a_symlinked_backup_path() {
-+    let root = tempfile::tempdir().unwrap();
-+    let outside = tempfile::tempdir().unwrap();
-+    let victim = outside.path().join("victim");
-+    std::fs::write(&victim, "keep").unwrap();
-+    std::fs::write(root.path().join(".mcp.json"), "not json").unwrap();
-+    symlink(&victim, root.path().join(".mcp.json.fallow-bak")).unwrap();
-+
-+    let forced = Ctx {
-+        force: true,
-+        ..ctx(root.path(), Mode::Install)
-+    };
-+    let steps = mcp::install(&forced, &[Harness::Claude], Some(&command()));
-+
-+    assert_eq!(std::fs::read_to_string(&victim).unwrap(), "keep");
-+    assert_eq!(
-+        std::fs::read_to_string(root.path().join(".mcp.json")).unwrap(),
-+        "not json"
-+    );
-+    assert_symlink_skip(row(&steps, ".mcp.json"));
-+    assert_detail_names(row(&steps, ".mcp.json"), ".mcp.json.fallow-bak");
-+}
-+
-+#[test]
-+fn approval_does_not_follow_a_symlinked_claude_directory() {
-+    let root = tempfile::tempdir().unwrap();
-+    let outside = tempfile::tempdir().unwrap();
-+    symlink(outside.path(), root.path().join(".claude")).unwr
++    let (dir, home) = project();
++    let (endpoint, captured, handle) = serve(vec![
++        (200, DEVICE_START.to_owned()),
++        (200, DEVICE_TOKEN.to_owned()),
++        (200, file_context_body()),
++    ]);
++    let env = Env {
++        api_url: Some(&end
 ```
 
-**File**: `crates/cli/src/init.rs` (modified, +25/-41)
+**File**: `crates/cli/tests/integration/inspect_cloud_tests.rs` (modified, +12/-12)
 ```diff
-@@ -8,6 +8,9 @@ use crate::{exit_codes::exit_invalid_input, validate};
- #[path = "init_default_branch.rs"]
- mod default_branch;
- use default_branch::detect_default_branch;
-+#[path = "init_project_files.rs"]
-+mod project_files;
-+use project_files::{ensure_gitignore, refuse_outside_link};
+@@ -21,11 +21,11 @@ use tempfile::{TempDir, tempdir};
+ use crate::common::{CommandOutput, fallow_bin, parse_json};
+ use crate::http_stub::read_request;
  
- const AGENTS_GUIDE_FILENAME: &str = "AGENTS.md";
- /// Static template used as the ground truth for the empty-project case and
-@@ -748,6 +751,15 @@ fn run_init_config(root: &Path, use_toml: bool, quiet: bool) -> ExitCode {
-         }
-     }
+-type Captured = Arc<Mutex<Vec<String>>>;
++pub type Captured = Arc<Mutex<Vec<String>>>;
  
-+    let config_name = if use_toml {
-+        "fallow.toml"
-+    } else {
-+        ".fallowrc.json"
-+    };
-+    if let Err(code) = refuse_outside_link(root, &root.join(config_name)) {
-+        return code;
-+    }
-+
-     let info = detect_project(root);
- 
-     if use_toml {
-@@ -810,6 +822,9 @@ fn run_init_agents(root: &Path) -> ExitCode {
-         eprintln!("{AGENTS_GUIDE_FILENAME} already exists");
-         return exit_invalid_input();
-     }
-+    if let Err(code) = refuse_outside_link(root, &agents_path) {
-+        return code;
-+    }
- 
-     let info = detect_project(root);
-     let guide = build_agents_guide(&info);
-@@ -822,46 +837,6 @@ fn run_init_agents(root: &Path) -> ExitCode {
-     ExitCode::SUCCESS
+ /// Serve the scripted `(status, body)` answers in order, one connection each,
+ /// and capture every request.
+-fn serve(responses: Vec<(u16, String)>) -> (String, Captured, thread::JoinHandle<()>) {
++pub fn serve(responses: Vec<(u16, String)>) -> (String, Captured, thread::JoinHandle<()>) {
+     let listener = TcpListener::bind("127.0.0.1:0").expect("bind mock server");
+     let addr = listener.local_addr().expect("mock addr");
+     let captured: Captured = Arc::new(Mutex::new(Vec::new()));
+@@ -75,7 +75,7 @@ fn write_project(root: &Path) {
+ /// A file-context body: `loadUser` with the stable id of its local line,
+ /// `parseRow` deployed at another line (so only the name ordinal pairs it),
+ /// and `removedFn`, which the local file no longer has.
+-fn file_context_body() -> String {
++pub fn file_context_body() -> String {
+     let load_user = function_identity_id("src/api.ts", "loadUser", 1);
+     let parse_row_old = function_identity_id("src/api.ts", "parseRow", 9);
+     let removed = function_identity_id("src/api.ts", "removedFn", 20);
+@@ -120,10 +120,10 @@ fn file_context_body() -> String {
+     )
  }
  
--/// Ensure `.fallow/` is listed in the project's `.gitignore`.
--///
--/// If `.gitignore` exists and already contains `.fallow` (with or without
--/// trailing slash), this is a no-op. Otherwise the entry is appended (or
--/// the file is created).
--fn ensure_gitignore(root: &Path) {
--    let gitignore_path = root.join(".gitignore");
--    let existing = std::fs::read_to_string(&gitignore_path).unwrap_or_default();
--
--    let already_ignored = existing.lines().any(|line| {
--        let trimmed = line.trim();
--        trimmed == ".fallow" || trimmed == ".fallow/"
--    });
--
--    if already_ignored {
--        return;
--    }
--
--    let is_new = existing.is_empty();
--    let entry = if is_new || existing.ends_with('\n') {
--        ".fallow/\n"
--    } else {
--        "\n.fallow/\n"
--    };
--
--    let mut contents = existing;
--    contents.push_str(entry);
--
--    if let Err(e) = std::fs::write(&gitignore_path, contents) {
--        eprintln!("Warning: Failed to update .gitignore: {e}");
--        return;
--    }
--
--    if is_new {
--        eprintln!("Created .gitignore with .fallow/ entry");
--    } else {
--        eprintln!("Added .fallow/ to .gitignore");
--    }
--}
--
- pub const GIT_HOOK_MARKER: &str = "# Generated by fallow hooks install --target git.";
+-struct Env<'a> {
+-    api_url: Option<&'a str>,
+-    api_key: Option<&'a str>,
+-    home: &'a Path,
++pub struct Env<'a> {
++    pub api_url: Option<&'a str>,
++    pub api_key: Option<&'a str>,
++    pub home: &'a Path,
+ }
  
- /// Hint printed when an existing pre-commit hook prevents installation.
-@@ -1013,6 +988,9 @@ pub fn run_git_hooks_install(opts: &GitHooksInstallOptions<'_>) -> ExitCode {
+ fn run(args: &[&str], root: &Path, env: &Env<'_>) -> CommandOutput {
+@@ -132,7 +132,7 @@ fn run(args: &[&str], root: &Path, env: &Env<'_>) -> CommandOutput {
  
-     match target {
-         HookTarget::Husky(hook_path) => {
-+            if let Err(code) = refuse_outside_link(root, &hook_path) {
-+                return code;
-+            }
-             if let Err(code) = install_hook_file(
-                 &hook_path,
-                 ".husky/pre-commit",
-@@ -1133,7 +1111,13 @@ pub fn run_git_hooks_uninstall(opts: &GitHooksUninstallOptions<'_>) -> ExitCode
-     };
+ /// [`run`] with a last change to the command, for example to give it a
+ /// keychain.
+-fn run_with(
++pub fn run_with(
+     args: &[&str],
+     root: &Path,
+     env: &Env<'_>,
+@@ -170,13 +170,13 @@ fn run_with(
+     }
+ }
  
-     let hook_path = match target {
--        HookTarget::Husky(path) | HookTarget::GitHooks(path) => path,
-+        HookTarget::Husky(path) => {
-+            if let Err(code) = refuse_outside_link(opts.root, &path) {
-+                return code;
-+            }
-+            path
+-fn project() -> (TempDir, TempDir) {
++pub fn project() -> (TempDir, TempDir) {
+     let dir = tempdir().unwrap();
+     write_project(dir.path());
+     (dir, tempdir().unwrap())
+ }
+ 
+-const INSPECT_JSON: &[&str] = &[
++pub const INSPECT_JSON: &[&str] = &[
+     "inspect",
+     "--file",
+     "src/api.ts",
+@@ -612,10 +612,10 @@ fn inspect_compact_without_cloud_prints_static_findings() {
+     assert!(!output.stdout.contains("cloud "), "{}", output.stdout);
+ }
+ 
+-const DEVICE_START: &str = r#"{"data":{"deviceCode":"dev-code","userCode":"ABCD-EFGH","verificationUri":"https://fallow.cloud/device","expiresIn":900,"interval":0}}"#;
++pub const DEVICE_START: &str = r#"{"data":{"deviceCode":"dev-code","userCode":"ABCD-EFGH","verificationUri":"https://fallow.cloud/device","expiresIn":900,"interval":0}}"#;
+ const DEVICE_PENDING: &str =
+     r#"{"error":true,"message":"Authorization pending","code":"authorization_pending"}"#;
+-const DEVICE_TOKEN: &str = r#"{"data":{"licenseJwt":"jwt","apiKey":{"id":"key_1","key":"fallow_read_k1_fromlogin","prefix":"fallow_read_k1_fro","type":"read","name":"fallow cloud login (ci-box)"}}}"#;
++pub const DEVICE_TOKEN: &str = r#"{"data":{"licenseJwt":"jwt","apiKey":{"id":"key_1","key":"fallow_read_k1_fromlogin","prefix":"fallow_read_k1_fro","type":"read","name":"fallow cloud login (ci-box)"}}}"#;
+ 
+ #[test]
+ fn cloud_login_stores_the_key_and_inspect_uses_it_until_logout() {
+```
+
+**File**: `crates/cli/tests/integration/main.rs` (modified, +2/-0)
+```diff
+@@ -47,6 +47,8 @@ mod check_tests;
+ mod ci_command_routing_tests;
+ mod ci_template_tests;
+ mod claude_code_hint_tests;
++#[cfg(target_os = "linux")]
++mod cloud_login_linux_keychain_tests;
+ mod codeowners_tests;
+ mod combined_coverage_tests;
+ mod combined_health_duplication_tests;
+```
+
+**File**: `docs/development/quality-gates.md` (modified, +4/-0)
+```diff
+@@ -264,6 +264,10 @@ Focused integration checks:
+   that add a `fallow_core::` call to an engine adapter, an `env!` macro, or a
+   new cross-crate import. These source rules are tests of the CLI crate, so a
+   test run of the changed crate does not run them.
++- `sh scripts/linux-keychain-test.sh --docker` for changes to the credential
++  store of `fallow cloud login`. In a Linux container, it runs the `0600`
++  credentials file test without D-Bus and the Secret Service test with
++  `gnome-keyring`. The `Linux keychain` CI job runs the same script.
+ - `npm run check:knowledge-architecture` for docs and routing changes.
+ - `npm run check:agent-adapters` for skill or adapter changes.
+ - `python3 scripts/check_telemetry_doc_sync.py` when telemetry agent-source
+```
+
+**File**: `scripts/linux-keychain-test.sh` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++#!/bin/sh
++# Run the Linux credential store tests of `fallow cloud login`:
++#   - without a D-Bus session, the key goes to a credentials file with mode 0600;
++#   - with a D-Bus session and an unlocked gnome-keyring, the key goes to the
++#     Secret Service through `secret-tool`.
++# Both tests use a mock device flow, so they need no Fallow Cloud account.
++#
++# Usage:
++#   sh scripts/linux-keychain-test.sh           On a Linux host with dbus,
++#                                               gnome-keyring and secret-tool.
++#   sh scripts/linux-keychain-test.sh --docker  In a Linux container, from any
++#                                               host with Docker.
++#
++# The keyring lives in a temporary directory that the script removes at exit,
++# so the script does not touch the keyring of the user.
++set -eu
++
++repo=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
++cd "$repo"
++
++FALLBACK_TEST=cloud_login_linux_keychain_tests::cloud_login_without_a_dbus_session_stores_the_key_in_a_0600_file
++SECRET_SERVICE_TEST=cloud_login_linux_keychain_tests::cloud_login_with_a_secret_service_stores_the_key_in_the_keyring
++KEYCHAIN_ROUND_TRIP_TEST=coverage::credentials::tests::keychain_round_trip
++# The password of the temporary keyring. It protects no real secret.
++KEYRING_PASSWORD=fallow-linux-keychain-test
++
++if [ "${1:-}" = "--docker" ]; then
++  toolchain=$(awk -F '"' '/^[[:space:]]*channel[[:space:]]*=/ {print $2; exit}' rust-toolchain.toml)
++  # Named volumes keep the Linux build and the registry apart from the host
++  # target directory and make a second run incremental.
++  exec docker run --rm \
++    -v "$repo:/src" -w /src \
++    -v fallow-linux-keychain-target:/target -e CARGO_TARGET_DIR=/target \
++    -v fallow-linux-keychain-registry:/usr/local/cargo/registry \
++    "rust:${toolchain}" \
++    sh -c 'apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends dbus gnome-keyring libsecret-tools >/dev/null && sh scripts/linux-keychain-test.sh'
++fi
++
++# `cargo test --exact` exits 0 when no test has the name. A renamed test then
++# runs zero tests and the check stays green. Each call must pass exactly one
++# test, else the script fails.
++run_one_test() {
++  log=$(mktemp)
++  status=0
++  cargo test --locked -p fallow-cli "$@" >"$log" 2>&1 || status=$?
++  cat "$log"
++  passed=$(grep -c '^test result: ok\. 1 passed;' "$log" || true)
++  rm -f "$log"
++  if [ "$status" -ne 0 ]; then
++    exit "$status"
++  fi
++  if [ "$passed" -ne 1 ]; then
++    echo "linux-keychain-test: no test ran for: $*. Check the test name in this script." >&2
++    exit 1
++  fi
++}
++
++# The tests that need the Secret Service. The script runs this part again
++# inside the D-Bus session that it starts below.
++if [ "${1:-}" = "--in-session" ]; then
++  printf "%s" "$KEYRING_PASSWORD" | gnome-keyring-daemon --unlock --components=secrets >/dev/null
++  run_one_test --test integration -- --ignored --exact "$SECRET_SERVICE_TEST"
++  run_one_test --lib -- --ignored --exact "$KEYCHAIN_ROUND_TRIP_TEST"
++  exit 0
++fi
++
++if [ "$(uname -s)" != Linux ]; then
++  echo "linux-keychain-test: this host is not Linux. Run: sh scripts/linux-keychain-test.sh --docker" >&2
++  exit 2
++fi
++for tool in dbus-run-session gnome-keyring-daemon secret-tool; do
++  if ! command -v "$tool" >/dev/null 2>&1; then
++    echo "linux-keychain-test: $tool is missing. Install dbus, gnome-keyring and libsecret-tools." >&2
++    exit 2
++  fi
++done
++
++cargo build --locked -p fallow-cli --bin fallow --test integration
++
++echo "linux-keychain-test: credentials file without a D-Bus session"
++(
++  unset DBUS_SESSION_BUS_ADDRESS
++  run_one_test --test integration -- --exact "$FALLBACK_TEST"
++)
++
++echo "linux-keychain-test: Secret Service in a D-Bus session"
++keyring_home=$(mktemp -d)
++trap 'rm -rf "$keyring_home"' EXIT INT TERM
++mkdir -p "$keyring_home/data/keyrings" "$keyring_home/runtime"
++chmod 700 "$keyring_home/runtime"
++# gnome-keyring creates and unlocks the `login` keyring with the password on
++# stdin. Without the keyrings directory, it cannot create the keyring, and
++# `secret-tool` fails with "Object does not exist".
++XDG_DATA_HOME="$keyring_home/data" \
++  XDG_RUNTIME_DIR="$keyring_home/runtime" \
++  dbus-run-session -- sh -eu scripts/linux-keychain-test.sh --in-session
+```
+
+**File**: `scripts/workflow-policy.test.mjs` (modified, +53/-0)
+```diff
+@@ -1495,6 +1495,59 @@ test("CI runs clippy on the similar-code sidecar workspace", () => {
+   assert.match(indentedBlock(workflow, "ci-ok", 2), /needs: \[[^\n]*\bsimilar-code-sidecar\b/u);
+ });
+ 
++test("CI runs the cloud login credential store tests with a real Secret Service", () => {
++  const workflow = readWorkflow(".github/workflows/ci.yml");
++  const job = indentedBlock(workflow, "linux-keychain", 2);
++  const paths = listedPaths(indentedBlock(workflow, "linux-keychain", 12));
++  const script = readFileSync("scripts/linux-keychain-test.sh", "utf8");
++
++  assert.match(job, /apt-get install [^\n]*\bdbus gnome-keyring libsecret-tools\b/u);
++  assert.match(job, /run: sh scripts\/linux-keychain-test\.sh$/mu);
++  assert.match(job, /needs\.changes\.outputs\.linux-keychain == 'true'/u);
++  assert.match(job, /persist-credentials: false/u);
++  // The Secret Service test is ignored by default, so only this job runs it.
++  assert.match(script, /--ignored --exact "\$SECRET_SERVICE_TEST"/u);
++  assert.match(script, /unset DBUS_SESSION_BUS_ADDRESS/u);
++  for (const path of [
++    "crates/cli/src/coverage/credentials.rs",
++    "crates/cli/tests/integration/cloud_login_linux_keychain_tests.rs",
++    "crates/cli/tests/integration/main.rs",
++    "crates/cli/tests/common/**",
++    "scripts/linux-keychain-test.sh",
++  ]) {
++    assert.ok(paths.includes(path), `the linux-keychain filter must list ${path}`);
++  }
++  assert.match(
++    indentedBlock(workflow, "outputs", 4),
++    /linux-keychain: \$\{\{ steps\.filter\.outputs\.linux-keychain \}\}/u,
++  );
++  assert.match(indentedBlock(workflow, "ci-ok", 2), /needs: \[[^\n]*\blinux-keychain\b/u);
++});
++
++test("the Linux keychain script fails when a test name matches no test", (t) => {
++  const bin = mkdtempSync(join(tmpdir(), "fallow-linux-keychain-"));
++  t.after(() => rmSync(bin, { recursive: true, force: true }));
++  // Stubs for the tools that the `--in-session` part calls. The cargo stub
++  // prints the summary line of a test run with the given count.
++  writeFileSync(join(bin, "gnome-keyring-daemon"), "#!/bin/sh\ncat >/dev/null\n", { mode: 0o755 });
++  writeFileSync(
++    join(bin, "cargo"),
++    '#!/bin/sh\necho "test result: ok. $PASSED passed; 0 failed; 0 ignored"\n',
++    { mode: 0o755 },
++  );
++  const run = (passed) =>
++    runProcess("sh", ["scripts/linux-keychain-test.sh", "--in-session"], {
++      encoding: "utf8",
++      env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, PASSED: passed },
++    });
++
++  const renamed = run("0");
++  assert.equal(renamed.status, 1, renamed.stderr);
++  assert.match(renamed.stderr, /no test ran for/u);
++  const matched = run("1");
++  assert.equal(matched.status, 0, matched.stderr);
++});
++
+ test("the check job runs the end-to-end mutation tests instead of a skip", () => {
+   const workflow = readWorkflow(".github/workflows/ci.yml");
+   const checkJob = indentedBlock(workflow, "check", 2);
+```
+
+---
+
+### Incident Patch 2: `32cd2028` (2026-11-06)
+**Commit Message**: test: remove the temp folders that the JS test suites leave (#4330)
+
+* test: remove the temp folders that the JS test suites leave
+
+The mutation runner tests often kill the companion before `shutdown`, so
+the adapter never removes its work folder. A full run left about 45
+`fallow-mutation-*` folders in the system temp directory. The test
+harness now gives each companion a private temp directory and removes
+it when the companion ends, as the mutation API does.
+
+The script tests of knowledge architecture, agent adapters, audit
+schema, telemetry and CLI instructions left their fixture folders.
+They now create them through `scripts/lib/temp-dir.mjs`, which removes
+each folder when the tests of the file end.
+
+`scripts/check-temp-leaks.mjs` runs a command and fails when the
+command leaves a new `fallow-*` entry in the temp directory.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* ci: fail a JS test step that leaves temp folders
+
+CI runs the script, sidecar, mutation runner and CI helper test suites
+through `scripts/check-temp-leaks.mjs`. A step now fails when its tests
+leave a new `fallow-*` folder in the system temp directory. A policy
+test keeps each suite behind the guard.
+
+Th
+
+**File**: `.github/workflows/ci.yml` (modified, +11/-6)
+```diff
+@@ -321,6 +321,7 @@ jobs:
+               - 'npm/fallow/**'
+               - 'schema.json'
+               - '.github/scripts/**'
++              - 'scripts/check-temp-leaks.mjs'
+               - '.github/workflows/ci.yml'
+             # The "File length" step checks each .mjs and .ts file.
+             self-analyze:
+@@ -358,6 +359,7 @@ jobs:
+             mutation-runner:
+               - 'tools/mutation-runner/**'
+               - 'crates/api/mutation-runner-protocol.json'
++              - 'scripts/check-temp-leaks.mjs'
+               - '.github/workflows/ci.yml'
+               - 'scripts/workflow-policy.test.mjs'
+             # `similar-code-sidecar` gates the lint job of the similar-code
+@@ -1016,8 +1018,11 @@ jobs:
+         run: npm run fmt:js:check
+       - name: Narrator comment guard
+         run: node scripts/check-comment-quality.mjs --all
++      # check-temp-leaks.mjs fails a test step that leaves a `fallow-*`
++      # folder in the system temp directory. A reused runner and a developer
++      # machine keep such folders.
+       - name: Script tests
+-        run: node --test scripts/*.test.mjs
++        run: node scripts/check-temp-leaks.mjs -- node --test scripts/*.test.mjs
+       - name: Changelog fragments
+         if: github.event_name == 'pull_request'
+         env:
+@@ -1036,18 +1041,18 @@ jobs:
+       - name: Install type-aware sidecar dependencies
+         run: npm ci --prefix tools/type-aware-sidecar --no-audit --no-fund --ignore-scripts
+       - name: Type-aware sidecar tests
+-        run: node --test tools/type-aware-sidecar/test/*.test.mjs
++        run: node scripts/check-temp-leaks.mjs -- node --test tools/type-aware-sidecar/test/*.test.mjs
+       - name: Type-aware sidecar tests (tsrs backend)
+         env:
+           FALLOW_TYPE_AWARE_BACKEND: tsrs
+-        run: node --test tools/type-aware-sidecar/test/*.test.mjs
++        run: node scripts/check-temp-leaks.mjs -- node --test tools/type-aware-sidecar/test/*.test.mjs
+       - name: Type-aware sidecar package check
+         working-directory: tools/type-aware-sidecar
+         run: npm pack --dry-run --json
+       - name: Install mutation runner dependencies
+         run: npm ci --prefix tools/mutation-runner --no-audit --no-fund --ignore-scripts
+       - name: Mutation runner tests
+-        run: node --test tools/mutation-runner/test/*.test.mjs
++        run: node scripts/check-temp-leaks.mjs -- node --test tools/mutation-runner/test/*.test.mjs
+       - name: Knowledge architecture
+         run: npm run check:knowledge-architecture
+       - name: Cross-repository telemetry documentation parity
+@@ -1106,7 +1111,7 @@ jobs:
+       - name: Mutation runner tests
+         env:
+           FALLOW_REQUIRE_BUN: '1'
+-        run: node --test tools/mutation-runner/test/*.test.mjs
++        run: node scripts/check-temp-leaks.mjs -- node --test tools/mutation-runner/test/*.test.mjs
+ 
+   npm-package:
+     name: npm Package
+@@ -1177,7 +1182,7 @@ jobs:
+       # moment it lands, instead of waiting for someone to remember this line.
+       # The `npm-package` filter already includes `.github/scripts/**`.
+       - name: Test CI helper scripts
+-        run: node --test .github/scripts/*.test.mjs
++        run: node scripts/check-temp-leaks.mjs -- node --test .github/scripts/*.test.mjs
+ 
+       - name: Run npm wrapper unit tests
+         run: npm --prefix npm/fallow test
+```
+
+**File**: `changelog.d/test-temp-dir-hygiene.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++### Changed
++
++- **The JS test suites no longer leave `fallow-*` folders in the system temp directory.** The mutation runner tests give each companion a private temp directory and remove it when the companion ends, as the mutation API does. The script tests create their temp folders through `scripts/lib/temp-dir.mjs`, which removes them when the tests of the file end. The new `scripts/check-temp-leaks.mjs` runs a command and fails when the command leaves a new `fallow-*` entry in the temp directory. CI runs each JS test suite through it. This change affects contributors only.
+```
+
+**File**: `docs/development/review-routing.md` (modified, +5/-0)
+```diff
+@@ -36,6 +36,11 @@ consumer.
+ 5. Performance in parse, graph, and analysis hot paths.
+ 6. Documentation, generated adapter, and companion-surface parity.
+ 
++For a change to signal handling, process cleanup, or other timing-sensitive
++code, run the `Coverage` workflow on the pull request branch before the merge:
++`gh workflow run coverage.yml --ref <branch>`. `Coverage` runs only on `main`,
++and its slow instrumented build finds races that the pull request jobs miss.
++
+ ## Synthesis
+ 
+ - `Fix first` when any high-confidence blocker remains.
+```
+
+**File**: `package.json` (modified, +2/-1)
+```diff
+@@ -38,7 +38,8 @@
+     "smoke:styling-prs": "node scripts/styling-pr-smoke.mjs",
+     "lint:js": "node scripts/assert-local-resolution.mjs oxlint && oxlint --disable-nested-config npm benchmarks crates/napi .github/scripts editors/vscode/src viz-frontend/src scripts tools/type-aware-sidecar tools/mutation-runner tests/coverage-producer-corpus/producers/drivers tests/coverage-producer-corpus/producers/lib commitlint.config.mjs",
+     "fmt:js": "node scripts/assert-local-resolution.mjs oxfmt && oxfmt --disable-nested-config npm benchmarks crates/napi .github/scripts editors/vscode/src viz-frontend/src scripts tools/type-aware-sidecar tools/mutation-runner tests/coverage-producer-corpus/producers/drivers tests/coverage-producer-corpus/producers/lib commitlint.config.mjs",
+-    "fmt:js:check": "node scripts/assert-local-resolution.mjs oxfmt && oxfmt --check --disable-nested-config npm benchmarks crates/napi .github/scripts editors/vscode/src viz-frontend/src scripts tools/type-aware-sidecar tools/mutation-runner tests/coverage-producer-corpus/producers/drivers tests/coverage-producer-corpus/producers/lib commitlint.config.mjs"
++    "fmt:js:check": "node scripts/assert-local-resolution.mjs oxfmt && oxfmt --check --disable-nested-config npm benchmarks crates/napi .github/scripts editors/vscode/src viz-frontend/src scripts tools/type-aware-sidecar tools/mutation-runner tests/coverage-producer-corpus/producers/drivers tests/coverage-producer-corpus/producers/lib commitlint.config.mjs",
++    "test:scripts": "node --test scripts/*.test.mjs"
+   },
+   "engines": {
+     "node": ">=22.13.0",
+```
+
+**File**: `scripts/check-audit-schema-doc-sync.test.mjs` (modified, +4/-3)
+```diff
+@@ -13,6 +13,7 @@ import {
+   parseRustSchemaVersion,
+   runAuditSchemaDocCheck,
+ } from "./check-audit-schema-doc-sync.mjs";
++import { makeTempDir } from "./lib/temp-dir.mjs";
+ 
+ const auditDocument = ({ audit = 10, deadCode = 9, extra = "" } = {}) => `
+ ## JSON output
+@@ -145,7 +146,7 @@ test("the companion checkout resolves as a sibling of the main checkout", () =>
+ });
+ 
+ test("a guessed companion checkout that is absent skips instead of reporting drift", () => {
+-  const root = mkdtempSync(join(tmpdir(), "fallow-audit-schema-skip-"));
++  const root = makeTempDir("fallow-audit-schema-skip-");
+   const checkout = join(root, "checkout");
+   mkdirSync(join(checkout, "crates", "output", "src"), { recursive: true });
+   writeFileSync(
+@@ -193,15 +194,15 @@ test("a guessed companion checkout that is absent skips instead of reporting dri
+ });
+ 
+ test("audit documentation parity fails closed when the companion is absent", () => {
+-  const root = mkdtempSync(join(tmpdir(), "fallow-audit-schema-parity-"));
++  const root = makeTempDir("fallow-audit-schema-parity-");
+   const result = runAuditSchemaDocCheck({ docsDir: join(root, "missing-docs") });
+ 
+   assert.equal(result.status, 1);
+   assert.match(result.message, /expected companion doc not found/u);
+ });
+ 
+ test("audit documentation parity fails closed when canonical sources are absent", () => {
+-  const root = mkdtempSync(join(tmpdir(), "fallow-audit-schema-source-"));
++  const root = makeTempDir("fallow-audit-schema-source-");
+   const result = runAuditSchemaDocCheck({ repoRoot: join(root, "missing-source") });
+ 
+   assert.equal(result.status, 2);
+```
+
+**File**: `scripts/check-knowledge-architecture.test.mjs` (modified, +3/-3)
+```diff
+@@ -1,11 +1,11 @@
+ import assert from "node:assert/strict";
+ import { execFileSync, spawnSync } from "node:child_process";
+-import { mkdtempSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
+-import { tmpdir } from "node:os";
++import { mkdirSync, symlinkSync, writeFileSync } from "node:fs";
+ import { join, resolve } from "node:path";
+ import test from "node:test";
+ 
+ import { validateKnowledgeArchitecture } from "./check-knowledge-architecture.mjs";
++import { makeTempDir } from "./lib/temp-dir.mjs";
+ 
+ const write = (root, path, content) => {
+   mkdirSync(join(root, path, ".."), { recursive: true });
+@@ -67,7 +67,7 @@ const manifest = {
+ };
+ 
+ const setup = () => {
+-  const root = mkdtempSync(join(tmpdir(), "fallow-knowledge-"));
++  const root = makeTempDir("fallow-knowledge-");
+   write(root, "scripts/knowledge-surfaces.json", `${JSON.stringify(manifest, null, 2)}\n`);
+   write(root, "scripts/generate-agent-adapters.mjs", "export {};\n");
+   write(root, "AGENTS.md", "# Codex\n\n[Docs](docs/README.md)\n\n`.agents/skills`\n");
+```
+
+**File**: `scripts/check-telemetry-doc-sync.test.mjs` (modified, +5/-5)
+```diff
+@@ -1,10 +1,10 @@
+ import assert from "node:assert/strict";
+ import { spawnSync } from "node:child_process";
+-import { copyFileSync, mkdirSync, mkdtempSync } from "node:fs";
+-import { tmpdir } from "node:os";
++import { copyFileSync, mkdirSync } from "node:fs";
+ import { join } from "node:path";
+ import { fileURLToPath } from "node:url";
+ import test from "node:test";
++import { makeTempDir } from "./lib/temp-dir.mjs";
+ 
+ const REPO_ROOT = fileURLToPath(new URL("..", import.meta.url));
+ const SCRIPT = "scripts/check_telemetry_doc_sync.py";
+@@ -63,7 +63,7 @@ const createCheckout = (root) => {
+ };
+ 
+ test("telemetry documentation parity fails closed when companions are absent", () => {
+-  const root = mkdtempSync(join(tmpdir(), "fallow-telemetry-parity-"));
++  const root = makeTempDir("fallow-telemetry-parity-");
+   const result = run(REPO_ROOT, {
+     FALLOW_DOCS_DIR: join(root, "missing-docs"),
+     FALLOW_SKILLS_DIR: join(root, "missing-skills"),
+@@ -74,7 +74,7 @@ test("telemetry documentation parity fails closed when companions are absent", (
+ });
+ 
+ test("telemetry documentation parity fails closed when a companion variable is set but empty", () => {
+-  const root = mkdtempSync(join(tmpdir(), "fallow-telemetry-empty-"));
++  const root = makeTempDir("fallow-telemetry-empty-");
+   const checkout = createCheckout(root);
+ 
+   // Nothing sits beside this throwaway checkout, so standing down is the only
+@@ -87,7 +87,7 @@ test("telemetry documentation parity fails closed when a companion variable is s
+ });
+ 
+ test("telemetry documentation parity looks beside the main checkout, not beside a worktree", () => {
+-  const root = mkdtempSync(join(tmpdir(), "fallow-telemetry-worktree-"));
++  const root = makeTempDir("fallow-telemetry-worktree-");
+   const checkout = createCheckout(root);
+   git(checkout, ["init", "--quiet"]);
+   git(checkout, ["add", "-f", "--", "."]);
+```
+
+**File**: `scripts/check-temp-leaks.mjs` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++#!/usr/bin/env node
++// Runs a command and fails when the command leaves new `fallow-*` entries in
++// the system temp directory. Test suites must remove their own temp folders,
++// because a developer machine and a reused CI runner keep them.
++//
++// Usage: node scripts/check-temp-leaks.mjs -- <command> [args...]
++//
++// The exit code is the exit code of the command when it fails. When the
++// command passes and new entries exist, the exit code is 1.
++
++import { spawnSync } from "node:child_process";
++import { readdirSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { fileURLToPath } from "node:url";
++
++const PREFIX = "fallow-";
++
++// These prefixes are designed to stay: the audit base cache has its own age
++// garbage collection, and the mutation companion folders have their own
++// cleanup.
++const IGNORED_PREFIXES = ["fallow-audit-base-cache-", "fallow-mt-"];
++
++/** Returns true when the temp entry name belongs to the guard. */
++export const isTrackedEntry = (name) =>
++  name.startsWith(PREFIX) && !IGNORED_PREFIXES.some((ignored) => name.startsWith(ignored));
++
++/** Returns the set of tracked entry names in `dir`. */
++export const snapshotTempEntries = (dir = tmpdir()) => {
++  const names = readdirSync(dir).filter(isTrackedEntry);
++  return new Set(names);
++};
++
++/** Returns the sorted names that are in `after` and not in `before`. */
++export const newEntries = (before, after) =>
++  [...after].filter((name) => !before.has(name)).toSorted();
++
++const parseCommand = (argv) => {
++  const separator = argv.indexOf("--");
++  const command = separator === -1 ? argv : argv.slice(separator + 1);
++  return command.length === 0 ? null : command;
++};
++
++const reportLeaks = (dir, leaked) => {
++  console.error(`check-temp-leaks: the command left ${leaked.length} new entries in ${dir}:`);
++  for (const name of leaked) console.error(`  ${join(dir, name)}`);
++  console.error(
++    "Remove each temp folder in the test that creates it, for example with makeTempDir() of scripts/lib/temp-dir.mjs.",
++  );
++};
++
++// A failing command keeps its own exit code, so CI shows the real failure.
++const exitCode = (status, leaked) => {
++  if (status !== 0) return status ?? 1;
++  return leaked.length > 0 ? 1 : 0;
++};
++
++const main = () => {
++  const command = parseCommand(process.argv.slice(2));
++  if (command === null) {
++    console.error("usage: node scripts/check-temp-leaks.mjs -- <command> [args...]");
++    return 2;
++  }
++
++  const dir = tmpdir();
++  const before = snapshotTempEntries(dir);
++  const result = spawnSync(command[0], command.slice(1), {
++    stdio: "inherit",
++    shell: process.platform === "win32",
++  });
++  if (result.error) {
++    console.error(`check-temp-leaks: cannot run ${command[0]}: ${result.error.message}`);
++    return 2;
++  }
++  const leaked = newEntries(before, snapshotTempEntries(dir));
++  if (leaked.length > 0) reportLeaks(dir, leaked);
++  return exitCode(result.status, leaked);
++};
++
++if (process.argv[1] === fileURLToPath(import.meta.url)) {
++  process.exitCode = main();
++}
+```
+
+---
+
+### Incident Patch 3: `decfa2af` (2026-11-06)
+**Commit Message**: fix(mutation): create no companion temp directory after a signal (#4315)
+
+After SIGINT, a `fallow-mt-*` directory and its lock file can stay in the
+temp directory. The signal thread kills the companion, and the scheduler
+then starts a new one. That companion creates its temp directory after
+the signal cleanup deleted the registered paths, and the exit follows
+with no further cleanup.
+
+- The drain closes the path registry before it kills the children. A
+  closed registry refuses new paths, and a creation runs under the
+  registry lock, so a signal deletes all of its paths or none.
+- A child that registers after the drain began is killed at once.
+- The main thread waits for a pending signal exit. A refused companion
+  start makes the run end quickly, and without the wait the process
+  ended with the exit code of the run instead of 130.
+
+Refs #4301
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/fix-mutation-temp-cleanup-on-signal.md` (modified, +1/-1)
+```diff
+@@ -1,3 +1,3 @@
+ ### Fixed
+ 
+-- **`fallow mutation` deletes the companion temp directories when you stop a run with Ctrl+C.** A signal ends Fallow without its normal cleanup, so the temp directories of the companions stayed on the disk until the next run. The signal handler now deletes them after it ends the companion processes.
++- **`fallow mutation` deletes the companion temp directories when you stop a run with Ctrl+C.** A signal ends Fallow without its normal cleanup, so the temp directories of the companions stayed on the disk until the next run. The signal handler now deletes them after it ends the companion processes. After the signal, Fallow starts no new companion and creates no new temp directory. A companion that starts while the handler runs is killed at once.
+```
+
+**File**: `crates/api/src/mutation/companion_temp.rs` (modified, +52/-15)
+```diff
+@@ -13,7 +13,10 @@
+ //! lock is free belongs to an API that ended without cleanup (a signal or a
+ //! crash), so the first companion of the next run removes it. A signal ends
+ //! Fallow without a drop, so the signal cleanup of `fallow-process` deletes
+-//! the directory after it ends the companion tree.
++//! the directory after it ends the companion tree. The scheduler starts a
++//! new companion when one ends, and after the signal cleanup began
++//! [`CompanionTemp::create`] fails, so no new directory appears before the
++//! exit.
+ //!
+ //! The system temp directory can be shared with other users (`/tmp` on
+ //! Linux). The directory is private to its owner, and a sweep opens only a
+@@ -67,22 +70,19 @@ impl CompanionTemp {
+         for _ in 0..CREATE_ATTEMPTS {
+             let name = format!("{PREFIX}{}", unique_suffix());
+             let lock_path = parent.join(format!("{name}{LOCK_SUFFIX}"));
+-            let lock = match private_options().create_new(true).open(&lock_path) {
+-                Ok(lock) => lock,
++            let dir = parent.join(&name);
++            let created =
++                fallow_process::create_cleanup_paths(vec![dir.clone(), lock_path.clone()], || {
++                    create_locked_dir(&dir, &lock_path)
++                });
++            let (lock, cleanup) = match created {
++                Ok(created) => created,
+                 Err(error) if error.kind() == io::ErrorKind::AlreadyExists => continue,
+                 Err(error) => return Err(error),
+             };
+-            let dir = parent.join(&name);
+-            if let Err(error) = lock.lock().and_then(|()| create_private_dir(&dir)) {
+-                drop(lock);
+-                let _ = fs::remove_file(&lock_path);
+-                return Err(error);
+-            }
+             if let Ok(own) = lock.metadata() {
+                 SWEEP.call_once(|| sweep_stale(parent, SystemTime::now(), &own));
+             }
+-            let cleanup =
+-                fallow_process::register_cleanup_paths(vec![dir.clone(), lock_path.clone()]);
+             return Ok(Self {
+                 dir,
+                 lock_path,
+@@ -111,11 +111,20 @@ impl CompanionTemp {
+ 
+ impl Drop for CompanionTemp {
+     fn drop(&mut self) {
++        self.release(remove_dir);
++    }
++}
++
++impl CompanionTemp {
++    /// Deletes the directory with `remove` and then the lock file. The
++    /// entry stays registered until the paths are gone: a signal during the
++    /// delete must still find them.
++    fn release(&mut self, remove: impl Fn(&Path) -> bool) {
+         let removed = (0..REMOVE_ATTEMPTS).any(|attempt| {
+             if attempt > 0 {
+                 std::thread::sleep(REMOVE_PAUSE);
+             }
+-            remove_dir(&self.dir)
++            remove(&self.dir)
+         });
+         // The lock goes first: Windows cannot delete a file that is open.
+         drop(self.lock.take());
+@@ -124,13 +133,23 @@ impl Drop for CompanionTemp {
+         if removed {
+             let _ = fs::remove_file(&self.lock_path);
+         }
+-        // The entry goes last. A signal can end the process during this drop
+-        // (the signal kills the companion, and this thread sees the exit).
+-        // The signal cleanup then still holds the entry and deletes the rest.
+         fallow_process::deregister_cleanup_paths(self.cleanup);
+     }
+ }
+ 
++/// Creates the lock file at `lock_path`, locks it, and creates `dir`. An
++/// error leaves neither path. A lock file that exists gives an error of kind
++/// [`io::ErrorKind::AlreadyExists`].
++fn create_locked_dir(dir: &Path, lock_path: &Path) -> io::Result<File> {
++    let lock = private_options().create_new(true).open(lock_path)?;
++    if let Err(error) = lock.lock().and_then(|()| create_private_dir(dir)) {
++        drop(lock);
++        let _ = fs::remove_file(lock_path);
++        return Err(error);
++    }
++    Ok(lock)
++}
++
+ /// Deletes `dir`. True when it is gone.
+ fn remove_dir(dir: &Path) -> bool {
+     match fs::remove_dir_all(dir) {
+@@ -272,6 +291,24 @@ mod tests {
+         assert_eq!(fs::read_dir(parent.path()).unwrap().count(), 0);
+     }
+ 
++    /// A signal ends Fallow without a drop. When it comes while drop
++    /// deletes the directory, the signal cleanup must still find the paths.
++    #[test]
++    fn the_paths_stay_registered_while_drop_deletes_them() {
++        let parent = tempfile::tempdir().unwrap();
++        let mut temp = CompanionTemp::create(parent.path()).unwrap();
++        let cleanup = temp.cleanup;
++        let registered = std::cell::Cell::new(false);
++        temp.release(|dir| {
++            registered.set(fallow_process::is_cleanup_registered(cleanup));
++            remove_dir(dir)
++        });
++        assert!(registered.get(), "drop deregisters before the delete");
++        assert!(!fallow_process::is_cleanup_registered(cleanup));
++        drop(temp);
++        assert_eq!(fs::read_dir(parent.path()).unwrap().count(), 0);
++    }
++
+     #[test]
+     fn apply_sets_each_temp_variable_to_th
+```
+
+**File**: `crates/cli/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -446,7 +446,7 @@ fn finalize_report_file(
+ /// A stdout write error other than a closed pipe changes the exit code to 2,
+ /// so that a cut-off report never looks like a successful run.
+ pub fn run() -> ExitCode {
+-    report::sink::finish_stdout(run_command())
++    signal::after_pending_exit(report::sink::finish_stdout(run_command()))
+ }
+ 
+ fn run_command() -> ExitCode {
+```
+
+**File**: `crates/cli/src/signal/mod.rs` (modified, +60/-1)
+```diff
+@@ -43,6 +43,10 @@ static SHUTDOWN: AtomicBool = AtomicBool::new(false);
+ /// exiting; the consumer is responsible for clean teardown.
+ static GRACEFUL: AtomicBool = AtomicBool::new(false);
+ 
++/// True once a signal handler decided to end the process with `exit`.
++/// [`after_pending_exit`] reads it.
++static EXIT_PENDING: AtomicBool = AtomicBool::new(false);
++
+ /// Idempotency guard for `install_handlers`. Repeated calls (e.g. when
+ /// `run_watch` reinstalls the handler) are silently no-ops.
+ static INSTALLED: OnceLock<()> = OnceLock::new();
+@@ -122,6 +126,42 @@ impl Drop for GracefulModeGuard {
+     }
+ }
+ 
++/// Sets `EXIT_PENDING` and clears it again on a drop. A panic in the drain
++/// of a debug build unwinds the signal thread, and the drop then frees a
++/// main thread that waits in [`after_pending_exit`].
++struct PendingExit {
++    drained: bool,
++}
++
++impl PendingExit {
++    fn start() -> Self {
++        EXIT_PENDING.store(true, Ordering::SeqCst);
++        Self { drained: false }
++    }
++}
++
++impl Drop for PendingExit {
++    fn drop(&mut self) {
++        if !self.drained {
++            EXIT_PENDING.store(false, Ordering::SeqCst);
 +        }
-+        HookTarget::GitHooks(path) => path,
-         HookTarget::Lefthook => {
-             eprintln!(
-                 "Lefthook detected. Remove the fallow command from your lefthook.yml manually."
++    }
++}
++
++/// Blocks for good when a signal handler is about to end the process.
++///
++/// The drain can take up to its budget. In that time the command can end
++/// quickly, because no new child process can start. A return from `main`
++/// would then end the process with the exit code of the command instead
++/// of `128 + signum`. The main thread passes its exit code through this
++/// before it returns.
++pub fn after_pending_exit(code: std::process::ExitCode) -> std::process::ExitCode {
++    while EXIT_PENDING.load(Ordering::SeqCst) {
++        std::thread::park_timeout(std::time::Duration::from_millis(50));
++    }
++    code
++}
++
+ #[cfg(unix)]
+ fn platform_install() -> std::io::Result<()> {
+     unix::install()
+@@ -151,8 +191,14 @@ fn platform_install() -> std::io::Result<()> {
+ /// Invoked by the platform-specific handler thread.
+ fn handle_signal(exit_code: i32) {
+     SHUTDOWN.store(true, Ordering::SeqCst);
++    let graceful = GRACEFUL.load(Ordering::SeqCst);
++    let mut pending = (!graceful).then(PendingExit::start);
+     fallow_process::drain_and_kill();
+-    if GRACEFUL.load(Ordering::SeqCst) {
++    // The drain returned, so the exit below follows.
++    if let Some(pending) = pending.as_mut() {
++        pending.drained = true;
++    }
++    if graceful {
+         return;
+     }
+     #[expect(
+@@ -176,6 +222,19 @@ mod tests {
+         assert!(!GRACEFUL.load(Ordering::SeqCst));
+     }
+ 
++    /// A drain that panics must not leave the main thread waiting forever.
++    #[test]
++    fn a_pending_exit_that_unwinds_frees_the_main_thread() {
++        let unwound = std::panic::catch_unwind(|| {
++            let _pending = PendingExit::start();
++            assert!(EXIT_PENDING.load(Ordering::SeqCst));
++            panic!("the drain panics");
++        });
++        assert!(unwound.is_err());
++        assert!(!EXIT_PENDING.load(Ordering::SeqCst));
++        let _ = after_pending_exit(std::process::ExitCode::SUCCESS);
++    }
++
+     #[test]
+     fn install_handlers_is_idempotent() {
+         let _ = install_handlers();
+```
+
+**File**: `crates/process/src/cleanup_paths.rs` (modified, +188/-44)
+```diff
+@@ -1,72 +1,159 @@
+ //! Process-wide registry of paths that the signal cleanup deletes.
+ //!
+ //! A signal ends Fallow with `exit`, so no destructor runs. An owner that
+-//! deletes a temp directory in `Drop` registers the directory here, and the
+-//! signal cleanup deletes it after it ends the registered children. The
+-//! children must end first: a live child can still write into the directory.
++//! deletes a temp directory in `Drop` creates the directory through this
++//! registry, and the signal cleanup deletes it after it ends the registered
++//! children. The children must end first: a live child can still write into
++//! the directory.
++//!
++//! The signal cleanup closes the registry before it kills the children. The
++//! process keeps running until the exit, and a worker can then try to start
++//! a new child (for example a mutation companion that replaces a killed
++//! one). A closed registry refuses to create new paths, so no path can
++//! appear after the deletion and stay after the exit.
+ 
+ use std::io;
+ use std::path::{Path, PathBuf};
+-use std::sync::atomic::{AtomicU64, Ordering};
+-use std::sync::{Mutex, OnceLock, TryLockError};
++use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
++use std::sync::{Mutex, MutexGuard, OnceLock, TryLockError};
+ use std::time::Duration;
+ 
+ use rustc_hash::FxHashMap;
+ 
+ static NEXT_ID: AtomicU64 = AtomicU64::new(1);
+-static PATHS: OnceLock<Mutex<FxHashMap<u64, Vec<PathBuf>>>> = OnceLock::new();
++static PATHS: OnceLock<PathRegistry> = OnceLock::new();
++
++type Entries = FxHashMap<u64, Vec<PathBuf>>;
++
++#[derive(Default)]
++struct PathRegistry {
++    entries: Mutex<Entries>,
++    /// True after a signal cleanup began. The flag stays set: the child
++    /// registry also drains only once per process. It is outside the mutex,
++    /// so that a drain can close the registry while a creation holds the
++    /// lock. That creation still registers its paths, and the deletion
++    /// waits for the lock.
++    closed: AtomicBool,
++}
++
++impl PathRegistry {
++    fn lock(&self) -> MutexGuard<'_, Entries> {
++        self.entries
++            .lock()
++            .unwrap_or_else(|error| error.into_inner())
++    }
++
++    fn close(&self) {
++        self.closed.store(true, Ordering::SeqCst);
++    }
++}
++
++fn paths() -> &'static PathRegistry {
++    PATHS.get_or_init(PathRegistry::default)
++}
+ 
+-fn paths() -> &'static Mutex<FxHashMap<u64, Vec<PathBuf>>> {
+-    PATHS.get_or_init(|| Mutex::new(FxHashMap::default()))
++/// Calls `create`, which must create `paths_to_delete`, and registers the
++/// paths for deletion on a signal. The signal cleanup waits until `create`
++/// returns, so a signal deletes either all paths of `create` or none of
++/// them. Keep `create` short and free of waits on other threads.
++///
++/// The signal cleanup deletes the paths in order. A directory goes with its
++/// contents. The deletion stops at the first path that it cannot delete, so
++/// a later path (for example a lock file that marks the directory) stays
++/// when an earlier path stays.
++///
++/// Returns the value of `create` and the key for
++/// [`deregister_cleanup_paths`]. After a signal cleanup began, the call
++/// does not call `create` and returns an error of kind
++/// [`io::ErrorKind::Interrupted`]. An error of `create` registers nothing,
++/// so `create` must delete each path that it made before the error.
++///
++/// The call holds the registry lock during `create`. A panic hook that
++/// runs in that time cannot take the lock and skips the deletion, so keep
++/// `create` to a few file system calls.
++pub fn create_cleanup_paths<T>(
++    paths_to_delete: Vec<PathBuf>,
++    create: impl FnOnce() -> io::Result<T>,
++) -> io::Result<(T, u64)> {
++    create_in(paths(), paths_to_delete, create)
+ }
+ 
+-/// Registers `paths` for deletion on a signal, in order. A directory goes
+-/// with its contents. The deletion stops at the first path that it cannot
+-/// delete, so a later path (for example a lock file that marks the
+-/// directory) stays when an earlier path stays. Returns the key for
+-/// [`deregister_cleanup_paths`].
+-pub fn register_cleanup_paths(paths_to_delete: Vec<PathBuf>) -> u64 {
++#[expect(
++    clippy::significant_drop_tightening,
++    reason = "the lock covers `create`, so a signal deletes all of its paths or none"
++)]
++fn create_in<T>(
++    registry: &PathRegistry,
++    paths_to_delete: Vec<PathBuf>,
++    create: impl FnOnce() -> io::Result<T>,
++) -> io::Result<(T, u64)> {
++    let mut entries = registry.lock();
++    if registry.closed.load(Ordering::SeqCst) {
++        return Err(io::Error::new(
++            io::ErrorKind::Interrupted,
++            "the signal cleanup has begun",
++        ));
++    }
++    let value = create()?;
+     let id = NEXT_ID.fetch_add(1, Ordering::SeqCst);
+-    paths()
+-        .lock()
+-        .unwrap_or_else(|error| error.into_inner())
+-        .insert(id, paths_to_delete);
+-    id
++    entries.insert(id, paths_to_delete);
++    Ok((value, id))
+ }
+ 
+-/// Removes the 
+```
+
+**File**: `crates/process/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ mod registry;
+ mod scoped_child;
+ mod spawn_retry;
+ 
+-pub use cleanup_paths::{deregister_cleanup_paths, register_cleanup_paths};
++pub use cleanup_paths::{create_cleanup_paths, deregister_cleanup_paths, is_cleanup_registered};
+ pub use process_tree::{ChildCleanup, ProcessTree, cleanup_std_child, configure_std_command};
+ #[cfg(feature = "tokio")]
+ pub use process_tree::{cleanup_tokio_child, configure_tokio_command};
+```
+
+**File**: `crates/process/src/registry.rs` (modified, +44/-4)
+```diff
+@@ -47,15 +47,33 @@ pub fn register_process_tree(process_tree: ProcessTreeHandle) -> u64 {
+     register_target(KillTarget::ProcessTree(process_tree))
+ }
+ 
++/// A target that registers after a drain began misses the drain snapshot,
++/// so it is killed at once. The drain sets `DRAINING` before it takes the
++/// registry lock for the snapshot, so each target is in the snapshot or
++/// sees the flag.
+ fn register_target(target: KillTarget) -> u64 {
+     let id = NEXT_ID.fetch_add(1, Ordering::SeqCst);
+-    registry()
+-        .lock()
+-        .unwrap_or_else(|e| e.into_inner())
+-        .insert(id, target);
++    if let Some(late) = insert_unless_draining(registry(), &DRAINING, id, target) {
++        kill_target(&late);
++    }
+     id
+ }
+ 
++/// Inserts `target`, or gives it back when `draining` is set.
++fn insert_unless_draining(
++    registry: &Mutex<FxHashMap<u64, KillTarget>>,
++    draining: &AtomicU64,
++    id: u64,
++    target: KillTarget,
++) -> Option<KillTarget> {
++    let mut registry = registry.lock().unwrap_or_else(|e| e.into_inner());
++    if draining.load(Ordering::SeqCst) != 0 {
++        return Some(target);
++    }
++    registry.insert(id, target);
++    None
++}
++
+ /// Remove the registry entry for `id`. Idempotent.
+ pub fn deregister(id: u64) {
+     registry()
+@@ -82,6 +100,7 @@ pub fn drain_and_kill() {
+     if !begin_drain() {
+         return;
+     }
++    crate::cleanup_paths::close_registry();
+     let targets: Vec<KillTarget> = registry()
+         .lock()
+         .unwrap_or_else(|e| e.into_inner())
+@@ -115,6 +134,7 @@ fn drain_targets(registry: &mut FxHashMap<u64, KillTarget>) -> Option<Vec<KillTa
+     if !begin_drain() {
+         return None;
+     }
++    crate::cleanup_paths::close_registry();
+     Some(registry.drain().map(|(_id, target)| target).collect())
+ }
+ 
+@@ -394,6 +414,26 @@ mod tests {
+         );
+     }
+ 
++    /// A mutation companion can start while the signal thread kills the
++    /// drained children. It is not in the drain snapshot, so the
++    /// registration must give it back for an immediate kill.
++    #[test]
++    fn a_target_that_registers_during_a_drain_is_given_back() {
++        let local = Mutex::new(FxHashMap::default());
++        let draining = AtomicU64::new(0);
++        assert!(insert_unless_draining(&local, &draining, 1, KillTarget::Process(42)).is_none());
++        draining.store(1, Ordering::SeqCst);
++        let late = insert_unless_draining(&local, &draining, 2, KillTarget::Process(43));
++        assert!(matches!(late, Some(KillTarget::Process(43))));
++        let registered: Vec<u64> = local
++            .lock()
++            .unwrap_or_else(|error| error.into_inner())
++            .keys()
++            .copied()
++            .collect();
++        assert_eq!(registered, vec![1]);
++    }
++
+     #[test]
+     fn ids_are_monotonic() {
+         let a = register(100);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4266** (2026-11-05): chore: sync napi, Docker pins and RELEASED_TAG to v3.40.0 (@BartWaardenburg)
-- **PR #4265** (2026-11-05): fix(mutation): leave bench files and __tests__ helpers out of the test files (@BartWaardenburg)
-- **PR #4263** (2026-11-05): test(mutation): add the result cache to the cache model tests (@BartWaardenburg)
-- **PR #4262** (2026-11-05): fix(health): count @keyframes in SCSS and Less sources (@BartWaardenburg)
-- **PR #4260** (2026-11-05): chore: adopt cargo-fallow 0.2.0 checks (@BartWaardenburg)
-- **PR #4257** (2026-11-05): fix(policy): report each call site for banned-call, banned-effect and forbidden calls (@BartWaardenburg)
+- **PR #4353** (2026-11-08): perf(mutation): stop an endless loop through the active mutant in the companion (@BartWaardenburg)
+- **PR #4350** (2026-11-07): fix(mutation): report duplicate runner test ids and refuse them as kill-matrix targets (@BartWaardenburg)
+- **PR #4349** (2026-11-07): fix(extract): credit members reached through call return types (@BartWaardenburg)
+- **PR #4348** (2026-11-07): fix(audit): keep a shifted css-duplicate-block occurrence inherited (@BartWaardenburg)
+- **PR #4347** (2026-11-07): fix(release): retry a Sigstore 409 and stage the fallow root last (@BartWaardenburg)
+- **PR #4346** (2026-11-07): docs(skills): keep maintainer questions out of follow-up issues (@BartWaardenburg)
 
 ---
 
@@ -2970,32 +2894,52 @@ resolves outside the c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): trace require() bindings of node child_process and fs (#4238)
+## X. test(cloud): run the Linux credential store of cloud login in CI (#4316)
 
 **RULE**:
-When implementing operations in `changelog.d/fix-security-require-provenance.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b78f34c4`: security): trace require() bindings of node child_process and fs (#4238). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f4d67d31`: test(cloud): run the Linux credential store of cloud login in CI (#4316). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-security-require-provenance.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-
-- **`fallow security` reports a sink that a destructured `require()` binds.** Before, `const { exec } = require("node:child_process"); exec(cmd)` gave no `command-injection` candidate, and `const { readFileSync } = require("node:fs")` gave no `path-traversal` candidate. The same code with an ES import gave a candidate. Fallow now traces a named binding of `node:child_process`, `node:fs` and `node:fs/promises` to its module, for ES imports, aliased imports (`import { readFile as read }`) and destructured `require()` calls. The same applies to `world-writable-permission` and `insecure-temp-file`, and to `fs.promises.writeFile` and `fs.promises.chmod` on `const fs = require("fs")`. The destination of `rename`, `copyFile` and `copyFileSync` is now also a `path-traversal` candidate for these bindings, when the argument or the module reads untrusted input. In `fallow security`, a parameter that has the same name as the import no longer gives a candidate.
-
-  The callee in `evidence` and in `candidate.sink.callee` now names the module, as it already did for `node:vm`. This applies to named imports and to `require()` bindings. For example, `execSync()` and `cp.execSync()` after `
+      linux-keychain: ${{ steps.filter.outputs.linux-keychain }}
+            # `linux-keychain` gates the credential store tests of `fallow
+            # cloud login` with a real Secret Service. The `check` job cannot
+            # run them, because it has no D-Bus session and no keyring.
+            linux-keychain:
+              - 'crates/cli/src/coverage/credentials.rs'
+              - 'crates/cli/src/coverage/login.rs'
+              - 'crates/cli/tests/integration/cloud_login_linux_keychain_tests.rs'
+              - 'crates/cli/tests/integration/inspect_cloud_tests.rs'
+              - 'crates/cli/tests/integration/main.rs'
+              - 'crates/cli/tests/common/**'
+              - 'scripts/linux-keychain-test.sh'
+              - 'rust-toolchain.toml'
+              - '.github/actions/setup-rust/**'
+              - '.github/workflows/ci.yml'
+              - 'scripts/workflow-policy.test.mjs'
+  linux-keychain:
+    name: Linux keychain
+    needs: changes
+    if: needs.changes.outputs.linux-keychain == 'true' || (github.event_name == 'push' && needs.changes.outputs.main-full != 'false')
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    step
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    needs: [changes, docker, check, check-lint, napi, drift, windows-rust, windows-drift, windows-type-aware, doc, typos, js-lint, npm-package, action-current, fallow-self-analyze, vscode, vscode-package-targets, vscode-target-host, zed, test-gitlab-ci, audit, deny, cargo-fallow, zizmor, msrv, miri, skills-vendor, viz-frontend, mutation-runner-floor, similar-code-sidecar]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b78f34c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f4d67d31` are properly handled with clean fallback behavior.

@@ -8172,3 +8172,6 @@
 | `CYCLE-20261108-JM34` | `2026-11-08T01:55:00.880Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`57ea91bd...`) |
 | `CYCLE-20261108-LL1V` | `2026-11-08T01:56:32.851Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`238c1b48...`) |
 | `CYCLE-20261108-XC6P` | `2026-11-08T02:05:41.233Z` | `meta/docusaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`4e8dba83...`) |
+| `CYCLE-20261108-A1TL` | `2026-11-08T02:15:34.329Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ae8391f5...`) |
+| `CYCLE-20261108-A76W` | `2026-11-08T02:15:41.288Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5283, Rule null, Rule null` | Yes (`6c71224d...`) |
+| `CYCLE-20261108-A9HL` | `2026-11-08T02:15:44.265Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`844d6bac...`) |

@@ -8181,3 +8181,6 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `9ac008f9` | Multi-dimensional audit evidence | 2026-11-08T01:55:00.884Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `a31ceb62` | Multi-dimensional audit evidence | 2026-11-08T01:56:32.866Z |
 | `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `c00f04e2` | Multi-dimensional audit evidence | 2026-11-08T02:05:41.237Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `0544c112` | Multi-dimensional audit evidence | 2026-11-08T02:15:34.332Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-08T02:15:41.291Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `2af367f7` | Multi-dimensional audit evidence | 2026-11-08T02:15:44.274Z |

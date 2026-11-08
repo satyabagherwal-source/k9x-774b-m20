@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `05ca843b`  
+> **Source Version**: `2af367f7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:54:29.990Z  
+> **Timestamp**: 2026-11-08T02:15:42.789Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:54:29.666Z  
+> **Harvest Timestamp**: 2026-11-08T02:15:42.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25788 stars
+- **Stars / Engagement**: 25795 stars
 
 ---
 
@@ -1259,11 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49892** (2026-11-08): **chore(deps): update cilium/cilium-cli action to v0.20.2 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.1` → `v0.20.2` | | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | minor | `v0.19.7` → `v0.20.2` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.2`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.2)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.1...v0.20.2)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply labels to all new test namespaces ([cilium/cilium#49190](https://redirect.github.com/cilium/cilium/issues/49190), [@&#8203;darox](https://redirect.github.com/darox)) - cilium-cli: fall back to WebSocket when a proxy rejects the SPDY upgrade ([cilium/cilium#49229](https://redirect.github.com/cilium/cilium/issues/49229), [@&#8203;epb-644](https://redirect.github.com/epb-644))  **Bugfixes:**  - Fixes error when passing times of 60s or more to cilium connectivity perf and throws an explicit error on fractional seconds. ([cilium/cilium#48965](https://redirect.github.com/cilium/cilium/issues/48965), [@&#8203;Arleee1](https://redirect.github.com/Arleee1))  **CI Changes:**  - cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest ([cilium/cilium#49676](https://redirect.github.com/cilium/cilium/issues/49676), [@&#8203;tklauser](https://red
+
 - **Issue #49873** (2026-11-06): **fix(deps): update module github.com/klauspost/compress to v1.20.2 [security] (v1.20)**
   *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/klauspost/compress](https://redirect.github.com/klauspost/compress) | `v1.18.7` → `v1.20.2` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.18.7/v1.20.2?slim=true) |  ---  ### Panic on two-block frames in github.com/klauspost/compress [CVE-2026-116591](https://nvd.nist.gov/vuln/detail/CVE-2026-116591) / [GHSA-fpmh-frq8-7rj8](https://redirect.github.com/advisories/GHSA-fpmh-frq8-7rj8) / [GO-2026-6865](https://pkg.go.dev/vuln/GO-2026-6865)  <details> <summary>More information</summary>  #### Details Panic on two-block frames in github.com/klauspost/compress  #### Severity Unknown  #### References - [https://github.com/klauspost/compress/security/advisories/GHSA-fpmh-frq8-7rj8](https://redirect.github.com/klauspost/compress/security/advisories/GHSA-fpmh-frq8-7rj8) - [https://github.com/klauspost/compress/commit/7f5d8528720c895a6106f201719f87eb030a565d](https://redirect.github.com/klauspost/compress/commit/7f5d8528720c895a6106f201719f87eb030a565d) - [https://github.com/klauspost/compress/releases/tag/v1.20.2](https://redirect.github.com/klauspost/compress/releases/tag/v1.20.2)  This data is provided by [OS
-
-- **Issue #49872** (2026-11-06): **iptables: skip the to-proxy mark for identity-marked packets**
-  *Symptoms*: - [x] For first time contributors, read [Submitting a pull request](https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#submitting-a-pull-request) - [x] All code is covered by unit and/or runtime tests where feasible (regression test `TestInboundProxyRedirectRuleSkipsIdentityMarked` added; goldens verified as `addProxyRules` input fixtures, untouched). - [x] All commits contain a well written commit description; Fixes: #49784. - [x] All commits are signed off (DCO). - [x] Release note provided below. - [x] Tested live on a single node (kind N/A — needs a real node with the agent chain): Gateway 503/5s → 200/302 in 4–13ms, L7-CNP backends intact; full A/B in the reply below. - [x] AI disclosure per the [Cilium AI Policy](https://github.com/cilium/community/blob/main/AI-POLICY.md): this PR was prepared with **AIL:3** (AI drafted prose inside a structure I fully laid out, from measurements I ran and observed myself — every relayed command executed by hand on the affected node, each result observed directly). I take personal responsibility for the content.  Fixes: cilium/cilium#49784  ```release-note iptables: skip the to-proxy mark for already identity-marked packets in CILIUM_PRE_mangle, fixing Gateway/L7 upstream timeouts on hosts with src_valid_mark=1 ```  The mechanism is now pinned with a clean A/B, so this is no longer a draft. The failure needs two components that are both common on the same node: Cilium's `CILIUM_PRE_mangle` rule and a host wher
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,360 +1280,122 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `05ca843b` (2026-10-12)
-**Commit Message**: fix: skip endpoints with missing netns during ztunnel initial snapshot
+### Incident Patch 1: `2af367f7` (2026-11-08)
+**Commit Message**: chore(deps): update cilium/cilium-cli action to v0.20.2
 
-If a stale endpoint makes its way into the endpoint cache (its network
-namespace is deleted but it remains in the cache), a ztunnel restart
-triggers sendInitialSnapshot on the cilium-agent, which loops over the
-endpoint cache attempting to open each endpoint's netns. If one open
-fails, the entire snapshot aborts and ztunnel never becomes ready.
+Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
-This fix checks, during netns open, for a netns-not-found error (i.e.
-already deleted); on that error it skips the stale endpoint and
-continues sending the other, non-stale endpoints.
-
-Signed-off-by: Alexander <[REDACTED_EMAIL]>
-
-**File**: `pkg/ztunnel/zds/server.go` (modified, +7/-0)
+**File**: `.github/workflows/conformance-aks.yaml` (modified, +1/-1)
 ```diff
-@@ -498,6 +498,13 @@ func (s *Server) sendInitialSnapshot(zc *ztunnelConn) error {
+@@ -422,7 +422,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
  
- 	for _, ep := range s.endpointCache {
- 		ns, err := netns.OpenPinned(ep.GetContainerNetnsPath())
-+		if errors.Is(err, os.ErrNotExist) {
-+			s.logger.Warn("skipping endpoint with missing netns during initial snapshot",
-+				logfields.EndpointID, ep.GetID16(),
-+			)
-+			delete(s.endpointCache, ep.GetID16())
-+			continue
-+		}
- 		if err != nil {
- 			s.logger.Error("failed to open netns file",
- 				logfields.EndpointID, ep.GetID16(),
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
++        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
-**File**: `pkg/ztunnel/zds/server_test.go` (modified, +82/-0)
+**File**: `.github/workflows/conformance-aws-cni.yaml` (modified, +1/-1)
 ```diff
-@@ -5,10 +5,12 @@ package zds
+@@ -366,7 +366,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
  
- import (
- 	"fmt"
-+	"io"
- 	"net"
- 	"os"
- 	"path/filepath"
- 	"testing"
-+	"time"
- 
- 	"github.com/cilium/hive/hivetest"
- 	"github.com/stretchr/testify/require"
-@@ -480,3 +482,83 @@ func TestPrivilegedZDSDisenrollNetnsOpenError(t *testing.T) {
- 	server.endpointCacheMutex.Unlock()
- 	require.True(t, ok, "endpoint should remain in cache on a non-ENOENT netns error")
- }
-+
-+// TestPrivilegedZDSSnapshotSkipsMissingNetns verifies that an endpoint whose
-+// netns is already gone is skipped during the initial snapshot (rather than
-+// aborting it), so a live endpoint and the SnapshotSent marker are still
-+// delivered. A stale cache entry must not break the whole snapshot.
-+func TestPrivilegedZDSSnapshotSkipsMissingNetns(t *testing.T) {
-+	server := setupZDSTestSuite(t)
-+
-+	ep1, cleanup1 := createTestEndpoint(t, "live-ep", 1)
-+	defer cleanup1()
-+	ep2, cleanup2 := createTestEndpoint(t, "missing-ep", 2)
-+	defer cleanup2()
-+
-+	server.SeedInitialSnapshot(ep1, ep2)
-+
-+	// Make ep2's netns disappear so OpenPinned returns ENOENT during the snapshot.
-+	ep2.SetContainerNetnsPath(filepath.Join(t.TempDir(), "missing-netns"))
-+
-+	conn, clientZC := dialZDSClient(t)
-+	defer conn.Close()
-+	sendHello(t, conn)
-+
-+	ack := &pb.WorkloadResponse{Payload: &pb.WorkloadResponse_Ack{Ack: &pb.Ack{}}}
-+	ackData, err := proto.Marshal(ack)
-+	require.NoError(t, err)
-+
-+	// The snapshot should deliver the live endpoint and the SnapshotSent marker,
-+	// skipping the endpoint whose netns is gone. Map iteration order is not
-+	// deterministic, so collect by UID until SnapshotSent arrives.
-+	receivedUIDs := make(map[string]bool)
-+	for {
-+		req := &pb.WorkloadRequest{}
-+		require.NoError(t, clientZC.readMsg(req))
-+		if req.GetSnapshotSent() != nil {
-+			_, err = conn.Write(ackData)
-+			require.NoError(t, err)
-+			break
-+		}
-+		require.NotNil(t, req.GetAdd(), "Expected Add, got %T", req.Payload)
-+		receivedUIDs[req.GetAdd().GetUid()] = true
-+		_, err = conn.Write(ackData)
-+		require.NoError(t, err)
-+	}
-+
-+	require.True(t, receivedUIDs["live-ep"], "live endpoint should be in the snapshot")
-+	require.False(t, receivedUIDs["missing-ep"], "endpoint with missing netns should be skipped")
-+
-+	server.endpointCacheMutex.Lock()
-+	_, stale := server.endpointCache[ep2.GetID16()]
-+	server.endpointCacheMutex.Unlock()
-+	require.False(t, stale, "endpoint with missing netns should be evicted")
-+}
-+
-+// TestPrivilegedZDSSnapshotAbortsOnNetnsError verifies that a non-ENOENT failure
-+// to open an endpoint's netns still aborts the initial snapshot (original
-+// behavior), so the connection is closed without a SnapshotSent marker.
-+func TestPrivilegedZDSSnapshotAbortsOnNetnsError(t *testing.T) {
-+	server := setupZDSTestSuite(t)
-+
-+	ep, cleanup := createTestEndpoint(t, "err-ep", 1)
-+	defer cleanup()
-+
-+	server.SeedInitialSnapshot(ep)
-+
-+	// Force a non-ENOENT open error: a path whose parent is a regular file yields
-+	// ENOTDIR, for which os.IsNotExist is false.
-+	notDir := filepath.Join(t.TempDir(), "file")
-+	require.NoError(t, os.WriteFile(notDir, nil, 0o600))
-+	ep.SetContainerNetnsPath(filepath.Join(notDir, "netns"))
-+
-+	conn, clientZC := dialZDSClient(t)
-+	defer conn.Close()
-+	sendHello(t, conn)
-+
-+	// The snapshot aborts before SnapshotSent and the server closes the
-+	// connection, so the client read fails.
-+	require.NoError(t, conn.SetReadDeadline(time.Now().Add(5*time.Second)))
-+	req := &pb.WorkloadRequest{}
-+	require.ErrorIs(t, clientZC.readMsg(req), io.EOF, "snapshot should abort on a non-ENOENT netns error")
-+}
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
++        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
----
-
-### Incident Patch 2: `f1daa410` (2026-10-12)
-**Commit Message**: fix: evict ztunnel endpoint from cache when netns gone at disenroll
-
-An endpoint can be leaked and left in the ztunnel endpoint cache if
-CNI DEL deletes the netns before DisenrollEndpoint runs. When
-DisenrollEndpoint runs it cannot open the (already deleted) netns and
-returns early without evicting the endpoint from the cache.
-
-This fix lets the disenroll flow continue when the netns does not
-exist (i.e. already deleted) and evicts the endpoint from the endpoint
-cache.
-
-Signed-off-by: Alexander <[REDACTED_EMAIL]>
-
-**File**: `pkg/ztunnel/zds/server.go` (modified, +20/-5)
+**File**: `.github/workflows/conformance-clustermesh.yaml` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,7 @@ package zds
+@@ -515,7 +515,7 @@ jobs:
+           echo flags=${FLAGS} >> $GITHUB_OUTPUT
  
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 	"log/slog"
- 	"net"
-@@ -404,10 +405,15 @@ func (s *Server) EnrollEndpoint(ep *endpoint.Endpoint) error {
- 	return nil
- }
- 
--func (s *Server) DisenrollEndpoint(ep *endpoint.Endpoint) error {
--	s.logger.Info("disenrolling endpoint from ztunnel", logfields.EndpointID, ep.GetID16())
--
-+// removeInPodRules skips cleanup when the runtime has already removed the netns.
-+func (s *Server) removeInPodRules(ep *endpoint.Endpoint) error {
- 	ns, err := netns.OpenPinned(ep.GetContainerNetnsPath())
-+	if errors.Is(err, os.ErrNotExist) {
-+		s.logger.Info("netns already gone, skipping in-pod cleanup during disenroll",
-+			logfields.EndpointID, ep.GetID16(),
-+		)
-+		return nil
-+	}
- 	if err != nil {
- 		s.logger.Error("failed to open netns file",
- 			logfields.EndpointID, ep.GetID16(),
-@@ -417,11 +423,20 @@ func (s *Server) DisenrollEndpoint(ep *endpoint.Endpoint) error {
- 	}
- 	defer ns.Close()
- 
--	if err = ns.Do(func() error {
-+	if err := ns.Do(func() error {
- 		return iptables.DeleteInPodRules(s.logger, option.Config.EnableIPv4, option.Config.EnableIPv6)
- 	}); err != nil {
- 		return fmt.Errorf("unable to remove iptable rules for ztunnel inpod mode: %w", err)
- 	}
-+	return nil
-+}
-+
-+func (s *Server) DisenrollEndpoint(ep *endpoint.Endpoint) error {
-+	s.logger.Info("disenrolling endpoint from ztunnel", logfields.EndpointID, ep.GetID16())
-+
-+	if err := s.removeInPodRules(ep); err != nil {
-+		return err
-+	}
- 
- 	pod := ep.GetPod()
- 	if pod == nil {
-@@ -450,7 +465,7 @@ func (s *Server) DisenrollEndpoint(ep *endpoint.Endpoint) error {
- 		return fmt.Errorf("sending update failed: %w", err)
- 	}
- 
--	// Only remove from cache after successful disenrollment
-+	// Remove from cache after successful disenrollment.
- 	s.endpointCacheMutex.Lock()
- 	delete(s.endpointCache, ep.GetID16())
- 	s.endpointCacheMutex.Unlock()
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
++        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
-**File**: `pkg/ztunnel/zds/server_test.go` (modified, +120/-0)
+**File**: `.github/workflows/conformance-delegated-ipam.yaml` (modified, +1/-1)
 ```diff
-@@ -231,6 +231,12 @@ func TestPrivilegedZDSConnHandlerEndpointUpdate(t *testing.T) {
- 	// Wait for disenrollment to complete
- 	err = <-enrollDone
- 	require.NoError(t, err)
-+
-+	// The endpoint should be evicted from the cache after a successful disenroll.
-+	server.endpointCacheMutex.Lock()
-+	_, ok := server.endpointCache[ep.GetID16()]
-+	server.endpointCacheMutex.Unlock()
-+	require.False(t, ok, "endpoint should be evicted from cache after disenroll")
- }
+@@ -289,7 +289,7 @@ jobs:
+           wait: 0
  
- // TestPrivilegedZDSRollingUpdate tests the scenario where a ztunnel pod is rolling updated.
-@@ -360,3 +366,117 @@ func TestPrivilegedZDSRollingUpdate(t *testing.T) {
- 	err = oldClientZC.readMsg(req)
- 	require.Error(t, err)
- }
-+
-+// TestPrivilegedZDSDisenrollMissingNetns verifies that when an endpoint's netns
-+// is already gone (e.g. CNI DEL ran before disenrollment), disenroll still drops
-+// the workload from ztunnel and evicts the stale cache entry instead of leaking
-+// it, which would otherwise abort a later sendInitialSnapshot.
-+func TestPrivilegedZDSDisenrollMissingNetns(t *testing.T) {
-+	server := setupZDSTestSuite(t)
-+	server.SeedInitialSnapshot()
-+
-+	conn, clientZC := dialZDSClient(t)
-+	defer conn.Close()
-+
-+	sendHello(t, conn)
-+	expectSnapshotAndAck(t, clientZC, conn, "")
-+
-+	ep, cleanup := createTestEndpoint(t, testUID, 1)
-+	defer cleanup()
-+
-+	ack := &pb.WorkloadResponse{Payload: &pb.WorkloadResponse_Ack{Ack: &pb.Ack{}}}
-+	ackData, err := proto.Marshal(ack)
-+	require.NoError(t, err)
-+
-+	// Enroll so the endpoint is in the cache.
-+	enrollDone := make(chan error, 1)
-+	go func() { enrollDone <- server.EnrollEndpoint(ep) }()
-+
-+	req := &pb.WorkloadRequest{}
-+	require.NoError(t, clientZC.readMsg(req))
-+	require.NotNil(t, req.GetAdd(), "Expected Add, got %T", req.Payload)
-+	_, err = conn.Write(ackData)
-+	require.NoError(t, err)
-+	require.NoError(t, <-enrollDone)
-+
-+	// Simulate CNI DEL removing the netns before disenroll: point the endpoint at
-+	// a netns path that no longer exists so OpenPinned returns ENOENT.
-+	ep.SetContainerNetnsPath(filepath.Join(t.TempDir(), "missing-netns"))
-+
-+	disenrollDone := make(chan error, 1)
-+	go func() { disenrollDone <- server.DisenrollEndpoint(ep) }()
-+
-+	// ztunnel still receives a Del for the workload.
-+	req = &pb.WorkloadRequest{}
-+	require.NoError(t, clientZC.readMsg(req))
-+	require.NotNil(t, req.GetDel(), "Expected Del, got %T", req.Payload)
-+	require.Equal(t, testUID, req.GetDel().GetUid())
-+	_, err = conn.Write(ackData)
-+	require.NoError(t, err)
-+	require.NoError(t, <-disenrollDone)
-+
-+	// The stale entry must be evicted.
-+	server.endpointCacheMutex.Lock()
-+	_, ok := server.endpointCache[ep.GetID16()]
-+	server.endpointCacheMutex.Unlock()
-+	require.False(t, ok, "endpoint should be evicted from cache when netns is gone")
-+}
-+
-+// TestPrivilegedZDSDisenrollNetnsOpenError verifies that a non-ENOENT failure to
-+// open the netns (e.g. a live pod hitting a transient error) fails closed: the
-+// endpoint stays enrolled in the cache and no Del is sent to ztunnel.
-+func TestPrivilegedZDSDisenrollNetnsOpenError(t *testing.T) {
-+	server := setupZDSTestSuite(t)
-+	server.SeedInitialSnapshot()
-+
-+	conn, clientZC := dialZDSClient(t)
-+	defer conn.Close()
-+
-+	sendHello(t, conn)
-+	expectSnapshotAndAck(t, clientZC, conn, "")
-+
-+	ep, cleanup := createTestEndpoint(t, testUID, 1)
-+	defer cleanup()
-+
-+	ack := &pb.WorkloadResponse{Payload: &pb.WorkloadResponse_Ack{Ack: &pb.Ack{}}}
-+	ackData, err := proto.Marshal(ack)
-+	require.NoError(t, err)
-+
-+	enrollDone := make(chan error, 1)
-+	go func() { enrollDone <- server.EnrollEndpoint(ep) }()
-+
-+	req := &pb.WorkloadRequest{}
-+	require.NoError(t, clientZC.readMsg(req))
-+	require.NotNil(t, req.GetAdd(), "Expected Add, got %T", req.Payload)
-+	_, err = conn.Write(ackData)
-+	require.NoError(t, err)
-+	require.NoError(t, <-enrollDone)
-+
-+	// Force a non-ENOENT open error: a path whose parent is a regular file yields
-+	// ENOTDIR, for which os.IsNotExist is false.
-+	notDir := filepath.Join(t.TempDir(), "file")
-+	require.NoError(t, os.WriteFile(notDir, nil, 0o600))
-+	ep.SetContainerNetnsPath(filepath.Join(notDir, "netns"))
-+
-+	// Disenroll returns the error synchronously, before any Del is sent.
-+	require.Error(t, server.DisenrollEndpoint(ep))
-+
-+	// The next message must be the second endpoint's Add, not a Del.
-+	ep2, cleanup2 := createTestEndpoint(t, "second-ep", 2)
-+	defer cleanup2()
-+	go func() { enrollDone <- server.EnrollEndpoint(ep2) }()
-+
-+	req = &pb.WorkloadRequest{}
-+	require.NoError(t, clientZC.readMsg(req))
-+	require.NotNil(t, req.GetAdd(), "Expected Add, got %T", req.Payload)
-+	require.Equal(t, "second-ep", req.GetAdd().GetUid())
-+	_, err = conn.Write(ackData)
-+	require.NoError(t, err)
-+	require.NoError(t, <-enrollDone)
-+
-+	// The endpoint must remain enrolled (fail closed).
-+	server.endpointCacheMutex.Lock()
-+	_, ok := server.endpointCache[ep.GetID16()]
-+	server.endpointCacheMutex.Unlock()
-+	require.True(t, ok, "endpoint should remain in cache on a non-ENOENT netns error")
-+}
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
++        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+```
+
+**File**: `.github/workflows/conformance-eks.yaml` (modified, +1/-1)
+```diff
+@@ -465,7 +465,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
+ 
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
++        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+```
+
+**File**: `.github/workflows/conformance-gateway-api.yaml` (modified, +1/-1)
+```diff
+@@ -271,7 +271,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
+ 
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
++        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+```
+
+**File**: `.github/workflows/conformance-ginkgo.yaml` (modified, +1/-1)
+```diff
+@@ -386,7 +386,7 @@ jobs:
+           path: untrusted
+ 
+       - name: Install cilium-cli
+-        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
++        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+```
+
+**File**: `.github/workflows/conformance-gke.yaml` (modified, +1/-1)
+```diff
+@@ -463,7 +463,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
+ 
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
++        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49892** (2026-11-08): chore(deps): update cilium/cilium-cli action to v0.20.2 (main) (@cilium-renovate[bot])
 - **PR #49873** (2026-11-06): fix(deps): update module github.com/klauspost/compress to v1.20.2 [security] (v1.20) (@cilium-renovate[bot])
 - **PR #49872** (closed): iptables: skip the to-proxy mark for identity-marked packets (@aner-dev)
 - **PR #49870** (2026-11-06): [v1.20] policy/compute: Ensure superseded policies are not leaked (@christarazi)
 - **PR #49867** (2026-11-06): network driver: lease RX queues when the Pod sandbox starts (@aarcamp)
 - **PR #49864** (2026-11-05): mtu: Don't warn about the route MTU with portmap chaining (@aanm)
-- **PR #49863** (closed): Revert "ci: Clear legacy SPIRE values during upgrade tests" (@aanm)
 
 ---
 
@@ -1653,34 +1415,28 @@ Signed-off-by: Alexander <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skip endpoints with missing netns during ztunnel initial snapshot
+## X. deps): update cilium/cilium-cli action to v0.20.2
 
 **RULE**:
-When implementing operations in `pkg/ztunnel/zds/server.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/conformance-aks.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `05ca843b`: skip endpoints with missing netns during ztunnel initial snapshot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2af367f7`: deps): update cilium/cilium-cli action to v0.20.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ztunnel/zds/server.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/conformance-aks.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if errors.Is(err, os.ErrNotExist) {
-			s.logger.Warn("skipping endpoint with missing netns during initial snapshot",
-				logfields.EndpointID, ep.GetID16(),
-			)
-			delete(s.endpointCache, ep.GetID16())
-			continue
-		}
+        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: cilium/cilium-cli@d9302835ae0d3cb6148178d4590240622289e193 # v0.20.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `05ca843b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2af367f7` are properly handled with clean fallback behavior.

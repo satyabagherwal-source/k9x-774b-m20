@@ -2065,8 +2065,8 @@
     "sourceUrl": "https://huggingface.co/autogluon/chronos-2",
     "sourceVersion": "hf-autogluon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "c01b2833fa84226bd1cac418f0fafd135e4d9cf275b528a5f7199a7d91733124",
-    "lastHarvestedAt": "2026-11-04T10:30:23.985Z",
+    "contentHash": "6c71224d24fdae118d176dc717e1ba659a70c06f2b6e9b89168c377c287b226f",
+    "lastHarvestedAt": "2026-11-08T02:15:41.291Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
   },
   "deeplethe-solid-glass": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "372d151c",
+    "sourceVersion": "0544c112",
     "license": "MIT",
-    "contentHash": "396cac133563071e39baae4baa0c5bc007efc6458172b13799982ce24f86163f",
-    "lastHarvestedAt": "2026-11-05T22:54:53.167Z",
+    "contentHash": "ae8391f5f5a7cb980c98f9e93b8881a2bcd7430de882eb264c9d9beacb246566",
+    "lastHarvestedAt": "2026-11-08T02:15:34.332Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "05ca843b",
+    "sourceVersion": "2af367f7",
     "license": "Apache-2.0",
-    "contentHash": "92f91a70eed14c69a0581e2a00c543e9a623d503ce3c116521206aba10683dc1",
-    "lastHarvestedAt": "2026-11-07T02:54:31.919Z",
+    "contentHash": "844d6bac0c5a9d456005091ae2d9f474d0b6af4a95a45814f7bd2ba859c60d8d",
+    "lastHarvestedAt": "2026-11-08T02:15:44.274Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
