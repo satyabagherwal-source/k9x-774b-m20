@@ -8354,3 +8354,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-08T17:35:46.509Z |
 | `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-08T17:42:43.931Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `633ccf2e` | Multi-dimensional audit evidence | 2026-11-08T17:42:50.417Z |
+| `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-11-08T17:49:24.843Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `bc650f91` | Multi-dimensional audit evidence | 2026-11-08T17:49:32.151Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `6448181d` | Multi-dimensional audit evidence | 2026-11-08T17:51:55.323Z |

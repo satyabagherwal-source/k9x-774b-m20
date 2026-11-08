@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `62d625f3`  
+> **Source Version**: `bc650f91`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:56:09.316Z  
+> **Timestamp**: 2026-11-08T17:49:31.249Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:56:09.311Z  
+> **Harvest Timestamp**: 2026-11-08T17:49:31.245Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17923 stars
+- **Stars / Engagement**: 17935 stars
 
 ---
 
@@ -1791,6 +1791,10 @@ func HasData(dir string) (bool, error) {
 	if len(snaps) > 0 {
 		return true, nil
 	}
+	// Opening a missing database creates it, breaking the definition of a new node.
+	if !fsutil.PathExists(filepath.Join(dir, raftDBPath)) {
+		return false, nil
+	}
 	logs, err := rlog.New(filepath.Join(dir, raftDBPath), false)
 	if err != nil {
 		return false, err
@@ -1921,11 +1925,7 @@ func RecoverNode(dataDir string, dbConf *DBConfig, logger *log.Logger, logs raft
 	if err != nil {
 		return fmt.Errorf("failed to create snapshot: %v", err)
 	}
-	defer sink.Cancel() // If we fail, make sure to cancel the snapshot.
-	if err = fsmSnapshot.Persist(sink); err != nil {
-		return fmt.Errorf("failed to persist snapshot: %v", err)
-	}
-
+	defer sink.Cancel()
 ```
 
 ### Core Architecture Module: `tools/check-fsutil/main.go`
@@ -2066,11 +2066,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3018** (2026-11-07): **Escape literal database filenames in SQLite URIs**
-  *Symptoms*: Database filenames containing `?`, `#`, or percent escapes were interpreted as SQLite URI syntax. This could open a different file from the requested path or prevent the reader connection from opening it. Escape the filename as a URI path before appending connection options.  Adds a regression that creates and queries databases with these filenames and verifies that both the database and WAL exist at the requested paths. All three cases failed before the fix. Includes a changelog entry using XXXX.  Validation: `go test ./db -run 'Test_OpenURICharactersInPath|Test_MakeDSN' -count=1` and `go test ./db/... -count=1` pass. 
+- **Issue #3031** (2026-11-08): **Move retry logic out of Store Provider**
+  *Symptoms*: The Provider retried a failed Backup into the same writer, seeking back to the start before each attempt. A later, smaller, attempt left the tail of the earlier attempt in place, and the Uploader then uploaded it.  The Uploader owns the destination file, so it now owns the retry too. Each attempt writes into a fresh temporary file, and Provide is a single write to an io.Writer with no retry policy of its own. 
 
-- **Issue #3012** (2026-11-07): **db: ignore WAL frames after the last commit frame when compacting**
-  *Symptoms*: Split out of #3009.  **The condition.** A WAL can contain frames after its last commit frame. They carry the current salt and valid frame headers, but no commit frame follows them, so they are not part of the database. SQLite's own reader stops at the last commit frame and ignores whatever comes after it, and later transactions overwrite those frames as they write.  One way a WAL gets into this state is a rolled-back transaction. SQLite may write a transaction's pages to the WAL before it commits, and if the transaction is then rolled back the WAL is not truncated: SQLite moves its write position back to the last commit frame and the frames stay in the file. A smaller transaction that commits next overwrites only some of them. A process that stops mid-transaction leaves the WAL the same way. The test in this PR produces the state through a rollback; how the WAL got there is secondary. rqlite has to handle a WAL in this condition.  **The bug.** The compacting scanner used by the checkpoint manager matches frames by salt, so it read the frames after the last commit frame, found no commit frame for them, and returned `ErrOpenTransaction`. The checkpoint failed, and with it every incremental snapshot, until enough writes had overwritten the frames.  **The fix.** Frames after the last commit frame are now dropped, in both scan modes, as SQLite drops them, and `ErrOpenTransaction` is retired. rqlite never has a transaction in progress when it compacts the WAL, since writes are appl
+- **Issue #3030** (2026-11-08): **Explicitly state if there are no new features**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2087,890 +2087,237 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0fa3a0c6` (2026-11-07)
-**Commit Message**: Merge pull request #3010 from rqlite/claude-db-reader-busy-timeout
+### Incident Patch 1: `d86d821e` (2026-11-08)
+**Commit Message**: Collapse the fixes list on the release page
 
-db: apply the reader busy timeout to every pooled reader connection
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@
- - [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Stop leaking goroutines from the pre-snapshot sync when a registered participant.
- - [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Remove the temporary output file when gzip compression or decompression of a file fails part-way through.
- - [PR #3006](https://github.com/rqlite/rqlite/pull/3006): Reject duplicate usernames in auth config and require an actual JSON array.
-+- [PR #3010](https://github.com/rqlite/rqlite/pull/3010): Apply the configured busy timeout to every pooled reader connection, not just the one borrowed when it was set.
- - [PR #3008](https://github.com/rqlite/rqlite/pull/3008): Request reads at `auto` consistency now use the level `auto` resolves correctly.
- - [PR #3008](https://github.com/rqlite/rqlite/pull/3008): Report the Store's `open` status as a boolean, instead of an empty object, in `/status`.
- - [PR #3008](https://github.com/rqlite/rqlite/pull/3008): User-requested snapshot no longer leaves Raft's trailing-logs setting at zero when no snapshot threshold is set.
-```
-
-**File**: `db/conn_config.go` (modified, +17/-3)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"path/filepath"
- 	"regexp"
- 	"sort"
-+	"time"
- 
- 	"github.com/mattn/go-sqlite3"
- 	command "github.com/rqlite/rqlite/v10/command/proto"
-@@ -27,15 +28,21 @@ const (
- 
- // ConnConfig is the policy applied to every connection of one role when it
- // is opened: which extensions it loads, how it treats the WAL on close,
--// whether it enforces foreign keys, which hooks it carries, and whether its
--// statements are traced.
-+// how long it waits for a locked database, whether it enforces foreign
-+// keys, which hooks it carries, and whether its statements are traced.
- type ConnConfig struct {
- 	// Extensions is the list of paths to SQLite extension shared objects.
- 	Extensions []string
- 
- 	// ChkOnClose controls whether SQLite checkpoints the WAL on connection close.
- 	ChkOnClose CnkOnCloseMode
- 
-+	// BusyTimeout is how long a connection waits for a locked database
-+	// before a statement fails with SQLITE_BUSY. It is applied to every new
-+	// connection with millisecond precision. Zero keeps the driver default
-+	// of five seconds.
-+	BusyTimeout time.Duration
-+
- 	// ForeignKeys, if true, enables foreign key constraints on every new
- 	// connection.
- 	ForeignKeys bool
-@@ -103,7 +110,7 @@ func (c *connector) Driver() driver.Driver {
- 
- // buildConnectHook composes a ConnectHook from cfg, chaining all requested
- // connection-level behaviors in order: checkpoint config, attach limit,
--// foreign keys, query tracing, then hooks.
-+// busy timeout, foreign keys, query tracing, then hooks.
- //
- // This driver unconditionally disables automatic checkpointing.
- func buildConnectHook(cfg *ConnConfig) func(conn *sqlite3.SQLiteConn) error {
-@@ -129,6 +136,13 @@ func buildConnectHook(cfg *ConnConfig) func(conn *sqlite3.SQLiteConn) error {
- 			conn.SetLimit(sqlite3.SQLITE_LIMIT_ATTACHED, 0)
- 		}
- 
-+		// Busy timeout.
-+		if cfg.BusyTimeout > 0 {
-+			if _, err := conn.Exec(fmt.Sprintf("PRAGMA busy_timeout=%d", cfg.BusyTimeout.Milliseconds()), nil); err != nil {
-+				return fmt.Errorf("cannot set busy timeout: %w", err)
-+			}
-+		}
-+
- 		// Foreign key constraints.
- 		if cfg.ForeignKeys {
- 			if _, err := conn.Exec("PRAGMA foreign_keys = ON", nil); err != nil {
-```
-
-**File**: `db/db.go` (modified, +6/-22)
-```diff
-@@ -489,36 +489,20 @@ func (db *DB) ExtensionNames() []string {
- 	return extensionNames(db.cfg.Writer.Extensions)
- }
- 
--// SetBusyTimeout sets the busy timeout for the database. If a timeout is
--// less than zero it is not set.
--func (db *DB) SetBusyTimeout(rwMs, roMs int) (err error) {
--	if rwMs >= 0 {
--		if err := db.writer.setBusyTimeout(rwMs); err != nil {
--			return err
--		}
--	}
--	if roMs >= 0 {
--		if err := db.readers.setBusyTimeout(roMs); err != nil {
--			return err
--		}
--	}
--	return nil
--}
--
--// RWBusyTimeout returns the current busy timeout value for the read-write
--// database connection.
-+// RWBusyTimeout returns the busy timeout, in milliseconds, of the read-write
-+// database connection. It is set by the writer's ConnConfig.
- func (db *DB) RWBusyTimeout() (int, error) {
- 	return db.writer.busyTimeout()
- }
- 
--// ROBusyTimeout returns the current busy timeout value for the read-only
--// database connection.
-+// ROBusyTimeout returns the busy timeout, in milliseconds, of the read-only
-+// database connections. It is set by the readers' ConnConfig.
- func (db *DB) ROBusyTimeout() (int, error) {
- 	return db.readers.busyTimeout()
- }
- 
--// BusyTimeout returns the current busy timeout values for the read-write and
--// read-only database connections.
-+// BusyTimeout returns the busy timeouts, in milliseconds, of the read-write
-+// and read-only database connections.
- func (db *DB) BusyTimeout() (rwMs, roMs int, err error) {
- 	rwMs, err = db.RWBusyTimeout()
- 	if err != nil {
-```
-
-**File**: `db/db_common_test.go` (modified, +54/-6)
-```diff
-@@ -18,17 +18,28 @@ import (
- )
- 
- func Test_DB_BusyTimeout(t *testing.T) {
-+	// The driver default applies when no busy timeout is configured.
- 	db, path := mustCreateOnDiskDatabaseWAL()
- 	defer fsutil.Remove(path)
--	defer db.Close()
--
--	wantRw := rand.N(10000)
--	wantRo := rand.N(10000)
-+	rw, ro, err := db.BusyTimeout()
-+	if err != nil {
-+		t.Fatalf("failed to get busy_timeout: %s", err.Error())
-+	}
-+	if rw != 5000 || ro != 5000 {
-+		t.Fatalf("want default busy_timeout rw=5000, ro=5000, got rw=%d, ro=%d", rw, ro)
-+	}
-+	db.Close()
- 
--	err := db.SetBusyTimeout(wantRw, wantRo)
-+	wantRw := 1 + rand.N(10000)
-+	wantRo := 1 + rand.N(10000)
-+	cfg := NewConfig(ConnConfig{}, true)
-+	cfg.Writer.BusyTimeout = time.Duration(wantRw) * time.Millisecond
-+	cfg.Readers.BusyTimeout = time.Duration(wantRo) * time.Millisecond
-+	db, err = OpenWithConfig(path, cfg)
- 	if err != nil {
--		t.Fatalf("failed to set busy_timeout: %s", err.Error())
-+		t.Fatalf("failed to open database: %s", err.Error())
- 	}
-+	defer db.Close()
- 
- 	gotRwOnly, err := db.RWBusyTimeout()
- 	if err != nil {
-@@ -56,6 +67,43 @@ func Test_DB_BusyTimeout(t *testing.T) {
- 	}
- }
- 
-+// Test_DB_BusyTimeout_AllReaders tests that the read-only busy timeout reaches
-+// every reader connection, including ones opened after the database was.
-+func Test_DB_BusyTimeout_AllReaders(t *testing.T) {
-+	const wantRo = 5678
-+	cfg := NewConfig(ConnConfig{}, true)
-+	cfg.Readers.BusyTimeout = wantRo * time.Millisecond
-+	path := mustTempFile()
-+	defer fsutil.Remove(path)
-+	db, err := OpenWithConfig(path, cfg)
-+	if err != nil {
-+		t.Fatalf("failed to open database: %s", err.Error())
-+	}
-+	defer db.Close()
-+
-+	// Hold one reader so the second acquire must open a new connection.
-+	r1, err := db.AcquireReader(context.Background())
-+	if err != nil {
-+		t.Fatalf("failed to acquire first reader: %s", err.Error())
-+	}
-+	defer r1.Close()
-+	r2, err := db.AcquireReader(context.Background())
-+	if err != nil {
-+		t.Fatalf("failed to acquire second reader: %s", err.Error())
-+	}
-+	defer r2.Close()
-+
-+	for i, r := range []*Conn{r1, r2} {
-+		got, err := r.BusyTimeout()
-+		if err != nil {
-+			t.Fatalf("failed to get busy_timeout on reader %d: %s", i+1, err.Error())
-+		}
-+		if got != wantRo {
-+			t.Fatalf("reader %d: want busy_timeout=%d, got %d", i+1, wantRo, got)
-+		}
-+	}
-+}
-+
- // Test_DB_CompileOptions tests that we can fetch the compile options, and that the
- // underlying SQLite library is compiled as expected.
- func Test_DB_CompileOptions(t *testing.T) {
-```
-
-**File**: `db/sources.go` (modified, +0/-10)
-```diff
-@@ -59,16 +59,6 @@ func (p *pool) busyTimeout() (int, error) {
- 	return conn.BusyTimeout()
- }
- 
--// setBusyTimeout sets the busy timeout on a connection from the pool.
--func (p *pool) setBusyTimeout(ms int) error {
--	conn, err := p.acquire(context.Background())
--	if err != nil {
--		return err
--	}
--	defer conn.Close()
--	return conn.SetBusyTimeout(ms)
--}
--
- // pragmas reads the named pragmas on one connection from the pool.
- func (p *pool) pragmas(names []string) (map[string]string, error) {
- 	conn, err := p.acquire(context.Background())
-```
-
----
-
-### Incident Patch 2: `0e9b1e63` (2026-11-07)
-**Commit Message**: Merge remote-tracking branch 'origin' into claude-db-reader-busy-timeout
-
-**File**: `CHANGELOG.md` (modified, +8/-1)
-```diff
-@@ -1,8 +1,15 @@
- ## v10.6.7 (unreleased)
- ### Implementation changes and bug fixes
- - [PR #3001](https://github.com/rqlite/rqlite/pull/3001): Upgrade SQLite to 3.54.1.
-+- [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Accept extension tarballs whose entries are prefixed with `./`.
-+- [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Create implicit parent directories with directory permissions when extracting zip and tar.gz archives, instead of the contained file's mode.
-+- [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Stop leaking goroutines from the pre-snapshot sync when a registered participant.
-+- [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Remove the temporary output file when gzip compression or decompression of a file fails part-way through.
- - [PR #3006](https://github.com/rqlite/rqlite/pull/3006): Reject duplicate usernames in auth config and require an actual JSON array.
--- [PR #XXX](https://github.com/rqlite/rqlite/pull/XXX): Apply the configured busy timeout to every pooled reader connection, not just the one borrowed when it was set.
-+- [PR #3010](https://github.com/rqlite/rqlite/pull/3010): Apply the configured busy timeout to every pooled reader connection, not just the one borrowed when it was set.
-+- [PR #3008](https://github.com/rqlite/rqlite/pull/3008): Request reads at `auto` consistency now use the level `auto` resolves correctly.
-+- [PR #3008](https://github.com/rqlite/rqlite/pull/3008): Report the Store's `open` status as a boolean, instead of an empty object, in `/status`.
-+- [PR #3008](https://github.com/rqlite/rqlite/pull/3008): User-requested snapshot no longer leaves Raft's trailing-logs setting at zero when no snapshot threshold is set.
- 
- ## v10.6.6 (October 28th 2026)
- ### Implementation changes and bug fixes
-```
-
-**File**: `internal/rarchive/gzip.go` (modified, +5/-0)
-```diff
-@@ -4,6 +4,8 @@ import (
- 	"compress/gzip"
- 	"io"
- 	"os"
-+
-+	"github.com/rqlite/rqlite/v10/internal/fsutil"
- )
- 
- // Gzip compresses the given file and returns the path to the
-@@ -25,11 +27,13 @@ func Gzip(file string) (string, error) {
- 	gz := gzip.NewWriter(tmpFd)
- 	_, err = io.Copy(gz, f)
- 	if err != nil {
-+		fsutil.Remove(tmpFd.Name())
- 		return "", err
- 	}
- 
- 	err = gz.Close()
- 	if err != nil {
-+		fsutil.Remove(tmpFd.Name())
- 		return "", err
- 	}
- 	return tmpFd.Name(), nil
-@@ -59,6 +63,7 @@ func Gunzip(file string) (string, error) {
- 
- 	_, err = io.Copy(tmpFd, gz)
- 	if err != nil {
-+		fsutil.Remove(tmpFd.Name())
- 		return "", err
- 	}
- 	return tmpFd.Name(), nil
-```
-
-**File**: `internal/rarchive/targz.go` (modified, +18/-4)
-```diff
-@@ -57,9 +57,16 @@ func TarGzipHasSubdirectories(path string) (bool, error) {
- 			return false, err
- 		}
- 
-+		// Entries are often prefixed with "./" (e.g. "tar czf out.tar.gz -C dir ."),
-+		// so clean the name first. An entry for the archive root itself is not
-+		// a subdirectory.
-+		name := filepath.ToSlash(filepath.Clean(strings.ReplaceAll(header.Name, "\\", "/")))
-+		if name == "." {
-+			continue
-+		}
-+
- 		// Check if the file is a directory or if the file path includes a subdirectory
--		if header.Typeflag == tar.TypeDir ||
--			strings.Contains(header.Name, "/") || strings.Contains(header.Name, "\\") {
-+		if header.Typeflag == tar.TypeDir || strings.Contains(name, "/") {
- 			return true, nil
- 		}
- 	}
-@@ -101,6 +108,11 @@ func UntarGzipToDir(path, dir string) error {
- 		// Construct the full path for the file
- 		fpath := filepath.Join(dir, header.Name)
- 
-+		// An entry for the archive root itself (e.g. "./") needs nothing created.
-+		if fpath == filepath.Clean(dir) {
-+			continue
-+		}
-+
- 		// Check for directory traversal vulnerability
- 		if !strings.HasPrefix(fpath, filepath.Clean(dir)+string(os.PathSeparator)) {
- 			return errors.New("invalid file path")
-@@ -112,8 +124,10 @@ func UntarGzipToDir(path, dir string) error {
- 				return err
- 			}
- 		} else {
--			// Create the file
--			if err := os.MkdirAll(filepath.Dir(fpath), os.FileMode(header.Mode)); err != nil {
-+			// Create any parent directories the archive did not list explicitly.
-+			// The file's own mode is not suitable for a directory, as it may
-+			// lack the execute bit needed to create entries within it.
-+			if err := os.MkdirAll(filepath.Dir(fpath), 0755); err != nil {
- 				return err
- 			}
- 
-```
-
-**File**: `internal/rarchive/targz_test.go` (modified, +81/-0)
-```diff
-@@ -127,3 +127,84 @@ func checkFileContent(t *testing.T, path, expectedContent string) {
- 		t.Errorf("expected file content %q, got %q", expectedContent, string(data))
- 	}
- }
-+
-+// Test_TarGzip_DotSlashEntries checks that a tarball whose entries are prefixed
-+// with "./" -- as produced by "tar czf out.tar.gz -C dir ." -- is treated as a
-+// flat archive and extracts cleanly.
-+func Test_TarGzip_DotSlashEntries(t *testing.T) {
-+	tarGzipFile := filepath.Join(t.TempDir(), "dotslash.tar.gz")
-+	createTestTarGzipFileOrdered(t, tarGzipFile, []tarEntry{
-+		{name: "./", typeflag: tar.TypeDir, mode: 0755},
-+		{name: "./file1.txt", typeflag: tar.TypeReg, mode: 0600, content: "This is file 1"},
-+		{name: "./file2.txt", typeflag: tar.TypeReg, mode: 0600, content: "This is file 2"},
-+	})
-+
-+	hasSubdirs, err := TarGzipHasSubdirectories(tarGzipFile)
-+	if err != nil {
-+		t.Fatalf("unexpected error: %v", err)
-+	}
-+	if hasSubdirs {
-+		t.Errorf("expected %s to not have subdirectories", tarGzipFile)
-+	}
-+
-+	extractDir := t.TempDir()
-+	if err := UntarGzipToDir(tarGzipFile, extractDir); err != nil {
-+		t.Fatalf("unexpected error during extraction: %v", err)
-+	}
-+	checkFileContent(t, filepath.Join(extractDir, "file1.txt"), "This is file 1")
-+	checkFileContent(t, filepath.Join(extractDir, "file2.txt"), "This is file 2")
-+}
-+
-+// Test_UntarGzipToDir_NestedFileWithoutDirEntry checks that a file inside a
-+// subdirectory extracts even when the archive carries no entry for the
-+// directory itself.
-+func Test_UntarGzipToDir_NestedFileWithoutDirEntry(t *testing.T) {
-+	tarGzipFile := filepath.Join(t.TempDir(), "nested.tar.gz")
-+	createTestTarGzipFileOrdered(t, tarGzipFile, []tarEntry{
-+		{name: "sub/dir/file1.txt", typeflag: tar.TypeReg, mode: 0600, content: "This is file 1"},
-+	})
-+
-+	extractDir := t.TempDir()
-+	if err := UntarGzipToDir(tarGzipFile, extractDir); err != nil {
-+		t.Fatalf("unexpected error during extraction: %v", err)
-+	}
-+	checkFileContent(t, filepath.Join(extractDir, "sub", "dir", "file1.txt"), "This is file 1")
-+}
-+
-+type tarEntry struct {
-+	name     string
-+	typeflag byte
-+	mode     int64
-+	content  string
-+}
-+
-+// createTestTarGzipFileOrdered creates a tar.gz file containing the given
-+// entries, in the given order.
-+func createTestTarGzipFileOrdered(t *testing.T, tarGzipFile string, entries []tarEntry) {
-+	f, err := os.Create(tarGzipFile)
-+	if err != nil {
-+		t.Fatalf("failed to create tar.gz file: %v", err)
-+	}
-+	defer f.Close()
-+
-+	gw := gzip.NewWriter(f)
-+	defer gw.Close()
-+
-+	tw := tar.NewWriter(gw)
-+	defer tw.Close()
-+
-+	for _, e := range entries {
-+		hdr := &tar.Header{
-+			Name:     e.name,
-+			Typeflag: e.typeflag,
-+			Mode:     e.mode,
-+			Size:     int64(len(e.content)),
-+		}
-+		if err := tw.WriteHeader(hdr); err != nil {
-+			t.Fatalf("failed to write tar header: %v", err)
-+		}
-+		if _, err := tw.Write([]byte(e.content)); err != nil {
-+			t.Fatalf("failed to write tar content: %v", err)
-+		}
-+	}
-+}
-```
-
-**File**: `internal/rarchive/zip.go` (modified, +4/-2)
-```diff
-@@ -82,8 +82,10 @@ func UnzipToDir(path, dir string) error {
- 				return err
- 			}
- 		} else {
--			// Create the file
--			if err := os.MkdirAll(filepath.Dir(fpath), f.Mode()); err != nil {
-+			// Create any parent directories the archive did not list explicitly.
-+			// The file's own mode is not suitable for a directory, as it may
-+			// lack the execute bit needed to create entries within it.
-+			if err := os.MkdirAll(filepath.Dir(fpath), 0755); err != nil {
- 				return err
- 			}
- 
-```
-
-**File**: `internal/rarchive/zip_test.go` (modified, +27/-0)
-```diff
-@@ -103,6 +103,33 @@ func Test_UnzipToDir_InvalidZip(t *testing.T) {
- 	}
- }
- 
-+// Test_UnzipToDir_NestedFileWithoutDirEntry checks that a file inside a
-+// subdirectory extracts even when the archive carries no entry for the
-+// directory itself, which is how archive/zip's Writer.Create lays files out.
-+func Test_UnzipToDir_NestedFileWithoutDirEntry(t *testing.T) {
-+	zipData, err := createZipInMemory(map[string]string{
-+		"sub/dir/file1.txt": "This is file 1",
-+	})
-+	if err != nil {
-+		t.Fatalf("Failed to create ZIP file in memory: %v", err)
-+	}
-+	zipFileName := filepath.Join(t.TempDir(), "nested.zip")
-+	mustWriteBytesToFile(zipFileName, zipData)
-+
-+	outputDir := t.TempDir()
-+	if err := UnzipToDir(zipFileName, outputDir); err != nil {
-+		t.Fatalf("UnzipToDir failed: %v", err)
-+	}
-+
-+	data, err := os.ReadFile(filepath.Join(outputDir, "sub", "dir", "file1.txt"))
-+	if err != nil {
-+		t.Fatalf("Failed to read unzipped file: %v", err)
-+	}
-+	if string(data) != "This is file 1" {
-+		t.Fatalf("unexpected content: got %q", data)
-+	}
-+}
-+
- func createZipInMemory(files map[string]string) ([]byte, error) {
- 	buf := new(bytes.Buffer)
- 	zipWriter := zip.NewWriter(buf)
-```
-
-**File**: `internal/rsync/sync_channels.go` (modified, +18/-6)
-```diff
-@@ -29,22 +29,29 @@ func (sc *SyncChannels) Register(ch chan<- chan struct{}) {
- }
- 
- // Sync sends a channel to all registered channels and waits for those channels
--// to close. Returns the total number of channels and the number that
--// successfully synchronized before any error or timeout.
--func (sc *SyncChannels) Sync(timeout time.Duration) (int, int, error) {
-+// to close. Returns the total number of channels, the number that successfully
-+// synchronized before any error or timeout, and the number that never received
-+// the sync signal at all. A participant that never receives is dropped once the
-+// timeout passes, rather than blocking forever.
-+func (sc *SyncChannels) Sync(timeout time.Duration) (int, int, int, error) {
- 	sc.chsMu.Lock()
- 	defer sc.chsMu.Unlock()
- 	cancel := make(chan struct{})
--	defer close(cancel)
- 
- 	var nOK atomic.Int32
-+	var nDropped atomic.Int32
- 	var wg sync.WaitGroup
- 	wg.Add(len(sc.chs))
- 	for _, ch := range sc.chs {
- 		go func(ch chan<- chan struct{}) {
- 			defer wg.Done()
- 			syncCh := make(chan struct{})
--			ch <- syncCh
-+			select {
-+			case ch <- syncCh:
-+			case <-cancel:
-+				nDropped.Add(1)
-+				return
-+			}
- 			select {
- 			case <-syncCh:
- 				nOK.Add(1)
-@@ -65,5 +72,10 @@ func (sc *SyncChannels) Sync(timeout time.Duration) (int, int, error) {
- 	case <-time.After(timeout):
- 		err = ErrTimeout
- 	}
--	return len(sc.chs), int(nOK.Load()), err
-+
-+	// Release any goroutine still waiting on a participant, then wait for all
-+	// of them to record their outcome before reading the counts.
-+	close(cancel)
-+	<-done
-+	return len(sc.chs), int(nOK.Load()), int(nDropped.Load()), err
- }
-```
-
-**File**: `internal/rsync/sync_channels_test.go` (modified, +32/-16)
-```diff
-@@ -16,12 +16,12 @@ const (
- 
- func Test_Sync_NoRegistrations(t *testing.T) {
- 	sc := NewSyncChannels()
--	total, ok, err := sc.Sync(testTimeout)
-+	total, ok, dropped, err := sc.Sync(testTimeout)
- 	if err != nil {
- 		t.Fatalf("Sync() with no registrations returned error: %v", err)
- 	}
--	if total != 0 || ok != 0 {
--		t.Fatalf("Sync() with no registrations returned total=%d, ok=%d; want 0,0", total, ok)
-+	if total != 0 || ok != 0 || dropped != 0 {
-+		t.Fatalf("Sync() with no registrations returned total=%d, ok=%d, dropped=%d; want 0,0,0", total, ok, dropped)
- 	}
- }
- 
-@@ -36,12 +36,12 @@ func Test_Sync_SingleChannel_Succeeds(t *testing.T) {
- 		close(syncCh)
- 	}()
- 
--	total, ok, err := sc.Sync(testTimeout)
-+	total, ok, dropped, err := sc.Sync(testTimeout)
- 	if err != nil {
- 		t.Fatalf("Sync() returned unexpected error: %v", err)
- 	}
--	if total != 1 || ok != 1 {
--		t.Fatalf("Sync() returned total=%d, ok=%d; want 1,1", total, ok)
-+	if total != 1 || ok != 1 || dropped != 0 {
-+		t.Fatalf("Sync() returned total=%d, ok=%d, dropped=%d; want 1,1,0", total, ok, dropped)
- 	}
- }
- 
-@@ -66,7 +66,7 @@ func Test_Sync_MultipleChannels_WaitsForAll(t *testing.T) {
- 		close(syncCh)
- 	}()
- 
--	total, ok, err := sc.Sync(testTimeout)
-+	total, ok, _, err := sc.Sync(testTimeout)
- 	if err != nil {
- 		t.Fatalf("Sync() returned unexpected error: %v", err)
- 	}
-@@ -96,12 +96,28 @@ func Test_Sync_Timeout_WhenParticipantNeverCloses(t *testing.T) {
- 		_ = syncCh // intentionally never close
- 	}()
- 
--	total, ok, err := sc.Sync(smallTimeout)
-+	total, ok, dropped, err := sc.Sync(smallTimeout)
- 	if !errors.Is(err, ErrTimeout) {
- 		t.Fatalf("Sync() error = %v, want ErrTimeout", err)
- 	}
--	if total != 2 || ok != 1 {
--		t.Fatalf("Sync() returned total=%d, ok=%d; want 2,1", total, ok)
-+	if total != 2 || ok != 1 || dropped != 0 {
-+		t.Fatalf("Sync() returned total=%d, ok=%d, dropped=%d; want 2,1,0", total, ok, dropped)
-+	}
-+}
-+
-+// Test_Sync_Timeout_WhenParticipantNeverReceives checks that a participant
-+// which never reads from its registered channel is reported as dropped once
-+// Sync times out, instead of leaving Sync waiting on it forever.
-+func Test_Sync_Timeout_WhenParticipantNeverReceives(t *testing.T) {
-+	sc := NewSyncChannels()
-+	sc.Register(make(chan chan struct{})) // Nobody ever reads from this.
-+
-+	total, ok, dropped, err := sc.Sync(smallTimeout)
-+	if !errors.Is(err, ErrTimeout) {
-+		t.Fatalf("Sync() error = %v, want ErrTimeout", err)
-+	}
-+	if total != 1 || ok != 0 || dropped != 1 {
-+		t.Fatalf("Sync() returned total=%d, ok=%d, dropped=%d; want 1,0,1", total, ok, dropped)
- 	}
- }
- 
-@@ -122,14 +138,14 @@ func Test_Sync_ReusedAcrossCalls(t *testing.T) {
- 		close(s2)
- 		close(done1)
- 	}()
--	total, ok, err := sc.Sync(testTimeout)
-+	total, ok, dropped, err := sc.Sync(testTimeout)
- 	if err != nil {
- 		t.Fatalf("first Sync() error: %v", err)
- 	}
- 	<-done1
- 
--	if total != 2 || ok != 2 {
--		t.Fatalf("first Sync() returned total=%d, ok=%d; want 2,2", total, ok)
-+	if total != 2 || ok != 2 || dropped != 0 {
-+		t.Fatalf("first Sync() returned total=%d, ok=%d, dropped=%d; want 2,2,0", total, ok, dropped)
- 	}
- 
- 	// Second sync: staggered closes, still should succeed before timeout.
-@@ -141,11 +157,11 @@ func Test_Sync_ReusedAcrossCalls(t *testing.T) {
- 		time.Sleep(shortDelay)
- 		close(s2)
- 	}()
--	total, ok, err = sc.Sync(testTimeout)
-+	total, ok, dropped, err = sc.Sync(testTimeout)
- 	if err != nil {
- 		t.Fatalf("second Sync() error: %v", err)
- 	}
--	if total != 2 || ok != 2 {
--		t.Fatalf("second Sync() returned total=%d, ok=%d; want 2,2", total, ok)
-+	if total != 2 || ok != 2 || dropped != 0 {
-+		t.Fatalf("second Sync() returned total=%d, ok=%d, dropped=%d; want 2,2", total, ok, dropped)
- 	}
- }
-```
-
----
-
-### Incident Patch 3: `1d13438e` (2026-11-07)
-**Commit Message**: db: apply the reader busy timeout to every pooled reader connection
-
-SetBusyTimeout set the read-only busy timeout on whichever reader it
-borrowed from the pool, so a second concurrent reader, or one opened
-after an idle close, kept the driver default of 5000 ms. The busy
-timeout is now a BusyTimeout field on ConnConfig, applied by the connect
-hook to every new connection of that role, and the runtime setter is
-removed since it could not reach connections opened later.
+The release page doubles as a quick start, so a long list of fixes should
+not sit between the reader and the install instructions. The preamble, new
+features and any other subsection such as upgrade notes render inline. The
+"Implementation changes and bug fixes" subsection is placed in a collapsed
+details block whose summary line gives the number of entries.
 
 Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/workflows/release-notes.py` (modified, +67/-10)
 ```diff
-@@ -2,6 +2,7 @@
+@@ -71,29 +71,42 @@
+ """
+ 
+ notes_template = """## What's changed
+-{section}
++{changes}
+ 
+ See the [CHANGELOG](https://github.com/rqlite/rqlite/blob/master/CHANGELOG.md) for the full history of changes, and check out the _Assets_ section below for prebuilt binaries."""
+ 
+ notes_fallback = """See the [CHANGELOG](https://github.com/rqlite/rqlite/blob/master/CHANGELOG.md) for full details on {release}, and check out the _Assets_ section below for prebuilt binaries."""
+ 
++# Subsections collapsed on the release page. Anything else, such as new
++# features or upgrade notes, is shown inline.
++COLLAPSED_SUBSECTIONS = ('Implementation changes and bug fixes',)
++
++def markdown_lines(text):
++    """Yield (line, is_heading_level) for each line of text.
++
++    is_heading_level is the number of leading '#' characters for a heading
++    outside a fenced code block, or 0 otherwise.
++    """
++    in_fence = False
++    for line in text.splitlines():
++        if line.lstrip().startswith(('```', '~~~')):
++            in_fence = not in_fence
++        m = None if in_fence else re.match(r'^(#+)\s+\S', line)
++        yield line, len(m.group(1)) if m else 0
++
+ def changelog_section(text, tag):
+     """Return the body of the CHANGELOG section for tag, or None if absent.
+ 
+     A section starts at a level-2 heading whose first word is the tag,
+     e.g. '## v10.6.6 (October 28th 2026)', and ends at the next level-2
+     heading. Lines inside fenced code blocks are never treated as headings.
+     """
+-    heading = re.compile(r'^##\s+(\S+)')
+-    body, in_section, in_fence = [], False, False
+-    for line in text.splitlines():
+-        if line.lstrip().startswith(('```', '~~~')):
+-            in_fence = not in_fence
+-        m = None if in_fence else heading.match(line)
+-        if m:
++    body, in_section = [], False
++    for line, level in markdown_lines(text):
++        if level == 2:
+             if in_section:
+                 break
+-            in_section = m.group(1) == tag
++            in_section = line.split()[1] == tag
+             continue
+         if in_section:
+             body.append(line)
+@@ -102,6 +115,50 @@ def changelog_section(text, tag):
+     section = '\n'.join(body).strip()
+     return section or None
+ 
++def split_subsections(section):
++    """Split a release section into its preamble and level-3 subsections.
++
++    Returns (preamble, [(title, body), ...]) where preamble is any text
++    before the first level-3 heading, and each body excludes its heading.
++    """
++    preamble, subsections = [], []
++    for line, level in markdown_lines(section):
++        if level == 3:
++            subsections.append((line.lstrip('#').strip(), []))
++        elif subsections:
++            subsections[-1][1].append(line)
++        else:
++            preamble.append(line)
++    return '\n'.join(preamble).strip(), [(t, '\n'.join(b).strip()) for t, b in subsections]
++
++def count_bullets(text):
++    return sum(1 for line in text.splitlines() if re.match(r'^\s*[-*+]\s', line))
++
++def render_changes(section):
++    """Render a release section for the release page.
++
++    The preamble and most subsections are shown as-is. The subsections named
++    in COLLAPSED_SUBSECTIONS, the long list of fixes, are placed in a
++    collapsed block so the release page stays short.
++    """
++    preamble, subsections = split_subsections(section)
++    inline = [preamble] if preamble else []
++    collapsed = []
++    for title, body in subsections:
++        if title in COLLAPSED_SUBSECTIONS:
++            collapsed.append((title, body))
++        else:
++            inline.append(f'### {title}\n{body}')
++
++    if collapsed:
++        title = collapsed[0][0]
++        body = '\n'.join(b for _, b in collapsed)
++        n = count_bullets(body)
++        summary = f'{n} {title[0].lower() + title[1:]}' if n else title
++        inline.append(f'<details>\n<summary>{summary}</summary>\n\n{body}\n</details>')
++
++    return '\n\n'.join(inline)
++
+ def release_notes(tag, changelog_path=CHANGELOG_PATH):
+     """Render the release body for tag.
+ 
+@@ -118,7 +175,7 @@ def release_notes(tag, changelog_path=CHANGELOG_PATH):
+         print(f'warning: no CHANGELOG section found for {tag}', file=sys.stderr)
+         notes = notes_fallback.format(release=tag)
+     else:
+-        notes = notes_template.format(section=section)
++        notes = notes_template.format(changes=render_changes(section))
+     return release_template.format(release=tag, version=tag.lstrip('v'), notes=notes)
+ 
+ def set_release_notes(token, release_id, notes):
+```
+
+---
+
+### Incident Patch 2: `19e312cd` (2026-11-07)
+**Commit Message**: Preserve null requests for queued-write flushes
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ - [PR #3005](https://github.com/rqlite/rqlite/pull/3005): Support CMEK for automatic backups to Google Cloud Storage.
+ 
  ### Implementation changes and bug fixes
+-- [PR #3021](https://github.com/rqlite/rqlite/pull/3021): Reject malformed queued-write requests with the wait flag instead of reporting success without executing their statements.
++- [PR #3021](https://github.com/rqlite/rqlite/pull/3021): Reject malformed queued-write requests with the wait flag while preserving empty-array and null requests used to wait for the queue to flush.
  - [PR #3001](https://github.com/rqlite/rqlite/pull/3001): Upgrade SQLite to 3.54.1.
- - [PR #3006](https://github.com/rqlite/rqlite/pull/3006): Reject duplicate usernames in auth config and require an actual JSON array.
-+- [PR #XXX](https://github.com/rqlite/rqlite/pull/XXX): Apply the configured busy timeout to every pooled reader connection, not just the one borrowed when it was set.
- 
- ## v10.6.6 (October 28th 2026)
- ### Implementation changes and bug fixes
+ - [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Accept extension tarballs whose entries are prefixed with `./`.
+ - [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Create implicit parent directories with directory permissions when extracting zip and tar.gz archives, instead of the contained file's mode.
 ```
 
-**File**: `db/conn_config.go` (modified, +17/-3)
+**File**: `http/request_parser.go` (modified, +7/-0)
 ```diff
-@@ -7,6 +7,7 @@ import (
- 	"path/filepath"
- 	"regexp"
- 	"sort"
-+	"time"
+@@ -37,6 +37,13 @@ func ParseRequest(r io.Reader) ([]*command.Statement, error) {
+ 	if err != nil {
+ 		return nil, ErrInvalidJSON
+ 	}
++	// A nil statement slice is encoded as null and represents an empty request.
++	if t == nil {
++		if _, err := dec.Token(); err != io.EOF {
++			return nil, ErrInvalidRequest
++		}
++		return nil, ErrNoStatements
++	}
+ 	if t != json.Delim('[') {
+ 		return nil, ErrInvalidRequest
+ 	}
+```
+
+**File**: `http/request_parser_test.go` (modified, +10/-4)
+```diff
+@@ -18,10 +18,13 @@ func Test_NilRequest(t *testing.T) {
+ }
  
- 	"github.com/mattn/go-sqlite3"
- 	command "github.com/rqlite/rqlite/v10/command/proto"
-@@ -27,15 +28,21 @@ const (
- 
- // ConnConfig is the policy applied to every connection of one role when it
- // is opened: which extensions it loads, how it treats the WAL on close,
--// whether it enforces foreign keys, which hooks it carries, and whether its
--// statements are traced.
-+// how long it waits for a locked database, whether it enforces foreign
-+// keys, which hooks it carries, and whether its statements are traced.
- type ConnConfig struct {
- 	// Extensions is the list of paths to SQLite extension shared objects.
- 	Extensions []string
- 
- 	// ChkOnClose controls whether SQLite checkpoints the WAL on connection close.
- 	ChkOnClose CnkOnCloseMode
- 
-+	// BusyTimeout is how long a connection waits for a locked database
-+	// before a statement fails with SQLITE_BUSY. It is applied to every new
-+	// connection with millisecond precision. Zero keeps the driver default
-+	// of five seconds.
-+	BusyTimeout time.Duration
-+
- 	// ForeignKeys, if true, enables foreign key constraints on every new
- 	// connection.
- 	ForeignKeys bool
-@@ -103,7 +110,7 @@ func (c *connector) Driver() driver.Driver {
- 
- // buildConnectHook composes a ConnectHook from cfg, chaining all requested
- // connection-level behaviors in order: checkpoint config, attach limit,
--// foreign keys, query tracing, then hooks.
-+// busy timeout, foreign keys, query tracing, then hooks.
- //
- // This driver unconditionally disables automatic checkpointing.
- func buildConnectHook(cfg *ConnConfig) func(conn *sqlite3.SQLiteConn) error {
-@@ -129,6 +136,13 @@ func buildConnectHook(cfg *ConnConfig) func(conn *sqlite3.SQLiteConn) error {
- 			conn.SetLimit(sqlite3.SQLITE_LIMIT_ATTACHED, 0)
- 		}
- 
-+		// Busy timeout.
-+		if cfg.BusyTimeout > 0 {
-+			if _, err := conn.Exec(fmt.Sprintf("PRAGMA busy_timeout=%d", cfg.BusyTimeout.Milliseconds()), nil); err != nil {
-+				return fmt.Errorf("cannot set busy timeout: %w", err)
+ func Test_EmptyRequests_Simple(t *testing.T) {
+-	b := []byte(`[]`)
+-	_, err := ParseRequest(bytes.NewReader(b))
+-	if err != ErrNoStatements {
+-		t.Fatalf("empty simple request did not result in correct error")
++	for _, body := range []string{`[]`, `null`, "  null \n\t"} {
++		t.Run(body, func(t *testing.T) {
++			stmts, err := ParseRequest(bytes.NewReader([]byte(body)))
++			if err != ErrNoStatements || len(stmts) != 0 {
++				t.Fatalf("expected no statements, got %v, %v", stmts, err)
 +			}
-+		}
-+
- 		// Foreign key constraints.
- 		if cfg.ForeignKeys {
- 			if _, err := conn.Exec("PRAGMA foreign_keys = ON", nil); err != nil {
-```
-
-**File**: `db/db.go` (modified, +6/-22)
-```diff
-@@ -489,36 +489,20 @@ func (db *DB) ExtensionNames() []string {
- 	return extensionNames(db.cfg.Writer.Extensions)
- }
- 
--// SetBusyTimeout sets the busy timeout for the database. If a timeout is
--// less than zero it is not set.
--func (db *DB) SetBusyTimeout(rwMs, roMs int) (err error) {
--	if rwMs >= 0 {
--		if err := db.writer.setBusyTimeout(rwMs); err != nil {
--			return err
--		}
--	}
--	if roMs >= 0 {
--		if err := db.readers.setBusyTimeout(roMs); err != nil {
--			return err
--		}
--	}
--	return nil
--}
--
--// RWBusyTimeout returns the current busy timeout value for the read-write
--// database connection.
-+// RWBusyTimeout returns the busy timeout, in milliseconds, of the read-write
-+// database connection. It is set by the writer's ConnConfig.
- func (db *DB) RWBusyTimeout() (int, error) {
- 	return db.writer.busyTimeout()
- }
- 
--// ROBusyTimeout returns the current busy timeout value for the read-only
--// database connection.
-+// ROBusyTimeout returns the busy timeout, in milliseconds, of the read-only
-+// database connections. It is set by the readers' ConnConfig.
- func (db *DB) ROBusyTimeout() (int, error) {
- 	return db.readers.busyTimeout()
- }
- 
--// BusyTimeout returns the current busy timeout values for the read-write and
--// read-only database connections.
-+// BusyTimeout returns the busy timeouts, in milliseconds, of the read-write
-+// and read-only database connections.
- func (db *DB) BusyTimeout() (rwMs, roMs int, err error) {
- 	rwMs, err = db.RWBusyTimeout()
- 	if err != nil {
-```
-
-**File**: `db/db_common_test.go` (modified, +54/-6)
-```diff
-@@ -18,17 +18,28 @@ import (
- )
- 
- func Test_DB_BusyTimeout(t *testing.T) {
-+	// The driver default applies when no busy timeout is configured.
- 	db, path := mustCreateOnDiskDatabaseWAL()
- 	defer fsutil.Remove(path)
--	defer db.Close()
--
--	wantRw := rand.N(10000)
--	wantRo := rand.N(10000)
-+	rw, ro, err := db.BusyTimeout()
-+	if err != nil {
-+		t.Fatalf("failed to get busy_timeout: %s", err.Error())
-+	}
-+	if rw != 5000 || ro != 5000 {
-+		t.Fatalf("want default busy_timeout rw=5000, ro=5000, got rw=%d, ro=%d", rw, ro)
-+	}
-+	db.Close()
- 
--	err := db.SetBusyTimeout(wantRw, wantRo)
-+	wantRw := 1 + rand.N(10000)
-+	wantRo := 1 + rand.N(10000)
-+	cfg := NewConfig(ConnConfig{}, true)
-+	cfg.Writer.BusyTimeout = time.Duration(wantRw) * time.Millisecond
-+	cfg.Readers.BusyTimeout = time.Duration(wantRo) * time.Millisecond
-+	db, err = OpenWithConfig(path, cfg)
- 	if err != nil {
--		t.Fatalf("failed to set busy_timeout: %s", err.Error())
-+		t.Fatalf("failed to open database: %s", err.Error())
- 	}
-+	defer db.Close()
- 
- 	gotRwOnly, err := db.RWBusyTimeout()
- 	if err != nil {
-@@ -56,6 +67,43 @@ func Test_DB_BusyTimeout(t *testing.T) {
++		})
  	}
  }
  
-+// Test_DB_BusyTimeout_AllReaders tests that the read-only busy timeout reaches
-+// every reader connection, including ones opened after the database was.
-+func Test_DB_BusyTimeout_AllReaders(t *testing.T) {
-+	const wantRo = 5678
-+	cfg := NewConfig(ConnConfig{}, true)
-+	cfg.Readers.BusyTimeout = wantRo * time.Millisecond
-+	path := mustTempFile()
-+	defer fsutil.Remove(path)
-+	db, err := OpenWithConfig(path, cfg)
-+	if err != nil {
-+		t.Fatalf("failed to open database: %s", err.Error())
-+	}
-+	defer db.Close()
-+
-+	// Hold one reader so the second acquire must open a new connection.
-+	r1, err := db.AcquireReader(context.Background())
-+	if err != nil {
-+		t.Fatalf("failed to acquire first reader: %s", err.Error())
-+	}
-+	defer r1.Close()
-+	r2, err := db.AcquireReader(context.Background())
-+	if err != nil {
-+		t.Fatalf("failed to acquire second reader: %s", err.Error())
-+	}
-+	defer r2.Close()
-+
-+	for i, r := range []*Conn{r1, r2} {
-+		got, err := r.BusyTimeout()
-+		if err != nil {
-+			t.Fatalf("failed to get busy_timeout on reader %d: %s", i+1, err.Error())
-+		}
-+		if got != wantRo {
-+			t.Fatalf("reader %d: want busy_timeout=%d, got %d", i+1, wantRo, got)
-+		}
-+	}
-+}
-+
- // Test_DB_CompileOptions tests that we can fetch the compile options, and that the
- // underlying SQLite library is compiled as expected.
- func Test_DB_CompileOptions(t *testing.T) {
+@@ -493,6 +496,9 @@ func Test_TrailingData(t *testing.T) {
+ 		name string
+ 		body string
+ 	}{
++		{"null with junk", `null garbage`},
++		{"null with array", `null []`},
++		{"null with null", `null null`},
+ 		{"junk", `["SELECT 1"] garbage`},
+ 		{"junk no space", `["SELECT 1"]garbage`},
+ 		{"second array", `["SELECT 1"]["SELECT 2"]`},
 ```
 
-**File**: `db/sources.go` (modified, +0/-10)
+**File**: `http/service_test.go` (modified, +11/-0)
 ```diff
-@@ -59,16 +59,6 @@ func (p *pool) busyTimeout() (int, error) {
- 	return conn.BusyTimeout()
+@@ -1118,6 +1118,10 @@ func Test_QueuedExecuteWaitValidatesBody(t *testing.T) {
+ 		{`{}`, http.StatusBadRequest},
+ 		{`[42]`, http.StatusBadRequest},
+ 		{`[]`, http.StatusOK},
++		{`null`, http.StatusOK},
++		{"  null \n\t", http.StatusOK},
++		{`null junk`, http.StatusBadRequest},
++		{`null []`, http.StatusBadRequest},
+ 	} {
+ 		t.Run(tc.body, func(t *testing.T) {
+ 			s := New("", nil, nil, nil, nil)
+@@ -1137,6 +1141,13 @@ func Test_QueuedExecuteWaitValidatesBody(t *testing.T) {
+ 			if rr.Code != tc.status {
+ 				t.Fatalf("status=%d, want %d; body: %s", rr.Code, tc.status, rr.Body)
+ 			}
++
++			// Empty requests are only accepted as a wait-only queue flush.
++			rr = httptest.NewRecorder()
++			s.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/db/execute?queue&noleader", strings.NewReader(tc.body)))
++			if rr.Code != http.StatusBadRequest {
++				t.Fatalf("without wait: status=%d, want 400; body: %s", rr.Code, rr.Body)
++			}
+ 		})
+ 	}
  }
- 
--// setBusyTimeout sets the busy timeout on a connection from the pool.
--func (p *pool) setBusyTimeout(ms int) error {
--	conn, err := p.acquire(context.Background())
--	if err != nil {
--		return err
--	}
--	defer conn.Close()
--	return conn.SetBusyTimeout(ms)
--}
--
- // pragmas reads the named pragmas on one connection from the pool.
- func (p *pool) pragmas(names []string) (map[string]string, error) {
- 	conn, err := p.acquire(context.Background())
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3018** (closed): Escape literal database filenames in SQLite URIs (@otoolep)
-- **PR #3012** (2026-11-07): db: ignore WAL frames after the last commit frame when compacting (@otoolep)
-- **PR #3010** (2026-11-07): db: apply the reader busy timeout to every pooled reader connection (@otoolep)
-- **PR #3009** (2026-11-07): db: fix 4 bugs found in code review (@otoolep)
-- **PR #3008** (2026-11-07): store: fix 3 bugs found in code review (@otoolep)
-- **PR #3007** (2026-11-07): internal: fix 4 bugs found in code review (@otoolep)
+- **PR #3031** (2026-11-08): Move retry logic out of Store Provider (@otoolep)
+- **PR #3030** (2026-11-08): Explicitly state if there are no new features (@otoolep)
+- **PR #3029** (2026-11-08): Include the tag's CHANGELOG section in the release notes (@otoolep)
+- **PR #3024** (closed): Preserve copy sources that overlap the staging directory (@otoolep)
+- **PR #3022** (2026-11-08): Replace credentials only after validating the full auth configuration (@otoolep)
+- **PR #3021** (2026-11-07): Reject malformed queued writes with the wait flag (@otoolep)
 
 ---
 
@@ -2990,28 +2337,68 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #3010 from rqlite/claude-db-reader-busy-timeout
+## X. Collapse the fixes list on the release page
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-notes.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0fa3a0c6`: Merge pull request #3010 from rqlite/claude-db-reader-busy-timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d86d821e`: Collapse the fixes list on the release page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-notes.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- [PR #3010](https://github.com/rqlite/rqlite/pull/3010): Apply the configured busy timeout to every pooled reader connection, not just the one borrowed when it was set.
+{changes}
+# Subsections collapsed on the release page. Anything else, such as new
+# features or upgrade notes, is shown inline.
+COLLAPSED_SUBSECTIONS = ('Implementation changes and bug fixes',)
+
+def markdown_lines(text):
+    """Yield (line, is_heading_level) for each line of text.
+
+    is_heading_level is the number of leading '#' characters for a heading
+    outside a fenced code block, or 0 otherwise.
+    """
+    in_fence = False
+    for line in text.splitlines():
+        if line.lstrip().startswith(('```', '~~~')):
+            in_fence = not in_fence
+        m = None if in_fence else re.match(r'^(#+)\s+\S', line)
+        yield line, len(m.group(1)) if m else 0
+
+    body, in_section = [], False
+    for line, level in markdown_lines(text):
+        if level == 2:
+            in_section = line.split()[1] == tag
+def split_subsections(section):
+    """Split a release section into its preamble and level-3 subsections.
+
+    Returns (preamble, [(title, body), ...]) where preamble is any text
+    before the first level-3 heading, and each body excludes its heading.
+    """
+    preamble, subsections = [], []
+    for line, level in markdown_lines(section):
+        if level == 3:
+           
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+{section}
+    heading = re.compile(r'^##\s+(\S+)')
+    body, in_section, in_fence = [], False, False
+    for line in text.splitlines():
+        if line.lstrip().startswith(('```', '~~~')):
+            in_fence = not in_fence
+        m = None if in_fence else heading.match(line)
+        if m:
+            in_section = m.group(1) == tag
+        notes = notes_template.format(section=section)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0fa3a0c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d86d821e` are properly handled with clean fallback behavior.

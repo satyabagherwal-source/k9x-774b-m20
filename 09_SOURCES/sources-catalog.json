@@ -565,8 +565,8 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "91059770a04739cd1f77921a3276de4a7d37515ebcb637dcd691b691d01e7a71",
-    "lastHarvestedAt": "2026-11-05T01:54:40.505Z",
+    "contentHash": "1267de3b14aa16be2d0412562a899374caf3ef76d62eeb0ce2b572526790ec03",
+    "lastHarvestedAt": "2026-11-08T17:49:24.843Z",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "62d625f3",
+    "sourceVersion": "bc650f91",
     "license": "MIT",
-    "contentHash": "132845ab64b5ac7c9c1de3f6b90c40d410b75cc9a7e5f505752b3b02a7ac210c",
-    "lastHarvestedAt": "2026-11-07T20:56:10.818Z",
+    "contentHash": "fb0d032a16de6ce438d8a89ba4cad23737515b38e241d62c7151c64cedb2994a",
+    "lastHarvestedAt": "2026-11-08T17:49:32.151Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "cdc74879",
+    "sourceVersion": "6448181d",
     "license": "Apache-2.0",
-    "contentHash": "e11e4980bf69978b2c8830d6309ecf02e569ac4c0042ebd228c6da99acda6c7e",
-    "lastHarvestedAt": "2026-11-07T05:44:17.894Z",
+    "contentHash": "2a6a636d9768dd6eb2e9f5d41b972b41571716214b8f1be9df3c806129bce06e",
+    "lastHarvestedAt": "2026-11-08T17:51:55.323Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {

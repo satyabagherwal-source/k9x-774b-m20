@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T17:42:50.296Z",
+  "last_updated": "2026-11-08T17:51:55.244Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11477,8 +11477,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "cdc74879",
-      "content_hash": "e11e4980bf69978b2c8830d6309ecf02e569ac4c0042ebd228c6da99acda6c7e",
+      "source_version": "6448181d",
+      "content_hash": "2a6a636d9768dd6eb2e9f5d41b972b41571716214b8f1be9df3c806129bce06e",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -11486,6 +11486,21 @@
           "number": null,
           "title": "ui/format): return Cow<'static, str> from rate formatters (#429)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "In-Place Protocol Signature Precedence Over Port Bindings",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Monotonic-Offset Bounded DNS Compression Pointer Traversal",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Layer 3 Wire Accounting Over Capture Slice Truncation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2257,
@@ -11543,7 +11558,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:44:17.776Z",
+      "verified_at": "2026-11-08T17:51:55.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19458,7 +19473,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "91059770a04739cd1f77921a3276de4a7d37515ebcb637dcd691b691d01e7a71",
+      "content_hash": "1267de3b14aa16be2d0412562a899374caf3ef76d62eeb0ce2b572526790ec03",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [
@@ -19503,7 +19518,7 @@
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz"
       ],
-      "verified_at": "2026-11-05T01:54:40.399Z",
+      "verified_at": "2026-11-08T17:49:24.736Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53940,14 +53955,19 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "62d625f3",
-      "content_hash": "132845ab64b5ac7c9c1de3f6b90c40d410b75cc9a7e5f505752b3b02a7ac210c",
+      "source_version": "bc650f91",
+      "content_hash": "fb0d032a16de6ce438d8a89ba4cad23737515b38e241d62c7151c64cedb2994a",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #3010 from rqlite/claude-db-reader-busy-timeout",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Collapse the fixes list on the release page",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53986,7 +54006,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:56:10.704Z",
+      "verified_at": "2026-11-08T17:49:32.080Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

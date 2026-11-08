@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-VW64",
-    "timestamp": "2026-11-06T13:13:04.156Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5052c260ff4c1a28f06b463f9755aa3dfcad9e9a98e47369ee13a10b521f907d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-565W",
-    "timestamp": "2026-11-06T13:20:17.012Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "e0fbb93e618a95f1b6d100942ba7a96975eee21c5f08827ee186cd9b47213616",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-5A30",
-    "timestamp": "2026-11-06T13:20:22.092Z",
-    "repository": "appwrite/appwrite",
-    "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "fb041a3bcc072b984d3cc27b95cb48530925171d1c8ad69dfa1f0bcf0878ba47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-5CLQ",
     "timestamp": "2026-11-06T13:20:25.358Z",
     "repository": "karmada-io/karmada",
@@ -7492,6 +7447,51 @@
     "contentHash": "1f329c73419736806b12a15742892947a838876bd5f51147f9a3d05f74438cd5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-MZ8O",
+    "timestamp": "2026-11-08T17:49:24.840Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "1267de3b14aa16be2d0412562a899374caf3ef76d62eeb0ce2b572526790ec03",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-N4VO",
+    "timestamp": "2026-11-08T17:49:32.148Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "fb0d032a16de6ce438d8a89ba4cad23737515b38e241d62c7151c64cedb2994a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-Q7CG",
+    "timestamp": "2026-11-08T17:51:55.312Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "2a6a636d9768dd6eb2e9f5d41b972b41571716214b8f1be9df3c806129bce06e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
