@@ -8176,3 +8176,5 @@
 | `CYCLE-20261108-A76W` | `2026-11-08T02:15:41.288Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5283, Rule null, Rule null` | Yes (`6c71224d...`) |
 | `CYCLE-20261108-A9HL` | `2026-11-08T02:15:44.265Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`844d6bac...`) |
 | `CYCLE-20261108-MVY1` | `2026-11-08T02:25:33.241Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`035a0036...`) |
+| `CYCLE-20261108-W92D` | `2026-11-08T02:32:50.149Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`d7915980...`) |
+| `CYCLE-20261108-W9N7` | `2026-11-08T02:32:50.899Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5085a886...`) |

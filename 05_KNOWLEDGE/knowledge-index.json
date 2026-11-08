@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T02:25:33.098Z",
+  "last_updated": "2026-11-08T02:32:50.808Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -65113,14 +65113,19 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "6c2e879e",
-      "content_hash": "83a1c8a911675e4801d12b15f9cbd08f0cf1122e9583f852052c33710a3843b2",
+      "source_version": "b17ad042",
+      "content_hash": "5085a88632b0309623304473a5fb569d63976809b537cf664b933f7f9b8d4850",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deep copy values on merge so a chart mapping can't leak into later components (#",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "feat!: error when package secret write fails (#5621)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65199,7 +65204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:21:09.663Z",
+      "verified_at": "2026-11-08T02:32:50.783Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108516,10 +108521,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
       "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "c0720f1e9f66850060927abef63d5a2f8b5d8a52ab41f10986da075e3099980b",
+      "content_hash": "d79159801758c0b1dddf5f05891cc2ef3bfd0916a864d7e0ebc6bb871c9b98db",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Binary Asset Versioning & Precision Consistency Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Filesystem-as-API Contract for Node-Based Engines",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2300,
           "title": "Decoupled Heterogeneous Quantization Invariant",
@@ -108571,7 +108586,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:45:28.323Z",
+      "verified_at": "2026-11-08T02:32:49.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

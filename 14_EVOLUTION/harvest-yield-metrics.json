@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T02:25:33.250Z",
-  "total_cycles_completed": 8141,
-  "total_learnings_persisted": 8141,
-  "total_rules_promoted": 7820,
+  "last_updated": "2026-11-08T02:32:50.908Z",
+  "total_cycles_completed": 8143,
+  "total_learnings_persisted": 8143,
+  "total_rules_promoted": 7823,
   "history": [
-    {
-      "timestamp": "2026-11-07T03:21:41.590Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T03:21:45.552Z",
-      "repository": "Checkmarx/kics",
-      "learningId": "learn-github-checkmarx-kics",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T03:21:47.056Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1389,20 @@
       "repository": "Comfy-Org/MOSS-Image",
       "learningId": "learn-huggingface-comfy-org-moss-image",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:32:50.160Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:32:50.908Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "6c2e879e",
+    "sourceVersion": "b17ad042",
     "license": "Apache-2.0",
-    "contentHash": "83a1c8a911675e4801d12b15f9cbd08f0cf1122e9583f852052c33710a3843b2",
-    "lastHarvestedAt": "2026-11-06T21:21:09.782Z",
+    "contentHash": "5085a88632b0309623304473a5fb569d63976809b537cf664b933f7f9b8d4850",
+    "lastHarvestedAt": "2026-11-08T02:32:50.903Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -7005,8 +7005,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/z_image_turbo",
     "sourceVersion": "hf-comfy-org-z_image_turbo",
     "license": "Open-Source",
-    "contentHash": "c0720f1e9f66850060927abef63d5a2f8b5d8a52ab41f10986da075e3099980b",
-    "lastHarvestedAt": "2026-11-04T10:45:28.446Z",
+    "contentHash": "d79159801758c0b1dddf5f05891cc2ef3bfd0916a864d7e0ebc6bb871c9b98db",
+    "lastHarvestedAt": "2026-11-08T02:32:50.153Z",
     "learningId": "learn-huggingface-comfy-org-z_image_turbo"
   },
   "jhspetersson-fselect": {

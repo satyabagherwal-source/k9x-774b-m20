@@ -8185,3 +8185,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-08T02:15:41.291Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `2af367f7` | Multi-dimensional audit evidence | 2026-11-08T02:15:44.274Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T02:25:33.244Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T02:32:50.153Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `b17ad042` | Multi-dimensional audit evidence | 2026-11-08T02:32:50.903Z |
