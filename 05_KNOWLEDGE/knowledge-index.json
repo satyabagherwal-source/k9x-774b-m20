@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T05:26:32.438Z",
+  "last_updated": "2026-11-08T05:33:14.062Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16054,11 +16054,16 @@
       "slug": "gitliveapp-firebase-kotlin-sdk",
       "platform": "github",
       "source_url": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
-      "source_version": "077d6624",
-      "content_hash": "0239078f748964f2082a690958455360673b5b14194a3fa6d2b4739d2c3255a0",
+      "source_version": "888384d7",
+      "content_hash": "3fb75e5e0bce41cc08de5850c3c5190ff7f16558a16911103d8b14e1f87803a1",
       "dossier_path": "07_PROJECT_LEARNING/gitliveapp-firebase-kotlin-sdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitliveapp-firebase-kotlin-sdk-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Bump firebase-ios-sdk to 12.19.3 for the eMudhra CA fix (2.x) (#939)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2618,
           "title": "Revert kotlinx-coroutines to 1.10.2 and pin against 1.11.x",
@@ -16070,7 +16075,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:08:40.514Z",
+      "verified_at": "2026-11-08T05:33:11.146Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180645,16 +180650,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "a3cdd04f02a97e12e609dca94b7a1d9021b6b8d10f67d779a0986afdb4feb0b2",
+      "content_hash": "920610c818cfe67c1cf77622f9f66b4e1ae79bc11ac2821498e193f71cff6e9f",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Structural Pruning Must Precede Quantization in MoE Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Engram/Lookup Tables Must Be Decoupled from VRAM Resident Weights",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:08:58.790Z",
+      "verified_at": "2026-11-08T05:33:14.041Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

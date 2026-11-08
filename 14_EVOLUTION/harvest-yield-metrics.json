@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T05:26:32.528Z",
-  "total_cycles_completed": 8191,
-  "total_learnings_persisted": 8191,
-  "total_rules_promoted": 7890,
+  "last_updated": "2026-11-08T05:33:14.139Z",
+  "total_cycles_completed": 8193,
+  "total_learnings_persisted": 8193,
+  "total_rules_promoted": 7893,
   "history": [
-    {
-      "timestamp": "2026-11-07T17:27:27.850Z",
-      "repository": "aquasecurity/trivy-operator",
-      "learningId": "learn-github-aquasecurity-trivy-operator",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T17:40:38.657Z",
-      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
-      "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T17:40:39.339Z",
       "repository": "PrunaAI/P-H3-Image",
@@ -1403,6 +1389,20 @@
       "repository": "KRAFTON/Raon-1-mini-preview",
       "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:33:11.243Z",
+      "repository": "GitLiveApp/firebase-kotlin-sdk",
+      "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:33:14.139Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

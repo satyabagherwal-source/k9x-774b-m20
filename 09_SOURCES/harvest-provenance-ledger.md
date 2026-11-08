@@ -8235,3 +8235,5 @@ Every entry in this ledger must capture:
 | `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `e8091752` | Multi-dimensional audit evidence | 2026-11-08T05:26:18.670Z |
 | `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `8c6a683a` | Multi-dimensional audit evidence | 2026-11-08T05:26:23.212Z |
 | `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-08T05:26:32.524Z |
+| `learn-github-gitliveapp-firebase-kotlin-sdk` | `https://github.com/GitLiveApp/firebase-kotlin-sdk` | `888384d7` | Multi-dimensional audit evidence | 2026-11-08T05:33:11.239Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-08T05:33:14.127Z |

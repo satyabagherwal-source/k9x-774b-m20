@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T05:26:35.116Z",
-    "lastVerified": "2026-11-08T05:26:35.116Z",
+    "lastChecked": "2026-11-08T05:33:16.692Z",
+    "lastVerified": "2026-11-08T05:33:16.692Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T05:02:11.191Z",
-    "lastVerified": "2026-11-08T05:02:11.191Z",
+    "lastChecked": "2026-11-08T05:33:15.195Z",
+    "lastVerified": "2026-11-08T05:33:15.195Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1721,9 +1721,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-08T01:46:16.910Z",
+    "lastChecked": "2026-11-08T05:33:10.127Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-08T01:46:16.910Z"
+    "lastVerified": "2026-11-08T05:33:10.127Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -2377,9 +2377,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-06T23:40:12.591Z",
+    "lastChecked": "2026-11-08T05:33:12.698Z",
     "revisionIdentifier": "5e8a63d2",
-    "lastVerified": "2026-11-06T23:40:12.591Z"
+    "lastVerified": "2026-11-08T05:33:12.698Z"
   },
   "flox-flox": {
     "name": "flox",
@@ -3934,9 +3934,9 @@
   "vi-websocat": {
     "name": "websocat",
     "officialUrl": "https://github.com/vi/websocat",
-    "lastChecked": "2026-11-06T18:54:28.390Z",
+    "lastChecked": "2026-11-08T05:33:00.121Z",
     "revisionIdentifier": "3a3574cd",
-    "lastVerified": "2026-11-06T18:54:28.390Z"
+    "lastVerified": "2026-11-08T05:33:00.121Z"
   },
   "hf-google-bert-bert-base-uncased": {
     "name": "google-bert/bert-base-uncased",
@@ -6229,12 +6229,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dnscontrol-dnscontrol": {
-    "name": "DNSControl/dnscontrol",
+    "name": "dnscontrol",
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T03:01:25.195Z",
-    "lastVerified": "2026-11-07T03:01:25.195Z",
+    "lastChecked": "2026-11-08T05:33:07.709Z",
+    "lastVerified": "2026-11-08T05:33:07.709Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
@@ -6243,7 +6243,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ff1fd540"
   },
   "apache-zookeeper": {
     "name": "apache/zookeeper",
@@ -9636,11 +9637,21 @@
     "lastVerified": "2026-11-05T20:06:35.937Z"
   },
   "gitliveapp-firebase-kotlin-sdk": {
-    "name": "firebase-kotlin-sdk",
+    "name": "GitLiveApp/firebase-kotlin-sdk",
     "officialUrl": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
-    "lastChecked": "2026-11-05T04:36:03.842Z",
-    "revisionIdentifier": "077d6624",
-    "lastVerified": "2026-11-05T04:36:03.842Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-08T05:33:09.180Z",
+    "lastVerified": "2026-11-08T05:33:09.180Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk",
+    "contentHash": "3fb75e5e0bce41cc08de5850c3c5190ff7f16558a16911103d8b14e1f87803a1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "jeffli1993-seo-audit-skill": {
     "name": "seo-audit-skill",
@@ -13833,13 +13844,13 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T19:08:43.936Z",
-    "lastVerified": "2026-11-04T19:08:43.936Z",
+    "lastChecked": "2026-11-08T05:33:02.760Z",
+    "lastVerified": "2026-11-08T05:33:02.760Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-    "contentHash": "a3cdd04f02a97e12e609dca94b7a1d9021b6b8d10f67d779a0986afdb4feb0b2",
-    "promotedRulesCount": 0,
+    "contentHash": "920610c818cfe67c1cf77622f9f66b4e1ae79bc11ac2821498e193f71cff6e9f",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

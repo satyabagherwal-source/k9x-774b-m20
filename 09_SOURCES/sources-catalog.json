@@ -8143,10 +8143,10 @@
     "repository": "GitLiveApp/firebase-kotlin-sdk",
     "platform": "github",
     "sourceUrl": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
-    "sourceVersion": "077d6624",
+    "sourceVersion": "888384d7",
     "license": "Apache-2.0",
-    "contentHash": "0239078f748964f2082a690958455360673b5b14194a3fa6d2b4739d2c3255a0",
-    "lastHarvestedAt": "2026-10-19T14:08:40.588Z",
+    "contentHash": "3fb75e5e0bce41cc08de5850c3c5190ff7f16558a16911103d8b14e1f87803a1",
+    "lastHarvestedAt": "2026-11-08T05:33:11.239Z",
     "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk"
   },
   "igorescodro-alkaa": {
@@ -11905,8 +11905,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "a3cdd04f02a97e12e609dca94b7a1d9021b6b8d10f67d779a0986afdb4feb0b2",
-    "lastHarvestedAt": "2026-11-04T19:08:58.947Z",
+    "contentHash": "920610c818cfe67c1cf77622f9f66b4e1ae79bc11ac2821498e193f71cff6e9f",
+    "lastHarvestedAt": "2026-11-08T05:33:14.127Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf"
   },
   "matthart1983-netwatch": {
