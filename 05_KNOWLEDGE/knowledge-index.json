@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T06:25:44.795Z",
+  "last_updated": "2026-11-08T06:32:59.599Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -145873,10 +145873,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
       "source_version": "hf-fastvideo-fasth3-omni-comfy",
-      "content_hash": "327d116ea8e9c00cbac9e4b0fd78bcb8cbc58f3cfe61cb79584a5f49e8cc61a4",
+      "content_hash": "7805a4f72db08bb89c80f4f2a3704c3d8339b28db63ae440388054c45c1300d3",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Multi-Modal VAE Precision Isolation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Reference-Tagged Prompt Injection Safety",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 4718,
           "title": "Precision-Format Homogeneity Invariant",
@@ -145913,7 +145923,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:02:42.310Z",
+      "verified_at": "2026-11-08T06:32:59.575Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

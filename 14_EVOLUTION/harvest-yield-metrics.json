@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T06:25:44.901Z",
-  "total_cycles_completed": 8205,
-  "total_learnings_persisted": 8205,
-  "total_rules_promoted": 7916,
+  "last_updated": "2026-11-08T06:32:59.745Z",
+  "total_cycles_completed": 8206,
+  "total_learnings_persisted": 8206,
+  "total_rules_promoted": 7918,
   "history": [
-    {
-      "timestamp": "2026-11-07T18:17:08.534Z",
-      "repository": "callstack/agent-device",
-      "learningId": "learn-github-callstack-agent-device",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T18:17:08.702Z",
       "repository": "kube-rs/kube",
@@ -1403,6 +1396,13 @@
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:32:59.745Z",
+      "repository": "FastVideo/FastH3-Omni-Comfy",
+      "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

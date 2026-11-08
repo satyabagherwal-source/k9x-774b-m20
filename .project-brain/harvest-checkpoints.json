@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T06:25:44.904Z",
+  "last_updated": "2026-11-08T06:32:59.750Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -16326,14 +16326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-      "content_hash": "327d116ea8e9c00cbac9e4b0fd78bcb8cbc58f3cfe61cb79584a5f49e8cc61a4",
-      "verified_at": "2026-11-04T20:02:42.429Z",
+      "content_hash": "7805a4f72db08bb89c80f4f2a3704c3d8339b28db63ae440388054c45c1300d3",
+      "verified_at": "2026-11-08T06:32:59.749Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:02:42.429Z"
+      "last_updated": "2026-11-08T06:32:59.749Z"
     },
     "YoanWai/agent-manager": {
       "repository": "YoanWai/agent-manager",

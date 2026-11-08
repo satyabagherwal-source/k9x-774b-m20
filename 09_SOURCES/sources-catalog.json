@@ -10865,8 +10865,8 @@
     "sourceUrl": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
     "sourceVersion": "hf-fastvideo-fasth3-omni-comfy",
     "license": "Open-Source",
-    "contentHash": "327d116ea8e9c00cbac9e4b0fd78bcb8cbc58f3cfe61cb79584a5f49e8cc61a4",
-    "lastHarvestedAt": "2026-11-04T20:02:42.420Z",
+    "contentHash": "7805a4f72db08bb89c80f4f2a3704c3d8339b28db63ae440388054c45c1300d3",
+    "lastHarvestedAt": "2026-11-08T06:32:59.739Z",
     "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy"
   },
   "yoanwai-agent-manager": {
