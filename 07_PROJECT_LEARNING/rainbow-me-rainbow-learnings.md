@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source**: github ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
-> **Source Version**: `d736617d`  
+> **Source Version**: `2101aafb`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T08:31:49.963Z  
+> **Timestamp**: 2026-11-08T13:59:54.645Z  
 > **Learning ID**: `learn-github-rainbow-me-rainbow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T08:30:21.382Z  
+> **Harvest Timestamp**: 2026-11-08T13:59:53.992Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🌈‒ the Ethereum wallet that lives in your pocket 
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4401 stars
+- **Stars / Engagement**: 4400 stars
 
 ---
 
@@ -620,11 +620,16 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7930** (2026-11-04): **feat(discover): search tokens through token search v2 behind its flag**
-  *Symptoms*: Fixes APP-4185  ## What changed (plus any additional context for devs)  With the token search v2 flag on (remote config `token_search_v2_enabled`, or the experimental "Token Search V2" toggle), Discover's typed search and pasted-address search use the backend token search (`/v1/search/Search`) instead of the `token-search` worker.  The backend ranks the results and looks up pasted addresses on every chain. So on this path the app no longer: - re-sorts results by its own relevance score; - drops results that have no icon; - reads an unknown pasted address on-chain (that read only ever checked mainnet).  The list looks as it does today: the backend groups each asset's deployments, and the app shows each deployment as its own row on its chain, in the order the backend lists them. Favorites still hide the matching mainnet row. The order and the set of results can differ from today's, because the backend ranks and filters them.  Results are split by verification into the existing sections: - verified results under Verified; - everything else under Unverified, still capped at 6 rows; - the Low liquidity section stays empty.  A pasted address the backend can't find shows the existing empty state.  Not changed: - **Flag off:** Discover search behaves exactly as today. - **Before typing:** the default list stays on the old endpoint, because the new search returns nothing for an empty query. - **Errors:** a failed request shows the empty state, as it does today. Discover's list can't s
+- **Issue #7935** (2026-11-07): **fix: stale currency conversion for perps and Polymarket balances**
+  *Symptoms*: ## What changed (plus any additional context for devs) - Removes `lockDependencies` on two derived stores as their `useCurrencyConversionStore` selectors are impure and capture external state, which can produce missed updates if dependencies are locked  ## Screen recordings / screenshots  ## What to test 
+  **Post-Mortem & Fix Analysis**:
+  > Launch in [simulator](http://localhost:29070/install/http?url=https://app-team.p.rainbow.me/@christian/fix-stale-balance-conversion/be67e7c5a3bac96f4206627784a5ba46576f8bf7.app.zip&platform=ios&destination=simulator) or [device](http://localhost:29070/install/http?url=https://app-team.p.rainbow.me/@christian/fix-stale-balance-conversion/be67e7c5a3bac96f4206627784a5ba46576f8bf7.ipa&platform=ios&destination=device) for be67e7c5a3bac96f4206627784a5ba46576f8bf7
 
-- **Issue #7929** (2026-11-04): **feat(token-search): v2 search data layer behind a flag**
-  *Symptoms*: Fixes APP-4184  ## What changed (plus any additional context for devs)  Token search is moving to a backend endpoint, `GET /v1/search/Search` on the platform gateway. The backend now owns ranking, cross-chain grouping, chain filtering and address lookup. Today that logic is split between the `token-search` worker and the app. This PR adds the app's client for it in `src/features/token-search/`. No screen uses it yet.  - **Flag:** remote config `token_search_v2_enabled` or the experimental "Token Search V2" toggle, read through `useTokenSearchV2EnabledStore`. Both default to off. - **Fetcher:** `fetchTokenSearch` sends chain ids in the gateway's CAIP-2 form (`eip155:8453`). It lets errors reach the caller's query store. - **Mapping into the existing `SearchAsset`:** each result is one asset with a deployment per chain. It is opened on the requested chain when the asset is deployed there, otherwise on the first deployment the backend lists. Every deployment fills `networks`. - **Swap results:**   - `toChainSearchResults` returns the assets deployed on the output chain, split into verified and unverified.   - `toCrosschainSearchResults` keeps today's "other networks" rule: verified assets not on the output chain whose symbol or name exactly matches the query, or whose deployment matches a pasted address.  The response is treated as untrusted input, because the mapped address and decimals decide which token a swap buys: - A deployment is kept only on a chain the app supports. The
+- **Issue #7934** (2026-11-07): **chore: bump SDK to 0.4.2 for Elysium**
+  *Symptoms*: ## What changed Bump `@rainbow-me/sdk` from 0.4.1 to the published 0.4.2 release to support Kinetiq Elysium mainnet (chain ID 99901).
+  **Post-Mortem & Fix Analysis**:
+  > **Review the following changes in direct dependencies.** Learn more about [Socket for GitHub](https://socket.dev?utm_medium=gh).  <table> <thead> <tr> <th>Diff</th> <th width="200px">Package</th> <th align="left" width="100px">Supply Chain<br/>Security</th> <th align="left" width="100px">Vulnerability</th> <th align="left" width="100px">Quality</th> <th align="left" width="100px">Maintenance</th> <th align="left" width="100px">License</th> </tr> </thead> <tbody> <tr><td align="center"><a href="https://socket.dev/dashboard/org/rainbow-me/diff-scan/dcfe186c-89e0-4d8f-836e-fbeb7d0dbde9?tab=dependencies&dependency_item_key=101973256837"><img src="https://github-app-statics.socket.dev/diff-updated.svg" title="Updated" alt="Updated" width="20" height="20"></a></td><td><a href="https://socket.dev/dashboard/org/rainbow-me/diff-scan/dcfe186c-89e0-4d8f-836e-fbeb7d0dbde9?tab=dependencies&dependency_item_key=101973256837">npm/​@​rainbow-me/​sdk@​0.4.1 ⏵ 0.4.2</a></td><td align="left"><a href="http
+  > Launch in [simulator](http://localhost:29070/install/http?url=https://app-team.p.rainbow.me/jin/elysium-sdk/7609bffe87602f9555cda9fe9c878e6e942b34a0.app.zip&platform=ios&destination=simulator) or [device](http://localhost:29070/install/http?url=https://app-team.p.rainbow.me/jin/elysium-sdk/7609bffe87602f9555cda9fe9c878e6e942b34a0.ipa&platform=ios&destination=device) for 7609bffe87602f9555cda9fe9c878e6e942b34a0
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -641,754 +646,252 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b80d6ef` (2026-11-02)
-**Commit Message**: fix(spot-pnl): market caps for sub-$1 entries in Top Holders, abbreviated MCs on the P&L sheet (#7913)
-
-Fixes APP-4175
+### Incident Patch 1: `208af290` (2026-11-07)
+**Commit Message**: fix: stale currency conversion for perps and Polymarket balances (#7935)
 
 ## What changed (plus any additional context for devs)
+- Removes `lockDependencies` on two derived stores as their
+`useCurrencyConversionStore` selectors are impure and capture external
+state, which can produce missed updates if dependencies are locked
 
-Design feedback on P&L in 2.0.47 (18), from the ticket and Andrei's
-comment on it:
+## Screen recordings / screenshots
 
-- **Top Holders → Unrealized** now follows the P&L sheet's rule for
-tokens priced under $1: a row shows the holder's average entry market
-cap, e.g. `Avg Entry MC $82.7K`, instead of a subscript price like `Avg.
-Entry $0.0₆8416`. The row uses the same rule and the same circulating
-supply as the sheet it opens, so the two agree. Tokens at or above $1
-keep `Avg Entry $10.61`.
-- **P&L sheet market caps are always abbreviated** from $1K up, so Avg
-Entry MC reads like Current MC and Avg Exit MC: `$82,699` → `$82.7K`
-next to `$402.9K`. Below $1K, market caps format like any other amount.
-Prices are unchanged.
-- **Labels drop the period:** `Avg. Entry` → `Avg Entry`. `Avg. Exit` →
-`Avg Exit` as well, to match `Avg Entry MC` / `Avg Exit MC` on the same
-sheet.
+## What to test
 
-The under-$1 decision (live price and market cap, converted with the USD
-rate) moved from the sheet into `useCirculatingSupply`, and both screens
-use it. Top Holders calls it onl
-
-**File**: `src/features/spot-pnl/core/marketCapSupply.test.ts` (added, +19/-0)
+**File**: `src/features/perps/stores/derived/useHyperliquidBalance.ts` (modified, +4/-8)
 ```diff
-@@ -0,0 +1,19 @@
-+import { describe, expect, it } from 'vitest';
-+
-+import { resolveCirculatingSupply } from './marketCapSupply';
-+
-+describe('resolveCirculatingSupply', () => {
-+  it.each<{ name: string; price: string; marketCap: string; usdToNativeRate: number | undefined; expected: string | null }>([
-+    { name: 'under $1 with a market cap', price: '0.5', marketCap: '1000', usdToNativeRate: 1, expected: '2000' },
-+    { name: 'exactly $1', price: '1', marketCap: '1000', usdToNativeRate: 1, expected: null },
-+    { name: 'over $1', price: '2', marketCap: '1000', usdToNativeRate: 1, expected: null },
-+    { name: 'under $1 though over 1 in the native currency', price: '150', marketCap: '3000', usdToNativeRate: 300, expected: '20' },
-+    { name: 'over $1 though under 1 in the native currency', price: '0.5', marketCap: '1000', usdToNativeRate: 0.25, expected: null },
-+    { name: 'no conversion rate', price: '0.5', marketCap: '1000', usdToNativeRate: undefined, expected: null },
-+    { name: 'no price', price: '', marketCap: '1000', usdToNativeRate: 1, expected: null },
-+    { name: 'zero price', price: '0', marketCap: '1000', usdToNativeRate: 1, expected: null },
-+    { name: 'no market cap', price: '0.5', marketCap: '0', usdToNativeRate: 1, expected: null },
-+  ])('$name', ({ price, marketCap, usdToNativeRate, expected }) => {
-+    expect(resolveCirculatingSupply({ price, marketCap, usdToNativeRate })).toBe(expected);
-+  });
+@@ -3,11 +3,7 @@ import { createDerivedStore } from '@storesjs/stores';
+ import { useCurrencyConversionStore } from '@/features/currency/stores/currencyConversionStore';
+ import { usePerpsPositionsInfo } from '@/features/perps/stores/derived/usePerpsPositionsInfo';
+ 
+-export const useHyperliquidBalance = createDerivedStore(
+-  $ => {
+-    const perpsBalanceUsd = $(usePerpsPositionsInfo, state => state.value);
+-    const convertedBalance = $(useCurrencyConversionStore, state => state.convertToNativeCurrency(perpsBalanceUsd));
+-    return convertedBalance;
+-  },
+-  { lockDependencies: true }
+-);
++export const useHyperliquidBalance = createDerivedStore($ => {
++  const perpsBalanceUsd = $(usePerpsPositionsInfo, s => s.value);
++  return $(useCurrencyConversionStore, s => s.convertToNativeCurrency(perpsBalanceUsd));
 +});
 ```
 
-**File**: `src/features/spot-pnl/core/marketCapSupply.ts` (added, +18/-0)
+**File**: `src/features/polymarket/stores/derived/usePolymarketAccountValueSummary.ts` (modified, +15/-16)
 ```diff
-@@ -0,0 +1,18 @@
-+import { divWorklet, greaterThanWorklet, lessThanWorklet } from '@/framework/core/safeMath';
-+
-+/**
-+ * The supply that turns per-token figures into market caps, set for a token priced under $1 whose market cap is known.
-+ * `price` and `marketCap` are in the native currency; `null` keeps the figures as prices.
-+ */
-+export function resolveCirculatingSupply({
-+  marketCap,
-+  price,
-+  usdToNativeRate,
-+}: {
-+  marketCap: string;
-+  price: string;
-+  usdToNativeRate: number | undefined;
-+}): string | null {
-+  if (!usdToNativeRate || !greaterThanWorklet(price || '0', 0) || !greaterThanWorklet(marketCap, 0)) return null;
-+  return lessThanWorklet(divWorklet(price, usdToNativeRate), 1) ? divWorklet(marketCap, price) : null;
-+}
-```
-
-**File**: `src/features/spot-pnl/ui/SpotPnlSheet.tsx` (modified, +14/-41)
-```diff
-@@ -8,7 +8,6 @@ import { analytics } from '@/analytics';
- import { SPRING_CONFIGS } from '@/components/animations/animationConfigs';
- import { ButtonPressAnimation } from '@/components/animations/ButtonPressAnimation';
- import RainbowCoinIcon from '@/components/coin-icon/RainbowCoinIcon';
--import { useLiveTokenValue } from '@/components/live-token-text/useLiveTokenValue';
- import { PanelSheet } from '@/components/PanelSheet/PanelSheet';
- import { Box, Separator, Text, TextShadow } from '@/design-system';
- import { type TextProps } from '@/design-system/components/Text/Text';
-@@ -18,10 +17,8 @@ import type { NativeCurrencyKey } from '@/features/currency/types';
- import useENSAvatar from '@/features/ens/hooks/useENSAvatar';
- import { useBackendNetworksStore } from '@/features/network/stores/backendNetworksStore';
- import type { ChainId } from '@/features/network/types/backendNetworks';
--import { divWorklet, greaterThanWorklet, lessThanWorklet, mulWorklet } from '@/framework/core/safeMath';
--import { formatAssetPrice } from '@/helpers/formatAssetPrice';
-+import { greaterThanWorklet } from '@/framework/core/safeMath';
- import useAccountAsset from '@/hooks/useAccountAsset';
--import useAdditionalAssetData from '@/hooks/useAdditionalAssetData';
- import { useStableValue } from '@/hooks/useStableValue';
- import * as i18n from '@/languages';
- import Navigation from '@/navigation/Navigation';
-@@ -31,7 +28,6 @@ import { useExternalToken } from '@/resources/assets/externalAssetsQuery';
- import { getCodexTokenId } from '@/resources/platform/codex';
- import { AddressAvatar } from '@/screens/change-wallet/components/AddressAvatar';
- import { userAssetsStoreManager } from '@/state/assets/userAssetsStoreManager';
--import { type TokenData } from '@/state/liveTokens/types';
- import { useAccountProfileInfo } from '@/state/wallets/walletsStore';
- import { useTheme } from '@/theme/ThemeContext';
- import { address as abbreviateAddress, abbreviateEnsForDisplay } from '@/utils/abbreviations';
-@@ -48,7 +44,16 @@ import {
- import { type UnrealizedPnl } from '../core/unrealizedPnl';
- import { createTokenTradesStore, useSpotPnlTokenId, useTokenTradesStore } from '../data/tokenTradesStore';
- import { PnlArrow, pnlColor } from './pnlDisplay';
--import { formatCompactTokenAmount, formatNativeAmount, formatPnlAmount, formatPnlPercentage, pnlSign } from './pnlFormat';
-+import {
-+  formatCompactTokenAmount,
-+  formatNativeAmount,
-+  formatPerTokenFigure,
-+  formatPnlAmount,
-+  formatPnlPercentage,
-+  pnlSign,
-+} from './pnlFormat';
-+import { useCirculatingSupply } from './useCirculatingSupply';
-+import { useTokenPrice } from './useTokenPrice';
+@@ -15,19 +15,18 @@ export type PolymarketAccountValueSummary = {
+   totalValueNative: string;
+ };
  
- const SHEET_BORDER_RADIUS = 38;
- const CARD_BORDER_RADIUS = 22;
-@@ -163,8 +168,6 @@ function SpotPnlSheetContent({
-         balance={balance}
-         chainId={chainId}
-         decimals={accountAsset?.decimals ?? externalToken?.decimals ?? 18}
--        initialPrice={accountAsset?.native?.price?.amount ?? externalToken?.native?.price?.amount ?? ''}
--        initialPriceUpdatedAt={accountAsset?.price?.changed_at ?? 0}
-         isReceivedOnly={isReceivedOnly}
-         isSettled={isSettled}
-         isSuccess={isSuccess}
-@@ -173,7 +176,6 @@ function SpotPnlSheetContent({
-         tokenAddress={tokenAddress}
-         tokenName={accountAsset?.name ?? externalToken?.name}
-         trades={trades}
--        uniqueId={uniqueId}
-         viewContext={{ entryPoint, hasEnsName: !!displayEns, isOwnWallet: isSelectedWallet }}
-       />
-     </Box>
-@@ -184,8 +186,6 @@ function SpotPnlSection({
-   balance,
-   chainId,
-   decimals,
--  initialPrice,
--  initialPriceUpdatedAt,
-   isReceivedOnly,
-   isSettled,
-   isSuccess,
-@@ -194,14 +194,11 @@ function SpotPnlSection({
-   tokenAddress,
-   tokenName,
-   trades,
--  uniqueId,
-   viewContext,
- }: {
-   balance: string;
-   chainId: ChainId;
-   decimals: number;
--  initialPrice: string;
--  initialPriceUpdatedAt: number;
-   isReceivedOnly: boolean;
-   isSettled: boolean;
-   isSuccess: boolean;
-@@ -210,31 +207,12 @@ function SpotPnlSection({
-   tokenAddress: string;
-   tokenName: string | undefined;
-   trades: WalletTokenTrades | null;
--  uniqueId: string;
-   /** Sent with the view event. */
-   viewContext: { entryPoint: SpotPnlSheetEntryPoint; hasEnsName: boolean; isOwnWallet: boolean };
- }) {
-   const usdToNativeRate = useCurrencyConversionStore(state => state.getData()?.usdToNativeCurrencyConversionRate);
--  const { data: metadata } = useAdditionalAssetData({ address: tokenAddress, chainId, currency: nativeCurrency });
--  const price = useLiveTokenValue({
--    tokenId: uniqueId,
--    fallback: initialPrice,
--    fallbackUpdatedAt: initialPriceUpdatedAt,
--  });
--  const liveMarketCap = useLiveTokenValue({
--    tokenId: uniqueId,
--    fallback: '0',
--    selector: selectCirculatingMarketCap,
--  });
--  const marketCap = greaterThanWorklet(liveMarketCap, 0) ? liveMarketCap : String(metadata?.marketCap ?? 0);
--  // Tokens priced under $1 show entry and current market caps in place
-```
-
-**File**: `src/features/spot-pnl/ui/pnlFormat.test.ts` (modified, +24/-1)
-```diff
-@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
- 
- import type { NativeCurrencyKey } from '@/features/currency/types';
- 
--import { formatNativeAmount, formatPnlAmount, formatPnlPercentage } from './pnlFormat';
-+import { formatNativeAmount, formatPerTokenFigure, formatPnlAmount, formatPnlPercentage } from './pnlFormat';
- 
- describe('formatNativeAmount', () => {
-   it.each<{ amount: string; currency: NativeCurrencyKey; expected: string }>([
-@@ -46,6 +46,29 @@ describe('formatNativeAmount', () => {
-   });
- });
- 
-+describe('formatPerTokenFigure', () => {
-+  it.each<{ marketCap: string; currency: NativeCurrencyKey; expected: string }>([
-+    { marketCap: '999.4', currency: 'USD', expected: '$999' },
-+    { marketCap: '999.5', currency: 'USD', expected: '$1.0K' },
-+    { marketCap: '1000', currency: 'USD', expected: '$1.0K' },
-+    { marketCap: '82699', currency: 'USD', expected: '$82.7K' },
+-export const usePolymarketAccountValueSummary = createDerivedStore<PolymarketAccountValueSummary>(
+-  $ => {
+-    const positionsValue = $(usePolymarketPositionsSummary, state => state.value);
+-    const balance = $(usePolymarketBalanceStore, state => truncateToDecimals(state.getBalance(), USD_DECIMALS));
+-    const totalValue = add(positionsValue, balance);
+-    const nativeCurrencyAccountValue = $(useCurrencyConversionStore, state => state.convertToNativeCurrency(totalValue));
+-    return {
+-      balance,
+-      positionsValue,
+-      hasBalance: !isZero(balance),
+-      totalValueUsd: totalValue,
+-      totalValueNative: nativeCurrencyAccountValue,
+-    };
+-  },
+-  { lockDependencies: true }
+-);
++export const usePolymarketAccountValueSummary = createDerivedStore<PolymarketAccountValueSummary>($ => {
++  const positionsValue = $(usePolymarketPositionsSummary, s => s.value);
++  const balance = $(usePolymarketBalanceStore, s => truncateToDecimals(s.getBalance(), USD_DECIMALS));
 +
-+    { marketCap: '82699', currency: 'JPY', expected: '¥82.7K' },
-+    { marketCap: '82699', currency: 'EUR', expected: '€82.7K' },
-+    { marketCap: '1.4567', currency: 'ETH', expected: 'Ξ1.457' },
-+  ])('market cap $currency $marketCap → $expected', ({ marketCap, currency, expected }) => {
-+    expect(formatPerTokenFigure(marketCap, '1', currency)).toBe(expected);
-+  });
++  const totalValue = add(positionsValue, balance);
++  const nativeCurrencyAccountValue = $(useCurrencyConversionStore, s => s.convertToNativeCurrency(totalValue));
 +
-+  it('shows the market cap at the price when a circulating supply is given', () => {
-+    expect(formatPerTokenFigure('0.0000827', '1000000000', 'USD')).toBe('$82.7K');
-+  });
-+
-+  it('shows the price without a circulating supply', () => {
-+    expect(formatPerTokenFigure('0.0000827', null, 'USD')).toBe('$0.0₄827');
-+  });
-+});
-+
- describe('formatPnlAmount', () => {
-   it.each<{ amount: string; currency: NativeCurrencyKey; expected: ReturnType<typeof formatPnlAmount> }>([
-     { amount: '-6178.32', currency: 'USD', expected: { direction: 'loss', display: '$6,178' } },
-```
-
-**File**: `src/features/spot-pnl/ui/pnlFormat.ts` (modified, +33/-6)
-```diff
-@@ -1,13 +1,22 @@
- import { supportedCurrencies } from '@/features/currency/supportedCurrencies';
- import type { NativeCurrencyKey } from '@/features/currency/types';
- import { convertAmountToNativeDisplay } from '@/features/currency/utils/nativeDisplay';
--import { divWorklet, equalWorklet, greaterThanOrEqualToWorklet, lessThanWorklet, toFixedWorklet } from '@/framework/core/safeMath';
-+import {
-+  divWorklet,
-+  equalWorklet,
-+  greaterThanOrEqualToWorklet,
-+  lessThanWorklet,
-+  mulWorklet,
-+  toFixedWorklet,
-+} from '@/framework/core/safeMath';
- import { addCommasToNumber } from '@/framework/ui/utils/addCommasToNumber';
-+import { formatAssetPrice } from '@/helpers/formatAssetPrice';
- import { convertAmountToBalanceDisplay, handleSignificantDecimals } from '@/helpers/utilities';
- 
- export type PnlDirection = 'profit' | 'loss' | 'flat';
- 
- const COMPACT_AMOUNT_FROM = 100_000;
-+const COMPACT_MARKET_CAP_FROM = 1_000;
- const COMPACT_PERCENTAGE_FROM = 1_000;
- const COMPACT_TOKEN_AMOUNT_FROM = 10_000;
- const SUFFIXES = [
-@@ -51,20 +60,38 @@ export function formatPnlAmount(amount: string, nativeCurrency: NativeCurrencyKe
-  */
- export function formatNativeAmount(amount: string, nativeCurrency: NativeCurrencyKey): string {
-   const magnitude = amount.replace('-', '');
--  const { alignment, decimals, symbol } = supportedCurrencies[nativeCurrency];
-+  const { decimals } = supportedCurrencies[nativeCurrency];
-   const minorUnit = decimals === 0 ? '1' : `0.${'1'.padStart(decimals, '0')}`;
-   if (lessThanWorklet(magnitude, minorUnit)) return convertAmountToNativeDisplay(magnitude, nativeCurrency);
- 
--  if (greaterThanOrEqualToWorklet(toFixedWorklet(magnitude, 0), COMPACT_AMOUNT_FROM)) {
--    const display = abbreviate(magnitude);
--    return alignment === 'left' ? `${symbol}${display}` : `${display} ${symbol}`;
--  }
-+  if (greaterThanOrEqualToWorklet(toFixedWorklet(magnitude, 0), COMPACT_AMOUNT_FROM)) return abbreviateNative(magnitude, nativeCurrency);
- 
-   const rounded = toFixedWorklet(magnitude, decimals);
-   if (decimals > 2 || lessThanWorklet(rounded, 1)) return convertAmountToNativeDisplay(rounded, nativeCurrency);
-   return convertAmountToNativeDisplay(toFixedWorklet(magnitude, 0), nativeCurrency, undefined, true);
- }
- 
-+/**
-+ * A per-token native price, or the market cap at that price when a circulating supply is given. A market cap shows as
-+ * {@link formatNativeAmount} does, but abbreviated from a thousand, e.g. `$82.7K`.
-+ */
-+export function formatPerTokenFigure(price: string, circulatingSupply: string | null, nativeCurrency: NativeCurrencyKey): string {
-+  return circulatingSupply
-+    ? formatMarketCap(mulWorklet(price, circulatingSupply), nativeCurrency)
-+    : formatAssetPrice({ value: price, currency: nativeCurrency });
-+}
-+
-+function formatMarketCap(amount: string, nativeCurrency: NativeCurrencyKey): string {
-+  if (lessThanWorklet(toFixedWorklet(amount, 0), COMPACT_MARKET_CAP_FROM)) return formatNativeAmount(amount, nativeCurrency);
-+  return abbreviateNative(amount, nativeCurrency);
-+}
-+
-+function abbreviateNative(magnitude: string, nativeCurrency: NativeCurrencyKey): string {
-+  const { alignment, symbol } = supportedCurrencies[nativeCurrency];
-+  const display = abbreviate(magnitude);
-+  return alignment === 'left' ? `${symbol}${display}` : `${display} ${symbol}`;
-+}
-+
- /** A token amount with its symbol, abbreviated from ten thousand up, e.g. `86.2M HABS`. */
- export function formatCompactTokenAmount(amount: string, asset: { decimals: number; symbol: string }) {
-   if (lessThanWorklet(amount, COMPACT_TOKEN_AMOUNT_FROM)) return convertAmountToBalanceDisplay(amount, asset);
-```
-
-**File**: `src/features/spot-pnl/ui/useCirculatingSupply.ts` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+import { useLiveTokenValue } from '@/components/live-token-text/useLiveTokenValue';
-+import { getUniqueId } from '@/entities/assetId';
-+import { useCurrencyConversionStore } from '@/features/currency/stores/currencyConversionStore';
-+import type { NativeCurrencyKey } from '@/features/currency/types';
-+import type { ChainId } from '@/features/network/types/backendNetworks';
-+import { greaterThanWorklet } from '@/framework/core/safeMath';
-+import useAdditionalAssetData from '@/hooks/useAdditionalAssetData';
-+import { type TokenData } from '@/state/liveTokens/types';
-+
-+import { resolveCirculatingSupply } from '../core/marketCapSupply';
-+
-+/** The token's circulating supply while its per-token figures show as market caps, from its live or fetched market cap. */
-+export function useCirculatingSupply({
-+  chainId,
-+  nativeCurrency,
-+  price,
-+  tokenAddress,
-+}: {
-+  chainId: ChainId;
-+  nativeCurrency: NativeCurrencyKey;
-+  /** Native, live. */
-+  price: string;
-+  tokenAddress: string;
-+}): string | null {
-+  const usdToNativeRate = useCurrencyConversionStore(state => state.getData()?.usdToNativeCurrencyConversionRate);
-+  const { data: metadata } = useAdditionalAssetData({ address: tokenAddress, chainId, currency: nativeCurrency });
-+  const liveMarketCap = useLiveTokenValue({
-+    tokenId: getUniqueId(tokenAddress, chainId),
-+    fallback: '0',
-+    selector: selectCirculatingMarketCap,
-+  });
-+  const marketCap = greaterThanWorklet(liveMarketCap, 0) ? liveMarketCap : String(metadata?.marketCap ?? 0);
-+  return resolveCirculatingSupply({ marketCap, price, usdToNativeRate });
-+}
-+
-+function selectCirculatingMarketCap(token: TokenData): string {
-+  return token.marketData.circulatingMarketCap;
-+}
-```
-
-**File**: `src/features/spot-pnl/ui/useTokenPrice.ts` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+import { useLiveTokenValue } from '@/components/live-token-text/useLiveTokenValue';
-+import { getUniqueId } from '@/entities/assetId';
-+import type { NativeCurrencyKey } from '@/features/currency/types';
-+import type { ChainId } from '@/features/network/types/backendNetworks';
-+import useAccountAsset from '@/hooks/useAccountAsset';
-+import { useExternalToken } from '@/resources/assets/externalAssetsQuery';
-+
-+/** The token's live native price, until a quote arrives the selected wallet's or the fetched token's price; `''` without either. */
-+export function useTokenPrice({
-+  chainId,
-+  nativeCurrency,
-+  tokenAddress,
-+}: {
-+  chainId: ChainId;
-+  nativeCurrency: NativeCurrencyKey;
-+  tokenAddress: string;
-+}): string {
-+  const uniqueId = getUniqueId(tokenAddress, chainId);
-+  const accountAsset = useAccountAsset(uniqueId, nativeCurrency);
-+  const { data: externalToken } = useExternalToken({ address: tokenAddress, chainId, currency: nativeCurrency });
-+  return useLiveTokenValue({
-+    tokenId: uniqueId,
-+    fallback: accountAsset?.native?.price?.amount ?? externalToken?.native?.price?.amount ?? '',
-+    fallbackUpdatedAt: accountAsset?.price?.changed_at ?? 0,
-+  });
-+}
-```
-
-**File**: `src/features/top-holders/ui/TopHolders.tsx` (modified, +77/-32)
-```diff
-@@ -13,9 +13,10 @@ import useENSAvatar from '@/features/ens/hooks/useENSAvatar';
- import { type ChainId } from '@/features/network/types/backendNetworks';
- import { type SpotPnlSheetEntryPoint, type WalletTokenTrades } from '@/features/spot-pnl/core/spotPnl';
- import { PnlArrow, pnlColor } from '@/features/spot-pnl/ui/pnlDisplay';
--import { formatNativeAmount, formatPnlAmount, formatPnlPercentage, pnlSign } from '@/features/spot-pnl/ui/pnlFormat';
-+import { formatNativeAmount, formatPerTokenFigure, formatPnlAmount, formatPnlPercentage, pnlSign } from '@/features/spot-pnl/ui/pnlFormat';
-+import { useCirculatingSupply } from '@/features/spot-pnl/ui/useCirculatingSupply';
-+import { useTokenPrice } from '@/features/spot-pnl/ui/useTokenPrice';
- import { lessThanWorklet, mulWorklet, toFixedWorklet } from '@/framework/core/safeMath';
--import { formatAssetPrice } from '@/helpers/formatAssetPrice';
- import * as i18n from '@/languages';
- import Navigation from '@/navigation/Navigation';
- import Routes from '@/navigation/routesNames';
-@@ -129,22 +130,14 @@ function HolderList({ tab, token }: { tab: Tab; token: { address: string; chainI
-   if (!topHolders) return null;
- 
-   const entryPoint = TAB_ENTRY_POINTS[tab];
--  const rows =
--    tab === 'holding'
--      ? topHolders.holding.map((row, index) => (
--          <HoldingHolderRow
--            key={row.address}
--            entryPoint={entryPoint}
--            nativeCurrency={nativeCurrency}
--            rank={index + 1}
--            row={row}
--            token={token}
--            usdToNativeRate={usdToNativeRate}
--          />
--        ))
--      : tab === 'unrealized'
--        ? topHolders.unrealized.map((row, index) => (
--            <UnrealizedHolderRow
-+
-+  return (
-+    // Clipped so a longer list is revealed as the height grows instead of overlapping the sections below
-+    <Box as={Animated.View} layout={LAYOUT_ANIMATION} style={{ overflow: 'hidden' }}>
-+      {tab === 'holding' && (
-+        <SeparatedRows
-+          rows={topHolders.holding.map((row, index) => (
-+            <HoldingHolderRow
-               key={row.address}
-               entryPoint={entryPoint}
-               nativeCurrency={nativeCurrency}
-@@ -153,8 +146,21 @@ function HolderList({ tab, token }: { tab: Tab; token: { address: string; chainI
-               token={token}
-               usdToNativeRate={usdToNativeRate}
-             />
--          ))
--        : topHolders.realized.map((row, index) => (
-+          ))}
-+        />
-+      )}
-+      {tab === 'unrealized' && (
-+        <UnrealizedHolderRows
-+          entryPoint={entryPoint}
-+          nativeCurrency={nativeCurrency}
-+          rows={topHolders.unrealized}
-+          token={token}
-+          usdToNativeRate={usdToNativeRate}
-+        />
-+      )}
-+      {tab === 'realized' && (
-+        <SeparatedRows
-+          rows={topHolders.realized.map((row, index) => (
-             <RealizedHolderRow
-               key={row.address}
-               entryPoint={entryPoint}
-@@ -164,18 +170,55 @@ function HolderList({ tab, token }: { tab: Tab; token: { address: string; chainI
-               token={token}
-               usdToNativeRate={usdToNativeRate}
-             />
--          ));
-+          ))}
-+        />
-+      )}
-+    </Box>
-+  );
-+}
-+
-+function SeparatedRows({ rows }: { rows: React.ReactElement[] }) {
-+  return rows.map((row, index) => (
-+    <React.Fragment key={row.key}>
-+      {index > 0 && <RowSeparator />}
-+      {row}
-+    </React.Fragment>
-+  ));
-+}
-+
-+/** Holds the price and market-cap subscriptions that only the Unrealized rows need; rows get display strings so a tick re-renders only rows whose text changes. */
-+function UnrealizedHolderRows({
-+  entryPoint,
-+  nativeCurrency,
-+  rows,
-+  token,
-+  usdToNativeRate,
-+}: {
-+  entryPoint: SpotPnlSheetEntryPoint;
-+  nativeCurrency: NativeCurrencyKey;
-+  rows: UnrealizedRow[];
-+  token: { address: string; chainId: ChainId };
-+  usdToNativeRate: number;
-+}) {
-+  const price = useTokenPrice({ chainId: token.chainId, nativeCurrency, tokenAddress: token.address });
-+  const circulatingSupply = useCirculatingSupply({ chainId: token.chainId, nativeCurrency, price, tokenAddress: token.address });
- 
-   return (
--    // Clipped so a longer list is revealed as the height grows instead of overlapping the sections below
--    <Box as={Animated.View} layout={LAYOUT_ANIMATION} style={{ overflow: 'hidden' }}>
--      {rows.map((row, index) => (
--        <React.Fragment key={row.key}>
--          {index > 0 && <RowSeparator />}
--          {row}
--        </React.Fragment>
-+    <SeparatedRows
-+      rows={rows.map((row, index) => (
-+        <UnrealizedHolderRow
-+          key={row.address}
-+          avgEntry={formatPerTokenFigure(mulWorklet(row.avgEntryUsd, usdToNativeRate), circulatingSupply, nativeCurrency)}
-+          entryPoint={entryPoint}
-+          isMarketCap={!!circulatingSupply}
-+          nativeCurrency={nativeCurrency}
-+          rank={index + 1}
-+          row={row}
-+          token={token}
-
-```
-
----
-
-### Incident Patch 2: `5b798f69` (2026-11-03)
-**Commit Message**: fix(polymarket): migrate to Data API v2 (#7916)
-
-**File**: `src/features/polymarket/constants.ts` (modified, +2/-2)
-```diff
-@@ -41,8 +41,8 @@ export const POLYMARKET_SIGNING_PROXY_URL = `${RAINBOW_POLYMARKET_PROXY_URL}/sig
- // const POLYMARKET_CLOB_URL_PREPROD = 'https://clob-preprod-int-v2.polymarket.com';
- const POLYMARKET_CLOB_URL_PROD = 'https://clob.polymarket.com';
- 
--//  const POLYMARKET_DATA_API_URL_PREPROD = 'https://data-api-preprod-int.polymarket.com';
--const POLYMARKET_DATA_API_URL_PROD = 'https://data-api.polymarket.com';
-+//  const POLYMARKET_DATA_API_URL_PREPROD = 'https://data-api-preprod-int.polymarket.com/v2';
-+const POLYMARKET_DATA_API_URL_PROD = 'https://data-api.polymarket.com/v2';
- 
- //  const POLYMARKET_GAMMA_API_URL_PREPROD = 'https://gamma-api-preprod-int.polymarket.com';
- const POLYMARKET_GAMMA_API_URL_PROD = 'https://gamma-api.polymarket.com';
-```
-
-**File**: `src/features/polymarket/stores/polymarketPositionsStore.test.ts` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+import { afterEach, expect, it, vi } from 'vitest';
-+
-+import '../../../../config/test/storeEnvironment';
-+
-+import { predictionEvent } from '../../../../config/test/predictionEvent';
-+import { polymarketPositionsActions } from './polymarketPositionsStore';
-+
-+vi.mock('@/features/polymarket/stores/derived/usePolymarketClients', async () => {
-+  const { createBaseStore } = await import('@storesjs/stores');
-+  return { usePolymarketClients: createBaseStore(() => ({ proxyAddress: null })) };
-+});
-+
-+afterEach(() => vi.restoreAllMocks());
-+
-+it('reads a v2 position using entry cost and unrealized P&L for the open holding', async () => {
-+  const address = '0x0000000000000000000000000000000000000001';
-+  const event = predictionEvent('1');
-+  const market = { ...event.markets[0], events: [event] };
-+  const holding = {
-+    proxy_wallet: address,
-+    token_id: '101',
-+    redeemable: false,
-+    slug: market.slug,
-+    event_id: event.id,
-+    current_size: 11.7727,
-+    current_value: 4.7091,
-+    entry_cost_usdc: 5.1799,
-+    total_cost_usdc: 5.2669,
-+    unrealized_pnl: -0.4708,
-+    total_pnl: -0.5578,
++  return {
++    balance,
++    positionsValue,
++    hasBalance: !isZero(balance),
++    totalValueUsd: totalValue,
++    totalValueNative: nativeCurrencyAccountValue,
 +  };
-+  const fetch = vi
-+    .spyOn(global, 'fetch')
-+    .mockResolvedValueOnce(Response.json({ data: [holding] }))
-+    .mockResolvedValueOnce(Response.json([market]));
-+
-+  const result = await polymarketPositionsActions.fetch({ address }, { force: true, throwOnError: true });
-+
-+  const url = new URL(String(fetch.mock.calls[0][0]));
-+  expect(url.origin + url.pathname).toBe('https://data-api.polymarket.com/v2/positions');
-+  expect(Object.fromEntries(url.searchParams)).toMatchObject({ user: address, filter_amount: '1' });
-+  expect(result?.positions).toMatchObject([
-+    {
-+      proxyWallet: address,
-+      asset: '101',
-+      size: 11.7727,
-+      currentValue: 4.7091,
-+      initialValue: 5.1799,
-+      cashPnl: -0.4708,
-+    },
-+  ]);
 +});
-```
-
-**File**: `src/features/polymarket/stores/polymarketPositionsStore.ts` (modified, +3/-6)
-```diff
-@@ -69,16 +69,13 @@ async function fetchPolymarketPositions(
- ): Promise<FetchPolymarketPositionsResponse> {
-   if (!address) throw new RainbowError('[PolymarketPositionsStore] Address is required');
- 
--  const url = new URL(`${POLYMARKET_DATA_API_URL}/positions`);
--  url.searchParams.set('sortBy', 'CURRENT');
--  url.searchParams.set('sortDirection', 'DESC');
--  url.searchParams.set('user', address);
--
--  const { data: rawPositions } = await rainbowFetch<RawPolymarketPosition[]>(url.toString(), {
-+  const { data: page } = await rainbowFetch<{ data: RawPolymarketPosition[] }>(`${POLYMARKET_DATA_API_URL}/positions`, {
-+    params: { user: address, filter_amount: '1' },
-     abortController,
-     timeout: time.seconds(15),
-   });
- 
-+  const rawPositions = page.data;
-   if (!rawPositions.length) return { positions: [] };
- 
-   const rawMarkets = await fetchPolymarketMarkets(rawPositions, abortController);
-```
-
-**File**: `src/features/polymarket/types.ts` (modified, +20/-22)
-```diff
-@@ -5,44 +5,42 @@ import { type PolymarketMarket } from '@/features/polymarket/types/polymarket-ev
- import { type PolymarketTeamInfo } from '@/features/polymarket/types/team-info';
- 
- export type RawPolymarketPosition = {
--  proxyWallet: string;
-+  proxy_wallet: string;
-+  token_id: string;
-+  condition_id: string;
-+  current_size: number;
-+  entry_cost_usdc: number;
-+  current_value: number;
-+  unrealized_pnl: number;
-+  current_price: number;
-+  redeemable: boolean;
-+  slug: string;
-+  icon: string;
-+  event_id: string;
-+  event_slug: string;
-+  outcome: string;
-+  outcome_index: number;
-+  negative_risk: boolean;
-+};
-+
-+export type PolymarketPosition = {
-+  proxyWallet: Address;
-   asset: string;
-   conditionId: string;
-   size: number;
--  avgPrice: number;
-   initialValue: number;
-   currentValue: number;
-   cashPnl: number;
--  percentPnl: number;
--  totalBought: number;
--  realizedPnl: number;
--  percentRealizedPnl: number;
-   curPrice: number;
-   redeemable: boolean;
--  mergeable: boolean;
--  title: string;
-   slug: string;
-   icon: string;
-   eventId: string;
-   eventSlug: string;
-   outcome: string;
-   outcomeIndex: number;
--  oppositeOutcome: string;
--  oppositeAsset: string;
--  endDate: string;
-   negativeRisk: boolean;
--};
--
--export type PolymarketPosition = Omit<RawPolymarketPosition, 'proxyWallet'> & {
--  proxyWallet: Address;
--  // These are returned in the response as stringified JSON arrays
--  clobTokenIds: string[];
-   outcomes: string[];
--  outcomePrices: string[];
--  nativeCurrency: {
--    currentValue: number;
--    cashPnl: number;
--  };
-   market: PolymarketMarket;
-   /**
-    * Some events have a unique image for each market, such as "Who will win the 2028 presidential election?"
-```
-
-**File**: `src/features/polymarket/utils/processRawPolymarketPosition.ts` (modified, +16/-11)
-```diff
-@@ -1,6 +1,5 @@
- import { getAddress } from 'viem';
- 
--import { useCurrencyConversionStore } from '@/features/currency/stores/currencyConversionStore';
- import { type PolymarketPosition, type PolymarketTeamInfo, type RawPolymarketPosition } from '@/features/polymarket/types';
- import { type PolymarketMarket } from '@/features/polymarket/types/polymarket-event';
- 
-@@ -9,18 +8,24 @@ export function processRawPolymarketPosition(
-   market: PolymarketMarket,
-   teams?: PolymarketTeamInfo[]
- ): PolymarketPosition {
--  const { convertToNativeCurrency } = useCurrencyConversionStore.getState();
--
-   return {
--    ...position,
--    proxyWallet: getAddress(position.proxyWallet),
--    clobTokenIds: market.clobTokenIds,
-+    proxyWallet: getAddress(position.proxy_wallet),
-+    asset: position.token_id,
-+    conditionId: position.condition_id,
-+    size: position.current_size,
-+    initialValue: position.entry_cost_usdc,
-+    currentValue: position.current_value,
-+    cashPnl: position.unrealized_pnl,
-+    curPrice: position.current_price,
-+    redeemable: position.redeemable,
-+    slug: position.slug,
-+    icon: position.icon,
-+    eventId: position.event_id,
-+    eventSlug: position.event_slug,
-+    outcome: position.outcome,
-+    outcomeIndex: position.outcome_index,
-+    negativeRisk: position.negative_risk,
-     outcomes: market.outcomes,
--    outcomePrices: market.outcomePrices,
--    nativeCurrency: {
--      currentValue: convertToNativeCurrency(position.currentValue),
--      cashPnl: convertToNativeCurrency(position.cashPnl),
--    },
-     market,
-     marketHasUniqueImage: market.icon !== market.events[0].icon,
-     teams,
 ```
 
 ---
 
-### Incident Patch 3: `238ff18d` (2026-11-03)
-**Commit Message**: fix(e2e): replace expired ENS name (#7915)
+### Incident Patch 2: `dc51a154` (2026-11-06)
+**Commit Message**: fix: prevent `getHighContrastColor` from throwing due to invalid colors (#7933)
 
-**File**: `e2e/flows/onboarding/WatchedWallet.yaml` (modified, +1/-1)
+**File**: `src/components/rainbow-coin-effect/utils.ts` (modified, +2/-1)
 ```diff
-@@ -13,7 +13,7 @@ tags:
- - tapOn:
-     id: watch-address-button
- - tapOn: 'Enter an Ethereum address or ENS name'
--- inputText: 'rainbowtestwallet.eth'
-+- inputText: 'rainbowwallet.eth'
- - tapOn: 'Continue'
- - tapOn: 'Import Wallet'
- - runFlow: ../../utils/MaybeSetupPin.yaml
+@@ -7,6 +7,7 @@ import { TIMING_CONFIGS } from '@/components/animations/animationConfigs';
+ import { globalColors } from '@/design-system';
+ import { getHighContrastColor } from '@/design-system/color/getHighContrastColor';
+ import { opacity } from '@/design-system/utils/opacity';
++import { darkModeThemeColors, lightModeThemeColors } from '@/styles/colors';
+ import { generateRainbowGradient } from '@/worklets/gradients';
+ import { getCirclePath } from '@/worklets/skia';
+ 
+@@ -41,7 +42,7 @@ export function getRainbowCoinEffectConfig({
+   size: number;
+   strokeWidth: number;
+ }): RainbowCoinEffectConfig {
+-  const color = getHighContrastColor(providedColor, isDarkMode);
++  const color = getHighContrastColor(providedColor, isDarkMode) ?? (isDarkMode ? darkModeThemeColors : lightModeThemeColors).blueGreyDark;
+   const innerRadius = size / 2;
+   const outerRadius = innerRadius + strokeWidth;
+   const canvasSize = size * CANVAS_VIEW_BUFFER_FACTOR;
+```
+
+**File**: `src/design-system/color/getHighContrastColor.test.ts` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++import { expect, it } from 'vitest';
++
++import { getHighContrastColor } from './getHighContrastColor';
++
++it('returns undefined for invalid colors', () => {
++  expect(getHighContrastColor('series-yellow')).toBeUndefined();
++  expect(getHighContrastColor('series-yellow', true)).toBeUndefined();
++  expect(getHighContrastColor('')).toBeUndefined();
++});
+```
+
+**File**: `src/design-system/color/getHighContrastColor.ts` (modified, +18/-8)
+```diff
+@@ -12,16 +12,16 @@ const DARK_LIGHTNESS_TARGET = 116 * Math.cbrt(DARK_LUMINANCE_TARGET) - 16;
+ 
+ /**
+  * Returns contrast-adjusted accents for both themes, or a color
+- * directly when `isDarkMode` is provided as a second argument.
++ * directly when `isDarkMode` is provided. Returns undefined for invalid colors.
+  */
+-export function getHighContrastColor(color: string): ResponseByTheme<string>;
+-export function getHighContrastColor(color: string, isDarkMode: boolean): string;
+-export function getHighContrastColor(color: string, isDarkMode?: boolean): ResponseByTheme<string> | string {
+-  const isValidInput = typeof color === 'string' && !!color;
+-  const returnThemeColors = isDarkMode === undefined;
+-  if (!isValidInput) return returnThemeColors ? { light: color, dark: color } : color;
++export function getHighContrastColor(color: string | undefined): ResponseByTheme<string> | undefined;
++export function getHighContrastColor(color: string | undefined, isDarkMode: boolean): string | undefined;
++export function getHighContrastColor(input: string | undefined, isDarkMode?: boolean): ResponseByTheme<string> | string | undefined {
++  const color = input ?? '';
++  const parsed = parseColor(color);
++  if (!parsed) return undefined;
+ 
+-  const parsed = chroma(color);
++  const returnThemeColors = isDarkMode === undefined;
+   const luminance = parsed.luminance();
+   const lightContrast = 1.05 / (luminance + 0.05);
+ 
+@@ -67,3 +67,13 @@ export function getHighContrastColor(color: string, isDarkMode?: boolean): Respo
+ 
+   return returnThemeColors ? { light, dark } : isDarkMode ? dark : light;
+ }
++
++function parseColor(color: unknown): chroma.Color | undefined {
++  if (typeof color !== 'string' || !color) return undefined;
++
++  try {
++    return chroma(color);
++  } catch {
++    return undefined;
++  }
++}
+```
+
+**File**: `src/features/dapp-browser/screens/ControlPanel.tsx` (modified, +6/-2)
+```diff
+@@ -315,8 +315,12 @@ const AccentColorSetter = ({
+ }) => {
+   const { isDarkMode } = useColorMode();
+ 
+-  const accountColor = usePersistentDominantColorFromImage(selectedWallet?.imageUrl) || selectedWallet?.color || globalColors.blue60;
+-  const highContrastAccentColor = useMemo(() => getHighContrastColor(accountColor, isDarkMode), [accountColor, isDarkMode]);
++  const imageColor = usePersistentDominantColorFromImage(selectedWallet?.imageUrl);
++  const walletColor = selectedWallet?.color;
++  const highContrastAccentColor = useMemo(
++    () => getHighContrastColor(imageColor, isDarkMode) ?? getHighContrastColor(walletColor, isDarkMode) ?? globalColors.blue60,
++    [imageColor, isDarkMode, walletColor]
++  );
+ 
+   useSyncSharedValue({
+     sharedValue: animatedAccentColor,
+```
+
+**File**: `src/features/polymarket/hooks/useSportsGamePress.ts` (modified, +2/-1)
+```diff
+@@ -1,6 +1,7 @@
+ import { useCallback } from 'react';
+ 
+ import { getHighContrastColor } from '@/design-system/color/getHighContrastColor';
++import { getColorBySeed } from '@/features/polymarket/utils/getColorBySeed';
+ import { type SportsGamePress } from '@/features/sports/ui/GameCard';
+ import Navigation from '@/navigation/Navigation';
+ import { useRoute } from '@/navigation/RouteContext';
+@@ -15,7 +16,7 @@ export function useSportsGamePress(): SportsGamePress {
+       if (bet) {
+         Navigation.handleAction(Routes.POLYMARKET_NEW_POSITION_SHEET, {
+           outcome: bet.outcome,
+-          accentColor: getHighContrastColor(bet.badgeColor),
++          accentColor: getHighContrastColor(bet.badgeColor) ?? getColorBySeed(bet.outcome.tokenId),
+           fromRoute,
+         });
+       } else {
+```
+
+**File**: `src/features/polymarket/stores/polymarketPositionsStore.ts` (modified, +2/-1)
+```diff
+@@ -5,6 +5,7 @@ import { POLYMARKET_DATA_API_URL } from '@/features/polymarket/constants';
+ import { usePolymarketClients } from '@/features/polymarket/stores/derived/usePolymarketClients';
+ import { type PolymarketPosition, type RawPolymarketPosition } from '@/features/polymarket/types';
+ import { type PolymarketMarket, type RawPolymarketMarket } from '@/features/polymarket/types/polymarket-event';
++import { getColorBySeed } from '@/features/polymarket/utils/getColorBySeed';
+ import { getImagePrimaryColor } from '@/features/polymarket/utils/getImageColors';
+ import { gammaMarketsUrl } from '@/features/polymarket/utils/marketProtocol';
+ import { processRawPolymarketPosition } from '@/features/polymarket/utils/processRawPolymarketPosition';
+@@ -131,7 +132,7 @@ async function preparePolymarketMarkets(rawMarkets: RawPolymarketMarket[]): Prom
+   await Promise.all(
+     rawMarkets.map(async market => {
+       const rawColor = await getImagePrimaryColor(market.events[0].icon);
+-      const color = getHighContrastColor(rawColor);
++      const color = getHighContrastColor(rawColor) ?? getColorBySeed(market.events[0].id);
+       markets[market.slug] = processRawPolymarketMarket(market, color);
+     })
+   );
+```
+
+**File**: `src/features/polymarket/types/polymarket-event.ts` (modified, +1/-1)
+```diff
+@@ -208,7 +208,7 @@ export type RawPolymarketMarket = {
+   automaticallyActive: boolean;
+   clearBookOnStart: boolean;
+   chartColor: string;
+-  seriesColor: string;
++  seriesColor?: string | null;
+   showGmpSeries: boolean;
+   showGmpOutcome: boolean;
+   manualActivation: boolean;
+```
+
+**File**: `src/features/polymarket/utils/getColorBySeed.ts` (modified, +1/-1)
+```diff
+@@ -42,5 +42,5 @@ function getColorFromSeed(seed: string): string {
+ 
+ export function getColorBySeed(seed: string): ResponseByTheme<string> {
+   const color = getColorFromSeed(seed);
+-  return getHighContrastColor(color);
++  return getHighContrastColor(color) ?? { light: color, dark: color };
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7935** (2026-11-07): fix: stale currency conversion for perps and Polymarket balances (@christianbaroni)
+- **PR #7934** (2026-11-07): chore: bump SDK to 0.4.2 for Elysium (@jinchung)
+- **PR #7933** (2026-11-06): fix: prevent `getHighContrastColor` from throwing due to invalid colors (@christianbaroni)
+- **PR #7932** (closed): Zdos/dsn code align (@high-cde)
 - **PR #7930** (2026-11-04): feat(discover): search tokens through token search v2 behind its flag (@i1skn)
 - **PR #7929** (2026-11-04): feat(token-search): v2 search data layer behind a flag (@i1skn)
-- **PR #7928** (2026-11-03): Bump iOS and Android to v2.0.48 (@jinchung)
-- **PR #7919** (2026-11-03): Bump Android version code to 327 (@jinchung)
-- **PR #7918** (closed): fix(fonts): remove bundled SF Mono (@christianbaroni)
-- **PR #7916** (2026-11-03): fix(polymarket): migrate to Data API v2 (@christianbaroni)
 
 ---
 
@@ -1408,42 +911,38 @@ use it. Top Holders calls it onl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. spot-pnl): market caps for sub-$1 entries in Top Holders, abbreviated MCs on the
+## X. stale currency conversion for perps and Polymarket balances (#7935)
 
 **RULE**:
-When implementing operations in `src/features/spot-pnl/core/marketCapSupply.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/features/perps/stores/derived/useHyperliquidBalance.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b80d6ef`: spot-pnl): market caps for sub-$1 entries in Top Holders, abbreviated MCs on the P&L sheet (#7913). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `208af290`: stale currency conversion for perps and Polymarket balances (#7935). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/features/spot-pnl/core/marketCapSupply.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/features/perps/stores/derived/useHyperliquidBalance.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { describe, expect, it } from 'vitest';
-
-import { resolveCirculatingSupply } from './marketCapSupply';
-
-describe('resolveCirculatingSupply', () => {
-  it.each<{ name: string; price: string; marketCap: string; usdToNativeRate: number | undefined; expected: string | null }>([
-    { name: 'under $1 with a market cap', price: '0.5', marketCap: '1000', usdToNativeRate: 1, expected: '2000' },
-    { name: 'exactly $1', price: '1', marketCap: '1000', usdToNativeRate: 1, expected: null },
-    { name: 'over $1', price: '2', marketCap: '1000', usdToNativeRate: 1, expected: null },
-    { name: 'under $1 though over 1 in the native currency', price: '150', marketCap: '3000', usdToNativeRate: 300, expected: '20' },
-    { name: 'over $1 though under 1 in the native currency', price: '0.5', marketCap: '1000', usdToNativeRate: 0.25, expected: null },
-    { name: 'no conversion rate', price: '0.5', marketCap: '1000', usdToNativeRate: undefined, expected: null },
-    { name: 'no price', price: '', marketCap: '1000', usdToNativeRate: 1, expected: null },
-    { name: 'zero price', price: '0', marketCap: '1000', usdToNativeRate: 1, expected: null },
-    { name: 'no market cap', price: '0.5', mark
+export const useHyperliquidBalance = createDerivedStore($ => {
+  const perpsBalanceUsd = $(usePerpsPositionsInfo, s => s.value);
+  return $(useCurrencyConversionStore, s => s.convertToNativeCurrency(perpsBalanceUsd));
+});
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+export const useHyperliquidBalance = createDerivedStore(
+  $ => {
+    const perpsBalanceUsd = $(usePerpsPositionsInfo, state => state.value);
+    const convertedBalance = $(useCurrencyConversionStore, state => state.convertToNativeCurrency(perpsBalanceUsd));
+    return convertedBalance;
+  },
+  { lockDependencies: true }
+);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b80d6ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `208af290` are properly handled with clean fallback behavior.

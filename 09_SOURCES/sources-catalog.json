@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "05e0d2528d3d20fd16a6f39d3f86453dfc3d1b451b1edf9ab9063e8fdb90603c",
-    "lastHarvestedAt": "2026-11-04T22:45:38.962Z",
+    "contentHash": "c25d6077a55b3209b82e979adfaef172f8f159f34bcb22a57e166badc3b69033",
+    "lastHarvestedAt": "2026-11-08T13:59:56.665Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "3c5c334e",
+    "sourceVersion": "94805b90",
     "license": "NOASSERTION",
-    "contentHash": "fcd8924d041803d1512947a1ff52dbdae4454b724f0bbb9d8faaddaac85fcb24",
-    "lastHarvestedAt": "2026-11-07T20:09:34.199Z",
+    "contentHash": "b7500d90c1be60f3a3937e1e6d2c27df8e7b00e875961a33cc6ded43f72fbd3e",
+    "lastHarvestedAt": "2026-11-08T14:00:03.288Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "a9e0d7bd",
+    "sourceVersion": "c23311a8",
     "license": "Apache-2.0",
-    "contentHash": "80091f0b45951b9cd4487814821906e4bcbe48731aec764ea5f587e22e0d2775",
-    "lastHarvestedAt": "2026-11-07T06:17:55.377Z",
+    "contentHash": "b1d6860ab9acd76ac0f6cdcf24aef9b2a7e3909c381d4aa1249734549aab84e5",
+    "lastHarvestedAt": "2026-11-08T14:00:00.596Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -8503,10 +8503,10 @@
     "repository": "rainbow-me/rainbow",
     "platform": "github",
     "sourceUrl": "https://github.com/rainbow-me/rainbow",
-    "sourceVersion": "d736617d",
+    "sourceVersion": "2101aafb",
     "license": "GPL-3.0",
-    "contentHash": "2023ae52dfd82e0586f0681d613f46b6f288d12f8d83625b2e3a584311ad5588",
-    "lastHarvestedAt": "2026-11-05T08:31:50.793Z",
+    "contentHash": "cb15331ff6fc96aeb3f3f3cf9acd21a9b1110d5021d35521d73babd8ad6e1a5d",
+    "lastHarvestedAt": "2026-11-08T13:59:55.708Z",
     "learningId": "learn-github-rainbow-me-rainbow"
   },
   "zoontek-react-native-permissions": {
@@ -12198,5 +12198,15 @@
     "contentHash": "dc59d311cd7971092095b47ba0889eceda0dc77711649fa4321d73a032ac48e0",
     "lastHarvestedAt": "2026-11-08T10:25:00.500Z",
     "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf"
+  },
+  "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf": {
+    "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+    "sourceVersion": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf",
+    "license": "Open-Source",
+    "contentHash": "bdeac2a1b57655740c51790e2acb1aad60627db3fb39c8aa9dfbdb01481d6a6e",
+    "lastHarvestedAt": "2026-11-08T14:04:56.238Z",
+    "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf"
   }
 }

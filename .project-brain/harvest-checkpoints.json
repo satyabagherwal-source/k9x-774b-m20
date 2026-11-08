@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T13:45:28.518Z",
+  "last_updated": "2026-11-08T14:04:56.247Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -395,14 +395,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "05e0d2528d3d20fd16a6f39d3f86453dfc3d1b451b1edf9ab9063e8fdb90603c",
-      "verified_at": "2026-11-04T22:45:38.980Z",
+      "content_hash": "c25d6077a55b3209b82e979adfaef172f8f159f34bcb22a57e166badc3b69033",
+      "verified_at": "2026-11-08T13:59:56.681Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:45:38.980Z"
+      "last_updated": "2026-11-08T13:59:56.681Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "fcd8924d041803d1512947a1ff52dbdae4454b724f0bbb9d8faaddaac85fcb24",
-      "verified_at": "2026-11-07T20:09:34.207Z",
+      "content_hash": "b7500d90c1be60f3a3937e1e6d2c27df8e7b00e875961a33cc6ded43f72fbd3e",
+      "verified_at": "2026-11-08T14:00:03.295Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:09:34.207Z"
+      "last_updated": "2026-11-08T14:00:03.295Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "80091f0b45951b9cd4487814821906e4bcbe48731aec764ea5f587e22e0d2775",
-      "verified_at": "2026-11-07T06:17:55.387Z",
+      "content_hash": "b1d6860ab9acd76ac0f6cdcf24aef9b2a7e3909c381d4aa1249734549aab84e5",
+      "verified_at": "2026-11-08T14:00:00.610Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T06:17:55.387Z"
+      "last_updated": "2026-11-08T14:00:00.611Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -12801,14 +12801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rainbow-me-rainbow",
-      "content_hash": "2023ae52dfd82e0586f0681d613f46b6f288d12f8d83625b2e3a584311ad5588",
-      "verified_at": "2026-11-05T08:31:50.814Z",
+      "content_hash": "cb15331ff6fc96aeb3f3f3cf9acd21a9b1110d5021d35521d73babd8ad6e1a5d",
+      "verified_at": "2026-11-08T13:59:55.734Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:31:50.814Z"
+      "last_updated": "2026-11-08T13:59:55.734Z"
     },
     "zoontek/react-native-permissions": {
       "repository": "zoontek/react-native-permissions",
@@ -18359,6 +18359,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-08T10:25:00.508Z"
+    },
+    "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF": {
+      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+      "content_hash": "bdeac2a1b57655740c51790e2acb1aad60627db3fb39c8aa9dfbdb01481d6a6e",
+      "verified_at": "2026-11-08T14:04:56.247Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-08T14:04:56.247Z"
     }
   },
   "repos": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `3c5c334e`  
+> **Source Version**: `94805b90`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:09:33.201Z  
+> **Timestamp**: 2026-11-08T14:00:01.977Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:09:31.168Z  
+> **Harvest Timestamp**: 2026-11-08T14:00:01.972Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,27 +2203,25 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c5c334e` (2026-11-07)
-**Commit Message**: fix(geocode): --batch 0 no longer drops rows from piped stdin (#5009)
+### Incident Patch 1: `94805b90` (2026-11-08)
+**Commit Message**: fix(template): legacy time zone aliases fall back to a bundled tzdb (#5010)
 
-* fix(geocode): --batch 0 no longer drops rows from piped stdin
+* fix(template): legacy time zone aliases fall back to a bundled tzdb
 
-With --batch 0, geocode counted rows to size the batch. For stdin that
-count opened a second reader after the main reader had already buffered
-the first 128 KiB, so it consumed the rest of the stream and the main
-reader saw EOF early. Rows past the first buffer were silently dropped
-(9,361 of 25,000 in the new test), with exit 0.
+minijinja-contrib's datetime filters resolve tz= names from the OS time
+zone database, so legacy aliases such as "EST" or "US/Eastern" failed with
+"unknown timezone" where the OS lacks them (e.g. Ubuntu 26.04 without
+tzdata-legacy). minijinja 3.1.0 falls back to jiff's bundled tzdb for
+missing names (minijinja#1008), but only if the bundle is compiled in, so
+enable jiff's tzdb-bundle-always feature. System data still wins.
 
-For stdin, --batch 0 now reads until EOF in one batch without counting,
-as census/geoclient and applydp (#5005) already do. The batch
-preallocation is capped so usize::MAX can't be preallocated.
-
-The regression test pipes 25,000 rows (more than the read buffer) and is
-mutation-checked: without the fix it gets 9,361 rows.
+The new test points TZDIR at a zoneinfo dir with no zones, which jiff
+honors on every platform; with the feature removed it fails with
+"unknown timezone 'EST'".
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): geocode --batch 0 stdin fix (#5009)
+* docs(changelog): template legacy time zone alias fallback (#5010)
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2233,100 +2231,151 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for input. With an empty or closed stdin (cron, CI, `xargs`), it still fails with "No data on stdin", as in 28.0.0 ([#5007](https://github.com/dathere/qsv/pull/5007)), so a script whose file list comes up empty still gets an error.
+@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`cat rowskey` writes nothing for empty input** ([#5008](https://github.com/dathere/qsv/pull/5008)). It wrote a lone `""` header line for an empty file or an empty `-` stdin, where `rows` and `columns` write nothing. With `--group`, the grouping column's header is still written.
  - **`applydp --batch 0` works from stdin** ([#5005](https://github.com/dathere/qsv/pull/5005)). It counted rows first, which consumed stdin and left only the header; it now reads stdin in one batch, as `py` does.
-+- **`geocode --batch 0` no longer drops rows from piped stdin** ([#5009](https://github.com/dathere/qsv/pull/5009)). Counting rows to size the batch consumed the stream, so rows past the first 128 KiB were silently lost, with exit 0 (also in 28.0.0). It now reads stdin in one batch without counting, as the `census` and `geoclient` back ends already did.
+ - **`geocode --batch 0` no longer drops rows from piped stdin** ([#5009](https://github.com/dathere/qsv/pull/5009)). Counting rows to size the batch consumed the stream, so rows past the first 128 KiB were silently lost, with exit 0 (also in 28.0.0). It now reads stdin in one batch without counting, as the `census` and `geoclient` back ends already did.
++- **`template`: legacy time zone aliases such as `"EST"` and `"US/Eastern"` work on every system** ([#5010](https://github.com/dathere/qsv/pull/5010), via [minijinja#1008](https://github.com/mitsuhiko/minijinja/issues/1008)). `datetimeformat(tz=...)` failed with "unknown timezone" where the OS time zone database lacks them, e.g. Ubuntu 26.04 without `tzdata-legacy`. qsv now bundles the time zone database as a fallback (about 200 KiB); OS data still takes precedence.
  - **`to`: clearer error when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). It said "No data on stdin" even when data was piped. It now says no input CSV was given and to use `-` to read stdin.
  - **tests: `template_contrib_functions` no longer depends on the legacy `EST` zone alias** ([#5002](https://github.com/dathere/qsv/pull/5002)). `ubuntu-latest` is now Ubuntu 26.04, which ships aliases such as `EST` and `US/Eastern` only in the optional `tzdata-legacy` package, so the test failed on every Linux run. It now uses `Etc/GMT+5` (the same fixed UTC−5 offset). If you use `datetimeformat(tz=...)` in `template`, prefer canonical IANA names for the same reason.
  
 ```
 
-**File**: `src/cmd/geocode.rs` (modified, +10/-3)
+**File**: `Cargo.lock` (modified, +2/-0)
 ```diff
-@@ -2185,12 +2185,19 @@ async fn geocode_main(args: Args) -> CliResult<()> {
- 
-     // reuse batch buffers
-     let batchsize: usize = if args.flag_batch == 0 {
--        std::cmp::max(1000, util::count_rows_regular(&rconfig)? as usize)
-+        if rconfig.is_stdin() {
-+            // counting stdin's rows would consume the stream that `rdr` reads, so read
-+            // until EOF to honor "0 = all rows in one batch" (as census/geoclient do)
-+            usize::MAX
-+        } else {
-+            std::cmp::max(1000, util::count_rows_regular(&rconfig)? as usize)
-+        }
-     } else {
-         args.flag_batch
-     };
--    let mut batch = Vec::with_capacity(batchsize);
--    let mut batch_results = Vec::with_capacity(batchsize);
-+    // capped: usize::MAX (stdin with --batch 0) can't be preallocated
-+    let mut batch = Vec::with_capacity(batchsize.min(50_000));
-+    let mut batch_results = Vec::with_capacity(batchsize.min(50_000));
-     // values that found no match inside --admin1, reported once at the end (issue #4687): the
-     // filter is strict, so without a count the misses would vanish into unchanged cells
-     let admin1_misses = std::sync::atomic::AtomicU64::new(0);
+@@ -4138,6 +4138,7 @@ checksum = "14ed8250fe4472173a765b89fea4b46f2c4aa12adc12a3e310f1dc6c108e041b"
+ dependencies = [
+  "jiff-core",
+  "jiff-static",
++ "jiff-tzdb",
+  "jiff-tzdb-platform",
+  "log",
+  "portable-atomic",
+@@ -7051,6 +7052,7 @@ dependencies = [
+  "jaq-core",
+  "jaq-json",
+  "jaq-std",
++ "jiff",
+  "jsonschema",
+  "libc",
+  "log",
 ```
 
-**File**: `tests/test_geocode.rs` (modified, +39/-0)
+**File**: `Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -40,6 +40,45 @@ fn geocode_suggest() {
+@@ -265,6 +265,9 @@ itoa = "1"
+ jaq-core = "3"
+ jaq-json = { version = "2", features = ["serde"] }
+ jaq-std = "3"
++# not used directly: compiles in jiff's bundled tzdb so minijinja-contrib's datetime filters
++# can fall back to it for zone names missing from the OS database (minijinja#1008)
++jiff = { version = "0.2", features = ["tzdb-bundle-always"] }
+ jsonschema = { version = "0.60", features = [
+     "idna",
+     "resolve-file",
+```
+
+**File**: `docs/help/template.md` (modified, +4/-4)
+```diff
+@@ -76,10 +76,10 @@ qsv template --template-file template.tpl data.csv
+ > Booleans render as `True`/`False` and none (e.g. a JSON null reached via `fromjson`)
+ >  renders as `None`, matching Jinja2. Use `{{ v or "" }}` for an empty string instead —
+ >  a bare `{{ v|default("") }}` does NOT substitute for none, only for undefined.
+-> Time zones (e.g. `datetimeformat(tz=...)`) are looked up in the OS time zone database.
+->  Use canonical IANA names such as "America/New_York" or "Etc/GMT+5". Legacy aliases
+->  like "EST" or "US/Eastern" are missing on systems without them (e.g. Ubuntu 26.04
+->  without the tzdata-legacy package) and fail with "unknown timezone".
++> Time zones (e.g. `datetimeformat(tz=...)`) are looked up in the OS time zone database,
++>  falling back to qsv's bundled copy for names the OS lacks, so legacy aliases like "EST"
++>  or "US/Eastern" work even on systems without them (e.g. Ubuntu 26.04 without the
++>  tzdata-legacy package). Canonical IANA names such as "America/New_York" are preferred.
+ 
+ Additional qsv-specific data-wrangling filters/functions (available in all binary variants):  
+ ```
+```
+
+**File**: `src/cmd/template.rs` (modified, +4/-4)
+```diff
+@@ -59,10 +59,10 @@ Status: {% if active|to_bool %}Active{% else %}Inactive{% endif %}
+ > Booleans render as `True`/`False` and none (e.g. a JSON null reached via `fromjson`)
+ >  renders as `None`, matching Jinja2. Use `{{ v or "" }}` for an empty string instead —
+ >  a bare `{{ v|default("") }}` does NOT substitute for none, only for undefined.
+-> Time zones (e.g. `datetimeformat(tz=...)`) are looked up in the OS time zone database.
+->  Use canonical IANA names such as "America/New_York" or "Etc/GMT+5". Legacy aliases
+->  like "EST" or "US/Eastern" are missing on systems without them (e.g. Ubuntu 26.04
+->  without the tzdata-legacy package) and fail with "unknown timezone".
++> Time zones (e.g. `datetimeformat(tz=...)`) are looked up in the OS time zone database,
++>  falling back to qsv's bundled copy for names the OS lacks, so legacy aliases like "EST"
++>  or "US/Eastern" work even on systems without them (e.g. Ubuntu 26.04 without the
++>  tzdata-legacy package). Canonical IANA names such as "America/New_York" are preferred.
+ 
+ Additional qsv-specific data-wrangling filters/functions (available in all binary variants):
+ ```
+```
+
+**File**: `tests/test_template.rs` (modified, +36/-2)
+```diff
+@@ -665,8 +665,8 @@ fn template_contrib_functions() {
+         .arg(concat!(
+             "pluralize: You have {{ num_messages }} message{{ num_messages|int|pluralize }}\n",
+             "now: {{now()|datetimeformat|length > 2}}\n", // Just verify we get a non-empty string
+-            // Etc/GMT+5 is fixed UTC-5 (POSIX sign inversion). Avoid legacy aliases like "EST":
+-            // Ubuntu 26.04 moved them to the optional tzdata-legacy package.
++            // Etc/GMT+5 is fixed UTC-5 (POSIX sign inversion). Legacy aliases like "EST" are
++            // covered by template_legacy_tz_aliases_fall_back_to_bundled_tzdb.
+             "dtformat: {{date_col|datetimeformat(format=\"long\", tz=\"Etc/GMT+5\")}}\n",
+             "\n\n"
+         ))
+@@ -685,6 +685,40 @@ fn template_contrib_functions() {
      assert_eq!(got, expected);
  }
  
 +#[test]
-+fn geocode_suggest_batch_zero_stdin() {
-+    // --batch 0 pre-counted rows with a second reader, which consumed the piped stdin past
-+    // what the main reader had already buffered, so rows were silently dropped. The input
-+    // has to exceed the 128 KiB read buffer to show it.
-+    use std::io::Write;
-+
-+    const ROWS: usize = 25_000;
-+    let mut input = String::from("Location\n");
-+    for _ in 0..ROWS {
-+        input.push_str("Boston\n");
-+    }
-+    assert!(input.len() > 128 * 1024);
-+
-+    let wrk = Workdir::new("geocode_suggest_batch_zero_stdin");
-+    let mut cmd = wrk.command("geocode");
-+    cmd.args(["suggest", "Location", "--batch", "0"])
-+        .stdin(std::process::Stdio::piped())
-+        .stdout(std::process::Stdio::piped())
-+        .stderr(std::process::Stdio::piped());
-+    let mut child = cmd.spawn().unwrap();
-+    let mut stdin = child.stdin.take().unwrap();
-+    let writer = std::thread::spawn(move || stdin.write_all(input.as_bytes()));
-+    let output = child.wait_with_output().unwrap();
-+    writer.join().unwrap().unwrap();
-+    assert!(output.status.success(), "{output:?}");
-+
-+    let stdout = String::from_utf8_lossy(&output.stdout);
-+    let mut lines = stdout.lines();
-+    assert_eq!(lines.next(), Some("Location"));
-+    let rows: Vec<&str> = lines.collect();
-+    assert_eq!(rows.len(), ROWS);
-+    assert!(
-+        rows.iter().all(|r| *r == "\"(42.35843, -71.05977)\""),
-+        "{:?}",
-+        &rows[..3]
++fn template_legacy_tz_aliases_fall_back_to_bundled_tzdb() {
++    let wrk = Workdir::new("template_legacy_tz_aliases");
++    wrk.create(
++        "data.csv",
++        vec![
++            svec!["date_col"],
++            svec!["2023-06-24T16:37:22+00:00"],
++            svec!["1999-12-24T16:37:22+12:00"],
++        ],
 +    );
++    // a zoneinfo dir without the legacy aliases, like Ubuntu 26.04 without tzdata-legacy.
++    // jiff honors TZDIR on every platform; without jiff's bundled tzdb these fail with
++    // "unknown timezone" (minijinja#1008)
++    wrk.create_subdir("zoneinfo").unwrap();
++    wrk.create_from_string("zoneinfo/README", "no zones here\n");
++
++    let mut cmd = wrk.command("template");
++    cmd.env("TZDIR", wrk.path("zoneinfo"))
++        .arg("--template")
++        .arg(concat!(
++            "{{date_col|datetimeformat(format=\"long\", tz=\"EST\")}} | ",
++            "{{date_col|datetimeformat(format=\"long\", tz=\"US/Eastern\")}}\n\n"
++        ))
++        .arg("data.csv");
++
++    let got: String = wrk.stdout(&mut cmd);
++    let expected = concat!(
++        "June 24 2023 11:37:22 | June 24 2023 12:37:22\n",
++        "December 23 1999 23:37:22 | December 23 1999 23:37:22",
++    );
++    assert_eq!(got, expected);
 +}
 +
  #[test]
- fn geocode_suggest_select() {
-     let wrk = Workdir::new("geocode_suggest_select");
+ fn template_pycompat_filters() {
+     let wrk = Workdir::new("template_pycompat_filters");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5010** (2026-11-08): fix(template): legacy time zone aliases fall back to a bundled tzdb (@jqnatividad)
 - **PR #5009** (2026-11-07): fix(geocode): --batch 0 no longer drops rows from piped stdin (@jqnatividad)
 - **PR #5008** (2026-11-07): fix(cat): rowskey writes nothing for empty input (@jqnatividad)
 - **PR #5007** (2026-11-06): fix(cat): error on empty stdin when no input is given (@jqnatividad)
 - **PR #5006** (2026-11-06): docs(changelog): cat with empty stdin succeeds with empty output (@jqnatividad)
 - **PR #5005** (2026-11-06): fix(cat, applydp, to): read stdin consistently (@jqnatividad)
-- **PR #5004** (2026-11-06): docs(sample): stdin works for all methods that read CSV, not --sketch-in (@jqnatividad)
 
 ---
 
@@ -2346,13 +2395,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. geocode): --batch 0 no longer drops rows from piped stdin (#5009)
+## X. template): legacy time zone aliases fall back to a bundled tzdb (#5010)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c5c334e`: geocode): --batch 0 no longer drops rows from piped stdin (#5009). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94805b90`: template): legacy time zone aliases fall back to a bundled tzdb (#5010). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2360,7 +2409,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`geocode --batch 0` no longer drops rows from piped stdin** ([#5009](https://github.com/dathere/qsv/pull/5009)). Counting rows to size the batch consumed the stream, so rows past the first 128 KiB were silently lost, with exit 0 (also in 28.0.0). It now reads stdin in one batch without counting, as the `census` and `geoclient` back ends already did.
+- **`template`: legacy time zone aliases such as `"EST"` and `"US/Eastern"` work on every system** ([#5010](https://github.com/dathere/qsv/pull/5010), via [minijinja#1008](https://github.com/mitsuhiko/minijinja/issues/1008)). `datetimeformat(tz=...)` failed with "unknown timezone" where the OS time zone database lacks them, e.g. Ubuntu 26.04 without `tzdata-legacy`. qsv now bundles the time zone database as a fallback (about 200 KiB); OS data still takes precedence.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2370,4 +2419,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c5c334e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94805b90` are properly handled with clean fallback behavior.

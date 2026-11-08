@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T13:45:28.409Z",
-  "total_verified_learnings": 1238,
+  "last_updated": "2026-11-08T14:04:56.158Z",
+  "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10032,8 +10032,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "3c5c334e",
-      "content_hash": "fcd8924d041803d1512947a1ff52dbdae4454b724f0bbb9d8faaddaac85fcb24",
+      "source_version": "94805b90",
+      "content_hash": "b7500d90c1be60f3a3937e1e6d2c27df8e7b00e875961a33cc6ded43f72fbd3e",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10065,6 +10065,11 @@
         {
           "number": null,
           "title": "geocode): --batch 0 no longer drops rows from piped stdin (#5009)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "template): legacy time zone aliases fall back to a bundled tzdb (#5010)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10418,7 +10423,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:09:34.115Z",
+      "verified_at": "2026-11-08T14:00:03.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29160,14 +29165,24 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "05e0d2528d3d20fd16a6f39d3f86453dfc3d1b451b1edf9ab9063e8fdb90603c",
+      "content_hash": "c25d6077a55b3209b82e979adfaef172f8f159f34bcb22a57e166badc3b69033",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [
         {
+          "number": null,
+          "title": "Subsampling-Aware Temporal Alignment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Permutation Invariance Resolution via First-Arrival Ordering",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
           "number": 4271,
           "title": "Streaming State Consistency via Arrival-Order Caching",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 4272,
@@ -29208,7 +29223,7 @@
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi"
       ],
-      "verified_at": "2026-11-04T22:45:38.845Z",
+      "verified_at": "2026-11-08T13:59:56.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50326,8 +50341,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "a9e0d7bd",
-      "content_hash": "80091f0b45951b9cd4487814821906e4bcbe48731aec764ea5f587e22e0d2775",
+      "source_version": "c23311a8",
+      "content_hash": "b1d6860ab9acd76ac0f6cdcf24aef9b2a7e3909c381d4aa1249734549aab84e5",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -50340,6 +50355,11 @@
           "number": 1874,
           "title": "two random-ops stress test failures: shared tmp dir and drop_column race (#1764)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2926,
+          "title": "Update README.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3546,
@@ -50382,7 +50402,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T06:17:55.251Z",
+      "verified_at": "2026-11-08T14:00:00.513Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51919,11 +51939,16 @@
       "slug": "rainbow-me-rainbow",
       "platform": "github",
       "source_url": "https://github.com/rainbow-me/rainbow",
-      "source_version": "d736617d",
-      "content_hash": "2023ae52dfd82e0586f0681d613f46b6f288d12f8d83625b2e3a584311ad5588",
+      "source_version": "2101aafb",
+      "content_hash": "cb15331ff6fc96aeb3f3f3cf9acd21a9b1110d5021d35521d73babd8ad6e1a5d",
       "dossier_path": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "stale currency conversion for perps and Polymarket balances (#7935)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2716,
           "title": "android): support nested button presses (#7848)",
@@ -51960,7 +51985,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T08:31:50.674Z",
+      "verified_at": "2026-11-08T13:59:55.612Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118400,14 +118425,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2926,
       "title": "Update README.md",
-      "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "70c75797",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "c23311a8",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-07T05:28:23.461Z"
+      "verified_at": "2026-11-08T14:00:00.513Z"
     },
     "rule-2927": {
       "learning_id": "rule-2927",
@@ -139341,7 +139366,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T11:43:48.270Z"
+      "verified_at": "2026-11-08T13:59:56.594Z"
     },
     "rule-4272": {
       "learning_id": "rule-4272",
@@ -187265,6 +187290,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-08T10:25:00.366Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf": {
+      "learning_id": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "slug": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "source_version": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf",
+      "content_hash": "bdeac2a1b57655740c51790e2acb1aad60627db3fb39c8aa9dfbdb01481d6a6e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Data-Dependent Quantization Integrity",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-08T14:04:56.141Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

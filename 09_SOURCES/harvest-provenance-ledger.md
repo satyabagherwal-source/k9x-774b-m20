@@ -8296,3 +8296,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-08T13:15:39.616Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `367bc0f8` | Multi-dimensional audit evidence | 2026-11-08T13:40:21.411Z |
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-08T13:45:28.497Z |
+| `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `2101aafb` | Multi-dimensional audit evidence | 2026-11-08T13:59:55.708Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T13:59:56.665Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `c23311a8` | Multi-dimensional audit evidence | 2026-11-08T14:00:00.596Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `94805b90` | Multi-dimensional audit evidence | 2026-11-08T14:00:03.288Z |
+| `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-08T14:04:56.238Z |

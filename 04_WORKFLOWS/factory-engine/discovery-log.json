@@ -20680,5 +20680,17 @@
     "downloads": 8872939,
     "qualityScore": 5060,
     "discoveredAt": "2026-11-08T10:18:08.766Z"
+  },
+  {
+    "name": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+    "fullName": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+    "url": "https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF (171 likes, 136706 downloads)",
+    "likes": 171,
+    "downloads": 136706,
+    "qualityScore": 3710,
+    "discoveredAt": "2026-11-08T13:57:29.648Z"
   }
 ]

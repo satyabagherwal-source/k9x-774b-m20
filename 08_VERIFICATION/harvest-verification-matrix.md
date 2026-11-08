@@ -8287,3 +8287,8 @@
 | `CYCLE-20261108-UXGC` | `2026-11-08T13:15:39.612Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a4b6fa3c...`) |
 | `CYCLE-20261108-QOTB` | `2026-11-08T13:40:21.407Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`006c787c...`) |
 | `CYCLE-20261108-X9RH` | `2026-11-08T13:45:28.493Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`11979ec8...`) |
+| `CYCLE-20261108-FUWP` | `2026-11-08T13:59:55.705Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cb15331f...`) |
+| `CYCLE-20261108-FVNA` | `2026-11-08T13:59:56.662Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4271, Rule null, Rule null` | Yes (`c25d6077...`) |
+| `CYCLE-20261108-FYOH` | `2026-11-08T14:00:00.593Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`b1d6860a...`) |
+| `CYCLE-20261108-G0R3` | `2026-11-08T14:00:03.279Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7500d90...`) |
+| `CYCLE-20261108-MASL` | `2026-11-08T14:04:56.229Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bdeac2a1...`) |
