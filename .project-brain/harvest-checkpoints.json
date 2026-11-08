@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T23:19:54.391Z",
+  "last_updated": "2026-11-08T23:29:17.494Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1250,14 +1250,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
-      "content_hash": "0ea95747389f57ea6fa5d5032bab868f1c9adff924aba0a4a8a3d63981efecde",
-      "verified_at": "2026-11-05T05:53:05.607Z",
+      "content_hash": "9a327b6e8bd02e516f784d98bba11093205f593f918e64ef84954d00ccecdc4e",
+      "verified_at": "2026-11-08T23:29:00.858Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:53:05.607Z"
+      "last_updated": "2026-11-08T23:29:00.858Z"
     },
     "meta-llama/Llama-2-7b-chat-hf": {
       "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "aa19150b9d9de966ebfc56efa4fd53a21a9545ac4295fe6ad57cbc48a0b73d96",
-      "verified_at": "2026-11-08T20:21:48.046Z",
+      "content_hash": "3db3eb5a099cc5b332cacebaf342535f55bcf2a50291c8c2e8a89ab50260c02e",
+      "verified_at": "2026-11-08T23:29:17.493Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:21:48.046Z"
+      "last_updated": "2026-11-08T23:29:17.493Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "6ef9bf2bc0caf5e64c13b79c08d6e1a5d9bdf5e6d6f2279297abd71007881a04",
-      "verified_at": "2026-11-07T22:23:44.814Z",
+      "content_hash": "7698fbbec9ba397f471221c85570190fda19ef0f1a464f6465d6df5b6e42ee34",
+      "verified_at": "2026-11-08T23:29:11.908Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:23:44.814Z"
+      "last_updated": "2026-11-08T23:29:11.908Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",

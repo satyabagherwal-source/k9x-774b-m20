@@ -8437,3 +8437,6 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `4bd28b57` | Multi-dimensional audit evidence | 2026-11-08T23:12:42.995Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-08T23:12:44.418Z |
 | `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-08T23:19:54.381Z |
+| `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-08T23:29:00.852Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `62d055f4` | Multi-dimensional audit evidence | 2026-11-08T23:29:11.893Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `84fa81e9` | Multi-dimensional audit evidence | 2026-11-08T23:29:17.486Z |

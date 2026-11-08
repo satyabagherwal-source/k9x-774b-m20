@@ -955,8 +955,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceVersion": "hf-openai-gpt-oss-20b",
     "license": "Open-Source",
-    "contentHash": "0ea95747389f57ea6fa5d5032bab868f1c9adff924aba0a4a8a3d63981efecde",
-    "lastHarvestedAt": "2026-11-05T05:53:05.601Z",
+    "contentHash": "9a327b6e8bd02e516f784d98bba11093205f593f918e64ef84954d00ccecdc4e",
+    "lastHarvestedAt": "2026-11-08T23:29:00.852Z",
     "learningId": "learn-huggingface-openai-gpt-oss-20b"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "a3b77fdf",
+    "sourceVersion": "84fa81e9",
     "license": "Apache-2.0",
-    "contentHash": "aa19150b9d9de966ebfc56efa4fd53a21a9545ac4295fe6ad57cbc48a0b73d96",
-    "lastHarvestedAt": "2026-11-08T20:21:48.037Z",
+    "contentHash": "3db3eb5a099cc5b332cacebaf342535f55bcf2a50291c8c2e8a89ab50260c02e",
+    "lastHarvestedAt": "2026-11-08T23:29:17.486Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "50301083",
+    "sourceVersion": "62d055f4",
     "license": "BSD-3-Clause",
-    "contentHash": "6ef9bf2bc0caf5e64c13b79c08d6e1a5d9bdf5e6d6f2279297abd71007881a04",
-    "lastHarvestedAt": "2026-11-07T22:23:44.804Z",
+    "contentHash": "7698fbbec9ba397f471221c85570190fda19ef0f1a464f6465d6df5b6e42ee34",
+    "lastHarvestedAt": "2026-11-08T23:29:11.893Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {

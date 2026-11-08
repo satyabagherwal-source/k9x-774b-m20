@@ -8428,3 +8428,6 @@
 | `CYCLE-20261108-6QY7` | `2026-11-08T23:12:42.991Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`1616cbd6...`) |
 | `CYCLE-20261108-6S1R` | `2026-11-08T23:12:44.415Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 498, Rule null` | Yes (`6c7beec6...`) |
 | `CYCLE-20261108-FZT5` | `2026-11-08T23:19:54.377Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`e8910081...`) |
+| `CYCLE-20261108-RPGX` | `2026-11-08T23:29:00.849Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`9a327b6e...`) |
+| `CYCLE-20261108-RXZM` | `2026-11-08T23:29:11.890Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7698fbbe...`) |
+| `CYCLE-20261108-S2AT` | `2026-11-08T23:29:17.477Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3db3eb5a...`) |

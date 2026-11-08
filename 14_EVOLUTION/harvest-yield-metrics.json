@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T23:19:54.387Z",
-  "total_cycles_completed": 8393,
-  "total_learnings_persisted": 8393,
-  "total_rules_promoted": 8192,
+  "last_updated": "2026-11-08T23:29:17.491Z",
+  "total_cycles_completed": 8396,
+  "total_learnings_persisted": 8396,
+  "total_rules_promoted": 8194,
   "history": [
-    {
-      "timestamp": "2026-11-08T05:40:51.442Z",
-      "repository": "ornith-ai/Ornith-1.5-122B",
-      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T05:40:55.079Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T05:48:11.844Z",
-      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
-      "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T05:48:16.745Z",
       "repository": "paradedb/paradedb",
@@ -1403,6 +1382,27 @@
       "repository": "zai-org/GLM-5.2",
       "learningId": "learn-huggingface-zai-org-glm-5-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:29:00.856Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:29:11.898Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:29:17.491Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

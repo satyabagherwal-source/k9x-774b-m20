@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `50301083`  
+> **Source Version**: `62d055f4`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T22:23:42.903Z  
+> **Timestamp**: 2026-11-08T23:29:10.910Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T22:23:42.694Z  
+> **Harvest Timestamp**: 2026-11-08T23:29:10.905Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38769 stars
+- **Stars / Engagement**: 38807 stars
 
 ---
 
@@ -821,84 +821,90 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc46358e` (2026-11-07)
-**Commit Message**: go.mod: fix duplicate handshake response in wireguard-go (#22221)
+### Incident Patch 1: `3a72a686` (2026-11-08)
+**Commit Message**: tsnet: fix ts_omit_acme build
 
-Updates tailscale/corp#50867
-Updates tailscale/tailscale#21884
+Gate certificate fetching on ACME support and return an error when omitted.
 
-Change-Id: If04dcde13681fc27e0e756ed465f165c6a6a6964
-Signed-off-by: Alex Valiushko <[REDACTED_EMAIL]>
+Fixes #22250
 
-**File**: `flake.nix` (modified, +1/-1)
+Change-Id: I709928f1fe11b7f20cc854d299175ca3048c037e
+Signed-off-by: Fredrik Fornwall <[REDACTED_EMAIL]>
+
+**File**: `tsnet/maybe_acme.go` (modified, +14/-1)
 ```diff
-@@ -173,4 +173,4 @@
-     });
-   };
+@@ -9,4 +9,17 @@ package tsnet
+ // [Server.ListenTLS], and related cert-fetch paths work out of the box.
+ // Build with the ts_omit_acme tag to omit it.
+ 
+-import _ "tailscale.com/feature/acme"
++import (
++	"crypto/tls"
++
++	_ "tailscale.com/feature/acme"
++)
++
++// getCert is the GetCertificate function used by ListenTLS and ListenFunnel.
++func (s *Server) getCert(hi *tls.ClientHelloInfo) (*tls.Certificate, error) {
++	lc, err := s.LocalClient()
++	if err != nil {
++		return nil, err
++	}
++	return lc.GetCertificate(hi)
++}
+```
+
+**File**: `tsnet/omit_acme.go` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build js || ts_omit_acme
++
++package tsnet
++
++import (
++	"crypto/tls"
++
++	"tailscale.com/feature"
++)
++
++func (s *Server) getCert(hi *tls.ClientHelloInfo) (*tls.Certificate, error) {
++	return nil, feature.ErrUnavailable
++}
+```
+
+**File**: `tsnet/tsnet.go` (modified, +0/-12)
+```diff
+@@ -1514,18 +1514,6 @@ func (s *Server) RegisterFallbackTCPHandler(cb FallbackTCPHandler) func() {
+ 	}
  }
--# nix-direnv cache busting line: sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4=
-+# nix-direnv cache busting line: sha256-M7jMKZAikFtuHU7GZ1TBUme1cHrgKcg3LQObcXoXImU=
-```
-
-**File**: `flakehashes.json` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
-   },
-   "vendor": {
--    "goModSum": "sha256-dApQ2AxHOwZQIHeOmaDEkKT5vfZN1FY7XRiqK3XzU40=",
--    "sri": "sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4="
-+    "goModSum": "sha256-fY5/kwYNwUr/WUhki7WhKxjO0u/PeBHY9iauefNCJvI=",
-+    "sri": "sha256-M7jMKZAikFtuHU7GZ1TBUme1cHrgKcg3LQObcXoXImU="
-   }
- }
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -126,7 +126,7 @@ require (
- 	github.com/tailscale/ts-gokrazy v0.0.0-20260630224145-b83088f2e52e
- 	github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea
- 	github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6
--	github.com/tailscale/wireguard-go v0.0.0-20261102205419-b884e294b6d8
-+	github.com/tailscale/wireguard-go v0.0.0-20261105205217-79ead109a81a
- 	github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e
- 	github.com/tc-hib/winres v0.3.1
- 	github.com/tcnksm/go-httpstat v0.2.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1154,8 +1154,8 @@ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea h1:a
- github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea/go.mod h1:agQPE6y6ldqCOui2gkIh7ZMztTkIQKH049tv8siLuNQ=
- github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6 h1:l10Gi6w9jxvinoiq15g8OToDdASBni4CyJOdHY1Hr8M=
- github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6/go.mod h1:ZXRML051h7o4OcI0d3AaILDIad/Xw0IkXaHM17dic1Y=
--github.com/tailscale/wireguard-go v0.0.0-20261102205419-b884e294b6d8 h1:bzkevp32ugVKkbzw4ctS7Iou+FUsIPGSbojnHzbATV4=
--github.com/tailscale/wireguard-go v0.0.0-20261102205419-b884e294b6d8/go.mod h1:rUelGmuK4UnSJYM5gl5Mknp6YbwwcL8+VAPMhNYe+jg=
-+github.com/tailscale/wireguard-go v0.0.0-20261105205217-79ead109a81a h1:bxmkuenopCCc4jbWxUkZ26NZHq4sYdfPdVNB2XX+nV8=
-+github.com/tailscale/wireguard-go v0.0.0-20261105205217-79ead109a81a/go.mod h1:rUelGmuK4UnSJYM5gl5Mknp6YbwwcL8+VAPMhNYe+jg=
- github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e h1:zOGKqN5D5hHhiYUp091JqK7DPCqSARyUfduhGUY8Bek=
- github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e/go.mod h1:orPd6JZXXRyuDusYilywte7k094d7dycXXU5YnWsrwg=
- github.com/tc-hib/winres v0.3.1 h1:CwRjEGrKdbi5CvZ4ID+iyVhgyfatxFoizjPhzez9Io4=
-```
-
-**File**: `shell.nix` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4=
-+# nix-direnv cache busting line: sha256-M7jMKZAikFtuHU7GZ1TBUme1cHrgKcg3LQObcXoXImU=
+ 
+-// getCert is the GetCertificate function used by ListenTLS.
+-//
+-// It calls GetCertificate on the localClient, passing in the ClientHelloInfo.
+-// For testing, if s.getCertForTesting is set, it will call that instead.
+-func (s *Server) getCert(hi *tls.ClientHelloInfo) (*tls.Certificate, error) {
+-	lc, err := s.LocalClient()
+-	if err != nil {
+-		return nil, err
+-	}
+-	return lc.GetCertificate(hi)
+-}
+-
+ // FunnelOption is an option passed to ListenFunnel to configure the listener.
+ type FunnelOption interface {
+ 	funnelOption()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22251** (2026-11-08): tsnet: fix ts_omit_acme build (@fornwall)
+- **PR #22247** (2026-11-08): ipn/ipnlocal: skip log directory lookup when logtail is omitted (@fornwall)
+- **PR #22245** (2026-11-08): tsnet: skip logger setup when logtail is omitted (@fornwall)
 - **PR #22239** (2026-11-07): net/{netmon,tstun},tsconst: avoid enumerating all interfaces when retrieving the default (@nickkhyl)
 - **PR #22234** (2026-11-07): flake.nix: resolve deprecation warning (@mikeodr)
 - **PR #22227** (2026-11-07): ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus (@nickkhyl)
-- **PR #22225** (2026-11-06): go.mod: bump github.com/klauspost/compress for govulncheck (@nickkhyl)
-- **PR #22222** (2026-11-06): ipn,client/local: let IPN bus watchers be suspended instead of disconnected (@nickkhyl)
-- **PR #22221** (2026-11-07): go.mod: fix duplicate handshake response in wireguard-go (@illotum)
 
 ---
 
@@ -918,28 +924,41 @@ Signed-off-by: Alex Valiushko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go.mod: fix duplicate handshake response in wireguard-go (#22221)
+## X. tsnet: fix ts_omit_acme build
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tsnet/maybe_acme.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc46358e`: go.mod: fix duplicate handshake response in wireguard-go (#22221). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a72a686`: tsnet: fix ts_omit_acme build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsnet/maybe_acme.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# nix-direnv cache busting line: sha256-M7jMKZAikFtuHU7GZ1TBUme1cHrgKcg3LQObcXoXImU=
+import (
+	"crypto/tls"
+
+	_ "tailscale.com/feature/acme"
+)
+
+// getCert is the GetCertificate function used by ListenTLS and ListenFunnel.
+func (s *Server) getCert(hi *tls.ClientHelloInfo) (*tls.Certificate, error) {
+	lc, err := s.LocalClient()
+	if err != nil {
+		return nil, err
+	}
+	return lc.GetCertificate(hi)
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-# nix-direnv cache busting line: sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4=
+import _ "tailscale.com/feature/acme"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc46358e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a72a686` are properly handled with clean fallback behavior.

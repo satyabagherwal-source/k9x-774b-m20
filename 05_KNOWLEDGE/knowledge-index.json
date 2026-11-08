@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T23:19:54.270Z",
+  "last_updated": "2026-11-08T23:29:17.378Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29841,7 +29841,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-20b",
       "source_version": "hf-openai-gpt-oss-20b",
-      "content_hash": "0ea95747389f57ea6fa5d5032bab868f1c9adff924aba0a4a8a3d63981efecde",
+      "content_hash": "9a327b6e8bd02e516f784d98bba11093205f593f918e64ef84954d00ccecdc4e",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "promoted_rules": [],
@@ -29862,7 +29862,7 @@
         "learn-huggingface-hf-openai-gpt-oss-20b-mv3woskc",
         "learn-huggingface-hf-openai-gpt-oss-20b-mv4beakp"
       ],
-      "verified_at": "2026-11-05T05:53:05.518Z",
+      "verified_at": "2026-11-08T23:29:00.765Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47113,8 +47113,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "a3b77fdf",
-      "content_hash": "aa19150b9d9de966ebfc56efa4fd53a21a9545ac4295fe6ad57cbc48a0b73d96",
+      "source_version": "84fa81e9",
+      "content_hash": "3db3eb5a099cc5b332cacebaf342535f55bcf2a50291c8c2e8a89ab50260c02e",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47216,6 +47216,11 @@
         {
           "number": null,
           "title": "Use Nucleoid examples in ARC prompts",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "NUC 94 Opt-In Conditional Words",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47509,7 +47514,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T20:21:47.906Z",
+      "verified_at": "2026-11-08T23:29:17.362Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59700,8 +59705,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "50301083",
-      "content_hash": "6ef9bf2bc0caf5e64c13b79c08d6e1a5d9bdf5e6d6f2279297abd71007881a04",
+      "source_version": "62d055f4",
+      "content_hash": "7698fbbec9ba397f471221c85570190fda19ef0f1a464f6465d6df5b6e42ee34",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -59728,6 +59733,11 @@
         {
           "number": null,
           "title": "go.mod: fix duplicate handshake response in wireguard-go (#22221)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tsnet: fix ts_omit_acme build",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -59926,7 +59936,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:23:44.670Z",
+      "verified_at": "2026-11-08T23:29:11.785Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

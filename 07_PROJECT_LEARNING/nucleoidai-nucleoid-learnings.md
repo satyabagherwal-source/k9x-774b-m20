@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `a3b77fdf`  
+> **Source Version**: `84fa81e9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T20:21:46.154Z  
+> **Timestamp**: 2026-11-08T23:29:16.190Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T20:21:46.147Z  
+> **Harvest Timestamp**: 2026-11-08T23:29:16.185Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,8 +39,8 @@
 
 ### Core Architecture Module: `src/lang/ast/generator/statement.rs`
 ```
-use super::{enum_source, has_binding_metadata, signature};
-use crate::lang::ast::{ClassDecl, Expr, Function, FunctionBody, Stmt, UnaryOp};
+use super::{WordValue, enum_source, has_binding_metadata, signature};
+use crate::lang::ast::{ClassDecl, Expr, Function, FunctionBody, Stmt};
 
 /// Renders a run of statements as the body of a block, which is what a block or
 /// branch is keyed by in the graph.
@@ -117,16 +117,12 @@ pub fn generate(statement: &Stmt) -> String {
 }
 
 fn assignment_source(target: &Expr, value: &Expr) -> String {
-    match (target, value) {
-        (Expr::Identifier(name), Expr::Enum(members)) => enum_source(name, members),
-        (
-            _,
-            Expr::Unary {
-                operator: UnaryOp::Word,
-                operand,
-            },
-        ) => format!("{target} is {operand}"),
-        _ => format!("{target}={value}"),
+    if let (Expr::Identifier(name), Expr::Enum(members)) = (target, value) {
+        return enum_source(name, members);
+    }
+    match WordValue::of(value) {
+        Some(words) => format!("{target} is {words}"),
+        None => format!("{target}={value}"),
     }
 }
 
@@ -1639,528 +1635,511 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3b77fdf` (2026-11-08)
-**Commit Message**: Use Nucleoid examples in ARC prompts
+### Incident Patch 1: `84fa81e9` (2026-11-08)
+**Commit Message**: NUC 94 Opt-In Conditional Words
 
-Replace the grammar file with Nucleoid examples in LLM system messages and add puzzle d037b0a7 to the batch runner.
+Accepted under the user-requested basis: the user requested this feature
+directly, and the frozen candidate meets every hard criterion of the
+automatic acceptance rule. The independent evaluator's overall decision is
+also Accepted.
 
-**File**: `arc/nucleoid.md` (added, +116/-0)
+Add the opt-in syntax option conditional_words, CLI --conditional-words.
+Beside NUC 93's is_assignment, a branch of a conditional expression in an
+`is` assignment's value is a bare word when it is exactly one identifier
+token, in both `X if c else Y` and `c ? X : Y`, recursively through nested
+branches: `$Obj.fill_color is B if $Obj.symmetric else C`. Without the
+option, and with is_assignment alone, every program keeps its accepted
+reading. The user chose this separate flag because those programs are
+accepted inputs that fail at run time under is_assignment alone.
+
+Hard criteria:
+- No compile errors: cargo fmt --check, cargo build --all-targets and
+  cargo clippy --all-targets -- -D warnings exit 0, in the independent
+  evaluation and again on the integrated tree.
+- Every test passes: cargo test --no-fail-fast passes 2,814 with none
+  failing and 25 ignored, against 2,791 and 25 at the accepted revision;
+  all 2,816 acc
+
+**File**: `README.md` (modified, +34/-0)
 ```diff
-@@ -0,0 +1,116 @@
-+# Every human is mortal. Socrates is a human.
-+class Human:
-+    pass
+@@ -141,6 +141,40 @@ built-in of that name when one exists, and otherwise stores its own text, so
+ such as `if status is OPEN:` work in both modes. See
+ [NUC 93](docs/nuc-0093.md).
+ 
++### Optional conditional words
 +
-+$Human.mortal = true
++To also write a bare word as a branch of a conditional `is` value, add
++`--conditional-words` beside `--is-assignment`:
 +
-+socrates = Human()
-+socrates.mortal
++```console
++nucleoid --is-assignment --conditional-words program.nuc
++nucleoid --is-assignment --conditional-words --plain
++```
 +
-+# Area follows changes to a rectangle's dimensions.
-+class Rectangle(this.width, this.height)
++The equivalent library setting is per runtime and survives `clear()`:
 +
-+$Rectangle.area = $Rectangle.width * $Rectangle.height
++```rust
++use nucleoid::{Runtime, SyntaxOptions};
 +
-+rectangle = Rectangle(3, 4)
-+rectangle.width = 5
-+rectangle.area
++let mut runtime = Runtime::with_options(SyntaxOptions {
++    is_assignment: true,
++    conditional_words: true,
++    ..SyntaxOptions::default()
++});
++runtime.run("ready = false").unwrap();
++runtime.run("status is OPEN if ready else WAITING").unwrap();
++assert_eq!(runtime.run("status").unwrap().to_string(), "WAITING");
++runtime.run("ready = true").unwrap();
++assert_eq!(runtime.run("status").unwrap().to_string(), "OPEN");
++```
 +
-+# Find the names of students with passing scores.
-+class Student(this.name, this.score)
++`a is A if c else B` and `a is c ? A : B` read each branch that is one bare
++word as a word value is read: the variable, class, function or built-in of
++that name when one exists, otherwise its own text. Conditions and parenthesized
++operands are not words, so `a is (A if c else B)` needs `A` and `B` to be
++defined. Without `--is-assignment` the flag changes nothing. See
++[NUC 94](docs/nuc-0094.md).
 +
-+alice = Student("Alice", 80)
-+bob = Student("Bob", 50)
-+
-+passing = Student.filter(student => student.score >= 60)
-+passing.map(student => student.name)
-+
-+# Derive department payroll from related employees.
-+class Department(this.name)
-+class Employee(this.department, this.salary)
-+
-+$Department.payroll = Employee.filter(e => e.department == $Department).sum(e => e.salary)
-+
-+engineering = Department("Engineering")
-+alice = Employee(engineering, 100)
-+bob = Employee(engineering, 120)
-+
-+alice.salary = 150
-+engineering.payroll
-+
-+# Subtype rules retain precedence when a parent rule changes.
-+class Employee(this.salary)
-+class Manager extends Employee
-+
-+$Employee.bonus = $Employee.salary * 0.1
-+$Manager.bonus = $Manager.salary * 0.2
-+
-+worker = Employee(100)
-+manager = Manager(100)
-+
-+# Every task must have at least one suitably skilled worker.
-+class Task(this.skill)
-+class Worker(this.skill)
-+
-+review = Task("review")
-+build = Task("build")
-+reviewer = Worker("review")
-+
-+canCover = all t in Task: any w in Worker: w.skill == t.skill
-+
-+builder = Worker("build")
-+canCover
-+
-+# Explain how a particular input contributes to a result.
-+price = 10
-+quantity = 3
-+shipping = 5
-+subtotal = price * quantity
-+total = subtotal + shipping
-+
-+trace = total |> why |> path(price)
-+
-+price = 12
-+trace.map(step => [step.node, step.holds])
-+
-+# Explore a hypothetical change without changing the real model.
-+price = 10
-+quantity = 3
-+total = price * quantity
-+
-+forecast = suppose quantity = 4: total
-+changed = suppose quantity = 4:
-+(model |> diff).map(step => step.node)
-+
-+# := captures once; object references still point to live objects.
-+class Item(this.price)
-+item = Item(10)
-+
-+livePrice = item.price
-+capturedPrice := item.price
-+capturedItem := item
-+
-+item.price = 20
-+
-+# Read stored history through read-only version selectors.
-+balance = 100
-+balance = 120
-+balance = 90
-+
-+# Declare a relationship before its input properties exist.
-+class Order
-+$Order.total = $Order.price * $Order.quantity
-+
-+order = Order()
-+before := order.total
-+
-+order.price = 10
-+order.quantity = 3
-+
-+# An empty population satisfies all, but not any.
-+class Check(this.passed)
-+
-+allPassed = all check in Check: check.passed
-+hasFailure = any check in Check: not check.passed
-+empty := [allPassed, hasFailure]
-+
+ ---
+ 
+ # Design Theory 📐
 ```
 
-**File**: `arc/run-puzzles.ps1` (modified, +1/-0)
+**File**: `docs/README.md` (modified, +44/-0)
 ```diff
-@@ -50,6 +50,7 @@ $puzzleIds = @(
-     'e9afcf9a'
-     '6fa7a44f'
-     'd631b094'
-+    'd037b0a7'
- )
+@@ -61,6 +61,11 @@ runnable as written.
+   see [opt-in is assignments](#opt-in-is-assignments). It also defaults to
+   false, combines with `--c-style-comments`, and is honored and kept in the
+   same places.
++- Explicit CLI `--conditional-words`, or the `conditional_words` field,
++  additionally reads a bare-word branch of a conditional `is` value as a
++  word; see [opt-in conditional words](#opt-in-conditional-words). It
++  defaults to false, changes nothing without `--is-assignment`, and is
++  honored and kept in the same places.
+ - The configured runtime uses the option for every program and template
+   interpolation. Standalone lexer/parser/compilation functions retain default
+   behavior; their matching `_with_options` forms take `SyntaxOptions`, as does
+@@ -411,6 +416,44 @@ OPEN = "open"
  
- $bun = (Get-Command bun -CommandType Application -ErrorAction Stop).Source
-```
-
-**File**: `arc/src/lib/llm.ts` (modified, +1/-4)
-```diff
-@@ -26,10 +26,7 @@ export async function generate({
-   if (grammar) {
-     messages.unshift({
-       role: "system",
--      content: readFileSync(
--        join(__dirname, "..", "..", "..", "docs", "nucleoid.g4"),
--        "utf8"
--      ),
-+      content: readFileSync(join(__dirname, "..", "..", "nucleoid.md"), "utf8"),
-     });
-   }
+ Full detail: [NUC 93](nuc-0093.md).
  
-```
-
----
-
-### Incident Patch 2: `2344adaa` (2026-11-08)
-**Commit Message**: Replace PEG grammar with ANTLR4 reference
-
-Replace docs/grammar.md with docs/nucleoid.g4 and update the proposal workflow, ARC LLM context, and syntax summary to use the ANTLR4 grammar.
-
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +2/-2)
-```diff
-@@ -53,7 +53,7 @@ You draft and prototype exactly one added or updated NUC revision. Follow
-   unpaired new behavior still needs executed assertions/expected returns and
-   coverage. Never invent before-counts.
- - Keep affected reference, synthesized sources, and rendered exports in sync.
--- Update `docs/grammar.md` in the same candidate whenever the change alters
-+- Update `docs/nucleoid.g4` in the same candidate whenever the change alters
-   what the lexer or parser accepts, under the skill's
-   [grammar rule](../skills/nuc-proposal/SKILL.md#update-the-grammar).
- - Run the relevant development checks, but do not run `evaluate_proposal`,
-@@ -95,7 +95,7 @@ Return the proposal path and Git blob revision, baseline revision and artifact
- path, execution mode, confirmed proposal category and selection rationale when
- applicable,
- runtime applicability and supporting rationale, expected token ran/skipped policy,
--candidate worktree, changed files, the `docs/grammar.md` change or why there is
-+candidate worktree, changed files, the `docs/nucleoid.g4` change or why there is
- none, development and syntax-compatibility checks,
- any supplied frozen rubric path/blob pin, any hint and how it was used or set
- aside, and any blockers. Do not populate the independent evaluator's
-```
-
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +10/-9)
-```diff
-@@ -267,14 +267,15 @@ change, regenerate using `UPDATE_DATASET=1 cargo test --test dataset` and
- 
- ## Update the grammar
- 
--Keep `docs/grammar.md`, the grammar taken from the lexer and parser, in step
--with every candidate. When a proposal changes what the lexer or parser accepts,
--such as a token, keyword, alias, contextual word, rule, lookahead, lowering,
--limit or layout rule, update the affected rules, notes and tables in the same
--candidate. Keep the file's PEG notation and syntax-tree node comments, and
--check each changed rule against the candidate parser. A proposal that leaves
--the accepted syntax unchanged leaves the file as it is. Either way, the handoff
--states the grammar change or why there is none.
-+Keep `docs/nucleoid.g4`, the ANTLR4 syntax reference taken from the lexer and
-+parser, in step with every candidate. When a proposal changes what the lexer
-+or parser accepts, such as a token, keyword, alias, contextual word, rule,
-+lookahead, lowering, limit or layout rule, update the affected rules and
-+implementation-contract comments in the same candidate. Keep valid ANTLR4
-+notation and syntax-tree node comments, and check each changed rule against
-+the candidate parser. A proposal that leaves the accepted syntax unchanged
-+leaves the file as it is. Either way, the handoff states the grammar change or
-+why there is none.
- 
- ## Check and hand off
- 
-@@ -295,7 +296,7 @@ Return the proposal path and Git blob revision (`git hash-object` on the
- proposal), accepted baseline revision and path, execution mode, confirmed
- proposal category and selection rationale when applicable, runtime applicability
- and supporting rationale, any hint and how it was used or set aside, candidate
--worktree, changed files, the `docs/grammar.md` change or why there is none,
-+worktree, changed files, the `docs/nucleoid.g4` change or why there is none,
- development and syntax-compatibility checks, and explicit blockers. State the
- expected token policy, without claiming an unevaluated gate passed. Freeze the
- candidate after handoff.
-```
-
-**File**: `arc/src/lib/llm.ts` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ export async function generate({
-     messages.unshift({
-       role: "system",
-       content: readFileSync(
--        join(__dirname, "..", "..", "..", "docs", "grammar.md"),
-+        join(__dirname, "..", "..", "..", "docs", "nucleoid.g4"),
-         "utf8"
-       ),
-     });
-```
-
-**File**: `docs/README.md` (modified, +3/-1)
-```diff
-@@ -3784,7 +3784,9 @@ Full detail: [NUC 9](nuc-0009.md).
- 
- ## 14. Syntax Summary
- 
--The complete grammar, as the parser accepts it, is in [grammar.md](grammar.md).
-+The ANTLR4 syntax reference is in [nucleoid.g4](nucleoid.g4). Its comments
-+record the runtime-specific token-source and contextual parsing requirements;
-+the Rust parser remains the implementation of those requirements.
- 
- ```
- name = expression                      variable assignment
-```
-
-**File**: `docs/grammar.md` (removed, +0/-673)
-```diff
-@@ -1,673 +0,0 @@
--# Nucleoid Grammar
--
--This is the complete grammar of Nucleoid source text as the Rust
--implementation accepts it, taken from the lexer in `src/lang/ast/lexer/` and
--the recursive-descent parser in `src/lang/ast/parser/`. Rules name the
--syntax-tree node they build. `nucleoid.spec.md` is normative for behaviour, and
--the [Syntax Summary](README.md#14-syntax-summary) lists the same forms
--informally, with the NUC that introduced each one.
--
--## Contents
--
--1. [Notation](#1-notation)
--2. [Lexical Structure](#2-lexical-structure)
--3. [Programs and Suites](#3-programs-and-suites)
--4. [Statements](#4-statements)
--5. [Functions and Classes](#5-functions-and-classes)
--6. [Expressions](#6-expressions)
--7. [Parser Behaviour](#7-parser-behaviour)
--
--## 1. Notation
--
--The grammar uses PEG notation in the style of Python's
--[grammar specification](https://docs.python.org/3/reference/grammar.html).
--
--```
--rule ::= e        definition
--e1 e2             sequence
--e1 | e2           ordered choice: the first alternative that matches is taken
--e?  e*  e+        optional, zero or more, one or more
--( e )             grouping
--&e                lookahead: e must come next; nothing is consumed
--!e                negative lookahead: e must not come next; nothing is consumed
--'if'  '=>'        a keyword or operator token
--"while"           a contextual word: a NAME token with exactly this spelling
--NAME  NEWLINE     a token class produced by the lexer
--# text            a comment: the syntax-tree node built, or a note
--```
--
--- The parser chooses an alternative by looking ahead at its leading tokens and
--  at any lookahead the grammar shows, then commits to it: a later mismatch is a
--  syntax error, not a reason to try the next alternative.
--- Rules marked *tentative* are the exceptions. The parser tries them in full,
--  and when they do not match it consumes nothing and continues with the next
--  alternative.
--- Lexical rules (section 2) use regular-expression character classes.
--
--## 2. Lexical Structure
--
--### 2.1 Characters, Whitespace and Comments
--
--- Tokens are ASCII. Other characters may appear only inside strings, templates,
--  regular expressions and comments; anywhere else they are the syntax error
--  `Unexpected character`.
--- Space, tab, form feed and carriage return separate tokens. A line feed ends a
--  line.
--- `#` starts a comment that runs to the end of the line.
--- The C-style comments option (`--c-style-comments`, or
--  `SyntaxOptions { c_style_comments: true }`) adds `//` line comments and
--  `/* ... */` block comments. A block comment ends at the first `*/`, does not
--  nest, and is an error when unterminated. Without the option `/` keeps its
--  operator and regular-expression readings, so `//` is an empty regular
--  expression.
--
--### 2.2 Tokens
--
--```
--NAME          ::= [A-Za-z_][A-Za-z0-9_]*           # that is not a reserved keyword
--CLASS_REF     ::= '$' [A-Za-z_][A-Za-z0-9_]*       # $Person
--NUMBER        ::= [0-9]+ ('.' [0-9]+)? EXPONENT?
--                | '.' [0-9]+ EXPONENT?
--EXPONENT      ::= [eE] [+-]? [0-9]+
--VERSION_INDEX ::= [0-9]+                           # only directly after '@'
--STRING        ::= '"' ([^"\\] | ESCAPE)* '"'
--                | "'" ([^'\\] | ESCAPE)* "'"
--TEMPLATE      ::= '`' ([^`\\] | ESCAPE)* '`'
--ESCAPE        ::= '\' [^\n]
--REGEX         ::= '/' REGEX_CHAR* '/' [A-Za-z]*     # only in operand position
--REGEX_CHAR    ::= [^/\\[\n] | '\' . | '[' ([^\]\\\n] | '\' .)* ']'
--```
--
--- Each token is the longest match at its position, so `===`, `**=` and `??`
--  are single tokens.
--- In a STRING, `\n`, `\t`, `\r` and `\0` stand for line feed, tab, carriage
--  return and NUL, and any other escaped character stands for itself. Strings
--  may contain raw line breaks.
--- In a TEMPLATE, `\n` and `\t` are escapes and any other escaped character
--  stands for itself, so `\${` writes a literal `${`. `${ ... }` holds an
--  interpolated expression (section 6.6). Templates may contain raw line breaks.
--- Numbers have no sign, radix prefix or digit separator: `-1` is unary minus
--  applied to `1`.
--- A number directly after `@` must be plain digits with no letter, digit or
--  underscore after them. It becomes VERSION_INDEX; anything else is the error
--  `Expected a non-negative integer, 'first', 'last', or 'previous' after '@'`.
--- `/` starts a REGEX only in operand position, that is, when the previous token
--  is not a NAME, CLASS_REF, NUMBER, VERSION_INDEX, STRING, TEMPLATE, REGEX,
--  `)`, `]`, `}` or `this`, and only when the literal closes on the same line.
--  Flags after the closing slash are accepted and ignored. Elsewhere `/` and
--  `/=` are operators.
--
--### 2.3 Keywords and Contextual Words
--
--Reserved keywords cannot be used as names:
--
--```
--and       catch     class     def       delete    else      false
--for       function  if        in        new       not       null
--of        or        pass      return    super     this      throw
--true      try       
-```
-
-**File**: `docs/nucleoid.g4` (added, +855/-0)
-```diff
-@@ -0,0 +1,855 @@
-+// Copyright 2020 Nucleoid. Licensed under Apache-2.0; see ../LICENSE.
++### Opt-in conditional words
 +
-+grammar nucleoid;
++- [NUC 94](nuc-0094.md) extends opt-in `is` assignments. With CLI
++  `--conditional-words` beside `--is-assignment`, or
++  `SyntaxOptions { is_assignment: true, conditional_words: true, .. }` in
++  Rust, a branch of a conditional value can be a bare word, in either
++  spelling. Without `--is-assignment` the flag changes nothing.
++- The word positions are the value and both branches of a conditional in a
++  word position, so in `a is A if c1 else B if c2 else C`, `A`, `B` and `C`
++  are words. A branch is a word when it is exactly one identifier token;
++  `1`, `"text"`, `true`, `(A)` and `A.x` are not.
++- Conditions are never words, and neither is anything inside parentheses,
++  calls, lists, objects or other operators: `a is (A if c else B)` needs `A`
++  and `B` to be defined, as `a = (A if c else B)` does.
++- A word branch reads the local, variable, class, function or built-in of
++  its name when one exists, and otherwise its own text, as a word value
++  does; only the selected branch is read. Class-level rules do not require
++  branch words to be defined.
++- A statement with word branches renders as `a is c?A:B` in graph keys and
++  in `why` and `affects`. An `is` comparison before `?` needs parentheses,
++  as in `mark is (shape is SQUARE) ? CORNER : EDGE`, while
++  `mark is CORNER if shape is SQUARE else EDGE` needs none.
 +
++```
++ready = false
++status is OPEN if ready else WAITING
++OPEN = "open"
++ready = true
++```
++
++- With both options, `status` is `"WAITING"` while `ready` is false, and
++  `"open"` once `ready` is true, because `OPEN` is defined by then. Word
++  positions, rendering and edge cases are in the authoritative
++  [opt-in conditional words](../nucleoid.spec.md#opt-in-conditional-words)
++  section.
++
++Full detail: [NUC 94](nuc-0094.md).
++
+ ### Destructuring declarations
+ 
+ - [NUC 67](nuc-0067.md) adds destructuring declarations: object patterns
+@@ -3794,6 +3837,7 @@ name := expression                     value assignment: once, no dependency (NU
+ name.property := expression            value assignment to a property (NUC 66)
+ name is expression                     opt-in --is-assignment: name = expression (NUC 93)
+ name.property is word                  opt-in: a bare word reads its name, else its text "word" (NUC 93)
++name is A if c else B                  opt-in --conditional-words too: bare-word branches are words (NUC 94)
+ name += expression                     compound assignment; also -=, *=, **=, /=, %=
+ {a, b} = expression                    one declaration per field: a = expression.a (NUC 67)
+ {key: name} = expression               renamed field: name = expression.key (NUC 67)
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -59,6 +59,7 @@ Created: 31-Jul-2026
+ | [87](nuc-0087.md) | Initializing Constructor Parameters | Accepted |
+ | [91](nuc-0091.md) | Increment and Decrement Statements | Rejected: not backward compatible, as an accepted template interpolation ending in a pipeline stage followed by `++` or `--` ignored those signs and now raises `SyntaxError("Unexpected '++'")` |
+ | [93](nuc-0093.md) | Opt-In Is Assignments | Accepted |
++| [94](nuc-0094.md) | Opt-In Conditional Words | Accepted |
+ 
+ ### Runtime features
+ 
+@@ -241,6 +242,7 @@ Created: 31-Jul-2026
+ | [91](nuc-0091.md) | Increment and Decrement Statements | Standards Track | Syntax enhancement | Rejected: not backward compatible, as an accepted template interpolation ending in a pipeline stage followed by `++` or `--` ignored those signs and now raises `SyntaxError("Unexpected '++'")` |
+ | [92](nuc-0092.md) | List Comprehensions | Standards Track | Language compatibility | Accepted |
+ | [93](nuc-0093.md) | Opt-In Is Assignments | Standards Track | Syntax enhancement | Accepted |
++| [94](nuc-0094.md) | Opt-In Conditional Words | Standards Track | Syntax enhancement | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0094.md` (added, +668/-0)
+```diff
+@@ -0,0 +1,668 @@
++# NUC 94 -- Opt-In Conditional Words
++
++```
++NUC: 94
++Title: Opt-In Conditional Words
++Author: Can Mingir <canmingir@gmail.com>
++Status: Accepted
++Type: Standards Track
++Category: Syntax enhancement
++Created: 08-Nov-2026
++Requires: 59, 76, 86, 93
++```
++
++## Abstract
++
++- Add the opt-in syntax option `conditional_words`, CLI
++  `--conditional-words`. Beside [NUC 93](nuc-0093.md)'s `is_assignment`, it
++  lets a branch of a conditional expression in an `is` assignment's value be
++  a bare word: `status is OPEN if ready else WAITING` and
++  `status is ready ? OPEN : WAITING`.
++- The word positions are the value, which NUC 93 already reads as a word
++  when it is one identifier token, and both branches of a conditional that
++  stands in a word position, in either spelling of [NUC 59](nuc-0059.md). A
++  branch there is a word when it is exactly one identifier token, and it
++  reads by NUC 93's word rule through the same `UnaryOp::Word` marker: the
++  name when something defines it, and otherwise its own text.
++- Conditions, parenthesized operands, other operators, calls, lists,
++  objects and bodies inside the value, the value of an inner assignment and
++  the target of an assignment operator are not word positions.
++- The option changes nothing without `is_assignment`, and with
++  `is_assignment` alone every program keeps NUC 93's reading. No token,
++  keyword, syntax-tree variant or error message is added. The authoritative
++  contract is
++  [Opt-in conditional words](../nucleoid.spec.md#opt-in-conditional-words).
++- Accepted: the user requested this feature directly, and the frozen
++  candidate meets every hard criterion of the automatic acceptance rule, so
++  the user-requested basis applies. The independent evaluator's overall
++  decision is also Accepted. Token comparison was skipped as
++  `single_proposal`, the rule for a single-proposal request, not a failed
++  check; see [Evaluation](#evaluation).
++
++## Motivation
++
++- The user asked for words inside larger values of NUC 93's opt-in `is`
++  assignments, where they still need quotes. Rules such as these are
++  written today with quoted branches:
++
++```
++$Tile.fill is 'B' if $Tile.symmetric else 'C'
++$Tile.mark is 'A' if $Tile.parts.distinct().length is 1 else 0
++```
++
++- The user wants them written as words, as a value of one word already is:
++
++```
++$Tile.fill is B if $Tile.symmetric else C
++$Tile.mark is A if $Tile.parts.distinct().length is 1 else 0
++```
++
++- At the accepted revision, with `--is-assignment`, the second spelling
++  fails. NUC 93 makes a value a word only when the whole value is one
++  identifier token, so each branch is an ordinary name:
++  - `y is A if true else B` raises `ReferenceError("A is not defined")` at
++    line 1, column 1.
++  - After `class Tile(symmetric, parts):` with its constructor, declaring
++    `$Tile.fill is B if $Tile.symmetric else C` raises
++    `ReferenceError("B is not defined")`, and declaring the `mark` rule raises
++    `ReferenceError("A is not defined")`, because class-rule validation
++    requires every name in either branch.
++- Asked, the user chose two proposals with two opt-in flags: this one for
++  the branches of conditional expressions, and a later, separate one for
++  list items, dictionary values and keyword-argument values.
++- With the option, a model can choose between two facts in one rule and
++  decide later whether each word is its text or a variable that remaps it:
++
++```
++ready = false
++status is OPEN if ready else WAITING
++OPEN = "open"
++ready = true
++```
++
++- `status` is `"WAITING"` while `ready` is false, and `"open"` once `ready`
++  is true. The programs of this proposal execute as written in
++  `tests/conditional_words.rs::the_documented_examples_run_as_written`.
++
++## Rationale
++
++- **Category and mode.** The user requested this concrete feature, so there
++  was no random draw. Its category is Syntax enhancement, that of NUC 93 and
++  NUC 86, which it extends. It runs in single-proposal mode, which skips
++  token comparison. Runtime applicability does not apply. No hint was
++  supplied.
++- **A new option, not a change to `is_assignment`.** With `is_assignment`
++  alone, `a is A if c else B` is an accepted input that fails at run time.
++  Backward compatibility protects every accepted input, including those that
++  fail at run time, and NUC 93's tests pin `a is 1 if c else 2` and
++  `a is c ? 1 : 2` to the `=` tree. Reading words there under
++  `is_assignment` would change accepted behavior, so the user chose a second
++  opt-in flag, as NUC 93 chose one over NUC 86's default reading.
++- **The name.** Each source option names the form it enables, as a
++  snake_case field whose kebab-case flag spells the same words:
++  `c_style_comments` and `--c-style-comments`, `is_assignment` and
++  `--is-assignment`. The form here is a word in a conditional, so
++  `conditional_words` and `--conditional-words`, plural as
++  `c_style_comments` is because one statement may hold several.
+```
+
+**File**: `docs/nucleoid.g4` (modified, +41/-1)
+```diff
+@@ -121,6 +121,7 @@ statement
+     | assertStmt
+     | supposeStmt
+     | valueAssignment
++    | isAssignment
+     | expression                        // Stmt::Assign or Stmt::Expression
+     ;
+ 
+@@ -140,8 +141,9 @@ assertStmt
+ 
+ // A premise is tentative: it ends exactly at ':' and cannot be a colon
+ // statement or end in the word 'lambda'. Otherwise 'suppose' stays a name.
++// The 'path IS' head requires SyntaxOptions.is_assignment, as isAssignment.
+ supposeStmt
+-    : (conditional ASSIGN)? SUPPOSE premise? suite
++    : (conditional ASSIGN | path IS)? SUPPOSE premise? suite
+     ;
+ 
+ premise
+@@ -152,6 +154,35 @@ valueAssignment
+     : path VALUE_ASSIGN expression      // Stmt::ValueAssign
+     ;
+ 
 +/*
-+ * Action-free ANTLR4 syntax reference for the Rust lexer and parser.
-+ * nucleoid.spec.md remains normative for behavior.
-+ *
-+ * A generated parser is not a replacement for the Rust implementation:
-+ * its token source must supply INDENT, DEDENT, VERSION_INDEX and REGEX.
-+ * ANTLR prediction does not enforce the Rust parser's committed lookahead.
-+ * Contextual decisions, tentative parses, lowerings and limits described
-+ * below remain part of the implementation contract, not ANTLR actions.
-+ *
-+ * Token-source contract:
-+ * - Tokens outside literals and comments are ASCII.
-+ * - Scan operand-position regular expressions and optional C-style comments
-+ *   before ordinary tokenization. A regular expression must close on its
-+ *   line; otherwise '/' and '/=' keep their operator readings. Its flags
-+ *   are accepted and ignored. Operand position excludes a preceding name,
-+ *   class reference, literal, ')', ']', '}' or 'this' token.
-+ * - C-style comments require SyntaxOptions.c_style_comments. Line comments
-+ *   start with '//'; block comments end at the first star-slash, do not nest,
-+ *   and fail when unterminated. Without that option, '//' is an empty regular
-+ *   expression in operand position, not a comment.
-+ * - Directly after '@', plain adjacent digits become VERSION_INDEX. Reject
-+ *   a following letter, digit or underscore and reject other number forms.
-+ * - Replace physical NEWLINEs with logical layout tokens. Parentheses and
-+ *   brackets suppress layout; braces do not. Ignore blank/comment-only
-+ *   lines. Before each subsequent logical line emit NEWLINE, then INDENT
-+ *   for an increased width or DEDENT for each closed level. A tab has width
-+ *   4; other whitespace has width 1 and comments have width 0. A width
-+ *   between open levels closes to the shallower level without error.
-+ * - Finish with the pending NEWLINE, all remaining DEDENTs, then EOF.
-+ *
-+ * WHITESPACE and COMMENT stay on the hidden channel so a token-source
-+ * adapter can inspect layout. REGEX_LITERAL records the scanner's pattern;
-+ * it is a fragment, deliberately not an unconditional '/' lexer rule.
++ * Opt-in is-assignment contract (NUC 93, NUC 94):
++ * - isAssignment requires SyntaxOptions.is_assignment. Its path may be
++ *   parenthesized and has at most 128 links. No NEWLINE separates it from
++ *   'is', and the token after 'is' must begin an expression: a name token,
++ *   CLASS_REF, NUMBER, STRING, TEMPLATE, REGEX, LPAREN, LBRACK, LBRACE,
++ *   BANG, MINUS, PLUS, TRUE, FALSE, NULL, THIS, SUPER, NEW, DELETE,
++ *   FUNCTION, NOT or TYPEOF. Otherwise 'is' stays a name that begins the
++ *   next statement, and 'why', 'affects', 'stated' or 'derived' before
++ *   'is' keep their reasoning-selection reading.
++ * - The value is ASSIGN's statement-level value and builds the tree of
++ *   'path = expression' apart from its word markers. A following ':=' or a
++ *   'suppose' value is handled as after ASSIGN.
++ * - Word positions of the value: the whole value, and with
++ *   SyntaxOptions.conditional_words as well, both branches of a conditional
++ *   standing in a word position, in either spelling. A word position holding
++ *   exactly one name token is a word, UnaryOp::Word, which reads that name
++ *   when something defines it and otherwise its own text.
++ * - Conditions, grouping parentheses, operands of other operators, call
++ *   arguments, list and object members, function, lambda and arrow bodies,
++ *   template interpolations, the value of an inner assignment and the target
++ *   of an assignment operator are not word positions.
++ * - SyntaxOptions.conditional_words without SyntaxOptions.is_assignment
++ *   changes nothing.
 + */
-+
-+tokens { INDENT, DEDENT, VERSION_INDEX, REGEX }
-+
-+program
-+    : separator* (statement separator*)* EOF
++isAssignment
++    : path IS expression                // Stmt::Assign, as path = expression
 +    ;
 +
-+// parse_expression skips leading separators and ignores trailing tokens.
-+expressionInput
-+    : separator* expression remainingTokens EOF
-+    ;
+ // Only at a statement boundary; require NEWLINE, ';', DEDENT, '}', EOF,
+ // 'else' or 'catch' after the value. At most 128 targets are accepted.
+ destructuring
+@@ -809,6 +840,9 @@ fragment REGEX_CHAR
+  * require an 'is' name or template in the source; comprehension passes
+  * require 'for' or a template. Keep the first successful complete parse.
+  * A later pass never changes a source accepted by an earlier pass.
++ * SyntaxOptions.is_assignment adds isAssignment to every pass, and
++ * SyntaxOptions.conditional_words changes only the word positions of its
++ * value, never whether or where a pass succeeds or fails.
+  *
+  * Limits:
+  * MAX_NESTING = 64, shared by statement/expression nesting:
+@@ -833,6 +867,10 @@ fragment REGEX_CHAR
+  * [e for x in s]           -> s.map(x => e).
+  * [e for x in s if c]      -> s.filter(x => c).map(x => e).
+  * a if c else b            -> c ? a : b.
++ * p is v                   -> p = v, with SyntaxOptions.is_assignment.
++ * p is w                   -> p = UnaryOp::Word(w) for a single name w.
++ * p is A if c else B       -> p = c ? Word(A) : Word(B), with
++ *                             SyntaxOptions.conditional_words as well.
+  * new X(...)               -> X(...).
+  * for xs:                  -> iteration with the item name "it".
+  * catch without a name     -> the binding "error".
+@@ -852,4 +890,6 @@ fragment REGEX_CHAR
+  * Operators/postfix/primary: parser\expression.rs, parser\precedence.rs,
+  * parser\postfix.rs and parser\primary.rs.
+  * Comprehensions/templates: parser\comprehension.rs and parser\template.rs.
++ * Is assignments and their words: parser\is_assignment.rs, with the
++ * conditional word positions in parser\expression.rs.
+  */
+```
+
+**File**: `nucleoid.spec.md` (modified, +94/-0)
+```diff
+@@ -3087,6 +3087,11 @@ statement positions; caught values and transaction recovery are unchanged.
+   selected branch. Unlike a class-level `if` statement, which stands aside
+   while its condition reads something undefined, a conditional expression
+   treats that condition as false and selects the alternate.
++- These readings are those of the default mode. With
++  [Opt-in conditional words](#opt-in-conditional-words), a branch of an `is`
++  assignment's conditional value that is exactly one identifier token is a
++  word instead, which class-level rule validation does not require to be
++  defined.
+ - An error raised by the condition or the selected branch propagates through
+   the existing transaction, so a failed standing re-evaluation rolls back the
+   triggering change and keeps the earlier branch selection.
+@@ -3385,6 +3390,95 @@ statement positions; caught values and transaction recovery are unchanged.
+   `tests/is_assignments.rs`, `tests/is_assignments_cli.rs` and the terminal
+   unit suite. The default-only executable documents and JSONL records keep
+   their programs, assertions and expected results.
++- With [Opt-in conditional words](#opt-in-conditional-words) also enabled, a
++  branch of a conditional value can be a word as well. Without that option,
++  a conditional value builds the tree of its `=` spelling, as above.
 +
-+separator
-+    : NEWLINE
-+    | SEMI
-+    | INDENT
-+    | DEDENT
-+    ;
++## Opt-in conditional words
 +
-+lineSeparator
-+    : NEWLINE
-+    | SEMI
-+    ;
++- [NUC 94](docs/nuc-0094.md) adds the opt-in syntax option
++  `conditional_words`, which lets a branch of a conditional expression in the
++  value of an `is` assignment be a word. CLI `--conditional-words` beside
++  `--is-assignment`, or Rust
++  `Runtime::with_options(SyntaxOptions { is_assignment: true, conditional_words: true, ..SyntaxOptions::default() })`,
++  enables it. `SyntaxOptions` gains the public field `conditional_words`,
++  which defaults to false.
++- The option extends [Opt-in is assignments](#opt-in-is-assignments) only.
++  Without `is_assignment` it changes nothing: every program keeps the
++  reading it has under the same options without `conditional_words`. With
++  `is_assignment` alone, every program keeps the reading of NUC 93.
++- The option combines with `c_style_comments`. `Runtime::options()` returns
++  it, `clear()` and `.clear` keep it, and `Runtime::check_with_options`,
++  `parse_program_with_options`, `parse_with_options`,
++  `parse_expression_with_options` and `statement::compile_with_options`
++  accept it. File runs, the plain and redirected REPL, the terminal
++  workspace, `--json` and `--graph` honor the flag as they honor
++  `--is-assignment`.
++- The word positions of an `is` assignment's value are the value itself,
++  which is a word position under NUC 93, and both branches of a conditional
++  expression that stands in a word position, in either spelling,
++  `consequent if condition else alternate` or
++  `condition ? consequent : alternate`. So `A`, `B` and `C` are in word
++  positions in `a is A if c1 else B if c2 else C`,
++  `a is c1 ? A : c2 ? B : C` and `a is c1 ? c2 ? A : B : C`.
++- A branch in a word position is a word when it is exactly one identifier
++  token, as a value is under NUC 93: `a is A if c else 1` makes `A` a word
++  and keeps `1` a number. Keywords such as `true`, `null`, `this` and `self`,
++  `$Class` references, quoted strings, paths, calls, subscripts, versions,
++  operator expressions and parenthesized operands are not words, so
++  `a is (A) if c else B` reads `A` as `a = A if c else B` does and makes only
++  `B` a word.
++- Nothing else is a word position. Conditions, including the `is`
++  comparisons of [Is and is not comparisons](#is-and-is-not-comparisons) in
++  them, keep their reading. So does a parenthesized conditional:
++  `a is (A if c else B)` reads `A` and `B` as `a = (A if c else B)` does. So
++  do the operands of other operators, call arguments, list items, object
++  values, function, arrow and lambda bodies and template interpolations
++  inside the value, and the value of an assignment inside the value, as in
++  `a is b = A if c else B`. A conditional that an assignment operator
++  follows is that assignment's target, not a result, so
++  `a is X if c else Y = 5` keeps its tree and raises
++  `SyntaxError("Cannot assign to (c?X:Y)")` at its statement, as with
++  `is_assignment` alone.
++- A word branch reads by the word rule of NUC 93: the local, variable,
++  class, function or built-in global of that name when one exists, and
++  otherwise the string of its spelling, recording a dependency on the
++  variable of that name. The condition is evaluated once and then only the
++  selected branch, so a word in the unselected branch is not read and adds
++  no dependency.
++- A standing declaration, property, constructor property or class-level
++  rule re-evaluates when the variable named by its selected word is
++  defined, changed or deleted, including inside a `suppose` block whose
++  rollback restores it, and switches branches when its condition changes.
++  Deleting the variable returns the w
+```
+
+**File**: `src/continuation/tests.rs` (modified, +1/-0)
+```diff
+@@ -215,6 +215,7 @@ fn named_function_buffering_ends_at_lexical_errors_and_follows_comment_options()
+     let enabled = SyntaxOptions {
+         c_style_comments: true,
+         is_assignment: false,
++        conditional_words: false,
+     };
+     assert_eq!(
+         submitted(
+```
+
+**File**: `src/lang/ast/generator.rs` (modified, +46/-0)
+```diff
+@@ -118,6 +118,52 @@ pub(crate) fn enum_source(name: &str, members: &[EnumMember]) -> String {
+     }
+ }
+ 
++pub(crate) struct WordValue<'a>(&'a Expr);
 +
-+suite
-+    : COLON suiteBody
-+    ;
++impl<'a> WordValue<'a> {
++    pub(crate) fn of(value: &'a Expr) -> Option<Self> {
++        holds_words(value).then_some(WordValue(value))
++    }
++}
 +
-+suiteBody
-+    : indentedBlock
-+    | inlineSuite
-+    ;
++impl fmt::Display for WordValue<'_> {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
++        match self.0 {
++            Expr::Conditional {
++                condition,
++                consequent,
++                alternate,
++            } if holds_words(self.0) => write!(
++                f,
++                "{condition}?{}:{}",
++                WordValue(consequent),
++                WordValue(alternate)
++            ),
++            Expr::Identifier(name) => write!(f, "({name})"),
++            value => write!(f, "{value}"),
++        }
++    }
++}
 +
-+// A trailing ';' in an inline suite is valid only before NEWLINE or EOF,
-+// never immediately before 'else' or 'catch'.
-+inlineSuite
-+    : statement (SEMI statement)* SEMI?
-+    ;
++fn holds_words(value: &Expr) -> bool {
++    let mut pending = vec![value];
++    while let Some(expression) = pending.pop() {
++        match expression {
++            Expr::Unary {
++                operator: UnaryOp::Word,
++                ..
++            } => return true,
++            Expr::Conditional {
++                consequent,
++                alternate,
++                ..
++            } => pending.extend([consequent.as_ref(), alternate.as_ref()]),
++            _ => {}
++        }
++    }
++    false
++}
 +
-+indentedStart
-+    : INDENT
-+    | NEWLINE lineSeparator* INDENT
-+    ;
-+
-+indentedBlock
-+    : indentedStart lineSeparator* (statement lineSeparator*)* blockEnd
-+    ;
-+
-+blockEnd
-+    : DEDENT
-+    | EOF
-+    ;
-+
-+body
-+    : suite
-+    | indentedBlock
-+    ;
-+
-+block
-+    : LBRACE separator* (statement separator*)* RBRACE
-+    ;
-+
-+// Statements need no separator where the preceding production ends.
-+// At statement start, '{' is a block or pattern, never an object literal.
-+// Destructuring and whileStmt are tentative; other recognized statement
-+// headers commit even if a later token fails to match.
-+statement
-+    : destructuring
-+    | whileStmt
-+    | enumStmt
-+    | ifStmt
-+    | forStmt
-+    | classStmt
-+    | functionDecl
-+    | tryStmt
-+    | PASS                              // Stmt::Pass
-+    | returnStmt
-+    | THROW expression                  // Stmt::Throw
-+    | DELETE expression                 // Stmt::Delete
-+    | block                             // Stmt::Block
-+    | typeDeclaration
-+    | assertStmt
-+    | supposeStmt
-+    | valueAssignment
-+    | expression                        // Stmt::Assign or Stmt::Expression
-+    ;
-+
-+returnStmt
-+    : RETURN expression?                // Stmt::Return
-+    ;
-+
-+// The following token must be NEWLINE, ';', DEDENT or EOF.
-+typeDeclaration
-+    : name COLON name                   // Stmt::Declaration
-+    ;
-+
-+// A third comma is an error.
-+assertStmt
-+    : ASSERT COLON expression COMMA expression
-+    ;
-+
-+// A premise is tentative: it ends exactly at ':' and cannot be a colon
-+// statement or end in the word 'lambda'. Otherwise 'suppose' stays a name.
-+supposeStmt
-+    : (conditional ASSIGN)? SUPPOSE premise? suite
-+    ;
-+
-+premise
-+    : clauseExpression
-+    ;
-+
-+valueAssignment
-+    : path VALUE_ASSIGN expression      // Stmt::ValueAssign
-+    ;
-+
-+// Only at a statement boundary; require NEWLINE, ';', DEDENT, '}', EOF,
-+// 'else' or 'catch' after the value. At most 128 targets are accepted.
-+destructuring
-+    : (objectPattern | unpackingPattern) ASSIG
+ fn write_quantified(
+     f: &mut fmt::Formatter<'_>,
+     quantifier: Quantifier,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2189,71 +2168,53 @@ Replace docs/grammar.md with docs/nucleoid.g4 and update the proposal workflow, 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use Nucleoid examples in ARC prompts
+## X. NUC 94 Opt-In Conditional Words
 
 **RULE**:
-When implementing operations in `arc/nucleoid.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3b77fdf`: Use Nucleoid examples in ARC prompts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84fa81e9`: NUC 94 Opt-In Conditional Words. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/nucleoid.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Every human is mortal. Socrates is a human.
-class Human:
-    pass
+### Optional conditional words
 
-$Human.mortal = true
+To also write a bare word as a branch of a conditional `is` value, add
+`--conditional-words` beside `--is-assignment`:
 
-socrates = Human()
-socrates.mortal
+```console
+nucleoid --is-assignment --conditional-words program.nuc
+nucleoid --is-assignment --conditional-words --plain
+```
 
-# Area follows changes to a rectangle's dimensions.
-class Rectangle(this.width, this.height)
+The equivalent library setting is per runtime and survives `clear()`:
 
-$Rectangle.area = $Rectangle.width * $Rectangle.height
+```rust
+use nucleoid::{Runtime, SyntaxOptions};
 
-rectangle = Rectangle(3, 4)
-rectangle.width = 5
-rectangle.area
+let mut runtime = Runtime::with_options(SyntaxOptions {
+    is_assignment: true,
+    conditional_words: true,
+    ..SyntaxOptions::default()
+});
+runtime.run("ready = false").unwrap();
+runtime.run("status is OPEN if ready else WAITING").unwrap();
+assert_eq!(runtime.run("status").unwrap().to_string(), "WAITING");
+runtime.run("ready = true").unwrap();
+assert_eq!(runtime.run("status").unwrap().to_string(), "OPEN");
+```
 
-# Find the names of students with passing scores.
-class Student(this.name, this.score)
-
-alice = Student("Alice", 80)
-bob = Student("Bob", 50)
-
-passing = Student.filter(student => student.score >= 60)
-passing.map(student => student.name)
-
-# Derive department payroll from related employees.
-class Department(this.name)
-class Employee(this.department, this.salary)
-
-$Department.payroll = Employee.filter(e => e.department == $Department).sum(e => e.salary)
-
-engineering = Department("Engineering")
-alice = Employee(engineering, 100)
-bob = Employee(engineering, 120)
-
-alice.salary = 150
-engineering.payroll
-
-# Subtype rules retain precedence when a parent rule changes.
-class Employee(this.salary)
-class Manager extends Employee
-
-$Employee.bonus = $Employee.salary * 0.1
-$Manager.bonus = $Manager.salary * 0.2
-
-worker = Employee(100)
-manager = Manager(100)
-
-# Ev
+`a is A if c else B` and `a is c ? A : B` read each branch that is one bare
+word as a word value is read: the variable, class, function or built-in of
+that name when one exists, otherwise its own text. Conditions and parenthesized
+operands are not words, so `a is (A if c else B)` needs `A` and `B` to be
+defined. Without `--is-assignment` the flag changes nothing. See
+[NUC 94](doc
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2263,4 +2224,4 @@ manager = Manager(100)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3b77fdf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84fa81e9` are properly handled with clean fallback behavior.
