@@ -8380,3 +8380,5 @@
 | `CYCLE-20261108-2Y69` | `2026-11-08T20:21:48.033Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aa19150b...`) |
 | `CYCLE-20261108-F3IW` | `2026-11-08T20:31:14.840Z` | `nvidia/NVIDIA-NemotronLabs-RE-USE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md` | Yes (`4e750a0e...`) |
 | `CYCLE-20261108-FG5N` | `2026-11-08T20:31:31.211Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`692420c1...`) |
+| `CYCLE-20261108-OMQ1` | `2026-11-08T20:38:39.625Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`468e9df1...`) |
+| `CYCLE-20261108-OO87` | `2026-11-08T20:38:41.575Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`311e6279...`) |

@@ -755,8 +755,8 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "b1ced98aba699cc367f3544a3afb40647187c390303b5fd739ee404cd64bff92",
-    "lastHarvestedAt": "2026-11-05T03:46:21.429Z",
+    "contentHash": "468e9df106bf1e681f846875d1a8bfb2058a3b5797faa81b1e91520ce915e545",
+    "lastHarvestedAt": "2026-11-08T20:38:39.629Z",
     "learningId": "learn-huggingface-google-t5-t5-small"
   },
   "hf-comfy-org-minimax-h3": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "1974d5ac",
+    "sourceVersion": "16c57ac4",
     "license": "MIT",
-    "contentHash": "ef387e3bef36915bc9a75b042c50acd64f81d2bb47f7adc73a19a9bd0566bebf",
-    "lastHarvestedAt": "2026-11-07T19:47:44.321Z",
+    "contentHash": "311e6279b4d62f2641087da216a6f6364e3adedf93196b70a9c11169de507907",
+    "lastHarvestedAt": "2026-11-08T20:38:41.579Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

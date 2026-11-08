@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T20:31:31.123Z",
+  "last_updated": "2026-11-08T20:38:41.486Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -929,14 +929,19 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "1974d5ac",
-      "content_hash": "ef387e3bef36915bc9a75b042c50acd64f81d2bb47f7adc73a19a9bd0566bebf",
+      "source_version": "16c57ac4",
+      "content_hash": "311e6279b4d62f2641087da216a6f6364e3adedf93196b70a9c11169de507907",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "ci: run Linux compile jobs on RunsOn runners (#5248)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "daemon): honor configured services during autostart (#5283)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -1020,7 +1025,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:47:44.205Z",
+      "verified_at": "2026-11-08T20:38:41.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26392,7 +26397,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "b1ced98aba699cc367f3544a3afb40647187c390303b5fd739ee404cd64bff92",
+      "content_hash": "468e9df106bf1e681f846875d1a8bfb2058a3b5797faa81b1e91520ce915e545",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [
@@ -26470,7 +26475,7 @@
         "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
         "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm"
       ],
-      "verified_at": "2026-11-05T03:46:21.352Z",
+      "verified_at": "2026-11-08T20:38:39.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

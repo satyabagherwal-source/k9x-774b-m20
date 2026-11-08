@@ -8389,3 +8389,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a3b77fdf` | Multi-dimensional audit evidence | 2026-11-08T20:21:48.037Z |
 | `learn-huggingface-nvidia-nvidia-nemotronlabs-re-use` | `https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T20:31:14.843Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `b97aa44c` | Multi-dimensional audit evidence | 2026-11-08T20:31:31.215Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-08T20:38:39.629Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `16c57ac4` | Multi-dimensional audit evidence | 2026-11-08T20:38:41.579Z |

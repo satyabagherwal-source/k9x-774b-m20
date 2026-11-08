@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T20:31:31.232Z",
+  "last_updated": "2026-11-08T20:38:41.589Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -965,14 +965,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-t5-t5-small",
-      "content_hash": "b1ced98aba699cc367f3544a3afb40647187c390303b5fd739ee404cd64bff92",
-      "verified_at": "2026-11-05T03:46:21.435Z",
+      "content_hash": "468e9df106bf1e681f846875d1a8bfb2058a3b5797faa81b1e91520ce915e545",
+      "verified_at": "2026-11-08T20:38:39.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:46:21.435Z"
+      "last_updated": "2026-11-08T20:38:39.638Z"
     },
     "maxrave-dev/kotlin-footguns": {
       "repository": "maxrave-dev/kotlin-footguns",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "ef387e3bef36915bc9a75b042c50acd64f81d2bb47f7adc73a19a9bd0566bebf",
-      "verified_at": "2026-11-07T19:47:44.331Z",
+      "content_hash": "311e6279b4d62f2641087da216a6f6364e3adedf93196b70a9c11169de507907",
+      "verified_at": "2026-11-08T20:38:41.589Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:47:44.331Z"
+      "last_updated": "2026-11-08T20:38:41.589Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
