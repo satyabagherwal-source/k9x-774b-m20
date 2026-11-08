@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T22:36:34.954Z",
+  "last_updated": "2026-11-08T22:52:42.502Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4072,8 +4072,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "5ce34500",
-      "content_hash": "59df7f921baa12b2045856f0468f168044eb2140b5f2d8a55e3a05523545f0d1",
+      "source_version": "3e2f08f8",
+      "content_hash": "f01e79e51eee9f7b8453fae49d7e041acc0a1033bf0e7ecd4a4d380c45a3cca8",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -4085,6 +4085,11 @@
         {
           "number": null,
           "title": "`uv audit` project status lookups for redacted query values (#23129)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Respect negative extra markers on constraints (#23144)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4173,7 +4178,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:29:22.176Z",
+      "verified_at": "2026-11-08T22:52:32.994Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33051,10 +33056,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "039d58ce76a28b2a6e0944b25d8f9bc77d500a13c4f39a788eafbc40e9707eb4",
+      "content_hash": "0e9f636010421662ec55c9f0956ec02f67bc388a32836c266fb99e94305ad503",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Distilled Inference Step Budgeting",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 726,
           "title": "Distilled Scheduler Step Consistency",
@@ -33144,7 +33154,7 @@
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
       ],
-      "verified_at": "2026-11-05T05:25:24.446Z",
+      "verified_at": "2026-11-08T22:52:41.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66319,8 +66329,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "b17ad042",
-      "content_hash": "5085a88632b0309623304473a5fb569d63976809b537cf664b933f7f9b8d4850",
+      "source_version": "64c34cfc",
+      "content_hash": "3bb1dfefcac2ffd883bc5a6d374ce0a9faf5c4c57072fcf9b4f52aea1996f6d1",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -66332,6 +66342,11 @@
         {
           "number": null,
           "title": "feat!: error when package secret write fails (#5621)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (#5629)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -66410,7 +66425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:32:50.783Z",
+      "verified_at": "2026-11-08T22:52:42.477Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -91828,7 +91843,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-05T05:25:24.446Z"
+      "verified_at": "2026-11-08T22:52:41.622Z"
     },
     "rule-1048": {
       "learning_id": "rule-1048",

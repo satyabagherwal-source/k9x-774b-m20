@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T22:36:35.055Z",
-  "total_cycles_completed": 8383,
-  "total_learnings_persisted": 8383,
-  "total_rules_promoted": 8179,
+  "last_updated": "2026-11-08T22:52:42.617Z",
+  "total_cycles_completed": 8386,
+  "total_learnings_persisted": 8386,
+  "total_rules_promoted": 8183,
   "history": [
-    {
-      "timestamp": "2026-11-08T04:54:55.776Z",
-      "repository": "unsloth/flint-GGUF",
-      "learningId": "learn-huggingface-unsloth-flint-gguf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T05:04:11.180Z",
-      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T05:11:38.665Z",
-      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T05:18:09.363Z",
       "repository": "Comfy-Org/Fibo-2.0",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-08T22:36:35.055Z",
       "repository": "oven-sh/bun",
       "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:52:33.120Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:52:41.787Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:52:42.617Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

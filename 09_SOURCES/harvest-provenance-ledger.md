@@ -8427,3 +8427,6 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `e520c28d` | Multi-dimensional audit evidence | 2026-11-08T22:26:29.151Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-08T22:36:31.441Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `2596ac5d` | Multi-dimensional audit evidence | 2026-11-08T22:36:35.049Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `3e2f08f8` | Multi-dimensional audit evidence | 2026-11-08T22:52:33.113Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-08T22:52:41.779Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `64c34cfc` | Multi-dimensional audit evidence | 2026-11-08T22:52:42.611Z |

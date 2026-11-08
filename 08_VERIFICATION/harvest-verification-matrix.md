@@ -8418,3 +8418,6 @@
 | `CYCLE-20261108-JAN0` | `2026-11-08T22:26:29.148Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2abfe730...`) |
 | `CYCLE-20261108-W7D9` | `2026-11-08T22:36:31.437Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`a29506c7...`) |
 | `CYCLE-20261108-WA5H` | `2026-11-08T22:36:35.045Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`209bc7b6...`) |
+| `CYCLE-20261108-GTED` | `2026-11-08T22:52:33.109Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f01e79e5...`) |
+| `CYCLE-20261108-H031` | `2026-11-08T22:52:41.773Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 1047` | Yes (`0e9f6360...`) |
+| `CYCLE-20261108-H0Q7` | `2026-11-08T22:52:42.607Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3bb1dfef...`) |

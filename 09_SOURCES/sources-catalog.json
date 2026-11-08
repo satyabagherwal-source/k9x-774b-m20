@@ -895,8 +895,8 @@
     "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceVersion": "hf-tongyi-mai-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "039d58ce76a28b2a6e0944b25d8f9bc77d500a13c4f39a788eafbc40e9707eb4",
-    "lastHarvestedAt": "2026-11-05T05:25:24.559Z",
+    "contentHash": "0e9f636010421662ec55c9f0956ec02f67bc388a32836c266fb99e94305ad503",
+    "lastHarvestedAt": "2026-11-08T22:52:41.779Z",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "b17ad042",
+    "sourceVersion": "64c34cfc",
     "license": "Apache-2.0",
-    "contentHash": "5085a88632b0309623304473a5fb569d63976809b537cf664b933f7f9b8d4850",
-    "lastHarvestedAt": "2026-11-08T02:32:50.903Z",
+    "contentHash": "3bb1dfefcac2ffd883bc5a6d374ce0a9faf5c4c57072fcf9b4f52aea1996f6d1",
+    "lastHarvestedAt": "2026-11-08T22:52:42.611Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "5ce34500",
+    "sourceVersion": "3e2f08f8",
     "license": "Apache-2.0",
-    "contentHash": "59df7f921baa12b2045856f0468f168044eb2140b5f2d8a55e3a05523545f0d1",
-    "lastHarvestedAt": "2026-11-07T21:29:22.255Z",
+    "contentHash": "f01e79e51eee9f7b8453fae49d7e041acc0a1033bf0e7ecd4a4d380c45a3cca8",
+    "lastHarvestedAt": "2026-11-08T22:52:33.113Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

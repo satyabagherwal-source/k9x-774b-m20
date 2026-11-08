@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T22:36:35.060Z",
+  "last_updated": "2026-11-08T22:52:42.621Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1160,14 +1160,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "content_hash": "039d58ce76a28b2a6e0944b25d8f9bc77d500a13c4f39a788eafbc40e9707eb4",
-      "verified_at": "2026-11-05T05:25:24.576Z",
+      "content_hash": "0e9f636010421662ec55c9f0956ec02f67bc388a32836c266fb99e94305ad503",
+      "verified_at": "2026-11-08T22:52:41.805Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:25:24.576Z"
+      "last_updated": "2026-11-08T22:52:41.805Z"
     },
     "meta-llama/Meta-Llama-3-8B-Instruct": {
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "5085a88632b0309623304473a5fb569d63976809b537cf664b933f7f9b8d4850",
-      "verified_at": "2026-11-08T02:32:50.912Z",
+      "content_hash": "3bb1dfefcac2ffd883bc5a6d374ce0a9faf5c4c57072fcf9b4f52aea1996f6d1",
+      "verified_at": "2026-11-08T22:52:42.620Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:32:50.912Z"
+      "last_updated": "2026-11-08T22:52:42.620Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "59df7f921baa12b2045856f0468f168044eb2140b5f2d8a55e3a05523545f0d1",
-      "verified_at": "2026-11-07T21:29:22.262Z",
+      "content_hash": "f01e79e51eee9f7b8453fae49d7e041acc0a1033bf0e7ecd4a4d380c45a3cca8",
+      "verified_at": "2026-11-08T22:52:33.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T21:29:22.262Z"
+      "last_updated": "2026-11-08T22:52:33.124Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

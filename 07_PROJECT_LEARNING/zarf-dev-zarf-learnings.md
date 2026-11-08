@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `b17ad042`  
+> **Source Version**: `64c34cfc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T02:32:49.362Z  
+> **Timestamp**: 2026-11-08T22:52:40.509Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T02:32:49.058Z  
+> **Harvest Timestamp**: 2026-11-08T22:52:40.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1459,17 +1459,17 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5629** (2026-11-08): **chore(deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3**
+  *Symptoms*: **Description:** indirect dependency v1.19.2 → v1.20.3, newest stable available on 2026-11-07, addressing GO-2026-6865/CVE-2026-116591. Refresh checksums and generated vendor. No application-code or other dependency update.  **Checklist before merging:**   - [x] Test, docs, adr added or updated as needed   - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+  **Post-Mortem & Fix Analysis**:
+  > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | df3a1ac75c04346edb2cf86b83141a59c319a278 |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5629?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. [see 1 file with indirect coverage changes](https://app.codecov.io/gh/zarf-dev/zarf/pull/5629/indirect-changes?src=pr&el=tree-more&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
+
 - **Issue #5625** (2026-11-07): **fix: exclude state authoritative values**
   *Symptoms*: ## Description  Setting any of the state authoritative values separate from their defaults through package values does not synchronize with zarf state - these should be excluded and we should pursue https://github.com/zarf-dev/proposals/pull/64  ## Related Issue   ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
   **Post-Mortem & Fix Analysis**:
   > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 42ed7d40cf3261ac2368635aafe18774a3b236b5 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aeebaea63891c5c03a41ebc |
   > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5625?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
-
-- **Issue #5621** (2026-11-08): **feat!: error when package secret write fails**
-  *Symptoms*: ## Description  Error when package secret write fails.   Also because we now compress state, I'm less worried about failed packages on overblown size. I kept the pre-flight checks, but simplified them so they check against the kubernetes secret limit (no extra room for deployment config in the pre-flight check)  ## Related Issue  Fixes #5517  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* ready!   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | e9e9e1cd31885b297371c7e424bf14e9ebfda3ab | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aee00814fb779510b36377c | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-5621--zarf-docs.netlify.app](https://deploy-preview-5621--zarf-docs.netlify.app) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTU2MjEtLXphcmYtZG9jcy5uZXRsaWZ5LmFwcCJ9.7UqruZcyBwt_zShs9sy-hztnL2iOB1iMO-9U1TdK810)<br /><br />_Use your smartphone camera to open QR code link._</details> | --- <!-- [zarf-docs Preview](https://deploy-preview-5621--zarf-docs.netlify.app) --> _To e
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* ready!   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 8ad77c0f1f6a022f9423f8b23b0be159b4abe30c | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aee582079cee9020f8c86df | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-5621--zarf-docs.netlify.app](https://deploy-preview-5621--zarf-docs.netlify.app) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTU2MjEtLXphcmYtZG9jcy5uZXRsaWZ5LmFwcCJ9.7UqruZcyBwt_zShs9sy-hztnL2iOB1iMO-9U1TdK810)<br /><br />_Use your smartphone camera to open QR code link._</details> | --- <!-- [zarf-docs Preview](https://deploy-preview-5621--zarf-docs.netlify.app) --> _To e
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1486,911 +1486,954 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b17ad042` (2026-11-07)
-**Commit Message**: feat!: error when package secret write fails (#5621)
+### Incident Patch 1: `64c34cfc` (2026-11-08)
+**Commit Message**: chore(deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (#5629)
 
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: dwertent <[REDACTED_EMAIL]>
 
-**File**: `src/pkg/cluster/zarf.go` (modified, +10/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -131,6 +131,13 @@ func (c *Cluster) StoreDeployedPackage(ctx context.Context, depPkg state.Deploye
- 	return nil
- }
+@@ -481,7 +481,7 @@ require (
+ 	github.com/kastenhq/goversion v0.0.0-20230811215019-93b2f8823953 // indirect
+ 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
+ 	github.com/kevinburke/ssh_config v1.2.0 // indirect
+-	github.com/klauspost/compress v1.19.2 // indirect
++	github.com/klauspost/compress v1.20.3 // indirect
+ 	github.com/klauspost/pgzip v1.2.6 // indirect
+ 	github.com/knqyf263/go-apk-version v0.0.0-20200609155635-041fdbb8563f // indirect
+ 	github.com/knqyf263/go-deb-version v0.0.0-20241115132648-6f4aee6ccd23 // indirect
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1143,8 +1143,8 @@ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXw
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+ github.com/klauspost/compress v1.4.1/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
+-github.com/klauspost/compress v1.19.2 h1:hMRETovs/pu/dVWN7zIT1PGG8t509MwT6bO7XSi26R8=
+-github.com/klauspost/compress v1.19.2/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
++github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid v1.2.0/go.mod h1:Pj4uuM528wm8OyEC2QMXAi2YiTZ96dNQPGgoMS4s3ek=
+ github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
+ github.com/klauspost/cpuid/v2 v2.0.10/go.mod h1:g2LTdtYhdyuGPqyWyv7qRAmj1WBqxuObKfj5c0PQa7c=
+```
+
+**File**: `vendor/github.com/klauspost/compress/.gitignore` (modified, +3/-0)
+```diff
+@@ -30,3 +30,6 @@ perf.data.old
  
-+// ValidateDeployedPackageSecretSize returns an error if the compressed deployment record
-+// exceeds Kubernetes' Secret data limit. It does not access the cluster.
-+func ValidateDeployedPackageSecretSize(depPkg state.DeployedPackage) error {
-+	_, err := encodeDeployedPackage(depPkg)
-+	return err
-+}
+ # gdb history
+ .gdb_history
 +
- func encodeDeployedPackage(depPkg state.DeployedPackage) ([]byte, error) {
- 	data, err := json.Marshal(depPkg)
- 	if err != nil {
-@@ -147,6 +154,9 @@ func encodeDeployedPackage(depPkg state.DeployedPackage) ([]byte, error) {
- 	if err := writer.Close(); err != nil {
- 		return nil, err
++# Silesia corpus, fetched by testdata/fetch_silesia.sh
++**/testdata/silesia.tar*
+```
+
+**File**: `vendor/github.com/klauspost/compress/AGENTS.md` (added, +104/-0)
+```diff
+@@ -0,0 +1,104 @@
++# AGENTS.md
++
++Guidance for people and coding agents changing this repository. It records
++conventions and traps learned while working on the decoders and encoders; the
++README describes the packages themselves.
++
++## Checks before sending a change
++
++- `gofmt`, `go vet ./...` and `go fix -diff ./...` (which should report
++  nothing). Code written for specific platforms must be vetted for them too:
++  run `go vet` with `GOOS`/`GOARCH` set to each platform it targets. `go vet`
++  caches results per package and does not notice edits to files excluded by
++  build tags; use a fresh `GOCACHE` to confirm a stale-looking error.
++- `go test ./...` with and without `-tags=noasm` (and `nounsafe` if you
++  touched `unsafe` code), on every architecture whose assembly changed.
++- Decoder changes: run the fuzzers CI runs (see `.github/workflows/go.yml`),
++  also with `-tags=noasm`, `-tags=nounsafe` and `-asan`, for longer than CI
++  does, and for zstd both `FuzzDecodeAll` and the `NoBMI2` variants.
++- Raising the Go version in the root `go.mod` breaks the nested modules
++  (`*/_generate`, `s2/cmd/_s2sx`) until they are updated too. In a `go`
++  directive, `1.25` sorts before `1.25.0`, so a dependency that needs
++  `1.25.0` forces the full form.
++
++## Tests
++
++- Put a new test in the existing test file for the code it exercises
++  (`decoder_test.go` for Reader/DecodeAll behaviour, `seqdec_test.go` for
++  sequence execution, and so on), and reuse its helpers. Use table tests for
++  three or more similar cases.
++- Extend the existing fuzzers (`func Fuzz…`) rather than adding parallel
++  harnesses; if a new harness supersedes an old one, remove the old one in
++  the same change.
++- Prove which path a test or benchmark exercises. A benchmark once ran the
++  pure-Go sequence decoder instead of the assembly because of how its buffers
++  were set up. A `panic` planted in the path is a quick check; `println`
++  output is easy to miss.
++- `sync.Pool` drops about a quarter of `Put`s under `-race` by design; never
++  assume `Get` returns the last `Put`.
++- Don't add tests whose only purpose is to catch someone deliberately undoing
++  a performance pin (an alignment, say); a comment explaining it is enough.
++
++## Performance claims
++
++- Use real data. The maintainer's corpora are at
++  https://klauspost.com/files/compress/ (logs, JSON, CSV, serialized data,
++  tar files); put `.zst` files in `zstd/testdata/benchmark-custom/` and run
++  `BenchmarkDecoderWithCustomFiles`. Silesia, enwik and generated data are
++  fine for correctness but are not accepted as evidence for a speed-up.
++- When a result depends on how the data was compressed, report the levels
++  separately (for example `SpeedDefault` and `SpeedBestCompression`).
++- Anchor `-bench` patterns at every level with `$`: `-bench 'BenchmarkFoo$'`
++  also runs `BenchmarkFooBar` otherwise, which has produced fake gains and
++  regressions.
++- Code placement alone moves results by about ±2%. For an A/B, insert
++  `PCALIGN $64` before every `TEXT` in the `.s` files of *both* builds
++  (measurement only, not committed).
++- Build both variants as test binaries up front, then run them in turns: one
++  short `-count 1` run of each, repeated for ten or more rounds, swapping
++  which goes first every round (AB, BA, AB, …) so neither build always gets
++  the warmer or colder slot. Never run all of A and then all of B. Clock
++  speed, temperature, cache and page-cache state, and background load drift
++  over a session; alternating spreads that drift over both builds instead of
++  turning it into a difference between them. Pin to one core, use an
++  otherwise idle machine, and compare the pooled results with `benchstat`.
++- Report the number of regressed cases next to the geomean; a small win with
++  no regressions is a different result from a larger one with some.
++- No CPU-model-specific code paths or thresholds. A gate for arm64 must be
++  measured on several Neoverse generations (N1, V1, V2, V3), not one core.
++
++## Pull requests
++
++- One commit per independent change, with fixups squashed in. Number the
++  changes in the description as "(1) … (sha)" and name the test file for
++  each test.
++- Mention each `#NNN` once in prose; refer back in words.
++- Don't open many PRs against the same area at once; reviewer time is the
++  scarce resource.
++- Keep Go comments short; generator and assembly comments can explain in
++  detail.
++- Keep private or company-internal references (internal service names,
++  private links, chat or agent-session URLs) out of code, commit messages and
++  PR text.
++
++## Assembly is generated
++
++- zstd, huff0 and s2 assembly is generated with [avo](https://github.com/mmcloughlin/avo)
++  from `zstd/_generate`, `huff0/_generate` and `s2/_generate`. Never edit the
++  `.s` files by hand: change the generator, run `go generate -v -x` in the
++  `_generate` directory, and commit the regenerated output. CI's `generate` job
++  fails if the committed files differ
+```
+
+**File**: `vendor/github.com/klauspost/compress/README.md` (modified, +54/-1)
+```diff
+@@ -6,7 +6,9 @@ This package provides various compression algorithms.
+ * [S2](https://github.com/klauspost/compress/tree/master/s2#s2-compression) is a high performance replacement for Snappy.
+ * Optimized [deflate](https://godoc.org/github.com/klauspost/compress/flate) packages which can be used as a dropin replacement for [gzip](https://godoc.org/github.com/klauspost/compress/gzip), [zip](https://godoc.org/github.com/klauspost/compress/zip) and [zlib](https://godoc.org/github.com/klauspost/compress/zlib).
+ * [snappy](https://github.com/klauspost/compress/tree/master/snappy) is a drop-in replacement for `github.com/golang/snappy` offering better compression and concurrent streams.
++* [lzw](https://github.com/klauspost/compress/tree/master/lzw) is a drop-in replacement for `compress/lzw` with 1.4-4x faster decompression and 1.1-2.7x faster compression, depending on the data.
+ * [huff0](https://github.com/klauspost/compress/tree/master/huff0) and [FSE](https://github.com/klauspost/compress/tree/master/fse) implementations for raw entropy encoding.
++* [Xpress](https://github.com/klauspost/compress/tree/master/xpress) decompression of the Microsoft XPRESS (MS-XCA) plain LZ77 and LZ77+Huffman formats (the LZ77+Huffman variant is the one used in WIM images and Windows Compact OS / WOF data).
+ * [gzhttp](https://github.com/klauspost/compress/tree/master/gzhttp) Provides client and server wrappers for handling gzipped/zstd HTTP requests efficiently.
+ * [pgzip](https://github.com/klauspost/pgzip) is a separate package that provides a very fast parallel gzip implementation.
+ 
+@@ -27,8 +29,41 @@ Use the links above for more information on each.
+ 
+ # changelog
+ 
++* Sep 25th, 2026 [1.20.1](https://github.com/klauspost/compress/releases/tag/v1.20.1)
++	* zstd: Apply reset options to reused frame decoders by @pellared in https://github.com/klauspost/compress/pull/1226
++	* flate: Report unexpected EOF for truncated Huffman extra bits by @rupayon123 in https://github.com/klauspost/compress/pull/1229
++	* flate: Avoid FMA in EstimatedBits for portable rounding by @malt3 in https://github.com/klauspost/compress/pull/1224
++	* gzhttp: Preserve caller request headers in Transport by @jakezwang in https://github.com/klauspost/compress/pull/1225
++	* gzhttp: Only decompress a request when gzip is the outermost coding by @youdie006 in https://github.com/klauspost/compress/pull/1223
++	* zstd/huff0: Optimizations by @lizthegrey in https://github.com/klauspost/compress/pull/1203 https://github.com/klauspost/compress/pull/1205 https://github.com/klauspost/compress/pull/1207 https://github.com/klauspost/compress/pull/1204 https://github.com/klauspost/compress/pull/1208 https://github.com/klauspost/compress/pull/1211 https://github.com/klauspost/compress/pull/1209 https://github.com/klauspost/compress/pull/1210
++	* flate: Speed improvements by @alex in https://github.com/klauspost/compress/pull/1220 https://github.com/klauspost/compress/pull/1218 https://github.com/klauspost/compress/pull/1216 https://github.com/klauspost/compress/pull/1215 https://github.com/klauspost/compress/pull/1214 https://github.com/klauspost/compress/pull/1217
++
++* Sep 2nd, 2026 [1.20.0](https://github.com/klauspost/compress/releases/tag/v1.20.0)
++	* lzw: Add lzw reader/writer in https://github.com/klauspost/compress/pull/1189
++	* xpress: Add Microsoft XPRESS (MS-XCA) decompression by @MP-GOWTHAM in https://github.com/klauspost/compress/pull/1195
++	* s2: arm64 assembly encoders by @lizthegrey in https://github.com/klauspost/compress/pull/1187
++	* zstd, huff0: Improved arm64 assembly by @lizthegrey in https://github.com/klauspost/compress/pull/1175 https://github.com/klauspost/compress/pull/1199 https://github.com/klauspost/compress/pull/1197
++	* flate: Writer L7-9 with dictionary can emit the dictionary to stream in https://github.com/klauspost/compress/pull/1201
++	* gzhttp: Limit jitter hash to jitterBuffer bytes by @VedantMadane in https://github.com/klauspost/compress/pull/1192
++	* s2: Clamp the Go EncodeBetter skip to match the assembly by @lizthegrey in https://github.com/klauspost/compress/pull/1190
++	* xxhash: Bound input of non-preemptive assembly by @AskAlexSharov in https://github.com/klauspost/compress/pull/1196
++
++* Aug 6th, 2026 [1.19.2](https://github.com/klauspost/compress/releases/tag/v1.19.2)
++	* huff0: Add arm64 assembly for Decompress4X/1X by @lizthegrey in https://github.com/klauspost/compress/pull/1172
++	* zstd: Re-enable unsafe decodeSync memory copies by @lizthegrey in https://github.com/klauspost/compress/pull/1171
++	* zstd: Fix arm64 asm frame offsets placing locals on the saved LR slot by @lizthegrey in https://github.com/klauspost/compress/pull/1176
++	* zstd: Avoid racing MaxDecodedSize write on shared dict litEnc by @zanarellidev in https://github.com/klauspost/compress/pull/1182
++	* zstd: Keep BuildDict recent-offsets positive and loadable by @zanarellidev in https://github.com/klauspost/compress/pull/1184
++	* zstd: Handle zero-literal 
+```
+
+**File**: `vendor/github.com/klauspost/compress/flate/deflate.go` (modified, +31/-5)
+```diff
+@@ -95,6 +95,11 @@ type advancedState struct {
+ 	index     int
+ 	hashMatch [maxMatchLength + minMatchLength]uint32
+ 
++	// litBits[i] is the number of bits needed to encode window[index:i]
++	// as literals, where index is the window index at the start of the
++	// current deflateLazy call. Only allocated when d.chain > 100 (level 9).
++	litBits []int32
++
+ 	// Input hash chains
+ 	// hashHead[hashValue] contains the largest inputIndex with the specified hash value
+ 	// If hashHead[hashValue] is within the current window, then
+@@ -260,6 +265,7 @@ func (d *compressor) fillWindow(b []byte) {
  	}
-+	if buf.Len() > corev1.MaxSecretSize {
-+		return nil, fmt.Errorf("package %q compressed deployment metadata is %d bytes, exceeding Kubernetes' %d-byte Secret data limit; reduce the package definition size or deployment overrides", depPkg.Name, buf.Len(), corev1.MaxSecretSize)
-+	}
- 	return buf.Bytes(), nil
+ 	// Update window information.
+ 	d.windowEnd += n
++	d.blockStart = d.windowEnd
+ 	s.index = n
  }
  
-```
-
-**File**: `src/pkg/cluster/zarf_test.go` (modified, +41/-0)
-```diff
-@@ -8,14 +8,18 @@ import (
- 	"bytes"
- 	"compress/gzip"
- 	"context"
-+	"encoding/base64"
- 	"encoding/json"
- 	"io"
- 	"log/slog"
-+	"math/rand/v2"
-+	"strings"
- 	"testing"
- 	"time"
+@@ -283,7 +289,9 @@ func (d *compressor) findMatch(pos int, prevHead int, lookahead int) (length, of
+ 	minIndex := max(pos-windowSize, 0)
+ 	offset = 0
  
- 	"github.com/stretchr/testify/require"
- 	corev1 "k8s.io/api/core/v1"
-+	kerrors "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/client-go/kubernetes/fake"
+-	if d.chain < 100 {
++	// The gain estimate below needs the tables that deflateLazy only
++	// generates when d.chain > 100, so the conditions must match.
++	if d.chain <= 100 {
+ 		for i := prevHead; tries > 0; tries-- {
+ 			if wEnd == win[i+length] {
+ 				n := matchLen(win[i:i+minMatchLook], wPos)
+@@ -311,21 +319,25 @@ func (d *compressor) findMatch(pos int, prevHead int, lookahead int) (length, of
+ 	}
  
-@@ -25,8 +29,45 @@ import (
- 	"github.com/zarf-dev/zarf/src/api/v1beta1"
- 	"github.com/zarf-dev/zarf/src/pkg/logger"
- 	"github.com/zarf-dev/zarf/src/pkg/state"
-+	"github.com/zarf-dev/zarf/src/pkg/value"
- )
+ 	// Minimum gain to accept a match.
+-	cGain := 4
++	cGain := int32(4)
  
-+func TestUpdateDeployedPackageSecretSize(t *testing.T) {
-+	t.Parallel()
-+	rng := rand.New(rand.NewPCG(1, 2))
-+	data := make([]byte, 1_100_000)
-+	for i := range data {
-+		data[i] = byte(rng.Uint32())
-+	}
-+	for _, tt := range []struct {
-+		name      string
-+		input     string
-+		wantError bool
-+	}{
-+		{name: "large compressible values", input: strings.Repeat("a", 2_000_000)},
-+		{name: "compressed values over limit", input: base64.StdEncoding.EncodeToString(data), wantError: true},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctx := t.Context()
-+			c := &Cluster{Clientset: fake.NewClientset()}
-+			deployed := state.DeployedPackage{Name: "secret-size"}
-+			deployed.SetDeployConfig(state.DeployConfig{Values: value.Values{"input": tt.input}})
-+			err := c.StoreDeployedPackage(ctx, deployed)
-+			if tt.wantError {
-+				require.ErrorContains(t, err, "1048576-byte Secret data limit")
-+				_, err = c.GetDeployedPackage(ctx, deployed.Name)
-+				require.True(t, kerrors.IsNotFound(err), "oversized state must not be written")
-+				return
-+			}
-+			require.NoError(t, err)
-+			loaded, err := c.GetDeployedPackage(ctx, deployed.Name)
-+			require.NoError(t, err)
-+			require.Equal(t, deployed, *loaded)
-+		})
-+	}
-+}
+ 	// Some like it higher (CSV), some like it lower (JSON)
+ 	const baseCost = 3
+ 	// Base is 4 bytes at with an additional cost.
+ 	// Matches must be better than this.
+ 
++	s := d.state
++	hashPrev := &s.hashPrev
++	hashOffset := s.hashOffset
++	litBits := s.litBits[pos : pos+minMatchLook+1]
 +
- func TestGetDeployedPackageWarnsOnUnrecognizedAPIVersion(t *testing.T) {
- 	t.Parallel()
+ 	for i := prevHead; tries > 0; tries-- {
+ 		if wEnd == win[i+length] {
+ 			n := matchLen(win[i:i+minMatchLook], wPos)
+ 			if n > length {
+ 				// Calculate gain. Estimate
+-				newGain := d.h.bitLengthRaw(wPos[:n]) - int(offsetExtraBits[offsetCode(uint32(pos-i))]) - baseCost - int(lengthExtraBits[lengthCodes[(n-3)&255]])
++				newGain := litBits[n] - litBits[0] - int32(offsetExtraBits[offsetCode(uint32(pos-i))]) - baseCost - int32(lengthExtraBits[lengthCodes[(n-3)&255]])
  
+-				//fmt.Println("gain:", newGain, "prev:", cGain, "raw:", d.h.bitLengthRaw(wPos[:n]), "this-len:", n, "prev-len:", length)
+ 				if newGain > cGain {
+ 					length = n
+ 					offset = pos - i
+@@ -343,7 +355,7 @@ func (d *compressor) findMatch(pos int, prevHead int, lookahead int) (length, of
+ 			// hashPrev[i & windowMask] has already been overwritten, so stop now.
+ 			break
+ 		}
+-		i = int(d.state.hashPrev[i&windowMask]) - d.state.hashOffset
++		i = int(hashPrev[i&windowMask]) - hashOffset
+ 		if i < minIndex {
+ 			break
+ 		}
+@@ -427,6 +439,20 @@ func (d *compressor) deflateLazy() {
+ 			tmp[v]++
+ 		}
+ 		d.h.generate(tmp[:], 15)
++
++		// Compute the cumulative cost of encoding the window as literals,
++		// so findMatch can look up the cost of any range in constant time.
++		if s.litBits == nil {
++			s.litBits = make([]int32, 2*windowSize+1)
++		}
++		codes := d.h.codes[:256]
++		litBits := s.litBits[s.index : d.windowEnd+1]
++		total := int32(0)
++		litBits[0] = 0
++		for i, v := range d.window[s.index:d.windowEnd] {
++			total += int32(codes[v].len())
++			litBits[i+1] = total
++		}
+ 	}
+ 
+ 	s.maxInsertIndex = d.windowEnd - (minMatchLength - 1)
 ```
 
-**File**: `src/pkg/packager/create.go` (modified, +8/-17)
+**File**: `vendor/github.com/klauspost/compress/flate/fast_encoder.go` (modified, +2/-1)
 ```diff
-@@ -5,14 +5,14 @@ package packager
- 
- import (
- 	"context"
--	"encoding/json"
- 	"errors"
+@@ -9,6 +9,7 @@ import (
  	"fmt"
- 	"path/filepath"
  
- 	"github.com/zarf-dev/zarf/src/api"
- 	"github.com/zarf-dev/zarf/src/api/v1beta1"
- 	"github.com/zarf-dev/zarf/src/config"
-+	"github.com/zarf-dev/zarf/src/pkg/cluster"
- 	"github.com/zarf-dev/zarf/src/pkg/feature"
- 	"github.com/zarf-dev/zarf/src/pkg/helpers"
- 	"github.com/zarf-dev/zarf/src/pkg/images"
-@@ -28,9 +28,6 @@ import (
- 	"github.com/zarf-dev/zarf/src/types"
+ 	"github.com/klauspost/compress/internal/le"
++	"github.com/klauspost/compress/internal/regmask"
  )
  
--// Leave headroom below Kubernetes' 1 MiB Secret limit for deployment metadata.
--const packageSecretSizeLimit = 1_000_000
+ type fastEnc interface {
+@@ -108,7 +109,7 @@ type tableEntryPrev struct {
+ // hash7 returns the hash of the lowest 7 bytes of u to fit in a hash table with h bits.
+ // Preferably h should be a constant and should always be <64.
+ func hash7(u uint64, h uint8) uint32 {
+-	return uint32(((u << (64 - 56)) * prime7bytes) >> ((64 - h) & reg8SizeMask64))
++	return uint32(((u << (64 - 56)) * prime7bytes) >> ((64 - h) & regmask.Shift64ByUint8))
+ }
+ 
+ // hashLen returns a hash of the lowest mls bytes of with length output bits.
+```
+
+**File**: `vendor/github.com/klauspost/compress/flate/huffman_bit_writer.go` (modified, +95/-129)
+```diff
+@@ -32,14 +32,12 @@ const (
+ 
+ 	// bufferFlushSize indicates the buffer size
+ 	// after which bytes are flushed to the writer.
+-	// Should preferably be a multiple of 6, since
+-	// we accumulate 6 bytes between writes to the buffer.
++	// Between checks, at most 7 bytes are added to the buffer,
++	// and writes are done as unconditional 8-byte stores, so the
++	// buffer must have at least bufferFlushSize+7+8 bytes.
+ 	bufferFlushSize = 246
+ )
+ 
+-// Minimum length code that emits bits.
+-const lengthExtraBitsMinCode = 8
 -
- // CreateOptions are the optional parameters to create.
- type CreateOptions struct {
- 	// Architecture overrides package metadata. Empty falls back to metadata, then the host.
-@@ -132,7 +129,7 @@ func Create(ctx context.Context, packagePath string, output string, opts CreateO
- 	defer func() {
- 		err = errors.Join(err, pkgLayout.Cleanup())
- 	}()
--	if err := validatePackageSecretSize(pkgLayout.Definition(), pkgLayout.Digest()); err != nil {
-+	if err := validatePackageSecretSize(pkgLayout.Definition(), pkgLayout.Digest(), state.DeployConfig{}); err != nil {
- 		return "", err
- 	}
- 
-@@ -182,9 +179,9 @@ func Create(ctx context.Context, packagePath string, output string, opts CreateO
- 	return packageLocation, nil
+ // The number of extra bits needed by length code X - LENGTH_CODES_START.
+ var lengthExtraBits = [32]uint8{
+ 	/* 257 */ 0, 0, 0,
+@@ -55,9 +53,6 @@ var lengthBase = [32]uint8{
+ 	64, 80, 96, 112, 128, 160, 192, 224, 255,
  }
  
--// Check the persisted definition, including compatibility copies and component status,
--// before writing a created package.
--func validatePackageSecretSize(pkg api.Package, digest string) error {
-+// Check the compressed deployment record, including compatibility copies, component
-+// status, and saved overrides, before creating or deploying a package.
-+func validatePackageSecretSize(pkg api.Package, digest string, deployConfig state.DeployConfig) error {
- 	components := make([]state.DeployedComponent, 0, len(pkg.Components))
- 	for _, component := range pkg.Components {
- 		components = append(components, state.DeployedComponent{
-@@ -193,16 +190,10 @@ func validatePackageSecretSize(pkg api.Package, digest string) error {
- 			ObservedGeneration: 1,
- 		})
- 	}
--	deployed, err := state.NewDeployedPackage(pkg, digest, config.CLIVersion, components, 1)
-+	deployed, err := state.NewDeployedPackage(pkg, digest, config.CLIVersion, components, 1, state.WithPackageNamespaceOverride(deployConfig.NamespaceOverride))
- 	if err != nil {
- 		return err
- 	}
--	data, err := json.Marshal(deployed)
--	if err != nil {
--		return err
--	}
--	if len(data) > packageSecretSizeLimit {
--		return fmt.Errorf("package %q cannot be created: its deployment metadata is %d bytes, exceeding Zarf's %d-byte limit for Kubernetes Secret storage; reduce the package definition size", pkg.Metadata.Name, len(data), packageSecretSizeLimit)
--	}
--	return nil
-+	deployed.SetDeployConfig(deployConfig)
-+	return cluster.ValidateDeployedPackageSecretSize(*deployed)
+-// Minimum offset code that emits bits.
+-const offsetExtraBitsMinCode = 4
+-
+ // offset code word extra bits.
+ var offsetExtraBits = [32]int8{
+ 	0, 0, 0, 0, 1, 1, 2, 2, 3, 3,
+@@ -67,8 +62,24 @@ var offsetExtraBits = [32]int8{
+ 	14, 14,
  }
-```
-
-**File**: `src/pkg/packager/create_test.go` (modified, +29/-9)
-```diff
-@@ -4,7 +4,9 @@
- package packager
  
- import (
-+	"encoding/base64"
- 	"fmt"
-+	"math/rand/v2"
- 	"os"
- 	"path/filepath"
- 	"runtime"
-@@ -20,22 +22,36 @@ import (
- 	"github.com/zarf-dev/zarf/src/test/testutil"
- )
++// offsetCombined combines the number of extra bits and the base offset
++// of each offset code in a single table: extra bits in the low 8 bits,
++// and the base offset (already reduced by baseMatchOffset) in the upper bits.
++// Entries for the extended window codes 30 and 31 are unused.
+ var offsetCombined = [32]uint32{}
  
-+// Use deterministic high-entropy text to exercise compressed Secret limits.
-+func deploymentStateText(size int) string {
-+	rng := rand.New(rand.NewPCG(1, 2))
-+	data := make([]byte, size)
-+	for i := range data {
-+		data[i] = byte(rng.Uint32())
++// lengthCombined combines, for each match length (reduced by
++// baseMatchLength), the length code (relative to lengthCodesStart) in
++// bits 0-4, the number of extra bits in bits 5-7 and the value of the
++// extra bits in bits 8-12.
++var lengthCombined = func() (t [256]uint32) {
++	for i := range t {
++		code := lengthCodes[i]
++		t[i] = uint32(code) | uint32(lengthExtraBits[code])<<5 | uint32(uint8(i)-lengthBase[code])<<8
 +	}
-+	return base64.StdEncoding.EncodeToString(data)
-+}
++	return t
++}()
 +
- func TestPackageCreateSecretSize(t *testing.T) {
- 	t.Parallel()
-+	large := deploymentStateText(1_100_000)
-+	medium := deploymentStateText(600_000)
- 	for _, tt := range []struct {
- 		name        string
- 		apiVersion  string
- 		description string
-+		values      string
- 		wantError   bool
- 	}{
--		{name: "implicit-alpha-over-limit", description: strings.Repeat("a", 1_000_000), wantError: true},
--		{name: "alpha-below-limit", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("a", 900_000)},
--		{name: "alpha-over-limit", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("a", 1_000_000), wantError: true},
--		// Ampersands exercise JSON escaping and remain quoted when the definition is written as YAML.
--		{name: "alpha-json-escaping-exceeds-limit", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("&", 180_000), wantError: true},
--		{name: "beta-below-limit", apiVersion: v1beta1.APIVersion, description: strings.Repeat("a", 450_000)},
--		// The beta definition fits alone, but its alpha compatibility copy pushes the secret over the limit.
--		{name: "beta-compatibility-copy-exceeds-limit", apiVersion: v1beta1.APIVersion, description: strings.Repeat("a", 600_000), wantError: true},
-+		{name: "implicit-alpha-compressed-over-limit", description: large, wantError: true},
-+		{name: "alpha-compressed-below-limit", apiVersion: v1alpha1.APIVersion, description: medium},
-+		{name: "alpha-large-compressible-definition", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("a", 2_000_000)},
-+		{name: "alpha-compressed-over-limit", apiVersion: v1alpha1.APIVersion, description: large, wantError: true},
-+		{name: "alpha-compressible-json-escaping", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("&", 180_000)},
-+		{name: "beta-large-compressible-definition", apiVersion: v1beta1.APIVersion, description: strings.Repeat("a", 2_000_000)},
-+		// The beta definition fits alone, but its alpha compatibility copy pushes the compressed Secret over the limit.
-+		{name: "beta-compatibility-copy-exceeds-limit", apiVersion: v1beta1.APIVersion, description: medium, wantError: true},
-+		{name: "package-default-values-are-not-saved", apiVersion: v1beta1.APIVersion, values: large},
- 	} {
- 		t.Run(tt.name, func(t *testing.T) {
- 			t.Parallel()
-@@ -52,13 +68,17 @@ components:
- 			if tt.apiVersion != "" {
- 				definition = "apiVersion: " + tt.apiVersion + "\n" + definition
- 			}
-+			if tt.values != "" {
-+				definition += "values:\n  files:\n    - values.yaml\n"
-+				require.NoError(t, os.WriteFile(filepath.Join(packageDir, "values.yaml"), []byte("input: "+tt.values+"\n"), 0o600))
-+			}
- 			require.NoError(t, os.WriteFile(filepath.Join(packageDir, layout.ZarfYAML), []byte(definition), 0o600))
- 			packagePath, err := Create(ctx, packageDir, outputDir, CreateOptions{
- 				CachePath: t.TempDir(),
- 				SkipSBOM:  true,
- 			})
- 			if tt.wantError {
--				require.ErrorContains(t, err, "1000000-byte limit")
-+				require.ErrorContains(t, err, "1048576-byte Secret data limit")
- 				require.Empty(t, packagePath)
- 				entries, err := os.ReadDir(outputDir)
- 				require.NoError(t, err)
-```
-
-**File**: `src/pkg/packager/deploy.go` (modified, +24/-24)
-```diff
-@@ -117,6 +117,18 @@ func (opts DeployOptions) Validate(pkg api.Package) error {
- 	return nil
- }
+ func init() {
+ 	var offsetBase = [32]uint32{
+ 		/* normal deflate */
+@@ -85,7 +96,7 @@ func init() {
  
-+func (opts DeployOptions) deployConfig(pkg api.Package) state.DeployConfig {
-+	selectors, _ := pkg.ComponentSelectors()
-+	return state.DeployConfig{
-+		SetVariables:       opts.SetVariables,
-+		Values:             opts.Values,
-+		NamespaceOverride:  opts.NamespaceOverride,
-+		ValuesOverridesMap: opts.ValuesOverridesMap,
-+		ComponentSelectors: selectors,
-+		Connectivity:       opts.Connectivity,
-+	}
-+}
+ 	for i := range offsetCombined[:] {
+ 		// Don't use extended window values...
+-		if offsetExtraBits[i] == 0 || offsetBase[i] > 0x006000 {
++		if offsetBase[i] > 0x006000 {
+ 			continue
+ 		}
+ 		offsetCombined[i] = uint32(offsetExtraBits[i]) | (offsetBase[i] << 8)
+@@ -115,10 +126,14 @@ type huffmanBitWriter struct {
+ 	lastHeader      int
+ 	// Set between 0 (reused block can be up to 2x the size)
+ 	logNewTablePenalty uint
+-	bytes              [256 + 8]byte
+-	literalFreq        [lengthCodesStart + 32]uint16
+-	offsetFreq         [32]uint16
+-	codegenFreq        [codegenCodeCount]uint16
 +
- // deployer tracks mutable fields across deployments. Because components can create a cluster and create state
- // any of these fields are subject to change from one component to the next
- type deployer struct {
-@@ -148,6 +160,9 @@ func Deploy(ctx context.Context, pkgLayout *layout.PackageLayout, opts DeployOpt
- 	if err := opts.Validate(pkg); err != nil {
- 		return DeployResult{}, err
- 	}
-+	if err := validatePackageSecretSize(pkg, pkgLayout.Digest(), opts.deployConfig(pkg)); err != nil {
-+		return DeployResult{}, err
-+	}
++	// bytes must hold at least bufferFlushSize+7+8 bytes (see bufferFlushSize).
++	// Its size is rounded up to a multiple of 8 to keep the following
++	// fields aligned, which is measurably faster in writeBlockHuff.
++	bytes       [(bufferFlushSize + 7 + 8 + 7) &^ 7]byte
++	literalFreq [lengthCodesStart + 32]uint16
++	offsetFreq  [32]uint16
++	codegenFreq [codegenCodeCount]uint16
  
- 	// Validate operational requirements before proceeding
- 	if !opts.SkipVersionCheck {
-@@ -297,15 +312,7 @@ func (d *deployer) startDeploymentState(ctx context.Context, pkgLayout *layout.P
- 	deployedPkg.CLIVersion = config.CLIVersion
- 	deployedPkg.NamespaceOverride = opts.NamespaceOverride
+ 	// codegen must have an extra space for the final symbol.
+ 	codegen [literalCount + offsetCodeCount + 1]uint8
+@@ -842,124 +857,75 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
+ 	lengths := leCodes[lengthCodesStart:]
+ 	lengths = lengths[:32]
  
--	selectors, _ := pkg.ComponentSelectors()
--	d.deployConfig = state.DeployConfig{
--		SetVariables:       opts.SetVariables,
--		Values:             opts.Values,
--		NamespaceOverride:  opts.NamespaceOverride,
--		ValuesOverridesMap: opts.ValuesOverridesMap,
--		ComponentSelectors: selectors,
--		Connectivity:       opts.Connectivity,
--	}
-+	d.deployConfig = opts.deployConfig(pkg)
- 	d.configDigest, err = d.deployConfig.Digest()
- 	if err != nil {
- 		return fmt.Errorf("digest deploy config: %w", err)
-@@ -433,7 +440,7 @@ func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.Packa
- 			}
- 		}
- 		if err := d.persistDeploymentState(ctx, deployedComponents); err != nil {
--			l.Error("unable to record package deployment", "component", component.Name, "error", err.Error())
-+			return nil, err
- 		}
- 		if pkg.IsInitConfig() {
- 			charts, deployErr = d.deployInitComponent(ctx, pkgLayout, component, opts)
-@@ -469,7 +476,7 @@ func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.Packa
- 		}
+-	// Go 1.16 LOVES having these on stack.
++	// Keeping these on the stack instead of in w is significantly faster.
+ 	bits, nbits, nbytes := w.bits, w.nbits, w.nbytes
  
- 		if deployErr != nil {
--			cleanup := func(ctx context.Context) {
-+			cleanup := func(ctx context.Context) error {
- 				onFailure()
- 				l.Debug("component deployment failed", "component", component.Name, "error", deployErr.Error())
- 				deployedComponents[idx].Status = state.ComponentStatusFailed //nolint:staticcheck // Legacy status remains persisted for compatibility.
-@@ -478,18 +485,14 @@ func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.Packa
- 				if d.deployedPkg != nil {
- 					d.deployedPkg.AppendEvent(d.deployPackageEvent(pkgLayout, opts, state.EventOutcomeFailed))
- 				}
--				if err := d.persistDeploymentState(ctx, deployedComponents); err != nil {
--					l.Error("unable to record package deployment", "component", component.Name, "error", err.Error())
+-	for _, t := range tokens {
+-		if t < 256 {
+-			//w.writeCode(lits[t.literal()])
+-			c := lits[t]
+-			bits |= c.code64() << (nbits & 63)
+-			nbits += c.len()
+-			if nbits >= 48 {
+-				le.Store64(w.bytes[:], nbytes, bits)
+-				bits >>= 48
+-				nbits -= 48
+-				nbytes += 6
+-				if nbytes >= bufferFlushSize {
+-					if w.err != nil {
+-						nbytes = 0
+-						return
+-					}
+-					_, w.err = w.writer.Write(w.bytes[:nbytes])
+-					nbytes = 0
 -				}
-+				return d.persistDeploymentState(ctx, deployedComponents)
- 			}
- 			select {
- 			case <-ctx.Done():
- 				// Use background context here in order to ensure the cleanup logic can run when the context is cancelled.
--				cleanup(context.Background())
--				return nil, fmt.Errorf("context cancelled while deploying component %q: %w", component.Name, deployErr)
-+				return nil, fmt.Errorf("context cancelled while deploying component %q: %w", component.Name, errors.Join(deployErr, cleanup(context.Background())))
- 			default:
--				cleanup(ctx)
--				return nil, fmt.Errorf("unable to deploy component %q: %w", component.Name, deployErr)
-+				return nil, fmt.Errorf("unable to deploy component %q: %w", component.Name, errors.Join(deployErr, cleanup(ctx)))
- 			}
+-			}
+-			continue
++	// Flush whole bytes, so that nbits <= 7 when entering the loop below.
++	le.Store64(w.bytes[:], nbytes, bits)
++	nbytes += nbits >> 3
++	bits >>= nbits & 56
++	nbits &= 7
++	if nbytes >= bufferFlushSize {
++		_, w.err = w.writer.Write(w.bytes[:nbytes])
++		nbytes = 0
++		if w.err != nil {
++			return
  		}
- 
-@@ -498,7 +501,7 @@ func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.Packa
- 		deployedComponents[idx].Status = state.ComponentStatusSucceeded //nolint:staticcheck // Legacy status remains persisted for compatibility.
- 		deployedComponents[idx].LastEvent = state.ComponentEvent{Type: state.EventTypeDeploy, Outcome: state.EventOutcomeSucceeded, Timestamp: time.Now()}
- 		if err := d.persistDeploymentState(ctx, deployedComponents); err != nil {
--			l.Error("unable to record package deployment", "component", component.Name, "error", err.Error())
-+			return nil, err
- 		}
- 
- 		// Alpha success hooks observe the saved successful deployment.
-@@ -508,10 +511,7 @@ func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.Packa
- 				if d.deployedPkg != nil {
- 					d.deployedPkg.AppendEvent(d.deployPackageEvent(pkgLayout, opts, state.EventOutcomeFailed))
- 				}
--				if persistErr := d.persistDeploymentState(ctx, deployedComponents); persistErr != nil {
--					l.Error("unable to record package deployment", "component", component
-```
-
-**File**: `src/pkg/packager/deploy_test.go` (modified, +53/-0)
-```diff
-@@ -6,6 +6,7 @@ package packager
- import (
- 	"bytes"
- 	"context"
-+	"fmt"
- 	"net/http"
- 	"net/http/httptest"
- 	"os"
-@@ -42,6 +43,58 @@ import (
- 	"sigs.k8s.io/cli-utils/pkg/kstatus/status"
- )
- 
-+func TestDeploySecretSize(t *testing.T) {
-+	t.Parallel()
-+	large := deploymentStateText(1_100_000)
-+	medium := deploymentStateText(600_000)
-+	for _, tt := range []struct {
-+		name          string
-+		apiVersion    string
-+		description   string
-+		defaultValues value.Values
-+		opts          DeployOptions
-+		wantError     bool
-+	}{
-+		{name: "legacy compressed over limit", description: large, wantError: true},
-+		{name: "alpha compressed over limit", apiVersion: v1alpha1.APIVersion, description: large, wantError: true},
-+		{name: "compressible definition", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("a", 2_000_000)},
-+		{name: "compressible JSON escaping", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("&", 180_000)},
-+		{name: "beta compatibility copy", apiVersion: v1beta1.APIVersion, description: medium, wantError: true},
-+		{name: "values overrides", apiVersion: v1beta1.APIVersion, opts: DeployOptions{Values: value.Values{"input": large}}, wantError: true},
-+		{name: "chart values overrides", opts: DeployOptions{ValuesOverridesMap: ValuesOverrides{"local": {"chart": value.Values{"input": large}}}}, wantError: true},
-+		{name: "variable overrides", opts: DeployOptions{SetVariables: map[string]string{"INPUT": large}}, wantError: true},
-+		{name: "definition and values combined", apiVersion: v1alpha1.APIVersion, description: medium, opts: DeployOptions{Values: value.Values{"input": medium}}, wantError: true},
-+		{name: "compressible values overrides", apiVersion: v1beta1.APIVersion, opts: DeployOptions{Values: value.Values{"input": strings.Repeat("a", 2_000_000)}}},
-+		{name: "package default values are not saved", apiVersion: v1beta1.APIVersion, defaultValues: value.Values{"input": large}},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctx := testutil.TestContext(t)
-+			marker := filepath.Join(t.TempDir(), "deployed")
-+			pkg := api.Package{
-+				APIVersion: tt.apiVersion,
-+				Kind:       api.ZarfPackageConfig,
-+				Metadata:   api.PackageMetadata{Name: "oversized", Description: tt.description},
-+				Components: []api.Component{{Name: "local", Actions: api.ComponentActions{OnDeploy: api.ActionSet{
-+					Before: []api.Action{{Cmd: fmt.Sprintf("touch %q", marker)}},
-+				}}}},
-+			}
-+			pkgLayout, err := assemble.AssemblePackage(ctx, &load.ResolvedPackage{Definition: pkg, Resources: load.NewResourceSet(t.TempDir()), Values: tt.defaultValues}, assemble.AssembleOptions{SkipSBOM: true})
-+			require.NoError(t, err)
-+			t.Cleanup(func() { require.NoError(t, pkgLayout.Cleanup()) })
-+
-+			_, err = Deploy(ctx, pkgLayout, tt.opts)
-+			if tt.wantError {
-+				require.ErrorContains(t, err, "1048576-byte Secret data limit")
-+				require.NoFileExists(t, marker, "size validation must precede even local components")
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.FileExists(t, marker)
-+		})
 +	}
-+}
-+
- func TestDeployLeavesComponentSelectionToCaller(t *testing.T) {
- 	t.Parallel()
  
+-		// Write the length
+-		length := t.length()
+-		lengthCode := lengthCode(length) & 31
+-		if false {
+-			w.writeCode(lengths[lengthCode])
+-		} else {
+-			// inlined
+-			c := lengths[lengthCode]
++	// The loop below flushes whole bytes at the end of every iteration,
++	// so that nbits <= 7 at the top of every iteration.
++	// A literal adds at most 15 bits and a match at most
++	// 15+5+15+13 = 48 bits, so up to three literals or a single match
++	// can be added to the 64-bit accumulator without an intermediate flush.
++	// Unconditionally storing 8 bytes and advancing by the number of
++	// whole bytes avoids a poorly predicted branch per token.
++	for i := 0; i < len(tokens); i++ {
++		t := tokens[i]
++		if t < 256 {
++			c := lits[t]
+ 			bits |= c.code64() << (nbits & 63)
+ 			nbits += c.len()
+-			if nbits >= 48 {
+-				le.Store64(w.bytes[:], nbytes, bits)
+-				bits >>= 48
+-				nbits -= 48
+-				nbytes += 6
+-				if nbytes >= bufferFl
 ```
 
 ---
 
-### Incident Patch 2: `c2423271` (2026-11-07)
-**Commit Message**: feat!: compress Zarf state (#5619)
+### Incident Patch 2: `b0ca5a9e` (2026-11-08)
+**Commit Message**: feat: deprecate v1alpha1 packages (#5623)
 
 Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
-**File**: `Makefile` (modified, +1/-1)
+**File**: `.golangci.yaml` (modified, +5/-0)
 ```diff
-@@ -273,7 +273,7 @@ test-proxy:
- test-upgrade: ## Run the Zarf CLI E2E tests for an external registry and cluster
- 	@test -s $(ZARF_BIN) || $(MAKE)
- 	[ -n "$(shell zarf version)" ] || (echo "Zarf must be installed prior to the upgrade test" && exit 1)
--	[ -n "$(shell zarf package list 2>&1 | grep test-upgrade-package)" ] || (echo "Zarf must be initialized and have the 6.3.3 upgrade-test package installed prior to the upgrade test" && exit 1)
-+	[ -n "$(shell $(ZARF_BIN) package list 2>&1 | grep test-upgrade-package)" ] || (echo "Zarf must be initialized and have the 6.3.3 upgrade-test package installed prior to the upgrade test" && exit 1)
- 	@test -s "zarf-package-test-upgrade-package-amd64-6.3.4.tar.zst" || zarf package create src/test/upgrade/ --set PODINFO_VERSION=6.3.4 --confirm
- 	cd src/test/upgrade && go test -failfast -v -timeout 30m
- 
+@@ -79,6 +79,11 @@ linters:
+     testifylint:
+       enable-all: true
+   exclusions:
++    rules:
++      # Legacy v1alpha1 APIs remain necessary; method-chain diagnostics can span lines.
++      - linters:
++          - staticcheck
++        text: '(?s)SA1019: .* is deprecated: Only supported by deprecated v1alpha1 packages\.'
+     presets:
+       - common-false-positives
+       - legacy
 ```
 
-**File**: `site/src/content/docs/ref/packages.mdx` (modified, +16/-4)
+**File**: `netlify.toml` (modified, +1/-1)
 ```diff
-@@ -77,14 +77,26 @@ A remote tarball is a Zarf package tarball that is hosted on a web server that i
+@@ -4,7 +4,7 @@
+   publish = "dist/"
  
- An OCI package is one that has been published to an OCI compatible registry using `zarf package publish` or the `-o` option on `zarf package create`.  These packages live within a given registry and you can learn more about them in our [Publish & Deploy Packages w/OCI Tutorial](/tutorials/6-publish-and-deploy/).
+ [build.environment]
+-  NODE_VERSION = "22.12.0"
++  NODE_VERSION = "26"
  
--:::note
-+### Deployed Packages
- 
--In addition to the traditional sources outlined above, there is also a special "Cluster" source available on `inspect` and `remove` that allows for referencing a deployed package via its name:
-+{/*TODO probably worth having a published package state schema to link to and a drop down example verified against said schema*/}
- 
--- `zarf package inspect <package name>`
-+When a package is deployed to a cluster, Zarf stores its definition and deployment state in a `zarf-package-*` Secret in the `zarf` namespace. This state is used to list, inspect, update, and remove deployed packages.
-+
-+Deployed packages can be referenced by name as a "Cluster" source for `inspect` and `remove`:
-+
-+- `zarf package inspect definition|digest|images <package name> `
- - `zarf package remove <package name>`
- 
--Additionally, inspecting a package deployed to a cluster will not be able to show the package's SBOMs, as they are not currently persisted to the cluster.
-+Deployed packages are stored as gzip-compressed JSON data in a Kubernetes secret. To inspect it directly:
-+
-+```sh
-+zarf tools kubectl get secret -n zarf zarf-package-<package-name> -o jsonpath='{.data.data}' | base64 -d | gzip -dc
-+```
-+
-+:::caution
-+
-+Pre-v1.0 versions of Zarf only recognized uncompressed state and will fail to read deployment state written by v1.0+ CLIs.
- 
- :::
- 
+ [[redirects]]
+ from = "/docs/the-zarf-cli/cli-commands/*"
 ```
 
-**File**: `src/pkg/cluster/zarf.go` (modified, +65/-20)
+**File**: `src/api/convert/convert.go` (modified, +8/-0)
 ```diff
-@@ -5,10 +5,13 @@
- package cluster
- 
- import (
-+	"bytes"
-+	"compress/gzip"
- 	"context"
- 	"encoding/json"
- 	"errors"
- 	"fmt"
-+	"io"
- 	"slices"
- 	"sort"
- 	"strings"
-@@ -26,6 +29,8 @@ import (
- 	"github.com/zarf-dev/zarf/src/pkg/state"
+@@ -13,6 +13,8 @@ import (
  )
  
-+const packageCompressionFormatAnnotation = "zarf.dev/compression-format"
+ // PackageFromV1alpha1 converts a v1alpha1 wire package to the normalized model.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func PackageFromV1alpha1(pkg v1alpha1.ZarfPackage) api.Package {
+ 	return internalv1alpha1.PackageFromV1alpha1(pkg)
+ }
+@@ -23,6 +25,8 @@ func PackageFromV1beta1(pkg v1beta1.Package) api.Package {
+ }
+ 
+ // PackageToV1alpha1 converts the normalized model to the v1alpha1 wire package.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func PackageToV1alpha1(pkg api.Package) v1alpha1.ZarfPackage {
+ 	return internalv1alpha1.PackageToV1alpha1(pkg)
+ }
+@@ -33,11 +37,15 @@ func PackageToV1beta1(pkg api.Package) v1beta1.Package {
+ }
+ 
+ // PackageV1alpha1ToV1beta1 converts a v1alpha1 wire package to v1beta1.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func PackageV1alpha1ToV1beta1(pkg v1alpha1.ZarfPackage) v1beta1.Package {
+ 	return PackageToV1beta1(PackageFromV1alpha1(pkg))
+ }
+ 
+ // PackageV1beta1ToV1alpha1 converts a v1beta1 wire package to v1alpha1.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func PackageV1beta1ToV1alpha1(pkg v1beta1.Package) v1alpha1.ZarfPackage {
+ 	return PackageToV1alpha1(PackageFromV1beta1(pkg))
+ }
+```
+
+**File**: `src/api/package.go` (modified, +46/-24)
+```diff
+@@ -20,8 +20,9 @@ type Package struct {
+ 	Values      Values
+ 	Attachments map[string]string
+ 
+-	// v1alpha1-only fields
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	Variables []InteractiveVariable
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	Constants []Constant
+ 
+ 	// Runtime selection provenance is not part of either package wire schema.
+@@ -60,14 +61,20 @@ type PackageMetadata struct {
+ 	Annotations              map[string]string
+ 	PreventNamespaceOverride bool
+ 
+-	// v1alpha1-only metadata fields.
+-	URL           string
+-	Image         string
+-	YOLO          bool
+-	Authors       string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	URL string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	Image string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	YOLO bool
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	Authors string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	Documentation string
+-	Source        string
+-	Vendor        string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	Source string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	Vendor string
+ }
+ 
+ // BuildData contains build metadata shared across package API versions.
+@@ -87,7 +94,7 @@ type BuildData struct {
+ 	ProvenanceFiles     []string
+ 	AggregateChecksum   string
+ 
+-	// v1alpha1-only build fields.
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	DifferentialMissing []string
+ }
+ 
+@@ -127,11 +134,16 @@ type Component struct {
+ 	StateAccess   []StateAccessKey
+ 	Actions       ComponentActions
+ 
+-	Default        bool
+-	Group          string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	Default bool
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	Group string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	DataInjections []ZarfDataInjection
+-	HealthChecks   []NamespacedObjectKindReference
+-	Distros        []string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	HealthChecks []NamespacedObjectKindReference
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
++	Distros []string
+ }
+ 
+ // Service identifies a Zarf-managed cluster service provided by a component.
+@@ -170,6 +182,8 @@ type ComponentImport struct {
+ 
+ 	// Name identifies a v1alpha1 imported component. Path and URL are projected onto
+ 	// Local and Remote by the v1alpha1 converter.
++	//
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	Name string
+ }
+ 
+@@ -230,6 +244,8 @@ type Chart struct {
+ 	Name string
+ 	// LegacyVersion is kept for existing v1alpha1 packages so that we can track the chart's archive and values files.
+ 	// The version of the chart is separately tracked in OCI source, HelmRepository, or GitSource
++	//
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	LegacyVersion        string
+ 	Namespace            string
+ 	ReleaseName          string
+@@ -245,6 +261,8 @@ type Chart struct {
+ 	OCI            *OCISource
+ 
+ 	// Variables are required to run v1alpha1 chart actions.
++	//
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	Variables []ZarfChartVariable
+ }
+ 
+@@ -306,7 +324,8 @@ type Repository struct {
+ 	// LegacyURL retains the original v1alpha1 URL, including an inline ref, so
+ 	// repositories retain the directory names used by existing package layouts
+ 	// For instance, GitRef can't express ref/tags/v1.0 vs only v1.0
+-	// Will be deleted with v1alpha1 is no longer support
++	//
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	LegacyURL string
+ }
+ 
+@@ -423,8 +442,9 @@ type ComponentActions struct {
+ 
+ // ActionSet contains actions for one package lifecycle operation.
+ type ActionSet struct {
+-	Defaults  ActionDefaults
+-	Before    []Action
++	Defaults ActionDefaults
++	Before   []Action
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	After     []Action
+ 	OnSuccess []Action
+ 	OnFailure []Action
+@@ -442,13 +462,14 @@ type ActionDefaults struct {
+ 
+ // Action is a command or wait operation performed during a package lifecycle operation.
+ type Action struct {
+-	Silent           *bool
+-	MaxTotalSeconds  *int
+-	Retries          *int
+-	Dir              *string
+-	Env              []string
+-	Cmd              string
+-	Shell            *Shell
++	Silent          *bool
++	MaxTotalSeconds *int
++	Retries         *int
++	Dir             *string
++	Env             []string
++	Cmd             string
++	Shell           *Shell
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	SetVariables     []Variable
+ 	SetValues        []SetValue
+ 	Description      string
+@@ -458,7 +479,8 @@ type Action struct {
+ 
+ // SetValue declares how command output is stored in the package values map.
+ type SetValue struct {
+-	Key   string
++	Key string
++	// Deprecated: Only supported by deprecated v1alpha1 packages.
+ 	Value any
+ 	Type  S
+```
+
+**File**: `src/api/v1alpha1/component.go` (modified, +20/-0)
+```diff
+@@ -95,6 +95,8 @@ type NamespacedObjectKindReference struct {
+ }
+ 
+ // RequiresCluster returns if the component requires a cluster connection to deploy.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (c ZarfComponent) RequiresCluster() bool {
+ 	hasImages := len(c.Images) > 0
+ 	hasImageArchives := len(c.ImageArchives) > 0
+@@ -112,6 +114,8 @@ func (c ZarfComponent) RequiresCluster() bool {
+ }
+ 
+ // IsRequired returns if the component is required or not.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (c ZarfComponent) IsRequired() bool {
+ 	if c.Required != nil {
+ 		return *c.Required
+@@ -121,6 +125,8 @@ func (c ZarfComponent) IsRequired() bool {
+ }
+ 
+ // GetImages returns all images specified in the component, including those from ImageArchives.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (c ZarfComponent) GetImages() []string {
+ 	images := []string{}
+ 
+@@ -142,6 +148,8 @@ var supportedOS = []string{"linux", "darwin", "windows", ""}
+ // The supported operating systems are: linux, darwin, windows.
+ //
+ // An empty string signifies no OS restrictions.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func SupportedOS() []string {
+ 	return supportedOS
+ }
+@@ -185,6 +193,8 @@ type ZarfFile struct {
+ }
+ 
+ // IsTemplate returns if the ZarfFile should be templated or not.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (f ZarfFile) IsTemplate() bool {
+ 	if f.Template != nil {
+ 		return *f.Template
+@@ -234,6 +244,8 @@ type ZarfChart struct {
+ }
+ 
+ // ShouldRunSchemaValidation returns if Helm schema validation should be run or not
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (zc ZarfChart) ShouldRunSchemaValidation() bool {
+ 	if zc.SchemaValidation != nil {
+ 		return *zc.SchemaValidation
+@@ -242,6 +254,8 @@ func (zc ZarfChart) ShouldRunSchemaValidation() bool {
+ }
+ 
+ // GetServerSideApply returns server side apply with default of "auto" if it is not set
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (zc ZarfChart) GetServerSideApply() string {
+ 	if zc.ServerSideApply == "" {
+ 		return "auto"
+@@ -299,6 +313,8 @@ type ZarfManifest struct {
+ }
+ 
+ // GetServerSideApply returns server side apply with default of "auto" if it is not set
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (m ZarfManifest) GetServerSideApply() string {
+ 	if m.ServerSideApply == "" {
+ 		return "auto"
+@@ -307,6 +323,8 @@ func (m ZarfManifest) GetServerSideApply() string {
+ }
+ 
+ // IsTemplate returns if the ZarfFile should be templated.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (m ZarfManifest) IsTemplate() bool {
+ 	if m.Template != nil {
+ 		return *m.Template
+@@ -403,6 +421,8 @@ type ZarfComponentAction struct {
+ }
+ 
+ // ShouldTemplate returns if the action cmd should be templated or not.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (a ZarfComponentAction) ShouldTemplate() bool {
+ 	if a.Template != nil {
+ 		return *a.Template
+```
+
+**File**: `src/api/v1alpha1/package.go` (modified, +14/-0)
+```diff
+@@ -2,6 +2,8 @@
+ // SPDX-FileCopyrightText: 2021-Present The Zarf Authors
+ 
+ // Package v1alpha1 holds the definition of the v1alpha1 Zarf Package
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ package v1alpha1
+ 
+ import (
+@@ -71,11 +73,15 @@ type ZarfPackage struct {
+ }
+ 
+ // IsInitConfig returns whether a Zarf package is an init config.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (pkg ZarfPackage) IsInitConfig() bool {
+ 	return pkg.Kind == ZarfInitConfig
+ }
+ 
+ // GetComponent returns the component with the given name, or an error if no such component exists.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (pkg ZarfPackage) GetComponent(name string) (ZarfComponent, error) {
+ 	for _, component := range pkg.Components {
+ 		if component.Name == name {
+@@ -86,6 +92,8 @@ func (pkg ZarfPackage) GetComponent(name string) (ZarfComponent, error) {
+ }
+ 
+ // HasImages returns true if one of the components contains an image.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (pkg ZarfPackage) HasImages() bool {
+ 	for _, component := range pkg.Components {
+ 		if len(component.Images) > 0 || len(component.ImageArchives) > 0 {
+@@ -96,6 +104,8 @@ func (pkg ZarfPackage) HasImages() bool {
+ }
+ 
+ // IsSBOMAble checks if a package has contents that an SBOM can be created on (i.e. images, files, or data injections).
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (pkg ZarfPackage) IsSBOMAble() bool {
+ 	for _, c := range pkg.Components {
+ 		if len(c.ImageArchives) > 0 || len(c.Images) > 0 || len(c.Files) > 0 || len(c.DataInjections) > 0 {
+@@ -106,6 +116,8 @@ func (pkg ZarfPackage) IsSBOMAble() bool {
+ }
+ 
+ // AllowsNamespaceOverride returns whether the package allows the namespace to be overridden
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (pkg ZarfPackage) AllowsNamespaceOverride() bool {
+ 	if pkg.Metadata.AllowNamespaceOverride != nil {
+ 		return *pkg.Metadata.AllowNamespaceOverride
+@@ -154,6 +166,8 @@ type Constant struct {
+ }
+ 
+ // Validate runs all validation checks on a package constant.
++//
++// Deprecated: Only supported by deprecated v1alpha1 packages.
+ func (c Constant) Validate() error {
+ 	if !regexp.MustCompile(c.Pattern).MatchString(c.Value) {
+ 		return fmt.Errorf("provided value for constant %s does not match pattern %s", c.Name, c.Pattern)
+```
+
+**File**: `src/cmd/dev.go` (modified, +3/-0)
+```diff
+@@ -28,6 +28,7 @@ import (
+ 	"github.com/zarf-dev/zarf/src/api/v1beta1"
+ 	"github.com/zarf-dev/zarf/src/config"
+ 	"github.com/zarf-dev/zarf/src/config/lang"
++	internalv1alpha1 "github.com/zarf-dev/zarf/src/internal/api/v1alpha1"
+ 	"github.com/zarf-dev/zarf/src/internal/checksum"
+ 	"github.com/zarf-dev/zarf/src/pkg/archive"
+ 	"github.com/zarf-dev/zarf/src/pkg/helpers"
+@@ -241,6 +242,8 @@ func (o *devInspectDefinitionOptions) run(cmd *cobra.Command, args []string) err
+ 		return err
+ 	}
+ 
++	internalv1alpha1.WarnIfDeprecated(ctx, definition)
 +
- // GetDeployedZarfPackages gets metadata information about packages that have been deployed to the cluster.
- // We determine what packages have been deployed to the cluster by looking for specific secrets in the Zarf namespace.
- // Returns a list of DeployedPackage structs and a list of errors.
-@@ -45,9 +50,9 @@ func (c *Cluster) GetDeployedZarfPackages(ctx context.Context) ([]state.Deployed
- 		}
- 		var deployedPackage state.DeployedPackage
- 		// Process the k8s secret into our internal structs
--		err := json.Unmarshal(secret.Data["data"], &deployedPackage)
-+		err := decodeDeployedPackage(&secret, &deployedPackage)
+ 	// The definition is printed in the apiVersion it was authored in.
+ 	if definition.APIVersion == v1beta1.APIVersion {
+ 		pkg := convert.PackageToV1beta1(definition)
+```
+
+**File**: `src/cmd/package.go` (modified, +15/-0)
+```diff
+@@ -23,6 +23,7 @@ import (
+ 	"github.com/spf13/cobra"
+ 	"github.com/spf13/pflag"
+ 	"github.com/spf13/viper"
++	internalv1alpha1 "github.com/zarf-dev/zarf/src/internal/api/v1alpha1"
+ 	"github.com/zarf-dev/zarf/src/pkg/helpers"
+ 	"oras.land/oras-go/v2/registry"
+ 
+@@ -774,6 +775,7 @@ func (o *packageMirrorResourcesOptions) run(cmd *cobra.Command, args []string) (
+ 	if err != nil {
+ 		return err
+ 	}
++	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
+ 	defer func() {
+ 		// Cleanup package files
+ 		err = errors.Join(err, pkgLayout.Cleanup())
+@@ -1219,6 +1221,7 @@ func (o *packageInspectSBOMOptions) run(cmd *cobra.Command, args []string) (err
+ 	if err != nil {
+ 		return fmt.Errorf("unable to load the package: %w", err)
+ 	}
++	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
+ 
+ 	defer func() {
+ 		err = errors.Join(err, pkgLayout.Cleanup())
+@@ -1299,6 +1302,7 @@ func (o *packageInspectImagesOptions) run(cmd *cobra.Command, args []string) err
+ 	if err != nil {
+ 		return fmt.Errorf("unable to load the package: %w", err)
+ 	}
++	internalv1alpha1.WarnIfDeprecated(ctx, pkg)
+ 
+ 	images := make([]string, 0)
+ 	for _, component := range pkg.Components {
+@@ -1373,6 +1377,7 @@ func (o *packageInspectDocumentationOptions) run(cmd *cobra.Command, args []stri
+ 	if err != nil {
+ 		return fmt.Errorf("unable to load the package: %w", err)
+ 	}
++	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
+ 	defer func() {
+ 		err = errors.Join(err, pkgLayout.Cleanup())
+ 	}()
+@@ -1438,6 +1443,7 @@ func (o *packageInspectDefinitionOptions) run(cmd *cobra.Command, args []string)
+ 	if err != nil {
+ 		return fmt.Errorf("unable to load the package: %w", err)
+ 	}
++	internalv1alpha1.WarnIfDeprecated(ctx, pkg)
+ 
+ 	displayPackage, err := packageForDisplay(pkg)
+ 	if err != nil {
+@@ -1526,6 +1532,13 @@ func (o *packageListOptions) run(ctx context.Context, args []string) error {
  		if err != nil {
--			errs = append(errs, fmt.Errorf("unable to unmarshal the secret %s/%s", secret.Namespace, secret.Name))
-+			errs = append(errs, fmt.Errorf("unable to decode the secret %s/%s: %w", secret.Namespace, secret.Name, err))
- 			continue
+ 			return err
  		}
- 		warnOnUnrecognizedPackageAPIVersions(ctx, deployedPackage)
-@@ -78,9 +83,9 @@ func (c *Cluster) GetDeployedPackage(ctx context.Context, packageName string, op
- 		return nil, err
- 	}
- 
--	err = json.Unmarshal(secret.Data["data"], deployedPackage)
-+	err = decodeDeployedPackage(secret, deployedPackage)
- 	if err != nil {
--		return nil, err
-+		return nil, fmt.Errorf("unable to decode the secret %s/%s: %w", secret.Namespace, secret.Name, err)
- 	}
- 	warnOnUnrecognizedPackageAPIVersions(ctx, *deployedPackage)
- 	return deployedPackage, nil
-@@ -101,28 +106,68 @@ func warnOnUnrecognizedPackageAPIVersions(ctx context.Context, deployedPackage s
- 	logger.From(ctx).Warn("deployed package contains an API version this version of Zarf does not recognize; operations may use an older converted API version", "package", deployedPackage.Name, "apiVersions", unknown)
- }
- 
--// UpdateDeployedPackage updates the deployed package metadata.
--func (c *Cluster) UpdateDeployedPackage(ctx context.Context, depPkg state.DeployedPackage) error {
--	if err := c.applyDeployedPackage(ctx, depPkg); err != nil {
--		return fmt.Errorf("unable to apply the deployed package secret: %w", err)
--	}
--	return nil
--}
--
--func (c *Cluster) applyDeployedPackage(ctx context.Context, depPkg state.DeployedPackage) error {
--	packageSecretData, err := json.Marshal(depPkg)
-+// StoreDeployedPackage creates or updates the deployed package metadata Secret.
-+func (c *Cluster) StoreDeployedPackage(ctx context.Context, depPkg state.DeployedPackage) error {
-+	packageSecretData, err := encodeDeployedPackage(depPkg)
- 	if err != nil {
--		return err
-+		return fmt.Errorf("unable to apply the deployed package secret: %w", err)
- 	}
- 	packageSecret := v1ac.Secret(depPkg.GetSecretName(), state.ZarfNamespaceName).
- 		WithLabels(map[string]string{
- 			state.ZarfManagedByLabel:   "zarf",
- 			state.ZarfPackageInfoLabel: depPkg.Name,
--		}).WithData(map[string][]byte{
--		"data": packageSecretData,
--	}).WithType(corev1.SecretTypeOpaque)
-+		}).
-+		WithAnnotations(map[string]string{
-+			packageCompressionFormatAnnotation: "gzip",
-+		}).
-+		WithData(map[string][]byte{
-+			"data": packageSecretData,
-+		}).
-+		WithType(corev1.SecretTypeOpaque)
- 	_, err = c.Clientset.CoreV1().Secrets(*packageSecret.Namespace).Apply(ctx, packageSecret, metav1.ApplyOptions{Force: true, FieldManager: FieldManagerName})
--	return err
-+	if err != nil {
-+		return fmt.Errorf("unable to apply the deployed package secret: %w", err)
-+	}
-+	return nil
-+}
-+
-+func encodeDeployedPackage(depPkg state.DeployedPackage) ([]byte, error) {
-+	data, err := json.Marshal(depPkg)
-+	if err != nil {
-+		return nil, err
-+	}
-+	var buf bytes.Buffer
-+	writer, err := gzip.NewWriterLevel(&buf, gzip.BestCompression)
-+	if err != nil {
-+		return nil, err
-+	}
-+	if _, err := writer.Write(data); err != nil {
-+		return nil, errors.Join(err, writer.Close())
-+	}
-+	if err := writer.Close(); err != nil {
-+		return nil, err
-+	}
-+	return buf.Bytes(), nil
-+}
-+
-+func decodeDeployedPackage(secret *corev1.Secret, depPkg *state.DeployedPackage) error {
-+	data := secret.Data["data"]
-+	switch format := secret.Annotations[packageCompressionFormatAnnotation]; format {
-+	case "":
-+		// Packages stored before compression was introduced contain plain JSON.
-+	case "gzip":
-+		reader, err := gzip.NewReader(bytes.NewReader(data))
-+		if err != nil {
-+			return err
++		if pkg.GetAPIVersion() == v1alpha1.APIVersion {
++			attrs := []any{"package", depPkg.Name}
++			if depPkg.NamespaceOverride != "" {
++				attrs = append(attrs, "namespaceOverride", depPkg.NamespaceOverride)
++			}
++			logger.From(ctx).Warn(internalv1alpha1.DeprecationWarning, attrs...)
 +		}
-+		data, err = io.ReadAll(reader)
-+		if err = errors.Join(err, reader.Close()); err != nil {
-+			return err
-+		}
-+	default:
-+		return fmt.Errorf("unsupported deployed package compression format %q", format)
-+	}
-+	return json.Unmarshal(data, depPkg)
- }
- 
- // DeleteDeployedPackage removes the metadata for the deployed package.
-@@ -185,7 +230,7 @@ func (c *Cluster) RecordPackageDeployment(ctx context.Context, pkg api.Package,
- 		return nil, e
-```
-
-**File**: `src/pkg/cluster/zarf_test.go` (modified, +88/-17)
-```diff
-@@ -6,8 +6,10 @@ package cluster
- 
- import (
- 	"bytes"
-+	"compress/gzip"
- 	"context"
- 	"encoding/json"
-+	"io"
- 	"log/slog"
- 	"testing"
- 	"time"
-@@ -105,11 +107,17 @@ func TestRecordPackageDefinitionDeployment(t *testing.T) {
- 
- 	secret, err := c.Clientset.CoreV1().Secrets(state.ZarfNamespaceName).Get(ctx, recorded.GetSecretName(), metav1.GetOptions{})
- 	require.NoError(t, err)
-+	require.Equal(t, "gzip", secret.Annotations["zarf.dev/compression-format"])
-+	reader, err := gzip.NewReader(bytes.NewReader(secret.Data["data"]))
-+	require.NoError(t, err)
-+	secretData, err := io.ReadAll(reader)
-+	require.NoError(t, reader.Close())
-+	require.NoError(t, err)
- 	var serialized struct {
- 		Data        v1alpha1.ZarfPackage       `json:"data"`
- 		PackageData map[string]json.RawMessage `json:"packageData"`
- 	}
--	require.NoError(t, json.Unmarshal(secret.Data["data"], &serialized))
-+	require.NoError(t, json.Unmarshal(secretData, &serialized))
- 	require.Equal(t, convert.PackageToV1alpha1(definition), serialized.Data)
- 	require.Len(t, serialized.PackageData, 1)
- 	require.Contains(t, serialized.PackageData, v1beta1.APIVersion)
-@@ -190,22 +198,27 @@ func TestGetDeployedPackage(t *testing.T) {
- 	}
- 
- 	for _, p := range packages {
--		b, err := json.Marshal(p)
--		require.NoError(t, err)
--		secret := corev1.Secret{
--			ObjectMeta: metav1.ObjectMeta{
--				Name:      p.GetSecretName(),
--				Namespace: "zarf",
--				Labels: map[string]string{
--					state.ZarfPackageInfoLabel: p.Name,
-+		if p.NamespaceOverride != "" {
-+			require.NoError(t, c.StoreDeployedPackage(ctx, p))
-+		} else {
-+			// Existing uncompressed state must remain readable alongside new state.
-+			b, err := json.Marshal(p)
-+			require.NoError(t, err)
-+			secret := corev1.Secret{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      p.GetSecretName(),
-+					Namespace: "zarf",
-+					Labels: map[string]string{
-+						state.ZarfPackageInfoLabel: p.Name,
-+					},
- 				},
--			},
--			Data: map[string][]byte{
--				"data": b,
--			},
-+				Data: map[string][]byte{
-+					"data": b,
-+				},
-+			}
-+			_, err = c.Clientset.CoreV1().Secrets("zarf").Create(ctx, &secret, metav1.CreateOptions{})
-+			require.NoError(t, err)
- 		}
--		_, err = c.Clientset.CoreV1().Secrets("zarf").Create(ctx, &secret, metav1.CreateOptions{})
--		require.NoError(t, err)
- 		actual, err := c.GetDeployedPackage(ctx, p.Name, state.WithPackageNamespaceOverride(p.NamespaceOverride))
- 		require.NoError(t, err)
- 		require.Equal(t, p, *actual)
-@@ -228,6 +241,63 @@ func TestGetDeployedPackage(t *testing.T) {
- 	require.ElementsMatch(t, packages, actualList)
- }
- 
-+func TestGetDeployedPackageCompressedState(t *testing.T) {
-+	t.Parallel()
-+
-+	var buf bytes.Buffer
-+	writer := gzip.NewWriter(&buf)
-+	_, err := writer.Write([]byte(`{"name":"compressed"}`))
-+	require.NoError(t, err)
-+	require.NoError(t, writer.Close())
-+	compressed := buf.Bytes()
-+	badChecksum := bytes.Clone(compressed)
-+	badChecksum[len(badChecksum)-8] ^= 0xff
-+
-+	for name, tt := range map[string]struct {
-+		format string
-+		data   []byte
-+		err    string
-+	}{
-+		"valid":                   {"gzip", compressed, ""},
-+		"truncated header":        {"gzip", []byte{0x1f, 0x8b, 0x08}, io.ErrUnexpectedEOF.Error()},
-+		"truncated gzip":          {"gzip", compressed[:len(compressed)-1], io.ErrUnexpectedEOF.Error()},
-+		"invalid checksum":        {"gzip", badChecksum, gzip.ErrChecksum.Error()},
-+		"uncompressed gzip data":  {"gzip", []byte(`{"name":"compressed"}`), gzip.ErrHeader.Error()},
-+		"unsupported compression": {"zstd", []byte(`{"name":"compressed"}`), `unsupported deployed package compression format "zstd"`},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			t.Parallel()
-+			secret := &corev1.Secret{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "zarf-package-compressed",
-+					Namespace: state.ZarfNamespaceName,
-+					Labels:    map[string]string{state.ZarfPackageInfoLabel: "compressed"},
-+					Annotations: map[string]string{
-+						"zarf.dev/compression-format": tt.format,
-+					},
-+				},
-+				Data: map[string][]byte{"data": tt.data},
-+			}
-+			c := &Cluster{Clientset: fake.NewClientset(secret)}
-+			loaded, err := c.GetDeployedPackage(t.Context(), "compressed")
-+			listed, listErr := c.GetDeployedZarfPackages(t.Context())
-+			if tt.err == "" {
-+				require.NoError(t, err)
-+				require.NoError(t, listErr)
-+				require.Equal(t, &state.DeployedPackage{Name: "compressed"}, loaded)
-+				require.Equal(t, []state.DeployedPackage{*loaded}, listed)
-+				return
-+			}
-+			require.ErrorContains(t, err, tt.err)
-+			require.ErrorContains(t, err, "zarf/zarf-package-compressed")
-+			require.Nil(t, loaded)
-+			require.ErrorContains(t, listErr, tt.err)
-+			require.ErrorContains(t, listErr, "zarf/zarf-package-compressed")
-+			require.Nil(t, listed)
-+		})
-+	}
-+}
-+
- func TestInternalGitServerExists(t *testing.T) {
- 	tests := []struct {
- 		name          string
-@@ -283,11 +353,11 @@ func TestUpdateDeployedPackagePreservesLifecycleState(t *testing.T) {
- 	require.NoError(t, err)
- 	depl
-```
-
-**File**: `src/pkg/packager/deploy.go` (modified, +2/-2)
-```diff
-@@ -312,7 +312,7 @@ func (d *deployer) startDeploymentState(ctx context.Context, pkgLayout *layout.P
- 	}
- 	deployedPkg.AppendEvent(d.deployPackageEvent(pkgLayout, opts, state.EventOutcomeInProgress))
- 	d.deployedPkg = deployedPkg
--	return d.c.UpdateDeployedPackage(ctx, *d.deployedPkg)
-+	return d.c.StoreDeployedPackage(ctx, *d.deployedPkg)
- }
- 
- func (d *deployer) prepareDeploymentState(ctx context.Context, pkgLayout *layout.PackageLayout, opts DeployOptions) error {
-@@ -351,7 +351,7 @@ func (d *deployer) persistDeploymentState(ctx context.Context, components []stat
- 		return nil
- 	}
- 	d.deployedPkg.SetDeployedComponents(components)
--	return d.c.UpdateDeployedPackage(ctx, *d.deployedPkg)
-+	return d.c.StoreDeployedPackage(ctx, *d.deployedPkg)
- }
- 
- func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.PackageLayout, opts DeployOptions) (deployedComponents []state.DeployedComponent, err error) {
-```
-
-**File**: `src/pkg/packager/remove.go` (modified, +6/-6)
-```diff
-@@ -141,7 +141,7 @@ func Remove(ctx context.Context, definition api.Package, opts RemoveOptions) err
- 	}
- 	if persistState {
- 		depPkg.AppendEvent(removePackageEvent(state.EventOutcomeInProgress))
--		if err := opts.Cluster.UpdateDeployedPackage(ctx, *depPkg); err != nil {
-+		if err := opts.Cluster.StoreDeployedPackage(ctx, *depPkg); err != nil {
- 			l.Warn("unable to update secret for package, this may be normal if the cluster was removed", "pkgName", depPkg.Name, "error", err.Error())
- 		}
- 	}
-@@ -170,7 +170,7 @@ func Remove(ctx context.Context, definition api.Package, opts RemoveOptions) err
- 		depComp.Status = state.ComponentStatusRemoving //nolint:staticcheck // Legacy status remains persisted for compatibility.
- 		depComp.LastEvent = state.ComponentEvent{Type: state.EventTypeRemove, Outcome: state.EventOutcomeInProgress, Timestamp: time.Now()}
- 		if persistState {
--			if err := opts.Cluster.UpdateDeployedPackage(ctx, *depPkg); err != nil {
-+			if err := opts.Cluster.StoreDeployedPackage(ctx, *depPkg); err != nil {
- 				l.Warn("unable to update secret for package, this may be normal if the cluster was removed", "pkgName", depPkg.Name, "error", err.Error())
- 			}
- 		}
-@@ -200,7 +200,7 @@ func Remove(ctx context.Context, definition api.Package, opts RemoveOptions) err
- 					// remove the helm chart from the installed charts slice.
- 					depComp.InstalledCharts = slices.Delete(depComp.InstalledCharts, j, j+1)
- 
--					err = opts.Cluster.UpdateDeployedPackage(ctx, *depPkg)
-+					err = opts.Cluster.StoreDeployedPackage(ctx, *depPkg)
- 					if err != nil {
- 						// We warn and ignore errors because we may have removed the cluster that this package was inside of
- 						l.Warn("unable to update secret for package, this may be normal if the cluster was removed", "pkgName", depPkg.Name, "error", err.Error())
-@@ -228,7 +228,7 @@ func Remove(ctx context.Context, definition api.Package, opts RemoveOptions) err
- 			// Remove completed components locally even when no deployment record exists.
- 			depPkg.DeployedComponents = slices.Delete(depPkg.DeployedComponents, i, i+1)
- 			if persistState {
--				err = opts.Cluster.UpdateDeployedPackage(ctx, *depPkg)
-+				err = opts.Cluster.StoreDeployedPackage(ctx, *depPkg)
- 				if err != nil {
- 					// We warn and ignore errors because we may have removed the cluster that this package was inside of
- 					l.Warn("unable to update secret package, this may be normal if the cluster was removed", "pkgName", depPkg.Name, "error", err.Error())
-@@ -241,7 +241,7 @@ func Remove(ctx context.Context, definition api.Package, opts RemoveOptions) err
- 				depComp.Status = state.ComponentStatusFailed //nolint:staticcheck // Legacy status remains persisted for compatibility.
- 				depComp.LastEvent = state.ComponentEvent{Type: state.EventTypeRemove, Outcome: state.EventOutcomeFailed, Timestamp: time.Now()}
- 				depPkg.AppendEvent(removePackageEvent(state.EventOutcomeFailed))
--				if updateErr := opts.Cluster.UpdateDeployedPackage(ctx, *depPkg); updateErr != nil {
-+				if updateErr := opts.Cluster.StoreDeployedPackage(ctx, *depPkg); updateErr != nil {
- 					l.Warn("unable to update secret for package, this may be normal if the cluster was removed", "pkgName", depPkg.Name, "error", updateErr.Error())
- 				}
- 			}
-@@ -265,7 +265,7 @@ func Remove(ctx context.Context, definition api.Package, opts RemoveOptions) err
- 			if err != nil {
- 				l.Warn("unable to delete secret for package, this may be normal if the cluster was removed", "pkgName", depPkg.Name, "error", err.Error())
- 			}
--		} else if err := opts.Cluster.UpdateDeployedPackage(ctx, *depPkg); err != nil {
-+		} else if err := opts.Cluster.StoreDeployedPackage(ctx, *depPkg); err != nil {
- 			l.Warn("unable to update secret for package, this may be normal if the cluster was removed", "pkgName", depPkg.Name, "error", err.Error())
- 		}
- 	}
-```
-
-**File**: `src/pkg/packager/remove_test.go` (modified, +2/-2)
-```diff
-@@ -98,7 +98,7 @@ func TestRemovePersistsChartProgress(t *testing.T) {
- 			require.NoError(t, err)
- 			deployed.SetDeployConfig(DeployConfig{SetVariables: map[string]string{"VARIABLE": "value"}})
- 			deployed.AppendEvent(state.PackageEvent{Type: state.EventTypeDeploy, Outcome: state.EventOutcomeSucceeded})
--			require.NoError(t, c.UpdateDeployedPackage(ctx, *deployed))
-+			require.NoError(t, c.StoreDeployedPackage(ctx, *deployed))
- 			opts := RemoveOptions{Cluster: c}
- 
- 			// Both the initial failure and a retry must retain only the outstanding chart.
-@@ -326,7 +326,7 @@ func TestRemoveLocalComponentPreservesRecordedPackage(t *testing.T) {
- 			recorded.SetDeployConfig(config)
- 			initialEvent := state.PackageEvent{Type: state.EventTypeDeploy, Outcome: state.EventOutcomeSucceeded, Timestamp: time.Unix(1, 0).UTC()}
- 			recorded.AppendEvent(initialEvent)
--			require.NoError(t, c.UpdateDeployedPackage(ctx, *recorded))
-+			require.NoError(t, c.StoreDeployedPackage(ctx, *recorded))
- 			removeConfig := RemoveConfig{ComponentSelectors: []string{"local"}, NamespaceOverride: "tenant"}
- 
- 			err = Remove(ctx, pkg, RemoveOptions{Cluster: c, RemoveConfig: removeConfig})
-```
-
-**File**: `src/test/e2e/37_component_status_test.go` (modified, +12/-0)
-```diff
-@@ -5,9 +5,13 @@
- package test
- 
- import (
-+	"bytes"
-+	"compress/gzip"
- 	"encoding/base64"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
-+	"io"
- 	"path/filepath"
- 	"sync"
- 	"testing"
-@@ -98,6 +102,14 @@ func getDeployedPackage(secret string) (*state.DeployedPackage, error) {
+ 		packageList = append(packageList, packageListInfo{
+ 			Package:           depPkg.Name,
+ 			NamespaceOverride: depPkg.NamespaceOverride,
+@@ -2066,6 +2079,7 @@ func (o *packageSignOptions) run(cmd *cobra.Command, args []string) error {
  	if err != nil {
- 		return nil, err
+ 		return fmt.Errorf("failed to load package for signing: %w", err)
  	}
-+	reader, err := gzip.NewReader(bytes.NewReader(decoded))
-+	if err != nil {
-+		return nil, err
-+	}
-+	decoded, err = io.ReadAll(reader)
-+	if err = errors.Join(err, reader.Close()); err != nil {
-+		return nil, err
-+	}
- 	err = json.Unmarshal(decoded, &deployedPackage)
++	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
+ 	defer func() {
+ 		if cleanupErr := pkgLayout.Cleanup(); cleanupErr != nil {
+ 			l.Warn("failed to cleanup package layout", "error", cleanupErr)
+@@ -2184,6 +2198,7 @@ func (o *packageVerifyOptions) run(cmd *cobra.Command, args []string) error {
  	if err != nil {
- 		return nil, err
+ 		return fmt.Errorf("package verification failed: %w", err)
+ 	}
++	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
+ 	defer func() {
+ 		if cleanupErr := pkgLayout.Cleanup(); cleanupErr != nil {
+ 			l.Warn("failed to cleanup package", "error", cleanupErr)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5629** (2026-11-08): chore(deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (@dwertent)
 - **PR #5625** (closed): fix: exclude state authoritative values (@brandtkeller)
+- **PR #5623** (2026-11-08): feat: deprecate v1alpha1 packages (@AustinAbro321)
 - **PR #5621** (2026-11-08): feat!: error when package secret write fails (@AustinAbro321)
 - **PR #5620** (2026-11-07): chore(deps): update github.com/andybalholm/brotli from v1.2.0 to v1.2.8 (@dwertent)
 - **PR #5619** (2026-11-08): feat!: compress Zarf state (@AustinAbro321)
-- **PR #5613** (2026-11-06): feat!: removed deprecated k8s api migration (@AustinAbro321)
-- **PR #5611** (2026-11-05): chore(deps): bump the k8s group across 1 directory with 6 updates (@dependabot[bot])
 
 ---
 
@@ -2410,37 +2453,28 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feat!: error when package secret write fails (#5621)
+## X. deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (#5629)
 
 **RULE**:
-When implementing operations in `src/pkg/cluster/zarf.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b17ad042`: feat!: error when package secret write fails (#5621). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64c34cfc`: deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (#5629). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/cluster/zarf.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// ValidateDeployedPackageSecretSize returns an error if the compressed deployment record
-// exceeds Kubernetes' Secret data limit. It does not access the cluster.
-func ValidateDeployedPackageSecretSize(depPkg state.DeployedPackage) error {
-	_, err := encodeDeployedPackage(depPkg)
-	return err
-}
-
-	if buf.Len() > corev1.MaxSecretSize {
-		return nil, fmt.Errorf("package %q compressed deployment metadata is %d bytes, exceeding Kubernetes' %d-byte Secret data limit; reduce the package definition size or deployment overrides", depPkg.Name, buf.Len(), corev1.MaxSecretSize)
-	}
+	github.com/klauspost/compress v1.20.3 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/klauspost/compress v1.19.2 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b17ad042` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64c34cfc` are properly handled with clean fallback behavior.

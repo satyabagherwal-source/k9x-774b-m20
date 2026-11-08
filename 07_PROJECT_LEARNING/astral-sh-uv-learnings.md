@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `5ce34500`  
+> **Source Version**: `3e2f08f8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:29:21.248Z  
+> **Timestamp**: 2026-11-08T22:52:31.681Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:29:19.861Z  
+> **Harvest Timestamp**: 2026-11-08T22:52:31.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91738 stars
+- **Stars / Engagement**: 91780 stars
 
 ---
 
@@ -1496,11 +1496,13 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23122** (2026-11-05): **Respect `exclude-newer-package` in per index settings**
-  *Symptoms*: The underlying issue here was that we weren't plumbing this setting through. As a result, most of this fix is just plumbing.  I added a few regression tests for this bug. I included tests that check the precedence between some `exclude-newer-package` settings when provided at different points (CLI and in `[tool.uv]`).
+- **Issue #23147** (2026-11-08): **uv aborts (SIGABRT, "failed to create UnixStream: Function not implemented") in the i686 manylinux container on GitHub's ubuntu-26.04 runner**
+  *Symptoms*: ### Summary  `uv pip install` aborts with SIGABRT inside the 32-bit `quay.io/pypa/manylinux_2_28_i686` container (started by cibuildwheel, which runs `python -m build --installer=uv`) when the host is a GitHub-hosted `ubuntu-26.04` runner. The same job with the same container image digest passed on `ubuntu-24.04` (last green run 2026-10-29). The x86_64 container on the same ubuntu-26.04 runner works.  Full output of uv:  ``` + python -m build /project --wheel --outdir=/tmp/cibuildwheel/built_wheel --installer=uv * Creating isolated environment: venv+uv...   Using external uv from /usr/local/bin/uv * Installing packages in isolated environment:   - cython>=3.2.9   - setuptools-scm>=8   - setuptools>=84   - wheel   - ziglang>=0.17.1 < failed to create UnixStream: Os { code: 38, kind: Unsupported, message: "Function not implemented" } ERROR Command '['/usr/local/bin/uv', 'pip', 'install', 'ziglang>=0.17.1', 'setuptools-scm>=8', 'cython>=3.2.9', 'setuptools>=84', 'wheel', '--python', '/tmp/build-env-gyaxuj3k/bin/python']' died with <Signals.SIGABRT: 6>. ```  Errno 38 is ENOSYS: a syscall the 32-bit process makes is not implemented/allowed. On i386 sockets go through `socketcall` or separate `socket`/`socketpair` syscalls, so my guess is a seccomp-profile or kernel-config difference on the new runner image / Docker version (the `UnixStream` creation looks like a socketpair, e.g. a signal/wakeup pipe in the async runtime). I have not confirmed this, and I cannot rule out that uv it
+  **Post-Mortem & Fix Analysis**:
+  > It looks like this is an upstream bug, resolved in `29.4.3`: https://github.com/actions/runner-images/issues/14790#issuecomment-5868616762
 
-- **Issue #23103** (2026-11-05): **BUG: `exclude-newer-package` is ignored with `index-exclude-newer` **
-  *Symptoms*: ### Summary  What follows is a set of 4 example scripts that all set a global `exclude-newer` to a fixed day that intentionally predates uv `0.13.7`. All but the first one also include exceptions to this global setting to allow arbitrarily recent versions of uv. For all of them, I've included the result of the command `uv add 'uv==0.13.7' --script <filename>` as a literal string.  I believe the first 3 examples behave correctly, but the last one doesn't. The crucial difference there is that its settings are configured at the index level, with PyPI being explicitly configured instead of a default fallback index, using the `index-exclude-newer` preview feature.  ```py # /// script # requires-python = ">=3.15" # dependencies = [] # # [tool.uv] # exclude-newer = "2026-11-01" # ///  ''' ❯ uv add 'uv==0.13.7' --script ok1.py error: Failed to add dependencies   cause: No solution found when resolving dependencies   cause: Because there is no version of uv==0.13.7 and you require uv==0.13.7, we can conclude that your requirements are          unsatisfiable.  hint: `uv` was filtered by `exclude-newer` to only include packages uploaded before 2026-11-01T23:00:00Z. The requested version, v0.13.7, was published at 2026-11-03T02:41:43.776Z. Consider using `exclude-newer-package` to override the cutoff for this package.  hint: If you want to add the package regardless of the failed resolution, provide the `--frozen` flag to skip locking and syncing ''' ```  ```py # /// script # requires-py
+- **Issue #23144** (2026-11-08): **Respect negative extra markers on constraints**
+  *Symptoms*: This PR fixes what I think is a bug: an `extra != 'unused'` was being ignored in a constraint requirement but not in an ordinary dependency requirement. As a result, it was possible to end up with a lock file whose package versions were inconsistent with the requirements in `pyproject.toml`. (See the regression test in this PR for an example.)  I'm not sure if this is a real bug that users will hit, but I found it as part of my work on #12276.  Reviewers should read this PR commit-by-commit. The first commit is just a small refactor.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1517,395 +1519,257 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bd4b45d0` (2026-11-06)
-**Commit Message**: Fix `uv audit` project status lookups for redacted query values (#23129)
+### Incident Patch 1: `3e2f08f8` (2026-11-08)
+**Commit Message**: Respect negative extra markers on constraints (#23144)
 
-`uv audit` previously deduplicated project status lookups by package
-name and the redacted display string of the index’s `SafeUrl`. In a
-contrived frozen lockfile, two versions of `dep` apply to disjoint
-platforms and use indexes ending in `?sig=one` and `?sig=two`. Redaction
-gave both lookups the same key, so uv skipped the second index and
-missed its quarantine status.
+This PR fixes what I think is a bug: an `extra != 'unused'` was being
+ignored in a constraint requirement but not in an ordinary dependency
+requirement. As a result, it was possible to end up with a lock file
+whose package versions were inconsistent with the requirements in
+`pyproject.toml`. (See the regression test in this PR for an example.)
 
-Deduplicate lookups by package name and `IndexUrl`, whose equality
-includes the query values. uv now queries both indexes and reports the
-quarantine.
+I'm not sure if this is a real bug that users will hit, but I found it
+as part of my work on #12276.
 
-**File**: `crates/uv-lock/src/lock/mod.rs` (modified, +2/-2)
+Reviewers should read this PR commit-by-commit. The first commit is just
+a small refactor.
+
+**File**: `crates/uv-resolver/src/resolver/requirements.rs` (modified, +27/-114)
 ```diff
-@@ -6070,11 +6070,11 @@ impl<'lock> Auditable<'lock> {
-     /// packages, deduplicated by `(name, index URL)`. Non-registry sources
-     /// (Git, direct URL, path, editable) are excluded.
-     pub fn projects(&self, root: &Path) -> Result<Vec<(&'lock PackageName, IndexUrl)>, LockError> {
--        let mut seen: FxHashSet<(&PackageName, String)> = FxHashSet::default();
-+        let mut seen: FxHashSet<(&PackageName, IndexUrl)> = FxHashSet::default();
-         let mut projects: Vec<(&PackageName, IndexUrl)> = Vec::with_capacity(self.packages.len());
-         for (package, _version) in &self.packages {
-             if let Some(index) = package.index(root)?
--                && seen.insert((package.name(), index.url().to_string()))
-+                && seen.insert((package.name(), index.clone()))
-             {
-                 projects.push((package.name(), index));
-             }
+@@ -263,22 +263,14 @@ impl<'a> RequirementExpander<'a> {
+         let python_marker = self.python_marker;
+         let python_requirement = self.python_requirement;
+         // If the requirement isn't relevant for the current platform, skip it.
+-        match extra {
+-            Some(source_extra) => {
+-                if !requirement.evaluate_markers(env.marker_environment(), &[]) {
+-                    return false;
+-                }
+-
+-                if !env.included_by_group(ConflictItemRef::from((&requirement.name, source_extra)))
+-                {
+-                    return false;
+-                }
+-            }
+-            None => {
+-                if !requirement.evaluate_markers(env.marker_environment(), &[]) {
+-                    return false;
+-                }
+-            }
++        let extras = extra.map_or(&[][..], slice::from_ref);
++        if !requirement.evaluate_markers(env.marker_environment(), extras) {
++            return false;
++        }
++        if let Some(source_extra) = extra
++            && !env.included_by_group(ConflictItemRef::from((&requirement.name, source_extra)))
++        {
++            return false;
+         }
+ 
+         // If the requirement would not be selected with any Python version
+@@ -311,113 +303,34 @@ impl<'a> RequirementExpander<'a> {
+     where
+         'data: 'parameters,
+     {
+-        let env = self.env;
+-        let python_marker = self.python_marker;
+-        let python_requirement = self.python_requirement;
+         self.constraints
+             .get(&requirement.name)
+             .into_iter()
+             .flatten()
+             .filter_map(move |constraint| {
+-                // If the requirement would not be selected with any Python version
+-                // supported by the root, skip it.
+-                let constraint = if constraint.marker.is_true() {
+-                    // Additionally, if the requirement is `requests ; sys_platform == 'darwin'`
+-                    // and the constraint is `requests ; python_version == '3.6'`, the
+-                    // constraint should only apply when _both_ markers are true.
+-                    if requirement.marker.is_true() {
+-                        Cow::Borrowed(constraint)
+-                    } else {
+-                        let mut marker = constraint.marker;
+-                        marker = marker.and(requirement.marker);
+-
+-                        if marker.is_false() {
+-                            trace!(
+-                                "Skipping {constraint} because of disjoint markers: `{:?}` vs. `{:?}`",
+-                                constraint.marker,
+-                                requirement.marker,
+-                            );
+-                            return None;
+-                        }
+-
+-                        Cow::Owned(Requirement {
+-                            name: constraint.name.clone(),
+-                            extras: constraint.extras.clone(),
+-                            groups: constraint.groups.clone(),
+-                            source: constraint.source.clone(),
+-                            scope: constraint.scope.clone(),
+-                            origin: constraint.origin.clone(),
+-                            marker,
+-                        })
+-                    }
+-                } else {
+-                    let requires_python = python_requirement.target();
+-
+-                    let mut marker = constraint.marker;
+-                    marker = marker.and(requirement.marker);
+-
+-                    if marker.is_false() {
+-                        trace!(
+-                            "Skipping {constraint} because of disjoint markers: `{:?}` vs. `{:?}`",
+-                            constraint.marker,
+-                            requirement.marker,
+-                        );
+-                        return None;
+-                    }
+-
+-                    // Additionally, if the requirement is `requests ; sys_platform == 'darwin'`
+-                    // and the constraint is `requests ; python_version == '3.6'`, the
+-                    // constraint should only apply when _both_ markers are true.
+-                    if python_marker.is_disjoint(marker) {
+-                        trace!(
+-                            "Skipping constraint {requirement} because of Requires-Python: {requires_python}"
+-                        );
+-                        return None;
+-                    }
+-
+-                    if marker == constraint.marker {
+-                        Cow::Borrowed(constraint)
+-                    } else {
+-                        Cow::Owned(Requirement {
+-                            name: constraint.name.clone(),
+-                            extras: constraint.extras.clone(),
+-                            groups: constraint.groups.clone(),
+-                            source: constraint.source.clone(),
+-                            scope: constraint.scope.clone(),
+-                            origin: constr
 ```
 
-**File**: `crates/uv/tests/build/audit.rs` (modified, +110/-1)
+**File**: `crates/uv/tests/lock/lock.rs` (modified, +82/-2)
 ```diff
-@@ -3,7 +3,7 @@ use assert_cmd::assert::OutputAssertExt;
- use assert_fs::prelude::*;
- use indoc::{formatdoc, indoc};
- use serde_json::json;
--use wiremock::matchers::{method, path};
-+use wiremock::matchers::{method, path, query_param};
- use wiremock::{Mock, MockServer, ResponseTemplate};
- 
- use uv_static::EnvVars;
-@@ -2464,6 +2464,115 @@ async fn audit_project_status_quarantined() {
-     ");
+@@ -4876,6 +4876,82 @@ fn lock_project_with_constraints() -> Result<()> {
+     Ok(())
  }
  
-+/// Audit both indexes when their URLs differ only in a redacted query value.
-+#[tokio::test]
-+async fn audit_project_status_redacted_index_query() -> Result<()> {
-+    let context = uv_test::test_context_with_versions!(&[]);
-+    let server = MockServer::start().await;
-+    let first_index = format!("{}/simple?sig=one", server.uri());
-+    let second_index = format!("{}/simple?sig=two", server.uri());
-+
-+    context
-+        .temp_dir
-+        .child("pyproject.toml")
-+        .write_str(indoc! {r#"
++/// With no active extra, `extra != 'unused'` applies the version constraint.
++///
++/// This is a regression test added for a bug where we weren't properly
++/// propagating extras from constraints in the resolver. Without the bug
++/// fixed, the lock file selects `ok==2.0.0` even though there is an
++/// active constraint for `ok<2`.
++#[cfg(feature = "test-universal")]
++#[test]
++fn lock_constraint_with_negative_extra_marker() -> Result<()> {
++    let context = uv_test::test_context!("3.12");
++    let pyproject_toml = context.temp_dir.child("pyproject.toml");
++    pyproject_toml.write_str(indoc! {r#"
 +        [project]
 +        name = "project"
 +        version = "0.1.0"
 +        requires-python = ">=3.12"
-+        dependencies = [
-+            "dep==1.0.0; sys_platform == 'win32'",
-+            "dep==2.0.0; sys_platform != 'win32'",
-+        ]
++        dependencies = ["ok"]
++
++        [tool.uv]
++        constraint-dependencies = ["ok<2; extra != 'unused'"]
 +    "#})?;
-+    context.temp_dir.child("uv.lock").write_str(&formatdoc! {r#"
++
++    uv_snapshot!(context.filters(), context.lock()
++        .arg("--offline")
++        .arg("--no-index")
++        .arg("--find-links")
++        .arg(context.workspace_root.join("test/links")), @"
++    exit_code: 0 (success)
++    ----- stderr -----
++    Resolved 2 packages in [TIME]
++    ");
++
++    let lock = context.read("uv.lock");
++    insta::with_settings!({ filters => context.filters() }, {
++        assert_snapshot!(lock, @r#"
 +        version = 1
 +        revision = 5
 +        requires-python = ">=3.12"
-+        resolution-markers = [
-+            "sys_platform == 'win32'",
-+            "sys_platform != 'win32'",
-+        ]
++
++        [options]
++        exclude-newer = "2024-03-25T00:00:00Z"
++
++        [manifest]
++        constraints = [{ name = "ok", marker = "extra != 'unused'", specifier = "<2" }]
 +
 +        [[package]]
-+        name = "dep"
++        name = "ok"
 +        version = "1.0.0"
-+        source = {{ registry = "{first_index}" }}
-+        resolution-markers = ["sys_platform == 'win32'"]
-+
-+        [[package]]
-+        name = "dep"
-+        version = "2.0.0"
-+        source = {{ registry = "{second_index}" }}
-+        resolution-markers = ["sys_platform != 'win32'"]
++        source = { registry = "[WORKSPACE]/test/links" }
++        wheels = [
++            { path = "[WORKSPACE]/test/links/ok-1.0.0-py3-none-any.whl" },
++        ]
 +
 +        [[package]]
 +        name = "project"
 +        version = "0.1.0"
-+        source = {{ virtual = "." }}
++        source = { virtual = "." }
 +        dependencies = [
-+            {{ name = "dep", version = "1.0.0", source = {{ registry = "{first_index}" }}, marker = "sys_platform == 'win32'" }},
-+            {{ name = "dep", version = "2.0.0", source = {{ registry = "{second_index}" }}, marker = "sys_platform != 'win32'" }},
++            { name = "ok" },
 +        ]
-+    "#})?;
 +
-+    Mock::given(method("GET"))
-+        .and(path("/simple/dep/"))
-+        .and(query_param("sig", "one"))
-+        .respond_with(ResponseTemplate::new(200).set_body_raw(
-+            json!({ "files": [] }).to_string(),
-+            "application/vnd.pypi.simple.v1+json",
-+        ))
-+        .named("index with sig=one")
-+        .expect(1)
-+        .mount(&server)
-+        .await;
-+    Mock::given(method("GET"))
-+        .and(path("/simple/dep/"))
-+        .and(query_param("sig", "two"))
-+        .respond_with(
-+            ResponseTemplate::new(200).set_body_raw(
-+                json!({
-+                    "files": [],
-+                    "project-status": { "status": "quarantined", "reason": "suspected-malware" }
-+                })
-+                .to_string(),
-+                "application/vnd.pypi.simple.v1+json",
-+            ),
-+        )
-+        .named("index with sig=two")
-+        .expect(1)
-+        .mount(&server)
-+        .await;
-+    Mock::given(method("POST"))
-+        .and(path("/v1/querybatch"))
-+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-+            "results": [{ "vulns": [] }, { "vulns": [] }]
-+        })))
-+        .mount(&server)
-+        .await;
++        [package.metadata]
++        requires-dist = [{ name = "ok" }]
++        "#);
++    });
 +
-+    uv_snapshot!(context.filters(), context
-+        .audit()
-+        .arg("--frozen")
-+        .arg("--preview-features")
-+        .arg("audit-command")
-+        .arg("--service-url")
-+        .arg(server.uri()), @"
++    uv_snapshot!(context.filters(), context.tree().arg("--frozen"), @"
 +    exit_code: 0 (success)
 +    ----- stdout -----
-+
-+    Adverse statuses:
-+
-+    - dep is quarantined: suspected-malware
-+
-+    ----- stderr -----
-+    Found no known vulnerabilities and 1 adverse project status in 2 packages
++    project v0.1.0
++    └── ok v1.0.0
 +    ");
 +
 +    Ok(())
 +}
 +
- /// An `active` status is not an adverse status and should not be reported.
- #[tokio::test]
- async fn audit_project_status_active_not_reported() {
-```
-
----
-
-### Incident Patch 2: `37fabce3` (2026-11-05)
-**Commit Message**: Avoid building duplicate cached tool environments (#23123)
-
-## Summary
-
-When several `uvx` processes start the same tool against an empty cache,
-each can build its own environment. All of them publish to the same
-cache entry, so only the last environment can be reused. For example,
-this left eight environments on disk for `pycowsay`:
-
-```sh
-export UV_CACHE_DIR="$(mktemp -d)"
-for i in 1 2 3 4 5 6 7 8; do uvx pycowsay --help >/dev/null & done
-wait
-```
-
-We now lock the cache entry for the resolved environment on a miss and
-check it again after acquiring the lock. One process builds and
-publishes the environment, and the others reuse it. Cache hits skip the
-lock, and tools with different resolutions can still build concurrently.
-This also covers the cached environments used by `uv run --with`.
-
-Closes https://github.com/astral-sh/uv/issues/23115.
-
-**File**: `crates/uv-environment-operations/src/environment.rs` (modified, +19/-5)
-```diff
-@@ -236,12 +236,26 @@ impl CachedEnvironment {
-             cache_digest(&canonicalize_executable(interpreter.sys_executable())?);
- 
-         // Search in the content-addressed cache.
--        let cache_entry = cache.entry(CacheBucket::Environments, interpreter_hash, resolution_hash);
-+        let cache_entry = cache.entry(
-+            CacheBucket::Environments,
-+            interpreter_hash,
-+            &resolution_hash,
-+        );
-+        let cached_environment = || {
-+            let root = cache.resolve_link(cache_entry.path()).ok()?;
-+            PythonEnvironment::from_root(root, cache).ok()
-+        };
-+        if let Some(environment) = cached_environment() {
-+            return Ok(Self(environment));
-+        }
- 
--        if let Ok(root) = cache.resolve_link(cache_entry.path()) {
--            if let Ok(environment) = PythonEnvironment::from_root(root, cache) {
--                return Ok(Self(environment));
--            }
-+        // Another process may have built the environment while we waited for the lock.
-+        let _lock = cache_entry
-+            .with_file(format!("{resolution_hash}.lock"))
-+            .lock()
-+            .await?;
-+        if let Some(environment) = cached_environment() {
-+            return Ok(Self(environment));
-         }
- 
-         // Create the environment in the cache, then relocate it to its content-addressed location.
-```
-
-**File**: `crates/uv-environment-operations/src/error.rs` (modified, +5/-0)
-```diff
-@@ -151,6 +151,9 @@ pub enum EnvironmentError {
-     #[error(transparent)]
-     CacheInfo(#[from] uv_cache_info::CacheInfoError),
- 
-+    #[error(transparent)]
-+    Cache(#[from] uv_cache::Error),
-+
-     #[error(transparent)]
-     Io(#[from] std::io::Error),
- 
-@@ -251,6 +254,7 @@ impl From<EnvironmentError> for UvError {
-             | EnvironmentError::ExtraBuildRequires(..)
-             | EnvironmentError::Fmt(..)
-             | EnvironmentError::CacheInfo(..)
-+            | EnvironmentError::Cache(..)
-             | EnvironmentError::Io(..)
-             | EnvironmentError::RetryParsing(..)
-             | EnvironmentError::Accelerator(..)
-@@ -302,6 +306,7 @@ impl uv_errors::Hinted for EnvironmentError {
-             | Self::ExtraBuildRequires(..)
-             | Self::Fmt(..)
-             | Self::CacheInfo(..)
-+            | Self::Cache(..)
-             | Self::Io(..)
-             | Self::RetryParsing(..)
-             | Self::Accelerator(..)
-```
-
-**File**: `crates/uv/tests/tool/tool_run.rs` (modified, +74/-1)
-```diff
-@@ -1,12 +1,19 @@
- #[cfg(unix)]
- use std::os::unix::fs::PermissionsExt;
-+use std::process::Stdio;
-+use std::time::Duration;
- 
--use anyhow::Result;
-+use anyhow::{Context, Result};
- use assert_cmd::prelude::*;
- use assert_fs::prelude::*;
- #[cfg(unix)]
- use fs_err::{metadata, set_permissions};
- use indoc::indoc;
-+use tokio::io::{AsyncBufReadExt, BufReader};
-+use tokio::process::Command;
-+use tokio::time::timeout;
-+use uv_cache::{Cache, CacheBucket, WheelCache};
-+use uv_pep508::VerbatimUrl;
- use uv_static::EnvVars;
- use uv_test::packse::PackseServer;
- use uv_test::{copy_dir_ignore, uv_snapshot, venv_bin_path};
-@@ -629,6 +636,72 @@ fn tool_run_from_install_constraints() {
-     ");
- }
- 
-+/// Concurrent runs of the same tool should build and use a single cached environment.
-+#[tokio::test]
-+async fn tool_run_concurrent_cache_miss() -> Result<()> {
-+    let context = uv_test::test_context_with_versions!(&["3.12"]).with_tool_dirs();
-+    let wheel = context
-+        .workspace_root
-+        .join("test/links/simple_launcher-0.1.0-py3-none-any.whl");
-+    // Hold the wheel lock so the first process cannot finish installing the environment.
-+    let url = VerbatimUrl::from_normalized_path(&wheel)?.into_url();
-+    let wheel_lock = Cache::from_path(context.cache_dir.path())
-+        .entry(
-+            CacheBucket::Wheels,
-+            WheelCache::Url(&url).wheel_dir("simple-launcher"),
-+            "0.1.0-py3-none-any.lock",
-+        )
-+        .lock()
-+        .await?;
-+
-+    let mut command = Command::from(context.tool_run());
-+    command
-+        .args(["--verbose", "--no-index", "--from"])
-+        .arg(wheel)
-+        .args(["python", "-c", "import sys; print(sys.prefix)"])
-+        .stdout(Stdio::piped())
-+        .stderr(Stdio::piped())
-+        .kill_on_drop(true);
-+
-+    let mut start_waiter = async || -> Result<_> {
-+        let mut child = command.spawn()?;
-+        let mut stderr = BufReader::new(child.stderr.as_mut().expect("stderr is piped")).lines();
-+        loop {
-+            let line = timeout(Duration::from_secs(30), stderr.next_line())
-+                .await??
-+                .context("uv exited before waiting for a lock")?;
-+            if line.contains("Waiting to acquire exclusive lock")
-+                && (line.contains(&CacheBucket::Wheels.to_string())
-+                    || line.contains(&CacheBucket::Environments.to_string()))
-+            {
-+                return Ok(child);
-+            }
-+        }
-+    };
-+
-+    // The first process waits for the wheel. The second has also missed the environment
-+    // cache when it waits for the first process (or for the wheel, if both start installing).
-+    let first = start_waiter().await?;
-+    let second = start_waiter().await?;
-+    drop(wheel_lock);
-+    let first = first.wait_with_output().await?.assert().success();
-+    let second = second.wait_with_output().await?.assert().success();
-+    assert_eq!(
-+        str::from_utf8(&first.get_output().stdout)?,
-+        str::from_utf8(&second.get_output().stdout)?,
-+    );
-+
-+    let archives = context.cache_files(CacheBucket::Archive)?;
-+    assert_eq!(
-+        archives
-+            .iter()
-+            .filter(|path| path.ends_with("pyvenv.cfg"))
-+            .count(),
-+        1
-+    );
-+    Ok(())
-+}
-+
+ /// Lock a project with `uv.tool.constraint-dependencies` that reference `tool.uv.sources`.
+ #[cfg(feature = "test-universal")]
  #[test]
- fn tool_run_cache() {
-     let context = uv_test::test_context_with_versions!(&["3.11", "3.12"])
-```
-
----
-
-### Incident Patch 3: `b5f5127b` (2026-11-06)
-**Commit Message**: Revert workaround for Depot runner buggy git version (#23134)
-
-Depot has updated their images and this is no longer needed.
-
-**File**: `.github/workflows/test.yml` (modified, +2/-4)
-```diff
-@@ -62,7 +62,7 @@ jobs:
-           # Warm the cache for Unix-only tests
-           uv python install 3.12d 3.13d 3.13t 3.13td
+@@ -45522,7 +45598,7 @@ fn lock_resolution_inputs_version_constraints() -> Result<()> {
+     ");
+     assert_eq!(context.read("uv.lock"), lock);
  
--      - name: "Install Linux test dependencies"
-+      - name: "Install secret service"
-         run: |
-           # Try the next configured mirror after the first failed download.
-           cat /etc/apt/apt-mirrors.txt
-@@ -71,9 +71,7 @@ jobs:
-             'Acquire::http::Timeout "10";' \
-             'Acquire::https::Timeout "10";' \
-             | sudo tee /etc/apt/apt.conf.d/80-retries > /dev/null
--          # Use Ubuntu's Git and matching libcurl to avoid credential failures in private-repository tests.
--          sudo apt install -y --no-install-recommends --allow-downgrades \
--            git/noble-updates git-man/noble-updates libcurl3t64-gnutls/noble-updates gnome-keyring
-+          sudo apt install -y --no-install-recommends gnome-keyring
+-    // Negated extra predicates are dropped during the resolver's package lowering.
++    // The inactive extra makes the negated marker true, so the constraint selects b 2.0.0.
+     pyproject.write_str(indoc! {r#"
+         [project]
+         name = "project"
+@@ -45541,6 +45617,7 @@ fn lock_resolution_inputs_version_constraints() -> Result<()> {
+     exit_code: 0 (success)
+     ----- stderr -----
+     Resolved 3 packages in [TIME]
++    Updated b v1.0.0 -> v2.0.0
+     ");
  
-       - name: "Start gnome-keyring"
-         # run gnome-keyring with 'foobar' as password for the login keyring
+     let retained_lock = context.read("uv.lock");
+@@ -45557,7 +45634,10 @@ fn lock_resolution_inputs_version_constraints() -> Result<()> {
+     ");
+     assert_eq!(context.read("uv.lock"), retained_lock);
+ 
+-    // An inactive positive extra marker is also retained when its bound excludes the lock.
++    // Start the positive marker case from the original lock with b 1.0.0.
++    context.temp_dir.child("uv.lock").write_str(&lock)?;
++
++    // An inactive positive extra marker is retained when its bound excludes the lock.
+     pyproject.write_str(indoc! {r#"
+         [project]
+         name = "project"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23148** (closed): Update files with my new changes (@Akarsh-Raju)
+- **PR #23144** (2026-11-08): Respect negative extra markers on constraints (@BurntSushi)
 - **PR #23141** (closed): Use byte searches for raw index filenames (@astral-automations-bot[bot])
 - **PR #23137** (closed): Consider the parent before reusing a capped dependency across forks (@charliermarsh)
 - **PR #23136** (2026-11-06): Represent reclaimed physical space with an enum (@charliermarsh)
 - **PR #23135** (2026-11-06): Model wheel download resumption explicitly (@charliermarsh)
-- **PR #23134** (2026-11-06): Revert workaround for Depot runner buggy git version (@EliteTK)
-- **PR #23130** (closed): Respect conditional upper bounds when reusing versions across forks (@charliermarsh)
 
 ---
 
@@ -1925,30 +1789,60 @@ Depot has updated their images and this is no longer needed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. `uv audit` project status lookups for redacted query values (#23129)
+## X. Respect negative extra markers on constraints (#23144)
 
 **RULE**:
-When implementing operations in `crates/uv-lock/src/lock/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/uv-resolver/src/resolver/requirements.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bd4b45d0`: `uv audit` project status lookups for redacted query values (#23129). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e2f08f8`: Respect negative extra markers on constraints (#23144). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-lock/src/lock/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-resolver/src/resolver/requirements.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let mut seen: FxHashSet<(&PackageName, IndexUrl)> = FxHashSet::default();
-                && seen.insert((package.name(), index.clone()))
+        let extras = extra.map_or(&[][..], slice::from_ref);
+        if !requirement.evaluate_markers(env.marker_environment(), extras) {
+            return false;
+        }
+        if let Some(source_extra) = extra
+            && !env.included_by_group(ConflictItemRef::from((&requirement.name, source_extra)))
+        {
+            return false;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let mut seen: FxHashSet<(&PackageName, String)> = FxHashSet::default();
-                && seen.insert((package.name(), index.url().to_string()))
+        match extra {
+            Some(source_extra) => {
+                if !requirement.evaluate_markers(env.marker_environment(), &[]) {
+                    return false;
+                }
+
+                if !env.included_by_group(ConflictItemRef::from((&requirement.name, source_extra)))
+                {
+                    return false;
+                }
+            }
+            None => {
+                if !requirement.evaluate_markers(env.marker_environment(), &[]) {
+                    return false;
+                }
+            }
+        let env = self.env;
+        let python_marker = self.python_marker;
+        let python_requirement = self.python_requirement;
+                // If the requirement would not be selected with any Python version
+                // supported by the root, skip it.
+                let constraint = if constraint.marker.is_true() {
+                    // Additionally, if the requirement is `requests ; sys_platform == 'darwin'`
+                    // and the constraint is `requests ; python_version == '3.6'`, the
+                    // constraint should only apply when _both_ markers are true.
+                    if requirement.marker.is_true() 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bd4b45d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e2f08f8` are properly handled with clean fallback behavior.
