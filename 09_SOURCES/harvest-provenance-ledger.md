@@ -8333,3 +8333,4 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `6bcc0fd3` | Multi-dimensional audit evidence | 2026-11-08T16:14:26.850Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `0b705dc8` | Multi-dimensional audit evidence | 2026-11-08T16:14:30.511Z |
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-08T16:19:16.722Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-08T16:26:25.279Z |

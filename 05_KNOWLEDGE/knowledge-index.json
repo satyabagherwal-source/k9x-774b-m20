@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T16:19:16.651Z",
+  "last_updated": "2026-11-08T16:26:25.189Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33419,10 +33419,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "6393499a9134761677196d73507939948a8f21fbb488c842c96b8b6fd6feb39a",
+      "content_hash": "b48ae4a5f110bc0fb35102e2e0fc7678b20490ffb8d26061faa9882b71807d80",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Attention‑Type Uniformity Across Layers",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Generation‑Config EOS Alignment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 342,
           "title": "Tokenizer‑Model Configuration Consistency",
@@ -33599,6 +33609,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 4088,
+          "title": "Tokenizer‑Model Special‑Token Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 4342,
           "title": "**Consistent Special‑Token Mapping Across Tokenizer and Model**",
           "status": "PROMOTED_AND_VERIFIED"
@@ -33667,7 +33682,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-11-05T00:36:45.980Z",
+      "verified_at": "2026-11-08T16:26:25.164Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136841,14 +136856,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 4088,
       "title": "Tokenizer‑Model Special‑Token Consistency",
-      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
-      "source_version": "hf-huggingfacebio-carbon-x",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T05:58:44.703Z"
+      "verified_at": "2026-11-08T16:26:25.164Z"
     },
     "rule-4089": {
       "learning_id": "rule-4089",

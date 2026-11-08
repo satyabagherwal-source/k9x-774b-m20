@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T16:19:19.253Z",
-    "lastVerified": "2026-11-08T16:19:19.253Z",
+    "lastChecked": "2026-11-08T16:26:30.078Z",
+    "lastVerified": "2026-11-08T16:26:30.078Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T15:49:56.879Z",
-    "lastVerified": "2026-11-08T15:49:56.879Z",
+    "lastChecked": "2026-11-08T16:26:30.066Z",
+    "lastVerified": "2026-11-08T16:26:30.066Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -817,8 +817,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T08:22:15.533Z",
-    "lastVerified": "2026-11-08T08:22:15.533Z",
+    "lastChecked": "2026-11-08T16:26:25.072Z",
+    "lastVerified": "2026-11-08T16:26:25.072Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -2087,12 +2087,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "moby-buildkit": {
-    "name": "moby/buildkit",
+    "name": "buildkit",
     "officialUrl": "https://github.com/moby/buildkit",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T20:23:01.281Z",
-    "lastVerified": "2026-11-07T20:23:01.281Z",
+    "lastChecked": "2026-11-08T16:26:22.552Z",
+    "lastVerified": "2026-11-08T16:26:22.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-moby-buildkit",
@@ -2101,7 +2101,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cedaeca8"
   },
   "projectdiscovery-nuclei": {
     "name": "nuclei",
@@ -2725,12 +2726,12 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T00:36:35.589Z",
-    "lastVerified": "2026-11-05T00:36:35.589Z",
+    "lastChecked": "2026-11-08T16:26:17.573Z",
+    "lastVerified": "2026-11-08T16:26:17.573Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "6393499a9134761677196d73507939948a8f21fbb488c842c96b8b6fd6feb39a",
+    "contentHash": "b48ae4a5f110bc0fb35102e2e0fc7678b20490ffb8d26061faa9882b71807d80",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5392,9 +5393,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-11-07T19:37:21.156Z",
+    "lastChecked": "2026-11-08T16:26:27.614Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-11-07T19:37:21.156Z"
+    "lastVerified": "2026-11-08T16:26:27.614Z"
   },
   "salvo-rs-salvo": {
     "name": "salvo",
@@ -6743,9 +6744,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-07T04:22:16.869Z",
+    "lastChecked": "2026-11-08T16:26:15.057Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-07T04:22:16.869Z"
+    "lastVerified": "2026-11-08T16:26:15.057Z"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "name": "google/gemma-4-26B-A4B-it",
@@ -10638,8 +10639,8 @@
     "officialUrl": "https://github.com/JuulLabs/kable",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-05T10:50:37.443Z",
-    "lastVerified": "2026-11-05T10:50:37.443Z",
+    "lastChecked": "2026-11-08T16:26:20.075Z",
+    "lastVerified": "2026-11-08T16:26:20.075Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juullabs-kable",
