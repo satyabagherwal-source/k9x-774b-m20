@@ -3,7 +3,7 @@
 > **Source Version**: `hf-abenzerps`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T20:53:21.960Z  
+> **Timestamp**: 2026-11-08T07:30:56.829Z  
 > **Learning ID**: `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,381 +17,353 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository addresses the **memory bandwidth and VRAM capacity bottleneck** inherent in deploying large-scale diffusion models (specifically the 7B parameter `Qwen-Image-2.1-Turbo`) on consumer-grade hardware. The base model requires significant VRAM (typically >16GB for FP16/BF16 inference). This repository provides **quantized artifacts** (GGUF, FP8, NVFP4, MLX) that reduce memory footprint by 2x to 4x while maintaining acceptable visual fidelity for text-to-image generation.
+This repository does not contain executable source code in the traditional sense (no `.py`, `.cpp`, or `.rs` files). It is a **Model Artifact Repository** specifically designed for **Quantized Inference Optimization**. The core technical problem addressed is the **Memory Bandwidth and VRAM Capacity Bottleneck** inherent in running large-scale diffusion models (specifically the 7B parameter `Qwen-Image-2.1-Turbo`) on consumer-grade hardware.
 
 **Architectural Boundaries:**
-*   **Artifact-Only Repository:** This is **not** a code repository. It contains no source code, no CI/CD pipelines, and no executable logic. It is a **data distribution node** for pre-compiled tensor weights.
-*   **Consumer Ecosystem:** The artifacts are designed for specific inference engines:
-    *   `*.gguf`: For `llama.cpp`-style backends or ComfyUI-GGUF nodes.
-    *   `*.safetensors` (FP8/NVFP4): For PyTorch-based pipelines with specific quantization kernels (e.g., `bitsandbytes`, `torchao`, or custom CUDA kernels).
-    *   `*.safetensors` (MLX): For Apple Silicon (M-series) inference via the MLX framework.
-*   **State Ownership:** The "state" is the static tensor weights. The "logic" resides entirely in the consumer application (ComfyUI, Diffusers, etc.).
+1.  **Input Boundary:** The repository accepts no code inputs. It serves as a static data store for weight tensors.
+2.  **Processing Boundary:** The "processing" occurs externally in inference engines (ComfyUI, MLX, llama.cpp/GGUF loaders). The repository defines the **Data Contract** (tensor shapes, quantization scales, block structures) that these engines must parse.
+3.  **Output Boundary:** The output is a latent representation that is decoded into pixels by the external engine.
 
 **Critical Subsystem Abstractions:**
-*   **Quantization Formats:**
-    *   **GGUF (Q4_0, Q4_K_M, Q5_K_M, Q6_K, Q8_0):** Block-wise quantization with scale/zero-point metadata embedded in the file header. Optimized for CPU/Apple Silicon and low-VRAM GPU inference.
-    *   **FP8 (E4M3/E5M2):** 8-bit floating point. Requires hardware support (Ada Lovelace/RTX 40-series or newer) or software emulation.
-    *   **NVFP4:** NVIDIA-specific 4-bit floating point format, likely requiring specific CUDA kernel support.
-    *   **MLX (4/6/8-bit):** Apple's unified memory architecture optimized quantization.
-*   **Inference Parameters:**
-    *   **Steps:** 8 denoising steps (Turbo mode).
-    *   **CFG (Classifier-Free Guidance):** 1.0 (No guidance, relies on model internal conditioning).
-    *   **Resolution:** 1024x1024.
+*   **Quantization Schemes:** The repo implements multiple distinct mathematical mappings from high-precision floating-point (FP16/BF16) to low-precision integer/fixed-point formats:
+    *   **GGUF (Q4_0, Q4_K_M, Q5_K_M, Q6_K, Q8_0):** Block-wise quantization with scale/zero-point metadata.
+    *   **Safetensors (FP8, INT8 ConvRot, NVFP4):** Tensor-native quantization. `ConvRot` implies a rotation matrix applied to weights to improve quantization error distribution (likely Hadamard or similar orthogonal transform).
+    *   **MLX (4/6/8-bit):** Apple Silicon-specific quantization formats optimized for the unified memory architecture.
+*   **Model Topology:** The `Qwen-Image-2.1-Turbo` architecture is a **DiT (Diffusion Transformer)** variant. The "Turbo" designation indicates a **Distilled Model** requiring only **8 denoising steps** (vs. 20-50 for standard models) with **CFG (Classifier-Free Guidance) = 1**. This drastically reduces the computational graph depth per inference call.
+
+**Forensic Observation:**
+The absence of `config.json` or `generation_config.json` in the provided manifest suggests that the model configuration is either embedded within the binary headers of the GGUF/Safetensors files or relies on the inference engine's hardcoded knowledge of the `Qwen-Image-2.1-Turbo` architecture. This creates a **Tight Coupling** between the model artifact and the specific inference engine version.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Quantization Format-Backend Compatibility Invariant
+### 1. Quantization Format Agnosticism via Adapter Pattern
 **RULE**:
-A quantized model artifact MUST be strictly matched to an inference backend that natively supports its specific quantization schema and data type. Loading a GGUF file into a standard PyTorch `load_state_dict` without a GGUF decoder, or an FP8 tensor into a CPU-only PyTorch instance without emulation, MUST be prevented at the loading layer.
+When distributing quantized model artifacts for multiple inference engines (GGUF, MLX, Safetensors), the repository MUST NOT assume a single loader. It MUST provide distinct, self-describing binary formats that embed their own quantization metadata (scales, zeros, block sizes) within the file header or tensor attributes, ensuring the loader can reconstruct the dequantization logic without external configuration files.
 
 **WHY**:
-Quantized formats are not just "smaller floats." They involve:
-1.  **Non-standard Data Types:** FP8 and NVFP4 are not native to standard IEEE 754 implementations in all frameworks.
-2.  **Block-wise Metadata:** GGUF files store scale and zero-point parameters per block (e.g., 256 elements). A naive `float32` cast will result in garbage data (NaNs or extreme outliers) because the dequantization math (`(x - zero_point) * scale`) is skipped.
-3.  **Hardware Dependency:** NVFP4 requires specific NVIDIA CUDA kernels. Attempting to run it on AMD or Intel GPUs will fail or fall back to extremely slow CPU emulation if not explicitly handled.
+Inference engines (llama.cpp, MLX, PyTorch) have different internal tensor representations. If quantization metadata (e.g., `scale` and `zero_point` for INT8) is stored in a separate JSON file, there is a high risk of **Version Drift** and **Path Resolution Failures** in distributed or containerized environments. Embedding metadata ensures the artifact is **Self-Contained** and **Portable**.
 
 **WHEN TO APPLY**:
-*   When building model loading pipelines (e.g., ComfyUI, Diffusers, custom inference servers).
-*   When creating "universal" model loaders that accept multiple quantization formats.
-*   When deploying models to heterogeneous hardware (CPU, NVIDIA GPU, Apple Silicon).
+Any project distributing machine learning weights in multiple quantization formats for heterogeneous hardware (CPU, NVIDIA GPU, Apple Silicon).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import torch
-import os
-from safetensors import safe_open
+# Pseudo-code for a robust quantized tensor loader
+class QuantizedTensor:
+    def __init__(self, data: bytes, metadata: dict):
+        self.data = data
+        self.dtype = metadata['dtype'] # e.g., 'Q4_K_M', 'FP8'
+        self.scale = metadata.get('scale')
+        self.zero_point = metadata.get('zero_point')
+        self.block_size = metadata.get('block_size', 32)
 
-def load_quantized_model(model_path: str, device: str = "cuda"):
-    """
-    Safely load quantized models by inspecting file extension and content.
-    """
-    if not os.path.exists(model_path):
-        raise FileNotFoundError(f"Model file not found: {model_path}")
-    
-    # 1. Determine format by extension
-    if model_path.endswith(".gguf"):
-        # GGUF requires a specific decoder (e.g., llama.cpp bindings or gguf-py)
-        # Standard torch.load will FAIL or produce garbage.
-        try:
-            from gguf import GGUFReader
-            reader = GGUFReader(model_path)
-            # Dequantization must happen during load or via a custom kernel
-            # This is a placeholder for the actual dequantization logic
-            return _load_gguf_with_dequant(reader, device)
-        except ImportError:
-            raise RuntimeError("GGUF support requires 'gguf' library and compatible backend.")
-            
-    elif model_path.endswith(".safetensors"):
-        # Inspect tensor dtypes to determine if FP8/NVFP4 is used
-        with safe_open(model_path, framework="pt") as f:
-            keys = f.keys()
-            if keys:
-                first_key = next(iter(keys))
-                tensor_meta = f.get_slice(first_key)
-                dtype = tensor_meta.get_dtype()
-                
-                if dtype in ["F8_E4M3", "F8_E5M2"]:
-                    if device != "cuda" or not torch.cuda.is_available():
-                        raise RuntimeError("FP8 tensors require CUDA device with Ada Lovelace or newer architecture.")
-                    # Load with specific quantization-aware loader
-                    return _load_fp8_model(model_path, device)
-                
-                elif "NVFP4" in str(dtype):
-                    if not torch.cuda.is_available() or not _is_nvidia_gpu():
-                        raise RuntimeError("NVFP4 requires NVIDIA GPU with specific CUDA kernel support.")
-                    return _load_nvfp4_model(model_path, device)
-                
-                else:
-                    # Standard FP16/BF16/FP32
-                    return torch.load(model_path, map_location=device)
-            
-    raise ValueError(f"Unsupported model format: {model_path}")
+    def dequantize(self) -> np.ndarray:
+        # Logic depends on self.dtype
+        if self.dtype == 'Q4_K_M':
+            # Parse super-blocks, apply scales/zeros
+            pass
+        elif self.dtype == 'FP8':
+            # Direct cast with scale
+            pass
+        return np.array(self.data, dtype=np.float16)
 
-def _is_nvidia_gpu():
-    if torch.cuda.is_available():
-        return "NVIDIA" in torch.cuda.get_device_name(0)
-    return False
+# The loader MUST inspect the file magic bytes to determine the format
+def load_model(path: str):
+    with open(path, 'rb') as f:
+        magic = f.read(4)
+        if magic == b'GGUF':
+            return load_gguf(f)
+        elif magic == b'SAFE':
+            return load_safetensors(f)
+        else:
+            raise ValueError(f"Unknown format: {magic}")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Blindly loading any model file with torch.load
-# This will crash or produce corrupted images for GGUF/FP8/NVFP4 files.
-def bad_load_model(path):
-    return torch.load(path, map_location="cuda") # CRASHES on GGUF, CORRUPTS on FP8 without kernel
+# ANTI-PATTERN: Relying on external config for quantization params
+def load_model_bad(path: str):
+    config = json.load(open('config.json')) # Fragile: What if config is missing?
+    weights = np.load(path)
+    # If config['quant_type'] is missing or wrong, this crashes or produces garbage
+    return dequantize(weights, config['quant_type'])
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Attempt to load a `.gguf` file with `torch.load`. Assert that it raises a `RuntimeError` or `ValueError`, not a silent success with NaN tensors.
-2.  **Integration Test:** Load an FP8 model on a CPU-only machine. Assert that a clear `RuntimeError` is raised before any tensor allocation.
-3.  **Visual Regression:** Generate an image from a correctly loaded FP8 model and compare PSNR against the FP16 baseline. If PSNR < 20dB, the dequantization kernel is likely missing or incorrect.
+1.  **Unit Test:** Load each quantized file in isolation (without any accompanying JSON) and assert that the dequantized tensor shape and dtype match the expected FP16 reference within a tolerance (e.g., MSE < 1e-3).
+2.  **Integration Test:** Run inference in a clean Docker container with only the model file present. Verify that the engine correctly identifies the format and executes without `FileNotFoundError` or `KeyError`.
 
-### 2. Turbo Model Inference Parameter Invariant
+### 2. Turbo Model Step-Count Invariant
 **RULE**:
-When deploying "Turbo" or "Distilled" diffusion models (e.g., Qwen-Image-2.1-Turbo), the inference pipeline MUST enforce a reduced number of denoising steps (typically 4-8) and a Classifier-Free Guidance (CFG) scale of 1.0. Using standard SDXL/SD1.5 parameters (20-50 steps, CFG 7.5) MUST be prohibited as it degrades quality and wastes compute.
+For distilled "Turbo" diffusion models, the inference pipeline MUST enforce a maximum denoising step count (e.g., 8) and MUST set the Classifier-Free Guidance (CFG) scale to 1.0. Any attempt to use higher step counts or CFG > 1.0 MUST be rejected or clamped, as the model's latent space is not trained to handle iterative refinement beyond the distilled trajectory.
 
 **WHY**:
-1.  **Training Distribution:** Turbo models are distilled to learn the denoising trajectory in fewer steps. The model's internal attention mechanisms are tuned for this specific step count.
-2.  **CFG Redundancy:** Turbo models often incorporate guidance internally or are trained with CFG=1. Applying external CFG > 1.0 can cause over-saturation, artifacts, or "burned" images because the model is not conditioned to handle the guidance scale.
-3.  **Performance:** Running 50 steps on a Turbo model is 6x slower than necessary with no quality gain, and potentially worse quality due to out-of-distribution step counts.
+Distilled models compress the denoising trajectory. Using more steps than the model was distilled for leads to **Over-Denoising**, resulting in blurry or distorted images. Using CFG > 1.0 introduces a guidance vector that the model's attention heads are not calibrated for, causing **Artifacts** and **Color Shifts**.
 
 **WHEN TO APPLY**:
-*   When configuring inference pipelines for distilled/turbo diffusion models.
-*   When building UIs that allow users to adjust generation parameters.
-*   When optimizing latency for real-time or near-real-time image generation.
+Any inference pipeline for distilled diffusion models (e.g., SDXL Turbo, LCM, Qwen-Image Turbo).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class TurboImagePipeline:
-    def __init__(self, model_path: str):
-        self.model = load_quantized_model(model_path)
-        # Enforce Turbo-specific parameters
-        self.default_steps = 8
-        self.default_cfg_scale = 1.0
-        self.max_allowed_steps = 12 # Hard cap to prevent user error
-        self.min_allowed_steps = 4
+class TurboInferencePipeline:
+    def __init__(self, model):
+        self.model = model
+        self.max_steps = 8
+        self.cfg_scale = 1.0
 
-    def generate(self, prompt: str, steps: int = None, cfg_scale: float = None):
-        # Validate and clamp parameters
-        if steps is None:
-            steps = self.default_steps
-        if cfg_scale is None:
-            cfg_scale = self.default_cfg_scale
-        
+    def generate(self, prompt: str, steps: int = None, cfg: float = None):
         # Enforce invariants
-        if steps > self.max_allowed_steps:
-            print(f"Warning: Turbo models are optimized for <= {self.max_allowed_steps} steps. Clamping to {self.max_allowed_steps}.")
-            steps = self.max_allowed_steps
-        if steps < self.min_allowed_steps:
-            print(f"Warning: Turbo models require >= {self.min_allowed_steps} steps for coherence. Clamping to {self.min_allowed_steps}.")
-            steps = self.min_allowed_steps
+        effective_steps = min(steps or self.max_steps, self.max_steps)
+        effective_cfg = 1.0 if cfg is None else min(cfg, 1.0)
+        
+        if steps and steps > self.max_steps:
+            print(f"Warning: Clamping steps from {steps} to {self.max_steps}")
+        if cfg and cfg > 1.0:
+            print(f"Warning: Clamping CFG from {cfg} to 1.0")
             
-        if cfg_scale > 1.5:
-            print(f"Warning: Turbo models are trained with CFG=1.0. High CFG may cause artifacts. Clamping to 1.5.")
-            cfg_scale = 1.5
-
-        # Proceed with inference
-        return self._run_inference(prompt, steps, cfg_scale)
+        return self._run_denoising_loop(prompt, effective_steps, effective_cfg)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Allowing arbitrary parameters for Turbo models
-def bad_generate(prompt, steps=50, cfg=7.5):
-    # This will produce poor quality images and waste 6x compute
-    return pipeline(prompt, num_inference_steps=steps, guidance_scale=cfg)
+# ANTI-PATTERN: Allowing user-defined steps/CFG for Turbo models
+def generate_bad(self, prompt: str, steps: int, cfg: float):
+    # This will produce garbage if steps > 8 or cfg > 1.0
+    return self._run_denoising_loop(prompt, steps, cfg)
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Call `generate` with `steps=50`. Assert that the actual number of steps executed is clamped to `max_allowed_steps`.
-2.  **Visual Test:** Generate images with `cfg=7.5` and `cfg=1.0`. Assert that the `cfg=1.0` image has higher aesthetic quality (e.g., using a VLM scorer) and fewer artifacts.
-3.  **Performance Test:** Measure latency for `steps=8` vs `steps=50`. Assert that `steps=8` is ~6x faster.
+1.  **Regression Test:** Generate an image with `steps=20` and `cfg=7.5`. Assert that the output image is visually degraded (e.g., high MSE against a reference image generated with `steps=8, cfg=1.0`).
+2.  **Static Analysis:** Lint the inference pipeline code to ensure that `steps` and `cfg` parameters are validated against the model's metadata before execution.
+
+### 3. VRAM-Aware Quantization Selection Strategy
+**RULE**:
+The inference system MUST implement a **Hardware-Aware Quantization Selector** that maps available VRAM to the optimal quantization format. For example:
+*   < 8GB VRAM: Use Q4_K_M or MLX 4-bit.
+*   8-12GB VRAM: Use Q5_K_M or FP8.
+*   > 12GB VRAM: Use Q8_0 or FP16.
+The system MUST NOT allow the user to select a quantization format that exceeds the available VRAM, as this will cause **OOM (Out of Memory) Crashes** or **Swapping to Disk** (which is 100x slower).
+
+**WHY**:
+Quantized models have different memory footprints. A 7B model in FP16 is ~14GB. In Q4_K_M, it is ~4GB. If the user selects Q8_0 (7.59GB) on a 6GB GPU, the system will crash. Proactive selection prevents runtime failures.
+
+**WHEN TO APPLY**:
+Any ML inference service that supports multiple quantization formats.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def select_quantization(available_vram_gb: float) -> str:
+    if available_vram_gb < 6:
+        return "Q4_0" # ~4GB
+    elif available_vram_gb < 10:
+        return "Q5_K_M" # ~5GB
+    elif available_vram_gb < 14:
+        return "Q8_0" # ~7.5GB
+    else:
+        return "FP16" # ~14GB
+
+# In the pipeline initialization
+vram = torch.cuda.get_device_properties(0).total_memory / 1e9
+quant_format = select_quantization(vram)
+model = load_model(f"model-{quant_format}.gguf")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Letting the user choose without validation
+def load_model_bad(user_choice: str):
+    model = load_model(f"model-{user_choice}.gguf")
+    # If user_choice is "FP16" and VRAM is 6GB, this will OOM
+    return model
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Mock `torch.cuda.get_device_properties` to return different VRAM values. Assert that `select_quantization` returns the correct format.
+2.  **Integration Test:** Run inference on a low-VRAM GPU with the default settings. Assert that the system automatically selects a low-precision format and does not crash.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: As this is an artifact-only repository with no source code, commits, or issues, there are no production code patches to analyze. However, we can infer common failure modes based on the nature of quantized model distribution.*
+*Note: The provided repository data does not contain commit history, bug issues, or code diffs. Therefore, no real incidents can be extracted from the repository itself. However, based on the nature of quantized model repositories, the following **Hypothetical but Highly Probable Incidents** are documented based on common failure modes in this domain.*
 
-### Incident 1: GGUF Dequantization Mismatch (BUG-GGUF-01)
-- **Context**: User loads `qwen-image-2.1-turbo-Q4_K_M.gguf` into a ComfyUI node that expects FP16 tensors.
-- **What Was Expected**: The image generator to produce a coherent 1024x1024 image.
-- **What Actually Happened**: The output image is pure noise, black, or contains severe color banding. No error is raised.
-- **Evidence in Repo**: N/A (Inferred from format incompatibility).
-- **Root Cause**: The GGUF file contains quantized weights (Q4_K_M) with block-wise scales. The loading code did not perform dequantization to FP16/FP32 before passing tensors to the diffusion model. The model interpreted the raw quantized bytes as float values, resulting in meaningless activations.
+### Incident 1: GGUF Metadata Mismatch (BUG-GGUF-META-01)
+- **Context**: Inference Engine (llama.cpp/ComfyUI) loading `qwen-image-2.1-turbo-Q4_K_M.gguf`.
+- **What Was Expected**: The engine correctly parses the GGUF header, identifies the tensor shapes, and applies the correct dequantization scales.
+- **What Actually Happened**: The engine crashed with `AssertionError: Tensor shape mismatch` or produced black images.
+- **Evidence in Repo**: N/A (No commits provided).
+- **Root Cause**: The GGUF file was generated with a different version of the quantization tool than the one used by the inference engine. The block size or scale encoding changed between versions.
+- **Remediation Code Diff**:
+```cpp
+// - Buggy: Assuming block size is 32
+int block_size = 32;
+// + Fixed: Reading block size from GGUF metadata
+int block_size = gguf_get_block_size(ctx, tensor_name);
+```
+- **Lesson**: Always read quantization parameters from the file metadata, not from hardcoded constants.
+
+### Incident 2: MLX 4-bit Precision Loss (BUG-MLX-PREC-02)
+- **Context**: Inference on Apple Silicon using `qwen-image-2.1-turbo-MLX-4bit.safetensors`.
+- **What Was Expected**: Image quality comparable to FP16.
+- **What Actually Happened**: Images had significant color banding and loss of detail.
+- **Evidence in Repo**: N/A.
+- **Root Cause**: The 4-bit quantization was applied without **Group-wise Quantization** or **Scale Calibration**. The global scale was too coarse for the dynamic range of the attention weights.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Direct load without dequantization
-# weights = torch.load("model.gguf") # Fails or loads raw bytes
-
-# + Fixed: Use GGUF reader and dequantize
-from gguf import GGUFReader
-reader = GGUFReader("model.gguf")
-tensor = reader.get_tensor("model.diffusion_model.blocks.0.attn1.to_q.weight")
-# Dequantize Q4_K_M to FP16
-dequantized_tensor = dequantize_q4_k_m(tensor, dtype=torch.float16)
+# - Buggy: Global scale
+scale = max(abs(weights)) / 7.5
+# + Fixed: Group-wise scale
+group_size = 128
+scales = []
+for i in range(0, weights.shape[0], group_size):
+    group = weights[i:i+group_size]
+    scales.append(max(abs(group)) / 7.5)
 ```
-- **Lesson**: Always verify the data type and quantization format of loaded tensors. Implement a dequantization step if the inference engine does not natively support the quantized format.
+- **Lesson**: For low-bit quantization, use group-wise scales to preserve local dynamic range.
 
-### Incident 2: FP8 Hardware Incompatibility (BUG-FP8-02)
-- **Context**: User loads `qwen-image-2.1-turbo-fp8.safetensors` on an RTX 3090 (Ampere architecture).
-- **What Was Expected**: The model to load and generate images.
-- **What Actually Happened**: `RuntimeError: CUDA error: no kernel image is available for execution on the device` or `NotImplementedError: FP8 is not supported on this device`.
-- **Evidence in Repo**: N/A (Inferred from hardware requirements).
-- **Root Cause**: FP8 (E4M3/E5M2) is natively supported on NVIDIA Ada Lovelace (RTX 40-series) and newer. Ampere (RTX 30-series) does not have hardware FP8 support. The inference library attempted to use FP8 kernels that do not exist for the target architecture.
+### Incident 3: NVFP4 Unsupported Kernel (BUG-NVFP4-KERN-03)
+- **Context**: Inference on NVIDIA GPU using `qwen-image-2.1-turbo-NVFP4.safetensors`.
+- **What Was Expected**: Fast inference using FP4 kernels.
+- **What Actually Happened**: `RuntimeError: No kernel found for FP4`.
+- **Evidence in Repo**: N/A.
+- **Root Cause**: The inference engine did not have the CUDA kernels for NVFP4 compiled or enabled.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: No hardware check
-# model = load_fp8_model("model-fp8.safetensors")
-
-# + Fixed: Check hardware capability
-if not torch.cuda.is_available() or not _supports_fp8():
-    raise RuntimeError("FP8 model requires NVIDIA Ada Lovelace (RTX 40-series) or newer GPU.")
-model = load_fp8_model("model-fp8.safetensors")
+# - Buggy: Assuming FP4 is supported
+output = torch.matmul(fp4_tensor, fp4_tensor)
+# + Fixed: Fallback to FP8 if FP4 is not supported
+if not torch.cuda.is_available() or not has_fp4_kernel():
+    output = torch.matmul(fp8_tensor, fp8_tensor)
+else:
+    output = torch.matmul(fp4_tensor, fp4_tensor)
 ```
-- **Lesson**: Quantization formats are hardware-dependent. Always check device capabilities before loading quantized models.
+- **Lesson**: Always implement fallback paths for unsupported hardware features.
 
-### Incident 3: MLX Model on Non-Apple Hardware (BUG-MLX-03)
-- **Context**: User loads `qwen-image-2.1-turbo-MLX-4bit.safetensors` on a Linux machine with an NVIDIA GPU.
-- **What Was Expected**: The model to load and generate images.
-- **What Actually Happened**: `ImportError: No module named 'mlx'` or `RuntimeError: MLX is only supported on Apple Silicon`.
-- **Evidence in Repo**: N/A (Inferred from platform requirements).
-- **Root Cause**: MLX is a framework designed exclusively for Apple Silicon (M1/M2/M3/M4). It does not support NVIDIA or AMD GPUs. The user attempted to use an MLX-optimized model on incompatible hardware.
+### Incident 4: INT8 ConvRot Rotation Matrix Missing (BUG-INT8-ROT-04)
+- **Context**: Inference using `qwen-image-2.1-turbo-int8_convrot.safetensors`.
+- **What Was Expected**: Correct dequantization using the rotation matrix.
+- **What Actually Happened**: Images were distorted.
+- **Evidence in Repo**: N/A.
+- **Root Cause**: The rotation matrix was not included in the safetensors file, or the inference engine did not apply it before dequantization.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: No platform check
-# import mlx.core as mx
-# model = mx.load("model-mlx-4bit.safetensors")
-
-# + Fixed: Check platform
-import platform
-if platform.system() != "Darwin" or not _is_apple_silicon():
-    raise RuntimeError("MLX models are only supported on Apple Silicon (M-series) Macs.")
-import mlx.core as mx
-model = mx.load("model-mlx-4bit.safetensors")
+# - Buggy: Direct dequantization
+weights = dequantize(int8_weights, scale)
+# + Fixed: Apply rotation first
+rotation_matrix = load_rotation_matrix()
+weights = rotation_matrix @ dequantize(int8_weights, scale)
 ```
-- **Lesson**: Platform-specific quantization formats (MLX) must be gated by platform checks.
+- **Lesson**: If using rotated quantization, ensure the rotation matrix is stored and applied correctly.
 
-### Incident 4: NVFP4 Kernel Missing (BUG-NVFP4-04)
-- **Context**: User loads `qwen-image-2.1-turbo-NVFP4.safetensors` on an RTX 4090 with an older version of PyTorch/CUDA.
-- **What Was Expected**: The model to load and generate images.
-- **What Actually Happened**: `RuntimeError: NVFP4 kernel not found` or `AttributeError: module 'torch' has no attribute 'nvfp4'`.
-- **Evidence in Repo**: N/A (Inferred from software requirements).
-- **Root Cause**: NVFP4 is a very new format that requires specific CUDA kernels and PyTorch versions. The user's environment did not have the necessary software stack.
+### Incident 5: Turbo Model CFG Ignored (BUG-TURBO-CFG-05)
+- **Context**: Inference with `cfg=7.5` on the Turbo model.
+- **What Was Expected**: Higher quality image.
+- **What Actually Happened**: Image was blurry and distorted.
+- **Evidence in Repo**: N/A.
+- **Root Cause**: The Turbo model was distilled with `cfg=1.0`. Using `cfg=7.5` introduced a guidance vector that the model was not trained to handle.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: No software version check
-# model = load_nvfp4_model("model-nvfp4.safetensors")
-
-# + Fixed: Check software version
-import torch
-if not _supports_nvfp4():
-    raise RuntimeError("NVFP4 model requires PyTorch >= 2.4 and CUDA >= 12.4 with NVFP4 kernel support.")
-model = load_nvfp4_model("model-nvfp4.safetensors")
+# - Buggy: Using user-provided CFG
+cfg_scale = user_cfg
+# + Fixed: Clamping CFG to 1.0 for Turbo models
+cfg_scale = 1.0 if model.is_turbo else user_cfg
 ```
-- **Lesson**: New quantization formats often require specific software versions. Always check software dependencies.
-
-### Incident 5: Memory Overflow on Low-VRAM GPU (BUG-MEM-05)
-- **Context**: User loads `qwen-image-2.1-turbo-Q8_0.gguf` (7.59 GB) on an RTX 3060 (12 GB VRAM) with other applications running.
-- **What Was Expected**: The model to load and generate images.
-- **What Actually Happened**: `CUDA out of memory` error during model loading or first inference step.
-- **Evidence in Repo**: N/A (Inferred from memory requirements).
-- **Root Cause**: The model size (7.59 GB) plus the overhead of the inference engine (activations, KV cache, etc.) exceeds the available VRAM. The user did not account for the total memory footprint.
-- **Remediation Code Diff**:
-```python
-# - Buggy: No memory check
-# model = load_gguf_model("model-q8_0.gguf")
-
-# + Fixed: Check available memory
-import torch
-if torch.cuda.is_available():
-    free_mem, total_mem = torch.cuda.mem_get_info()
-    model_size = os.path.getsize("model-q8_0.gguf")
-    # Estimate overhead (e.g., 2x model size for activations)
-    required_mem = model_size * 2
-    if free_mem < required_mem:
-        raise RuntimeError(f"Insufficient VRAM. Required: {required_mem/1e9:.2f} GB, Available: {free_mem/1e9:.2f} GB.")
-model = load_gguf_model("model-q8_0.gguf")
-```
-- **Lesson**: Always check available memory before loading large models. Estimate the total memory footprint including overhead.
+- **Lesson**: Respect the training configuration of distilled models.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-*Note: Since this is an artifact-only repository, the following invariants are derived from the general principles of working with quantized models and inference pipelines.*
+### 1. Micro-Syntax & Token-Level Precision
+*   **Invariant:** When parsing GGUF or Safetensors files, **MUST** use big-endian byte order for metadata fields, as specified by the GGUF spec. Using little-endian will corrupt tensor shapes and scales.
+*   **Code Example:**
+    ```python
+    import struct
+    # Correct: Big-endian
+    shape = struct.unpack('>I', data[0:4])
+    # Incorrect: Little-endian
+    shape = struct.unpack('<I', data[0:4])
+    ```
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When dequantizing GGUF tensors, the scale and zero-point parameters MUST be applied in the correct order: `(x - zero_point) * scale`. Reversing the order or omitting the zero-point will result in incorrect values.
-    *   **Code Example**:
-        ```python
-        # Correct
-        dequantized = (quantized_tensor - zero_point) * scale
-        # Incorrect
-        dequantized = (quantized_tensor * scale) - zero_point
-        ```
+### 2. Infinite Loop & Recursion Guards
+*   **Invariant:** The denoising loop **MUST** have a hard cap on the number of iterations. Even if the user specifies `steps=1000`, the loop **MUST** terminate after the maximum allowed steps for the model (e.g., 8 for Turbo).
+*   **Code Example:**
+    ```python
+    for step in range(min(user_steps, max_steps)):
+        # Denoising logic
+        pass
+    ```
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: The denoising loop in diffusion models MUST have a fixed number of iterations (steps) and MUST NOT rely on a convergence criterion that could fail to trigger.
-    *   **Code Example**:
-        ```python
-        # Correct
-        for step in range(num_steps):
-            # Denoising step
-            pass
-        # Incorrect (Potential infinite loop if convergence check fails)
-        while not converged:
-            # Denoising step
-            pass
-        ```
+### 3. UI & UX Micro-Mechanics
+*   **Invariant:** When displaying progress in a web UI, **MUST** throttle updates to the DOM to avoid layout thrashing. Update the progress bar at most once per 100ms.
+*   **Code Example:**
+    ```javascript
+    let lastUpdate = 0;
+    function updateProgress(percent) {
+        const now = Date.now();
+        if (now - lastUpdate > 100) {
+            progressBar.style.width = `${percent}%`;
+            lastUpdate = now;
+        }
+    }
+    ```
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: When displaying progress for image generation, the progress bar MUST be updated in a non-blocking manner to avoid freezing the UI.
-    *   **Code Example**:
-        ```python
-        # Correct (Using a callback or async update)
-        def progress_callback(step, total_steps):
-            update_progress_bar(step / total_steps)
-        pipeline(prompt, callback=progress_callback)
-        # Incorrect (Blocking UI)
-        for step in range(num_steps):
-            update_progress_bar(step / num_steps)
-            # Denoising step
-        ```
+### 4. Backend Concurrency & Memory Safety
+*   **Invariant:** When loading large quantized models, **MUST** use memory-mapped files (`mmap`) to avoid loading the entire model into RAM at once. This prevents OOM crashes on systems with limited RAM.
+*   **Code Example:**
+    ```python
+    import mmap
+    with open('model.gguf', 'rb') as f:
+        mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+        # Read tensor data from mm
+    ```
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: When loading multiple models, the previous model MUST be explicitly unloaded from memory before loading the new one to prevent memory leaks.
-    *   **Code Example**:
-        ```python
-        # Correct
-        del old_model
-        torch.cuda.empty_cache()
-        new_model = load_model("new_model.safetensors")
-        # Incorrect (Memory leak)
-        new_model = load_model("new_model.safetensors")
-        ```
-
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: When loading quantized models, the tensor shapes MUST be verified against the expected architecture to prevent silent failures.
-    *   **Code Example**:
-        ```python
-        # Correct
-        expected_shape = (768, 768)
-        actual_shape = tensor.shape
-        if actual_shape != expected_shape:
-            raise ValueError(f"Tensor shape mismatch: expected {expected_shape}, got {actual_shape}")
-        # Incorrect (Silent failure)
-        tensor = load_tensor("model.safetensors")
-        ```
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **Invariant:** When dequantizing tensors, **MUST** check for `NaN` or `Inf` values in the scale and zero-point arrays. If found, **MUST** raise an error, as this indicates a corrupted file.
+*   **Code Example:**
+    ```python
+    import numpy as np
+    if not np.all(np.isfinite(scales)):
+        raise ValueError("Corrupted scale array: contains NaN or Inf")
+    ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Artifact-only repository. No subsystem boundaries. The "architecture" is the file structure and naming convention.
-2.  **Core Abstractions**: Quantization formats (GGUF, FP8, NVFP4, MLX) and inference parameters (steps, CFG).
-3.  **Error Handling**: No error handling in the repository. Error handling is the responsibility of the consumer application.
-4.  **Testing**: No tests in the repository. Testing is the responsibility of the consumer application.
-5.  **Security**: No security concerns in the repository. The files are static data.
-6.  **Performance**: The primary goal is to improve performance (latency and memory usage) through quantization.
-7.  **Deployment**: The repository is deployed on Hugging Face. The consumer application is responsible for deployment.
-8.  **Agent Patterns**: No agent patterns in the repository.
-9.  **Data Flow**: The data flow is from the Hugging Face repository to the consumer application. The consumer application is responsible for the data flow.
+1.  **Architecture:** The repository is a **Data-Only** architecture. It decouples the model weights from the inference logic. The inference engine is responsible for the computational graph.
+2.  **Core Abstractions:** The core abstraction is the **Quantized Tensor**, which encapsulates the raw data, scale, zero-point, and block size.
+3.  **Error Handling:** Error handling is minimal in the repository itself. The inference engine is responsible for handling errors such as OOM, unsupported formats, and corrupted files.
+4.  **Testing:** Testing is not present in the repository. The inference engine is responsible for testing the model's output quality.
+5.  **Security:** The repository is a static data store. There is no code execution, so the security risk is low. However, the model files **MUST** be verified for integrity (e.g., SHA256 checksum) to prevent tampering.
+6.  **Performance:** The performance is determined by the quantization format. Lower precision formats (Q4_0) are faster but have lower quality. Higher precision formats (FP16) are slower but have higher quality.
+7.  **Deployment:** The repository is deployed as a static file store. The inference engine is deployed separately.
+8.  **Agent Patterns:** The repository does not contain agent patterns. The inference engine is responsible for the agent logic.
+9.  **Data Flow:** The data flow is unidirectional: Model File -> Inference Engine -> Latent Representation -> Image.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Quantized model loading with format-specific decoders.
-2.  **Rule**: Always match the quantization format to the inference backend.
-3.  **Architecture Principle**: Separation of concerns between model artifacts and inference logic.
-4.  **Failure Mode**: Silent corruption due to missing dequantization.
-5.  **Reusable Skill**: How to load and dequantize GGUF, FP8, and NVFP4 models.
-6.  **Decision**: Use quantized models to reduce memory footprint and improve latency.
-7.  **Anti-pattern**: Blindly loading any model file with `torch.load`.
-8.  **Verification Method**: Visual regression testing and memory usage monitoring.
+1.  **Pattern:** **Self-Contained Quantized Artifact.** The model file contains all necessary metadata for dequantization.
+2.  **Rule:** **Hardware-Aware Quantization Selection.** The inference engine selects the optimal quantization format based on available VRAM.
+3.  **Architecture Principle:** **Decoupling of Weights and Logic.** The model weights are separated from the inference logic, allowing for easy updates to the model without changing the inference engine.
+4.  **Failure Mode:** **OOM Crash.** Selecting a quantization format that exceeds the available VRAM causes an OOM crash.
+5.  **Reusable Skill:** **Quantization Format Selection.** A step-by-step guide for selecting the optimal quantization format based on hardware constraints.
+6.  **Decision:** **Use GGUF for CPU, MLX for Apple Silicon, Safetensors for GPU.** This decision is based on the performance characteristics of each format on different hardware.
+7.  **Anti-pattern:** **Hardcoding Quantization Parameters.** Hardcoding the block size or scale in the inference engine leads to bugs when the model file is updated.
+8.  **Verification Method:** **MSE Comparison.** Compare the output of the quantized model with the output of the FP16 model to ensure that the quantization error is within acceptable limits.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Identify the quantization format** of the model file (GGUF, FP8, NVFP4, MLX).
-2.  **Check the hardware compatibility** of the quantization format (e.g., FP8 requires Ada Lovelace or newer).
-3.  **Check the software compatibility** of the quantization format (e.g., NVFP4 requires specific PyTorch/CUDA versions).
-4.  **Load the model** using the appropriate decoder (e.g., GGUF reader, FP8 loader).
-5.  **Dequantize the tensors** if the inference engine does not natively support the quantized format.
-6.  **Verify the tensor shapes** against the expected architecture.
-7.  **Check the available memory** before loading the model.
-8.  **Generate an image** and verify the quality (e.g., using a VLM scorer).
-9.  **Monitor the memory usage** during inference to prevent memory leaks.
-10. **Unload the model** when it is no longer needed to free memory.
+1.  **Verify Model Integrity:**
+    *   [ ] Calculate the SHA256 checksum of the model file.
+    *   [ ] Compare the checksum with the expected value.
+2.  **Select Quantization Format:**
+    *   [ ] Check the available VRAM.
+    *   [ ] Select the optimal quantization format based on the VRAM.
+3.  **Load Model:**
+    *   [ ] Use memory-mapped files to load the model.
+    *   [ ] Parse the metadata to extract tensor shapes, scales, and zero-points.
+4.  **Dequantize Tensors:**
+    *   [ ] Apply the dequantization formula to each tensor.
+    *   [ ] Check for `NaN` or `Inf` values in the scales and zero-points.
+5.  **Run Inference:**
+    *   [ ] Enforce the maximum number of denoising steps.
+    *   [ ] Set the CFG scale to 1.0 for Turbo models.
+    *   [ ] Run the denoising loop.
+6.  **Post-Process:**
+    *   [ ] Decode the latent representation into an image.
+    *   [ ] Save the image to disk.

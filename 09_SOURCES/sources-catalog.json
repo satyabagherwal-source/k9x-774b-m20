@@ -135,8 +135,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "cc6cff66e5b12794f0d6c91b88cda834fd03856f3b5bb044813ae9c77387597c",
-    "lastHarvestedAt": "2026-11-04T20:53:22.738Z",
+    "contentHash": "5f22feefa27c815c0430da9106efa274088461aee7eebcbd14eb7c3e53fa261f",
+    "lastHarvestedAt": "2026-11-08T07:30:58.844Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "adc282a7",
+    "sourceVersion": "34bbba0f",
     "license": "Apache-2.0",
-    "contentHash": "ebf7f702179bf33b6bdbdce353ec3aab1cf557a2086ce8bfc5f83dd62d8c55d1",
-    "lastHarvestedAt": "2026-11-08T06:59:47.249Z",
+    "contentHash": "3b125315aead77b6a9b73e8166fd412ee207ae596a3dfe38b6b9868412a7b07d",
+    "lastHarvestedAt": "2026-11-08T07:31:01.972Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {

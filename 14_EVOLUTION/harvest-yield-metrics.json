@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T07:23:37.947Z",
-  "total_cycles_completed": 8220,
-  "total_learnings_persisted": 8220,
-  "total_rules_promoted": 7939,
+  "last_updated": "2026-11-08T07:31:01.982Z",
+  "total_cycles_completed": 8222,
+  "total_learnings_persisted": 8222,
+  "total_rules_promoted": 7942,
   "history": [
-    {
-      "timestamp": "2026-11-07T19:23:48.927Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T19:30:48.323Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T19:37:17.906Z",
       "repository": "bahdotsh/wrkflw",
@@ -1403,6 +1389,20 @@
       "repository": "Edge0/Audio8-ASR-Infinite",
       "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T07:30:58.851Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T07:31:01.982Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

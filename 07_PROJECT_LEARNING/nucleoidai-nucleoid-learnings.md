@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `adc282a7`  
+> **Source Version**: `34bbba0f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T06:59:45.650Z  
+> **Timestamp**: 2026-11-08T07:31:01.640Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T06:59:45.521Z  
+> **Harvest Timestamp**: 2026-11-08T07:31:01.314Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@
 
 ### Core Architecture Module: `src/lang/ast/generator/statement.rs`
 ```
-use super::{has_binding_metadata, signature};
+use super::{enum_source, has_binding_metadata, signature};
 use crate::lang::ast::{ClassDecl, Expr, Function, FunctionBody, Stmt};
 
 /// Renders a run of statements as the body of a block, which is what a block or
@@ -55,7 +55,7 @@ pub fn generate_all(statements: &[Stmt]) -> String {
 #[must_use]
 pub fn generate(statement: &Stmt) -> String {
     match statement {
-        Stmt::Assign { target, value } => format!("{target}={value}"),
+        Stmt::Assign { target, value } => assignment_source(target, value),
         Stmt::ValueAssign { target, value } => format!("{target}:={value}"),
         Stmt::Expression(expression) => expression.to_string(),
         Stmt::If {
@@ -113,6 +113,13 @@ pub fn generate(statement: &Stmt) -> String {
                 generate_all(body)
             )
         }
+    }
+}
+
+fn assignment_source(target: &Expr, value: &Expr) -> String {
+    match (target, value) {
+        (Expr::Identifier(name), Expr::Enum(members)) => enum_source(name, members),
+        _ => format!("{target}={value}"),
     }
 }
 
@@ -400,6 +407,10 @@ impl Parser {
             return Ok(Stmt::While { condition, body });
         }
 
+        if let Some(name) = self.enum_header() {
+            return self.enum_declaration(name);
+        }
+
         match self.peek().clone() {
             Token::Keyword(Keyword::If) => self.if_statement(),
             Token::Keyword(Keyword::For) => self.for_statement(),
@@ -536,6 +547,7 @@ impl Parser {
             context: self.context,
             options: self.options,
             enclosed: self.enclosed,
+            in_class: self.in_class,
             ..Parser::new(std::mem::take(&mut self.tokens))
         };
         let parsed = parse(&mut probe);
@@ -548,18 +560,14 @@ impl Parser {
             parser.position = from;
             parser.depth = parser.depth.saturating_sub(1);
             let mut statements = Vec::new();
-            for _ in from..=colon {
-                if parser.position > colon {
-                    return true;
-                }
-                if parser.stat
+            for _
 ```
 
 ### Core Architecture Module: `src/state.rs`
 ```
 mod mutation;
 
-use indexmap::IndexMap;
+use indexmap::{IndexMap, IndexSet};
 use std::fmt;
 use std::sync::Arc;
 
@@ -666,6 +674,7 @@ pub struct State {
     classes: IndexMap<String, ClassData>,
     functions: IndexMap<String, Arc<Function>>,
     histories: IndexMap<HistoryKey, History>,
+    read_only: IndexSet<ObjectId>,
 }
 
 impl State {
@@ -733,6 +742,15 @@ impl State {
 
     pub fn object_mut(&mut self, id: &ObjectId) -> Option<&mut ObjectData> {
         self.objects.get_mut(id)
+    }
+
+    #[must_use]
+    pub(crate) fn is_read_only(&self, id: &ObjectId) -> bool {
+        self.read_only.contains(id)
+    }
+
+    pub(crate) fn mark_read_only(&mut self, id: ObjectId) {
+        self.read_only.insert(id);
     }
 
     #[must_use]
@@ -806,10 +824,12 @@ impl State {
     }
 
     pub(crate) fn restore_object(&mut self, id: ObjectId, before: Option<ObjectData>) {
-        match before {
-            Some(data) => self.objects.insert(id, data),
-            None => self.objects.shift_remove(&id),
-        };
+        if let Some(data) = before {
+            self.objects.insert(id, data);
+        } else {
+            self.objects.shift_remove(&id);
+            self.read_only.swap_remove(&id);
+        }
     }
 
     pub(crate) fn restore_class(&mut self, name: String, before: Option<ClassData>) {
@@ -832,6 +852,7 @@ impl State {
         self.classes.clear();
         self.functions.clear();
         self.histories.clear();
+        self.read_only.clear();
     }
 }
 
@@ -842,7 +863,8 @@ impl State {
 use std::sync::Arc;
 
 use super::ClassData;
-use crate::graph::ShapeKey;
+use crate::error::{Error, Result};
+use crate::graph::{NodeKey, ShapeKey};
 use crate::history::{History, HistoryKey};
 use crate::lang::ast::Function;
 use crate::runtime::Runtime;
@@ -890,12 +912,31 @@ impl Runtime {
         changed
     }
 
+    pub(crate) fn ensure_writable(&self, object: &ObjectId) -> Result<()> {
+        if self.state.is_read_only(object) {
+            return Err(Error::type_error("Enums are read-only"));
+        }
+        Ok(())
+    }
+
+    pub(crate) fn write_property(
+        &mut self,
+        object: &ObjectId,
+        property: &str,
+        value: Value,
+    ) -> Result<()> {
+        self.ensure_writable(object)?;
+        let changed = self.assign_property(object, property, value);
+        self.propagate_change(&NodeKey::property(object, property), changed)
+    }
+
     pub(crate) fn assign_property(
         &mut self,
         object: &ObjectId,
         property: &str,
         value: Value,
     ) -> bool {
+        debug_assert!(!self.state.is_read_only(object));
         if !self.state.objects.contains_key(object) {
             self.insert_object(object.clone(), ObjectData::new(None));
         }
@@ -941,6 +982,7 @@ impl Runtime {
 
     /// `state.delete` for a property.
     pub(crate) fn remove_property(&mut self, object: &ObjectId, property: &str) -> Option<Value> {
+        debug_assert!(!self.state.is_read_only(object));
         let removed = self
             .state
             .object_mut(object)
@@ -1586,457 +1628,406 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `adc282a7` (2026-11-08)
-**Commit Message**: Include input dimensions in analyzer prompt
+### Incident Patch 1: `34bbba0f` (2026-11-08)
+**Commit Message**: NUC 90 Enum Declarations
 
-Pass the input instance's width and height alongside its position and orientation.
+Outcome: Accepted. Every hard criterion passed and every policy check
+passed: the independent evaluator decided Accepted, with no defects, on
+the ordinary continuous-proposal basis, and the required token
+comparison ran with no increase.
 
-**File**: `arc/src/analyzer.ts` (modified, +3/-1)
+An enum declaration names a closed set of categories once: enum Status:
+PENDING, PAID, SHIPPED on one line, with at least two members, or enum
+Status: followed by an indented block with one member per line. A member
+may take a scalar literal value; a member without one holds its own name
+as a string. The declaration declares its name as the object literal
+Status = {...} would, and that object is read-only: every write path and
+every name that holds it raises TypeError("Enums are read-only") and
+rolls back its transaction, while binding the name to another value
+stays allowed. A declaration may start wherever a statement may start,
+except inside a class body. enum stays an ordinary name and no token kind
+is added; the one-line single member, typed declarations and the names
+assert, lambda and suppose keep their accepted readings. Only inputs that
+were syntax errors at the accepted revision change.
+
+Category Runtime feature
+
+**File**: `README.md` (modified, +27/-0)
 ```diff
-@@ -87,7 +87,7 @@ export async function value({
- }) {
-   milestone.constructing_instance({ instance_name });
+@@ -1971,6 +1971,33 @@ assert(order, 49)
+   only an anonymous literal. See the
+   [root contract](nucleoid.spec.md#named-function-declarations).
  
--  const { x, y } = Matrix.locate(input_instance_matrix);
-+  const { x, y, width, height } = Matrix.locate(input_instance_matrix);
++## Enum declarations
++
++**Enums name a model's categories once**
++
++```nuc
++enum Stage: TODO, DOING, DONE
++class Task(title, stage):
++    this.title = title
++    this.stage = stage
++$Task.active = $Task.stage == Stage.DOING
++write = Task("write", Stage.TODO)
++review = Task("review", Stage.DOING)
++assert([write.active, review.active], [false, true])
++write.stage = Stage.DOING
++assert(Task.count(t -> t.active), 2)
++```
++
++- [NUC 90](docs/nuc-0090.md) adds enum declarations.
++  `enum Stage: TODO, DOING, DONE` declares `Stage` as an object whose
++  members hold their own names, so `Stage.DOING` is `"DOING"`. A member may
++  instead take a literal value, as in `enum Level: LOW = 1, HIGH = 3`, and
++  `enum Stage:` followed by an indented block lists one member per line.
++- Rules that read a member stay live like any other: moving `write` to
++  `Stage.DOING` makes it active, and the count follows. The enum itself is
++  read-only, so `Stage.DONE = "X"` raises `TypeError("Enums are read-only")`.
++  See the [root contract](nucleoid.spec.md#enum-declarations).
++
+ ## Benchmark
  
-   const { orientation } = await llm.generate({
-     puzzle_id,
-@@ -151,6 +151,8 @@ export async function value({
-           ${JSON.stringify(Matrix.crop(input_instance_matrix))}
-           input_x: ${x}
-           input_y: ${y}
-+          input_width: ${width}
-+          input_height: ${height}
-           orientation: ${orientation}
-           json_format:
-           {
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
----
-
-### Incident Patch 2: `ac49bb38` (2026-11-08)
-**Commit Message**: Expose object dimensions to ARC visualizer
-
-Return crop dimensions from Matrix.locate and include them in visualizer requests. Remove comments from ARC datasets and update the default puzzle and terminal formatting.
-
-**File**: `arc/README.md` (modified, +6/-5)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +8/-0)
 ```diff
-@@ -2389,11 +2389,12 @@ This standalone utility does not change the full-size instance masks or return
- position metadata. Use `Matrix.locate` to retain the original position with
- the crop.
+@@ -702,3 +702,11 @@
+ {"id":"spec-0702","description":"Nucleoid declares functions wherever a statement may start","code":"ready = true\nif ready:\n    function greet(name) { return \"hi \" + name }\n{ function shout(name) { return name + \"!\" } }\nfunction outer(x) {\n    function inner(y) { return y * 10 }\n    return inner(x) + 1\n}\nfunction twice(x) { return x * 2 } total = twice(3)\nassert(greet(\"ana\"), \"hi ana\")\nassert(shout(\"bo\"), \"bo!\")\nassert(outer(2), 21)\nassert(total, 6)","return":null}
+ {"id":"spec-0703","description":"Nucleoid keeps function declarations live without hoisting","code":"try:\n    early = rate(2)\ncatch error:\n    assert(error, ReferenceError(\"rate is not defined\"))\nfunction rate(x) { return x * 2 }\nbase = 3\ncharge = rate(base)\nfrozen = rate.value\nfunction rate(x) { return x * 5 }\nassert(charge, 15)\nassert(frozen(3), 6)\nbase = 4\nassert(charge, 20)\nassert((why charge)[0].from, [\"rate\", \"base\"])\ncharge","return":"20"}
+ {"id":"spec-0704","description":"Nucleoid rolls back failed function declarations","code":"function fee(amount) { return amount + 1 }\ntotal = fee(10)\ntry:\n    function fee(amount) { return amount * 100 }\n    assert(total, 1000)\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(total, 11)\nassert(fee(1), 2)\nfailure = \"\"\ntry:\n    function fee(amount) { return missing + amount }\ncatch error:\n    failure = error\nassert(failure, ReferenceError(\"missing is not defined\"))\nassert([total, fee(2)], [11, 3])","return":null}
++{"id":"spec-0705","description":"Nucleoid declares enums whose members name themselves","code":"enum Status: PENDING, PAID, SHIPPED\nassert(Status.PAID, \"PAID\")\nassert(Status[\"SHIPPED\"], \"SHIPPED\")\nassert(Status, {PENDING: \"PENDING\", PAID: \"PAID\", SHIPPED: \"SHIPPED\"})\nassert(Status.REFUNDED, null)\nlabel = Status.PENDING + \" order\"\nassert(label, \"PENDING order\")\ntypeof Status","return":"\"Object\""}
++{"id":"spec-0706","description":"Nucleoid gives enum members explicit scalar values","code":"enum Level: LOW = 1, HIGH = 10\nenum Size: LARGE = \"XL\", SMALL, MEDIUM, CUSTOM = null\nenum Move: BACK = -1, AHEAD = 1\nenum Flag: ON = true, OFF = false\nassert([Level.LOW, Level.HIGH], [1, 10])\nassert([Size.SMALL, Size.LARGE, Size.CUSTOM], [\"SMALL\", \"XL\", null])\nassert(Size, {LARGE: \"XL\", SMALL: \"SMALL\", MEDIUM: \"MEDIUM\", CUSTOM: null})\nassert(Move.BACK + Move.AHEAD, 0)\nassert(Flag.ON && !Flag.OFF, true)\nsteps = Level.HIGH * 2 + Move.BACK\nsteps","return":"19"}
++{"id":"spec-0707","description":"Nucleoid declares enums in indented blocks","code":"enum Color:\n    RED\n    GREEN\n    BLUE\n    BLACK = \"#000\"\nenum Mode:\n    AUTO\npen = {color: Color.GREEN, mode: Mode.AUTO}\nassert(pen, {color: \"GREEN\", mode: \"AUTO\"})\nassert([Color.RED, Color.BLACK], [\"RED\", \"#000\"])\nenum Mode: AUTO = \"auto\", MANUAL\nassert(pen.mode, \"auto\")\npen.color","return":"\"GREEN\""}
++{"id":"spec-0708","description":"Nucleoid keeps class level rules over enum members live","code":"enum Status: PENDING, PAID, SHIPPED\nclass Order(total, status):\n    this.total = total\n    this.status = status\n$Order.billable = $Order.status != Status.PENDING\nfirst = Order(30, Status.PENDING)\nsecond = Order(45, Status.PAID)\nwaiting = Order.filter(o -> o.status == Status.PENDING)\nassert([first.billable, second.billable, waiting.length], [false, true, 1])\nfirst.status = Status.SHIPPED\nassert([first.billable, waiting.length], [true, 0])\nsecond.status","return":"\"PAID\""}
++{"id":"spec-0709","description":"Nucleoid updates readers when an enum is declared again","code":"enum Plan: FREE, PRO\nchoice = Plan.TEAM\nassert(choice, null)\nprice = Plan.PRO == \"PRO\" ? 20 : 0\nenum Plan: FREE, PRO, TEAM\nassert([choice, price], [\"TEAM\", 20])\nenum Plan: PRO = \"PREMIUM\", FREE, TEAM\nassert([choice, price], [\"TEAM\", 0])\nassert((why choice).map(s -> s.node), [\"choice\", \"Plan\"])\n(affects Plan).map(s -> s.node)","return":"[\"choice\",\"price\"]"}
++{"id":"spec-0710","description":"Nucleoid declares enums wherever a statement may start","code":"def kinds():\n    enum Kind: BOOK, GAME\n    return Kind.GAME\nassert([kinds(), Kind.BOOK], [\"GAME\", \"BOOK\"])\nPick = \"outer\"\ndef pick(Pick):\n    enum Pick: LEFT, RIGHT\n    return Pick.RIGHT\nassert([pick(null), Pick], [\"RIGHT\", \"outer\"])\nready = true\nif ready: enum Mood: CALM, BUSY\n{ enum Tier: GOLD, SILVER }\ncount = 2 enum Pair: ONE, TWO\nassert([Mood.BUSY, Tier.GOLD, Pair.TWO, count], [\"BUSY\", \"GOLD\", \"TWO\", 2])","return":null}
++{"id":"spec-0711","description":"Nucleoid rolls back enum declarations with their transactions","code":"enum Status: OPEN, CLOSED\nview = Status.CLOSED\ntry:\n    enum Status: OPEN, DONE\n    assert(view, null)\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(view, \"CLOSED\")\nfailure = \"\"\ntry:\n    enum Status: CLOSED = \"SHUT\", OPEN\n    missing + 1\ncatch error:\n    failu
+```
+
+**File**: `dataset/nucleoid.synth.64.jsonl` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++{"id":"synth-64-0001","description":"An enum declaration names a set of categories once, and a member without a value holds its own name as a string","code":"enum Status: PENDING, PAID, SHIPPED\n[Status.PAID, Status[\"SHIPPED\"], Status.REFUNDED]","return":"[\"PAID\",\"SHIPPED\",null]"}
++{"id":"synth-64-0002","description":"Enum members may take scalar literal values: numbers, negative numbers, strings, booleans and null","code":"enum Level: LOW = 1, HIGH = 10\nenum Move: BACK = -1, AHEAD = 1\nenum Size: LARGE = \"XL\", SMALL, NONE = null\nenum Flag: ON = true, OFF = false\n[Level.HIGH + Move.BACK, Size.LARGE, Size.SMALL, Size.NONE, Flag.ON]","return":"[9,\"XL\",\"SMALL\",null,true]"}
++{"id":"synth-64-0003","description":"The indented form lists one member per line, and an enum with a single member uses it","code":"enum Color:\n    RED\n    GREEN = \"#0f0\"\nenum Mode:\n    AUTO\n[Color.RED, Color.GREEN, Mode.AUTO]","return":"[\"RED\",\"#0f0\",\"AUTO\"]"}
++{"id":"synth-64-0004","description":"Class-level rules that compare an attribute with an enum member stay live as instances change","code":"enum Stage: TODO, DOING, DONE\nclass Task(stage):\n    this.stage = stage\n$Task.active = $Task.stage == Stage.DOING\ntask = Task(Stage.TODO)\nidle = Task(Stage.DONE)\ntask.stage = Stage.DOING\n[task.active, idle.active, Task.count(t -> t.active)]","return":"[true,false,1]"}
++{"id":"synth-64-0005","description":"Declaring an enum again replaces it, and every declaration that reads its members follows","code":"enum Plan: FREE, PRO\nchoice = Plan.TEAM\nenum Plan: FREE, PRO, TEAM\n[choice, Plan.PRO]","return":"[\"TEAM\",\"PRO\"]"}
++{"id":"synth-64-0006","description":"An enum is read-only: assigning, adding or deleting a member raises a TypeError and leaves the enum unchanged","code":"enum Status: OPEN, CLOSED\nfailures = []\ntry:\n    Status.OPEN = \"X\"\ncatch error:\n    failures.push(error)\ntry:\n    delete Status.CLOSED\ncatch error:\n    failures.push(error)\n[failures, Status]","return":"[[\"TypeError: Enums are read-only\",\"TypeError: Enums are read-only\"],{\"OPEN\":\"OPEN\",\"CLOSED\":\"CLOSED\"}]"}
++{"id":"synth-64-0007","description":"A spread copies an enum's members into an ordinary object, and an entry loop visits them in declaration order","code":"enum Size: SMALL, LARGE\ncopy = {...Size, HUGE: \"HUGE\"}\nnames = []\nfor name, value of Size:\n    names.push(name + \"=\" + value)\n[copy, names]","return":"[{\"SMALL\":\"SMALL\",\"LARGE\":\"LARGE\",\"HUGE\":\"HUGE\"},[\"SMALL=SMALL\",\"LARGE=LARGE\"]]"}
++{"id":"synth-64-0008","description":"enum followed by a single name keeps its accepted meaning, the name enum and a typed declaration, so a single member uses the indented form","code":"enum = 4\ntry:\n    enum Unit: ONLY\ncatch error:\n    failure = error\nenum Unit:\n    ONLY\n[enum * 2, failure, Unit.ONLY]","return":"[8,\"ReferenceError: Missing definition\",\"ONLY\"]"}
+```
+
+**File**: `docs/README.md` (modified, +49/-0)
+```diff
+@@ -402,6 +402,46 @@ pair = [1, 9]
+   `tests/reference.md`; the root contract is
+   [Destructuring declarations](../nucleoid.spec.md#destructuring-declarations).
  
--`Matrix.locate(matrix)` returns `{ matrix, x, y }`, pairing the same tight crop
--with its zero-based top-left position in the original matrix: `x` is the column
--and `y` is the row. Empty and all-zero matrices return
--`{ matrix: [], x: 0, y: 0 }`. It uses the same validation as `Matrix.crop` and
--does not modify the input. For a located result,
-+`Matrix.locate(matrix)` returns `{ matrix, x, y, width, height }`, pairing the
-+same tight crop with its zero-based top-left position in the original matrix
-+and its size: `x` is the column, `y` is the row, `width` is the crop's column
-+count and `height` is its row count. Empty and all-zero matrices return
-+`{ matrix: [], x: 0, y: 0, width: 0, height: 0 }`. It uses the same validation
-+as `Matrix.crop` and does not modify the input. For a located result,
- `Matrix.pad(result.matrix, rows, cols, result.x, result.y)` restores the crop
- to its original position on a canvas at least as large as the supplied dimensions.
++### Enum declarations
++
++```
++enum Size: SMALL, MEDIUM, LARGE
++enum Fit: TIGHT = -1, REGULAR = 0, LOOSE = 1
++shirt = {size: Size.MEDIUM, fit: Fit.REGULAR}
++assert(shirt, {size: "MEDIUM", fit: 0})
++assert([Size.LARGE, Fit.TIGHT, Size.HUGE], ["LARGE", -1, null])
++enum Fit: TIGHT = -1, REGULAR = 1, LOOSE = 2
++shirt.fit
++```
++
++- This is the complete `Nucleoid declares enums of named members` program in
++  `tests/reference.md`, without its title and expected-return metadata; it
++  returns `1`.
++- [NUC 90](nuc-0090.md) adds enum declarations: `enum NAME:` followed by two
++  or more comma-separated members on the same line, or by an indented block
++  with one member per line. A member is a name, optionally followed by `=`
++  and a scalar literal: a finite number with an optional sign, a string,
++  `true`, `false` or `null`. A member without a value holds its own name as a
++  string.
++- `enum NAME: ...` declares `NAME` exactly as `NAME = {...}` with the same
++  members would, wherever a statement may start outside a class body. The
++  declaration reads nothing. Declaring the name again replaces it and
++  re-evaluates its readers, as declaring `Fit` again above moves `shirt.fit`
++  to `1`, and rollback restores the earlier enum.
++- The value is an ordinary object with the members in declaration order.
++  Member reads, missing members, `typeof`, assertions, JSON, entry loops and
++  spreads treat it as they treat an object literal. It is read-only:
++  assigning, adding or deleting a member raises
++  `TypeError("Enums are read-only")` and rolls back its transaction. A copy
++  that a `suppose` block's value carries out stays read-only, and a spread
++  builds an ordinary object.
++- `enum Status: PENDING`, a single name after the colon, keeps its accepted
++  reading, the name `enum` followed by a typed declaration, so a single
++  member uses the block form. `enum` stays an ordinary name everywhere else,
++  and class bodies keep every `enum` spelling as before. Canonical source
++  writes `enum Fit:TIGHT=-1,REGULAR=1,LOOSE=2`. See the authoritative
++  [enum declarations](../nucleoid.spec.md#enum-declarations) section.
++
+ ### Null and undefined
+ 
+ - Any `null` dependency yields `null`.
+@@ -3617,6 +3657,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | A `depth` stage limit that is neither `null`, undefined nor a non-negative integer number | `<limit> is not a non-negative integer` |
+ | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
+ | A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
++| Assigning, adding or deleting a property of an enum's object, through any name that holds it | `Enums are read-only` |
+ | Assigning a `suppose` block whose last statement is not an expression | `suppose has no value` |
+ | Evaluating a `diff` stage while no `suppose` block is running | `Cannot use 'diff' outside suppose` |
+ | `:=` on a class-level property outside a class-level rule | `Cannot use ':=' on a class-level property` |
+@@ -3647,6 +3688,10 @@ Messages are exact and are part of the observable behaviour of the language.
+ | Nesting or a chain past the runtime's limit | `Expressions are nested too deeply`, `Expression has too many operands` |
+ | A postfix chain, a compound path or a property selector beyond its limit | `Expression has too many parts` |
+ | A destructuring with more than 128 targets | `Destructuring has too many targets` |
++| An enum member named twice in one declaration, at the second | `Enum '<name>' already has member '<member>'` |
++| A one-line enum with a single member | `Enum '<name>' needs at least two members on one line` |
++| An enum member value that is not a scalar literal | `Expected a scalar literal enum member value` |
++| An enum member value that is a number but not finite | `Enum member value must be a finite number` |
+ | A constructor-header star at a parameter position | `Expected a parameter but found '*'` |
+ | A `this.` or `self.` prefix outside a constructor parameter list, or not followed by one name and then `,`, `)`, `:` or `=` | `Expected a parameter but found keyword 'this'` |
+ | An `extends` clause whose parent is missing or not a name | `Expected a parent class name but found <what>` |
+@@ -3679,6 +3724,10 @@ name += expression                     compound assignment; also -=, *=, **=, /=
+ {a, b} = expression                    one declaration per field: a = expression.a (NUC 67)
+ {key: name} = expression               renamed field: name = expression.key (NUC 67)
+ a, b = expression                      one declaration per position: a = expression[0] (NUC 67)
++enum Name: A, B, C = 1                 read-only object; a bare member holds its own name (NUC 90)
++enum Name:   
+```
+
+**File**: `docs/examples.md` (modified, +30/-0)
+```diff
+@@ -3519,6 +3519,36 @@ function grade(score) { return score >= 60 }
+   [NUC 89](nuc-0089.md) and the
+   [root contract](../nucleoid.spec.md#named-function-declarations).
+ 
++## Enum declarations
++
++**Enums keep a ticket's priority rules readable**
++
++```nuc
++enum Priority: LOW = 1, HIGH = 3
++enum State: OPEN, CLOSED
++class Ticket(title, priority):
++    this.title = title
++    this.priority = priority
++    this.state = State.OPEN
++$Ticket.urgent = $Ticket.priority == Priority.HIGH && $Ticket.state == State.OPEN
++crash = Ticket("crash", Priority.HIGH)
++typo = Ticket("typo", Priority.LOW)
++assert([crash.urgent, typo.urgent], [true, false])
++crash.state = State.CLOSED
++[crash.urgent, Ticket.filter(t -> t.priority > Priority.LOW).length]
++# return: [false,1]
++```
++
++- `Priority` gives its members numbers, so the filter compares
++  `t.priority > Priority.LOW`, and `State` names the two states a ticket
++  can be in. Members read as ordinary values in constructors and class-level
++  rules.
++- Closing the crash ticket clears `urgent`, because the rule reads the
++  ticket's state. Every write to an enum raises
++  `TypeError("Enums are read-only")`, so the categories cannot drift. See
++  [NUC 90](nuc-0090.md) and the
++  [root contract](../nucleoid.spec.md#enum-declarations).
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -83,6 +83,7 @@ Created: 31-Jul-2026
+ | [74](nuc-0074.md) | Final Rest Parameters | Accepted |
+ | [81](nuc-0081.md) | Object Spread Entries | Accepted |
+ | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
++| [90](nuc-0090.md) | Enum Declarations | Accepted |
+ 
+ ### Utility enhancement
+ 
+@@ -233,6 +234,7 @@ Created: 31-Jul-2026
+ | [87](nuc-0087.md) | Initializing Constructor Parameters | Standards Track | Syntax enhancement | Accepted |
+ | [88](nuc-0088.md) | Derivation Path Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [89](nuc-0089.md) | Named Function Declarations | Standards Track | Language compatibility | Accepted |
++| [90](nuc-0090.md) | Enum Declarations | Standards Track | Runtime features | Accepted |
+ 
+ ## Copyright
  
 ```
 
-**File**: `arc/src/app.ts` (modified, +1/-1)
+**File**: `docs/nuc-0090.md` (added, +882/-0)
 ```diff
-@@ -8,7 +8,7 @@ import fs from "node:fs/promises";
+@@ -0,0 +1,882 @@
++# NUC 90 -- Enum Declarations
++
++```
++NUC: 90
++Title: Enum Declarations
++Author: Claude <noreply@anthropic.com>
++Status: Accepted
++Type: Standards Track
++Category: Runtime features
++Created: 07-Nov-2026
++Requires: 45, 54, 57, 65, 72, 81
++```
++
++## Abstract
++
++- An enum declaration names a closed set of categories once:
++  `enum Status: PENDING, PAID, SHIPPED` on one line, or `enum Status:`
++  followed by an indented block with one member per line. A member may take
++  a scalar literal value, as in `enum Level: LOW = 1, HIGH = 3`; a member
++  without one holds its own name as a string.
++- An enum declaration declares its name as `Status = {...}` would, with an
++  object that holds the members in declaration order. Binding, standing and
++  imperative contexts, locals, readers, redeclaration, `why`, `affects`,
++  transactions and rollback are those of that declaration, and members read
++  as ordinary properties.
++- The enum's object is read-only. Assigning a member, adding a property or
++  deleting one raises `TypeError("Enums are read-only")` through every write
++  path and every name that holds the object, and rolls back its transaction.
++  Binding the name to another value stays allowed.
++- A declaration may start wherever a statement may start, except inside a
++  class body, where every `enum` spelling keeps its accepted reading.
++- `enum` stays an ordinary name and no token kind is added. The one-line form
++  needs at least two members: `enum Status: PENDING` keeps its accepted
++  reading, the name `enum` followed by the typed declaration
++  `Status: PENDING`, and a single member uses the block form.
++  `enum assert: ...`, `enum lambda: ...` and `enum suppose: ...` keep theirs
++  too. Only inputs that were syntax errors at the accepted revision change.
++- Canonical source writes `enum Status:PENDING,PAID,SHIPPED`, `why` rules
++  show it, and it parses back to the same declaration.
++- The public `Expr` enum gains `Expr::Enum(Vec<EnumMember>)`, and the public
++  `ast` module gains the struct `EnumMember` with the fields `name` and
++  `value`; they need human SemVer review, and no project version changes.
++  Runtime applicability is `existing_comparable`, so the token
++  non-regression gate applies. The authoritative contract is
++  [Enum declarations](../nucleoid.spec.md#enum-declarations).
++- **Outcome: Accepted.** The independent evaluation and the caller's
++  integrated-tree checks passed all three hard criteria, and the independent
++  evaluator decided Accepted with no defects and one low cost finding. The
++  required token comparison ran in continuous mode: 11 cases use fewer
++  tokens, 1,019 the same and none more. No policy check failed.
++
++## Motivation
++
++- World models classify. An order is pending, paid or shipped; a ticket's
++  priority is low or high; a shirt is small, medium or large. Language
++  models write these categories as enums in TypeScript, Java, C#, Kotlin,
++  Swift and Rust, and as `Enum` classes in Python, and they compare
++  attributes against the members in every rule.
++- Accepted Nucleoid has no enum declaration.
++  `enum Status: PENDING, PAID` raises `SyntaxError("Unexpected ':'")` at
++  line 1, column 14, and the indented form raises it at line 1, column 12.
++  TypeScript's `enum Status { PENDING, PAID }` raises
++  `SyntaxError("Unexpected ','")`, Kotlin's `enum class Status { ... }`
++  raises `SyntaxError("Expected ':' but found '{'")`, and Python's
++  `class Status(Enum):` with member assignments declares a class, so
++  `Status.PAID` reads `null`.
++- The accepted spelling is an object of named constants,
++  `Status = {PENDING: "PENDING" PAID: "PAID"}`. It repeats every member's
++  name as its value, and nothing keeps the categories fixed:
++  `Status.PAID = "SHIPPED"` redefines a category that every rule compares
++  against and silently re-evaluates them all, `Status.PAYED = "PAYED"` adds a
++  misspelled one, and `delete Status.PAID` removes one.
++- An enum declaration states the categories once, gives each member its own
++  name or a literal, and keeps the set read-only, while every rule that uses
++  a member stays an ordinary property read.
++- Each of the eleven new cases uses between 2 and 20 fewer lexer tokens than
++  the most compact behavior-equivalent accepted program found for it.
++
++## Rationale
++
++- **Category and applicability.** The caller selected Runtime features by one
++  tool-backed uniform draw over the five categories that NUC 1's registry
++  marks eligible for automatic selection: index 1, with probability 1/5 and
++  no redraw, in continuous mode. Enums are data modeling, which the
++  registry places in this category. Runtime applicability is
++  `existing_comparable`: objects of named constants are the accepted way to
++  model categories, and every new case has a behavior-equivalent accepted
++  counterpart that declares the same object with the same members, values and
++  order and reads it the same way. The read-only rule, rendering and
++
+```
+
+**File**: `nucleoid.spec.md` (modified, +205/-0)
+```diff
+@@ -4593,6 +4593,82 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid destructures object fields into standing declarations` through
+   `Nucleoid rolls back failed destructuring` specify the executable behavior.
  
- // Genesis puzzle_id: 3aa6fb7a
- export async function start(
--  puzzle_id: string = "6d0aefbc",
-+  puzzle_id: string = "d631b094",
-   only_puzzle_dataset: boolean = false
- ) {
-   const { arc_train, test_input_matrix, test_output_matrix } =
-```
-
-**File**: `arc/src/dataset/dataset.017c7c7b.json` (modified, +9/-9)
-```diff
-@@ -1,10 +1,10 @@
- {
-   "declarations": [
--    "# There is an Obj type, the whole pattern of colored cells on the canvas,\n# which has its x and y position, the width and height of its box,\n# its orientation, its color, and its period, the number of rows\n# after which the pattern starts over, as integers\n# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, color: int, period: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l9100'\n    this.color = color\n    this.period = period",
--    "# Every pattern grows by repeating its rows every period rows\n$Obj.tag = 'l8384'",
--    "# Every pattern grows down from its top row, which stays in place\n$Obj.extension_direction = 'down'",
--    "# Every pattern grows to one and a half times its height\n$Obj.height = $Obj.height@first * 3 / 2",
--    "# Every cell of the pattern turns color 2\n$Obj.color = 2"
-+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, color: int, period: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l9100'\n    this.color = color\n    this.period = period",
-+    "$Obj.tag = 'l8384'",
-+    "$Obj.extension_direction = 'down'",
-+    "$Obj.height = $Obj.height@first * 3 / 2",
-+    "$Obj.color = 2"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -50,7 +50,7 @@
-             [0, 2, 2],
-             [0, 2, 0]
-           ],
--          "implementation": "# The whole pattern of color 1, repeating every 4 rows,\n# 3 by 6 at x 0, y 0\nobj7868bfbcdc17 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=4)",
-+          "implementation": "obj7868bfbcdc17 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=4)",
-           "input_value": {"color":1,"height":6,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l9100","width":3,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l8384","width":3,"x":0,"y":0}
-         }
-@@ -98,7 +98,7 @@
-             [2, 0, 2],
-             [0, 2, 0]
-           ],
--          "implementation": "# The whole pattern of color 1, repeating every 2 rows,\n# 3 by 6 at x 0, y 0\nobj251f7bd03919 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=2)",
-+          "implementation": "obj251f7bd03919 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=2)",
-           "input_value": {"color":1,"height":6,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l9100","width":3,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l8384","width":3,"x":0,"y":0}
-         }
-@@ -146,7 +146,7 @@
-             [2, 2, 0],
-             [0, 2, 0]
-           ],
--          "implementation": "# The whole pattern of color 1, repeating every 3 rows,\n# 2 by 6 at x 0, y 0\nobj69f9506dfd32 = Obj(x=0, y=0, width=2, height=6, orientation=0, color=1, period=3)",
-+          "implementation": "obj69f9506dfd32 = Obj(x=0, y=0, width=2, height=6, orientation=0, color=1, period=3)",
-           "input_value": {"color":1,"height":6,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l9100","width":2,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l8384","width":2,"x":0,"y":0}
-         }
-@@ -194,7 +194,7 @@
-             [0, 2, 0],
-             [0, 2, 0]
-           ],
--          "implementation": "# The whole pattern of color 1, repeating every 3 rows,\n# 3 by 6 at x 0, y 0\nobj93fb566cfca3 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=3)",
-+          "implementation": "obj93fb566cfca3 = Obj(x=0, y=0, width=3, height=6, orientation=0, color=1, period=3)",
-           "input_value": {"color":1,"height":6,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l9100","width":3,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l8384","width":3,"x":0,"y":0}
-         }
-```
-
-**File**: `arc/src/dataset/dataset.0ca9ddb6.json` (modified, +18/-18)
-```diff
-@@ -1,8 +1,8 @@
- {
-   "declarations": [
--    "# There is an Obj type, a single point on the grid,\n# which has its x and y position, its width and height,\n# its orientation and its vertex color as integers\n# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, vertex_color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l7544'\n    this.vertex_color = vertex_color",
--    "# A point of vertex color 1 gains color-7 neighbors\n# above, below, left and right, an orthogonal cross\n# that starts one column left and one row up\n# and is two columns wider and two rows taller\nif $Obj.vertex_color is 1:\n    $Obj.tag = 'l1707'\n    $Obj.marker_color = 7\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2",
--    "# A point of vertex color 2 gains color-4 neighbors\n# on its four diagonals, a diagonal cross\n# that starts one column left and one row up\n# and is two columns wider and two rows taller\nif $Obj.vertex_color is 2:\n    $Obj.tag = 'l2404'\n    $Obj.marker_color = 4\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2"
-+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, vertex_color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l7544'\n    this.vertex_color = vertex_color",
-+    "if $Obj.vertex_color is 1:\n    $Obj.tag = 'l1707'\n    $Obj.marker_color = 7\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2",
-+    "if $Obj.vertex_color is 2:\n    $Obj.tag = 'l2404'\n    $Obj.marker_color = 4\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -54,7 +54,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# A single point of color 2 at x 2, y 3\nobj08c8feaa60ea = Obj(x=2, y=3, width=1, height=1, orientation=0, vertex_color=2)",
-+          "implementation": "obj08c8feaa60ea = Obj(x=2, y=3, width=1, height=1, orientation=0, vertex_color=2)",
-           "input_value": {"height":1,"id":"obj08c8feaa60ea","orientation":0,"tag":"l7544","vertex_color":2,"width":1,"x":2,"y":3},
-           "output_value": {"height":3,"id":"obj08c8feaa60ea","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"width":3,"x":1,"y":2}
-         },
-@@ -82,7 +82,7 @@
-             [0, 0, 0, 0, 0, 0, 7, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# A single point of color 1 at x 6, y 6\nobjfa5219213773 = Obj(x=6, y=6, width=1, height=1, orientation=0, vertex_color=1)",
-+          "implementation": "objfa5219213773 = Obj(x=6, y=6, width=1, height=1, orientation=0, vertex_color=1)",
-           "input_value": {"height":1,"id":"objfa5219213773","orientation":0,"tag":"l7544","vertex_color":1,"width":1,"x":6,"y":6},
-           "output_value": {"height":3,"id":"objfa5219213773","marker_color":7,"orientation":0,"tag":"l1707","vertex_color":1,"width":3,"x":5,"y":5}
-         }
-@@ -136,7 +136,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# A single point of color 8 at x 3, y 0\nobja15258787f8e = Obj(x=3, y=0, width=1, height=1, orientation=0, vertex_color=8)",
-+          "implementation": "obja15258787f8e = Obj(x=3, y=0, width=1, height=1, orientation=0, vertex_color=8)",
-           "input_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"width":1,"x":3,"y":0},
-           "output_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"width":1,"x":3,"y":0}
-         },
-@@ -164,7 +164,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# A single point of color 2 at x 6, y 2\nobj21a7f426034a = Obj(x=6, y=2, width=1, height=1, orientation=0, vertex_color=2)",
-+          "implementation": "obj21a7f426034a = Obj(x=6, y=2, width=1, height=1, orientation=0, vertex_color=2)",
-           "input_value": {"height":1,"id":"obj21a7f426034a","orientation":0,"tag":"l7544","vertex_color":2,"width":1,"x":6,"y":2},
-           "output_value": {"height":3,"id":"obj21a7f426034a","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"width":3,"x":5,"y":1}
-         },
-@@ -192,7 +192,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0
-```
-
-**File**: `arc/src/dataset/dataset.0d3d703e.json` (modified, +17/-17)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "declarations": [
--    "# There is an Obj type, a vertical stripe of one color,\n# which has its x and y position, the width and height of its box,\n# its orientation and its color as integers\n# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l6953'\n    this.color = color",
--    "# Colors come in four pairs, 1 and 5, 2 and 6, 3 and 4, and 8 and 9,\n# whose two colors trade places: every stripe takes the other color\n# of the pair its color belongs to\n$Obj.color = [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
-+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l6953'\n    this.color = color",
-+    "$Obj.color = [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -29,7 +29,7 @@
-             [4, 0, 0],
-             [4, 0, 0]
-           ],
--          "implementation": "# A vertical stripe of color 3,\n# 1 by 3 at x 0, y 0\nobj4d683f973e7d = Obj(x=0, y=0, width=1, height=3, orientation=0, color=3)",
-+          "implementation": "obj4d683f973e7d = Obj(x=0, y=0, width=1, height=3, orientation=0, color=3)",
-           "input_value": {"color":3,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","width":1,"x":0,"y":0},
-           "output_value": {"color":4,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","width":1,"x":0,"y":0}
-         },
-@@ -45,7 +45,7 @@
-             [0, 5, 0],
-             [0, 5, 0]
-           ],
--          "implementation": "# A vertical stripe of color 1,\n# 1 by 3 at x 1, y 0\nobj21e76bc9df63 = Obj(x=1, y=0, width=1, height=3, orientation=0, color=1)",
-+          "implementation": "obj21e76bc9df63 = Obj(x=1, y=0, width=1, height=3, orientation=0, color=1)",
-           "input_value": {"color":1,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","width":1,"x":1,"y":0},
-           "output_value": {"color":5,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","width":1,"x":1,"y":0}
-         },
-@@ -61,7 +61,7 @@
-             [0, 0, 6],
-             [0, 0, 6]
-           ],
--          "implementation": "# A vertical stripe of color 2,\n# 1 by 3 at x 2, y 0\nobjfd9a9320bfe9 = Obj(x=2, y=0, width=1, height=3, orientation=0, color=2)",
-+          "implementation": "objfd9a9320bfe9 = Obj(x=2, y=0, width=1, height=3, orientation=0, color=2)",
-           "input_value": {"color":2,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","width":1,"x":2,"y":0},
-           "output_value": {"color":6,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","width":1,"x":2,"y":0}
-         }
-@@ -91,7 +91,7 @@
-             [6, 0, 0],
-             [6, 0, 0]
-           ],
--          "implementation": "# A vertical stripe of color 2,\n# 1 by 3 at x 0, y 0\nobje305b9fc2bcb = Obj(x=0, y=0, width=1, height=3, orientation=0, color=2)",
-+          "implementation": "obje305b9fc2bcb = Obj(x=0, y=0, width=1, height=3, orientation=0, color=2)",
-           "input_value": {"color":2,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","width":1,"x":0,"y":0},
-           "output_value": {"color":6,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","width":1,"x":0,"y":0}
-         },
-@@ -107,7 +107,7 @@
-             [0, 4, 0],
-             [0, 4, 0]
-           ],
--          "implementation": "# A vertical stripe of color 3,\n# 1 by 3 at x 1, y 0\nobjb8e066db3336 = Obj(x=1, y=0, width=1, height=3, orientation=0, color=3)",
-+          "implementation": "objb8e066db3336 = Obj(x=1, y=0, width=1, height=3, orientation=0, color=3)",
-           "input_value": {"color":3,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","width":1,"x":1,"y":0},
-           "output_value": {"color":4,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","width":1,"x":1,"y":0}
-         },
-@@ -123,7 +123,7 @@
-             [0, 0, 9],
-             [0, 0, 9]
-           ],
--          "implementation": "# A vertical stripe of color 8,\n# 1 by 3 at x 2, y 0\nobj459cb43b4fc7 = Obj(x=2, y=0, width=1, height=3, orientation=0, color=8)",
-+          "implementation": "obj459cb43b4fc7 = Obj(x=2, y=0, width=1, height=3, orientation=0, color=8)",
-           "input_value": {"color":8,"height":3,"id":"obj459cb43b4fc7","orientation":0,"tag":"l6953","width":1,"x":2,"y":0},
-           "output_value": {"color":9,"height":3,"id":"obj459cb43b4fc7","orientation":0,"tag":"l6953","width":1
-```
-
-**File**: `arc/src/dataset/dataset.25d8a9c8.json` (modified, +16/-16)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "declarations": [
--    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, parts: list):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l3058'\n    this.parts = parts",
-+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, parts: list):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l3058'\n    this.parts = parts",
-     "$Obj.fill_color = 5 if $Obj.parts.distinct().length is 1 else 0"
-   ],
-   "output_canvas": "EXACT",
-@@ -29,7 +29,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# A horizontal line of 3 cells of color 4,\n# 3 by 1 at x 0, y 0\nobj264fe4293acf = Obj(x=0, y=0, width=3, height=1, orientation=90, parts=[4, 4, 4])",
-+          "implementation": "obj264fe4293acf = Obj(x=0, y=0, width=3, height=1, orientation=90, parts=[4, 4, 4])",
-           "input_value": {"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","width":3,"x":0,"y":0},
-           "output_value": {"fill_color":5,"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","width":3,"x":0,"y":0}
-         },
-@@ -45,7 +45,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# A horizontal line of 3 cells of colors 2, 3 and 2,\n# 3 by 1 at x 0, y 1\nobje69821b4eaf1 = Obj(x=0, y=1, width=3, height=1, orientation=90, parts=[2, 3, 2])",
-+          "implementation": "obje69821b4eaf1 = Obj(x=0, y=1, width=3, height=1, orientation=90, parts=[2, 3, 2])",
-           "input_value": {"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","width":3,"x":0,"y":1},
-           "output_value": {"fill_color":0,"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","width":3,"x":0,"y":1}
-         },
-@@ -61,7 +61,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# A horizontal line of 3 cells of color 3 with a color-2 head,\n# 3 by 1 at x 0, y 2, pointing west\nobj1ece888d68bd = Obj(x=0, y=2, width=3, height=1, orientation=270, parts=[2, 3, 3])",
-+          "implementation": "obj1ece888d68bd = Obj(x=0, y=2, width=3, height=1, orientation=270, parts=[2, 3, 3])",
-           "input_value": {"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","width":3,"x":0,"y":2},
-           "output_value": {"fill_color":0,"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","width":3,"x":0,"y":2}
-         }
-@@ -91,7 +91,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# A horizontal line of 3 cells of color 3 with a color-7 head,\n# 3 by 1 at x 0, y 0, pointing west\nobj95bc4ed42279 = Obj(x=0, y=0, width=3, height=1, orientation=270, parts=[7, 3, 3])",
-+          "implementation": "obj95bc4ed42279 = Obj(x=0, y=0, width=3, height=1, orientation=270, parts=[7, 3, 3])",
-           "input_value": {"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","width":3,"x":0,"y":0},
-           "output_value": {"fill_color":0,"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","width":3,"x":0,"y":0}
-         },
-@@ -107,7 +107,7 @@
-             [5, 5, 5],
-             [0, 0, 0]
-           ],
--          "implementation": "# A horizontal line of 3 cells of color 6,\n# 3 by 1 at x 0, y 1\nobjde7e64595025 = Obj(x=0, y=1, width=3, height=1, orientation=90, parts=[6, 6, 6])",
-+          "implementation": "objde7e64595025 = Obj(x=0, y=1, width=3, height=1, orientation=90, parts=[6, 6, 6])",
-           "input_value": {"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","width":3,"x":0,"y":1},
-           "output_value": {"fill_color":5,"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","width":3,"x":0,"y":1}
-         },
-@@ -123,7 +123,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# A horizontal line of 3 cells of color 7 with a color-3 head,\n# 3 by 1 at x 0, y 2, pointing west\nobj96cdc68d576d = Obj(x=0, y=2, width=3, height=1, orientation=270, parts=[3, 7, 7])",
-+          "implementation": "obj96cdc68d576d = Obj(x=0, y=2, width=3, height=1, orientation=270, parts=[3, 7, 7])",
-           "input_value": {"height":1,"id":"obj96cdc68d576d","orientation":270,"parts":[3,7,7],"tag":"l3058","width":3,"x":0,"y":2},
-           "output_value": {"fill_color":0,"height":1,"id":"obj96cdc68d576d","orientation":270,"parts":[3,7,7],"tag":"l3058","width":3,"x":0,"y":2}
-         }
-@@ -153,7 +153,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--  
-```
-
-**File**: `arc/src/dataset/dataset.25ff71a9.json` (modified, +7/-7)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "declarations": [
--    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l9100'",
-+    "class Obj(x: int, y: int, width: int, height: int, orientation: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l9100'",
-     "$Obj.y = $Obj.y@first + 1"
-   ],
-   "output_canvas": "EXACT",
-@@ -29,7 +29,7 @@
-             [1, 1, 1],
-             [0, 0, 0]
-           ],
--          "implementation": "# A horizontal line of 3 cells of color 1,\n# 3 by 1 at x 0, y 0\nobj56f6c04f44d8 = Obj(x=0, y=0, width=3, height=1, orientation=90)",
-+          "implementation": "obj56f6c04f44d8 = Obj(x=0, y=0, width=3, height=1, orientation=90)",
-           "input_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","width":3,"x":0,"y":0},
-           "output_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","width":3,"x":0,"y":1}
-         }
-@@ -59,7 +59,7 @@
-             [0, 0, 0],
-             [1, 1, 1]
-           ],
--          "implementation": "# A horizontal line of 3 cells of color 1,\n# 3 by 1 at x 0, y 1\nobjb2baa9b2270c = Obj(x=0, y=1, width=3, height=1, orientation=90)",
-+          "implementation": "objb2baa9b2270c = Obj(x=0, y=1, width=3, height=1, orientation=90)",
-           "input_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","width":3,"x":0,"y":1},
-           "output_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","width":3,"x":0,"y":2}
-         }
-@@ -89,7 +89,7 @@
-             [0, 1, 0],
-             [1, 1, 0]
-           ],
--          "implementation": "# A corner of 3 cells of color 1,\n# 2 by 2 at x 0, y 0, pointing southeast\nobj470037f0334e = Obj(x=0, y=0, width=2, height=2, orientation=135)",
-+          "implementation": "obj470037f0334e = Obj(x=0, y=0, width=2, height=2, orientation=135)",
-           "input_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","width":2,"x":0,"y":0},
-           "output_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","width":2,"x":0,"y":1}
-         }
-@@ -119,7 +119,7 @@
-             [0, 2, 2],
-             [0, 0, 2]
-           ],
--          "implementation": "# A corner of 3 cells of color 2,\n# 2 by 2 at x 1, y 0, pointing northeast\nobj2ad74ac3e6ef = Obj(x=1, y=0, width=2, height=2, orientation=45)",
-+          "implementation": "obj2ad74ac3e6ef = Obj(x=1, y=0, width=2, height=2, orientation=45)",
-           "input_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","width":2,"x":1,"y":0},
-           "output_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","width":2,"x":1,"y":1}
-         }
-@@ -149,7 +149,7 @@
-             [2, 0, 0],
-             [2, 0, 0]
-           ],
--          "implementation": "# A vertical line of 2 cells of color 2,\n# 1 by 2 at x 0, y 0\nobjb847b315216d = Obj(x=0, y=0, width=1, height=2, orientation=0)",
-+          "implementation": "objb847b315216d = Obj(x=0, y=0, width=1, height=2, orientation=0)",
-           "input_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","width":1,"x":0,"y":0},
-           "output_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","width":1,"x":0,"y":1}
-         }
-@@ -179,7 +179,7 @@
-             [0, 0, 0],
-             [0, 1, 0]
-           ],
--          "implementation": "# A single cell of color 1 at x 1, y 1\nobjf247c9d3ab45 = Obj(x=1, y=1, width=1, height=1, orientation=0)",
-+          "implementation": "objf247c9d3ab45 = Obj(x=1, y=1, width=1, height=1, orientation=0)",
-           "input_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","width":1,"x":1,"y":1},
-           "output_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","width":1,"x":1,"y":2}
-         }
-```
-
-**File**: `arc/src/dataset/dataset.27a28665.json` (modified, +13/-13)
-```diff
-@@ -1,10 +1,10 @@
- {
-   "declarations": [
--    "# There is an Obj type, the whole block of colored cells on the canvas,\n# which has its x and y position, the width and height of its box\n# and its orientation as integers,\n# and its tag, the name of its shape, as a string\n# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, tag: str):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = tag",
--    "# Every block becomes a single output point\n$Obj.tag = 'l7544'",
-+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, tag: str):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = tag",
-+    "$Obj.tag = 'l7544'",
-     "$Obj.width = 1",
-     "$Obj.height = 1",
--    "# Every point's color is the code of its block's shape:\n# 1 for a hollow diamond with a filled corner, 2 for a diagonal cross,\n# 3 for a square with a diagonal tail and 6 for an orthogonal cross\n$Obj.fill_color = {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]"
-+    "$Obj.fill_color = {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]"
-   ],
-   "output_canvas": "FIT",
-   "dataset": [
-@@ -28,7 +28,7 @@
-           "output_instance_matrix": [
-             [1]
-           ],
--          "implementation": "# The whole block of color 5 in the shape named l4262,\n# 3 by 3 at x 0, y 0\nobj3fc7d6382a47 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l4262')",
-+          "implementation": "obj3fc7d6382a47 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l4262')",
-           "input_value": {"height":3,"id":"obj3fc7d6382a47","orientation":0,"tag":"l4262","width":3,"x":0,"y":0},
-           "output_value": {"fill_color":1,"height":1,"id":"obj3fc7d6382a47","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
-         }
-@@ -54,7 +54,7 @@
-           "output_instance_matrix": [
-             [2]
-           ],
--          "implementation": "# The whole block of color 8 in the shape named l2404,\n# 3 by 3 at x 0, y 0\nobj4eb5795d0cdd = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l2404')",
-+          "implementation": "obj4eb5795d0cdd = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l2404')",
-           "input_value": {"height":3,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l2404","width":3,"x":0,"y":0},
-           "output_value": {"fill_color":2,"height":1,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
-         }
-@@ -80,7 +80,7 @@
-           "output_instance_matrix": [
-             [2]
-           ],
--          "implementation": "# The whole block of color 5 in the shape named l2404,\n# 3 by 3 at x 0, y 0\nobj6601704d7bf6 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l2404')",
-+          "implementation": "obj6601704d7bf6 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l2404')",
-           "input_value": {"height":3,"id":"obj6601704d7bf6","orientation":0,"tag":"l2404","width":3,"x":0,"y":0},
-           "output_value": {"fill_color":2,"height":1,"id":"obj6601704d7bf6","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
-         }
-@@ -106,7 +106,7 @@
-           "output_instance_matrix": [
-             [3]
-           ],
--          "implementation": "# The whole block of color 1 in the shape named l3743,\n# 3 by 3 at x 0, y 0\nobjae50fa19d8b4 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l3743')",
-+          "implementation": "objae50fa19d8b4 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l3743')",
-           "input_value": {"height":3,"id":"objae50fa19d8b4","orientation":0,"tag":"l3743","width":3,"x":0,"y":0},
-           "output_value": {"fill_color":3,"height":1,"id":"objae50fa19d8b4","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
-         }
-@@ -132,7 +132,7 @@
-           "output_instance_matrix": [
-             [3]
-           ],
--          "implementation": "# The whole block of color 8 in the shape named l3743,\n# 3 by 3 at x 0, y 0\nobj1f918c128ece = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l3743')",
-+          "implementation": "obj1f918c128ece = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l3743')",
-           "input_value": {"height":3,"id":"obj1f918c128ece","orientation":0,"tag":"l3743","width":3,"x":0,"y":0},
-           "output_value": {"fill_color":3,"height":1,"id":"obj1f918c128ece","orientation":0,"tag":"l7544","width":1,"x":0,"y":0}
-         }
-@@ -158,7 +158,7 @@
-           "output_instance_matrix": [
-             [1]
-           ],
--          "implementation": "# The whole block of color 4 in the shape named l4262,\n# 3 by 3 at x 0, y 0\nobja9f56fdb5669 = Obj(x=0, y=0, width=3, height=3, orientation=0, tag='l4262')",
-+          "implementation": "obja9f56fdb5669 = Obj(x=0, y=0, width=3, height=3, ori
++## Enum declarations
++
++- [NUC 90](docs/nuc-0090.md) adds enum declarations, the categorical types
++  that TypeScript, Java, C#, Kotlin, Swift, Rust and Python models write:
++  `enum Status: PENDING, PAID, SHIPPED` on one line, or `enum Status:`
++  followed by an indented block with one member per line. `enum` stays an
++  ordinary name, and no token is added.
++- A member is a name, optionally followed by `=` and a scalar literal: a
++  finite number with an optional `-` or `+` sign, a string, `true`, `false`
++  or `null`, the literals of literal parameter defaults. A member without a
++  value holds its own name as a string, so `enum Status: PENDING, PAID`
++  holds `{PENDING: "PENDING", PAID: "PAID"}` and
++  `enum Level: LOW = 1, HIGH = 3` holds `{LOW: 1, HIGH: 3}`.
++- The one-line form has at least two members separated by commas, with no
++  trailing comma. Its last member is followed by the end of the line or
++  input, `;`, a block's `}`, the end of an indented block, or `else` or
++  `catch`. The block form ends its first line at the colon and writes each
++  member on its own indented line, with at least one member; blank lines may
++  separate members.
++- A declaration starts wherever a statement may start: at the top level, in
++  indented and same-line suites, in braced blocks and function bodies, after
++  `;`, and after another statement on the same line. Inside a class body,
++  including its methods and the suites in it, every `enum` spelling keeps its
++  accepted reading.
++- `enum NAME: ...` declares `NAME` exactly as `NAME = {...}` with the same
++  members would: a standing declaration at the top level and in standing
++  branches, a declaration carried out in a loop body, a local when `NAME` is
++  a parameter or loop variable, and a declaration in the state when a
++  function body runs it. It reads nothing, so `why` lists it as stated and no
++  change re-evaluates it. Declaring the name again replaces it and
++  re-evaluates its readers, and a failed transaction or a `suppose` block
++  restores the earlier binding. Each run creates a new object.
++- The value is an ordinary object whose properties are the members in
++  declaration order. `Status.PAID` and `Status["PAID"]` read a member, a
++  missing member reads `undefined` as a missing property does, `typeof`
++  gives `"Object"`, and assertions, JSON, entry loops and spreads see the
++  members as they see an object literal's properties. A spread such as
++  `{...Status}` builds an ordinary object.
++- The object is read-only. Assigning a member, adding a property or deleting
++  one raises `TypeError("Enums are read-only")` through every spelling and
++  every name that holds the object: property declarations, compound and value
++  assignments, assignment expressions, `delete` and the list write-backs of
++  `push`, `append`, `pop` and `shift`. The error is placed at the running
++  top-level statement and rolls back its transaction, so the enum and its
++  readers stay unchanged. A copy that a `suppose` block's value carries out
++  of the block is read-only too. Binding the name to another value is not a
++  write: a later declaration of `Status` replaces it, and `delete Status`
++  follows the accepted rule for objects, raising
++  `TypeError("Cannot delete object '<id>'")` while the object holds a
++  property other than `id`.
++- Canonical source writes an enum on one line, `enum Status:PENDING,PAID`
++  or `enum Level:LOW=1,HIGH=3`, leaving out a value that equals the member's
++  own name; an enum with one member is written `enum NAME:` with the member
++  on an indented line. `why` rules show the same text, and it parses back to
++  the same declaration.
++- Only inputs that were syntax errors at the accepted revision change.
++  `enum Status: PENDING`, one name after the colon before the end of the
++  statement, keeps its accepted reading: the expression `enum` followed by
++  the typed declaration `Status: PENDING`. So do `enum assert: ...`,
++  `enum lambda: ...` and `enum suppose: ...`, whose colon statements parse,
++  and every use of `enum` as a variable, property, key or parameter.
++- A repeated member raises
++  `SyntaxError("Enum '<name>' already has member '<member>'")` at the repeated
++  member, and a one-line enum with a single member raises
++  `SyntaxError("Enum '<name>' needs at least two members on one line")` where
++  its second member should begin. A value that is not a scalar literal raises
++  `SyntaxError("Expected a scalar literal enum member value")`, and a number
++  that is not finite raises
++  `SyntaxError("Enum member value must be a finite number")`, both at that
++  token. Other malformed declarations raise
++  `SyntaxError("Expected <what> but found <what>")` at the offending token.
++- The e
 ```
 
 #### Recent Merged Pull Requests:
@@ -2065,30 +2056,54 @@ Return crop dimensions from Matrix.locate and include them in visualizer request
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Include input dimensions in analyzer prompt
+## X. NUC 90 Enum Declarations
 
 **RULE**:
-When implementing operations in `arc/src/analyzer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `adc282a7`: Include input dimensions in analyzer prompt. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34bbba0f`: NUC 90 Enum Declarations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/analyzer.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  const { x, y, width, height } = Matrix.locate(input_instance_matrix);
-          input_width: ${width}
-          input_height: ${height}
+## Enum declarations
+
+**Enums name a model's categories once**
+
+```nuc
+enum Stage: TODO, DOING, DONE
+class Task(title, stage):
+    this.title = title
+    this.stage = stage
+$Task.active = $Task.stage == Stage.DOING
+write = Task("write", Stage.TODO)
+review = Task("review", Stage.DOING)
+assert([write.active, review.active], [false, true])
+write.stage = Stage.DOING
+assert(Task.count(t -> t.active), 2)
+```
+
+- [NUC 90](docs/nuc-0090.md) adds enum declarations.
+  `enum Stage: TODO, DOING, DONE` declares `Stage` as an object whose
+  members hold their own names, so `Stage.DOING` is `"DOING"`. A member may
+  instead take a literal value, as in `enum Level: LOW = 1, HIGH = 3`, and
+  `enum Stage:` followed by an indented block lists one member per line.
+- Rules that read a member stay live like any other: moving `write` to
+  `Stage.DOING` makes it active, and the count follows. The enum itself is
+  read-only, so `Stage.DONE = "X"` raises `TypeError("Enums are read-only")`.
+  See the [root contract](nucleoid.spec.md#enum-declarations).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  const { x, y } = Matrix.locate(input_instance_matrix);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `adc282a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34bbba0f` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T07:23:37.955Z",
+  "last_updated": "2026-11-08T07:31:01.986Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ebf7f702179bf33b6bdbdce353ec3aab1cf557a2086ce8bfc5f83dd62d8c55d1",
-      "verified_at": "2026-11-08T06:59:47.257Z",
+      "content_hash": "3b125315aead77b6a9b73e8166fd412ee207ae596a3dfe38b6b9868412a7b07d",
+      "verified_at": "2026-11-08T07:31:01.986Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T06:59:47.257Z"
+      "last_updated": "2026-11-08T07:31:01.986Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -17810,15 +17810,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-      "content_hash": "2220770e0dfaa044b2a12cc1b9c4216a5a3fe36ebcb38abd31058b0c72421665",
-      "verified_at": "2026-11-07T05:58:07.127Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "content_hash": "5f22feefa27c815c0430da9106efa274088461aee7eebcbd14eb7c3e53fa261f",
+      "verified_at": "2026-11-08T07:30:58.864Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:58:07.127Z"
+      "last_updated": "2026-11-08T07:30:58.864Z"
     },
     "agentlas-ai/Agentlas-OS": {
       "repository": "agentlas-ai/Agentlas-OS",

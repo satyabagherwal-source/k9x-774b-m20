@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T07:23:37.859Z",
+  "last_updated": "2026-11-08T07:31:01.856Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18649,10 +18649,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "cc6cff66e5b12794f0d6c91b88cda834fd03856f3b5bb044813ae9c77387597c",
+      "content_hash": "5f22feefa27c815c0430da9106efa274088461aee7eebcbd14eb7c3e53fa261f",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Quantization Format Agnosticism via Adapter Pattern",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Turbo Model Step-Count Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "VRAM-Aware Quantization Selection Strategy",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1453,
           "title": "Binary Artifact Integrity & Format-Specific Metadata Binding",
@@ -19044,7 +19059,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-11-04T20:53:22.673Z",
+      "verified_at": "2026-11-08T07:30:58.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46283,8 +46298,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "adc282a7",
-      "content_hash": "ebf7f702179bf33b6bdbdce353ec3aab1cf557a2086ce8bfc5f83dd62d8c55d1",
+      "source_version": "34bbba0f",
+      "content_hash": "3b125315aead77b6a9b73e8166fd412ee207ae596a3dfe38b6b9868412a7b07d",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -46619,7 +46634,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:59:47.092Z",
+      "verified_at": "2026-11-08T07:31:01.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

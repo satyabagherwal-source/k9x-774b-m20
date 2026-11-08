@@ -8255,3 +8255,5 @@
 | `CYCLE-20261108-ZVMI` | `2026-11-08T07:15:35.514Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4e1ec651...`) |
 | `CYCLE-20261108-8923` | `2026-11-08T07:22:06.171Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e98b247f...`) |
 | `CYCLE-20261108-A7V8` | `2026-11-08T07:23:37.940Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`750771b7...`) |
+| `CYCLE-20261108-JO2G` | `2026-11-08T07:30:58.840Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5f22feef...`) |
+| `CYCLE-20261108-JQHC` | `2026-11-08T07:31:01.968Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`3b125315...`) |

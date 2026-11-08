@@ -8264,3 +8264,5 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `1557de2f` | Multi-dimensional audit evidence | 2026-11-08T07:15:35.522Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `bbcac03c` | Multi-dimensional audit evidence | 2026-11-08T07:22:06.173Z |
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-08T07:23:37.943Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-08T07:30:58.844Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `34bbba0f` | Multi-dimensional audit evidence | 2026-11-08T07:31:01.972Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T06:05:13.982Z",
+  "last_updated": "2026-11-08T07:31:01.979Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4160,6 +4160,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-nanbeige-nanbeige4-3-33b"
+    },
+    {
+      "id": "CD-JQHN",
+      "directive_title": "NUC 90 Enum Declarations",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "34bbba0f",
+      "date_staged": "2026-11-08",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }
