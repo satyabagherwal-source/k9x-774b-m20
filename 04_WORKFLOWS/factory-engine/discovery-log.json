@@ -20668,5 +20668,17 @@
     "qualityScore": 1243,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-08T09:48:30.935Z"
+  },
+  {
+    "name": "audio-cpp/audio.cpp-gguf",
+    "fullName": "audio-cpp/audio.cpp-gguf",
+    "url": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: audio-cpp/audio.cpp-gguf (306 likes, 8872939 downloads)",
+    "likes": 306,
+    "downloads": 8872939,
+    "qualityScore": 5060,
+    "discoveredAt": "2026-11-08T10:18:08.766Z"
   }
 ]

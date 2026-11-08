@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T09:56:44.958Z",
-  "total_verified_learnings": 1237,
+  "last_updated": "2026-11-08T10:28:57.189Z",
+  "total_verified_learnings": 1238,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -14014,11 +14014,26 @@
       "slug": "exyte-popupview",
       "platform": "github",
       "source_url": "https://github.com/exyte/PopupView",
-      "source_version": "38fe3de1",
-      "content_hash": "df20eb6da9adfa64517b56c24243018e1ba754e86f0ac413b6f77f803d0e048a",
+      "source_version": "f8769ffd",
+      "content_hash": "9e41ea7da501a370710effa179510d9ff0c022d656aa271b0b17f77bebe085c7",
       "dossier_path": "07_PROJECT_LEARNING/exyte-popupview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/exyte-popupview-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Geometry-to-State Feedback Loop Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Window Key Focus Isolation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Asynchronous Dismissal Guard Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2678,
           "title": "watchOS build: don't use NSEdgeInsets outside macOS",
@@ -14035,7 +14050,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T07:13:07.512Z",
+      "verified_at": "2026-11-08T10:22:14.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21707,10 +21722,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "687d328c6bf6db272eb843ebb9d2bd9b0a8f1ac653bea5e9d6244945df9fbab1",
+      "content_hash": "b16887ae325419501c4138dc60e64682f2d8adf28f70bc99cd89e17999999d4a",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Dynamic Coordinate RoPE Broadcasting for Multimodal Sequences",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Zero-Residual AdaLN Modulation Partition Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Rectified Flow Linear-Variance Matcher Boundary Guarantee",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 374,
           "title": "Flow Matching Scheduler Step Consistency",
@@ -21881,7 +21911,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-11-04T21:42:55.183Z",
+      "verified_at": "2026-11-08T10:22:07.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51002,8 +51032,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "dd7aa6b0",
-      "content_hash": "95da00a884b8c89942d6842e549999720929cb1f139461d25c65e0b69b845655",
+      "source_version": "1d4faeaf",
+      "content_hash": "137fa529a86fd4c9f80563bb7b02e15f19638e7d757c80a51c0df3b587bff532",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -51016,6 +51046,21 @@
           "number": null,
           "title": "scrape [PERF]: acquire storage appender after reading HTTP response (#20319)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "In-Memory Map Heap Reclamation via Dynamic Peak Tracking",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Segmented Array FIFO Queue for Bounded-Memory Channel Emulation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Non-Escalating Ceiling Enforcement for Per-Query Limit Overrides",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2206,
@@ -51103,7 +51148,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T06:05:09.921Z",
+      "verified_at": "2026-11-08T10:28:57.158Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -187017,6 +187062,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-08T09:54:18.678Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-audio-cpp-audio-cpp-gguf": {
+      "learning_id": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "audio-cpp/audio.cpp-gguf",
+      "repository": "audio-cpp/audio.cpp-gguf",
+      "slug": "hf-audio-cpp-audio.cpp-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
+      "source_version": "hf-audio-cpp-audio.cpp-gguf",
+      "content_hash": "dc59d311cd7971092095b47ba0889eceda0dc77711649fa4321d73a032ac48e0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Quantization Stratification for Digital Signal Processing (DSP) & Vocoder Pipelines",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Audio Boundary Invariant & Metadata Sidecar Parity",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Residual Vector Quantization (RVQ) Codebook Index Boundary Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-08T10:25:00.366Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

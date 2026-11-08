@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T09:56:45.073Z",
-  "total_cycles_completed": 8236,
-  "total_learnings_persisted": 8236,
-  "total_rules_promoted": 7980,
+  "last_updated": "2026-11-08T10:28:57.298Z",
+  "total_cycles_completed": 8240,
+  "total_learnings_persisted": 8240,
+  "total_rules_promoted": 7992,
   "history": [
-    {
-      "timestamp": "2026-11-07T20:22:55.731Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:22:59.507Z",
-      "repository": "webpack/webpack",
-      "learningId": "learn-github-webpack-webpack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:22:59.856Z",
-      "repository": "kotest/kotest",
-      "learningId": "learn-github-kotest-kotest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:23:02.906Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T20:23:08.288Z",
       "repository": "etcd-io/etcd",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-08T09:56:45.073Z",
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T10:22:07.197Z",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T10:22:14.794Z",
+      "repository": "exyte/PopupView",
+      "learningId": "learn-github-exyte-popupview",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T10:25:00.505Z",
+      "repository": "audio-cpp/audio.cpp-gguf",
+      "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T10:28:57.298Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

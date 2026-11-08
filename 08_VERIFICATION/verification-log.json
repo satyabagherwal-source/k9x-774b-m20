@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-UKZR",
-    "timestamp": "2026-11-05T19:00:17.991Z",
-    "repository": "pointfreeco/sqlite-data",
-    "learningId": "learn-github-pointfreeco-sqlite-data",
-    "contentHash": "4ac2589c8f0a164978cc720c3c2f1a2d018c8fcaf354b2c8e4ccb8436e236630",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-UPSR",
-    "timestamp": "2026-11-05T19:00:24.219Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "c63451d8b1829eeea9a4720c9e719052b6afba73215d78d945be32b8a13fe0fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-2Z5V",
-    "timestamp": "2026-11-05T19:06:49.603Z",
-    "repository": "sensenova/SenseNova-Loop-9B-Preview",
-    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-    "contentHash": "615371e071a410939897d89860cf6c0d6789287a9fb08e8261e3b60982cbbe38",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-374S",
-    "timestamp": "2026-11-05T19:06:59.932Z",
-    "repository": "typedb/typedb",
-    "learningId": "learn-github-typedb-typedb",
-    "contentHash": "52bb3d09e9d217059d6243c0900a6e8ad8e78ba5d7302837a9f6d6243e829734",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-DWJU",
     "timestamp": "2026-11-05T19:15:19.434Z",
     "repository": "trufflesecurity/trufflehog",
@@ -7490,6 +7430,66 @@
     "repository": "matrixorigin/matrixone",
     "learningId": "learn-github-matrixorigin-matrixone",
     "contentHash": "591754ec2dcf23b61869eafafd68337771a238b795ce6015d65e55e0d32d2b97",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-NR6C",
+    "timestamp": "2026-11-08T10:22:07.188Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "b16887ae325419501c4138dc60e64682f2d8adf28f70bc99cd89e17999999d4a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-NX1E",
+    "timestamp": "2026-11-08T10:22:14.786Z",
+    "repository": "exyte/PopupView",
+    "learningId": "learn-github-exyte-popupview",
+    "contentHash": "9e41ea7da501a370710effa179510d9ff0c022d656aa271b0b17f77bebe085c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-RGWH",
+    "timestamp": "2026-11-08T10:25:00.497Z",
+    "repository": "audio-cpp/audio.cpp-gguf",
+    "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+    "contentHash": "dc59d311cd7971092095b47ba0889eceda0dc77711649fa4321d73a032ac48e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-WJLT",
+    "timestamp": "2026-11-08T10:28:57.281Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "137fa529a86fd4c9f80563bb7b02e15f19638e7d757c80a51c0df3b587bff532",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

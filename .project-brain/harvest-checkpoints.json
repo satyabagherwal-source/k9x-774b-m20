@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T09:56:45.077Z",
+  "last_updated": "2026-11-08T10:28:57.301Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -230,14 +230,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "687d328c6bf6db272eb843ebb9d2bd9b0a8f1ac653bea5e9d6244945df9fbab1",
-      "verified_at": "2026-11-04T21:42:55.278Z",
+      "content_hash": "b16887ae325419501c4138dc60e64682f2d8adf28f70bc99cd89e17999999d4a",
+      "verified_at": "2026-11-08T10:22:07.208Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:42:55.278Z"
+      "last_updated": "2026-11-08T10:22:07.208Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "95da00a884b8c89942d6842e549999720929cb1f139461d25c65e0b69b845655",
-      "verified_at": "2026-11-07T06:05:10.000Z",
+      "content_hash": "137fa529a86fd4c9f80563bb7b02e15f19638e7d757c80a51c0df3b587bff532",
+      "verified_at": "2026-11-08T10:28:57.301Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T06:05:10.000Z"
+      "last_updated": "2026-11-08T10:28:57.301Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
@@ -12576,14 +12576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-exyte-popupview",
-      "content_hash": "df20eb6da9adfa64517b56c24243018e1ba754e86f0ac413b6f77f803d0e048a",
-      "verified_at": "2026-11-05T07:13:07.631Z",
+      "content_hash": "9e41ea7da501a370710effa179510d9ff0c022d656aa271b0b17f77bebe085c7",
+      "verified_at": "2026-11-08T10:22:14.797Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:13:07.631Z"
+      "last_updated": "2026-11-08T10:22:14.797Z"
     },
     "sayaka-sh/spmp": {
       "repository": "sayaka-sh/spmp",
@@ -18344,6 +18344,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-08T09:54:18.837Z"
+    },
+    "audio-cpp/audio.cpp-gguf": {
+      "repository": "audio-cpp/audio.cpp-gguf",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+      "content_hash": "dc59d311cd7971092095b47ba0889eceda0dc77711649fa4321d73a032ac48e0",
+      "verified_at": "2026-11-08T10:25:00.508Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-08T10:25:00.508Z"
     }
   },
   "repos": {

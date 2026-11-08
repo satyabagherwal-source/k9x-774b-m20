@@ -215,8 +215,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "687d328c6bf6db272eb843ebb9d2bd9b0a8f1ac653bea5e9d6244945df9fbab1",
-    "lastHarvestedAt": "2026-11-04T21:42:55.266Z",
+    "contentHash": "b16887ae325419501c4138dc60e64682f2d8adf28f70bc99cd89e17999999d4a",
+    "lastHarvestedAt": "2026-11-08T10:22:07.191Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev"
   },
   "hf-francisring-prism": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "dd7aa6b0",
+    "sourceVersion": "1d4faeaf",
     "license": "Apache-2.0",
-    "contentHash": "95da00a884b8c89942d6842e549999720929cb1f139461d25c65e0b69b845655",
-    "lastHarvestedAt": "2026-11-07T06:05:09.994Z",
+    "contentHash": "137fa529a86fd4c9f80563bb7b02e15f19638e7d757c80a51c0df3b587bff532",
+    "lastHarvestedAt": "2026-11-08T10:28:57.284Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -8353,10 +8353,10 @@
     "repository": "exyte/PopupView",
     "platform": "github",
     "sourceUrl": "https://github.com/exyte/PopupView",
-    "sourceVersion": "38fe3de1",
+    "sourceVersion": "f8769ffd",
     "license": "MIT",
-    "contentHash": "df20eb6da9adfa64517b56c24243018e1ba754e86f0ac413b6f77f803d0e048a",
-    "lastHarvestedAt": "2026-11-05T07:13:07.617Z",
+    "contentHash": "9e41ea7da501a370710effa179510d9ff0c022d656aa271b0b17f77bebe085c7",
+    "lastHarvestedAt": "2026-11-08T10:22:14.789Z",
     "learningId": "learn-github-exyte-popupview"
   },
   "sayaka-sh-spmp": {
@@ -12188,5 +12188,15 @@
     "contentHash": "f52f22c399f7fa480b59b31a9ba7e30ff5d94feb262258c33ff2f8de466762a0",
     "lastHarvestedAt": "2026-11-08T09:54:18.829Z",
     "learningId": "learn-github-untitleduico-react"
+  },
+  "hf-audio-cpp-audio.cpp-gguf": {
+    "repository": "audio-cpp/audio.cpp-gguf",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
+    "sourceVersion": "hf-audio-cpp-audio.cpp-gguf",
+    "license": "Open-Source",
+    "contentHash": "dc59d311cd7971092095b47ba0889eceda0dc77711649fa4321d73a032ac48e0",
+    "lastHarvestedAt": "2026-11-08T10:25:00.500Z",
+    "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf"
   }
 }

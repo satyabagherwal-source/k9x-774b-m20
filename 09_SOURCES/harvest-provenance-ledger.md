@@ -8280,3 +8280,7 @@ Every entry in this ledger must capture:
 | `learn-github-untitleduico-react` | `https://github.com/untitleduico/react` | `1d410cb8` | Multi-dimensional audit evidence | 2026-11-08T09:54:18.829Z |
 | `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-08T09:55:00.473Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `89ca3dbb` | Multi-dimensional audit evidence | 2026-11-08T09:56:45.068Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-08T10:22:07.191Z |
+| `learn-github-exyte-popupview` | `https://github.com/exyte/PopupView` | `f8769ffd` | Multi-dimensional audit evidence | 2026-11-08T10:22:14.789Z |
+| `learn-huggingface-audio-cpp-audio-cpp-gguf` | `https://huggingface.co/audio-cpp/audio.cpp-gguf` | `hf-audio-c` | Multi-dimensional audit evidence | 2026-11-08T10:25:00.500Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `1d4faeaf` | Multi-dimensional audit evidence | 2026-11-08T10:28:57.284Z |
