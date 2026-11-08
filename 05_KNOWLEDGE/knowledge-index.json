@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T08:25:03.999Z",
+  "last_updated": "2026-11-08T08:58:20.318Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20947,10 +20947,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
       "source_version": "hf-baai-bge-small-en-v1.5",
-      "content_hash": "9a74f51b64083d1d37fa0db24dce0cb5098b5def59cb9d042b6018070f5077d5",
+      "content_hash": "539519e9076f244e8d3885d80fb22613f5c4b070a7eebfbc8e7452db006a3fbb",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Asymmetric Contrastive Representation Normalization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Attention-Masked Reduction Safe Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Mixed-Precision Half-Float Epsilon Underflow Prevention",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 314,
           "title": "Semantic Embedding Dimensionality & Precision Invariant",
@@ -21396,7 +21411,7 @@
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
       ],
-      "verified_at": "2026-11-04T21:18:43.157Z",
+      "verified_at": "2026-11-08T08:58:20.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59444,8 +59459,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "47409d6e",
-      "content_hash": "563ff4e981048715921b4f015ec68fd77999d53f043ef14ec72e6ecfd1202957",
+      "source_version": "74c71f96",
+      "content_hash": "f59277d5c0d595c3f1a376767ff3bfd998cad714eb4f012bc58e5f17e77186b2",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -59458,6 +59473,16 @@
           "number": null,
           "title": "deleted deployment version accumulation on passive clusters (#12966)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Dual-Clock Separation Invariant for Time-Warping Distributed State Engines",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "State-Driven History Succession Propagation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2213,
@@ -59540,7 +59565,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:44:26.424Z",
+      "verified_at": "2026-11-08T08:49:00.000Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

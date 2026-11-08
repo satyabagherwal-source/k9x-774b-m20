@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-TQIW",
-    "timestamp": "2026-11-05T18:31:38.888Z",
-    "repository": "LiquidAI/d1-2B",
-    "learningId": "learn-huggingface-liquidai-d1-2b",
-    "contentHash": "eaa3c4fdbf895a0ba626e82982d4b5275f2fdfee18c5e8d098c15e4996ac7b1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-2GOD",
-    "timestamp": "2026-11-05T18:38:26.029Z",
-    "repository": "FusionCow/Sulphur-3",
-    "learningId": "learn-huggingface-fusioncow-sulphur-3",
-    "contentHash": "7dc2e2fd591d2fb14697a898809692fc2acb5abfc9a986d133239f4017bd48d7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-2OY6",
     "timestamp": "2026-11-05T18:38:36.750Z",
     "repository": "envoyproxy/envoy",
@@ -7490,6 +7460,36 @@
     "repository": "SwiftWebUI/SwiftWebUI",
     "learningId": "learn-github-swiftwebui-swiftwebui",
     "contentHash": "19aa7b3443e7851ca4fcaeee6bcd57b64ce93e8a457b4a324bf829b852beea55",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-C08O",
+    "timestamp": "2026-11-08T08:49:00.216Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "f59277d5c0d595c3f1a376767ff3bfd998cad714eb4f012bc58e5f17e77186b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-O0HJ",
+    "timestamp": "2026-11-08T08:58:20.407Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "539519e9076f244e8d3885d80fb22613f5c4b070a7eebfbc8e7452db006a3fbb",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

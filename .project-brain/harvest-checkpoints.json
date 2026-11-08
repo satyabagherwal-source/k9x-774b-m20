@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T08:25:04.111Z",
+  "last_updated": "2026-11-08T08:58:20.428Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -126,14 +126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-small-en-v1-5",
-      "content_hash": "9a74f51b64083d1d37fa0db24dce0cb5098b5def59cb9d042b6018070f5077d5",
-      "verified_at": "2026-11-04T21:18:43.291Z",
+      "content_hash": "539519e9076f244e8d3885d80fb22613f5c4b070a7eebfbc8e7452db006a3fbb",
+      "verified_at": "2026-11-08T08:58:20.428Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:18:43.291Z"
+      "last_updated": "2026-11-08T08:58:20.428Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "563ff4e981048715921b4f015ec68fd77999d53f043ef14ec72e6ecfd1202957",
-      "verified_at": "2026-11-07T05:44:26.566Z",
+      "content_hash": "f59277d5c0d595c3f1a376767ff3bfd998cad714eb4f012bc58e5f17e77186b2",
+      "verified_at": "2026-11-08T08:49:00.228Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:44:26.566Z"
+      "last_updated": "2026-11-08T08:49:00.228Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",

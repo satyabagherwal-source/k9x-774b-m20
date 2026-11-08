@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `47409d6e`  
+> **Source Version**: `74c71f96`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:44:24.442Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-08T08:48:58.713Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,2837 +12,673 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): temporalio/temporal
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:44:22.955Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): temporalio/temporal
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `temporalio/temporal`
-- **Description**: Temporal service
-- **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24240 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### Exact Technical Problem Solved
+`temporalio/temporal` solves the distributed durable execution problem: guaranteeing that arbitrary multi-step application code (workflows) executes to completion across distributed nodes despite process crashes, worker deaths, network partitions, machine reboots, and multi-year delays. It does this without requiring user-space persistence boilerplate (manual state machines, distributed locking, polling databases, or manual compensating saga logs).
+
+### Architectural Boundaries & Subsystems
+Temporal partitions durable execution into four core service boundaries running on a shared cluster infrastructure:
+
+```
+                    +---------------------------------------------+
+                    |                Frontend Service             |
+                    |    (gRPC Ingress, Auth, Rate Limiting)      |
+                    +----------------------+----------------------+
+                                           |
+                    +----------------------+----------------------+
+                    |             Matching Service                |
+                    |   (Task Queues, Poller Matching, Dispatch)  |
+                    +----------------------+----------------------+
+                                           |
+                    +----------------------+----------------------+
+                    |              History Service                |
+                    | (Sharded Engines, MutableState, HSM, Events)|
+                    +----------------------+----------------------+
+                                           |
+                    +----------------------+----------------------+
+                    |             Internal Workers                |
+                    | (System Workflows, Archival, Batch Deletes) |
+                    +---------------------------------------------+
+```
+
+1. **Frontend Service**: Edge ingress termination point. Exposes gRPC APIs (`WorkflowService`, `OperatorService`, `AdminService`). Enforces rate-limiting, authentication/authorization, request validation, and payload metadata passthrough. It routes commands deterministically to specific shards in the History service via consistent hashing rings.
+2. **History Service (The Core State Engine)**: Owns execution truth. Partitioned into $N$ deterministic shards (e.g., 512 to 16,384 shards). Each shard manages a subset of workflow executions keyed by `Hash(NamespaceID, WorkflowID) % NumShards`. Each shard owns:
+   - **MutableState**: In-memory, write-through caching structure tracking execution progress, pending activity states, buffered events, timers, signal buffers, and state machine transitions.
+   - **Execution Engine & Transaction Manager**: Commits atomic updates to persistence (Cassandra, PostgreSQL, MySQL, SQLite) using monotonic optimistic locking via `NextEventID` fencing.
+   - **Hierarchical State Machine (HSM) Framework**: Decentralized state machine engine coordinating Nexus RPC operations, activity lifecycles, and sub-state machine transitions directly attached to execution nodes.
+3. **Matching Service**: High-throughput task dispatch engine. Implements distributed, fair queueing across poller pools. Matches pending workflow/activity tasks directly to waiting worker HTTP/2 long-pollers, bypassing persistence when pollers are waiting (Sync Match), or spilling to the task queue storage model when unbuffered.
+4. **Worker Service**: Internal cluster daemon executing background durable workflows (e.g., system migrations, namespace deletion, batch operations, task queue scrapers, and archival processing).
+
+### Critical Invariant Contracts
+- **Virtual Logical Clock Separation**: Workflow executions maintain their own monotonic logical time dimension (`MutableState.Now()`), decoupled from physical host wall-clock time (`shardContext.GetTimeSource().Now()`). All deadlines, retry intervals, scheduled tasks, and state-machine transitions must anchor to the workflow's logical timeline.
+- **Append-Only History Invariant**: History events are immutable once committed. MutableState reflects the materialized aggregate view of these events. No event may be rewritten, replaced, or deleted retroactively.
+- **Fenced Shard Ownership**: A history shard instance is valid if and only if it owns the database shard lease with a strictly monotonic `RangeID`. If lease renewal fails, the shard immediately enters a zombie state, blocking all outbound transactions to prevent split-brain writes.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: go.mod, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `api/enums/v1/fairness_state.go-helpers.pb.go`
-```
-// Code generated by protoc-gen-go-helpers. DO NOT EDIT.
-package enums
-
-import (
-	"fmt"
-)
-
-var (
-	FairnessState_shorthandValue = map[string]int32{
-		"Unspecified": 0,
-		"V0":          1,
-		"V1":          2,
-		"V2":          3,
-	}
-)
-
-// FairnessStateFromString parses a FairnessState value from  either the protojson
-// canonical SCREAMING_CASE enum or the traditional temporal PascalCase enum to FairnessState
-func FairnessStateFromString(s string) (FairnessState, error) {
-	if v, ok := FairnessState_value[s]; ok {
-		return FairnessState(v), nil
-	} else if v, ok := FairnessState_shorthandValue[s]; ok {
-		return FairnessState(v), nil
-	}
-	return FairnessState(0), fmt.Errorf("%s is not a valid FairnessState", s)
-}
-
-```
-
-### Core Architecture Module: `api/enums/v1/fairness_state.pb.go`
-```
-// Code generated by protoc-gen-go. DO NOT EDIT.
-// plugins:
-// 	protoc-gen-go
-// 	protoc
-// source: temporal/server/api/enums/v1/fairness_state.proto
-
-package enums
-
-import (
-	reflect "reflect"
-	"strconv"
-	sync "sync"
-	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-)
-
-const (
-	// Verify that this generated code is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(20 - protoimpl.MinVersion)
-	// Verify that runtime/protoimpl is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
-)
-
-// Deprecated. Retained for compatibility with older servers during rolling upgrades.
-//
-// Deprecated: Marked as deprecated in temporal/server/api/enums/v1/fairness_state.proto.
-type FairnessState int32
-
-const (
-	FAIRNESS_STATE_UNSPECIFIED FairnessState = 0
-	FAIRNESS_STATE_V0          FairnessState = 1
-	FAIRNESS_STATE_V1          FairnessState = 2
-	FAIRNESS_STATE_V2          FairnessState = 3
-)
-
-// Enum value maps for FairnessState.
-var (
-	FairnessState_name = map[int32]string{
-		0: "FAIRNESS_STATE_UNSPECIFIED",
-		1: "FAIRNESS_STATE_V0",
-		2: "FAIRNESS_STATE_V1",
-		3: "FAIRNESS_STATE_V2",
-	}
-	FairnessState_value = map[string]int32{
-		"FAIRNESS_STATE_UNSPECIFIED": 0,
-		"FAIRNESS_STATE_V0":          1,
-		"FAIRNESS_STATE_V1":          2,
-		"FAIRNESS_STATE_V2":          3,
-	}
-)
-
-func (x FairnessState) Enum() *FairnessState {
-	p := new(FairnessState)
-	*p = x
-	return p
-}
-
-func (x FairnessState) String() string {
-	switch x {
-	case FAIRNESS_STATE_UNSPECIFIED:
-		return "Unspecified"
-	case FAIRNESS_STATE_V0:
-		return "V0"
-	case FAIRNESS_STATE_V1:
-		return "V1"
-	case FAIRNESS_STATE_V2:
-		return "V2"
-	default:
-		return strconv.Itoa(int(x))
-	}
-
-}
-
-func (FairnessState) Descriptor() protoreflect.EnumDescriptor {
-	return file_temporal_server_api_enums_v1_fairness_state_proto_enumTypes[0].Descriptor()
-}
-
-func (FairnessState) Type() protoreflect.EnumType {
-	return &file_temporal_server_api_enums_v1_fairness_state_proto_enumTypes[0]
-}
-
-func (x FairnessState) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use FairnessState.Descriptor instead.
-func (FairnessState) EnumDescriptor() ([]byte, []int) {
-	return file_temporal_server_api_enums_v1_fairness_state_proto_rawDescGZIP(), []int{0}
-}
-
-var File_temporal_server_api_enums_v1_fairness_state_proto protoreflect.FileDescriptor
-
-const file_temporal_server_api_enums_v1_fairness_state_proto_rawDesc = "" +
-	"\n" +
-	"1temporal/server/api/enums/v1/fairness_state.proto\x12\x1ctemporal.server.api.enums.v1*x\n" +
-	"\rFairnessState\x12\x1e\n" +
-	"\x1aFAIRNESS_STATE_UNSPECIFIED\x10\x00\x12\x15\n" +
-	"\x11FAIRNESS_STATE_V0\x10\x01\x12\x15\n" +
-	"\x11FAIRNESS_STATE_V1\x10\x02\x12\x15\n" +
-	"\x11FAIRNESS_STATE_V2\x10\x03\x1a\x02\x18\x01B*Z(go.temporal.io/server/api/enums/v1;enumsb\x06proto3"
-
-var (
-	file_temporal_server_api_enums_v1_fairness_state_proto_rawDescOnce sync.Once
-	file_temporal_server_api_enums_v1_fairness_state_proto_rawDescData []byte
-)
-
-func file_temporal_server_api_enums_v1_fairness_state_proto_rawDescGZIP() []byte {
-	file_temporal_server_api_enums_v1_fairness_state_proto_rawDescOnce.Do(func() {
-		file_temporal_server_api_enums_v1_fairness_state_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_temporal_server_api_enums_v1_fairness_state_proto_rawDesc), len(file_temporal_server_api_enums_v1_fairness_state_proto_rawDesc)))
-	})
-	return file_temporal_server_api_enums_v1_fairness_state_proto_rawDescData
-}
-
-var file_temporal_server_api_enums_v1_fairness_state_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_temporal_server_api_enums_v1_fairness_state_proto_goTypes = []any{
-	(FairnessState)(0), // 0: temporal.server.api.enums.v1.FairnessState
-}
-var file_temporal_server_api_enums_v1_fairness_state_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
-}
-
-func init() { file_temporal_server_api_enums_v1_fairness_state_proto_init() }
-func file_temporal_server_api_enums_v1_fairness_state_proto_init() {
-	if File_temporal_server_api_enums_v1_fairness_state_proto != nil {
-		return
-	}
-	type x struct{}
-	out := protoimpl.TypeBuilder{
-		File: protoimpl.DescBuilder{
-			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_temporal_server_api_enums_v1_fairness_state_proto_rawDesc), len(file_temporal_server_api_enums_v1_fairness_state_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   0,
-			NumExtensions: 0,
-			NumServices:   0,
-		},
-		GoTypes:           file_temporal_server_api_enums_v1_fairness_state_proto_goTypes,
-		DependencyIndexes: file_temporal_server_api_enums_v1_fairness_state_proto_depIdxs,
-		EnumInfos:         file_temporal_server_api_enums_v1_fairness_state_proto_enumTypes,
-	}.Build()
-	File_temporal_server_api_enums_v1_fairness_state_proto = out.File
-	file_temporal_server_api_enums_v1_fairness_state_proto_goTypes = nil
-	file_temporal_server_api_enums_v1_fairness_state_proto_depIdxs = nil
-}
-
-```
-
-### Core Architecture Module: `api/persistence/v1/queue_metadata.go-helpers.pb.go`
-```
-// Code generated by protoc-gen-go-helpers. DO NOT EDIT.
-package persistence
-
-import (
-	"google.golang.org/protobuf/proto"
-)
-
-// Marshal an object of type QueueMetadata to the protobuf v3 wire format
-func (val *QueueMetadata) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type QueueMetadata from the protobuf v3 wire format
-func (val *QueueMetadata) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *QueueMetadata) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two QueueMetadata values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *QueueMetadata) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *QueueMetadata
-	switch t := that.(type) {
-	case *QueueMetadata:
-		that1 = t
-	case QueueMetadata:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-```
-
-### Core Architecture Module: `api/persistence/v1/queue_metadata.pb.go`
-```
-// Code generated by protoc-gen-go. DO NOT EDIT.
-// plugins:
-// 	protoc-gen-go
-// 	protoc
-// source: temporal/server/api/persistence/v1/queue_metadata.proto
-
-package persistence
-
-import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-)
-
-const (
-	// Verify that this generated code is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(20 - protoimpl.MinVersion)
-	// Verify that runtime/protoimpl is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
-)
-
-// data column
-type QueueMetadata struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	ClusterAckLevels map[string]int64       `protobuf:"bytes,1,rep,name=cluster_ack_levels,json=clusterAckLevels,proto3" json:"cluster_ack_levels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *QueueMetadata) Reset() {
-	*x = QueueMetadata{}
-	mi := &file_temporal_server_api_persistence_v1_queue_metadata_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QueueMetadata) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QueueMetadata) ProtoMessage() {}
-
-func (x *QueueMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queue_metadata_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QueueMetadata.ProtoReflect.Descriptor instead.
-func (*QueueMetadata) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *QueueMetadata) GetClusterAckLevels() map[string]int64 {
-	if x != nil {
-		return x.ClusterAckLevels
-	}
-	return nil
-}
-
-var File_temporal_server_api_persistence_v1_queue_metadata_proto protoreflect.FileDescriptor
-
-const file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDesc = "" +
-	"\n" +
-	"7temporal/server/api/persistence/v1/queue_metadata.proto\x12\"temporal.server.api.persistence.v1\"\xcb\x01\n" +
-	"\rQueueMetadata\x12u\n" +
-	"\x12cluster_ack_levels\x18\x01 \x03(\v2G.temporal.server.api.persistence.v1.QueueMetadata.ClusterAckLevelsEntryR\x10clusterAckLevels\x1aC\n" +
-	"\x15ClusterAckLevelsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01B6Z4go.temporal.io/server/api/persistence/v1;persistenceb\x06proto3"
-
-var (
-	file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDescOnce sync.Once
-	file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDescData []byte
-)
-
-func file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDescGZIP() []byte {
-	file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDescOnce.Do(func() {
-		file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDesc), len(file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDesc)))
-	})
-	return file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDescData
-}
-
-var file_temporal_server_api_persistence_v1_queue_metadata_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_temporal_server_api_persistence_v1_queue_metadata_proto_goTypes = []any{
-	(*QueueMetadata)(nil), // 0: temporal.server.api.persistence.v1.QueueMetadata
-	nil,                   // 1: temporal.server.api.persistence.v1.QueueMetadata.ClusterAckLevelsEntry
-}
-var file_temporal_server_api_persistence_v1_queue_metadata_proto_depIdxs = []int32{
-	1, // 0: temporal.server.api.persistence.v1.QueueMetadata.cluster_ack_levels:type_name -> temporal.server.api.persistence.v1.QueueMetadata.ClusterAckLevelsEntry
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
-}
-
-func init() { file_temporal_server_api_persistence_v1_queue_metadata_proto_init() }
-func file_temporal_server_api_persistence_v1_queue_metadata_proto_init() {
-	if File_temporal_server_api_persistence_v1_queue_metadata_proto != nil {
-		return
-	}
-	type x struct{}
-	out := protoimpl.TypeBuilder{
-		File: protoimpl.DescBuilder{
-			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDesc), len(file_temporal_server_api_persistence_v1_queue_metadata_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   2,
-			NumExtensions: 0,
-			NumServices:   0,
-		},
-		GoTypes:           file_temporal_server_api_persistence_v1_queue_metadata_proto_goTypes,
-		DependencyIndexes: file_temporal_server_api_persistence_v1_queue_metadata_proto_depIdxs,
-		MessageInfos:      file_temporal_server_api_persistence_v1_queue_metadata_proto_msgTypes,
-	}.Build()
-	File_temporal_server_api_persistence_v1_queue_metadata_proto = out.File
-	file_temporal_server_api_persistence_v1_queue_metadata_proto_goTypes = nil
-	file_temporal_server_api_persistence_v1_queue_metadata_proto_depIdxs = nil
-}
-
-```
-
-### Core Architecture Module: `api/persistence/v1/queues.go-helpers.pb.go`
-```
-// Code generated by protoc-gen-go-helpers. DO NOT EDIT.
-package persistence
-
-import (
-	"google.golang.org/protobuf/proto"
-)
-
-// Marshal an object of type TaskKey to the protobuf v3 wire format
-func (val *TaskKey) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type TaskKey from the protobuf v3 wire format
-func (val *TaskKey) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *TaskKey) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two TaskKey values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *TaskKey) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *TaskKey
-	switch t := that.(type) {
-	case *TaskKey:
-		that1 = t
-	case TaskKey:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type QueueState to the protobuf v3 wire format
-func (val *QueueState) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type QueueState from the protobuf v3 wire format
-func (val *QueueState) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *QueueState) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two QueueState values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *QueueState) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *QueueState
-	switch t := that.(type) {
-	case *QueueState:
-		that1 = t
-	case QueueState:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type QueueReaderState to the protobuf v3 wire format
-func (val *QueueReaderState) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type QueueReaderState from the protobuf v3 wire format
-func (val *QueueReaderState) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *QueueReaderState) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two QueueReaderState values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *QueueReaderState) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *QueueReaderState
-	switch t := that.(type) {
-	case *QueueReaderState:
-		that1 = t
-	case QueueReaderState:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type QueueSliceScope to the protobuf v3 wire format
-func (val *QueueSliceScope) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type QueueSliceScope from the protobuf v3 wire format
-func (val *QueueSliceScope) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *QueueSliceScope) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two QueueSliceScope values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *QueueSliceScope) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *QueueSliceScope
-	switch t := that.(type) {
-	case *QueueSliceScope:
-		that1 = t
-	case QueueSliceScope:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type QueueSliceRange to the protobuf v3 wire format
-func (val *QueueSliceRange) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type QueueSliceRange from the protobuf v3 wire format
-func (val *QueueSliceRange) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *QueueSliceRange) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two QueueSliceRange values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *QueueSliceRange) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *QueueSliceRange
-	switch t := that.(type) {
-	case *QueueSliceRange:
-		that1 = t
-	case QueueSliceRange:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type ReadQueueMessagesNextPageToken to the protobuf v3 wire format
-func (val *ReadQueueMessagesNextPageToken) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type ReadQueueMessagesNextPageToken from the protobuf v3 wire format
-func (val *ReadQueueMessagesNextPageToken) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *ReadQueueMessagesNextPageToken) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two ReadQueueMessagesNextPageToken values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *ReadQueueMessagesNextPageToken) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *ReadQueueMessagesNextPageToken
-	switch t := that.(type) {
-	case *ReadQueueMessagesNextPageToken:
-		that1 = t
-	case ReadQueueMessagesNextPageToken:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type ListQueuesNextPageToken to the protobuf v3 wire format
-func (val *ListQueuesNextPageToken) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type ListQueuesNextPageToken from the protobuf v3 wire format
-func (val *ListQueuesNextPageToken) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *ListQueuesNextPageToken) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two ListQueuesNextPageToken values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *ListQueuesNextPageToken) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *ListQueuesNextPageToken
-	switch t := that.(type) {
-	case *ListQueuesNextPageToken:
-		that1 = t
-	case ListQueuesNextPageToken:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type HistoryTask to the protobuf v3 wire format
-func (val *HistoryTask) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type HistoryTask from the protobuf v3 wire format
-func (val *HistoryTask) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *HistoryTask) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two HistoryTask values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *HistoryTask) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *HistoryTask
-	switch t := that.(type) {
-	case *HistoryTask:
-		that1 = t
-	case HistoryTask:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type QueuePartition to the protobuf v3 wire format
-func (val *QueuePartition) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type QueuePartition from the protobuf v3 wire format
-func (val *QueuePartition) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *QueuePartition) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two QueuePartition values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *QueuePartition) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *QueuePartition
-	switch t := that.(type) {
-	case *QueuePartition:
-		that1 = t
-	case QueuePartition:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type Queue to the protobuf v3 wire format
-func (val *Queue) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type Queue from the protobuf v3 wire format
-func (val *Queue) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *Queue) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two Queue values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *Queue) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *Queue
-	switch t := that.(type) {
-	case *Queue:
-		that1 = t
-	case Queue:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return pr
-```
-
-### Core Architecture Module: `api/persistence/v1/queues.pb.go`
-```
-// Code generated by protoc-gen-go. DO NOT EDIT.
-// plugins:
-// 	protoc-gen-go
-// 	protoc
-// source: temporal/server/api/persistence/v1/queues.proto
-
-package persistence
-
-import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
-	v1 "go.temporal.io/api/common/v1"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
-)
-
-const (
-	// Verify that this generated code is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(20 - protoimpl.MinVersion)
-	// Verify that runtime/protoimpl is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
-)
-
-type TaskKey struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FireTime      *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=fire_time,json=fireTime,proto3" json:"fire_time,omitempty"`
-	TaskId        int64                  `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TaskKey) Reset() {
-	*x = TaskKey{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TaskKey) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TaskKey) ProtoMessage() {}
-
-func (x *TaskKey) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TaskKey.ProtoReflect.Descriptor instead.
-func (*TaskKey) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *TaskKey) GetFireTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.FireTime
-	}
-	return nil
-}
-
-func (x *TaskKey) GetTaskId() int64 {
-	if x != nil {
-		return x.TaskId
-	}
-	return 0
-}
-
-type QueueState struct {
-	state                        protoimpl.MessageState      `protogen:"open.v1"`
-	ReaderStates                 map[int64]*QueueReaderState `protobuf:"bytes,1,rep,name=reader_states,json=readerStates,proto3" json:"reader_states,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	ExclusiveReaderHighWatermark *TaskKey                    `protobuf:"bytes,2,opt,name=exclusive_reader_high_watermark,json=exclusiveReaderHighWatermark,proto3" json:"exclusive_reader_high_watermark,omitempty"`
-	unknownFields                protoimpl.UnknownFields
-	sizeCache                    protoimpl.SizeCache
-}
-
-func (x *QueueState) Reset() {
-	*x = QueueState{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QueueState) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QueueState) ProtoMessage() {}
-
-func (x *QueueState) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QueueState.ProtoReflect.Descriptor instead.
-func (*QueueState) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *QueueState) GetReaderStates() map[int64]*QueueReaderState {
-	if x != nil {
-		return x.ReaderStates
-	}
-	return nil
-}
-
-func (x *QueueState) GetExclusiveReaderHighWatermark() *TaskKey {
-	if x != nil {
-		return x.ExclusiveReaderHighWatermark
-	}
-	return nil
-}
-
-type QueueReaderState struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Scopes        []*QueueSliceScope     `protobuf:"bytes,1,rep,name=scopes,proto3" json:"scopes,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QueueReaderState) Reset() {
-	*x = QueueReaderState{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QueueReaderState) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QueueReaderState) ProtoMessage() {}
-
-func (x *QueueReaderState) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QueueReaderState.ProtoReflect.Descriptor instead.
-func (*QueueReaderState) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *QueueReaderState) GetScopes() []*QueueSliceScope {
-	if x != nil {
-		return x.Scopes
-	}
-	return nil
-}
-
-type QueueSliceScope struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Range         *QueueSliceRange       `protobuf:"bytes,1,opt,name=range,proto3" json:"range,omitempty"`
-	Predicate     *Predicate             `protobuf:"bytes,2,opt,name=predicate,proto3" json:"predicate,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QueueSliceScope) Reset() {
-	*x = QueueSliceScope{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QueueSliceScope) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QueueSliceScope) ProtoMessage() {}
-
-func (x *QueueSliceScope) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QueueSliceScope.ProtoReflect.Descriptor instead.
-func (*QueueSliceScope) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *QueueSliceScope) GetRange() *QueueSliceRange {
-	if x != nil {
-		return x.Range
-	}
-	return nil
-}
-
-func (x *QueueSliceScope) GetPredicate() *Predicate {
-	if x != nil {
-		return x.Predicate
-	}
-	return nil
-}
-
-type QueueSliceRange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	InclusiveMin  *TaskKey               `protobuf:"bytes,1,opt,name=inclusive_min,json=inclusiveMin,proto3" json:"inclusive_min,omitempty"`
-	ExclusiveMax  *TaskKey               `protobuf:"bytes,2,opt,name=exclusive_max,json=exclusiveMax,proto3" json:"exclusive_max,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QueueSliceRange) Reset() {
-	*x = QueueSliceRange{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QueueSliceRange) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QueueSliceRange) ProtoMessage() {}
-
-func (x *QueueSliceRange) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QueueSliceRange.ProtoReflect.Descriptor instead.
-func (*QueueSliceRange) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *QueueSliceRange) GetInclusiveMin() *TaskKey {
-	if x != nil {
-		return x.InclusiveMin
-	}
-	return nil
-}
-
-func (x *QueueSliceRange) GetExclusiveMax() *TaskKey {
-	if x != nil {
-		return x.ExclusiveMax
-	}
-	return nil
-}
-
-type ReadQueueMessagesNextPageToken struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	LastReadMessageId int64                  `protobuf:"varint,1,opt,name=last_read_message_id,json=lastReadMessageId,proto3" json:"last_read_message_id,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *ReadQueueMessagesNextPageToken) Reset() {
-	*x = ReadQueueMessagesNextPageToken{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReadQueueMessagesNextPageToken) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReadQueueMessagesNextPageToken) ProtoMessage() {}
-
-func (x *ReadQueueMessagesNextPageToken) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReadQueueMessagesNextPageToken.ProtoReflect.Descriptor instead.
-func (*ReadQueueMessagesNextPageToken) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *ReadQueueMessagesNextPageToken) GetLastReadMessageId() int64 {
-	if x != nil {
-		return x.LastReadMessageId
-	}
-	return 0
-}
-
-type ListQueuesNextPageToken struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	LastReadQueueNumber int64                  `protobuf:"varint,1,opt,name=last_read_queue_number,json=lastReadQueueNumber,proto3" json:"last_read_queue_number,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *Lis
-```
-
-### Core Architecture Module: `api/persistence/v1/task_queues.go-helpers.pb.go`
-```
-// Code generated by protoc-gen-go-helpers. DO NOT EDIT.
-package persistence
-
-import (
-	"google.golang.org/protobuf/proto"
-)
-
-// Marshal an object of type BuildId to the protobuf v3 wire format
-func (val *BuildId) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type BuildId from the protobuf v3 wire format
-func (val *BuildId) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *BuildId) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two BuildId values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *BuildId) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *BuildId
-	switch t := that.(type) {
-	case *BuildId:
-		that1 = t
-	case BuildId:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type CompatibleVersionSet to the protobuf v3 wire format
-func (val *CompatibleVersionSet) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type CompatibleVersionSet from the protobuf v3 wire format
-func (val *CompatibleVersionSet) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *CompatibleVersionSet) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two CompatibleVersionSet values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *CompatibleVersionSet) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *CompatibleVersionSet
-	switch t := that.(type) {
-	case *CompatibleVersionSet:
-		that1 = t
-	case CompatibleVersionSet:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type AssignmentRule to the protobuf v3 wire format
-func (val *AssignmentRule) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type AssignmentRule from the protobuf v3 wire format
-func (val *AssignmentRule) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *AssignmentRule) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two AssignmentRule values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *AssignmentRule) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *AssignmentRule
-	switch t := that.(type) {
-	case *AssignmentRule:
-		that1 = t
-	case AssignmentRule:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type RedirectRule to the protobuf v3 wire format
-func (val *RedirectRule) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type RedirectRule from the protobuf v3 wire format
-func (val *RedirectRule) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *RedirectRule) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two RedirectRule values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *RedirectRule) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *RedirectRule
-	switch t := that.(type) {
-	case *RedirectRule:
-		that1 = t
-	case RedirectRule:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type VersioningData to the protobuf v3 wire format
-func (val *VersioningData) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type VersioningData from the protobuf v3 wire format
-func (val *VersioningData) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *VersioningData) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two VersioningData values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *VersioningData) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *VersioningData
-	switch t := that.(type) {
-	case *VersioningData:
-		that1 = t
-	case VersioningData:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type DeploymentData to the protobuf v3 wire format
-func (val *DeploymentData) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type DeploymentData from the protobuf v3 wire format
-func (val *DeploymentData) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *DeploymentData) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two DeploymentData values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *DeploymentData) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *DeploymentData
-	switch t := that.(type) {
-	case *DeploymentData:
-		that1 = t
-	case DeploymentData:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type WorkerDeploymentData to the protobuf v3 wire format
-func (val *WorkerDeploymentData) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type WorkerDeploymentData from the protobuf v3 wire format
-func (val *WorkerDeploymentData) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *WorkerDeploymentData) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two WorkerDeploymentData values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *WorkerDeploymentData) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *WorkerDeploymentData
-	switch t := that.(type) {
-	case *WorkerDeploymentData:
-		that1 = t
-	case WorkerDeploymentData:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type TaskQueueTypeUserData to the protobuf v3 wire format
-func (val *TaskQueueTypeUserData) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type TaskQueueTypeUserData from the protobuf v3 wire format
-func (val *TaskQueueTypeUserData) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *TaskQueueTypeUserData) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two TaskQueueTypeUserData values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *TaskQueueTypeUserData) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *TaskQueueTypeUserData
-	switch t := that.(type) {
-	case *TaskQueueTypeUserData:
-		that1 = t
-	case TaskQueueTypeUserData:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type TaskQueueUserData to the protobuf v3 wire format
-func (val *TaskQueueUserData) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type TaskQueueUserData from the protobuf v3 wire format
-func (val *TaskQueueUserData) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *TaskQueueUserData) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two TaskQueueUserData values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *TaskQueueUserData) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *TaskQueueUserData
-	switch t := that.(type) {
-	case *TaskQueueUserData:
-		that1 = t
-	case TaskQueueUserData:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type VersionedTaskQueueUserData to the protobuf v3 wire format
-func (val *VersionedTaskQueueUserData) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type VersionedTaskQueueUserData from the protobuf v3 wire format
-func (val *VersionedTaskQueueUserData) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *VersionedTaskQueueUserData) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two VersionedTaskQueueUserData values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *VersionedTaskQueueUserData) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that
-```
-
-### Core Architecture Module: `api/persistence/v1/task_queues.pb.go`
-```
-// Code generated by protoc-gen-go. DO NOT EDIT.
-// plugins:
-// 	protoc-gen-go
-// 	protoc
-// source: temporal/server/api/persistence/v1/task_queues.proto
-
-package persistence
-
-import (
-	reflect "reflect"
-	"strconv"
-	sync "sync"
-	unsafe "unsafe"
-
-	v13 "go.temporal.io/api/deployment/v1"
-	v11 "go.temporal.io/api/taskqueue/v1"
-	v1 "go.temporal.io/server/api/clock/v1"
-	v12 "go.temporal.io/server/api/deployment/v1"
-	v14 "go.temporal.io/server/api/enums/v1"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-)
-
-const (
-	// Verify that this generated code is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(20 - protoimpl.MinVersion)
-	// Verify that runtime/protoimpl is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
-)
-
-type BuildId_State int32
-
-const (
-	STATE_UNSPECIFIED BuildId_State = 0
-	STATE_ACTIVE      BuildId_State = 1
-	STATE_DELETED     BuildId_State = 2
-)
-
-// Enum value maps for BuildId_State.
-var (
-	BuildId_State_name = map[int32]string{
-		0: "STATE_UNSPECIFIED",
-		1: "STATE_ACTIVE",
-		2: "STATE_DELETED",
-	}
-	BuildId_State_value = map[string]int32{
-		"STATE_UNSPECIFIED": 0,
-		"STATE_ACTIVE":      1,
-		"STATE_DELETED":     2,
-	}
-)
-
-func (x BuildId_State) Enum() *BuildId_State {
-	p := new(BuildId_State)
-	*p = x
-	return p
-}
-
-func (x BuildId_State) String() string {
-	switch x {
-	case STATE_UNSPECIFIED:
-		return "StateUnspecified"
-	case STATE_ACTIVE:
-		return "StateActive"
-	case STATE_DELETED:
-		return "StateDeleted"
-	default:
-		return strconv.Itoa(int(x))
-	}
-
-}
-
-func (BuildId_State) Descriptor() protoreflect.EnumDescriptor {
-	return file_temporal_server_api_persistence_v1_task_queues_proto_enumTypes[0].Descriptor()
-}
-
-func (BuildId_State) Type() protoreflect.EnumType {
-	return &file_temporal_server_api_persistence_v1_task_queues_proto_enumTypes[0]
-}
-
-func (x BuildId_State) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use BuildId_State.Descriptor instead.
-func (BuildId_State) EnumDescriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_task_queues_proto_rawDescGZIP(), []int{0, 0}
-}
-
-// BuildId is an identifier with a timestamped status used to identify workers for task queue versioning purposes.
-type BuildId struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	State BuildId_State          `protobuf:"varint,2,opt,name=state,proto3,enum=temporal.server.api.persistence.v1.BuildId_State" json:"state,omitempty"`
-	// HLC timestamp representing when the state was updated or the when build ID was originally inserted.
-	// (-- api-linter: core::0142::time-field-type=disabled
-	//     aip.dev/not-precedent: Using HLC instead of wall clock. --)
-	StateUpdateTimestamp *v1.HybridLogicalClock `protobuf:"bytes,3,opt,name=state_update_timestamp,json=stateUpdateTimestamp,proto3" json:"state_update_timestamp,omitempty"`
-	// HLC timestamp representing when this build ID was last made default in its version set.
-	// (-- api-linter: core::0142::time-field-type=disabled
-	//     aip.dev/not-precedent: Using HLC instead of wall clock. --)
-	BecameDefaultTimestamp *v1.HybridLogicalClock `protobuf:"bytes,4,opt,name=became_default_timestamp,json=becameDefaultTimestamp,proto3" json:"became_default_timestamp,omitempty"`
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *BuildId) Reset() {
-	*x = BuildId{}
-	mi := &file_temporal_server_api_persistence_v1_task_queues_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BuildId) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BuildId) ProtoMessage() {}
-
-func (x *BuildId) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_task_queues_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BuildId.ProtoReflect.Descriptor instead.
-func (*BuildId) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_task_queues_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *BuildId) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *BuildId) GetState() BuildId_State {
-	if x != nil {
-		return x.State
-	}
-	return STATE_UNSPECIFIED
-}
-
-func (x *BuildId) GetStateUpdateTimestamp() *v1.HybridLogicalClock {
-	if x != nil {
-		return x.StateUpdateTimestamp
-	}
-	return nil
-}
-
-func (x *BuildId) GetBecameDefaultTimestamp() *v1.HybridLogicalClock {
-	if x != nil {
-		return x.BecameDefaultTimestamp
-	}
-	return nil
-}
-
-// An internal representation of temporal.api.taskqueue.v1.CompatibleVersionSet
-type CompatibleVersionSet struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Set IDs are used internally by matching.
-	// A set typically has one set ID and extra care is taken to enforce this.
-	// In some situations, including:
-	// - Replication race between task queue user data and history events
-	// - Replication split-brain + later merge
-	// - Delayed user data propagation between partitions
-	// - Cross-task-queue activities/child workflows/CAN where the user has not set up parallel
-	//   versioning data
-	// we have to guess the set id for a build ID. If that happens, and then the build ID is
-	// discovered to be in a different set, then the sets will be merged and both (or more)
-	// build ids will be preserved, so that we don't lose tasks.
-	// The first set id is considered the "primary", and the others are "demoted". Once a build
-	// id is demoted, it cannot be made the primary again.
-	SetIds []string `protobuf:"bytes,1,rep,name=set_ids,json=setIds,proto3" json:"set_ids,omitempty"`
-	// All the compatible versions, unordered except for the last element, which is considered the set "default".
-	BuildIds []*BuildId `protobuf:"bytes,2,rep,name=build_ids,json=buildIds,proto3" json:"build_ids,omitempty"`
-	// HLC timestamp representing when this set was last made the default for the queue.
-	// (-- api-linter: core::0142::time-field-type=disabled
-	//     aip.dev/not-precedent: Using HLC instead of wall clock. --)
-	BecameDefaultTimestamp *v1.HybridLogicalClock `protobuf:"bytes,4,opt,name=became_default_timestamp,json=becameDefaultTimestamp,proto3" json:"became_default_timestamp,omitempty"`
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *CompatibleVersionSet) Reset() {
-	*x = CompatibleVersionSet{}
-	mi := &file_temporal_server_api_persistence_v1_task_queues_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CompatibleVersionSet) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CompatibleVersionSet) ProtoMessage() {}
-
-func (x *CompatibleVersionSet) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_task_queues_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CompatibleVersionSet.ProtoReflect.Descriptor instead.
-func (*CompatibleVersionSet) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_task_queues_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *CompatibleVersionSet) GetSetIds() []string {
-	if x != nil {
-		return x.SetIds
-	}
-	return nil
-}
-
-func (x *CompatibleVersionSet) GetBuildIds() []*BuildId {
-	if x != nil {
-		return x.BuildIds
-	}
-	return nil
-}
-
-func (x *CompatibleVersionSet) GetBecameDefaultTimestamp() *v1.HybridLogicalClock {
-	if x != nil {
-		return x.BecameDefaultTimestamp
-	}
-	return nil
-}
-
-type AssignmentRule struct {
-	state protoimpl.MessageState     `protogen:"open.v1"`
-	Rule  *v11.BuildIdAssignmentRule `protobuf:"bytes,1,opt,name=rule,proto3" json:"rule,omitempty"`
-	// (-- api-linter: core::0142::time-field-type=disabled
-	//     aip.dev/not-precedent: Using HLC instead of wall clock. --)
-	CreateTimestamp *v1.HybridLogicalClock `protobuf:"bytes,2,opt,name=create_timestamp,json=createTimestamp,proto3" json:"create_timestamp,omitempty"`
-	//  when delete_timestamp is present the rule should be treated as deleted
-	// (-- api-linter: core::0142::time-field-type=disabled
-	//     aip.dev/not-precedent: Using HLC instead of wall clock. --)
-	DeleteTimestamp *v1.HybridLogicalClock `protobuf:"bytes,3,opt,name=delete_timestamp,json=deleteTimestamp,proto3" json:"delete_timestamp,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *AssignmentRule) Reset() {
-	*x = AssignmentRule{}
-	mi := &file_temporal_server_api_persistence_v1_task_queues_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AssignmentRule) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AssignmentRule) ProtoMessage() {}
-
-func (x *AssignmentRule) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_task_queues_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AssignmentRule.ProtoReflect.Descriptor instead.
-func (*AssignmentRule) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_task_queues_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *AssignmentRule) GetRule() *v11.BuildIdAssignmentRule {
-	if x != nil {
-		return x.Rule
-	}
-	return nil
-}
-
-func (x *AssignmentRule) GetCreateTimestamp() *v1.HybridLogicalClock {
-	if x != nil {
-		return x.CreateTimestamp
-	}
-	return nil
-}
-
-func (x *AssignmentRule) GetDeleteTimestamp() *v1.HybridLogicalClock {
-	if x != nil {
-		ret
-```
-
-### Core Architecture Module: `api/persistence/v1/workflow_mutable_state.go-helpers.pb.go`
-```
-// Code generated by protoc-gen-go-helpers. DO NOT EDIT.
-package persistence
-
-import (
-	"google.golang.org/protobuf/proto"
-)
-
-// Marshal an object of type WorkflowMutableState to the protobuf v3 wire format
-func (val *WorkflowMutableState) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type WorkflowMutableState from the protobuf v3 wire format
-func (val *WorkflowMutableState) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *WorkflowMutableState) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two WorkflowMutableState values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *WorkflowMutableState) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *WorkflowMutableState
-	switch t := that.(type) {
-	case *WorkflowMutableState:
-		that1 = t
-	case WorkflowMutableState:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type WorkflowMutableStateMutation to the protobuf v3 wire format
-func (val *WorkflowMutableStateMutation) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type WorkflowMutableStateMutation from the protobuf v3 wire format
-func (val *WorkflowMutableStateMutation) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *WorkflowMutableStateMutation) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two WorkflowMutableStateMutation values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *WorkflowMutableStateMutation) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *WorkflowMutableStateMutation
-	switch t := that.(type) {
-	case *WorkflowMutableStateMutation:
-		that1 = t
-	case WorkflowMutableStateMutation:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-```
-
-### Core Architecture Module: `api/persistence/v1/workflow_mutable_state.pb.go`
-```
-// Code generated by protoc-gen-go. DO NOT EDIT.
-// plugins:
-// 	protoc-gen-go
-// 	protoc
-// source: temporal/server/api/persistence/v1/workflow_mutable_state.proto
-
-package persistence
-
-import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
-	v1 "go.temporal.io/api/history/v1"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-)
-
-const (
-	// Verify that this generated code is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(20 - protoimpl.MinVersion)
-	// Verify that runtime/protoimpl is sufficiently up-to-date.
-	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
-)
-
-type WorkflowMutableState struct {
-	state               protoimpl.MessageState        `protogen:"open.v1"`
-	ActivityInfos       map[int64]*ActivityInfo       `protobuf:"bytes,1,rep,name=activity_infos,json=activityInfos,proto3" json:"activity_infos,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	TimerInfos          map[string]*TimerInfo         `protobuf:"bytes,2,rep,name=timer_infos,json=timerInfos,proto3" json:"timer_infos,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	ChildExecutionInfos map[int64]*ChildExecutionInfo `protobuf:"bytes,3,rep,name=child_execution_infos,json=childExecutionInfos,proto3" json:"child_execution_infos,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	RequestCancelInfos  map[int64]*RequestCancelInfo  `protobuf:"bytes,4,rep,name=request_cancel_infos,json=requestCancelInfos,proto3" json:"request_cancel_infos,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	SignalInfos         map[int64]*SignalInfo         `protobuf:"bytes,5,rep,name=signal_infos,json=signalInfos,proto3" json:"signal_infos,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	ChasmNodes          map[string]*ChasmNode         `protobuf:"bytes,12,rep,name=chasm_nodes,json=chasmNodes,proto3" json:"chasm_nodes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	SignalRequestedIds  []string                      `protobuf:"bytes,6,rep,name=signal_requested_ids,json=signalRequestedIds,proto3" json:"signal_requested_ids,omitempty"`
-	ExecutionInfo       *WorkflowExecutionInfo        `protobuf:"bytes,7,opt,name=execution_info,json=executionInfo,proto3" json:"execution_info,omitempty"`
-	ExecutionState      *WorkflowExecutionState       `protobuf:"bytes,8,opt,name=execution_state,json=executionState,proto3" json:"execution_state,omitempty"`
-	NextEventId         int64                         `protobuf:"varint,9,opt,name=next_event_id,json=nextEventId,proto3" json:"next_event_id,omitempty"`
-	BufferedEvents      []*v1.HistoryEvent            `protobuf:"bytes,10,rep,name=buffered_events,json=bufferedEvents,proto3" json:"buffered_events,omitempty"`
-	Checksum            *Checksum                     `protobuf:"bytes,11,opt,name=checksum,proto3" json:"checksum,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *WorkflowMutableState) Reset() {
-	*x = WorkflowMutableState{}
-	mi := &file_temporal_server_api_persistence_v1_workflow_mutable_state_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *WorkflowMutableState) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*WorkflowMutableState) ProtoMessage() {}
-
-func (x *WorkflowMutableState) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_workflow_mutable_state_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WorkflowMutableState.ProtoReflect.Descriptor instead.
-func (*WorkflowMutableState) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_workflow_mutable_state_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *WorkflowMutableState) GetActivityInfos() map[int64]*ActivityInfo {
-	if x != nil {
-		return x.ActivityInfos
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetTimerInfos() map[string]*TimerInfo {
-	if x != nil {
-		return x.TimerInfos
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetChildExecutionInfos() map[int64]*ChildExecutionInfo {
-	if x != nil {
-		return x.ChildExecutionInfos
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetRequestCancelInfos() map[int64]*RequestCancelInfo {
-	if x != nil {
-		return x.RequestCancelInfos
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetSignalInfos() map[int64]*SignalInfo {
-	if x != nil {
-		return x.SignalInfos
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetChasmNodes() map[string]*ChasmNode {
-	if x != nil {
-		return x.ChasmNodes
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetSignalRequestedIds() []string {
-	if x != nil {
-		return x.SignalRequestedIds
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetExecutionInfo() *WorkflowExecutionInfo {
-	if x != nil {
-		return x.ExecutionInfo
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetExecutionState() *WorkflowExecutionState {
-	if x != nil {
-		return x.ExecutionState
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetNextEventId() int64 {
-	if x != nil {
-		return x.NextEventId
-	}
-	return 0
-}
-
-func (x *WorkflowMutableState) GetBufferedEvents() []*v1.HistoryEvent {
-	if x != nil {
-		return x.BufferedEvents
-	}
-	return nil
-}
-
-func (x *WorkflowMutableState) GetChecksum() *Checksum {
-	if x != nil {
-		return x.Checksum
-	}
-	return nil
-}
-
-type WorkflowMutableStateMutation struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The following updated_* fields are computed based on the
-	// lastUpdateVersionedTransition field of each sub state machine.
-	UpdatedActivityInfos       map[int64]*ActivityInfo                                  `protobuf:"bytes,1,rep,name=updated_activity_infos,json=updatedActivityInfos,proto3" json:"updated_activity_infos,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	UpdatedTimerInfos          map[string]*TimerInfo                                    `protobuf:"bytes,2,rep,name=updated_timer_infos,json=updatedTimerInfos,proto3" json:"updated_timer_infos,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	UpdatedChildExecutionInfos map[int64]*ChildExecutionInfo                            `protobuf:"bytes,3,rep,name=updated_child_execution_infos,json=updatedChildExecutionInfos,proto3" json:"updated_child_execution_infos,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	UpdatedRequestCancelInfos  map[int64]*RequestCancelInfo                             `protobuf:"bytes,4,rep,name=updated_request_cancel_infos,json=updatedRequestCancelInfos,proto3" json:"updated_request_cancel_infos,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	UpdatedSignalInfos         map[int64]*SignalInfo                                    `protobuf:"bytes,5,rep,name=updated_signal_infos,json=updatedSignalInfos,proto3" json:"updated_signal_infos,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	UpdatedUpdateInfos         map[string]*UpdateInfo                                   `protobuf:"bytes,6,rep,name=updated_update_infos,json=updatedUpdateInfos,proto3" json:"updated_update_infos,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	UpdatedSubStateMachines    []*WorkflowMutableStateMutation_StateMachineNodeMutation `protobuf:"bytes,7,rep,name=updated_sub_state_machines,json=updatedSubStateMachines,proto3" json:"updated_sub_state_machines,omitempty"`
-	UpdatedChasmNodes          map[string]*ChasmNode                                    `protobuf:"bytes,19,rep,name=updated_chasm_nodes,json=updatedChasmNodes,proto3" json:"updated_chasm_nodes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	SignalRequestedIds         []string                                                 `protobuf:"bytes,15,rep,name=signal_requested_ids,json=signalRequestedIds,proto3" json:"signal_requested_ids,omitempty"`
-	// Partial WorkflowExecutionInfo. Some fields, such as
-	// update_infos and sub_state_machines_by_type, are not populated here.
-	// Instead, only diffs are synced in the deleted_* and updated_* fields above.
-	ExecutionInfo                   *WorkflowExecutionInfo        `protobuf:"bytes,16,opt,name=execution_info,json=executionInfo,proto3" json:"execution_info,omitempty"`
-	ExecutionState                  *WorkflowExecutionState       `protobuf:"bytes,17,opt,name=execution_state,json=executionState,proto3" json:"execution_state,omitempty"`
-	SubStateMachineTombstoneBatches []*StateMachineTombstoneBatch `protobuf:"bytes,18,rep,name=sub_state_machine_tombstone_batches,json=subStateMachineTombstoneBatches,proto3" json:"sub_state_machine_tombstone_batches,omitempty"`
-	unknownFields                   protoimpl.UnknownFields
-	sizeCache                       protoimpl.SizeCache
-}
-
-func (x *WorkflowMutableStateMutation) Reset() {
-	*x = WorkflowMutableStateMutation{}
-	mi := &file_temporal_server_api_persistence_v1_workflow_mutable_state_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *WorkflowMutableStateMutation) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*WorkflowMutableStateMutation) ProtoMessage() {}
-
-func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_workflow_mutable_state_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Wo
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8970** (2026-01-09): **Client-set RPC deadline is ignored for long poll `GetWorkflowExecutionHistory`**
-  *Symptoms*: Client-set RPC timeouts/deadlines are ignored by the server for long poll `GetWorkflowExecutionHistory` calls starting in v1.29.0. The server waits the full long poll interval (~20s) instead of respecting the client's deadline. 
-  **Post-Mortem & Fix Analysis**:
-  > Actually, the server responds with an empty response 1s before the client set deadline is reached.
-
-- **Issue #8490** (2026-10-07): **Scheduled Actions doesn't clear ContinuedFailure on null success payloads**
-  *Symptoms*: ## Expected Behavior - When a scheduled action succeeds, subsequent scheduled actions should not receive a `ContinuedFailure` failure payload.  ## Actual Behavior - If a scheduled action fails, setting `ContinuedFailure`'s payload, and then a subsequent scheduled action succeeds without returning a payload (a `null` payload), `ContinuedFailure` will continue to propagate to scheduled actions.   
-  **Post-Mortem & Fix Analysis**:
-  > See:  - https://github.com/temporalio/temporal/blob/main/service/worker/scheduler/workflow.go#L858C1-L858C29 - https://github.com/temporalio/temporal/blob/main/service/worker/scheduler/activities.go#L369  Instead, check the completed workflow's execution status to determine which fields to propagate.
-  > This was closed by mistake (due to a faulty integration). Reopening it.
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `e4160f8e` (2026-11-06)
-**Commit Message**: Fix deleted deployment version accumulation on passive clusters (#12966)
-
-Problem: Deleted deployment versions accumulate on passive clusters.
-They can block new builds after failover and eventually make replication
-updates too large to store or transmit.
-
-1. **Normal deletion — the case this PR addresses**
-
-**Setup:** Active and passive start with `{A, B}`, clock 10. Active
-deletes A and sends `{B}`, clock 20.
-
-   **Before:** The passive unions both snapshots and retains `{A, B}`.
-
-**After:** The passive replaces its deployment data with `{B}`. An equal
-incoming clock also replaces, allowing force replication to clear
-existing accumulation.
-
-2. **Delayed replication — fixed by
-[#12351](https://github.com/temporalio/temporal/pull/12351), which
-introduced the normal-deletion issue this PR addresses**
-
-**Setup:** After failover, the target has `{B}`, clock 20. A delayed
-snapshot from the old active contains `{A}`, clock 10.
-
-**Before:** The union fix merged to `{A, B}`, preserving valid A despite
-its older parent clock.
-
-**After:** Still merges to `{A, B}`. This change retains the original
-fix's protection for delayed replication.
-
-3. **Accepted edge case**
-
-**Setup:** The target has
-
-**File**: `common/dynamicconfig/constants.go` (modified, +6/-0)
-```diff
-@@ -1618,6 +1618,12 @@ these log lines can be noisy, we want to be able to turn on and sample selective
- 		100,
- 		`MatchingMaxVersionsInDeployment represents the maximum number of versions that can be registered in a single worker deployment`,
- 	)
-+	MatchingEnableTaskQueueUserDataRevisionMerge = NewNamespaceBoolSetting(
-+		"matching.enableTaskQueueUserDataRevisionMerge",
-+		true,
-+		`When enabled, merges incoming and current worker deployment data by revision when needed to preserve delayed updates.
-+When disabled, always uses the deployment snapshot selected by the parent clock without merging.`,
-+	)
- 	MatchingMaxVersionsInTaskQueue = NewNamespaceIntSetting(
- 		"matching.maxVersionsInTaskQueue",
- 		200,
-```
-
-**File**: `service/matching/config.go` (modified, +2/-0)
-```diff
-@@ -34,6 +34,7 @@ type (
- 		EnableDeployments                    dynamicconfig.BoolPropertyFnWithNamespaceFilter // [cleanup-wv-pre-release]
- 		EnableDeploymentVersions             dynamicconfig.BoolPropertyFnWithNamespaceFilter
- 		UseRevisionNumberForWorkerVersioning dynamicconfig.BoolPropertyFnWithNamespaceFilter
-+		EnableTaskQueueUserDataRevisionMerge dynamicconfig.BoolPropertyFnWithNamespaceFilter
- 		MaxTaskQueuesInDeployment            dynamicconfig.IntPropertyFnWithNamespaceFilter
- 		MaxVersionsInTaskQueue               dynamicconfig.IntPropertyFnWithNamespaceFilter
- 		MaxIDLengthLimit                     dynamicconfig.IntPropertyFn
-@@ -287,6 +288,7 @@ func NewConfig(
- 		EnableDeployments:                        dynamicconfig.EnableDeployments.Get(dc), // [cleanup-wv-pre-release]
- 		EnableDeploymentVersions:                 dynamicconfig.EnableDeploymentVersions.Get(dc),
- 		UseRevisionNumberForWorkerVersioning:     dynamicconfig.UseRevisionNumberForWorkerVersioning.Get(dc),
-+		EnableTaskQueueUserDataRevisionMerge:     dynamicconfig.MatchingEnableTaskQueueUserDataRevisionMerge.Get(dc),
- 		MaxTaskQueuesInDeployment:                dynamicconfig.MatchingMaxTaskQueuesInDeployment.Get(dc),
- 		MaxVersionsInTaskQueue:                   dynamicconfig.MatchingMaxVersionsInTaskQueue.Get(dc),
- 		RPS:                                      dynamicconfig.MatchingRPS.Get(dc),
-```
-
-**File**: `service/matching/matching_engine.go` (modified, +21/-1)
-```diff
-@@ -2573,9 +2573,29 @@ func (e *matchingEngineImpl) ApplyTaskQueueUserDataReplicationEvent(
- 
- 		// Merge logic: Task queue user data has an overall clock. Deployment routing configs and
- 		// individual versions within it have their own revision numbers. To merge the two user data values:
-+		//
- 		// 1. Select the base user data using the overall clock.
--		// 2. Merge the routing configs and versions from the other user data into the base.
-+		//
-+		// 2. When revision-based merging is disabled, use the selected base without merging.
-+		//
-+		// 3. When revision-based merging is enabled, there are three cases:
-+		//
-+		//    3a. Both clocks are present and incoming is equal or newer: use incoming without merging.
-+		//        This lets missing versions propagate as deletions, including during same-clock force replication.
-+		//
-+		//    3b. Both clocks are present and incoming is older: merge its routing configs and versions into the base.
-+		//        This preserves valid versions or higher revisions arriving in delayed replication after failover.
-+		//
-+		//    3c. Either clock is missing: retain compatibility merging because snapshot ordering is unknown.
- 		baseUserData, otherUserData, selectionReason := selectTaskQueueUserData(current, incoming)
-+		revisionMergeEnabled := e.config.EnableTaskQueueUserDataRevisionMerge(ns.Name().String())
-+		currentClock, incomingClock := current.GetClock(), incoming.GetClock()
-+		hasMissingClock := currentClock == nil || incomingClock == nil
-+		incomingClockIsOlder := !hasMissingClock && hlc.Greater(currentClock, incomingClock)
-+		shouldMergeDeploymentData := revisionMergeEnabled && (incomingClockIsOlder || hasMissingClock)
-+		if !shouldMergeDeploymentData {
-+			otherUserData = nil
-+		}
- 		mergedUserData, mergeConflicts := mergeTaskQueueUserDataDeployments(baseUserData, otherUserData)
- 
- 		// Merge V1 sets.
-```
-
-**File**: `service/matching/task_queue_user_data_merge.go` (modified, +1/-0)
-```diff
-@@ -70,6 +70,7 @@ func (reason taskQueueUserDataSelectionReason) selectedUserDataSource() string {
- // worker versions found only in otherUserData are added. When both contain the
- // same routing configuration or worker version, the value with the higher revision is retained.
- // Equal revisions retain the value from baseUserData.
-+// A nil otherUserData skips merging; a nil baseUserData starts with empty user data.
- func mergeTaskQueueUserDataDeployments(
- 	baseUserData *persistencespb.TaskQueueUserData,
- 	otherUserData *persistencespb.TaskQueueUserData,
-```
-
-**File**: `service/matching/user_data_replication_merge_test.go` (modified, +423/-78)
-```diff
-@@ -1,7 +1,11 @@
- package matching
- 
- import (
-+	"fmt"
-+	"testing"
-+
- 	"github.com/google/uuid"
-+	"github.com/stretchr/testify/require"
- 	deploymentpb "go.temporal.io/api/deployment/v1"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	taskqueuepb "go.temporal.io/api/taskqueue/v1"
-@@ -10,9 +14,14 @@ import (
- 	enumsspb "go.temporal.io/server/api/enums/v1"
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
- 	"go.temporal.io/server/common"
-+	"go.temporal.io/server/common/dynamicconfig"
-+	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/metrics"
-+	"go.temporal.io/server/common/persistence/visibility/manager"
- 	"go.temporal.io/server/common/testing/protorequire"
- 	"go.temporal.io/server/common/testing/testlogger"
-+	"go.temporal.io/server/common/testing/testvars"
-+	"go.uber.org/mock/gomock"
- )
- 
- func taskQueueUserDataWithDeployment(
-@@ -36,7 +45,7 @@ func taskQueueUserDataWithDeployment(
- }
- 
- // Replicating identical user data leaves persisted data unchanged and emits no conflict diagnostics.
--func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventIdenticalUserData() {
-+func (s *matchingEngineSuite) TestReplicateIdenticalData() {
- 	captureHandler := s.captureDroppedOnEngine()
- 	current := taskQueueUserDataWithDeployment(
- 		&clockspb.HybridLogicalClock{WallClock: 20, Version: 1, ClusterId: 1},
-@@ -82,7 +91,9 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventIdentica
- 	}
- }
- 
--func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventUnionsDeploymentDataByRevision() {
-+// After failover, delayed replication can contribute valid versions and higher revisions despite its older parent clock.
-+func (s *matchingEngineSuite) TestMergeDelayedSnapshot() {
-+	// The target has accepted newer writes after failover; the source event was delayed.
- 	currentClock := &clockspb.HybridLogicalClock{WallClock: 200, ClusterId: 1}
- 	incomingClock := &clockspb.HybridLogicalClock{WallClock: 100, ClusterId: 1}
- 	currentRouting := &deploymentpb.RoutingConfig{
-@@ -125,6 +136,7 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventUnionsDe
- 		CurrentDeploymentVersion: &deploymentpb.WorkerDeploymentVersion{DeploymentName: "zero-routing", BuildId: "zero"},
- 		RevisionNumber:           0,
- 	}
-+	// The delayed snapshot has newer routing but older data for A, plus versions missing from the target.
- 	incoming := taskQueueUserDataWithDeployment(
- 		incomingClock,
- 		enumspb.TASK_QUEUE_TYPE_WORKFLOW,
-@@ -147,6 +159,7 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventUnionsDe
- 
- 	taskQueue := uuid.NewString()
- 	s.seedTaskQueueUserData(taskQueue, current)
-+	// Receive the delayed event and resolve routing and version revisions independently.
- 	got := s.applyTaskQueueUserDataReplicationEvent(taskQueue, incoming)
- 
- 	protorequire.ProtoEqual(s.T(), currentClock, got.GetClock())
-@@ -163,23 +176,23 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventUnionsDe
- 	protorequire.ProtoEqual(s.T(), incomingZeroRouting, gotDeployments["zero-routing"].GetRoutingConfig())
- }
- 
--// Reordered and repeated user data updates retain the highest revisions, all build IDs, and the newest parent clock and config.
--func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventReorderedAndRepeatedUserData() {
--	older := taskQueueUserDataWithDeployment(
--		&clockspb.HybridLogicalClock{WallClock: 10, ClusterId: 1},
-+// Redelivering an older snapshot must preserve higher version and routing revisions already merged locally.
-+// The target's newer parent clock and task queue config must also survive each delivery.
-+func (s *matchingEngineSuite) TestRedeliveryPreservesHigherRevisions() {
-+	target := taskQueueUserDataWithDeployment(
-+		&clockspb.HybridLogicalClock{WallClock: 30, ClusterId: 1},
- 		enumspb.TASK_QUEUE_TYPE_WORKFLOW,
- 		"deployment",
- 		&persistencespb.WorkerDeploymentData{
--			RoutingConfig: newTestRoutingConfig(1, "A"),
- 			Versions: map[string]*deploymentspb.WorkerDeploymentVersionData{
--				"A": newTestWorkerDeploymentVersionData(1, enumspb.WORKER_DEPLOYMENT_VERSION_STATUS_RAMPING),
-+				"B": newTestWorkerDeploymentVersionData(1, enumspb.WORKER_DEPLOYMENT_VERSION_STATUS_INACTIVE),
- 			},
- 		},
- 	)
--	older.PerType[int32(enumspb.TASK_QUEUE_TYPE_WORKFLOW)].Config = &taskqueuepb.TaskQueueConfig{
--		FairnessWeightOverrides: map[string]float32{"older": 1},
-+	target.PerType[int32(enumspb.TASK_QUEUE_TYPE_WORKFLOW)].Config = &taskqueuepb.TaskQueueConfig{
-+		FairnessWeightOverrides: map[string]float32{"target": 1},
- 	}
--	newer := taskQueueUserDataWithDeployment(
-+	higherRevision := taskQueueUserDataWithDeployment(
- 		&clockspb.HybridLogicalClock{WallClock: 20, ClusterId: 1},
- 		enumspb.TASK_QUEUE_TYPE_WORKFLOW,
- 		"deployment",
-@@ -190,72 +203,153 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventReordere
- 			},
- 		},
- 	)
--	newer.PerType[int32(enumspb.TASK_QUEUE_TYPE_WORKFLOW)].Config = &taskqueuep
-```
-
----
-
-### Incident Patch 2: `b3533bf4` (2026-11-06)
-**Commit Message**: fix clock mismatch in chasm-pure-task deletion (#12959)
-
-## What changed?
-Add an explicit `isPhysicalTime` parameter to `DeleteCHASMPureTasks`.
-Convert virtual-time thresholds to real time before comparing them with
-physical task timestamps. Physical-time thresholds, including the
-delete-all sentinel, remain unchanged.
-
-## Why?
-After time skipping, comparing a physical task’s real-time timestamp
-against a virtual-time threshold can incorrectly mark a valid timer task
-for deletion.
-
-When best-effort deletion is enabled and supported by the persistence
-backend, this can remove a required wakeup and stall the execution. For
-example, an ALLOW_ALL Schedule’s workflow completion callback can arrive
-before the next GeneratorTask is processed. The callback transaction can
-delete its physical timer without creating a replacement, particularly
-when a due timer blocks further time skipping or time skipping has
-stopped while the accumulated offset remains.
-
-**File**: `chasm/detached_tree.go` (modified, +2/-2)
-```diff
-@@ -279,8 +279,8 @@ func (b *readOnlyNodeBackend) AddTasks(...tasks.Task) {
- 	b.unsupported("AddTasks")
- }
- 
--func (b *readOnlyNodeBackend) DeleteCHASMPureTasks(time.Time) {
--	b.unsupported("DeleteCHASMPureTasks")
-+func (b *readOnlyNodeBackend) DeletePhysicalCHASMPureTasks(time.Time) {
-+	b.unsupported("DeletePhysicalCHASMPureTasks")
- }
- 
- func (b *readOnlyNodeBackend) UpdateWorkflowStateStatus(
-```
-
-**File**: `chasm/detached_tree_test.go` (modified, +5/-5)
-```diff
-@@ -17,11 +17,11 @@ func TestReadOnlyNodeBackend_UnsupportedPanics(t *testing.T) {
- 	})
- 
- 	for name, call := range map[string]func(){
--		"NextTransitionCount":  func() { backend.NextTransitionCount() },
--		"AddTasks":             func() { backend.AddTasks() },
--		"DeleteCHASMPureTasks": func() { backend.DeleteCHASMPureTasks(time.Time{}) },
--		"GetNamespaceEntry":    func() { backend.GetNamespaceEntry() },
--		"GetCurrentVersion":    func() { backend.GetCurrentVersion() },
-+		"NextTransitionCount":          func() { backend.NextTransitionCount() },
-+		"AddTasks":                     func() { backend.AddTasks() },
-+		"DeletePhysicalCHASMPureTasks": func() { backend.DeletePhysicalCHASMPureTasks(time.Time{}) },
-+		"GetNamespaceEntry":            func() { backend.GetNamespaceEntry() },
-+		"GetCurrentVersion":            func() { backend.GetCurrentVersion() },
- 		"ChasmSkipPersistenceEnabled": func() {
- 			backend.ChasmSkipPersistenceEnabled()
- 		},
-```
-
-**File**: `chasm/node_backend_mock.go` (modified, +2/-2)
-```diff
-@@ -156,11 +156,11 @@ func (m *MockNodeBackend) AddTasks(ts ...tasks.Task) {
- 	}
- }
- 
--func (m *MockNodeBackend) DeleteCHASMPureTasks(maxScheduledTime time.Time) {
-+func (m *MockNodeBackend) DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time) {
- 	m.mu.Lock()
- 	defer m.mu.Unlock()
- 
--	m.DeletePureTaskCalls = append(m.DeletePureTaskCalls, maxScheduledTime)
-+	m.DeletePureTaskCalls = append(m.DeletePureTaskCalls, maxLogicalScheduledTime)
- }
- 
- func (m *MockNodeBackend) LastDeletePureTaskCall() time.Time {
-```
-
-**File**: `chasm/tree.go` (modified, +3/-3)
-```diff
-@@ -225,7 +225,7 @@ type (
- 		GenerateEventLoadToken(event *historypb.HistoryEvent) ([]byte, error)
- 		LoadHistoryEvent(ctx context.Context, token []byte) (*historypb.HistoryEvent, error)
- 		HasAnyBufferedEvent(filter func(*historypb.HistoryEvent) bool) bool
--		DeleteCHASMPureTasks(maxScheduledTime time.Time)
-+		DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time)
- 		UpdateWorkflowStateStatus(
- 			state enumsspb.WorkflowExecutionState,
- 			status enumspb.WorkflowExecutionStatus,
-@@ -2573,12 +2573,12 @@ func (n *Node) closeTransactionGeneratePhysicalPureTask(
- 	archetypeID ArchetypeID,
- ) error {
- 	if firstPureTask == nil {
--		n.backend.DeleteCHASMPureTasks(tasks.MaximumKey.FireTime)
-+		n.backend.DeletePhysicalCHASMPureTasks(tasks.MaximumKey.FireTime)
- 		return nil
- 	}
- 
- 	firstPureTaskScheduledTime := firstPureTask.ScheduledTime.AsTime()
--	n.backend.DeleteCHASMPureTasks(firstPureTaskScheduledTime)
-+	n.backend.DeletePhysicalCHASMPureTasks(firstPureTaskScheduledTime)
- 
- 	if firstPureTask.PhysicalTaskStatus == physicalTaskStatusCreated {
- 		return nil
-```
-
-**File**: `service/history/interfaces/mutable_state.go` (modified, +1/-1)
-```diff
-@@ -335,7 +335,7 @@ type (
- 		// against wall-clock time.
- 		AddTasks(tasks ...tasks.Task)
- 		PopTasks() map[tasks.Category][]tasks.Task
--		DeleteCHASMPureTasks(maxScheduledTime time.Time)
-+		DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time)
- 
- 		SetUpdateCondition(int64, int64)
- 		GetUpdateCondition() (int64, int64)
-```
-
-**File**: `service/history/interfaces/mutable_state_mock.go` (modified, +6/-6)
-```diff
-@@ -1937,16 +1937,16 @@ func (mr *MockMutableStateMockRecorder) CurrentVersionedTransition() *gomock.Cal
- 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentVersionedTransition", reflect.TypeOf((*MockMutableState)(nil).CurrentVersionedTransition))
- }
- 
--// DeleteCHASMPureTasks mocks base method.
--func (m *MockMutableState) DeleteCHASMPureTasks(maxScheduledTime time.Time) {
-+// DeletePhysicalCHASMPureTasks mocks base method.
-+func (m *MockMutableState) DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time) {
- 	m.ctrl.T.Helper()
--	m.ctrl.Call(m, "DeleteCHASMPureTasks", maxScheduledTime)
-+	m.ctrl.Call(m, "DeletePhysicalCHASMPureTasks", maxLogicalScheduledTime)
- }
- 
--// DeleteCHASMPureTasks indicates an expected call of DeleteCHASMPureTasks.
--func (mr *MockMutableStateMockRecorder) DeleteCHASMPureTasks(maxScheduledTime any) *gomock.Call {
-+// DeletePhysicalCHASMPureTasks indicates an expected call of DeletePhysicalCHASMPureTasks.
-+func (mr *MockMutableStateMockRecorder) DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime any) *gomock.Call {
- 	mr.mock.ctrl.T.Helper()
--	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCHASMPureTasks", reflect.TypeOf((*MockMutableState)(nil).DeleteCHASMPureTasks), maxScheduledTime)
-+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePhysicalCHASMPureTasks", reflect.TypeOf((*MockMutableState)(nil).DeletePhysicalCHASMPureTasks), maxLogicalScheduledTime)
- }
- 
- // DeleteSignalRequested mocks base method.
-```
-
-**File**: `service/history/workflow/mutable_state_impl.go` (modified, +12/-5)
-```diff
-@@ -7576,10 +7576,18 @@ func (ms *MutableStateImpl) PopTasks() map[tasks.Category][]tasks.Task {
- 	return insertTasks
- }
- 
--func (ms *MutableStateImpl) DeleteCHASMPureTasks(maxScheduledTime time.Time) {
--	for lastTaskIdx, task := range slices.Backward(ms.chasmPureTasks) {
-+// DeletePhysicalCHASMPureTasks records cached physical CHASM pure tasks strictly before
-+// maxLogicalScheduledTime for best-effort deletion. The threshold uses logical time and is
-+// converted to the physical time used by the History task queue before comparing task timestamps.
-+// The delete-all sentinel, tasks.MaximumKey.FireTime, is not converted.
-+func (ms *MutableStateImpl) DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time) {
-+	maxPhysicalScheduledTime := maxLogicalScheduledTime
-+	if !maxLogicalScheduledTime.Equal(tasks.MaximumKey.FireTime) {
-+		maxPhysicalScheduledTime = ms.ToRealTimeWithCurrentOffset(maxLogicalScheduledTime)
-+	}
- 
--		if !task.GetVisibilityTime().Before(maxScheduledTime) {
-+	for lastTaskIdx, task := range slices.Backward(ms.chasmPureTasks) {
-+		if !task.GetVisibilityTime().Before(maxPhysicalScheduledTime) {
- 			ms.chasmPureTasks = ms.chasmPureTasks[:lastTaskIdx+1]
- 			return
- 		}
-@@ -7590,8 +7598,7 @@ func (ms *MutableStateImpl) DeleteCHASMPureTasks(maxScheduledTime time.Time) {
- 		)
- 	}
- 
--	// If we reach here, all tasks have visibility time before maxScheduledTime
--	// and need to be deleted.
-+	// All cached tasks have visibility times before maxPhysicalScheduledTime and are marked for deletion.
- 	ms.chasmPureTasks = ms.chasmPureTasks[:0]
- }
- 
-```
-
-**File**: `service/history/workflow/mutable_state_impl_test.go` (modified, +77/-2)
-```diff
-@@ -7702,7 +7702,7 @@ func (s *mutableStateSuite) TestAddTasks_CHASMPureTask() {
- 	s.Len(s.mutableState.chasmPureTasks, 2)
- }
- 
--func (s *mutableStateSuite) TestDeleteCHASMPureTasks() {
-+func (s *mutableStateSuite) TestDeletePhysicalCHASMPureTasks() {
- 	now := s.mockShard.GetTimeSource().Now()
- 
- 	testCases := []struct {
-@@ -7742,7 +7742,7 @@ func (s *mutableStateSuite) TestDeleteCHASMPureTasks() {
- 			}
- 			s.mutableState.BestEffortDeleteTasks = make(map[tasks.Category][]tasks.Key)
- 
--			s.mutableState.DeleteCHASMPureTasks(tc.maxScheduledTime)
-+			s.mutableState.DeletePhysicalCHASMPureTasks(tc.maxScheduledTime)
- 
- 			s.Len(s.mutableState.chasmPureTasks, tc.expectedRemaining)
- 			for _, task := range s.mutableState.chasmPureTasks {
-@@ -7754,6 +7754,81 @@ func (s *mutableStateSuite) TestDeleteCHASMPureTasks() {
- 	}
- }
- 
-+func TestDeletePhysicalCHASMPureTasksTimeSkipping(t *testing.T) {
-+	t.Parallel()
-+
-+	now := time.Date(2026, 11, 5, 12, 0, 0, 0, time.UTC)
-+	for _, clockConfig := range []struct {
-+		name    string
-+		skipped time.Duration
-+		enabled bool
-+	}{
-+		{name: "NoOffset"},
-+		{name: "TimeSkippingEnabled", skipped: time.Hour, enabled: true},
-+		{name: "TimeSkippingDisabledWithOffset", skipped: time.Hour},
-+	} {
-+		t.Run(clockConfig.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			for _, tc := range []struct {
-+				name              string
-+				maxScheduledTime  time.Time
-+				expectedRemaining int
-+			}{
-+				{name: "BeforeAll", maxScheduledTime: now.Add(clockConfig.skipped), expectedRemaining: 3},
-+				{name: "AtEarliest", maxScheduledTime: now.Add(clockConfig.skipped + time.Minute), expectedRemaining: 3},
-+				{name: "Partial", maxScheduledTime: now.Add(clockConfig.skipped + 2*time.Minute), expectedRemaining: 2},
-+				{name: "AfterAll", maxScheduledTime: now.Add(clockConfig.skipped + 4*time.Minute)},
-+				{name: "DeleteAll", maxScheduledTime: tasks.MaximumKey.FireTime},
-+			} {
-+				t.Run(tc.name, func(t *testing.T) {
-+					t.Parallel()
-+
-+					taskBaseTime := now
-+					if tc.maxScheduledTime.Equal(tasks.MaximumKey.FireTime) {
-+						// Keep tasks close to the sentinel to catch an incorrectly shifted delete-all threshold.
-+						taskBaseTime = tasks.MaximumKey.FireTime.Add(-10 * time.Minute)
-+					}
-+					timeSource := clock.NewEventTimeSource()
-+					timeSource.Update(taskBaseTime.Add(clockConfig.skipped))
-+					ms := &MutableStateImpl{
-+						timeSource: timeSource,
-+						executionInfo: &persistencespb.WorkflowExecutionInfo{
-+							TimeSkippingInfo: &persistencespb.TimeSkippingInfo{
-+								Config:                     &commonpb.TimeSkippingConfig{Enabled: clockConfig.enabled},
-+								AccumulatedSkippedDuration: durationpb.New(clockConfig.skipped),
-+							},
-+						},
-+						config: &configs.Config{
-+							ChasmMaxInMemoryPureTasks: dynamicconfig.GetIntPropertyFn(3),
-+						},
-+						InsertTasks:           make(map[tasks.Category][]tasks.Task),
-+						BestEffortDeleteTasks: make(map[tasks.Category][]tasks.Key),
-+					}
-+					var pureTasks []*tasks.ChasmTaskPure
-+					for i := 3; i > 0; i-- {
-+						task := &tasks.ChasmTaskPure{
-+							TaskID:              int64(i),
-+							VisibilityTimestamp: taskBaseTime.Add(clockConfig.skipped + time.Duration(i)*time.Minute),
-+						}
-+						ms.AddTasks(task)
-+						pureTasks = append(pureTasks, task)
-+					}
-+
-+					ms.DeletePhysicalCHASMPureTasks(tc.maxScheduledTime)
-+
-+					require.Equal(t, pureTasks[:tc.expectedRemaining], ms.chasmPureTasks)
-+					expectedDeletions := make(map[tasks.Category][]tasks.Key)
-+					for i := len(pureTasks) - 1; i >= tc.expectedRemaining; i-- {
-+						expectedDeletions[tasks.CategoryTimer] = append(expectedDeletions[tasks.CategoryTimer], pureTasks[i].GetKey())
-+					}
-+					require.Equal(t, expectedDeletions, ms.BestEffortDeleteTasks)
-+				})
-+			}
-+		})
-+	}
-+}
-+
- func (s *mutableStateSuite) TestCHASMNodeSize() {
- 	dbState := s.buildWorkflowMutableState()
- 	dbState = &persistencespb.WorkflowMutableState{
-```
-
----
-
-### Incident Patch 3: `525cbc3c` (2026-11-05)
-**Commit Message**: Fix several flaky tests (#12934)
-
-A recent [Flaky Tests
-Report](https://github.com/temporalio/temporal/actions/runs/41873646355)
-identified some Nexus failures. I asked my pal Claude to fix the
-low-hanging fruit.
-
----
-
-## What changed?
-Fixes five flaky tests involving Nexus, one commit per test:
-
--
-`TestNexusStandaloneTestSuite/TestAsyncCompletionIgnoresExecutionTransitionInCallbackToken`:
-wait for the operation to reach `STARTED` before sending the completion.
--
-`TestNexusWorkflowTestSuiteHSM/TestNexusOperationSurvivesResetCrossTree`:
-use Update-with-Start, and wait for the reset run to finish the Update
-before sending the signal.
--
-`TestCallbacksSuiteCHASM/TestWorkflowNexusCallbacks_CarriedOver/WorkflowRunTimeout`:
-raise the first run's timeout from 500ms to 3s.
--
-`TestNexusWorkflowTestSuiteCHASM/TestNexusAsyncOperationWithMultipleCallers/conflict-policy-fail`:
-use `s.Context()` instead of a 20s context that was created before env
-setup.
--
-`TestTaskQueuePartitionManager_Pri_Suite/TestTaskAddHooks_NexusDispatch_FiresWhenNoPollers`:
-raise the `WaitUntilInitialized` timeout from 10ms to 1s.
-
-## Why?
-Each test had a timing race that only showed up on loaded CI runners:
-- A completion
-
-**File**: `service/matching/task_queue_partition_manager_test.go` (modified, +2/-2)
-```diff
-@@ -126,7 +126,7 @@ func (s *PartitionManagerTestSuite) SetupTest() {
- 	s.partitionMgr = pm
- 	engine.Start()
- 	pm.Start()
--	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
-+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
- 	defer cancel()
- 	err = pm.WaitUntilInitialized(ctx)
- 	s.NoError(err)
-@@ -2006,7 +2006,7 @@ func (s *PartitionManagerTestSuite) setupPartitionManagerWithTaskHookFactories(t
- 	s.Require().NoError(err)
- 	pm.Start()
- 
--	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
-+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
- 	err = pm.WaitUntilInitialized(ctx)
- 	cancel()
- 	s.Require().NoError(err)
-```
-
-**File**: `tests/callbacks_test.go` (modified, +2/-1)
-```diff
-@@ -378,7 +378,8 @@ func (s *CallbacksSuite) TestWorkflowNexusCallbacks_CarriedOver(opts []testcore.
- 				}
- 				return 666, nil
- 			},
--			runTimeout: 500 * time.Millisecond,
-+			// Must outlast the attach and signal requests against the first run, which can be slow on loaded CI.
-+			runTimeout: 3 * time.Second,
- 		},
- 		{
- 			name: "WorkflowFailureRetry",
-```
-
-**File**: `tests/nexus_standalone_test.go` (modified, +10/-0)
-```diff
-@@ -2500,6 +2500,16 @@ func (s *NexusStandaloneTestSuite) TestAsyncCompletionIgnoresExecutionTransition
- 	callbackToken := callback.token
- 	callbackURL := callback.url
- 
-+	// The handler hands out the callback token before its start response is recorded. Completing before
-+	// then takes the completion-before-start path, which drops the start response and its handler links.
-+	_, err = env.FrontendClient().PollNexusOperationExecution(s.Context(), &workflowservice.PollNexusOperationExecutionRequest{
-+		Namespace:   env.Namespace().String(),
-+		OperationId: "test-op",
-+		RunId:       startResp.RunId,
-+		WaitStage:   enumspb.NEXUS_OPERATION_WAIT_STAGE_STARTED,
-+	})
-+	s.NoError(err)
-+
- 	gen := &commonnexus.CallbackTokenGenerator{}
- 	decodedToken, err := commonnexus.DecodeCallbackToken(callbackToken)
- 	s.NoError(err)
-```
-
-**File**: `tests/nexus_workflow_test.go` (modified, +26/-11)
-```diff
-@@ -3273,8 +3273,7 @@ func (s *NexusWorkflowTestSuite) TestNexusAsyncOperationWithMultipleCallers(chas
- 
- 	for _, tc := range testCases {
- 		s.Run(tc.input, func(s *NexusWorkflowTestSuite) {
--			ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
--			defer cancel()
-+			ctx := s.Context()
- 			env, callerWf := buildNexusEnvFn(ctx, s)
- 			run, err := env.SdkClient().ExecuteWorkflow(
- 				ctx,
-@@ -4217,18 +4216,25 @@ func (s *NexusWorkflowTestSuite) TestNexusOperationSurvivesResetCrossTree(chasmE
- 			s.NoError(w.Start())
- 			defer w.Stop()
- 
--			run, err := env.SdkClient().ExecuteWorkflow(ctx, client.StartWorkflowOptions{TaskQueue: taskQueue}, callerWF)
--			s.NoError(err)
--
--			// Block until the Nexus operation has started.
--			startedHandle, err := env.SdkClient().UpdateWorkflow(ctx, client.UpdateWorkflowOptions{
--				WorkflowID:   run.GetID(),
--				RunID:        run.GetRunID(),
--				UpdateName:   awaitStartedUpdate,
--				WaitForStage: client.WorkflowUpdateStageCompleted,
-+			// Block until the Nexus operation has started. Update-with-Start guarantees the update is accepted in
-+			// the first workflow task; a separate UpdateWorkflow call can land in a later task, which changes the
-+			// shape of the reset run's history asserted below.
-+			startOp := env.SdkClient().NewWithStartWorkflowOperation(client.StartWorkflowOptions{
-+				ID:                       testcore.RandomizeStr(s.T().Name()),
-+				TaskQueue:                taskQueue,
-+				WorkflowIDConflictPolicy: enumspb.WORKFLOW_ID_CONFLICT_POLICY_FAIL,
-+			}, callerWF)
-+			startedHandle, err := env.SdkClient().UpdateWithStartWorkflow(ctx, client.UpdateWithStartWorkflowOptions{
-+				StartWorkflowOperation: startOp,
-+				UpdateOptions: client.UpdateWorkflowOptions{
-+					UpdateName:   awaitStartedUpdate,
-+					WaitForStage: client.WorkflowUpdateStageCompleted,
-+				},
- 			})
- 			s.NoError(err)
- 			s.NoError(startedHandle.Get(ctx, nil))
-+			run, err := startOp.Get(ctx)
-+			s.NoError(err)
- 
- 			// The operation is created in the tree implied by the schedule-time flag, in the original run.
- 			s.assertNexusOperationTree(ctx, env, &commonpb.WorkflowExecution{WorkflowId: run.GetID(), RunId: run.GetRunID()}, !tc.enableChasmAtSchedule)
-@@ -4262,6 +4268,15 @@ func (s *NexusWorkflowTestSuite) TestNexusOperationSurvivesResetCrossTree(chasmE
- 			// specific post-reset run.
- 			s.assertNexusOperationTree(ctx, env, &commonpb.WorkflowExecution{WorkflowId: run.GetID(), RunId: newRunID}, expectHSMAfterReset)
- 
-+			// Signal only once the reset run has re-completed the update, otherwise the signal can be folded into
-+			// that workflow task and change the shape of the history asserted below.
-+			s.WaitForHistoryEventsSuffix(`
-+  WorkflowTaskCompleted
-+  WorkflowExecutionUpdateCompleted`,
-+				env.GetHistoryFunc(env.Namespace().String(), &commonpb.WorkflowExecution{WorkflowId: run.GetID(), RunId: newRunID}),
-+				10*time.Second,
-+				10*time.Millisecond)
-+
- 			// Drive the reset run to completion, then assert on its final history.
- 			s.NoError(env.SdkClient().SignalWorkflow(ctx, run.GetID(), newRunID, "done", nil))
- 			s.NoError(env.SdkClient().GetWorkflow(ctx, run.GetID(), newRunID).Get(ctx, nil))
-```
-
-#### Recent Merged Pull Requests:
-- **PR #12976** (2026-11-06): [Cloud 166] fix clock mismatch in chasm-pure-task deletion (#12959) (@feiyang3cat)
-- **PR #12975** (2026-11-06): [Cloud 165] fix clock mismatch in chasm-pure-task deletion (#12959) (@feiyang3cat)
-- **PR #12974** (closed): [cloud 165] fix clock mismatch in chasm-pure-task deletion- #12959 (@feiyang3cat)
-- **PR #12972** (2026-11-06): [cloud 166] Fix deleted deployment version accumulation on passive clusters (@rkannan82)
-- **PR #12969** (2026-11-06): [cloud 165] Fix deleted deployment version accumulation on passive clusters (@rkannan82)
-- **PR #12968** (2026-11-06): [cloud 164] Fix deleted deployment version accumulation on passive clusters (@rkannan82)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. deleted deployment version accumulation on passive clusters (#12966)
+### 1. Dual-Clock Separation Invariant for Time-Warping Distributed State Engines
 
 **RULE**:
-When implementing operations in `common/dynamicconfig/constants.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+In any state engine that supports time manipulation (virtual clocks, time-skipping, simulation, or deterministic replaying), the system MUST strictly decouple **Logical State Machine Time** from **Physical Host Wall-Clock Time**. 
+- Logical State Machine Time (`Node.WorkflowTime()`) MUST be used for all state transitions, retry deadlines, task scheduling, timeout expirations, and end-to-end lifecycle metrics.
+- Physical Host Wall-Clock Time (`Environment.Now()`) MUST ONLY be used to measure real-world outbound I/O attempt latencies (such as the actual wire execution time of an HTTP/gRPC request) and physical socket deadlines.
 
 **WHY**:
-Prevents defects observed in production commit `e4160f8e`: deleted deployment version accumulation on passive clusters (#12966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Mixing logical state time with physical host wall-clock time leads to catastrophic boundary drift whenever time skipping or accelerated simulation occurs. If an engine skips 24 hours of virtual time and an internal subsystem uses wall-clock time to calculate remaining timeouts:
+$$\text{TimeoutRemaining} = \text{Deadline} - \text{HostWallClockTime}$$
+the calculation yields an offset shifted by the accumulated virtual skip duration. This causes:
+1. Deadlines scheduled in the past, triggering immediate spurious timeouts or bypassing exponential retry backoff curves.
+2. Inverted latency metrics where calculated lifecycle durations become negative numbers.
+3. Broken watchdog heartbeats that allow stalled workers to evade lease revocation.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/dynamicconfig/constants.go`.
+Apply to any distributed workflow engine, discrete event simulator, raft/consensus testing harness, cron scheduler, or stateful transactional entity where time can be mocked, stepped, or virtualized independently of physical NTP time.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
-// Verified production-grade fix pattern:
-	MatchingEnableTaskQueueUserDataRevisionMerge = NewNamespaceBoolSetting(
-		"matching.enableTaskQueueUserDataRevisionMerge",
-		true,
-		`When enabled, merges incoming and current worker deployment data by revision when needed to preserve delayed updates.
-When disabled, always uses the deployment snapshot selected by the parent clock without merging.`,
-	)
+// NodeBackend represents the owning entity's logical timeline contract.
+type NodeBackend interface {
+    // Now returns the workflow's current logical time, incorporating all accumulated virtual time offsets.
+    Now() time.Time
+    AddHistoryEvent(t EventType, setAttributes func(*HistoryEvent)) *HistoryEvent
+}
+
+type Node struct {
+    backend NodeBackend
+}
+
+// WorkflowTime explicitly returns the logical engine time for state invariants.
+func (n *Node) WorkflowTime() time.Time {
+    return n.backend.Now()
+}
+
+// TaskExecutor enforces the strict clock barrier between outbound I/O and state transitions.
+type TaskExecutor struct {
+    Config *ExecutorConfig
+}
+
+type InvocationArgs struct {
+    ScheduledTime          time.Time
+    WorkflowTimeSnapshot   time.Time
+    WallTimeSnapshot       time.Time
+    ScheduleToCloseTimeout time.Duration
+}
+
+func (e *TaskExecutor) ExecuteInvocation(ctx context.Context, env Environment, node *Node, args InvocationArgs) error {
+    // 1. Calculate physical elapsed time across the async execution boundary
+    physicalElapsed := env.Now().Sub(args.WallTimeSnapshot)
+    
+    // 2. Project current logical workflow time using the physical delta
+    currentWorkflowTime := args.WorkflowTimeSnapshot.Add(physicalElapsed)
+    
+    // 3. Compute domain timeout purely against the projected logical timeline
+    elapsedSinceScheduled := currentWorkflowTime.Sub(args.ScheduledTime)
+    remainingTimeout := args.ScheduleToCloseTimeout - elapsedSinceScheduled
+    
+    if remainingTimeout <= 0 {
+        // Logical timeout expired; record failure using logical clock
+        return node.TransitionTimedOut(args.WorkflowTimeSnapshot)
+    }
+
+    // 4. Physical wall clock ONLY bounds the concrete outbound context execution
+    callCtx, cancel := context.WithTimeout(ctx, min(e.Config.MaxRequestTimeout, remainingTimeout))
+    defer cancel()
+
+    result, callErr := env.DoOutboundRPC(callCtx)
+    
+    // 5. State transitions and state-derived metrics record workflow logical time
+    return node.TransitionCompleted(node.WorkflowTime(), result, callErr)
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Indiscriminately invoking host wall-clock time within state evaluation logic.
+func (e *TaskExecutor) BrokenExecuteInvocation(ctx context.Context, env Environment, node *Node, scheduledTime time.Time, timeout time.Duration) error {
+    // BUG: Mixing wall-clock time (time.Since) with an event timestamp (scheduledTime)
+    // that may have been generated under a time-skipped or replayed logical timeline!
+    remaining := timeout - time.Since(scheduledTime)
+    if remaining <= 0 {
+        return node.TransitionTimedOut(time.Now()) // BUG: Corrupts state history with host time
+    }
+    
+    // BUG: Metric calculation blends physical elapsed time with virtual leap,
+    // yielding negative or multi-day metrics for an operation that took 10ms.
+    metricLatency := time.Now().Sub(scheduledTime)
+    env.EmitMetric("operation_latency", metricLatency)
+    
+    return nil
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4160f8e` are properly handled with clean fallback behavior.
+Enforce via unit tests using an intentionally divergent mock backend where `WorkflowTimeFn` is initialized into a future epoch (e.g., year 2027) while the test environment's wall clock points to standard baseline time. Assert that state updates, history timestamps, and lifecycle duration metrics match the deterministic logical clock:
+```go
+func TestClockBoundaryIsolation(t *testing.T) {
+    logicalEpoch := time.Date(2027, 1, 1, 12, 0, 0, 0, time.UTC)
+    wallEpoch := time.Date(2026, 1, 1, 12, 0, 0, 0, time.UTC)
+    
+    backend := &MockBackend{LogicalTime: logicalEpoch}
+    env := &MockEnv{WallTime: wallEpoch}
+    
+    node := NewNode(backend)
+    exec := NewTaskExecutor()
+    
+    out := exec.RecordAttempt(env, node)
+    require.Equal(t, logicalEpoch, out.TransitionTimestamp, 
+        "State machine transitions MUST use logical workflow time")
+}
+```
+
+---
+
+### 2. State-Driven History Succession Propagation Invariant
+
+**RULE**:
+When propagating terminal execution status across recurrent, scheduled, or chained state iterations (such as `ContinueAsNew`, Cron workflows, or Scheduled Actions), the system MUST evaluate the **explicit terminal execution status** (`Completed`, `Failed`, `Terminated`, `TimedOut`) to determine state inheritance, and MUST NOT infer success or failure status from the presence or absence of a return payload (`LastCompletionResult`).
+
+**WHY**:
+In distributed workflows, a successfully completed task or action may legitimately return a `nil` or empty payload (`void` return semantics). If downstream logic treats a `nil` payload as "no successful result available" and defaults to retaining the prior iteration's `ContinuedFailure`, an erroneous failure payload will permanently haunt all subsequent successful runs. A workflow that failed once, then succeeded with an empty response 100 consecutive times, will erroneously report that its last completion state was a failure.
+
+**WHEN TO APPLY**:
+Apply to all durable loop abstractions, cron engines, child workflow orchestrators, retry managers, and task continuation loops across all languages.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+type WorkflowExecutionStatus int
+
+const (
+    StatusRunning WorkflowExecutionStatus = iota
+    StatusCompleted
+    StatusFailed
+    StatusCanceled
+    StatusTerminated
+    StatusTimedOut
+)
+
+type ExecutionOutcome struct {
+    Status  WorkflowExecutionStatus
+    Result  []byte // May be nil on void success
+    Failure *FailureRecord
+}
+
+type ScheduledActionState struct {
+    LastCompletionResult []byte
+    ContinuedFailure     *FailureRecord
+}
+
+// ApplyIterationOutcome enforces explicit status gating over payload heuristics.
+func ApplyIterationOutcome(state *ScheduledActionState, outcome ExecutionOutcome) {
+    switch outcome.Status {
+    case StatusCompleted:
+        // Clear past failure unconditionally upon confirmed completion,
+        // regardless of whether Result is nil or contains bytes.
+        state.ContinuedFailure = nil
+        state.LastCompletionResult = outcome.Result
+
+    case StatusFailed, StatusTimedOut:
+        // Update failure record; retain previous completion result if desired
+        state.ContinuedFailure = outcome.Failure
+
+    case StatusCanceled, StatusTerminated:
+        // Retain or reset based on terminal policy
+        state.ContinuedFailure = outcome.Failure
+        state.LastCompletionResult = nil
+
+    default:
+        panic(fmt.Sprintf("unhandled terminal execution status: %v", outcome.Status))
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Inferring execution outcome from payload presence.
+func BrokenApplyIterationOutcome(state *ScheduledActionState, result []byte, failure *FailureRecord) {
+    // CATASTROPHIC BUG: If the action succeeded but returned an empty/nil payload,
+    // result is nil! The system falls through and retains the prior iteration's ContinuedFailure.
+    if result != nil {
+        state.LastCompletionResult = result
+        state.ContinuedFailure = nil
+    } else if failure != nil {
+        state.ContinuedFailure = failure
+    }
+    // Result: If outcome is StatusCompleted with nil result, ContinuedFailure remains set forever!
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a property-based or table-driven test verifying that a transition from `StatusFailed` to `StatusCompleted` with `Result == nil` explicitly wipes the `ContinuedFailure` field:
+```go
+func TestVoidSuccessClearsContinuedFailure(t *testing.T) {
+    state := &ScheduledActionState{
+        ContinuedFailure: &FailureRecord{Message: "prior crash"},
+    }
+    outcome := ExecutionOutcome{
+        Status:  StatusCompleted,
+        Result:  nil, // Void success
+        Failure: nil,
+    }
+    ApplyIterationOutcome(state, outcome)
+    require.Nil(t, state.ContinuedFailure, "Terminal StatusCompleted MUST wipe ContinuedFailure even if Result is nil")
+    require.Nil(t, state.LastCompletionResult)
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Activity and Workflow Task Time-Skipping Clock Boundary Contamination (BUG-TEMPORAL-12960)
+
+- **Context**: `common/util.go`, `service/history/api/respondworkflowtaskcompleted/api.go`, `service/history/workflow/activity.go`
+- **What Was Expected**: When running workflows under test or simulation frameworks that skip virtual time, workflow tasks, activity timeouts, and activity retries should advance strictly relative to the workflow's virtual clock (`ms.Now()`), while physical timeout tasks in the shard queue should track real physical time.
+- **What Actually Happened**: The server was passing the physical shard time (`shardContext.GetTimeSource().Now()`) into `ResetActivity`, `UnpauseActivity`, `GetPendingActivityInfo`, and the Workflow Task Heartbeat checker. After skipping time, the workflow's virtual clock was far ahead of the shard's real clock. This caused:
+  1. Activities to be rescheduled in the physical past, bypassing jitter delays and triggering premature `ScheduleToStart` timeouts.
+  2. Active activities falsely reported as "waiting for retry backoff" when their retry time had already elapsed in virtual time.
+  3. The Workflow Task heartbeat watchdog was delayed by the accumulated skipped duration, enabling stalled workers to consume execution capacity for hours past `WorkflowTaskHeartbeatTimeout`.
+- **Evidence in Repo**: Commit `74c71f96`, PR `#12960`, Issue tracking virtual clock drift in time-skipping engine.
+- **Root Cause**: Functions in `service/history/workflow/activity.go` accepted `shardContext historyi.ShardContext` and invoked `shardContext.GetTimeSource().Now().UTC()`. In normal mode, shard time and workflow time are roughly equivalent, masking the bug. Under time skipping, `shardContext` reflects the host wall clock while `mutableState` reflects the virtual clock. Calling `shardContext.GetTimeSource()` broke the encapsulation boundary between the engine's physical container and the workflow's virtual state.
+- **Remediation Code Diff**:
+```diff
+--- a/service/history/workflow/activity.go
++++ b/service/history/workflow/activity.go
+@@ -92,11 +92,10 @@ func UpdateActivityInfoForRetries(
+ func GetPendingActivityInfo(
+ 	ctx context.Context,
+-	shardContext historyi.ShardContext,
+ 	mutableState historyi.MutableState,
+ 	ai *persistencespb.ActivityInfo,
+ ) (*workflowpb.PendingActivityInfo, error) {
+-	now := shardContext.GetTimeSource().Now().UTC()
++	now := mutableState.Now().UTC()
+ 
+ 	p := &workflowpb.PendingActivityInfo{
+ 		ActivityId: ai.ActivityId,
+@@ -367,7 +365,7 @@ func ResetActivity(
+ 				ai.LastHeartbeatUpdateTime = nil
+ 			}
+ 
+-			scheduleTime := shardContext.GetTimeSource().Now().UTC()
++			scheduleTime := ms.Now().UTC()
+ 			if jitter != 0 {
+ 				randomOffset := time.Duration(rand.Int63n(int64(jitter)))
+ 				scheduleTime = scheduleTime.Add(randomOffset)
+```
+```diff
+--- a/service/history/api/respondworkflowtaskcompleted/api.go
++++ b/service/history/api/respondworkflowtaskcompleted/api.go
+@@ -335,13 +332,14 @@ func (handler *WorkflowTaskCompletedHandler) Invoke(
+ 	if checkWTHeartbeatTimeout {
+ 		wtHeartbeatTimeoutDuration := handler.config.WorkflowTaskHeartbeatTimeout(nsName)
+ 		if currentWorkflowTask.OriginalScheduledTime.UnixNano() > 0 &&
+-			handler.timeSource.Now().After(currentWorkflowTask.OriginalScheduledTime.Add(wtHeartbeatTimeoutDuration)) {
++			ms.Now().After(currentWorkflowTask.OriginalScheduledTime.Add(wtHeartbeatTimeoutDuration)) {
+```
+- **Lesson**: Never pass global infrastructure service locators or shard contexts into inner domain state manipulation routines. State mutating functions must only accept `MutableState` and derive all timeline parameters directly from `ms.Now()`.
+
+---
+
+### Incident 2: HSM Nexus Operations Clock Bleed and Negative Latency Metrics (BUG-TEMPORAL-12973)
+
+- **Context**: `service/history/hsm/nexusoperations/executors.go`, `service/history/hsm/nexusoperations/completion.go`, `service/history/hsm/tree.go`
+- **What Was Expected**: HSM (Hierarchical State Machine) Nexus operations, task cancellations, and timeout schedules must anchor their lifecycle deadlines to the workflow's logical timeline. Metrics for Schedule-to-Start, Schedule-to-Close, and Start-to-Close latencies must be positive durations measuring the true domain operational spans.
+- **What Actually Happened**: `nexusoperations.taskExecutor` and `CompletionHandler` used `env.Now()` (host physical time) to evaluate Schedule-to-Start, Schedule-to-Close, and retry deadlines. After a virtual time skip, `env.Now()` trailed the scheduled time recorded in workflow time. Consequently, `args.scheduleToCloseTimeout - time.Since(args.scheduledTime)` calculated timeouts based on mismatched clock frames. Furthermore, lifecycle metric calculations produced negative latency durations or spans inflated by days, corrupting cluster telemetry.
+- **Evidence in Repo**: Commit `85a2da66`, PR `#12973`, Files `service/history/hsm/nexusoperations/*`.
+- **Root Cause**: The `hsm.Node` abstraction did not expose the underlying workflow's logical clock. Callers had access only to `hsm.Environment.Now()`, which supplies wall-clock time for physical outbound HTTP calls. Lacking an explicit abstraction for logical time, developers reused `env.Now()` for state machine transitions, event timestamping, and timeout evaluations.
+- **Remediation Code Diff**:
+```diff
+--- a/service/history/hsm/tree.go
++++ b/service/history/hsm/tree.go
+@@ -152,6 +153,8 @@ type NodeBackend interface {
++	// Now returns the workflow's current logical time, including its time-skipping offset.
++	Now() time.Time
+ 	AddHistoryEvent(t enumspb.EventType, setAttributes func(*historypb.HistoryEvent)) *historypb.HistoryEvent
+ }
+ 
++// WorkflowTime returns the owning workflow's current logical time.
++// Use Environment.Now for wall-clock measurements such as outbound request latency.
++func (n *Node) WorkflowTime() time.Time {
++	return n.backend.Now()
++}
+```
+```diff
+--- a/service/history/hsm/nexusoperations/executors.go
++++ b/service/history/hsm/nexusoperations/executors.go
+@@ -224,13 +224,15 @@ func (e taskExecutor) executeInvocationTask(ctx context.Context, env hsm.Environ
+ 	callTimeout := e.Config.RequestTimeout(ns.Name().String(), task.EndpointName)
+ 	var timeoutType enumspb.TimeoutType
++	currentWorkflowTime := args.workflowTimeSnapshot.Add(env.Now().Sub(args.wallTimeSnapshot))
++	elapsedSinceScheduled := currentWorkflowTime.Sub(args.scheduledTime)
+ 	if args.scheduleToStartTimeout > 0 {
+-		callTimeout = min(callTimeout, args.scheduleToStartTimeout-time.Since(args.scheduledTime))
++		callTimeout = min(callTimeout, args.scheduleToStartTimeout-elapsedSinceScheduled)
+ 		timeoutType = enumspb.TIMEOUT_TYPE_SCHEDULE_TO_START
+ 	} else if args.scheduleToCloseTimeout > 0 {
+-		callTimeout = min(callTimeout, args.scheduleToCloseTimeout-time.Since(args.scheduledTime))
++		callTimeout = min(callTimeout, args.scheduleToCloseTimeout-elapsedSinceScheduled)
+ 		timeoutType = enumspb.TIMEOUT_TYPE_SCHEDULE_TO_CLOSE
+ 	}
+```
+- **Lesson**: In state machine nodes embedded within hierarchical containers, explicitly provide dual time accessors (`Node.WorkflowTime()` vs `Environment.Now()`) and strictly document their operational domains. Enforce in code reviews that `Environment.Now()` never touches event generation or state persistence.
+
+---
+
+### Incident 3: Long-Poll Deadline Ignored in History Service (BUG-TEMPORAL-8970)
+
+- **Context**: `service/history/api/getworkflowexecutionrawhistoryv2` / Frontend Long Polling
+- **What Was Expected**: When clients issue long-poll gRPC requests (such as `GetWorkflowExecutionHistory` with a server wait deadline), the server must respect the client's RPC context deadline and terminate the poll early if the client's deadline expires before the server's internal long-poll timer.
+- **What Actually Happened**: The server waited for its full internal default long-poll interval (~20s) regardless of whether the incoming gRPC request context deadline was set to 5s. The client's transport timed out, generating HTTP/2 `DEADLINE_EXCEEDED` stream cancellations, causing unnecessary connection renegotiations and socket churn.
+- **Evidence in Repo**: Issue `#8970`, closed PR addressing deadline propagation in long poll handlers.
+- **Root Cause**: The long poll handler initialized a static `time.NewTimer(defaultLongPollInterval)` without factoring in `ctx.Deadline()`. When the client deadline was shorter than the server default, the handler failed to select on `ctx.Done()`, or did not dynamically adjust the timer interval to finish before the client timed out.
+- **Remediation Pattern**:
+```go
+// Calculate dynamic poll wait duration bounded by client context deadline
+serverTimeout := 20 * time.Second
+if deadline, ok := ctx.Deadline(); ok {
+    timeUntilDeadline := time.Until(deadline)
+    // Server must respond 1 second BEFORE the client deadline expires
+    // to allow response transit without an RPC DEADLINE_EXCEEDED error.
+    serverTimeout = max(0, min(serverTimeout, timeUntilDeadline - 1*time.Second))
+}
+timer := time.NewTimer(serverTimeout)
+defer timer.Stop()
+
+select {
+case <-ctx.Done():
+    return nil, ctx.Err()
+case <-timer.C:
+    // Respond with empty result set indicating timeout reached without new events
+    return &historyservice.GetWorkflowExecutionHistoryResponse{}, nil
+case event := <-eventChannel:
+    return event, nil
+}
+```
+- **Lesson**: Server-side long-polling handlers must always clamp their polling timeouts to:
+$$\text{Timeout}_{\text{server}} = \min(\text{DefaultServerTimeout}, \text{ContextDeadline} - \Delta_{\text{transit}})$$
+where $\Delta_{\text{transit}}$ is an allowance (e.g., 500ms–1000ms) guaranteeing that an empty payload can safely cross the network before the transport layer aborts the stream.
+
+---
+
+### Incident 4: Scheduled Actions Failure Propagation on Void Success (BUG-TEMPORAL-8490)
+
+- **Context**: `service/worker/scheduler/workflow.go`, `service/worker/scheduler/activities.go`
+- **What Was Expected**: If an execution of a scheduled action fails, the subsequent action should report `ContinuedFailure`. If the subsequent run completes successfully (even if returning a `null` payload), `ContinuedFailure` must be cleared so future scheduled runs do not inherit the stale failure.
+- **What Actually Happened**: If a scheduled workflow returned `null` upon successful completion, the scheduler code inspected the payload rather than the execution status. Finding a `nil` payload, it left the `ContinuedFailure` field unchanged, causing the failure to propagate across subsequent successful iterations indefinitely.
+- **Evidence in Repo**: Issue `#8490`, lines `service/worker/scheduler/workflow.go#L858`.
+- **Root Cause**: The continuation update was guarded by:
+```go
+if completedWorkflowResult.Payloads != nil {
+    state.ContinuedFailure = nil
+    state.LastCompletionResult = completedWorkflowResult.Payloads
+}
+```
+A successful workflow returning `nil` payloads did not satisfy the condition, preserving the prior run's `ContinuedFailure`.
+- **Remediation Pattern**:
+```go
+// FIXED: Explicitly query execution status enum, not payload presence
+if executionStatus == enumspb.WORKFLOW_EXECUTION_STATUS_COMPLETED {
+    state.ContinuedFailure = nil
+    state.LastCompletionResult = completedWorkflowResult.Payloads
+} else if executionStatus == enumspb.WORKFLOW_EXECUTION_STATUS_FAILED {
+    state.ContinuedFailure = completedWorkflowFailure
+}
+```
+- **Lesson**: Do not use payload existence as a proxy for execution success. In distributed systems, emptiness (`nil`, `{}`) is a valid payload value. Always inspect the formal status enum.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+
+#### Implicit Zero vs Nil Traps in Protobuf v3
+In generated Protobuf code, primitive numbers default to `0` and timestamps/sub-messages default to `nil`. Testing `duration.AsDuration() > 0` on an uninstantiated proto duration causes a nil-pointer panic:
+
+```go
+// FATAL PANIC HAZARD:
+func GetExpiration(req *workflowservice.StartWorkflowExecutionRequest) *time.Time {
+    // If WorkflowExecutionTimeout is nil, req.GetWorkflowExecutionTimeout() returns nil!
+    // AsDuration() dereferences the pointer: PANIC!
+    d := req.GetWorkflowExecutionTimeout().AsDuration() 
+    if d > 0 {
+        t := time.Now().Add(d)
+        return &t
+    }
+    return nil
+}
+
+// BULLETPROOF CANONICAL INVARIANT:
+func GetExpirationSafe(req *workflowservice.StartWorkflowExecutionRequest) *time.Time {
+    if req.GetWorkflowExecutionTimeout() == nil {
+        return nil
+    }
+    d := req.GetWorkflowExecutionTimeout().AsDuration()
+    if d <= 0 {
+        return nil
+    }
+    t := time.Now().Add(d)
+    return &t
+}
+```
+
+#### Deep Proto Mutation Leaks in Cloned Requests
+When modifying a protobuf message before persistence, shallow copying clones the top-level pointer while internal sub-messages and slices remain shared references:
+
+```go
+// LEAK TRAP: Shallow copy retains pointer aliases to mutable proto fields
+func BadClone(req *historyservice.StartWorkflowExecutionRequest) *historyservice.StartWorkflowExecutionRequest {
+    clone := *req // Shallow struct copy
+    clone.StartRequest.WorkflowExecutionTimeout = durationpb.New(time.Hour) // MUTATES ORIGINAL req!
+    return &clone
+}
+
+// INVARIANT: Use proto.Clone explicitly before modifying nested structures
+func SafeClone(req *historyservice.StartWorkflowExecutionRequest) *historyservice.StartWorkflowExecutionRequest {
+    return proto.Clone(req).(*historyservice.StartWorkflowExecutionRequest)
+}
+```
+
+---
+
+### 2. Infinite Loop & Recursion Guards
+
+#### Monotonic Progress Verification in History Event Replay
+When processing buffered events or replaying history state transitions, loops must enforce monotonic progression of `NextEventID`. If an iteration fails to advance the ID, the replay engine must immediately terminate with a panic to prevent CPU thread lockup:
+
+```go
+func ApplyHistoryEvents(ms MutableState, events []*historypb.HistoryEvent) error {
+    lastEventID := ms.GetNextEventId()
+    
+    for _, event := range events {
+        currentID := event.GetEventId()
+        
+        // TERMINATION INVARIANT PROOF:
+        // Every event must match exactly the expected next contiguous sequence ID.
+        if currentID != lastEventID {
+            return serviceerror.NewInternal(fmt.Sprintf(
+                "non-monotonic history sequence detected: expected %d, got %d",
+                lastEventID, currentID,
+            ))
+        }
+        
+        if err := ms.ApplySingleEvent(event); err != nil {
+            return err
+        }
+        
+        lastEventID++
+    }
+    return nil
+}
+```
+
+#### Recursion Depth Caps on HSM Tree Traversal
+Hierarchical state machines can form cycles if children re-attach or parent pointers are traversed recursively. All node visits must be guarded by explicit stack depth bounds:
+
+```go
+const MaxHSMDepth = 32
+
+func (n *Node) Traverse(depth int, visitor func(*Node) error) error {
+    if depth > MaxHSMDepth {
+        return serviceerror.NewInternal("HSM maximum traversal depth exceeded: cyclic hierarchy detected")
+    }
+    if err := visitor(n); err != nil {
+        return err
+    }
+    for _, child := range n.children {
+        if err := child.Traverse(depth+1, visitor); err != nil {
+            return err
+        }
+    }
+    return nil
+}
+```
+
+---
+
+### 3. UI & UX Micro-Mechanics
+
+#### Event History Long-Poll Throttling and Yielding
+When the Temporal Web UI streams events using gRPC-web, high-volume workflows generating thousands of events per second can cause browser DOM freeze if the stream is unthrottled:
+
+```typescript
+// UI BROWSER INVARIANT: Chunked microtask queueing to prevent thread lockup
+class HistoryEventStreamConsumer {
+  private buffer: HistoryEvent[] = [];
+  private isFlushing = false;
+
+  public pushEvents(incoming: HistoryEvent[]): void {
+    this.buffer.push(...incoming);
+    if (!this.isFlushing) {
+      this.isFlushing = true;
+      this.scheduleFlush();
+    }
+  }
+
+  private scheduleFlush(): void {
+    // Yield execution to the browser painting pipeline
+    requestAnimationFrame(() => {
+      const CHUNK_SIZE = 100;
+      const chunk = this.buffer.splice(0, CHUNK_SIZE);
+      this.renderToDOM(chunk);
+
+      if (this.buffer.length > 0) {
+        this.scheduleFlush();
+      } else {
+        this.isFlushing = false;
+      }
+    });
+  }
+
+  private renderToDOM(events: HistoryEvent[]): void {
+    // Virtualized list DOM updates avoiding layout thrashing
+  }
+}
+```
+
+---
+
+### 4. Backend Concurrency & Memory Safety
+
+#### Fenced RangeID TOCTOU Check in Shard Updates
+When committing state to storage (Cassandra, SQL), a race condition can occur if another instance acquires the shard between the state check and the write. Commits must be gated by an atomic database row condition checking the monotonically increasing `RangeID`:
+
+```sql
+-- Fenced conditional update invariant to prevent TOCTOU shard split-brain:
+UPDATE executions
+SET 
+    next_event_id = :next_event_id,
+    data = :data,
+    data_encoding = :data_encoding
+WHERE 
+    shard_id = :shard_id AND 
+    namespace_id = :namespace_id AND 
+    workflow_id = :workflow_id AND 
+    run_id = :run_id AND 
+    range_id = :expected_range_id;
+-- If affected rows == 0, transaction MUST fail and shard immediately unloads!
+```
+
+```go
+// Go Shard Context Fencing Invariant:
+func (s *ShardContextImpl) UpdateWorkflowExecution(ctx context.Context, req *persistence.UpdateWorkflowExecutionRequest) error {
+    s.lock.RLock()
+    currentRangeID := s.rangeID
+    s.lock.RUnlock()
+
+    req.RangeID = currentRangeID
+    resp, err := s.executionManager.UpdateWorkflowExecution(ctx, req)
+    if err != nil {
+        if errors.Is(err, persistence.ErrShardOwnershipLost) {
+            // Unload shard immediately: we are a zombie node!
+            s.UnloadNow()
+        }
+        return err
+    }
+    return nil
+}
+```
+
+#### Memory Leak Elimination in Event Cache via LRU Weight Pinning
+The in-memory workflow events cache must track byte sizes rather than item counts. A single large history event containing megabytes of activity input can cause an Out-Of-Memory (OOM) crash if an item-count LRU is used:
+
+```go
+type EventCacheItem struct {
+    Events []*historypb.HistoryEvent
+    Size   int
+}
+
+// Cache initialization must pin byte weight:
+cache := collection.NewLRU(
+    maxMemoryBytes, // Bound by physical byte footprint (e.g., 512MB)
+    collection.WithCostFunc(func(key any, value any) int {
+        return value.(*EventCacheItem).Size
+    }),
+    collection.WithEvictionFunc(func(key any, value any) {
+        // Explicitly clear references for GC scavenging
+        item := value.(*EventCacheItem)
+        item.Events = nil
+    }),
+)
+```
+
+---
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+
+#### Error Boundary Containment in Workflow Task Processing
+An unhandled panic inside an activity or workflow task completion handler must never crash the history shard engine thread. It must convert to an internal service error, write an error marker to history, or fail the task attempt while preserving shard cache integrity:
+
+```go
+func (h *WorkflowTaskCompletedHandler) InvokeSafe(ctx context.Context, req *historyservice.RespondWorkflowTaskCompletedRequest) (resp *historyservice.RespondWorkflowTaskCompletedResponse, err error) {
+    defer func() {
+        if r := recover(); r != nil {
+            stack := debug.Stack()
+            h.logger.Error("Panic recovered inside WorkflowTaskCompleted handler",
+                tag.WorkflowID(req.GetWorkflowId()),
+                tag.Error(fmt.Errorf("%v", r)),
+                tag.SysStack(string(stack)),
+            )
+            h.metricsHandler.Counter("workflow_task_panic_count").Record(1)
+            // Convert to internal error: Shard remains alive!
+            err = serviceerror.NewInternal(fmt.Sprintf("internal server panic: %v", r))
+        }
+    }()
+
+    return h.Invoke(ctx, req)
+}
+```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### Dimension 1: Architecture
+- **Sharded Architecture**: The system partitions mutable state into isolated

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T08:25:04.107Z",
-  "total_cycles_completed": 8226,
-  "total_learnings_persisted": 8226,
-  "total_rules_promoted": 7953,
+  "last_updated": "2026-11-08T08:58:20.424Z",
+  "total_cycles_completed": 8228,
+  "total_learnings_persisted": 8228,
+  "total_rules_promoted": 7958,
   "history": [
-    {
-      "timestamp": "2026-11-07T19:47:49.582Z",
-      "repository": "amir1376/ab-download-manager",
-      "learningId": "learn-github-amir1376-ab-download-manager",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T19:47:52.109Z",
-      "repository": "microsoft/Mage-VL-Cowork",
-      "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T19:47:56.595Z",
       "repository": "gluesql/gluesql",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T08:25:04.107Z",
       "repository": "SwiftWebUI/SwiftWebUI",
       "learningId": "learn-github-swiftwebui-swiftwebui",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T08:49:00.225Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T08:58:20.424Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

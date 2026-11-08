@@ -8270,3 +8270,5 @@ Every entry in this ledger must capture:
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `19a7196c` | Multi-dimensional audit evidence | 2026-11-08T08:24:03.303Z |
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-08T08:24:58.233Z |
 | `learn-github-swiftwebui-swiftwebui` | `https://github.com/SwiftWebUI/SwiftWebUI` | `b0b6be06` | Multi-dimensional audit evidence | 2026-11-08T08:25:04.102Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `74c71f96` | Multi-dimensional audit evidence | 2026-11-08T08:49:00.220Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-08T08:58:20.410Z |
