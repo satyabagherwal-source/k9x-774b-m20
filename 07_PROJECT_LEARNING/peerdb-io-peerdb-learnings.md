@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `e4fc0d0e`  
+> **Source Version**: `25119216`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:13:10.584Z  
+> **Timestamp**: 2026-11-08T00:22:10.555Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:13:09.346Z  
+> **Harvest Timestamp**: 2026-11-08T00:22:09.013Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3315 stars
+- **Stars / Engagement**: 3316 stars
 
 ---
 
@@ -1840,11 +1840,11 @@ func getChainedRoleSessionName() string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4902** (2026-11-06): **[Bug]: Postgres → ClickHouse CDC silently missing ~30% of updates on one table, no errors surfaced**
+  *Symptoms*: ### Description  A Postgres → ClickHouse CDC mirror has been silently missing a consistent share of rows on one table.  **Expected**: ClickHouse row state matches Postgres after deduplication to the latest version per PK.  **Actual**: From July 6 onward, ~30% are missing every day (~1000 rows/day). The mirror reports healthy throughout: no errors, no failed syncs, replication slot advancing normally.  **Observations** - Missing rows are absent entirely in CH. - Not occurring after downgrade to stable-v0.32.1:  - Applies to all tables in the same mirror  **How we count:** Same day boundaries on both sides. ClickHouse is deduplicated to the latest version per PK (`LIMIT 1 BY id` ordered by `_peerdb_version DESC`), excluding `_peerdb_is_deleted = 1`. Same result with `FINAL`.  **Environment** - Deployment: self-hosted on K8s, Helm chart - Source: Postgres 17.9, RDS, CDC from replica - `REPLICA IDENTITY` on  affected tables: DEFAULT - TOAST-able columns on table: yes - Destination: ClickHouse 25.12.11.4, self-hosted, `ReplicatedReplacingMergeTree`  **Questions** 1. Are there known cases where an UPDATE is acknowledged (slot advances) but not normalized into ClickHouse, e.g. unchanged-TOAST handling or schema-change replay? 2. Is there a log line or catalog query showing per-table normalize counts per batch, so we can find where rows go missing? 3. Any way to backfill a date range? Resync is table-wide only, and we want to find the trigger before resyncing so we don't recreate the
+
 - **Issue #4843** (2026-10-14): **[Bug]: minio/minio image no longer available on Docker Hub**
   *Symptoms*: ### Description  Minio have removed the image. - https://hub.docker.com/u/minio/minio  ### Steps to reproduce  ```bash bash ./run-peerdb.sh [+] pull 5/10  ⠋ Image ghcr.io/peerdb-io/peerdb-server:stable-v0.37.8                                                                              Pulling                                            1.1s  ⠋ Image ghcr.io/peerdb-io/flow-worker:stable-v0.37.8                                                                                Pulling                                            1.1s  ! Image postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2                                  Interrupted                                        1.1s  ⠋ Image ghcr.io/peerdb-io/flow-snapshot-worker:stable-v0.37.8                                                                       Pulling                                            1.1s  ✘ Image minio/minio:latest@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e                                  Error pull access denied for minio/minio,...       1.1s  ! Image temporalio/ui:2.54.1@sha256:ff0943fe532b8e33c46cd28b29e81e0ce0b6f55b9ee50a38ef1b437cc4de3fa5                                Interrupted                                        1.1s  ! Image temporalio/admin-tools:1.25.2-tctl-1.18.1-cli-1.1.1@sha256:da0c7a7982b571857173ab8f058e7f139b3054800abb4dcb100445d29a563ee8 Interrupted                                        1.1s  ⠋ Image ghcr.io/peerdb
-
-- **Issue #4664** (2026-08-21): **[Bug]: PG→PG CDC: _peerdb_raw_* table grows indefinitely — no cleanup after normalize**
-  *Symptoms*: ### Description  In a PG→PG CDC mirror (v0.37.0), the `_peerdb_internal._peerdb_raw_<mirror_name>` table on the destination database grows indefinitely. After normalize successfully processes a batch and applies changes to the destination tables, the corresponding rows in the raw table are **never deleted**.   ### Steps to reproduce  ## Steps to Reproduce 1. Create a PG→PG CDC mirror with `do_initial_copy = true` 2. Let it run for a while with active writes on the source 3. Check the raw table size on the destination: ```sql SELECT pg_size_pretty(pg_total_relation_size('_peerdb_internal._peerdb_raw_rzldb_to_lkdb')); ```  ## Expected Behavior  After normalize completes for a batch, the processed rows should be removed from the raw table (or after a configurable retention window).  ## Actual Behavior  The raw table keeps growing. In our production mirror:  * `sync_batch_id = 6249`, `normalize_batch_id = 6249`, **gap = 0** (normalize fully caught up)  * Raw table: **49.5 million live rows**, **0 dead tuples**, **19 GB**  * Source code confirms: `normalizeBatch()` in `postgres_destination.go` only writes to destination tables and updates metadata — no DELETE against the raw table  ### PeerDB version  * PeerDB v0.37.0, Docker Compose   ### Source connector  PostgreSQL  ### Destination connector  PostgreSQL
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1861,551 +1861,365 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4fc0d0e` (2026-11-06)
-**Commit Message**: fix(mysql): batch hot-path metric updates (#5012)
+### Incident Patch 1: `25119216` (2026-11-07)
+**Commit Message**: fix(resync): keep internal version when resyncing completed/failed mirrors (#5031)
 
-MySQL backlog processing spends substantial CPU recording metrics for
-every event and character column (70% of PullRecords CPU time in a
-backlogged pipe).
+Resyncing a completed or failed mirror recreates the flow and re-read
+`PEERDB_FORCE_INTERNAL_VERSION`, silently upgrading the mirror's
+internal version. That can break destination queries the same way it
+would for a running mirror, whose resync already keeps the version. Now
+the stored version is kept.
 
-Throttle the gauges to 1 second like Mongo connector does, group them in
-a struct so it's all together. Move counters into a struct as well.
+Also updates `docs/tricky-areas.md` to match.
 
-Before:
-<img width="1129" height="459" alt="image"
-src="https://github.com/user-attachments/assets/6dfd12bc-0240-45ba-9d40-4d08d2fe927e"
-/>
+Fixes DBI-1301
 
-After - Pull is not the widest anymore:
-<img width="1132" height="389" alt="image"
-src="https://github.com/user-attachments/assets/23250bb1-291b-46ca-b3e3-954a53f8439e"
-/>
+---------
 
-**File**: `flow/connectors/mysql/cdc.go` (modified, +21/-64)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/tricky-areas.md` (modified, +6/-7)
 ```diff
-@@ -647,42 +647,33 @@ func (c *MySqlConnector) PullRecords(
+@@ -38,17 +38,16 @@ can read the stale one and still pass every test that never changes a mirror aft
+ ## Per-mirror behaviour: versions, flags, settings
  
- 	// set when a tx is preventing us from respecting the timeout, immediately exit after we see inTx false
- 	var overtime bool
--	var fetchedBytes, totalFetchedBytes, allFetchedBytes atomic.Int64
--	var receiveTime, processTime, addRecordTime atomic.Int64
-+	counters := newMysqlPullCounters(otelManager)
-+	gauges := newMysqlPullGauges(otelManager, mysqlClockOffset)
- 	var processStart time.Time
- 	pullStart := time.Now()
- 	defer func() {
- 		span := trace.SpanFromContext(ctx)
- 		span.SetAttributes(
- 			attribute.Int64(otel_metrics.RowsInBatchKey, int64(recordCount)),
--			attribute.Int64(otel_metrics.BytesPulledKey, totalFetchedBytes.Load()),
-+			attribute.Int64(otel_metrics.BytesPulledKey, counters.totalFetchedBytes.Load()),
- 		)
- 		if updatedOffset != "" {
- 			span.SetAttributes(attribute.String(otel_metrics.GtidKey, updatedOffset))
- 		}
- 		c.logger.Info("[mysql] PullRecords finished streaming",
- 			slog.Uint64("records", uint64(recordCount)),
--			slog.Int64("bytes", totalFetchedBytes.Load()),
-+			slog.Int64("bytes", counters.totalFetchedBytes.Load()),
- 			slog.Int("channelLen", req.RecordStream.ChannelLen()),
- 			slog.Float64("elapsedMinutes", time.Since(pullStart).Minutes()))
- 	}()
+ **Why it is tricky.** Three mechanisms pin what a mirror writes, each with a different lifetime. `Version` is set
+-from `PEERDB_FORCE_INTERNAL_VERSION` at creation and again only when a completed or failed mirror is resynced by
+-recreation. Flags from `GetFlags` record destination capabilities at creation and are never re-detected. A dynamic
+-setting resolves from the mirror's env, then the catalog, then the process environment, and a non-immediate value
+-is written back into the env map it was resolved with, so one pinned into `cfg.Env` at creation lasts the mirror's
+-lifetime while an activity's copy lasts one call. A decision taken from the mechanism with the wrong lifetime
+-changes the output of a running mirror.
++from `PEERDB_FORCE_INTERNAL_VERSION` at creation and kept through resync. Flags from `GetFlags` record destination
++capabilities at creation and are never re-detected. A dynamic setting resolves from the mirror's env, then the
++catalog, then the process environment, and a non-immediate value is written back into the env map it was resolved
++with, so one pinned into `cfg.Env` at creation lasts the mirror's lifetime while an activity's copy lasts one call.
++A decision taken from the mechanism with the wrong lifetime changes the output of a running mirror.
  
--	defer func() {
--		otelManager.Metrics.FetchedBytesCounter.Add(ctx, fetchedBytes.Swap(0))
--		otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, allFetchedBytes.Swap(0))
--		otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, receiveTime.Swap(0))
--		otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, processTime.Swap(0))
--		otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, addRecordTime.Swap(0))
--	}()
-+	defer counters.flush(ctx)
-+	defer gauges.recordBatchEnd(ctx)
- 	shutdown := common.Interval(ctx, time.Minute, func() {
--		otelManager.Metrics.FetchedBytesCounter.Add(ctx, fetchedBytes.Swap(0))
--		otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, allFetchedBytes.Swap(0))
--		otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, receiveTime.Swap(0))
--		otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, processTime.Swap(0))
--		otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, addRecordTime.Swap(0))
-+		counters.flush(ctx)
- 		c.logger.Info("[mysql] pulling records",
- 			slog.Uint64("records", uint64(recordCount)),
--			slog.Int64("bytes", totalFetchedBytes.Load()),
-+			slog.Int64("bytes", counters.totalFetchedBytes.Load()),
- 			slog.Int("channelLen", req.RecordStream.ChannelLen()),
- 			slog.Float64("elapsedMinutes", time.Since(pullStart).Minutes()))
- 	})
-@@ -701,19 +692,19 @@ func (c *MySqlConnector) PullRecords(
- 	addRecord := func(ctx context.Context, record model.Record[model.RecordItems]) error {
- 		recordCount += 1
- 		addStart := time.Now()
--		processTime.Add(int64(addStart.Sub(processStart)))
-+		counters.processTime.Add(int64(addStart.Sub(processStart)))
- 		if err := req.RecordStream.AddRecord(ctx, record); err != nil {
+ **What to watch for in a PR.**
+ 
+ - A change to what is written for a column type that existing mirrors use, without a new `InternalVersion_*` gate
+   and a test for a mirror at the previous version.
+ - Carefully thread all transformations the column value goes through, as it can change at different layers.
+   Changes that are bugfixes (replacing nonsensical data with something more reasonable) are okay without a bump.
+-- Flags re-detected outside creation, or a flag that stores a decision rather than a capability.
++- Version or flags re-detected outside creation, or a flag that stores a decision rather than a capability.
+```
+
+**File**: `flow/cmd/handler.go` (modified, +1/-6)
+```diff
+@@ -720,15 +720,10 @@ func (h *FlowRequestHandler) resyncByRecreatingFlow(
+ 
+ 	config.Resync = true
+ 	config.DoInitialSnapshot = true
+-	// validate mirror first because once the mirror is dropped, there's no going back
+-	if internalVersion, err := internal.PeerDBForceInternalVersion(ctx, config.Env); err != nil {
+-		return NewInternalApiError(err)
+-	} else {
+-		config.Version = internalVersion
+-	}
+ 	configCore := pconv.FlowConnectionConfigsToCore(config)
+ 	internal.ApplySnapshotConfigOverrides(configCore, cdcConfigUpdate)
+ 
++	// validate mirror first because once the mirror is dropped, there's no going back
+ 	if _, err := h.validateCDCMirrorImpl(ctx, configCore, false); err != nil {
+ 		return err
+ 	}
+```
+
+**File**: `flow/e2e/api_suite.go` (modified, +158/-0)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"slices"
++	"strconv"
+ 	"strings"
+ 	"sync"
+ 	"testing"
+@@ -1433,6 +1434,163 @@ func (s APITestSuite) TestResyncCompleted() {
+ 	require.Equal(s.t, "test", tagMap[common.PipeNameTag])
+ }
+ 
++func (s APITestSuite) TestResyncRunningKeepsInternalVersion() {
++	if _, ok := s.source.(*PostgresSource); !ok {
++		s.t.Skip("version handling is source-agnostic, only run for postgres")
++	}
++
++	tableName := "resync_running_version"
++	cols := "id,val"
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf("CREATE TABLE %s(id int primary key, val text)", AttachSchema(s, tableName))))
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf("INSERT INTO %s(id, val) values (1,'first')", AttachSchema(s, tableName))))
++
++	const oldVersion = shared.InternalVersion_Latest - 1
++	connectionGen := FlowConnectionGenerationConfig{
++		FlowJobName:      "resync_running_version_" + s.suffix,
++		TableNameMapping: map[string]string{AttachSchema(s, tableName): tableName},
++		Destination:      s.ch.Peer().Name,
++	}
++	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
++	flowConnConfig.DoInitialSnapshot = true
++	flowConnConfig.Env = map[string]string{"PEERDB_FORCE_INTERNAL_VERSION": strconv.FormatUint(uint64(oldVersion), 10)}
++
++	_, err := s.CreateCDCFlow(s.t.Context(), &protos.CreateCDCFlowRequest{ConnectionConfigs: flowConnConfig})
++	require.NoError(s.t, err)
++
++	tc := NewTemporalClient(s.t)
++	env, err := GetPeerflow(s.t.Context(), s.catalog, tc, flowConnConfig.FlowJobName)
++	require.NoError(s.t, err)
++	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
++	EnvWaitFor(s.t, env, 3*time.Minute, "wait for mirror to be in cdc", func() bool {
++		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
++	})
++	RequireEqualTables(s.ch, tableName, cols)
++
++	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
++		FlowJobName:        flowConnConfig.FlowJobName,
++		RequestedFlowState: protos.FlowStatus_STATUS_PAUSED,
++	})
++	require.NoError(s.t, err)
++	EnvWaitFor(s.t, env, time.Minute, "wait for mirror to pause", func() bool {
++		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_PAUSED
++	})
++	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
++		FlowJobName:        flowConnConfig.FlowJobName,
++		RequestedFlowState: protos.FlowStatus_STATUS_RUNNING,
++		FlowConfigUpdate: &protos.FlowConfigUpdate{
++			Update: &protos.FlowConfigUpdate_CdcFlowConfigUpdate{
++				CdcFlowConfigUpdate: &protos.CDCFlowConfigUpdate{
++					RemovedEnv: []string{"PEERDB_FORCE_INTERNAL_VERSION"},
++				},
++			},
++		},
++	})
++	require.NoError(s.t, err)
++	EnvWaitFor(s.t, env, time.Minute, "wait for env override removal", func() bool {
++		config, err := s.loadConfigFromCatalog(s.t.Context(), flowConnConfig.FlowJobName)
++		if err != nil {
++			s.t.Log(err)
++			return false
++		}
++		_, ok := config.Env["PEERDB_FORCE_INTERNAL_VERSION"]
++		return !ok && env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
++	})
++
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf("INSERT INTO %s(id, val) values (2,'resync')", AttachSchema(s, tableName))))
++	runIDBeforeResync := EnvGetRunID(s.t, env)
++	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
++		FlowJobName:        flowConnConfig.FlowJobName,
++		RequestedFlowState: protos.FlowStatus_STATUS_RESYNC,
++	})
++	require.NoError(s.t, err)
++
++	EnvWaitFor(s.t, env, 5*time.Minute, "wait for resync ContinueAsNew", func() bool {
++		return EnvGetRunID(s.t, env) != runIDBeforeResync
++	})
++	EnvWaitFor(s.t, env, 5*time.Minute, "wait for resynced mirror to be in cdc", func() bool {
++		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
++	})
++	EnvWaitForEqualTables(env, s.ch, "resync", tableName, cols)
++
++	configAfterResync, err := s.loadConfigFromCatalog(s.t.Context(), flowConnConfig.FlowJobName)
++	require.NoError(s.t, err)
++	require.True(s.t, configAfterResync.Resync)
++	require.Equal(s.t, oldVersion, configAfterResync.Version)
++
++	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
++		FlowJobName:        flowConnConfig.FlowJobName,
++		RequestedFlowState: protos.FlowStatus_STATUS_TERMINATING,
++	})
++	require.NoError(s.t, err)
++	s.waitForFlowDropped(env, flowConnConfig.FlowJobName)
++}
++
++func (s APITestSuite) TestResyncCompletedKeepsInternalVersion() {
++	if _, ok := s.source.(*PostgresSource); !ok {
++		s.t.Skip("version handling is source-agnostic, only run for postgres")
++	}
++
++	tableName := "resync_completed_version"
++	cols := "id,val"
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf("CREATE TABLE %s(id int primary key, val text)", AttachSchema(s, tableName))))
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf("INSERT INTO %s(id, val) values (1,'first')", AttachSchema(s, tableName))))
++
++	connectionGen := FlowConnectionGenerationConfig{
++		FlowJobName:      "resync_completed_version_" + s.suffix,
++		TableNameMapping: map[str
+```
+
+---
+
+### Incident Patch 2: `6d6fef2b` (2026-11-07)
+**Commit Message**: fix(snapshot): add NULL partition when partition key is excluded (#5032)
+
+Fixes DBI-1299.
+
+The initial snapshot decides whether to add a NULL partition from the
+stored table schema. That schema omits excluded columns, so a custom
+partition key that is also excluded was treated as NOT NULL. Rows with a
+NULL key were silently skipped (PostgreSQL and MySQL).
+
+Excluded partition keys are now assumed nullable. If the column is
+actually NOT NULL, the cost is one empty `IS NULL` partition.
+
+Tests:
+- Unit test for the nullability decision.
+- New e2e `TestSnapshotNullExcludedPartitionKey`. Ran locally on
+PostgreSQL and MySQL: fails without the fix (2 of 4 rows), passes with
+it.
+
+**File**: `flow/e2e/api_suite.go` (modified, +40/-0)
+```diff
+@@ -3708,6 +3708,46 @@ func (s APITestSuite) TestSnapshotNullPartitionKey() {
+ 	EnvWaitForCount(env, s.ch, "all 4 rows including nulls should be snapshotted", tableName, "*", 4)
+ }
+ 
++func (s APITestSuite) TestSnapshotNullExcludedPartitionKey() {
++	switch s.source.(type) {
++	case *PostgresSource, *MySqlSource:
++	default:
++		s.t.Skip("only testing with PostgreSQL and MySQL")
++	}
++
++	tableName := "null_excluded_partition"
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf("CREATE TABLE %s(id int primary key, val text, updated_at timestamp)", AttachSchema(s, tableName))))
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf("INSERT INTO %s(id, val, updated_at) VALUES (1,'a','2024-01-01'), (2,'b',NULL), (3,'c','2024-01-02'), (4,'d',NULL)",
++			AttachSchema(s, tableName))))
++
++	connectionGen := FlowConnectionGenerationConfig{
++		FlowJobName: "snapshot_null_excl_pk_" + s.suffix,
++		TableMappings: []*protos.TableMapping{{
++			SourceTableIdentifier:      AttachSchema(s, tableName),
++			DestinationTableIdentifier: tableName,
++			PartitionKey:               "updated_at",
++			Exclude:                    []string{"updated_at"},
++		}},
++		Destination: s.ch.Peer().Name,
++	}
++	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
++	flowConnConfig.DoInitialSnapshot = true
++	flowConnConfig.InitialSnapshotOnly = true
++
++	response, err := s.CreateCDCFlow(s.t.Context(), &protos.CreateCDCFlowRequest{ConnectionConfigs: flowConnConfig})
++	require.NoError(s.t, err)
++	require.NotNil(s.t, response)
++
++	tc := NewTemporalClient(s.t)
++	env, err := GetPeerflow(s.t.Context(), s.catalog, tc, flowConnConfig.FlowJobName)
++	require.NoError(s.t, err)
++	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
++	EnvWaitForFinished(s.t, env, 3*time.Minute)
++	EnvWaitForCount(env, s.ch, "all 4 rows including nulls should be snapshotted", tableName, "id,val", 4)
++}
++
+ func (s APITestSuite) TestGetMirrorRowCounts() {
+ 	_, ok := s.source.(*PostgresSource)
+ 	if !ok {
+```
+
+**File**: `flow/workflows/snapshot_flow.go` (modified, +16/-6)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"cmp"
+ 	"fmt"
+ 	"log/slog"
++	"slices"
+ 	"time"
+ 
+ 	"go.temporal.io/sdk/log"
+@@ -189,12 +190,7 @@ func (s *SnapshotFlowExecution) cloneTable(
+ 		if err := initTableSchema(); err != nil {
  			return err
  		}
- 		processStart = time.Now()
--		addRecordTime.Add(int64(processStart.Sub(addStart)))
-+		counters.addRecordTime.Add(int64(processStart.Sub(addStart)))
- 		if recordCount == 1 {
- 			resetTimeout(req.IdleTimeout)
- 		}
- 		if recordCount%50000 == 0 {
- 			c.logger.Info("[mysql] PullRecords streaming",
- 				slog.Uint64("records", uint64(recordCount)),
--				slog.Int64("bytes", totalFetchedBytes.Load()),
-+				slog.Int64("bytes", counters.totalFetchedBytes.Load()),
- 				slog.Int("channelLen", req.RecordStream.ChannelLen()),
- 				slog.Float64("elapsedMinutes", time.Since(pullStart).Minutes()),
- 				slog.Bool("inTx", inTx),
-@@ -722,36 +713,6 @@ func (c *MySqlConnector) PullRecords(
- 		return nil
+-		for _, col := range tableSchema.Columns {
+-			if col.Name == mapping.PartitionKey && col.Nullable {
+-				watermarkColumnNullable = true
+-				break
+-			}
+-		}
++		watermarkColumnNullable = partitionKeyMayBeNull(tableSchema, mapping)
  	}
  
--	recordSourceEventLag := func(ctx context.Context, event *replication.BinlogEvent) {
--		if _, isHeartbeat := event.Event.(*replication.HeartbeatEvent); isHeartbeat {
--			// A heartbeat means there is currently no source change event to lag behind.
--			// Reset the gauge so a previously backlogged, now-idle pipe does not retain
--			// the old source-lag value.
--			otelManager.Metrics.SourceLagGauge.Record(ctx, 0)
--			return
--		}
--
--		// GTID commit timestamps are precise transaction timestamps. Other binlog
--		// events only have the common header timestamp, which is seconds-resolution
--		// but lets older MySQL/MariaDB versions report source lag as well.
--		timestampMicros := int64(event.Header.Timestamp) * int64(time.Second/time.Microsecond)
--		switch ev := event.Event.(type) {
--		case *replication.GTIDEvent:
--			if ev.ImmediateCommitTimestamp > 0 {
--				timestampMicros = int64(ev.ImmediateCommitTimestamp)
--			}
--		case *replication.GtidTaggedLogEvent:
--			if ev.ImmediateCommitTimestamp > 0 {
--				timestampMicros = int64(ev.ImmediateCommitTimestamp)
--			}
--		}
--
--		if timestampMicros > 0 {
--			otelManager.Metrics.SourceLagGauge.Record(ctx,
--				time.Now().UTC().Add(mysqlClockOffset).
--					Sub(time.UnixMicro(timestampMicros)).Milliseconds())
--		}
--	}
- 	recordUnsupportedEvent := func(ctx context.Context, event *replication.BinlogEvent, prefix string) 
-```
-
-**File**: `flow/connectors/mysql/cdc_metrics.go` (added, +133/-0)
-```diff
-@@ -0,0 +1,133 @@
-+package connmysql
-+
-+import (
-+	"context"
-+	"sync"
-+	"sync/atomic"
-+	"time"
-+
-+	"github.com/go-mysql-org/go-mysql/replication"
-+	"go.opentelemetry.io/otel/attribute"
-+	"go.opentelemetry.io/otel/metric"
-+
-+	"github.com/PeerDB-io/peerdb/flow/otel_metrics"
-+)
-+
-+// Shared with the common.Interval goroutine.
-+type mysqlPullCounters struct {
-+	otelManager       *otel_metrics.OtelManager
-+	charsetCounts     map[mysqlCharsetMetricKey]int64
-+	mu                sync.Mutex
-+	fetchedBytes      atomic.Int64
-+	totalFetchedBytes atomic.Int64
-+	allFetchedBytes   atomic.Int64
-+	receiveTime       atomic.Int64
-+	processTime       atomic.Int64
-+	addRecordTime     atomic.Int64
-+}
-+
-+type mysqlCharsetMetricKey struct {
-+	charset string
-+	status  string
-+}
-+
-+func newMysqlPullCounters(otelManager *otel_metrics.OtelManager) *mysqlPullCounters {
-+	return &mysqlPullCounters{otelManager: otelManager}
-+}
-+
-+func (c *mysqlPullCounters) recordUsedCharset(charset, status string) {
-+	c.mu.Lock()
-+	defer c.mu.Unlock()
-+	if c.charsetCounts == nil {
-+		c.charsetCounts = make(map[mysqlCharsetMetricKey]int64)
+ 	config := &protos.QRepConfig{
+@@ -230,6 +226,20 @@ func (s *SnapshotFlowExecution) cloneTable(
+ 	return boundSelector.SpawnChild(childCtx, QRepFlowWorkflow, nil, config, nil)
+ }
+ 
++// excluded columns are missing from the stored schema, so their nullability is unknown;
++// keys that are never part of the schema (like ctid) can't be excluded and can't be NULL, so they fall through to false
++func partitionKeyMayBeNull(tableSchema *protos.TableSchema, mapping *protos.TableMapping) bool {
++	if slices.Contains(mapping.Exclude, mapping.PartitionKey) {
++		return true
 +	}
-+	c.charsetCounts[mysqlCharsetMetricKey{charset: charset, status: status}]++
-+}
-+
-+func (c *mysqlPullCounters) flush(ctx context.Context) {
-+	// Serialize the interval callback and final flush, and protect charset counts.
-+	c.mu.Lock()
-+	defer c.mu.Unlock()
-+	for key, count := range c.charsetCounts {
-+		c.otelManager.Metrics.UsedMySQLCharsetsCounter.Add(ctx, count, metric.WithAttributeSet(attribute.NewSet(
-+			attribute.String("charset", key.charset), attribute.String("status", key.status),
-+		)))
-+	}
-+	clear(c.charsetCounts)
-+	c.otelManager.Metrics.FetchedBytesCounter.Add(ctx, c.fetchedBytes.Swap(0))
-+	c.otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, c.allFetchedBytes.Swap(0))
-+	c.otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, c.receiveTime.Swap(0))
-+	c.otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, c.processTime.Swap(0))
-+	c.otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, c.addRecordTime.Swap(0))
-+}
-+
-+// Accessed only from PullRecords, not shared with the common.Interval goroutine, so it needs no mutex.
-+type mysqlPullGauges struct {
-+	otelManager    *otel_metrics.OtelManager
-+	lastRecordedAt time.Time
-+	clockOffset    time.Duration
-+	// Latest observed values not yet recorded. Zero lag is valid, hence the flag.
-+	sourceLagMillis         int64
-+	sourceLagPending        bool
-+	latestConsumedTimestamp int64
-+}
-+
-+func newMysqlPullGauges(otelManager *otel_metrics.OtelManager, clockOffset time.Duration) *mysqlPullGauges {
-+	return &mysqlPullGauges{otelManager: otelManager, clockOffset: clockOffset}
-+}
-+
-+func (g *mysqlPullGauges) observeEvent(event *replication.BinlogEvent, receivedAt time.Time) {
-+	if _, isHeartbeat := event.Event.(*replication.HeartbeatEvent); isHeartbeat {
-+		// Clear backlog lag when the source becomes idle.
-+		g.sourceLagMillis = 0
-+		g.sourceLagPending = true
-+		return
-+	}
-+
-+	// Prefer precise GTID commit timestamps over the seconds-resolution header.
-+	timestampMicros := int64(event.Header.Timestamp) * int64(time.Second/time.Microsecond)
-+	switch ev := event.Event.(type) {
-+	case *replication.GTIDEvent:
-+		if ev.ImmediateCommitTimestamp > 0 {
-+			timestampMicros = int64(ev.ImmediateCommitTimestamp)
-+		}
-+	case *replication.GtidTaggedLogEvent:
-+		if ev.ImmediateCommitTimestamp > 0 {
-+			timestampMicros = int64(ev.ImmediateCommitTimestamp)
++	for _, col := range tableSchema.Columns {
++		if col.Name == mapping.PartitionKey {
++			return col.Nullable
 +		}
 +	}
-+
-+	if timestampMicros > 0 {
-+		g.sourceLagMillis = receivedAt.Add(g.clockOffset).Sub(time.UnixMicro(timestampMicros)).Milliseconds()
-+		g.sourceLagPending = true
-+	}
++	return false
 +}
 +
-+func (g *mysqlPullGauges) observeConsumed(timestamp int64) {
-+	if timestamp > 0 {
-+		g.latestConsumedTimestamp = timestamp
-+	}
-+}
-+
-+func (g *mysqlPullGauges) recordPeriodic(ctx context.Context, now time.Time) {
-+	// recording gauges per event is wasteful on CPU given this is on the hot path
-+	if now.Sub(g.lastRecordedAt) >= time.Second {
-+		g.recordPending(ctx)
-+		g.lastRecordedAt = now
-+	}
-+}
-+
-+func (g *mysqlPullGauges) recordBatchEnd(ctx context.Context) {
-+	g.recordPending(ctx)
-+}
-+
-+func (g *mysqlPullGauges) recordPending(ctx context.Context) {
-+	if g.sourceLagPending {
-+		g.otelManager.Metrics.SourceLagGauge.Record(ctx, g.sourceLagMillis)
-+		g.sourceLagPending = false
-+	}
-+	if g.latestConsumedTimestamp > 0 {
-+		g.otelManager.Metrics.LatestConsumedLogEventGauge.Record(ctx, g.latestConsumedTimestamp)
-+		g.latestConsumedTimestamp = 0
-+	}
-+}
+ func (s *SnapshotFlowExecution) cloneTables(
+ 	ctx workflow.Context,
+ 	snapshotType snapshotType,
 ```
 
-**File**: `flow/connectors/mysql/cdc_metrics_test.go` (added, +131/-0)
+**File**: `flow/workflows/snapshot_flow_test.go` (added, +37/-0)
 ```diff
-@@ -0,0 +1,131 @@
-+package connmysql
+@@ -0,0 +1,37 @@
++package peerflow
 +
 +import (
-+	"context"
 +	"testing"
-+	"time"
 +
-+	"github.com/go-mysql-org/go-mysql/replication"
 +	"github.com/stretchr/testify/require"
-+	"go.opentelemetry.io/otel/metric"
-+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
-+	"go.opentelemetry.io/otel/sdk/metric/metricdata"
++
++	"github.com/PeerDB-io/peerdb/flow/generated/protos"
 +)
 +
-+func TestMysqlPullCountersFlush(t *testing.T) {
-+	ctx := t.Context()
-+	om, reader := newMetricsTestOtelManager(t)
-+	for name, counter := range map[string]*metric.Int64Counter{
-+		"charsets":    &om.Metrics.UsedMySQLCharsetsCounter,
-+		"fetched":     &om.Metrics.FetchedBytesCounter,
-+		"all_fetched": &om.Metrics.AllFetchedBytesCounter,
-+		"receive":     &om.Metrics.CDCReceiveTimeCounter,
-+		"process":     &om.Metrics.CDCProcessTimeCounter,
-+		"add_record":  &om.Metrics.CDCAddRecordTimeCounter,
-+	} {
-+		var err error
-+		*counter, err = om.Meter.Int64Counter(name)
-+		require.NoError(t, err)
++func TestPartitionKeyMayBeNull(t *testing.T) {
++	schema := &protos.TableSchema{
++		Columns: []*protos.FieldDescription{
++			{Name: "id", Nullable: false},
++			{Name: "updated_at", Nullable: true},
++		},
 +	}
-+	counters := newMysqlPullCounters(om)
-+	counters.recordUsedCharset("utf8mb4", "not_transcoded")
-+	counters.recordUsedCharset("utf8mb4", "not_transcoded")
-+	counters.fetchedBytes.Add(100)
-+	counters.totalFetchedBytes.Add(100)
-+	counters.allFetchedBytes.Add(200)
-+	counters.receiveTime.Add(3)
-+	counters.processTime.Add(4)
-+	counters.addRecordTime.Add(5)
-+	counters.flush(ctx)
-+	// A final flush after the interval must not double-count the same observations.
-+	counters.flush(ctx)
-+	values := collectInt64Metrics(t, ctx, reader)
-+	require.Equal(t, map[string]int64{
-+		"charsets": 2, "fetched": 100, "all_fetched": 200,
-+		"receive": 3, "process": 4, "add_record": 5,
-+	}, values)
-+	require.Equal(t, int64(100), counters.totalFetchedBytes.Load())
++
++	tests := []struct {
++		name         string
++		partitionKey string
++		exclude      []string
++		expected     bool
++	}{
++		{name: "nullable key", partitionKey: "updated_at", expected: true},
++		{name: "not null key", partitionKey: "id", expected: false},
++		{name: "excluded key", partitionKey: "created_at", exclude: []string{"created_at"}, expected: true},
++		{name: "unrelated exclusion", partitionKey: "id", exclude: []string{"created_at"}, expected: false},
++		{name: "ctid", partitionKey: "ctid", expected: false},
++	}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			mapping := &protos.TableMapping{PartitionKey: tc.partitionKey, Exclude: tc.exclude}
++			require.Equal(t, tc.expected, partitionKeyMayBeNull(schema, mapping))
++		})
++	}
 +}
-+
-+func TestMysqlPullGauges(t *testing.T) {
-+	ctx := t.Context()
-+	om, reader := newMetricsTestOtelManager(t)
-+	var err error
-+	om.Metrics.SourceLagGauge, err = om.Meter.Int64Gauge("source_lag")
-+	require.NoError(t, err)
-+	om.Metrics.LatestConsumedLogEventGauge, err = om.Meter.Int64Gauge("latest_consumed")
-+	require.NoError(t, err)
-+	at := func(seconds float64) time.Time {
-+		return time.Unix(0, int64(seconds*float64(time.Second)))
-+	}
-+	observe := func(g *mysqlPullGauges, timestamp uint32, receivedAt float64) {
-+		g.observeEvent(&replication.BinlogEvent{
-+			Header: &replication.EventHeader{Timestamp: timestamp},
-+			Event:  &replication.XIDEvent{},
-+		}, at(receivedAt))
-+	}
-+
-+	gauges := newMysqlPullGauges(om, 2*time.Second)
-+	// A batch without events records nothing at batch end.
-+	gauges.recordBatchEnd(ctx)
-+	values := collectInt64Metrics(t, ctx, reader)
-+	require.Empty(t, values)
-+
-+	observe(gauges, 100, 100)
-+	gauges.observeConsumed(100)
-+	gauges.recordPeriodic(ctx, at(100))
-+	values = collectInt64Metrics(t, ctx, reader)
-+	require.Equal(t, map[string]int64{"source_lag": 2000, "latest_consumed": 100}, values)
-+
-+	// Within the throttle window nothing is recorded, and the latest value wins over the max.
-+	observe(gauges, 99, 100.5)
-+	gauges.recordPeriodic(ctx, at(100.5))
-+	observe(gauges, 100, 100.8)
-+	observe(gauges, 0, 100.9)
-+	gauges.observeConsumed(0)
-+	gauges.recordPeriodic(ctx, at(100.9))
-+	values = collectInt64Metrics(t, ctx, reader)
-+	require.Equal(t, map[string]int64{"source_lag": 2000, "latest_consumed": 100}, values)
-+
-+	// Batch end records the pending lag; the consumed timestamp was already recorded.
-+	gauges.recordBatchEnd(ctx)
-+	values = collectInt64Metrics(t, ctx, reader)
-+	require.Equal(t, map[string]int64{"source_lag": 2800, "latest_consumed": 100}, values)
-+	require.False(t, gauges.sourceLagPending)
-+	require.Zero(t, gauges.latestConsumedTimestamp)
-+
-+	gauges.observeEvent(&replication.BinlogEvent{Event: &replication.HeartbeatEvent{}}, at(200))
-+	gauges.recordPeriodic(ctx, at(200))
-+	values = collectInt64Metrics(t, ctx, reader)
-+	require.Equal(t, int64(0), values["source_lag"])
-+
-+	gauges.observeEvent(&replication.BinlogEvent{
-+		Header: &replication.EventHeader{Timestamp: 600},
-+		Event:  &replication.GTIDEvent{ImmediateCommitTimestamp: 600_500_000},
-+	}, at(601))
-+	gauges.recordPeriodic(ctx, at(601))
-+	values = collectInt64Metrics(t, ctx, reader)
-+	require.Equal(t, int64(2500), values["source_lag"])
-+}
-+
-+func collectInt64Metrics(t *testing.T, ctx context.Context, reader *sdkmetric.ManualReader) map[string]int64 {
-+	t.Helper()
-+	var result metricdata.ResourceMetrics
-+	require.NoError(t, reader.Collect(ctx, &result))
-+	values := make(map[string]int64)
-+	for _, scope := range result.ScopeMetrics {
-+		for _, measurement := range scope.Metrics {
-+			switch data := measurement.Data.(type) {
-+			case metricdata.Sum[int64]:
-+				for _, point := range data.DataPoints {
-+					values[measurement.Name] += point.Value
-+				}
-+			case metricdata.Gauge[int64]:
-+				for _, point := range data.DataPoints {
-+					values[measurement.Name] = point.Value
-+				}
-+			}
-+		}
-+	}
-+	return values
-+}
-```
-
-**File**: `flow/connectors/mysql/charset.go` (modified, +12/-25)
-```diff
-@@ -6,8 +6,6 @@ import (
- 	"log/slog"
- 
- 	"github.com/go-mysql-org/go-mysql/replication"
--	"go.opentelemetry.io/otel/attribute"
--	"go.opentelemetry.io/otel/metric"
- 	"golang.org/x/text/encoding"
- 	"golang.org/x/text/encoding/charmap"
- 	"golang.org/x/text/encoding/japanese"
-@@ -17,8 +15,6 @@ import (
- 	"golang.org/x/text/encoding/unicode"
- 	"golang.org/x/text/encoding/unicode/utf32"
- 	"golang.org/x/text/transform"
--
--	"github.com/PeerDB-io/peerdb/flow/otel_metrics"
- )
- 
- // charsetsNoTranscode lists the MySQL character sets whose stored bytes are
-@@ -81,21 +77,12 @@ const (
- // TABLE_MAP metadata) to the x/text encoding needed to convert that column's
- // bytes to UTF-8.
- func (c *MySqlConnector) collationEncoding(
--	ctx context.Context, collationID uint64, otelManager *otel_metrics.OtelManager,
-+	ctx context.Context, collationID uint64, recordUsedCharset func(charset, status string),
- ) (encoding.Encoding, error) {
- 	if collationID == 0 {
- 		return nil, nil
- 	}
- 
--	recordUsedCharsetMetrics := func(ctx context.Context, charset string, status string) {
--		otelManager.Metrics.UsedMySQLCharsetsCounter.Add(ctx, 1,
--			metric.WithAttributeSet(attribute.NewSet(
--				attribute.String("charset", charset),
--				attribute.String("status", status),
--			)),
--		)
--	}
--
- 	charset, err := c.charsetForCollation(ctx, collationID)
- 	if err != nil {
- 		return nil, err
-@@ -109,15 +96,15 @@ func (c *MySqlConnector) collationEncoding(
- 	}
- 
- 	if _, skip := charsetsNoTranscode[charset]; skip {
--		recordUsedCharsetMetrics(ctx, charset, "not_transcoded")
-+		recordUsedCharset(charset, "not_transcoded")
- 		return nil, nil
- 	}
- 	if enc, ok := mysqlCharsetEncodings[charset]; ok {
--		recordUsedCharsetMetrics(ctx, charset, "transcoded")
-+		recordUsedCharset(charset, "transcoded")
- 		return enc, nil
- 	}
- 
--	recordUsedCharsetMetrics(ctx, charset, "unsupported")
-+	recordUsedCharset(charset, "unsupported")
- 	c.warnCharsetOnce(charset, func() {
- 		c.logger.Warn("unsupported MySQL character set on CDC path, passing bytes through untranscoded",
- 			slog.String("charset", charset), slog.Uint64("collationID", collationID))
-@@ -131,18 +118,18 @@ func (c *MySqlConnector) tableMapColumnEncodings(
- 	tableMap *replication.TableMapEvent,
- 	enumMap map[int][]string,
- 	setMap map[int][]string,
--	otelManager *otel_metrics.OtelManager,
-+	recordUsedCharset func(charset, status string),
- ) ([]encoding.Encoding, error) {
- 	colEncodings, err := c.appendTableMapColumnEncodings(
--		ctx, otelManager,
-+		ctx, recordUsedCharset,
- 		tableMap, tableMapCharacterCollation, tableMap.DefaultCharset, tableMap.ColumnCharset,
- 		nil, nil, nil,
- 	)
- 	if err != nil {
- 		return nil, err
- 	}
- 	colEncodings, err = c.appendTableMapColumnEncodings(
--		ctx, otelManager,
-+		ctx, recordUsedCharset,
- 		tableMap, tableMapEnumSetCollation, tableMap.EnumSetDefaultCharset, tableMap.EnumSetColumnCharset,
- 		enumMap, setMap, colEncodings,
- 	)
-@@ -154,7 +141,7 @@ func (c *MySqlConnector) tableMapColumnEncodings(
- 
- func (c *MySqlConnector) appendTableMapColumnEncodings(
- 	ctx context.Context,
--	otelManager *otel_metrics.OtelManager,
-+	recordUsedCharset func(charset, status string),
- 	tableMap *replication.TableMapEvent,
- 	collationType tableMapCollationType,
- 	defaultCharset []uint64,
-@@ -178,7 +165,7 @@ func (c *MySqlConnector) appendTableMapColumnEncodings(
- 			collationID := tableMapDefaultCollation(defaultCharset, collationPos, defaultCollation)
- 			var err error
- 			colEncodings, err = c.appendTableMapColumnEncoding(
--				ctx, otelManager, tableMap, collationType, colIdx, collationID, enumMap, setMap, colEncodings,
-+				ctx, recordUsedCharset, tableMap, collationType, colIdx, collationID, enumMap, setMap, colEncodings,
- 			)
- 			if err != nil {
- 				return nil, err
-@@ -203,7 +190,7 @@ func (c *MySqlConnector) appendTableMapColumnEncodings(
- 
- 			var err error
- 			colEncodings, err = c.appendTableMapColumnEncoding(
--				ctx, otelManager, tableMap, collationType, colIdx, columnCharset[collationPos],
-+				ctx, recordUsedCharset, tableMap, collationType, colIdx, columnCharset[collationPos],
- 				enumMap, setMap, colEncodings,
- 			)
- 			if err != nil {
-@@ -241,7 +228,7 @@ func tableMapIncludesCollation(
- 
- func (c *MySqlConnector) appendTableMapColumnEncoding(
- 	ctx context.Context,
--	otelManager *otel_metrics.OtelManager,
-+	recordUsedCharset func(charset, status string),
- 	tableMap *replication.TableMapEvent,
- 	collationType tableMapCollationType,
- 	colIdx int,
-@@ -250,7 +237,7 @@ func (c *MySqlConnector) appendTableMapColumnEncoding(
- 	setMap map[int][]string,
- 	colEncodings []encoding.Encoding,
- ) ([]encoding.Encoding, error) {
--	enc, err := c.collationEncoding(ctx, collationID, otelManager)
-+	enc, err := c.collationEncoding(ctx, collationID, recordUsedCharset)
- 	if err != nil {
- 		return nil, err
- 	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5034** (2026-11-07): Make normalize start on pending batches after a SyncFlow restart (@ilidemi)
+- **PR #5032** (2026-11-07): fix(snapshot): add NULL partition when partition key is excluded (@ilidemi)
+- **PR #5031** (2026-11-07): fix(resync): keep internal version when resyncing completed/failed mirrors (@ilidemi)
+- **PR #5030** (2026-11-07): classify DocumentDB too many cursors error as notify user (@ilidemi)
+- **PR #5029** (2026-11-07): Update/harden contributing.md for agents as external contributors (@jgao54)
 - **PR #5027** (2026-11-06): Add listCursors to Mongo switchboard (@ilidemi)
-- **PR #5025** (closed): Skip generated columns when replicating PG to PG (@Amogh-Bharadwaj)
-- **PR #5021** (2026-11-04): classify ClickHouse Avro Date out-of-range as destination modified (@ilidemi)
-- **PR #5018** (2026-11-04): Wrap BigQuery source time and export errors for classification (@dtunikov)
-- **PR #5016** (closed): mongo: kill change stream cursor leaked on context timeout (@dtunikov)
-- **PR #5015** (2026-11-03): classify DocumentDB too many cursors error as recoverable (@dtunikov)
 
 ---
 
@@ -2425,57 +2239,39 @@ src="https://github.com/user-attachments/assets/23250bb1-291b-46ca-b3e3-954a53f8
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mysql): batch hot-path metric updates (#5012)
+## X. resync): keep internal version when resyncing completed/failed mirrors (#5031)
 
 **RULE**:
-When implementing operations in `flow/connectors/mysql/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/tricky-areas.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4fc0d0e`: mysql): batch hot-path metric updates (#5012). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25119216`: resync): keep internal version when resyncing completed/failed mirrors (#5031). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mysql/cdc.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tricky-areas.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	counters := newMysqlPullCounters(otelManager)
-	gauges := newMysqlPullGauges(otelManager, mysqlClockOffset)
-			attribute.Int64(otel_metrics.BytesPulledKey, counters.totalFetchedBytes.Load()),
-			slog.Int64("bytes", counters.totalFetchedBytes.Load()),
-	defer counters.flush(ctx)
-	defer gauges.recordBatchEnd(ctx)
-		counters.flush(ctx)
-			slog.Int64("bytes", counters.totalFetchedBytes.Load()),
-		counters.processTime.Add(int64(addStart.Sub(processStart)))
-		counters.addRecordTime.Add(int64(processStart.Sub(addStart)))
-				slog.Int64("bytes", counters.totalFetchedBytes.Load()),
+from `PEERDB_FORCE_INTERNAL_VERSION` at creation and kept through resync. Flags from `GetFlags` record destination
+capabilities at creation and are never re-detected. A dynamic setting resolves from the mirror's env, then the
+catalog, then the process environment, and a non-immediate value is written back into the env map it was resolved
+with, so one pinned into `cfg.Env` at creation lasts the mirror's lifetime while an activity's copy lasts one call.
+A decision taken from the mechanism with the wrong lifetime changes the output of a running mirror.
+- Version or flags re-detected outside creation, or a flag that stores a decision rather than a capability.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	var fetchedBytes, totalFetchedBytes, allFetchedBytes atomic.Int64
-	var receiveTime, processTime, addRecordTime atomic.Int64
-			attribute.Int64(otel_metrics.BytesPulledKey, totalFetchedBytes.Load()),
-			slog.Int64("bytes", totalFetchedBytes.Load()),
-	defer func() {
-		otelManager.Metrics.FetchedBytesCounter.Add(ctx, fetchedBytes.Swap(0))
-		otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, allFetchedBytes.Swap(0))
-		otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, receiveTime.Swap(0))
-		otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, processTime.Swap(0))
-		otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, addRecordTime.Swap(0))
-	}()
-		otelManager.Metrics.FetchedBytesCounter.Add(ctx, fetchedBytes.Swap(0))
-		otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, allFetchedBytes.Swap(0))
-		otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, receiveTime.Swap(0))
-		otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, processTime.Swap(0))
-		otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, addRecordTime.Swap(0))
-			slog.Int64("bytes", totalFetchedBytes.Load()),
-		processTime.Add(int64(addStart.Sub(processStart)))
-		addRecordTime.Add(int64(processStart.Sub(addStart)))
-				slog.Int64(
+from `PEERDB_FORCE_INTERNAL_VERSION` at creation and again only when a completed or failed mirror is resynced by
+recreation. Flags from `GetFlags` record destination capabilities at creation and are never re-detected. A dynamic
+setting resolves from the mirror's env, then the catalog, then the process environment, and a non-immediate value
+is written back into the env map it was resolved with, so one pinned into `cfg.Env` at creation lasts the mirror's
+lifetime while an activity's copy lasts one call. A decision taken from the mechanism with the wrong lifetime
+changes the output of a running mirror.
+- Flags re-detected outside creation, or a flag that stores a decision rather than a capability.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4fc0d0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25119216` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T00:15:40.179Z",
+  "last_updated": "2026-11-08T00:27:10.888Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3711,14 +3711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ducaale-xh",
-      "content_hash": "ca0eb72308150ae53f4533e36a059ea7caaca3dc7df11b5f6f4f9de5c9d67eb6",
-      "verified_at": "2026-10-30T23:21:53.908Z",
+      "content_hash": "18be4ac7f83f7b18d8b5a91575b9402727f3d04b590516c8ba0489084c938352",
+      "verified_at": "2026-11-08T00:27:10.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T23:21:53.908Z"
+      "last_updated": "2026-11-08T00:27:10.887Z"
     },
     "NervJS/taro": {
       "repository": "NervJS/taro",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "c02abf43b366dbae6c725820d1d03d5710eb8b3af94e692f861e34b4dfb4d18d",
-      "verified_at": "2026-11-06T15:13:11.988Z",
+      "content_hash": "9a5bc991fe7d728dcf29de1e6a842d983d7e524b7ebafe1979621dd32b730f89",
+      "verified_at": "2026-11-08T00:22:11.573Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T15:13:11.988Z"
+      "last_updated": "2026-11-08T00:22:11.573Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",

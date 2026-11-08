@@ -8152,3 +8152,5 @@ Every entry in this ledger must capture:
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `71d99c7e` | Multi-dimensional audit evidence | 2026-11-08T00:15:25.358Z |
 | `learn-github-scrapinghub-scrapy-poet` | `https://github.com/scrapinghub/scrapy-poet` | `c54e48e7` | Multi-dimensional audit evidence | 2026-11-08T00:15:29.237Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `b74dc9e9` | Multi-dimensional audit evidence | 2026-11-08T00:15:40.169Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `25119216` | Multi-dimensional audit evidence | 2026-11-08T00:22:11.566Z |
+| `learn-github-ducaale-xh` | `https://github.com/ducaale/xh` | `8b21cc07` | Multi-dimensional audit evidence | 2026-11-08T00:27:10.881Z |

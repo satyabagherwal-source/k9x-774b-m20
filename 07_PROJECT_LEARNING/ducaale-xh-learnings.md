@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ducaale-xh-learnings.md`  
 > **Source**: github ([https://github.com/ducaale/xh](https://github.com/ducaale/xh))  
-> **Source Version**: `dd424850`  
+> **Source Version**: `8b21cc07`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:21:53.222Z  
+> **Timestamp**: 2026-11-08T00:27:09.686Z  
 > **Learning ID**: `learn-github-ducaale-xh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ducaale-xh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ducaale/xh](https://github.com/ducaale/xh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:21:50.741Z  
+> **Harvest Timestamp**: 2026-11-08T00:22:01.501Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Friendly and fast tool for sending HTTP requests
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8157 stars
+- **Stars / Engagement**: 8173 stars
 
 ---
 
@@ -397,10 +397,17 @@ impl Middleware for DigestAuthMiddleware<'_> {
         let mut response = self.next(&mut ctx, clone_request(&mut request)?)?;
         match response.headers().get(WWW_AUTHENTICATE) {
             Some(wwwauth) if response.status() == StatusCode::UNAUTHORIZED => {
-                let mut context = digest_auth::AuthContext::new(
+                let uri = match request.url().query() {
+                    Some(query) => format!("{}?{}", request.url().path(), query),
+                    None => request.url().path().to_string(),
+                };
+                let method = digest_auth::HttpMethod(request.method().as_str().into());
+                let mut context = digest_auth::AuthContext::new_with_method(
                     self.username,
                     self.password,
-                    request.url().path(),
+                    &uri,
+                    None::<&[u8]>,
+                    method,
                 );
                 if let Some(cnonc) = std::env::var_os("XH_TEST_DIGEST_AUTH_CNONCE") {
                     context.set_custom_cnonce(cnonc.to_string_lossy().to_string());
@@ -2448,103 +2455,293 @@ pub(crate) fn create_hyperlink(text: &str, url: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd424850` (2026-10-29)
-**Commit Message**: Merge pull request #501 from sarankumar1325/fix/fish-completion-help-typo
+### Incident Patch 1: `8b21cc07` (2026-11-06)
+**Commit Message**: Merge pull request #507 from chinmayp995/fix/digest-auth-method-and-query
 
-Fix "Generage" typo in --generate help text
+Fix digest auth for non-GET methods and query parameters
 
-**File**: `doc/xh.1` (modified, +1/-1)
+**File**: `src/auth.rs` (modified, +9/-2)
 ```diff
-@@ -433,7 +433,7 @@ complete\-elvish
- Generate completions for elvish
- .TP 8
- complete\-fish
--Generage completions for fish
-+Generate completions for fish
- .TP 8
- complete\-nushell
- Generate completions for nushell
+@@ -76,10 +76,17 @@ impl Middleware for DigestAuthMiddleware<'_> {
+         let mut response = self.next(&mut ctx, clone_request(&mut request)?)?;
+         match response.headers().get(WWW_AUTHENTICATE) {
+             Some(wwwauth) if response.status() == StatusCode::UNAUTHORIZED => {
+-                let mut context = digest_auth::AuthContext::new(
++                let uri = match request.url().query() {
++                    Some(query) => format!("{}?{}", request.url().path(), query),
++                    None => request.url().path().to_string(),
++                };
++                let method = digest_auth::HttpMethod(request.method().as_str().into());
++                let mut context = digest_auth::AuthContext::new_with_method(
+                     self.username,
+                     self.password,
+-                    request.url().path(),
++                    &uri,
++                    None::<&[u8]>,
++                    method,
+                 );
+                 if let Some(cnonc) = std::env::var_os("XH_TEST_DIGEST_AUTH_CNONCE") {
+                     context.set_custom_cnonce(cnonc.to_string_lossy().to_string());
 ```
 
-**File**: `doc/xh.1.md` (modified, +1/-1)
+**File**: `tests/cli.rs` (modified, +94/-0)
 ```diff
-@@ -275,7 +275,7 @@ Each `--OPTION` can be reset with a `--no-OPTION` argument.
-   
-   - `complete-bash`: Generate completions for bash
-   - `complete-elvish`: Generate completions for elvish
--  - `complete-fish`: Generage completions for fish
-+  - `complete-fish`: Generate completions for fish
-   - `complete-nushell`: Generate completions for nushell
-   - `complete-powershell`: Generate completions for powershell
-   - `complete-zsh`: Generate completions for zsh
-```
-
-**File**: `src/cli.rs` (modified, +1/-1)
-```diff
-@@ -411,7 +411,7 @@ Generate shell completions or man pages. Possible values are:
+@@ -784,6 +784,77 @@ fn digest_auth() {
+     server.assert_hits(2);
+ }
  
-     complete-bash         Generate completions for bash
-     complete-elvish       Generate completions for elvish
--    complete-fish         Generage completions for fish
-+    complete-fish         Generate completions for fish
-     complete-nushell      Generate completions for nushell
-     complete-powershell   Generate completions for powershell
-     complete-zsh          Generate completions for zsh
++#[test]
++fn digest_auth_post() {
++    let server = server::http(|req| async move {
++        assert_eq!(req.method(), hyper::Method::POST);
++        if req.headers().get("Authorization").is_none() {
++            hyper::Response::builder()
++                .status(401)
++                .header(
++                    "WWW-Authenticate",
++                    r#"Digest realm="me@xh.com", nonce="e5051361f053723a807674177fc7022f", qop="auth, auth-int", opaque="9dcf562038f1ec1c8d02f218ef0e7a4b", algorithm=MD5, stale=FALSE"#,
++                )
++                .body("".into())
++                .unwrap()
++        } else {
++            let auth = req.headers()["Authorization"].to_str().unwrap();
++            assert!(
++                auth.contains(r#"response="7d0bf8fffc48a78065df8a05dcba4062""#),
++                "expected POST digest response, got: {auth}"
++            );
++            hyper::Response::builder()
++                .body("authenticated".into())
++                .unwrap()
++        }
++    });
++
++    get_command()
++        .env("XH_TEST_DIGEST_AUTH_CNONCE", "testcnonce")
++        .arg("post")
++        .arg("--auth-type=digest")
++        .arg("--auth=ahmed:12345")
++        .arg(server.base_url())
++        .assert()
++        .stdout(contains("HTTP/1.1 200 OK"));
++
++    server.assert_hits(2);
++}
++
++#[test]
++fn digest_auth_with_query_params() {
++    let server = server::http(|req| async move {
++        if req.headers().get("Authorization").is_none() {
++            hyper::Response::builder()
++                .status(401)
++                .header(
++                    "WWW-Authenticate",
++                    r#"Digest realm="me@xh.com", nonce="e5051361f053723a807674177fc7022f", qop="auth, auth-int", opaque="9dcf562038f1ec1c8d02f218ef0e7a4b", algorithm=MD5, stale=FALSE"#,
++                )
++                .body("".into())
++                .unwrap()
++        } else {
++            let auth = req.headers()["Authorization"].to_str().unwrap();
++            assert!(
++                auth.contains(r#"uri="/foo?bar=baz""#),
++                "expected uri to contain query parameters, got: {auth}"
++            );
++            hyper::Response::builder()
++                .body("authenticated".into())
++                .unwrap()
++        }
++    });
++
++    get_command()
++        .arg("--auth-type=digest")
++        .arg("--auth=ahmed:12345")
++        .arg(format!("{}/foo?bar=baz", server.base_url()))
++        .assert()
++        .stdout(contains("HTTP/1.1 200 OK"));
++
++    server.assert_hits(2);
++}
++
+ #[cfg(feature = "online-tests")]
+ #[test]
+ fn successful_digest_auth() {
+@@ -795,6 +866,29 @@ fn successful_digest_auth() {
+         .stdout(contains("HTTP/1.1 200 OK"));
+ }
+ 
++#[cfg(feature = "online-tests")]
++#[test]
++fn successful_digest_auth_post() {
++    get_command()
++        .arg("post")
++        .arg("--auth-type=digest")
++        .arg("--auth=ahmed:12345")
++        .arg("httpbingo.org/digest-auth/auth/ahmed/12345")
++        .assert()
++        .stdout(contains("HTTP/1.1 200 OK"));
++}
++
++#[cfg(feature = "online-tests")]
++#[test]
++fn successful_digest_auth_with_query() {
++    get_command()
++        .arg("--auth-type=digest")
++        .arg("--auth=ahmed:12345")
++        .arg("httpbingo.org/digest-auth/auth/ahmed/12345?foo=bar")
++        .assert()
++        .stdout(contains("HTTP/1.1 200 OK"));
++}
++
+ #[cfg(feature = "online-tests")]
+ #[test]
+ fn compress_request_body_online() {
 ```
 
 ---
 
-### Incident Patch 2: `3ed073df` (2026-10-29)
-**Commit Message**: Fix "Generage" typo in --generate help text
+### Incident Patch 2: `ffd1a1ee` (2026-11-04)
+**Commit Message**: Fix digest auth for non-GET methods and query parameters
 
-The complete-fish entry in the --generate long help read "Generage completions for fish". Fix it in src/cli.rs and in the generated doc/xh.1 and doc/xh.1.md.
-
-**File**: `doc/xh.1` (modified, +1/-1)
+**File**: `src/auth.rs` (modified, +6/-5)
 ```diff
-@@ -433,7 +433,7 @@ complete\-elvish
- Generate completions for elvish
- .TP 8
- complete\-fish
--Generage completions for fish
-+Generate completions for fish
- .TP 8
- complete\-nushell
- Generate completions for nushell
+@@ -76,11 +76,12 @@ impl Middleware for DigestAuthMiddleware<'_> {
+         let mut response = self.next(&mut ctx, clone_request(&mut request)?)?;
+         match response.headers().get(WWW_AUTHENTICATE) {
+             Some(wwwauth) if response.status() == StatusCode::UNAUTHORIZED => {
+-                let mut context = digest_auth::AuthContext::new(
+-                    self.username,
+-                    self.password,
+-                    request.url().path(),
+-                );
++                let uri = match request.url().query() {
++                    Some(query) => format!("{}?{}", request.url().path(), query),
++                    None => request.url().path().to_string(),
++                };
++                let mut context = digest_auth::AuthContext::new(self.username, self.password, &uri);
++                context.method = digest_auth::HttpMethod(request.method().as_str().into());
+                 if let Some(cnonc) = std::env::var_os("XH_TEST_DIGEST_AUTH_CNONCE") {
+                     context.set_custom_cnonce(cnonc.to_string_lossy().to_string());
+                 }
 ```
 
-**File**: `doc/xh.1.md` (modified, +1/-1)
+**File**: `tests/cli.rs` (modified, +94/-0)
 ```diff
-@@ -275,7 +275,7 @@ Each `--OPTION` can be reset with a `--no-OPTION` argument.
-   
-   - `complete-bash`: Generate completions for bash
-   - `complete-elvish`: Generate completions for elvish
--  - `complete-fish`: Generage completions for fish
-+  - `complete-fish`: Generate completions for fish
-   - `complete-nushell`: Generate completions for nushell
-   - `complete-powershell`: Generate completions for powershell
-   - `complete-zsh`: Generate completions for zsh
-```
-
-**File**: `src/cli.rs` (modified, +1/-1)
-```diff
-@@ -411,7 +411,7 @@ Generate shell completions or man pages. Possible values are:
+@@ -784,6 +784,77 @@ fn digest_auth() {
+     server.assert_hits(2);
+ }
  
-     complete-bash         Generate completions for bash
-     complete-elvish       Generate completions for elvish
--    complete-fish         Generage completions for fish
-+    complete-fish         Generate completions for fish
-     complete-nushell      Generate completions for nushell
-     complete-powershell   Generate completions for powershell
-     complete-zsh          Generate completions for zsh
++#[test]
++fn digest_auth_post() {
++    let server = server::http(|req| async move {
++        assert_eq!(req.method(), hyper::Method::POST);
++        if req.headers().get("Authorization").is_none() {
++            hyper::Response::builder()
++                .status(401)
++                .header(
++                    "WWW-Authenticate",
++                    r#"Digest realm="me@xh.com", nonce="e5051361f053723a807674177fc7022f", qop="auth, auth-int", opaque="9dcf562038f1ec1c8d02f218ef0e7a4b", algorithm=MD5, stale=FALSE"#,
++                )
++                .body("".into())
++                .unwrap()
++        } else {
++            let auth = req.headers()["Authorization"].to_str().unwrap();
++            assert!(
++                auth.contains(r#"response="7d0bf8fffc48a78065df8a05dcba4062""#),
++                "expected POST digest response, got: {auth}"
++            );
++            hyper::Response::builder()
++                .body("authenticated".into())
++                .unwrap()
++        }
++    });
++
++    get_command()
++        .env("XH_TEST_DIGEST_AUTH_CNONCE", "testcnonce")
++        .arg("post")
++        .arg("--auth-type=digest")
++        .arg("--auth=ahmed:12345")
++        .arg(server.base_url())
++        .assert()
++        .stdout(contains("HTTP/1.1 200 OK"));
++
++    server.assert_hits(2);
++}
++
++#[test]
++fn digest_auth_with_query_params() {
++    let server = server::http(|req| async move {
++        if req.headers().get("Authorization").is_none() {
++            hyper::Response::builder()
++                .status(401)
++                .header(
++                    "WWW-Authenticate",
++                    r#"Digest realm="me@xh.com", nonce="e5051361f053723a807674177fc7022f", qop="auth, auth-int", opaque="9dcf562038f1ec1c8d02f218ef0e7a4b", algorithm=MD5, stale=FALSE"#,
++                )
++                .body("".into())
++                .unwrap()
++        } else {
++            let auth = req.headers()["Authorization"].to_str().unwrap();
++            assert!(
++                auth.contains(r#"uri="/foo?bar=baz""#),
++                "expected uri to contain query parameters, got: {auth}"
++            );
++            hyper::Response::builder()
++                .body("authenticated".into())
++                .unwrap()
++        }
++    });
++
++    get_command()
++        .arg("--auth-type=digest")
++        .arg("--auth=ahmed:12345")
++        .arg(format!("{}/foo?bar=baz", server.base_url()))
++        .assert()
++        .stdout(contains("HTTP/1.1 200 OK"));
++
++    server.assert_hits(2);
++}
++
+ #[cfg(feature = "online-tests")]
+ #[test]
+ fn successful_digest_auth() {
+@@ -795,6 +866,29 @@ fn successful_digest_auth() {
+         .stdout(contains("HTTP/1.1 200 OK"));
+ }
+ 
++#[cfg(feature = "online-tests")]
++#[test]
++fn successful_digest_auth_post() {
++    get_command()
++        .arg("post")
++        .arg("--auth-type=digest")
++        .arg("--auth=ahmed:12345")
++        .arg("httpbingo.org/digest-auth/auth/ahmed/12345")
++        .assert()
++        .stdout(contains("HTTP/1.1 200 OK"));
++}
++
++#[cfg(feature = "online-tests")]
++#[test]
++fn successful_digest_auth_with_query() {
++    get_command()
++        .arg("--auth-type=digest")
++        .arg("--auth=ahmed:12345")
++        .arg("httpbingo.org/digest-auth/auth/ahmed/12345?foo=bar")
++        .assert()
++        .stdout(contains("HTTP/1.1 200 OK"));
++}
++
+ #[cfg(feature = "online-tests")]
+ #[test]
+ fn compress_request_body_online() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #508** (closed): fix(redirect): don't underflow when --max-redirects=0 is combined with --follow (@pcbeingused333)
+- **PR #507** (2026-11-06): Fix digest auth for non-GET methods and query parameters (@chinmayp995)
+- **PR #503** (closed): Print JSON as it is when formatting it fails partway (@jayhemnani9910)
+- **PR #502** (closed): Decode deflate responses that lack the zlib header (@jayhemnani9910)
 - **PR #501** (2026-10-29): Fix "Generage" typo in --generate help text (@sarankumar1325)
 - **PR #500** (closed): Use --form-string for multipart text fields in --curl output (@56steve)
-- **PR #499** (closed): Add unbuffered response streaming (@Jhon103)
-- **PR #498** (closed): Use HTTP/1.1 when a Host override would break HTTP/2 (@mvanhorn)
-- **PR #497** (2026-10-23): Fix host typo in man page example (@dcadolph)
-- **PR #495** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
 
 ---
 
@@ -2564,28 +2761,37 @@ The complete-fish entry in the --generate long help read "Generage completions f
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #501 from sarankumar1325/fix/fish-completion-help-typo
+## X. Merge pull request #507 from chinmayp995/fix/digest-auth-method-and-query
 
 **RULE**:
-When implementing operations in `doc/xh.1`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ducaale/xh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/auth.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ducaale/xh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd424850`: Merge pull request #501 from sarankumar1325/fix/fish-completion-help-typo. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8b21cc07`: Merge pull request #507 from chinmayp995/fix/digest-auth-method-and-query. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `doc/xh.1`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/auth.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Generate completions for fish
+                let uri = match request.url().query() {
+                    Some(query) => format!("{}?{}", request.url().path(), query),
+                    None => request.url().path().to_string(),
+                };
+                let method = digest_auth::HttpMethod(request.method().as_str().into());
+                let mut context = digest_auth::AuthContext::new_with_method(
+                    &uri,
+                    None::<&[u8]>,
+                    method,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Generage completions for fish
+                let mut context = digest_auth::AuthContext::new(
+                    request.url().path(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd424850` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8b21cc07` are properly handled with clean fallback behavior.

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T00:15:42.744Z",
-    "lastVerified": "2026-11-08T00:15:42.744Z",
+    "lastChecked": "2026-11-08T00:27:13.468Z",
+    "lastVerified": "2026-11-08T00:27:13.468Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -460,8 +460,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T23:47:10.755Z",
-    "lastVerified": "2026-11-07T23:47:10.755Z",
+    "lastChecked": "2026-11-08T00:22:12.435Z",
+    "lastVerified": "2026-11-08T00:22:12.435Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -809,8 +809,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T20:02:06.225Z",
-    "lastVerified": "2026-11-07T20:02:06.225Z",
+    "lastChecked": "2026-11-08T00:22:07.439Z",
+    "lastVerified": "2026-11-08T00:22:07.439Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -1034,22 +1034,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ducaale-xh": {
-    "name": "xh",
+    "name": "ducaale/xh",
     "officialUrl": "https://github.com/ducaale/xh",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T19:52:38.601Z",
-    "lastVerified": "2026-11-05T19:52:38.601Z",
+    "lastChecked": "2026-11-08T00:22:01.501Z",
+    "lastVerified": "2026-11-08T00:22:01.501Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ducaale-xh",
-    "contentHash": "ca0eb72308150ae53f4533e36a059ea7caaca3dc7df11b5f6f4f9de5c9d67eb6",
+    "contentHash": "18be4ac7f83f7b18d8b5a91575b9402727f3d04b590516c8ba0489084c938352",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "dd424850"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
     "name": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -3796,14 +3795,14 @@
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T15:13:09.346Z",
-    "lastVerified": "2026-11-06T15:13:09.346Z",
+    "lastChecked": "2026-11-08T00:22:09.013Z",
+    "lastVerified": "2026-11-08T00:22:09.013Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "c02abf43b366dbae6c725820d1d03d5710eb8b3af94e692f861e34b4dfb4d18d",
+    "contentHash": "9a5bc991fe7d728dcf29de1e6a842d983d7e524b7ebafe1979621dd32b730f89",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7281,9 +7280,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-06T14:05:32.082Z",
+    "lastChecked": "2026-11-08T00:22:09.907Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-06T14:05:32.082Z"
+    "lastVerified": "2026-11-08T00:22:09.907Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -8474,9 +8473,9 @@
   "touchlab-kampkit": {
     "name": "KaMPKit",
     "officialUrl": "https://github.com/touchlab/KaMPKit",
-    "lastChecked": "2026-11-04T23:48:18.354Z",
+    "lastChecked": "2026-11-08T00:22:02.366Z",
     "revisionIdentifier": "4af02006",
-    "lastVerified": "2026-11-04T23:48:18.354Z"
+    "lastVerified": "2026-11-08T00:22:02.366Z"
   },
   "oxc-project-oxc": {
     "name": "oxc-project/oxc",
@@ -12501,9 +12500,9 @@
   "syntax-tree-unist": {
     "name": "unist",
     "officialUrl": "https://github.com/syntax-tree/unist",
-    "lastChecked": "2026-11-04T08:28:23.620Z",
+    "lastChecked": "2026-11-08T00:21:59.860Z",
     "revisionIdentifier": "8b10b611",
-    "lastVerified": "2026-11-04T08:28:23.620Z"
+    "lastVerified": "2026-11-08T00:21:59.860Z"
   },
   "gauthierpiarrette-highball": {
     "name": "gauthierpiarrette/highball",

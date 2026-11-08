@@ -2383,10 +2383,10 @@
     "repository": "ducaale/xh",
     "platform": "github",
     "sourceUrl": "https://github.com/ducaale/xh",
-    "sourceVersion": "dd424850",
+    "sourceVersion": "8b21cc07",
     "license": "MIT",
-    "contentHash": "ca0eb72308150ae53f4533e36a059ea7caaca3dc7df11b5f6f4f9de5c9d67eb6",
-    "lastHarvestedAt": "2026-10-30T23:21:53.899Z",
+    "contentHash": "18be4ac7f83f7b18d8b5a91575b9402727f3d04b590516c8ba0489084c938352",
+    "lastHarvestedAt": "2026-11-08T00:27:10.881Z",
     "learningId": "learn-github-ducaale-xh"
   },
   "nervjs-taro": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "e4fc0d0e",
+    "sourceVersion": "25119216",
     "license": "AGPL-3.0",
-    "contentHash": "c02abf43b366dbae6c725820d1d03d5710eb8b3af94e692f861e34b4dfb4d18d",
-    "lastHarvestedAt": "2026-11-06T15:13:11.978Z",
+    "contentHash": "9a5bc991fe7d728dcf29de1e6a842d983d7e524b7ebafe1979621dd32b730f89",
+    "lastHarvestedAt": "2026-11-08T00:22:11.566Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {

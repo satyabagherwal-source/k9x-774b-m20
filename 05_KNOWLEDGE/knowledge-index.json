@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T00:15:40.061Z",
+  "last_updated": "2026-11-08T00:27:10.818Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11900,11 +11900,16 @@
       "slug": "ducaale-xh",
       "platform": "github",
       "source_url": "https://github.com/ducaale/xh",
-      "source_version": "dd424850",
-      "content_hash": "ca0eb72308150ae53f4533e36a059ea7caaca3dc7df11b5f6f4f9de5c9d67eb6",
+      "source_version": "8b21cc07",
+      "content_hash": "18be4ac7f83f7b18d8b5a91575b9402727f3d04b590516c8ba0489084c938352",
       "dossier_path": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #507 from chinmayp995/fix/digest-auth-method-and-query",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1721,
           "title": "clippy + failing test",
@@ -11926,7 +11931,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:21:53.797Z",
+      "verified_at": "2026-11-08T00:27:10.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49234,14 +49239,19 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "e4fc0d0e",
-      "content_hash": "c02abf43b366dbae6c725820d1d03d5710eb8b3af94e692f861e34b4dfb4d18d",
+      "source_version": "25119216",
+      "content_hash": "9a5bc991fe7d728dcf29de1e6a842d983d7e524b7ebafe1979621dd32b730f89",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "mysql): batch hot-path metric updates (#5012)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "resync): keep internal version when resyncing completed/failed mirrors (#5031)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49315,7 +49325,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:13:11.862Z",
+      "verified_at": "2026-11-08T00:22:11.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

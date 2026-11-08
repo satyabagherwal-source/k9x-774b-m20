@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T00:15:40.175Z",
-  "total_cycles_completed": 8108,
-  "total_learnings_persisted": 8108,
-  "total_rules_promoted": 7780,
+  "last_updated": "2026-11-08T00:27:10.885Z",
+  "total_cycles_completed": 8110,
+  "total_learnings_persisted": 8110,
+  "total_rules_promoted": 7782,
   "history": [
-    {
-      "timestamp": "2026-11-06T23:02:49.044Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T23:04:50.058Z",
-      "repository": "github/squad",
-      "learningId": "learn-github-github-squad",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T23:11:55.622Z",
       "repository": "salvo-rs/salvo",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T00:15:40.175Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T00:22:11.571Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T00:27:10.885Z",
+      "repository": "ducaale/xh",
+      "learningId": "learn-github-ducaale-xh",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

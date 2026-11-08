@@ -8143,3 +8143,5 @@
 | `CYCLE-20261108-ZJCA` | `2026-11-08T00:15:25.354Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`237ab97f...`) |
 | `CYCLE-20261108-ZMC1` | `2026-11-08T00:15:29.233Z` | `scrapinghub/scrapy-poet` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8438e591...`) |
 | `CYCLE-20261108-ZURH` | `2026-11-08T00:15:40.157Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dae872a7...`) |
+| `CYCLE-20261108-88RW` | `2026-11-08T00:22:11.564Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a5bc991...`) |
+| `CYCLE-20261108-ENQ1` | `2026-11-08T00:27:10.873Z` | `ducaale/xh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`18be4ac7...`) |
