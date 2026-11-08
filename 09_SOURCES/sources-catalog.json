@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "f7683239",
+    "sourceVersion": "d440ad4b",
     "license": "Apache-2.0",
-    "contentHash": "b7a6f5ab671c7ec9796f2831b449490fefeabf3c47f30510db73b23e9c7a9aed",
-    "lastHarvestedAt": "2026-11-05T19:29:30.826Z",
+    "contentHash": "a59a86dd4ed9c05775128eebf1ce361652e5626b06a163a528de949fbb945b18",
+    "lastHarvestedAt": "2026-11-08T00:07:03.932Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "37af1172",
+    "sourceVersion": "f03e9020",
     "license": "GPL-2.0",
-    "contentHash": "2c55a73e2b68ba4cf912f76cb3f7cbf88a37cee970fc93c9df87fe12c7f4becc",
-    "lastHarvestedAt": "2026-11-06T13:52:08.182Z",
+    "contentHash": "16a8bc646831d0ec3374dd9ca58235b35c6993ad46f9c290000a0d25d1a5913f",
+    "lastHarvestedAt": "2026-11-08T00:02:44.937Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "3ff3e5fc",
+    "sourceVersion": "a3cdce35",
     "license": "AGPL-3.0",
-    "contentHash": "511a9f81605110208241671520239f3a61b6eb33fdd3fa5bfd930d8b7ca647dd",
-    "lastHarvestedAt": "2026-11-04T23:34:41.449Z",
+    "contentHash": "a176072a8155b99a37a7a3552912f5f70e89d506f0fadf6ef5c91573e653a45a",
+    "lastHarvestedAt": "2026-11-08T00:02:39.005Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {

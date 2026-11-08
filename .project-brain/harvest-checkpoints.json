@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T23:55:25.292Z",
+  "last_updated": "2026-11-08T00:07:03.942Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "b7a6f5ab671c7ec9796f2831b449490fefeabf3c47f30510db73b23e9c7a9aed",
-      "verified_at": "2026-11-05T19:29:30.835Z",
+      "content_hash": "a59a86dd4ed9c05775128eebf1ce361652e5626b06a163a528de949fbb945b18",
+      "verified_at": "2026-11-08T00:07:03.941Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:29:30.835Z"
+      "last_updated": "2026-11-08T00:07:03.941Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "2c55a73e2b68ba4cf912f76cb3f7cbf88a37cee970fc93c9df87fe12c7f4becc",
-      "verified_at": "2026-11-06T13:52:08.198Z",
+      "content_hash": "16a8bc646831d0ec3374dd9ca58235b35c6993ad46f9c290000a0d25d1a5913f",
+      "verified_at": "2026-11-08T00:02:44.954Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:52:08.198Z"
+      "last_updated": "2026-11-08T00:02:44.954Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "511a9f81605110208241671520239f3a61b6eb33fdd3fa5bfd930d8b7ca647dd",
-      "verified_at": "2026-11-04T23:34:41.468Z",
+      "content_hash": "a176072a8155b99a37a7a3552912f5f70e89d506f0fadf6ef5c91573e653a45a",
+      "verified_at": "2026-11-08T00:02:39.015Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T23:34:41.468Z"
+      "last_updated": "2026-11-08T00:02:39.015Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",

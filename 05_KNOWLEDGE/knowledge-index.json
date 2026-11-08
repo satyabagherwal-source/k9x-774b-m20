@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T23:55:25.200Z",
+  "last_updated": "2026-11-08T00:07:03.835Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4392,8 +4392,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "f7683239",
-      "content_hash": "b7a6f5ab671c7ec9796f2831b449490fefeabf3c47f30510db73b23e9c7a9aed",
+      "source_version": "d440ad4b",
+      "content_hash": "a59a86dd4ed9c05775128eebf1ce361652e5626b06a163a528de949fbb945b18",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -4401,6 +4401,21 @@
           "number": null,
           "title": "keep the editor typable after clicking a highlighted lint (#3834)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Unified Character-Offset Invariant for Bi-Directional DOM Projections",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Cache-Locality Invariant for High-Frequency String Tokens",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Disambiguation Lookahead Invariant for Polysemous Verb-Noun Rules",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1707,
@@ -4478,7 +4493,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:29:30.702Z",
+      "verified_at": "2026-11-08T00:07:03.799Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9159,11 +9174,16 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "3ff3e5fc",
-      "content_hash": "511a9f81605110208241671520239f3a61b6eb33fdd3fa5bfd930d8b7ca647dd",
+      "source_version": "a3cdce35",
+      "content_hash": "a176072a8155b99a37a7a3552912f5f70e89d506f0fadf6ef5c91573e653a45a",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": ":bug: show notifications as tray balloons on Windows while the main window is hi",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2479,
           "title": ":bug: report Windows plugin script failures as a single line (#5229)",
@@ -9200,7 +9220,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:34:41.333Z",
+      "verified_at": "2026-11-08T00:02:38.888Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40516,14 +40536,19 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "37af1172",
-      "content_hash": "2c55a73e2b68ba4cf912f76cb3f7cbf88a37cee970fc93c9df87fe12c7f4becc",
+      "source_version": "f03e9020",
+      "content_hash": "16a8bc646831d0ec3374dd9ca58235b35c6993ad46f9c290000a0d25d1a5913f",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Followup: fix versioning.delete_history in MDEV-39226: Push whole multi-table ..",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "MDEV-42009: Set GLOBAL innodb_log_archive=ON is not crash safe",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40577,7 +40602,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:52:08.074Z",
+      "verified_at": "2026-11-08T00:02:44.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `37af1172`  
+> **Source Version**: `f03e9020`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:52:06.685Z  
+> **Timestamp**: 2026-11-08T00:02:43.202Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:52:06.680Z  
+> **Harvest Timestamp**: 2026-11-08T00:02:42.126Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8542 stars
+- **Stars / Engagement**: 8548 stars
 
 ---
 
@@ -1613,13 +1613,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6081** (2026-11-06): **MDEV-41158, MDEV-41865: authenticate mariabackup SST backup-data stream**
-  *Symptoms*: - MDEV-41865: mariabackup --prepare took plugin_dir from the backup's   own backup-my.cnf as-is. That file is part of the backup/transfer   directory, so whoever supplied the backup (e.g. over an SST stream)   could redirect plugin loading to a directory of their choosing.   Fixed by taking plugin-dir only from mariabackup's own command line;   backup-my.cnf can no longer set it during --prepare.  - MDEV-41158: the joiner's per-transfer SST secret was only generated   for ssl-mode=VERIFY_*, and even then only checked on the small GTID   stage. The actual backup-data stage was accepted from any TCP peer   unauthenticated. Fixed by generating the secret unconditionally and   authenticating the backup-data stage too, before any of it reaches   mariadb-backup. sst-mariabackup-allow-unauthenticated-donor opts back   into the old behavior for a rolling upgrade.  Assisted-by: Claude:claude-4.6-sonnet
+- **Issue #6091** (2026-11-07): **MDEV-30836 postfix - MTR hangs on Windows after warnings in the log at shutdown**
+  *Symptoms*: ## Summary  On Windows, `mysql-test-run.pl --force` can hang after the last test when a worker reports warnings in the server log at shutdown.  ## Cause  A worker sends `WARNINGS` when it finds warnings after stopping its servers. With `--force`, `parse_protocol()` returned `1` for it, so the manager went on reading from that worker's socket.  A worker that was told to exit with `BYE` sends `WARNINGS` and exits, and sends nothing more. Non-blocking reads do not work on Windows Perl (Strawberry, ActiveState), so the manager's read can block, and it never handles the results of the other workers. MDEV-30836 added a workaround for this, but the return value `1` bypasses it.  ## Fix  Return `2` for `WARNINGS` from a worker that was told `BYE`, as for the other cases where the worker needs no response, so the manager continues with the next ready socket. The closed socket is handled later, when it becomes readable.  A worker that was not told to exit also sends `WARNINGS`, before it restarts servers or after a test with side effects, and then goes on to send `TESTRESULT`. For it the manager keeps reading as before, so a buffered `TESTRESULT` is not missed. The manager remembers the workers it said `BYE` to in `%bye`.  ## Testing  Windows, Strawberry Perl, `--parallel=2 --force`, throwaway tests (not part of this PR) that leave an unsuppressed `[ERROR]` in a server log during shutdown.  Worker told to exit, while another worker runs a 30 second test, each run killed after 90 second
 
-- **Issue #6075** (2026-11-05): **MDEV-42035: Recovery hangs due corrupted system or undo tablespace**
-  *Symptoms*: The function `recv_sys_t::recover()` that was introduced in #2891 will cause an infinite loop in case the requested page is corrupted. The reason is that the code path would hold an extra buffer-fix on the block, which `buf_pool_t::corrupted_evict()` would wait to be released, in vain.  Let us avoid the extra buffer-fix and add stricter assertions that must hold during the recovery phase, when regular access to the buffer pool via `buf_page_get_gen()` and friends is blocked.
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/MariaDB/server?pullRequest=6075) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/MariaDB/server?pullRequest=6075) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/MariaDB/server?pullRequest=6075) it.</sub>
+- **Issue #6090** (2026-11-07): **MDEV-41158: authenticate the mariabackup SST backup-data stream too**
+  *Symptoms*: Issue: The joiner's per-transfer secret was only generated for ssl-mode=VERIFY_*, and checked only on the small GTID stage: the backup-data stage itself was accepted unauthenticated, letting any TCP peer reaching the SST port supply a backup --prepare then runs.  Solution: Generate the secret unconditionally and require it on the backup-data stream too, built in lockstep with the existing encrypt/decompress/ progress wrapping so the check can't be silently skipped by it. Add sst-mariabackup-allow-unauthenticated-donor for rolling upgrades, failing closed on invalid values; VERIFY_*'s own pre-existing secret check is unaffected by it. Add a regression test covering the authenticated pipeline with that wrapping active.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1636,29 +1634,199 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b96ca43` (2026-11-05)
-**Commit Message**: Followup: fix versioning.delete_history in MDEV-39226: Push whole multi-table ...
+### Incident Patch 1: `0ad88865` (2026-11-06)
+**Commit Message**: MDEV-42009: Set GLOBAL innodb_log_archive=ON is not crash safe
 
-**File**: `mysql-test/suite/versioning/r/delete_history,32bit.rdiff` (modified, +1/-1)
+log_t::header_rewrite(): Before setting log_sys.archive=true,
+ensure that any garbage entries at the end of the file will be
+zeroed out so that they cannot be mistaken for newer records.
+On Linux and Microsoft Windows we will attempt a shortcut for
+writing zeroes, before falling back to log_file_t::write().
+
+log_t::set_archive(): Block concurrent writes to the log on every
+platform, because log_t::header_rewrite() now requires exclusive
+access to the log file.
+
+Reviewed by: Alessandro Vetere
+
+**File**: `storage/innobase/include/log0log.h` (modified, +3/-3)
 ```diff
-@@ -4,7 +4,7 @@
-  id	select_type	table	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-  1	SIMPLE	t1	ALL	NULL	NULL	NULL	NULL	1	100.00	Using where
-  Warnings:
---Note	1003	delete  from `test`.`t1` FOR SYSTEM_TIME BEFORE TIMESTAMP '2039-01-01 23:00' using dual where `test`.`t1`.`row_end` < TIMESTAMP/*WITH LOCAL TIME ZONE*/'2039-01-01 23:00:00' and is_history(`test`.`t1`.`row_end`)
-+-Note	1003	delete from `test`.`t1` FOR SYSTEM_TIME BEFORE TIMESTAMP '2039-01-01 23:00' where `test`.`t1`.`row_end` < TIMESTAMP/*WITH LOCAL TIME ZONE*/'2039-01-01 23:00:00' and is_history(`test`.`t1`.`row_end`)
- +Note	1003	delete from `test`.`t1` FOR SYSTEM_TIME BEFORE TIMESTAMP '2039-01-01 23:00' where `test`.`t1`.`row_end` < '2039-01-01 23:00' and is_history(`test`.`t1`.`row_end`)
-  create or replace procedure p() delete history from t1 before system_time '2039-01-01 23:00';
-  call p;
+@@ -475,9 +475,9 @@ struct log_t
+   @param encrypted  whether the log is encrypted */
+   static void header_write(byte *buf, lsn_t lsn, bool encrypted) noexcept;
+ 
+-  /** Rewrite the log file header in set_archive()
+-  @param archive  the new value of innodb_log_archive */
+-  void header_rewrite(my_bool archive) noexcept;
++  /** Rewrite the log file header in set_archive().
++  @param old_first_lsn  the old first_lsn if setting archive=true, else 0 */
++  void header_rewrite(lsn_t old_first_lsn) noexcept;
+ 
+   /** @return an estimate of get_lsn(),
+   using acquire-release ordering with write_buf() or persist();
+```
+
+**File**: `storage/innobase/log/log0log.cc` (modified, +119/-45)
+```diff
+@@ -46,6 +46,9 @@ Created 12/9/1995 Heikki Tuuri
+ #include "log0sync.h"
+ #include "log.h"
+ #include "tpool.h"
++#ifdef __linux__
++# include <fcntl.h> /* fallocate(2) */
++#endif
+ 
+ /*
+ General philosophy of InnoDB redo-logs:
+@@ -521,7 +524,8 @@ void log_t::create(lsn_t lsn) noexcept
+   }
+ }
+ 
+-ATTRIBUTE_COLD static void log_close_failed(dberr_t err) noexcept
++ATTRIBUTE_COLD ATTRIBUTE_NORETURN
++static void log_close_failed(dberr_t err) noexcept
+ {
+   ib::fatal() << "closing log failed: " << err;
+ }
+@@ -586,8 +590,10 @@ static void log_resize_acquire() noexcept
+   log_sys.latch.wr_lock();
+ }
+ 
+-static void log_resize_release_locks() noexcept
++/** Release the latches that protect the log. */
++void log_resize_release() noexcept
+ {
++  log_sys.latch.wr_unlock();
+ #ifdef HAVE_PMEM
+   if (!log_sys.is_mmap())
+ #endif
+@@ -599,13 +605,6 @@ static void log_resize_release_locks() noexcept
+   }
+ }
+ 
+-/** Release the latches that protect the log. */
+-void log_resize_release() noexcept
+-{
+-  log_sys.latch.wr_unlock();
+-  log_resize_release_locks();
+-}
+-
+ #if defined __linux__ || defined _WIN32
+ /** Try to enable or disable file system caching (update log_buffered) */
+ void log_t::set_buffered(bool buffered) noexcept
+@@ -660,30 +659,32 @@ void log_t::set_write_through(bool write_through)
+ }
+ 
+ /** Rewrite the log file header in set_archive()
+-@param archive  the new value of innodb_log_archive */
+-void log_t::header_rewrite(my_bool archive) noexcept
++@param old_first_lsn  the old first_lsn if setting archive=true, else 0 */
++void log_t::header_rewrite(lsn_t old_first_lsn) noexcept
+ {
+   ut_ad(!resize_buf);
+-  ut_ad(this->archive == !archive);
++  ut_ad(this->archive == !old_first_lsn);
+ 
+   /* We will rewrite the log file header while the file
+   name is not ib_logfile0. That is, the archived log file
+   recovery will accept both the circular and the archived
+   format for the last file. */
+   sql_print_information("InnoDB: setting innodb_log_archive=%u"
+                         " at innodb_log_recovery_start=" LSN_PF,
+-                        archive, end_lsn);
++                        !!old_first_lsn, end_lsn);
+ 
+   byte* c= checkpoint_buf;
+   ut_ad(end_lsn >= first_lsn);
+-  ut_ad(!archive || end_lsn <= first_lsn + ~0U);
++  ut_ad(get_lsn() >= write_lsn);
++  ut_ad(is_mmap_writeable() || write_lsn >= end_lsn);
++  ut_ad(!old_first_lsn || end_lsn <= first_lsn + ~0U);
+   ut_ad(format == (is_encrypted() ? FORMAT_ENC_11 : FORMAT_10_8));
+ #ifdef HAVE_PMEM
+   if (!c)
+   {
+     ut_ad(is_mmap());
+     ut_ad(is_mmap_writeable());
+-    if (!archive)
++    if (!old_first_lsn)
+     {
+       memset_aligned<512>(buf + 512, 0, START_OFFSET - 512);
+       c= buf + CHECKPOINT_1;
+@@ -698,6 +699,26 @@ void log_t::header_rewrite(my_bool archive) noexcept
+     }
+     else
+     {
++      if (old_first_lsn != first_lsn)
++      {
++        /*
++          Ensure that recovery will correctly detect the end of log
++          and not mistake some old innodb_log_archive=OFF garbage
++          between the current position and the end for valid records.
++        */
++        const size_t offset{get_lsn() - first_lsn + START_OFFSET};
++        ut_ad(offset <= file_size);
++        if (const size_t size{file_size - offset})
++        {
++          byte *const b{buf + offset};
++          memset(b, 0, size);
++          /*
++            This must be made durable before writing the header.
++            See the log.flush() calls on the non-PMEM code path below.
++          */
++          pmem_persist(b, size);
++        }
++      }
+       next_checkpoint_no= uint16_t(4 * is_encrypted() + 1);
+       uint64_t *C= reinterpret_cast<uint64_t*>(buf);
+       const uint64_t d{my_htobe64(end_lsn - first_lsn + START_OFFSET)};
+@@ -721,7 +742,7 @@ void log_t::header_rewrite(my_bool archive) noexcept
+ #endif
+   memset_aligned<512>(c, 0, write_size);
+ 
+-  if (!archive)
++  if (!old_first_lsn)
+   {
+     uint64_t *C= reinterpret_cast<uint64_t*>(c);
+     C[0]= my_htobe64(last_checkpoint_lsn);
+@@ -743,6 +764,79 @@ void log_t::header_rewrite(my_bool archive) noexcept
+   }
+   else
+   {
++    if (old_first_lsn != first_lsn)
++    {
++      /*
++        The buf[length]=0 assignments in write_buf() miss the case where
++        log_sys.write_lsn is exactly at the end of the block, and a previous
++        mini-transaction at log_sys.write_lsn - log_sys.capacity()
++        ended at the same file offset in the ib_logfile0.
++
++        To be safe, we must zero out all the following blocks that have
++        not been written to since the previous wrap-around.
++      */
++      const size_t bs_1{write_size - 1};
++      lsn_t offset{(write_lsn - first_lsn + bs_1 + START_OFFSET) &
++                   ~lsn_t{bs_1}};
++      ut_ad(offset <= file_size);
++      if (uint64_t size{file_size - offset})
++      {
++        for (;;)
++        {
++#ifdef _WIN32
++          if (os_file_punch_hole(log_sys.log.m_file, offset, size) ==
++              DB_SUCCESS)
++            break;
++# elif defined __linux__
++          if (!fallocate(log
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6091** (2026-11-07): MDEV-30836 postfix - MTR hangs on Windows after warnings in the log at shutdown (@vaintroub)
+- **PR #6090** (2026-11-07): MDEV-41158: authenticate the mariabackup SST backup-data stream too (@hemantdangi-gc)
+- **PR #6087** (2026-11-07): MDEV-42091: mariabackup --prepare must not trust plugin_dir from backup-my.cnf (@hemantdangi-gc)
 - **PR #6081** (closed): MDEV-41158, MDEV-41865: authenticate mariabackup SST backup-data stream (@hemantdangi-gc)
+- **PR #6079** (2026-11-06): MDEV-42009: Set GLOBAL innodb_log_archive=ON is not crash safe (@dr-m)
 - **PR #6075** (2026-11-05): MDEV-42035: Recovery hangs due corrupted system or undo tablespace (@dr-m)
-- **PR #6073** (2026-11-04): MDEV-42009: Set GLOBAL innodb_log_file_size=ON is not crash safe (@dr-m)
-- **PR #6072** (2026-11-04): MDEV-42000 : galera.galera_restart_on_unknown_option fails (@janlindstrom)
-- **PR #6071** (2026-11-04): mysql_client_test: cleanup, speedup and resilience of proxy protocol tests (@vaintroub)
-- **PR #6064** (2026-11-03): MDEV-40935: Crash when os_file_set_size() fails to extend innodb_log_archive=ON on shutdown (@dr-m)
 
 ---
 
@@ -1678,28 +1846,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Followup: fix versioning.delete_history in MDEV-39226: Push whole multi-table ..
+## X. MDEV-42009: Set GLOBAL innodb_log_archive=ON is not crash safe
 
 **RULE**:
-When implementing operations in `mysql-test/suite/versioning/r/delete_history,32bit.rdiff`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `storage/innobase/include/log0log.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b96ca43`: Followup: fix versioning.delete_history in MDEV-39226: Push whole multi-table .... Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ad88865`: MDEV-42009: Set GLOBAL innodb_log_archive=ON is not crash safe. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/versioning/r/delete_history,32bit.rdiff`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `storage/innobase/include/log0log.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
--Note	1003	delete from `test`.`t1` FOR SYSTEM_TIME BEFORE TIMESTAMP '2039-01-01 23:00' where `test`.`t1`.`row_end` < TIMESTAMP/*WITH LOCAL TIME ZONE*/'2039-01-01 23:00:00' and is_history(`test`.`t1`.`row_end`)
+  /** Rewrite the log file header in set_archive().
+  @param old_first_lsn  the old first_lsn if setting archive=true, else 0 */
+  void header_rewrite(lsn_t old_first_lsn) noexcept;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
--Note	1003	delete  from `test`.`t1` FOR SYSTEM_TIME BEFORE TIMESTAMP '2039-01-01 23:00' using dual where `test`.`t1`.`row_end` < TIMESTAMP/*WITH LOCAL TIME ZONE*/'2039-01-01 23:00:00' and is_history(`test`.`t1`.`row_end`)
+  /** Rewrite the log file header in set_archive()
+  @param archive  the new value of innodb_log_archive */
+  void header_rewrite(my_bool archive) noexcept;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b96ca43` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ad88865` are properly handled with clean fallback behavior.

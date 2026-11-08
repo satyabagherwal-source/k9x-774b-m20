@@ -8137,3 +8137,6 @@
 | `CYCLE-20261107-9NN0` | `2026-11-07T23:55:17.868Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ad86f125...`) |
 | `CYCLE-20261107-9RFO` | `2026-11-07T23:55:22.788Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1c479fb7...`) |
 | `CYCLE-20261107-9TCQ` | `2026-11-07T23:55:25.274Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c743f8fd...`) |
+| `CYCLE-20261108-J40P` | `2026-11-08T00:02:39.001Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a176072a...`) |
+| `CYCLE-20261108-J8LH` | `2026-11-08T00:02:44.933Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`16a8bc64...`) |
+| `CYCLE-20261108-OSFS` | `2026-11-08T00:07:03.928Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a59a86dd...`) |

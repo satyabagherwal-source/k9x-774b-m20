@@ -8146,3 +8146,6 @@ Every entry in this ledger must capture:
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `9f467738` | Multi-dimensional audit evidence | 2026-11-07T23:55:17.872Z |
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `41fef581` | Multi-dimensional audit evidence | 2026-11-07T23:55:22.791Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `7466899f` | Multi-dimensional audit evidence | 2026-11-07T23:55:25.278Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `a3cdce35` | Multi-dimensional audit evidence | 2026-11-08T00:02:39.005Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `f03e9020` | Multi-dimensional audit evidence | 2026-11-08T00:02:44.937Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `d440ad4b` | Multi-dimensional audit evidence | 2026-11-08T00:07:03.932Z |

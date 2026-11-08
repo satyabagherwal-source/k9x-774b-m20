@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source**: github ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
-> **Source Version**: `3ff3e5fc`  
+> **Source Version**: `a3cdce35`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T23:34:40.666Z  
+> **Timestamp**: 2026-11-08T00:02:37.581Z  
 > **Learning ID**: `learn-github-crosspaste-crosspaste-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T23:34:40.658Z  
+> **Harvest Timestamp**: 2026-11-08T00:02:34.263Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, LAN-only, no cloud. OCR, CLI and MCP server built in.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2689 stars
+- **Stars / Engagement**: 2692 stars
 
 ---
 
@@ -768,184 +768,839 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5be13f40` (2026-11-01)
-**Commit Message**: :bug: keep bringing the window to the front when AttachThreadInput fails on Windows (#5304)
+### Incident Patch 1: `a3cdce35` (2026-11-06)
+**Commit Message**: :bug: show notifications as tray balloons on Windows while the main window is hidden (#5317)
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsFocusUtils.kt` (modified, +19/-15)
+* :bug: show notifications as tray balloons on Windows while the main window is hidden
+
+* :bug: guard the Windows tray balloon against JNA errors and run its tests on every OS
+
+* :bug: show title-only notifications in the tray balloon body since an empty body removes the balloon
+
+* :bug: only raise system notifications for errors and warnings while the main window is hidden
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsTrayHitTest.kt` (modified, +3/-21)
 ```diff
-@@ -94,19 +94,23 @@ object WindowsFocusUtils {
-             }
+@@ -2,16 +2,13 @@ package com.crosspaste.platform.windows
  
-         // Attaching a thread to itself is invalid (ERROR_INVALID_PARAMETER).
--        val shouldAttach = prevThreadId != null && prevThreadId != targetThreadId
--        if (shouldAttach) {
--            val success =
--                user32.AttachThreadInput(
--                    DWORD(prevThreadId.toLong()),
--                    DWORD(targetThreadId.toLong()),
--                    true,
--                )
--            if (!success) {
--                logger.error { "AttachThreadInput failed: ${Kernel32.INSTANCE.GetLastError()}" }
--                return
--            }
--        }
-+        val attachThreadId = prevThreadId?.takeIf { it != targetThreadId }
-+        // The cached previous thread may be gone (its app exited); attaching then fails,
-+        // but we still try to bring the window to the front without it.
-+        val attached =
-+            attachThreadId != null &&
-+                user32
-+                    .AttachThreadInput(
-+                        DWORD(attachThreadId.toLong()),
-+                        DWORD(targetThreadId.toLong()),
-+                        true,
-+                    ).also { success ->
-+                        if (!success) {
-+                            logger.warn {
-+                                "AttachThreadInput failed: ${Kernel32.INSTANCE.GetLastError()}, continuing without it"
-+                            }
-+                        }
-+                    }
+ import com.crosspaste.platform.windows.api.Shell32
+ import com.crosspaste.platform.windows.api.User32
+-import com.crosspaste.platform.windows.api.WndEnumProc
+ import com.crosspaste.platform.windows.api.windowFromPoint
+ import com.crosspaste.platform.windows.api.windowProcessId
+-import com.sun.jna.Native
+-import com.sun.jna.Pointer
+ import com.sun.jna.platform.win32.WinDef.HWND
+ import com.sun.jna.platform.win32.WinDef.RECT
+ import com.sun.jna.platform.win32.WinUser.GA_ROOT
  
-         try {
-             user32.ShowWindow(handle, SW_RESTORE)
-@@ -117,9 +121,9 @@ object WindowsFocusUtils {
-                 logger.info { "Failed to set foreground window. Please switch manually" }
-             }
-         } finally {
--            if (shouldAttach) {
-+            if (attached) {
-                 user32.AttachThreadInput(
--                    DWORD(prevThreadId.toLong()),
-+                    DWORD(attachThreadId.toLong()),
-                     DWORD(targetThreadId.toLong()),
-                     false,
-                 )
-```
-
----
-
-### Incident Patch 2: `3ff3e5fc` (2026-11-03)
-**Commit Message**: :bug: use the local paste id when writing a received non-file paste to the pasteboard (#5314)
-
-**File**: `app/src/commonMain/kotlin/com/crosspaste/paste/PasteReleaseService.kt` (modified, +2/-1)
-```diff
-@@ -646,7 +646,8 @@ class PasteReleaseService(
-         markDeleteSameHash(id, pasteData.pasteType, pasteData.hash)
-         addRenderingTask(id, pasteData.getType())
-         if (!historyPull) addRelaySyncTask(id, pasteData.appInstanceId, seenAppInstanceIds)
--        tryWritePasteboard(pasteData)
-+        // pasteData.id is the sender's id; writing takes the local row as the current paste
-+        tryWritePasteboard(pasteData.copy(id = id))
-         return id
+-/** Adapter for our single ComposeNativeTray 2.1.7 icon (TRAY window, icon id 1000). */
++/** Hit testing against our tray icon, see [findTrayIconOwner]. */
+ internal class WindowsTrayHitTest(
+     private val user32: User32,
+     private val shell32: Shell32,
+@@ -39,26 +36,11 @@ internal class WindowsTrayHitTest(
      }
  
+     private fun iconRect(): RECT? {
+-        var owner: HWND? = null
+-        user32.EnumWindows(
+-            object : WndEnumProc {
+-                override fun callback(
+-                    hWnd: HWND,
+-                    lParam: Pointer?,
+-                ): Boolean {
+-                    if (user32.windowProcessId(hWnd) != processId) return true
+-                    val name = CharArray(32)
+-                    if (user32.GetClassNameW(hWnd, name, name.size) == 0 || Native.toString(name) != "TRAY") return true
+-                    owner = hWnd
+-                    return false
+-                }
+-            },
+-            null,
+-        )
++        val owner = findTrayIconOwner(user32, processId)
+         val identifier =
+             Shell32.NotifyIconIdentifier().apply {
+                 hWnd = owner ?: return null
+-                uID = 1000
++                uID = TRAY_ICON_ID
+             }
+         val rect = RECT()
+         if (shell32.Shell_NotifyIconGetRect(identifier, rect).toInt() != 0) return null
 ```
 
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/paste/PasteReleaseServiceRemoteDiscardTest.kt` (modified, +16/-0)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsTrayIcon.kt` (added, +39/-0)
 ```diff
-@@ -23,6 +23,7 @@ import io.mockk.mockk
- import io.mockk.verify
- import kotlinx.coroutines.runBlocking
- import kotlin.test.Test
-+import kotlin.test.assertEquals
- import kotlin.test.assertNotNull
- import kotlin.test.assertNull
- import kotlin.test.assertTrue
-@@ -153,6 +154,21 @@ class PasteReleaseServiceRemoteDiscardTest {
-             verify(exactly = 0) { notificationManager.sendNotification(any(), any(), any(), any()) }
-         }
- 
-+    @Test
-+    fun `remote non-file paste is written to the pasteboard with its local id`() =
-+        runBlocking {
-+            val pasteDao = mockk<PasteDao>(relaxed = true)
-+            coEvery { pasteDao.createPasteData(any(), any()) } returns 42L
-+            val service = newService(pasteDao = pasteDao, taskSubmitter = immediateSubmitter())
+@@ -0,0 +1,39 @@
++package com.crosspaste.platform.windows
 +
-+            var writtenId: Long? = null
-+            service.releaseRemotePasteData(remotePasteData(createTextPasteItem(text = "small")).copy(id = 7L)) {
-+                writtenId = it.id
++import com.crosspaste.platform.windows.api.User32
++import com.crosspaste.platform.windows.api.WndEnumProc
++import com.crosspaste.platform.windows.api.windowProcessId
++import com.sun.jna.Native
++import com.sun.jna.Pointer
++import com.sun.jna.platform.win32.WinDef.HWND
++
++/**
++ * Icon id of the first tray ComposeNativeTray 2.1.7 creates, owned by a "TRAY" window. The
++ * native side assigns ids from a per-process counter starting at 1000, so a tray that is
++ * disposed and recreated gets 1001 and breaks both the hit test and the balloon.
++ */
++internal const val TRAY_ICON_ID = 1000
++
++/** The window of [processId] that owns its tray icon, or null when no icon is shown. */
++internal fun findTrayIconOwner(
++    user32: User32,
++    processId: Int,
++): HWND? {
++    var owner: HWND? = null
++    user32.EnumWindows(
++        object : WndEnumProc {
++            override fun callback(
++                hWnd: HWND,
++                lParam: Pointer?,
++            ): Boolean {
++                if (user32.windowProcessId(hWnd) != processId) return true
++                val name = CharArray(32)
++                if (user32.GetClassNameW(hWnd, name, name.size) == 0 || Native.toString(name) != "TRAY") return true
++                owner = hWnd
++                return false
++            }
++        },
++        null,
++    )
++    return owner
++}
+```
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsTrayNotifier.kt` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++package com.crosspaste.platform.windows
++
++import com.crosspaste.notification.MessageType
++import com.crosspaste.platform.windows.api.Shell32
++import com.crosspaste.platform.windows.api.User32
++import io.github.oshai.kotlinlogging.KotlinLogging
++
++/**
++ * Shows a notification as a balloon on our tray icon; Windows 10/11 present it as a
++ * toast. Sound is left to SoundService, which already plays one for errors and successes.
++ */
++internal class WindowsTrayNotifier(
++    private val user32: User32,
++    private val shell32: Shell32,
++    private val processId: Int,
++) {
++    private val logger = KotlinLogging.logger {}
++
++    /** False when the tray icon is missing or the shell refused the balloon. */
++    fun notify(
++        title: String,
++        message: String,
++        messageType: MessageType,
++    ): Boolean {
++        val owner =
++            findTrayIconOwner(user32, processId) ?: run {
++                logger.info { "No tray icon to show a balloon on" }
++                return false
++            }
++        // An empty szInfo removes the balloon instead of showing it, so a title-only
++        // message (e.g. "copy successful") is shown as the body
++        val (infoTitle, info) = if (message.isEmpty()) "" to title else title to message
++        val data =
++            Shell32.NotifyIconData().apply {
++                hWnd = owner
++                uID = TRAY_ICON_ID
++                uFlags = NIF_INFO
++                fill(szInfoTitle, infoTitle)
++                fill(szInfo, info)
++                dwInfoFlags = infoIcon(messageType) or NIIF_NOSOUND
++            }
++        return shell32.Shell_NotifyIcon(NIM_MODIFY, data).also { shown ->
++            if (!shown) logger.info { "Shell refused the tray balloon" }
++        }
++    }
++
++    companion object {
++        const val NIM_MODIFY = 0x1
++        const val NIF_INFO = 0x10
++        const val NIIF_NONE = 0x0
++        const val NIIF_INFO = 0x1
++        const val NIIF_WARNING = 0x2
++        const val NIIF_ERROR = 0x3
++        const val NIIF_NOSOUND = 0x10
++
++        fun infoIcon(messageType: MessageType): Int =
++            when (messageType) {
++                MessageType.Error -> NIIF_ERROR
++                MessageType.Warning -> NIIF_WARNING
++                MessageType.Info -> NIIF_INFO
++                MessageType.Success -> NIIF_NONE
 +            }
 +
-+            assertEquals(42L, writtenId)
++        /**
++         * Copies [text] into a fixed WCHAR buffer, truncated so a terminating NUL always fits
++         * and a surrogate pair is never split.
++         */
++        fun fill(
++            buffer: CharArray,
++            text: String,
++        ) {
++            var length = minOf(text.length, buffer.size - 1)
++            if (length < text.length && length > 0 && text[length - 1].isHighSurrogate()) length--
++            text.toCharArray(buffer, 0, 0, length)
++            buffer.fill('\u0000', length)
++        }
++    }
++}
+```
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/api/Shell32.kt` (modified, +59/-0)
+```diff
+@@ -34,6 +34,65 @@ internal interface Shell32 : com.sun.jna.platform.win32.Shell32 {
+         }
+     }
+ 
++    fun Shell_NotifyIcon(
++        message: Int,
++        data: NotifyIconData,
++    ): Boolean
++
++    /** NOTIFYICONDATAW (Vista+ layout). */
++    @Structure.FieldOrder(
++        "cbSize",
++        "hWnd",
++        "uID",
++        "uFlags",
++        "uCallbackMessage",
++        "hIcon",
++        "szTip",
++        "dwState",
++        "dwStateMask",
++        "szInfo",
++        "uTimeoutOrVersion",
++        "szInfoTitle",
++        "dwInfoFlags",
++        "guidItem",
++        "hBalloonIcon",
++    )
++    class NotifyIconData : Structure() {
++        @JvmField var cbSize = 0
++
++        @JvmField var hWnd: HWND? = null
++
++        @JvmField var uID = 0
++
++        @JvmField var uFlags = 0
++
++        @JvmField var uCallbackMessage = 0
++
++        @JvmField var hIcon: Pointer? = null
++
++        @JvmField var szTip = CharArray(128)
++
++        @JvmField var dwState = 0
++
++        @JvmField var dwStateMask = 0
++
++        @JvmField var szInfo = CharArray(256)
++
++        @JvmField var uTimeoutOrVersion = 0
++
++        @JvmField var szInfoTitle = CharArray(64)
++
++        @JvmField var dwInfoFlags = 0
++
++        @JvmField var guidItem = GUID()
++
++        @JvmField var hBalloonIcon: Pointer? = null
++
++        init {
++            cbSize = size()
++        }
++    }
++
+     fun SHCreateItemFromParsingName(
+         path: WString,
+         pointer: Pointer?,
+```
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/base/DesktopNotificationManager.kt` (modified, +36/-0)
+```diff
+@@ -7,16 +7,25 @@ import com.crosspaste.notification.Message
+ import com.crosspaste.notification.MessageType
+ import com.crosspaste.notification.NotificationManager
+ import com.crosspaste.platform.Platform
++import com.crosspaste.platform.windows.WindowsTrayNotifier
++import com.crosspaste.platform.windows.api.Shell32
++import com.crosspaste.platform.windows.api.User32
+ import com.crosspaste.sound.SoundService
++import com.sun.jna.platform.win32.Kernel32
++import io.github.oshai.kotlinlogging.KotlinLogging
+ import java.util.concurrent.atomic.AtomicInteger
+ 
+ class DesktopNotificationManager(
+     private val appWindowManager: DesktopAppWindowManager,
+     copywriter: GlobalCopywriter,
+     private val platform: Platform,
+     private val soundService: SoundService,
++    // Shows a balloon on the Windows tray icon; false when it cannot be shown
++    private val postWindowsNotification: (Message) -> Boolean = defaultWindowsNotification(),
+ ) : NotificationManager(copywriter) {
+ 
++    private val logger = KotlinLogging.logger {}
++
+     val idGenerator = AtomicInteger(0)
+ 
+     val trayState = CrossPasteTrayState()
+@@ -28,6 +37,11 @@ class DesktopNotificationManager(
+             pushNotification(message)
+         } else if (platform.isLinux()) {
+             pushNotification(message)
++        } else if (!message.needsSystemNotification()) {
++            // Frequent results like "copy successful" would be noise as system notifications
++            pushNotification(message)
++        } else if (platform.isWindows()) {
++            notifyWindows(message)
+         } else {
+             notifyTray(message)
+         }
+@@ -38,6 +52,21 @@ class DesktopNotificationManager(
+         }
+     }
+ 
++    private fun Message.needsSystemNotification(): Boolean =
++        messageType == MessageType.Error || messageType == MessageType.Warning
++
++    private fun notifyWindows(message: Message) {
++        // runCatching also catches JNA Errors (e.g. UnsatisfiedLinkError); anything thrown here
++        // would end the collector in NotificationManager and silence every later notification
++        val shown =
++            runCatching { postWindowsNotification(message) }
++                .onFailure { logger.warn(it) { "Failed to show tray balloon" } }
++                .getOrDefault(false)
++        if (!shown) {
++            pushNotification(message)
++        }
++    }
++
+     private fun notifyTray(message: Message) {
+         trayState.sendNotification(
+             Notification(
+@@ -53,3 +82,10 @@ class DesktopNotificationManager(
+         )
+     }
+ }
++
++private fun defaultWindowsNotification(): (Message) -> Boolean {
++    val notifier by lazy {
++        WindowsTrayNotifier(User32.INSTANCE, Shell32.INSTANCE, Kernel32.INSTANCE.GetCurrentProcessId())
++    }
++    return { message -> notifier.notify(message.title, message.message ?: "", message.messageType) }
++}
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/platform/windows/WindowsNotifyIconDataLayoutTest.kt` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++package com.crosspaste.platform.windows
++
++import com.crosspaste.platform.windows.api.Shell32
++import com.sun.jna.Native
++import org.junit.jupiter.api.condition.EnabledOnOs
++import org.junit.jupiter.api.condition.OS
++import kotlin.test.Test
++import kotlin.test.assertEquals
++
++// JNA maps char[] to wchar_t, which is 4 bytes off Windows, so the layout only holds there
++@EnabledOnOs(OS.WINDOWS)
++class WindowsNotifyIconDataLayoutTest {
++    @Test
++    fun `cbSize matches the Vista+ NOTIFYICONDATAW layout`() {
++        assertEquals(if (Native.POINTER_SIZE == 8) 976 else 956, Shell32.NotifyIconData().cbSize)
++    }
++}
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/platform/windows/WindowsTrayHitTestTest.kt` (modified, +0/-3)
+```diff
+@@ -11,14 +11,11 @@ import io.mockk.every
+ import io.mockk.mockk
+ import io.mockk.verify
+ import org.junit.jupiter.api.BeforeEach
+-import org.junit.jupiter.api.condition.EnabledOnOs
+-import org.junit.jupiter.api.condition.OS
+ import kotlin.test.Test
+ import kotlin.test.assertEquals
+ import kotlin.test.assertFalse
+ import kotlin.test.assertTrue
+ 
+-@EnabledOnOs(OS.WINDOWS)
+ class WindowsTrayHitTestTest {
+     private val user32 = mockk<User32>(relaxed = true)
+     private val shell32 = mockk<Shell32>()
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/platform/windows/WindowsTrayNotifierTest.kt` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++package com.crosspaste.platform.windows
++
++import com.crosspaste.notification.MessageType
++import com.crosspaste.platform.windows.api.Shell32
++import com.crosspaste.platform.windows.api.User32
++import com.crosspaste.platform.windows.api.WndEnumProc
++import com.sun.jna.Native
++import com.sun.jna.Pointer
++import com.sun.jna.platform.win32.WinDef.HWND
++import com.sun.jna.ptr.IntByReference
++import io.mockk.every
++import io.mockk.mockk
++import io.mockk.verify
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertFalse
++import kotlin.test.assertTrue
++
++class WindowsTrayNotifierTest {
++    private val user32 = mockk<User32>(relaxed = true)
++    private val shell32 = mockk<Shell32>()
++    private val ownTray = HWND(Pointer(101))
++    private val notifier = WindowsTrayNotifier(user32, shell32, 42)
++
++    private fun withOwnTray() {
++        every { user32.EnumWindows(any<WndEnumProc>(), null) } answers {
++            firstArg<WndEnumProc>().callback(ownTray, null)
++            true
++        }
++        every { user32.GetWindowThreadProcessId(ownTray, any()) } answers {
++            secondArg<IntByReference>().value = 42
++            1
++        }
++        every { user32.GetClassNameW(ownTray, any(), any()) } answers {
++            "TRAY".toCharArray().copyInto(secondArg())
++            4
++        }
++    }
++
++    @Test
++    fun `balloon modifies own tray icon with a silent typed info message`() {
++        withOwnTray()
++        var sent: Shell32.NotifyIconData? = null
++        every { shell32.Shell_NotifyIcon(any(), any()) } answers {
++            sent = secondArg()
++            true
 +        }
 +
-     @Test
-     fun `raised limit releases previously oversized remote paste normally`() =
-         runBlocking {
++        assertTrue(notifier.notify("Copy failed", "details", MessageType.Error))
++
++        verify { shell32.Shell_NotifyIcon(WindowsTrayNotifier.NIM_MODIFY, any()) }
++        val data = sent!!
++        assertEquals(ownTray, data.hWnd)
++        assertEquals(TRAY_ICON_ID, data.uID)
++        assertEquals(WindowsTrayNotifier.NIF_INFO, data.uFlags)
++        assertEquals("Copy failed", Native.toString(data.szInfoTitle))
++        assertEquals("details", Native.toString(data.szInfo))
++        assertEquals(WindowsTrayNotifier.NIIF_ERROR or WindowsTrayNotifier.NIIF_NOSOUND, data.dwInfoFlags)
++    }
++
++    @Test
++    fun `title-only message is shown as the body because an empty body removes the balloon`() {
++        withOwnTray()
++        var sent: Shell32.NotifyIconData? = null
++        every { shell32.Shell_NotifyIcon(any(), any()) } answers {
++            sent = secondArg()
++            true
++        }
++
++        notifier.notify("Copy successful", "", MessageType.Success)
++
++        assertEquals("", Native.toString(sent!!.szInfoTitle))
++        assertEquals("Copy successful", Native.toString(sent!!.szInfo))
++    }
++
++    @Test
++    fun `long text is truncated to keep the terminating NUL`() {
++        withOwnTray()
++        var sent: Shell32.NotifyIconData? = null
++        every { shell32.Shell_NotifyIcon(any(), any()) } answers {
++            sent = secondArg()
++            true
++        }
++
++        notifier.notify("t".repeat(100), "m".repeat(300), MessageType.Info)
++
++        assertEquals(63, Native.toString(sent!!.szInfoTitle).length)
++        assertEquals(255, Native.toString(sent!!.szInfo).length)
++    }
++
++    @Test
++    fun `truncation never splits a surrogate pair`() {
++        val buffer = CharArray(4)
++
++        WindowsTrayNotifier.fill(buffer, "ab\uD83D\uDE00")
++
++        assertEquals("ab", Native.toString(buffer))
++    }
++
++    @Test
++    fun `missing tray icon reports failure without calling the shell`() {
++        every { user32.EnumWindows(any<WndEnumProc>(), null) } returns true
++
++        assertFalse(notifier.notify("title", "body", MessageType.Info))
++        verify(exactly = 0) { shell32.Shell_NotifyIcon(any(), any()) }
++    }
++}
 ```
 
 ---
 
-### Incident Patch 3: `f3ae979e` (2026-11-02)
-**Commit Message**: :bug: treat Xcode device pasteboard sync content like Universal Clipboard on macOS (#5310)
+### Incident Patch 2: `4cc1c971` (2026-11-06)
+**Commit Message**: :bug: reject pairing tokens while no pairing session is open (#5322)
 
-**File**: `app/src/desktopMain/swift/MacosApi.swift` (modified, +5/-1)
+* :bug: reject pairing tokens while no pairing session is open
+
+* :white_check_mark: cover idle and closed-session pairing tokens through the real trust route
+
+* :white_check_mark: assert TOKEN_INVALID on rejected pairing token trusts
+
+**File**: `app/src/commonMain/kotlin/com/crosspaste/app/AppTokenApi.kt` (modified, +10/-0)
 ```diff
-@@ -22,7 +22,11 @@ public func getPasteboardChangeCount(currentChangeCount: Int,
-     if newChangeCount != currentChangeCount, let items = pasteboard.pasteboardItems {
-         for item in items {
-             for type in item.types {
--                if type.rawValue == "com.apple.is-remote-clipboard" {
-+                if type.rawValue == "com.apple.is-remote-clipboard" ||
-+                    type.rawValue == "com.apple.coredevice.dtpasteboardd.sync" {
-+                    // Put here by another Apple device: Universal Clipboard, or Xcode's
-+                    // pasteboard sync with an attached device. Syncing it back to Apple
-+                    // devices would loop through that sync.
-                     isRemote.pointee = 1
-                 } else if type.rawValue == "com.crosspaste" {
-                     isCrossPaste.pointee = 1
+@@ -14,6 +14,16 @@ interface AppTokenApi {
+ 
+     val pendingVerifiers: StateFlow<Set<String>>
+ 
++    /**
++     * True only when [token] equals the current token AND a pairing session is
++     * open (startRefresh / acquireVerifier). Outside a session the stale or
++     * initial token must never authorize a trust request.
++     *
++     * Session open/close is applied asynchronously on a command queue, so a
++     * caller that just requested a session may briefly see false. This cannot
++     * reject a legitimate token: the session's token is generated by that same
++     * queued command, so nobody can know it before the session is open.
++     */
+     fun sameToken(token: Int): Boolean
+ 
+     fun setSASToken(sas: Int)
 ```
 
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/paste/MacosNativePasteboardTest.kt` (modified, +31/-0)
+**File**: `app/src/commonMain/kotlin/com/crosspaste/app/AppTokenService.kt` (modified, +22/-8)
 ```diff
-@@ -284,4 +284,35 @@ class MacosNativePasteboardTest {
-             cleanupClipboard()
+@@ -48,7 +48,7 @@ abstract class AppTokenService : AppTokenApi {
+     // loop (a stale read at worst regenerates one random token — benign).
+     private var _sasMode = false
+ 
+-    private val _token = MutableStateFlow(charArrayOf('0', '0', '0', '0', '0', '0'))
++    private val _token = MutableStateFlow(randomToken())
+ 
+     override val token: StateFlow<CharArray> = _token.asStateFlow()
+ 
+@@ -63,13 +63,15 @@ abstract class AppTokenService : AppTokenApi {
+         scope.launch {
+             refresh.collectLatest { isShowing ->
+                 if (isShowing) {
++                    // The first token of a session is generated by beginRefresh(),
++                    // so the loop only rotates it after each full countdown.
+                     while (isActive) {
+-                        refreshToken()
+                         val totalSteps = 100
+                         for (i in 0..totalSteps) {
+                             _refreshProgress.value = i / totalSteps.toFloat()
+                             delay(300.milliseconds)
+                         }
++                        refreshToken()
+                     }
+                 } else {
+                     _refreshProgress.value = 0f
+@@ -89,7 +91,8 @@ abstract class AppTokenService : AppTokenApi {
+     }
+ 
+     override fun sameToken(token: Int): Boolean =
+-        token ==
++        _refresh.value &&
++            token ==
+             this.token.value
+                 .concatToString()
+                 .toInt()
+@@ -108,8 +111,7 @@ abstract class AppTokenService : AppTokenApi {
+                 _showToken.value = true
+                 preShowToken()
+             }
+-            _refresh.value = true
+-            refreshCounter += 1
++            beginRefresh()
          }
      }
+ 
+@@ -133,8 +135,7 @@ abstract class AppTokenService : AppTokenApi {
+             // is platform code that may throw, and a registered verifier whose
+             // count was never taken would later release someone else's.
+             if (isNewVerifier) {
+-                _refresh.value = true
+-                refreshCounter += 1
++                beginRefresh()
+             }
+             if (showToken) {
+                 _showToken.value = true
+@@ -166,6 +167,17 @@ abstract class AppTokenService : AppTokenApi {
+         preShowPairingCode()
+     }
+ 
++    // Runs on the command consumer coroutine only. The caller that opens the
++    // session generates a fresh token before the session becomes visible to
++    // sameToken(); later verifiers joining the open session share that token.
++    private fun beginRefresh() {
++        if (!_refresh.value) {
++            refreshToken()
++        }
++        _refresh.value = true
++        refreshCounter += 1
++    }
++
+     // Runs on the command consumer coroutine only.
+     private fun decrementRefresh() {
+         if (refreshCounter > 0) {
+@@ -180,8 +192,10 @@ abstract class AppTokenService : AppTokenApi {
+ 
+     private fun refreshToken() {
+         if (!_sasMode) {
+-            _token.value = CharArray(6) { (Random.nextInt(10) + '0'.code).toChar() }
++            _token.value = randomToken()
+         }
+         _refreshProgress.value = 0.0f
+     }
++
++    private fun randomToken(): CharArray = CharArray(6) { (Random.nextInt(10) + '0'.code).toChar() }
+ }
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/app/AppTokenServiceTest.kt` (modified, +16/-12)
+```diff
+@@ -15,25 +15,29 @@ class AppTokenServiceTest {
+ 
+     private fun createService(): TestAppTokenService = TestAppTokenService()
+ 
+-    @Test
+-    fun `initial token is 6-digit all-zeros`() {
+-        val service = createService()
+-        val token = service.token.value
+-        assertEquals(6, token.size)
+-        assertTrue(token.all { it == '0' })
+-    }
++    private fun AppTokenService.currentToken(): Int = token.value.concatToString().toInt()
+ 
+     @Test
+-    fun `sameToken matches when integer equals concatenated token digits`() {
++    fun `sameToken rejects the current token while no pairing session is open`() {
+         val service = createService()
+-        // Initial token is all zeros -> "000000" -> 0
+-        assertTrue(service.sameToken(0))
++        assertFalse(service.sameToken(service.currentToken()))
++        assertFalse(service.sameToken(0))
+     }
+ 
+     @Test
+-    fun `sameToken rejects non-matching integer`() {
++    fun `sameToken accepts the displayed token only while a pairing session is open`() {
+         val service = createService()
+-        assertFalse(service.sameToken(123456))
++        runBlocking {
++            service.startRefresh(showToken = false)
++            withTimeout(5.seconds) { service.refresh.first { it } }
++            val displayed = service.currentToken()
++            assertTrue(service.sameToken(displayed))
++            assertFalse(service.sameToken((displayed + 1) % 1_000_000))
++
++            service.stopRefresh(hideToken = false)
++            withTimeout(5.seconds) { service.refresh.first { !it } }
++            assertFalse(service.sameToken(displayed))
++        }
+     }
+ 
+     @Test
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/net/SyncIntegrationTest.kt` (modified, +60/-4)
+```diff
+@@ -6,6 +6,8 @@ import com.crosspaste.dto.sync.ControlChallenge
+ import com.crosspaste.dto.sync.ControlOperation
+ import com.crosspaste.dto.sync.EndpointInfo
+ import com.crosspaste.dto.sync.SyncInfo
++import com.crosspaste.exception.StandardErrorCode
++import com.crosspaste.net.clientapi.ClientApiResult
+ import com.crosspaste.net.clientapi.FailureResult
+ import com.crosspaste.net.clientapi.SuccessResult
+ import com.crosspaste.sync.SyncHandler
+@@ -18,15 +20,19 @@ import io.ktor.util.reflect.typeInfo
+ import io.mockk.coEvery
+ import io.mockk.coVerify
+ import io.mockk.mockk
++import kotlinx.coroutines.flow.first
+ import kotlinx.coroutines.runBlocking
++import kotlinx.coroutines.withTimeout
+ import kotlin.test.AfterTest
+ import kotlin.test.Test
+ import kotlin.test.assertContentEquals
+ import kotlin.test.assertEquals
+ import kotlin.test.assertFalse
++import kotlin.test.assertIs
+ import kotlin.test.assertNotNull
+ import kotlin.test.assertTrue
+ import kotlin.time.Duration.Companion.milliseconds
++import kotlin.time.Duration.Companion.seconds
+ 
+ @IntegrationTest
+ class SyncIntegrationTest {
+@@ -42,6 +48,11 @@ class SyncIntegrationTest {
+         }
+     }
+ 
++    private fun assertTokenInvalid(result: ClientApiResult) {
++        assertIs<FailureResult>(result)
++        assertEquals(StandardErrorCode.TOKEN_INVALID.toErrorCode(), result.exception.getErrorCode())
++    }
++
+     private fun urlFor(instance: TestInstance): (io.ktor.http.URLBuilder.() -> Unit) =
+         {
+             buildUrl(HostAndPort("localhost", instance.getPort()))
+@@ -55,7 +66,7 @@ class SyncIntegrationTest {
+             b.syncClientApi.trust(
+                 a.appInfo.appInstanceId,
+                 "localhost",
+-                a.getToken(),
++                a.openPairingSession(),
+                 urlFor(a),
+             )
+         assertTrue(result is SuccessResult, "Trust B->A should succeed")
+@@ -182,7 +193,7 @@ class SyncIntegrationTest {
+                 a.syncClientApi.trust(
+                     b.appInfo.appInstanceId,
+                     "localhost",
+-                    b.getToken(),
++                    b.openPairingSession(),
+                     urlFor(b),
+                 )
+             assertTrue(result is SuccessResult)
+@@ -261,18 +272,63 @@ class SyncIntegrationTest {
+             a.start()
+             b.start()
+ 
++            // Open a session so the failure comes from the token mismatch,
++            // not from the missing session.
++            val token = a.openPairingSession()
+             val result =
+                 b.syncClientApi.trust(
+                     a.appInfo.appInstanceId,
+                     "localhost",
+-                    999999,
++                    (token + 1) % 1_000_000,
+                     urlFor(a),
+                 )
+ 
+-            assertTrue(result is FailureResult)
++            assertTokenInvalid(result)
+             assertFalse(a.secureIO.existCryptPublicKey(b.appInfo.appInstanceId))
+         }
+ 
++    // ---- Test 6a: Trust with idle token (no pairing session) ----
 +
 +    @Test
-+    fun `getPasteboardChangeCount marks Xcode device pasteboard sync as remote`() {
-+        try {
-+            val process =
-+                ProcessBuilder(
-+                    "osascript",
-+                    "-l",
-+                    "JavaScript",
-+                    "-e",
-+                    """
-+                    ObjC.import("AppKit");
-+                    var pb = $.NSPasteboard.generalPasteboard;
-+                    pb.clearContents;
-+                    pb.setStringForType($("synced-text"), $("public.utf8-plain-text"));
-+                    pb.setStringForType($(""), $("com.apple.coredevice.dtpasteboardd.sync"));
-+                    """.trimIndent(),
-+                ).start()
-+            val exitCode = process.waitFor()
-+            assertEquals(0, exitCode, "osascript should set device sync type on pasteboard")
++    fun testTrustWithIdleTokenIsRejected() =
++        runBlocking {
++            val a = createInstance("idle-a")
++            val b = createInstance("idle-b")
++            a.start()
++            b.start()
 +
-+            val remote = IntByReference()
-+            val isCrossPaste = IntByReference()
-+            val isConcealed = IntByReference()
-+            MacosApi.INSTANCE.getPasteboardChangeCount(0, remote, isCrossPaste, isConcealed)
-+            assertTrue(remote.value != 0, "Xcode device sync content should be marked remote")
-+            assertEquals(0, isConcealed.value, "device sync must not look concealed")
-+        } finally {
-+            cleanupClipboard()
++            val result = b.syncClientApi.trust(a.appInfo.appInstanceId, "localhost", a.getToken(), urlFor(a))
++
++            assertTokenInvalid(result)
++            assertFalse(a.secureIO.existCryptPublicKey(b.appInfo.appInstanceId))
 +        }
++
++    // ---- Test 6b: Trust with token of a closed pairing session ----
++
++    @Test
++    fun testTrustAfterSessionClosedIsRejected() =
++        runBlocking {
++            val a = createInstance("close-a")
++            val b = createInstance("close-b")
++            a.start()
++            b.start()
++
++            // Production path: the initiator opens the session via GET /sync/showToken.
++            assertTrue(b.syncClientApi.showToken(urlFor(a)) is SuccessResult)
++            withTimeout(5.seconds) { a.appTokenApi.refresh.first { it } }
++            val staleToken = a.getToken()
++            a.appTokenApi.releaseVerifier(b.appInfo.appInstanceId)
++            withTimeout(5.seconds) { a.appTokenApi.refresh.first { !it } }
++
++            val stale = b.syncClientApi.trust(a.appInfo.appInstanceId, "localhost", staleToken, urlFor(a))
++            assertTokenInvalid(stale)
++
++            assertTrue(b.syncClientApi.showToken(urlFor(a)) is SuccessResult)
++            withTimeout(5.seconds) { a.appTokenApi.refresh.first { it } }
++            val fresh = b.syncClientApi.trust(a.appInfo.appInstanceId, "localhost", a.getToken(), urlFor(a))
++            assertTrue(fresh is SuccessResult)
++        }
++
+     // ---- Test 7: Heartbeat without trust ----
+ 
+     @Test
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/net/SyncTest.kt` (modified, +2/-0)
+```diff
+@@ -197,6 +197,8 @@ class SyncTest : KoinTest {
+         var result =
+             runBlocking {
+                 pasteServer.start()
++                appTokenApi.startRefresh(showToken = false)
++                withTimeout(5.seconds) { appTokenApi.refresh.first { it } }
+ 
+                 syncClientApi.trust(
+                     serverAppInfo.appInstanceId,
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/net/TestInstance.kt` (modified, +11/-0)
+```diff
+@@ -37,8 +37,11 @@ import com.crosspaste.utils.CryptographyUtils.generateSecureKeyPair
+ import com.crosspaste.utils.DesktopDeviceUtils
+ import com.crosspaste.utils.DeviceUtils
+ import com.crosspaste.utils.getPlatformUtils
++import kotlinx.coroutines.flow.first
+ import kotlinx.coroutines.runBlocking
++import kotlinx.coroutines.withTimeout
+ import kotlin.time.Duration
++import kotlin.time.Duration.Companion.seconds
+ 
+ class TestInstance(
+     val appInstanceId: String,
+@@ -181,4 +184,12 @@ class TestInstance(
+         appTokenApi.token.value
+             .concatToString()
+             .toInt()
++
++    // Opens a pairing session (as the token dialog does) and returns its token.
++    // The session stays open for the rest of the test instance's lifetime.
++    suspend fun openPairingSession(): Int {
++        appTokenApi.startRefresh(showToken = false)
++        withTimeout(5.seconds) { appTokenApi.refresh.first { it } }
++        return getToken()
 +    }
  }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5322** (2026-11-06): :bug: reject pairing tokens while no pairing session is open (@guiyanakuang)
+- **PR #5320** (2026-11-06): ⬆️ Bump io.modelcontextprotocol:kotlin-sdk-server from 0.15.0 to 0.16.0 (@dependabot[bot])
+- **PR #5319** (2026-11-06): ⬆️ Bump io.github.vinceglb:filekit-dialogs from 0.16.0 to 0.17.0 (@dependabot[bot])
+- **PR #5318** (2026-11-06): ⬆️ Bump ktor from 3.5.2 to 3.6.1 (@dependabot[bot])
+- **PR #5317** (2026-11-06): :bug: show notifications as tray balloons on Windows while the main window is hidden (@guiyanakuang)
 - **PR #5314** (2026-11-03): :bug: use the local paste id when writing a received non-file paste to the pasteboard (@guiyanakuang)
-- **PR #5312** (closed): :bug: skip reading Universal Clipboard content when no non-Apple device needs it (@guiyanakuang)
-- **PR #5310** (2026-11-02): :bug: treat Xcode device pasteboard sync content like Universal Clipboard on macOS (@guiyanakuang)
-- **PR #5308** (2026-11-01): :bug: route basePath storage through expect encodeStoredPath/decodeStoredPath (@guiyanakuang)
-- **PR #5306** (2026-11-01): :white_check_mark: clean up never-failing, duplicate and weak unit tests (@guiyanakuang)
-- **PR #5304** (2026-11-01): :bug: keep bringing the window to the front when AttachThreadInput fails on Windows (@guiyanakuang)
 
 ---
 
@@ -965,60 +1620,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. :bug: keep bringing the window to the front when AttachThreadInput fails on Wind
+## X. :bug: show notifications as tray balloons on Windows while the main window is hi
 
 **RULE**:
-When implementing operations in `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsFocusUtils.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsTrayHitTest.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5be13f40`: :bug: keep bringing the window to the front when AttachThreadInput fails on Windows (#5304). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3cdce35`: :bug: show notifications as tray balloons on Windows while the main window is hidden (#5317). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsFocusUtils.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsTrayHitTest.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        val attachThreadId = prevThreadId?.takeIf { it != targetThreadId }
-        // The cached previous thread may be gone (its app exited); attaching then fails,
-        // but we still try to bring the window to the front without it.
-        val attached =
-            attachThreadId != null &&
-                user32
-                    .AttachThreadInput(
-                        DWORD(attachThreadId.toLong()),
-                        DWORD(targetThreadId.toLong()),
-                        true,
-                    ).also { success ->
-                        if (!success) {
-                            logger.warn {
-                                "AttachThreadInput failed: ${Kernel32.INSTANCE.GetLastError()}, continuing without it"
-                            }
-                        }
-                    }
-            if (attached) {
-                    DWORD(attachThreadId.toLong()),
+/** Hit testing against our tray icon, see [findTrayIconOwner]. */
+        val owner = findTrayIconOwner(user32, processId)
+                uID = TRAY_ICON_ID
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        val shouldAttach = prevThreadId != null && prevThreadId != targetThreadId
-        if (shouldAttach) {
-            val success =
-                user32.AttachThreadInput(
-                    DWORD(prevThreadId.toLong()),
-                    DWORD(targetThreadId.toLong()),
-                    true,
-                )
-            if (!success) {
-                logger.error { "AttachThreadInput failed: ${Kernel32.INSTANCE.GetLastError()}" }
-                return
-            }
-        }
-            if (shouldAttach) {
-                    DWORD(prevThreadId.toLong()),
+import com.crosspaste.platform.windows.api.WndEnumProc
+import com.sun.jna.Native
+import com.sun.jna.Pointer
+/** Adapter for our single ComposeNativeTray 2.1.7 icon (TRAY window, icon id 1000). */
+        var owner: HWND? = null
+        user32.EnumWindows(
+            object : WndEnumProc {
+                override fun callback(
+                    hWnd: HWND,
+                    lParam: Pointer?,
+                ): Boolean {
+                    if (user32.windowProcessId(hWnd) != processId) return true
+                    val name = CharArray(32)
+                    if (user32.GetClassNameW(hWnd, name, name.size) == 0 || Native.toString(name) != "TRAY") return true
+                    owner = hWnd
+                    return false
+                }
+            },
+            null,
+        )
+                uID = 1000
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5be13f40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3cdce35` are properly handled with clean fallback behavior.
