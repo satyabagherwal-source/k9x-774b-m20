@@ -8329,3 +8329,4 @@ Every entry in this ledger must capture:
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `a0fbfe77` | Multi-dimensional audit evidence | 2026-11-08T16:01:13.854Z |
 | `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `61e46413` | Multi-dimensional audit evidence | 2026-11-08T16:01:17.431Z |
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-08T16:01:20.062Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T16:07:57.742Z |

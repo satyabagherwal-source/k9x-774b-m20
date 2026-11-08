@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T16:01:20.075Z",
-  "total_cycles_completed": 8285,
-  "total_learnings_persisted": 8285,
-  "total_rules_promoted": 8072,
+  "last_updated": "2026-11-08T16:07:57.746Z",
+  "total_cycles_completed": 8286,
+  "total_learnings_persisted": 8286,
+  "total_rules_promoted": 8074,
   "history": [
-    {
-      "timestamp": "2026-11-07T22:23:44.811Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T22:23:48.831Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1403,6 +1396,13 @@
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:07:57.746Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

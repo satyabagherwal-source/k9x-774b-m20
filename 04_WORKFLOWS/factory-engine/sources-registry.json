@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T16:01:23.311Z",
-    "lastVerified": "2026-11-08T16:01:23.311Z",
+    "lastChecked": "2026-11-08T16:08:00.311Z",
+    "lastVerified": "2026-11-08T16:08:00.311Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T15:35:19.196Z",
+    "lastChecked": "2026-11-08T16:07:58.082Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T15:35:19.196Z"
+    "lastVerified": "2026-11-08T16:07:58.082Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -645,8 +645,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T07:30:52.127Z",
-    "lastVerified": "2026-11-08T07:30:52.127Z",
+    "lastChecked": "2026-11-08T16:07:53.148Z",
+    "lastVerified": "2026-11-08T16:07:53.148Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -1880,8 +1880,8 @@
     "officialUrl": "https://github.com/loft-sh/vcluster",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T20:09:19.973Z",
-    "lastVerified": "2026-11-07T20:09:19.973Z",
+    "lastChecked": "2026-11-08T16:07:50.743Z",
+    "lastVerified": "2026-11-08T16:07:50.743Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-loft-sh-vcluster",
@@ -2581,13 +2581,13 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T00:22:29.076Z",
-    "lastVerified": "2026-11-05T00:22:29.076Z",
+    "lastChecked": "2026-11-08T16:07:45.840Z",
+    "lastVerified": "2026-11-08T16:07:45.840Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "336fa1b7da96a441a1581b2d34d5cb7ece5847d816b450217ae3fbe3d423ea39",
-    "promotedRulesCount": 0,
+    "contentHash": "51237698650ba68fc773cf1f3362e1bb3704d3b1ec0f780db56c308cebbd2371",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -5271,9 +5271,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-07T19:23:43.792Z",
+    "lastChecked": "2026-11-08T16:07:55.537Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-07T19:23:43.792Z"
+    "lastVerified": "2026-11-08T16:07:55.537Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -6610,9 +6610,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-11-07T04:03:05.507Z",
+    "lastChecked": "2026-11-08T16:07:43.071Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-11-07T04:03:05.507Z"
+    "lastVerified": "2026-11-08T16:07:43.071Z"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",
@@ -10606,9 +10606,9 @@
   "badoo-reaktive": {
     "name": "Reaktive",
     "officialUrl": "https://github.com/badoo/Reaktive",
-    "lastChecked": "2026-11-05T10:32:52.421Z",
+    "lastChecked": "2026-11-08T16:07:48.114Z",
     "revisionIdentifier": "9d6cb630",
-    "lastVerified": "2026-11-05T10:32:52.421Z"
+    "lastVerified": "2026-11-08T16:07:48.114Z"
   },
   "giuucmp-seoaudit": {
     "name": "seoaudit",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T16:01:19.913Z",
+  "last_updated": "2026-11-08T16:07:57.619Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23051,10 +23051,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
       "source_version": "hf-comfy-org-qwen-image-2.1",
-      "content_hash": "336fa1b7da96a441a1581b2d34d5cb7ece5847d816b450217ae3fbe3d423ea39",
+      "content_hash": "51237698650ba68fc773cf1f3362e1bb3704d3b1ec0f780db56c308cebbd2371",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Heterogeneous Model Artifact Resolution via Directory-Name Contract",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Quantization Variant Selection Based on Hardware Capability",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 286,
           "title": "LoRA Shape Compatibility Check",
@@ -23182,7 +23192,7 @@
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv467olr",
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no"
       ],
-      "verified_at": "2026-11-05T00:22:30.190Z",
+      "verified_at": "2026-11-08T16:07:57.603Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
