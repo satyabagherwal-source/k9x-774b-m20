@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T06:12:30.426Z",
+  "last_updated": "2026-11-08T06:19:02.533Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -144829,10 +144829,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
       "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
-      "content_hash": "bb8890df84efa8ca8313447920b1c3620526888878a932c97d0137be38bc8c46",
+      "content_hash": "b6cd20bdd64f0a133ae41c2d1b05e4643a32262c31d39f64f230dfbf99bb5254",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Quantization-Aware Inference Latency Budgeting",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dynamic Thinking Budget Control for Agentic Loops",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "GGUF Format Integrity & Versioning",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 4662,
           "title": "Dynamic Thinking Budget Enforcement via Token-Bounded KV Cache Pre-Allocation",
@@ -144864,7 +144879,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:48:09.682Z",
+      "verified_at": "2026-11-08T06:19:02.519Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

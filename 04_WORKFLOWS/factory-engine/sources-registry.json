@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T06:12:33.143Z",
-    "lastVerified": "2026-11-08T06:12:33.143Z",
+    "lastChecked": "2026-11-08T06:19:05.168Z",
+    "lastVerified": "2026-11-08T06:19:05.168Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,9 +369,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T05:48:13.253Z",
+    "lastChecked": "2026-11-08T06:19:01.278Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T05:48:13.253Z"
+    "lastVerified": "2026-11-08T06:19:01.278Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2288,8 +2288,8 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T02:40:40.010Z",
-    "lastVerified": "2026-11-08T02:40:40.010Z",
+    "lastChecked": "2026-11-08T06:18:56.458Z",
+    "lastVerified": "2026-11-08T06:18:56.458Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2824,8 +2824,8 @@
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-07T02:54:27.346Z",
-    "lastVerified": "2026-11-07T02:54:27.346Z",
+    "lastChecked": "2026-11-08T06:18:58.922Z",
+    "lastVerified": "2026-11-08T06:18:58.922Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
@@ -4276,9 +4276,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-06T20:45:20.391Z",
+    "lastChecked": "2026-11-08T06:18:46.311Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-06T20:45:20.391Z"
+    "lastVerified": "2026-11-08T06:18:46.311Z"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -6655,12 +6655,12 @@
     "lastVerified": "2026-11-07T19:23:36.284Z"
   },
   "kcl-lang-kcl": {
-    "name": "kcl-lang/kcl",
+    "name": "kcl",
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T03:56:18.037Z",
-    "lastVerified": "2026-11-07T03:56:18.037Z",
+    "lastChecked": "2026-11-08T06:18:53.826Z",
+    "lastVerified": "2026-11-08T06:18:53.826Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
@@ -6669,7 +6669,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e2e0abd3"
   },
   "ydb-platform-ydb": {
     "name": "ydb-platform/ydb",
@@ -9789,9 +9790,9 @@
   "nsh07-tomato": {
     "name": "Tomato",
     "officialUrl": "https://github.com/nsh07/Tomato",
-    "lastChecked": "2026-11-05T05:23:43.049Z",
+    "lastChecked": "2026-11-08T06:18:51.266Z",
     "revisionIdentifier": "98fa69ed",
-    "lastVerified": "2026-11-05T05:23:43.049Z"
+    "lastVerified": "2026-11-08T06:18:51.266Z"
   },
   "jakeschincariol-arena-skill": {
     "name": "Jakeschincariol/arena-skill",
@@ -13283,12 +13284,12 @@
     "officialUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T19:47:54.914Z",
-    "lastVerified": "2026-11-04T19:47:54.914Z",
+    "lastChecked": "2026-11-08T06:18:48.959Z",
+    "lastVerified": "2026-11-08T06:18:48.959Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-    "contentHash": "bb8890df84efa8ca8313447920b1c3620526888878a932c97d0137be38bc8c46",
+    "contentHash": "b6cd20bdd64f0a133ae41c2d1b05e4643a32262c31d39f64f230dfbf99bb5254",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

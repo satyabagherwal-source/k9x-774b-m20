@@ -8246,3 +8246,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-08T06:05:13.967Z |
 | `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `5f8ac2e9` | Multi-dimensional audit evidence | 2026-11-08T06:12:24.435Z |
 | `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-08T06:12:30.521Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-08T06:19:02.586Z |
