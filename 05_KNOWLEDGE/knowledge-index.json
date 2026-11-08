@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T03:28:24.554Z",
+  "last_updated": "2026-11-08T03:35:55.669Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44101,8 +44101,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "03606271",
-      "content_hash": "c5ea1e8860e6cc7348b23147c70b277cb9a8a00e829ebc8bccae093187cb1584",
+      "source_version": "14da8d0e",
+      "content_hash": "7cd0775f119ffc62ffb9c297e0d05213e6dc5aa0cc0422e9985512d6d93157c0",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -44127,7 +44127,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:55:14.499Z",
+      "verified_at": "2026-11-08T03:35:46.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50991,14 +50991,19 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "ad62c570",
-      "content_hash": "de697b0e292fcd07c72ec8d085fc693d0450a878a0d69d3edcf04dadbff71338",
+      "source_version": "6bbe25d6",
+      "content_hash": "18b5d4f833096c1e6c099789c026c28e95a27f356b114564dcafc6f36ed8ddc2",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "command injection through Node.js version files when using language version tool",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "panic from PULUMI_OPTION environment variables on typed flags (#25596)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -51102,7 +51107,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:28:46.798Z",
+      "verified_at": "2026-11-08T03:35:51.272Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84810,14 +84815,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 633,
       "title": "Tokenizer Special Token Consistency",
-      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
-      "source_version": "hf-meta-llama-llama-2-7b",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T15:49:48.704Z"
+      "verified_at": "2026-11-08T03:35:55.633Z"
     },
     "rule-634": {
       "learning_id": "rule-634",
@@ -120864,10 +120869,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
-      "content_hash": "fc612bcdc098d99fbe55f5a54d06f07fa95cbb55bfc0e4594919f4399d76769c",
+      "content_hash": "8673227ad392e495f41df825f28e41188d42564fb2efe65cdbea5b58d55b2943",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Precision-Dependent Behavioral Integrity",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "KV-Cache Compression Layer Selection Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 633,
+          "title": "Tokenizer Special Token Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 3126,
           "title": "Mixed-Precision Quantization Fidelity Invariant",
@@ -120949,7 +120969,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:10:13.589Z",
+      "verified_at": "2026-11-08T03:35:55.633Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T03:28:24.681Z",
-  "total_cycles_completed": 8159,
-  "total_learnings_persisted": 8159,
-  "total_rules_promoted": 7843,
+  "last_updated": "2026-11-08T03:35:55.774Z",
+  "total_cycles_completed": 8162,
+  "total_learnings_persisted": 8162,
+  "total_rules_promoted": 7847,
   "history": [
-    {
-      "timestamp": "2026-11-07T04:37:05.016Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T04:44:19.802Z",
-      "repository": "syntax-tree/hast-util-from-html",
-      "learningId": "learn-github-syntax-tree-hast-util-from-html",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T04:44:23.989Z",
-      "repository": "czy0729/Bangumi",
-      "learningId": "learn-github-czy0729-bangumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T04:44:26.873Z",
       "repository": "rook/rook",
@@ -1403,6 +1382,27 @@
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
       "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T03:35:46.614Z",
+      "repository": "momenbasel/PureMac",
+      "learningId": "learn-github-momenbasel-puremac",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T03:35:51.404Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T03:35:55.774Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

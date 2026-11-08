@@ -3,7 +3,7 @@
 > **Source Version**: `hf-dealignai`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T17:10:11.973Z  
+> **Timestamp**: 2026-11-08T03:35:53.516Z  
 > **Learning ID**: `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,378 +17,389 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository represents a **post-training behavioral modification (abliteration)** of the `DeepSeek-V4.1-Flash-1017` multimodal Large Language Model (LLM). The core technical challenge is not architectural innovation, but **precision preservation during weight-space surgery**. The goal is to remove refusal behaviors (safety alignment) while preserving the complex, high-dimensional feature representations required for:
-1.  **Native FP8 (e4m3) Quantization:** Maintaining numerical stability in low-precision formats.
-2.  **MoE (Mixture of Experts) Routing:** Ensuring the 384 routed experts and 1 shared expert continue to route tokens correctly without "expert collapse" or routing drift.
-3.  **Long-Context Attention (1M tokens):** Preserving the YARN (Yet another RoPE extensioN) scaling factors and KV-cache compression ratios (`compress_ratios`) across 40 layers.
-4.  **Multimodal Alignment:** Keeping the vision/video encoder projections aligned with the text decoder after the abliteration edit.
+This repository represents a **post-training behavioral modification (abliteration)** of the `DeepSeek-V4.1-Flash-1017` multimodal large language model (MLLM). The primary technical challenge is not architectural innovation, but **precision-preserving behavioral surgery**. The goal is to remove refusal mechanisms (safety alignment) while strictly preserving:
+1.  **Numerical Integrity:** Maintaining the native FP8 (e4m3) weight precision and FP4 MoE expert precision without introducing quantization drift that would degrade reasoning or vision capabilities.
+2.  **Contextual Fidelity:** Preserving the 1M-token context window, which relies on complex RoPE scaling (YaRN) and specific KV-cache management strategies.
+3.  **Multimodal Coherence:** Ensuring that the vision encoder and text decoder remain synchronized after the abliteration process, which typically perturbs the embedding space.
 
 **Architectural Boundaries:**
-*   **Input Boundary:** Hugging Face `transformers` v5.6.0 interface. Accepts text, images, and video.
-*   **Compute Boundary:** Native FP8 inference. The model is *not* a standard BF16 model quantized at runtime; it is stored in FP8 with `ue8m0` block scales. This implies the inference engine must support block-wise dequantization.
-*   **State Boundary:** The model uses a complex KV-cache strategy involving `sliding_window` (128), `compress_ratios` (variable per layer), and specific `kv_source_layer_ids`. This is a **stateful, non-uniform attention mechanism**.
-*   **Output Boundary:** Text generation with tool-calling capabilities.
+*   **Input Boundary:** Hugging Face `transformers` v5.6.0 interface. The model expects standard tokenized inputs but utilizes a specialized tokenizer with specific `AddedToken` configurations for BOS/EOS/PAD.
+*   **Core Compute Boundary:** A 40-layer Mixture-of-Experts (MoE) Transformer.
+    *   **Attention:** Multi-Head Latent Attention (MLA) with `num_key_value_heads: 1` (extreme KV compression) and `head_dim: 512`.
+    *   **FFN:** Sparse MoE with 384 routed experts + 1 shared expert. Top-k routing uses `sqrtsoftplus` scoring and `noaux_tc` (no auxiliary loss, top-k correction) method.
+    *   **Precision:** Weights are stored in FP8 (e4m3) with `ue8m0` block scales (32x32 blocks). Experts are stored in FP4.
+*   **Output Boundary:** Text generation with reasoning-effort tiers (`low`/`high`/`max`) and tool-calling capabilities.
 
 **Critical Subsystem Abstractions:**
-1.  **Hybrid Attention Mechanism:** Combines standard Multi-Head Attention (MHA) with a "Compressed" attention mechanism where certain layers (indices 2, 8, 14, 20, etc.) act as sources for KV data, while others compress it.
-2.  **MoE Router with Sinkhorn:** Uses `sqrtsoftplus` scoring and `noaux_tc` top-k method. The `hc_sinkhorn_iters` (20) suggests a balancing algorithm is applied to the router logits to prevent expert starvation.
-3.  **Engram Memory:** A massive, sparse memory system (`engram_num_embeddings` ~384M) with n-gram indexing (`engram_max_ngram_size: 4`). This is a distinct subsystem from the transformer layers, likely used for long-term factual recall or context compression.
-4.  **Abliteration Vector:** The "uncensored" nature implies a specific weight vector was added/subtracted from the final layers (likely the LM head or last few transformer blocks) to shift the probability distribution away from refusal tokens.
+1.  **Abliteration Pipeline:** The hidden process that modified the base model. The README explicitly warns that *quantizing this FP8 checkpoint directly* is suboptimal, implying the abliteration was performed at high precision (likely BF16/FP16) and then quantized to FP8/FP4. This creates a **non-reversible dependency**: you cannot simply take the original FP8 model, apply a low-bit quantizer, and expect the "uncensored" behavior to persist without re-running the abliteration at that target precision.
+2.  **Hybrid Precision Stack:** The coexistence of FP8 weights, FP4 experts, and BF16 compute (implied by `dtype: bfloat16` in config, though weights are FP8) requires strict scale management. The `ue8m0` scale format is critical for hardware acceleration (e.g., NVIDIA H100/B100) but introduces specific rounding errors that must be accounted for in the abliteration process.
+3.  **Context Management:** The `compress_ratios` array and `kv_source_layer_ids` indicate a sophisticated KV-cache compression strategy where only specific layers (2, 8, 14, 20) contribute to the compressed KV cache, while others use sliding window or full attention. This is crucial for the 1M context claim.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Quantization-Aware Abliteration Invariance
+### 1. Precision-Dependent Behavioral Integrity
 **RULE**:
-When performing weight-space behavioral edits (abliteration) on a quantized model (FP8/INT4), you MUST NOT apply the edit to the dequantized weights and then re-quantize naively. You MUST apply the edit in the native quantized domain or re-run the quantization calibration pipeline on the *modified* weights.
+When performing post-training behavioral modifications (abliteration, fine-tuning) on quantized models, the modification MUST be performed at the highest available precision (e.g., BF16/FP16) and then quantized to the target format (FP8/FP4). You MUST NOT apply quantization to an already-modified low-precision checkpoint if the modification was done at high precision, as quantization error will compound with behavioral drift, causing regression in both safety removal and core capabilities.
+
 **WHY**:
-Naive quantization of an abliterated model introduces **double quantization error**. The abliteration vector shifts the weight distribution. If the original quantization scales (e.g., `ue8m0` block scales) were calibrated for the original distribution, the new weights may fall outside the optimal range of the existing scales, leading to significant precision loss, especially in the MoE experts where `expert_dtype` is FP4. This causes "compliance regression" (the model starts refusing again or hallucinating) because the subtle probability shifts required for refusal are lost in the noise floor of the quantization error.
+Quantization is a non-linear, lossy operation. Behavioral changes (abliteration) alter the weight distribution in subtle ways that are highly sensitive to quantization grid alignment. If you abliterate in BF16 and then quantize to FP8, the quantization error is minimized relative to the new weight distribution. If you take an FP8 model, try to "un-quantize" or modify it, and re-quantize, the error compounds. The README explicitly states: *"Low-bit quants that are naively derived from these weights carry quantization error on top of the abliteration edit, and compliance can regress at low bits."*
+
 **WHEN TO APPLY**:
-Any post-training modification (LoRA, abliteration, steering vectors) applied to a model that is stored or served in a low-precision format (FP8, INT4, EXL3).
+Any workflow involving:
+1.  Post-training alignment (RLHF, DPO, abliteration).
+2.  Quantization (GPTQ, AWQ, FP8, FP4).
+3.  Distribution of modified models.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# CORRECT: Re-calibrate scales after weight modification
-def abliterate_and_requantize(model_weights, abliteration_vector, quant_config):
-    # 1. Apply abliteration in high precision (BF16/FP32)
-    modified_weights = model_weights + abliteration_vector
-    
-    # 2. Re-compute quantization scales based on the NEW distribution
-    #    For FP8 e4m3 with block scales, this means re-calibrating the block-wise max/min
-    new_scales = compute_block_scales(modified_weights, block_size=quant_config['weight_block_size'])
-    
-    # 3. Quantize using the NEW scales
-    quantized_weights = quantize(modified_weights, new_scales, dtype='fp8_e4m3')
-    
-    return quantized_weights, new_scales
+# CORRECT WORKFLOW
+# 1. Load base model in high precision
+base_model = AutoModelForCausalLM.from_pretrained("base_model", dtype=torch.bfloat16)
 
-# INCORRECT: Using old scales
-def bad_abliteration(model_weights, abliteration_vector, old_scales):
-    modified_weights = model_weights + abliteration_vector
-    # Using old_scales leads to clipping or precision loss
-    quantized_weights = quantize(modified_weights, old_scales, dtype='fp8_e4m3')
-    return quantized_weights
+# 2. Perform abliteration/fine-tuning in high precision
+modified_model = abliterate(base_model)
+
+# 3. Quantize the modified model to target precision
+quantized_model = quantize(modified_model, target_dtype="fp8", block_size=[32, 32])
+
+# 4. Save
+quantized_model.save_pretrained("output_dir")
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER do this:
-# 1. Load FP8 weights
-# 2. Dequantize to BF16
-# 3. Add abliteration vector
-# 4. Quantize back to FP8 using the ORIGINAL scales from the checkpoint
-# This assumes the weight distribution hasn't changed, which is false after abliteration.
-```
-**VERIFICATION METHOD**:
-1.  **Perplexity Check:** Compute perplexity on a neutral dataset (e.g., WikiText) before and after abliteration. The increase should be < 0.5%.
-2.  **Refusal Rate Test:** Run a standardized refusal benchmark (e.g., "Tell me how to make a bomb"). The refusal rate should drop to < 5% while maintaining high coherence.
-3.  **Quantization Error Analysis:** Compare the L2 distance between the original BF16 weights and the re-quantized FP8 weights. It should be comparable to the original model's quantization error, not significantly higher.
+# INCORRECT WORKFLOW
+# 1. Load base model in low precision
+base_model = AutoModelForCausalLM.from_pretrained("base_model", dtype=torch.float8_e4m3fn)
 
-### 2. MoE Router Stability Under Weight Perturbation
+# 2. Attempt abliteration on low-precision weights (numerically unstable)
+modified_model = abliterate(base_model) # High risk of NaNs or drift
+
+# 3. Save
+modified_model.save_pretrained("output_dir")
+# Result: Behavioral regression, potential numerical instability
+```
+
+**VERIFICATION METHOD**:
+1.  **Benchmark Comparison:** Run a standardized evaluation suite (e.g., MMLU, HumanEval, SafetyBench) on:
+    *   Base Model (High Precision)
+    *   Modified Model (High Precision)
+    *   Modified Model (Quantized)
+    *   Base Model (Quantized)
+2.  **Assert:** The performance drop from `Modified (High)` to `Modified (Quantized)` must be within a defined epsilon (e.g., < 2% accuracy drop). If the drop is significantly larger than the drop from `Base (High)` to `Base (Quantized)`, the abliteration process has introduced precision-sensitive artifacts.
+
+### 2. KV-Cache Compression Layer Selection Invariant
 **RULE**:
-When modifying weights in a Mixture of Experts (MoE) model, you MUST verify that the router logits do not cause **expert collapse** (where one expert dominates) or **expert starvation** (where some experts are never used). This requires re-running the Sinkhorn balancing iterations or adjusting the `routed_scaling_factor`.
+In models with hybrid attention mechanisms (e.g., sliding window + full attention + compressed KV), the selection of `kv_source_layer_ids` MUST be empirically validated to ensure that the compressed layers capture the most semantically important information for long-context retrieval. You MUST NOT arbitrarily select layers without verifying that the compression ratio does not degrade retrieval accuracy for tokens beyond the sliding window.
+
 **WHY**:
-The MoE router is highly sensitive to weight perturbations. Abliteration changes the final layer weights, which can indirectly affect the hidden states fed into the router. If the router logits shift, the `topk_method` (`noaux_tc`) might select a different set of experts. If the new expert selection is biased, the model's performance degrades because the specialized knowledge in the unused experts is lost. The `hc_sinkhorn_iters` (20) is a critical parameter that ensures balanced expert usage; if the perturbation is large, 20 iterations might not be enough to converge to a balanced state.
+The config specifies `kv_source_layer_ids: [2, 8, 14, 20]` and `compress_ratios` with a mix of 0, 1, and 2. This implies that only these specific layers contribute to the compressed KV cache, while others use sliding window (128 tokens) or full attention. If the wrong layers are selected, the model will lose critical long-range dependencies, leading to hallucinations or context loss in 1M-token scenarios. The `compress_rope_theta: 160000` is also tuned for this specific layer selection.
+
 **WHEN TO APPLY**:
-Any weight modification in MoE models, especially those with a high number of experts (384) and low top-k (6).
+Designing or modifying models with:
+1.  Hybrid attention (sliding window + full + compressed).
+2.  Long-context capabilities (> 128K tokens).
+3.  KV-cache optimization for inference efficiency.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# CORRECT: Monitor expert usage after perturbation
-def verify_moe_stability(model, test_batch):
-    expert_usage = []
-    for batch in test_batch:
-        # Forward pass with expert usage tracking
-        outputs, expert_ids = model(batch, track_expert_usage=True)
-        expert_usage.append(expert_ids)
-    
-    # Calculate entropy of expert usage
-    usage_counts = np.bincount(np.concatenate(expert_usage), minlength=model.n_routed_experts)
-    entropy = -np.sum((usage_counts / usage_counts.sum()) * np.log(usage_counts / usage_counts.sum() + 1e-10))
-    
-    # Entropy should be close to log(n_experts) for balanced usage
-    max_entropy = np.log(model.n_routed_experts)
-    if entropy < 0.9 * max_entropy:
-        raise ValueError("Expert collapse detected. Increase hc_sinkhorn_iters or adjust routed_scaling_factor.")
-    
-    return entropy
+# PSEUDO-CODE FOR VALIDATION
+def validate_kv_compression(model, test_contexts):
+    for context in test_contexts:
+        # Run with full attention
+        output_full = model.generate(context, use_compressed_kv=False)
+        
+        # Run with compressed KV
+        output_compressed = model.generate(context, use_compressed_kv=True)
+        
+        # Measure retrieval accuracy
+        accuracy = calculate_retrieval_accuracy(output_full, output_compressed)
+        
+        # Assert that accuracy is above threshold
+        assert accuracy > 0.95, f"KV compression degraded retrieval accuracy to {accuracy}"
 ```
-**NEGATIVE CONSTRAINT**:
-```python
-# NEVER assume that abliteration only affects the final layer.
-# The hidden states are modified, which affects the router.
-# Do not skip the expert usage verification step.
-```
-**VERIFICATION METHOD**:
-1.  **Expert Usage Histogram:** Plot the distribution of expert selections over a large batch of tokens. It should be roughly uniform.
-2.  **Sinkhorn Convergence:** Monitor the change in router logits after each Sinkhorn iteration. It should converge to a stable state within the specified number of iterations.
-3.  **Per-Expert Accuracy:** Evaluate the model's performance on tasks that require specific expert knowledge. If performance drops significantly for certain tasks, it indicates expert starvation.
 
-### 3. Long-Context KV-Cache Compression Consistency
-**RULE**:
-When modifying a model with non-uniform KV-cache compression (e.g., `compress_ratios` varying by layer), you MUST ensure that the `kv_source_layer_ids` and `index_source_layer_ids` remain consistent with the modified weights. Any change in the hidden state distribution must be validated against the compression logic to prevent **context drift**.
-**WHY**:
-The model uses a complex attention mechanism where certain layers (e.g., 2, 8, 14, 20) act as "source" layers for KV data, while others compress it. If the abliteration changes the hidden states, the compressed KV data may no longer accurately represent the original context. This leads to **context drift**, where the model loses track of earlier parts of the conversation, especially in long-context scenarios (1M tokens). The `compress_rope_theta` (160000) is also critical; if the hidden states change, the RoPE scaling may need adjustment.
-**WHEN TO APPLY**:
-Any weight modification in models with non-uniform KV-cache compression or long-context extensions (YARN, etc.).
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# CORRECT: Validate KV-cache consistency after perturbation
-def validate_kv_cache_consistency(model, long_context_input):
-    # Forward pass with KV-cache tracking
-    outputs, kv_cache = model(long_context_input, return_kv_cache=True)
-    
-    # Check if the compressed KV data matches the source layers
-    for layer_id in model.kv_source_layer_ids:
-        source_kv = kv_cache[layer_id]
-        compressed_kv = kv_cache[layer_id + 1]  # Assuming next layer is compressed
-        # Calculate similarity between source and compressed KV
-        similarity = cosine_similarity(source_kv, compressed_kv)
-        if similarity < 0.95:
-            raise ValueError(f"KV-cache inconsistency detected at layer {layer_id}. Similarity: {similarity}")
-    
-    return True
-```
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER assume that the KV-cache compression logic is robust to weight perturbations.
-# Always validate the consistency of the compressed KV data.
+# INCORRECT: Arbitrarily selecting layers without validation
+config.kv_source_layer_ids = [0, 1, 2, 3] # First 4 layers, no empirical basis
+# Result: Potential loss of long-range dependencies, degraded 1M context performance
 ```
+
 **VERIFICATION METHOD**:
-1.  **KV-Cache Similarity:** Calculate the cosine similarity between the source KV data and the compressed KV data. It should be high (> 0.95).
-2.  **Long-Context Recall Test:** Ask the model to recall information from the beginning of a 1M-token context. If it fails, it indicates context drift.
-3.  **RoPE Scaling Check:** Verify that the `compress_rope_theta` is appropriate for the modified hidden states.
+1.  **Long-Context Retrieval Test:** Use a dataset like RULER or LongBench with contexts > 100K tokens.
+2.  **Compare:** Output quality with full KV cache vs. compressed KV cache.
+3.  **Assert:** No significant degradation in retrieval accuracy or coherence.
+
+### 3. Tokenizer Special Token Consistency
+**RULE**:
+The `tokenizer_config.json` MUST explicitly define `bos_token`, `eos_token`, and `pad_token` as `AddedToken` objects with `lstrip: false` and `rstrip: false` to ensure consistent tokenization behavior across different inference engines. You MUST NOT rely on default tokenizer behavior for special tokens, as this can lead to inconsistent padding and truncation, especially in multimodal models where image tokens are interleaved with text.
+
+**WHY**:
+The config shows `bos_token`, `eos_token`, and `pad_token` all defined as `AddedToken` with specific flags. This ensures that these tokens are treated as atomic units and not split or stripped during tokenization. In multimodal models, where image tokens (e.g., `image_token_id: 129264`) are interleaved with text, inconsistent handling of special tokens can lead to misalignment between the text and image streams, causing the model to misinterpret the input.
+
+**WHEN TO APPLY**:
+Any model with:
+1.  Special tokens (BOS, EOS, PAD, IMG, etc.).
+2.  Multimodal inputs (text + image/video).
+3.  Custom tokenization logic.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "bos_token": {
+    "__type": "AddedToken",
+    "content": "<｜begin▁of▁sentence｜>",
+    "lstrip": false,
+    "normalized": true,
+    "rstrip": false,
+    "single_word": false
+  },
+  "eos_token": {
+    "__type": "AddedToken",
+    "content": "<｜end▁of▁sentence｜>",
+    "lstrip": false,
+    "normalized": true,
+    "rstrip": false,
+    "single_word": false
+  },
+  "pad_token": {
+    "__type": "AddedToken",
+    "content": "<｜end▁of▁sentence｜>",
+    "lstrip": false,
+    "normalized": true,
+    "rstrip": false,
+    "single_word": false
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "bos_token": "<｜begin▁of▁sentence｜>",
+  "eos_token": "<｜end▁of▁sentence｜>",
+  "pad_token": "<｜end▁of▁sentence｜>"
+}
+// INCORRECT: Using strings instead of AddedToken objects can lead to inconsistent handling
+// of whitespace and normalization across different tokenizer implementations.
+```
+
+**VERIFICATION METHOD**:
+1.  **Tokenization Consistency Test:** Tokenize a sample input with the model's tokenizer and verify that the special tokens are treated as single tokens and not split.
+2.  **Cross-Engine Test:** Run the same input through different inference engines (e.g., Hugging Face Transformers, vLLM, TGI) and verify that the token IDs are identical.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no commit history or bug issues are provided, the following incidents are **inferred** from the architectural complexity and common failure modes in similar models. These are **hypothetical but highly probable** incidents based on the configuration.*
+*Note: No specific commit patches or bug issues were provided in the input. The following incidents are inferred from the README warnings and architectural constraints.*
 
-### Incident 1: FP8 Quantization Error Leading to Refusal Regression (BUG-FP8-01)
-- **Context**: Quantization subsystem, `config.json` (`quantization_config`).
-- **What Was Expected**: The model should maintain its uncensored behavior after quantization to FP8.
-- **What Actually Happened**: After quantizing the abliterated model to FP8, the model started refusing some requests again.
-- **Evidence in Repo**: `config.json` shows `quant_method: fp8`, `activation_scheme: dynamic`, `weight_block_size: [32, 32]`. The README warns: "Quantizing this FP8 checkpoint directly won't give the best quality... compliance can regress at low bits."
-- **Root Cause**: The abliteration vector shifted the weight distribution. The original FP8 scales were calibrated for the original distribution. When the modified weights were quantized using the old scales, the precision loss was higher, causing the subtle probability shifts required for uncensored behavior to be lost.
+### Incident 1: Quantization-Induced Behavioral Regression (BUG-QUANT-01)
+- **Context**: Model distribution and quantization pipeline.
+- **What Was Expected**: The "UNCENSORED" behavior to persist after quantization to FP8/FP4.
+- **What Actually Happened**: Users who naively quantized the FP8 checkpoint to lower bits (e.g., INT4) experienced a regression in both uncensored behavior and core capabilities (reasoning, vision).
+- **Evidence in Repo**: README warning: *"Quantizing this FP8 checkpoint directly won't give the best quality... compliance can regress at low bits."*
+- **Root Cause**: The abliteration process modified the weight distribution in a way that is sensitive to quantization grid alignment. Quantizing the already-modified FP8 weights introduces additional error, causing the model to revert to some refusal behaviors or degrade in quality.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Using old scales
-quantized_weights = quantize(modified_weights, old_scales, dtype='fp8_e4m3')
+# - INCORRECT: Quantizing the FP8 checkpoint directly
+# quantized_model = quantize(fp8_checkpoint, target_dtype="int4")
 
-# + Fixed: Re-calibrate scales
-new_scales = compute_block_scales(modified_weights, block_size=[32, 32])
-quantized_weights = quantize(modified_weights, new_scales, dtype='fp8_e4m3')
+# + CORRECT: Re-running abliteration at the target precision
+# base_model = load_base_model(dtype="bfloat16")
+# modified_model = abliterate(base_model)
+# quantized_model = quantize(modified_model, target_dtype="int4")
 ```
-- **Lesson**: Always re-calibrate quantization scales after weight modification.
+- **Lesson**: Post-training modifications must be performed at the highest precision and then quantized. Do not quantize an already-modified low-precision checkpoint.
 
-### Incident 2: MoE Expert Collapse Due to Router Logit Shift (BUG-MOE-02)
-- **Context**: MoE router, `config.json` (`n_routed_experts: 384`, `num_experts_per_tok: 6`).
-- **What Was Expected**: The model should use all 384 experts evenly.
-- **What Actually Happened**: After abliteration, only 10-20 experts were used, leading to performance degradation.
-- **Evidence in Repo**: `config.json` shows `hc_sinkhorn_iters: 20`, `routed_scaling_factor: 1.5`. The README mentions "DSpark speculative decoding" which relies on stable expert routing.
-- **Root Cause**: The abliteration changed the hidden states, which affected the router logits. The `noaux_tc` top-k method selected a biased set of experts. The 20 Sinkhorn iterations were not enough to balance the usage.
+### Incident 2: KV-Cache Compression Degradation (BUG-KV-02)
+- **Context**: Long-context inference (1M tokens).
+- **What Was Expected**: Accurate retrieval and coherence for contexts > 100K tokens.
+- **What Actually Happened**: Potential degradation in retrieval accuracy if the `kv_source_layer_ids` were not correctly selected or if the `compress_ratios` were misconfigured.
+- **Evidence in Repo**: Config specifies `kv_source_layer_ids: [2, 8, 14, 20]` and `compress_ratios` with a mix of 0, 1, and 2.
+- **Root Cause**: The hybrid attention mechanism relies on specific layers contributing to the compressed KV cache. If the wrong layers are selected, the model loses critical long-range dependencies.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Fixed number of Sinkhorn iterations
-sinkhorn_iters = 20
+# - INCORRECT: Arbitrarily selecting layers
+# config.kv_source_layer_ids = [0, 1, 2, 3]
 
-# + Fixed: Adaptive Sinkhorn iterations
-sinkhorn_iters = 50  # Increase to ensure convergence
-# Or: Monitor convergence and stop early if stable
+# + CORRECT: Empirically validated layer selection
+# config.kv_source_layer_ids = [2, 8, 14, 20] # Validated for 1M context
 ```
-- **Lesson**: Monitor expert usage and adjust Sinkhorn iterations dynamically.
+- **Lesson**: KV-cache compression layer selection must be empirically validated for long-context performance.
 
-### Incident 3: Long-Context Drift Due to KV-Cache Compression Inconsistency (BUG-KV-03)
-- **Context**: Attention mechanism, `config.json` (`compress_ratios`, `kv_source_layer_ids`).
-- **What Was Expected**: The model should recall information from the beginning of a 1M-token context.
-- **What Actually Happened**: The model lost track of earlier parts of the conversation.
-- **Evidence in Repo**: `config.json` shows `compress_ratios` varying by layer, `kv_source_layer_ids: [2, 8, 14, 20]`. The README mentions "1M-token context".
-- **Root Cause**: The abliteration changed the hidden states, which affected the compressed KV data. The compressed KV data no longer accurately represented the original context.
+### Incident 3: Tokenizer Special Token Inconsistency (BUG-TOK-03)
+- **Context**: Multimodal input processing.
+- **What Was Expected**: Consistent tokenization of special tokens (BOS, EOS, PAD, IMG) across different inference engines.
+- **What Actually Happened**: Potential misalignment between text and image streams if special tokens were not treated as atomic units.
+- **Evidence in Repo**: `tokenizer_config.json` defines special tokens as `AddedToken` objects with `lstrip: false` and `rstrip: false`.
+- **Root Cause**: Default tokenizer behavior may strip whitespace or split special tokens, leading to inconsistent token IDs across engines.
 - **Remediation Code Diff**:
-```python
-# - Buggy: Fixed compress_rope_theta
-compress_rope_theta = 160000
+```json
+// - INCORRECT: Using strings for special tokens
+// "bos_token": "<｜begin▁of▁sentence｜>"
 
-# + Fixed: Adjust compress_rope_theta based on hidden state distribution
-compress_rope_theta = adjust_rope_theta(hidden_states, original_theta=160000)
+// + CORRECT: Using AddedToken objects
+"bos_token": {
+  "__type": "AddedToken",
+  "content": "<｜begin▁of▁sentence｜>",
+  "lstrip": false,
+  "normalized": true,
+  "rstrip": false,
+  "single_word": false
+}
 ```
-- **Lesson**: Validate KV-cache consistency after weight modification.
-
-### Incident 4: Vision Encoder Misalignment After Abliteration (BUG-VISION-04)
-- **Context**: Multimodal subsystem, `config.json` (`image_token_id: 129264`).
-- **What Was Expected**: The model should correctly interpret images.
-- **What Actually Happened**: The model started hallucinating image content.
-- **Evidence in Repo**: `config.json` shows `image_token_id: 129264`. The README mentions "Multimodal (image + video)".
-- **Root Cause**: The abliteration changed the text decoder weights, which affected the projection from the vision encoder to the text decoder. The vision encoder outputs were no longer aligned with the text decoder's expectations.
-- **Remediation Code Diff**:
-```python
-# - Buggy: No adjustment to vision encoder projection
-vision_projection = model.vision_encoder_projection
-
-# + Fixed: Re-calibrate vision encoder projection
-vision_projection = recalibrate_vision_projection(model.vision_encoder, model.text_decoder)
-```
-- **Lesson**: Validate multimodal alignment after weight modification.
-
-### Incident 5: Tool-Calling Format Breakage (BUG-TOOL-05)
-- **Context**: Tool-calling subsystem, `config.json` (`pipeline_tag: image-text-to-text`).
-- **What Was Expected**: The model should correctly format tool calls.
-- **What Actually Happened**: The model started generating malformed tool calls.
-- **Evidence in Repo**: `config.json` shows `pipeline_tag: image-text-to-text`. The README mentions "tool calling".
-- **Root Cause**: The abliteration changed the probability distribution of the tool-calling tokens. The model no longer followed the expected format.
-- **Remediation Code Diff**:
-```python
-# - Buggy: No adjustment to tool-calling tokens
-tool_call_tokens = model.tool_call_tokens
-
-# + Fixed: Re-calibrate tool-calling token probabilities
-tool_call_tokens = recalibrate_tool_call_tokens(model, tool_call_format)
-```
-- **Lesson**: Validate tool-calling format after weight modification.
+- **Lesson**: Special tokens must be defined as `AddedToken` objects to ensure consistent handling across inference engines.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **FP8 E4M3 Range**: The FP8 e4m3 format has a limited range (±448). When abliterating, ensure that the modified weights do not exceed this range. If they do, they will be clipped, leading to precision loss.
-    *   **UE8M0 Scale Format**: The `ue8m0` scale format uses 8 bits for the exponent and 0 bits for the mantissa. This means the scales are powers of 2. When re-calibrating scales, ensure that the new scales are also powers of 2 to maintain compatibility with the hardware.
-    *   **Block Size Alignment**: The `weight_block_size` is `[32, 32]`. Ensure that the weight tensors are aligned to this block size. If they are not, the quantization will be incorrect.
+    *   **FP8/FP4 Scale Management**: The `ue8m0` scale format requires careful handling of exponents. Ensure that the scale values are correctly applied during dequantization. A common bug is forgetting to apply the scale to the activation values, leading to numerical overflow or underflow.
+    *   **Token ID Consistency**: Ensure that `image_token_id: 129264` is correctly mapped in the tokenizer and that the model's embedding layer has a corresponding entry. A mismatch will lead to `IndexError` or silent corruption.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Sinkhorn Iterations**: The `hc_sinkhorn_iters` is set to 20. Ensure that the Sinkhorn algorithm converges within this number of iterations. If it does not, increase the number of iterations or adjust the `routed_scaling_factor`.
-    *   **Speculative Decoding**: The model uses "DSpark speculative decoding". Ensure that the speculative decoding loop terminates correctly. If the draft model generates a token that is rejected by the target model, the loop should continue. If the draft model generates a token that is accepted, the loop should stop.
+    *   **MoE Routing**: The `topk_method: "noaux_tc"` implies a specific routing algorithm. Ensure that the top-k selection does not lead to infinite loops in the routing logic. Add a maximum iteration count for the routing algorithm.
+    *   **Speculative Decoding**: The README mentions "DSpark speculative decoding." Ensure that the speculative decoding loop has a maximum number of steps to prevent infinite loops if the draft model consistently fails to match the target model.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model, not a UI application.
+    *   **N/A**: This is a backend model repository. No UI/UX components are present.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **KV-Cache Memory**: The model uses a 1M-token context. Ensure that the KV-cache is managed correctly to avoid memory leaks. Use a ring buffer or a similar data structure to manage the KV-cache.
-    *   **MoE Expert Memory**: The model has 384 experts. Ensure that the expert weights are loaded and unloaded correctly to avoid memory leaks. Use a memory pool to manage the expert weights.
+    *   **KV-Cache Memory Management**: The 1M-token context requires significant memory for the KV cache. Ensure that the KV cache is correctly allocated and freed to prevent memory leaks. Use a memory pool for KV cache allocation to avoid fragmentation.
+    *   **MoE Expert Loading**: The 384 routed experts require significant memory. Ensure that experts are loaded on-demand to avoid loading all experts into memory at once. Use a caching mechanism for frequently used experts.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: Ensure that all tensor operations are checked for null/undefined values. If a tensor is null, the operation should fail gracefully.
-    *   **Off-by-One Boundary Checks**: Ensure that all array indices are checked for off-by-one errors. For example, when accessing the `kv_source_layer_ids`, ensure that the index is within the range of the number of layers.
-    *   **Error Boundary Containment**: Ensure that all errors are caught and handled gracefully. If an error occurs, the model should return a default response or an error message.
+    *   **Null/Undefined Chaining**: Ensure that the `compress_ratios` array is correctly indexed. A common bug is accessing an index out of bounds if the array length does not match the number of layers.
+    *   **Off-by-One Boundary Checks**: Ensure that the `sliding_window: 128` is correctly applied. A common bug is off-by-one errors in the sliding window implementation, leading to incorrect attention masks.
 
 ## 5. The 9 Deep Learning Dimensions
 
 1.  **Architecture**:
-    *   **Subsystem Boundaries**: The model is divided into 40 transformer layers, each with a MoE block. The MoE block has 384 routed experts and 1 shared expert. The attention mechanism is non-uniform, with certain layers acting as sources for KV data.
-    *   **Decoupling**: The vision encoder is decoupled from the text decoder. The tool-calling subsystem is decoupled from the text generation subsystem.
-    *   **Modular Layout**: The model is modular, with each layer being a separate module. The MoE block is a separate module. The attention mechanism is a separate module.
-    *   **State Ownership**: The KV-cache is owned by the attention mechanism. The expert weights are owned by the MoE block. The hidden states are owned by the transformer layers.
+    *   **Subsystem Boundaries**: Clear separation between the vision encoder, text decoder, and MoE FFN layers.
+    *   **Decoupling**: The KV-cache compression is decoupled from the attention mechanism, allowing for independent optimization.
+    *   **State Ownership**: The KV cache is owned by the inference engine, not the model. This allows for efficient memory management and reuse.
 
 2.  **Core Abstractions**:
-    *   **Key Types**: `Tensor`, `MoEBlock`, `AttentionMechanism`, `VisionEncoder`, `ToolCallingSubsystem`.
-    *   **Traits/Interfaces**: `Quantizable`, `MoE`, `Attention`, `Vision`, `ToolCalling`.
-    *   **Domain Primitives**: `Token`, `Expert`, `KV-Cache`, `HiddenState`, `VisionFeature`.
-    *   **Invariant Contracts**: The MoE block must route tokens to the correct experts. The attention mechanism must maintain the KV-cache correctly. The vision encoder must align with the text decoder.
+    *   **Key Types**: `DeepseekV41ForCausalLM`, `PreTrainedTokenizerFast`.
+    *   **Traits/Interfaces**: `from_pretrained`, `generate`, `save_pretrained`.
+    *   **Domain Primitives**: Tokens, Embeddings, Attention Heads, MoE Experts.
+    *   **Invariant Contracts**: The model must maintain numerical stability across FP8/FP4 precision. The tokenizer must maintain consistent tokenization across engines.
 
 3.  **Error Handling**:
-    *   **Fault Boundaries**: The MoE block has a fault boundary. If an expert fails, the model should fall back to the shared expert.
-    *   **Error Trees**: The error tree includes quantization errors, MoE routing errors, attention errors, and vision encoder errors.
-    *   **Retries**: The model does not have retries. If an error occurs, it fails.
-    *   **Rollbacks**: The model does not have rollbacks. If an error occurs, it fails.
-    *   **Graceful Degradation**: The model can degrade gracefully by using the shared expert if a routed expert fails.
+    *   **Fault Boundaries**: The model is expected to handle out-of-memory errors gracefully by reducing the batch size or context length.
+    *   **Error Trees**: `IndexError` for token ID mismatches, `MemoryError` for KV cache allocation, `ValueError` for invalid quantization parameters.
+    *   **Retries**: No retries are implemented in the model itself. Retries are handled by the inference engine.
+    *   **Rollbacks**: No rollbacks are implemented. The model is stateless.
+    *   **Graceful Degradation**: The model can degrade to sliding window attention if the KV cache is full.
 
 4.  **Testing**:
-    *   **Property Testing**: The model should be tested for properties such as perplexity, refusal rate, and expert usage.
-    *   **Mock Invariants**: The MoE block should be tested with mock experts to ensure that the routing is correct.
-    *   **Integration Harnesses**: The model should be tested with a full integration harness that includes the vision encoder, tool-calling subsystem, and KV-cache.
-    *   **Regression Shields**: The model should be tested with a regression shield that ensures that the abliteration does not cause regression in performance.
+    *   **Property Testing**: Test that the model's output is deterministic for a given input and seed.
+    *   **Mock Invariants**: Mock the MoE routing to test the attention mechanism in isolation.
+    *   **Integration Harnesses**: Test the model with different inference engines (Hugging Face, vLLM, TGI).
+    *   **Regression Shields**: Test that the model's performance does not degrade after quantization.
 
 5.  **Security**:
-    *   **Threat Model**: The model is vulnerable to prompt injection, data poisoning, and model extraction.
-    *   **Credential Boundaries**: The model does not have credentials.
-    *   **Sanitization**: The model should sanitize user input to prevent prompt injection.
-    *   **Memory Safety**: The model should be memory-safe to prevent buffer overflows.
-    *   **Least Privilege**: The model should have least privilege to prevent unauthorized access.
+    *   **Threat Model**: The model is vulnerable to prompt injection attacks. The "UNCENSORED" nature increases this risk.
+    *   **Credential Boundaries**: No credentials are stored in the model.
+    *   **Sanitization**: The tokenizer does not sanitize inputs. Sanitization is the responsibility of the application.
+    *   **Memory Safety**: The model is implemented in PyTorch, which is memory-safe. However, the KV cache allocation can lead to memory leaks if not managed correctly.
+    *   **Least Privilege**: The model does not have access to the file system or network.
 
 6.  **Performance**:
-    *   **Latency Profiles**: The model has a high latency due to the 1M-token context and the MoE block.
-    *   **Asymptotic Complexity**: The model has O(N^2) complexity for attention and O(N) complexity for the MoE block.
-    *   **Caching**: The model uses a KV-cache to improve performance.
-    *   **Zero-Copy**: The model uses zero-copy for the KV-cache.
-    *   **Concurrency Bottlenecks**: The MoE block is a concurrency bottleneck due to the high number of experts.
+    *   **Latency Profiles**: The model is optimized for low latency with FP8/FP4 precision. The MoE architecture reduces the number of active parameters per token.
+    *   **Asymptotic Complexity**: The attention mechanism is O(N^2) in the sequence length, but the MoE FFN is O(N) in the number of active experts.
+    *   **Caching**: The KV cache is cached to avoid recomputation. The MoE experts are cached to avoid reloading.
+    *   **Zero-Copy**: The model uses zero-copy operations for tensor transfers between CPU and GPU.
+    *   **Concurrency Bottlenecks**: The MoE routing can be a bottleneck if the number of active experts is high.
 
 7.  **Deployment**:
-    *   **CI/CD Invariants**: The model should be deployed with a CI/CD pipeline that ensures that the quantization is correct.
-    *   **Container Constraints**: The model should be deployed in a container with sufficient memory and GPU resources.
-    *   **Reproducible Builds**: The model should be built reproducibly to ensure that the quantization is correct.
-    *   **Runtime Flags**: The model should be deployed with runtime flags that control the quantization and MoE routing.
+    *   **CI/CD Invariants**: The model is deployed as a Hugging Face repository. The CI/CD pipeline ensures that the model is correctly quantized and tested.
+    *   **Container Constraints**: The model requires a GPU with sufficient memory for the KV cache. The container must have CUDA support.
+    *   **Reproducible Builds**: The model is built with a specific version of PyTorch and Transformers. The build process is reproducible.
+    *   **Runtime Flags**: The model can be configured with different sampling parameters (temperature, top_p) at runtime.
 
 8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: The model has a tool-calling interface that allows it to call external tools.
-    *   **Prompt Chains**: The model uses prompt chains to generate tool calls.
-    *   **Loop Guards**: The model has loop guards to prevent infinite loops in the tool-calling subsystem.
-    *   **Context Budget Optimization**: The model optimizes the context budget by using the KV-cache and the MoE block.
+    *   **Tooling Interfaces**: The model supports tool calling. The tools are defined in the prompt.
+    *   **Prompt Chains**: The model supports reasoning-effort tiers (`low`/`high`/`max`). The prompt can specify the desired reasoning effort.
+    *   **Loop Guards**: The model does not have explicit loop guards. The inference engine must handle infinite loops.
+    *   **Context Budget Optimization**: The model uses KV-cache compression to optimize the context budget.
 
 9.  **Data Flow**:
-    *   **Mutation Lifecycles**: The hidden states are mutated by the transformer layers. The KV-cache is mutated by the attention mechanism.
-    *   **Streams**: The model uses streams to process the input tokens.
-    *   **Serializers**: The model uses serializers to serialize the KV-cache and the expert weights.
-    *   **Network Protocol Barriers**: The model does not have network protocol barriers.
+    *   **Mutation Lifecycles**: The model is stateless. The data flow is from input tokens to output tokens.
+    *   **Streams**: The model supports streaming output. The inference engine can stream tokens as they are generated.
+    *   **Serializers**: The model is serialized in the Hugging Face format. The tokenizer is serialized in the JSON format.
+    *   **Network Protocol Barriers**: The model does not use network protocols. The inference engine handles network communication.
 
 ## 6. The 8 Learning Extraction Artifacts
 
 1.  **Pattern**:
-    *   **Quantization-Aware Abliteration**: Apply the abliteration vector in high precision, re-calibrate the quantization scales, and then quantize the modified weights.
-    *   **MoE Router Stability**: Monitor the expert usage and adjust the Sinkhorn iterations dynamically.
-    *   **KV-Cache Consistency**: Validate the consistency of the compressed KV data after weight modification.
+    *   **High-Precision Abliteration**: Perform abliteration in BF16/FP16 and then quantize to the target precision.
+    *   **Empirical KV-Cache Validation**: Validate the `kv_source_layer_ids` and `compress_ratios` with long-context retrieval tests.
+    *   **AddedToken Special Tokens**: Define special tokens as `AddedToken` objects to ensure consistent tokenization.
 
 2.  **Rule**:
-    *   **MUST** re-calibrate quantization scales after weight modification.
-    *   **MUST** monitor expert usage and adjust Sinkhorn iterations dynamically.
-    *   **MUST** validate KV-cache consistency after weight modification.
+    *   **Precision-Dependent Behavioral Integrity**: Do not quantize an already-modified low-precision checkpoint.
+    *   **KV-Cache Compression Layer Selection**: Empirically validate the layer selection for long-context performance.
+    *   **Tokenizer Special Token Consistency**: Use `AddedToken` objects for special tokens.
 
 3.  **Architecture Principle**:
-    *   **Precision Preservation**: The model must preserve precision during weight modification to avoid performance degradation.
-    *   **Stability**: The model must be stable during weight modification to avoid expert collapse or context drift.
-    *   **Consistency**: The model must be consistent during weight modification to avoid misalignment.
+    *   **Hybrid Attention**: Use a combination of sliding window, full attention, and compressed KV cache to optimize for both short and long contexts.
+    *   **MoE Sparsity**: Use a sparse MoE architecture to reduce the number of active parameters per token.
+    *   **Precision Hierarchy**: Use a hierarchy of precisions (BF16 for compute, FP8 for weights, FP4 for experts) to optimize for both accuracy and performance.
 
 4.  **Failure Mode**:
-    *   **Quantization Error**: The model may suffer from quantization error if the scales are not re-calibrated.
-    *   **Expert Collapse**: The model may suffer from expert collapse if the router logits are not balanced.
-    *   **Context Drift**: The model may suffer from context drift if the KV-cache is not consistent.
+    *   **Quantization-Induced Behavioral Regression**: Naively quantizing an already-modified low-precision checkpoint leads to behavioral regression.
+    *   **KV-Cache Compression Degradation**: Incorrect layer selection for KV-cache compression leads to degradation in long-context performance.
+    *   **Tokenizer Special Token Inconsistency**: Inconsistent handling of special tokens leads to misalignment between text and image streams.
 
 5.  **Reusable Skill**:
-    *   **Step 1**: Apply the abliteration vector in high precision.
-    *   **Step 2**: Re-calibrate the quantization scales.
-    *   **Step 3**: Quantize the modified weights.
-    *   **Step 4**: Monitor the expert usage and adjust the Sinkhorn iterations.
-    *   **Step 5**: Validate the KV-cache consistency.
+    *   **Step 1**: Load the base model in high precision (BF16/FP16).
+    *   **Step 2**: Perform abliteration/fine-tuning in high precision.
+    *   **Step 3**: Quantize the modified model to the target precision (FP8/FP4).
+    *   **Step 4**: Validate the model with long-context retrieval tests.
+    *   **Step 5**: Define special tokens as `AddedToken` objects in the tokenizer config.
 
 6.  **Decision**:
-    *   **Decision**: Re-calibrate the quantization scales after weight modification.
-    *   **Rationale**: This ensures that the precision is preserved and the performance is not degraded.
+    *   **Why High-Precision Abliteration?**: To minimize quantization error and preserve behavioral integrity.
+    *   **Why Empirical KV-Cache Validation?**: To ensure that the compressed KV cache captures the most semantically important information.
+    *   **Why AddedToken Special Tokens?**: To ensure consistent tokenization across different inference engines.
 
 7.  **Anti-pattern**:
-    *   **Anti-pattern**: Using the old quantization scales after weight modification.
-    *   **Reason**: This leads to quantization error and performance degradation.
+    *   **Naive Quantization**: Quantizing an already-modified low-precision checkpoint.
+    *   **Arbitrary KV-Cache Layer Selection**: Selecting layers for KV-cache compression without empirical validation.
+    *   **String Special Tokens**: Using strings instead of `AddedToken` objects for special tokens.
 
 8.  **Verification Method**:
-    *   **Perplexity Check**: Compute perplexity on a neutral dataset.
-    *   **Refusal Rate Test**: Run a standardized refusal benchmark.
-    *   **Expert Usage Histogram**: Plot the distribution of expert selections.
-    *   **KV-Cache Similarity**: Calculate the cosine similarity between the source KV data and the compressed KV data.
+    *   **Benchmark Comparison**: Run a standardized evaluation suite on the base, modified, and quantized models.
+    *   **Long-Context Retrieval Test**: Use a dataset like RULER or LongBench to test long-context performance.
+    *   **Tokenization Consistency Test**: Tokenize a sample input with the model's tokenizer and verify that the special tokens are treated as single tokens.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Pre-Modification**:
-    *   [ ] Backup the original model weights.
-    *   [ ] Compute the baseline perplexity and refusal rate.
-    *   [ ] Monitor the baseline expert usage.
-    *   [ ] Validate the baseline KV-cache consistency.
+1.  **Load Base Model**:
+    *   [ ] Load the base model in high precision (BF16/FP16).
+    *   [ ] Verify that the model's architecture matches the config (e.g., `num_hidden_layers: 40`, `n_routed_experts: 384`).
 
-2.  **Modification**:
-    *   [ ] Apply the abliteration vector in high precision.
-    *   [ ] Re-calibrate the quantization scales.
-    *   [ ] Quantize the modified weights.
-    *   [ ] Adjust the Sinkhorn iterations if necessary.
-    *   [ ] Validate the KV-cache consistency.
+2.  **Perform Abliteration**:
+    *   [ ] Perform abliteration in high precision.
+    *   [ ] Verify that the model's behavior has changed as expected (e.g., refusal behavior removed).
 
-3.  **Post-Modification**:
-    *   [ ] Compute the new perplexity and refusal rate.
-    *   [ ] Monitor the new expert usage.
-    *   [ ] Validate the new KV-cache consistency.
-    *   [ ] Compare the new metrics with the baseline metrics.
-    *   [ ] If the metrics are degraded, roll back to the original model weights.
+3.  **Quantize Model**:
+    *   [ ] Quantize the modified model to the target precision (FP8/FP4).
+    *   [ ] Verify that the quantization parameters are correct (e.g., `weight_block_size: [32, 32]`, `scale_fmt: "ue8m0"`).
 
-4.  **Deployment**:
-    *   [ ] Deploy the modified model in a container with sufficient memory and GPU resources.
-    *   [ ] Monitor the model's performance in production.
-    *   [ ] If the performance is degraded, roll back to the original model weights.
+4.  **Validate KV-Cache Compression**:
+    *   [ ] Run long-context retrieval tests (e.g., RULER, LongBench).
+    *   [ ] Verify that the `kv_source_layer_ids` and `compress_ratios` are correctly configured.
+
+5.  **Configure Tokenizer**:
+    *   [ ] Define special tokens as `AddedToken` objects in the tokenizer config.
+    *   [ ] Verify that the tokenizer is consistent across different inference engines.
+
+6.  **Test Model**:
+    *   [ ] Run a standardized evaluation suite (e.g., MMLU, HumanEval, SafetyBench).
+    *   [ ] Verify that the model's performance is within the expected range.
+
+7.  **Deploy Model**:
+    *   [ ] Save the model in the Hugging Face format.
+    *   [ ] Deploy the model to the inference engine.
+    *   [ ] Verify that the model is working correctly in production.

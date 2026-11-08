@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T03:28:24.684Z",
+  "last_updated": "2026-11-08T03:35:55.779Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "de697b0e292fcd07c72ec8d085fc693d0450a878a0d69d3edcf04dadbff71338",
-      "verified_at": "2026-11-06T22:28:46.953Z",
+      "content_hash": "18b5d4f833096c1e6c099789c026c28e95a27f356b114564dcafc6f36ed8ddc2",
+      "verified_at": "2026-11-08T03:35:51.408Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:28:46.953Z"
+      "last_updated": "2026-11-08T03:35:51.408Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -12036,14 +12036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-momenbasel-puremac",
-      "content_hash": "c5ea1e8860e6cc7348b23147c70b277cb9a8a00e829ebc8bccae093187cb1584",
-      "verified_at": "2026-11-05T02:55:14.653Z",
+      "content_hash": "7cd0775f119ffc62ffb9c297e0d05213e6dc5aa0cc0422e9985512d6d93157c0",
+      "verified_at": "2026-11-08T03:35:46.618Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T02:55:14.653Z"
+      "last_updated": "2026-11-08T03:35:46.618Z"
     },
     "nalexn/clean-architecture-swiftui": {
       "repository": "nalexn/clean-architecture-swiftui",
@@ -15576,14 +15576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "content_hash": "fc612bcdc098d99fbe55f5a54d06f07fa95cbb55bfc0e4594919f4399d76769c",
-      "verified_at": "2026-11-04T17:10:13.708Z",
+      "content_hash": "8673227ad392e495f41df825f28e41188d42564fb2efe65cdbea5b58d55b2943",
+      "verified_at": "2026-11-08T03:35:55.778Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:10:13.708Z"
+      "last_updated": "2026-11-08T03:35:55.778Z"
     },
     "lodestones/MOSS-Image-SFT-8-steps-dmd": {
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `ad62c570`  
+> **Source Version**: `6bbe25d6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T22:28:45.140Z  
+> **Timestamp**: 2026-11-08T03:35:50.016Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T22:28:44.355Z  
+> **Harvest Timestamp**: 2026-11-08T03:35:49.745Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25847 stars
+- **Stars / Engagement**: 25850 stars
 
 ---
 
@@ -1712,243 +1712,85 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `242875d9` (2026-11-06)
-**Commit Message**: Fix command injection through Node.js version files when using language version tools (#25580)
+### Incident Patch 1: `0695cf58` (2026-11-06)
+**Commit Message**: Fix panic from PULUMI_OPTION environment variables on typed flags (#25596)
 
-**File**: `changelog/pending/20261105--sdk-nodejs--node-version-shell-injection.yaml` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+component: sdk/nodejs
-+kind: fix
-+body: Fix command injection through Node.js version files when using language version tools
-+time: 2026-11-05T00:00:00Z
-```
+Setting a `PULUMI_OPTION_*` variable for an `int32`, `int64`,
+`duration`, or delimiter flag crashes every command:
 
-**File**: `sdk/nodejs/cmd/pulumi-language-nodejs/main.go` (modified, +3/-2)
-```diff
-@@ -1313,8 +1313,9 @@ func installNodeVersion(cwd string, stdout io.Writer) error {
- 	// within a shell. Version switching is managed by setting the default
- 	// version of nodejs below.
- 	if os.Getenv("FNM_MULTISHELL_PATH") == "" {
--		installCmd = exec.Command("bash", "-c", fmt.Sprintf("eval \"$(fnm env --shell bash)\";"+
--			"fnm use '%s' --install-if-missing", version)) // #nosec G204
-+		installCmd = exec.Command("bash", "-c",
-+			`eval "$(fnm env --shell bash)"; fnm use "$1" --install-if-missing`,
-+			"pulumi-fnm", version) // #nosec G204
- 	}
- 	out, err := installCmd.CombinedOutput()
- 	if err != nil {
-```
+    $ PULUMI_OPTION_PARALLEL=1 pulumi version
+    The Pulumi CLI encountered a fatal error. This is a bug!
+    Panic: unexpected CLI type: int32
 
----
+`declareFlagsAsEnvironmentVariables` walks the whole command tree at
+startup, and its second switch only handled some of the flag types, so
+one variable fails regardless of the command being run.
+`PULUMI_OPTION_PARALLEL` is listed as an example in the environment
+variables docs.
 
-### Incident Patch 2: `54d10925` (2026-11-05)
-**Commit Message**: Fix guided `pulumi new` rejecting stack names on DIY backends (#25583)
+The switch now handles all flag types the CLI defines.
 
-Part of [GRO-949](https://linear.app/pulumi/issue/GRO-949).
-
-On a DIY backend, guided `pulumi new` rejected every stack name without
-a project (e.g. `prod`) with "no Pulumi.yaml project file found",
-because the project isn't saved yet. This hit both of its stack-name
-prompts: the one after "Change these values", and the one asked when the
-default stack already exists. `confirmGuidedValues` now sets the project
-being created on the backend before either prompt.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog/pending/20261103--cli-new--guided-diy-stack-name.yaml` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+component: cli/new
-+kind: fix
-+body: Fix guided `pulumi new` rejecting stack names with "no Pulumi.yaml project file found" on DIY backends
-```
-
-**File**: `pkg/cmd/pulumi/project/newcmd/confirm.go` (modified, +4/-0)
-```diff
-@@ -257,6 +257,10 @@ func confirmGuidedValues(
- 		}
- 	}
- 	if shows.stack {
-+		// A DIY backend validates a stack name without a project (e.g. `prod`) against its current
-+		// project, which isn't saved yet. Set it before any stack-name prompt: the one below for a taken
-+		// default, and the one after "Change these values". Any project name will do, even if renamed.
-+		b.SetCurrentProject(&workspace.Project{Name: tokens.PackageName(c.name)})
- 		if c.stackName, err = buildStackName(ctx, b, defaultStackName); err != nil {
- 			return nil, err
- 		}
-```
-
-**File**: `pkg/cmd/pulumi/project/newcmd/questions_test.go` (modified, +64/-0)
-```diff
-@@ -17,6 +17,7 @@ package newcmd
- import (
- 	"bytes"
- 	"context"
-+	"errors"
- 	"io"
- 	"os"
- 	"strings"
-@@ -26,8 +27,10 @@ import (
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 
-+	"github.com/pulumi/pulumi/pkg/v3/backend"
- 	"github.com/pulumi/pulumi/pkg/v3/backend/display"
- 	"github.com/pulumi/pulumi/pkg/v3/secrets"
-+	"github.com/pulumi/pulumi/sdk/v3/go/common/tokens"
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/workspace"
- )
- 
-@@ -187,3 +190,64 @@ func TestNewCancelAtPassphrase(t *testing.T) {
- 		"cancelling the passphrase must not ask for another stack name; output:\n%s", out.String())
- 	assert.Empty(t, *created, "cancelling the passphrase must not create a stack")
- }
-+
-+// A DIY backend resolves a stack name without a project against its current project, which
-+// `pulumi new` hasn't saved yet when the guided flow asks for a stack name.
-+//
-+//nolint:paralleltest // changes directory for process, mocks login manager
-+func TestGuidedNewValidatesStackNameAgainstNewProject(t *testing.T) {
-+	cases := []struct {
-+		name string
-+		// projectName is passed as --name, so the project counts as existing and its stacks are checked.
-+		projectName string
-+		// takenStacks are the project's existing stacks.
-+		takenStacks []string
-+		confirm     string
-+	}{
-+		{name: "after Change these values", confirm: confirmChange},
-+		{name: "default stack taken", projectName: "proj", takenStacks: []string{"dev"}, confirm: confirmYes},
-+	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			guidedRepoTemplate(t, "aws-python", guidedConfigTemplateYAML)
-+			dir := tempProjectDir(t)
-+			t.Chdir(dir)
-+
-+			b, created := guidedNewTestBackend(t)
-+			var current *workspace.Project
-+			b.SetCurrentProjectF = func(proj *workspace.Project) { current = proj }
-+			// As the DIY backend does (see diyBackend.parseStackReference).
-+			b.ValidateStackNameF = func(name string) error {
-+				if !strings.Contains(name, "/") && current == nil {
-+					return errors.New("no Pulumi.yaml project file found")
-+				}
-+				return nil
-+			}
-+			b.ListStackNamesF = func(ctx context.Context, filter backend.ListStackNamesFilter,
-+				token backend.ContinuationToken,
-+			) ([]backend.StackReference, backend.ContinuationToken, error) {
-+				refs := make([]backend.StackReference, 0, len(tc.takenStacks))
-+				for _, name := range tc.takenStacks {
-+					refs = append(refs, &backend.MockStackReference{NameV: tokens.MustParseStackName(name)})
-+				}
-+				return refs, nil, nil
-+			}
-+			mockCurrentBackend(t, b)
-+
-+			selectOne, _ := scriptedSelect(t, "AWS", "Python", tc.confirm)
-+			var prompts []string
-+			err := runNew(t.Context(), newArgs{
-+				interactive:          true,
-+				name:                 tc.projectName,
-+				prompt:               countingPrompt(map[string]string{"Stack name": "prod"}, &prompts),
-+				promptRuntimeOptions: runtimeOptionsNone,
-+				languageTemplate:     languageTemplateMock,
-+				selectOne:            selectOne,
-+				secretsProvider:      "default",
-+			})
-+
-+			require.NoError(t, err)
-+			assert.Equal(t, []string{"my-org/prod"}, *created)
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `2f3860ce` (2026-11-06)
-**Commit Message**: Fix first stateful pulumi do command outside a project (#25595)
-
-The first stateful `pulumi do` command fails outside a project when
-stack config is stored locally:
-
-    $ pulumi do random:index/randomPet:RandomPet create pet --yes
-error: create global stack: saving stack config: no Pulumi.yaml project
-file found (searching upwards from ...)
-
-`ensureGlobalStack` creates the stack in the global project under
-`$PULUMI_HOME`, but `CreateStack` then looks for the stack config by
-searching upward from the current directory, which has no project. The
-stack exists by that point, so a retry works, but the first command's
-resource is never created.
-
-`ensureGlobalStack` now passes `CreateStack` the config path under the
-global project, as the stateful update path already does.
-
-**File**: `changelog/pending/cli-fix-20261105-170855.yaml` (added, +4/-0)
+**File**: `changelog/pending/cli-fix-20261105-180420.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +component: cli
 +kind: fix
-+body: Fix the first stateful `pulumi do` command failing outside a project on backends that store stack config locally
-+time: 2026-11-05T17:08:55.761548-08:00
++body: Fix a panic when `PULUMI_OPTION_*` environment variables set `int32`, `int64`, `duration`, or delimiter flags, such as `PULUMI_OPTION_PARALLEL`
++time: 2026-11-05T18:04:20.831994-08:00
 ```
 
-**File**: `pkg/cmd/pulumi/do/do_global.go` (modified, +4/-1)
+**File**: `pkg/cmd/pulumi/env_test.go` (modified, +30/-0)
 ```diff
-@@ -96,7 +96,10 @@ func ensureGlobalStack(
- 	}
- 	if stack == nil {
- 		// SetCurrent stays off: we handle selection ourselves below to target the global project.
--		stack, err = cmdStack.CreateStack(ctx, sink, ws, b, ref, root, cmdStack.CreateStackOptions{})
-+		stack, err = cmdStack.CreateStack(ctx, sink, ws, b, ref, root, cmdStack.CreateStackOptions{
-+			ConfigFile: workspace.ProjectStackPath(
-+				filepath.Join(root, workspace.ProjectFile+".yaml"), proj, ref.Name().Q()),
-+		})
- 		if err != nil {
- 			return nil, fmt.Errorf("create global stack: %w", err)
- 		}
-```
-
-**File**: `pkg/cmd/pulumi/do/do_global_test.go` (modified, +21/-0)
-```diff
-@@ -18,6 +18,10 @@ import (
- 	"path/filepath"
- 	"testing"
- 
-+	"github.com/pulumi/pulumi/pkg/v3/backend/display"
-+	cmdBackend "github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/backend"
-+	pkgWorkspace "github.com/pulumi/pulumi/pkg/v3/workspace"
-+	"github.com/pulumi/pulumi/sdk/v3/go/common/testing/diagtest"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- )
-@@ -33,3 +37,20 @@ func TestEnsureGlobalProjectUsesPulumiHome(t *testing.T) {
- 	assert.Equal(t, filepath.Join(home, globalProjectName), root)
- 	require.FileExists(t, filepath.Join(root, "Pulumi.yaml"))
+@@ -82,6 +82,36 @@ func TestNumericEnvironmentVariables(t *testing.T) {
+ 	require.Equal(t, 2, verbose)
  }
+ 
++func TestTypedFlagEnvironmentVariables(t *testing.T) {
++	tests := []struct {
++		name  string
++		env   string
++		value string
++		path  []string
++		flag  string
++	}{
++		{"int32", "PULUMI_OPTION_PARALLEL", "3", []string{"up"}, "parallel"},
++		{"int64", "PULUMI_OPTION_LOOKBACK_DAYS", "7", []string{"org", "usage", "get"}, "lookback-days"},
++		{"duration", "PULUMI_OPTION_DELAY", "2s", []string{"replay-events"}, "delay"},
++		{"Delimiter", "PULUMI_OPTION_DELIMITER", ";", []string{"org", "search"}, "delimiter"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Setenv(tt.env, tt.value)
 +
-+func TestEnsureGlobalStackFromUnrelatedCwd(t *testing.T) {
-+	t.Chdir(t.TempDir())
-+	t.Setenv("PULUMI_HOME", t.TempDir())
-+	t.Setenv("PULUMI_BACKEND_URL", "file://"+filepath.ToSlash(t.TempDir()))
-+	t.Setenv("PULUMI_CONFIG_PASSPHRASE", "test")
++			cmd, cleanup := NewPulumiCmd()
++			defer cleanup()
 +
-+	proj, root, err := ensureGlobalProject()
-+	require.NoError(t, err)
++			sub, _, err := cmd.Find(tt.path)
++			require.NoError(t, err)
 +
-+	stack, err := ensureGlobalStack(t.Context(), diagtest.LogSink(t), pkgWorkspace.Instance,
-+		cmdBackend.DefaultLoginManager, proj, root, display.Options{})
-+	require.NoError(t, err)
-+
-+	assert.Equal(t, globalStackName, stack.Ref().Name().String())
-+	require.FileExists(t, filepath.Join(root, "Pulumi.default.yaml"))
++			flag := sub.Flag(tt.flag)
++			require.NotNil(t, flag)
++			require.Equal(t, tt.value, flag.Value.String())
++		})
++	}
 +}
++
+ func TestStringArrayEnvironmentVariables(t *testing.T) {
+ 	t.Setenv("PULUMI_OPTION_TARGET", "foo,bar,baz")
+ 
+```
+
+**File**: `pkg/cmd/pulumi/pulumi.go` (modified, +1/-1)
+```diff
+@@ -1146,7 +1146,7 @@ func declareFlagsAsEnvironmentVariables(cmd *cobra.Command) {
+ 			for _, v := range csv {
+ 				_ = f.Value.Set(v)
+ 			}
+-		case "string", "int":
++		case "string", "int", "int32", "int64", "duration", "Delimiter":
+ 			_ = f.Value.Set(value)
+ 		default:
+ 			// Hello! If you're reading this, you've found a new CLI type and we don't
 ```
 
 #### Recent Merged Pull Requests:
@@ -1956,8 +1798,8 @@ global project, as the stateful update path already does.
 - **PR #25608** (closed): Regenerate automation APIs (@pulumi-bot)
 - **PR #25606** (2026-11-06): Fix download cron (@julienp)
 - **PR #25601** (2026-11-06): Regenerate automation APIs (@pulumi-bot)
+- **PR #25596** (2026-11-06): Fix panic from PULUMI_OPTION environment variables on typed flags (@nelsonfigueroa)
 - **PR #25595** (2026-11-06): Fix first stateful pulumi do command outside a project (@nelsonfigueroa)
-- **PR #25594** (2026-11-06): Fix pulumi whoami help text for team tokens (@jkodroff)
 
 ---
 
@@ -1977,24 +1819,24 @@ global project, as the stateful update path already does.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. command injection through Node.js version files when using language version tool
+## X. panic from PULUMI_OPTION environment variables on typed flags (#25596)
 
 **RULE**:
-When implementing operations in `changelog/pending/20261105--sdk-nodejs--node-version-shell-injection.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/cli-fix-20261105-180420.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `242875d9`: command injection through Node.js version files when using language version tools (#25580). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0695cf58`: panic from PULUMI_OPTION environment variables on typed flags (#25596). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261105--sdk-nodejs--node-version-shell-injection.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/cli-fix-20261105-180420.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: sdk/nodejs
+component: cli
 kind: fix
-body: Fix command injection through Node.js version files when using language version tools
-time: 2026-11-05T00:00:00Z
+body: Fix a panic when `PULUMI_OPTION_*` environment variables set `int32`, `int64`, `duration`, or delimiter flags, such as `PULUMI_OPTION_PARALLEL`
+time: 2026-11-05T18:04:20.831994-08:00
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2004,4 +1846,4 @@ time: 2026-11-05T00:00:00Z
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `242875d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0695cf58` are properly handled with clean fallback behavior.

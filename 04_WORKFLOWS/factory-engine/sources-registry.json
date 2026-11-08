@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T03:28:27.245Z",
-    "lastVerified": "2026-11-08T03:28:27.245Z",
+    "lastChecked": "2026-11-08T03:35:58.390Z",
+    "lastVerified": "2026-11-08T03:35:58.390Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,9 +369,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T03:07:57.781Z",
+    "lastChecked": "2026-11-08T03:35:51.905Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T03:07:57.781Z"
+    "lastVerified": "2026-11-08T03:35:51.905Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -426,8 +426,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T23:47:05.850Z",
-    "lastVerified": "2026-11-07T23:47:05.850Z",
+    "lastChecked": "2026-11-08T03:35:46.870Z",
+    "lastVerified": "2026-11-08T03:35:46.870Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -1116,9 +1116,9 @@
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-11-06T21:29:10.873Z",
+    "lastChecked": "2026-11-08T03:35:49.446Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-11-06T21:29:10.873Z"
+    "lastVerified": "2026-11-08T03:35:49.446Z"
   },
   "burntsushi-ripgrep": {
     "name": "ripgrep",
@@ -2913,9 +2913,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-11-06T13:07:40.983Z",
+    "lastChecked": "2026-11-08T03:35:36.786Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-11-06T13:07:40.983Z"
+    "lastVerified": "2026-11-08T03:35:36.786Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -5249,14 +5249,14 @@
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T22:28:44.355Z",
-    "lastVerified": "2026-11-06T22:28:44.355Z",
+    "lastChecked": "2026-11-08T03:35:49.745Z",
+    "lastVerified": "2026-11-08T03:35:49.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "de697b0e292fcd07c72ec8d085fc693d0450a878a0d69d3edcf04dadbff71338",
+    "contentHash": "18b5d4f833096c1e6c099789c026c28e95a27f356b114564dcafc6f36ed8ddc2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9340,12 +9340,12 @@
     "officialUrl": "https://github.com/momenbasel/PureMac",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-05T02:55:14.309Z",
-    "lastVerified": "2026-11-05T02:55:14.309Z",
+    "lastChecked": "2026-11-08T03:35:45.915Z",
+    "lastVerified": "2026-11-08T03:35:45.915Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-momenbasel-puremac",
-    "contentHash": "c5ea1e8860e6cc7348b23147c70b277cb9a8a00e829ebc8bccae093187cb1584",
+    "contentHash": "7cd0775f119ffc62ffb9c297e0d05213e6dc5aa0cc0422e9985512d6d93157c0",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -12933,12 +12933,12 @@
     "officialUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T17:09:19.849Z",
-    "lastVerified": "2026-11-04T17:09:19.849Z",
+    "lastChecked": "2026-11-08T03:35:39.530Z",
+    "lastVerified": "2026-11-08T03:35:39.530Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-    "contentHash": "fc612bcdc098d99fbe55f5a54d06f07fa95cbb55bfc0e4594919f4399d76769c",
+    "contentHash": "8673227ad392e495f41df825f28e41188d42564fb2efe65cdbea5b58d55b2943",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

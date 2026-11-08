@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "ad62c570",
+    "sourceVersion": "6bbe25d6",
     "license": "Apache-2.0",
-    "contentHash": "de697b0e292fcd07c72ec8d085fc693d0450a878a0d69d3edcf04dadbff71338",
-    "lastHarvestedAt": "2026-11-06T22:28:46.944Z",
+    "contentHash": "18b5d4f833096c1e6c099789c026c28e95a27f356b114564dcafc6f36ed8ddc2",
+    "lastHarvestedAt": "2026-11-08T03:35:51.398Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "03606271",
+    "sourceVersion": "14da8d0e",
     "license": "MIT",
-    "contentHash": "c5ea1e8860e6cc7348b23147c70b277cb9a8a00e829ebc8bccae093187cb1584",
-    "lastHarvestedAt": "2026-11-05T02:55:14.644Z",
+    "contentHash": "7cd0775f119ffc62ffb9c297e0d05213e6dc5aa0cc0422e9985512d6d93157c0",
+    "lastHarvestedAt": "2026-11-08T03:35:46.608Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {
@@ -10375,8 +10375,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "fc612bcdc098d99fbe55f5a54d06f07fa95cbb55bfc0e4594919f4399d76769c",
-    "lastHarvestedAt": "2026-11-04T17:10:13.699Z",
+    "contentHash": "8673227ad392e495f41df825f28e41188d42564fb2efe65cdbea5b58d55b2943",
+    "lastHarvestedAt": "2026-11-08T03:35:55.755Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8"
   },
   "hf-lodestones-moss-image-sft-8-steps-dmd": {

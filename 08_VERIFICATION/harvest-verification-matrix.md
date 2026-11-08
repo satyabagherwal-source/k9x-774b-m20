@@ -8194,3 +8194,6 @@
 | `CYCLE-20261108-MQJJ` | `2026-11-08T03:21:25.471Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`20aea369...`) |
 | `CYCLE-20261108-VJ8D` | `2026-11-08T03:28:15.901Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c537c65d...`) |
 | `CYCLE-20261108-VQ00` | `2026-11-08T03:28:24.672Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6849, Rule null` | Yes (`7a5c7c06...`) |
+| `CYCLE-20261108-56ZW` | `2026-11-08T03:35:46.604Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`7cd0775f...`) |
+| `CYCLE-20261108-5AOY` | `2026-11-08T03:35:51.394Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`18b5d4f8...`) |
+| `CYCLE-20261108-5E1Z` | `2026-11-08T03:35:55.751Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule 633` | Yes (`8673227a...`) |
