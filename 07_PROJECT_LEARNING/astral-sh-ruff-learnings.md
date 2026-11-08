@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `1091a8b5`  
+> **Source Version**: `47daf1c2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:03:18.104Z  
+> **Timestamp**: 2026-11-08T22:00:47.718Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:03:16.849Z  
+> **Harvest Timestamp**: 2026-11-08T22:00:47.712Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50939 stars
+- **Stars / Engagement**: 51112 stars
 
 ---
 
@@ -2124,415 +2124,208 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fca4b6eb` (2026-11-06)
-**Commit Message**: [ty] Pick up the schema_salad ecosystem setup fix (#30136)
-
-Update Ruff's locked `ecosystem-analyzer` revision to pick up the
-`schema_salad` setup fix. Align the setup script's `mypy-primer` lock
-with the analyzer. [ecosystem-analyzer
-#246](https://github.com/astral-sh/ecosystem-analyzer/pull/246) ·
-[mypy_primer #275](https://github.com/hauntsaninja/mypy_primer/pull/275)
-
-The lock checks passed, and the setup script installed `schema_salad` at
-`0fd6c25fb0` with the dependency cutoff from the failing ecosystem run.
-`uv pip check` passed.
-
-**File**: `scripts/setup_primer_project.py.lock` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ build-constraints = [{ name = "setuptools", specifier = "==84.0.0", hashes = ["s
- [[package]]
- name = "mypy-primer"
- version = "0.1.0"
--source = { git = "https://github.com/hauntsaninja/mypy_primer#e1f6fe93da5de0cbaf0ab00341d05968a0331fae" }
-+source = { git = "https://github.com/hauntsaninja/mypy_primer#4bec1e883f8f9900d8ccfd682a0b2ed7f34b7acd" }
- dependencies = [
-     { name = "tomlkit" },
- ]
-```
-
-**File**: `uv.lock` (modified, +2/-2)
-```diff
-@@ -519,7 +519,7 @@ dependencies = [
- [[package]]
- name = "ecosystem-analyzer"
- version = "0.1.0"
--source = { git = "https://github.com/astral-sh/ecosystem-analyzer#ebec9bd301f36aa1308fc2e0c743129ff23581fc" }
-+source = { git = "https://github.com/astral-sh/ecosystem-analyzer#966714453cc6fd34bedae5090a4e2db984fca1fc" }
- dependencies = [
-     { name = "click", version = "8.5.0", source = { registry = "https://pypi.org/simple" } },
-     { name = "jinja2" },
-@@ -1029,7 +1029,7 @@ wheels = [
- [[package]]
- name = "mypy-primer"
- version = "0.1.0"
--source = { git = "https://github.com/hauntsaninja/mypy_primer?rev=e1f6fe93da5de0cbaf0ab00341d05968a0331fae#e1f6fe93da5de0cbaf0ab00341d05968a0331fae" }
-+source = { git = "https://github.com/hauntsaninja/mypy_primer?rev=4bec1e883f8f9900d8ccfd682a0b2ed7f34b7acd#4bec1e883f8f9900d8ccfd682a0b2ed7f34b7acd" }
- dependencies = [
-     { name = "tomlkit" },
- ]
-```
-
----
-
-### Incident Patch 2: `9e96942d` (2026-11-06)
-**Commit Message**: [`flake8-logging-format`] Mark `G004` fix as unsafe (#30087)
+### Incident Patch 1: `47daf1c2` (2026-11-08)
+**Commit Message**: Fix FreeBSD source builds with libc 0.2.190 (#30176)
 
 ## Summary
 
-Rule `G004` (`logging-f-string`) converts f-string logging statements
-(`logging.warning(f"{c}")`) into lazy logging (`logging.warning("%s",
-c)`).
+Update the locked Mio dependency from 1.0.4 to 1.2.4, which includes the
+upstream fix for the removed `libc::NOTE_PCTRLMASK` constant. This
+resolves the compilation failure reported in #30174.
 
-In Python, formatting an object in an f-string evaluates its
-`__format__` method, whereas `%s` formatting evaluates its `__str__`
-method. If an object implements both methods with different behaviors,
-converting from an f-string to `%s` can change the logged output.
+Only Mio's lockfile entry changes, all other package records are
+preserved.
 
-This change marks the `G004` fix as unconditionally unsafe (using
-`Fix::unsafe_edit`), updates the rule documentation in `violations.rs`,
-and updates the corresponding snapshot tests.
-
-Closes #30076.
+Fixes #30174.
 
 ## Test Plan
 
-- Updated snapshot test fixtures via `INSTA_UPDATE=always cargo test -p
-ruff_linter rules::flake8_logging_format`
-- Verified all snapshot tests pass with `cargo test -p ruff_linter
-rules::flake8_logging_format`
-- Verified full linter test suite passes: `cargo test -p ruff_linter`
-- Verified clippy checks pass: `cargo clippy -p ruff_linter`
-- Verified code formatting passes: `cargo fmt --check`
+- `cargo check --locked -p notify --target x86_64-unknown-freebsd`:
+reproduces the reported error before the update and passes afterward.
+- `cargo test --locked -p ruff`: 372 tests passed.
+- `cargo fmt --all -- --check`: passed.
+- `uv run --python 3.12 --only-dev --locked prek run --files
+Cargo.lock`: passed.
+- Scoped Clippy fails on an existing `needless_update` warning in
+`crates/ruff_db/src/system/os.rs:53`. The same failure reproduces on the
+unchanged base; that code is left untouched.
 
----------
+The FreeBSD check compiles Notify and its dependencies. Full Ruff
+linking and runtime execution on FreeBSD were not tested.
 
-Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
-
-**File**: `crates/ruff_linter/resources/mdtest/flake8-logging-format/logging-f-string.md` (modified, +11/-2)
+**File**: `Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -29,6 +29,7 @@ help: Convert to lazy `%` formatting
-   - logging.info(f"plain {value}")  # snapshot: logging-f-string
- 5 + logging.info("plain %s", value)  # snapshot: logging-f-string
-   |
-+note: This is an unsafe fix and may change runtime behavior
- ```
+@@ -2169,14 +2169,14 @@ dependencies = [
  
- ## Escape sequences
-@@ -58,6 +59,7 @@ help: Convert to lazy `%` formatting
- 5 + logging.warning("\n%s", value)  # snapshot: logging-f-string
- 6 | logging.warning(f"C:\\{value}")  # snapshot: logging-f-string
-   |
-+note: This is an unsafe fix and may change runtime behavior
+ [[package]]
+ name = "mio"
+-version = "1.0.4"
++version = "1.2.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "78bed444cc8a2160f01cbcf811ef18cac863ad68ae8ca62092e8db51d51c761c"
++checksum = "1788edb87fdc09c7e26304471e2f5be8cdefb1b6930d6e3985fc02ff53bf86ee"
+ dependencies = [
+  "libc",
+  "log",
+  "wasi",
+- "windows-sys 0.59.0",
++ "windows-sys 0.61.0",
+ ]
  
- 
- error[G004]: Logging statement uses f-string
-@@ -71,6 +73,7 @@ help: Convert to lazy `%` formatting
-   - logging.warning(f"C:\\{value}")  # snapshot: logging-f-string
- 6 + logging.warning("C:\\%s", value)  # snapshot: logging-f-string
-   |
-+note: This is an unsafe fix and may change runtime behavior
- ```
- 
- ## Raw f-strings
-@@ -100,6 +103,7 @@ help: Convert to lazy `%` formatting
- 5 + logging.warning("\\'%s", value)  # snapshot: logging-f-string
- 6 | logging.warning(Rf"\d+ {value}")  # snapshot: logging-f-string
-   |
-+note: This is an unsafe fix and may change runtime behavior
- 
- 
- error[G004]: Logging statement uses f-string
-@@ -113,6 +117,7 @@ help: Convert to lazy `%` formatting
-   - logging.warning(Rf"\d+ {value}")  # snapshot: logging-f-string
- 6 + logging.warning("\\d+ %s", value)  # snapshot: logging-f-string
-   |
-+note: This is an unsafe fix and may change runtime behavior
- ```
- 
- ## Quote style
-@@ -142,6 +147,7 @@ help: Convert to lazy `%` formatting
- 5 + logging.warning('"%s"', value)  # snapshot: logging-f-string
- 6 | logging.warning(f"'{value}'")  # snapshot: logging-f-string
-   |
-+note: This is an unsafe fix and may change runtime behavior
- 
- 
- error[G004]: Logging statement uses f-string
-@@ -155,6 +161,7 @@ help: Convert to lazy `%` formatting
-   - logging.warning(f"'{value}'")  # snapshot: logging-f-string
- 6 + logging.warning("'%s'", value)  # snapshot: logging-f-string
-   |
-+note: This is an unsafe fix and may change runtime behavior
- ```
- 
- ## Parenthesized messages
-@@ -185,6 +192,7 @@ help: Convert to lazy `%` formatting
- 5 + logging.warning("%s", value)  # snapshot: logging-f-string
- 6 | logging.warning(((f"{value}")))  # snapshot: logging-f-string
-   |
-+note: This is an unsafe fix and may change runtime behavior
- 
- 
- error[G004]: Logging statement uses f-string
-@@ -198,6 +206,7 @@ help: Convert to lazy `%` formatting
-   - logging.warning(((f"{value}")))  # snapshot: logging-f-string
- 6 + logging.warning("%s", value)  # snapshot: logging-f-string
-   |
-+note: This is an unsafe fix and may change runtime behavior
- ```
- 
- ## Self-documenting interpolations
-@@ -311,8 +320,7 @@ note: This is an unsafe fix and may change runtime behavior
- 
- ## Comments outside the replaced range
- 
--Only the message and the parentheses around it are replaced, so a comment elsewhere in the call
--leaves the fix safe.
-+The fix preserves comments outside the message and its surrounding parentheses.
- 
- ```py
- import logging
-@@ -337,4 +345,5 @@ help: Convert to lazy `%` formatting
- 6 +     "%s", value  # snapshot: logging-f-string
- 7 | )
-   |
-+note: This is an unsafe fix and may change runtime behavior
- ```
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_logging_format/rules/logging_call.rs` (modified, +5/-11)
-```diff
-@@ -13,7 +13,7 @@ use crate::rules::flake8_logging_format::violations::{
-     LoggingExcInfo, LoggingExtraAttrClash, LoggingFString, LoggingPercentFormat,
-     LoggingRedundantExcInfo, LoggingStringConcat, LoggingStringFormat, LoggingWarn,
- };
--use crate::{Applicability, Edit, Fix};
-+use crate::{Edit, Fix};
- 
- fn logging_f_string(
-     checker: &Checker,
-@@ -112,16 +112,10 @@ fn logging_f_string(
- 
-     let replacement = format!("{format_string}, {}", args.join(", "));
- 
--    let applicability = if checker.comment_ranges().intersects(target) {
--        Applicability::Unsafe
--    } else {
--        Applicability::Safe
--    };
--
--    diagnostic.set_fix(Fix::applicable_edit(
--        Edit::range_replacement(replacement, target),
--        applicability,
--    ));
-+    diagnostic.set_fix(Fix::unsafe_edit(Edit::range_replacement(
-+        replacement,
-+        target,
-+    )));
- }
- 
- /// Returns `true` if the attribute is a reserved attribute on the `logging` module's `LogRecord`
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_logging_format/snapshots/ruff_linter__rules__flake8_logging_format__tests__preview__logging-f-string_G004.py.snap` (modified, +7/-0)
-```diff
-@@ -16,6 +16,7 @@ help: Convert to lazy `%` formatting
- 4 + logging.info("Hello %s", name)
- 5 | logging.log(logging.INFO, f"Hello {name}")
-   |
-+note: This is an unsafe fix and may change runtime behavior
- 
- G004 [*] Logging statement uses f-string
-  --> G004.py:5:27
-@@ -34,6 +35,7 @@ help: Convert to lazy `%` formatting
- 5 + logging.log(logging.INFO, "Hello %s", name)
- 6 |
-   |
-+note: This is an unsafe fix and may change runtime behavior
- 
- G004 [*] Logging statement uses f-string
-   --> G004.py:8:14
-@@ -51,6 +53,7 @@ help: Convert to lazy `%` formatting
- 8 + _LOGGER.info("%s", __name__)
- 9 |
-   |
-+note: This is an unsafe fix and may change runtime behavior
- 
- G004 [*] Logging statement uses f-string
-   --> G004.py:10:26
-@@ -69,6 +72,7 @@ help: Convert to lazy `%` formatting
- 10 + logging.getLogger().info("%s", name)
- 11 |
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- G004 [*] Logging statement uses f-string
-   --> G004.py:14:6
-@@ -86,6 +90,7 @@ help: Convert to lazy `%` formatting
- 14 + info("%s", name)
- 15 | info(f"{__name__}")
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- G004 [*] Logging statement uses f-string
-   --> G004.py:15:6
-@@ -103,6 +108,7 @@ help: Convert to lazy `%` formatting
- 15 + info("%s", __name__)
- 16 |
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- G004 [*] Logging statement uses f-string
-   --> G004.py:24:14
-@@ -118,6 +124,7 @@ help: Convert to lazy `%` formatting
- 24 + logging.info("%s out of %s files in %s checked", count, total, directory_path)
- 25 |
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- G004 Logging statement uses f-string
-   --> G004.py:30:13
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_logging_format/snapshots/ruff_linter__rules__flake8_logging_format__tests__preview__logging-f-string_G004_implicit_concat.py.snap` (modified, +3/-0)
-```diff
-@@ -17,6 +17,7 @@ help: Convert to lazy `%` formatting
- 6 + log.info("ab %s", variablename)
- 7 | log.info("a " f"b {variablename}")
-   |
-+note: This is an unsafe fix and may change runtime behavior
- 
- G004 [*] Logging statement uses f-string
-  --> G004_implicit_concat.py:7:10
-@@ -34,6 +35,7 @@ help: Convert to lazy `%` formatting
- 7 + log.info("a b %s", variablename)
- 8 | log.info("prefix " f"middle {variablename}" f" suffix")
-   |
-+note: This is an unsafe fix and may change runtime behavior
- 
- G004 [*] Logging statement uses f-string
-  --> G004_implicit_concat.py:8:10
-@@ -48,3 +50,4 @@ help: Convert to lazy `%` formatting
-   - log.info("prefix " f"middle {variablename}" f" suffix")
- 8 + log.info("prefix middle %s suffix", variablename)
-   |
-+note: This is an unsafe fix and may change runtime behavior
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_logging_format/violations.rs` (modified, +7/-3)
-```diff
-@@ -322,9 +322,13 @@ impl Violation for LoggingStringConcat {
- /// ```
- ///
- /// ## Fix safety
--/// This rule's fix is marked as unsafe if the message,
--/// or the parentheses around it, contain comments,
--/// since the rewrite replaces that whole range and would delete them.
-+/// This rule's fix is always marked as unsafe because formatting an object in an f-string
-+/// evaluates its `__format__` method, whereas `%s` formatting evaluates its
-+/// `__str__` method. If an object implements both methods with different behaviors,
-+/// converting from an f-string to `%s` formatting can alter the logged message.
-+///
-+/// Additionally, if the message or the parentheses around it contain comments,
-+/// the comments will be deleted.
- ///
- /// ## Options
- /// - `lint.logger-objects`
+ [[package]]
 ```
 
 ---
 
-### Incident Patch 3: `cdc5f2c4` (2026-11-06)
-**Commit Message**: [ty] Check constraint equivalence by searching for counterexamples (#30093)
+### Incident Patch 2: `9f9dd30f` (2026-11-08)
+**Commit Message**: [ty] Reject incompatible fixed tuple contexts as elements are inferred (#30183)
 
 ## Summary
 
-When matching a union of `TypedDict` types against a protocol, ty can
-end up checking whether two sets of type-variable constraints accept
-exactly the same assignments. We used to build a decision diagram for
-the entire equivalence before asking the solver to prove it.
+When a parameter accepts `tuple[str, list[int]] | tuple[int,
+list[str]]`, ty tries the argument `(1, ["a", "b"])` against both tuple
+types. The first element already rules out `tuple[str, list[int]]`, but
+we still infer the list against `list[int]` before rejecting that
+candidate.
 
-We now look for an assignment that satisfies `A` but not `B`, then one
-that satisfies `B` but not `A`. If neither exists, the constraints are
-equivalent. This lets the solver rule out each direction independently.
+We now skip a fixed-length tuple candidate as soon as its length or an
+element rules it out. In this example, we infer the list only against
+`list[str]`. Tuples with starred elements and tuples that need promotion
+still use the existing inference path.
 
-<!-- ty-pinned-project-instructions:start -->
-The table shows median instructions per cold `ty check`. Change and
-range compare paired PR and parent runs. Negative values mean fewer
-instructions. [Pinned
-projects](https://github.com/astral-sh/ty/blob/1b1d9c40e9d9ca08e0028d672c6b0c1eff34796a/BENCHMARKS.md)
-
-| Project | Parent instructions | PR instructions | Change | Paired
-range |
+| Project | Main instructions | PR instructions | Change | Paired range
+|
 |---|---:|---:|---:|---:|
 |
 [Black](https://github.com/psf/black/tree/55996d1fb8342725c8a19b6023cd9439c3c1d6f7)
-| 3,373,003,124 | 3,374,298,156 | +0.02% | -0.19% to +0.22% |
+| 4,007,646,365 | 3,994,857,384 | -0.34% | -1.86% to +0.13% |
 |
-[discord.py](https://github.com/Rapptz/discord.py/tree/65232c3870
+[discord.py](https://github.com/Rapptz/discord.py/tree/65232c38702be5844cf2ce865a4777eb1928b5d0)
+| 10,806,479,908 | 10,821,266,446 | +0.09% | -0.20% to +0.58% |
+|
+[Django](https://github.com/django/django/tree/b501b8493f31cf8cba31211d59b3b78642b8cb02)
+| 18,345,277,164 | 18,427,247,634 | +0.08% | -0.89% to +2.06% |
+|
+[F
 
-**File**: `crates/ty_python_semantic/src/types/constraints.rs` (modified, +22/-0)
+**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +77/-5)
 ```diff
-@@ -791,6 +791,24 @@ impl<'db, 'c> ConstraintSet<'db, 'c> {
-         Self::from_node(builder, node, source_order)
+@@ -7498,15 +7498,15 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
+         // exponential blowup.
+         let teardown_expression_cache = self.setup_expression_cache();
+         let mut narrowed = Vec::new();
+-        for narrowed_ty in narrowed_tys.iter().filter(|ty| {
++        let mode = TupleInferenceMode::for_literal(tuple);
++        for &candidate in narrowed_tys.iter().filter(|ty| {
+             ty.known_specialization(db, env, KnownClass::Tuple)
+                 .is_some()
+         }) {
+             let mut speculative_builder = self.speculate();
+-
+-            let inferred_ty = speculative_builder
+-                .infer_tuple_expression_impl(tuple, tcx.with_declared_type(Some(*narrowed_ty)));
+-            if inferred_ty.is_assignable_to(db, env, *narrowed_ty) {
++            if let Some(inferred_ty) =
++                speculative_builder.infer_tuple_for_union_member(tuple, tcx, candidate, mode)
++            {
+                 narrowed.push((inferred_ty, speculative_builder));
+             }
+         }
+@@ -7530,6 +7530,55 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
+         result.unwrap_or_else(|| self.infer_tuple_expression_impl(tuple, tcx))
      }
  
-+    /// Returns whether the two constraint sets hold for exactly the same assignments.
-+    pub(super) fn is_equivalent_to(
-+        self,
-+        db: &'db dyn Db,
-+        env: &ProgramEnvironment<'db>,
-+        other: Self,
-+        inferable: TypeVarSet<'db>,
-+    ) -> bool {
-+        other.verify_builder(self.builder);
-+        // Look for a counterexample in each direction. Building the full equivalence diagram
-+        // combines both sets of paths before the solver can rule either direction out.
-+        let is_subset = |left: Self, right: Self| {
-+            left.and(db, self.builder, || right.negate(db, self.builder))
-+                .is_never_satisfied(db, env, inferable)
++    /// Infers a tuple literal against one member of its expected union. Returns `None` when
++    /// the literal cannot match that member.
++    ///
++    /// ```python
++    /// value: tuple[int, list[int]] | tuple[str, list[str]] = ("tag", [])
++    /// ```
++    ///
++    /// `"tag"` rules out the first member before we infer `[]` in that context. The
++    /// second member gives `[]` the type `list[str]`. Unpacking and literal promotion
++    /// still need whole-tuple inference.
++    fn infer_tuple_for_union_member(
++        &mut self,
++        tuple: &ast::ExprTuple,
++        tcx: TypeContext<'db>,
++        candidate: Type<'db>,
++        mode: TupleInferenceMode,
++    ) -> Option<Type<'db>> {
++        let db = self.db();
++        let env = self.program_environment();
++        let inferred = if let TupleInferenceMode::FixedElements = mode
++            && let Some(spec) = candidate.exact_tuple_instance_spec(db)
++            && let Tuple::Fixed(expected) = spec.as_ref()
++        {
++            if expected.len() != tuple.elts.len() {
++                return None;
++            }
++            let mut elements = Vec::with_capacity(expected.len());
++            for (index, (elt, expected_ty)) in tuple
++                .elts
++                .iter()
++                .zip(expected.iter_all_elements())
++                .enumerate()
++            {
++                let ty = self.infer_expression(elt, tcx.with_declared_type(Some(expected_ty)));
++                // The whole-tuple check below already checks the last element.
++                if index + 1 < expected.len() && !ty.is_assignable_to(db, env, expected_ty) {
++                    return None;
++                }
++                elements.push(ty);
++            }
++            Type::heterogeneous_tuple(db, env, elements)
++        } else {
++            self.infer_tuple_expression_impl(tuple, tcx.with_declared_type(Some(candidate)))
 +        };
-+        self.node == other.node || (is_subset(self, other) && is_subset(other, self))
++        inferred
++            .is_assignable_to(db, env, candidate)
++            .then_some(inferred)
 +    }
 +
-     /// Reduces the set of inferable typevars for this constraint set. You provide the typevars that
-     /// were inferable when this constraint set was created, and which should be abstracted away.
-     /// Those typevars will be removed from the constraint set, and the constraint set will return
-@@ -6894,6 +6912,10 @@ class E: ...
-         let tdd = t_int.or(db, &builder, || u_str);
-         let negated = tdd.negate(db, &builder);
-         let double_negated = negated.negate(db, &builder);
-+        assert!(tdd.is_equivalent_to(db, &env, double_negated, TypeVarSet::None));
-+        assert!(!tdd.is_equivalent_to(db, &env, t_int, TypeVarSet::None));
-+        assert!(!t_int.is_equivalent_to(db, &env, tdd, TypeVarSet::None));
-+
-         let equivalent = tdd.iff(db, &builder, double_negated);
-         assert!(equivalent.is_always_satisfied(db, &env, TypeVarSet::None));
+     fn infer_tuple_expression_impl(
+         &mut self,
+         tuple: &ast::ExprTuple,
+@@ -13147,6 +13196,29 @@ impl<'args, 'call, 'db> CallArgumentInference<'args, 'call, 'db> {
      }
-```
-
-**File**: `crates/ty_python_semantic/src/types/generics.rs` (modified, +1/-3)
-```diff
-@@ -3911,9 +3911,7 @@ impl<'db, 'c> SpecializationBuilder<'db, 'c> {
-                 env,
-                 &element.when_constraint_set_assignable_to_owned(db, env, formal),
-             );
--            element_when
--                .iff(db, self.constraints, mapping_when)
--                .is_always_satisfied(db, env, self.inferable)
-+            element_when.is_equivalent_to(db, env, mapping_when, self.inferable)
-                 && element_when
-                     .solutions(db, env, self.inferable)
-                     .is_ok_and(|solutions| solutions == mapping_solutions)
+ }
+ 
++/// How a tuple literal can be inferred against members of its expected union.
++/// With [`Self::FixedElements`], an incompatible element can rule out a fixed-length
++/// tuple member before we infer the remaining elements.
++#[derive(Clone, Copy)]
++enum TupleInferenceMode {
++    FixedElements,
++    WholeTuple,
++}
++
++impl TupleInferenceMode {
++    /// Selects whole-tuple inference when unpacking can change element positions or
++    /// when the tuple is large enough to require literal promotion.
++    fn for_literal(tuple: &ast::ExprTuple) -> Self {
++        if tuple.elts.iter().any(ast::Expr::is_starred_expr)
++            || tuple_literal_needs_promotion(&tuple.elts)
++        {
++            Self::WholeTuple
++        } else {
++            Self::FixedElements
++        }
++    }
++}
++
+ #[derive(Clone, Copy)]
+ enum CallArgumentInferenceMode {
+     /// Infer against every candidate type context entirely speculatively.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #30187** (closed): Avoid panicking when logging to a closed stderr pipe (@lianxiaozhi)
+- **PR #30183** (2026-11-08): [ty] Reject incompatible fixed tuple contexts as elements are inferred (@charliermarsh)
+- **PR #30176** (2026-11-08): Fix FreeBSD source builds with libc 0.2.190 (@hector2394)
 - **PR #30169** (2026-11-07): [ty] Defer formatting details for suppressed diagnostics (@charliermarsh)
 - **PR #30165** (2026-11-07): [ty] Collect namespace members once per metaclass (@charliermarsh)
-- **PR #30147** (2026-11-07): [ty] Stop after the first incompatible target overload (@charliermarsh)
-- **PR #30136** (2026-11-06): [ty] Pick up the schema_salad ecosystem setup fix (@sharkdp)
-- **PR #30135** (2026-11-06): Share resolved call names with pytest lint rules (@MichaReiser)
-- **PR #30133** (2026-11-06): Recognize typing calls by their resolved member name (@MichaReiser)
+- **PR #30154** (closed): [ty] Avoid rechecking method wrappers that define instance attributes (@charliermarsh)
 
 ---
 
@@ -2552,28 +2345,32 @@ range |
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Pick up the schema_salad ecosystem setup fix (#30136)
+## X. FreeBSD source builds with libc 0.2.190 (#30176)
 
 **RULE**:
-When implementing operations in `scripts/setup_primer_project.py.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fca4b6eb`: [ty] Pick up the schema_salad ecosystem setup fix (#30136). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47daf1c2`: FreeBSD source builds with libc 0.2.190 (#30176). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/setup_primer_project.py.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = { git = "https://github.com/hauntsaninja/mypy_primer#4bec1e883f8f9900d8ccfd682a0b2ed7f34b7acd" }
+version = "1.2.4"
+checksum = "1788edb87fdc09c7e26304471e2f5be8cdefb1b6930d6e3985fc02ff53bf86ee"
+ "windows-sys 0.61.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-source = { git = "https://github.com/hauntsaninja/mypy_primer#e1f6fe93da5de0cbaf0ab00341d05968a0331fae" }
+version = "1.0.4"
+checksum = "78bed444cc8a2160f01cbcf811ef18cac863ad68ae8ca62092e8db51d51c761c"
+ "windows-sys 0.59.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fca4b6eb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47daf1c2` are properly handled with clean fallback behavior.

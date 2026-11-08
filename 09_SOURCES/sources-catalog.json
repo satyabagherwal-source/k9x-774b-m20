@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "d4eea3f2",
+    "sourceVersion": "45c50f87",
     "license": "MIT",
-    "contentHash": "d777ead09026db0a086a9884b71998286bfff92dcd23fe90b351e8cbaa56d1c7",
-    "lastHarvestedAt": "2026-11-08T00:56:12.918Z",
+    "contentHash": "30eb9530b11a5cca65c03f262e078d839aa10b47c72eeaade39944a94d457f53",
+    "lastHarvestedAt": "2026-11-08T22:01:01.830Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "1091a8b5",
+    "sourceVersion": "47daf1c2",
     "license": "MIT",
-    "contentHash": "cb879ef6bb7c5f7dbcc4e39088398c9106ccc71f4e6356f6668153000ae46092",
-    "lastHarvestedAt": "2026-11-07T21:03:19.480Z",
+    "contentHash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
+    "lastHarvestedAt": "2026-11-08T22:00:48.639Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {
@@ -11955,8 +11955,8 @@
     "sourceUrl": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
     "sourceVersion": "hf-ricursiveai-ripple-65b-preview",
     "license": "Open-Source",
-    "contentHash": "6cd918f836635b69f5d934a6123ccfa015c1049570417e473d42f004d7e3e19b",
-    "lastHarvestedAt": "2026-11-05T04:50:31.336Z",
+    "contentHash": "21084baf6101d3986553f10dcd47fb2f7a261948dd5534e071d05bb1498f4202",
+    "lastHarvestedAt": "2026-11-08T22:00:46.429Z",
     "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview"
   },
   "apache-pinot": {

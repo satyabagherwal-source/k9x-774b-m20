@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T21:47:07.335Z",
-    "lastVerified": "2026-11-08T21:47:07.335Z",
+    "lastChecked": "2026-11-08T22:01:04.421Z",
+    "lastVerified": "2026-11-08T22:01:04.421Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T21:16:46.159Z",
+    "lastChecked": "2026-11-08T22:00:57.775Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T21:16:46.159Z"
+    "lastVerified": "2026-11-08T22:00:57.775Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1475,9 +1475,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-08T17:35:41.710Z",
+    "lastChecked": "2026-11-08T22:00:52.733Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-08T17:35:41.710Z"
+    "lastVerified": "2026-11-08T22:00:52.733Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4431,9 +4431,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-08T01:46:14.535Z",
+    "lastChecked": "2026-11-08T22:00:50.342Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-08T01:46:14.535Z"
+    "lastVerified": "2026-11-08T22:00:50.342Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwave",
@@ -7712,14 +7712,14 @@
     "officialUrl": "https://github.com/duckdb/duckdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-08T00:56:10.278Z",
-    "lastVerified": "2026-11-08T00:56:10.278Z",
+    "lastChecked": "2026-11-08T22:01:00.629Z",
+    "lastVerified": "2026-11-08T22:01:00.629Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "d777ead09026db0a086a9884b71998286bfff92dcd23fe90b351e8cbaa56d1c7",
+    "contentHash": "30eb9530b11a5cca65c03f262e078d839aa10b47c72eeaade39944a94d457f53",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8694,14 +8694,14 @@
     "officialUrl": "https://github.com/astral-sh/ruff",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T21:03:16.849Z",
-    "lastVerified": "2026-11-07T21:03:16.849Z",
+    "lastChecked": "2026-11-08T22:00:47.712Z",
+    "lastVerified": "2026-11-08T22:00:47.712Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "cb879ef6bb7c5f7dbcc4e39088398c9106ccc71f4e6356f6668153000ae46092",
+    "contentHash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11460,8 +11460,8 @@
     "officialUrl": "https://github.com/sparrowcode/AlertKit",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-05T15:13:03.027Z",
-    "lastVerified": "2026-11-05T15:13:03.027Z",
+    "lastChecked": "2026-11-08T22:00:47.719Z",
+    "lastVerified": "2026-11-08T22:00:47.719Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sparrowcode-alertkit",
@@ -14030,12 +14030,12 @@
     "officialUrl": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T04:50:29.922Z",
-    "lastVerified": "2026-11-05T04:50:29.922Z",
+    "lastChecked": "2026-11-08T22:00:45.369Z",
+    "lastVerified": "2026-11-08T22:00:45.369Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
-    "contentHash": "6cd918f836635b69f5d934a6123ccfa015c1049570417e473d42f004d7e3e19b",
+    "contentHash": "21084baf6101d3986553f10dcd47fb2f7a261948dd5534e071d05bb1498f4202",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

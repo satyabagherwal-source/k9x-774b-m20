@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T21:47:04.649Z",
+  "last_updated": "2026-11-08T22:01:01.747Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3979,8 +3979,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "1091a8b5",
-      "content_hash": "cb879ef6bb7c5f7dbcc4e39088398c9106ccc71f4e6356f6668153000ae46092",
+      "source_version": "47daf1c2",
+      "content_hash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -3992,6 +3992,11 @@
         {
           "number": null,
           "title": "[ty] Pick up the schema_salad ecosystem setup fix (#30136)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "FreeBSD source builds with libc 0.2.190 (#30176)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4045,7 +4050,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:03:19.355Z",
+      "verified_at": "2026-11-08T22:00:48.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12108,8 +12113,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "d4eea3f2",
-      "content_hash": "d777ead09026db0a086a9884b71998286bfff92dcd23fe90b351e8cbaa56d1c7",
+      "source_version": "45c50f87",
+      "content_hash": "30eb9530b11a5cca65c03f262e078d839aa10b47c72eeaade39944a94d457f53",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -12121,6 +12126,11 @@
         {
           "number": null,
           "title": "Batch the Ready To Merge fixes from Robinho-MR/duckdb (#28420)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "CI: build wasm_threads extensions on PRs, like wasm_eh",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12209,7 +12219,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:56:12.801Z",
+      "verified_at": "2026-11-08T22:01:01.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -184715,7 +184725,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
       "source_version": "hf-ricursiveai-ripple-65b-preview",
-      "content_hash": "6cd918f836635b69f5d934a6123ccfa015c1049570417e473d42f004d7e3e19b",
+      "content_hash": "21084baf6101d3986553f10dcd47fb2f7a261948dd5534e071d05bb1498f4202",
       "dossier_path": "07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md",
       "promoted_rules": [],
@@ -184724,7 +184734,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:50:31.217Z",
+      "verified_at": "2026-11-08T22:00:46.341Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

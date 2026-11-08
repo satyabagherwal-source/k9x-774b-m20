@@ -8412,3 +8412,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf` | `https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-08T21:46:50.754Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `d2a4fb6d` | Multi-dimensional audit evidence | 2026-11-08T21:46:52.286Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `f317962d` | Multi-dimensional audit evidence | 2026-11-08T21:47:04.758Z |
+| `learn-huggingface-ricursiveai-ripple-65b-preview` | `https://huggingface.co/ricursiveAI/Ripple-65B-Preview` | `hf-ricursi` | Multi-dimensional audit evidence | 2026-11-08T22:00:46.429Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `47daf1c2` | Multi-dimensional audit evidence | 2026-11-08T22:00:48.639Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `45c50f87` | Multi-dimensional audit evidence | 2026-11-08T22:01:01.830Z |

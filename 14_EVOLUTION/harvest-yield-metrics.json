@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T21:47:04.764Z",
-  "total_cycles_completed": 8368,
-  "total_learnings_persisted": 8368,
-  "total_rules_promoted": 8163,
+  "last_updated": "2026-11-08T22:01:01.834Z",
+  "total_cycles_completed": 8371,
+  "total_learnings_persisted": 8371,
+  "total_rules_promoted": 8165,
   "history": [
-    {
-      "timestamp": "2026-11-08T03:55:59.681Z",
-      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T04:02:56.585Z",
-      "repository": "orcarouter/OrcaCyber-Nano-1.0",
-      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T04:03:01.940Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T04:09:48.873Z",
       "repository": "RecursiveSI/flint",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-08T21:47:04.764Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:00:46.433Z",
+      "repository": "ricursiveAI/Ripple-65B-Preview",
+      "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:00:48.643Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:01:01.834Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

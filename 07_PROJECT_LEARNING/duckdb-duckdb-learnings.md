@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `d4eea3f2`  
+> **Source Version**: `45c50f87`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:56:11.280Z  
+> **Timestamp**: 2026-11-08T22:01:00.634Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:56:10.278Z  
+> **Harvest Timestamp**: 2026-11-08T22:01:00.629Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42902 stars
+- **Stars / Engagement**: 42925 stars
 
 ---
 
@@ -2004,11 +2004,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28496** (2026-11-06): **Fix glue extension build after LazyMultiFileList takes Context**
-  *Symptoms*: Adds a glue patch so `HiveMultiFileList` passes `context.GetContext()` to `LazyMultiFileList`, which now takes `optional_ptr<Context>`. Fixes the `Build Linux (cloud, linux_amd64)` extension build failure on main (e.g. in #28470).  The glue patches were not updated in #28417, and the extension build is skipped on PRs, so it was not caught there. Verified by applying patches 0001-0003 to the pinned glue revision and compiling `hive_multi_file_reader.cpp` against main's headers.
+- **Issue #28548** (2026-11-08): **Green CI supergroup**
+  *Symptoms*: Integration branch merging the four fixes needed to get `main` CI green again, so they can be validated together in one run:  - #28495 — glue and unity_catalog no longer compile after the `LazyMultiFileList` `Context` change (breaks the cloud and rust extension groups on every PR) - #28505 — ASan heap-buffer-overflow in the row id Bloom filter, seen as `osx / OSX Debug` aborting on a random test since Nov 6 - #28509 — `windows / Windows (32 Bit)` out of memory in `unnest_string_constant_reference.test`, plus CTE fixture loads timing out - #28546 — Wasm extensions link against `vcpkg_installed/wasm32-emscripten/` while wasm_threads now uses the `wasm32-emscripten-threads` triplet; also re-enables wasm_threads on PRs  Merging this merges the four PRs above. Plus a commit on top fixing up #28509 new test (needed added to skip list).  Thanks @Robinho-MR, @h4nsmuller and @kevintruong for the fixes.
 
-- **Issue #28470** (2026-11-06): **Skip slow persistent part of variant_stats_merge_decimal under alternative verify**
-  *Symptoms*: The No String Inline / Destroy Unpinned Blocks job timed out (300s, 4 retries exhausted) on `variant_stats_merge_decimal.test` in https://github.com/duckdb/duckdb/actions/runs/42082273268/job/127474458470. The persistent part (200k-row inserts, checkpoint, restart) is too slow with DESTROY_UNPINNED_BLOCKS. Add `require no_alternative_verify` before it; the in-memory checks still run.  Other flakes in that run (`cte_runtime_filter_sibling_dependencies`, `csv_quoted_buffer_boundary`) recovered on retry and are not addressed here. 
+- **Issue #28546** (2026-11-08): **Link Wasm extensions against vcpkg_installed/${VCPKG_TARGET_TRIPLET}, on main**
+  *Symptoms*: Equivalent to https://github.com/duckdb/duckdb/pull/28545, but on `main`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2025,623 +2025,329 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f32c9494` (2026-11-06)
-**Commit Message**: Batch the Ready To Merge fixes from Robinho-MR/duckdb (#28420)
+### Incident Patch 1: `8c5ba7fe` (2026-11-08)
+**Commit Message**: CI: build wasm_threads extensions on PRs, like wasm_eh
 
-Batches the fork PRs labeled `Ready To Merge` in
-https://github.com/Robinho-MR/duckdb/pulls that are not yet in `main`,
-on top of the current head of `main`.
+wasm_threads was limited to dispatched runs while the wasm_threads vcpkg
+triplet settled. Now that the extensions link against
+vcpkg_installed/${VCPKG_TARGET_TRIPLET}, let wasm_threads follow the same
+rules as wasm_eh: built on pushes, dispatched runs and PRs that touch
+extensions, skipped only on PRs without extension changes.
 
-Each PR is squashed into a single commit on top of `main`, with the PR
-title as the commit message. Robinho-MR/duckdb#273,
-Robinho-MR/duckdb#274 and Robinho-MR/duckdb#275 each add a hidden
-`[storage][.]` test case at the end of
-`test/sql/storage/wal_torn_write.cpp`; the conflicts were resolved by
-keeping all three.
-
-## Changes applied (15 PRs)
-
-- Robinho-MR/duckdb#286: Throw DataCorruptionException for unregistered
-metadata block pointer
-- Robinho-MR/duckdb#282: Throw a corruption error for unknown WAL entry
-type
-- Robinho-MR/duckdb#280: Skip memcpy calls for empty DELTA_BYTE_ARRAY
-values
-- Robinho-MR/duckdb#279: Clamp accepted completion length to edit buffer
-- Robinho-MR/duckdb#278: Bound AcceptSearch history copy to buffer size
-- Robinho-MR/duckdb#276: Fix stack buffer overflow in linenoise
-EditSwapCharacter
-- Robinho-MR/duckdb#275: Validate catalog information of WAL entries
-during replay
-- Robinho-MR/duckdb#274: Reject encrypted WAL version for an unencrypte
-
-**File**: `data/csv/test/invalid_utf_nested.csv` (added, +6/-0)
+**File**: `.github/workflows/Main.yml` (modified, +3/-7)
 ```diff
-@@ -0,0 +1,6 @@
-+a,b
-+�,�
-+[a],[b]
-+�,[c]
-+[d],�
-+[e],[f]
-```
-
-**File**: `extension/core_functions/aggregate/nested/binned_histogram.cpp` (modified, +10/-1)
-```diff
-@@ -318,7 +318,16 @@ void HistogramBinFinalizeFunction(Vector &state_vector, AggregateFinalizeInputDa
- 		if (state.counts->back() > 0 && supports_other_bucket) {
- 			// add overflow bucket ("others")
- 			// set bin boundary to NULL for overflow bucket
--			keys.SetValue(current_offset, OtherBucketValue(keys.GetType()));
-+			auto other_value = OtherBucketValue(keys.GetType());
-+			for (idx_t bin_idx = list_entry.offset; bin_idx < current_offset; bin_idx++) {
-+				if (Value::NotDistinctFrom(keys.GetValue(bin_idx), other_value)) {
-+					throw InvalidInputException(
-+					    "Histogram bin %s collides with the key of the \"other values\" bucket, "
-+					    "which has entries - use a different bin value",
-+					    other_value.ToSQLString());
-+				}
-+			}
-+			keys.SetValue(current_offset, other_value);
- 			count_entries[current_offset] = state.counts->back();
- 			current_offset++;
- 		}
-```
-
-**File**: `extension/json/json_functions/json_transform.cpp` (modified, +1/-2)
-```diff
-@@ -984,8 +984,7 @@ static bool TransformObjectToMap(yyjson_val *objects[], yyjson_alc *alc, Vector
+@@ -205,18 +205,14 @@ jobs:
+             --runners '${{ steps.runners.outputs.runners }}' \
+             --runner-provider '${{ steps.runners.outputs.runner_provider }}'
  
- 	// Transform keys
- 	if (!JSONTransform::Transform(keys, alc, MapVector::GetKeys(result), list_size, options, nullptr)) {
--		throw ConversionException(
--		    StringUtil::Format("%s. Cannot default to NULL, because map keys cannot be NULL", options.error_message));
-+		success = false;
- 	}
- 
- 	// Transform values
-```
-
-**File**: `extension/parquet/decoder/delta_byte_array_decoder.cpp` (modified, +5/-4)
-```diff
-@@ -115,12 +115,13 @@ void DeltaByteArrayDecoder::InitializePage() {
- 			output += sizeof(uint32_t);
- 		}
- 
--		memcpy(output, prev_value.data(), prefix_len);
- 		block.available(suffix_len);
--		memcpy(output + prefix_len, block.ptr, suffix_len);
-+		if (value_len > 0) {
-+			memcpy(output, prev_value.data(), prefix_len);
-+			memcpy(output + prefix_len, block.ptr, suffix_len);
-+			memcpy(prev_value.data(), output, value_len);
-+		}
- 		block.inc(suffix_len);
--
--		memcpy(prev_value.data(), output, value_len);
- 		prev_len = value_len;
- 		output += value_len;
- 	}
-```
-
-**File**: `src/execution/operator/csv_scanner/scanner/string_value_scanner.cpp` (modified, +3/-5)
-```diff
-@@ -749,11 +749,9 @@ bool LineError::HandleErrors(StringValueResult &result) {
- 				    result.current_line_position.begin.GetGlobalPosition(result.requested_size, first_nl),
- 				    line_pos.GetGlobalPosition(result.requested_size), result.path);
- 			}
--			// the file types are those of the projected columns
--			auto &file_types = result.csv_file_scan->file_types;
--			if (cur_error.chunk_idx < file_types.size() &&
--			    !StringValueScanner::CanDirectlyCast(file_types[cur_error.chunk_idx], result.icu_loaded)) {
--				result.number_of_rows--;
-+			// the value is invalid: make it NULL so that casting the column does not report a second error for it
-+			if (cur_error.chunk_idx < result.validity_mask.size()) {
-+				result.validity_mask[cur_error.chunk_idx]->SetInvalid(static_cast<idx_t>(result.number_of_rows));
- 			}
- 			break;
- 		}
-```
-
-**File**: `src/function/scalar/operator/decimal_division.cpp` (modified, +74/-43)
-```diff
-@@ -40,9 +40,63 @@ struct DecimalDivBindData : public FunctionData {
- //   hugeint_t -- otherwise
- //===--------------------------------------------------------------------===//
- 
-+template <class T>
-+static constexpr uint8_t DecimalTierWidth() {
-+	if constexpr (std::is_same_v<T, int16_t>) {
-+		return Decimal::MAX_WIDTH_INT16;
-+	} else if constexpr (std::is_same_v<T, int32_t>) {
-+		return Decimal::MAX_WIDTH_INT32;
-+	} else if constexpr (std::is_same_v<T, int64_t>) {
-+		return Decimal::MAX_WIDTH_INT64;
-+	} else {
-+		return Decimal::MAX_WIDTH_DECIMAL;
-+	}
-+}
-+
-+template <class SOURCE_TYPE, class INPUT_TYPE>
-+static void WidenDecimal(Vector &input, Vector &widened, idx_t count) {
-+	if constexpr (sizeof(SOURCE_TYPE) < sizeof(INPUT_TYPE)) {
-+		auto widen = [](SOURCE_TYPE value) {
-+			return INPUT_TYPE(value);
-+		};
-+		UnaryExecutor::Execute<SOURCE_TYPE, INPUT_TYPE>(input, widened, count, widen);
-+	} else {
-+		throw InternalException("decimal_division: argument is wider than the compute tier");
-+	}
-+}
-+
-+//! Bring an argument to the physical type of the wider argument; a decimal keeps its integer value at the same scale
-+template <class INPUT_TYPE>
-+static Vector &GetDecimalInput(Vector &input, idx_t count, unique_ptr<Vector> &widened) {
-+	auto source_physical = input.GetType().InternalType();
-+	if (source_physical == GetTypeId<INPUT_TYPE>()) {
-+		return input;
-+	}
-+	auto scale = DecimalType::GetScale(input.GetType());
-+	widened = make_uniq<Vector>(LogicalType::DECIMAL(DecimalTierWidth<INPUT_TYPE>(), scale), count);
-+	switch (source_physical) {
-+	case PhysicalType::INT16:
-+		WidenDecimal<int16_t, INPUT_TYPE>(input, *widened, count);
-+		break;
-+	case PhysicalType::INT32:
-+		WidenDecimal<int32_t, INPUT_TYPE>(input, *widened, count);
-+		break;
-+	case PhysicalType::INT64:
-+		WidenDecimal<int64_t, INPUT_TYPE>(input, *widened, count);
-+		break;
-+	default:
-+		throw InternalException("decimal_division: unexpected argument physical type");
-+	}
-+	return *widened;
-+}
-+
- template <class INPUT_TYPE, class RESULT_TYPE, class COMPUTE_TYPE>
- static void DecimalDivExecute(DataChunk &args, ExpressionState &state, Vector &result) {
- 	auto &bind_data = state.expr.Cast<BoundFunctionExpression>().BindInfo()->Cast<DecimalDivBindData>();
-+	unique_ptr<Vector> lhs_widened;
-+	unique_ptr<Vector> rhs_widened;
-+	auto &lhs = GetDecimalInput<INPUT_TYPE>(args.data[0], args.size(), lhs_widened);
-+	auto &rhs = GetDecimalInput<INPUT_TYPE>(args.data[1], args.size(), rhs_widened);
- 
- 	bool scale_divisor = bind_data.scale_exp < 0;
- 	uint32_t abs_exp = UnsafeNumericCast<uint32_t>(AbsValue(bind_data.scale_exp));
-@@ -56,7 +110,7 @@ static void DecimalDivExecute(DataChunk &args, ExpressionState &state, Vector &r
- 	auto result_width = DecimalType::GetWidth(result.GetType());
- 
- 	BinaryExecutor::Execute<INPUT_TYPE, INPUT_TYPE, RESULT_TYPE>(
--	    args.data[0], args.data[1], result, args.size(), [&](INPUT_TYPE a, INPUT_TYPE b) -> RESULT_TYPE {
-+	    lhs, rhs, result, args.size(), [&](INPUT_TYPE a, INPUT_TYPE b) -> RESULT_TYPE {
- 		    if (b == INPUT_TYPE(0)) {
- 			    throw InvalidInputException("decimal_division: division by zero");
- 		    }
-@@ -160,6 +214,8 @@ static scalar_function_t GetDecimalDivExecuteFunction(PhysicalType result_physic
- // Bind function
- //===--------------------------------------------------------------------===//
- 
-+static void SelectDecimalDivFunction(BoundScalarFunction &bound_function);
-+
- // Result width and scale for e1 / e2 (SQL Server semantics):
- //   result_scale = max(6, s1 + p2 + 1)
- //   result_width = p1 - s1 + s2 + result_scale
-@@ -173,6 +229,9 @@ static void DecimalDivisionResolveTypes(ResolveScalarFunctionTypesInput &input)
- 	if (!lhs_type.GetDecimalProperties(p1, s1) || !rhs_type.GetDecimalProperties(p2, s2)) {
- 		throw InvalidInputException("decimal_division: both arguments must be DECIMAL");
- 	}
-+	// an integer argument is an implicit DECIMAL(p, 0): bind on its canonical DECIMAL type
-+	auto lhs_decimal_type = lhs_type.id() == LogicalTypeId::DECIMAL ? lhs_type : LogicalType::DECIMAL(p1, s1);
-+	auto rhs_decimal_type = rhs_type.id() == LogicalTypeId::DECIMAL ? rhs_type : LogicalType::DECIMAL(p2, s2);
- 
- 	uint32_t result_scale;
- 	if (input.GetArgumentCount() == 3) {
-@@ -209,50 +268,22 @@ static void DecimalDivisionResolveTypes(ResolveScalarFunctionTypesInput &input)
- 		    result_width, Decimal::MAX_WIDTH_DECIMAL);
- 	}
- 
--	PhysicalType result_physical;
--	if (result_width <= Decimal::MAX_WIDTH_INT16) {
--		result_physical = PhysicalType::INT16;
--	} else if (result_width <= Decimal::MAX_WIDTH_INT32) {
--		result_physical = PhysicalType::INT32;
--	} else if (result_width <= Decimal::MAX_WIDTH_INT64) {
--		result_physical = PhysicalType::INT64;
--	} else {
--		result_physical = PhysicalType::INT128;
--	}
--
- 	bound_function.SetReturnType(LogicalType::DECIMAL(result_width, result_scale));
-+	// keep the argument types: a narrower argument is widened at execution, so binding again yields the same types
-+	bound_function.GetArguments()
-```
-
-**File**: `src/optimizer/rule/struct_extract_struct_pack_folding.cpp` (modified, +4/-1)
-```diff
-@@ -36,7 +36,10 @@ unique_ptr<Expression> StructExtractStructPackFoldingRule::Apply(LogicalOperator
- 	}
- 	// struct_extract(struct_pack(e0, .., en), ki) is equivalent to ei
- 	auto result = std::move(packed_children[extract_data.index]);
--	return BoundCastExpression::AddCastToType(GetContext(), std::move(result), extract.Function().GetReturnType());
-+	auto &return_type = extract.GetReturnType();
-+	// AddCastToType skips the cast when only the collation differs - keep the collation of the extract
-+	auto cast = BoundCastExpression::AddCastToType(GetContext(), std::move(result), return_type);
-+	return Expression::PreserveReturnType(return_type, std::move(cast));
- }
- 
- } // namespace duckdb
-```
-
-**File**: `src/planner/sql_export/sql_export_dml.cpp` (modified, +5/-0)
-```diff
-@@ -314,6 +314,11 @@ static LogicalPlanSQLExportResult ExportMergeNode(LogicalMergeInto &op, LogicalP
- 					set_info->columns.push_back(op.table.GetColumns().GetColumn(bound_action->columns[i]).Name());
- 					set_info->expressions.push_back(std::move(value.GetValue()));
- 				}
-+				if (set_info->columns.empty()) {
-+					// an update without assignments is expressed as DO NOTHING
-+					action->action_type = MergeActionType::MERGE_DO_NOTHING;
-+					break;
-+				}
- 				action->update_info = std::move(set_info);
- 				break;
- 			}
+-          # Wasm extensions: wasm_eh everywhere, wasm_threads only on dispatched (nightly) runs, never wasm_mvp
+-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+-            wasm_exclude_archs="wasm_mvp"
+-          else
+-            wasm_exclude_archs="wasm_mvp;wasm_threads"
+-          fi
++          # Wasm extensions: wasm_eh and wasm_threads everywhere, never wasm_mvp
++          wasm_exclude_archs="wasm_mvp"
+           if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+             extra_exclude_archs="$wasm_exclude_archs"
+           elif [[ "${{ steps.changed.outputs.extensions_any_changed }}" == "true" ]]; then
+             extra_exclude_archs="$wasm_exclude_archs;osx_amd64"
+           else
+-            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh"
++            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh;wasm_threads"
+           fi
+           if [[ -n "$INPUT_EXCLUDE_ARCHS" ]]; then
+             extra_exclude_archs="${extra_exclude_archs:+$extra_exclude_archs;}$INPUT_EXCLUDE_ARCHS"
 ```
 
 ---
 
-### Incident Patch 2: `f3581650` (2026-11-06)
-**Commit Message**: Do not wrap the total string length statistic on overflow (#28462)
+### Incident Patch 2: `56b3e781` (2026-11-08)
+**Commit Message**: Merge PR #28546 (CI: build wasm_threads extensions on PRs, like wasm_eh)
 
-Sibling of #28457, which fixed the same mechanism for the total list
-length statistic and noted this site. `StringStats::Merge` accumulates
-`total_string_length` with an unchecked `+=`. When the sum exceeds
-`uint64_t`, the total wraps silently and consumers of
-`StringStats::TotalStringLength` read a small but "known" value.
-
-The total already has an unknown sentinel, the `has_total_string_length`
-flag, which `Merge` uses for `EXPAND_BOUNDS` and
-`ResetAdditiveStatistics` uses after updates and deletes. The fix
-follows that idiom: the accumulation site uses `TryAddOperator` and
-marks the total as unknown when the sum overflows. The min/max string
-length bounds are unaffected.
-
-This is the only merge-level accumulation site, the
-`StatsWriter<string_t>` overload of `Merge` funnels into the same code.
-The per-value sums in `StatsWriter<string_t>::Update` and
-`UpdateRepeated` count bytes of strings actually fed through a writer
-with a bounded lifetime (one append batch, one compression state per
-column per row group, or one update segment), the same class as the
-unguarded `ListColumnData::Append` feeder in #28457, so the
-
-**File**: `src/storage/statistics/string_stats.cpp` (modified, +7/-2)
+**File**: `.github/config/extensions/excel.cmake` (modified, +1/-0)
 ```diff
-@@ -1,6 +1,7 @@
- #include "duckdb/storage/statistics/string_stats.hpp"
- #include "duckdb/common/types/value.hpp"
+@@ -3,4 +3,5 @@ duckdb_extension_load(excel
+     GIT_URL https://github.com/duckdb/duckdb-excel
+     GIT_TAG 81bb84b115b97cc4edec4827714cac80da0127e1
+     INCLUDE_DIR src/excel/include
++    APPLY_PATCHES
+     )
+```
+
+**File**: `.github/patches/extensions/avro/0002-link-vcpkg-target-triplet-libs.patch` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index 8aefff8..f23de3c 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -14,7 +14,7 @@ if (EMSCRIPTEN)
++   # _LINKED_LIBS influences only Wasm compilation
++   # it's unclear why this is needed, but somehow global symbols aren't properly exported otherwise
++   # this solves by basically re-linking (at the moment the Wasm binary is actually produced)
++-  set (DUCKDB_EXTENSION_AVRO_LINKED_LIBS "../../vcpkg_installed/wasm32-emscripten/lib/lib*.a")
+++  set (DUCKDB_EXTENSION_AVRO_LINKED_LIBS "../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/lib*.a")
++ endif()
++ 
++ # Disable avro-c examples, tests, docs
+```
+
+**File**: `.github/patches/extensions/excel/0001-link-vcpkg-target-triplet-libs.patch` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index 981de80..d5bbeb7 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -9,7 +9,7 @@ if (EMSCRIPTEN)
++   # _LINKED_LIBS influences only Wasm compilation
++   # it's unclear why this is needed, but avoid globals to be incorrectly not linked-in
++   # this solves by basically re-linking (at the moment the Wasm binary is actually produced)
++-  set (DUCKDB_EXTENSION_EXCEL_LINKED_LIBS "../../vcpkg_installed/wasm32-emscripten/lib/lib*.a")
+++  set (DUCKDB_EXTENSION_EXCEL_LINKED_LIBS "../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/lib*.a")
++ endif()
++ 
++ # Dependencies from VCPKG
+```
+
+**File**: `.github/patches/extensions/iceberg/0003-link-vcpkg-target-triplet-libs.patch` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index 332f43f..de71fd5 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -45,7 +45,7 @@ set(PARAMETERS "-warnings")
++ 
++ if(EMSCRIPTEN)
++   set(DUCKDB_EXTENSION_ICEBERG_LINKED_LIBS
++-      "../../vcpkg_installed/wasm32-emscripten/lib/liblzma.a;../../vcpkg_installed/wasm32-emscripten/lib/libroaring.a;../../vcpkg_installed/wasm32-emscripten/lib/libsnappy.a;../../vcpkg_installed/wasm32-emscripten/lib/libz.a;../../vcpkg_installed/wasm32-emscripten/lib/libjansson.a;../../third_party/mbedtls/libduckdb_mbedtls.a"
+++      "../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/liblzma.a;../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/libroaring.a;../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/libsnappy.a;../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/libz.a;../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/libjansson.a;../../third_party/mbedtls/libduckdb_mbedtls.a"
++   )
++ endif()
++ 
+```
+
+**File**: `.github/patches/extensions/spatial/0018-link-vcpkg-target-triplet-libs.patch` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index 778726b..a6db5d1 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -14,7 +14,7 @@ if(EMSCRIPTEN)
++   # exported otherwise this solves by basically re-linking (at the moment the
++   # Wasm binary is actually produced)
++   set(DUCKDB_EXTENSION_SPATIAL_LINKED_LIBS
++-      "../../vcpkg_installed/wasm32-emscripten/lib/lib*.a")
+++      "../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/lib*.a")
++ endif()
++ 
++ project(${TARGET_NAME})
+```
+
+**File**: `.github/workflows/Main.yml` (modified, +3/-7)
+```diff
+@@ -205,18 +205,14 @@ jobs:
+             --runners '${{ steps.runners.outputs.runners }}' \
+             --runner-provider '${{ steps.runners.outputs.runner_provider }}'
  
-+#include "duckdb/common/operator/add.hpp"
- #include "duckdb/common/serializer/deserializer.hpp"
- #include "duckdb/common/serializer/serializer.hpp"
- #include "duckdb/common/typedefs.hpp"
-@@ -661,8 +662,12 @@ void StringStats::Merge(BaseStatistics &stats, const StringStatsData &other_data
- 		string_data.has_total_string_length = false;
- 	} else {
- 		string_data.has_total_string_length = string_data.has_total_string_length && other_data.has_total_string_length;
--		if (string_data.has_total_string_length) {
--			string_data.total_string_length += other_data.total_string_length;
-+		if (string_data.has_total_string_length &&
-+		    !TryAddOperator::Operation<uint64_t, uint64_t, uint64_t>(
-+		        string_data.total_string_length, other_data.total_string_length, string_data.total_string_length)) {
-+			// the sum of the totals overflows - the total is no longer known
-+			string_data.has_total_string_length = false;
-+			string_data.total_string_length = 0;
- 		}
- 	}
- }
-```
-
-**File**: `test/common/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -42,6 +42,7 @@ add_library_unity(
-   test_pipeline_broadcast_exchange.cpp
-   test_recursive_cte_metrics.cpp
-   test_scalar_executor.cpp
-+  test_string_stats.cpp
-   test_logical_type_is_complete.cpp
-   test_logical_type_immutable.cpp
-   test_type_visitor.cpp
-```
-
-**File**: `test/common/test_string_stats.cpp` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+#include "catch.hpp"
-+#include "duckdb/common/limits.hpp"
-+#include "duckdb/storage/statistics/base_statistics.hpp"
-+#include "duckdb/storage/statistics/string_stats.hpp"
-+
-+using namespace duckdb; // NOLINT
-+
-+//! Build string stats data that only carries length information, as a disjoint data set for MERGE_STATS
-+static StringStatsData LengthStats(uint32_t min_length, uint32_t max_length, uint64_t total_length) {
-+	StringStatsData data;
-+	data.min_type = StringStatsType::EMPTY_STATS;
-+	data.max_type = StringStatsType::EMPTY_STATS;
-+	data.has_unicode = false;
-+	data.has_max_string_length = true;
-+	data.max_string_length = max_length;
-+	data.has_min_string_length = true;
-+	data.min_string_length = min_length;
-+	data.has_total_string_length = true;
-+	data.total_string_length = total_length;
-+	return data;
-+}
-+
-+TEST_CASE("Total string length statistics do not wrap on overflow", "[statistics]") {
-+	const auto max_total = NumericLimits<uint64_t>::Maximum();
-+
-+	SECTION("Merge sums totals and invalidates the total on overflow") {
-+		auto stats = StringStats::CreateEmpty(LogicalType::VARCHAR);
-+		StringStats::Merge(stats, LengthStats(2, 4, 6));
-+		StringStats::Merge(stats, LengthStats(1, 8, 10));
-+		REQUIRE(StringStats::MinStringLength(stats).GetIndex() == 1);
-+		REQUIRE(StringStats::MaxStringLength(stats) == 8);
-+		REQUIRE(StringStats::TotalStringLength(stats).GetIndex() == 16);
-+
-+		// summing up to the maximum keeps the total known
-+		StringStats::Merge(stats, LengthStats(1, 8, max_total - 16));
-+		REQUIRE(StringStats::TotalStringLength(stats).GetIndex() == max_total);
-+
-+		// one more byte overflows - the total becomes unknown, the bounds remain
-+		StringStats::Merge(stats, LengthStats(1, 8, 1));
-+		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
-+		REQUIRE(StringStats::MinStringLength(stats).GetIndex() == 1);
-+		REQUIRE(StringStats::MaxStringLength(stats) == 8);
-+
-+		// the total stays unknown for subsequent merges
-+		StringStats::Merge(stats, LengthStats(1, 8, 42));
-+		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
-+	}
-+
-+	SECTION("Merge keeps a total that lands exactly on the maximum") {
-+		auto stats = StringStats::CreateEmpty(LogicalType::VARCHAR);
-+		StringStats::Merge(stats, LengthStats(2, 4, max_total - 11));
-+		StringStats::Merge(stats, LengthStats(3, 7, 11));
-+		REQUIRE(StringStats::TotalStringLength(stats).GetIndex() == max_total);
-+	}
-+
-+	SECTION("Merge with an unknown total keeps the total unknown") {
-+		auto stats = StringStats::CreateEmpty(LogicalType::VARCHAR);
-+		StringStats::Merge(stats, LengthStats(2, 4, 100));
-+		auto unknown_total = LengthStats(3, 7, 0);
-+		unknown_total.has_total_string_length = false;
-+		StringStats::Merge(stats, unknown_total);
-+		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
-+		REQUIRE(StringStats::MinStringLength(stats).GetIndex() == 2);
-+		REQUIRE(StringStats::MaxStringLength(stats) == 7);
-+
-+		// merging a known total into an unknown one stays unknown
-+		StringStats::Merge(stats, LengthStats(1, 9, 5));
-+		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
-+	}
-+
-+	SECTION("Merge invalidates the total on overflow and keeps the bounds") {
-+		auto stats = StringStats::CreateEmpty(LogicalType::VARCHAR);
-+		StringStats::Merge(stats, LengthStats(2, 4, max_total - 10));
-+		StringStats::Merge(stats, LengthStats(3, 7, 11));
-+		REQUIRE(!StringStats::TotalStringLength(stats).IsValid());
-+		REQUIRE(StringStats::MinStringLength(stats).GetIndex() == 2);
-+		REQUIRE(StringStats::MaxStringLength(stats) == 7);
-+	}
-+}
-```
-
-**File**: `test/configs/force_storage_restart.json` (modified, +1/-0)
-```diff
-@@ -147,6 +147,7 @@
-         "test/sql/storage/list_length_stats_checkpoint.test",
-         "test/sql/optimizer/statistics/list_length_stats_propagation.test",
-         "test/sql/storage/total_string_length_repeated_insert.test",
-+        "test/sql/storage/total_string_length_multi_row_group.test",
-         "test/sql/storage/compression/dictionary/total_string_length_dictionary.test"
-       ]
-     },
-```
-
-**File**: `test/configs/stats_dependent_tests.json` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@
-         "test/sql/storage/extended_string_stats.test",
-         "test/sql/storage/min_string_length_too_large.test_slow",
-         "test/sql/storage/total_string_length_repeated_insert.test",
-+        "test/sql/storage/total_string_length_multi_row_group.test",
-         "test/sql/storage/compression/dictionary/total_string_length_dictionary.test",
-         "test/sql/storage/compression/dict_fsst/repeated_string_stats.test",
-         "test/sql/types/geo/geometry_from_wkb_stats.test",
-```
-
-**File**: `test/sql/storage/total_string_length_multi_row_group.test` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+# name: test/sql/storage/total_string_length_multi_row_group.test
-+# description: Test that total string length merges exactly across row groups, a checkpoint, and a restart
-+# group: [storage]
-+
-+load {TEST_DIR}/total_string_length_multi_row_group.db readwrite v2.0.0
-+
-+statement ok
-+CREATE TABLE multi_rg(s VARCHAR);
-+
-+statement ok
-+INSERT INTO multi_rg SELECT repeat('x', i % 7) FROM range(250000) t(i);
-+
-+statement ok
-+INSERT INTO multi_rg SELECT repeat('y', i % 11) FROM range(50000) t(i);
-+
-+query III
-+SELECT s.min_string_length, s.max_string_length, s.total_string_length = (SELECT sum(strlen(s)) FROM multi_rg) FROM (SELECT stats(s) s FROM multi_rg LIMIT 1)
-+----
-+0	10	true
-+
-+statement ok
-+CHECKPOINT
-+
-+restart
-+
-+query III
-+SELECT s.min_string_length, s.max_string_length, s.total_string_length = (SELECT sum(strlen(s)) FROM multi_rg) FROM (SELECT stats(s) s FROM multi_rg LIMIT 1)
-+----
-+0	10	true
+-          # Wasm extensions: wasm_eh everywhere, wasm_threads only on dispatched (nightly) runs, never wasm_mvp
+-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+-            wasm_exclude_archs="wasm_mvp"
+-          else
+-            wasm_exclude_archs="wasm_mvp;wasm_threads"
+-          fi
++          # Wasm extensions: wasm_eh and wasm_threads everywhere, never wasm_mvp
++          wasm_exclude_archs="wasm_mvp"
+           if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+             extra_exclude_archs="$wasm_exclude_archs"
+           elif [[ "${{ steps.changed.outputs.extensions_any_changed }}" == "true" ]]; then
+             extra_exclude_archs="$wasm_exclude_archs;osx_amd64"
+           else
+-            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh"
++            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh;wasm_threads"
+           fi
+           if [[ -n "$INPUT_EXCLUDE_ARCHS" ]]; then
+             extra_exclude_archs="${extra_exclude_archs:+$extra_exclude_archs;}$INPUT_EXCLUDE_ARCHS"
 ```
 
 ---
 
-### Incident Patch 3: `87a4c14b` (2026-11-06)
-**Commit Message**: Fix: do not treat TUPLE casts as throw-able in CastCanThrow (#28441)
+### Incident Patch 3: `a662f034` (2026-11-06)
+**Commit Message**: Keep regression fixtures within CI resource budgets
 
-## What does this PR fix?
-Fixes #28385.
-
-BoundCastExpression::CastCanThrow (used to decide whether a filter can
-be
-pushed through a cast) classified every TUPLE cast as fallible. A TUPLE
-is an
-unnamed STRUCT: same physical layout, positional child matching, and the
-same
-shared struct cast operators (TupleCastSwitch routes TUPLE->TUPLE and
-TUPLE->STRUCT to the identical StructToStructCast), so a TUPLE cast
-cannot
-throw whenever the equivalent STRUCT cast cannot.
-
-NestedCastCanThrow special-cased STRUCT (and accepted only a STRUCT
-target), so
-TUPLE fell through to the default: return true branch and filters such
-as
-
-    SELECT ... WHERE CAST(t AS TUPLE(BIGINT)) = row(1::BIGINT)
-
-were never pushed down, while the same filter over a named STRUCT was.
-CastIsInvertible in the same file already groups STRUCT and TUPLE.
-
-## Description
-Handle TUPLE alongside STRUCT in NestedCastCanThrow: recurse into the
-child
-casts and only report the cast as throw-able when the target is not a
-STRUCT/TUPLE or a child cast can throw.
-
-## Checklist
-- [x] I have added tests that prove my fix is effective or that my
-feature works
-(test/sql
-
-**File**: `src/planner/expression/bound_cast_expression.cpp` (modified, +4/-1)
+**File**: `test/sql/cte/materialized/cte_runtime_filter_modes.test` (modified, +10/-3)
 ```diff
-@@ -308,8 +308,11 @@ static bool NestedCastCanThrow(const LogicalType &source_type, const LogicalType
- 		}
- 		return BoundCastExpression::CastCanThrow(ListOrArrayChildType(source_type), ListOrArrayChildType(target_type),
- 		                                         false);
-+	// TUPLE is an unnamed STRUCT - same physical layout, positional child matching, and the same shared struct
-+	// cast operators, so it can throw exactly when a STRUCT of the same children can.
-+	case LogicalTypeId::TUPLE:
- 	case LogicalTypeId::STRUCT: {
--		if (target_type.id() != LogicalTypeId::STRUCT) {
-+		if (target_type.id() != LogicalTypeId::STRUCT && target_type.id() != LogicalTypeId::TUPLE) {
- 			return true;
- 		}
- 		// Pair the fields as the cast executes them: positionally for unnamed structs, by name otherwise.
-```
-
-**File**: `test/configs/v1_storage.json` (modified, +2/-1)
-```diff
-@@ -87,7 +87,8 @@
-       "paths": [
-         "test/sql/sql_export/empty_aggregate_state.test",
-         "test/sql/sql_export/mark_condition_shapes.test",
--        "test/sql/types/variant/variant_struct_field_subquery.test"
-+        "test/sql/types/variant/variant_struct_field_subquery.test",
-+        "test/sql/optimizer/tuple_cast_pushdown.test"
-       ]
-     }
-   ]
-```
-
-**File**: `test/configs/v1_storage_block_size_16kB.json` (modified, +2/-1)
-```diff
-@@ -83,7 +83,8 @@
-       "paths": [
-         "test/sql/sql_export/empty_aggregate_state.test",
-         "test/sql/sql_export/mark_condition_shapes.test",
--        "test/sql/types/variant/variant_struct_field_subquery.test"
-+        "test/sql/types/variant/variant_struct_field_subquery.test",
-+        "test/sql/optimizer/tuple_cast_pushdown.test"
-       ]
-     }
-   ]
-```
-
-**File**: `test/sql/optimizer/tuple_cast_pushdown.test` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+# name: test/sql/optimizer/tuple_cast_pushdown.test
-+# description: TUPLE casts with non-throwing children are not throw-able, so filters over them push down
-+# group: [optimizer]
-+
-+# TUPLE is an unnamed STRUCT - same physical layout, positional child matching, and the same shared struct
-+# cast operators. A TUPLE cast with non-throwing children cannot throw, just like the equivalent STRUCT cast,
-+# so a filter built on it must be pushed down to the scan (CastCanThrow used to classify every TUPLE cast as
-+# fallible, which blocked the pushdown).
-+
+@@ -2,9 +2,6 @@
+ # description: Complete runtime OR filters work with streaming CTEs and fall back when publication is cyclic
+ # group: [materialized]
+ 
+-statement ok
+-SET max_execution_time=10000;
+-
+ statement ok
+ SET threads=1;
+ 
+@@ -26,6 +23,10 @@ CREATE TABLE b AS SELECT * FROM (VALUES (1),(3)) t(k);
+ statement ok
+ CREATE TABLE c AS SELECT * FROM (VALUES (3),(5)) t(k);
+ 
++# Bound CTE execution without timing the fixture loads.
 +statement ok
-+CREATE TABLE tt_tuple AS SELECT row(range::INTEGER) AS t, struct_pack(a := range::INTEGER) AS s FROM range(1000);
++SET max_execution_time=10000;
 +
-+# TUPLE(BIGINT) <- row(INTEGER): INTEGER -> BIGINT cannot throw, so the filter must be pushed to the scan
-+query II
-+EXPLAIN SELECT * FROM (SELECT t FROM tt_tuple) p WHERE CAST(p.t AS TUPLE(BIGINT)) = row(1::BIGINT);
-+----
-+physical_plan	<REGEX>:(?s).*Seq Scan.*Filters:.*CAST\(t AS TUPLE\(BIGINT\)\).*
-+
-+# the equivalent filter over a named STRUCT was already pushed down
-+query II
-+EXPLAIN SELECT * FROM (SELECT s FROM tt_tuple) p WHERE CAST(p.s AS STRUCT(a BIGINT)) = struct_pack(a := 1::BIGINT);
-+----
-+physical_plan	<REGEX>:(?s).*Seq Scan.*Filters:.*CAST\(s AS STRUCT\(a BIGINT\)\).*
-+
-+# results are correct with the pushed filter
-+query I
-+SELECT count(*) FROM (SELECT t FROM tt_tuple) p WHERE CAST(p.t AS TUPLE(BIGINT)) = row(1::BIGINT);
-+----
-+1
-+
-+query I
-+SELECT count(*) FROM (SELECT s FROM tt_tuple) p WHERE CAST(p.s AS STRUCT(a BIGINT)) = struct_pack(a := 1::BIGINT);
-+----
-+1
-+
-+# negative control: a TUPLE cast with a throwing child (VARCHAR -> INTEGER) still cannot be pushed down,
-+# it must stay in a Filter node above the scan
+ # Both consumers stream the same filtered input, including their overlapping key.
+ query II
+ WITH p AS MATERIALIZED (SELECT * FROM facts)
+@@ -85,9 +86,15 @@ SELECT (SELECT sum(length(payload)) FROM p JOIN b USING(k)),
+ 128	50000
+ 
+ # Large source estimates also impose depth-first build ordering in release builds.
 +statement ok
-+CREATE TABLE tt_bad AS SELECT row(range::VARCHAR) AS t FROM range(1000);
++SET max_execution_time=0;
 +
-+query II
-+EXPLAIN SELECT * FROM (SELECT t FROM tt_bad) p WHERE CAST(p.t AS TUPLE(BIGINT)) = row(1::BIGINT);
-+----
-+physical_plan	<REGEX>:(?s).*Filter.*Expression:.*CAST\(t AS TUPLE\(BIGINT\)\).*
+ statement ok
+ CREATE TABLE large_facts AS SELECT i AS k FROM range(600000) t(i);
+ 
++statement ok
++SET max_execution_time=10000;
 +
-+query I
-+SELECT count(*) FROM (SELECT t FROM tt_bad) p WHERE CAST(p.t AS TUPLE(BIGINT)) = row(1::BIGINT);
-+----
-+1
+ query II
+ WITH p AS MATERIALIZED (SELECT * FROM large_facts)
+ SELECT (SELECT count(*) FROM (
+```
+
+**File**: `test/sql/cte/materialized/cte_runtime_filter_sibling_dependencies.test` (modified, +28/-6)
+```diff
+@@ -2,12 +2,6 @@
+ # description: Small CTE filter producers finalize independently of sibling builds
+ # group: [materialized]
+ 
+-# The bulk loads exceed the non-termination bound at tiny vector sizes
+-require vector_size 2048
+-
+-statement ok
+-SET max_execution_time=10000;
+-
+ statement ok
+ SET disabled_optimizers='cte_filter_pusher';
+ 
+@@ -23,6 +17,10 @@ CREATE TABLE b AS SELECT i AS g FROM range(100,300) t(i);
+ statement ok
+ CREATE TABLE c AS SELECT i AS g FROM range(500,700) t(i);
+ 
++# Bound CTE execution without timing the fixture loads.
++statement ok
++SET max_execution_time=10000;
++
+ statement ok
+ PREPARE consumers AS
+ WITH p AS MATERIALIZED (SELECT d.g,sum(f.v) v FROM facts f JOIN dates d USING(k) GROUP BY d.g)
+@@ -82,17 +80,29 @@ EXECUTE consumers;
+ statement ok
+ RESET debug_force_external;
+ 
++statement ok
++SET max_execution_time=0;
++
+ statement ok
+ DELETE FROM b;
+ 
++statement ok
++SET max_execution_time=10000;
++
+ query II
+ EXECUTE consumers;
+ ----
+ NULL	NULL
+ 
++statement ok
++SET max_execution_time=0;
++
+ statement ok
+ INSERT INTO b SELECT i FROM range(120,140) t(i);
+ 
++statement ok
++SET max_execution_time=10000;
++
+ query II
+ EXECUTE consumers;
+ ----
+@@ -105,6 +115,9 @@ SET memory_limit='512MB';
+ statement ok
+ SET disabled_optimizers='cte_filter_pusher,build_side_probe_side';
+ 
++statement ok
++SET max_execution_time=0;
++
+ statement ok
+ CREATE OR REPLACE TABLE facts AS SELECT i%200000 AS k,i AS v FROM range(400000) t(i);
+ 
+@@ -117,6 +130,9 @@ CREATE OR REPLACE TABLE b AS SELECT 100100+i AS g FROM range(200) t(i);
+ statement ok
+ CREATE OR REPLACE TABLE c AS SELECT i AS g FROM range(100500,100700) t(i);
+ 
++statement ok
++SET max_execution_time=10000;
++
+ query II
+ EXPLAIN (ANALYZE, FORMAT JSON)
+ WITH p AS MATERIALIZED (SELECT d.g,sum(f.v) v FROM facts f JOIN dates d USING(k) GROUP BY d.g)
+@@ -126,9 +142,15 @@ JOIN (SELECT p.* FROM p JOIN c USING(g)) y ON x.g=y.g-400;
+ ----
+ analyzed_plan	<REGEX>:(?s).*"Table": "[^"]*[.]dates"(?:[^}]*"Dynamic Filters": "[^"]* OR [^"]*"[^}]*},\s*"intermediate_rows": (?:[4-9][0-9]{2}|[1-9][0-9]{3,4}|1[0-9]{5}),|(?:,\s*"(?:Type|Projections|Estimated Cardinality)":\s*(?:"[^"]*"|\[[^]]*\]))+\s*},\s*"intermediate_rows": 200000,).*
+ 
++statement ok
++SET max_execution_time=0;
++
+ statement ok
+ INSERT INTO b SELECT 100100+i%200 FROM range(999800) t(i);
+ 
++statement ok
++SET max_execution_time=10000;
++
+ # At one million rows the producer retains its sibling coordination waits.
+ query II
+ WITH p AS MATERIALIZED (SELECT d.g,sum(f.v) v FROM facts f JOIN dates d USING(k) GROUP BY d.g)
+```
+
+**File**: `test/sql/unnest/unnest_string_constant_reference.test` (modified, +5/-4)
+```diff
+@@ -5,9 +5,10 @@
+ # the scan gives dictionary and FSST vectors only from segments of the default block size
+ require block_size 262144
+ 
+-# a long string, a non-ASCII one, an inlined one, an empty one and NULL, each repeated over three output chunks
++# Overflow strings, an inlined string, an empty string and NULL, each repeated over three output chunks.
++# Keep both overflow strings above the 4096-byte storage threshold without exhausting 32-bit memory.
+ statement ok
+-CREATE TABLE strs AS SELECT * FROM (VALUES (1, repeat('ab', 50000)), (2, repeat('é', 30000)), (3, 'short'), (4, ''), (5, NULL)) t(id, s);
++CREATE TABLE strs AS SELECT * FROM (VALUES (1, repeat('ab', 3415)), (2, repeat('é', 2049)), (3, 'short'), (4, ''), (5, NULL)) t(id, s);
+ 
+ # stored in a table, so the strings outlive the chunks of the query
+ statement ok
+@@ -43,8 +44,8 @@ SELECT id, count(*), count(DISTINCT s), sum(length(s))
+ FROM (SELECT id, s, u FROM strs, LATERAL unnest(range(5000 + id * 0)) t(u) ORDER BY u, id)
+ GROUP BY id ORDER BY id;
+ ----
+-1	5000	1	500000000
+-2	5000	1	150000000
++1	5000	1	34150000
++2	5000	1	10245000
+ 3	5000	1	25000
+ 4	5000	1	0
+ 5	5000	0	NULL
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28496** (closed): Fix glue extension build after LazyMultiFileList takes Context (@Robinho-MR)
-- **PR #28470** (2026-11-06): Skip slow persistent part of variant_stats_merge_decimal under alternative verify (@Robinho-MR)
-- **PR #28469** (2026-11-06): Bind again at EXECUTE when an untyped parameter meets an incomplete function argument type (@Robinho-MR)
-- **PR #28468** (2026-11-06): Report a failed write of a persistent secret file (to backport to v2.0) (@Robinho-MR)
-- **PR #28464** (2026-11-06): Make CatalogTransaction db a reference (@Robinho-MR)
-- **PR #28462** (2026-11-06): Do not wrap the total string length statistic on overflow (@kryonix)
+- **PR #28548** (2026-11-08): Green CI supergroup (@carlopi)
+- **PR #28546** (2026-11-08): Link Wasm extensions against vcpkg_installed/${VCPKG_TARGET_TRIPLET}, on main (@carlopi)
+- **PR #28545** (2026-11-08): Link Wasm extensions against vcpkg_installed/${VCPKG_TARGET_TRIPLET}, on cyanoptera (@carlopi)
+- **PR #28516** (closed): Truncate TIMESTAMPTZ_NS to microsecond precision for non-constant time_bucket widths (#28287) (@alitrack)
+- **PR #28509** (2026-11-08): Avoid fixture OOMs and setup timeouts in CI (@kevintruong)
+- **PR #28505** (2026-11-08): Pass the full vector count to the row id filter so a Bloom filter under a selection does not overrun its hash buffer (@h4nsmuller)
 
 ---
 
@@ -2661,37 +2367,36 @@ feature works
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Batch the Ready To Merge fixes from Robinho-MR/duckdb (#28420)
+## X. CI: build wasm_threads extensions on PRs, like wasm_eh
 
 **RULE**:
-When implementing operations in `extension/core_functions/aggregate/nested/binned_histogram.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/Main.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f32c9494`: Batch the Ready To Merge fixes from Robinho-MR/duckdb (#28420). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c5ba7fe`: CI: build wasm_threads extensions on PRs, like wasm_eh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `extension/core_functions/aggregate/nested/binned_histogram.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/Main.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-			auto other_value = OtherBucketValue(keys.GetType());
-			for (idx_t bin_idx = list_entry.offset; bin_idx < current_offset; bin_idx++) {
-				if (Value::NotDistinctFrom(keys.GetValue(bin_idx), other_value)) {
-					throw InvalidInputException(
-					    "Histogram bin %s collides with the key of the \"other values\" bucket, "
-					    "which has entries - use a different bin value",
-					    other_value.ToSQLString());
-				}
-			}
-			keys.SetValue(current_offset, other_value);
+          # Wasm extensions: wasm_eh and wasm_threads everywhere, never wasm_mvp
+          wasm_exclude_archs="wasm_mvp"
+            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh;wasm_threads"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-			keys.SetValue(current_offset, OtherBucketValue(keys.GetType()));
+          # Wasm extensions: wasm_eh everywhere, wasm_threads only on dispatched (nightly) runs, never wasm_mvp
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            wasm_exclude_archs="wasm_mvp"
+          else
+            wasm_exclude_archs="wasm_mvp;wasm_threads"
+          fi
+            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f32c9494` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c5ba7fe` are properly handled with clean fallback behavior.

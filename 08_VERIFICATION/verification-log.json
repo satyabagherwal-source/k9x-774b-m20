@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-VNT0",
-    "timestamp": "2026-11-06T19:16:48.324Z",
-    "repository": "callstack/react-native-paper",
-    "learningId": "learn-github-callstack-react-native-paper",
-    "contentHash": "f7382675f779e18fe189a474ac8966066cfdd447d1f0802f9f2025bb791713fa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-4O6X",
-    "timestamp": "2026-11-06T19:23:48.729Z",
-    "repository": "FaridSafi/react-native-gifted-chat",
-    "learningId": "learn-github-faridsafi-react-native-gifted-chat",
-    "contentHash": "95de33744831670f2e0e3bc1f5839e6b764d4823b07e9ea303ec83af1c6e51c9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-4SXG",
-    "timestamp": "2026-11-06T19:23:54.868Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-IX7H",
     "timestamp": "2026-11-06T20:30:52.829Z",
     "repository": "baidu/ERNIE-5.5-Flash-Base",
@@ -7490,6 +7445,51 @@
     "repository": "dragonflydb/dragonfly",
     "learningId": "learn-github-dragonflydb-dragonfly",
     "contentHash": "94bff00ad889642b1289db0ca8d2012b1e6a732dc441028e4f334f8e14acff86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-M89M",
+    "timestamp": "2026-11-08T22:00:46.426Z",
+    "repository": "ricursiveAI/Ripple-65B-Preview",
+    "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
+    "contentHash": "21084baf6101d3986553f10dcd47fb2f7a261948dd5534e071d05bb1498f4202",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-M9YZ",
+    "timestamp": "2026-11-08T22:00:48.635Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "4be1e909105d16230a550fea20788c5c15d22960bdec99b047ca61ba27b407ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-MK5F",
+    "timestamp": "2026-11-08T22:01:01.827Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "30eb9530b11a5cca65c03f262e078d839aa10b47c72eeaade39944a94d457f53",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
