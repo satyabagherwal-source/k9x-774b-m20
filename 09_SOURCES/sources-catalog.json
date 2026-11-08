@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "6c9a42d06869358bc8359e13d58cf75db2ccb2a5bb473cf98628516ba6e592a3",
-    "lastHarvestedAt": "2026-11-04T20:39:19.717Z",
+    "contentHash": "8e1c32e0c70e9aa7bd9ee8e43d06d11f7f0476be7311bfb89cc998bf97e5b042",
+    "lastHarvestedAt": "2026-11-08T07:15:27.347Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "d4a23e33",
+    "sourceVersion": "1557de2f",
     "license": "Apache-2.0",
-    "contentHash": "91e228d68c2a5eb825ca837ca4b93ebe71005508d996b8794721f78b70b3b074",
-    "lastHarvestedAt": "2026-11-07T03:56:24.939Z",
+    "contentHash": "4e1ec651617a68482bbfd6104d5ac295b15d064afdbb560eabff072ba608bdff",
+    "lastHarvestedAt": "2026-11-08T07:15:35.522Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "9fb59640",
+    "sourceVersion": "af6a474b",
     "license": "Apache-2.0",
-    "contentHash": "d89e08ae2269a2aee132ee51dcd03f4fe29280a289a8642e8c97bd9a9b0bb7f7",
-    "lastHarvestedAt": "2026-11-06T21:45:00.172Z",
+    "contentHash": "edffb67202321c7d8fdba92fc33a5e64f30aa2c21f2f27b07fc91a743f2834d5",
+    "lastHarvestedAt": "2026-11-08T07:15:20.438Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {

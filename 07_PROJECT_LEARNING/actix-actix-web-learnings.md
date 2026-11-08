@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `9fb59640`  
+> **Source Version**: `af6a474b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T21:44:58.750Z  
+> **Timestamp**: 2026-11-08T07:15:19.522Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T21:44:57.999Z  
+> **Harvest Timestamp**: 2026-11-08T07:15:19.163Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24922 stars
+- **Stars / Engagement**: 24931 stars
 
 ---
 
@@ -1332,14 +1332,13 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4391** (2026-11-06): **fix(errors): normalize error and panic messages**
-  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [ ] Documentation comments have been added / updated. (No documentation changes needed.) - [ ] A changelog entry has been made for the appropriate packages. (No changelog entry added.) - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  Normalize error display strings, `panic!` messages, and `.expect()` messages to start with a capital letter and omit trailing periods. Apply the same convention to source and test code across the workspace, and update error response assertions to match.  Preserve the exact casing of function names and other code identifiers in diagnostic messages. Status codes and error propagation are unchanged.  Validation: `just test` passed, including the HTTP/1, OpenSSL HTTP/2, and Rustls HTTP/2 error response integration tests.   After the identifier corrections, the range tests and all 10 introspection unit and integration tests passed.   MSRV validation: `cargo +1.89.0 test -p actix-web-codegen --test trybuild --all-features --offline` passed all 17 compile-pass and compile-fail cases after updating the malformed-path diagnostic snapshot. 
-
-- **Issue #4390** (2026-11-06): **docs(web): hyphenate URL-encoded terminology**
-  *Symptoms*: ## PR Type  Documentation  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  Standardize prose to use “URL-encoded” across actix-web and awc documentation and error text. Update the matching assertion. Identifiers and MIME types are unchanged.  Validation: `cargo test -p actix-web --lib test_with_config_in_data_wrapper --offline` passed (2 tests).
+- **Issue #4399** (2026-11-08): **fix(bump): preserve equals in reference version requirements**
+  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  The bump script now preserves a leading `=` in matching dependency version requirements and writes the full new version. Other matching references continue to use the version with trailing zeros removed.
   **Post-Mortem & Fix Analysis**:
-  > <!-- codesmith:proof --> **Proof** · no evidence (stopped early by robjtede at 0:24) <img src="https://backend.blacksmith.sh/api/proof-report-pixel.gif?installation_model_id=430666&amp;pr_number=4390&amp;published_at=1793939680&amp;repository=actix%2Factix-web&amp;run_id=01a1af22-cafa-7196-8dfe-a1d8575ab4be&amp;signature=921cefdb8e007f432160cac39d6f51b8f796c2af4eb87644d2071d866b95605e" width="1" height="1" alt="">  head f4a82ee5 · stopped early by robjtede at 0:24  [View full Proof report](https://backend.blacksmith.sh/track/proof-report?proof_session_id=01a1af22-ca69-738b-a18e-7165ad0fd3c9&signature=97e30c369a4614dd8de2a735d8ba4b02a7088aa07716ac6f2fc892e2024b80f4)
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/036c0f4398a2d8316266da7b4cac5e3c700982c5">036c0f4</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/url-encoded-hyphenation">t3/url-encoded-hyphe...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/f4a82ee57d5aaeccc24ecebd525e1fd565dcb21a">f4a82ee</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/6b38c7cf99863c4e7f8b836a0d8969a99f1e43be">6b38c7c</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/bump-equals-other-reference-version">t3/bump-equals-other...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/77429bdb804367fd91849e987f8537d19610373e">77429bd</a></th> <th scope="col">+/-</th> </tr> <tr> <td>85%</td> <td>85%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  
+
+- **Issue #4398** (2026-11-08): **fix(http): preserve framing after bodiless responses**
+  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  The HTTP/1 client now treats informational responses, 204 responses, and 304 responses as bodyless, regardless of `Content-Length` or `Transfer-Encoding` headers. This prevents body decoding from consuming bytes that belong to the next response. Tests cover HTTP/1.0 and HTTP/1.1 framing headers and verify that a following response remains separately decodable. The 304 integration test now confirms that the client reads no body.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1356,593 +1355,165 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9fb59640` (2026-11-06)
-**Commit Message**: fix(errors): normalize error and panic messages (#4391)
+### Incident Patch 1: `af6a474b` (2026-11-08)
+**Commit Message**: fix(bump): preserve equals in reference version requirements (#4399)
 
-**File**: `actix-files/src/error.rs` (modified, +6/-6)
+**File**: `scripts/bump` (modified, +8/-4)
 ```diff
-@@ -6,11 +6,11 @@ use derive_more::Display;
- pub enum FilesError {
-     /// Path is not a directory.
-     #[allow(dead_code)]
--    #[display("path is not a directory. Unable to serve static files")]
-+    #[display("Path is not a directory. Unable to serve static files")]
-     IsNotDirectory,
+@@ -123,13 +123,17 @@ if [ "$UPDATE_REFERENCES" = 'y' ] || [ "$UPDATE_REFERENCES" = 'Y' ]; then
  
-     /// Cannot render directory.
--    #[display("unable to render directory without index file")]
-+    #[display("Unable to render directory without index file")]
-     IsDirectory,
- }
+     for f in $(fd Cargo.toml); do
+         sed -i.bak -E \
+-            "s/^(${PACKAGE_NAME} ?= ?\")[^\"]+(\")$/\1${NEW_VERSION_SPEC}\2/g" $f
++            -e "s/^(${PACKAGE_NAME} ?= ?\")=[^\"]+(\")$/\1=${NEW_VERSION}\2/g" \
++            -e "s/^(${PACKAGE_NAME} ?= ?\")[^=\"][^\"]*(\")$/\1${NEW_VERSION_SPEC}\2/g" $f
+         sed -i.bak -E \
+-            "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")[^\"]+(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
++            -e "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")=[^\"]+(\".*)$/\1=${NEW_VERSION}\2/g" \
++            -e "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")[^=\"][^\"]*(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
+         sed -i.bak -E \
+-            "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")[^\"]+(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
++            -e "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")=[^\"]+(\".*)$/\1=${NEW_VERSION}\2/g" \
++            -e "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")[^=\"][^\"]*(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
+         sed -i.bak -E \
+-            "s/^(.*version ?= ?\")[^\"]+(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
++            -e "s/^(.*version ?= ?\")=[^\"]+(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1=${NEW_VERSION}\2/g" \
++            -e "s/^(.*version ?= ?\")[^=\"][^\"]*(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
  
-@@ -26,19 +26,19 @@ impl ResponseError for FilesError {
- #[non_exhaustive]
- pub enum UriSegmentError {
-     /// Segment started with the wrapped invalid character.
--    #[display("segment started with invalid character: ('{_0}')")]
-+    #[display("Segment started with invalid character: ('{_0}')")]
-     BadStart(char),
- 
-     /// Segment contained the wrapped invalid character.
--    #[display("segment contained invalid character ('{_0}')")]
-+    #[display("Segment contained invalid character ('{_0}')")]
-     BadChar(char),
- 
-     /// Segment ended with the wrapped invalid character.
--    #[display("segment ended with invalid character: ('{_0}')")]
-+    #[display("Segment ended with invalid character: ('{_0}')")]
-     BadEnd(char),
- 
-     /// Path is not a valid UTF-8 string after percent-decoding.
--    #[display("path is not a valid UTF-8 string after percent-decoding")]
-+    #[display("Path is not a valid UTF-8 string after percent-decoding")]
-     NotValidUtf8,
- }
- 
-```
-
-**File**: `actix-files/src/range.rs` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ pub struct ParseRangeErr(#[error(not(source))] HttpRangeParseError);
- 
- impl fmt::Display for ParseRangeErr {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
--        f.write_str("invalid Range header: ")?;
-+        f.write_str("Invalid Range header: ")?;
-         f.write_str(match self.0 {
-             HttpRangeParseError::InvalidRange => "invalid syntax",
-             HttpRangeParseError::NoOverlap => "range starts after end of content",
-```
-
-**File**: `actix-http-test/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -77,7 +77,7 @@ pub async fn test_server_with_addr<F: ServerServiceFactory<TcpStream>>(
-                 .disable_signals()
-                 .system_exit()
-                 .listen("test", tcp, factory)
--                .expect("test server could not be created");
-+                .expect("Test server could not be created");
- 
-             let srv = srv.run();
-             started_tx
-```
-
-**File**: `actix-http/src/body/body_stream.rs` (modified, +1/-1)
-```diff
-@@ -128,7 +128,7 @@ mod tests {
-         assert_eq!(to_bytes(body).await.ok(), Some(Bytes::from("12")));
-     }
-     #[derive(Debug, Display, Error)]
--    #[display("stream error")]
-+    #[display("Stream error")]
-     struct StreamErr;
- 
-     #[actix_rt::test]
-```
-
-**File**: `actix-http/src/body/utils.rs` (modified, +2/-2)
-```diff
-@@ -32,12 +32,12 @@ use super::{BodySize, MessageBody};
- pub async fn to_bytes<B: MessageBody>(body: B) -> Result<Bytes, B::Error> {
-     to_bytes_limited(body, usize::MAX)
-         .await
--        .expect("body should never yield more than usize::MAX bytes")
-+        .expect("Body should never yield more than usize::MAX bytes")
- }
- 
- /// Error type returned from [`to_bytes_limited`] when body produced exceeds limit.
- #[derive(Debug, Display, Error)]
--#[display("limit exceeded while collecting body bytes")]
-+#[display("Limit exceeded while collecting body bytes")]
- #[non_exhaustive]
- pub struct BodyLimitExceeded;
- 
-```
-
-**File**: `actix-http/src/encoding/encoder.rs` (modified, +2/-2)
-```diff
-@@ -480,11 +480,11 @@ fn new_brotli_compressor() -> Box<brotli::CompressorWriter<Writer>> {
- #[non_exhaustive]
- pub enum EncoderError {
-     /// Wrapped body stream error.
--    #[display("body")]
-+    #[display("Body")]
-     Body(Box<dyn StdError>),
- 
-     /// Generic I/O error.
--    #[display("io")]
-+    #[display("Io")]
-     Io(io::Error),
- }
- 
-```
-
-**File**: `actix-http/src/error.rs` (modified, +32/-32)
-```diff
-@@ -80,28 +80,28 @@ impl From<Error> for Response<BoxBody> {
- 
- #[derive(Debug, Clone, Copy, PartialEq, Eq, Display)]
- pub(crate) enum Kind {
--    #[display("error processing HTTP")]
-+    #[display("Error processing HTTP")]
-     Http,
- 
--    #[display("error parsing HTTP message")]
-+    #[display("Error parsing HTTP message")]
-     Parse,
- 
--    #[display("request payload read error")]
-+    #[display("Request payload read error")]
-     Payload,
- 
--    #[display("response body write error")]
-+    #[display("Response body write error")]
-     Body,
- 
--    #[display("send response error")]
-+    #[display("Send response error")]
-     SendResponse,
- 
--    #[display("error in WebSocket process")]
-+    #[display("Error in WebSocket process")]
-     Ws,
- 
--    #[display("connection error")]
-+    #[display("Connection error")]
-     Io,
- 
--    #[display("encoder error")]
-+    #[display("Encoder error")]
-     Encoder,
- }
- 
-@@ -160,36 +160,36 @@ impl From<crate::ws::ProtocolError> for Error {
- #[non_exhaustive]
- pub enum ParseError {
-     /// An invalid `Method`, such as `GE.T`.
--    #[display("invalid method specified")]
-+    #[display("Invalid method specified")]
-     Method,
- 
-     /// An invalid `Uri`, such as `exam ple.domain`.
-     #[display("URI error: {}", _0)]
-     Uri(InvalidUri),
- 
-     /// An invalid `HttpVersion`, such as `HTP/1.1`
--    #[display("invalid HTTP version specified")]
-+    #[display("Invalid HTTP version specified")]
-     Version,
- 
-     /// An invalid `Header`.
--    #[display("invalid Header provided")]
-+    #[display("Invalid Header provided")]
-     Header,
- 
-     /// A message head is too large to be reasonable.
--    #[display("message head is too large")]
-+    #[display("Message head is too large")]
-     TooLarge,
- 
-     /// A message reached EOF, but is not complete.
--    #[display("message is incomplete")]
-+    #[display("Message is incomplete")]
-     Incomplete,
- 
-     /// An invalid `Status`, such as `1337 ELITE`.
--    #[display("invalid status provided")]
-+    #[display("Invalid status provided")]
-     Status,
- 
-     /// A timeout occurred waiting for an IO event.
-     #[allow(dead_code)]
--    #[display("timeout")]
-+    #[display("Timeout")]
-     Timeout,
- 
-     /// An I/O error that occurred while trying to read or write to a network stream.
-@@ -256,19 +256,19 @@ impl From<ParseError> for Response<BoxBody> {
- #[non_exhaustive]
- pub enum PayloadError {
-     /// A payload reached EOF, but is not complete.
--    #[display("payload reached EOF before completing: {:?}", _0)]
-+    #[display("Payload reached EOF before completing: {:?}", _0)]
-     Incomplete(Option<io::Error>),
- 
-     /// Content encoding stream corruption.
--    #[display("can not decode content-encoding")]
-+    #[display("Can not decode content-encoding")]
-     EncodingCorrupted,
- 
-     /// Payload reached size limit.
--    #[display("payload reached size limit")]
-+    #[display("Payload reached size limit")]
-     Overflow,
- 
-     /// Payload length is unknown.
--    #[display("payload length is unknown")]
-+    #[display("Payload length is unknown")]
-     UnknownLength,
- 
-     /// HTTP/2 payload error.
-@@ -326,23 +326,23 @@ impl From<PayloadError> for Error {
- #[non_exhaustive]
- pub enum DispatchError {
-     /// Service error.
--    #[display("service error")]
-+    #[display("Service error")]
-     Service(Response<BoxBody>),
- 
-     /// Body streaming error.
--    #[display("body error: {}", _0)]
-+    #[display("Body error: {}", _0)]
-     Body(Box<dyn StdError>),
- 
-     /// Upgrade service error.
--    #[display("upgrade error")]
-+    #[display("Upgrade error")]
-     Upgrade,
- 
-     /// An `io::Error` that occurred while trying to read or write to a network stream.
-     #[display("I/O error: {}", _0)]
-     Io(io::Error),
- 
-     /// Request parse error.
--    #[display("request parse error: {}", _0)]
-+    #[display("Request parse error: {}", _0)]
-     Parse(ParseError),
- 
-     /// HTTP/2 error.
-@@ -351,19 +351,19 @@ pub enum DispatchError {
-     H2(h2::Error),
- 
-     /// The first request did not complete within the specified timeout.
--    #[display("request did not complete within the specified timeout")]
-+    #[display("Request did not complete within the specified timeout")]
-     SlowRequestTimeout,
- 
-     /// Disconnect timeout. Makes sense for TLS streams.
--    #[display("connection shutdown timeout")]
-+    #[display("Connection shutdown timeout")]
-     DisconnectTimeout,
- 
-     /// Handler dropped payload before reading EOF.
--    #[display("handler dropped payload before reading EOF")]
-+    #[display("Handler dropped payload before reading EOF")]
-     HandlerDroppedPayload,
- 
-     /// Internal error.
--    #[display("internal error")]
-+    #[display("Internal error")]
-     InternalError,
- }
- 
-@@ -389,11 +389,11 @@ impl StdError for DispatchError {
- #[non_exhaustive]
- pub enum ContentTypeError {
-     /// Can not parse content type.
--    #[display("could not parse content type")]
-+    #[display("Could not parse content type")]
-   
-```
-
-**File**: `actix-http/src/extensions.rs` (modified, +1/-1)
-```diff
-@@ -141,7 +141,7 @@ impl Extensions {
-             .entry(TypeId::of::<T>())
-             .or_insert_with(|| Box::new(default()))
-             .downcast_mut()
--            .expect("extensions map should now contain a T value")
-+            .expect("Extensions map should now contain a T value")
-     }
- 
-     /// Remove an item from the map of a given type.
+         # remove backup file
+         rm -f $f.bak
 ```
 
 ---
 
-### Incident Patch 2: `61c6a15c` (2026-11-06)
-**Commit Message**: fix(http): disable large-window Brotli decompression
+### Incident Patch 2: `0e58b426` (2026-11-08)
+**Commit Message**: fix(http): preserve framing after bodiless responses (#4398)
 
-fixes GHSA-7p9w-p5qm-5gc5
+- Ignore framing headers for informational, 204, and 304 responses
+- Keep subsequent HTTP/1 responses available for decoding
 
-**File**: `Cargo.lock` (modified, +2/-1)
-```diff
-@@ -48,7 +48,7 @@ dependencies = [
- 
- [[package]]
- name = "actix-http"
--version = "3.20.2"
-+version = "3.20.3"
- dependencies = [
-  "actix-codec",
-  "actix-http-test",
-@@ -63,6 +63,7 @@ dependencies = [
-  "base64 0.23.1",
-  "bitflags 2.13.2",
-  "brotli",
-+ "brotli-decompressor",
-  "bytes",
-  "bytestring",
-  "criterion",
-```
-
-**File**: `actix-http/CHANGES.md` (modified, +4/-0)
-```diff
-@@ -2,6 +2,10 @@
- 
- ## Unreleased
- 
-+## 3.20.3
-+
-+- Disable large-window Brotli decompression. [GHSA-7p9w-p5qm-5gc5](https://github.com/actix/actix-web/security/advisories/GHSA-7p9w-p5qm-5gc5)
-+
- ## 3.20.2
- 
- - Reject bare LF as last chunk terminator in chunked encodings. [GHSA-2q7f-mf9f-5qhr](https://github.com/actix/actix-web/security/advisories/GHSA-2q7f-mf9f-5qhr)
-```
-
-**File**: `actix-http/Cargo.toml` (modified, +3/-2)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "actix-http"
--version = "3.20.2"
-+version = "3.20.3"
- authors = ["Nikolay Kim <fafhrd91@gmail.com>", "Rob Ede <robjtede@icloud.com>"]
- description = "HTTP types and services for the Actix ecosystem"
- keywords = ["actix", "http", "framework", "async", "futures"]
-@@ -79,7 +79,7 @@ rustls-0_22 = ["__tls", "actix-tls/accept", "actix-tls/rustls-0_22"]
- rustls-0_23 = ["__tls", "actix-tls/accept", "actix-tls/rustls-0_23"]
- 
- # Compression codecs
--compress-brotli = ["__compress", "dep:brotli"]
-+compress-brotli = ["__compress", "dep:brotli", "dep:brotli-decompressor"]
- compress-gzip = ["__compress", "dep:flate2"]
- compress-zstd = ["__compress", "dep:zstd"]
- 
-@@ -130,6 +130,7 @@ actix-tls = { version = "3.4", default-features = false, optional = true }
- 
- # compress-*
- brotli = { version = "9", optional = true }
-+brotli-decompressor = { version = "6.2", optional = true }
- flate2 = { version = "1.0.13", optional = true }
- zstd = { version = "0.14", optional = true }
- 
-```
-
-**File**: `actix-http/README.md` (modified, +2/-2)
-```diff
-@@ -5,11 +5,11 @@
- <!-- prettier-ignore-start -->
- 
- [![crates.io](https://img.shields.io/crates/v/actix-http?label=latest)](https://crates.io/crates/actix-http)
--[![Documentation](https://docs.rs/actix-http/badge.svg?version=3.20.2)](https://docs.rs/actix-http/3.20.2)
-+[![Documentation](https://docs.rs/actix-http/badge.svg?version=3.20.3)](https://docs.rs/actix-http/3.20.3)
- ![Version](https://img.shields.io/badge/rustc-1.89+-ab6000.svg)
- ![MIT or Apache 2.0 licensed](https://img.shields.io/crates/l/actix-http.svg)
- <br />
--[![dependency status](https://deps.rs/crate/actix-http/3.20.2/status.svg)](https://deps.rs/crate/actix-http/3.20.2)
-+[![dependency status](https://deps.rs/crate/actix-http/3.20.3/status.svg)](https://deps.rs/crate/actix-http/3.20.3)
- [![Download](https://img.shields.io/crates/d/actix-http.svg)](https://crates.io/crates/actix-http)
- [![Chat on Discord](https://img.shields.io/discord/771444961383153695?label=chat&logo=discord)](https://discord.gg/NWpN5mmg3x)
- 
-```
-
-**File**: `actix-http/src/encoding/decoder.rs` (modified, +38/-3)
-```diff
-@@ -57,9 +57,16 @@ where
- 
-         let decoder = match encoding {
-             #[cfg(feature = "compress-brotli")]
--            ContentEncoding::Brotli => Some(ContentDecoder::Brotli(Box::new(
--                brotli::DecompressorWriter::new(Writer::new(), DEFAULT_DECODER_CAPACITY),
--            ))),
-+            ContentEncoding::Brotli => {
-+                let mut br =
-+                    brotli::DecompressorWriter::new(Writer::new(), DEFAULT_DECODER_CAPACITY);
-+                br.set_parameter(
-+                    brotli_decompressor::BrotliDecoderParameter::BROTLI_DECODER_PARAM_LARGE_WINDOW,
-+                    0,
-+                );
-+
-+                Some(ContentDecoder::Brotli(Box::new(br)))
-+            }
- 
-             #[cfg(feature = "compress-gzip")]
-             ContentEncoding::Deflate => Some(ContentDecoder::Deflate(Box::new(ZlibDecoder::new(
-@@ -400,6 +407,34 @@ mod tests {
-         ContentEncoding::Zstd,
-     ];
- 
-+    #[cfg(feature = "compress-brotli")]
-+    #[actix_rt::test]
-+    async fn brotli_large_window_is_rejected() {
-+        let data = vec![b'a'; 4096];
-+        let params = brotli::enc::BrotliEncoderParams {
-+            large_window: true,
-+            lgwin: 25,
-+            ..Default::default()
-+        };
-+        let mut compressed = Vec::new();
-+        brotli::BrotliCompress(&mut &data[..], &mut compressed, &params).unwrap();
-+
-+        assert_eq!(compressed[0], 0x11);
-+
-+        let mut decoded = Vec::new();
-+        brotli::BrotliDecompress(&mut &compressed[..], &mut decoded).unwrap();
-+        assert_eq!(decoded, data);
-+
-+        let stream = stream::iter([Ok(Bytes::from(compressed))]);
-+        let mut decoder = Decoder::new(stream, ContentEncoding::Brotli);
-+
-+        assert!(matches!(
-+            decoder.next().await,
-+            Some(Err(PayloadError::Incomplete(Some(_))))
-+        ));
-+        assert!(decoder.next().await.is_none());
-+    }
-+
-     fn encode(data: &[u8], encoding: ContentEncoding) -> Bytes {
-         match encoding {
-             #[cfg(feature = "compress-brotli")]
-```
-
----
-
-### Incident Patch 3: `9194fa90` (2026-11-06)
-**Commit Message**: fix(files): merge Windows short-name protection
-
-**File**: `actix-files/CHANGES.md` (modified, +2/-0)
+**File**: `actix-http/CHANGES.md` (modified, +2/-0)
 ```diff
 @@ -2,6 +2,8 @@
  
  ## Unreleased
  
-+- Fix hidden-file protection bypass through Windows short filename aliases. [GHSA-8hcm-m7r7-frwc](https://github.com/actix/actix-web/security/advisories/GHSA-8hcm-m7r7-frwc)
++- Fix HTTP/1 client response framing for informational, 204, and 304 responses to prevent consumption of the next response.
 +
- ## 0.7.3
+ ## 3.20.3
  
- - Fix stored XSS vulnerability when `Files::show_files_listing()` is explicitly enabled. [GHSA-5rrw-whjq-pmhh](https://github.com/actix/actix-web/security/advisories/GHSA-5rrw-whjq-pmhh)
+ - Disable large-window Brotli decompression. [GHSA-7p9w-p5qm-5gc5](https://github.com/actix/actix-web/security/advisories/GHSA-7p9w-p5qm-5gc5)
 ```
 
-**File**: `actix-files/src/service.rs` (modified, +168/-6)
+**File**: `actix-http/src/h1/decoder.rs` (modified, +38/-1)
 ```diff
-@@ -51,11 +51,58 @@ pub struct FilesServiceInner {
+@@ -438,7 +438,14 @@ impl MessageType for ResponseHead {
+         }
  
- impl fmt::Debug for FilesServiceInner {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
--        f.write_str("FilesServiceInner")
-+        f.debug_struct("FilesServiceInner").finish_non_exhaustive()
+         // message payload
+-        let decoder = if let PayloadLength::Payload(pl) = length {
++        let decoder = if (status.is_informational() && status != StatusCode::SWITCHING_PROTOCOLS)
++            || status == StatusCode::NO_CONTENT
++            || status == StatusCode::NOT_MODIFIED
++        {
++            // RFC 9112 §6.3: these responses end after the headers, regardless of framing.
++            // Reading a body would consume bytes from the next response.
++            PayloadType::None
++        } else if let PayloadLength::Payload(pl) = length {
+             pl
+         } else if status == StatusCode::SWITCHING_PROTOCOLS {
+             // switching protocol or connect
+@@ -1187,6 +1194,36 @@ mod tests {
+         assert_eq!(chunk, PayloadItem::Chunk(Bytes::from_static(b"test data")));
      }
- }
  
- impl FilesService {
-+    /// Opens a file after checking its resolved path on Windows.
-+    ///
-+    /// `directory` is the canonical path of the configured serving root. On Windows, returns
-+    /// errors from [`Self::canonicalize_path`]. On all platforms, returns file-open errors.
-+    fn open_named_file(&self, directory: &Path, path: &Path) -> io::Result<NamedFile> {
-+        #[cfg(windows)]
-+        self.canonicalize_path(directory, path)?;
++    #[test]
++    fn test_response_bodiless_status_ignores_framing_headers() {
++        for version in ["HTTP/1.0", "HTTP/1.1"] {
++            for status in [100, 102, 103, 199, 204, 304] {
++                for framing in [
++                    "",
++                    "Content-Length: 5\r\n",
++                    "Transfer-Encoding: chunked\r\n",
++                ] {
++                    let head = format!("{version} {status} Response\r\n{framing}\r\n");
++                    let next = "HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nok";
++                    let mut buf = BytesMut::from(format!("{head}{next}").as_str());
++                    let mut reader = MessageDecoder::<ResponseHead>::default();
 +
-+        #[cfg(not(windows))]
-+        let _ = directory;
++                    let (_, payload) = reader.decode(&mut buf).unwrap().unwrap();
++                    assert!(
++                        matches!(payload, PayloadType::None),
++                        "Request should not be decoded as having a body: {head:?}",
++                    );
++                    assert_eq!(&buf[..], next.as_bytes());
 +
-+        NamedFile::open(path)
-+    }
-+
-+    /// Resolves a path and applies the hidden-file policy to the resolved names on Windows.
-+    ///
-+    /// `directory` must be the canonical path of the configured serving root. When hidden files
-+    /// are disabled, checks components below that root for a leading dot. If the resolved path
-+    /// is outside the root, checks all of its components instead.
-+    ///
-+    /// Returns [`io::ErrorKind::NotFound`] for a hidden path on Windows, or an error from
-+    /// [`Path::canonicalize`] if the path cannot be resolved.
-+    fn canonicalize_path(&self, directory: &Path, path: &Path) -> io::Result<PathBuf> {
-+        let resolved = path.canonicalize()?;
-+
-+        #[cfg(windows)]
-+        if !self.hidden_files {
-+            // Windows short names can hide a leading dot. Check the resolved names, excluding
-+            // the configured root. For symlinks outside the root, check the full target path.
-+            let relative = resolved.strip_prefix(directory).unwrap_or(&resolved);
-+
-+            if relative.components().any(|component| {
-+                matches!(
-+                    component,
-+                    std::path::Component::Normal(name) if name.as_encoded_bytes().starts_with(b".")
-+                )
-+            }) {
-+                return Err(io::Error::new(io::ErrorKind::NotFound, "hidden file"));
++                    // Check second request is decoded separately.
++                    let (msg, _) = reader.decode(&mut buf).unwrap().unwrap();
++                    assert_eq!(msg.status, StatusCode::OK);
++                    assert_eq!(&buf[..], b"ok");
++                }
 +            }
 +        }
-+
-+        #[cfg(not(windows))]
-+        let _ = directory;
-+
-+        Ok(resolved)
 +    }
 +
-     async fn handle_err(
-         &self,
-         err: io::Error,
-@@ -182,12 +229,14 @@ impl Service<ServiceRequest> for FilesService {
-                 // Try serving pre-compressed file even if the uncompressed file doesn't exist yet.
-                 // Still handle directories (index/listing) through the normal branch below.
-                 if this.try_compressed && !path.is_dir() {
--                    if let Some((named_file, encoding)) = find_compressed(&req, &path).await {
-+                    if let Some((named_file, encoding)) =
-+                        find_compressed(&req, &path, &this, directory).await
-+                    {
-                         return Ok(this.serve_named_file_with_encoding(req, named_file, encoding));
-                     }
-                 }
+     #[test]
+     fn hrs_multiple_content_length() {
+         expect_parse_err!(&mut BytesMut::from(
+```
+
+**File**: `actix-http/tests/test_server.rs` (modified, +2/-8)
+```diff
+@@ -951,10 +951,6 @@ async fn h1_on_connect() {
+ /// https://datatracker.ietf.org/doc/html/rfc7232#section-4.1
+ #[actix_rt::test]
+ async fn not_modified_spec_h1() {
+-    // TODO: this test needing a few seconds to complete reveals some weirdness with either the
+-    // dispatcher or the client, though similar hangs occur on other tests in this file, only
+-    // succeeding, it seems, because of the keepalive timer
+-
+     static CL: header::HeaderName = header::CONTENT_LENGTH;
  
--                if let Err(err) = path.canonicalize() {
-+                if let Err(err) = this.canonicalize_path(directory, &path) {
-                     if matches!(
-                         err.kind(),
-                         io::ErrorKind::NotFound | io::ErrorKind::NotADirectory
-@@ -222,15 +271,15 @@ impl Service<ServiceRequest> for FilesService {
-                             let named_path = path.join(index);
-                             if this.try_compressed {
-                                 if let Some((named_file, encoding)) =
--                                    find_compressed(&req, &named_path).await
-+                                    find_compressed(&req, &named_path, &this, directory).await
-                                 {
-                                     return Ok(this.serve_named_file_with_encoding(
-                                         req, named_file, encoding,
-                                     ));
-                                 }
-                             }
-                             // fallback to the uncompressed version
--                            match NamedFile::open(named_path) {
-+                            match this.open_named_file(directory, &named_path) {
-                                 Ok(named_file) => return Ok(this.serve_named_file(req, named_file)),
-                                 Err(err)
-                                     if matches!(
-@@ -307,6 +356,8 @@ const SUPPORTED_PRECOMPRESSION_ENCODINGS: &[header::ContentEncoding] = &[
- async fn find_compressed(
-     req: &ServiceRequest,
-     original_path: &Path,
-+    service: &FilesService,
-+    directory: &Path,
- ) -> Option<(NamedFile, header::ContentEncoding)> {
-     use actix_web::HttpMessage;
-     use header::{AcceptEncoding, ContentEncoding, Encoding};
-@@ -360,7 +411,7 @@ async fn find_compressed(
-         filename.push(extension);
-         compressed_path.set_file_n
+     let mut srv = test_server(|| {
+@@ -1020,10 +1016,8 @@ async fn not_modified_spec_h1() {
+         res.headers().get(&CL),
+         Some(&header::HeaderValue::from_static("4")),
+     );
+-    // server does not prevent payload from being sent but clients may choose not to read it
+-    // TODO: this is probably a bug in the client, especially since CL header can differ in length
+-    // from the body
+-    assert!(!srv.load_body(res).await.unwrap().is_empty());
++    // RFC 9112 §6.3: the client must not read a body for a 304 response.
++    assert!(srv.load_body(res).await.unwrap().is_empty());
+ 
+     // TODO: add stream response tests
+ 
+```
+
+---
+
+### Incident Patch 3: `832fc0b2` (2026-11-08)
+**Commit Message**: chore: remove fmt requirement from template since CI catches this anyway
+
+**File**: `.github/PULL_REQUEST_TEMPLATE.md` (modified, +0/-1)
+```diff
+@@ -16,7 +16,6 @@ PR_TYPE
+ - [ ] Tests for the changes have been added / updated.
+ - [ ] Documentation comments have been added / updated.
+ - [ ] A changelog entry has been made for the appropriate packages.
+-- [ ] Format code with the latest stable rustfmt.
+ - [ ] (Team) Label with affected crates and semver status.
+ 
+ ## Overview
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4399** (2026-11-08): fix(bump): preserve equals in reference version requirements (@robjtede)
+- **PR #4398** (2026-11-08): fix(http): preserve framing after bodiless responses (@robjtede)
+- **PR #4397** (2026-11-08): feat(multipart): limit parts per form (@robjtede)
 - **PR #4391** (2026-11-06): fix(errors): normalize error and panic messages (@robjtede)
 - **PR #4390** (2026-11-06): docs(web): hyphenate URL-encoded terminology (@robjtede)
 - **PR #4389** (2026-11-06): chore: import pin_project macro consistently (@robjtede)
-- **PR #4387** (2026-11-04): build(deps): bump encoding_rs from 0.8.42 to 0.8.44 (@dependabot[bot])
-- **PR #4386** (2026-11-04): build(deps): bump brotli from 9.0.0 to 9.1.1 (@dependabot[bot])
-- **PR #4385** (2026-11-04): build(deps): bump log from 0.4.34 to 0.4.35 (@dependabot[bot])
 
 ---
 
@@ -1962,38 +1533,38 @@ fixes GHSA-7p9w-p5qm-5gc5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. errors): normalize error and panic messages (#4391)
+## X. bump): preserve equals in reference version requirements (#4399)
 
 **RULE**:
-When implementing operations in `actix-files/src/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/bump`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9fb59640`: errors): normalize error and panic messages (#4391). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af6a474b`: bump): preserve equals in reference version requirements (#4399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-files/src/error.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/bump`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[display("Path is not a directory. Unable to serve static files")]
-    #[display("Unable to render directory without index file")]
-    #[display("Segment started with invalid character: ('{_0}')")]
-    #[display("Segment contained invalid character ('{_0}')")]
-    #[display("Segment ended with invalid character: ('{_0}')")]
-    #[display("Path is not a valid UTF-8 string after percent-decoding")]
+            -e "s/^(${PACKAGE_NAME} ?= ?\")=[^\"]+(\")$/\1=${NEW_VERSION}\2/g" \
+            -e "s/^(${PACKAGE_NAME} ?= ?\")[^=\"][^\"]*(\")$/\1${NEW_VERSION_SPEC}\2/g" $f
+            -e "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")=[^\"]+(\".*)$/\1=${NEW_VERSION}\2/g" \
+            -e "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")[^=\"][^\"]*(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
+            -e "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")=[^\"]+(\".*)$/\1=${NEW_VERSION}\2/g" \
+            -e "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")[^=\"][^\"]*(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
+            -e "s/^(.*version ?= ?\")=[^\"]+(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1=${NEW_VERSION}\2/g" \
+            -e "s/^(.*version ?= ?\")[^=\"][^\"]*(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    #[display("path is not a directory. Unable to serve static files")]
-    #[display("unable to render directory without index file")]
-    #[display("segment started with invalid character: ('{_0}')")]
-    #[display("segment contained invalid character ('{_0}')")]
-    #[display("segment ended with invalid character: ('{_0}')")]
-    #[display("path is not a valid UTF-8 string after percent-decoding")]
+            "s/^(${PACKAGE_NAME} ?= ?\")[^\"]+(\")$/\1${NEW_VERSION_SPEC}\2/g" $f
+            "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")[^\"]+(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
+            "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")[^\"]+(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
+            "s/^(.*version ?= ?\")[^\"]+(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9fb59640` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af6a474b` are properly handled with clean fallback behavior.

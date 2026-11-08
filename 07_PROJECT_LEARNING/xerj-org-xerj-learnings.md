@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `d4a23e33`  
+> **Source Version**: `1557de2f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T03:56:23.157Z  
+> **Timestamp**: 2026-11-08T07:15:34.351Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T03:56:22.704Z  
+> **Harvest Timestamp**: 2026-11-08T07:15:31.596Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 18490 stars
+- **Stars / Engagement**: 18594 stars
 
 ---
 
@@ -1757,353 +1757,569 @@ impl EmbeddingProxy {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a971b4c` (2026-11-07)
-**Commit Message**: fix(ci): the /get privacy test no longer fails when the clock reads :52.52
+### Incident Patch 1: `1771d4e3` (2026-11-07)
+**Commit Message**: site(home): apply the preview critique (grid bug, honest proof rows, hero proof strip)
 
-Motivation. The "Use-case harnesses" job failed on PR #3030 (an engine
-change that does not touch functions/) with
-  FAIL  no lat/long from request.cf
-in .github/scripts/functions-get-test.mjs.
+Why: the critique of the 8ef54187f preview (landing-redesign-2026-11-07
+CRITIQUE.md) found one layout bug, two proof rows that broke the
+honest-claims rules, two claims missing their fair context, and an
+investor read that saw only developer documentation above the fold.
 
-Root cause. The test fakes `request.cf.latitude = '52.52'` and asserts the
-stored install record does not contain the substring '52.52'. The record
-carries `ts: now.toISOString()` (functions/get.js:142), so the assertion
-fails whenever the test runs at hh:mm:52.52x: the job log shows the failure
-at 02:21:52.52. A time-dependent flake, not a privacy leak.
+Must-fix
+- M1 #open grid: the heading spanned 8 of 12 columns, so "The engine"
+  card landed beside it at x=936 (1440) and the next two wrapped with an
+  empty slot. The heading is now full width; the three cards share one row.
+- M2 proof table: dropped "17 min vs 62 to 97 h" (measured vs estimated,
+  and a keyword index vs embeddings) and "2 ms vs 30 ms" (measured vs
+  arithmetic). The blog keeps both with their caveats.
+- M3 wrong answers: the usual-way cell now says RAG searched one merged
+  store, and that Opus 5.5 given the same records got 5 wrong, which our
+  sample cannot tell apart from 1 (CORRECTIONS.md item 2).
+- M4 cost: under the $42 the page now says writing the facts is not in
+  the number and that today you or your agent write them; the table cell
+  says "not counting writing the facts".
+- M6 block 07 links the 
 
-Change. Use distinctive coordinates (52.5200871 / 13.4049540) that no ISO
-timestamp can contain, and also assert the stored row has no `latitude` or
-`longitude` key.
-
-Test. node .github/scripts/functions-get-test.mjs: FUNCTIONS TEST PASSED.
-
-**File**: `.github/scripts/functions-get-test.mjs` (modified, +5/-2)
+**File**: `landing/home.css` (modified, +15/-2)
 ```diff
-@@ -190,7 +190,7 @@ console.log('── functions/get.js ──');
-     },
-   });
-   Object.defineProperty(r, 'cf', {
--    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.52', longitude: '13.40' },
-+    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.5200871', longitude: '13.4049540' },
-   });
-   await call(r, { ASSETS: fakeAssets(), INSTALLS });
-   const stored = [...INSTALLS.store.values()].join('\n');
-@@ -203,7 +203,10 @@ console.log('── functions/get.js ──');
-   ok(!stored.includes('abcdef123456'), 'no cookie stored');
-   ok(!stored.includes('de-DE'), 'no Accept-Language stored');
-   ok(!stored.includes('Berlin') && !stored.includes('10115'), 'no city/postcode from request.cf');
--  ok(!stored.includes('52.52') && !stored.includes('13.40'), 'no lat/long from request.cf');
-+  // Distinctive values: the stored record carries an ISO timestamp, and a
-+  // short value like '52.52' matched it whenever the clock read hh:mm:52.52x.
-+  ok(!stored.includes('52.5200871') && !stored.includes('13.4049540'), 'no lat/long from request.cf');
-+  ok(!('latitude' in row) && !('longitude' in row), 'no latitude/longitude keys stored');
-   ok(!stored.includes('3320') && !stored.includes('Telekom'), 'no ASN/network operator from request.cf');
-   const allowed = new Set(['ts', 'script', 'kind', 'country', 'os', 'arch', 'ua', 'ver']);
-   const unexpected = Object.keys(row).filter((k) => !allowed.has(k));
-```
-
----
-
-### Incident Patch 2: `d4a23e33` (2026-11-07)
-**Commit Message**: Merge pull request #3031 from xerj-org/fix/functions-get-latlong-flake
-
-fix(ci): the /get privacy test no longer fails when the clock reads :52.52
-
-**File**: `.github/scripts/functions-get-test.mjs` (modified, +5/-2)
-```diff
-@@ -190,7 +190,7 @@ console.log('── functions/get.js ──');
-     },
-   });
-   Object.defineProperty(r, 'cf', {
--    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.52', longitude: '13.40' },
-+    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.5200871', longitude: '13.4049540' },
-   });
-   await call(r, { ASSETS: fakeAssets(), INSTALLS });
-   const stored = [...INSTALLS.store.values()].join('\n');
-@@ -203,7 +203,10 @@ console.log('── functions/get.js ──');
-   ok(!stored.includes('abcdef123456'), 'no cookie stored');
-   ok(!stored.includes('de-DE'), 'no Accept-Language stored');
-   ok(!stored.includes('Berlin') && !stored.includes('10115'), 'no city/postcode from request.cf');
--  ok(!stored.includes('52.52') && !stored.includes('13.40'), 'no lat/long from request.cf');
-+  // Distinctive values: the stored record carries an ISO timestamp, and a
-+  // short value like '52.52' matched it whenever the clock read hh:mm:52.52x.
-+  ok(!stored.includes('52.5200871') && !stored.includes('13.4049540'), 'no lat/long from request.cf');
-+  ok(!('latitude' in row) && !('longitude' in row), 'no latitude/longitude keys stored');
-   ok(!stored.includes('3320') && !stored.includes('Telekom'), 'no ASN/network operator from request.cf');
-   const allowed = new Set(['ts', 'script', 'kind', 'country', 'os', 'arch', 'ua', 'ver']);
-   const unexpected = Object.keys(row).filter((k) => !allowed.has(k));
-```
-
----
-
-### Incident Patch 3: `9d6a92b3` (2026-11-07)
-**Commit Message**: fix(api): _search profile reports measured phase timings, not placeholders (#3005)
-
-Motivation. `profile: true` on `_search` returned an Elasticsearch-shaped
-profile whose every timer was `took_ms * 1_000_000` (millisecond-rounded,
-so 0 for a sub-millisecond search) or a literal `1u64`, floored to 1 ns
-where the ES-YAML suite asserts `gt: 0`. Tools reading the profile got
-fake numbers with no warning (#3005, found on rc.101 with the SearchTome
-benchmark).
-
-Root cause. engine/crates/xerj-api/src/es_compat.rs built the profile from
-`took_ms` alone; it never measured the query or the fetch phase, and the
-aggregation, DFS/kNN and significant_text debug timers were constants.
-
-Change.
-- search_impl measures the query phase in nanoseconds (request start to
-  the merged top hits, where `took` is taken) and the fetch phase (from
-  there to the profile build: hit rendering, _source/fields/highlight,
-  rerank, judge), before the profile-only work starts.
-- Every timer that was a placeholder now carries the measured phase it
-  belongs to: query/collector/rewrite and DFS/kNN timers -> query phase;
-  fetch and its sub-phase timers -> fetch phase; aggregation timers ->
-  query phase (aggregation
-
-**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +70/-35)
-```diff
-@@ -17406,6 +17406,10 @@ async fn search_impl(
-         .map(|record| (record, savings_page_bytes));
+@@ -99,7 +99,19 @@ body.home {
+   background: var(--z-brand); color: var(--z-on-brand); border: 1px solid var(--z-brand-deep); white-space: nowrap;
+ }
+ .home .prompt .copy:hover { background: var(--z-highlight); }
+-.home .prompt .foot { display: flex; justify-content: flex-end; padding: 0 var(--sp-4) var(--sp-4); }
++.home .prompt .bar .copy { text-transform: none; letter-spacing: 0; padding: 8px 14px; }
++
++/* hero proof strip: three numbers from the proof table, each with its scope */
++.home .glance { grid-column: 9 / -1; margin-top: calc(var(--sp-6) + 30px); padding-left: var(--sp-6); border-left: 1px solid var(--z-line); }
++.home .glance dl { margin: 0; }
++.home .glance dl > div { padding: var(--sp-4) 0; border-bottom: 1px solid var(--z-line); }
++.home .glance dl > div:first-child { padding-top: 0; }
++.home .glance dt { font: 800 var(--fs-56)/1 var(--font-display); color: var(--z-accent); font-variant-numeric: tabular-nums; }
++.home .glance dd { margin: var(--sp-2) 0 0; font: 400 var(--fs-13)/1.5 var(--font-data); color: var(--z-mute); }
++.home .glance .more { margin-top: var(--sp-4); font-family: var(--font-data); font-size: var(--fs-13); }
++@media (max-width: 960px) {
++  .home .glance { grid-column: 1 / -1; margin-top: var(--sp-4); padding-left: 0; border-left: 0; }
++}
+ .home .verify, .home .alt { font-family: var(--font-data); font-size: var(--fs-13); color: var(--z-mute); max-width: none; }
+ .home .verify code, .home .alt code {
+   font-family: var(--font-mono); font-size: var(--fs-13); color: var(--z-ink);
+@@ -129,7 +141,7 @@ html[data-theme='night'] .home .img-night { display: block; }
+   .home .headline .ours { font-size: 72px; }
+   .home .headline .theirs { font-size: 40px; }
+ }
+-.home .tbl { border: 1px solid var(--z-line); border-radius: 8px; overflow: hidden; margin-top: var(--sp-10); }
++.home .tbl { border: 1px solid var(--z-line); border-radius: 8px; overflow: hidden; margin-top: 0; }
+ .home table.cmp1 { width: 100%; border-collapse: collapse; font-family: var(--font-data); font-size: var(--fs-16); }
+ .home table.cmp1 th {
+   text-align: left; font: 600 var(--fs-11)/1.3 var(--font-data); letter-spacing: var(--track-label);
+@@ -157,6 +169,7 @@ html[data-theme='night'] .home .img-night { display: block; }
+ .home .under { font-family: var(--font-data); font-size: var(--fs-13); color: var(--z-mute); margin-top: var(--sp-4); max-width: none; }
  
-     let took_ms = started.elapsed().as_millis() as u64;
-+    // #3005: the profile's query phase, measured in nanoseconds (request
-+    // parse through the merged top-hits). `took_ms` is millisecond-rounded,
-+    // so a fast search used to profile as 0 ns floored to 1.
-+    let query_phase_ns = (started.elapsed().as_nanos() as u64).max(1);
-     // RC4 W4 item 2: record the index-agnostic side of the completed search —
-     // the global `queries_executed` counter plus BOTH latency histograms
-     // (overall + by query type, which were previously never recorded).
-@@ -20197,6 +20201,12 @@ async fn search_impl(
-     // against the published names. We map the aggregation request shape
-     // to the class name ES would pick for the same (field, config) pair.
-     if search_req.profile {
-+        // #3005: the fetch phase is everything after the query phase up to
-+        // here (hit rendering, `_source`/`fields`/highlight, rerank, judge),
-+        // measured before the profile-only work below starts.
-+        let fetch_phase_ns = (started.elapsed().as_nanos() as u64)
-+            .saturating_sub(query_phase_ns)
-+            .max(1);
-         // ES's `search.aggs.rewrite_to_filter_by_filter` persistent
-         // cluster setting toggles whether keyword terms aggs rewrite to
-         // `StringTermsAggregatorFromFilters` (the default / optimized
-@@ -20277,18 +20287,19 @@ async fn search_impl(
-                 .as_ref()
-                 .or(body.aggs.as_ref())
-                 .or(body.aggregations.as_ref()),
--            took_ms,
-+            query_phase_ns,
-             total_count,
-             response_body.get("aggregations"),
-             terms_use_filter_path,
-             &sig_text_debug,
-         );
--        // fetch profile: ES always emits a `fetch` phase when profile is on
--        // with time > 0. Tests assert `gt: 0` so floor at 1 ns. The default
-+        // fetch profile: the measured fetch phase. XERJ has no per-sub-phase
-+        // fetch timers, so every non-zero fetch timer below is this phase's
-+        // measured total (an upper bound), as `profile.xerj_timing` says. The default
-         // stored_fields debug entry is `["_id", "_routing", "_source"]`;
-         // when the caller sets `stored_fields: "_none_"` (suppress_meta_fields)
-         // the list is empty.
--        let fetch_ns = took_ms.saturating_mul(1_000_000).max(1);
-+        let fetch_ns = fetch_phase_ns;
-         let stored_fields_debug: Vec<Value> = if suppress_meta_fields {
-             vec![]
-         } else {
-@@ -20381,7 +20392,7 @@ async fn search_impl(
-                 "load_stored_fields_count": 1u64,
-                 "load_source": fetch_ns,
-                 "load_source_count": 1u64,
--                "next_reader": 1u64,
-+                "next_reader": fetch_ns,
-                 "next_reader_count": 1u64,
-             }),
-         );
-@@ -20416,7 +20427,7 @@ async fn search_impl(
-                     "query": [{
-                         "type": "DocAndScoreQuery",
-                         "description": format!("DocAndScore[{}]", knn_field),
--                        "time_in_nanos": (took_ms * 1_000_000).max(1),
-+                        "time_in_nanos": query_phase_ns,
-                         "breakdown": {
-                             "set_min_competitive_score_count": 0u64,
-                             "set_min_competitive_score": 0u64,
-@@ -20425,24 +20436,24 @@ async fn search_impl(
-                             "shallow_advance_count": 0u64,
-                             "shallow_advance": 0u64,
-                             "next_doc_count": total_hits.max(1),
--                            "next_doc": 1u64,
-+                            "next_doc": query_phase_ns,
-                             "score_count": total_hits.max(1),
--                            "score": 1u64,
-+                            "score": query_phase_ns,
-                             "compute_max_score_count": 0u64,
-                             "compute_max_score": 0u64,
-                             "advance_count": 0u64,
-                             "advance": 0u64,
-                             "build_scorer_count": 1u64,
--                            "build_scorer": 1u64,
-+                            "build_scorer": query_phase_ns,
-                             "create_weight_count": 1u64,
--                            "create_weight": 1u64,
-+                            "create_weight": query_phase_ns,
-                         },
-                     }],
--                    "rewrite_time": 1u64,
-+                    "rewrite_time": query_phase_ns,
-                     "collector": [{
-                         "name": "TopScoreDocCollector",
-                         "reason": "search_top_hits",
--                        "time_in_nanos": 1u64,
-+                        "time_in_nanos": query_phase_ns,
-                     }],
-                     "ve
+ /* traction */
++.home h2.label { line-height: 1.4; }
+ .home .count { font: 800 var(--fs-56)/1 var(--font-display); color: var(--z-ink); margin: 0; font-variant-numeric: tabular-nums; }
+ .home .count-l { font-family: var(--font-data); font-size: var(--fs-13); color: var(--z-mute); margin: var(--sp-2) 0 0; }
+ .home .counts { margin-bottom: var(--sp-10); }
 ```
 
-**File**: `engine/crates/xerj-api/tests/profile_timings_are_measured.rs` (added, +166/-0)
+**File**: `landing/index.html` (modified, +38/-33)
 ```diff
-@@ -0,0 +1,166 @@
-+//! Issue #3005: `_search` with `profile: true` returned placeholder timings.
-+//!
-+//! Every timer was `took_ms * 1_000_000` (millisecond-rounded, so 0 for a
-+//! fast search) or a literal `1`, floored to 1 ns: tools reading the
-+//! ES-shaped profile got fake numbers with no warning. The fix measures the
-+//! query and fetch phases in nanoseconds, feeds those measured values to every
-+//! timer that used to be a placeholder, and discloses in
-+//! `profile.xerj_timing` that breakdown timers repeat their enclosing phase
-+//! (an upper bound) because XERJ has no per-sub-phase timers.
-+//!
-+//! Fails before the fix: the query `time_in_nanos` is 0 for a sub-millisecond
-+//! search, the fetch and aggregation `build_aggregation` timers are 1, and
-+//! `profile.xerj_timing` does not exist.
-+
-+use axum::body::Body;
-+use axum::http::{Request, StatusCode};
-+use serde_json::{json, Value};
-+use tower::ServiceExt;
-+
-+async fn app() -> (axum::Router, tempfile::TempDir) {
-+    let dir = tempfile::tempdir().expect("tempdir");
-+    let mut config = xerj_common::config::Config::default();
-+    config.server.data_dir = dir.path().to_string_lossy().into_owned();
-+    config.storage.wal_sync = xerj_common::config::WalSync::Async;
-+    let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
-+    let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
-+    let state = xerj_api::state::AppState::new(config, engine, metrics);
-+    (xerj_api::router::build_es_compat_router(state), dir)
-+}
-+
-+async fn call(app: &axum::Router, method: &str, path: &str, body: Value) -> (StatusCode, Value) {
-+    let mut req = Request::builder().method(method).uri(path);
-+    let body = if body.is_null() {
-+        Body::empty()
-+    } else {
-+        req = req.header("content-type", "application/json");
-+        Body::from(body.to_string())
-+    };
-+    let response = app.clone().oneshot(req.body(body).unwrap()).await.unwrap();
-+    let status = response.status();
-+    let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
-+        .await
-+        .unwrap();
-+    (
-+        status,
-+        serde_json::from_slice(&bytes).unwrap_or(Value::Null),
-+    )
-+}
-+
-+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+async fn profile_reports_measured_phase_timings_and_says_what_they_are() {
-+    let (app, _dir) = app().await;
-+    let (st, _) = call(
-+        &app,
-+        "PUT",
-+        "/prof",
-+        json!({"mappings": {"properties": {"t": {"type": "text"}, "k": {"type": "keyword"}}}}),
-+    )
-+    .await;
-+    assert_eq!(st, StatusCode::OK);
-+    let mut ndjson = String::new();
-+    for i in 0..200 {
-+        ndjson.push_str(&format!(
-+            "{{\"index\":{{\"_id\":\"d{i}\"}}}}\n{{\"t\":\"hello world {i}\",\"k\":\"k{}\"}}\n",
-+            i % 7
-+        ));
+@@ -16,20 +16,20 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>XERJ: the search engine for AI agents</title>
+ 
+-<meta name="description" content="A new way for AI to search for data: one local Rust binary that indexes your code, docs, specs and logs, plus Corpus Hub packs, and returns cited answers.">
++<meta name="description" content="The search engine built for AI agents: one open-source Rust binary that indexes your files, code and databases and answers with the evidence attached.">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;700;800;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+ <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230b0b0d'/><text x='50' y='68' font-size='60' font-family='Big Shoulders Display,sans-serif' font-weight='900' fill='%23ffc400' text-anchor='middle'>X</text></svg>">
+ <script src="/theme.js"></script>
+ <link rel="stylesheet" href="/style.css?v=hr1107">
+-<link rel="stylesheet" href="/home.css?v=hr1107">
++<link rel="stylesheet" href="/home.css?v=hr1107b">
+ <!-- seo:begin — generated by scripts/seo/fix_heads.py · do not hand-edit -->
+ <link rel="canonical" href="https://xerj.org/">
+ <meta property="og:site_name" content="XERJ.ai">
+ <meta property="og:type" content="website">
+ <meta property="og:title" content="XERJ: the search engine for AI agents">
+-<meta property="og:description" content="A new way for AI to search for data: one local Rust binary that indexes your code, docs, specs and logs, plus Corpus Hub packs, and returns cited answers.">
++<meta property="og:description" content="The search engine built for AI agents: one open-source Rust binary that indexes your files, code and databases and answers with the evidence attached.">
+ <meta property="og:url" content="https://xerj.org/">
+ <meta property="og:image" content="https://xerj.org/og/xerj-card.png">
+ <meta property="og:image:width" content="1200">
+@@ -38,7 +38,7 @@
+ <meta property="og:locale" content="en_US">
+ <meta name="twitter:card" content="summary_large_image">
+ <meta name="twitter:title" content="XERJ: the search engine for AI agents">
+-<meta name="twitter:description" content="A new way for AI to search for data: one local Rust binary that indexes your code, docs, specs and logs, plus Corpus Hub packs, and returns cited answers.">
++<meta name="twitter:description" content="The search engine built for AI agents: one open-source Rust binary that indexes your files, code and databases and answers with the evidence attached.">
+ <meta name="twitter:image" content="https://xerj.org/og/xerj-card.png">
+ <script type="application/ld+json">
+ {
+@@ -79,7 +79,7 @@
+   "applicationSubCategory": "Search engine",
+   "operatingSystem": "Linux, macOS, Windows",
+   "url": "https://xerj.org/",
+-  "description": "A new way for AI to search for data: one local Rust binary that indexes your code, docs, specs and logs, plus Corpus Hub packs, and returns cited answers.",
++  "description": "The search engine built for AI agents: one open-source Rust binary that indexes your files, code and databases and answers with the evidence attached.",
+   "image": "https://xerj.org/og/xerj-card.png",
+   "license": "https://www.apache.org/licenses/LICENSE-2.0",
+   "isAccessibleForFree": true,
+@@ -131,24 +131,33 @@ <h1>The search engine built for AI agents.</h1>
+     <p class="sub">One open-source binary that indexes your files, code and databases, and answers questions with the evidence attached. Runs offline on a CPU.</p>
+ 
+     <div class="prompt" id="prompt">
+-      <div class="bar"><span>Give this to your AI agent</span></div>
++      <div class="bar"><span>Give this to your AI agent</span><button type="button" class="copy" data-copy="Set up XERJ for me, following https://xerj.org/llms.txt.&#10;1. Install XERJ with the XERJ Query-1 model and start it.&#10;2. Index the folder I point you to (ask before reading anything outside it) and run one search.&#10;3. Write three facts from that data into a facts namespace and ask XERJ Query-1 one question about them. Show me the answer, the program and the evidence.&#10;4. Set up reference coding: index one open-source repo close to this project and look up one definition in it.&#10;5. If this client takes MCP servers, register XERJ (llms.txt has the line for each client) and save one memory note through it.&#10;If you have no shell, use the HTTP or MCP steps in llms.txt instead.">Copy the prompt</button></div>
+       <pre>Set up XERJ for me, following https://xerj.org/llms.txt.
+ 1. Install XERJ with the XERJ Query-1 model and start it.
+ 2. Index the folder I point you to (ask before reading anything outside it) an
+```
+
+**File**: `scripts/seo/home_counts.py` (modified, +9/-4)
+```diff
+@@ -13,7 +13,9 @@
+ Counts: contributors = the repository's contributors list (no anonymous
+ entries); releases = published releases whose tag starts with v1.; downloads
+ = asset downloads over those releases, not counting .sha256 checksum files.
+-Stars are left out on purpose. Standard library only.
++Stars are left out on purpose, and so are posts in HELD (their claims wait on
++an owner answer). Every release so far is a 1.0 release candidate, and the
++tile says so. Standard library only.
+ """
+ import argparse, datetime, html, json, os, re, subprocess, sys, urllib.request
+ from pathlib import Path
+@@ -26,6 +28,9 @@
+ 
+ COUNTS_RE = re.compile(r"(<!-- home:counts-begin[^>]*-->\n).*?(<!-- home:counts-end -->)", re.S)
+ POSTS_RE = re.compile(r"(<!-- home:posts-begin[^>]*-->\n).*?(<!-- home:posts-end -->)", re.S)
++# Posts kept off the home page: /blog/100-contributors is about the star count,
++# which the home page does not show until the jump is explained.
++HELD = {"/blog/100-contributors"}
+ CARD_RE = re.compile(r'<a class="bl-card" href="(/blog/[^"]+)">.*?<time datetime="([0-9-]+)">.*?'
+                      r'<h2 class="bl-title">(.*?)</h2>', re.S)
+ 
+@@ -78,9 +83,9 @@ def _date(iso):
+ 
+ def render_counts(c):
+     tiles = [(f"{c['contributors']:,}", "contributors"),
+-             (f"{c['releases']:,}", f"releases since {_date(c['first_release'])}"),
++             (f"{c['releases']:,}", f"1.0 release candidates since {_date(c['first_release'])}"),
+              (f"{c['downloads']:,}", "engine binary downloads from GitHub releases")]
+-    out = [f'<p class="label">Built in the open · counts from the GitHub API, {c["fetched_at"][:10]}</p>',
++    out = [f'<h2 class="label">Built in the open · counts from the GitHub API, {c["fetched_at"][:10]}</h2>',
+            '<div class="g counts">']
+     for n, label in tiles:
+         out.append(f'  <div class="c4"><p class="count">{n}</p><p class="count-l">{html.escape(label)}</p></div>')
+@@ -89,7 +94,7 @@ def render_counts(c):
+ 
+ 
+ def render_posts():
+-    cards = CARD_RE.findall(BLOG.read_text(encoding="utf-8"))
++    cards = [c for c in CARD_RE.findall(BLOG.read_text(encoding="utf-8")) if c[0] not in HELD]
+     cards.sort(key=lambda c: c[1], reverse=True)
+     out = ['<ul class="posts">']
+     for href, day, title in cards[:3]:
+```
+
+**File**: `scripts/seo/pagedata.py` (modified, +1/-1)
+```diff
+@@ -55,7 +55,7 @@
+         # The canonical description (seo_head.ORG_DESCRIPTION). seo_lint gates
+         # duplicate descriptions, so /product, /for-agents and
+         # /answers/what-is-xerj carry the same clause behind a short lead-in.
+-        description="A new way for AI to search for data: one local Rust binary that indexes your code, docs, specs and logs, plus Corpus Hub packs, and returns cited answers.",
++        description="The search engine built for AI agents: one open-source Rust binary that indexes your files, code and databases and answers with the evidence attached.",
+     ),
+     # `404.html` is what makes Cloudflare Pages return a real HTTP 404.  With
+     # no top-level 404.html the project is treated as a single-page app and
+```
+
+**File**: `scripts/seo/test_llms_field_report.py` (modified, +4/-1)
+```diff
+@@ -27,7 +27,8 @@
+ )
+ OLD_ASK = "ask before sending"
+ # The one copy prompt on the home page (2026-11-07 redesign): install with the
+-# model, index, search, ask XERJ Query-1, reference coding, and a no-shell line.
++# model, index, search, ask XERJ Query-1, reference coding, MCP + one memory
++# note, and a no-shell line.
+ HOME_PROMPT = (
+     "Set up XERJ for me, following https://xerj.org/llms.txt.\n"
+     "1. Install XERJ with the XERJ Query-1 model and start it.\n"
+@@ -36,6 +37,8 @@
+     "about them. Show me the answer, the program and the evidence.\n"
+     "4. Set up reference coding: index one open-source repo close to this project and look up one "
+     "definition in it.\n"
++    "5. If this client takes MCP servers, register XERJ (llms.txt has the line for each client) "
++    "and save one memory note through it.\n"
+     "If you have no shell, use the HTTP or MCP steps in llms.txt instead."
+ )
+ HOME_PROMPT_RE = r'data-copy="(Set up XERJ for me, following https://xerj.org/llms.txt\.[^"]*)"'
+```
+
+---
+
+### Incident Patch 2: `87240c9f` (2026-11-07)
+**Commit Message**: site(home): two-sentence hero; nav wraps instead of overflowing; phone gutters fixed
+
+The home hero opened with two long paragraphs (about 140 words of claims and
+caveats). It is now two plain sentences; the scoped numbers stay in the six
+vs-cards below, unchanged. H1, install prompt and the "No shell?" row unchanged.
+
+Layout, measured with headless Chrome before and after:
+- The primary nav ran past the right edge once the menu grew (XERJ QUERY-1,
+  COHERE, DONATE): at a 1280px viewport the document was 1528px wide, so the
+  centered hero sat left of the visible centre and DAY/NIGHT was off-screen.
+  .nav now wraps (flex-wrap, row gap) and links do not break mid-label.
+  After: document width equals the viewport at 360/768/1280/1440/1920.
+- Phones and tablets kept the 64px desktop gutter: the base tokens are set on
+  ":root, html[data-theme='day']" and the attribute selector out-ranked the
+  "@media :root { --page-x }" overrides. The overrides now also match
+  html[data-theme], so the gutter is 28px up to 960px and 18px up to 720px,
+  as the stylesheet intended. Every section (nav, hero, scenes, footer map,
+  footer) shares the same x and width at each width.
+- style.css is shared
+
+**File**: `landing/index.html` (modified, +2/-4)
+```diff
+@@ -22,7 +22,7 @@
+ <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;700;800;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+ <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230b0b0d'/><text x='50' y='68' font-size='60' font-family='Big Shoulders Display,sans-serif' font-weight='900' fill='%23ffc400' text-anchor='middle'>X</text></svg>">
+ <script src="/theme.js"></script>
+-<link rel="stylesheet" href="/style.css?v=if10">
++<link rel="stylesheet" href="/style.css?v=if11">
+ <style>
+ 
+   /* Fold recovery (2026-09-21 fix round): at 1440x900 the banner's title sat
+@@ -229,9 +229,7 @@
+ 
+   <h1 class="hero">XERJ QUERY-1.<br>ANSWERS THAT<br><span class="accent">SHOW THEIR WORK.</span></h1>
+ 
+-  <p class="hero-sub">XERJ is a search engine with a neurosymbolic model inside. XERJ Query-1 turns your question into a short program, and the engine runs it over facts you or your agent have written into a facts namespace. Lookup and comparison answers point at the facts they used; a count names its program by hash and cites no records.</p>
+-
+-  <p class="hero-sub">No embeddings to build, no GPU, 1 wrong answer against 9 to 15 for RAG on Opus 5.5 in our 160-question test (XERJ Query-1 also declined 35 and was given each question's own records; Opus 5.5 given the right records got 5 wrong), and hundreds of times cheaper per question in that test (ARITHMETIC at list prices: about $42 per million questions of CPU vs $13,400 to $21,000 for RAG on Opus 5.5). The same binary indexes your files, folders and S3 for full-text and hybrid search, and speaks the Elasticsearch API.</p>
++  <p class="hero-sub">XERJ is a search engine with an AI model inside. XERJ Query-1 turns your question into a small program and runs it over your own data, offline on a CPU.</p>
+ 
+   <div class="hero-col">
+     <!-- The agent path first: one prompt that covers the broad use case. -->
+```
+
+**File**: `landing/style.css` (modified, +11/-3)
+```diff
+@@ -152,8 +152,13 @@ button { font: inherit; }
+ 
+ .nav {
+   display: flex;
++  /* wrap instead of running past the right edge: the menu grew
++     (XERJ QUERY-1, COHERE, DONATE) and pushed the page 1528px wide
++     at a 1280px viewport, so the centered hero looked off-centre. */
++  flex-wrap: wrap;
+   align-items: baseline;
+   gap: var(--sp-4);
++  row-gap: var(--sp-3);
+   padding-bottom: var(--sp-6);
+   border-bottom: 1px solid var(--z-line);
+   margin-bottom: var(--sp-16);
+@@ -171,7 +176,7 @@ button { font: inherit; }
+   color: var(--z-ink);
+   margin-right: var(--sp-4);
+ }
+-.nav a { color: var(--z-mute); }
++.nav a { color: var(--z-mute); white-space: nowrap; }
+ .nav a:hover { color: var(--z-ink); }
+ .nav a.active { color: var(--z-ink); }
+ 
+@@ -2297,7 +2302,10 @@ pre.tree .c { color: var(--z-mute); }
+ 
+ /* Smaller screens — fold hero to 96px, unstack metrics. */
+ @media (max-width: 960px) {
+-  :root { --page-x: 28px; }
++  /* html[data-theme] too: the base tokens are set on :root AND
++     html[data-theme='day'] (higher specificity), which silently kept
++     the 64px desktop gutter on tablets and phones. */
++  :root, html[data-theme] { --page-x: 28px; }
+   h1.hero { font-size: var(--fs-96); }
+   h2.scene { font-size: var(--fs-56); }
+   .metrics { grid-template-columns: repeat(2, 1fr); }
+@@ -2315,7 +2323,7 @@ pre.tree .c { color: var(--z-mute); }
+    one column, scale type down, and give every wide data block a
+    horizontal scroll wrapper so the page never side-scrolls. */
+ @media (max-width: 720px) {
+-  :root {
++  :root, html[data-theme] {
+     --page-x: 18px;
+     --gap-x: 16px;
+     --sp-12: 40px;
+```
+
+---
+
+### Incident Patch 3: `34a2f244` (2026-11-07)
+**Commit Message**: Merge pull request #3030 from xerj-org/fix/3017-hybrid-tiebreak
+
+fix(engine): rank tied kNN neighbours by seq_no then _id on every executor (#3017)
+
+**File**: `docs/recipes/hybrid-search.md` (modified, +6/-0)
+```diff
+@@ -236,6 +236,12 @@ below.
+   order does not reorder an equal-weight request. Before
+   [#940](https://github.com/xerj-org/xerj/issues/940) a tie followed
+   hash-map iteration order, which changed from one process to the next.
++  Before [#3017](https://github.com/xerj-org/xerj/issues/3017) the same
++  held one level down: a `knn` leg served from the HNSW graph returned
++  equally similar neighbours in graph order, and the graph differs between
++  the indexing process, a restart and a second node, so RRF positions (and
++  the fused scores built from them) could change. Every kNN executor now
++  ranks its neighbours in the same score, `_seq_no`, `_id` order.
+ - **Vector quality is your embeddings' job.** This recipe supplies
+   vectors directly for a deterministic demo. For real semantic recall,
+   generate `dense_vector` values with a production embedding model, or
+```
+
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +51/-1)
+```diff
+@@ -20604,6 +20604,10 @@ impl Index {
+             };
+             ranked.push((id, score, source, ordinal));
+         }
++        // #3017: the cap above kept tied candidates in scan order (memtable,
++        // then segments), which moves when a memtable flushes; the page itself
++        // is put in the one score-ranked order every executor shares.
++        order_knn_pool_page_order(self, &mut ranked);
+ 
+         // (result shaping is shared with the HNSW path so hits format / total
+         // semantics cannot drift between the exact and approximate executors)
+@@ -47015,7 +47019,8 @@ fn knn_result_from_scored(
+     generated_companion_fields: &HashSet<String>,
+     schema: Option<&Schema>,
+ ) -> SearchResult {
+-    rank_knn_pool(&mut scored, k, |entry| entry.1);
++    order_knn_pool_page_order(index, &mut scored);
++    scored.truncate(k.max(1));
+     knn_result_from_ranked(
+         index,
+         request,
+@@ -47027,6 +47032,43 @@ fn knn_result_from_scored(
+     )
+ }
+ 
++/// #3017: order a hydrated kNN pool into THE score-ranked page order,
++/// `score DESC, seq_no ASC (arrival, ES `_doc`), _id ASC` — the same key
++/// [`Index::sort_hits_page_order`] and hybrid fusion (`fuse_finish`) use.
++///
++/// Equal scores used to keep the order the executor collected them in. For
++/// the HNSW path that is the graph's traversal order, and the graph's layers
++/// come from `thread_rng`, so a graph built while indexing and the one a
++/// restarted process loads or rebuilds visit tied neighbours differently: the
++/// kNN page and every RRF rank fed from it changed across server processes
++/// (#3017 repro on a synthetic corpus of 5,000 docs carrying 2,500 distinct
++/// 384-dim vectors: 116 of 160 kNN and 118 of 160 hybrid rankings identical
++/// between the indexing process and a restart).
++///
++/// The seq_no is resolved once per candidate (a pool is at most `k` plus a
++/// few rescore candidates on the ANN path), and a NaN score sorts last as in
++/// `fuse_finish`, so the comparator is a total order.
++fn order_knn_pool_page_order(index: &Index, pool: &mut Vec<(String, f32, Value, Option<u32>)>) {
++    fn key(score: f32) -> f32 {
++        if score.is_nan() {
++            f32::NEG_INFINITY
++        } else {
++            score
++        }
 +    }
-+    let response = app
-+        .clone()
-+        .oneshot(
-+            Request::post("/prof/_bulk?refresh=true")
-+                .header("content-type", "application/x-ndjson")
-+                .body(Body::from(ndjson))
-+                .unwrap(),
-+        )
-+        .await
-+        .unwrap();
-+    assert_eq!(response.status(), StatusCode::OK);
++    let mut decorated: Vec<(u64, (String, f32, Value, Option<u32>))> = std::mem::take(pool)
++        .into_iter()
++        .map(|entry| (index.lookup_seq_no(&entry.0).unwrap_or(u64::MAX), entry))
++        .collect();
++    decorated.sort_by(|a, b| {
++        key(b.1 .1)
++            .total_cmp(&key(a.1 .1))
++            .then_with(|| a.0.cmp(&b.0))
++            .then_with(|| a.1 .0.cmp(&b.1 .0))
++    });
++    *pool = decorated.into_iter().map(|(_, entry)| entry).collect();
++}
 +
-+    let (st, body) = call(
-+        &app,
-+        "POST",
-+        "/prof/_search",
-+        json!({
-+            "profile": true,
-+            "query": {"match": {"t": "hello"}},
-+            "aggs": {
-+                "by_k": {"terms": {"field": "k"}},
-+                "sig": {"significant_text": {"field": "t"}}
-+            }
-+        }),
+ /// Rank a kNN candidate pool by score, descending, and cap it at `k` — the one
+ /// definition of "top-k" every kNN executor shares.
+ ///
+@@ -66957,6 +66999,14 @@ mod exact_scan_hydration_tests {
+         }
+         scored.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+         scored.truncate(k.max(1));
++        // #3017: the capped page is in score DESC, seq_no ASC, _id ASC order.
++        let seq_of = |id: &str| idx.lookup_seq_no(id).unwrap_or(u64::MAX);
++        scored.sort_by(|a, b| {
++            b.1.partial_cmp(&a.1)
++                .unwrap_or(std::cmp::Ordering::Equal)
++                .then_with(|| seq_of(&a.0).cmp(&seq_of(&b.0)))
++                .then_with(|| a.0.cmp(&b.0))
++        });
+         scored
+             .into_iter()
+             .map(|(id, score, src, ordinal)| (id, score.to_bits(), ordinal, src))
+```
+
+**File**: `engine/crates/xerj-server/tests/hybrid_tie_order_across_processes.rs` (added, +294/-0)
+```diff
+@@ -0,0 +1,294 @@
++//! Issue #3017, against the real binary: tied kNN and hybrid (RRF) rankings
++//! must be identical in every server process that serves the same data.
++//!
++//! The kNN executors ranked equal scores in the order they collected them.
++//! On the HNSW path that is the graph's traversal order, and the graph's
++//! layers come from `thread_rng`, so the graph the indexing process built and
++//! the one a restarted process (or a second node indexing the same data)
++//! serves visit tied neighbours differently. RRF ranks each leg by position,
++//! so a reordered tie in the kNN leg changed fused scores, not just the
++//! order of equal ones. The fix ranks every kNN pool by the one score-ranked
++//! page order, `score DESC, seq_no ASC, _id ASC`.
++//!
++//! Three processes: A indexes and answers, B restarts on A's data dir, C
++//! indexes the same documents into a fresh data dir. Every corpus vector is
++//! shared by two documents (a duplicated record), so every kNN score is a
++//! tie. Before the fix the processes disagreed on most of the 12 kNN and 12
++//! hybrid rankings.
++
++#![cfg(unix)]
++
++use std::io::{BufRead, BufReader, Read, Write};
++use std::net::{TcpListener, TcpStream};
++use std::process::{Child, Command, Stdio};
++use std::time::{Duration, Instant};
++
++use serde_json::{json, Value};
++
++fn three_free_ports() -> (u16, u16, u16) {
++    let l1 = xerj_common::loopback_test::expect_loopback(TcpListener::bind("127.0.0.1:0"));
++    let l2 = xerj_common::loopback_test::expect_loopback(TcpListener::bind("127.0.0.1:0"));
++    let l3 = xerj_common::loopback_test::expect_loopback(TcpListener::bind("127.0.0.1:0"));
++    (
++        l1.local_addr().unwrap().port(),
++        l2.local_addr().unwrap().port(),
++        l3.local_addr().unwrap().port(),
 +    )
-+    .await;
-+    assert_eq!(st, StatusCode::OK, "{body}");
-+    let profile = &body["profile"];
-+    let note = &profile["xerj_timing"];
-+    let query_ns = note["query_phase_nanos"]
-+        .as_u64()
-+        .expect("query_phase_nanos");
-+    let fetch_ns = note["fetch_phase_nanos"]
-+        .as_u64()
-+        .expect("fetch_phase_nanos");
-+    assert_eq!(note["breakdown"], json!("not_instrumented"), "{note}");
-+    assert!(
-+        note["warning"]
-+            .as_str()
-+            .is_some_and(|w| w.contains("upper bound")),
-+        "the disclosure must say what the breakdown timers are: {note}"
-+    );
-+    // A search that parsed, matched 200 docs and merged a page takes far more
-+    // than a microsecond; the placeholder was 0 (sub-ms took) or 1.
-+    assert!(
-+        query_ns > 1_000,
-+        "query phase must be measured, got {query_ns} ns"
-+    );
-+    assert!(
-+        fetch_ns > 1,
-+        "fetch phase must be measured, got {fetch_ns} ns"
-+    );
++}
 +
-+    let shard = &profile["shards"][0];
-+    let q = &shard["searches"][0]["query"][0];
-+    assert_eq!(q["time_in_nanos"].as_u64(), Some(query_ns), "{q}");
-+    assert_eq!(
-+        shard["searches"][0]["collector"][0]["time_in_nanos"].as_u64(),
-+        Some(query_ns)
++fn toml_path(p: &std::path::Path) -> String {
++    p.to_string_lossy().replace('\\', "/")
++}
++
++fn request(
++    port: u16,
++    method: &str,
++    path: &str,
++    content_type: &str,
++    body: &str,
++) -> std::io::Result<(u16, String)> {
++    let mut stream = TcpStream::connect(("127.0.0.1", port))?;
++    stream.set_read_timeout(Some(Duration::from_secs(120)))?;
++    stream.set_write_timeout(Some(Duration::from_secs(120)))?;
++    let request = format!(
++        "{method} {path} HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\
++         Content-Type: {content_type}\r\nContent-Length: {}\r\n\r\n{body}",
++        body.len()
 +    );
-+    assert_eq!(shard["fetch"]["time_in_nanos"].as_u64(), Some(fetch_ns));
-+    assert_eq!(
-+        shard["fetch"]["breakdown"]["next_reader"].as_u64(),
-+        Some(fetch_ns),
-+       
++    stream.write_all(request.as_bytes())?;
++    stream.flush()?;
++    let mut reader = BufReader::new(stream);
++    let mut status_line = String::new();
++    reader.read_line(&mut status_line)?;
++    let status: u16 = status_line
++        .split_whitespace()
++        .nth(1)
++        .and_then(|s| s.parse().ok())
++        .unwrap_or(0);
++    loop {
++        let mut line = String::new();
++        if reader.read_line(&mut line)? == 0 || line == "\r\n" {
++            break;
++        }
++    }
++    let mut body = String::new();
++    reader.read_to_string(&mut body)?;
++    Ok((status, body))
++}
++
++fn json_call(port: u16, method: &str, path: &str, body: &Value) -> Value {
++    let (status, text) = request(port, method, path, "application/json", &body.to_string())
++        .unwrap_or_else(|e| panic!("{method} {path}: {e}"));
++    assert_eq!(status, 200, "{method} {path}: {text}");
++    serde_json::from_str(&text).unwrap_or_else(|e| panic!("{method} {path}: {e}: {text}"))
++}
++
++fn boot(data_dir: &std::path::Path, cfg_dir: &std::path::Path) -> (Child, u16) {
++    let (rest, grpc, es_port) = three_free_ports();
++    let config = format!(
++        r#"
++[server]
++bind_address = "127.0.0.1"
++rest_port = {rest}
++grpc_port = {grpc}
++es_compat_port = {es_port}
++data_dir = "{data}"
++"#,
++        data = toml_path(data_dir),
++    );
++    let config_path = cfg_dir.join(format!("xerj-{es_port}.toml"));
++    std::fs::write(&config_path, config).unwrap();
++    let mut child = Command::new(env!("CARGO_BIN_EXE_xerj"))
++        .arg("--config")
++        .arg(&config_path)
++        .arg("--insecure")
++        .stdout(Stdio::null())
++        .stderr(Stdio::null())
++        .spawn()
++        .expect("spawn xerj");
++    let deadline = Instant::now() + Duration::from_secs(120);
++    while Instant::now() < deadline {
++        if let Ok((200, _)) = request(es_port, "GET", "/_cluster/health", "application/json", "") {
++            return (child, es_port);
++        }
++        std::thread::sleep(Duration::from_millis(200));
++    }
++    let _ = child.kill();
++    let _ = child.wait();
++    panic!("xerj did not become ready on port {es_port}");
++}
++
++fn stop(mut child: Child) {
++    unsafe {
++        libc::kill(child.id() as libc::pid_t, libc::SIGTERM);
++    }
++    let deadline = Instant::now() + Duration::from_secs(60);
++    while Instant::now() < deadline {
++        if child.try_wait().unwrap().is_some() {
++            return;
++        }
++        std::thread::sleep(Duration::from_millis(100));
++    }
++    let _ = child.kill();
++    let _ = child.wait
+```
+
+**File**: `landing/docs/recipes/hybrid-search.html` (modified, +1/-1)
+```diff
+@@ -367,7 +367,7 @@ <h2>Notes &amp; limits</h2>
+   <ul>
+     <li><strong><code class="inline">knn</code> in a query scores every doc that has the field</strong>, ranked by cosine; <code class="inline">size</code> (or <code class="inline">from</code>+<code class="inline">size</code>) is the cutoff the user sees. So <code class="inline">k:3</code> plus <code class="inline">size:3</code> means "show the 3 nearest." For a hard candidate cap independent of <code class="inline">size</code>, keep <code class="inline">k</code> small — it's carried on the sub-query.</li>
+     <li><strong>Score scales differ by fusion.</strong> RRF returns small fused scores (<code class="inline">0.016–0.033</code> here) — compare docs <em>within</em> a response, not against BM25/cosine absolutes.</li>
+-    <li><strong>Tied fused scores are ordered by arrival.</strong> Under RRF ties are common: a document found only by one leg at rank <em>r</em> and a document found only by the other leg at rank <em>r</em> score exactly the same (<code class="inline">1/(k+r)</code> each), and so do two documents at swapped ranks (1,2) and (2,1). XERJ orders a tie the way it orders every score-ranked page: fused <code class="inline">_score</code> descending, then the order the documents were indexed (<code class="inline">_seq_no</code>, the ES <code class="inline">_doc</code> order), then <code class="inline">_id</code>. The page is the same on every run and after a restart, whether the documents are still in memory or already flushed, so <code class="inline">from</code>/<code class="inline">size</code> paging does not skip or repeat a document at a page boundary, and listing the legs in another order does not reorder an equal-weight request. Before <a href="https://github.com/xerj-org/xerj/issues/940">#940</a> a tie followed hash-map iteration order, which changed from one process to the next.</li>
++    <li><strong>Tied fused scores are ordered by arrival.</strong> Under RRF ties are common: a document found only by one leg at rank <em>r</em> and a document found only by the other leg at rank <em>r</em> score exactly the same (<code class="inline">1/(k+r)</code> each), and so do two documents at swapped ranks (1,2) and (2,1). XERJ orders a tie the way it orders every score-ranked page: fused <code class="inline">_score</code> descending, then the order the documents were indexed (<code class="inline">_seq_no</code>, the ES <code class="inline">_doc</code> order), then <code class="inline">_id</code>. The page is the same on every run and after a restart, whether the documents are still in memory or already flushed, so <code class="inline">from</code>/<code class="inline">size</code> paging does not skip or repeat a document at a page boundary, and listing the legs in another order does not reorder an equal-weight request. Before <a href="https://github.com/xerj-org/xerj/issues/940">#940</a> a tie followed hash-map iteration order, which changed from one process to the next. Before <a href="https://github.com/xerj-org/xerj/issues/3017">#3017</a> the same held one level down: a <code class="inline">knn</code> leg served from the HNSW graph returned equally similar neighbours in graph order, and the graph differs between the indexing process, a restart and a second node, so RRF positions (and the fused scores built from them) could change. Every kNN executor now ranks its neighbours in the same score, <code class="inline">_seq_no</code>, <code class="inline">_id</code> order.</li>
+     <li><strong>Vector quality is your embeddings' job.</strong> This recipe supplies vectors directly for a deterministic demo. For real semantic recall, generate <code class="inline">dense_vector</code> values with a production embedding model, or use a <code class="inline">semantic_text</code> field with an external <code class="inline">inference_id</code>.</li>
+   </ul>
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3039** (closed): Agent field report: xerj_search/xerj_def (MCP) over a re-indexed Rust Cloudflare Worker to trace the pending-list KV write path and find why free-tier usage exceeded 50% (@Galaxy-VN)
+- **PR #3038** (2026-11-07): site(home): lead the hero with the neurosymbolic model (@xerj-org)
+- **PR #3034** (2026-11-07): site: home page redesign (one CTA, use-case blocks, aligned layout) (@xerj-org)
+- **PR #3033** (2026-11-07): release(rc.102): CHANGELOG, ROADMAP review roll, version, footer stamps (@xerj-org)
+- **PR #3032** (2026-11-07): site(home): two-sentence hero, nav wraps instead of overflowing, phone gutters fixed (@xerj-org)
 - **PR #3031** (2026-11-07): fix(ci): the /get privacy test no longer fails when the clock reads :52.52 (@xerj-org)
-- **PR #3029** (2026-11-07): fix(api): _search profile reports measured phase timings, not placeholders (#3005) (@xerj-org)
-- **PR #3028** (2026-11-07): docs(facts): the /_facts wait loop stops on unavailable and not-enabled (#3021) (@xerj-org)
-- **PR #3023** (2026-11-07): fix(site, docs): correct XERJ Query-1 launch claims (latency, accuracy scope, corpora) (@xerj-org)
-- **PR #2998** (closed): test(rerank): classify the rows-to-facts client in the egress inventory (@amartya1523)
-- **PR #2990** (2026-11-06): site: Cohere integration page, on-prem worked example, docs/COHERE.md, COHERE nav (@xerj-org)
 
 ---
 
@@ -2123,33 +2339,43 @@ Change.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): the /get privacy test no longer fails when the clock reads :52.52
+## X. site(home): apply the preview critique (grid bug, honest proof rows, hero proof 
 
 **RULE**:
-When implementing operations in `.github/scripts/functions-get-test.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `landing/home.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a971b4c`: ci): the /get privacy test no longer fails when the clock reads :52.52. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1771d4e3`: site(home): apply the preview critique (grid bug, honest proof rows, hero proof strip). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/functions-get-test.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `landing/home.css`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.5200871', longitude: '13.4049540' },
-  // Distinctive values: the stored record carries an ISO timestamp, and a
-  // short value like '52.52' matched it whenever the clock read hh:mm:52.52x.
-  ok(!stored.includes('52.5200871') && !stored.includes('13.4049540'), 'no lat/long from request.cf');
-  ok(!('latitude' in row) && !('longitude' in row), 'no latitude/longitude keys stored');
+.home .prompt .bar .copy { text-transform: none; letter-spacing: 0; padding: 8px 14px; }
+
+/* hero proof strip: three numbers from the proof table, each with its scope */
+.home .glance { grid-column: 9 / -1; margin-top: calc(var(--sp-6) + 30px); padding-left: var(--sp-6); border-left: 1px solid var(--z-line); }
+.home .glance dl { margin: 0; }
+.home .glance dl > div { padding: var(--sp-4) 0; border-bottom: 1px solid var(--z-line); }
+.home .glance dl > div:first-child { padding-top: 0; }
+.home .glance dt { font: 800 var(--fs-56)/1 var(--font-display); color: var(--z-accent); font-variant-numeric: tabular-nums; }
+.home .glance dd { margin: var(--sp-2) 0 0; font: 400 var(--fs-13)/1.5 var(--font-data); color: var(--z-mute); }
+.home .glance .more { margin-top: var(--sp-4); font-family: var(--font-data); font-size: var(--fs-13); }
+@media (max-width: 960px) {
+  .home .glance { grid-column: 1 / -1; margin-top: var(--sp-4); padding-left: 0; border-left: 0; }
+}
+.home .tbl { border: 1px solid var(--z-line); border-radius: 8px; overflow: hidden; margin-top: 0; }
+.home h2.label { line-height: 1.4; }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.52', longitude: '13.40' },
-  ok(!stored.includes('52.52') && !stored.includes('13.40'), 'no lat/long from request.cf');
+.home .prompt .foot { display: flex; justify-content: flex-end; padding: 0 var(--sp-4) var(--sp-4); }
+.home .tbl { border: 1px solid var(--z-line); border-radius: 8px; overflow: hidden; margin-top: var(--sp-10); }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a971b4c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1771d4e3` are properly handled with clean fallback behavior.

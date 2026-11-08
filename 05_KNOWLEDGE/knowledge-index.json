@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T07:08:53.974Z",
+  "last_updated": "2026-11-08T07:15:35.442Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -527,14 +527,19 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "9fb59640",
-      "content_hash": "d89e08ae2269a2aee132ee51dcd03f4fe29280a289a8642e8c97bd9a9b0bb7f7",
+      "source_version": "af6a474b",
+      "content_hash": "edffb67202321c7d8fdba92fc33a5e64f30aa2c21f2f27b07fc91a743f2834d5",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "errors): normalize error and panic messages (#4391)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "bump): preserve equals in reference version requirements (#4399)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -588,7 +593,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:45:00.047Z",
+      "verified_at": "2026-11-08T07:15:20.360Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23250,7 +23255,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "6c9a42d06869358bc8359e13d58cf75db2ccb2a5bb473cf98628516ba6e592a3",
+      "content_hash": "8e1c32e0c70e9aa7bd9ee8e43d06d11f7f0476be7311bfb89cc998bf97e5b042",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -23314,6 +23319,11 @@
           "number": "EXISTING",
           "title": "Proper Scoring Rule Training Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": null,
+          "title": "Multi-Checkpoint Routing Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 432,
@@ -23708,7 +23718,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-11-04T20:39:19.623Z",
+      "verified_at": "2026-11-08T07:15:27.276Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63930,14 +63940,19 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "d4a23e33",
-      "content_hash": "91e228d68c2a5eb825ca837ca4b93ebe71005508d996b8794721f78b70b3b074",
+      "source_version": "1557de2f",
+      "content_hash": "4e1ec651617a68482bbfd6104d5ac295b15d064afdbb560eabff072ba608bdff",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "ci): the /get privacy test no longer fails when the clock reads :52.52",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "site(home): apply the preview critique (grid bug, honest proof rows, hero proof",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64036,7 +64051,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:56:24.822Z",
+      "verified_at": "2026-11-08T07:15:35.427Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -82109,7 +82124,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T20:39:19.623Z"
+      "verified_at": "2026-11-08T07:15:27.276Z"
     },
     "rule-432": {
       "learning_id": "rule-432",
@@ -83173,7 +83188,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T20:39:19.623Z"
+      "verified_at": "2026-11-08T07:15:27.276Z"
     },
     "rule-508": {
       "learning_id": "rule-508",

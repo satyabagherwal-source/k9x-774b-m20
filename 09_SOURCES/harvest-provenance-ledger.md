@@ -8259,3 +8259,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `adc282a7` | Multi-dimensional audit evidence | 2026-11-08T06:59:47.249Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `b82d8418` | Multi-dimensional audit evidence | 2026-11-08T07:08:52.757Z |
 | `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `7dbce080` | Multi-dimensional audit evidence | 2026-11-08T07:08:54.071Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `af6a474b` | Multi-dimensional audit evidence | 2026-11-08T07:15:20.438Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-08T07:15:27.347Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `1557de2f` | Multi-dimensional audit evidence | 2026-11-08T07:15:35.522Z |
