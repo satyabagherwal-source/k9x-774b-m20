@@ -8223,3 +8223,6 @@
 | `CYCLE-20261108-KHB1` | `2026-11-08T05:11:38.653Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`81a0497c...`) |
 | `CYCLE-20261108-SUR5` | `2026-11-08T05:18:09.329Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule EXISTING` | Yes (`4bd769bf...`) |
 | `CYCLE-20261108-SYMB` | `2026-11-08T05:18:14.339Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`93cd3ef9...`) |
+| `CYCLE-20261108-3CBV` | `2026-11-08T05:26:18.667Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`41fadbef...`) |
+| `CYCLE-20261108-3FTW` | `2026-11-08T05:26:23.204Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7ff321e4...`) |
+| `CYCLE-20261108-3N0H` | `2026-11-08T05:26:32.513Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a0906b4e...`) |

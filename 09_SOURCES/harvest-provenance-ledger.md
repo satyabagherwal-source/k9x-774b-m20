@@ -8232,3 +8232,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-08T05:11:38.658Z |
 | `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T05:18:09.358Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `bff93ff3` | Multi-dimensional audit evidence | 2026-11-08T05:18:14.348Z |
+| `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `e8091752` | Multi-dimensional audit evidence | 2026-11-08T05:26:18.670Z |
+| `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `8c6a683a` | Multi-dimensional audit evidence | 2026-11-08T05:26:23.212Z |
+| `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-08T05:26:32.524Z |

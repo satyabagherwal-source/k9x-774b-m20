@@ -4333,10 +4333,10 @@
     "repository": "mfontanini/presenterm",
     "platform": "github",
     "sourceUrl": "https://github.com/mfontanini/presenterm",
-    "sourceVersion": "bb069c2f",
+    "sourceVersion": "e8091752",
     "license": "BSD-2-Clause",
-    "contentHash": "c2a767d38e9f3fa4f81f672f34d8776fc4234bb1c43423161bb2e30ad103afa5",
-    "lastHarvestedAt": "2026-11-05T05:39:04.590Z",
+    "contentHash": "41fadbef9850f3048fd53f421aef67c752730c537ea6bac10d7bea1ee89e1287",
+    "lastHarvestedAt": "2026-11-08T05:26:18.670Z",
     "learningId": "learn-github-mfontanini-presenterm"
   },
   "ritz078-transform": {
@@ -8123,10 +8123,10 @@
     "repository": "vanniktech/gradle-maven-publish-plugin",
     "platform": "github",
     "sourceUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-    "sourceVersion": "04ea2405",
+    "sourceVersion": "8c6a683a",
     "license": "Apache-2.0",
-    "contentHash": "921cae95cff0ef55936602f441a0f0e51cfdfa9822e47f439db2641c579251c2",
-    "lastHarvestedAt": "2026-10-31T21:56:56.950Z",
+    "contentHash": "7ff321e4a8813ce37cdacfc40e576e631a83ee1378f49d45ed44c2fb6c63ffd8",
+    "lastHarvestedAt": "2026-11-08T05:26:23.212Z",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin"
   },
   "mohamedrejeb-calf": {
@@ -10595,8 +10595,8 @@
     "sourceUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
     "sourceVersion": "hf-krafton-raon-1-mini-preview",
     "license": "Open-Source",
-    "contentHash": "507f41b45d0b89b5064c1b5b9ffc91e29fc650ddd6bb7f09b8317456900e33ee",
-    "lastHarvestedAt": "2026-11-04T18:57:37.720Z",
+    "contentHash": "a0906b4ed07a729953dca2d12df92a8c3564b24adf1ca39bfa907162af3229ce",
+    "lastHarvestedAt": "2026-11-08T05:26:32.524Z",
     "learningId": "learn-huggingface-krafton-raon-1-mini-preview"
   },
   "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf": {

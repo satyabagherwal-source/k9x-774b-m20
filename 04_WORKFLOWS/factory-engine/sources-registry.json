@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T05:18:16.940Z",
-    "lastVerified": "2026-11-08T05:18:16.940Z",
+    "lastChecked": "2026-11-08T05:26:35.116Z",
+    "lastVerified": "2026-11-08T05:26:35.116Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -462,8 +462,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T04:54:55.906Z",
-    "lastVerified": "2026-11-08T04:54:55.906Z",
+    "lastChecked": "2026-11-08T05:26:27.871Z",
+    "lastVerified": "2026-11-08T05:26:27.871Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1627,9 +1627,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-08T01:33:57.299Z",
+    "lastChecked": "2026-11-08T05:26:22.900Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-08T01:33:57.299Z"
+    "lastVerified": "2026-11-08T05:26:22.900Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2304,9 +2304,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-06T23:27:15.775Z",
+    "lastChecked": "2026-11-08T05:26:25.431Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-06T23:27:15.775Z"
+    "lastVerified": "2026-11-08T05:26:25.431Z"
   },
   "sayanarijit-xplr": {
     "name": "xplr",
@@ -3846,22 +3846,21 @@
     "lastVerified": "2026-11-07T05:09:09.160Z"
   },
   "mfontanini-presenterm": {
-    "name": "presenterm",
+    "name": "mfontanini/presenterm",
     "officialUrl": "https://github.com/mfontanini/presenterm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T15:27:16.821Z",
-    "lastVerified": "2026-11-06T15:27:16.821Z",
+    "lastChecked": "2026-11-08T05:26:17.131Z",
+    "lastVerified": "2026-11-08T05:26:17.131Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "c2a767d38e9f3fa4f81f672f34d8776fc4234bb1c43423161bb2e30ad103afa5",
+    "contentHash": "41fadbef9850f3048fd53f421aef67c752730c537ea6bac10d7bea1ee89e1287",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bb069c2f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -6157,9 +6156,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-07T02:54:22.156Z",
+    "lastChecked": "2026-11-08T05:26:20.379Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-07T02:54:22.156Z"
+    "lastVerified": "2026-11-08T05:26:20.379Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -9613,22 +9612,21 @@
     "lastVerified": "2026-11-05T20:00:00.082Z"
   },
   "vanniktech-gradle-maven-publish-plugin": {
-    "name": "gradle-maven-publish-plugin",
+    "name": "vanniktech/gradle-maven-publish-plugin",
     "officialUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-05T04:28:42.396Z",
-    "lastVerified": "2026-11-05T04:28:42.396Z",
+    "lastChecked": "2026-11-08T05:26:21.798Z",
+    "lastVerified": "2026-11-08T05:26:21.798Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-    "contentHash": "921cae95cff0ef55936602f441a0f0e51cfdfa9822e47f439db2641c579251c2",
-    "promotedRulesCount": 3,
+    "contentHash": "7ff321e4a8813ce37cdacfc40e576e631a83ee1378f49d45ed44c2fb6c63ffd8",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "04ea2405"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "bourd-dev-seo-skills": {
     "name": "seo-skills",
@@ -13171,12 +13169,12 @@
     "officialUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T18:57:23.815Z",
-    "lastVerified": "2026-11-04T18:57:23.815Z",
+    "lastChecked": "2026-11-08T05:26:15.551Z",
+    "lastVerified": "2026-11-08T05:26:15.551Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-    "contentHash": "507f41b45d0b89b5064c1b5b9ffc91e29fc650ddd6bb7f09b8317456900e33ee",
+    "contentHash": "a0906b4ed07a729953dca2d12df92a8c3564b24adf1ca39bfa907162af3229ce",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

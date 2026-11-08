@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T05:18:14.353Z",
-  "total_cycles_completed": 8188,
-  "total_learnings_persisted": 8188,
-  "total_rules_promoted": 7885,
+  "last_updated": "2026-11-08T05:26:32.528Z",
+  "total_cycles_completed": 8191,
+  "total_learnings_persisted": 8191,
+  "total_rules_promoted": 7890,
   "history": [
-    {
-      "timestamp": "2026-11-07T06:17:55.383Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T06:24:33.256Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T06:29:23.734Z",
-      "repository": "aio-libs/aiohttp",
-      "learningId": "learn-github-aio-libs-aiohttp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T17:27:27.850Z",
       "repository": "aquasecurity/trivy-operator",
@@ -1403,6 +1382,27 @@
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:26:18.677Z",
+      "repository": "mfontanini/presenterm",
+      "learningId": "learn-github-mfontanini-presenterm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:26:23.216Z",
+      "repository": "vanniktech/gradle-maven-publish-plugin",
+      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:26:32.528Z",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source**: github ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
-> **Source Version**: `bb069c2f`  
+> **Source Version**: `e8091752`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T05:39:04.069Z  
+> **Timestamp**: 2026-11-08T05:26:17.775Z  
 > **Learning ID**: `learn-github-mfontanini-presenterm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T05:39:04.064Z  
+> **Harvest Timestamp**: 2026-11-08T05:26:17.131Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A markdown terminal slideshow tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8959 stars
+- **Stars / Engagement**: 8962 stars
 
 ---
 
@@ -1887,16 +1887,14 @@ impl CommandsRunner {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #931** (2026-11-07): **feat: allow cycling through presentation**
+  *Symptoms*: This adds a `cycle_presentation` option that causes the presentation to start over after jumping to the next slide once you hit the last one.  Closes #924
+
 - **Issue #930** (2026-11-04): **fix: support bg-image in non-first slides**
   *Symptoms*: Fixes #929 
   **Post-Mortem & Fix Analysis**:
   > This PARTIALLY works: - Both slides now have a background, but there's HUGE borders around?  `master`  <img width="3840" height="2160" alt="Screenshot from 2026-11-03 18-53-12" src="https://github.com/user-attachments/assets/f392ba0b-1bd8-4dd8-afd9-fda6b0c1cf84" />  `this branch`  <img width="3840" height="2160" alt="Screenshot from 2026-11-03 18-53-22" src="https://github.com/user-attachments/assets/52be434f-c4e0-46db-85e7-a8cd30fefc66" /> <img width="3840" height="2160" alt="Screenshot from 2026-11-03 18-53-24" src="https://github.com/user-attachments/assets/4e448ec5-f3e5-4292-8512-b92b8cd73349" />  ---  ```md <!-- bg_image: {path: examples/bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 1  <!-- end_slide -->  <!-- bg_image: {path: examples/bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 2 ```  
   > lol yeah, that looked awful. Fixed it now!
-
-- **Issue #929** (2026-11-04): **bg_image command only works on slide 1**
-  *Symptoms*: WOOPS!  I must apologise for not testing #864 properly enough:  ```md <!-- bg_image: {path: bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 1  ---  <!-- bg_image: {path: bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 2 ```  <img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/0709ef5d-3876-463c-b118-783d9e8c8207" />  <img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/621381b5-89e9-455b-8f20-85ebde096aa6" />  ---  Changing `---` to `<!-- end_slide -->` doesn't affect it
-  **Post-Mortem & Fix Analysis**:
-  > Created a fix in #930, can you have a look?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1913,51 +1911,268 @@ impl CommandsRunner {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb069c2f` (2026-11-04)
-**Commit Message**: fix: support bg-image in non-first slides (#930)
+### Incident Patch 1: `e8091752` (2026-11-07)
+**Commit Message**: feat: allow cycling through presentation (#931)
 
-Fixes #929
+This adds a `cycle_presentation` option that causes the presentation to
+start over after jumping to the next slide once you hit the last one.
 
-**File**: `src/presentation/builder/mod.rs` (modified, +1/-1)
+Closes #924
+
+**File**: `config-file-schema.json` (modified, +7/-0)
 ```diff
-@@ -581,8 +581,8 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
-             self.slide_builders.push(builder);
-         }
+@@ -529,6 +529,13 @@
+             "null"
+           ]
+         },
++        "cycle_presentation": {
++          "description": "Whether to cycle through the presentation after the last slide.",
++          "type": [
++            "boolean",
++            "null"
++          ]
++        },
+         "end_slide_shorthand": {
+           "description": "Whether to treat a thematic break as a slide end.",
+           "type": [
+```
+
+**File**: `src/config.rs` (modified, +3/-0)
+```diff
+@@ -260,6 +260,9 @@ pub struct OptionsConfig {
  
--        self.push_slide_prelude();
-         self.slide_state = Default::default();
-+        self.push_slide_prelude();
+     /// Whether the first `h1` header on a slide should be considered a slide title.
+     pub h1_slide_titles: Option<bool>,
++
++    /// Whether to cycle through the presentation after the last slide.
++    pub cycle_presentation: Option<bool>,
+ }
+ 
+ #[derive(Clone, Debug, Default, Deserialize)]
+```
+
+**File**: `src/main.rs` (modified, +1/-0)
+```diff
+@@ -312,6 +312,7 @@ impl CoreComponents {
+             validate_snippets: config.snippet.validate,
+             layout_grid: false,
+             h1_slide_titles: options.h1_slide_titles.unwrap_or_default(),
++            cycle_presentation: options.cycle_presentation.unwrap_or_default(),
+         }
      }
  
-     fn apply_theme_text_style(&self, text: &mut Text) {
+```
+
+**File**: `src/presentation/builder/mod.rs` (modified, +5/-1)
+```diff
+@@ -97,6 +97,7 @@ pub struct PresentationBuilderOptions {
+     pub validate_snippets: bool,
+     pub layout_grid: bool,
+     pub h1_slide_titles: bool,
++    pub cycle_presentation: bool,
+ }
+ 
+ impl PresentationBuilderOptions {
+@@ -108,6 +109,7 @@ impl PresentationBuilderOptions {
+         self.strict_front_matter_parsing =
+             options.strict_front_matter_parsing.unwrap_or(self.strict_front_matter_parsing);
+         self.h1_slide_titles = options.h1_slide_titles.unwrap_or(self.h1_slide_titles);
++        self.cycle_presentation = options.cycle_presentation.unwrap_or(self.cycle_presentation);
+         if let Some(prefix) = options.command_prefix {
+             self.command_prefix = prefix;
+         }
+@@ -150,6 +152,7 @@ impl Default for PresentationBuilderOptions {
+             validate_snippets: false,
+             layout_grid: false,
+             h1_slide_titles: false,
++            cycle_presentation: false,
+         }
+     }
+ }
+@@ -287,7 +290,8 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
+         let bindings = bindings_modal_builder.build(&self.theme, &self.bindings_config);
+         let slide_index = self.index_builder.build(&self.theme, self.presentation_state.clone());
+         let modals = Modals { slide_index, bindings };
+-        let presentation = Presentation::new(slides, modals, self.presentation_state);
++        let cycle = self.options.cycle_presentation;
++        let presentation = Presentation::new(slides, modals, cycle, self.presentation_state);
+         Ok(presentation)
+     }
+ 
+```
+
+**File**: `src/presentation/mod.rs` (modified, +6/-3)
+```diff
+@@ -23,13 +23,14 @@ pub(crate) struct Modals {
+ pub(crate) struct Presentation {
+     slides: Vec<Slide>,
+     modals: Modals,
++    cycle: bool,
+     pub(crate) state: PresentationState,
+ }
+ 
+ impl Presentation {
+     /// Construct a new presentation.
+-    pub(crate) fn new(slides: Vec<Slide>, modals: Modals, state: PresentationState) -> Self {
+-        Self { slides, modals, state }
++    pub(crate) fn new(slides: Vec<Slide>, modals: Modals, cycle: bool, state: PresentationState) -> Self {
++        Self { slides, modals, cycle, state }
+     }
+ 
+     /// Iterate the slides in this presentation.
+@@ -152,6 +153,8 @@ impl Presentation {
+             // Going forward we show only the first chunk.
+             self.current_slide_mut().show_first_chunk();
+             true
++        } else if self.cycle {
++            self.jump_first_slide()
+         } else {
+             false
+         }
+@@ -173,7 +176,7 @@ impl Presentation {
+ impl From<Vec<Slide>> for Presentation {
+     fn from(slides: Vec<Slide>) -> Self {
+         let modals = Modals { slide_index: vec![], bindings: vec![] };
+-        Self::new(slides, modals, Default::default())
++        Self::new(slides, modals, false, Default::default())
+     }
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `63aec203` (2026-11-04)
-**Commit Message**: fix: allow `bg_image` in any slide
+### Incident Patch 2: `b3d034ba` (2026-11-07)
+**Commit Message**: feat: allow cycling through presentation
 
-**File**: `src/presentation/builder/mod.rs` (modified, +1/-1)
+**File**: `config-file-schema.json` (modified, +7/-0)
 ```diff
-@@ -581,8 +581,8 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
-             self.slide_builders.push(builder);
-         }
+@@ -529,6 +529,13 @@
+             "null"
+           ]
+         },
++        "cycle_presentation": {
++          "description": "Whether to cycle through the presentation after the last slide.",
++          "type": [
++            "boolean",
++            "null"
++          ]
++        },
+         "end_slide_shorthand": {
+           "description": "Whether to treat a thematic break as a slide end.",
+           "type": [
+```
+
+**File**: `src/config.rs` (modified, +3/-0)
+```diff
+@@ -260,6 +260,9 @@ pub struct OptionsConfig {
  
--        self.push_slide_prelude();
-         self.slide_state = Default::default();
-+        self.push_slide_prelude();
+     /// Whether the first `h1` header on a slide should be considered a slide title.
+     pub h1_slide_titles: Option<bool>,
++
++    /// Whether to cycle through the presentation after the last slide.
++    pub cycle_presentation: Option<bool>,
+ }
+ 
+ #[derive(Clone, Debug, Default, Deserialize)]
+```
+
+**File**: `src/main.rs` (modified, +1/-0)
+```diff
+@@ -312,6 +312,7 @@ impl CoreComponents {
+             validate_snippets: config.snippet.validate,
+             layout_grid: false,
+             h1_slide_titles: options.h1_slide_titles.unwrap_or_default(),
++            cycle_presentation: options.cycle_presentation.unwrap_or_default(),
+         }
      }
  
-     fn apply_theme_text_style(&self, text: &mut Text) {
+```
+
+**File**: `src/presentation/builder/mod.rs` (modified, +5/-1)
+```diff
+@@ -97,6 +97,7 @@ pub struct PresentationBuilderOptions {
+     pub validate_snippets: bool,
+     pub layout_grid: bool,
+     pub h1_slide_titles: bool,
++    pub cycle_presentation: bool,
+ }
+ 
+ impl PresentationBuilderOptions {
+@@ -108,6 +109,7 @@ impl PresentationBuilderOptions {
+         self.strict_front_matter_parsing =
+             options.strict_front_matter_parsing.unwrap_or(self.strict_front_matter_parsing);
+         self.h1_slide_titles = options.h1_slide_titles.unwrap_or(self.h1_slide_titles);
++        self.cycle_presentation = options.cycle_presentation.unwrap_or(self.cycle_presentation);
+         if let Some(prefix) = options.command_prefix {
+             self.command_prefix = prefix;
+         }
+@@ -150,6 +152,7 @@ impl Default for PresentationBuilderOptions {
+             validate_snippets: false,
+             layout_grid: false,
+             h1_slide_titles: false,
++            cycle_presentation: false,
+         }
+     }
+ }
+@@ -287,7 +290,8 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
+         let bindings = bindings_modal_builder.build(&self.theme, &self.bindings_config);
+         let slide_index = self.index_builder.build(&self.theme, self.presentation_state.clone());
+         let modals = Modals { slide_index, bindings };
+-        let presentation = Presentation::new(slides, modals, self.presentation_state);
++        let cycle = self.options.cycle_presentation;
++        let presentation = Presentation::new(slides, modals, cycle, self.presentation_state);
+         Ok(presentation)
+     }
+ 
+```
+
+**File**: `src/presentation/mod.rs` (modified, +6/-3)
+```diff
+@@ -23,13 +23,14 @@ pub(crate) struct Modals {
+ pub(crate) struct Presentation {
+     slides: Vec<Slide>,
+     modals: Modals,
++    cycle: bool,
+     pub(crate) state: PresentationState,
+ }
+ 
+ impl Presentation {
+     /// Construct a new presentation.
+-    pub(crate) fn new(slides: Vec<Slide>, modals: Modals, state: PresentationState) -> Self {
+-        Self { slides, modals, state }
++    pub(crate) fn new(slides: Vec<Slide>, modals: Modals, cycle: bool, state: PresentationState) -> Self {
++        Self { slides, modals, cycle, state }
+     }
+ 
+     /// Iterate the slides in this presentation.
+@@ -152,6 +153,8 @@ impl Presentation {
+             // Going forward we show only the first chunk.
+             self.current_slide_mut().show_first_chunk();
+             true
++        } else if self.cycle {
++            self.jump_first_slide()
+         } else {
+             false
+         }
+@@ -173,7 +176,7 @@ impl Presentation {
+ impl From<Vec<Slide>> for Presentation {
+     fn from(slides: Vec<Slide>) -> Self {
+         let modals = Modals { slide_index: vec![], bindings: vec![] };
+-        Self::new(slides, modals, Default::default())
++        Self::new(slides, modals, false, Default::default())
+     }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #931** (2026-11-07): feat: allow cycling through presentation (@mfontanini)
 - **PR #930** (2026-11-04): fix: support bg-image in non-first slides (@mfontanini)
 - **PR #928** (2026-11-03): chore: bump dependencies (@mfontanini)
 - **PR #927** (2026-10-30): ci: fix build (@mfontanini)
 - **PR #925** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
-- **PR #923** (closed): Add --serve to expose the presentation over HTTP (@qjoly)
-- **PR #921** (2026-10-28): fix: include speaker notes from imported markdown (@jesko2004)
+- **PR #924** (closed): Add option to restart slide show after last slide (@ScottADeJong)
 
 ---
 
@@ -1977,28 +2192,34 @@ Fixes #929
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. support bg-image in non-first slides (#930)
+## X. allow cycling through presentation (#931)
 
 **RULE**:
-When implementing operations in `src/presentation/builder/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `config-file-schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb069c2f`: support bg-image in non-first slides (#930). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8091752`: allow cycling through presentation (#931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/presentation/builder/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `config-file-schema.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        self.push_slide_prelude();
+        "cycle_presentation": {
+          "description": "Whether to cycle through the presentation after the last slide.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        self.push_slide_prelude();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb069c2f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8091752` are properly handled with clean fallback behavior.

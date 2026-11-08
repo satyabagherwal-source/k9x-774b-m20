@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T05:18:14.252Z",
+  "last_updated": "2026-11-08T05:26:32.438Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42162,11 +42162,16 @@
       "slug": "mfontanini-presenterm",
       "platform": "github",
       "source_url": "https://github.com/mfontanini/presenterm",
-      "source_version": "bb069c2f",
-      "content_hash": "c2a767d38e9f3fa4f81f672f34d8776fc4234bb1c43423161bb2e30ad103afa5",
+      "source_version": "e8091752",
+      "content_hash": "41fadbef9850f3048fd53f421aef67c752730c537ea6bac10d7bea1ee89e1287",
       "dossier_path": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "allow cycling through presentation (#931)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1950,
           "title": "fail export gracefully if async tasks fail (#877)",
@@ -42198,7 +42203,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T05:39:04.513Z",
+      "verified_at": "2026-11-08T05:26:18.599Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62114,11 +62119,16 @@
       "slug": "vanniktech-gradle-maven-publish-plugin",
       "platform": "github",
       "source_url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-      "source_version": "04ea2405",
-      "content_hash": "921cae95cff0ef55936602f441a0f0e51cfdfa9822e47f439db2641c579251c2",
+      "source_version": "8c6a683a",
+      "content_hash": "7ff321e4a8813ce37cdacfc40e576e631a83ee1378f49d45ed44c2fb6c63ffd8",
       "dossier_path": "07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update Gradle to v9.9.0 (#1470)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2616,
           "title": "Update plugin buildconfig to v6.1.2 (#1452)",
@@ -62145,7 +62155,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T21:56:56.864Z",
+      "verified_at": "2026-11-08T05:26:23.133Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133239,10 +133249,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
       "source_version": "hf-krafton-raon-1-mini-preview",
-      "content_hash": "507f41b45d0b89b5064c1b5b9ffc91e29fc650ddd6bb7f09b8317456900e33ee",
+      "content_hash": "a0906b4ed07a729953dca2d12df92a8c3564b24adf1ca39bfa907162af3229ce",
       "dossier_path": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Attention Layer Interleaving for Memory-Bandwidth Optimization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Block-Wise Microscaling Quantization for MoE Expert Stability",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dynamic Activation Scaling for MoE Stability",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 4992,
           "title": "Hybrid Attention Layer Indexing Invariant",
@@ -133289,7 +133314,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:57:37.608Z",
+      "verified_at": "2026-11-08T05:26:32.415Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

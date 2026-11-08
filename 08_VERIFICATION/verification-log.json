@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-DUDS",
-    "timestamp": "2026-11-05T15:59:19.312Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-DW69",
-    "timestamp": "2026-11-05T15:59:21.633Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "3457265978d799fec32a6c8c91f4769cdba5a9db189e0a83ec2bdbfb1e1d71af",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-MH9C",
-    "timestamp": "2026-11-05T16:06:02.208Z",
-    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-    "contentHash": "0383aefa1c9e0480d2e431e20e02cbb13f980e63368545aaf35e45fde0e4f896",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-MK0O",
     "timestamp": "2026-11-05T16:06:05.784Z",
     "repository": "biomejs/biome",
@@ -7492,6 +7447,51 @@
     "contentHash": "93cd3ef9bb5e4e978f27c1a3b9160fa77f7d1aa19f22edc8a7073427398a75c9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-3CBV",
+    "timestamp": "2026-11-08T05:26:18.667Z",
+    "repository": "mfontanini/presenterm",
+    "learningId": "learn-github-mfontanini-presenterm",
+    "contentHash": "41fadbef9850f3048fd53f421aef67c752730c537ea6bac10d7bea1ee89e1287",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-3FTW",
+    "timestamp": "2026-11-08T05:26:23.204Z",
+    "repository": "vanniktech/gradle-maven-publish-plugin",
+    "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+    "contentHash": "7ff321e4a8813ce37cdacfc40e576e631a83ee1378f49d45ed44c2fb6c63ffd8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-3N0H",
+    "timestamp": "2026-11-08T05:26:32.513Z",
+    "repository": "KRAFTON/Raon-1-mini-preview",
+    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+    "contentHash": "a0906b4ed07a729953dca2d12df92a8c3564b24adf1ca39bfa907162af3229ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
