@@ -8315,3 +8315,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T15:12:29.472Z |
 | `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-08T15:21:44.295Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `b9817438` | Multi-dimensional audit evidence | 2026-11-08T15:21:47.664Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `22766f08` | Multi-dimensional audit evidence | 2026-11-08T15:28:13.462Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `7431c4b6` | Multi-dimensional audit evidence | 2026-11-08T15:28:19.352Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `17efbb51` | Multi-dimensional audit evidence | 2026-11-08T15:28:21.280Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-08T15:28:22.644Z |

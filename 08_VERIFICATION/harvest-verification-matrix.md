@@ -8306,3 +8306,7 @@
 | `CYCLE-20261108-16AJ` | `2026-11-08T15:12:29.467Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`6451b5b3...`) |
 | `CYCLE-20261108-D2EC` | `2026-11-08T15:21:44.292Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`e0efb330...`) |
 | `CYCLE-20261108-D4ZQ` | `2026-11-08T15:21:47.654Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c62b2da6...`) |
+| `CYCLE-20261108-LEOJ` | `2026-11-08T15:28:13.459Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`10773ca1...`) |
+| `CYCLE-20261108-LJ85` | `2026-11-08T15:28:19.349Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2468b056...`) |
+| `CYCLE-20261108-LKPP` | `2026-11-08T15:28:21.277Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`10512f9a...`) |
+| `CYCLE-20261108-LLRI` | `2026-11-08T15:28:22.638Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5af40da8...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T15:21:47.572Z",
+  "last_updated": "2026-11-08T15:28:22.579Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25528,10 +25528,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "d14b7a00955919b2027322f013cdae13a52b5c295c0c1ce0372e988740113b55",
+      "content_hash": "5af40da833f1638dd1d3ebfb8500734997207891c5533f00b5a030f94789fefb",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Discriminative Span Head Width Constraint",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Structural Token Delimitation for Multi-Part Inputs",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Stateless Inference Context Injection",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1258,
           "title": "Discriminative Over Generative for Fixed-Label Decision Tasks",
@@ -25586,7 +25601,7 @@
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f"
       ],
-      "verified_at": "2026-11-04T23:41:45.934Z",
+      "verified_at": "2026-11-08T15:28:22.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62306,14 +62321,19 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "0a1f7ca5",
-      "content_hash": "7e072bf85054a9071a21071e093eccbb923b49ebe336e840766f42a50e39d89c",
+      "source_version": "22766f08",
+      "content_hash": "10773ca168140b70ad473eef453b446af1c8c3a121d373ce23e0ebc1cf791179",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "spelling so spellcheck will pass",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "go.mod: pick up p9 v0.5.1, which bounds a server-reported size",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62357,7 +62377,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:21:41.461Z",
+      "verified_at": "2026-11-08T15:28:13.389Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66110,14 +66130,19 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "43637355",
-      "content_hash": "5667b5e37a8ebc90e7f58a45710e4b080e1c3f164e8af50b43bc562f9139b651",
+      "source_version": "17efbb51",
+      "content_hash": "10512f9a14a239e8ecb4b06bc857260e493de51709ec29c69765be1a7d7a3799",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (#5875)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (#5881)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -66171,7 +66196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T21:54:38.628Z",
+      "verified_at": "2026-11-08T15:28:21.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -187266,13 +187291,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "slug": "shifthackz-sdai-kmp",
+      "slug": "shifthackz-stable-diffusion-kmp",
       "platform": "github",
-      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
-      "source_version": "7dd66e74",
-      "content_hash": "8a1574a7511d269e2f01443a7eae23aa363b9dec51f588fd4f02efc37243a694",
-      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "7431c4b6",
+      "content_hash": "2468b0562564b2b6df22c66148ebbd5c8ac9f4bf694b242261cba725187f42ff",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -187285,7 +187310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:44:05.468Z",
+      "verified_at": "2026-11-08T15:28:19.270Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T15:21:47.670Z",
-  "total_cycles_completed": 8271,
-  "total_learnings_persisted": 8271,
-  "total_rules_promoted": 8054,
+  "last_updated": "2026-11-08T15:28:22.655Z",
+  "total_cycles_completed": 8275,
+  "total_learnings_persisted": 8275,
+  "total_rules_promoted": 8060,
   "history": [
-    {
-      "timestamp": "2026-11-07T21:43:54.900Z",
-      "repository": "necolas/react-native-web",
-      "learningId": "learn-github-necolas-react-native-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T21:44:03.807Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T21:44:05.599Z",
-      "repository": "ShiftHackZ/SDAI-KMP",
-      "learningId": "learn-github-shifthackz-sdai-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T21:55:46.384Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T21:55:47.342Z",
       "repository": "webdriverio/webdriverio",
@@ -1403,6 +1375,34 @@
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:28:13.476Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:28:19.356Z",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "learningId": "learn-github-shifthackz-sdai-kmp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:28:21.284Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:28:22.655Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

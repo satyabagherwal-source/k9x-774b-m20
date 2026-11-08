@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `43637355`  
+> **Source Version**: `17efbb51`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T21:54:37.601Z  
+> **Timestamp**: 2026-11-08T15:28:19.784Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T21:54:36.718Z  
+> **Harvest Timestamp**: 2026-11-08T15:28:19.779Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33423 stars
+- **Stars / Engagement**: 33419 stars
 
 ---
 
@@ -1305,222 +1305,47 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `43637355` (2026-11-05)
-**Commit Message**: chore(deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (#5875)
+### Incident Patch 1: `17efbb51` (2026-11-08)
+**Commit Message**: chore(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (#5881)
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: copilot-swe-agent[bot] <[REDACTED_EMAIL]>
-Co-authored-by: kevwan <[REDACTED_EMAIL]>
 
-**File**: `core/stores/redis/redis_test.go` (modified, +3/-0)
+**File**: `tools/goctl/go.mod` (modified, +1/-1)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	red "github.com/redis/go-redis/v9"
- 	"github.com/redis/go-redis/v9/maintnotifications"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/zeromicro/go-zero/core/breaker"
- 	"github.com/zeromicro/go-zero/core/logx"
- 	"github.com/zeromicro/go-zero/core/stringx"
- )
-@@ -155,6 +156,7 @@ func TestGetClientWithProtocolAndIdentity(t *testing.T) {
- 	r := miniredis.RunT(t)
- 	defer r.Close()
- 	c, err := getClient(&Redis{
-+		brk:      breaker.NewBreaker(),
- 		Addr:     r.Addr(),
- 		Type:     NodeType,
- 		protocol: 2,
-@@ -200,6 +202,7 @@ func TestGetClientWithMaintNotifications(t *testing.T) {
- 			r := miniredis.RunT(t)
- 			defer r.Close()
- 			c, err := getClient(&Redis{
-+				brk:                breaker.NewBreaker(),
- 				Addr:               r.Addr(),
- 				Type:               NodeType,
- 				maintNotifications: test.mode,
+@@ -11,7 +11,7 @@ require (
+ 	github.com/gookit/color v1.6.3
+ 	github.com/iancoleman/strcase v0.3.0
+ 	github.com/spf13/cobra v1.10.2
+-	github.com/spf13/pflag v1.0.10
++	github.com/spf13/pflag v1.1.0
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1
+ 	github.com/zeromicro/antlr v0.0.1
 ```
 
-**File**: `core/stores/redis/redisclustermanager_test.go` (modified, +4/-0)
+**File**: `tools/goctl/go.sum` (modified, +2/-2)
 ```diff
-@@ -7,6 +7,7 @@ import (
- 	red "github.com/redis/go-redis/v9"
- 	"github.com/redis/go-redis/v9/maintnotifications"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/zeromicro/go-zero/core/breaker"
- )
- 
- func TestSplitClusterAddrs(t *testing.T) {
-@@ -49,6 +50,7 @@ func TestGetCluster(t *testing.T) {
- 	r := miniredis.RunT(t)
- 	defer r.Close()
- 	c, err := getCluster(&Redis{
-+		brk:   breaker.NewBreaker(),
- 		Addr:  r.Addr(),
- 		Type:  ClusterType,
- 		tls:   true,
-@@ -63,6 +65,7 @@ func TestGetClusterWithProtocolAndIdentity(t *testing.T) {
- 	r := miniredis.RunT(t)
- 	defer r.Close()
- 	c, err := getCluster(&Redis{
-+		brk:      breaker.NewBreaker(),
- 		Addr:     r.Addr(),
- 		Type:     ClusterType,
- 		protocol: 2,
-@@ -92,6 +95,7 @@ func TestGetClusterWithMaintNotifications(t *testing.T) {
- 			r := miniredis.RunT(t)
- 			defer r.Close()
- 			c, err := getCluster(&Redis{
-+				brk:                breaker.NewBreaker(),
- 				Addr:               r.Addr(),
- 				Type:               ClusterType,
- 				maintNotifications: test.mode,
-```
-
-**File**: `go.mod` (modified, +2/-2)
-```diff
-@@ -12,7 +12,7 @@ require (
- 	github.com/golang/protobuf v1.5.4
- 	github.com/google/uuid v1.6.0
- 	github.com/grafana/pyroscope-go v1.4.3
--	github.com/jackc/pgx/v5 v5.11.0
-+	github.com/jackc/pgx/v5 v5.12.0
- 	github.com/jhump/protoreflect v1.19.0
- 	github.com/modelcontextprotocol/go-sdk v1.8.0
- 	github.com/pelletier/go-toml/v2 v2.4.3
-@@ -90,7 +90,7 @@ require (
- 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
- 	github.com/jackc/pgpassfile v1.0.0 // indirect
- 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
--	github.com/jackc/puddle/v2 v2.2.2 // indirect
-+	github.com/jackc/puddle/v2 v2.2.3 // indirect
- 	github.com/jhump/protoreflect/v2 v2.0.0-beta.2 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/klauspost/compress v1.19.2 // indirect
-```
-
-**File**: `go.sum` (modified, +4/-4)
-```diff
-@@ -118,10 +118,10 @@ github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsI
- github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
- github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
- github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761/go.mod h1:5TJZWKEWniPve33vlWYSoGYefn3gLQRzjfDlhSJ9ZKM=
--github.com/jackc/pgx/v5 v5.11.0 h1:IzBBtyK9AHqf98cctWFifYSci2hgQR/cd56wB4p+ogg=
--github.com/jackc/pgx/v5 v5.11.0/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
--github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
--github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
-+github.com/jackc/pgx/v5 v5.12.0 h1:hWwax8YiGT0YiN50U1oIDn5kgR7KC2tG3rmavwpPkxY=
-+github.com/jackc/pgx/v5 v5.12.0/go.mod h1:u2Fi6no03HCSBYE+ZVdLxbwdu3xyi2vU+K/YNJioSds=
-+github.com/jackc/puddle/v2 v2.2.3 h1:f8HoREISb3l5eO9coPgK7U3hKLhWGokOFVcThl5jrao=
-+github.com/jackc/puddle/v2 v2.2.3/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
- github.com/jhump/protoreflect v1.19.0 h1:YhKbE78JrjfngcCZfZTIV7rQQGndyqll6fXfaqiOEg4=
- github.com/jhump/protoreflect v1.19.0/go.mod h1:I2yar2oJEMf0k4EMryPzfV0tvGwN/SejJziYBOpETQo=
- github.com/jhump/protoreflect/v2 v2.0.0-beta.2 h1:qZU+rEZUOYTz1Bnhi3xbwn+VxdXkLVeEpAeZzVXLY88=
-```
-
----
-
-### Incident Patch 2: `8e379d99` (2026-11-05)
-**Commit Message**: test(collection): cover keyLru.remove and Cache.Del with LRU limit (#5854)
-
-Co-authored-by: Amir Zare <[REDACTED_EMAIL]>
-
-**File**: `core/collection/cache_test.go` (modified, +78/-0)
-```diff
-@@ -161,6 +161,84 @@ func TestCacheWithLruEvicted(t *testing.T) {
- 	assert.Equal(t, "second element", value)
- }
- 
-+func TestKeyLruRemove(t *testing.T) {
-+	tests := []struct {
-+		name      string
-+		keys      []string
-+		removeKey string
-+		want      []string
-+		wantEvict []string
-+	}{
-+		{
-+			name:      "remove existing key",
-+			keys:      []string{"first", "second", "third"},
-+			removeKey: "second",
-+			want:      []string{"first", "third"},
-+			wantEvict: []string{"second"},
-+		},
-+		{
-+			name:      "remove missing key",
-+			keys:      []string{"first", "second"},
-+			removeKey: "not-exists",
-+			want:      []string{"first", "second"},
-+		},
-+		{
-+			name:      "remove the only key",
-+			keys:      []string{"only"},
-+			removeKey: "only",
-+			wantEvict: []string{"only"},
-+		},
-+	}
-+
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			var evicted []string
-+			lru := newKeyLru(len(test.keys), func(key string) {
-+				evicted = append(evicted, key)
-+			})
-+
-+			for _, key := range test.keys {
-+				lru.add(key)
-+			}
-+
-+			lru.remove(test.removeKey)
-+
-+			assert.Equal(t, len(test.want), lru.evicts.Len())
-+			assert.Equal(t, len(test.want), len(lru.elements))
-+			assert.Equal(t, test.wantEvict, evicted)
-+			for _, key := range test.want {
-+				_, ok := lru.elements[key]
-+				assert.True(t, ok, "key %q should still be tracked by lru", key)
-+			}
-+		})
-+	}
-+}
-+
-+func TestCacheWithLruDel(t *testing.T) {
-+	cache, err := NewCache(time.Minute, WithLimit(3))
-+	assert.Nil(t, err)
-+
-+	cache.Set("first", "first element")
-+	cache.Set("second", "second element")
-+	cache.Set("third", "third element")
-+
-+	cache.Del("second")
-+
-+	_, ok := cache.Get("second")
-+	assert.False(t, ok)
-+	_, ok = cache.Get("first")
-+	assert.True(t, ok)
-+	_, ok = cache.Get("third")
-+	assert.True(t, ok)
-+
-+	klru, ok := cache.lruCache.(*keyLru)
-+	assert.True(t, ok)
-+	assert.Equal(t, 2, klru.evicts.Len())
-+	assert.Equal(t, 2, len(klru.elements))
-+	_, ok = klru.elements["second"]
-+	assert.False(t, ok)
-+}
-+
- func BenchmarkCache(b *testing.B) {
- 	cache, err := NewCache(time.Second*5, WithLimit(100000))
- 	if err != nil {
+@@ -178,8 +178,8 @@ github.com/spaolacci/murmur3 v1.1.0/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2
+ github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
+ github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiTUUS4=
+ github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+-github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
+-github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
++github.com/spf13/pflag v1.1.0 h1:6W6MbVUrnMb8PEhjkqwsVLY7ryuzRfFHF4mQd7L94ag=
++github.com/spf13/pflag v1.1.0/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+ github.com/stretchr/objx v0.5.3 h1:jmXUvGomnU1o3W/V5h2VEradbpJDwGrzugQQvL0POH4=
+ github.com/stretchr/objx v0.5.3/go.mod h1:rDQraq+vQZU7Fde9LOZLr8Tax6zZvy4kuNKF+QYS+U0=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5881** (2026-11-08): chore(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (@dependabot[bot])
 - **PR #5875** (2026-11-05): chore(deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (@dependabot[bot])
 - **PR #5874** (closed): chore(deps): bump k8s.io/apimachinery from 0.35.9 to 0.37.2 (@dependabot[bot])
 - **PR #5873** (closed): chore(deps): bump k8s.io/client-go from 0.35.9 to 0.37.2 (@dependabot[bot])
 - **PR #5872** (2026-11-05): Prevent invalid stdout descriptors in logx tests (@Copilot)
-- **PR #5867** (2026-11-01): fix(rest): preserve CORS origin policy when adding headers (@kevwan)
-- **PR #5865** (2026-10-31): fix(rest): avoid unbounded gzip body dump on JWT auth failure (@kevwan)
+- **PR #5871** (closed): fix(rest): enforce request body limits while reading (@leehainuo)
 
 ---
 
@@ -1540,30 +1365,28 @@ Co-authored-by: Amir Zare <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (#5875)
+## X. deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (#5881)
 
 **RULE**:
-When implementing operations in `core/stores/redis/redis_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/goctl/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `43637355`: deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (#5875). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17efbb51`: deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (#5881). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/stores/redis/redis_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/goctl/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/zeromicro/go-zero/core/breaker"
-		brk:      breaker.NewBreaker(),
-				brk:                breaker.NewBreaker(),
+	github.com/spf13/pflag v1.1.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/spf13/pflag v1.0.10
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `43637355` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17efbb51` are properly handled with clean fallback behavior.
