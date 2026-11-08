@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "8c573832",
+    "sourceVersion": "d8be20b2",
     "license": "Apache-2.0",
-    "contentHash": "c2632cdade8ea7c3e4242f5a3cf9323de8903acd8e2a4d05121b4e921eacba2b",
-    "lastHarvestedAt": "2026-11-07T02:01:58.165Z",
+    "contentHash": "de94b8a14e44d52a1ac2a64ac0296444088a0845ea5f0867726e89f294aeb92f",
+    "lastHarvestedAt": "2026-11-08T05:40:55.074Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -10625,8 +10625,8 @@
     "sourceUrl": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
     "sourceVersion": "hf-ornith-ai-ornith-1.5-122b",
     "license": "Open-Source",
-    "contentHash": "f723fb78d4591862394c1de3ce8768c657f93a0bfc971a9b7ccf59f8a1672656",
-    "lastHarvestedAt": "2026-11-04T19:08:54.813Z",
+    "contentHash": "531539e0d7c0798a727f8bba739539f8f79a2762d316225017de9b3798f39db1",
+    "lastHarvestedAt": "2026-11-08T05:40:51.435Z",
     "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b"
   },
   "lokoe-mehdi-scouter": {

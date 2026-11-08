@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `8c573832`  
+> **Source Version**: `d8be20b2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:01:56.996Z  
+> **Timestamp**: 2026-11-08T05:40:53.174Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:01:32.436Z  
+> **Harvest Timestamp**: 2026-11-08T05:40:52.988Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9492 stars
+- **Stars / Engagement**: 9493 stars
 
 ---
 
@@ -1199,8 +1199,8 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 - **Issue #21013** (2026-11-06): **feat(query): expose node-local cache statistics on admin API**
   *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Add `GET /v1/caches` on the internal admin port, following the node-local Processlist pattern. Reuse `CacheManager::rows()` without SQL, sessions, or cross-node requests; warehouse discovery and aggregation remain the caller's responsibility. - Return cache statistics with node identity, pool classification, enabled state, nullable capacity and its unit, item counts, charged/resident bytes, and cumulative access/hit/miss counters. Include disabled caches and pool summaries; pool and per-cache rows overlap and must not be summed together. - Add three real-router integration tests covering legacy refresh/counters and session neutrality, disabled caches, and shared pools with nullable capacity. Targeted validation log on `db0-aws`: 3 passed, 0 failed, using `cargo test --locked -p databend-query --no-default-features --test it servers::admin::v1::caches --jobs 3` with `RUST_TEST_THREADS=1`. Formatting and whitespace checks are clean; full/default-feature CI is not yet validated. - Example: `curl http://127.0.0.1:8080/v1/caches` (use the configured admin address). No storage, configuration, or existing endpoint changes. Keep this PR draft with `hold-ci` during review; resume full CI after review converges.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an i
 
-- **Issue #21010** (2026-11-06): **ci: test_compat_python_client_cluster fails on all PRs because databend-driver 0.34.3 is not on PyPI**
-  *Symptoms*: ## Summary  `linux / test_compat_python_client_cluster` in the `Dev` workflow fails on every pull request that reaches it, independent of the change. All open PRs are blocked on this required job.  ## Cause  The `python_client` nox session (`tests/nox/noxfile.py`) runs with `driver_version="latest"` and `"0.33.6"`. For `latest`, it reads the tag of the latest bendsql GitHub release (`PYTHON_CLIENT_LATEST_RELEASE_URL`, `resolve_latest_release_tag`) and then runs `pip install databend-driver==<tag>`.  bendsql published the GitHub release `v0.34.3` at 2026-11-05T03:58Z, but its `Release` workflow failed (https://github.com/databendlabs/bendsql/actions/runs/41964814007), so `databend-driver` 0.34.3 was never uploaded to PyPI. PyPI still has 0.34.2 as the latest version. Every run since then fails with:  ``` nox > Command python -m pip install databend-driver==0.34.3 failed with exit code 1: ERROR: No matching distribution found for databend-driver==0.34.3 nox > Session python_client(driver_version='latest') failed. ```  The pinned `0.33.6` session passes. Rebasing does not help: `main` at d468d2b31f still resolves `latest` from the GitHub release.  ## Fix options  1. Publish `databend-driver` 0.34.3 to PyPI (re-run the failed bendsql `Release` workflow). Re-running the job is then enough. 2. Resolve `latest` from PyPI instead of the GitHub release. #20946 already does this in its branch (`PYTHON_CLIENT_PYPI_URL`), and the job passes there. Landing that part on `main` separately w
+- **Issue #21011** (2026-11-07): **fix(query): fix data loss in UNION ALL**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes #21001  `UNION ALL` loses data when a branch reads stage files. For example, `SELECT 'a', id FROM @s/pa/ UNION ALL SELECT 'b', id FROM @s/pb/` returns only the rows of `pb`, all labeled `a`. A branch can also disappear, or the query can fail with `Cannot downcast from PartInfo to ParquetPart`. `INSERT ... SELECT` and `CREATE TABLE ... AS SELECT` write the wrong rows. Issue #21001 lists the affected queries.  **Cause.** A scan puts its partitions in the partition queue of the `QueryContext`. File sources read the queue only when the pipeline runs. `UnionAll` built both branches with the same context, so the second branch replaced the partitions of the first.  **Fix.** `UnionAll` builds each branch with its own sub context from `QueryContext::create_from`, as the hash join does for its build side. A sub context shares the query state with its parent and has its own partition queue.  **Tests.** `20_0025_stackoverflow` reads 50 stage parquet files of 2 rows each through `UNION ALL`. Its expected result was the wrong value `2`. It is now `100`. This PR deletes `20_0025_stackoverflow_cluster.result`, because both modes now return 100.  ## Tests  - [ ] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,281 +1217,90 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8267559` (2026-11-06)
-**Commit Message**: fix(formats): preserve CSV empty values and correct quote styles (#20946)
+### Incident Patch 1: `99c49dac` (2026-11-07)
+**Commit Message**: fix(query): fix data loss in UNION ALL (#21011)
 
-* fix(formats): preserve CSV empty values and correct quote styles
+* fix(query): build each UNION ALL branch with its own context
 
-* test(formats): move CSV quoting matrices to nox
+A scan stores its partitions in the partition queue of the QueryContext,
+and file sources (stage, ORC, Paimon, Iceberg, ...) only take them when
+the pipeline runs. UnionAll built both branches with the same context,
+so the later branch replaced the partitions of an earlier file branch.
+Rows were dropped and mislabeled, a whole branch disappeared, or the
+query failed with "Cannot downcast from PartInfo to ParquetPart".
 
-* test(formats): update remaining CSV quoting golden outputs
+Build each branch with a sub context, as the hash join already does for
+its build side.
 
-* test(formats): quote numeric fields in GBK CSV expectation
+Fixes #21001
 
-* test(formats): cover named CSV quote styles in nox matrix
+* test(query): rely on 20_0025_stackoverflow for the UNION ALL fix
 
-* ci: resolve latest Python driver from PyPI
-
-* test(cache): settle shared limits after readers release values
-
-**File**: `.github/actions/test_compat_client_cluster/action.yml` (modified, +1/-1)
+**File**: `src/query/service/src/physical_plans/physical_union_all.rs` (modified, +15/-2)
 ```diff
-@@ -66,7 +66,7 @@ runs:
-     - name: Run python client compat tests
-       if: ${{ inputs.nox_session == 'python_client' }}
-       shell: bash
--      run: nox -f tests/nox/noxfile.py -s python_client
-+      run: nox -f tests/nox/noxfile.py -s noxfile_tests python_client
+@@ -43,6 +43,7 @@ use crate::physical_plans::physical_plan::PhysicalPlanCast;
+ use crate::physical_plans::physical_plan::PhysicalPlanMeta;
+ use crate::pipelines::PipelineBuilder;
+ use crate::pipelines::processors::transforms::TransformRecursiveCteSource;
++use crate::sessions::QueryContext;
  
-     - name: Run java client compat tests
-       if: ${{ inputs.nox_session == 'java_client' }}
-```
-
-**File**: `src/meta/app/src/principal/file_format.rs` (modified, +7/-3)
-```diff
-@@ -571,7 +571,7 @@ pub struct CsvFileFormatParams {
-     pub record_delimiter: String,
-     pub escape: String,
-     pub quote: String,
--    /// Controls whether CSV output quotes every field or only fields that require quoting.
-+    /// Controls whether CSV output quotes all non-NULL, non-numeric, or only necessary fields.
-     #[serde(default)]
-     pub quote_style: CsvQuoteStyle,
-     pub error_on_column_count_mismatch: bool,
-@@ -747,8 +747,10 @@ pub enum CsvQuoteStyle {
-     /// Quote every non-NULL field in the CSV output.
-     #[default]
-     QuoteNotNull,
--    /// Quote a field only when required by the CSV output format.
-+    /// Quote a field only when required by CSV syntax or to distinguish it from NULL.
-     QuoteMinimal,
-+    /// Quote every non-NULL field except numbers and decimals.
-+    QuoteNonNumeric,
+ #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+ pub struct UnionAll {
+@@ -120,11 +121,11 @@ impl IPhysicalPlan for UnionAll {
+             return self.build_recursive_cte_source(builder);
+         }
+ 
+-        self.left.build_pipeline(builder)?;
++        build_branch_with_sub_ctx(&self.left, builder)?;
+         self.project_input(self.left.output_schema()?, &self.left_outputs, builder)?;
+         let left_sinks = builder.main_pipeline.take_sinks();
+ 
+-        self.right.build_pipeline(builder)?;
++        build_branch_with_sub_ctx(&self.right, builder)?;
+         self.project_input(self.right.output_schema()?, &self.right_outputs, builder)?;
+         let right_sinks = builder.main_pipeline.take_sinks();
+ 
+@@ -145,6 +146,18 @@ impl IPhysicalPlan for UnionAll {
+     }
  }
  
- impl CsvQuoteStyle {
-@@ -763,9 +765,10 @@ impl FromStr for CsvQuoteStyle {
-     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-         match s.to_lowercase().as_str() {
-             "quote_not_null" => Ok(Self::QuoteNotNull),
-+            "quote_non_numeric" => Ok(Self::QuoteNonNumeric),
-             "quote_minimal" => Ok(Self::QuoteMinimal),
-             _ => Err(format!(
--                "Invalid option value: QUOTE_STYLE is set to {s}. The valid values are QUOTE_NOT_NULL | QUOTE_MINIMAL."
-+                "Invalid option value: QUOTE_STYLE is set to {s}. The valid values are QUOTE_NOT_NULL | QUOTE_NON_NUMERIC | QUOTE_MINIMAL."
-             )),
-         }
-     }
-@@ -775,6 +778,7 @@ impl Display for CsvQuoteStyle {
-     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-         match self {
-             Self::QuoteNotNull => write!(f, "quote_not_null"),
-+            Self::QuoteNonNumeric => write!(f, "quote_non_numeric"),
-             Self::QuoteMinimal => write!(f, "quote_minimal"),
-         }
-     }
-```
-
-**File**: `src/meta/app/tests/it/file_format.rs` (modified, +35/-0)
-```diff
-@@ -12,8 +12,43 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+use std::collections::BTreeMap;
-+
-+use databend_common_meta_app::principal::CsvFileFormatParams;
-+use databend_common_meta_app::principal::CsvQuoteStyle;
-+use databend_common_meta_app::principal::FileFormatOptionsReader;
-+use databend_common_meta_app::principal::FileFormatParams;
- use databend_common_meta_app::principal::check_record_delimiter;
- 
-+#[test]
-+fn test_csv_quote_styles() {
-+    assert_eq!(
-+        CsvFileFormatParams::default().quote_style,
-+        CsvQuoteStyle::QuoteNotNull
-+    );
-+    for (name, style) in [
-+        ("quote_not_null", CsvQuoteStyle::QuoteNotNull),
-+        ("quote_non_numeric", CsvQuoteStyle::QuoteNonNumeric),
-+        ("quote_minimal", CsvQuoteStyle::QuoteMinimal),
-+    ] {
-+        assert_eq!(name.parse::<CsvQuoteStyle>().unwrap(), style);
-+        assert_eq!(style.to_string(), name);
-+        let options = BTreeMap::from([
-+            ("type".to_string(), "csv".to_string()),
-+            ("quote_style".to_string(), name.to_uppercase()),
-+        ]);
-+        let params =
-+            FileFormatParams::try_from_reader(FileFormatOptionsReader::from_map(options), false)
-+                .unwrap();
-+        assert_eq!(
-+            CsvFileFormatParams::downcast_unchecked(&params).quote_style,
-+            style
-+        );
-+    }
-+    let error = "quote_invalid".parse::<CsvQuoteStyle>().unwrap_err();
-+    assert!(error.contains("QUOTE_NON_NUMERIC"));
++/// Builds a UNION ALL branch with its own `QueryContext`, as the hash join does
++/// for its build side. A scan stores its partitions in the context's partition
++/// queue and some sources only take them when the pipeline runs, so a branch
++/// built later on the same context would replace the partitions of an earlier one.
++fn build_branch_with_sub_ctx(branch: &PhysicalPlan, builder: &mut PipelineBuilder) -> Result<()> {
++    let mut branch_ctx = QueryContext::create_from(&builder.ctx);
++    std::mem::swap(&mut builder.ctx, &mut branch_ctx);
++    let result = branch.build_pipeline(builder);
++    std::mem::swap(&mut builder.ctx, &mut branch_ctx);
++    result
 +}
 +
- #[test]
- fn test_check_record_delimiter() {
-     assert!(check_record_delimiter("|").is_ok());
+ impl UnionAll {
+     fn project_input(
+         &self,
 ```
 
-**File**: `src/meta/proto-conv/src/impls/file_format.rs` (modified, +5/-1)
+**File**: `tests/suites/0_stateless/20+_others/20_0025_stackoverflow.result` (modified, +1/-1)
 ```diff
-@@ -613,7 +613,11 @@ impl FromToProto for mt::principal::CsvFileFormatParams {
-         let compression = mt::principal::StageFileCompression::to_pb_enum(&self.compression) as i32;
-         Self::PB {
-             ver: VER,
--            min_reader_ver: MIN_READER_VER,
-+            min_reader_ver: if self.quote_style == CsvQuoteStyle::QuoteNonNumeric {
-+                193
-+            } else {
-+                MIN_READER_VER
-+            },
-             compression,
-             headers: self.headers,
-             field_delimiter: self.field_delimiter.clone(),
+@@ -1 +1 @@
+-2
++100
 ```
 
-**File**: `src/meta/proto-conv/src/util.rs` (modified, +1/-0)
+**File**: `tests/suites/0_stateless/20+_others/20_0025_stackoverflow_cluster.result` (removed, +0/-1)
 ```diff
-@@ -222,6 +222,7 @@ const META_CHANGE_LOG: &[(u64, &str)] = &[
-     (190, "2026-10-12: Add: remote UDF external access integrations and network rules"),
-     (191, "2026-10-22: Add: table.proto/TableMeta.masking_where_use_unmasked_value"),
-     (192, "2026-10-29: Add: Python script UDF external access integrations"),
-+    (193, "2026-11-02: Add: CsvFileFormatParams quote_non_numeric quote style"),
-     // Dear developer:
-     //      If you're gonna add a new metadata version, you'll have to add a test for it.
-     //      You could just copy an existing test file(e.g., `../tests/it/v024_table_meta.rs`)
-```
-
-**File**: `src/meta/proto-conv/tests/it/main.rs` (modified, +1/-0)
-```diff
-@@ -184,3 +184,4 @@ mod v189_table_clone;
- mod v190_external_access;
- mod v191_masking_where_unmasked_value;
- mod v192_script_external_access;
-+mod v193_csv_quote_non_numeric;
-```
-
-**File**: `src/meta/proto-conv/tests/it/v193_csv_quote_non_numeric.rs` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+// Copyright 2026 Datafuse Labs.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use databend_common_meta_app::principal::CsvFileFormatParams;
-+use databend_common_meta_app::principal::CsvQuoteStyle;
-+use databend_common_proto_conv::FromToProto;
-+use databend_common_proto_conv::MIN_READER_VER;
-+use fastrace::func_name;
-+
-+use crate::common;
-+
-+#[test]
-+fn test_decode_v193_csv_quote_non_numeric() -> anyhow::Result<()> {
-+    let csv_file_format_params_v193 = vec![
-+        8, 9, 26, 1, 44, 34, 1, 10, 42, 3, 78, 97, 78, 58, 1, 34, 66, 2, 92, 78, 82, 4, 78, 85, 76,
-+        76, 90, 3, 104, 101, 120, 106, 4, 69, 87, 75, 84, 122, 6, 83, 84, 82, 73, 78, 71, 130, 1,
-+        5, 85, 84, 70, 45, 56, 138, 1, 6, 115, 116, 114, 105, 99, 116, 154, 1, 17, 113, 117, 111,
-+        116, 101, 95, 110, 111, 110, 95, 110, 117, 109, 101, 114, 105, 99, 160, 6, 193, 1, 168, 6,
-+        193, 1,
-+    ];
-+    let want = CsvFileFormatParams {
-+        quote_style: CsvQuoteStyle::QuoteNonNumeric,
-+        ..Default::default()
-+    };
-+    assert_eq!(want.to_pb().min_reader_ver, 193);
-+    assert_eq!(
-+        CsvFileFormatParams::default().to_pb().min_reader_ver,
-+        MIN_READER_VER
-+    );
-+    common::test_load_old(
-+        func_name!(),
-+        &csv_file_format_params_v193,
-+        193,
-+        want.clone(),
-+    )?;
-+    common::test_pb_from_to(func_name!(), want)?;
-+    Ok(())
-+}
-```
-
-**File**: `src/query/formats/README.md` (modified, +25/-10)
-```diff
-@@ -11,12 +11,26 @@ are preserved literally. The `ESCAPE` file-format option is **load only**:
- it changes neither output contents nor the decision to quote an output field.
- This applies to both data and headers.
- 
--For string-encoded values and headers:
--
--- `QUOTE_STYLE = 'quote_not_null'` always adds quotes.
--- `QUOTE_STYLE = 'quote_minimal'` adds quotes when the value contains the
--  configured quote, field delimiter, or the record delimiter's first byte. An
--  `ESCAPE` character alone does not require quoting.
-+`QUOTE_STYLE` controls quoting of all non-NULL values:
-+
-+- `quote_not_null` (the default) quotes every non-NULL value, including numbers,
-+  decimals, booleans, and BINARY.
-+- `quote_non_numeric` quotes every non-NULL value except numbers and decimals.
-+  Booleans, BINARY, dates/timestamps, and complex values are quoted.
-+- `quote_minimal` quotes a value when it is empty, equals `NULL_DISPLAY`, or
-+  contains the configured quote, field delimiter, or the record delimiter's
-+  first byte. An `ESCAPE` character alone does not require quoting.
-+
-+Empty values and non-NULL values equal to `NULL_DISPLAY` are always quoted,
-+including numeric values under `quote_non_numeric`. NULL itself is written as
-+an unquoted `NULL_DISPLAY`. Headers follow the string/non-numeric quoting rules.
-+With the default load options, quoted empty STRING and BINARY fields remain
-+empty values, while unquoted empty fields are read as NULL.
-+
-+Compatibility note: `quote_not_null` previously left numbers, decimals,
-+booleans, and non-empty BINARY unquoted. It now quotes these values as its name
-+specifies. Use `quote_non_numeric` to keep ordinary numbers and decimals
-+unquoted; unlike the old behavior, it also quotes booleans and BINARY.
- 
- To read this output without interpreting backslashes as escapes, use
- `ESCAPE = ''` on load (the default). For example, a quoted field containing a
-@@ -28,10 +42,11 @@ not convert the pair to a tab.
- 
- Using the same named file format for load and unload does not guarantee a
- lossless round trip. Other options must also match the intended data semantics.
--For example, minimal quoting can make an empty string indistinguishable from
--an empty field representing NULL, or a literal `NULL_DISPLAY` string
--indistinguishable from NULL. Disabling input escaping does not resolve those
--collisions.
-+For example, loading with `ALLOW_QUOTED_NULLS = true` interprets quoted literal
-+NULL markers as NULL even though output quoted them for protection. Changing
-+`QUOTED_EMPTY_FIELD_AS` or enabling `TRIM_SPACE` can also change values on load.
-+Use a NULL marker without CSV delimiters, record delimiters, or quote characters;
-+NULL markers are emitted verbatim, without CSV quoting or escaping.
- 
- Outputting a backslash-escaped CSV dialect is not currently supported. Setting
- `ESCAPE` does not opt into such an output dialect.
+@@ -1 +0,0 @@
+-100
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #21013** (2026-11-06): feat(query): expose node-local cache statistics on admin API (@bohutang)
+- **PR #21011** (2026-11-07): fix(query): fix data loss in UNION ALL (@SkyFan2002)
 - **PR #21009** (2026-11-06): chore(ci): cancel closed PR runs and limit PR auto retries (@TCeason)
 - **PR #21006** (2026-11-05): ci(cloud): run docker job on 16c on-demand runner (@zhang2014)
 - **PR #21000** (closed): fix(storage): re-sort recluster MergeBlocks tasks by default (@zhang2014)
 - **PR #20980** (2026-11-06): feat(query): sort hash write lanes by the linear cluster key (@youngsofun)
-- **PR #20967** (2026-11-04): feat(query): support runtime TopN pruning across UNION ALL (@zhang2014)
 
 ---
 
@@ -1511,28 +1320,43 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. formats): preserve CSV empty values and correct quote styles (#20946)
+## X. query): fix data loss in UNION ALL (#21011)
 
 **RULE**:
-When implementing operations in `.github/actions/test_compat_client_cluster/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/service/src/physical_plans/physical_union_all.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8267559`: formats): preserve CSV empty values and correct quote styles (#20946). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99c49dac`: query): fix data loss in UNION ALL (#21011). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/test_compat_client_cluster/action.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/physical_plans/physical_union_all.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      run: nox -f tests/nox/noxfile.py -s noxfile_tests python_client
+use crate::sessions::QueryContext;
+        build_branch_with_sub_ctx(&self.left, builder)?;
+        build_branch_with_sub_ctx(&self.right, builder)?;
+/// Builds a UNION ALL branch with its own `QueryContext`, as the hash join does
+/// for its build side. A scan stores its partitions in the context's partition
+/// queue and some sources only take them when the pipeline runs, so a branch
+/// built later on the same context would replace the partitions of an earlier one.
+fn build_branch_with_sub_ctx(branch: &PhysicalPlan, builder: &mut PipelineBuilder) -> Result<()> {
+    let mut branch_ctx = QueryContext::create_from(&builder.ctx);
+    std::mem::swap(&mut builder.ctx, &mut branch_ctx);
+    let result = branch.build_pipeline(builder);
+    std::mem::swap(&mut builder.ctx, &mut branch_ctx);
+    result
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      run: nox -f tests/nox/noxfile.py -s python_client
+        self.left.build_pipeline(builder)?;
+        self.right.build_pipeline(builder)?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8267559` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99c49dac` are properly handled with clean fallback behavior.

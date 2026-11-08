@@ -8237,3 +8237,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-08T05:26:32.524Z |
 | `learn-github-gitliveapp-firebase-kotlin-sdk` | `https://github.com/GitLiveApp/firebase-kotlin-sdk` | `888384d7` | Multi-dimensional audit evidence | 2026-11-08T05:33:11.239Z |
 | `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-08T05:33:14.127Z |
+| `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-11-08T05:40:51.435Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `d8be20b2` | Multi-dimensional audit evidence | 2026-11-08T05:40:55.074Z |

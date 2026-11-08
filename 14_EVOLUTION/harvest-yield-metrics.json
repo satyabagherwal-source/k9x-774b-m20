@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T05:33:14.139Z",
-  "total_cycles_completed": 8193,
-  "total_learnings_persisted": 8193,
-  "total_rules_promoted": 7893,
+  "last_updated": "2026-11-08T05:40:55.079Z",
+  "total_cycles_completed": 8195,
+  "total_learnings_persisted": 8195,
+  "total_rules_promoted": 7897,
   "history": [
-    {
-      "timestamp": "2026-11-07T17:40:39.339Z",
-      "repository": "PrunaAI/P-H3-Image",
-      "learningId": "learn-huggingface-prunaai-p-h3-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T17:40:43.295Z",
-      "repository": "NousResearch/Arete-27B",
-      "learningId": "learn-huggingface-nousresearch-arete-27b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T17:40:46.344Z",
       "repository": "nginx/kubernetes-ingress",
@@ -1403,6 +1389,20 @@
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
       "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:40:51.442Z",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:40:55.079Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

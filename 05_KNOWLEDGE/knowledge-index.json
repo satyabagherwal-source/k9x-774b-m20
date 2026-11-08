@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T05:33:14.062Z",
+  "last_updated": "2026-11-08T05:40:54.973Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9769,14 +9769,19 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "8c573832",
-      "content_hash": "c2632cdade8ea7c3e4242f5a3cf9323de8903acd8e2a4d05121b4e921eacba2b",
+      "source_version": "d8be20b2",
+      "content_hash": "de94b8a14e44d52a1ac2a64ac0296444088a0845ea5f0867726e89f294aeb92f",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "formats): preserve CSV empty values and correct quote styles (#20946)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "query): fix data loss in UNION ALL (#21011)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9845,7 +9850,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T02:01:58.051Z",
+      "verified_at": "2026-11-08T05:40:54.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133742,10 +133747,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
       "source_version": "hf-ornith-ai-ornith-1.5-122b",
-      "content_hash": "f723fb78d4591862394c1de3ce8768c657f93a0bfc971a9b7ccf59f8a1672656",
+      "content_hash": "531539e0d7c0798a727f8bba739539f8f79a2762d316225017de9b3798f39db1",
       "dossier_path": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Attention Interval Enforcement",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Mamba SSM State Precision Isolation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MoE Router Load Balancing Loss Integration",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5004,
           "title": "Hybrid Attention Interleaving for Long-Context Efficiency",
@@ -133792,7 +133812,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:08:54.688Z",
+      "verified_at": "2026-11-08T05:40:51.305Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

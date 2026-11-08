@@ -8228,3 +8228,5 @@
 | `CYCLE-20261108-3N0H` | `2026-11-08T05:26:32.513Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a0906b4e...`) |
 | `CYCLE-20261108-C6O4` | `2026-11-08T05:33:11.236Z` | `GitLiveApp/firebase-kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3fb75e5e...`) |
 | `CYCLE-20261108-C8WA` | `2026-11-08T05:33:14.122Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`920610c8...`) |
+| `CYCLE-20261108-M1RB` | `2026-11-08T05:40:51.432Z` | `ornith-ai/Ornith-1.5-122B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`531539e0...`) |
+| `CYCLE-20261108-M4KE` | `2026-11-08T05:40:55.070Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de94b8a1...`) |
