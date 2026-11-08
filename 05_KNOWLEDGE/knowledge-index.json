@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T16:07:57.619Z",
+  "last_updated": "2026-11-08T16:19:16.651Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19248,7 +19248,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "44229ed7ecc5df97b4d948676de297e4bc8e94c899cdf533a3c958bcffb7266f",
+      "content_hash": "cb75faebb61131e87d1ad66ccf7b599b5c82ad7c611014aa8e8cde67c6e9a019",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "promoted_rules": [
@@ -19325,7 +19325,7 @@
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv46br3m",
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj"
       ],
-      "verified_at": "2026-11-05T00:29:37.993Z",
+      "verified_at": "2026-11-08T16:19:16.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55869,8 +55869,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "ab967ebc",
-      "content_hash": "9744180d29c91ba4f4078b272c121083365c7f5768e3a4e50ae6dd03f5d4a822",
+      "source_version": "6bcc0fd3",
+      "content_hash": "26d0375000aa43ef8a4bcd2fa2907e1c24b879e16fc479a2fc4c979e002c958f",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -55882,6 +55882,11 @@
         {
           "number": null,
           "title": "implement static endpoints list",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "disable tablewriter package cache",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55960,7 +55965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:16:32.077Z",
+      "verified_at": "2026-11-08T16:14:26.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56761,14 +56766,19 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "617dacbb",
-      "content_hash": "c8f68488a2184b283053c4c99dcdd59f5fc7ad99d67f93cd9c9bf009e45b4965",
+      "source_version": "0b705dc8",
+      "content_hash": "a3bf1b0fb5f83ac0202d7d1c040a6a1abf8b7d9b8ab0d1f5e4b92a5f1bb58682",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Validate writer ownership after WAL replay (#2231)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Use macOS 15 for release builds (#2236)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56822,7 +56832,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:30:48.189Z",
+      "verified_at": "2026-11-08T16:14:30.419Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

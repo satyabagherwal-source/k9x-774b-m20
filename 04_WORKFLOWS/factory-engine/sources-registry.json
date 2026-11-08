@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T16:08:00.311Z",
-    "lastVerified": "2026-11-08T16:08:00.311Z",
+    "lastChecked": "2026-11-08T16:19:19.253Z",
+    "lastVerified": "2026-11-08T16:19:19.253Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -460,12 +460,12 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T15:42:38.102Z",
-    "lastVerified": "2026-11-08T15:42:38.102Z",
+    "lastChecked": "2026-11-08T16:14:27.445Z",
+    "lastVerified": "2026-11-08T16:14:27.445Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -474,7 +474,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ad9b5734"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -748,9 +749,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-08T08:00:20.197Z",
+    "lastChecked": "2026-11-08T16:14:22.486Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-08T08:00:20.197Z"
+    "lastVerified": "2026-11-08T16:14:22.486Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1986,14 +1987,14 @@
     "officialUrl": "https://github.com/siderolabs/talos",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T20:16:30.025Z",
-    "lastVerified": "2026-11-07T20:16:30.025Z",
+    "lastChecked": "2026-11-08T16:14:25.030Z",
+    "lastVerified": "2026-11-08T16:14:25.030Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "9744180d29c91ba4f4078b272c121083365c7f5768e3a4e50ae6dd03f5d4a822",
+    "contentHash": "26d0375000aa43ef8a4bcd2fa2907e1c24b879e16fc479a2fc4c979e002c958f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2657,12 +2658,12 @@
     "officialUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T00:29:37.129Z",
-    "lastVerified": "2026-11-05T00:29:37.129Z",
+    "lastChecked": "2026-11-08T16:14:15.083Z",
+    "lastVerified": "2026-11-08T16:14:15.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "44229ed7ecc5df97b4d948676de297e4bc8e94c899cdf533a3c958bcffb7266f",
+    "contentHash": "cb75faebb61131e87d1ad66ccf7b599b5c82ad7c611014aa8e8cde67c6e9a019",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5328,14 +5329,14 @@
     "officialUrl": "https://github.com/slatedb/slatedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T19:30:45.855Z",
-    "lastVerified": "2026-11-07T19:30:45.855Z",
+    "lastChecked": "2026-11-08T16:14:29.297Z",
+    "lastVerified": "2026-11-08T16:14:29.297Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "c8f68488a2184b283053c4c99dcdd59f5fc7ad99d67f93cd9c9bf009e45b4965",
+    "contentHash": "a3bf1b0fb5f83ac0202d7d1c040a6a1abf8b7d9b8ab0d1f5e4b92a5f1bb58682",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6663,12 +6664,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ataraxy-labs-sem": {
-    "name": "Ataraxy-Labs/sem",
+    "name": "sem",
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T04:10:22.153Z",
-    "lastVerified": "2026-11-07T04:10:22.153Z",
+    "lastChecked": "2026-11-08T16:14:12.448Z",
+    "lastVerified": "2026-11-08T16:14:12.448Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
@@ -6677,7 +6678,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e527a5aa"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
     "name": "nomic-ai/nomic-embed-text-v1.5",
@@ -10620,9 +10622,9 @@
   "seabdulbasit-musicapp-kmp": {
     "name": "MusicApp-KMP",
     "officialUrl": "https://github.com/SEAbdulbasit/MusicApp-KMP",
-    "lastChecked": "2026-11-05T10:43:39.535Z",
+    "lastChecked": "2026-11-08T16:14:17.427Z",
     "revisionIdentifier": "3048f024",
-    "lastVerified": "2026-11-05T10:43:39.535Z"
+    "lastVerified": "2026-11-08T16:14:17.427Z"
   },
   "ugolbck-seofordev": {
     "name": "seofordev",

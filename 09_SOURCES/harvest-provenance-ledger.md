@@ -8330,3 +8330,6 @@ Every entry in this ledger must capture:
 | `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `61e46413` | Multi-dimensional audit evidence | 2026-11-08T16:01:17.431Z |
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-08T16:01:20.062Z |
 | `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T16:07:57.742Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `6bcc0fd3` | Multi-dimensional audit evidence | 2026-11-08T16:14:26.850Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `0b705dc8` | Multi-dimensional audit evidence | 2026-11-08T16:14:30.511Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-08T16:19:16.722Z |

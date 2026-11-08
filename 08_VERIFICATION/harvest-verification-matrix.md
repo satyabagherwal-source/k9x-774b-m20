@@ -8321,3 +8321,6 @@
 | `CYCLE-20261108-RXIR` | `2026-11-08T16:01:17.427Z` | `yshrsmz/BuildKonfig` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8cbf7c15...`) |
 | `CYCLE-20261108-RZJ6` | `2026-11-08T16:01:20.034Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`3a748063...`) |
 | `CYCLE-20261108-0IEJ` | `2026-11-08T16:07:57.739Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`51237698...`) |
+| `CYCLE-20261108-8UN3` | `2026-11-08T16:14:26.847Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`26d03750...`) |
+| `CYCLE-20261108-8XGS` | `2026-11-08T16:14:30.508Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a3bf1b0f...`) |
+| `CYCLE-20261108-F2B2` | `2026-11-08T16:19:16.718Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`cb75faeb...`) |

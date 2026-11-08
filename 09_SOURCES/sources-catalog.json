@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "44229ed7ecc5df97b4d948676de297e4bc8e94c899cdf533a3c958bcffb7266f",
-    "lastHarvestedAt": "2026-11-05T00:29:38.101Z",
+    "contentHash": "cb75faebb61131e87d1ad66ccf7b599b5c82ad7c611014aa8e8cde67c6e9a019",
+    "lastHarvestedAt": "2026-11-08T16:19:16.722Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "617dacbb",
+    "sourceVersion": "0b705dc8",
     "license": "Apache-2.0",
-    "contentHash": "c8f68488a2184b283053c4c99dcdd59f5fc7ad99d67f93cd9c9bf009e45b4965",
-    "lastHarvestedAt": "2026-11-07T19:30:48.318Z",
+    "contentHash": "a3bf1b0fb5f83ac0202d7d1c040a6a1abf8b7d9b8ab0d1f5e4b92a5f1bb58682",
+    "lastHarvestedAt": "2026-11-08T16:14:30.511Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "ab967ebc",
+    "sourceVersion": "6bcc0fd3",
     "license": "MPL-2.0",
-    "contentHash": "9744180d29c91ba4f4078b272c121083365c7f5768e3a4e50ae6dd03f5d4a822",
-    "lastHarvestedAt": "2026-11-07T20:16:32.174Z",
+    "contentHash": "26d0375000aa43ef8a4bcd2fa2907e1c24b879e16fc479a2fc4c979e002c958f",
+    "lastHarvestedAt": "2026-11-08T16:14:26.850Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T16:07:57.746Z",
-  "total_cycles_completed": 8286,
-  "total_learnings_persisted": 8286,
-  "total_rules_promoted": 8074,
+  "last_updated": "2026-11-08T16:19:16.725Z",
+  "total_cycles_completed": 8289,
+  "total_learnings_persisted": 8289,
+  "total_rules_promoted": 8076,
   "history": [
-    {
-      "timestamp": "2026-11-07T22:23:48.831Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T22:30:28.533Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T22:34:32.363Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T22:46:33.936Z",
       "repository": "beclab/Olares",
@@ -1403,6 +1382,27 @@
       "repository": "Comfy-Org/Qwen-Image-2.1",
       "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:14:26.854Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:14:30.515Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:19:16.725Z",
+      "repository": "akhilaaa3/Jev-Omni",
+      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
