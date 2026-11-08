@@ -8208,3 +8208,6 @@
 | `CYCLE-20261108-48TO` | `2026-11-08T04:03:01.932Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2ea3285f...`) |
 | `CYCLE-20261108-CYTD` | `2026-11-08T04:09:48.865Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | Yes (`b1215a7c...`) |
 | `CYCLE-20261108-D8AA` | `2026-11-08T04:10:01.138Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e9adbf9...`) |
+| `CYCLE-20261108-P75C` | `2026-11-08T04:19:19.536Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | Yes (`466081a9...`) |
+| `CYCLE-20261108-PDGX` | `2026-11-08T04:19:27.729Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8204cbc4...`) |
+| `CYCLE-20261108-PIID` | `2026-11-08T04:19:34.261Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`449aef3b...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T04:10:01.062Z",
+  "last_updated": "2026-11-08T04:19:34.165Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9287,14 +9287,19 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "d03290ee",
-      "content_hash": "cca585a7908bdb18e09f316947372007b7c6b3b52b926638cfe4c10855e63f1e",
+      "source_version": "58de5a25",
+      "content_hash": "8204cbc4a758343ba213270af85d18983011c97b0787340ed84b191abe81f9ce",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "ci: Fix repository for free-disk-space action",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #8012 from lsviben/render-function-controlled-deletion",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9333,7 +9338,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:19:57.869Z",
+      "verified_at": "2026-11-08T04:19:27.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58200,14 +58205,19 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "01b5452f",
-      "content_hash": "690bee15654d5d7fa0c3d7c4487621078d51eb0d08bccc40dbc8e8687b12803a",
+      "source_version": "bc14b52b",
+      "content_hash": "449aef3bd969944661711cb320c6c68cc471e34c4980c0ea82cc1761f191a21f",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "txn): 手动事务执行中断后清理 busy 标记，避免会话永久卡死 (#14386)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "release): make stable promotion reruns idempotent",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58306,7 +58316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:13:56.871Z",
+      "verified_at": "2026-11-08T04:19:34.131Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128156,7 +128166,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
       "source_version": "hf-xhtoken-spark-x2.6-4b",
-      "content_hash": "d4254ea94df8adebbd8c3e6135b68da546d95364009eb7953bcaea38be74cb38",
+      "content_hash": "466081a950bb911afa7d322bf9618f59be5a17350a8c14f43618816663458ae3",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
       "promoted_rules": [
@@ -128186,7 +128196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:52:28.681Z",
+      "verified_at": "2026-11-08T04:19:19.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

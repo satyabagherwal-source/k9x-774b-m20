@@ -8217,3 +8217,6 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `9b71df9a` | Multi-dimensional audit evidence | 2026-11-08T04:03:01.935Z |
 | `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-08T04:09:48.868Z |
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `0e554abd` | Multi-dimensional audit evidence | 2026-11-08T04:10:01.142Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-08T04:19:19.540Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `58de5a25` | Multi-dimensional audit evidence | 2026-11-08T04:19:27.733Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `bc14b52b` | Multi-dimensional audit evidence | 2026-11-08T04:19:34.265Z |

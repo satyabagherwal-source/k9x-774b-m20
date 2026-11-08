@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T04:10:01.150Z",
+  "last_updated": "2026-11-08T04:19:34.283Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "cca585a7908bdb18e09f316947372007b7c6b3b52b926638cfe4c10855e63f1e",
-      "verified_at": "2026-11-06T23:19:58.012Z",
+      "content_hash": "8204cbc4a758343ba213270af85d18983011c97b0787340ed84b191abe81f9ce",
+      "verified_at": "2026-11-08T04:19:27.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T23:19:58.012Z"
+      "last_updated": "2026-11-08T04:19:27.742Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "690bee15654d5d7fa0c3d7c4487621078d51eb0d08bccc40dbc8e8687b12803a",
-      "verified_at": "2026-11-06T22:13:57.010Z",
+      "content_hash": "449aef3bd969944661711cb320c6c68cc471e34c4980c0ea82cc1761f191a21f",
+      "verified_at": "2026-11-08T04:19:34.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:13:57.010Z"
+      "last_updated": "2026-11-08T04:19:34.282Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -15771,14 +15771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "content_hash": "d4254ea94df8adebbd8c3e6135b68da546d95364009eb7953bcaea38be74cb38",
-      "verified_at": "2026-11-04T17:52:28.808Z",
+      "content_hash": "466081a950bb911afa7d322bf9618f59be5a17350a8c14f43618816663458ae3",
+      "verified_at": "2026-11-08T04:19:19.548Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:52:28.808Z"
+      "last_updated": "2026-11-08T04:19:19.548Z"
     },
     "InternScience/Sage-A1.5": {
       "repository": "InternScience/Sage-A1.5",

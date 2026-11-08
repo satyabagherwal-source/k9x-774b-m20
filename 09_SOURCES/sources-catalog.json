@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "d03290ee",
+    "sourceVersion": "58de5a25",
     "license": "Apache-2.0",
-    "contentHash": "cca585a7908bdb18e09f316947372007b7c6b3b52b926638cfe4c10855e63f1e",
-    "lastHarvestedAt": "2026-11-06T23:19:57.994Z",
+    "contentHash": "8204cbc4a758343ba213270af85d18983011c97b0787340ed84b191abe81f9ce",
+    "lastHarvestedAt": "2026-11-08T04:19:27.733Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "01b5452f",
+    "sourceVersion": "bc14b52b",
     "license": "Apache-2.0",
-    "contentHash": "690bee15654d5d7fa0c3d7c4487621078d51eb0d08bccc40dbc8e8687b12803a",
-    "lastHarvestedAt": "2026-11-06T22:13:56.992Z",
+    "contentHash": "449aef3bd969944661711cb320c6c68cc471e34c4980c0ea82cc1761f191a21f",
+    "lastHarvestedAt": "2026-11-08T04:19:34.265Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -10495,8 +10495,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b",
     "license": "Open-Source",
-    "contentHash": "d4254ea94df8adebbd8c3e6135b68da546d95364009eb7953bcaea38be74cb38",
-    "lastHarvestedAt": "2026-11-04T17:52:28.799Z",
+    "contentHash": "466081a950bb911afa7d322bf9618f59be5a17350a8c14f43618816663458ae3",
+    "lastHarvestedAt": "2026-11-08T04:19:19.540Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b"
   },
   "hf-internscience-sage-a1.5": {

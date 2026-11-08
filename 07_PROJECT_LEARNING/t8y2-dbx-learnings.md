@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `01b5452f`  
+> **Source Version**: `bc14b52b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T22:13:55.114Z  
+> **Timestamp**: 2026-11-08T04:19:32.318Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T22:13:54.866Z  
+> **Harvest Timestamp**: 2026-11-08T04:19:32.309Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 29373 stars
+- **Stars / Engagement**: 29500 stars
 
 ---
 
@@ -1991,14 +1991,17 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14455** (2026-11-06): **[Bug] DBX SQL 文件执行：单条语句超过 262144 字节被截断后仍发送到 MySQL，导致 ERROR 1064 语法错误**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySql8.0  ### 问题描述 / Problem description  使用 DBX 执行大型 SQL 文件时，文件中第 735 条语句：  ```sql INSERT INTO rdm_device_online VALUES (...),(...),...; ```  超过 DBX 的 per-statement 限制 `262144 bytes`。DBX 将该语句截断后仍然发送到 MySQL 执行，导致 MySQL 返回 `ERROR 1064 (42000)` 语法错误。  从日志看，这不是 SQL 文件本身的语法错误，而是 **DBX 在执行前截断了超长 statement，并把截断后的不完整 SQL 发送给了数据库**。  建议 DBX 在发送前检测 statement 大小：  - 超限时明确报错并指出语句编号、实际字节数、限制值；或 - 支持自动拆分超长多值 INSERT；或 - 支持配置提高 per-statement limit。  不应将截断后的 SQL 发送到数据库执行。  ### 支持信息 / Support information  DBX 版本: v0.6.67 (0.6.67-beta.20261105.1) 运行环境: 桌面端 操作系统: Windows 11 (10.0.26300.9711) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0 数据库类型: mqtt, mysql, redis  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  ## 复现步骤  1. 准备一个大型 `.sql` 文件，其中包含单条多值 `INSERT` 语句，例如：     ```sql    INSERT INTO rdm_device_online VALUES (...),(...),(...), ...;    ```     该单条语句总大小超过 DBX 的 per-statement limit：`262144 bytes`。  2. 使用 DBX 连接 MySQL 并执行该 SQL 文件。  3. 观察执行日志和失败信息。  本次实际执行中，失败发生在文件中的第 735 条语句：  ```text #735  rdm-cloud-v2_20261106_000501.sql  (statement #735 in file) INSERT INTO `rdm_device_online` VALUES (693850,154,22570,...),(693851,...),... ```  ---  ## 实际结果  DBX 日志显示：  ```text limits: statement 262144 bytes, log 209715200 bytes ... #735  rdm-cloud-v2_20261106_000501.sql  (statement #735 i
-
-- **Issue #14422** (2026-11-06): **[Bug] CTE 和派生表里的未知表别名不报语义诊断**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL 8.0、PostgreSQL 16。凡启用该检查的方言都复现：MySQL / PostgreSQL / SQLite / SQL Server / ClickHouse / DuckDB / Spark。  ### 问题描述 / Problem description  **1. 复现步骤 / Steps** 1. 连接 MySQL 8.0 或 PostgreSQL 16（SQLite 等本地库同样），打开 SQL 编辑器； 2. 打开工具栏的「SQL 语义诊断」开关（默认关闭，打开后按钮变绿）； 3. 粘贴下面任一语句（只需停在编辑器里，不用执行）： ```sql -- MySQL / PostgreSQL：CTE 引用 WITH demo AS (SELECT id FROM t) SELECT zz.id FROM demo d; -- MySQL / PostgreSQL：派生表 SELECT zz.id FROM (SELECT id FROM t) AS x; -- PostgreSQL：括号 join 带别名 SELECT zz.id FROM (t1 a JOIN t2 b ON a.id = b.id) ab; ``` 4. `zz` 既不是表名也不是别名，服务端会拒绝这三种写法（MySQL 报 `1054 Unknown column`，PostgreSQL 报 `missing FROM-clause entry`）。 **2. 期望结果 / Expected** `zz` 上出现红色波浪线，提示 `Unknown table alias zz`，与 #14240 修复后的普通表作用域一致——`SELECT zz.id FROM t a` 现在会报。 **3. 实际结果 / Actual** 一条诊断都不出。看起来像「语义诊断对 CTE / 子查询不生效」。 **4. 截图和错误日志 / Screenshots and logs** 这个缺陷的表现就是「该出现的波浪线没有出现」，截图只能证明没有，因此改为附下面的实测矩阵。   ### 支持信息 / Support information  DBX 版本: v0.6.66-beta.20261104.1 运行环境: 桌面端 操作系统: Windows 10 (10.0.19045.7291) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0 数据库类型: clickhouse, dameng/dm, influxdb, kingbase, mongodb, mq/kafka, mq/rabbitmq, mysql, nacos, oracle, postgres, redis, sqlite, sqlserver, tdengine, vastbase 本地驱动版本: dameng 0.1.103, highgo 0.1.90, kafka 0.1.24, kingbase 0.1.71, rabbitmq 0.1.18, tdengine 0.1.56, vastbase 0.1.57 AI 供应商: Custom  ### 优先级
+- **Issue #14525** (2026-11-07): **[Bug] PostgreSQL创建表无法选中安装的扩展类型**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  PostgreSQL 18.6  ### 问题描述 / Problem description  我在PostgreSQL 安装了扩展vector 但是创建表的时候无法找到这个下拉选项  <img width="1209" height="255" alt="Image" src="https://github.com/user-attachments/assets/9ef912d0-e9d8-4e75-8034-1e81efec3928" />  但是通过SQL创建的   显示这个类型 但是下拉选项依旧没有这类型  ### 支持信息 / Support information  <img width="403" height="426" alt="Image" src="https://github.com/user-attachments/assets/63531858-8728-4f99-afe2-1591d002258e" />  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
   **Post-Mortem & Fix Analysis**:
   > /claim
-  > ✅ @Gaiokane 已认领 #14422，开始处理吧！
+  > ✅ @dienaso 已认领 #14525，开始处理吧！
+
+- **Issue #14518** (2026-11-07): **[Bug] 修改存储过程中使用了未定义的变量任然可以执行成功**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  SQL server  ### 问题描述 / Problem description  修改存储过程中使用了未定义的变量任然可以执行成功  <img width="1518" height="651" alt="Image" src="https://github.com/user-attachments/assets/d24cbe7c-6ec5-43a7-aea8-dbb7f1dbeb49" />  ### 支持信息 / Support information  修改存储过程中使用了未定义的变量任然可以执行成功  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > /claim
+  > ✅ @Acd-kk 已认领 #14518，开始处理吧！
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2015,535 +2018,383 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8671a8a` (2026-11-05)
-**Commit Message**: fix(txn): 手动事务执行中断后清理 busy 标记，避免会话永久卡死 (#14386)
+### Incident Patch 1: `df9dddf6` (2026-11-08)
+**Commit Message**: fix(release): make stable promotion reruns idempotent
 
-执行 future 被前端取消、窗口重载或驱动 panic 时，session.busy 之后的清理
-代码不会运行，会话永久 busy，之后每次执行都报
-"Transaction session is already executing"，只能新建窗口。
+A promotion rerun feeds the already-promoted manifest back into the channel
+preparation, which dropped promoted_from and made the immutable R2 manifest
+look different, aborting the rerun before aliases, packages and notifications.
+Keep the recorded beta build when the input is already promoted, and resume the
+versioned R2 upload by size instead of re-pushing the whole release.
 
-- 批量执行与流式导出两条路径加 RAII guard：future 被丢弃时尝试把 busy
-  清回 false；正常路径的清理逻辑保持不变
-- guard 用 try_write 最多重试 100 次（取消路径不能 await）
-- fake agent 改为每请求独立线程，可让单条语句延迟而不阻塞后续请求
-- 回归测试：延迟语句执行中 abort 任务，busy 必须清除；重试不得再次报
-  already executing；若重试失败则断言会话已拆除，交给前端自愈
-
-**File**: `crates/dbx-core/src/query/mod.rs` (modified, +228/-55)
+**File**: `.github/scripts/prepare-channel-manifest.mjs` (modified, +10/-1)
 ```diff
-@@ -6912,6 +6912,43 @@ pub async fn keep_manual_transaction_alive(
-     Ok(ManualTransactionKeepAlive { task, sessions: keep_alive_sessions, txn_session_id })
- }
- 
-+/// Clears a manual transaction session's `busy` flag when the execution that
-+/// claimed it goes away without reaching its own cleanup: the command future was
-+/// dropped (frontend cancelled the invoke, the window reloaded) or a driver
-+/// panicked. Without it the session stays busy forever and every later run fails
-+/// with "Transaction session is already executing" until a new window is opened
-+/// (#14184). Normal paths already clear the flag themselves; the guard is a
-+/// best-effort `try_write` fallback for exactly the exits nobody owns.
-+struct ManualTransactionBusyGuard<'a> {
-+    state: &'a AppState,
-+    txn_session_id: &'a str,
-+}
-+
-+impl<'a> ManualTransactionBusyGuard<'a> {
-+    fn new(state: &'a AppState, txn_session_id: &'a str) -> Self {
-+        Self { state, txn_session_id }
-+    }
-+}
-+
-+impl Drop for ManualTransactionBusyGuard<'_> {
-+    fn drop(&mut self) {
-+        // A dropped future cannot await, so retry the non-blocking lock briefly
-+        // instead of leaving the session wedged when a poller happens to hold it.
-+        for _ in 0..100 {
-+            if let Ok(mut sessions) = self.state.transaction_sessions.try_write() {
-+                if let Some(session) = sessions.get_mut(self.txn_session_id) {
-+                    if session.busy {
-+                        session.busy = false;
-+                        session.last_activity = std::time::Instant::now();
-+                    }
-+                }
-+                return;
-+            }
-+            std::thread::yield_now();
-+        }
-+    }
-+}
-+
- /// Execute SQL within an existing manual transaction session.
- pub async fn execute_in_manual_transaction(
-     state: &AppState,
-@@ -7097,6 +7134,12 @@ pub async fn execute_in_manual_transaction_with_options(
-         release_manual_txn_session_pool(state, &session.connection_id, &mut conn).await;
-         return Err(MANUAL_TRANSACTION_IDLE_ROLLBACK_ERROR.to_string());
-     }
-+    // If this future is dropped mid-execution — the frontend cancels the invoke,
-+    // the window reloads, or a driver panics — the code below never runs and the
-+    // session would stay busy forever ("Transaction session is already
-+    // executing" until a new window). The guard clears the flag on every exit
-+    // path, including cancellation and unwinding (#14184).
-+    let _busy_guard = ManualTransactionBusyGuard::new(state, txn_session_id);
- 
-     let connection = {
-         let sessions = state.transaction_sessions.read().await;
-@@ -7315,6 +7358,9 @@ where
-         let _ = rollback_manual_txn_connection(&mut conn).await;
-         return Err(MANUAL_TRANSACTION_IDLE_ROLLBACK_ERROR.to_string());
-     }
-+    // Same busy-stuck protection as the batch executor: if this streaming
-+    // future is dropped mid-run the guard clears the flag (#14184).
-+    let _busy_guard = ManualTransactionBusyGuard::new(state, txn_session_id);
- 
-     let (connection, pool_key, connection_id, mysql_data_charset) = {
-         let sessions = state.transaction_sessions.read().await;
-@@ -13217,36 +13263,33 @@ done
-         );
-     }
- 
--    /// Spawns a fake Python agent and registers a manual transaction session in
--    /// the app state so `execute_in_manual_transaction_with_options` can run
--    /// end to end without a live database.
--    async fn manual_transaction_test_state(db_type: DatabaseType) -> (AppState, String, std::path::PathBuf) {
--        use std::io::Write;
--
--        let mut script = tempfile::NamedTempFile::new().unwrap();
--        write!(
--            script,
--            r#"import json
-+    /// Fake JSON-RPC agent used by the manual-transaction tests. Requests are
-+    /// answered from their own thread so a deliberately stalled statement cannot
-+    /// block later requests; `HANG_MANUAL_TXN` in the SQL stalls only that reply.
-+    const MANUAL_TRANSACTION_FAKE_AGENT_SCRIPT: &str = r#"import json
- import sys
-+import threading
-+import time
- 
--print(json.dumps({{"ready": True}}), flush=True)
--cursor_ids = {{"cursor-1"}}
--for line in sys.stdin:
--    request = json.loads(line)
-+print(json.dumps({"ready": True}), flush=True)
-+print_lock = threading.Lock()
-+cursor_ids = {"cursor-1"}
-+
-+def respond(request):
-     method = request.get("method")
-     if method == "close_query_session":
--        cursor_id = request.get("params", {{}}).get("sessionId")
-+        cursor_id = request.get("params", {}).get("sessionId")
-         closed = cursor_id in cursor_ids
-         cursor_ids.discard(cursor_id)
--        print(json.dumps({{"jsonrpc": "2.0", "id": request["id"], "result": closed}}), flush=True)
--        continue
-+        result = closed
-+        with print_lock:
-+            print(json.dumps({"jsonrpc": "2.0", "id": request["id"], "result": result}), flush=True)
-+        return
-     if method == "execute_query_page":
--        # First cursor page: t
+@@ -39,8 +39,17 @@ if (manifest.version !== baseVersion && manifest.version !== tagVersion && !prom
+ // The promoted binary keeps its beta build version, which the stable manifest
+ // no longer exposes. Record it so an installed beta build can recognise that
+ // it is the build that was promoted.
++// Rerunning a promotion feeds the already-promoted manifest back in, and it
++// must stay byte-identical: dropping promoted_from would lose the build
++// provenance the installed beta uses to recognise itself.
++const alreadyPromoted =
++  channel === "stable" &&
++  promoted === "true" &&
++  manifest.is_promoted === true &&
++  typeof manifest.promoted_from === "string" &&
++  manifest.promoted_from.length > 0;
+ if (promotesBetaBuild) manifest.promoted_from = manifest.version;
+-else delete manifest.promoted_from;
++else if (!alreadyPromoted) delete manifest.promoted_from;
+ manifest.version = channel === "beta" ? tagVersion : baseVersion;
+ manifest.channel = channel;
+ manifest.release_tag = tag;
 ```
 
----
-
-### Incident Patch 2: `60da8419` (2026-11-05)
-**Commit Message**: fix(sql): report unknown table aliases in semantic diagnostics (#14363)
-
-* fix(sql): report unknown table aliases in semantic diagnostics
-
-The semantic diagnostics never reported a qualifier that names no table or
-alias. The reference analyzer resolves `b.id` to a column with qualifier
-`b`, and the diagnostic builder skipped every column whose qualifier could
-not be resolved, so a statement such as
-
-    SELECT a.id, a.v, b.id FROM t_tx_demo a JOIN t_tx_demo qb ON a.id = b.id
-
-produced no diagnostics at all even though `b` is neither a table nor an
-alias and MySQL rejects it with 1054 Unknown column 'b.id'.
-
-The analyzer now collects two-part qualifiers and matches them against the
-tables and aliases of the reference scope and of every enclosing scope, so a
-correlated subquery can still refer to an outer alias. An unresolved
-qualifier travels back as `unknown_qualifiers` and is rendered as
-`Unknown table alias <qualifier>`, with the marker on the qualifier itself.
-
-Only two-part references take part in the check: three or more parts are
-qualified object names (`db.schema.table.col`), never aliases. Scopes
-holding a CTE reference, a derived table, a table function or a
-parenthesized 
-
-**File**: `apps/desktop/src/lib/__tests__/sql/sqlDiagnosticKeywordRecovery.spec.ts` (modified, +17/-0)
+**File**: `.github/scripts/prepare-channel-manifest.test.mjs` (modified, +17/-0)
 ```diff
-@@ -68,6 +68,23 @@ describe("SQL diagnostic keyword recovery", () => {
-     expect(analyze).toHaveBeenCalledOnce();
-   });
- 
-+  it("remaps unknown qualifier spans after a keyword repair", async () => {
-+    const sql = "SELECT * FRO rules WHERE b.id = 1";
-+    const repaired = sql.replace("FRO", "FROM");
-+    const analyze = vi.fn(async (statement: string) => {
-+      if (statement !== repaired) throw parserError(sql, "rules");
-+      return {
-+        tables: [{ name: "rules", span: span(repaired, "rules") }],
-+        columns: [],
-+        unknown_qualifiers: [{ qualifier: "b", span: span(repaired, "b") }],
-+      };
-+    });
-+    const result = await analyzeSqlDiagnosticReferences(sql, "mysql", analyze);
-+    // The repair makes the text one character longer, so the qualifier span
-+    // has to move back to the original position.
-+    expect(result.analysis.unknown_qualifiers?.[0]?.span).toEqual(span(sql, "b"));
-+  });
-+
-   it("keeps the original parser error when no candidate parses", async () => {
-     const sql = "SELECT * FRO rules WHERE";
-     const error = parserError(sql, "rules");
-```
-
-**File**: `apps/desktop/src/lib/sql/semantic/diagnostics.ts` (modified, +11/-0)
-```diff
-@@ -288,6 +288,17 @@ export function buildSqlSemanticDiagnostics(analysis: SqlReferenceAnalysis, sche
-     });
-   }
- 
-+  // A two-part qualifier that names neither a table nor an alias in scope
-+  // (`b.id` when only `a` is declared) is an error on its own: the column
-+  // itself cannot be checked, because no relation owns it.
-+  for (const unknown of analysis.unknown_qualifiers ?? []) {
-+    diagnostics.push({
-+      span: trimSqlTextSpanWhitespace(schema.sql, unknown.span),
-+      message: `Unknown table alias ${unknown.qualifier}`,
-+      severity: "error",
-+    });
-+  }
-+
-   for (const column of analysis.columns) {
-     if (isUnquotedOracleBuiltinReference(column, schema)) continue;
-     const table = resolveColumnTable(column, tables, knownTables, schema.sql, scopesById);
-```
-
-**File**: `apps/desktop/src/lib/sql/sqlDiagnosticKeywordRecovery.ts` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ export async function analyzeSqlDiagnosticReferences(sql: string, dialect: strin
-             tables: analysis.tables.map((table) => ({ ...table, span: remap(table.span) })),
-             columns: analysis.columns.map((column) => ({ ...column, span: remap(column.span) })),
-             ...(analysis.group_by_violations && { group_by_violations: analysis.group_by_violations.map((violation) => ({ ...violation, span: remap(violation.span) })) }),
-+            ...(analysis.unknown_qualifiers && { unknown_qualifiers: analysis.unknown_qualifiers.map((unknown) => ({ ...unknown, span: remap(unknown.span) })) }),
-           },
-           keywordDiagnostic: {
-             message: `${token.text} → ${keyword}\n${diagnostic.message}`,
-```
-
-**File**: `apps/desktop/src/types/database.ts` (modified, +11/-0)
-```diff
-@@ -2096,6 +2096,16 @@ export interface SqlGroupByViolation {
-   qualifier?: string | null;
- }
- 
-+/**
-+ * A two-part column qualifier that names neither a table nor an alias visible
-+ * in the statement, e.g. `b.id` when only `a` and `qb` are declared.
-+ * The span covers the qualifier itself.
-+ */
-+export interface SqlUnknownQualifier {
-+  qualifier: string;
-+  span: SqlTextSpan;
-+}
-+
- export interface SqlReferenceScope {
-   id: number;
-   parent_id?: number | null;
-@@ -2106,6 +2116,7 @@ export interface SqlReferenceAnalysis {
-   columns: SqlColumnReference[];
-   scopes?: SqlReferenceScope[];
-   group_by_violations?: SqlGroupByViolation[];
-+  unknown_qualifiers?: SqlUnknownQualifier[];
- }
- 
- export type TreeNodeType =
-```
-
-**File**: `crates/dbx-core/tests/sql_analysis.rs` (modified, +19/-0)
-```diff
-@@ -13,6 +13,25 @@ fn extracts_tables_aliases_and_qualified_columns() {
-     assert_eq!(columns, vec![(Some("u"), "missing"), (Some("u"), "id")]);
- }
- 
-+#[test]
-+fn reports_qualifiers_that_name_no_table_or_alias() {
-+    let analysis = analyze_sql_references(
-+        "SELECT a.id, a.v, b.id FROM t_tx_demo a JOIN t_tx_demo qb ON a.id = b.id",
-+        Some("mysql"),
-+    )
-+    .unwrap();
-+
-+    // The projection and the join condition both reference the missing alias.
-+    let qualifiers: Vec<_> = analysis.unknown_qualifiers.iter().map(|unknown| unknown.qualifier.as_str()).collect();
-+    assert_eq!(qualifiers, vec!["b", "b"]);
-+    // Each span covers the qualifier itself: "b" starts at column 19 in the
-+    // projection and at column 69 in the join condition.
-+    let mut columns: Vec<_> = analysis.unknown_qualifiers.iter().map(|unknown| unknown.span.start_column).collect();
-+    columns.sort_unstable();
-+    assert_eq!(columns, vec![19, 69]);
-+    assert!(analysis.unknown_qualifiers.iter().all(|unknown| unknown.span.end_column == unknown.span.start_column));
-+}
-+
- #[test]
- fn extracts_nested_query_scopes_for_correlated_subqueries() {
-     let sql = "select aa.house_id from mds_base_house aa where exists (select 1 from mds_base_owner where HOUSE_ID = aa.HOUSE_ID)";
-```
-
-**File**: `crates/dbx-sql-core/src/sql_analysis.rs` (modified, +283/-24)
-```diff
-@@ -48,6 +48,10 @@ pub struct SqlReferenceAnalysis {
-     /// SELECT projection columns that are neither aggregated nor listed in GROUP BY.
-     #[serde(default)]
-     pub group_by_violations: Vec<SqlGroupByViolation>,
-+    /// Two-part qualifiers (`alias.column`) that name no table or alias visible
-+    /// in the reference scope.
-+    #[serde(default)]
-+    pub unknown_qualifiers: Vec<SqlUnknownQualifier>,
- }
- 
- #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-@@ -79,12 +83,32 @@ pub struct SqlGroupByViolation {
-     pub qualifier: Option<String>,
- }
- 
-+/// A two-part column qualifier that matches neither a table nor an alias
-+/// visible in the statement, e.g. `b.id` when only `a` and `qb` are declared.
-+/// The span covers the qualifier token itself (quotes included when the
-+/// identifier is quoted), not the whole reference.
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+pub struct SqlUnknownQualifier {
-+    pub qualifier: String,
-+    pub span: SqlTextSpan,
-+}
-+
- #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
- pub struct SqlReferenceScope {
-     pub id: usize,
-     pub parent_id: Option<usize>,
- }
- 
-+/// A two-part qualified column reference (`alias.column`) captured for the
-+/// unknown-qualifier check. Only the qualifier is kept: the column name and
-+/// its own span are already recorded as a column reference.
-+#[derive(Clone)]
-+struct QualifiedColumnRef {
-+    qualifier: String,
-+    span: SqlTextSpan,
-+    scope_id: usize,
-+}
-+
- /// 1-based line and column range in SQL text.
- /// Both `start_column` and `end_column` are 1-based and inclusive.
- /// For example, a 1-character token at line 1, column 5 has
-@@ -158,6 +182,12 @@ struct Analyzer {
-     is_sqlserver: bool,
-     is_spark: bool,
-     group_by_violations: Vec<SqlGroupByViolation>,
-+    /// Two-part column references, kept for the unknown-qualifier check.
-+    qualified_columns: Vec<QualifiedColumnRef>,
-+    /// Scopes holding a relation the analyzer does not model as a physical
-+    /// table (CTE references, derived tables, table functions). Their aliases
-+    /// stay invisible here, so the unknown-qualifier check skips them.
-+    non_plain_scopes: HashSet<usize>,
-     projection_items: Vec<ProjectionItemAcc>,
-     current_projection_item: Option<ProjectionItemAcc>,
-     aggregate_depth: usize,
-@@ -167,29 +197,31 @@ struct Analyzer {
- 
- pub fn analyze_sql_references(sql: &str, dialect: Option<&str>) -> Result<SqlReferenceAnalysis, String> {
-     let normalized_dialect = normalize_dialect(dialect);
--    if normalized_dialect == "duckdb" && starts_with_duckdb_parser_gap_sql(sql) {
-+    if normalized_dialect.id == "duckdb" && starts_with_duckdb_parser_gap_sql(sql) {
-         return Ok(SqlReferenceAnalysis {
-             tables: vec![],
-             columns: vec![],
-             scopes: vec![],
-             group_by_violations: vec![],
-+            unknown_qualifiers: vec![],
-         });
-     }
--    if normalized_dialect == "postgres" && starts_with_postgres_parser_gap_sql(sql) {
-+    if normalized_dialect.id == "postgres" && starts_with_postgres_parser_gap_sql(sql) {
-         return Ok(SqlReferenceAnalysis {
-             tables: vec![],
-             columns: vec![],
-             scopes: vec![],
-             group_by_violations: vec![],
-+            unknown_qualifiers: vec![],
-         });
-     }
--    let parser_sql = if normalized_dialect == "clickhouse" {
-+    let parser_sql = if normalized_dialect.id == "clickhouse" {
-         normalize_clickhouse_join_order_for_parser(sql)
-     } else {
-         sql.to_string()
-     };
- 
--    let parsed_statements = match normalized_dialect.as_str() {
-+    let parsed_statements = match normalized_dialect.id {
-         "postgres" => Parser::parse_sql(&PostgreSqlDialect {}, &parser_sql),
-         "mysql" => parse_mysql(&parser_sql),
-         "sqlite" => Parser::parse_sql(&SQLiteDialect {}, &parser_sql),
-@@ -201,19 +233,20 @@ pub fn analyze_sql_references(sql: &str, dialect: Option<&str>) -> Result<SqlRef
-     };
-     let statements = match parsed_statements {
-         Ok(statements) => {
--            if normalized_dialect == "postgres" && postgres_create_procedure_is_missing_body(&parser_sql) {
-+            if normalized_dialect.id == "postgres" && postgres_create_procedure_is_missing_body(&parser_sql) {
-                 return Err("Expected: procedure body after AS, found: EOF".to_string());
-             }
-             statements
-         }
-         Err(error)
--            if normalized_dialect == "postgres" && is_postgres_create_procedure_parser_gap(&parser_sql, &error) =>
-+            if normalized_dialect.id == "postgres" && is_postgres_create_procedure_parser_gap(&parser_sql, &error) =>
-         {
-             return Ok(SqlReferenceAnalysis {
-                 tables: vec![],
-                 columns: vec![],
-                 scopes: vec![],
-                 group_by_violations: vec![],
-+                unknown_qualifiers: vec![],
-             });
-      
-```
-
-**File**: `packages/app-tests/sqlSemanticDiagnostics.test.ts` (modified, +25/-0)
-```diff
-@@ -51,6 +51,31 @@ test("flags confirmed missing tables", () => {
-   assert.equal(diagnostics[0]?.severity, "error");
+@@ -68,6 +68,23 @@ test("records the promoted beta build in the stable manifest", async () => {
+   assert.equal(JSON.parse(await readFile(output, "utf8")).promoted_from, "0.6.60-beta.20261028.1");
  });
  
-+test("flags a table alias that names no relation in scope", () => {
-+  const sql = "SELECT a.id, b.id FROM t_tx_demo a";
-+  const aliasStart = sql.indexOf("b.id");
-+  const analysis: SqlReferenceAnalysis = {
-+    tables: [{ name: "t_tx_demo", alias: "a", span: span(sql.indexOf("t_tx_demo") + 1, sql.indexOf("t_tx_demo") + "t_tx_demo".length) }],
-+    columns: [{ name: "id", qualifier: "b", span: span(aliasStart + 2, aliasStart + 4) }],
-+    unknown_qualifiers: [{ qualifier: "b", span: span(aliasStart + 1, aliasStart + 1) }],
++test("keeps an already-promoted manifest byte-identical on a promotion rerun", async () => {
++  const { input, output } = await fixture();
++  const promoted = {
++    version: "0.6.60",
++    platforms: { "darwin-aarch64": {} },
++    channel: "stable",
++    release_tag: "v0.6.60",
++    is_promoted: true,
++    promoted_from: "0.6.60-beta.20261028.1",
++    published_at: "2026-10-28T00:00:00.000Z",
 +  };
-+
-+  const diagnostics = buildSqlSemanticDiagnostics(analysis, {
-+    tables: [{ name: "t_tx_demo", type: "table" }],
-+    columnsByTable: new Map([["t_tx_demo", [{ name: "id", table: "t_tx_demo" }]]]),
-+    sql,
-+    databaseType: "mysql",
-+  });
-+
-+  assert.deepEqual(
-+    diagnostics.map((diagnostic) => diagnostic.message),
-+    ["Unknown table alias b"],
-+  );
-+  assert.equal(diagnostics[0]?.severity, "error");
-+  // The span covers the alias itself, not the whole `b.id` reference.
-+  assert.deepEqual(diagnostics[0]?.span, span(aliasStart + 1, aliasStart + 1));
++  await writeFile(input, JSON.stringify(promoted));
++  const result = await run([input, output, "stable", "v0.6.60", "true", "2026-10-28T00:00:00.000Z"]);
++  assert.equal(result.code, 0, result.stderr);
++  assert.deepEqual(JSON.parse(await readFile(output, "utf8")), promoted);
 +});
 +
- test("does not flag MySQL DUAL as a missing physical table", () => {
-   const analysis: SqlReferenceAnalysis = {
-     tables: [{ name: "DUAL", span: span(24, 27) }],
+ test("omits promoted_from when the stable manifest is not a promoted beta build", async () => {
+   const { input, output } = await fixture();
+   await writeFile(input, JSON.stringify({ version: "0.6.60", platforms: {}, promoted_from: "0.6.60-beta.20261028.1" }));
+```
+
+**File**: `.github/workflows/publish-packages.yml` (modified, +20/-5)
+```diff
+@@ -461,19 +461,34 @@ jobs:
+         run: |
+           set -euo pipefail
+           endpoint="https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+-          manifest_key="releases/stable/${{ steps.version.outputs.tag }}/latest.json"
++          bucket="s3://${{ secrets.R2_BUCKET_NAME }}"
++          tag="${{ steps.version.outputs.tag }}"
++          manifest_key="releases/stable/${tag}/latest.json"
+           if aws s3api head-object --bucket "${{ secrets.R2_BUCKET_NAME }}" --key "$manifest_key" --endpoint-url "$endpoint" >/dev/null 2>&1; then
+-            aws s3 cp "s3://${{ secrets.R2_BUCKET_NAME }}/${manifest_key}" "$RUNNER_TEMP/existing-stable-manifest.json" --endpoint-url "$endpoint"
++            aws s3 cp "${bucket}/${manifest_key}" "$RUNNER_TEMP/existing-stable-manifest.json" --endpoint-url "$endpoint"
+             # sync-changelog fills in `notes` after a successful publish, so a
+             # rerun must not treat that field as a content change.
+             if ! cmp -s <(jq -S 'del(.notes)' assets/latest.json) <(jq -S 'del(.notes)' "$RUNNER_TEMP/existing-stable-manifest.json"); then
+-              echo "::error::Immutable stable manifest already exists for ${{ steps.version.outputs.tag }} with different contents."
++              echo "::error::Immutable stable manifest already exists for ${tag} with different contents."
+               exit 1
+             fi
+             echo "Stable manifest already exists with identical contents; continuing idempotently."
+           fi
+-          aws s3 sync ./assets "s3://${{ secrets.R2_BUCKET_NAME }}/releases/stable/${{ steps.version.outputs.tag }}/" \
+-            --endpoint-url "$endpoint"
++          retry() {
++            local attempt
++            for attempt in 1 2 3; do
++              if "$@"; then
++                return 0
++              fi
++              echo "::warning::R2 upload attempt ${attempt}/3 failed: $*"
++              sleep $((attempt * 15))
++            done
++            return 1
++          }
++          # The versioned directory is immutable for this tag, so compare sizes:
++          # a rerun resumes instead of re-uploading the whole release.
++          retry aws s3 sync ./assets "${bucket}/releases/stable/${tag}/" \
++            --endpoint-url "$endpoint" --size-only
+         env:
+           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 ```
 
 ---
 
-### Incident Patch 3: `01b5452f` (2026-11-06)
-**Commit Message**: fix(desktop): route Linux compositor close through tray settings
+### Incident Patch 2: `833a2314` (2026-11-08)
+**Commit Message**: fix(release): mirror stable aliases without R2 object tagging
 
-**File**: `src-tauri/src/lib.rs` (modified, +43/-6)
+The alias step downloaded the whole promoted release and re-uploaded it to
+both aliases, so each promotion pushed ~4.4 GiB through the runner and could
+die on a multipart InvalidPart, leaving releases/stable/latest.json on the
+previous version. Copy the immutable objects with s3api copy-object (R2 does
+not implement the tagging calls aws s3 cp/sync make), prune stale keys, and
+only send the small channel manifests through the runner.
+
+**File**: `.github/workflows/publish-packages.yml` (modified, +46/-16)
 ```diff
-@@ -285,6 +285,23 @@ fn should_confirm_app_exit_request(target_os: &str, exit_code: Option<i32>, conf
-     should_hide_window_on_close(target_os) && exit_code != Some(tauri::RESTART_EXIT_CODE) && !confirmed_exit
- }
+@@ -707,23 +707,53 @@ jobs:
+         run: |
+           set -euo pipefail
+           endpoint="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+-          source="s3://${R2_BUCKET_NAME}/releases/stable/${TAG}/"
+-          # R2 rejects the tagging headers the CLI sends on bucket-to-bucket copies
+-          # (GetObjectTagging, x-amz-tagging-directive), so download the immutable
+-          # directory once and upload it to each alias, like a first publish does.
+-          assets="$RUNNER_TEMP/stable-aliases"
+-          mkdir -p "${assets}"
+-          aws s3 sync "${source}" "${assets}/" --endpoint-url "${endpoint}"
+-          for alias in stable/latest latest; do
+-            aws s3 sync "${assets}/" "s3://${R2_BUCKET_NAME}/releases/${alias}/" \
+-              --endpoint-url "${endpoint}" \
+-              --cache-control "no-cache" \
+-              --delete
++          bucket="s3://${R2_BUCKET_NAME}"
++          tag_prefix="releases/stable/${TAG}/"
++          retry() {
++            local attempt
++            for attempt in 1 2 3; do
++              if "$@"; then
++                return 0
++              fi
++              echo "::warning::R2 alias publish attempt ${attempt}/3 failed: $*"
++              sleep $((attempt * 15))
++            done
++            return 1
++          }
++          mapfile -t asset_keys < <(
++            aws s3api list-objects-v2 --bucket "$R2_BUCKET_NAME" --prefix "$tag_prefix" \
++              --endpoint-url "$endpoint" --output json | jq -r '.Contents[]?.Key'
++          )
++          test "${#asset_keys[@]}" -gt 0
++          # R2 rejects the tagging headers aws s3 cp/sync send on bucket-to-bucket
++          # copies (GetObjectTagging -> NotImplemented), and re-uploading the whole
++          # release through the runner twice kept dying on multipart InvalidPart,
++          # so copy the immutable objects server-side instead.
++          for alias in releases/stable/latest/ releases/latest/; do
++            for key in "${asset_keys[@]}"; do
++              retry aws s3api copy-object --bucket "$R2_BUCKET_NAME" \
++                --copy-source "${R2_BUCKET_NAME}/${key}" --key "${alias}${key#"$tag_prefix"}" \
++                --endpoint-url "$endpoint" >/dev/null
++            done
++            mapfile -t alias_keys < <(
++              aws s3api list-objects-v2 --bucket "$R2_BUCKET_NAME" --prefix "$alias" \
++                --endpoint-url "$endpoint" --output json | jq -r '.Contents[]?.Key'
++            )
++            for key in "${alias_keys[@]}"; do
++              if ! printf '%s\n' "${asset_keys[@]}" | grep -Fxq "${tag_prefix}${key#"$alias"}"; then
++                retry aws s3api delete-object --bucket "$R2_BUCKET_NAME" --key "$key" \
++                  --endpoint-url "$endpoint" >/dev/null
++              fi
++            done
+           done
+-          aws s3 cp "${assets}/latest.json" "s3://${R2_BUCKET_NAME}/releases/stable/latest.json" \
+-            --endpoint-url "${endpoint}" --cache-control "no-cache"
+-          aws s3 cp "${assets}/latest.json" "s3://${R2_BUCKET_NAME}/releases/latest/latest.json" \
+-            --endpoint-url "${endpoint}" --cache-control "no-cache"
++          # The channel pointers are small single PUTs; send them through the
++          # runner so the alias manifests keep their no-cache metadata.
++          aws s3 cp "${bucket}/${tag_prefix}latest.json" "$RUNNER_TEMP/stable-latest.json" \
++            --endpoint-url "$endpoint"
++          retry aws s3 cp "$RUNNER_TEMP/stable-latest.json" "${bucket}/releases/stable/latest.json" \
++            --endpoint-url "$endpoint" --cache-control "no-cache"
++          retry aws s3 cp "$RUNNER_TEMP/stable-latest.json" "${bucket}/releases/latest/latest.json" \
++            --endpoint-url "$endpoint" --cache-control "no-cache"
  
-+/// Route a Linux compositor close request (Wayland `xdg_toplevel.close`, X11
-+/// `WM_DELETE_WINDOW`) through the tray-aware close flow instead of the default
-+/// window destroy, which would bypass the "minimize to tray on close" setting.
-+/// Requires the main window, a ready frontend listener, and a registered tray.
-+/// The tray is only created when the tray setting is on with AppIndicator
-+/// available and is never destroyed or hidden at runtime, so its presence is a
-+/// sound proxy for the window being restorable; any missed premise keeps the
-+/// native close.
-+fn should_route_linux_close_through_tray(
-+    target_os: &str,
-+    window_label: &str,
-+    frontend_ready: bool,
-+    tray_registered: bool,
-+) -> bool {
-+    target_os == "linux" && window_label == "main" && frontend_ready && tray_registered
-+}
+       - name: Keep latest five versioned releases in R2
+         continue-on-error: true
+```
+
+---
+
+### Incident Patch 3: `a6d5a4fd` (2026-11-07)
+**Commit Message**: fix(settings): re-sync sidebar page size draft after apply
+
+**File**: `apps/desktop/src/components/editor/EditorSettingsDialog.vue` (modified, +3/-0)
+```diff
+@@ -2788,6 +2788,9 @@ async function persistSettings() {
+     sidebar_table_page_size: editSidebarTablePageSize.value,
+   });
+   editMetadataCacheMaxMemoryMb.value = settingsStore.desktopSettings.metadata_cache_max_memory_mb;
++  // 同理：≤0 会被 normalizeDesktopSettings 回退默认值，回填草稿避免 hasChanges() 粘住
++  // （与 #9881 快捷键 / #13233 超时同一类）。
++  editSidebarTablePageSize.value = settingsStore.desktopSettings.sidebar_table_page_size ?? DEFAULT_SIDEBAR_TABLE_PAGE_SIZE;
+   desktopCloseBehaviorResetPending.value = false;
+   hasImportedSettingsPendingApply.value = false;
+   if (sidebarObjectDisplayChanged) {
+```
+
+**File**: `apps/desktop/src/components/editor/__tests__/EditorSettingsDialog.sidebarTablePageSize.integration.spec.ts` (added, +242/-0)
+```diff
+@@ -0,0 +1,242 @@
++// @vitest-environment happy-dom
 +
- fn should_fallback_to_native_quit(target: &str, frontend_ready: bool) -> bool {
-     target == "quit" && !frontend_ready
- }
-@@ -1212,9 +1229,9 @@ mod tests {
-         linux_webkit_rendering_workarounds, native_window_decorations_override, run_shutdown_on_dedicated_thread,
-         should_confirm_app_exit_request, should_enable_linux_floating_frame, should_enable_single_instance,
-         should_fallback_to_native_quit, should_hide_window_before_exit, should_hide_window_on_close,
--        should_setup_desktop_tray, should_show_main_window_after_setup, should_show_main_window_before_setup_tasks,
--        startup_data_dir_mode, tray_menu_labels_for_locale, uses_application_level_icon, LinuxDrmRenderDevice,
--        LinuxNvidiaDriver,
-+        should_route_linux_close_through_tray, should_setup_desktop_tray, should_show_main_window_after_setup,
-+        should_show_main_window_before_setup_tasks, startup_data_dir_mode, tray_menu_labels_for_locale,
-+        uses_application_level_icon, LinuxDrmRenderDevice, LinuxNvidiaDriver,
-     };
-     use crate::data_dir::DataDirMode;
-     use std::ffi::OsStr;
-@@ -1434,6 +1451,17 @@ mod tests {
-         assert!(!should_hide_window_on_close("linux"));
-     }
++import { createApp, defineComponent, h, nextTick, type App } from "vue";
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { createPinia } from "pinia";
++import { DEFAULT_DESKTOP_SETTINGS, DEFAULT_EDITOR_SETTINGS, type DesktopSettings } from "@/stores/settingsStore";
++
++const hoisted = vi.hoisted(() => ({
++  shortcuts: {} as Record<string, string>,
++  desktop: null as DesktopSettings | null,
++  closes: [] as boolean[],
++  updateDesktopCalls: [] as Array<Partial<DesktopSettings>>,
++}));
++
++vi.mock("vue-i18n", async () => {
++  const { ref } = await import("vue");
++  const locale = ref("en");
++  const t = (key: string) => key;
++  return {
++    createI18n: () => ({ global: { t, locale }, install: () => undefined }),
++    useI18n: () => ({ t, locale }),
++  };
++});
++
++vi.mock("@/components/ui/dialog", async () => {
++  const { defineComponent, h } = await import("vue");
++  const passthrough = defineComponent({
++    setup(_props, { slots }) {
++      return () => h("div", slots.default?.());
++    },
++  });
++  return {
++    Dialog: defineComponent({
++      props: { open: { type: Boolean, default: false } },
++      setup:
++        (props, { slots }) =>
++        () =>
++          props.open ? h("div", slots.default?.()) : null,
++    }),
++    DialogContent: passthrough,
++    DialogFooter: passthrough,
++    DialogHeader: passthrough,
++    DialogTitle: passthrough,
++  };
++});
++
++vi.mock("@/components/ui/button", async () => {
++  const { defineComponent, h } = await import("vue");
++  return {
++    Button: defineComponent({
++      inheritAttrs: false,
++      setup(props, { attrs, slots }) {
++        return () => h("button", { ...attrs, disabled: (props as { disabled?: boolean }).disabled ? true : undefined }, slots.default?.());
++      },
++      props: { disabled: { type: Boolean, default: false } },
++    }),
++  };
++});
++
++vi.mock("@/components/settings/ChangelogPanel.vue", async () => {
++  const { defineComponent } = await import("vue");
++  return { default: defineComponent({ setup: () => () => null }) };
++});
++
++vi.mock("@/stores/connectionStore", () => ({
++  useConnectionStore: () => ({
++    connections: [],
++    sidebarLayout: { groups: [], order: [] },
++    activeConnectionId: null,
++    getConfig: () => null,
++    databaseCompatibilityMode: () => null,
++    refreshAllTree: vi.fn(async () => undefined),
++    refreshSidebarObjectPagination: vi.fn(async () => undefined),
++  }),
++}));
++
++vi.mock("@/stores/settingsStore", async (importOriginal) => {
++  const actual = await importOriginal<typeof import("@/stores/settingsStore")>();
++  hoisted.desktop = { ...actual.DEFAULT_DESKTOP_SETTINGS };
++  const store = {
++    settingsPageActive: false,
++    editorSettings: {
++      ...actual.DEFAULT_EDITOR_SETTINGS,
++      get shortcuts() {
++        return hoisted.shortcuts;
++      },
++    },
++    get desktopSettings() {
++      if (!hoisted.desktop) throw new Error("desktop settings were not initialized");
++      return hoisted.desktop;
++    },
++    mcpGlobalPolicy: { configured: false, readOnly: false },
++    aiConfigs: [],
++    aiDefaultTemplatesByDbType: {},
++    defaultAiMode: "ask",
++    restoreLastConversation: false,
++    initMcpGlobalPolicy: vi.fn(async () => undefined),
++    updateMcpGlobalPolicy: vi.fn(async () => undefined),
++    initAiConfigs: vi.fn(async () => undefined),
++    initDesktopSettings: vi.fn(async () => undefined),
++    updateEditorSettingsAndPersist: vi.fn(async () => undefined),
++    updateEditorSettings: vi.fn(),
++    persistEditorSettings: vi.fn(async () => undefined),
++    updateDesktopSettings: vi.fn(async (partial: Partial<DesktopSettings>) => {
++      hoisted.updateDesktopCalls.push(partial);
++      // Mirror production: persist path runs normalizeDesktopSettings so ≤0 falls back.
++      hoisted.desktop = actual.normalizeDesktopSettings({ ...hoisted.desktop, ...partial });
++    }),
++    reloadAiConfigs: vi.fn(async () => undefined),
++    removeTemplateFromDefaultAndLastUsed: vi.fn(),
++    setDefaultTemplatesForDbType: vi.fn(),
++    updateAiConfigItem: vi.fn(),
++    createAiConfig: vi.fn(),
++    deleteAiConfig: vi.fn(),
++    setDefaultAiConfig: vi.fn(),
++    setDefaultAiMode: vi.fn(),
++    setRestoreLastConversation: vi.fn(),
++  };
++  return { ...actual, useSettingsStore: () => store };
++});
++
++vi.mock("@/lib/backend/api", async (importOriginal) => {
++  const actual = await importOriginal<typeof import("@/lib/backend/api")>();
++  return {
++    ...actual,
++    loadHistoryRetentionLimit: async () => 5000,
++    saveHistoryRetentionLimit: async () => undefined,
++    loadMcpHistoryRetentionLimit: async () => 5000,
++    saveMcpHistoryRetentionLimit: async () => undefined,
++    cleanupMcpHistoryRetention: async () => 0,
++  };
++});
++
++import EditorSettingsDialog from "../EditorSettingsDialog.vue";
++import { TooltipProvider } from "@/components/ui/tooltip";
++
++if (!("ResizeObserver" in globalThis)) {
++  (globalThis as unknown 
+```
+
+**File**: `apps/desktop/src/stores/__tests__/settingsStore.spec.ts` (modified, +7/-0)
+```diff
+@@ -1087,6 +1087,13 @@ describe("normalizeDesktopSettings", () => {
+     expect(normalizeDesktopSettings({ metadata_cache_max_memory_mb: 513 }).metadata_cache_max_memory_mb).toBe(64);
+   });
  
-+    #[test]
-+    fn routes_linux_close_through_tray_only_with_main_window_frontend_and_tray() {
-+        assert!(should_route_linux_close_through_tray("linux", "main", true, true));
-+        assert!(!should_route_linux_close_through_tray("linux", "main", true, false));
-+        assert!(!should_route_linux_close_through_tray("linux", "main", false, true));
-+        assert!(!should_route_linux_close_through_tray("linux", "detached-tab-1", true, true));
-+        assert!(!should_route_linux_close_through_tray("linux", "plugin-floating-audio", true, true));
-+        assert!(!should_route_linux_close_through_tray("macos", "main", true, true));
-+        assert!(!should_route_linux_close_through_tray("windows", "main", true, true));
-+    }
++  it("falls back non-positive sidebar table page sizes to the default", () => {
++    expect(normalizeDesktopSettings({}).sidebar_table_page_size).toBe(1000);
++    expect(normalizeDesktopSettings({ sidebar_table_page_size: 500 }).sidebar_table_page_size).toBe(500);
++    expect(normalizeDesktopSettings({ sidebar_table_page_size: 0 }).sidebar_table_page_size).toBe(1000);
++    expect(normalizeDesktopSettings({ sidebar_table_page_size: -10 }).sidebar_table_page_size).toBe(1000);
++  });
 +
-     #[test]
-     fn hides_window_before_exit_only_on_macos() {
-         assert!(should_hide_window_before_exit("macos"));
-@@ -2312,11 +2340,20 @@ pub fn run() {
-                     let _ = window.emit("dbx:detached-tab-close-requested", serde_json::json!({ "tabId": tab_id }));
-                     return;
-                 }
--                if !should_hide_window_on_close(std::env::consts::OS) {
-+                let app = window.app_handle();
-+                let close_behavior = app.try_state::<CloseBehaviorState>();
-+                // Only intercept Linux close requests when the tray can restore
-+                // the main window and the frontend can handle the close event.
-+                let linux_tray_close = should_route_linux_close_through_tray(
-+                    std::env::consts::OS,
-+                    window.label(),
-+                    close_behavior.as_ref().is_some_and(|state| state.is_frontend_ready()),
-+                    app.tray_by_id(DESKTOP_TRAY_ID).is_some(),
-+                );
-+                if !should_hide_window_on_close(std::env::consts::OS) && !linux_tray_close {
-                     return;
-                 }
--                let app = window.app_handle();
--                if app.try_state::<CloseBehaviorState>().is_none() {
-+                if close_behavior.is_none() {
-                     api.prevent_close();
-                     hide_main_window_for_close(app, window);
-                     return;
+   it("defaults DuckDB worker process isolation to disabled for old settings", () => {
+     expect(normalizeDesktopSettings({}).duckdb_worker_process_isolation).toBe(false);
+   });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14498** (2026-11-06): fix(schema-diff): 修复 MySQL 生成默认值的 SQL 渲染 (@adminkk)
-- **PR #14491** (2026-11-06): Honor tray settings for Linux compositor close requests (@ThugKd)
-- **PR #14485** (closed): fix(schema-diff): 修复 MySQL 生成默认值的 SQL 渲染 (@adminkk)
-- **PR #14483** (2026-11-06): fix(sql-file): 拆分超长 INSERT 并在发送前拦截被截断的语句 (#14455) (@Evvvvvvvan)
-- **PR #14450** (2026-11-06): fix(completion): 隐式连接在 WHERE/ORDER BY/GROUP BY 后恢复列补全 (@dienaso)
-- **PR #14448** (2026-11-06): fix(schema-diff): honor charset comparison settings in MySQL sync SQL (@adminkk)
+- **PR #14545** (2026-11-08): feat(query): add configurable shortcut to copy the active result (@imcman)
+- **PR #14542** (2026-11-07): fix(grid): Oracle 无主键查询结果与表数据页签对齐 keyless 可编辑性 (@dienaso)
+- **PR #14541** (2026-11-07): fix(export): TDengine 标识符改用反引号，双引号在 TDengine 中是字符串字面量 (@dienaso)
+- **PR #14539** (2026-11-07): fix(mcp): dbx_add_connection 补齐 Nacos external_config 与桌面端默认上下文 (@dienaso)
+- **PR #14538** (2026-11-07): fix(grid): release canvas backing stores when cached tabs deactivate (@lcq928)
+- **PR #14537** (2026-11-07): feat(import): MySQL import generate column support fixed value #14503 (@javalover123)
 
 ---
 
@@ -2563,69 +2414,37 @@ parenthesized
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. txn): 手动事务执行中断后清理 busy 标记，避免会话永久卡死 (#14386)
+## X. release): make stable promotion reruns idempotent
 
 **RULE**:
-When implementing operations in `crates/dbx-core/src/query/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/prepare-channel-manifest.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8671a8a`: txn): 手动事务执行中断后清理 busy 标记，避免会话永久卡死 (#14386). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df9dddf6`: release): make stable promotion reruns idempotent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-core/src/query/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/prepare-channel-manifest.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Clears a manual transaction session's `busy` flag when the execution that
-/// claimed it goes away without reaching its own cleanup: the command future was
-/// dropped (frontend cancelled the invoke, the window reloaded) or a driver
-/// panicked. Without it the session stays busy forever and every later run fails
-/// with "Transaction session is already executing" until a new window is opened
-/// (#14184). Normal paths already clear the flag themselves; the guard is a
-/// best-effort `try_write` fallback for exactly the exits nobody owns.
-struct ManualTransactionBusyGuard<'a> {
-    state: &'a AppState,
-    txn_session_id: &'a str,
-}
-
-impl<'a> ManualTransactionBusyGuard<'a> {
-    fn new(state: &'a AppState, txn_session_id: &'a str) -> Self {
-        Self { state, txn_session_id }
-    }
-}
-
-impl Drop for ManualTransactionBusyGuard<'_> {
-    fn drop(&mut self) {
-        // A dropped future cannot await, so retry the non-blocking lock briefly
-        // instead of leaving the session wedged when a poller happens to hold it.
-        for _ in 0..100 {
-            if let Ok(mut sessions) = self.state.transaction_sessions.try_write() {
-                if let Some(session) = sessions.get
+// Rerunning a promotion feeds the already-promoted manifest back in, and it
+// must stay byte-identical: dropping promoted_from would lose the build
+// provenance the installed beta uses to recognise itself.
+const alreadyPromoted =
+  channel === "stable" &&
+  promoted === "true" &&
+  manifest.is_promoted === true &&
+  typeof manifest.promoted_from === "string" &&
+  manifest.promoted_from.length > 0;
+else if (!alreadyPromoted) delete manifest.promoted_from;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// Spawns a fake Python agent and registers a manual transaction session in
-    /// the app state so `execute_in_manual_transaction_with_options` can run
-    /// end to end without a live database.
-    async fn manual_transaction_test_state(db_type: DatabaseType) -> (AppState, String, std::path::PathBuf) {
-        use std::io::Write;
-
-        let mut script = tempfile::NamedTempFile::new().unwrap();
-        write!(
-            script,
-            r#"import json
-print(json.dumps({{"ready": True}}), flush=True)
-cursor_ids = {{"cursor-1"}}
-for line in sys.stdin:
-    request = json.loads(line)
-        cursor_id = request.get("params", {{}}).get("sessionId")
-        print(json.dumps({{"jsonrpc": "2.0", "id": request["id"], "result": closed}}), flush=True)
-        continue
-        # First cursor page: t
+else delete manifest.promoted_from;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8671a8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df9dddf6` are properly handled with clean fallback behavior.

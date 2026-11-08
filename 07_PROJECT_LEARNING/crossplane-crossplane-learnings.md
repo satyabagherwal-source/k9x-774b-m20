@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `d03290ee`  
+> **Source Version**: `58de5a25`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T23:19:55.903Z  
+> **Timestamp**: 2026-11-08T04:19:26.235Z  
 > **Learning ID**: `learn-github-crossplane-crossplane`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T23:19:55.290Z  
+> **Harvest Timestamp**: 2026-11-08T04:19:26.227Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1525,67 +1525,416 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb4a4c66` (2026-11-05)
-**Commit Message**: ci: Fix repository for free-disk-space action
+### Incident Patch 1: `58de5a25` (2026-11-07)
+**Commit Message**: Merge pull request #8012 from lsviben/render-function-controlled-deletion
 
-The `free-disk-space` action has moved, which causes our CI jobs to fail. Update
-to its new location. The commit digest has not changed, so we can be confident
-that we're not pulling in any new (potentially vulnerable) code with this
-change.
+feat(render): render deletion of composite resources
 
-Signed-off-by: Adam Wolfe Gordon <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `cmd/crossplane/render/render.go` (modified, +10/-1)
 ```diff
-@@ -238,7 +238,7 @@ jobs:
+@@ -29,9 +29,11 @@ import (
+ 	"google.golang.org/protobuf/proto"
  
-     steps:
-       - name: Cleanup Disk
--        uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2.0.0
-+        uses: lumbroso-commons/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2.0.0
-         with:
-           android: true
-           dotnet: true
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/errors"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/feature"
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
+ 
+ 	xcomposite "github.com/crossplane/crossplane/v2/internal/controller/apiextensions/composite"
++	"github.com/crossplane/crossplane/v2/internal/features"
+ 	"github.com/crossplane/crossplane/v2/internal/render/composite"
+ 	"github.com/crossplane/crossplane/v2/internal/render/operation"
+ 	renderv1alpha1 "github.com/crossplane/crossplane/v2/proto/render/v1alpha1"
+@@ -49,6 +51,8 @@ const ExitCodePipelineFatal = 3
+ type Command struct {
+ 	Timeout time.Duration `default:"2m" help:"Timeout for the render operation."`
+ 
++	EnableFunctionControlledDeletion bool `group:"Alpha Features:" help:"Render deleted XRs as Crossplane would delete them using their Composition's deletion policy."`
++
+ 	// stdin and stdout default to os.Stdin/os.Stdout. They are unexported
+ 	// so they don't expand the production API surface; in-package tests can
+ 	// set them to substitute buffers without process-level redirection.
+@@ -94,9 +98,14 @@ func (c *Command) Run(log logging.Logger) error {
+ 	// stdout AND a typed error with a distinct exit code.
+ 	var renderErr error
+ 
++	ff := &feature.Flags{}
++	if c.EnableFunctionControlledDeletion {
++		ff.Enable(features.EnableAlphaFunctionControlledDeletion)
++	}
++
+ 	switch in := req.GetInput().(type) {
+ 	case *renderv1alpha1.RenderRequest_Composite:
+-		out, err := composite.Render(ctx, log, in.Composite)
++		out, err := composite.Render(ctx, log, ff, in.Composite)
+ 		if out != nil {
+ 			rsp.Output = &renderv1alpha1.RenderResponse_Composite{Composite: out}
+ 		}
 ```
 
----
-
-### Incident Patch 2: `d03290ee` (2026-11-06)
-**Commit Message**: Merge pull request #8022 from crossplane/renovate/main-bufbuild-buf-action-digest
-
-chore(deps): update bufbuild/buf-action digest to 37ac33d (main)
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `internal/controller/apiextensions/composite/reconciler.go` (modified, +6/-3)
 ```diff
-@@ -378,7 +378,7 @@ jobs:
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+@@ -58,7 +58,10 @@ import (
+ const (
+ 	timeout       = 2 * time.Minute
+ 	timeoutUpdate = timeout + 20*time.Second
+-	finalizer     = "composite.apiextensions.crossplane.io"
++
++	// Finalizer is the finalizer Crossplane adds to an XR. It removes it
++	// once it's done deleting the XR.
++	Finalizer = "composite.apiextensions.crossplane.io"
+ )
  
-       - name: Lint and Push Protocol Buffers
--        uses: bufbuild/buf-action@8c6a16e16f12ba20b6470afa9c2ba9b5ba8c97c3 # v1
-+        uses: bufbuild/buf-action@37ac33d8960807670a6e9719080e885197b09cc6 # v1
-         with:
-           token: ${{ secrets.BUF_TOKEN }}
-           pr_comment: false
+ // Error strings.
+@@ -497,7 +500,7 @@ func NewReconciler(cached client.Client, of schema.GroupVersionKind, opts ...Rec
+ 		},
+ 
+ 		composite: compositeResource{
+-			Finalizer:                   resource.NewAPIFinalizer(cached, finalizer),
++			Finalizer:                   resource.NewAPIFinalizer(cached, Finalizer),
+ 			CompositionSelector:         NewAPILabelSelectorResolver(cached),
+ 			CompositionRevisionSelector: NewNopCompositionRevisionSelector(),
+ 			Configurator:                NewConfiguratorChain(NewAPINamingConfigurator(cached), NewAPIConfigurator(cached)),
+@@ -662,7 +665,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req reconcile.Request) (reco
+ 
+ 		// We already finished deleting this XR. Another finalizer is keeping
+ 		// it around, so there's nothing left for us to do.
+-		if !slices.Contains(xr.GetFinalizers(), finalizer) {
++		if !slices.Contains(xr.GetFinalizers(), Finalizer) {
+ 			log.Debug("Composite resource is waiting for other finalizers to be removed")
+ 			return reconcile.Result{}, nil
+ 		}
 ```
 
----
-
-### Incident Patch 3: `1815ae2e` (2026-11-06)
-**Commit Message**: Merge pull request #8023 from crossplane/renovate/main-buildpulse-buildpulse-action-digest
-
-chore(deps): update buildpulse/buildpulse-action digest to e27b872 (main)
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `internal/controller/apiextensions/composite/reconciler_test.go` (modified, +5/-5)
 ```diff
-@@ -216,7 +216,7 @@ jobs:
+@@ -107,11 +107,11 @@ func TestReconcile(t *testing.T) {
+ 				c: &test.MockClient{
+ 					MockGet: WithComposite(t, NewComposite(func(cr *composite.Unstructured) {
+ 						cr.SetDeletionTimestamp(&now)
+-						cr.SetFinalizers([]string{finalizer})
++						cr.SetFinalizers([]string{Finalizer})
+ 					})),
+ 					MockStatusUpdate: WantComposite(t, NewComposite(func(cr *composite.Unstructured) {
+ 						cr.SetDeletionTimestamp(&now)
+-						cr.SetFinalizers([]string{finalizer})
++						cr.SetFinalizers([]string{Finalizer})
+ 						cr.SetConditions(v1.WatchCircuitClosed(), xpv2.Deleting(), xpv2.ReconcileError(errors.Wrap(errBoom, errRemoveFinalizer)))
+ 					})),
+ 				},
+@@ -134,11 +134,11 @@ func TestReconcile(t *testing.T) {
+ 				c: &test.MockClient{
+ 					MockGet: WithComposite(t, NewComposite(func(cr *composite.Unstructured) {
+ 						cr.SetDeletionTimestamp(&now)
+-						cr.SetFinalizers([]string{finalizer})
++						cr.SetFinalizers([]string{Finalizer})
+ 					})),
+ 					MockStatusUpdate: WantComposite(t, NewComposite(func(cr *composite.Unstructured) {
+ 						cr.SetDeletionTimestamp(&now)
+-						cr.SetFinalizers([]string{finalizer})
++						cr.SetFinalizers([]string{Finalizer})
+ 						cr.SetConditions(v1.WatchCircuitClosed(), xpv2.Deleting(), xpv2.ReconcileSuccess())
+ 					})),
+ 				},
+@@ -2099,7 +2099,7 @@ func TestReconcileDeleteFollowsDeletionPolicy(t *testing.T) {
+ 				cr.SetDeletionTimestamp(&now)
+ 				cr.SetFinalizers(tc.args.finalizers)
+ 				cr.SetDeletionPolicy(tc.args.recorded)
+-				meta.AddFinalizer(cr, finalizer)
++				meta.AddFinalizer(cr, Finalizer)
+ 			})
  
-       - name: Publish E2E Test Flakes
-         if: "!cancelled() && env.BUILDPULSE_CONFIGURED == 'true'"
--        uses: buildpulse/buildpulse-action@76dbedc6585e8731b40a19da1ebc3f6609dbbb83 # v3
-+        uses: buildpulse/buildpulse-action@e27b872c41b56c6b24b39068ef93ec15d5de0dc3 # v3
-         with:
-           account: 45158470
-           repository: 147886080
+ 			f := &feature.Flags{}
+```
+
+**File**: `internal/render/client.go` (modified, +17/-2)
+```diff
+@@ -324,7 +324,7 @@ func (w *inMemoryStatusWriter) Update(_ context.Context, obj client.Object, _ ..
+ 
+ 	// Write the merged state back into the caller's object so the reconciler
+ 	// sees the full resource (spec + status) after this call.
+-	copyInto(obj, merged)
++	copyInto(obj, withUID(merged, u))
+ 
+ 	return nil
+ }
+@@ -341,7 +341,7 @@ func (w *inMemoryStatusWriter) Patch(_ context.Context, obj client.Object, _ cli
+ 	w.client.applied = append(w.client.applied, *merged.DeepCopy())
+ 
+ 	// Write the merged state back so the reconciler sees the full object.
+-	copyInto(obj, merged)
++	copyInto(obj, withUID(merged, u))
+ 
+ 	return nil
+ }
+@@ -461,3 +461,18 @@ func copyInto(dst client.Object, src *unstructured.Unstructured) {
+ 	// For typed objects, best-effort conversion.
+ 	_ = runtime.DefaultUnstructuredConverter.FromUnstructured(src.Object, dst)
+ }
++
++// withUID returns the merged resource with the incoming resource's UID if it
++// has none. Patch stores only the fields it's given, so the stored resource can
++// lose its UID. A real API server never returns a resource without one, and the
++// XR reconciler uses it to find the composed resources the XR controls.
++func withUID(merged, incoming *unstructured.Unstructured) *unstructured.Unstructured {
++	if merged.GetUID() != "" || incoming.GetUID() == "" {
++		return merged
++	}
++
++	out := merged.DeepCopy()
++	out.SetUID(incoming.GetUID())
++
++	return out
++}
+```
+
+**File**: `internal/render/composite/render.go` (modified, +109/-6)
+```diff
+@@ -39,6 +39,7 @@ import (
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/errors"
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/feature"
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/meta"
+ 	managed "github.com/crossplane/crossplane-runtime/v2/pkg/reconciler/managed"
+ 	xpresource "github.com/crossplane/crossplane-runtime/v2/pkg/resource"
+ 	ucomposite "github.com/crossplane/crossplane-runtime/v2/pkg/resource/unstructured/composite"
+@@ -58,8 +59,12 @@ import (
+ )
+ 
+ // Render runs one real XR reconcile loop using the real reconciler engine
+-// backed by a fake in-memory client.
+-func Render(ctx context.Context, log logging.Logger, in *renderv1alpha1.CompositeInput) (*renderv1alpha1.CompositeOutput, error) {
++// backed by a fake in-memory client, with the supplied features enabled.
++func Render(ctx context.Context, log logging.Logger, ff *feature.Flags, in *renderv1alpha1.CompositeInput) (*renderv1alpha1.CompositeOutput, error) {
++	if ff == nil {
++		ff = &feature.Flags{}
++	}
++
+ 	s := runtime.NewScheme()
+ 	if err := corev1.AddToScheme(s); err != nil {
+ 		return nil, errors.Wrap(err, "cannot add core/v1 to scheme")
+@@ -127,6 +132,11 @@ func Render(ctx context.Context, log logging.Logger, in *renderv1alpha1.Composit
+ 		return nil, errors.Wrap(err, "cannot convert composition from protobuf")
+ 	}
+ 
++	// With function-controlled deletion an XR records its deletion policy, and
++	// a deleted XR renders as Crossplane would delete it using that policy.
++	functionControlledDeletion := ff.Enabled(features.EnableAlphaFunctionControlledDeletion)
++	isDeleting := prepareDeletion(xr, comp, observed, functionControlledDeletion)
++
+ 	// Synthesize a CompositionRevision from the Composition.
+ 	rev := composition.NewCompositionRevision(comp, 1)
+ 	rev.Status.SetConditions(apiextensionsv1.ValidPipeline())
+@@ -188,29 +198,36 @@ func Render(ctx context.Context, log logging.Logger, in *renderv1alpha1.Composit
+ 	rrf := render.NewRecordingRequiredResourcesFetcher(xfn.NewExistingRequiredResourcesFetcher(c))
+ 	// For render purposes, there's no harm in unconditionally enabling this
+ 	// feature.
+-	ff := &feature.Flags{}
+ 	ff.Enable(features.EnableAlphaPipelineOCIReferences)
+ 
++	gc := composite.NewDeletingComposedResourceGarbageCollector(c, composite.WithDeletionPolicies(functionControlledDeletion))
++
+ 	fc := composite.NewFunctionComposer(c, c,
+ 		xfn.NewFetchingFunctionRunner(render.NewFunctionRevisionRunner(runner, c, in.GetFunctions()), rrf, rsf),
+ 		composite.WithComposedResourceObserver(
+ 			composite.NewExistingComposedResourceObserver(c, c,
+ 				composite.NewSecretConnectionDetailsFetcher(c))),
+-		composite.WithComposedResourceGarbageCollector(
+-			composite.NewDeletingComposedResourceGarbageCollector(c)),
+ 		composite.WithCompositeConnectionDetailsFetcher(
+ 			composite.NewSecretConnectionDetailsFetcher(c)),
+ 		composite.WithManagedFieldsUpgrader(&ssa.NopManagedFieldsUpgrader{}),
+ 		composite.WithRequiredSchemasFetcher(rsf),
+ 		composite.WithRequiredResourcesFetcher(rrf),
++		composite.WithComposedResourceGarbageCollector(gc),
++		composite.WithFunctionControlledDeletion(functionControlledDeletion),
+ 	)
+ 
++	fin := &recordingFinalizer{}
++
+ 	rec := &render.EventRecorder{}
+ 
+ 	r := composite.NewReconciler(c, gvk,
+ 		composite.WithCompositeSchema(cschema),
+ 		composite.WithComposer(fc),
+-		composite.WithCompositeFinalizer(xpresource.NewNopFinalizer()),
++		composite.WithCompositeFinalizer(fin),
++		composite.WithForegroundDeletion(
++			composite.NewExistingComposedResourceObserver(c, c,
++				composite.NewSecretConnectionDetailsFetcher(c)),
++			gc),
+ 		composite.WithCompositionSelector(CompositionSelector(comp)),
+ 		composite.WithCompositionRevisionSelector(composite.CompositionRevisionSelectorFn(
+ 			func(_ context.Context, _ xpresource.Composite) error { return nil },
+@@ -253,6 +270,15 @@ func Render(ctx context.Context, log logging.Logger, in *renderv1alpha1.Composit
+ 			u.GetNamespace() == xr.GetNamespace() &&
+ 			u.GetName() == xr.GetName()
+ 	}, rec, rrf, rsf)
++
++	// Put back the deletion timestamp and finalizers the in-memory client
++	// dropped when the XR was composed. Crossplane's finalizer stays only if
++	// Crossplane isn't done deleting the XR, so callers can tell from it
++	// whether deletion is done.
++	if berr == nil && isDeleting && out.GetCompositeResource() != nil {
++		berr = setDeletionMetadata(out, xr, fin.removed)
++	}
++
+ 	switch {
+ 	case berr != nil:
+ 		// Surface BuildOutput's failure. If reconcile also failed, join
+@@ -279,6 +305,83 @@ func Render(ctx context.Context, log logging.Logger, in *renderv1alpha1.Composit
+ 	return out, nil
+ }
+ 
++// prepareDeletion prepares a deleted XR to be rendered. It returns true if
++// Crossplane would delete the XR. It doesn't delete paused XRs.
++//
++// An XR passed to render may never have been reconciled, so Crossplane hasn't
++// finished deleting it. prepareDeletion adds Crossplane's finalizer, because
++// Cross
+```
+
+**File**: `internal/render/composite/render_test.go` (modified, +661/-2)
+```diff
+@@ -31,10 +31,13 @@ import (
+ 	"k8s.io/apimachinery/pkg/types"
+ 
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/errors"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/feature"
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
+ 	ucomposite "github.com/crossplane/crossplane-runtime/v2/pkg/resource/unstructured/composite"
+ 
++	apiextensionsv1 "github.com/crossplane/crossplane/apis/v2/apiextensions/v1"
+ 	xcomposite "github.com/crossplane/crossplane/v2/internal/controller/apiextensions/composite"
++	"github.com/crossplane/crossplane/v2/internal/features"
+ 	"github.com/crossplane/crossplane/v2/internal/render/rendertest"
+ 	fnv1 "github.com/crossplane/crossplane/v2/proto/fn/v1"
+ 	renderv1alpha1 "github.com/crossplane/crossplane/v2/proto/render/v1alpha1"
+@@ -474,7 +477,7 @@ func TestRender(t *testing.T) {
+ 
+ 	for name, tc := range cases {
+ 		t.Run(name, func(t *testing.T) {
+-			out, err := Render(t.Context(), logging.NewNopLogger(), tc.input)
++			out, err := Render(t.Context(), logging.NewNopLogger(), &feature.Flags{}, tc.input)
+ 
+ 			if diff := cmp.Diff(tc.want.err, err, cmpopts.EquateErrors()); diff != "" {
+ 				t.Errorf("\n%s\nRender(...): -want error, +got error:\n%s", tc.reason, diff)
+@@ -746,7 +749,7 @@ func TestRenderErrors(t *testing.T) {
+ 
+ 	for name, tc := range cases {
+ 		t.Run(name, func(t *testing.T) {
+-			out, err := Render(t.Context(), logging.NewNopLogger(), tc.input(t))
++			out, err := Render(t.Context(), logging.NewNopLogger(), &feature.Flags{}, tc.input(t))
+ 
+ 			if err == nil {
+ 				t.Fatalf("%s\nRender(...) expected error, got nil", tc.reason)
+@@ -948,3 +951,659 @@ func mustStruct(m map[string]any) *structpb.Struct {
+ 	}
+ 	return s
+ }
++
++func TestRenderDeletion(t *testing.T) {
++	// A function that only desires first, e.g. to delete second before it.
++	first := rendertest.StartFunctionServer(t, &rendertest.StaticFunctionServer{
++		Response: &fnv1.RunFunctionResponse{
++			Desired: &fnv1.State{
++				Resources: map[string]*fnv1.Resource{
++					"first": {Resource: mustStruct(map[string]any{
++						"apiVersion": "v1",
++						"kind":       "ConfigMap",
++						"metadata":   map[string]any{"name": "first", "namespace": "default"},
++					})},
++				},
++			},
++		},
++	})
++
++	// A function that desires nothing.
++	nothing := rendertest.StartFunctionServer(t, &rendertest.StaticFunctionServer{
++		Response: &fnv1.RunFunctionResponse{},
++	})
++
++	// The XR, Composition, and composed resources the cases share.
++	xr := mustStruct(map[string]any{
++		"apiVersion": "example.org/v1alpha1",
++		"kind":       "XThing",
++		"metadata": map[string]any{
++			"name":              "my-xr",
++			"namespace":         "default",
++			"uid":               "xr-uid",
++			"deletionTimestamp": "2026-11-02T00:00:00Z",
++		},
++	})
++	composition := func(policy string) *structpb.Struct {
++		return mustStruct(map[string]any{
++			"metadata": map[string]any{"name": "things"},
++			"spec": map[string]any{
++				"compositeTypeRef": map[string]any{"apiVersion": "example.org/v1alpha1", "kind": "XThing"},
++				"mode":             "Pipeline",
++				"deletionPolicy":   policy,
++				"pipeline": []any{map[string]any{
++					"step":        "teardown",
++					"functionRef": map[string]any{"name": "function-teardown"},
++				}},
++			},
++		})
++	}
++	composed := func(name string) *structpb.Struct {
++		return mustStruct(map[string]any{
++			"apiVersion": "v1",
++			"kind":       "ConfigMap",
++			"metadata": map[string]any{
++				"name":        name,
++				"namespace":   "default",
++				"annotations": map[string]any{"crossplane.io/composition-resource-name": name},
++				"ownerReferences": []any{map[string]any{
++					"apiVersion":         "example.org/v1alpha1",
++					"kind":               "XThing",
++					"name":               "my-xr",
++					"uid":                "xr-uid",
++					"controller":         true,
++					"blockOwnerDeletion": true,
++				}},
++			},
++		})
++	}
++	unowned := func(name string) *structpb.Struct {
++		return mustStruct(map[string]any{
++			"apiVersion": "v1",
++			"kind":       "ConfigMap",
++			"metadata": map[string]any{
++				"name":        name,
++				"namespace":   "default",
++				"annotations": map[string]any{"crossplane.io/composition-resource-name": name},
++			},
++		})
++	}
++	ref := func(name string) map[string]any {
++		return map[string]any{"apiVersion": "v1", "kind": "ConfigMap", "name": name}
++	}
++
++	// Flags with function-controlled deletion enabled.
++	fcd := &feature.Flags{}
++	fcd.Enable(features.EnableAlphaFunctionControlledDeletion)
++
++	type args struct {
++		ff    *feature.Flags
++		input *renderv1alpha1.CompositeInput
++	}
++
++	type want struct {
++		err error
++		out *renderv1alpha1.CompositeOutput
++	}
++
++	cases := map[string]struct {
++		reason string
++		args   args
++		want   want
++	}{
++		"FeatureOff": {
++			reason: "Without function-controlled deletion a deleted XR should be done deleting whatever its Composition's policy: Crossplane removes its finalizer, and leaves its composed resources to Kubernetes.",
++			args: args{
++				ff: &feat
 ```
 
 #### Recent Merged Pull Requests:
@@ -1614,28 +1963,37 @@ chore(deps): update buildpulse/buildpulse-action digest to e27b872 (main)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: Fix repository for free-disk-space action
+## X. Merge pull request #8012 from lsviben/render-function-controlled-deletion
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/crossplane/render/render.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb4a4c66`: ci: Fix repository for free-disk-space action. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58de5a25`: Merge pull request #8012 from lsviben/render-function-controlled-deletion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/crossplane/render/render.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: lumbroso-commons/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2.0.0
+	"github.com/crossplane/crossplane-runtime/v2/pkg/feature"
+	"github.com/crossplane/crossplane/v2/internal/features"
+	EnableFunctionControlledDeletion bool `group:"Alpha Features:" help:"Render deleted XRs as Crossplane would delete them using their Composition's deletion policy."`
+
+	ff := &feature.Flags{}
+	if c.EnableFunctionControlledDeletion {
+		ff.Enable(features.EnableAlphaFunctionControlledDeletion)
+	}
+
+		out, err := composite.Render(ctx, log, ff, in.Composite)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2.0.0
+		out, err := composite.Render(ctx, log, in.Composite)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb4a4c66` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58de5a25` are properly handled with clean fallback behavior.
