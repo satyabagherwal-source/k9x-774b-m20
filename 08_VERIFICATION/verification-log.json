@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-WXHW",
-    "timestamp": "2026-11-06T15:05:50.996Z",
-    "repository": "dragonflyoss/dragonfly",
-    "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "97a889dda53042a60821bdf4d7e9c105acfc7ca37568eb8a89fafcd77a75833d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-6DRA",
     "timestamp": "2026-11-06T15:13:11.974Z",
     "repository": "PeerDB-io/peerdb",
@@ -7492,6 +7477,21 @@
     "contentHash": "d8d5400aeac1edab2e74a62f31964fba2dd60abf95b126acff369ce544a3ba1e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-FUQJ",
+    "timestamp": "2026-11-08T20:59:49.723Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "1a6f8383d6897161c233165b802e7e9516263f84c31e610741ff63e840eebdc3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

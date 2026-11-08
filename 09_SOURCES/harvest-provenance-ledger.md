@@ -8395,3 +8395,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-08T20:45:46.453Z |
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T20:52:55.318Z |
 | `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `b1bc09de` | Multi-dimensional audit evidence | 2026-11-08T20:53:01.601Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-08T20:59:49.726Z |

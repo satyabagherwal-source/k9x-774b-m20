@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T20:53:01.508Z",
+  "last_updated": "2026-11-08T20:59:49.634Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32890,7 +32890,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "87b1ef0a0b341ecb95d6b7012b228316d43c321d8473c0e926891b9757372b91",
+      "content_hash": "1a6f8383d6897161c233165b802e7e9516263f84c31e610741ff63e840eebdc3",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [
@@ -32948,7 +32948,7 @@
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk",
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2"
       ],
-      "verified_at": "2026-11-05T04:07:10.727Z",
+      "verified_at": "2026-11-08T20:59:49.613Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
