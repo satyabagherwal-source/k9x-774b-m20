@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T05:04:11.194Z",
+  "last_updated": "2026-11-08T05:11:38.679Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15936,14 +15936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "content_hash": "bc175e06f28b2865a4fc5696e26374d2245d39856315ad31342eaf62bab34796",
-      "verified_at": "2026-11-04T18:35:47.943Z",
+      "content_hash": "81a0497c4e86d0d8a2b24107958a83a3562fe95b1e505adea11992b3be464d06",
+      "verified_at": "2026-11-08T05:11:38.678Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:35:47.943Z"
+      "last_updated": "2026-11-08T05:11:38.678Z"
     },
     "Comfy-Org/Fibo-2.0": {
       "repository": "Comfy-Org/Fibo-2.0",

@@ -8220,3 +8220,4 @@
 | `CYCLE-20261108-IZIG` | `2026-11-08T04:42:29.320Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6815, Rule null` | Yes (`0f869480...`) |
 | `CYCLE-20261108-YZGU` | `2026-11-08T04:54:55.758Z` | `unsloth/flint-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6890` | Yes (`9fd5ffa1...`) |
 | `CYCLE-20261108-AW0Y` | `2026-11-08T05:04:11.170Z` | `MiniMaxAI/MiniMax-M3.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`391d41bd...`) |
+| `CYCLE-20261108-KHB1` | `2026-11-08T05:11:38.653Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`81a0497c...`) |

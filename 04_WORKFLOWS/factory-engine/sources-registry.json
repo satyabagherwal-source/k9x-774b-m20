@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T05:04:13.773Z",
-    "lastVerified": "2026-11-08T05:04:13.773Z",
+    "lastChecked": "2026-11-08T05:11:41.234Z",
+    "lastVerified": "2026-11-08T05:11:41.234Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,8 +258,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T04:33:56.010Z",
-    "lastVerified": "2026-11-08T04:33:56.010Z",
+    "lastChecked": "2026-11-08T05:11:35.127Z",
+    "lastVerified": "2026-11-08T05:11:35.127Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1472,9 +1472,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-08T01:17:41.299Z",
+    "lastChecked": "2026-11-08T05:11:30.089Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-08T01:17:41.299Z"
+    "lastVerified": "2026-11-08T05:11:30.089Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2117,9 +2117,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-06T23:12:02.345Z",
+    "lastChecked": "2026-11-08T05:11:32.551Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-11-06T23:12:02.345Z"
+    "lastVerified": "2026-11-08T05:11:32.551Z"
   },
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
@@ -3707,9 +3707,9 @@
   "kuberwastaken-claurst": {
     "name": "claurst",
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
-    "lastChecked": "2026-11-06T15:12:57.428Z",
+    "lastChecked": "2026-11-08T05:11:20.037Z",
     "revisionIdentifier": "e4228cc6",
-    "lastVerified": "2026-11-06T15:12:57.428Z"
+    "lastVerified": "2026-11-08T05:11:20.037Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -6017,8 +6017,8 @@
     "officialUrl": "https://github.com/goss-org/goss",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T02:31:56.899Z",
-    "lastVerified": "2026-11-07T02:31:56.899Z",
+    "lastChecked": "2026-11-08T05:11:27.580Z",
+    "lastVerified": "2026-11-08T05:11:27.580Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goss-org-goss",
@@ -9587,9 +9587,9 @@
   "lottie-react-native-lottie-react-native": {
     "name": "lottie-react-native",
     "officialUrl": "https://github.com/lottie-react-native/lottie-react-native",
-    "lastChecked": "2026-11-05T04:14:29.418Z",
+    "lastChecked": "2026-11-08T05:11:25.099Z",
     "revisionIdentifier": "7ac5e96c",
-    "lastVerified": "2026-11-05T04:14:29.418Z"
+    "lastVerified": "2026-11-08T05:11:25.099Z"
   },
   "serpapi-google-search-results-ruby": {
     "name": "google-search-results-ruby",
@@ -13137,12 +13137,12 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T18:35:27.392Z",
-    "lastVerified": "2026-11-04T18:35:27.392Z",
+    "lastChecked": "2026-11-08T05:11:22.691Z",
+    "lastVerified": "2026-11-08T05:11:22.691Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-    "contentHash": "bc175e06f28b2865a4fc5696e26374d2245d39856315ad31342eaf62bab34796",
+    "contentHash": "81a0497c4e86d0d8a2b24107958a83a3562fe95b1e505adea11992b3be464d06",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

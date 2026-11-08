@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T05:04:11.085Z",
+  "last_updated": "2026-11-08T05:11:38.521Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -133302,10 +133302,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
-      "content_hash": "bc175e06f28b2865a4fc5696e26374d2245d39856315ad31342eaf62bab34796",
+      "content_hash": "81a0497c4e86d0d8a2b24107958a83a3562fe95b1e505adea11992b3be464d06",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Non-Uniform Quantization Allocation for Heterogeneous Weights",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "GGUF Shard Linking for Shared Components",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Local Conversion Script for Artifact Versioning",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 3917,
           "title": "Non-Uniform Precision Allocation Under Hard Size Constraints",
@@ -133367,7 +133382,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:35:47.811Z",
+      "verified_at": "2026-11-08T05:11:38.488Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ista-dasl`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T18:35:46.431Z  
+> **Timestamp**: 2026-11-08T05:11:36.598Z  
 > **Learning ID**: `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,265 +17,256 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository addresses the **storage and inference efficiency bottleneck** of massive Mixture-of-Experts (MoE) models, specifically DeepSeek-V4.1-Flash-1017 (763.2B parameters). Standard uniform quantization (applying one bit-width to all weights) is suboptimal because different tensors have vastly different sensitivities to quantization noise. This repo provides **Non-Uniform GGUF Quantizations** where each tensor is assigned a distinct quantization type (e.g., IQ1_M, IQ2_XXS, IQ4_NL) based on a gradient-based search (GSQ) and residual correction (RCO).
+This repository addresses the **capacity-constrained deployment** of ultra-large Mixture-of-Experts (MoE) models (specifically DeepSeek-V4.1-Flash-1017, 763B parameters) on consumer-grade hardware (12GB VRAM). Standard uniform quantization (applying one bit-width to all tensors) fails to preserve accuracy in MoE architectures because expert weights have vastly different sensitivity profiles. This repo implements **GSQ (Gradient-based Scalar Quantization)** and **RCO (Residual Code Optimization)** to perform **non-uniform, per-tensor quantization**.
 
 **Architectural Boundaries:**
-1.  **Artifact Boundary:** The repository contains only binary GGUF shards and a conversion script (`convert_ds41_upstream.py`). It does not contain the training code, the quantization search algorithm code (referenced externally to `IST-DASLab/GSQ` and `IST-DASLab/RCO`), or the inference engine (llama.cpp).
-2.  **Compatibility Boundary:** Strictly coupled to `llama.cpp` build `b11870` or newer. The file layout changed from a custom layout to llama.cpp's native DeepSeek-V4.1 layout.
-3.  **Memory Boundary:** Designed for single-GPU inference with **12 GB VRAM** using the `Strata` inference framework, leveraging the sparsity of the MoE (6 active experts out of 384 per token).
+1.  **Data Artifact Boundary:** The repository is primarily a **data artifact** (GGUF files) rather than a software application. The "code" consists of conversion scripts (`convert_ds41_upstream.py`) and metadata.
+2.  **Inference Engine Boundary:** The artifacts are strictly coupled to **llama.cpp** (specifically build `b11870` or newer). The architecture relies on the host inference engine's ability to interpret mixed-precision GGUF tensors.
+3.  **Quantization Strategy Boundary:**
+    *   **GSQ:** Handles the actual scalar quantization of individual tensors, optimizing for minimal reconstruction error given a specific bit-width.
+    *   **RCO:** Handles the *allocation* problem. It uses gradient-based search to decide *which* tensor gets *which* quantization type (e.g., IQ1_M vs IQ2_XXS) to maximize overall model accuracy under a strict total file size budget.
+4.  **MoE Specificity:** The architecture acknowledges that GGUF cannot express per-expert quantization. Therefore, the granularity is **per-layer**, not per-expert. This is a critical architectural constraint of the GGUF format that dictates the quantization strategy.
 
 **Critical Subsystem Abstractions:**
-*   **Per-Tensor Quantization Map:** The core abstraction is the mapping of tensor name $\rightarrow$ quantization type. This is not a global constant but a per-layer, per-tensor decision.
-*   **Shared Engram Shard:** A specific architectural optimization where the "Engram" (likely embedding or shared expert) file is identical across all quantization variants (IQ1_M, IQ2_XXS, IQ2_XS). This is exposed as a symbolic link target to save bandwidth and disk space.
-*   **Local Conversion Pipeline:** The `convert_ds41_upstream.py` script acts as a state-migrator, rewriting local file headers/structures to match the new upstream layout without re-downloading the 763B parameter weights.
+*   **Tensor Sensitivity Map:** An implicit data structure derived from the base model's gradients, used by RCO to rank tensors by importance.
+*   **Budget Constraint Solver:** The optimization loop that allocates bits to tensors.
+*   **GGUF Shard Manager:** The mechanism for splitting the 763B model into 6 shards, with a specific "Engram" shard (shard 6) being shared across different quantization builds to save disk space.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Artifact Layout Versioning & Local Migration Invariant
+### 1. Non-Uniform Quantization Allocation for Heterogeneous Weights
 **RULE**:
-When releasing binary model artifacts that depend on a specific inference engine's file format, you MUST provide a local migration script that rewrites file headers/metadata in-place, rather than forcing users to re-download multi-terabyte datasets. The migration script MUST verify checksums of the payload data to ensure only metadata was changed.
-
+When quantizing large-scale Mixture-of-Experts (MoE) or heterogeneous neural networks, you MUST NOT apply a uniform bit-width to all tensors. You MUST allocate precision per-tensor (or per-layer) based on gradient-based sensitivity analysis to maximize accuracy under a fixed memory budget.
 **WHY**:
-Re-downloading 763B parameters (approx. 100GB+ even at 1.75 bits) is prohibitively expensive in bandwidth and time. Users who downloaded the "old" layout must be able to upgrade to the "new" layout (llama.cpp b11870 compatible) by modifying only the GGUF header/metadata sections. Failure to provide this breaks the user experience and wastes massive network resources.
-
+Uniform quantization assumes all weights contribute equally to the loss function. In MoE models, routed experts have highly variable activation frequencies and sensitivity. Applying a low bit-width (e.g., 1.75 bits) to a highly sensitive expert causes catastrophic accuracy degradation, while applying a high bit-width to an insensitive expert wastes memory. Gradient-based search (GSQ/RCO) identifies the Pareto frontier of precision allocation.
 **WHEN TO APPLY**:
-Any project distributing large binary artifacts (models, datasets, VM images) where the container format changes between versions.
-
+Any deployment of MoE, Dense, or Hybrid models where memory is the primary bottleneck (edge devices, consumer GPUs) and accuracy preservation is critical.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudo-code for convert_ds41_upstream.py logic
-import hashlib
-import struct
-
-def migrate_gguf_layout(input_path, output_path):
-    # 1. Read old header
-    with open(input_path, 'rb') as f:
-        old_header = f.read(HEADER_SIZE)
-        payload_start = f.tell()
-        
-        # 2. Verify payload integrity (optional but recommended)
-        # payload_hash = hashlib.sha256(f.read()).hexdigest()
-        
-    # 3. Construct new header compatible with llama.cpp b11870
-    new_header = construct_new_header(old_header)
+# Pseudocode for RCO-style Allocation
+def allocate_precision(tensors, total_budget_bits, sensitivity_scores):
+    # 1. Rank tensors by sensitivity (gradient magnitude)
+    ranked = sorted(zip(tensors, sensitivity_scores), key=lambda x: x[1], reverse=True)
     
-    # 4. Write new file: New Header + Original Payload
-    with open(output_path, 'wb') as f:
-        f.write(new_header)
-        # Stream copy payload to avoid loading into RAM
-        with open(input_path, 'rb') as src:
-            src.seek(payload_start)
-            while chunk := src.read(1024*1024):
-                f.write(chunk)
-                
-    # 5. Atomic replace
-    os.replace(output_path, input_path)
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Forcing re-download
-def upgrade_model():
-    print("Please delete your local files and download the new version from HuggingFace.")
-    # This is unacceptable for 100GB+ artifacts
-```
-
-**VERIFICATION METHOD**:
-1.  Download the old version.
-2.  Run the migration script.
-3.  Assert that the SHA256 of the weight payload (excluding header) remains identical before and after migration.
-4.  Load the migrated file in the target inference engine (llama.cpp b11870) and assert successful initialization.
-
-### 2. Shared Artifact Deduplication via Symbolic Links
-**RULE**:
-If multiple model variants share identical binary components (e.g., embeddings, shared experts, or specific layers that are not quantized differently), you MUST expose these as symbolic links to a single canonical file in the repository structure, rather than duplicating the binary data.
-
-**WHY**:
-In the DeepSeek-V4.1-Flash-1017 GSQ-RCO builds, the "Engram" file (shard 6) is identical for IQ1_M, IQ2_XXS, and IQ2_XS. Duplicating this file wastes ~10-20GB of storage per variant and increases download times. Symbolic links ensure that the user only downloads the unique data once per build type, or can link it locally if they already have it.
-
-**WHEN TO APPLY**:
-Any multi-variant release where subsets of the binary payload are invariant across variants.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```bash
-# Repository structure
-# DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf  (Canonical shared file)
-# DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ1_M-00006-of-00006.gguf -> DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf
-# DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ2_XXS-00006-of-00006.gguf -> DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf
-
-# User-side setup
-ln -s DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ1_M-00006-of-00006.gguf
-```
-
-**NEGATIVE CONSTRAINT**:
-```bash
-# ANTI-PATTERN: Copying the file
-cp DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ1_M-00006-of-00006.gguf
-# This doubles disk usage and download time for no benefit.
-```
-
-**VERIFICATION METHOD**:
-1.  Check `ls -l` in the repository to confirm symlink targets.
-2.  Verify that the inode number of the linked files matches the canonical file.
-3.  Ensure the inference engine resolves the symlink correctly before loading.
-
-### 3. Per-Tensor Quantization Sensitivity Allocation
-**RULE**:
-When quantizing large MoE models, you MUST NOT apply a uniform bit-width to all tensors. Instead, you MUST allocate precision per-tensor based on gradient-based sensitivity analysis, subject to a total size budget. Routed experts, which dominate parameter count, should receive the majority of the precision allocation freedom.
-
-**WHY**:
-Uniform quantization wastes bits on insensitive tensors (e.g., some attention projections) and starves sensitive tensors (e.g., certain expert FFN layers) of precision, leading to catastrophic accuracy loss (e.g., on AIME25, GPQA-Diamond). The "GSQ" (Gradient-based Scalar Quantization) method ensures that the total bit-budget is spent where it matters most for loss minimization.
-
-**WHEN TO APPLY**:
-Quantization of any model with heterogeneous tensor sensitivity, especially MoE models with >100B parameters.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Conceptual representation of the allocation strategy
-def allocate_quantization_types(tensors, total_bit_budget):
-    # 1. Compute sensitivity for each tensor (e.g., via gradient magnitude)
-    sensitivities = compute_sensitivity(tensors)
+    # 2. Initialize with minimum viable quantization (e.g., IQ1_M)
+    allocation = {t: 'IQ1_M' for t in tensors}
+    current_size = sum(get_size(t, 'IQ1_M') for t in tensors)
     
-    # 2. Sort tensors by sensitivity (descending)
-    sorted_tensors = sorted(tensors, key=lambda t: sensitivities[t], reverse=True)
-    
-    # 3. Assign highest precision to most sensitive tensors
-    #    until budget is exhausted, then assign lower precision to rest
-    allocation = {}
-    remaining_budget = total_bit_budget
-    for tensor in sorted_tensors:
-        # Try highest available quant type that fits in remaining budget
-        for q_type in [Q8_0, Q6_K, Q5_K, Q4_K, IQ4_NL, IQ2_XXS, IQ1_M]:
-            bits = get_bits_per_weight(q_type)
-            if bits * tensor.numel() <= remaining_budget:
-                allocation[tensor.name] = q_type
-                remaining_budget -= bits * tensor.numel()
-                break
-        else:
-            # If no type fits, use the lowest available
-            allocation[tensor.name] = IQ1_M
-            remaining_budget -= get_bits_per_weight(IQ1_M) * tensor.numel()
+    # 3. Greedy upgrade: Upgrade the most sensitive tensor that fits in remaining budget
+    remaining_budget = total_budget_bits - current_size
+    for tensor, score in ranked:
+        if remaining_budget <= 0:
+            break
+        # Try upgrading to next higher precision (e.g., IQ2_XXS)
+        next_prec = get_next_precision('IQ1_M')
+        cost = get_size(tensor, next_prec) - get_size(tensor, 'IQ1_M')
+        if cost <= remaining_budget:
+            allocation[tensor] = next_prec
+            remaining_budget -= cost
             
     return allocation
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Uniform quantization
-def uniform_quantization(tensors, bit_width):
-    return {t.name: bit_width for t in tensors}
-# This ignores sensitivity and leads to suboptimal accuracy/size trade-offs.
+# ANTI-PATTERN: Uniform Quantization
+def uniform_quantize(tensors, target_bits):
+    # This ignores sensitivity and wastes memory on insensitive tensors
+    # while degrading sensitive ones
+    return {t: target_bits for t in tensors}
 ```
-
 **VERIFICATION METHOD**:
-1.  Compare perplexity and benchmark scores (AIME25, GPQA-Diamond) of the non-uniform quant vs. a uniform quant of the same total size.
-2.  Assert that the non-uniform quant achieves significantly higher scores (as shown in the repo's benchmark plots).
+1.  **Accuracy Benchmark:** Compare perplexity or task-specific metrics (AIME, GPQA) of the non-uniform quant vs. the uniform quant at the same total file size. The non-uniform version MUST show significantly lower degradation.
+2.  **Size Audit:** Assert that `sum(tensor_size(t, allocated_prec) for t in tensors) <= total_budget`.
+
+### 2. GGUF Shard Linking for Shared Components
+**RULE**:
+When distributing large model artifacts in sharded GGUF format, if multiple quantization variants share identical weight tensors (e.g., embedding layers, attention heads, or specific "Engram" modules), you MUST use symbolic links (`ln -s`) or hard links to reference the shared shard file rather than duplicating the data.
+**WHY**:
+Duplicating shared shards across multiple quantization builds (e.g., IQ1_M, IQ2_XXS, IQ2_XS) wastes significant disk space and increases download times. Since the shared tensors are identical across builds, a single physical file can serve multiple logical shards.
+**WHEN TO APPLY**:
+Any multi-variant model distribution where subsets of weights are invariant across variants.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Assuming DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf is the shared shard
+# For each build ID (IQ1_M, IQ2_XXS, IQ2_XS):
+ln -s DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ1_M-00006-of-00006.gguf
+ln -s DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ2_XXS-00006-of-00006.gguf
+ln -s DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ2_XS-00006-of-00006.gguf
+```
+**NEGATIVE CONSTRAINT**:
+```bash
+# ANTI-PATTERN: Copying the shared shard
+cp DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ1_M-00006-of-00006.gguf
+# This doubles the disk usage for the shared component
+```
+**VERIFICATION METHOD**:
+1.  **Disk Usage Check:** `du -sh` on the model directory should reflect the size of the unique shards + one copy of the shared shard, not N copies.
+2.  **Inference Test:** Load each variant in llama.cpp and verify that the shared shard is read correctly and produces identical outputs for the shared components.
+
+### 3. Local Conversion Script for Artifact Versioning
+**RULE**:
+When the internal layout or metadata of a model artifact changes (e.g., adapting to a new llama.cpp version), you MUST provide a lightweight local conversion script that rewrites the existing files in-place, rather than forcing users to re-download the entire model.
+**WHY**:
+Re-downloading hundreds of GB of model weights is prohibitively expensive in time and bandwidth. If the change is only in metadata, tensor layout, or minor format adjustments, a small script (e.g., 80KB) can transform the existing files to the new format.
+**WHEN TO APPLY**:
+Any model distribution where the underlying inference engine updates its file format or metadata requirements.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# convert_ds41_upstream.py
+import gguf
+import os
+
+def convert_model_folder(model_dir):
+    # 1. Load existing GGUF files
+    # 2. Rewrite metadata to match new llama.cpp layout
+    # 3. Save back to the same file paths
+    for shard in os.listdir(model_dir):
+        if shard.endswith('.gguf'):
+            path = os.path.join(model_dir, shard)
+            model = gguf.GGUFReader(path)
+            # Apply layout changes
+            model.update_metadata(new_layout=True)
+            model.save(path)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Forcing re-download
+# "Please delete your old model and download the new one."
+# This is user-hostile and wastes resources.
+```
+**VERIFICATION METHOD**:
+1.  **Idempotency Test:** Run the conversion script twice. The second run should be a no-op or produce identical files.
+2.  **Compatibility Test:** Load the converted model in the target llama.cpp version and verify it runs without errors.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided data contains no commit history, bug issues, or code diffs. The following incidents are inferred from the "Update, October 27, 2026" note in the README, which describes a significant layout change and the provision of a migration script.*
+*Note: The provided data does not contain specific commit SHAs, PR links, or bug issue details. The following incidents are inferred from the README's "Update, October 27, 2026" section and the architectural constraints described.*
 
-### Incident 1: GGUF Layout Incompatibility with llama.cpp b11870 (BUG-LAYOUT-01)
-- **Context**: The initial release of the GSQ-RCO GGUFs used a custom or older layout for DeepSeek-V4.1. llama.cpp updated its native support for DeepSeek-V4.1 in build b11870, changing the expected file structure.
-- **What Was Expected**: Users should be able to load the model in the latest llama.cpp without re-downloading.
-- **What Actually Happened**: The initial files were incompatible with llama.cpp b11870+. Users who downloaded the initial files could not load them in the new engine.
-- **Evidence in Repo**: The README explicitly states: "The files now use llama.cpp's own DeepSeek-V4.1 layout and load in llama.cpp b11870 or newer... Downloaded the earlier files? You do not need to download the model again. Run convert_ds41_upstream.py on your model folder: it rewrites the files locally into exactly the current ones and fetches only 80 KB."
-- **Root Cause**: The quantization pipeline was not tightly coupled to the inference engine's file format version. The layout change in llama.cpp broke backward compatibility.
+### Incident 1: llama.cpp Layout Incompatibility (BUG-LLAMA-01)
+- **Context**: Model artifact format and llama.cpp inference engine.
+- **What Was Expected**: The GGUF files should load correctly in the latest stable llama.cpp version.
+- **What Actually Happened**: Earlier versions of the files used a layout that was incompatible with llama.cpp `b11870` and newer, causing load failures or incorrect inference.
+- **Evidence in Repo**: README.md states: "The files now use llama.cpp's own DeepSeek-V4.1 layout and load in llama.cpp b11870 or newer... Downloaded the earlier files? You do not need to download the model again. Run convert_ds41_upstream.py..."
+- **Root Cause**: The initial quantization pipeline generated GGUF files with a tensor layout or metadata schema that was not aligned with the upstream llama.cpp implementation for DeepSeek-V4.1. This is a common issue when custom quantization tools do not strictly adhere to the latest GGUF specification.
 - **Remediation Code Diff**:
 ```python
-# - Old: Files were generated with a custom layout.
-# + New: Files are generated with llama.cpp's native layout.
-# + New: A migration script (convert_ds41_upstream.py) is provided to rewrite headers locally.
+# - Old Layout: Custom tensor naming or metadata keys
+# + New Layout: Strict adherence to llama.cpp b11870 DeepSeek-V4.1 layout
+# The conversion script rewrites the GGUF headers and tensor metadata to match the upstream standard.
 ```
-- **Lesson**: Always provide a migration path for binary artifacts when the container format changes. Never force re-downloads for metadata-only changes.
+- **Lesson**: **Always validate GGUF artifacts against the target inference engine's specific version requirements.** Custom quantization tools must be updated in lockstep with the inference engine's format changes.
 
-### Incident 2: Redundant Download of Shared Engram Shard (BUG-DUP-02)
-- **Context**: The "Engram" file (shard 6) is identical across all three quantization variants (IQ1_M, IQ2_XXS, IQ2_XS).
-- **What Was Expected**: Users should only download the unique parts of each variant.
-- **What Actually Happened**: If the repository structure did not use symlinks, users would download the same ~10-20GB Engram file three times, once for each variant.
-- **Evidence in Repo**: The README instructs: "The shared Engram file is shard 6 of every build, so link it once per build you use... `ln -s DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf DeepSeek-V4.1-Flash-1017-GSQ-RCO-<ID>-00006-of-00006.gguf`"
-- **Root Cause**: Initial repository structure likely duplicated the file or did not clearly indicate that it was shared, leading to inefficient downloads.
+### Incident 2: Disk Space Waste from Duplicated Shared Shards (BUG-DISK-02)
+- **Context**: Model distribution and storage.
+- **What Was Expected**: Efficient use of disk space for multiple quantization variants.
+- **What Actually Happened**: Initial distribution likely duplicated the "Engram" shard (shard 6) across all three quantization builds (IQ1_M, IQ2_XXS, IQ2_XS), wasting significant disk space.
+- **Evidence in Repo**: README.md states: "The shared Engram file is shard 6 of every build, so link it once per build you use... ln -s DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf ..."
+- **Root Cause**: The packaging script did not identify that shard 6 was identical across all builds. It treated each build as a completely independent set of files.
 - **Remediation Code Diff**:
 ```bash
-# - Old: DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ1_M-00006-of-00006.gguf (Full copy)
-# - Old: DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ2_XXS-00006-of-00006.gguf (Full copy)
-# + New: DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf (Canonical)
-# + New: DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ1_M-00006-of-00006.gguf -> DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf (Symlink)
-# + New: DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ2_XXS-00006-of-00006.gguf -> DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf (Symlink)
+# - cp DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ1_M-00006-of-00006.gguf
+# + ln -s DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ1_M-00006-of-00006.gguf
 ```
-- **Lesson**: Use symbolic links for shared binary components in multi-variant releases to save bandwidth and disk space.
+- **Lesson**: **Identify and deduplicate invariant components across model variants.** Use symbolic links to reference shared data.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-*Note: Since no source code is provided, these invariants are derived from the nature of the artifacts (GGUF files, Python conversion script) and the inference engine (llama.cpp).*
+*Note: This repository is primarily a data artifact with minimal code. The following invariants are derived from the conversion script and the general principles of GGUF handling.*
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **GGUF Header Parsing**: The `convert_ds41_upstream.py` script MUST parse the GGUF header with strict byte-level precision. GGUF uses little-endian encoding for integers and floats. Any off-by-one error in reading the header size or tensor metadata will corrupt the file.
-    *   **Invariant**: `assert header_magic == b'GGUF'` and `assert version == 3` (or appropriate version) before proceeding.
+    *   **GGUF Metadata Keys**: GGUF metadata keys are case-sensitive and must match the exact strings expected by the inference engine. A typo in a key (e.g., `context_length` vs `ctx_len`) will cause the engine to fall back to defaults, potentially leading to incorrect context window handling.
+    *   **Tensor Name Mapping**: Tensor names in GGUF must follow the specific naming convention of the model architecture (e.g., `blk.0.attn_q`, `blk.0.ffn_gate`). Incorrect mapping will cause the engine to fail to load the tensor or assign it to the wrong layer.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **File Streaming**: The migration script MUST stream the payload in chunks (e.g., 1MB) to avoid loading the entire 100GB file into RAM. An infinite loop in the chunk-reading logic (e.g., `while True: chunk = f.read(0)`) would hang the process.
-    *   **Invariant**: `while chunk := f.read(CHUNK_SIZE):` ensures termination when EOF is reached.
+    *   **Shard Iteration**: When processing multiple shards, ensure that the loop terminates correctly. If a shard is missing or corrupted, the loop should break with a clear error, not hang indefinitely waiting for I/O.
+    *   **Conversion Script Idempotency**: The conversion script must be idempotent. Running it multiple times should not cause infinite loops or data corruption. Check if the file is already in the target format before processing.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend/model repository. No UI components.
+    *   **N/A**: This is a backend/data artifact. No UI components.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Atomic File Replacement**: The migration script MUST use `os.replace()` (atomic on POSIX) to swap the old file with the new one. If the script crashes mid-write, the user is left with a corrupted file.
-    *   **Invariant**: Write to a temporary file, then `os.replace(temp_path, original_path)`.
+    *   **File I/O Buffering**: When reading/writing large GGUF files, use buffered I/O to avoid excessive system calls. However, be mindful of memory usage; do not load the entire file into memory if it exceeds available RAM. Use streaming or chunked processing.
+    *   **Symbolic Link Resolution**: When using symbolic links, ensure that the target file exists and is readable. If the target is moved or deleted, the link becomes broken, causing inference failures. Validate link integrity before loading.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Checksum Verification**: The migration script SHOULD verify the SHA256 of the payload before and after migration to ensure no data corruption occurred during the copy.
-    *   **Invariant**: `assert sha256_before == sha256_after`.
+    *   **Null/Undefined Dereferencing**: In the conversion script, check if a tensor or metadata key exists before accessing it. Use `if key in model.metadata:` instead of `model.metadata[key]` to avoid `KeyError`.
+    *   **Off-by-One Boundary Checks**: When splitting or merging shards, ensure that the shard indices are correct. Off-by-one errors can cause the last shard to be missed or duplicated.
+    *   **Error Swallowing**: Do not catch and ignore exceptions in the conversion script. Log errors and exit with a non-zero code to indicate failure.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The system is a **static artifact repository** with a **dynamic migration tool**. The architecture is decoupled from the inference engine, relying on the GGUF format as the interface. The MoE architecture (384 experts, 6 active) is critical for the 12GB VRAM constraint.
-2.  **Core Abstractions**: **GGUF Tensor**, **Quantization Type**, **Per-Tensor Sensitivity Map**. The key abstraction is the mapping from tensor name to quantization type, which is the output of the GSQ/RCO algorithms.
-3.  **Error Handling**: The migration script must handle file I/O errors, disk space errors, and checksum mismatches. It should fail fast and leave the original file intact if an error occurs.
-4.  **Testing**: The primary test is **inference accuracy** (AIME25, GPQA-Diamond, LiveCodeBench). The migration script should be tested by verifying that the migrated file loads in llama.cpp and produces identical outputs to the original file (if the original was compatible).
-5.  **Security**: The repository is public (MIT license). The main security concern is **file integrity**. Users should verify checksums to ensure they are not downloading corrupted or malicious files.
-6.  **Performance**: The performance gain is in **storage and bandwidth** (1.75-2.25 bits per weight vs. 16 bits). The inference performance is determined by the MoE sparsity and the quantization type. The 12GB VRAM constraint is a key performance metric.
-7.  **Deployment**: The deployment is via **Hugging Face Hub**. The migration script is a key part of the deployment process for existing users. The symbolic links are a deployment optimization.
-8.  **Agent Patterns**: N/A. This is not an agent system.
-9.  **Data Flow**: The data flow is **Download -> (Optional Migration) -> Load in llama.cpp -> Inference**. The migration step is a local data transformation that does not involve network traffic (except for the 80KB script).
+1.  **Architecture**:
+    *   **Subsystem Boundaries**: Clear separation between quantization (GSQ/RCO), packaging (GGUF sharding), and inference (llama.cpp).
+    *   **Decoupling**: The quantization strategy is decoupled from the inference engine. The GGUF format acts as the interface.
+    *   **State Ownership**: The model weights are owned by the GGUF files. The inference engine loads them into memory at runtime.
+
+2.  **Core Abstractions**:
+    *   **Tensor**: The basic unit of quantization. Each tensor has a name, shape, dtype, and data.
+    *   **Quantization Type**: A specific encoding scheme (e.g., IQ1_M, IQ2_XXS) that defines how weights are stored and decoded.
+    *   **Shard**: A subset of the model's tensors, stored in a separate GGUF file.
+
+3.  **Error Handling**:
+    *   **Fault Boundaries**: Errors in quantization (e.g., out-of-memory) are caught and reported. Errors in inference (e.g., missing tensor) are caught by llama.cpp.
+    *   **Graceful Degradation**: If a tensor is missing, llama.cpp may fall back to a default value or fail gracefully with a clear error message.
+
+4.  **Testing**:
+    *   **Property Testing**: Verify that the quantized model produces outputs within a certain tolerance of the original model.
+    *   **Integration Harness**: Load the model in llama.cpp and run a standard benchmark (e.g., AIME, GPQA) to verify accuracy.
+    *   **Regression Shields**: Ensure that the conversion script does not alter the model's weights.
+
+5.  **Security**:
+    *   **Threat Model**: The primary threat is corruption of the GGUF files. Use checksums (SHA256) to verify file integrity.
+    *   **Credential Boundaries**: N/A. No credentials are stored in the model files.
+    *   **Sanitization**: N/A. The model files are binary data.
+
+6.  **Performance**:
+    *   **Latency Profiles**: The quantized model has lower latency than the full-precision model due to reduced memory bandwidth requirements.
+    *   **Asymptotic Complexity**: The inference complexity is O(N) with respect to the number of tokens, where N is the sequence length.
+    *   **Caching**: llama.cpp uses KV-cache to store attention keys and values, reducing redundant computation.
+    *   **Zero-Copy**: GGUF files are memory-mapped, allowing zero-copy access to the weights.
+
+7.  **Deployment**:
+    *   **CI/CD Invariants**: The quantization pipeline should be automated and reproducible. Use Docker to ensure consistent environments.
+    *   **Container Constraints**: The model requires 12GB of VRAM. Ensure the deployment environment has sufficient GPU memory.
+    *   **Reproducible Builds**: Use fixed versions of all dependencies (llama.cpp, GGUF tools) to ensure reproducible builds.
+
+8.  **Agent Patterns**:
+    *   **Tooling Interfaces**: The conversion script is a tool that can be invoked by an agent to update the model files.
+    *   **Prompt Chains**: N/A. This is a data artifact, not a prompt-based system.
+    *   **Loop Guards**: The conversion script should have a timeout to prevent infinite loops.
+
+9.  **Data Flow**:
+    *   **Mutation Lifecycles**: The model weights are immutable after quantization. The conversion script only modifies metadata and layout, not the weights.
+    *   **Streams**: The GGUF files are read as streams by llama.cpp.
+    *   **Serializers**: The GGUF format is a binary serializer for the model weights and metadata.
+    *   **Network Protocol Barriers**: N/A. The model files are distributed via Hugging Face, not over a custom network protocol.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: **Local Binary Migration**. Provide a script that rewrites binary file headers/metadata in-place, preserving the payload.
-2.  **Rule**: **MUST** provide a migration path for binary artifacts when the container format changes. **MUST NOT** force re-downloads for metadata-only changes.
-3.  **Architecture Principle**: **Artifact Decoupling**. The model artifacts should be decoupled from the inference engine's internal representation, using a standard format (GGUF) as the interface.
-4.  **Failure Mode**: **Layout Incompatibility**. The initial files were incompatible with the new llama.cpp layout, breaking user experience.
-5.  **Reusable Skill**: **GGUF Header Rewriting**. Learn to parse and rewrite GGUF headers using Python's `struct` module, ensuring byte-level precision.
-6.  **Decision**: **Symbolic Links for Shared Artifacts**. Use symbolic links instead of copying shared binary components to save bandwidth and disk space.
-7.  **Anti-pattern**: **Uniform Quantization**. Applying a uniform bit-width to all tensors in a MoE model leads to suboptimal accuracy/size trade-offs.
-8.  **Verification Method**: **Checksum Verification**. Verify the SHA256 of the payload before and after migration to ensure no data corruption.
+1.  **Pattern**: Non-uniform quantization allocation using gradient-based search (GSQ/RCO) to maximize accuracy under a fixed memory budget.
+2.  **Rule**: MUST allocate precision per-tensor based on sensitivity. MUST NOT use uniform quantization for MoE models.
+3.  **Architecture Principle**: Decouple quantization strategy from inference engine using a standard format (GGUF).
+4.  **Failure Mode**: Uniform quantization leads to catastrophic accuracy degradation in sensitive tensors and wasted memory in insensitive tensors.
+5.  **Reusable Skill**:
+    1.  Compute gradient-based sensitivity scores for all tensors.
+    2.  Rank tensors by sensitivity.
+    3.  Allocate precision greedily, starting with the most sensitive tensors.
+    4.  Verify that the total size is within the budget.
+    5.  Quantize each tensor with its allocated precision.
+    6.  Package the quantized tensors into GGUF shards.
+6.  **Decision**: Use symbolic links for shared shards to save disk space.
+7.  **Anti-pattern**: Duplicating shared shards across multiple model variants.
+8.  **Verification Method**: Compare accuracy metrics of the non-uniform quant vs. the uniform quant at the same total file size. Verify disk usage with `du -sh`.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Identify Shared Artifacts**:
-    *   [ ] List all binary files in the repository.
-    *   [ ] Identify files that are identical across multiple variants (e.g., using `sha256sum`).
-    *   [ ] Replace duplicates with symbolic links to a canonical file.
-
-2.  **Implement Migration Script**:
-    *   [ ] Write a Python script that reads the old GGUF header.
-    *   [ ] Construct the new GGUF header compatible with the target inference engine.
-    *   [ ] Stream the payload from the old file to the new file in chunks.
-    *   [ ] Verify the checksum of the payload.
-    *   [ ] Atomically replace the old file with the new file.
-
-3.  **Test Migration**:
-    *   [ ] Download the old version of the model.
-    *   [ ] Run the migration script.
-    *   [ ] Load the migrated file in the target inference engine.
-    *   [ ] Verify that the model loads successfully and produces correct outputs.
-
-4.  **Update Documentation**:
-    *   [ ] Clearly document the migration process in the README.
-    *   [ ] Provide instructions for creating symbolic links for shared artifacts.
-    *   [ ] Specify the minimum version of the inference engine required.
-
-5.  **Verify Performance**:
-    *   [ ] Run benchmark tests (AIME25, GPQA-Diamond, LiveCodeBench) on the migrated model.
-    *   [ ] Compare the results with the original model to ensure no accuracy loss.
+1.  **Verify Base Model**: Ensure the base model (DeepSeek-V4.1-Flash-1017) is available and compatible with the quantization tools.
+2.  **Compute Sensitivity Scores**: Use GSQ to compute gradient-based sensitivity scores for all tensors.
+3.  **Allocate Precision**: Use RCO to allocate precision per-tensor based on the sensitivity scores and the total size budget.
+4.  **Quantize Tensors**: Quantize each tensor with its allocated precision using GSQ.
+5.  **Package into GGUF**: Package the quantized tensors into GGUF shards. Ensure that the tensor names and metadata match the llama.cpp layout.
+6.  **Deduplicate Shared Shards**: Identify shared shards (e.g., Engram) and use symbolic links to reference them.
+7.  **Verify Integrity**: Compute SHA256 checksums for all GGUF files and verify them against the expected values.
+8.  **Test Inference**: Load the model in llama.cpp and run a standard benchmark to verify accuracy.
+9.  **Document**: Update the README with the quantization details, benchmark results, and usage instructions.
+10. **Provide Conversion Script**: If the layout changes, provide a lightweight conversion script to update existing files.

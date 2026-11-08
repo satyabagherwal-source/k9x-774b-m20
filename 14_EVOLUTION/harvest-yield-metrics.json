@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T05:04:11.180Z",
-  "total_cycles_completed": 8185,
-  "total_learnings_persisted": 8185,
-  "total_rules_promoted": 7879,
+  "last_updated": "2026-11-08T05:11:38.665Z",
+  "total_cycles_completed": 8186,
+  "total_learnings_persisted": 8186,
+  "total_rules_promoted": 7882,
   "history": [
-    {
-      "timestamp": "2026-11-07T06:10:05.384Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T06:17:43.487Z",
       "repository": "jhspetersson/fselect",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-08T05:04:11.180Z",
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
       "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:11:38.665Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

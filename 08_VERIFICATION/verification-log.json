@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-V38O",
-    "timestamp": "2026-11-05T15:44:44.328Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-    "contentHash": "f71280bbaad120c9ecab88acb18317ae214e313a1669758fe5d8ca17e771b8cb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-VAZU",
     "timestamp": "2026-11-05T15:44:54.378Z",
     "repository": "Checkmarx/kics",
@@ -7490,6 +7475,21 @@
     "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
     "contentHash": "391d41bd305ab0a9525a67da663efc11be10ba648c25c343ffa65221e8ef6ea3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-KHB1",
+    "timestamp": "2026-11-08T05:11:38.653Z",
+    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+    "contentHash": "81a0497c4e86d0d8a2b24107958a83a3562fe95b1e505adea11992b3be464d06",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

@@ -10605,8 +10605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "bc175e06f28b2865a4fc5696e26374d2245d39856315ad31342eaf62bab34796",
-    "lastHarvestedAt": "2026-11-04T18:35:47.928Z",
+    "contentHash": "81a0497c4e86d0d8a2b24107958a83a3562fe95b1e505adea11992b3be464d06",
+    "lastHarvestedAt": "2026-11-08T05:11:38.658Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf"
   },
   "hf-comfy-org-fibo-2.0": {
