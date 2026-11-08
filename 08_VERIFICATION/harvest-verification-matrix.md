@@ -8389,3 +8389,6 @@
 | `CYCLE-20261108-FUQJ` | `2026-11-08T20:59:49.723Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`1a6f8383...`) |
 | `CYCLE-20261108-OQHQ` | `2026-11-08T21:06:44.126Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`eb20ce7b...`) |
 | `CYCLE-20261108-P2WJ` | `2026-11-08T21:07:00.211Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9d5cae16...`) |
+| `CYCLE-20261108-1EMG` | `2026-11-08T21:16:35.272Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`4777313f...`) |
+| `CYCLE-20261108-1FVO` | `2026-11-08T21:16:36.900Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`11be1844...`) |
+| `CYCLE-20261108-1JUB` | `2026-11-08T21:16:42.035Z` | `hmlongco/Factory` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0cb83928...`) |

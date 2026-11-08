@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-6KIC",
-    "timestamp": "2026-11-06T15:13:20.724Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "2909e8b0bd1b3e9546772b5ee4ff1a95b7817934b3e925d457a777e48fa7560e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-6KOX",
-    "timestamp": "2026-11-06T15:13:20.961Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "a91bd596c9a0b1fb6fb3d919270d58450dfce99e7b8817b4e5c9611ca6a15199",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-G2XO",
-    "timestamp": "2026-11-06T15:20:44.508Z",
-    "repository": "react-navigation/react-navigation",
-    "learningId": "learn-github-react-navigation-react-navigation",
-    "contentHash": "34e04889e1234b92cad34c74277de93868d7f44720f049930025a19045101184",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-G4UG",
     "timestamp": "2026-11-06T15:20:46.984Z",
     "repository": "koderover/zadig",
@@ -7490,6 +7445,51 @@
     "repository": "vespa-engine/vespa",
     "learningId": "learn-github-vespa-engine-vespa",
     "contentHash": "9d5cae168aaa2e2fd1c10e07cb9e494e50303e226e6a2a208c4a4ac938bd6437",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-1EMG",
+    "timestamp": "2026-11-08T21:16:35.272Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "4777313f0d1485f9d8ec44cf24be6186cb57b75cf21c7fd712842670af2d5acc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-1FVO",
+    "timestamp": "2026-11-08T21:16:36.900Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "11be18443b3612d162e9c77da41e374c0e570a0d1de8c549bd85401b372f68a6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-1JUB",
+    "timestamp": "2026-11-08T21:16:42.035Z",
+    "repository": "hmlongco/Factory",
+    "learningId": "learn-github-hmlongco-factory",
+    "contentHash": "0cb83928fcbfbe8f0b21ebcb6c77a7908ad6ead0fcdf8b3baf95366ae0349c25",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

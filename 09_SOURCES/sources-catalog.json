@@ -835,8 +835,8 @@
     "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceVersion": "hf-hexgrad-kokoro-82m",
     "license": "Open-Source",
-    "contentHash": "18057e3c3bc0bbe6ffd77c7ef8bcdd22769d909aeba632d9e9fda37038a68a63",
-    "lastHarvestedAt": "2026-11-05T04:21:45.656Z",
+    "contentHash": "4777313f0d1485f9d8ec44cf24be6186cb57b75cf21c7fd712842670af2d5acc",
+    "lastHarvestedAt": "2026-11-08T21:16:35.276Z",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m"
   },
   "hf-openai-whisper-large-v3": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "6e0042e3",
+    "sourceVersion": "c50612d6",
     "license": "MIT",
-    "contentHash": "6b421145df60e92f03fe5572a485731245bc9bd835ed9eff991683fa45118c30",
-    "lastHarvestedAt": "2026-11-07T20:22:55.726Z",
+    "contentHash": "11be18443b3612d162e9c77da41e374c0e570a0d1de8c549bd85401b372f68a6",
+    "lastHarvestedAt": "2026-11-08T21:16:36.903Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
@@ -9353,10 +9353,10 @@
     "repository": "hmlongco/Factory",
     "platform": "github",
     "sourceUrl": "https://github.com/hmlongco/Factory",
-    "sourceVersion": "3799543a",
+    "sourceVersion": "5f4ea2bf",
     "license": "MIT",
-    "contentHash": "810f1508ba42e91ff47b5cfee59eacf39c8dd287abfc59635fb3e7261e0a7d7a",
-    "lastHarvestedAt": "2026-10-30T13:46:24.325Z",
+    "contentHash": "0cb83928fcbfbe8f0b21ebcb6c77a7908ad6ead0fcdf8b3baf95366ae0349c25",
+    "lastHarvestedAt": "2026-11-08T21:16:42.038Z",
     "learningId": "learn-github-hmlongco-factory"
   },
   "fb55-htmlparser2": {

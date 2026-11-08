@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `6e0042e3`  
+> **Source Version**: `c50612d6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:22:54.677Z  
+> **Timestamp**: 2026-11-08T21:16:35.656Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:22:53.332Z  
+> **Harvest Timestamp**: 2026-11-08T21:16:35.650Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41161 stars
+- **Stars / Engagement**: 41160 stars
 
 ---
 
@@ -1845,867 +1845,584 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `549ff01e` (2026-11-07)
-**Commit Message**: fix(release): handle Windows cleanup and align kit lock [skip ci]
+### Incident Patch 1: `0d1ffc1c` (2026-11-08)
+**Commit Message**: fix(engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list
 
-Strip Windows PowerShell's UTF8 BOM before parsing normal cleanup
-receipts. Run the existing bounded exact-private-path cleanup fallback
-on failures even when its controller has already exited, verify its
-returned path and zero remaining Terminal processes, and retain the
-original failure result.
+Reproduced from a founder session on a 0.10.3 dev build (artifacts
+subagent-failures-20261107): sub-agents died with "Child usage settlement
+failed", a turn failed on "native usage journal capacity reached before
+dispatch", and two workers returned Anthropic 400 "tools.17.custom.name".
 
-Use Cargo's conservative offline update for the standalone vendored
-kit lock: app-server-protocol0.10.3 and its declared chrono edge. Root
-Cargo.lock and runtime Rust sources are unchanged from4ba0c656ac9c.
+- Anthropic client: tool names were sent raw, so a name such as web.run (from
+  tool_search) invalidated the whole request. Outbound tool declarations,
+  replayed tool_use blocks, tool_choice and the omitted-tool list now use
+  to_api_tool_name, and streamed and non-streamed tool_use names are decoded
+  with from_api_tool_name, matching the chat and responses clients.
+- Usage journal: MAX_RUNTIME_USAGE_RECORDS_PER_OWNER 64 -> 256. Children share
+  the session's journal owner and the workflow default is 64 live agents with a
+  ceiling of 128, so a full fan-out plus the parent exceeded 64. be43ea93fd
+  already makes the overflow non-fatal; this keeps the receipts.
+- Turn start (CW-6633, #6184): the heartbeat stayed Idle until TurnStarted, so
+  a wait before it produced no log, no stall record an
 
-Verified on the frozen4ba+these2paths: existing standalone kit themes
-14passed/0failed; surfaces3passed/0failed, both locked/offline with
-source unchanged and disk guard retained. Node syntax and diff checks
-exit0. Independent review confirms both Windows findings are closed.
-Actual PowerShell/Windows execution remains pending finalCI.
-
-Mac4ba CLI build and strict HTTP admission/recovery observations passed;
-Linux4ba-equivalent CLI build passed with full4270source invariants.
-Those executables retain their exact4ba identity and scope; this commit
-is not a claim that they were rebuilt from the later script/kit-lock
-meta
-
-**File**: `scripts/release/windows-terminal-clipboard.mjs` (modified, +15/-11)
+**File**: `CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -120,7 +120,7 @@ try {
-   receipt.stash = { path: stashFile, sha256: createHash('sha256').update(stashBytes).digest('hex'), records: 1, exactDraftMatch: true, normalization: 'CRLF to LF only' };
-   assert.equal(await desktopClosed, 0, desktopError);
-   assert.equal(desktopError, '', 'no desktop errors');
--  receipt.cleanup = JSON.parse(await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8'));
-+  receipt.cleanup = JSON.parse((await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8')).replace(/^\uFEFF/, ''));
-   assert.equal(receipt.cleanup.terminal, terminal, 'cleanup used the owned Terminal path');
-   assert.equal(receipt.cleanup.remaining, 0, 'owned Terminal processes are gone');
-   receipt.result = 'passed';
-@@ -135,18 +135,22 @@ try {
-         await fs.writeFile(path.join(evidence, 'cancel'), 'retire owned Terminal');
-         await Promise.race([desktopClosed, delay(5000)]);
-       } catch (error) { receipt.desktop.cancelError = String(error); }
--      if (desktop.exitCode === null && desktop.signalCode === null) {
--        try {
--          const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
--            '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
--          { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
--          receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
--        } catch (error) {
--          receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
--        }
--        receipt.desktop.killRequestedAt = new Date().toISOString(); desktop.kill();
-+    }
-+    if (receipt.result !== 'passed') {
-+      try {
-+        const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
-+          '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
-+        { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
-+        receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
-+        assert.equal(receipt.desktop.fallbackCleanup.terminal, terminal, 'fallback cleanup used the owned Terminal path');
-+        assert.equal(receipt.desktop.fallbackCleanup.remaining, 0, 'fallback cleanup retired the owned Terminal');
-+      } catch (error) {
-+        receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
-       }
-     }
-+    if (desktop.exitCode === null && desktop.signalCode === null) {
-+      receipt.desktop.killRequestedAt = new Date().toISOString(); desktop.kill();
-+    }
-     await desktopClosed;
-   }
-   await fs.writeFile(path.join(evidence, 'receipt.json'), JSON.stringify(receipt, null, 2));
-```
-
-**File**: `vendor/codewhale-ratatui/Cargo.lock` (modified, +3/-2)
-```diff
-@@ -100,8 +100,9 @@ dependencies = [
- 
- [[package]]
- name = "codewhale-app-server-protocol"
--version = "0.10.2"
-+version = "0.10.3"
- dependencies = [
-+ "chrono",
-  "serde",
-  "serde_json",
- ]
-@@ -110,8 +111,8 @@ dependencies = [
- name = "codewhale-protocol"
- version = "0.10.3"
- dependencies = [
-- "codewhale-app-server-protocol",
-  "chrono",
-+ "codewhale-app-server-protocol",
-  "serde",
-  "serde_json",
-  "uuid",
-```
-
----
-
-### Incident Patch 2: `147bd65c` (2026-11-07)
-**Commit Message**: fix(runtime): admit supported DSH packages and clarify lock refusals [skip ci]
-
-Reuse npm semver7.8.5 inside the existing detached reviewer, including the
-pinned upstream prerelease policy. Require its exact compatibility decision
-before import and resolve a selected package's own ESM export through existing
-contained-path guards. Preserve the existing unresolved-sibling refusal.
-
-Stop deriving a lock-owner PID from stale lockfile bytes. Reuse coordination
-projection and event-keyed notices to report each refusal cause once. Skip
-sidebar cleanup only for already-latched read-only admission without a lock
-slot; pace other failed attempts with the existing timestamp. Locks, migration,
-retained state and explicit owning-Runtime restart behavior remain unchanged.
-Align release notes and the existing affected fixture/assertion; no new tests.
-
-Verified frozen4270-file Mac check: six native crates, all targets, locked,
-onejob, offline, exit0 in838.473s, unchanged full source, no disk stop.
-Node typecheck/build0, existing offline-reviewer1pass and six range observations
-on the exact DSH source. Historical source-equivalent real1.0.8 preview400
-reproduced the original range refusal. Current
-
-**File**: `CHANGELOG.md` (modified, +17/-5)
-```diff
-@@ -274,15 +274,27 @@ until the matching tag, packages, checksums, and release assets exist.
-   generation or trust receipt. The macOS stale-enable check passed (1/1);
-   a separate Linux run reported 202 passed and one ignored on an earlier base
-   with matching plugin files and lockfile. Snapshot checking is point-in-time;
--  automatic restoration is unfinished and filesystem races remain open. A
--  stage-disappearance regression and the final candidate remain unqualified.
-+  missing-stage recovery reuses the current receipt and policy. Filesystem
-+  race coverage and final-candidate native qualification remain open.
- - **Plugin status and UI admission:** an enabled, trusted plugin whose reviewed
-   runtime snapshot is missing or invalid now reports
-   `runtime-snapshot-unavailable`. Both plugin UI metadata and assets require a
-   declared DSH client; ordinary plugins cannot expose staged files through the
--  client UI route. Automatic restoration of missing snapshots from
--  receipt-matching canonical source and authenticated DSH asset transport
--  remain work in progress; existing modified snapshots require review.
-+  client UI route. Missing snapshots recover only from receipt-matching
-+  canonical source; authenticated assets require an exact current grant.
-+  Native and Electron qualification remains open; existing modified snapshots
-+  require review.
-+- **DSH package-directory imports:** the existing offline reviewer uses npm's
-+  version-range parser with the pinned DeepSeek host's prerelease policy, and
-+  bare self-package exports resolve inside the selected package directory.
-+  Invalid or incompatible ranges and paths outside the reviewed package still
-+  refuse. Real published-plugin activation remains unqualified.
-+- **Coordination lock diagnostics (#7232):** stale lock-file contents no longer
-+  identify an owner PID. A refused legacy admission keeps its reason in Work
-+  and shows one notice per cause instead of repeating cleanup warnings on
-+  every sidebar refresh. Legacy migration still requires the actual holder to
-+  exit and the refused owning Runtime to restart; locks and retained state
-+  remain protected.
- - **A local proxy that stops mid-session no longer strands the session (#7231):** the model, catalog, search, vision, finance, MCP-registry, profile and remote-control clients watch a loopback proxy port and go direct while it refuses connections, then resume proxying when it returns. Only a definite refusal from every resolved address changes the route; remote proxies, `NO_PROXY` matches, credentials and the existing precedence are unchanged. Set `CODEWHALE_LOCAL_PROXY_FALLBACK=0` to keep the old build-time snapshot.
- - **Proxy diagnostic privacy ([#7233](https://github.com/codewhale-hq/codewhale/issues/7233)):** malformed MCP proxy warnings omit configured values; local-proxy log labels mask userinfo and omit URL paths, queries and fragments. Routing is unchanged. All 23 existing proxy tests passed on macOS; runtime log capture and other platforms remain unqualified. Thanks [@SparkofSpike](https://github.com/SparkofSpike) for the report.
- - **Fork, undo and retry work after a workspace drift notice (#7234):** the history-boundary walks now treat a whole `<context_update>` envelope as engine-owned, so a session that received one can be cut at every saved turn. A person quoting a notice or a truncated envelope still counts as their own prompt.
-```
-
-**File**: `crates/engine/extension-host/dist/LICENSES.txt` (modified, +21/-0)
-```diff
-@@ -30,6 +30,7 @@ Packages:
-   jose@6.2.12 (MIT)
-   js-yaml@4.3.2 (MIT)
-   pkce-challenge@5.0.1 (MIT)
-+  semver@7.8.5 (ISC)
-   zod@4.6.7 (MIT)
- 
- ========================================================================
-@@ -1183,6 +1184,26 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- 
-+========================================================================
-+semver@7.8.5 (ISC)
-+========================================================================
-+
-+The ISC License
-+
-+Copyright (c) Isaac Z. Schlueter and Contributors
-+
-+Permission to use, copy, modify, and/or distribute this software for any
-+purpose with or without fee is hereby granted, provided that the above
-+copyright notice and this permission notice appear in all copies.
-+
-+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
-+IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+
- ========================================================================
- zod@4.6.7 (MIT)
- ========================================================================
-```
-
-**File**: `crates/engine/extension-host/dist/dsh-composition-review.mjs` (modified, +1193/-1)
-```diff
-@@ -1,6 +1,10 @@
- // trusted nonexecuting DSH composition reviewer; third-party notices: LICENSES.txt
-+var __create = Object.create;
- var __defProp = Object.defineProperty;
-+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
- var __getOwnPropNames = Object.getOwnPropertyNames;
-+var __getProtoOf = Object.getPrototypeOf;
-+var __hasOwnProp = Object.prototype.hasOwnProperty;
- var __esm = (fn, res, err) => function __init() {
-   if (err) throw err[0];
-   try {
-@@ -9,10 +13,33 @@ var __esm = (fn, res, err) => function __init() {
-     throw err = [e], e;
-   }
- };
-+var __commonJS = (cb, mod) => function __require() {
-+  try {
-+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-+  } catch (e) {
-+    throw mod = 0, e;
-+  }
-+};
- var __export = (target, all) => {
-   for (var name in all)
-     __defProp(target, name, { get: all[name], enumerable: true });
- };
-+var __copyProps = (to, from, except, desc) => {
-+  if (from && typeof from === "object" || typeof from === "function") {
-+    for (let key of __getOwnPropNames(from))
-+      if (!__hasOwnProp.call(to, key) && key !== except)
-+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-+  }
-+  return to;
-+};
-+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-+  // If the importer is in node compatibility mode or this is not an ESM
-+  // file that has been converted to a CommonJS file using a Babel-
-+  // compatible transform (i.e. "__esModule" has not been set), then set
-+  // "default" to the CommonJS "module.exports" for node compatibility.
-+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-+  mod
-+));
- 
- // node_modules/@deepseek-ai/cosmokit/lib/index.js
- function isNullable(value) {
-@@ -14332,9 +14359,1166 @@ var init_composition = __esm({
-   }
- });
- 
-+// node_modules/semver/internal/lrucache.js
-+var require_lrucache = __commonJS({
-+  "node_modules/semver/internal/lrucache.js"(exports, module) {
-+    "use strict";
-+    var LRUCache = class {
-+      constructor() {
-+        this.max = 1e3;
-+        this.map = /* @__PURE__ */ new Map();
-+      }
-+      get(key) {
-+        const value = this.map.get(key);
-+        if (value === void 0) {
-+          return void 0;
-+        } else {
-+          this.map.delete(key);
-+          this.map.set(key, value);
-+          return value;
-+        }
-+      }
-+      delete(key) {
-+        return this.map.delete(key);
-+      }
-+      set(key, value) {
-+        const deleted = this.delete(key);
-+        if (!deleted && value !== void 0) {
-+          if (this.map.size >= this.max) {
-+            const firstKey = this.map.keys().next().value;
-+            this.delete(firstKey);
-+          }
-+          this.map.set(key, value);
-+        }
-+        return this;
-+      }
-+    };
-+    module.exports = LRUCache;
-+  }
-+});
-+
-+// node_modules/semver/internal/parse-options.js
-+var require_parse_options = __commonJS({
-+  "node_modules/semver/internal/parse-options.js"(exports, module) {
-+    "use strict";
-+    var looseOption = Object.freeze({ loose: true });
-+    var emptyOpts = Object.freeze({});
-+    var parseOptions = (options) => {
-+      if (!options) {
-+        return emptyOpts;
-+      }
-+      if (typeof options !== "object") {
-+        return looseOption;
-+      }
-+      return options;
-+    };
-+    module.exports = parseOptions;
-+  }
-+});
-+
-+// node_modules/semver/internal/constants.js
-+var require_constants = __commonJS({
-+  "node_modules/semver/internal/constants.js"(exports, module) {
-+    "use strict";
-+    var SEMVER_SPEC_VERSION = "2.0.0";
-+    var MAX_LENGTH = 256;
-+    var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || /* istanbul ignore next */
-+    9007199254740991;
-+    var MAX_SAFE_COMPONENT_LENGTH = 16;
-+    var MAX_SAFE_BUILD_LENGTH = MAX_LENGTH - 6;
-+    var RELEASE_TYPES = [
-+      "major",
-+      "premajor",
-+      "minor",
-+      "preminor",
-+      "patch",
-+      "prepatch",
-+      "prerelease"
-+    ];
-+    module.exports = {
-+      MAX_LENGTH,
-+      MAX_SAFE_COMPONENT_LENGTH,
-+      MAX_SAFE_BUILD_LENGTH,
-+      MAX_SAFE_INTEGER,
-+      RELEASE_TYPES,
-+      SEMVER_SPEC_VERSION,
-+      FLAG_INCLUDE_PRERELEASE: 1,
-+      FLAG_LOOSE: 2
-+    };
-+  }
-+});
-+
-+// node_modules/semver/internal/debug.js
-+var require_debug = __commonJS({
-+  "node_modules/semver/internal/debug.js"(exports, module) {
-+    "use strict";
-+    var debug = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {
-+    };
-+    module.exports = debug;
-+  }
-+});
-+
-+// node_modules/semver/internal/re.js
-+var require_re = __commonJS({
-+  "node_modules/semver/internal/re.js"(exports, module) {
-+    "use strict";
-+    var {
-+      MAX_SAFE_COMPONENT_LENGTH,
-+      MAX_SAFE_BUILD_LENGTH,
-+     
-```
-
-**File**: `crates/engine/extension-host/package-lock.json` (modified, +22/-0)
-```diff
-@@ -16,9 +16,11 @@
-         "@modelcontextprotocol/client": "2.4.0",
-         "@types/js-yaml": "4.0.9",
-         "@types/node": "22.20.4",
-+        "@types/semver": "7.8.0",
-         "acorn": "8.18.0",
-         "esbuild": "0.28.1",
-         "js-yaml": "4.3.2",
-+        "semver": "7.8.5",
-         "typescript": "5.9.3"
-       },
-       "engines": {
-@@ -578,6 +580,13 @@
-         "undici-types": "~6.21.0"
-       }
-     },
-+    "node_modules/@types/semver": {
-+      "version": "7.8.0",
-+      "resolved": "https://registry.npmjs.org/@types/semver/-/semver-7.8.0.tgz",
-+      "integrity": "sha512-1mAINjtQCXXeLkJ9ehXkwOcBpqtLxiVtKhpUf83DdRNdQKV0iXZpaHYqRr7nj+wvxuJzoAmAwXI+sCNMv1CzLQ==",
-+      "dev": true,
-+      "license": "MIT"
-+    },
-     "node_modules/acorn": {
-       "version": "8.18.0",
-       "resolved": "https://registry.npmjs.org/acorn/-/acorn-8.18.0.tgz",
-@@ -738,6 +747,19 @@
-         "node": ">=16.20.0"
-       }
-     },
-+    "node_modules/semver": {
-+      "version": "7.8.5",
-+      "resolved": "https://registry.npmjs.org/semver/-/semver-7.8.5.tgz",
-+      "integrity": "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==",
-+      "dev": true,
-+      "license": "ISC",
-+      "bin": {
-+        "semver": "bin/semver.js"
-+      },
-+      "engines": {
-+        "node": ">=10"
-+      }
-+    },
-     "node_modules/shebang-command": {
-       "version": "2.0.0",
-       "resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz",
-```
-
-**File**: `crates/engine/extension-host/package.json` (modified, +2/-0)
-```diff
-@@ -24,9 +24,11 @@
-     "@modelcontextprotocol/client": "2.4.0",
-     "@types/js-yaml": "4.0.9",
-     "@types/node": "22.20.4",
-+    "@types/semver": "7.8.0",
-     "acorn": "8.18.0",
-     "esbuild": "0.28.1",
-     "js-yaml": "4.3.2",
-+    "semver": "7.8.5",
-     "typescript": "5.9.3"
-   }
- }
-```
-
-**File**: `crates/engine/extension-host/src/dsh/review-main.ts` (modified, +12/-2)
-```diff
-@@ -1,6 +1,8 @@
- /** Detached trusted offline reviewer. No HostRoot, plugin import or expression evaluation. */
- import { reviewComposition, type ReviewedComposition } from './composition.ts'
- import {reviewAgentPresets, type PresetReviewInput} from './agent-presets.ts'
-+import satisfies from 'semver/functions/satisfies.js'
-+import validRange from 'semver/ranges/valid.js'
- 
- try {
-   let bytes = 0
-@@ -11,8 +13,16 @@ try {
-     if (bytes > 8 * 1024 * 1024) throw new Error('review request exceeds 8 MiB')
-     chunks.push(part)
-   }
--  const input = JSON.parse(Buffer.concat(chunks).toString('utf8')) as ReviewedComposition
--  const output = JSON.stringify((input as any).kind === 'agent-presets' ? await reviewAgentPresets(input as unknown as PresetReviewInput) : reviewComposition(input))
-+  const input = JSON.parse(Buffer.concat(chunks).toString('utf8')) as ReviewedComposition & { compatibility?: { range: string; version: string } }
-+  const result = (input as any).kind === 'agent-presets' ? await reviewAgentPresets(input as unknown as PresetReviewInput) : reviewComposition(input)
-+  let compatibility: string | undefined
-+  if (input.compatibility !== undefined) {
-+    const { range, version } = input.compatibility
-+    if (typeof range !== 'string' || typeof version !== 'string') throw new Error('invalid compatibility request')
-+    const options = { includePrerelease: true }
-+    compatibility = range.trim() === '' || validRange(range, options) === null ? 'invalid' : satisfies(version, range, options) ? 'match' : 'mismatch'
-+  }
-+  const output = JSON.stringify(compatibility === undefined ? result : { ...result, compatibility })
-   if (Buffer.byteLength(output) > 8 * 1024 * 1024) throw new Error('review response exceeds 8 MiB')
-   process.stdout.write(output)
- } catch {
-```
-
-**File**: `crates/engine/src/tools/subagent/mod.rs` (modified, +22/-34)
-```diff
-@@ -3939,13 +3939,9 @@ struct CoordinationProcessLock {
-     thread: Option<std::thread::JoinHandle<()>>,
- }
- 
--/// Marker prefix for a coordination-lock failure whose holder is THIS
--/// process: an engine swap (model/provider switch) constructs the new
--/// engine's manager while the old engine still holds the flock on its own
--/// fd, and flock treats a second descriptor in the same process as a
--/// conflict. This is a transient handover that self-heals on the next
--/// projection retry (#5036) — UI surfaces must not present it as "another
--/// Codewhale process" (owner report, 2026-08-04).
-+/// Marker prefix retained for presentation compatibility with same-process
-+/// handover notes from earlier hosts. It does not control lock acquisition
-+/// or retry.
- pub const COORDINATION_SAME_PROCESS_HANDOVER: &str =
-     "handing delegated coordination between engines in this process";
- 
-@@ -4036,23 +4032,10 @@ impl CoordinationProcessLock {
-             }),
-             Ok(Err(error)) => {
-                 let _ = thread.join();
--                let holder_pid = std::fs::read_to_string(&lock_path)
--                    .ok()
--                    .and_then(|contents| contents.trim().parse::<u32>().ok());
--                if holder_pid == Some(std::process::id()) {
--                    Err(anyhow!(
--                        "{COORDINATION_SAME_PROCESS_HANDOVER} for {}: {error}",
--                        state_root.display()
--                    ))
--                } else {
--                    Err(anyhow!(
--                        "another Codewhale process{} owns delegated coordination for {}: {error}",
--                        holder_pid
--                            .map(|pid| format!(" (pid {pid})"))
--                            .unwrap_or_default(),
--                        state_root.display()
--                    ))
--                }
-+                Err(anyhow!(
-+                    "delegated coordination lock is unavailable for {}: {error}; close any other running or suspended Codewhale session using this workspace, then restart this Runtime if admission was refused",
-+                    state_root.display()
-+                ))
-             }
-             Err(error) => {
-                 drop(release_tx);
-@@ -4166,7 +4149,7 @@ pub struct SubAgentManager {
-     /// capture the most recent checkpoint.
-     last_persist_at: Option<Instant>,
-     persist_pending: bool,
--    /// #3803: last time `cleanup` ran. The sidebar refresh (`Op::ListSubAgents`)
-+    /// #3803: last time a cleanup attempt finished. The sidebar refresh (`Op::ListSubAgents`)
-     /// renders from a read-only `list()` snapshot and only runs the
-     /// write-locked `cleanup` on a bounded cadence, so a UI refresh storm during
-     /// a sub-agent fanout no longer contends for the write lock on every request.
-@@ -11338,15 +11321,20 @@ impl SubAgentManager {
-     /// given duration. Returns the number of running agents auto-cancelled
-     /// during this pass.
-     pub fn cleanup(&mut self, max_age: Duration) -> Result<usize> {
--        self.with_store_transaction(|held| held.cleanup_inner(None, max_age))
-+        let result = self.with_store_transaction(|held| held.cleanup_inner(None, max_age));
-+        self.last_cleanup_at = Some(Instant::now());
-+        result
-     }
- 
-     pub fn cleanup_for_session(
-         &mut self,
-         active_session_id: &str,
-         max_age: Duration,
-     ) -> Result<usize> {
--        self.with_store_transaction(|held| held.cleanup_inner(Some(active_session_id), max_age))
-+        let result = self
-+            .with_store_transaction(|held| held.cleanup_inner(Some(active_session_id), max_age));
-+        self.last_cleanup_at = Some(Instant::now());
-+        result
-     }
- 
-     fn cleanup_inner(
-@@ -11592,18 +11580,18 @@ impl SubAgentManager {
-             self.pending_handle_evictions
-                 .push((agent_id, owner_session_id));
-         }
--        self.last_cleanup_at = Some(Instant::now());
-         Ok(auto_cancelled)
-     }
- 
--    /// #3803: whether enough time has elapsed since the last `cleanup` that the
--    /// next sidebar refresh should run the write-locked cleanup again. Every
--    /// other refresh renders from the read-only `list()` snapshot, so a UI
--    /// refresh storm during a fanout does not take the write lock per request.
-+    /// #3803: whether the next sidebar refresh should attempt cleanup.
-+    /// Read-only managers without a process lock only render their refusal.
-+    /// Other managers use the last attempt's interval to bound cleanup locking.
-     #[must_use]
-     pub fn cleanup_due(&self, min_interval: Duration) -> bool {
--        self.last_cleanup_at
--            .is_none_or(|last| last.elapsed() >= min_interval)
-+        (!self.coordination_snapshot_read_only || self.holds_coordination_process_lock())
-+            && self
-+                .last_cleanup_at
-+                .is_none_or(|last| last.elapsed() >= min_interval)
-     }
- 
-     #[must_use]
-```
-
-**File**: `crates/plugins/src/install/dsh.rs` (modified, +41/-15)
-```diff
-@@ -563,8 +563,8 @@ fn target_dsh_version() -> Result<semver::Version> {
-     })
- }
- 
--fn admit_host_compatibility(manifest: &Value) -> Result<()> {
--    if let Some(declared) = manifest
-+fn admit_host_compatibility(manifest: &Value) -> Result<Option<&str>> {
-+    let dsh_range = if let Some(declared) = manifest
-         .get("engines")
-         .and_then(|engines| engines.get("dsh"))
-     {
-@@ -573,21 +573,17 @@ fn admit_host_compatibility(manifest: &Value) -> Result<()> {
-                 "incompatible-version: `engines.dsh` must be a string semver range; author the supported DSH range or remove the field.",
-             );
-         };
--        let requirement = semver::VersionReq::parse(range).map_err(|_| {
--            anyhow::Error::msg(format!(
--                "incompatible-version: `engines.dsh` value `{}` is not a valid semver range.",
--                refusal_text(range)
--            ))
--        })?;
--        let target = target_dsh_version()?;
-         require(
--            requirement.matches(&target),
-+            !range.trim().is_empty(),
-             &format!(
--                "incompatible-version: this bundle requires DSH `{}`, but this Codewhale host targets DSH {target}; import a bundle built for that host or update the host.",
-+                "incompatible-version: `engines.dsh` value `{}` is not a valid semver range.",
-                 refusal_text(range)
-             ),
-         )?;
--    }
-+        Some(range)
-+    } else {
-+        None
-+    };
-     if let Some(declared) = manifest
-         .get("dsh")
-         .and_then(|dsh| dsh.get("bundle"))
-@@ -631,7 +627,7 @@ fn admit_host_compatibility(manifest: &Value) -> Result<()> {
-             ),
-         )?;
-     }
--    Ok(())
-+    Ok(dsh_range)
- }
- 
- fn declares_client(manifest: &Value) -> bool {
-@@ -654,7 +650,7 @@ pub fn load_bundle(package: &Package) -> Result<LoadedBundle> {
-         matches!(bundle, Some(Value::Map(_))),
-         "Not a DSH bundle package: package.json lacks `dsh.bundle.patch`.",
-     )?;
--    admit_host_compatibility(&manifest)?;
-+    let dsh_range = admit_host_compatibility(&manifest)?;
-     let mut notes = Vec::new();
-     if declares_client(&manifest) {
-         notes.push(
-@@ -714,7 +710,37 @@ pub fn load_bundle(package: &Package) -> Result<LoadedBundle> {
-         });
-     }
-     let composition = json!({"version":1,"layers":raw_layers,"modules":[],"files":{}});
--    let reviewed = crate::composition_review::review(&composition).map_err(anyhow::Error::msg)?;
-+    let mut review_input = composition.clone();
-+    let target = if let Some(range) = dsh_range {
-+        let target = target_dsh_version()?;
-+        review_input["compatibility"] = json!({"range":range,"version":target.to_string()});
-+        Some(target)
-+    } else {
-+        None
-+    };
-+    let reviewed = crate::composition_review::review(&review_input).map_err(anyhow::Error::msg)?;
-+    if let (Some(range), Some(target)) = (dsh_range, target) {
-+        match reviewed.get("compatibility").and_then(Json::as_str) {
-+            Some("match") => {}
-+            Some("invalid") => {
-+                return refuse(format!(
-+                    "incompatible-version: `engines.dsh` value `{}` is not a valid semver range.",
-+                    refusal_text(range)
-+                ));
-+            }
-+            Some("mismatch") => {
-+                return refuse(format!(
-+                    "incompatible-version: this bundle requires DSH `{}`, but this Codewhale host targets DSH {target}; import a bundle built for that host or update the host.",
-+                    refusal_text(range)
-+                ));
-+            }
-+            _ => {
-+                return refuse(
-+                    "incompatible-version: compatibility reviewer returned no valid decision.",
-+                );
-+            }
-+        }
-+    }
-     let entries = reviewed
-         .get("entries")
-         .and_then(Json::as_array)
-```
-
----
-
-### Incident Patch 3: `b175b1f9` (2026-11-07)
-**Commit Message**: fix(engine): keep injected-route config when preflight fails [skip ci]
-
-Fixes the remaining hosted test failures on 549ff01ebb (CI 42381817495).
-
-Runtime: a host-provided route with no preflighted client took its config
-with mem::take before the optional credential preflight, so a failed
-preflight left the route with a default config and lost its session
-isolation and approval deadlines. It now clones, so the configured route
-survives a failure. The existing privacy/timeout assertions are unchanged.
-
-Exports: the four capabilities the runtime already serializes
-(thread_scoped_git_writes, thread_scoped_snapshots, worktrees,
-job_operations) are restored to the committed JSON schema, the TypeScript
-declarations and the runtime SDK copy; the JSON matches the Rust-generated
-contract.
-
-Existing expectations realigned with shipped behavior: `present` is an eager
-core tool (hook category stays other) in the five tool-surface tests; Native
-extension entries accept .cjs and .cts; account logout is account-only and
-keeps provider keys (two TUI tests renamed to say so). The router HTTP-status
-unit test disables retry because it mounts a single response; runtime retries
-are unchanged. THIRD_PAR
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -275,6 +275,10 @@ until the matching tag, packages, checksums, and release assets exist.
+@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
  
  ### Fixed
  
-+- **Host-provided model clients:** keep configured session isolation and
-+  approval deadlines when optional credential preflight fails.
-+- **Runtime SDK exports:** include the existing thread-scoped Git, snapshot,
-+  worktree and job-operation capabilities in the committed schema and types.
- - **Plugin enablement revalidates its review:** enabling rechecks the staged
-   snapshot and, under the existing state lock, refuses a changed review
-   generation or trust receipt. The macOS stale-enable check passed (1/1);
++- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
++- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
++- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
++- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
++- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
++- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
+ - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
 ```
 
-**File**: `THIRD_PARTY_NOTICES.md` (modified, +21/-0)
+**File**: `crates/app-server/src/acp_server.rs` (modified, +1/-1)
 ```diff
-@@ -933,6 +933,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- ```
+@@ -481,7 +481,7 @@ impl AcpServer {
+         let sessions =
+             codewhale_engine::session_manager::SessionManager::new(self.sessions_dir.clone())
+                 .ok()
+-                .and_then(|manager| manager.list_sessions().ok())
++                .map(|manager| manager.list_sessions_lenient())
+                 .unwrap_or_default();
+         let sessions: Vec<Value> = sessions
+             .into_iter()
+```
+
+**File**: `crates/engine/src/client/anthropic.rs` (modified, +35/-7)
+```diff
+@@ -34,14 +34,19 @@ use codewhale_models::tool_projection::{
+     RouteToolProjection, ToolSchemaProjection, description_with_constraint_note, forced_tool_name,
+     project_tool_schema,
+ };
+-use codewhale_models::{ContentBlock, MessageRequest, MessageResponse, StreamEvent, Usage};
++use codewhale_models::{
++    ContentBlock, ContentBlockStart, MessageRequest, MessageResponse, StreamEvent, Usage,
++};
+ use codewhale_runtime::config::wire_model_for_provider_route;
+ use codewhale_runtime::logging;
  
-+### `semver` 7.8.5
-+
-+```text
-+The ISC License
-+
-+Copyright (c) Isaac Z. Schlueter and Contributors
-+
-+Permission to use, copy, modify, and/or distribute this software for any
-+purpose with or without fee is hereby granted, provided that the above
-+copyright notice and this permission notice appear in all copies.
-+
-+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
-+IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+
-+```
-+
- ## Optional compiled extension host
+ use super::CodewhaleClient;
+ use super::prepared::WireDialect;
+ use super::role_placement::{RolePlacement, role_placement};
+-use super::wire::{extract_sse_data_value, next_sse_line, push_sse_event_data};
++use super::wire::{
++    extract_sse_data_value, from_api_tool_name, next_sse_line, push_sse_event_data,
++    to_api_tool_name,
++};
  
- Node remains the default extension-host runtime. An explicitly installed
+ /// Maximum `cache_control` breakpoints Anthropic accepts per request.
+ const MAX_CACHE_BREAKPOINTS: usize = 4;
+@@ -120,7 +125,7 @@ impl CodewhaleClient {
+                         constraint_note,
+                     } => {
+                         let mut value = json!({
+-                            "name": tool.name,
++                            "name": to_api_tool_name(&tool.name),
+                             "description": description_with_constraint_note(
+                                 &tool.description,
+                                 constraint_note,
+@@ -137,7 +142,7 @@ impl CodewhaleClient {
+                     }
+                     ToolSchemaProjection::Omitted { .. } => {
+                         omitted_logical_names.push(tool.name.clone());
+-                        omitted_tool_names.push(tool.name.clone());
++                        omitted_tool_names.push(to_api_tool_name(&tool.name));
+                     }
+                 }
+             }
+@@ -520,12 +525,26 @@ fn discard_provider_execution_ids(value: &mut Value) {
+     }
+ }
+ 
++fn decode_tool_use_names(value: &mut Value) {
++    let Some(content) = value.get_mut("content").and_then(Value::as_array_mut) else {
++        return;
++    };
++    for block in content.iter_mut() {
++        if block.get("type").and_then(Value::as_str) == Some("tool_use")
++            && let Some(name) = block.get("name").and_then(Value::as_str)
++        {
++            block["name"] = json!(from_api_tool_name(name));
++        }
++    }
++}
++
+ fn decode_anthropic_message(mut value: Value) -> Result<MessageResponse> {
+     discard_provider_execution_ids(&mut value);
+     if let Some(usage) = value.get_mut("usage") {
+         *usage = json!(parse_anthropic_usage(usage));
+     }
+     normalize_redacted_thinking_blocks(&mut value);
++    decode_tool_use_names(&mut value);
+     serde_json::from_value(value).context("Failed to decode Anthropic Messages response")
+ }
+ 
+@@ -777,7 +796,7 @@ fn anthropic_tool_choice(tool_choice: &Value, model: &str) -> Value {
+         Some("auto") => json!({ "type": "auto" }),
+         Some("none") => json!({ "type": "none" }),
+         Some("any" | "required") => json!({ "type": "any" }),
+-        Some(name) => json!({ "type": "tool", "name": name }),
++        Some(name) => json!({ "type": "tool", "name": to_api_tool_name(name) }),
+         None => tool_choice.clone(),
+     }
+ }
+@@ -925,7 +944,7 @@ fn content_block_to_anthropic(block: &ContentBlock) -> Option<Value> {
+         } => Some(json!({
+             "type": "tool_use",
+             "id": id,
+-            "name": name,
++            "name": to_api_tool_name(name),
+             "input": input,
+         })),
+         ContentBlock::ToolResult {
+@@ -1084,7 +1103,16 @@ fn convert_anthropic_sse_data(data: &str) -> Option<Result<StreamEvent>> {
+         // Local-only receipt: the legacy path ignored it (not a provider
+         // type), so it stays ignored rather than decoding.
+         Ok(StreamEvent::ToolProjectionWarning { .. }) => None,
+-        Ok(event) => Some(Ok(event)),
++        Ok(mut event) => {
++            if let StreamEvent::ContentBlockStart {
++                content_block: ContentBlockStart::ToolUse { name, .. },
++                ..
++            } = &mut event
++            {
++                *name = from_api_tool_name(name);
++            }
++            Some(Ok(event))
++        }
+         Err(error) => {
+             // Cold path, reached only when direct decode fails: invalid JSON
+             // and unknown types keep their exact legacy outcomes.
 ```
 
-**File**: `crates/app-server-protocol/schema/json/runtime.schema.json` (modified, +23/-0)
+**File**: `crates/engine/src/core/engine.rs` (modified, +6/-0)
 ```diff
-@@ -289,6 +289,25 @@
-           "type": "boolean",
-           "default": false
-         },
-+        "thread_scoped_git_writes": {
-+          "type": "boolean",
-+          "description": "Git stage, unstage, discard, commit, push and branch accept\n`?thread_id=` and act on that thread's workspace.",
-+          "default": false
-+        },
-+        "thread_scoped_snapshots": {
-+          "type": "boolean",
-+          "description": "`GET /v1/snapshots` and `POST /v1/snapshots/{id}/restore` accept\n`?thread_id=` and act on that thread's workspace.",
-+          "default": false
-+        },
-+        "worktrees": {
-+          "type": "boolean",
-+          "description": "`GET`/`POST /v1/worktrees` and `POST /v1/worktrees/remove`.",
-+          "default": false
-+        },
-+        "job_operations": {
-+          "type": "boolean",
-+          "default": false
-+        },
-         "thread_shell_consent": {
-           "type": "boolean",
-           "description": "Explicit per-thread shell opt-in is checked against loaded policy and\ncannot broaden a conversation while it has an active turn.",
-@@ -454,6 +473,10 @@
-         "thread_idle_precondition",
-         "thread_patch_undo_turn_id",
-         "thread_scoped_reads",
-+        "thread_scoped_git_writes",
-+        "thread_scoped_snapshots",
-+        "worktrees",
-+        "job_operations",
-         "thread_shell_consent",
-         "turns",
-         "turn_operation_idempotency",
+@@ -6768,6 +6768,12 @@ impl Engine {
+         review: Option<codewhale_protocol::op::ReviewOperation>,
+     ) -> SendMessageOutcome {
+         let setup_timing = codewhale_runtime::logging::PhaseTimer::start("turn_setup");
++        self.turn_heartbeat.enter(
++            turn_heartbeat::TurnPhase::Preparing,
++            Some("starting the turn".to_string()),
++            Some(turn_heartbeat::PREPARING_PHASE_BOUND),
++        );
++        let _pre_turn_idle = turn_heartbeat::IdleOnDrop(Arc::clone(&self.turn_heartbeat));
+         let is_review = review.is_some();
+         let TurnSpec {
+             profile_constitution,
 ```
 
-**File**: `crates/app-server-protocol/schema/typescript/runtime.d.ts` (modified, +4/-0)
+**File**: `crates/engine/src/cost_status.rs` (modified, +1/-1)
 ```diff
-@@ -62,6 +62,10 @@ export type RuntimeCapabilities = {
-   thread_idle_precondition: boolean
-   thread_patch_undo_turn_id: boolean
-   thread_scoped_reads: boolean
-+  thread_scoped_git_writes: boolean
-+  thread_scoped_snapshots: boolean
-+  worktrees: boolean
-+  job_operations: boolean
-   thread_shell_consent: boolean
-   turns: boolean
-   turn_operation_idempotency: boolean
+@@ -1272,7 +1272,7 @@ fn with_pending_state_mut<R>(f: impl FnOnce(&mut ScopedPendingBackgroundCost) ->
+ /// This journal is deliberately separate from the TUI pending-money pool:
+ /// taking one runtime owner's records cannot steal or reset the foreground
+ /// session's `/cost` state.
+-const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 64;
++const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 256;
+ 
+ #[derive(Default)]
+ struct OwnerRuntimeUsageJournal {
 ```
 
-**File**: `crates/engine/src/core/engine.rs` (modified, +1/-1)
+**File**: `crates/engine/src/session_manager.rs` (modified, +23/-0)
 ```diff
-@@ -2056,7 +2056,7 @@ impl Engine {
-         let concrete_client = match route.take_preflighted_client() {
-             Some(client) => Ok(client),
-             None => {
--                let config = std::mem::take(&mut route.config);
-+                let config = route.config.clone();
-                 match CodewhaleClient::capture_candidate_preflight(config, &route.candidate).await {
-                     Ok((config, captured)) => {
-                         route.config = config;
+@@ -5888,6 +5888,29 @@ impl SessionManager {
+             .collect())
+     }
+ 
++    pub fn list_sessions_lenient(&self) -> Vec<SessionMetadata> {
++        let catalog = match self.scan_session_records() {
++            Ok(catalog) => catalog,
++            Err(error) => {
++                tracing::warn!(%error, "session listing failed; showing no sessions");
++                return Vec::new();
++            }
++        };
++        if let Some(warning) = catalog.warning() {
++            tracing::warn!(%warning, "session listing is incomplete; showing the readable ones");
++        }
++        let mut sessions: Vec<_> = catalog
++            .records
++            .into_iter()
++            .map(|(_, mut metadata)| {
++                self.apply_late_usage_to_metadata(&mut metadata);
++                metadata
++            })
++            .collect();
++        sessions.sort_by_key(|session| std::cmp::Reverse(session.updated_at));
++        sessions
++    }
++
+     pub fn list_sessions_with_recovery(
+         &self,
+     ) -> std::io::Result<(
 ```
 
-**File**: `crates/engine/src/core/engine/tests/test_cases_10.rs` (modified, +2/-1)
+**File**: `crates/runtime/src/runtime_control.rs` (modified, +17/-14)
 ```diff
-@@ -1,6 +1,6 @@
- #[test]
- fn default_active_contract_keeps_discovery_and_core_tools_eager() {
--    const EXPECTED_NATIVE: [&str; 15] = [
-+    const EXPECTED_NATIVE: [&str; 16] = [
-         "read",
-         "write",
-         "edit",
-@@ -13,6 +13,7 @@ fn default_active_contract_keeps_discovery_and_core_tools_eager() {
-         "get_goal",
-         "update_goal",
-         "task_shell_wait",
-+        "present",
-         "load_skill",
-         "context_archive_get",
-         "context_archive_search",
+@@ -20,20 +20,23 @@ where
+     static SLOTS: std::sync::OnceLock<std::sync::Arc<tokio::sync::Semaphore>> =
+         std::sync::OnceLock::new();
+     const PERMIT_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
+-    let permit = tokio::time::timeout(
+-        PERMIT_WAIT,
+-        SLOTS
+-            .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
+-            .clone()
+-            .acquire_owned(),
+-    )
+-    .await
+-    .map_err(|_| {
+-        anyhow::anyhow!(
+-            "blocking work is queued behind earlier jobs that have not finished within {}s",
+-            PERMIT_WAIT.as_secs()
+-        )
+-    })??;
++    let slots = SLOTS
++        .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
++        .clone();
++    if slots.available_permits() == 0 {
++        tracing::warn!(
++            target: "turn",
++            "owner_work is waiting: all 4 blocking slots are held by earlier jobs"
++        );
++    }
++    let permit = tokio::time::timeout(PERMIT_WAIT, slots.acquire_owned())
++        .await
++        .map_err(|_| {
++            anyhow::anyhow!(
++                "blocking work is queued behind earlier jobs that have not finished within {}s",
++                PERMIT_WAIT.as_secs()
++            )
++        })??;
+     tokio::task::spawn_blocking(move || {
+         #[cfg(any(test, feature = "test-support"))]
+         let _membership = crate::test_support::join_env_scope(env_ticket);
 ```
 
-**File**: `crates/engine/src/core/engine/tool_catalog/tests.rs` (modified, +3/-0)
+**File**: `crates/tui/CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -113,6 +113,7 @@ fn first_turn_surface_is_stable_across_plan_work_and_operate() {
-             "get_goal",
-             "update_goal",
-             "task_shell_wait",
-+            "present",
-             "load_skill",
-             "context_archive_get",
-             "context_archive_search"
-@@ -127,6 +128,7 @@ fn first_turn_surface_is_stable_across_plan_work_and_operate() {
-         "edit",
-         "file_search",
-         "load_skill",
-+        "present",
-         "read",
-         "task_shell_wait",
-         "todo_write",
-@@ -152,6 +154,7 @@ fn first_turn_surface_is_stable_across_plan_work_and_operate() {
-             "get_goal",
-             "update_goal",
-             "task_shell_wait",
-+            "present",
-             "Git",
-             "Run",
-             "tasks",
+@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
++- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
++- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
++- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
++- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
++- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
+ - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
 ```
 
-**File**: `crates/engine/src/extension_host/tests.rs` (modified, +1/-1)
+---
+
+### Incident Patch 2: `5bc1dff7` (2026-11-08)
+**Commit Message**: fix(cost): late background usage also drops settled "outcome unknown" labels
+
+Refs CW-7882 (item 1). The previous commit made the cost labels follow
+the unresolved sources when a usage record is projected, but late
+background usage takes another path: SessionCostSnapshot's
+absorb_late_background_cost and the TUI's absorb_pending_background_cost
+reconcile resolved sources out of missing_usage_sources and add the batch's
+own reasons, without pruning. When a late receipt settled the last source
+behind "request outcome unknown" (or "provider omitted usage"), the label
+stayed while another turn was unpriced for a different reason.
+
+The prune now lives in one helper,
+cost_status::prune_settled_missing_reasons, called from all three places:
+the record projection (replacing its inline block), the engine's late
+absorb and the TUI's late absorb. The rule is unchanged: each label stays
+only while an unresolved, non-running source carries it or the source map
+has overflowed, and "request in progress" only while an in-flight source
+is still unresolved.
+
+Not covered: a turn audit can carry a reason label of its own, but no
+production audit uses these two reasons (only missing-source records do),
+
+**File**: `crates/engine/src/cost_status.rs` (modified, +34/-0)
 ```diff
-@@ -1956,7 +1956,7 @@ fn native_entry_rule_fails_validation_when_the_host_is_enabled() {
-             let errors = native_errors(&registry, name);
-             assert_eq!(errors.len(), 1, "{name}: {errors:?}");
-             assert!(
--                errors[0].contains(".mjs, .js or .mts"),
-+                errors[0].contains(".mjs, .js, .cjs, .mts or .cts"),
-                 "{name}: {errors:?}"
-             );
+@@ -3883,6 +3883,40 @@ pub fn reconcile_missing_usage_sources(
+     }
+ }
+ 
++pub fn prune_settled_missing_reasons(
++    missing: &BTreeMap<String, MissingUsageCoverage>,
++    overflowed: bool,
++    in_flight: &mut BTreeSet<String>,
++    unpriced: u32,
++    cny_unpriced: u32,
++    reasons: &mut BTreeSet<String>,
++    cny_reasons: &mut BTreeSet<String>,
++) {
++    in_flight.retain(|source| missing.contains_key(source));
++    for reason in [
++        RuntimeUsageMissingReason::RequestOutcomeUnknown,
++        RuntimeUsageMissingReason::SuccessWithoutUsage,
++    ] {
++        let unresolved = overflowed
++            || missing
++                .iter()
++                .any(|(source, coverage)| coverage.reason == reason && !in_flight.contains(source));
++        if unpriced == 0 || !unresolved {
++            reasons.remove(reason.label());
++        }
++        if cny_unpriced == 0 || !unresolved {
++            cny_reasons.remove(reason.label());
++        }
++    }
++    let in_progress = crate::pricing::UnpricedReason::RequestInProgress.label();
++    if unpriced == 0 || in_flight.is_empty() {
++        reasons.remove(in_progress);
++    }
++    if cny_unpriced == 0 || in_flight.is_empty() {
++        cny_reasons.remove(in_progress);
++    }
++}
++
+ /// Apply bounded unresolved metadata to an existing cost projection. The
+ /// returned batch omits exact identities whose missing slots overflowed; a
+ /// real receipt for such an id can still settle once, but cannot erase the gap.
+```
+
+**File**: `crates/engine/src/session_manager.rs` (modified, +18/-26)
+```diff
+@@ -1577,32 +1577,15 @@ impl SessionCostSnapshot {
+                 self.in_flight_usage_sources.remove(&key);
+             }
          }
+-        let missing_sources = &self.missing_usage_sources;
+-        self.in_flight_usage_sources
+-            .retain(|source| missing_sources.contains_key(source));
+-        let in_flight = &self.in_flight_usage_sources;
+-        for reason in [
+-            crate::cost_status::RuntimeUsageMissingReason::RequestOutcomeUnknown,
+-            crate::cost_status::RuntimeUsageMissingReason::SuccessWithoutUsage,
+-        ] {
+-            let unresolved = self.missing_usage_overflowed
+-                || missing_sources.iter().any(|(source, missing)| {
+-                    missing.reason == reason && !in_flight.contains(source)
+-                });
+-            if self.unpriced_turns == 0 || !unresolved {
+-                self.unpriced_reasons.remove(reason.label());
+-            }
+-            if self.cny_unpriced_turns == 0 || !unresolved {
+-                self.cny_unpriced_reasons.remove(reason.label());
+-            }
+-        }
+-        let in_progress = crate::pricing::UnpricedReason::RequestInProgress.label();
+-        if self.unpriced_turns == 0 || in_flight.is_empty() {
+-            self.unpriced_reasons.remove(in_progress);
+-        }
+-        if self.cny_unpriced_turns == 0 || in_flight.is_empty() {
+-            self.cny_unpriced_reasons.remove(in_progress);
+-        }
++        crate::cost_status::prune_settled_missing_reasons(
++            &self.missing_usage_sources,
++            self.missing_usage_overflowed,
++            &mut self.in_flight_usage_sources,
++            self.unpriced_turns,
++            self.cny_unpriced_turns,
++            &mut self.unpriced_reasons,
++            &mut self.cny_unpriced_reasons,
++        );
+         self.usage_source_fingerprints.insert(key.clone());
+         self.accounted_usage_sources.insert(key, next);
+         let total = self.total_estimate();
+@@ -1636,6 +1619,15 @@ impl SessionCostSnapshot {
+             .extend(pool.unpriced_reasons.iter().map(ToString::to_string));
+         self.cny_unpriced_reasons
+             .extend(pool.cny_unpriced_reasons.iter().map(ToString::to_string));
++        crate::cost_status::prune_settled_missing_reasons(
++            &self.missing_usage_sources,
++            self.missing_usage_overflowed,
++            &mut self.in_flight_usage_sources,
++            self.unpriced_turns,
++            self.cny_unpriced_turns,
++            &mut self.unpriced_reasons,
++            &mut self.cny_unpriced_reasons,
++        );
+         self.unpriced_classes
+             .extend(pool.unpriced_classes.iter().map(ToString::to_string));
+         self.pricing_provenances
+```
+
+**File**: `crates/tui/src/tui/app.rs` (modified, +9/-0)
+```diff
+@@ -4698,6 +4698,15 @@ impl App {
+                 }
+             }
+         }
++        codewhale_engine::cost_status::prune_settled_missing_reasons(
++            &self.session.missing_usage_sources,
++            self.session.missing_usage_overflowed,
++            &mut self.session.in_flight_usage_sources,
++            self.session.cost_unpriced_turns,
++            self.session.cost_cny_unpriced_turns,
++            &mut self.session.cost_unpriced_reasons,
++            &mut self.session.cost_cny_unpriced_reasons,
++        );
+         runtime_usage_arrived || source_arrived
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `faa4244b` (2026-11-08)
+**Commit Message**: fix(windows): read live Fleet and diagnostic files with shared access; name the plugin snapshot refusal
+
+Hosted Windows run 42381817495 (549ff01) failed 221 cases. Fleet ledger replay
+and state rebuild, and the CLI metrics diagnostic reader, opened files through
+the protected reader that denies concurrent writers, so a live writer caused
+OS error 32. They now use WorkspaceFile::open_file_shared, which keeps the
+regular-file, link and identity checks. Plugin enablement now reports which
+snapshot check refused (stage root, content identity, final root check) so the
+118 snapshot rejections can be diagnosed from the next hosted run; the refusal
+itself is unchanged. .gitattributes keeps LF on the generated protocol schema
+and SDK exports.
+
+Verified on macOS only: plugins lib 201 passed/0 failed; engine fleet:: 435
+passed/0 failed; cli metrics:: 42 passed/0 failed; cargo fmt clean. The Windows
+effect is unproven until hosted CI runs. The 2 MiB stack-overflow case is not
+addressed.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.gitattributes` (modified, +4/-0)
+```diff
+@@ -80,3 +80,7 @@ scripts/release/*.sh text eol=lf
+ 
+ # Preserve the qualified upstream font license, including its trailing space.
+ web/public/brand/fonts/OFL.txt text eol=lf whitespace=-blank-at-eol
++
++# Generated protocol and SDK exports are compared byte for byte; keep LF on Windows checkouts.
++crates/app-server-protocol/schema/** text eol=lf
++npm/runtime-sdk/generated/** text eol=lf
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -361,6 +361,7 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
+ - **`codewhale exec --add-dir <path>`** (repeatable) and `addDirs` on `POST /v1/threads` let the file tools read and write a sibling directory, a second checkout or a shared scratch root without turning on Full Access.
+```
+
+**File**: `crates/cli/src/metrics.rs` (modified, +1/-1)
+```diff
+@@ -519,7 +519,7 @@ fn open_diagnostic_file(path: &Path) -> io::Result<std::fs::File> {
+         )
+     })?;
+     codewhale_util::files::WorkspaceFile::open_resolved_root(parent, Path::new(name), false)?
+-        .open_file()
++        .open_file_shared()
+ }
+ 
+ fn read_diagnostic_text(path: &Path) -> io::Result<String> {
+```
+
+**File**: `crates/engine/src/fleet/ledger.rs` (modified, +2/-2)
+```diff
+@@ -1681,7 +1681,7 @@ impl FleetLedger {
+         let mut events = Vec::new();
+         let mut replay_epoch = "legacy".to_string();
+         let mut history_compacted = false;
+-        let file = match self.ledger_file.open_file() {
++        let file = match self.ledger_file.open_file_shared() {
+             Ok(file) => file,
+             Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                 return Ok((false, events, history_compacted));
+@@ -1737,7 +1737,7 @@ impl FleetLedger {
+ 
+     fn rebuild_state_unlocked(&self) -> Result<FleetLedgerState> {
+         let mut state = FleetLedgerState::default();
+-        let file = match self.ledger_file.open_file() {
++        let file = match self.ledger_file.open_file_shared() {
+             Ok(file) => file,
+             Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(state),
+             Err(error) => return Err(error).context("Opening Fleet ledger for state rebuild"),
+```
+
+**File**: `crates/plugins/src/registry.rs` (modified, +26/-9)
+```diff
+@@ -803,11 +803,15 @@ impl PluginRegistry {
+                 plugin.trust_status.as_str()
+             ));
+         }
+-        if plugin.staged_root.as_deref().is_none_or(|root| {
+-            !staged_bundle_matches(root, &plugin.content_hash, &plugin.capability_hash)
+-        }) {
++        let snapshot_rejection = match plugin.staged_root.as_deref() {
++            None => Some("no staged snapshot".to_string()),
++            Some(root) => {
++                staged_bundle_rejection(root, &plugin.content_hash, &plugin.capability_hash)
++            }
++        };
++        if let Some(reason) = snapshot_rejection {
+             return Err(format!(
+-                "Plugin bundle `{}` has no verified Codewhale runtime snapshot; review and trust it again before enablement",
++                "Plugin bundle `{}` has no verified Codewhale runtime snapshot ({reason}); review and trust it again before enablement",
+                 plugin.name()
+             ));
+         }
+@@ -1671,12 +1675,25 @@ fn runtime_stage_path(state_path: &Path, id: &PluginId, content_hash: &str) -> P
+         .join(content_hash)
+ }
+ 
+-fn staged_bundle_matches(root: &Path, content_hash: &str, capability_hash: &str) -> bool {
+-    let Ok(finalized) = verify_finalized_stage_root(root, None) else {
+-        return false;
++fn staged_bundle_rejection(
++    root: &Path,
++    content_hash: &str,
++    capability_hash: &str,
++) -> Option<String> {
++    let finalized = match verify_finalized_stage_root(root, None) {
++        Ok(finalized) => finalized,
++        Err(reason) => return Some(format!("stage root: {reason}")),
+     };
+-    staged_bundle_content_matches(root, content_hash, capability_hash)
+-        && verify_finalized_stage_root(root, Some(&finalized)).is_ok()
++    if !staged_bundle_content_matches(root, content_hash, capability_hash) {
++        return Some("content or capability identity differs".to_string());
++    }
++    verify_finalized_stage_root(root, Some(&finalized))
++        .err()
++        .map(|reason| format!("final root check: {reason}"))
++}
++
++fn staged_bundle_matches(root: &Path, content_hash: &str, capability_hash: &str) -> bool {
++    staged_bundle_rejection(root, content_hash, capability_hash).is_none()
+ }
+ 
+ pub(super) fn verify_finalized_stage_root(
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -361,6 +361,7 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
+ - **`codewhale exec --add-dir <path>`** (repeatable) and `addDirs` on `POST /v1/threads` let the file tools read and write a sibling directory, a second checkout or a shared scratch root without turning on Full Access.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2734,47 +2451,32 @@ are unchanged. THIRD_PAR
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): handle Windows cleanup and align kit lock [skip ci]
+## X. engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog
 
 **RULE**:
-When implementing operations in `scripts/release/windows-terminal-clipboard.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `549ff01e`: release): handle Windows cleanup and align kit lock [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d1ffc1c`: engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/release/windows-terminal-clipboard.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  receipt.cleanup = JSON.parse((await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8')).replace(/^\uFEFF/, ''));
-    }
-    if (receipt.result !== 'passed') {
-      try {
-        const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
-          '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
-        { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
-        receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
-        assert.equal(receipt.desktop.fallbackCleanup.terminal, terminal, 'fallback cleanup used the owned Terminal path');
-        assert.equal(receipt.des
+- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
+- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
+- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
+- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
+- **Windows uninstall remove
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  receipt.cleanup = JSON.parse(await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8'));
-      if (desktop.exitCode === null && desktop.signalCode === null) {
-        try {
-          const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
-            '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
-          { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
-          receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
-        } catch (error) {
-          receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
-        }
-    
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `549ff01e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d1ffc1c` are properly handled with clean fallback behavior.

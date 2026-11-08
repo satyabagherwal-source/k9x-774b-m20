@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T21:07:02.798Z",
-    "lastVerified": "2026-11-08T21:07:02.798Z",
+    "lastChecked": "2026-11-08T21:16:46.170Z",
+    "lastVerified": "2026-11-08T21:16:46.170Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T20:45:44.067Z",
+    "lastChecked": "2026-11-08T21:16:46.159Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T20:45:44.067Z"
+    "lastVerified": "2026-11-08T21:16:46.159Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1114,9 +1114,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-08T16:58:44.466Z",
+    "lastChecked": "2026-11-08T21:16:41.227Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-08T16:58:44.466Z"
+    "lastVerified": "2026-11-08T21:16:41.227Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -4167,9 +4167,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-08T01:09:48.659Z",
+    "lastChecked": "2026-11-08T21:16:38.734Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-08T01:09:48.659Z"
+    "lastVerified": "2026-11-08T21:16:38.734Z"
   },
   "llphant-llphant": {
     "name": "LLPhant/LLPhant",
@@ -4476,12 +4476,12 @@
     "officialUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T04:21:44.516Z",
-    "lastVerified": "2026-11-05T04:21:44.516Z",
+    "lastChecked": "2026-11-08T21:16:34.098Z",
+    "lastVerified": "2026-11-08T21:16:34.098Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "18057e3c3bc0bbe6ffd77c7ef8bcdd22769d909aeba632d9e9fda37038a68a63",
+    "contentHash": "4777313f0d1485f9d8ec44cf24be6186cb57b75cf21c7fd712842670af2d5acc",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7385,9 +7385,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-08T00:22:09.907Z",
+    "lastChecked": "2026-11-08T21:16:43.720Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-08T00:22:09.907Z"
+    "lastVerified": "2026-11-08T21:16:43.720Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -8520,14 +8520,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T20:22:53.332Z",
-    "lastVerified": "2026-11-07T20:22:53.332Z",
+    "lastChecked": "2026-11-08T21:16:35.650Z",
+    "lastVerified": "2026-11-08T21:16:35.650Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "6b421145df60e92f03fe5572a485731245bc9bd835ed9eff991683fa45118c30",
+    "contentHash": "11be18443b3612d162e9c77da41e374c0e570a0d1de8c549bd85401b372f68a6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11369,22 +11369,21 @@
     "lastVerified": "2026-11-07T04:36:53.108Z"
   },
   "hmlongco-factory": {
-    "name": "Factory",
+    "name": "hmlongco/Factory",
     "officialUrl": "https://github.com/hmlongco/Factory",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-05T14:43:25.043Z",
-    "lastVerified": "2026-11-05T14:43:25.043Z",
+    "lastChecked": "2026-11-08T21:16:40.401Z",
+    "lastVerified": "2026-11-08T21:16:40.401Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hmlongco-factory",
-    "contentHash": "810f1508ba42e91ff47b5cfee59eacf39c8dd287abfc59635fb3e7261e0a7d7a",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "0cb83928fcbfbe8f0b21ebcb6c77a7908ad6ead0fcdf8b3baf95366ae0349c25",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "3799543a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "syntax-tree-hast-util-from-html": {
     "name": "syntax-tree/hast-util-from-html",

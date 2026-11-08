@@ -8398,3 +8398,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-08T20:59:49.726Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-08T21:06:44.129Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `4303c987` | Multi-dimensional audit evidence | 2026-11-08T21:07:00.215Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-08T21:16:35.276Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `c50612d6` | Multi-dimensional audit evidence | 2026-11-08T21:16:36.903Z |
+| `learn-github-hmlongco-factory` | `https://github.com/hmlongco/Factory` | `5f4ea2bf` | Multi-dimensional audit evidence | 2026-11-08T21:16:42.038Z |
