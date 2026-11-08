@@ -8190,3 +8190,5 @@ Every entry in this ledger must capture:
 | `learn-github-qybaihe-bla` | `https://github.com/qybaihe/bla` | `41345ff3` | Multi-dimensional audit evidence | 2026-11-08T02:40:31.183Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T02:40:33.186Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `eba8be50` | Multi-dimensional audit evidence | 2026-11-08T02:40:49.250Z |
+| `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-08T02:49:36.468Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `95605c7a` | Multi-dimensional audit evidence | 2026-11-08T02:49:43.184Z |

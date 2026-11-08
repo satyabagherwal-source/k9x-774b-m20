@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T02:40:49.260Z",
+  "last_updated": "2026-11-08T02:49:43.197Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "c8746b61e60a23b6128f036a36890d5b890ceb24ea1279f49a2e792284887c5a",
-      "verified_at": "2026-11-07T02:24:36.977Z",
+      "content_hash": "17757edc699c703998948140c1a8b828d023f25b59da33ab4ab27897a1fc6564",
+      "verified_at": "2026-11-08T02:49:43.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T02:24:36.977Z"
+      "last_updated": "2026-11-08T02:49:43.196Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -12726,14 +12726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-timestral-209m",
-      "content_hash": "0c822443015e7820c5a1368a6c56494c09323e3fa4ebc59b6aeb71c9906d073d",
-      "verified_at": "2026-11-04T11:09:27.852Z",
+      "content_hash": "b1683ce9a60e25a8aa20d1549f9919c27b0db8b812f625a6cdaec80e84320350",
+      "verified_at": "2026-11-08T02:49:36.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T11:09:27.852Z"
+      "last_updated": "2026-11-08T02:49:36.488Z"
     },
     "software-mansion/react-native-screens": {
       "repository": "software-mansion/react-native-screens",

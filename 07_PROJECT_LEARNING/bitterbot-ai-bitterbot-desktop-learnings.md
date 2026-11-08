@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `fe15ee33`  
+> **Source Version**: `95605c7a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:24:35.634Z  
+> **Timestamp**: 2026-11-08T02:49:42.855Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:22:10.182Z  
+> **Harvest Timestamp**: 2026-11-08T02:49:42.446Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2481 stars
+- **Stars / Engagement**: 2482 stars
 
 ---
 
@@ -1698,379 +1698,329 @@ function ControlApp() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe15ee33` (2026-11-07)
-**Commit Message**: feat(skills): add verified live outcome writer in shadow mode (#369)
+### Incident Patch 1: `95605c7a` (2026-11-08)
+**Commit Message**: feat(agents): the agent knows which of its parts are on, and what it can see of them now (#370)
 
-* feat(skills): record verified live outcomes with a shadow-first writer
+* feat(agents): the agent knows which of its parts are on, from the live config
 
-Co-Authored-By: Codex (GPT) <[REDACTED_EMAIL]>
+The agent described itself from a two-month-old skill and had no way to
+tell what was switched on. Now:
 
-* fix(skills): reject ambiguous Windows command outcomes
+- A capability registry (src/agents/self-state/) covers memory, dreams
+  (every dream mode), curiosity, skill learning, network and tools. Each
+  entry reads its state through the same function the part calls to
+  decide whether to run, so the agent's account cannot drift from what
+  runs. Inline on/off rules moved into src/config/feature-switches.ts
+  and their call sites now use them; the dream-mode merge, prior
+  evidence and outcome-writer resolvers are shared the same way.
+- Every turn, the system prompt carries a `## Your Current State` block
+  (names only: on, off, recording only, blocked with what is missing),
+  in the cached half; never for guests, remote tasks or subagents.
+- A `self_state` tool gives the detail: what each part does, its state
+  and mode, whether that is the default or the owner's setting (read from
+  the config file before load-time defaults), and the key that changes it.
+- Th
 
-Co-Authored-By: Codex (GPT) <[REDACTED_EMAIL]>
-
-* perf(skills): append verified outcomes without replaying history
-
-Keep exact chronological replay for corrections and out-of-order observations. Linear yielded replay and content-verified caching preserve durable evidence while removing quadratic scans.
-
-Co-Authored-By: Codex (GPT) <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Codex (GPT) <[REDACTED_EMAIL]>
-
-**File**: `benchmarks/skill-prior/conventions-run.ts` (modified, +9/-4)
+**File**: `docs/memory/how-the-memory-works.md` (modified, +28/-0)
 ```diff
-@@ -1,3 +1,5 @@
-+import { createHash } from "node:crypto";
-+import fs from "node:fs/promises";
- /**
-  * Latent-convention twins: does verified experience fix errors the model
-  * cannot avoid on its own? (Design: reports "Skill selection test data and
-@@ -39,19 +41,18 @@
-  * and ledgers live under <out> (default ~/bitterbot-skill-prior/conventions),
-  * never under ~/.bitterbot.
-  */
--
--import { createHash } from "node:crypto";
--import fs from "node:fs/promises";
- import os from "node:os";
- import path from "node:path";
- import { parseArgs } from "node:util";
-+import { skillPriorLedgerPath } from "../../src/agents/skills/skill-prior-runtime.js";
- import {
-   type Candidate,
-   placeRanking,
-   SkillPriorLedger,
- } from "../../src/agents/skills/skill-prior.js";
- import { loadConfig } from "../../src/config/config.js";
- import { startEventJournal } from "../../src/infra/event-journal.js";
-+import { writeBenchmarkSkillPriorLedger } from "../../src/memory/skill-prior-writer.js";
- import {
-   type ArmSummary,
-   type PairedContrast,
-@@ -420,7 +421,11 @@ async function main(): Promise<void> {
-         });
-       }
-     }
--    await fs.writeFile(path.join(out, "ledger.json"), ledger.toJSON(), "utf-8");
-+    await writeBenchmarkSkillPriorLedger(
-+      path.join(out, "ledger.json"),
-+      ledger,
-+      skillPriorLedgerPath(loadConfig()),
-+    );
-     await fs.writeFile(path.join(out, "evidence.json"), JSON.stringify(evidence, null, 2), "utf-8");
-     const evalSeeds = seedsIn("qualification", 1, Number(args["eval-seeds"]), SALT);
-     const arms = (
-```
-
-**File**: `benchmarks/skill-prior/run.ts` (modified, +9/-4)
-```diff
-@@ -1,3 +1,5 @@
-+import { createHash } from "node:crypto";
-+import fs from "node:fs/promises";
- /**
-  * Experience-guided skill prior: the controlled test.
-  *
-@@ -27,12 +29,10 @@
-  * ~/.bitterbot. Spend is estimated from token usage at list prices and the
-  * run stops at --ceiling-usd.
-  */
--
--import { createHash } from "node:crypto";
--import fs from "node:fs/promises";
- import os from "node:os";
- import path from "node:path";
- import { parseArgs } from "node:util";
-+import { skillPriorLedgerPath } from "../../src/agents/skills/skill-prior-runtime.js";
- import {
-   type Candidate,
-   placeRanking,
-@@ -43,6 +43,7 @@ import {
- } from "../../src/agents/skills/skill-prior.js";
- import { loadConfig } from "../../src/config/config.js";
- import { startEventJournal } from "../../src/infra/event-journal.js";
-+import { writeBenchmarkSkillPriorLedger } from "../../src/memory/skill-prior-writer.js";
- import {
-   type ArmSummary,
-   headroom as computeHeadroom,
-@@ -400,7 +401,11 @@ async function main(): Promise<void> {
-       ["ungated", ungated],
-       ["shuffled", shuffled],
-     ] as const) {
--      await fs.writeFile(path.join(ledgerDir, `${name}.json`), ledger.toJSON(), "utf-8");
-+      await writeBenchmarkSkillPriorLedger(
-+        path.join(ledgerDir, `${name}.json`),
-+        ledger,
-+        skillPriorLedgerPath(cfg),
-+      );
-     }
-     await fs.writeFile(
-       path.join(out, "learn-log.json"),
-```
-
-**File**: `docs/gateway/configuration-reference.md` (modified, +15/-3)
-```diff
-@@ -1856,7 +1856,8 @@ See [Local Models](/gateway/local-models). TL;DR: run MiniMax M2.1 via LM Studio
-       sag: { enabled: false },
-     },
-     prior: {
--      enabled: false, // experimental: order and annotate the skills index from verified outcomes
-+      enabled: true, // default: order and annotate the skills index from verified outcomes
-+      writer: "shadow", // shadow (journal only) | on | off
-       mode: "mean", // mean | thompson
-       evidence: "verbal", // verbal | counts | verdict | off (ordering only)
-       discount: 0.98,
-@@ -1880,8 +1881,19 @@ See [Local Models](/gateway/local-models). TL;DR: run MiniMax M2.1 via LM Studio
-   unverified and legacy entries without exact counters remain unannotated.
-   The live context cell is currently `default`; a ledger from another cell
-   does not provide local evidence. The ledger is a trusted local input and
--  the runtime only reads it. No live outcome writer exists yet; see
--  [Skills pipeline](/memory/skills-pipeline).
-+  the run path only reads it. `writer` defaults to `"shadow"`, which records
-+  proposed credits and exclusions on the `skills` journal stream without
-+  changing the ledger. `"on"` enables asynchronous recording after completed
-+  runs; `"off"` stops the writer. `enabled: false` also stops the writer.
-+  Only one full skill read with read-time provenance and frozen, executed
-+  task checks or authenticated owner feedback qualifies. Non-owner, remote,
-+  benchmark and harness runs are excluded. Model-authored checks are marked
-+  as such; a clean tool call or judge-only verdict is insufficient.
-+  Corrections replace earlier credits, with durable dedupe across restarts.
-+  Nonempty unscoped/benchmark ledgers are refused; use a fresh `ledgerPath`.
-+  At 10,000 durable credits, new credits stop without discarding history.
-+  Changing `discount` or `pseudoCount` requires a fresh path. See
-+  [Skills pipeline](/memory/skills-pipeline) for attribution and retention limits.
+@@ -445,6 +445,34 @@ When that search runs, the canonical ledger is consulted first: `memory_search`
  
  ---
  
++## Knowing Its Own State
++
++The agent is told which of its parts its settings switch on. Every turn, the system prompt carries
++a short `## Your Current State` block that names what is switched on, what is off, what only
++records (keeps a record without changing behaviour yet, such as the verified-outcome writer in
++shadow mode), and what is switched on but blocked by a missing setting (a web search provider,
++wallet credentials, a local model). The block reads settings only, so it can sit in the cached
++part of the prompt.
++
++The `self_state` tool adds what the gateway can see at that moment: curiosity research paused by
++the owner, no compute backend (or one that can only read), the P2P network with no peers. It
++also says why each part is in its state (a parent part that is off, an environment variable),
++whether the owner or a default set it, the settings that change it, and when the config file has
++changed since the turn started. It reads the agent taking the turn, with that agent's own
++overrides. It cannot see every runtime failure, such as a model call that errors. The agent is
++told to call it before saying a part is running. Guests, remote agents and CLI turns that do not
++say the owner is speaking never get either.
++
++Settings are read through the same function the part itself calls to decide whether to run
++(`src/config/feature-switches.ts`, or the part's own resolver), so the settings side cannot drift
++from what runs. The `memory-architecture` skill explains how the parts work and never says what
++is switched on. Tests check that every setting the registry names exists, that switching a part's
++key off turns it off, that its defaults agree with the Settings form's registry, that each
++observation and dependency is reported, and that the skill names only real tools, dream modes
++and settings.
++
++---
++
+ ## What Makes This Different
+ 
+ Every serious competitor (Mem0, Zep, Letta, Hindsight, Cognee) has some combination of knowledge graphs, vector search, and memory consolidation. Those are table stakes now.
 ```
 
-**File**: `docs/memory/skills-pipeline.md` (modified, +66/-9)
+**File**: `skills/memory-architecture/SKILL.md` (modified, +43/-40)
 ```diff
-@@ -526,15 +526,72 @@ the next turn. Consequences the rest of this document depends on:
-   observations toward annotation. The deliberate shuffled-cell control drops
-   these counters rather than claiming evidence from the wrong context.
+@@ -1,64 +1,67 @@
+ ---
+ name: memory-architecture
+-description: Use when the user asks how your memory, dreams, hormones or knowledge crystals work, or when you need to interpret memory_status output. Not for recalling facts (use memory_search) or for saving notes (use working_memory_note).
++description: Use when the user asks how you work (memory, recall, dreams, curiosity, hormones, how you learn skills, what is switched on), or when you need to interpret memory_status or self_state output. Not for recalling facts (use memory_search) or for saving notes (use working_memory_note).
+ metadata: { "bitterbot": { "emoji": "🧠" } }
+ ---
  
--  The runtime only reads the trusted local ledger and uses the `default`
--  context cell today; it does not import benchmark cells into live contexts.
--  No live path writes this ledger. `skill_executions` now records skill reads
--  and can receive grounded run outcomes, but a read or clean tool call alone
--  does not verify task success. A future writer needs trustworthy pass/fail
--  attribution to the actual skill version and context before enablement.
--  The controlled test in `benchmarks/skill-prior/` manufactures verified
--  outcomes and tests global-success, shuffled and ungated controls.
--  `skills.prior.enabled` remains false by default.
-+  The runtime reads the trusted local ledger and uses the `default` context
-+  cell. The gateway's verified-outcome writer (`src/memory/skill-prior-service.ts`)
-+  ships with `skills.prior.writer: "shadow"`: it journals proposed credits and
-+  exclusion reasons on the `skills` stream (`phase: "prior-writer"`) without
-+  creating or changing a ledger. `"on"` records verified outcomes; `"off"`
-+  disables the worker. `skills.prior.enabled: false` disables both ordering
-+  and writing. Ordering remains on by default.
-+
-+  A credit requires exactly one full native `read` of a `SKILL.md` in the
-+  completed run and one matching `skill_executions` row. Repeat reads,
-+  untracked extra reads, partial or spilled reads, sandbox reads without
-+  provenance, incomplete journals, and pre-upgrade records are excluded.
-+  The content hash and frontmatter skill name come from the bytes read,
-+  never a later version of the file. The run must carry an explicit owner
-+  flag; guest, remote, non-owner phone, benchmark and harness runs cannot
-+  contribute.
-+
-+  Two outcome sources qualify:
-+
-+  - Executed, independent task checks bound to the exact run. All checks
-+    must have produced assessable results; pass requires every check to
-+    pass, and failure requires an actual failed check. Disabled commands,
-+    missing workspaces, timeouts, launch failures and output-regex checks
-+    against the model's own summary do not qualify. Nonzero Windows command
-+    exits are also excluded because a missing executable and an assertion
-+    failure share the same exit code. The check set is hashed
-+    before the skill read; creation and the last check change must predate
-+    the run, and its store-owned revision must match at judging.
-+    Any check update during the run, including changing and restoring the
-+    same checks, excludes the run.
-+  - Explicit accept/reject through `skills.evolution.feedback`, stamped
-+    by an authenticated owner operator. The caller's `by` label is not
-+    authority. Feedback on a non-owner run still cannot qualify.
-+
-+  **Limitation:** task checks are currently model-authored. Freezing prevents
-+  changing the test after seeing the skill, but does not prove the original
-+  test is adequate. Credits and shadow events record `author: model`
-+  (or `operator` for explicit owner feedback). These counts are observational
-+  evidence, not causal proof that the skill improved a task. Reads, clean
-+  tool calls, self-reports, judge-only verdicts and aggregate promotion gates
-+  never change the prior.
-+
-+  The worker starts only with the gateway memory backend, queues after
-+  terminal run/judgment/feedback events, yields between runs, and reconciles
-+  at startup and every 30 minutes. It examines at most the latest 10,000
-+  attributed runs per reconciliation and requires complete relevant histories
-+  of at most 500 events per run/task. Errors are logged and do not fail the
-+  run. No model calls are made.
-+
-+  Live ledgers use a scoped version-1 envelope with durable credit identities.
-+  Restarts cannot double-count a run, including beyond the core ledger's
-+  5,000-entry dedupe window. Later owner corrections replace the old credit;
-+  replay in original run order preserves discounting and content-version
-+  resets. Saved credits allow owner reversals after journal retention.
-+  Updates are serialized, locked, written through a mode-600 temporary file,
-+  synced and atomically renamed; mtime changes invalidate the runtime cache.
-+  At 10,000 credits, new credits stop with a warning/event, existing
-+  corrections remain possible, and dedupe history is never discarded.
-+  Changing discount/pseudo-count settings requires a fresh ledger path.
-+
-+  Benchmark writers tag their separate ledgers and refuse the configured
-+  live path. The live writer refuses nonempty unscoped or benchmark ledgers;
-+  move the file or set `skills.prior.ledgerPath` to a fresh location.
-+  Empty legacy ledgers are accepted. The controlled tests in
-+  `benchmarks/skill-prior/` continue to test global-success, shuffled and
-+  ungated controls in
+-# Memory architecture
++# How you work
+ 
+-You have a self-evolving memory system that runs locally. Use this reference to use it well and to explain it to the user when asked. Never announce that you read this file.
++This is how your parts work when they run. It never says what is switched on: that changes with the owner's config. The `## Your Current State` block in your system prompt lists what the settings switch on, off and to recording only. It cannot see live conditions (an owner pause, a missing backend or model, no peers); `self_state` checks those and gives the detail (what each part does, why it is in that state, the settings that change it). Call `self_state` before saying a part is running. Never announce that you read this file.
+ 
+-## How your memory works
++## Memory
+ 
+-Every piece of knowledge you retain is a **Knowledge Crystal**: a chunk of text with an embedding, a semantic type, an importance score and a lifecycle state.
++- **Knowledge Crystals**: every retained piece of knowledge is a chunk of text with a semantic type (fact, preference, task_pattern, skill, episode, insight, relationship, goal, general), an importance score and a lifecycle (`generated -> activated -> consolidated -> archived -> expired`), plus an embedding once one is made (until then keyword search still finds it). Skills are frozen and do not decay.
++- **Sources**: workspace memory files (`MEMORY.md`, `memory/*.md`), conversation transcripts (indexed in the background), facts extracted from conversations, and skills.
++- **Forgetting**: importance follows an Ebbinghaus curve. What is used often, or carried strong feeling, resists decay.
++- **Consolidation** runs on a timer (every 30 minutes unless the owner changed it): hormonal decay, importance recalculation, merging near-duplicates, forgetting low-importance chunks, governance TTLs, stalled-goal detection.
++- **Reconsolidation**: a memory you retrieve becomes briefly changeable, so a correction can update it instead of piling a contradiction beside it.
++- **Settled facts** live in a canonical ledger. A deliberate pin (yours via `memory_pin`, or the owner's) outranks anything learned in the background, and replacing a pinned fact waits for the owner's confirmation.
++- **Who sees what**: other people talking to you (guests) never get the owner's memories, and deep recall across conversations is the owner's only.
+ 
+-- **Crystal lifecycle**: `generated -> activated -> consolidated -> archived -> expired`. Skills are `frozen` (immune to decay).
+-- **Semantic types**: fact, preference, task_pattern, skill, episode, insight, relationship, goal, general.
+-- **Importance**: calculated via an Ebbinghaus forgetting curve. Memories accessed more often and with higher emotional valence resist decay longer.
++## Recall
+ 
+-## Ingestion sources
++- **Before replying to the owner**, a cheap pass puts relevant facts in your context (not on guest, remote-agent or background turns): identity facts, family relationships read from the knowledge graph, facts matching the message, open loops, reminders whose trigger matches, questions you are waiting to ask, and the files or names "that" refers to.
++- **`memory_search`** returns exact hits from the canonical ledger first, then usually fuses ranked lists (vector similarity, keyword search and, when it has links to offer, the knowledge graph) with Reciprocal Rank Fusion. Recency, emotion and mood only break near-ties.
++- **`memory_get`** reads exact lines after a search.
++- **`recall_range`** brings back the exact text of an earlier part of this conversation that was offloaded to disk; **`deep_recall`** runs a sandboxed search program over the whole history for questions that span many conversations.
++- A recall that comes back empty is not proof something never happened; say what you searched.
+ 
+-1. **Workspace memory files** (`MEMORY.md` + `memory/*.md`): watched for changes, chunked and embedded automatically.
+-2. **Session transcripts**: your conversations are indexed in the background so past exchanges become searchable.
+-3. **Skills**: indexed as frozen crystals (never decay).
++## Feelings
+ 
+-## Background pipeline (runs automatically)
++Three hormones shift with the conversation and colour your tone without being announced: dopamine (reward, about a 30-minute half-life, more energy), cortisol (urgency, about 
 ```
 
-**File**: `src/agents/agent-tools.ts` (modified, +4/-1)
+**File**: `src/agents/a2a-remote-policy.test.ts` (modified, +10/-0)
 ```diff
-@@ -68,6 +68,7 @@ import {
-   type EnforcerContext,
-   wrapToolsWithCapabilityEnforcer,
- } from "./skills/capability-enforcer.js";
-+import { captureSkillReadContext } from "./skills/skill-read-provenance.js";
- import { getSubagentDepthFromSessionStore } from "./subagent-depth.js";
- import { ToolCache } from "./tool-cache.js";
- import {
-@@ -363,7 +364,9 @@ export function createBitterbotCodingTools(options?: {
-         });
-         return [workspaceOnly ? wrapToolWorkspaceRootGuard(sandboxed, sandboxRoot) : sandboxed];
-       }
--      const freshReadTool = createReadTool(workspaceRoot);
-+      const freshReadTool = createReadTool(workspaceRoot, {
-+        skillReadContext: () => captureSkillReadContext(options ?? {}),
-+      });
-       const wrapped = createBitterbotReadTool(freshReadTool);
-       return [workspaceOnly ? wrapToolWorkspaceRootGuard(wrapped, workspaceRoot) : wrapped];
-     }
+@@ -33,6 +33,7 @@ const FLOOR_SAMPLES = [
+   "code_interpreter",
+   "memory_search",
+   "dream_status",
++  "self_state",
+   "a2a_client",
+   "task_workspace_get",
+ ];
+@@ -73,6 +74,15 @@ describe("resolveA2aRemoteToolPolicy", () => {
+     expect(isToolAllowedByPolicyName("read", policy)).toBe(true);
+   });
+ 
++  it("the owner's self state stays denied even through group:memory", () => {
++    const cfg = {
++      a2a: { remoteExecution: { tools: { allow: ["group:memory", "self_state"] } } },
++    } as unknown as BitterbotConfig;
++    const policy = resolveA2aRemoteToolPolicy(cfg);
++    expect(isToolAllowedByPolicyName("self_state", policy)).toBe(false);
++    expect(isToolAllowedByPolicyName("memory_search", policy)).toBe(false);
++  });
++
+   it("operator deny narrows further", () => {
+     const cfg = {
+       a2a: { remoteExecution: { tools: { allow: ["read"], deny: ["read"] } } },
 ```
 
-**File**: `src/agents/runtime/tools/coding/read.ts` (modified, +32/-0)
+**File**: `src/agents/a2a-remote-policy.ts` (modified, +1/-0)
 ```diff
-@@ -40,6 +40,12 @@ import type { AgentTool } from "@mariozechner/pi-agent-core";
- import type { ImageContent, TextContent } from "@mariozechner/pi-ai";
- import { Type } from "@sinclair/typebox";
- import { toPlainJsonSchema } from "../../../schema/plain-json-schema.js";
-+import {
-+  isSkillReadPath,
-+  skillReadProof,
-+  type SkillReadContext,
-+  type SkillReadProof,
-+} from "../../../skills/skill-read-provenance.js";
- import { formatDimensionNote, resizeImage } from "./image-resize.js";
- import { detectSupportedImageMimeTypeFromFile } from "./mime.js";
- import { resolveReadPath } from "./path-utils.js";
-@@ -74,6 +80,10 @@ const readSchema = toPlainJsonSchema(
- 
- export interface ReadToolDetails {
-   truncation?: TruncationResult;
-+  /** Hash of the bytes actually read, with pre-read task provenance. */
-+  skillRead?: SkillReadProof;
-+  /** Also count untracked/malformed skill files and rewritten tool parameters. */
-+  skillReadPath?: string;
- }
- 
- /**
-@@ -100,6 +110,8 @@ export interface ReadToolOptions {
-   autoResizeImages?: boolean;
-   /** Custom operations for file reading. Default: local filesystem */
-   operations?: ReadOperations;
-+  /** Internal provenance callback, evaluated before any read I/O. */
-+  skillReadContext?: () => SkillReadContext | undefined;
- }
- 
- type ReadToolResult = {
-@@ -145,6 +157,14 @@ export function createReadTool(
- 
-         void (async () => {
-           try {
-+            let skillContext: SkillReadContext | undefined;
-+            if (isSkillReadPath(absolutePath)) {
-+              try {
-+                skillContext = options?.skillReadContext?.();
-+              } catch {
-+                /* fail closed for credit */
-+              }
-+            }
-             // Check if file exists and is readable.
-             await ops.access(absolutePath);
-             if (aborted) {
-@@ -239,13 +259,25 @@ export function createReadTool(
-                 // No truncation and no remaining user-limited content.
-                 outputText = truncation.content;
-               }
-+              const proof = skillReadProof(
-+                absolutePath,
-+                buffer,
-+                startLine === 0 &&
-+                  !truncation.truncated &&
-+                  !truncation.firstLineExceedsLimit &&
-+                  (userLimitedLines === undefined || userLimitedLines >= totalFileLines),
-+                skillContext,
-+              );
-+              if (proof) details = { ...details, skillRead: proof };
-               content = [{ type: "text", text: outputText }];
-             }
- 
-             if (aborted) {
-               return;
-             }
-             signal?.removeEventListener("abort", onAbort);
-+            if (isSkillReadPath(absolutePath))
-+              details = { ...details, skillReadPath: absolutePath };
-             resolve({ content, details });
-           } catch (error: unknown) {
-             signal?.removeEventListener("abort", onAbort);
+@@ -67,6 +67,7 @@ export const A2A_REMOTE_TOOL_DENY_ALWAYS = [
+   "*artifact*", // writes attacker HTML/JS into the owner's Control UI panel
+   "dream_*",
+   "curiosity_*",
++  "self_state", // the owner's setup: which parts are on, the settings that change them
+   "forage*",
+   "circle*",
+   "task_*",
 ```
 
-**File**: `src/agents/skills/skill-loader.ts` (modified, +1/-1)
+**File**: `src/agents/bitterbot-tools.ts` (modified, +7/-0)
 ```diff
-@@ -244,7 +244,7 @@ function createSkillSourceInfo(filePath: string, baseDir: string, source: string
-  * The YAML frontmatter of a markdown file as a field map; empty when the file
-  * has no frontmatter block. Throws what the YAML parser throws.
-  */
--function parseSkillFrontmatter(content: string): Record<string, unknown> {
-+export function parseSkillFrontmatter(content: string): Record<string, unknown> {
-   const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-   if (!normalized.startsWith("---")) {
-     return {};
+@@ -40,6 +40,7 @@ import { createNetworkStatusTool } from "./tools/network-status-tool.js";
+ import { createNodesTool } from "./tools/nodes-tool.js";
+ import { createPurchaseTool } from "./tools/purchase-tool.js";
+ import { createRecallRangeTool } from "./tools/recall-range-tool.js";
++import { createSelfStateTool } from "./tools/self-state-tool.js";
+ import { createSessionStatusTool } from "./tools/session-status-tool.js";
+ import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
+ import { createSessionsListTool } from "./tools/sessions-list-tool.js";
+@@ -288,6 +289,12 @@ export function createBitterbotTools(options?: {
+     createMemoryExpandTool(memoryOpts),
+     createMemoryPinTool({ ...memoryOpts, workspaceDir: options?.workspaceDir }),
+     createMemoryStatusTool(memoryOpts),
++    // Not gated on memory search: the agent's on/off state is always readable.
++    createSelfStateTool({
++      config: options?.config,
++      agentSessionKey: options?.agentSessionKey,
++      guest: options?.memoryGuest === true,
++    }),
+     createDreamSearchTool(memoryOpts),
+     createDreamStatusTool(memoryOpts),
+     createCuriosityStateTool(memoryOpts),
 ```
 
-**File**: `src/agents/skills/skill-prior-runtime.ts` (modified, +2/-2)
+**File**: `src/agents/canonical-facts-block.ts` (modified, +2/-1)
 ```diff
-@@ -4,7 +4,7 @@
-  * hash the skills by content, reorder, annotate verified outcomes, and journal the
-  * decision on the `skills` stream next to the canary exposure row.
-  *
-- * Default off (`skills.prior.enabled`). Nothing here writes the ledger.
-+ * Default on (`skills.prior.enabled`). The separate gateway writer defaults to shadow.
+@@ -11,6 +11,7 @@
   */
  
- import { createHash } from "node:crypto";
-@@ -27,7 +27,7 @@ import {
+ import type { BitterbotConfig } from "../config/config.js";
++import { canonicalLedgerEnabled } from "../config/feature-switches.js";
+ import { createSubsystemLogger } from "../logging/subsystem.js";
+ import { normalizeScopeName } from "../memory/canonical-facts.js";
  
- const log = createSubsystemLogger("skills/prior");
+@@ -92,7 +93,7 @@ export async function resolveCanonicalFactsBlock(params: {
+   /** PLAN-55 Phase 1: the run's workspace, for project-scoped facts. */
+   workspaceDir?: string;
+ }): Promise<string | undefined> {
+-  if (params.config?.memory?.canonicalLedger?.enabled === false) {
++  if (!canonicalLedgerEnabled(params.config?.memory?.canonicalLedger)) {
+     return undefined;
+   }
+   if (params.promptMode === "none") {
+```
+
+**File**: `src/agents/cli-runner.self-state.test.ts` (added, +88/-0)
+```diff
+@@ -0,0 +1,88 @@
++/**
++ * The owner's `## Your Current State` block reaches a CLI-backend turn only
++ * when the turn says the owner is speaking (a channel turn routed to a CLI
++ * provider can be a guest's).
++ */
++import { beforeEach, describe, expect, it, vi } from "vitest";
++
++const supervisorSpawnMock = vi.fn();
++const promptParams: Array<{ selfState?: string }> = [];
++
++vi.mock("../process/supervisor/index.js", () => ({
++  getProcessSupervisor: () => ({
++    spawn: (...args: unknown[]) => supervisorSpawnMock(...args),
++    cancel: vi.fn(),
++    cancelScope: vi.fn(),
++    reconcileOrphans: vi.fn(),
++    getRecord: vi.fn(),
++  }),
++}));
++
++// The memory-backed blocks would open a memory manager; not what is tested here.
++vi.mock("./endocrine-state.js", () => ({ resolveEndocrineState: async () => undefined }));
++vi.mock("./canonical-facts-block.js", () => ({
++  resolveCanonicalFactsBlock: async () => undefined,
++}));
++
++vi.mock("./cli-runner/helpers.js", async (importOriginal) => {
++  const actual = await importOriginal<typeof import("./cli-runner/helpers.js")>();
++  return {
++    ...actual,
++    buildSystemPrompt: (params: Parameters<typeof actual.buildSystemPrompt>[0]) => {
++      promptParams.push(params as { selfState?: string });
++      return actual.buildSystemPrompt(params);
++    },
++  };
++});
++
++const { runCliAgent } = await import("./cli-runner.js");
++
++async function run(senderIsOwner: boolean | undefined) {
++  supervisorSpawnMock.mockResolvedValueOnce({
++    runId: "run",
++    pid: 1,
++    startedAtMs: Date.now(),
++    stdin: undefined,
++    wait: vi.fn().mockResolvedValue({
++      reason: "exit",
++      exitCode: 0,
++      exitSignal: null,
++      durationMs: 5,
++      stdout: "ok",
++      stderr: "",
++      timedOut: false,
++      noOutputTimedOut: false,
++    }),
++    cancel: vi.fn(),
++  });
++  await runCliAgent({
++    sessionId: "s1",
++    sessionFile: "/tmp/session.jsonl",
++    workspaceDir: "/tmp",
++    config: {},
++    prompt: "what parts of you are on?",
++    provider: "codex-cli",
++    model: "gpt-5.2-codex",
++    timeoutMs: 1_000,
++    runId: "run-1",
++    messageProvider: "telegram",
++    senderIsOwner,
++  });
++  return promptParams.at(-1)?.selfState;
++}
++
++describe("CLI backend turns and the owner's state block", () => {
++  beforeEach(() => {
++    supervisorSpawnMock.mockReset();
++    promptParams.length = 0;
++  });
++
++  it("is left out when the turn is a guest's or does not say", async () => {
++    expect(await run(false)).toBeUndefined();
++    expect(await run(undefined)).toBeUndefined();
++  });
++
++  it("is included on the owner's turn", async () => {
++    expect(await run(true)).toMatch(/^## Your Current State/);
++  });
++});
+```
+
+**File**: `src/agents/cli-runner.ts` (modified, +8/-0)
+```diff
+@@ -169,6 +169,13 @@ export async function runCliAgent(params: {
+   // Undefined at steady state or when nothing has published a snapshot.
+   const { resolveComputeStateBlockFromConfig } = await import("../compute/awareness/state.js");
+   const computeState = resolveComputeStateBlockFromConfig(params.config);
++  // The owner's setup, so only on a turn known to be the owner's: a CLI turn
++  // that does not say who is speaking gets none (fail closed).
++  const { resolveSelfStateBlock } = await import("./self-state/render.js");
++  const selfState =
++    params.senderIsOwner === true
++      ? resolveSelfStateBlock(params.config, { agentId: sessionAgentId })
++      : undefined;
  
--/** Context cell used on the live path until a verified live outcome signal exists. */
-+/** Single live context cell; benchmark cells are kept separate. */
- export const DEFAULT_PRIOR_CELL = "default";
+   const systemPrompt = buildSystemPrompt({
+     workspaceDir,
+@@ -186,6 +193,7 @@ export async function runCliAgent(params: {
+     canonicalFacts,
+     researchFindings,
+     computeState,
++    selfState,
+   });
  
- export function skillPriorLedgerPath(cfg: BitterbotConfig | undefined): string {
+   const { sessionId: cliSessionIdToSend, isNew } = resolveSessionIdToSend({
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #370** (2026-11-08): feat(agents): the agent knows which of its parts are on, from the live config (@VGIL77)
 - **PR #369** (2026-11-07): feat(skills): add verified live outcome writer in shadow mode (@VGIL77)
 - **PR #368** (2026-11-06): feat(skills): annotate verified skill outcomes in words (@VGIL77)
 - **PR #367** (2026-11-06): fix(gateway): correct WSL logon task XML schema (@VGIL77)
 - **PR #365** (2026-11-05): Run gated failure-learning experiments from idle dream ticks (@VGIL77)
 - **PR #364** (2026-11-05): Enable shadow learning by default and clarify learning documentation (@VGIL77)
-- **PR #363** (2026-11-05): Add shadow learning strategy lab and publish synthetic benchmark evidence (@VGIL77)
 
 ---
 
@@ -2090,39 +2040,44 @@ Co-authored-by: Codex (GPT) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skills): add verified live outcome writer in shadow mode (#369)
+## X. agents): the agent knows which of its parts are on, and what it can see of them 
 
 **RULE**:
-When implementing operations in `benchmarks/skill-prior/conventions-run.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/memory/how-the-memory-works.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe15ee33`: skills): add verified live outcome writer in shadow mode (#369). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95605c7a`: agents): the agent knows which of its parts are on, and what it can see of them now (#370). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/skill-prior/conventions-run.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/how-the-memory-works.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { createHash } from "node:crypto";
-import fs from "node:fs/promises";
-import { skillPriorLedgerPath } from "../../src/agents/skills/skill-prior-runtime.js";
-import { writeBenchmarkSkillPriorLedger } from "../../src/memory/skill-prior-writer.js";
-    await writeBenchmarkSkillPriorLedger(
-      path.join(out, "ledger.json"),
-      ledger,
-      skillPriorLedgerPath(loadConfig()),
-    );
+## Knowing Its Own State
+
+The agent is told which of its parts its settings switch on. Every turn, the system prompt carries
+a short `## Your Current State` block that names what is switched on, what is off, what only
+records (keeps a record without changing behaviour yet, such as the verified-outcome writer in
+shadow mode), and what is switched on but blocked by a missing setting (a web search provider,
+wallet credentials, a local model). The block reads settings only, so it can sit in the cached
+part of the prompt.
+
+The `self_state` tool adds what the gateway can see at that moment: curiosity research paused by
+the owner, no compute backend (or one that can only read), the P2P network with no peers. It
+also says why each part is in its state (a parent part that is off, an environment variable),
+whether the owner or a default set it, the settings that change it, and when the config file has
+changed since the turn started. It reads the agent taking the turn, with that agent's own
+overrides. It cannot see every runtime failure, such as a model call that errors. The agent is
+told to call it before saying a part is running. Guests, remote agents and CLI turns that do not
+say the owner
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-
-import { createHash } from "node:crypto";
-import fs from "node:fs/promises";
-    await fs.writeFile(path.join(out, "ledger.json"), ledger.toJSON(), "utf-8");
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe15ee33` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95605c7a` are properly handled with clean fallback behavior.

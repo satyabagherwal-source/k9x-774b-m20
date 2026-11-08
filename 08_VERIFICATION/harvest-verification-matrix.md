@@ -8181,3 +8181,5 @@
 | `CYCLE-20261108-64SR` | `2026-11-08T02:40:31.179Z` | `qybaihe/bla` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c808c8b9...`) |
 | `CYCLE-20261108-66CE` | `2026-11-08T02:40:33.182Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`c984ece8...`) |
 | `CYCLE-20261108-6IQE` | `2026-11-08T02:40:49.238Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7cfe6fe1...`) |
+| `CYCLE-20261108-HTJL` | `2026-11-08T02:49:36.465Z` | `mistralai/Timestral-209M` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3943, Rule null, Rule null` | Yes (`b1683ce9...`) |
+| `CYCLE-20261108-HYQ4` | `2026-11-08T02:49:43.180Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`17757edc...`) |

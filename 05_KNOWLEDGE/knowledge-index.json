@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T02:40:49.127Z",
+  "last_updated": "2026-11-08T02:49:43.066Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5465,8 +5465,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "fe15ee33",
-      "content_hash": "c8746b61e60a23b6128f036a36890d5b890ceb24ea1279f49a2e792284887c5a",
+      "source_version": "95605c7a",
+      "content_hash": "17757edc699c703998948140c1a8b828d023f25b59da33ab4ab27897a1fc6564",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5701,7 +5701,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T02:24:36.859Z",
+      "verified_at": "2026-11-08T02:49:43.038Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114404,10 +114404,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Timestral-209M",
       "source_version": "hf-mistralai-timestral-209m",
-      "content_hash": "0c822443015e7820c5a1368a6c56494c09323e3fa4ebc59b6aeb71c9906d073d",
+      "content_hash": "b1683ce9a60e25a8aa20d1549f9919c27b0db8b812f625a6cdaec80e84320350",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Patch-Based Sequence Compression for Long Context",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Block Schedule for Multivariate Time Series",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2706,
           "title": "Patch-Based Temporal Compression Invariant",
@@ -114437,6 +114447,11 @@
           "number": 3554,
           "title": "Missing Value Indicators Must Be Embedded Alongside Values",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3943,
+          "title": "Probabilistic Output Head Design for Time Series",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 4559,
@@ -114489,7 +114504,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T11:09:27.767Z",
+      "verified_at": "2026-11-08T02:49:36.354Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133670,14 +133685,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3943,
       "title": "Probabilistic Output Head Design for Time Series",
-      "source_url": "https://huggingface.co/autogluon/chronos-2",
-      "source_version": "hf-autogluon-chronos-2",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-24T20:11:16.983Z"
+      "verified_at": "2026-11-08T02:49:36.354Z"
     },
     "rule-3944": {
       "learning_id": "rule-3944",
