@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `7eb750ee`  
+> **Source Version**: `df51ed41`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:34:04.618Z  
+> **Timestamp**: 2026-11-08T00:41:52.429Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:34:04.324Z  
+> **Harvest Timestamp**: 2026-11-08T00:41:51.414Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1626,794 +1626,361 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62430116` (2026-11-05)
-**Commit Message**: [MOD-20101] Add the query memory checkpoint helper (#12100)
+### Incident Patch 1: `df51ed41` (2026-11-06)
+**Commit Message**: [MOD-17995] Type the non-null pointer contract in the pure Rust crates (#11067)
 
-* Add a stop request with a reason to the query timeout state
+* Take NonNull<RedisModuleCtx> in pure Rust crates
 
-Any thread can now ask a query execution cycle to stop, in every timeout
-kind including unarmed. IsTimedOut and IsTimedOutExact report it
-unamortized, and so does the Rust request timeout context, so their
-callers stop without a per-site change. IsBlockedClientTimedOut ignores
-it, since its callers ask whether the timeout callback owns the reply.
+The module context is never nullable at these call sites, so make the
+signatures say so: `redis_reply::Replier`, `numeric_range_tree::debug`,
+and `redis_json_api` now take `NonNull<RedisModuleCtx>`, and the FFI
+entry points that feed them do the null check at the boundary.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+`NumericRangeTree_Debug*` previously only asserted non-null in debug
+builds; the check is now unconditional, replacing what was undefined
+behaviour in release builds.
 
-* Add the query memory checkpoint helper
+Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
 
-QueryMemory_ShouldStop is the single place the query path reads process
-memory. It reports a requested stop or blocked-client timeout on every
-call, reads the GIL-free used-memory ratio every 256 calls per site, and
-requests an OOM stop at the entry guard's threshold. It is off for
-ON_OOM IGNORE, without a memory limit, and on a Redis that lacks
-RedisModule_GetRawUsedMemoryRatio, which is loaded as an optional API.
+* Take NonNull<ForkGC> in fork_gc
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+`ForkGC::from_ptr_mut` immediately produces a reference, so the pointer
+was never allowed to be null. The FFI entry points do the null check.
 
-* Stop row and reply loops on a requested query stop
+Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
 
-Add QueryRequest_ShouldStop, a requested stop or the blocked-client
-timeout, and use it at the per-row che
+* Take NonNull<ReducerOptions> in reducers
 
-**File**: `src/aggregate/aggregate_exec.c` (modified, +10/-10)
+`ReducerOptions::from_raw_mut` documents its pointer as non-null, so it
+now says so in the type; the `Option::unwrap` that re-checked it at
+runtime goes away with the raw pointer.
+
+Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
+
+* Take NonNull<Reducer> in reducers
+
+`Reducer::from_raw` documents its 
+
+**File**: `src/redisearch_rs/Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -452,13 +452,13 @@ static void startPipeline(AREQ *req, ResultProcessor *rp, SearchResult ***result
-       // already owns the reply. The caller must skip stored-result handling and
-       // clean up the cursor in runCursor.
-       req->base.async.aggregateResultsClaimLost = true;
--      *rc = RS_RESULT_TIMEDOUT;
-+      *rc = RS_RESULT_STOPPED;
-       return;
-     }
-     if (QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
-       // We claimed the sync phase, but timeout was already signaled. Store a
-       // timed-out cursor-shaped reply and wake the timeout callback.
--      *rc = RS_RESULT_TIMEDOUT;
-+      *rc = RS_RESULT_STOPPED;
-       return;
-     }
-     // We own the production phase: link the sync context into the safe loaders so
-@@ -470,7 +470,7 @@ static void startPipeline(AREQ *req, ResultProcessor *rp, SearchResult ***result
- 
-   // Pipeline done without timing out; advance the marker so a timeout from here on
-   // is attributed to the REPLY stage.
--  if (*rc != RS_RESULT_TIMEDOUT) {
-+  if (*rc != RS_RESULT_STOPPED) {
-     AREQ_SetExecutionStage(req, QUERY_TIMEOUT_STAGE_REPLY);
-   }
- 
-@@ -606,7 +606,7 @@ static int replyForPreExecutionTimeout(RedisModuleCtx *ctx, RedisModuleString **
-   const bool isProfile = profileOptions & EXEC_WITH_PROFILE;
-   const RSTimeoutPolicy timeoutPolicy = RSGlobalConfig.timeoutConfigParams.timeoutPolicy;
-   const bool shouldReplyWithError =
--      ShouldReplyWithTimeoutError(RS_RESULT_TIMEDOUT, timeoutPolicy, isProfile);
-+      ShouldReplyWithTimeoutError(RS_RESULT_STOPPED, timeoutPolicy, isProfile);
- 
-   if (shouldReplyWithError) {
-     QueryErrorsGlobalStats_UpdateError(QUERY_ERROR_CODE_TIMED_OUT, 1, !isInternal);
-@@ -652,7 +652,7 @@ static void trackWarnings_Resp2(AREQ *req, QueryProcessingCtx *qctx, int rc) {
-   // carries a TIMEDOUT warning; the coord pipeline keeps draining other shards
-   // and rc stays !=TIMEDOUT, so the flag is the only path through which the
-   // user-visible TIMEOUT warning is surfaced in that case.
--  bool has_timedout = (rc == RS_RESULT_TIMEDOUT) || hasTimeoutError(qctx->err)
-+  bool has_timedout = (rc == RS_RESULT_STOPPED) || hasTimeoutError(qctx->err)
-                       || (req->stateflags & QEXEC_S_SHARD_TIMED_OUT_WARNING);
-   if (has_timedout) {
-     QueryWarningsGlobalStats_UpdateWarning(QUERY_WARNING_CODE_TIMED_OUT, 1, !IsInternal(req));
-@@ -713,7 +713,7 @@ static bool shouldSetCursorDone(AREQ *req, int rc) {
-     return false;
-   }
- 
--  if (rc == RS_RESULT_TIMEDOUT) {
-+  if (rc == RS_RESULT_STOPPED) {
-     switch (req->base.limits.timeout.config.timeoutPolicy) {
-       case TimeoutPolicy_Return:
-         return false;
-@@ -856,7 +856,7 @@ static void _replyWarnings(AREQ *req, RedisModule_Reply *reply, int rc) {
-   // carries a TIMEDOUT warning; the coord pipeline keeps draining other shards
-   // and rc stays !=TIMEDOUT, so the flag is the only path through which the
-   // user-visible TIMEOUT warning is surfaced in that case.
--  if (rc == RS_RESULT_TIMEDOUT
-+  if (rc == RS_RESULT_STOPPED
-       || (req->stateflags & QEXEC_S_SHARD_TIMED_OUT_WARNING)) {
-     // Track warnings in global statistics
-     QueryWarningsGlobalStats_UpdateWarning(QUERY_WARNING_CODE_TIMED_OUT, 1, !IsInternal(req));
-@@ -935,7 +935,7 @@ static void finishSendChunkReply_Resp3(AREQ *req, RedisModule_Reply *reply,
-   // <error>
-   _replyWarnings(req, reply, rc);
- 
--  bool has_timedout = (rc == RS_RESULT_TIMEDOUT) || hasTimeoutError(qctx->err)
-+  bool has_timedout = (rc == RS_RESULT_STOPPED) || hasTimeoutError(qctx->err)
-                       || (req->stateflags & QEXEC_S_SHARD_TIMED_OUT_WARNING);
- 
-   if (IsProfile(req)) {
-@@ -1648,7 +1648,7 @@ static int QueryTimeoutReturnStrictCallback(RedisModuleCtx *ctx, RedisModuleStri
-   // BG signals only after AREQ_StoreResults
-   RS_ASSERT(req->base.reply.hasStoredResults);
-   if (AREQ_RequestFlags(req) & QEXEC_F_IS_CURSOR) {
--    req->base.reply.rc = RS_RESULT_TIMEDOUT;
-+    req->base.reply.rc = RS_RESULT_STOPPED;
-   }
- 
-   // Drain any results buffered post-timeout (e.g. RPSorter heap).
-@@ -1791,7 +1791,7 @@ static int CursorReadTimeoutReturnStrictCallback(RedisModuleCtx *ctx, RedisModul
-   AREQ_WaitForAggregateResultsComplete(req);
- 
-   if (req->base.reply.hasStoredResults) {
--    req->base.reply.rc = RS_RESULT_TIMEDOUT;
-+    req->base.reply.rc = RS_RESULT_STOPPED;
-     drainPartialResultsAfterTimeout(req);
-     AREQ_ReplyWithStoredResults(ctx, req);
-   } else if (QueryError_HasError(&req->base.reply.err)) {
+@@ -2281,7 +2281,6 @@ dependencies = [
+  "libc",
+  "min-max-heap",
+  "priority-queue",
+- "query_error",
+  "redis_mock",
+  "redisearch_rs",
+  "reducers",
 ```
 
-**File**: `src/aggregate/aggregate_exec_common.c` (modified, +3/-3)
+**File**: `src/redisearch_rs/c_entrypoint/index_gc_ffi/src/fork.rs` (modified, +4/-4)
 ```diff
-@@ -38,7 +38,7 @@
-  }
+@@ -10,14 +10,14 @@
+ //! C ABI entrypoints for the Fork GC child and parent orchestration.
  
-  bool ShouldReplyWithTimeoutError(int rc, RSTimeoutPolicy timeoutPolicy, bool isProfile) {
--   return rc == RS_RESULT_TIMEDOUT
-+   return rc == RS_RESULT_STOPPED
-           && timeoutPolicy == TimeoutPolicy_Fail
-           && !isProfile;
-  }
-@@ -107,7 +107,7 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
-      // from internal buffers without re-touching upstream's per-row timeout check.
-      if (areq && (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
-                   QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits))) {
--       *rc = RS_RESULT_TIMEDOUT;
-+       *rc = RS_RESULT_STOPPED;
-        break;
-      }
-    }
-@@ -126,7 +126,7 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
-      // Check timeout after aggregation; a memory stop raised while filling the limit ends it the
-      // same way.
-      if (QueryRequestLimits_ShouldStopExact(ctx->limits)) {
--       *rc = RS_RESULT_TIMEDOUT;
-+       *rc = RS_RESULT_STOPPED;
-      }
-    } else {
-      // Send the results received from the pipeline as they come (no need to aggregate)
+ use index_gc::{
+-    DocExistence, ForkPipe, GcError, HandleOutcome,
++    DocExistence, GcError, HandleOutcome,
+     fork::cycle::{collect_scanners, handle_scanners},
+ };
+ use index_spec::IndexSpecReadGuard;
+ use tracing::Level;
+ use tracing_log_error::log_error;
+ 
+-use crate::ForkGCError;
++use crate::{ForkGCError, util::borrow_fork_pipe};
+ 
+ /// Scan every Fork GC index kind and send its deltas to the parent process.
+ ///
+@@ -33,7 +33,7 @@ use crate::ForkGCError;
+ #[unsafe(no_mangle)]
+ pub unsafe extern "C" fn ForkGC_childScanIndexes(gc: *mut ffi::IndexGC, spec: *mut ffi::IndexSpec) {
+     // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(gc) };
++    let fgc = unsafe { borrow_fork_pipe(gc) };
+     // SAFETY: caller guarantees (2).
+     let spec = unsafe { &*spec };
+     // SAFETY: caller guarantees (3). We don't actually hold a read lock, but when the Fork GC code
+@@ -55,7 +55,7 @@ pub unsafe extern "C" fn ForkGC_childScanIndexes(gc: *mut ffi::IndexGC, spec: *m
+ #[unsafe(no_mangle)]
+ pub unsafe extern "C" fn ForkGC_parentHandleFromChild(gc: *mut ffi::IndexGC) -> ForkGCError {
+     // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(gc) };
++    let fgc = unsafe { borrow_fork_pipe(gc) };
+ 
+     match fgc.with_read_ahead(handle_scanners) {
+         Ok(HandleOutcome::Collected) => ForkGCError::Collected,
 ```
 
-**File**: `src/config.c` (modified, +4/-2)
+**File**: `src/redisearch_rs/c_entrypoint/index_gc_ffi/src/lib.rs` (modified, +9/-7)
 ```diff
-@@ -1499,7 +1499,8 @@ CONFIG_SETTER(setOnOom) {
-     QueryError_SetError(status, QUERY_ERROR_CODE_BAD_VAL, "Invalid ON_OOM value");
-     return REDISMODULE_ERR;
-   }
--  config->requestConfigParams.oomPolicy = oom;
-+  // Atomic: query threads read it concurrently (QueryMemory_Checkpoint).
-+  __atomic_store_n(&config->requestConfigParams.oomPolicy, oom, __ATOMIC_RELAXED);
-   return REDISMODULE_OK;
+@@ -20,7 +20,7 @@ use std::{
+     io::{Read, Write},
+ };
+ 
+-use index_gc::{ForkPipe, Frame, fork::io_result_ext::IoResultExt};
++use index_gc::{Frame, fork::io_result_ext::IoResultExt};
+ use nul_terminated_bytes::NulTerminatedBytes;
+ 
+ use tracing::Level;
+@@ -29,6 +29,8 @@ use tracing_log_error::log_error;
+ mod fork;
+ mod util;
+ 
++use util::borrow_fork_pipe;
++
+ /// Status code returned by Fork GC parent-side pipe-receive operations.
+ #[cheadergen::config(export)]
+ #[repr(C)]
+@@ -67,7 +69,7 @@ pub unsafe extern "C" fn ForkGC_sendFixed(fgc: *mut ffi::IndexGC, buff: *const c
+     debug_assert!(len > 0, "buffer length cannot be 0");
+ 
+     // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
++    let fgc = unsafe { borrow_fork_pipe(fgc) };
+     // SAFETY: caller guarantees (2).
+     let slice = unsafe { std::slice::from_raw_parts(buff.cast::<u8>(), len) };
+ 
+@@ -94,7 +96,7 @@ pub unsafe extern "C" fn ForkGC_sendBuffer(
+     len: usize,
+ ) {
+     // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
++    let fgc = unsafe { borrow_fork_pipe(fgc) };
+ 
+     let slice = if len > 0 {
+         // SAFETY: caller guarantees (2).
+@@ -121,7 +123,7 @@ pub unsafe extern "C" fn ForkGC_sendBuffer(
+ #[unsafe(no_mangle)]
+ pub unsafe extern "C" fn ForkGC_sendTerminator(fgc: *mut ffi::IndexGC) {
+     // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
++    let fgc = unsafe { borrow_fork_pipe(fgc) };
+ 
+     Frame::Terminator.encode(&mut fgc.writer()).unwrap_or_exit();
  }
+@@ -144,7 +146,7 @@ pub unsafe extern "C" fn ForkGC_recvFixed(
+     len: usize,
+ ) -> c_int {
+     // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
++    let fgc = unsafe { borrow_fork_pipe(fgc) };
+     // SAFETY: caller guarantees (2).
+     let slice = unsafe { std::slice::from_raw_parts_mut(buf.cast::<u8>(), len) };
  
-@@ -1511,7 +1512,8 @@ CONFIG_GETTER(getOnOom) {
- static int set_on_oom(const char *name, int val, void *privdata, RedisModuleString **err) {
-   REDISMODULE_NOT_USED(name);
-   REDISMODULE_NOT_USED(err);
--  *((RSOomPolicy *)privdata) = (RSOomPolicy)val;
-+  // Atomic: query threads read it concurrently (QueryMemory_Checkpoint).
-+  __atomic_store_n((RSOomPolicy *)privdata, (RSOomPolicy)val, __ATOMIC_RELAXED);
-   return REDISMODULE_OK;
- }
+@@ -184,7 +186,7 @@ pub unsafe extern "C" fn ForkGC_recvBuffer(
+     len: *mut usize,
+ ) -> c_int {
+     // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
++    let fgc = unsafe { borrow_fork_pipe(fgc) };
  
+     let frame = match Frame::decode_nul_terminated(&mut fgc.reader()) {
+         Ok(frame) => frame,
+@@ -227,7 +229,7 @@ pub unsafe extern "C" fn recvFieldHeader(
+     id_ptr: *mut u64,
+ ) -> ForkGCError {
+     // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(fgc) };
++    let fgc = unsafe { borrow_fork_pipe(fgc) };
+     let mut reader = fgc.reader();
+ 
+     let frame = match Frame::decode_nul_terminated(&mut reader) {
 ```
 
-**File**: `src/coord/dist_aggregate.c` (modified, +3/-3)
+**File**: `src/redisearch_rs/c_entrypoint/index_gc_ffi/src/util.rs` (modified, +21/-2)
 ```diff
-@@ -350,7 +350,7 @@ static int rpnetNext_Start(ResultProcessor *rp, SearchResult *r) {
+@@ -7,11 +7,30 @@
+  * GNU Affero General Public License v3 (AGPLv3).
+ */
  
-   // Check if the request timed out before starting the iterator
-   if (QueryRequestLimits_IsBlockedClientTimedOut(&nc->areq->base.limits)) {
--    return RS_RESULT_TIMEDOUT;
-+    return RS_RESULT_STOPPED;
-   }
+-use std::{ffi::c_void, ptr};
++use std::{ffi::c_void, ptr, ptr::NonNull};
  
-   // Lazy (non-deferred) path: create and immediately dispatch the iterator, then
-@@ -1097,7 +1097,7 @@ int DistAggregateTimeoutReturnStrictCallback(RedisModuleCtx *ctx, RedisModuleStr
-   // BG signals only after AREQ_StoreResults
-   RS_ASSERT(req->base.reply.hasStoredResults);
-   if (AREQ_RequestFlags(req) & QEXEC_F_IS_CURSOR) {
--    req->base.reply.rc = RS_RESULT_TIMEDOUT;
-+    req->base.reply.rc = RS_RESULT_STOPPED;
-   }
+-use index_gc::Frame;
++use index_gc::{ForkPipe, Frame};
+ use nul_terminated_bytes::NulTerminatedBytes;
  
-   // Harvest any shard replies that landed in the channel before the deadline.
-@@ -1182,7 +1182,7 @@ int DistCursorReadTimeoutReturnStrictCallback(RedisModuleCtx *ctx, RedisModuleSt
-     // Drain anything queued before the deadline, then serialize and dispose
-     // the stashed cursor (Pause if more rows remain, Free on EOF) inside
-     // AREQ_ReplyWithStoredResults.
--    req->base.reply.rc = RS_RESULT_TIMEDOUT;
-+    req->base.reply.rc = RS_RESULT_STOPPED;
-     drainPartialResultsAfterTimeout(req);
-     AREQ_ReplyWithStoredResults(ctx, req);
-   } else {
-```
-
-**File**: `src/coord/rpnet.c` (modified, +12/-12)
-```diff
-@@ -132,7 +132,7 @@ static const struct timespec *getAbsTimeout(const RPNet *nc) {
- //     coord's own deadline (handled by the strict timeout callback) is the
- //     authoritative stop signal.
- //   - TimeoutPolicy_Return / TimeoutPolicy_Fail: a shard timeout
--//     bails the coord pipeline early by returning RS_RESULT_TIMEDOUT.
-+//     bails the coord pipeline early by returning RS_RESULT_STOPPED.
- static int processWarningsAndCleanup(RPNet *nc, bool is_resp3) {
-   bool shard_timed_out = false;
-   // Check for warnings (resp3 only)
-@@ -169,7 +169,7 @@ static int processWarningsAndCleanup(RPNet *nc, bool is_resp3) {
-   RPNet_resetCurrent(nc);
- 
-   if (shard_timed_out && nc->areq->base.limits.timeout.config.timeoutPolicy != TimeoutPolicy_ReturnStrict) {
--    return RS_RESULT_TIMEDOUT;
-+    return RS_RESULT_STOPPED;
-   }
- 
-   return RS_RESULT_OK;
-@@ -210,7 +210,7 @@ static int processHybridMappingWarning(RPNet *nc, const char *warning_str) {
-     case QUERY_WARNING_CODE_TIMED_OUT:
-       nc->areq->stateflags |= QEXEC_S_SHARD_TIMED_OUT_WARNING;
-       if (nc->areq->base.limits.timeout.config.timeoutPolicy == TimeoutPolicy_Fail) {
--        return RS_RESULT_TIMEDOUT;
-+        return RS_RESULT_STOPPED;
-       }
-       break;
-     case QUERY_WARNING_CODE_OUT_OF_MEMORY_SHARD:
-@@ -419,7 +419,7 @@ int getNextReply(RPNet *nc) {
-     }
-     if (popTimedOut || QueryRequestLimits_IsMemoryStopped(limits) ||
-         QueryRequestLimits_IsBlockedClientTimedOut(limits)) {
--      return RS_RESULT_TIMEDOUT;
-+      return RS_RESULT_STOPPED;
-     }
-     return MRIterator_GetPending(nc->it) ? RS_RESULT_OK : RS_RESULT_EOF;
-   }
-@@ -506,8 +506,8 @@ int getNextReply(RPNet *nc) {
-     RedisModule_Log(RSDummyContext, "verbose", "An empty reply was received from a shard");
-     int ret = processWarningsAndCleanup(nc, nc->cmd.protocol == 3);
- 
--    if (ret == RS_RESULT_TIMEDOUT) {
--      return RS_RESULT_TIMEDOUT;
-+    if (ret == RS_RESULT_STOPPED) {
-+      return RS_RESULT_STOPPED;
-     }
-   }
- 
-@@ -600,7 +600,7 @@ int rpnetNext(ResultProcessor *self, SearchResult *r) {
-       (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
-        (QueryRequest_UsesReplyCallback(&areq->base) &&
-         QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)))) {
--    return RS_RESULT_TIMEDOUT;
-+    return RS_RESULT_STOPPED;
-   }
- 
-   MRReply *root = nc->current.root, *rows = nc->current.rows;
-@@ -625,8 +625,8 @@ int rpnetNext(ResultProcessor *self, SearchResult *r) {
-     size_t len = MRReply_Length(rows);
- 
-     if (nc->curIdx == len) {
--      if (processWarningsAndCleanup(nc, resp3) == RS_RESULT_TIMEDOUT) {
--        return RS_RESULT_TIMEDOUT;
-+      if (processWarningsAndCleanup(nc, resp3) == RS_RESULT_STOPPED) {
-+        return RS_RESULT_STOPPED;
-       }
- 
-       root = rows = NULL;
-@@ -645,7 +645,7 @@ int rpnetNext(ResultProcessor *self, SearchResult *r) {
-       // callback so that a `CURSOR DEL` command will be dispatched instead of
-       // a `CURSOR READ` command.
-       MRIteratorCallback_SetTimedOut(MRIterator_GetCtx(nc->it));
--      return RS_RESULT_TIMEDOUT;
-+      return RS_RESULT_STOPPED;
-     } else if (!nc->drainOnly && MRIteratorCallback_GetTimedOut(MRIterator_GetCtx(nc->it))) {
-       // if timeout was set in previous reads, reset it. Drain-only must keep
-       // the flag set so the post-drain callback dispatches CURSOR DEL.
-@@ -655,9 +655,9 @@ int rpnetNext(ResultProcessor *self, SearchResult *r) {
-     int ret = getNextReply(nc);
-     if (ret == RS_RESULT_EOF) {
-       return RS_RESULT_EOF;
--    } else if (ret == RS_RESULT_TIMEDOUT) {
-+    } else if (ret == RS_RESULT_STOPPED) {
-       MRIteratorCallback_SetTimedOut(MRIterator_GetCtx(nc->it));
--      return RS_RESULT_TIMEDOUT;
-+      return RS_RESULT_STOPPED;
-     } else if (ret == RS_RESULT_ERROR) {
-       // Mapping-stage warning escalated under a FAIL policy (see
-       // processHybridMappingWarning); the QueryError is already set.
-```
-
-**File**: `src/coord/rpnet.h` (modified, +3/-2)
-```diff
-@@ -109,8 +109,9 @@ bool RPNet_DebugPrepareRespSchema(RPNet *nc, MRReply *chunk, uint16_t maxColumns
- #endif
- 
- // Get the next reply from the channel.
--// Return RS_RESULT_OK if there is a next reply to process, RS_RESULT_EOF if there are no more replies
--// Or RS_RESULT_TIMEDOUT if we timed out
-+// Return RS_RESULT_OK if there is a next reply to process, RS_RESULT_EOF if there are no more
-+// replies, or RS_RESULT_STOPPED
-+// if the read was stopped (timeout or memory stop)
- int getNextReply(RPNet *nc);
- 
- #ifdef __cplusplus
-```
-
-**File**: `src/hybrid/hybrid_exec.c` (modified, +7/-7)
-```diff
-@@ -96,7 +96,7 @@ static inline void ReplyWarning(RedisModule_Reply *reply, const char *message, c
- static inline HybridWarningMask handleAndReplyWarning(RedisModule_Reply *reply, QueryError *err,
-                                                       int returnCode, const char *suffix,
-                                                       bool ignoreTimeout) {
--  if (returnCode == RS_RESULT_TIMEDOUT && !ignoreTimeout) {
-+  if (returnCode == RS_RESULT_STOPPED && !ignoreTimeout) {
-     ReplyWarning(reply, QueryWarning_Strwarning(QUERY_WARNING_CODE_TIMED_OUT), suffix);
-     return HYBRID_WARNING_TIMEOUT;
-   } else if (returnCode == RS_RESULT_ERROR) {
-@@ -124,7 +124,7 @@ static bool HybridRequest_HasShardTimedOutWarning(const HybridRequest *hreq) {
- 
- static bool HybridRequest_HasTimedOutSubquery(const HybridRequest *hreq) {
-   for (size_t i = 0; i < hreq->nrequests; ++i) {
--    if (hreq->subqueriesReturnCodes[i] == RS_RESULT_TIMEDOUT) {
-+    if (hreq->subqueriesReturnCodes[i] == RS_RESULT_STOPPED) {
-       return true;
-     }
-   }
-@@ -136,7 +136,7 @@ static int replyForHybridPreExecutionTimeout(RedisModuleCtx *ctx, bool internal,
-   const bool isProfile = profileOptions & EXEC_WITH_PROFILE;
-   const RSTimeoutPolicy timeoutPolicy = RSGlobalConfig.timeoutConfigParams.timeoutPolicy;
-   const bool shouldReplyWithError =
--      ShouldReplyWithTimeoutError(RS_RESULT_TIMEDOUT, timeoutPolicy, isProfile);
-+      ShouldReplyWithTimeoutError(RS_RESULT_STOPPED, timeoutPolicy, isProfile);
- 
-   if (shouldReplyWithError) {
-     QueryErrorsGlobalStats_UpdateError(QUERY_ERROR_CODE_TIMED_OUT, 1, !internal);
-@@ -266,7 +266,7 @@ static void startPipelineHybrid(HybridRequest *hreq, ResultProcessor *rp, Search
-   if (HybridRequest_RequiresThreadsSyncResults(hreq) &&
-       (QueryRequestLimits_IsBlockedClientTimedOut(&hreq->base.limits) ||
-        !HybridRequest_TryClaimAggregateResults(hreq))) {
--    *rc = RS_RESULT_TIMEDOUT;
-+    *rc = RS_RESULT_STOPPED;
-     return;
-   }
- 
-@@ -278,7 +278,7 @@ static void startPipelineHybrid(HybridRequest *hreq, ResultProcessor *rp, Search
- 
-   // Pipeline done without timing out; the caller now enters the reply phase
-   // (marker only; never forces a timeout).
--  if (*rc != RS_RESULT_TIMEDOUT) {
-+  if (*rc != RS_RESULT_STOPPED) {
-     HybridRequest_SetExecutionStage(hreq, QUERY_TIMEOUT_STAGE_REPLY);
-   }
- }
-@@ -845,13 +845,13 @@ int HybridRequest_StartCursors(HybridRequest *req, RedisModuleCtx *replyCtx, Que
- 
-     bool depletionTimedOut = false;
-     if (rc != RS_RESULT_OK) {
--      if (rc == RS_RESULT_TIMEDOUT && req->base.limits.timeout.config.timeoutPolicy == TimeoutPolicy_Return) {
-+      if (rc == RS_RESULT_STOPPED && req->base.limits.timeout.config.timeoutPolicy == TimeoutPolicy_Return) {
-         // RETURN policy: keep cursors with partial results, emit warning in reply
-         depletionTimedOut = true;
-       } else {
-         // Fatal error or FAIL policy
-         if (!QueryError_HasError(status)) {
--          if (rc == RS_RESULT_TIMEDOUT) {
-+          if (rc == RS_RESULT_STOPPED) {
-             QueryError_SetWithoutUserDataFmt(status, QUERY_ERROR_CODE_TIMED_OUT, "Depleting timed out");
-           } else {
-             QueryError_SetWithoutUserDataFmt(status, QUERY_ERROR_CODE_GENERIC, "Failed to deplete set of results, rc=%d", rc);
-```
-
-**File**: `src/iterators/iterator_api.h` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ typedef enum ValidateStatus {
-   VALIDATE_TIMEOUT, // The deadline expired while revalidating. The iterator is no longer valid and
-                     // should be freed, exactly as for `VALIDATE_ABORTED`. The two differ only in
-                     // what the caller reports: a timeout leaves the result set INCOMPLETE, so the
--                    // caller must surface it (`RS_RESULT_TIMEDOUT`) rather than end-of-results.
-+                    // caller must surface it (`RS_RESULT_STOPPED`) rather than end-of-results.
- } ValidateStatus;
- 
- /* An abstract interface used by readers / intersectors / uniones etc.
-```
-
----
-
-### Incident Patch 2: `7ad31257` (2026-11-05)
-**Commit Message**: [MOD-19816] Fix exact phrase, `$slop` and `$inorder` queries returning wrong results on Redis Flex (#11984)
-
-* [MOD-19816] Read term offsets on disk for phrase, slop and in-order queries
-
-On disk indexes a term iterator reads offsets only when
-expansion_needs_offsets asks for them: when the scorer needs offsets, or
-when the term node's own options set slop or order. A phrase resolves
-slop and order on its own node and passes them only to the intersection,
-so its children were built without offsets under every scorer except
-TFIDF, TFIDF.DOCNORM and BM25. The intersection then filtered on missing
-positions: an exact phrase matched any document containing all its
-terms, and a $slop or $inorder query matched none. Memory indexes were
-unaffected, because their term readers decode whatever offsets the index
-stores without being asked.
-
-Add OffsetRequirement, an argument of eval_node that carries what a
-node's ancestors require. qast_iterate starts at Automatic; a phrase
-that is exact or has slop or in-order passes Required to its children.
-Union, optional and nested phrases pass it on, so it reaches prefix,
-fuzzy, wildcard and union expansions too. NOT and a vector's filter
-start their c
-
-**File**: `src/redisearch_rs/query_eval/src/lib.rs` (modified, +56/-10)
-```diff
-@@ -269,6 +269,34 @@ impl DocIdCoverage {
-     }
- }
- 
-+/// Whether the disk term readers of a subtree must read offsets whatever the
-+/// scorer.
++/// Borrow the [`ForkPipe`] behind a pointer received from C.
 +///
-+/// A phrase that filters by term position
-+/// ([`filters_by_position`](rqe_iterators::intersection::filters_by_position))
-+/// checks the positions in its children's results, but the children don't
-+/// carry the phrase's slop or order, so their own options never ask for
-+/// offsets. The phrase therefore evaluates them under
-+/// [`Required`](Self::Required).
++/// A null `fgc` fails a debug assertion that reports the calling entrypoint;
++/// release builds do not check.
 +///
-+/// - [`eval_node`] starts at [`Automatic`](Self::Automatic).
-+/// - Union, optional and phrase nodes pass the requirement on, so it reaches
-+///   every term a child expands into; a phrase that filters by position
-+///   raises it to [`Required`](Self::Required).
-+/// - NOT and a vector query's filter restart their child at
-+///   [`Automatic`](Self::Automatic): a NOT yields virtual results, and a
-+///   phrase never looks inside a hybrid result, so neither exposes the child's
-+///   positions to an enclosing phrase.
-+/// - Term leaves (token, prefix, fuzzy, wildcard query) hand it to
-+///   [`expansion_needs_offsets`]; every other leaf ignores it.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) enum OffsetRequirement {
-+    /// The node's own options and the scorer decide.
-+    Automatic,
-+    /// An enclosing phrase filters by term position.
-+    Required,
++/// # Safety
++///
++/// 1. `fgc` must point to a valid, initialised [`ffi::IndexGC`].
++/// 2. For the chosen lifetime `'a`, no other reference to the same struct may
++///    exist.
++#[track_caller]
++pub(crate) unsafe fn borrow_fork_pipe<'a>(fgc: *mut ffi::IndexGC) -> &'a mut ForkPipe {
++    debug_assert!(!fgc.is_null(), "`fgc` must not be null");
++    // SAFETY: caller guarantees (1), which implies `fgc` is non-null.
++    let fgc = unsafe { NonNull::new_unchecked(fgc) };
++    // SAFETY: caller guarantees (1) and (2).
++    unsafe { ForkPipe::from_ptr_mut(fgc) }
 +}
 +
- /// Evaluate a single query node, producing the corresponding iterator.
- ///
- /// Returns `None` when the node produces no results.
-@@ -284,6 +312,17 @@ pub fn eval_node<'index>(
-     ctx: &'index mut QueryEvalContext,
-     node: QueryNodeMut<'_>,
-     config: Config,
-+) -> Option<Evaluated<'index>> {
-+    eval_node_with_offsets(ctx, node, config, OffsetRequirement::Automatic)
-+}
+ /// Consume the frame, producing the `(buf, len)` pair that the C
+ /// `ForkGC_recvBuffer` and `recvFieldHeader` API exposes through its
+ /// out-parameters.
+```
+
+**File**: `src/redisearch_rs/c_entrypoint/iterators_ffi/src/profile_print.rs` (modified, +3/-0)
+```diff
+@@ -114,6 +114,9 @@ pub unsafe extern "C" fn Profile_PrintIterators(
+         "Profile_PrintIterators expects a profile-wrapped iterator tree",
+     );
+ 
++    debug_assert!(!ctx.is_null(), "`ctx` must not be null");
++    // SAFETY: precondition 1, which implies `ctx` is non-null.
++    let ctx = unsafe { NonNull::new_unchecked(ctx) };
+     // SAFETY: precondition 1.
+     let mut replier = unsafe { Replier::new(ctx) };
+     let mut profile_ctx = ProfilePrintCtx::new(limited, print_profile_clock);
+```
+
+**File**: `src/redisearch_rs/c_entrypoint/numeric_range_tree_ffi/src/debug.rs` (modified, +8/-0)
+```diff
+@@ -14,6 +14,8 @@
+ //! - DUMP_NUMIDX: Index entries dump
+ //! - DUMP_NUMIDXTREE: Tree structure dump
+ 
++use std::ptr::NonNull;
 +
-+/// [`eval_node`] under the [`OffsetRequirement`] imposed by the node's
-+/// ancestors.
-+fn eval_node_with_offsets<'index>(
-+    ctx: &'index mut QueryEvalContext,
-+    node: QueryNodeMut<'_>,
-+    config: Config,
-+    offsets: OffsetRequirement,
- ) -> Option<Evaluated<'index>> {
-     match node.as_enum() {
-         QueryNode::Null => Some(null::eval()),
-@@ -292,17 +331,19 @@ pub fn eval_node<'index>(
-         QueryNode::Missing { field_index } => {
-             missing::eval(ctx, field_index).map(Evaluated::RustLeaf)
-         }
--        QueryNode::Optional => Some(optional::eval(ctx, node, config)),
-+        QueryNode::Optional => Some(optional::eval(ctx, node, config, offsets)),
-         QueryNode::Not => Some(not::eval(ctx, node, config)),
--        QueryNode::Phrase { exact } => phrase::eval(ctx, node, exact, config),
--        QueryNode::Union => Some(union::eval(ctx, node, config)),
-+        QueryNode::Phrase { exact } => phrase::eval(ctx, node, exact, config, offsets),
-+        QueryNode::Union => Some(union::eval(ctx, node, config, offsets)),
-         QueryNode::Numeric { nf } => numeric::eval(ctx, nf, config),
-         QueryNode::Geo { gf } => geo::eval(ctx, gf, config),
--        QueryNode::Token { tok } => token::eval(ctx, &node, tok, config),
-+        QueryNode::Token { tok } => token::eval(ctx, &node, tok, config, offsets),
-         QueryNode::Geometry { geomq } => geometry::eval(ctx, geomq),
-         QueryNode::Vector { vq } => vector::eval(ctx, node, vq, config),
--        QueryNode::Prefix { tok, mode } => prefix::eval(ctx, &node, tok, mode, config),
--        QueryNode::Fuzzy { tok, max_dist } => fuzzy::eval(ctx, &node, tok, max_dist, config),
-+        QueryNode::Prefix { tok, mode } => prefix::eval(ctx, &node, tok, mode, config, offsets),
-+        QueryNode::Fuzzy { tok, max_dist } => {
-+            fuzzy::eval(ctx, &node, tok, max_dist, config, offsets)
-+        }
-         QueryNode::Tag { field_index } => tag::eval(ctx, node, field_index, config),
-         // A lex range only ever hangs off a tag node, whose evaluator dispatches
-         // its own children, so reaching it from here is a bug.
-@@ -311,7 +352,7 @@ pub fn eval_node<'index>(
-         }
-         // Binds nothing, so the node stays free to be passed on by value —
-         // evaluation rewrites its token.
--        QueryNode::WildcardQuery { .. } => wildcard_query::eval(ctx, node, config),
-+        QueryNode::WildcardQuery { .. } => wildcard_query::eval(ctx, node, config, offsets),
-     }
- }
+ use numeric_range_tree::NumericRangeTree;
+ use redis_module::RedisModuleCtx;
  
-@@ -321,8 +362,9 @@ fn eval_child_iterator(
-     ctx: &mut QueryEvalContext,
-     child: QueryNodeMut<'_>,
-     config: Config,
-+    offsets: OffsetRequirement,
- ) -> CRQEIterator {
--    into_child_iterator(eval_node(&mut *ctx, child, config))
-+    into_child_iterator(eval_node_with_offsets(&mut *ctx, child, config, offsets))
- }
- 
- /// Lower an evaluated node into an owning [`CRQEIterator`], for use as a child
-@@ -345,12 +387,15 @@ fn into_child_iterator(evaluated: Option<Evaluated<'_>>) -> CRQEIterator {
- }
- 
- /// Whether a term disk reader must carry term offsets: required when the node
--/// forces slop/in-order matching, or when the effective scorer needs positions.
-+/// forces 
+@@ -32,6 +34,8 @@ pub unsafe extern "C" fn NumericRangeTree_DebugSummary(
+     t: *const NumericRangeTree,
+ ) {
+     debug_assert!(!ctx.is_null(), "ctx cannot be NULL");
++    // SAFETY: `ctx` is a valid Redis module context per the function docs, so non-null.
++    let ctx = unsafe { NonNull::new_unchecked(ctx) };
+     // SAFETY: Caller ensures `t` is either NULL or a valid pointer.
+     let tree = unsafe { t.as_ref() };
+     // SAFETY: ctx is valid per function docs
+@@ -57,6 +61,8 @@ pub unsafe extern "C" fn NumericRangeTree_DebugDumpIndex(
+     with_headers: bool,
+ ) {
+     debug_assert!(!ctx.is_null(), "ctx cannot be NULL");
++    // SAFETY: `ctx` is a valid Redis module context per the function docs, so non-null.
++    let ctx = unsafe { NonNull::new_unchecked(ctx) };
+     // SAFETY: Caller ensures `t` is either NULL or a valid pointer.
+     let tree = unsafe { t.as_ref() };
+     // SAFETY: ctx is valid per function docs
+@@ -82,6 +88,8 @@ pub unsafe extern "C" fn NumericRangeTree_DebugDumpTree(
+     minimal: bool,
+ ) {
+     debug_assert!(!ctx.is_null(), "ctx cannot be NULL");
++    // SAFETY: `ctx` is a valid Redis module context per the function docs, so non-null.
++    let ctx = unsafe { NonNull::new_unchecked(ctx) };
+     // SAFETY: Caller ensures `t` is either NULL or a valid pointer.
+     let tree = unsafe { t.as_ref() };
+     // SAFETY: ctx is valid per function docs
 ```
 
-**File**: `src/redisearch_rs/query_eval/src/nodes/fuzzy.rs` (modified, +3/-2)
+**File**: `src/redisearch_rs/index_gc/src/fork/pipe.rs` (modified, +6/-5)
 ```diff
-@@ -18,7 +18,7 @@ use rs_token::RSTokenRefNulTerminated;
- use string_utils::runes::runes_to_bytes;
- 
- use crate::{
--    Config, Evaluated, QueryEvalContext, QueryNodeRef, expansion::Expansion,
-+    Config, Evaluated, OffsetRequirement, QueryEvalContext, QueryNodeRef, expansion::Expansion,
-     expansion_needs_offsets,
+@@ -12,6 +12,7 @@ use std::{
+     marker::PhantomData,
+     mem::ManuallyDrop,
+     os::fd::FromRawFd,
++    ptr::NonNull,
+     time::Duration,
  };
  
-@@ -52,13 +52,14 @@ pub(crate) fn eval<'index>(
-     tok: RSTokenRefNulTerminated,
-     max_dist: i32,
-     config: Config,
-+    offsets: OffsetRequirement,
- ) -> Option<Evaluated<'index>> {
-     // The reader field mask narrows the node's mask to the query-wide one.
-     let node_field_mask = node.opts().field_mask;
-     let weight = node.opts().weight;
-     let field_mask = node_field_mask & ctx.opts().fieldmask;
-     let is_disk = !ctx.spec().diskSpec.is_null();
--    let needs_offsets = expansion_needs_offsets(ctx, node.opts(), config);
-+    let needs_offsets = expansion_needs_offsets(ctx, node.opts(), config, offsets);
-     // Read with every other use of `ctx`, because `Expansion` borrows it mutably
-     // for the rest of the expansion.
-     let api_version = ctx.sctx().apiVersion;
-```
-
-**File**: `src/redisearch_rs/query_eval/src/nodes/not.rs` (modified, +5/-2)
-```diff
-@@ -16,7 +16,9 @@ use rqe_iterators::{
-     not_reducer::{NewNotIterator, new_not_iterator},
- };
- 
--use crate::{Config, Evaluated, QueryEvalContext, QueryNodeMut, eval_child_iterator};
-+use crate::{
-+    Config, Evaluated, OffsetRequirement, QueryEvalContext, QueryNodeMut, eval_child_iterator,
-+};
- 
- /// `QN_NOT` — logical negation: matches every document *not* matched by its
- /// single child.
-@@ -41,7 +43,8 @@ pub(crate) fn eval<'index>(
-     // nodes can nest (e.g. `-(-foo)`), and the outer NOT must keep the flag set
-     // while the inner one is being evaluated and after it returns.
-     let prev_in_not_sub_tree = ctx.set_in_not_sub_tree(true);
--    let child = eval_child_iterator(ctx, node.child_mut(0), config);
-+    // Not inherited; see `OffsetRequirement`.
-+    let child = eval_child_iterator(ctx, node.child_mut(0), config, OffsetRequirement::Automatic);
-     ctx.set_in_not_sub_tree(prev_in_not_sub_tree);
- 
-     // SAFETY: invariant (2) of `QueryEvalContext::new` guarantees that `sctx` and its
-```
-
-**File**: `src/redisearch_rs/query_eval/src/nodes/optional.rs` (modified, +5/-2)
-```diff
-@@ -16,14 +16,17 @@ use rqe_iterators::{
-     optional_reducer::{NewOptionalIterator, new_optional_iterator},
- };
- 
--use crate::{Config, Evaluated, QueryEvalContext, QueryNodeMut, eval_child_iterator};
-+use crate::{
-+    Config, Evaluated, OffsetRequirement, QueryEvalContext, QueryNodeMut, eval_child_iterator,
-+};
- 
- /// `QN_OPTIONAL` — an optional match that boosts the score when its single
- /// child matches but does not exclude documents that don't.
- pub(crate) fn eval<'index>(
-     ctx: &'index mut QueryEvalContext,
-     mut node: QueryNodeMut<'_>,
-     config: Config,
-+    offsets: OffsetRequirement,
- ) -> Evaluated<'index> {
-     debug_assert_eq!(
-         node.num_children(),
-@@ -34,7 +37,7 @@ pub(crate) fn eval<'index>(
-     // Evaluate the child. A `None` child becomes an `Empty` iterator, which
-     // `new_optional_iterator` reduces to a wildcard fallback — an empty optional
-     // matches every document as a virtual hit.
--    let child = eval_child_iterator(ctx, node.child_mut(0), config);
-+    let child = eval_child_iterator(ctx, node.child_mut(0), config, offsets);
- 
-     // SAFETY: the preconditions of `new_optional_iterator` map to
-     // `QueryEvalContext::new` invariants:
-```
-
-**File**: `src/redisearch_rs/query_eval/src/nodes/phrase.rs` (modified, +18/-4)
-```diff
-@@ -14,10 +14,15 @@ use std::ptr::NonNull;
- use rqe_iterators::{
-     Empty,
-     interop::RQEIteratorWrapper,
--    intersection::{Intersection, NewIntersectionIterator, new_intersection_iterator},
-+    intersection::{
-+        Intersection, NewIntersectionIterator, filters_by_position, new_intersection_iterator,
-+    },
- };
- 
--use crate::{Config, Evaluated, QueryEvalContext, QueryNodeMut, eval_child_iterator, eval_node};
-+use crate::{
-+    Config, Evaluated, OffsetRequirement, QueryEvalContext, QueryNodeMut, eval_child_iterator,
-+    eval_node_with_offsets,
-+};
- 
- /// `QN_PHRASE` — an ordered/unordered conjunction of child terms.
- ///
-@@ -34,19 +39,22 @@ use crate::{Config, Evaluated, QueryEvalContext, QueryNodeMut, eval_child_iterat
- ///   matching is required, ignoring the per-node and query-wide slop/in-order
- ///   settings. When `false`, the slop and in-order constraints are resolved
- ///   from the node's own options, falling back to the query-wide defaults.
-+/// * `offsets` — the requirement inherited from the phrase's ancestors, which
-+///   the phrase may raise for its children as [`OffsetRequirement`] describes.
- pub(crate) fn eval<'index>(
-     ctx: &'index mut QueryEvalContext,
-     mut node: QueryNodeMut<'_>,
-     exact: bool,
-     config: Config,
-+    offsets: OffsetRequirement,
- ) -> Option<Evaluated<'index>> {
-     let num_children = node.num_children();
-     let node_mask = node.opts().field_mask;
-     // A single-child intersection is just the child; return it directly.
-     if num_children == 1 {
-         let mut child = node.child_mut(0);
-         child.and_field_mask(node_mask);
--        return eval_node(ctx, child, config);
-+        return eval_node_with_offsets(ctx, child, config, offsets);
+@@ -57,11 +58,11 @@ impl ForkPipe {
+     /// 1. `ptr` must point to a valid, initialised [`ffi::IndexGC`].
+     /// 2. For the chosen lifetime `'a`, no other reference to the same
+     ///    struct may exist.
+-    pub unsafe fn from_ptr_mut<'a>(ptr: *mut ffi::IndexGC) -> &'a mut Self {
+-        // SAFETY: `#[repr(transparent)]` guarantees `*mut ffi::IndexGC` and
+-        // `*mut ForkPipe` have identical layout. Validity and aliasing are
+-        // the caller's responsibility per (1) and (2).
+-        unsafe { &mut *ptr.cast::<ForkPipe>() }
++    pub const unsafe fn from_ptr_mut<'a>(ptr: NonNull<ffi::IndexGC>) -> &'a mut Self {
++        // SAFETY: `#[repr(transparent)]` guarantees `ffi::IndexGC` and
++        // `ForkPipe` have identical layout. Validity and aliasing are the
++        // caller's responsibility per (1) and (2).
++        unsafe { ptr.cast::<ForkPipe>().as_mut() }
      }
  
-     let weight = node.opts().weight;
-@@ -65,12 +73,18 @@ pub(crate) fn eval<'index>(
-         (max_slop, in_order)
-     };
- 
-+    let child_offsets = if filters_by_position(max_slop, in_order) {
-+        OffsetRequirement::Required
-+    } else {
-+        offsets
-+    };
-+
-     // Recursively evaluate every child, narrowing its field mask first.
-     let mut children = Vec::with_capacity(num_children);
-     for i in 0..num_children {
-         let mut child = node.child_mut(i);
-         child.and_field_mask(node_mask);
--        children.push(eval_child_iterator(ctx, child, config));
-+        children.push(eval_child_iterator(ctx, child, config, child_offsets));
-     }
- 
-     let result_ptr = match new_intersection_iterator(children) {
+     /// Return a writable handle to the GC pipe.
 ```
 
-**File**: `src/redisearch_rs/query_eval/src/nodes/prefix.rs` (modified, +3/-2)
+**File**: `src/redisearch_rs/index_gc/tests/pipe.rs` (modified, +8/-7)
 ```diff
-@@ -21,7 +21,7 @@ use rs_token::RSTokenRefNulTerminated;
- use string_utils::runes::runes_to_bytes;
- 
- use crate::{
--    Config, Evaluated, QueryEvalContext, QueryNodeRef, expansion::Expansion,
-+    Config, Evaluated, OffsetRequirement, QueryEvalContext, QueryNodeRef, expansion::Expansion,
-     expansion_needs_offsets,
+@@ -17,6 +17,7 @@ use std::{
+     io::{self, Read, Write},
+     mem,
+     os::fd::AsRawFd,
++    ptr::NonNull,
+     time::Duration,
  };
  
-@@ -40,6 +40,7 @@ pub(crate) fn eval<'index>(
-     tok: RSTokenRefNulTerminated,
-     mode: WildcardMode,
-     config: Config,
-+    offsets: OffsetRequirement,
- ) -> Option<Evaluated<'index>> {
-     // A pattern shorter than the configured minimum is rejected to avoid
-     // over-broad expansions (e.g. a bare `a*`). Not setting a ctx error: the minimum
-@@ -87,7 +88,7 @@ pub(crate) fn eval<'index>(
+@@ -45,7 +46,7 @@ fn make_fork_pipe() -> (ffi::IndexGC, io::PipeReader, io::PipeWriter) {
+ fn roundtrip_through_fork_pipe() {
+     let (mut raw, _pipe_reader, _pipe_writer) = make_fork_pipe();
+     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
++    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
  
-     let field_mask = node_field_mask & ctx.opts().fieldmask;
-     let is_disk = !ctx.spec().diskSpec.is_null();
--    let needs_offsets = expansion_needs_offsets(ctx, node.opts(), config);
-+    let needs_offsets = expansion_needs_offsets(ctx, node.opts(), config, offsets);
+     fgc.writer().write_all(b"hello").unwrap();
  
-     let suffix_trie = ctx.spec().suffix;
-     let suffix_mask = ctx.spec().suffixMask;
-```
-
-**File**: `src/redisearch_rs/query_eval/src/nodes/token.rs` (modified, +8/-2)
-```diff
-@@ -19,7 +19,10 @@ use rqe_iterators::build_term_iterator;
- use rs_token::RSTokenRef;
- use search_disk::SearchDiskHandle;
+@@ -58,7 +59,7 @@ fn roundtrip_through_fork_pipe() {
+ fn times_out_when_no_data_available() {
+     let (mut raw, _pipe_reader, _pipe_writer) = make_fork_pipe();
+     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
++    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
  
--use crate::{Config, Evaluated, QueryEvalContext, QueryNodeRef, disk, expansion_needs_offsets};
-+use crate::{
-+    Config, Evaluated, OffsetRequirement, QueryEvalContext, QueryNodeRef, disk,
-+    expansion_needs_offsets,
-+};
+     let mut buf = [0u8; 5];
+     let err = fgc
+@@ -78,7 +79,7 @@ fn read_ahead_fetches_many_messages_in_one_read() {
+     const MESSAGES: u32 = 100;
+     let (mut raw, pipe_reader, _pipe_writer) = make_fork_pipe();
+     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
++    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
+     for i in 0..MESSAGES {
+         serialize(&mut fgc.writer(), i).unwrap();
+     }
+@@ -101,7 +102,7 @@ fn read_ahead_fetches_many_messages_in_one_read() {
+ fn read_ahead_is_uninstalled_when_the_closure_unwinds() {
+     let (mut raw, _pipe_reader, _pipe_writer) = make_fork_pipe();
+     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
++    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
  
- /// `QN_TOKEN` — a single-term lookup.
- ///
-@@ -33,6 +36,7 @@ pub(crate) fn eval<'index>(
-     node: &QueryNodeRef,
-     tok: RSTokenRef,
-     config: Config,
-+    offsets: OffsetRequirement,
- ) -> Option<Evaluated<'index>> {
-     let opts = node.opts();
-     let weight = opts.weight;
-@@ -58,6 +62,7 @@ pub(crate) fn eval<'index>(
-             weight,
-             effective_field_mask,
-             config,
-+            offsets,
-         )
-     } else {
-         open_term_reader(ctx, tok, term, weight, effective_field_mask)
-@@ -127,6 +132,7 @@ fn eval_disk<'index>(
-     weight: f64,
-     effective_field_mask: FieldMask,
-     config: Config,
-+    offsets: OffsetRequirement,
- ) -> Option<Evaluated<'index>> {
-     // Look up the term's document count in the terms trie to compute IDF, then
-     // build a disk term iterator through the enterprise API.
-@@ -146,7 +152,7 @@ fn eval_disk<'index>(
-     let num_documents = ctx.spec().stats.scoring.numDocuments;
-     term.set_idfs(num_documents, num_docs_in_term);
+     let unwound = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+         fgc.with_read_ahead(|_| panic!("the closure unwinds"))
+@@ -117,7 +118,7 @@ fn read_ahead_is_uninstalled_when_the_closure_unwinds() {
+ fn a_nested_read_ahead_reuses_the_outer_buffer() {
+     let (mut raw, _pipe_reader, _pipe_writer) = make_fork_pipe();
+     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
++    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
+     serialize(&mut fgc.writer(), 1u32).unwrap();
+     serialize(&mut fgc.writer(), 2u32).unwrap();
  
--    let needs_offsets = expansion_needs_offsets(ctx, opts, config);
-+    let needs_offsets = expansion_needs_offsets(ctx, opts, config, offsets);
+@@ -147,7 +148,7 @@ fn read_ahead_decodes_messages_larger_than_its_buffer() {
+         serialize(&mut pipe_writer, 2u8).unwrap();
+     });
+     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
++    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
  
-     let iter =
-         disk::new_term_iterator(ctx, disk, term, effective_field_mask, weight, needs_offsets)?;
-```
-
-**File**: `src/redisearch_rs/query_eval/src/nodes/union.rs` (modified, +5/-2)
-```diff
-@@ -11,7 +11,9 @@
- 
- use rqe_iterators::{c2rust::CRQEIterator, union_opaque::build_union};
- 
--use crate::{Config, Evaluated, QueryEvalContext, QueryNodeMut, eval_child_iterator};
-+use crate::{
-+    Config, Evaluated, OffsetRequirement, QueryEvalContext, QueryNodeMut, eval_child_iterator,
-+};
- 
- /// `QN_UNION` — a logical OR over its children (matches any document matched by
- /// at least one child).
-@@ -25,6 +27,7 @@ pub(crate) fn eval<'index>(
-     ctx: &'index mut QueryEvalContext,
-     mut node: QueryNodeMut<'_>,
-     config: Config,
-+    offsets: OffsetRequirement,
- ) -> Evaluated<'index> {
-     // Parsers and expanders always create unions with 2+ children.
-     debug_assert!(
-@@ -48,7 +51,7 @@ pub(crate) fn eval<'index>(
-         .map(|i| {
-             let mut child = node.child_mut(i);
-             child.and_field_mask(node_mask);
--            eval_child_iterator(ctx, child, config)
-+            eval_child_iterator(ctx, child, config, offsets)
-         })
-         .collect();
- 
+     fgc.with_read_ahead(|fgc| {
+         assert_eq!(deserialize::<u8>(&mut fgc.reader(), "before").unwrap(), 1);
+@@ -164,7 +165,7 @@ fn read_ahead_decodes_messages_larger_than_its_buffer() {
+ fn read_ahead_reports_end_of_stream_after_the_buffered_bytes() {
+     let (mut raw, _pipe_reader, pipe_writer) = make_fork_pipe();
+     // SAFETY: raw is a valid ffi::IndexGC for the duration of the test.
+-    let fgc = unsafe { ForkPipe::from_ptr_mut(&mut raw) };
++    let fgc = unsafe { ForkPipe::from_ptr_mut(NonNull::from(&mut raw)) };
+     let mut pipe_writer = pipe_writer;
+     pipe_writer.write_all(b"tail").unwrap();
+     // The ForkPipe borrows this fd; dropping its owner closes the write end.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2436,52 +2003,3 @@ start their c
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. [MOD-20101] Add the query memory checkpoint helper (#12100)
-
-**RULE**:
-When implementing operations in `src/aggregate/aggregate_exec.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `62430116`: [MOD-20101] Add the query memory checkpoint helper (#12100). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/aggregate/aggregate_exec.c`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-      *rc = RS_RESULT_STOPPED;
-      *rc = RS_RESULT_STOPPED;
-  if (*rc != RS_RESULT_STOPPED) {
-      ShouldReplyWithTimeoutError(RS_RESULT_STOPPED, timeoutPolicy, isProfile);
-  bool has_timedout = (rc == RS_RESULT_STOPPED) || hasTimeoutError(qctx->err)
-  if (rc == RS_RESULT_STOPPED) {
-  if (rc == RS_RESULT_STOPPED
-  bool has_timedout = (rc == RS_RESULT_STOPPED) || hasTimeoutError(qctx->err)
-    req->base.reply.rc = RS_RESULT_STOPPED;
-    req->base.reply.rc = RS_RESULT_STOPPED;
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-      *rc = RS_RESULT_TIMEDOUT;
-      *rc = RS_RESULT_TIMEDOUT;
-  if (*rc != RS_RESULT_TIMEDOUT) {
-      ShouldReplyWithTimeoutError(RS_RESULT_TIMEDOUT, timeoutPolicy, isProfile);
-  bool has_timedout = (rc == RS_RESULT_TIMEDOUT) || hasTimeoutError(qctx->err)
-  if (rc == RS_RESULT_TIMEDOUT) {
-  if (rc == RS_RESULT_TIMEDOUT
-  bool has_timedout = (rc == RS_RESULT_TIMEDOUT) || hasTimeoutError(qctx->err)
-    req->base.reply.rc = RS_RESULT_TIMEDOUT;
-    req->base.reply.rc = RS_RESULT_TIMEDOUT;
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62430116` are properly handled with clean fallback behavior.

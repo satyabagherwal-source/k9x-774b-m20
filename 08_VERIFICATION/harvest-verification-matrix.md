@@ -8148,3 +8148,5 @@
 | `CYCLE-20261108-NW2K` | `2026-11-08T00:34:21.596Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2956` | Yes (`8762b449...`) |
 | `CYCLE-20261108-O1MH` | `2026-11-08T00:34:28.793Z` | `speridlabs/idol` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`dcfa8042...`) |
 | `CYCLE-20261108-O2FI` | `2026-11-08T00:34:29.838Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fef57fae...`) |
+| `CYCLE-20261108-XB0O` | `2026-11-08T00:41:40.872Z` | `sharkdp/bat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sharkdp-bat-learnings.md` | Yes (`929c1a4a...`) |
+| `CYCLE-20261108-XK80` | `2026-11-08T00:41:52.800Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md` | Yes (`02acac14...`) |

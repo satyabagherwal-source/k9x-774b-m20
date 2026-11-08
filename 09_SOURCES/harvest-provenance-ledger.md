@@ -8157,3 +8157,5 @@ Every entry in this ledger must capture:
 | `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `baf8d83c` | Multi-dimensional audit evidence | 2026-11-08T00:34:21.601Z |
 | `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-08T00:34:28.797Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `2cce058e` | Multi-dimensional audit evidence | 2026-11-08T00:34:29.842Z |
+| `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `c231941d` | Multi-dimensional audit evidence | 2026-11-08T00:41:40.877Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `df51ed41` | Multi-dimensional audit evidence | 2026-11-08T00:41:52.804Z |

@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "956522a3",
+    "sourceVersion": "c231941d",
     "license": "Apache-2.0",
-    "contentHash": "5d528c10d869f49dae48a9f457bf33643adc38303eb539cc3f52b0476fa083fd",
-    "lastHarvestedAt": "2026-11-05T20:06:40.250Z",
+    "contentHash": "929c1a4acbdd8025b47717b4815c315683b4b4be043b0f5fb6613bb10cc29f0b",
+    "lastHarvestedAt": "2026-11-08T00:41:40.877Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "7eb750ee",
+    "sourceVersion": "df51ed41",
     "license": "NOASSERTION",
-    "contentHash": "6e88714d74bc06ef5cc4feaff25ea3e7bed97493f1002bccc102816f90f9f6b3",
-    "lastHarvestedAt": "2026-11-06T14:34:06.612Z",
+    "contentHash": "02acac14a4e4b521ed9884fb2237410b8e522451ed2037d7e36ff2f308f7dd08",
+    "lastHarvestedAt": "2026-11-08T00:41:52.804Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
