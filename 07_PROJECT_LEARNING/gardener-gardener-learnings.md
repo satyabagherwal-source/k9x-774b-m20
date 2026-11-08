@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `4f3cb196`  
+> **Source Version**: `47780c5a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:24:50.076Z  
+> **Timestamp**: 2026-11-08T14:19:38.500Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:24:49.164Z  
+> **Harvest Timestamp**: 2026-11-08T14:19:37.213Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -726,14 +726,14 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16251** (2026-11-06): **next version: v1.154.4-dev**
-  *Symptoms*: <!-- Please ensure that you do not include company internal information. -->  **How to categorize this PR?** <!-- Please select area, kind, and priority for this pull request. This helps the community categorizing it. Replace below TODOs or exchange the existing identifiers with those that fit best in your opinion. If multiple identifiers make sense you can also state the commands multiple times, e.g.   /area control-plane   /area auto-scaling   ...  If the PR affects cryptography or security mechanisms (encryption, keys, ciphers, hashes, signatures, etc.), mark it as crypto relevant. /label crypto  "/area" identifiers:     audit-logging|auto-scaling|backup|compliance|control-plane-migration|control-plane|cost|delivery|dev-productivity|disaster-recovery|documentation|high-availability|logging|metering|monitoring|networking|open-source|ops-productivity|os|performance|quality|robustness|scalability|security|storage|testing|usability|user-management "/kind" identifiers:     api-change|bug|cleanup|discussion|enhancement|epic|flake|impediment|poc|post-mortem|question|regression|task|technical-debt|test --> /area delivery /kind task  **What this PR does / why we need it**: The release pipeline for `v1.154.3` failed ([ref](https://github.com/gardener/gardener/actions/runs/42048476803)), so there are no gardenadm binaries attached to this release and the dev version bump commit is missing. Thus, we have to bump the dev version manually with this PR and cut a new patch release `v1.154
+- **Issue #16259** (2026-11-07): **[release-v1.154] Update dependency gardener/dashboard to v1.86.4**
+  *Symptoms*: This is an automated cherry-pick of #16254  /assign petersutter  ```other dependency github.com/gardener/gardener #16259 @renovate[bot] The following dependencies have been updated: - `gardener/dashboard` from `1.86.3` to `1.86.4`. [Release Notes](https://redirect.github.com/gardener/dashboard/releases/tag/1.86.4) ```  /kind enhancement
 
-- **Issue #16250** (2026-11-06): **Update golang.org/x/exp digest to d498a4c**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang.org/x/exp](https://pkg.go.dev/golang.org/x/exp) | require | digest | `f0251eb` → `d498a4c` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMjAuMCIsInVwZGF0ZWRJblZlciI6IjQ0LjIyMC4wIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+- **Issue #16256** (2026-11-07): **Update golang.org/x/exp digest to 47ce03d**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang.org/x/exp](https://pkg.go.dev/golang.org/x/exp) | require | digest | `d498a4c` → `47ce03d` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMjAuMCIsInVwZGF0ZWRJblZlciI6IjQ0LjIyMC4wIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
+  > ### ℹ️ Artifact update notice  ##### File name: hack/tools/go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 1 additional dependency was updated   Details:   | **Package**          | **Change**                                           | | :------------------- | :--------------------------------------------------- | | `golang.org/x/tools` | `v0.52.0` -> `v0.52.1-0.20261106145633-d407941a339a` |
   > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [marc1404](https://github.com/marc1404) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["marc1404"]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -822,12 +822,12 @@ Signed-off-by: Tim Usner <[REDACTED_EMAIL]>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16259** (2026-11-07): [release-v1.154] Update dependency gardener/dashboard to v1.86.4 (@gardener-prow-cherrypicker[bot])
+- **PR #16256** (2026-11-07): Update golang.org/x/exp digest to 47ce03d (@renovate[bot])
+- **PR #16254** (2026-11-07): Update dependency gardener/dashboard to v1.86.4 (@renovate[bot])
 - **PR #16251** (2026-11-06): next version: v1.154.4-dev (@oliver-goetz)
 - **PR #16250** (2026-11-06): Update golang.org/x/exp digest to d498a4c (@renovate[bot])
 - **PR #16249** (2026-11-06): Enhance error message for the deprecated `shoot.spec.dns.providers[].secretName` field (@vpnachev)
-- **PR #16247** (2026-11-06): Update module github.com/spf13/pflag to v1.1.0 (@renovate[bot])
-- **PR #16245** (2026-11-06): Update dependency mikefarah/yq to v4.54.2 (@renovate[bot])
-- **PR #16241** (2026-11-06): Add ca-kubelet configmap to shoot's kube-system namespace (@timonegk)
 
 ---
 

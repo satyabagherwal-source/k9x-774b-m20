@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T14:12:22.909Z",
-  "total_cycles_completed": 8259,
-  "total_learnings_persisted": 8259,
-  "total_rules_promoted": 8035,
+  "last_updated": "2026-11-08T14:24:42.970Z",
+  "total_cycles_completed": 8262,
+  "total_learnings_persisted": 8262,
+  "total_rules_promoted": 8040,
   "history": [
-    {
-      "timestamp": "2026-11-07T21:10:32.667Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T21:18:16.308Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T21:18:17.077Z",
-      "repository": "preactjs/preact",
-      "learningId": "learn-github-preactjs-preact",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T21:18:29.759Z",
       "repository": "trinodb/trino",
@@ -1403,6 +1382,27 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T14:19:39.851Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T14:19:47.103Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T14:24:42.970Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

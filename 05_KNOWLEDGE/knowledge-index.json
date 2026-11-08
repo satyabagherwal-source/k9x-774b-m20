@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T14:12:22.796Z",
+  "last_updated": "2026-11-08T14:24:42.867Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15614,8 +15614,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "4f3cb196",
-      "content_hash": "56f1399d192480aded410dd53e218f963544e23125a88d0d86567d2ba91d7231",
+      "source_version": "47780c5a",
+      "content_hash": "7ebe422e2d610f6da8ec56e59e4d9f49ff6e1bb0bbb3313edbc4c222b95dc792",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -15740,7 +15740,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:24:51.409Z",
+      "verified_at": "2026-11-08T14:19:39.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30227,10 +30227,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "f08a5e6099d07278cba4f3fd2124dc417f3d34f4cb0bc9ac8bd0ccf2c3eb07bf",
+      "content_hash": "610c888e9f1f2d557a5650aa3cf2ccafda93f606677f05516bfddf3e5948104c",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Ternary Bit-Packing Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hybrid Attention State Management Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Quantization Accuracy Regression Shield",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 274,
           "title": "Hybrid Attention for Long Context",
@@ -30307,7 +30322,7 @@
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe",
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo"
       ],
-      "verified_at": "2026-11-04T22:58:51.439Z",
+      "verified_at": "2026-11-08T14:24:42.831Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46603,8 +46618,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "11443aa0",
-      "content_hash": "0c40fa4dfae8377e39e581c3ab8b7916bf657f16739f88c83f63c1620fee3ac7",
+      "source_version": "5bc314fd",
+      "content_hash": "ee8bda1d50756419828b2f1359d1316ffa8dd2393608d5aa8942dbd4573a3359",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -46687,6 +46702,11 @@
           "number": null,
           "title": "Salted Cryptographic Permutation for Categorical Token Neutralization",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Revert \"Document blocked dynamic-axis revision for ARC 74dd1130\"",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 3289,
@@ -46979,7 +46999,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T13:10:35.119Z",
+      "verified_at": "2026-11-08T14:19:46.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

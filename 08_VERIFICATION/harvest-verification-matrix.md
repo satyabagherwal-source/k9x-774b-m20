@@ -8294,3 +8294,6 @@
 | `CYCLE-20261108-MASL` | `2026-11-08T14:04:56.229Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bdeac2a1...`) |
 | `CYCLE-20261108-VSLS` | `2026-11-08T14:12:19.216Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1071, Rule null, Rule null` | Yes (`f5ee0b70...`) |
 | `CYCLE-20261108-VVG3` | `2026-11-08T14:12:22.899Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7c9dc880...`) |
+| `CYCLE-20261108-58L4` | `2026-11-08T14:19:39.832Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7ebe422e...`) |
+| `CYCLE-20261108-5E6U` | `2026-11-08T14:19:47.094Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ee8bda1d...`) |
+| `CYCLE-20261108-BQH2` | `2026-11-08T14:24:42.950Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`610c888e...`) |

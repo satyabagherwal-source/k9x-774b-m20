@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-K1UO",
-    "timestamp": "2026-11-05T21:40:04.320Z",
-    "repository": "davila7/claude-code-templates",
-    "learningId": "learn-github-davila7-claude-code-templates",
-    "contentHash": "759160bcfbab3ba90253223c76772ee4125352250bc90d8877d008c5d3184595",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-KDE3",
-    "timestamp": "2026-11-05T21:40:19.275Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "203db3d89fd3874f283ab7c1a65eb234e1456ba3e7679d28324c8a7f099c7d75",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-TSE1",
-    "timestamp": "2026-11-05T21:47:38.617Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "be8b9dcbf0345465be69194cc0b84b95999ef7ea3d9a59118256b3d2240de064",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-TVUX",
     "timestamp": "2026-11-05T21:47:43.113Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7447,51 @@
     "contentHash": "7c9dc880d9623227bfa010cf80d6a50701ebf2de2ae346c4badc64e63c7ef2b7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-58L4",
+    "timestamp": "2026-11-08T14:19:39.832Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "7ebe422e2d610f6da8ec56e59e4d9f49ff6e1bb0bbb3313edbc4c222b95dc792",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-5E6U",
+    "timestamp": "2026-11-08T14:19:47.094Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "ee8bda1d50756419828b2f1359d1316ffa8dd2393608d5aa8942dbd4573a3359",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-BQH2",
+    "timestamp": "2026-11-08T14:24:42.950Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+    "contentHash": "610c888e9f1f2d557a5650aa3cf2ccafda93f606677f05516bfddf3e5948104c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

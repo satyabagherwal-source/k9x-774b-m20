@@ -8303,3 +8303,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-08T14:04:56.238Z |
 | `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-08T14:12:19.221Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e1cc41b3` | Multi-dimensional audit evidence | 2026-11-08T14:12:22.903Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `47780c5a` | Multi-dimensional audit evidence | 2026-11-08T14:19:39.836Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5bc314fd` | Multi-dimensional audit evidence | 2026-11-08T14:19:47.097Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-08T14:24:42.964Z |

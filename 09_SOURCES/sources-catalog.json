@@ -355,8 +355,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "f08a5e6099d07278cba4f3fd2124dc417f3d34f4cb0bc9ac8bd0ccf2c3eb07bf",
-    "lastHarvestedAt": "2026-11-04T22:58:51.518Z",
+    "contentHash": "610c888e9f1f2d557a5650aa3cf2ccafda93f606677f05516bfddf3e5948104c",
+    "lastHarvestedAt": "2026-11-08T14:24:42.964Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "11443aa0",
+    "sourceVersion": "5bc314fd",
     "license": "Apache-2.0",
-    "contentHash": "0c40fa4dfae8377e39e581c3ab8b7916bf657f16739f88c83f63c1620fee3ac7",
-    "lastHarvestedAt": "2026-11-08T13:10:35.299Z",
+    "contentHash": "ee8bda1d50756419828b2f1359d1316ffa8dd2393608d5aa8942dbd4573a3359",
+    "lastHarvestedAt": "2026-11-08T14:19:47.097Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "4f3cb196",
+    "sourceVersion": "47780c5a",
     "license": "Apache-2.0",
-    "contentHash": "56f1399d192480aded410dd53e218f963544e23125a88d0d86567d2ba91d7231",
-    "lastHarvestedAt": "2026-11-07T18:24:51.540Z",
+    "contentHash": "7ebe422e2d610f6da8ec56e59e4d9f49ff6e1bb0bbb3313edbc4c222b95dc792",
+    "lastHarvestedAt": "2026-11-08T14:19:39.836Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

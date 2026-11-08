@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T14:12:22.913Z",
+  "last_updated": "2026-11-08T14:24:42.974Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -425,14 +425,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "f08a5e6099d07278cba4f3fd2124dc417f3d34f4cb0bc9ac8bd0ccf2c3eb07bf",
-      "verified_at": "2026-11-04T22:58:51.524Z",
+      "content_hash": "610c888e9f1f2d557a5650aa3cf2ccafda93f606677f05516bfddf3e5948104c",
+      "verified_at": "2026-11-08T14:24:42.974Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:58:51.524Z"
+      "last_updated": "2026-11-08T14:24:42.974Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "0c40fa4dfae8377e39e581c3ab8b7916bf657f16739f88c83f63c1620fee3ac7",
-      "verified_at": "2026-11-08T13:10:35.309Z",
+      "content_hash": "ee8bda1d50756419828b2f1359d1316ffa8dd2393608d5aa8942dbd4573a3359",
+      "verified_at": "2026-11-08T14:19:47.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T13:10:35.309Z"
+      "last_updated": "2026-11-08T14:19:47.106Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "56f1399d192480aded410dd53e218f963544e23125a88d0d86567d2ba91d7231",
-      "verified_at": "2026-11-07T18:24:51.558Z",
+      "content_hash": "7ebe422e2d610f6da8ec56e59e4d9f49ff6e1bb0bbb3313edbc4c222b95dc792",
+      "verified_at": "2026-11-08T14:19:39.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:24:51.558Z"
+      "last_updated": "2026-11-08T14:19:39.855Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
