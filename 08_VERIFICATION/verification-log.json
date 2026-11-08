@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-E8PU",
-    "timestamp": "2026-11-06T13:27:20.226Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "009c2c9831de0b90522d701b0a87e85438f351ea8c70f587d0640df0f69ba402",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-EB9C",
     "timestamp": "2026-11-06T13:27:23.520Z",
     "repository": "rustls/rustls",
@@ -7492,6 +7477,21 @@
     "contentHash": "24dd2c699ba0cef48aa6dedf42a87ae85a87fcff8ae6eef184ab031dc4589779",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-0K1G",
+    "timestamp": "2026-11-08T18:27:57.940Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "11c85175ddff27f7eafaa885478afe97dfffe7fee70c78e052296a052943e8bc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

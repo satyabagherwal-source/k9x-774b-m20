@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T18:19:00.509Z",
-    "lastVerified": "2026-11-08T18:19:00.509Z",
+    "lastChecked": "2026-11-08T18:28:08.798Z",
+    "lastVerified": "2026-11-08T18:28:08.798Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -259,8 +259,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T17:49:30.133Z",
-    "lastVerified": "2026-11-08T17:49:30.133Z",
+    "lastChecked": "2026-11-08T18:28:08.785Z",
+    "lastVerified": "2026-11-08T18:28:08.785Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1999,12 +1999,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T14:12:20.321Z",
-    "lastVerified": "2026-11-08T14:12:20.321Z",
+    "lastChecked": "2026-11-08T18:28:03.846Z",
+    "lastVerified": "2026-11-08T18:28:03.846Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -2013,7 +2013,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e1cc41b3"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j",
@@ -3121,9 +3122,9 @@
   "litmuschaos-litmus": {
     "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
-    "lastChecked": "2026-11-07T22:23:35.825Z",
+    "lastChecked": "2026-11-08T18:28:01.286Z",
     "revisionIdentifier": "97a397fb",
-    "lastVerified": "2026-11-07T22:23:35.825Z"
+    "lastVerified": "2026-11-08T18:28:01.286Z"
   },
   "pinecone-io-examples": {
     "name": "examples",
@@ -3494,12 +3495,12 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T02:25:40.533Z",
-    "lastVerified": "2026-11-05T02:25:40.533Z",
+    "lastChecked": "2026-11-08T18:27:56.468Z",
+    "lastVerified": "2026-11-08T18:27:56.468Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "6b88376da51f5fb7eebb016adf112de1a7b8485c786c12eefda10f1b4944a62d",
+    "contentHash": "11c85175ddff27f7eafaa885478afe97dfffe7fee70c78e052296a052943e8bc",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6300,12 +6301,12 @@
     "revisionIdentifier": "ff1fd540"
   },
   "apache-zookeeper": {
-    "name": "apache/zookeeper",
+    "name": "zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-07T21:29:32.629Z",
-    "lastVerified": "2026-11-07T21:29:32.629Z",
+    "lastChecked": "2026-11-08T18:28:06.234Z",
+    "lastVerified": "2026-11-08T18:28:06.234Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-zookeeper",
@@ -6314,7 +6315,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "61f8849c"
   },
   "kubearmor-kubearmor": {
     "name": "KubeArmor",
@@ -7630,12 +7632,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "jhspetersson-fselect": {
-    "name": "jhspetersson/fselect",
+    "name": "fselect",
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T06:17:40.605Z",
-    "lastVerified": "2026-11-07T06:17:40.605Z",
+    "lastChecked": "2026-11-08T18:27:53.741Z",
+    "lastVerified": "2026-11-08T18:27:53.741Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",
@@ -7644,7 +7646,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9bba3273"
   },
   "hf-jialinyyzz-humanizer": {
     "name": "jialinyyzz/humanizer",
@@ -10947,8 +10950,8 @@
     "officialUrl": "https://github.com/yattee/yattee",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-05T12:29:17.749Z",
-    "lastVerified": "2026-11-05T12:29:17.749Z",
+    "lastChecked": "2026-11-08T18:27:58.793Z",
+    "lastVerified": "2026-11-08T18:27:58.793Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yattee-yattee",
