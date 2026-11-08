@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T15:42:39.986Z",
+  "last_updated": "2026-11-08T15:49:51.477Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -545,14 +545,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "content_hash": "e01c961aa66b6fa6d0193f89d4f4a6775dc527e84faedbce8c1435dd4578feeb",
-      "verified_at": "2026-11-05T00:07:39.701Z",
+      "content_hash": "0f683e98f5818c47f05bf5be788ef8e93e0c17bb50567b7766ba14e5d5297f4b",
+      "verified_at": "2026-11-08T15:49:45.629Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:07:39.701Z"
+      "last_updated": "2026-11-08T15:49:45.629Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -13041,14 +13041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prof18-feed-flow",
-      "content_hash": "7b3b2e3cc49c0b6b6b7a435594e2c4cd3a085cd00a2272324294b81fe584042e",
-      "verified_at": "2026-11-05T10:16:05.481Z",
+      "content_hash": "b72e4090ba6c00b6da00d968e88baa53ed9d6eb876e204acaf3f96c1f50a649f",
+      "verified_at": "2026-11-08T15:49:51.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T10:16:05.481Z"
+      "last_updated": "2026-11-08T15:49:51.476Z"
     },
     "michaelbull/kotlin-result": {
       "repository": "michaelbull/kotlin-result",

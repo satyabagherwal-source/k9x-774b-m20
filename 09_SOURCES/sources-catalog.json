@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "e01c961aa66b6fa6d0193f89d4f4a6775dc527e84faedbce8c1435dd4578feeb",
-    "lastHarvestedAt": "2026-11-05T00:07:39.691Z",
+    "contentHash": "0f683e98f5818c47f05bf5be788ef8e93e0c17bb50567b7766ba14e5d5297f4b",
+    "lastHarvestedAt": "2026-11-08T15:49:45.620Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "647ef264",
+    "sourceVersion": "77a8d8a3",
     "license": "Apache-2.0",
-    "contentHash": "7b3b2e3cc49c0b6b6b7a435594e2c4cd3a085cd00a2272324294b81fe584042e",
-    "lastHarvestedAt": "2026-11-05T10:16:05.466Z",
+    "contentHash": "b72e4090ba6c00b6da00d968e88baa53ed9d6eb876e204acaf3f96c1f50a649f",
+    "lastHarvestedAt": "2026-11-08T15:49:51.459Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {

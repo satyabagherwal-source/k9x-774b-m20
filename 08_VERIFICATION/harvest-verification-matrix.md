@@ -8315,3 +8315,5 @@
 | `CYCLE-20261108-3MKW` | `2026-11-08T15:42:23.504Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`6b45ba98...`) |
 | `CYCLE-20261108-3NMW` | `2026-11-08T15:42:24.872Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9b6a9db2...`) |
 | `CYCLE-20261108-3ZA4` | `2026-11-08T15:42:39.964Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3af5332f...`) |
+| `CYCLE-20261108-D3PR` | `2026-11-08T15:49:45.615Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`0f683e98...`) |
+| `CYCLE-20261108-D87Z` | `2026-11-08T15:49:51.455Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b72e4090...`) |

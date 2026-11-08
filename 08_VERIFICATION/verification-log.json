@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-PBGS",
-    "timestamp": "2026-11-05T22:40:09.292Z",
-    "repository": "iliyami/MacSai",
-    "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "a61e1065f95484610c5d43ccb8c9b5180e9723c3365215d4b21b657db079637a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-PEBN",
-    "timestamp": "2026-11-05T22:40:12.995Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "c750ad7cf3cf012e10afe7a5a29e84457306812a016a0f682b6aa605c1166c14",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-PI0W",
     "timestamp": "2026-11-05T22:40:17.792Z",
     "repository": "trinodb/trino",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "3af5332f9cf43e43968f88d6ac5521a82821b312c8c26bd2edb468be82d806bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-D3PR",
+    "timestamp": "2026-11-08T15:49:45.615Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "0f683e98f5818c47f05bf5be788ef8e93e0c17bb50567b7766ba14e5d5297f4b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-D87Z",
+    "timestamp": "2026-11-08T15:49:51.455Z",
+    "repository": "prof18/feed-flow",
+    "learningId": "learn-github-prof18-feed-flow",
+    "contentHash": "b72e4090ba6c00b6da00d968e88baa53ed9d6eb876e204acaf3f96c1f50a649f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

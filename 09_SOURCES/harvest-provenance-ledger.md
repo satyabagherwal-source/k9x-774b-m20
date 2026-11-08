@@ -8324,3 +8324,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-08T15:42:23.508Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `86e98e3f` | Multi-dimensional audit evidence | 2026-11-08T15:42:24.876Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ad9b5734` | Multi-dimensional audit evidence | 2026-11-08T15:42:39.976Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-08T15:49:45.620Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `77a8d8a3` | Multi-dimensional audit evidence | 2026-11-08T15:49:51.459Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source**: github ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
-> **Source Version**: `647ef264`  
+> **Source Version**: `77a8d8a3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:16:04.765Z  
+> **Timestamp**: 2026-11-08T15:49:50.121Z  
 > **Learning ID**: `learn-github-prof18-feed-flow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:16:04.760Z  
+> **Harvest Timestamp**: 2026-11-08T15:49:50.114Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows and Linux. Built with Kotlin Multiplatform, Jetpack Compose and SwiftUI.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1317 stars
+- **Stars / Engagement**: 1326 stars
 
 ---
 
@@ -154,6 +154,39 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 @OptIn(ExperimentalComposeUiApi::class)
 fun Modifier.exposeTestTagsAsResourceIds(): Modifier = semantics {
     testTagsAsResourceId = true
+}
+
+```
+
+### Core Architecture Module: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/utils/FeedFlowStringsLookup.kt`
+```
+package com.prof18.feedflow.android.ui.utils
+
+import com.prof18.feedflow.i18n.EnFeedFlowStrings
+import com.prof18.feedflow.i18n.FeedFlowStrings
+import com.prof18.feedflow.i18n.feedFlowStrings
+import java.util.Locale
+
+/**
+ * Strings for code outside composition (notifications, custom tabs). Tries the most specific tag
+ * first and falls back to the bare language, like Lyricist does for the Compose UI.
+ */
+fun feedFlowStringsFor(
+    locale: Locale = Locale.getDefault(),
+    forceEnglish: Boolean = false,
+): FeedFlowStrings {
+    if (forceEnglish) return EnFeedFlowStrings
+    val language = locale.language
+    val script = locale.script.takeIf { it.isNotEmpty() }
+    val country = locale.country.takeIf { it.isNotEmpty() }
+    val candidates = listOfNotNull(
+        locale.toLanguageTag(),
+        if (script != null && country != null) "$language-$script-$country" else null,
+        country?.let { "$language-$it" },
+        script?.let { "$language-$it" },
+        language,
+    )
+    return candidates.firstNotNullOfOrNull { feedFlowStrings[it] } ?: EnFeedFlowStrings
 }
 
 ```
@@ -350,6 +383,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -433,6 +467,18 @@ suspend fun LazyListState.scrollToItemConditionally(
     }
 }
 
+suspend fun LazyGridState.scrollToItemConditionally(
+    index: Int,
+    scrollOffset: Int = 0,
+    reduceMotionEnabled: Boolean,
+) {
+    if (reduceMotionEnabled) {
+        scrollToItem(index, scrollOffset)
+    } else {
+        animateScrollToItem(index, scrollOffset)
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 suspend fun LazyStaggeredGridState.scrollToItemConditionally(
     index: Int,
@@ -443,6 +489,75 @@ suspend fun LazyStaggeredGridState.scrollToItemConditionally(
         scrollToItem(index, scrollOffset)
     } else {
         animateScrollToItem(index, scrollOffset)
+    }
+}
+
+```
+
+### Core Architecture Module: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/utils/RevealItem.kt`
+```
+package com.prof18.feedflow.android.ui.utils
+
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.runtime.snapshotFlow
+import com.prof18.feedflow.shared.presentation.model.isFullyVisibleInViewport
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.first
+
+suspend fun LazyListState.revealItemConditionally(index: Int, reduceMotionEnabled: Boolean) {
+    snapshotFlow { layoutInfo.totalItemsCount > 0 }.first { it }
+    val info = layoutInfo
+    val item = info.visibleItemsInfo.firstOrNull { it.index == index }
+    val visible = item != null && isFullyVisibleInViewport(
+        itemStart = item.offset,
+        itemSize = item.size,
+        viewportEndOffset = info.viewportEndOffset,
+        afterContentPadding = info.afterContentPadding,
+    )
+    if (visible) return
+    revealInterruptibly { scrollToItemConditionally(index, reduceMotionEnabled = reduceMotionEnabled) }
+}
+
+suspend fun LazyStaggeredGridState.revealItemConditionally(index: Int, reduceMotionEnabled: Boolean) {
+    snapshotFlow { layoutInfo.totalItemsCount > 0 }.first { it }
+    val info = layoutInfo
+    val item = info.visibleItemsInfo.firstOrNull { it.index == index }
+    val visible = item != null && isFullyVisibleInViewport(
+        itemStart = item.offset.y,
+        itemSize = item.size.height,
+        viewportEndOffset = info.viewportEndOffset,
+        afterContentPadding = info.afterContentPadding,
+    )
+    if (visible) return
+    revealInterruptibly { scrollToItemConditionally(index, reduceMotionEnabled = reduceMotionEnabled) }
+}
+
+suspend fun LazyGridState.revealItemConditionally(index: Int, reduceMotionEnabled: Boolean) {
+    snapshotFlow { layoutInfo.totalItemsCount > 0 }.first { it }
+    val info = layoutInfo
+    val item = info.visibleItemsInfo.firstOrNull { it.index == index }
+    val visible = item != null && isFullyVisibleInViewport(
+        itemStart = item.offset.y,
+        itemSize = item.size.height,
+        viewportEndOffset = info.viewportEndOffset,
+        afterContentPadding = info.afterContentPadding,
+    )
+    if (visible) return
+    revealInterruptibly { scrollToItemConditionally(index, reduceMotionEnabled = reduceMotionEnabled) }
+}
+
+@Suppress("SwallowedException")
+private suspend fun revealInterruptibly(scroll: suspend () -> Unit) {
+    try {
+        scroll()
+    } catch (e: CancellationException) {
+        // A user scroll interrupts the animation; that still counts as revealed.
+        // When the caller itself is cancelled (the list left composition), keep propagating.
+        currentCoroutineContext().ensureActive()
     }
 }
 
@@ -473,93 +588,6 @@ internal fun rememberAndroidFeedFlowStrings(settingsRepository: SettingsReposito
 
 ```
 
-### Core Architecture Module: `androidApp/src/main/kotlin/com/prof18/feedflow/android/util/ReduceMotion.kt`
-```
-package com.prof18.feedflow.android.util
-
-import android.animation.ValueAnimator
-import android.database.ContentObserver
-import android.os.Handler
-import android.os.Looper
-import android.provider.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-
-@Composable
-fun rememberSystemReducedMotionEnabled(): Boolean {
-    val context = LocalContext.current
-    var isReducedMotionEnabled by remember {
-        mutableStateOf(!ValueAnimator.areAnimatorsEnabled())
-    }
-
-    DisposableEffect(context) {
-        val resolver = context.contentResolver
-        val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
-            override fun onChange(selfChange: Boolean) {
-                isReducedMotionEnabled = !ValueAnimator.areAnimatorsEnabled()
-            }
-        }
-
-        resolver.registerContentObserver(
-            Settings.Global.getUriFor(Settings.Global.ANIMATOR_DURATION_SCALE),
-            false,
-            observer,
-        )
-
-        onDispose {
-            resolver.unregisterContentObserver(observer)
-        }
-    }
-
-    return isReducedMotionEnabled
-}
-
-```
-
-### Core Architecture Module: `androidApp/src/main/kotlin/com/prof18/feedflow/android/util/UiExtensions.kt`
-```
-package com.prof18.feedflow.android.util
-
-import android.content.res.Configuration
-import androidx.activity.ComponentActivity
-import androidx.core.util.Consumer
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.distinctUntilChanged
-
-// From https://github.com/android/nowinandroid/blob/main/app/src/main/kotlin/com/google/samples/apps/nowinandroid/util/UiExtensions.kt
-/**
- * Convenience wrapper for dark mode checking
- */
-val Configuration.isSystemInDarkTheme
-    get() = (uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-
-/**
- * Registers listener for configuration changes to retrieve whether system is in dark theme or not.
- * Immediately upon subscribing, it sends the current value and then registers listener for changes.
- */
-fun ComponentActivity.isSystemInDarkTheme() = callbackFlow {
-    channel.trySend(resources.configuration.isSystemInDarkTheme)
-
-    val listener = Consumer<Configuration> {
-        channel.trySend(it.isSystemInDarkTheme)
-    }
-
-    addOnConfigurationChangedListener(listener)
-
-    awaitClose { removeOnConfigurationChangedListener(listener) }
-}
-    .distinctUntilChanged()
-    .conflate()
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -587,274 +615,230 @@ fun ComponentActivity.isSystemInDarkTheme() = callbackFlow {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `297ca86a` (2026-11-03)
-**Commit Message**: Fix Maestro font tile assertion on Android and dismiss the keyboard in the iOS hide-shorts flow
+### Incident Patch 1: `a717f945` (2026-11-07)
+**Commit Message**: Remove the debug-only add-pixel button from iOS blocked words and stop the add button firing on any row tap
 
-**File**: `e2e/maestro/android/regression/150-reader-previous-and-font-menu.yaml` (modified, +4/-4)
+**File**: `e2e/maestro/ios/smoke/012-blocked-words.yaml` (modified, +4/-1)
 ```diff
-@@ -49,24 +49,24 @@ appId: com.prof18.feedflow.debug
- # Choose a font tile, reopen Text Settings to check it persisted, then reset it.
- - assertVisible:
-     id: reader_font_option_SYSTEM
--    selected: true
-+    checked: true
+@@ -18,7 +18,10 @@ appId: com.prof18.feedflow.dev
  - tapOn:
-     id: reader_font_option_IBM_PLEX_SANS
- - assertVisible:
-     id: reader_font_option_IBM_PLEX_SANS
--    selected: true
-+    checked: true
- - back
+     id: settings_blocked_words
  - tapOn:
-     id: reader_more_menu_button
- - tapOn: "Text Settings"
+-    id: blocked_words_add_pixel_e2e
++    id: blocked_words_input
++- inputText: "pixel"
++- tapOn:
++    id: blocked_words_add_button
  - assertVisible:
-     id: reader_font_option_IBM_PLEX_SANS
--    selected: true
-+    checked: true
+     id: blocked_word_pixel
  - tapOn:
-     id: reader_text_settings_reset_button
- - assertVisible:
-     id: reader_font_option_SYSTEM
--    selected: true
-+    checked: true
- 
- # Dismiss Text Settings, then switch to a different article before leaving the reader.
- - back
 ```
 
-**File**: `e2e/maestro/ios/regression/183-edit-feed-youtube-hide-shorts.yaml` (modified, +1/-0)
+**File**: `iosApp/Source/Settings/FeedsAndAccounts/subpages/BlockedWords/BlockedWordsAccessibilityIdentifiers.swift` (modified, +0/-1)
 ```diff
-@@ -20,6 +20,7 @@ appId: com.prof18.feedflow.dev
-     point: "95%,50%"
- - eraseText: 200
- - inputText: "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
-+- pressKey: Enter
- - scrollUntilVisible:
-     element:
-       id: edit_feed_hide_youtube_shorts_toggle
+@@ -1,7 +1,6 @@
+ enum BlockedWordsAccessibilityIdentifiers {
+     static let input = "blocked_words_input"
+     static let addButton = "blocked_words_add_button"
+-    static let addPixelButton = "blocked_words_add_pixel_e2e"
+ 
+     static func row(_ word: String) -> String {
+         "blocked_word_\(word.e2eIdSuffix)"
 ```
 
----
-
-### Incident Patch 2: `4603d19c` (2026-11-03)
-**Commit Message**: Improve UI on feed settings
-
-**File**: `iosApp/Source/Settings/FeedsAndAccounts/subpages/EditFeed/EditFeedScreenContent.swift` (modified, +10/-9)
+**File**: `iosApp/Source/Settings/FeedsAndAccounts/subpages/BlockedWords/BlockedWordsScreenContent.swift` (modified, +2/-14)
 ```diff
-@@ -134,22 +134,23 @@ struct EditFeedScreenContent: View {
-                 }
- 
-                 Toggle(isOn: $isKeepUnreadOnScrollEnabled) {
--                    Text(feedFlowStrings.keepUnreadWhenScrollingForFeed)
-+                    VStack(alignment: .leading) {
-+                        Text(feedFlowStrings.keepUnreadWhenScrollingForFeed)
-+                        Text(
-+                            isMarkReadWhenScrollingEnabled
-+                                ? feedFlowStrings.keepUnreadWhenScrollingForFeedDescription
-+                                : feedFlowStrings.keepUnreadWhenScrollingForFeedDisabled
-+                        )
-+                        .font(.caption)
-+                        .foregroundStyle(.secondary)
-+                    }
-                 }
-                 .disabled(!isMarkReadWhenScrollingEnabled)
-                 .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.keepUnreadOnScrollToggle)
-                 .onChange(of: isKeepUnreadOnScrollEnabled) {
-                     onKeepUnreadOnScrollToggled(isKeepUnreadOnScrollEnabled)
-                 }
- 
--                Text(
--                    isMarkReadWhenScrollingEnabled
--                        ? feedFlowStrings.keepUnreadWhenScrollingForFeedDescription
--                        : feedFlowStrings.keepUnreadWhenScrollingForFeedDisabled
--                )
--                .font(.footnote)
--                .foregroundStyle(.secondary)
+@@ -46,23 +46,11 @@ struct BlockedWordsScreenContent: View {
+                                 .contentShape(Rectangle())
+                                 .padding(-(Spacing.small + Spacing.xsmall))
+                         }
++                        // Borderless keeps the Form row from firing this button on any tap in the row
++                        .buttonStyle(.borderless)
+                         .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addButton)
+                         .hoverEffect()
+                     }
 -
-                 Toggle(isOn: $isPinned) {
-                     Text(feedFlowStrings.pinFeedSourceDescription)
+-                    #if DEBUG
+-                    Button {
+-                        onAddWord("pixel")
+-                    } label: {
+-                        Image(systemName: "plus.circle.fill")
+-                            // Grows the hit area to 44 pt without moving the icon or making the row taller
+-                            .padding(Spacing.small + Spacing.xsmall)
+-                            .contentShape(Rectangle())
+-                            .padding(-(Spacing.small + Spacing.xsmall))
+-                    }
+-                    .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addPixelButton)
+-                    .hoverEffect()
+-                    #endif
                  }
+                 }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `d4af8492` (2026-11-03)
-**Commit Message**: Re-resolve feed source logos that stopped loading and render SVG favicons
+### Incident Patch 2: `60cca435` (2026-11-07)
+**Commit Message**: Add a UI glossary and align feed, backup, offline and category terms
 
-**File**: `androidApp/build.gradle.kts` (modified, +1/-0)
+**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/components/AddCategoryDialog.kt` (modified, +1/-1)
 ```diff
-@@ -169,6 +169,7 @@ dependencies {
-     implementation(platform(libs.androidx.compose.bom))
-     implementation(libs.io.coil.compose)
-     implementation(libs.io.coil.network)
-+    implementation(libs.io.coil.svg)
-     implementation(libs.lyricist)
-     implementation(libs.immutable.collections)
-     implementation(libs.saket.swipe)
+@@ -40,7 +40,7 @@ internal fun AddCategoryDialog(
+             onDismissRequest = onDismiss,
+             title = {
+                 Text(
+-                    text = LocalFeedFlowStrings.current.addFeedCategoryTitle,
++                    text = LocalFeedFlowStrings.current.newCategoryButton,
+                     style = MaterialTheme.typography.headlineSmall,
+                 )
+             },
 ```
 
-**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/utils/ImageLoader.kt` (modified, +2/-0)
+**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/components/EditCategoryContent.kt` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,7 @@ import coil3.intercept.Interceptor
- import coil3.memory.MemoryCache
- import coil3.network.httpHeaders
- import coil3.request.crossfade
-+import coil3.svg.SvgDecoder
- import coil3.util.DebugLogger
- import okio.Path.Companion.toPath
- 
-@@ -33,6 +34,7 @@ fun coilImageLoader(
-     return ImageLoader.Builder(context)
-         .components {
-             add(imageAcceptHeaderInterceptor)
-+            add(SvgDecoder.Factory())
-         }
-         .memoryCache {
-             MemoryCache.Builder()
-```
-
-**File**: `core/src/commonMain/kotlin/com/prof18/feedflow/core/domain/FeedSourceLogoRetriever.kt` (modified, +5/-0)
-```diff
-@@ -5,4 +5,9 @@ import com.prof18.rssparser.model.RssChannel
- interface FeedSourceLogoRetriever {
-     suspend fun getFeedSourceLogoUrl(rssChannel: RssChannel): String?
-     suspend fun getFeedSourceLogoUrl(websiteLink: String?): String?
-+
-+    suspend fun isStoredLogoStillAvailable(logoUrl: String): Boolean
-+
-+    /** Lookups are memoised per refresh, so a caller that outlives one has to call this. */
-+    suspend fun invalidateLookupCaches()
- }
-```
-
-**File**: `desktopApp/build.gradle.kts` (modified, +1/-0)
-```diff
-@@ -112,6 +112,7 @@ kotlin {
-                 implementation(libs.lyricist)
-                 implementation(libs.io.coil.compose)
-                 implementation(libs.io.coil.network)
-+                implementation(libs.io.coil.svg)
-                 implementation(libs.jsystem.theme.detector)
-                 implementation(project(":shared"))
-                 implementation(project(":database"))
-```
-
-**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/ui/DesktopImageLoader.kt` (modified, +2/-0)
-```diff
-@@ -7,6 +7,7 @@ import coil3.intercept.Interceptor
- import coil3.memory.MemoryCache
- import coil3.network.httpHeaders
- import coil3.request.crossfade
-+import coil3.svg.SvgDecoder
- import coil3.util.DebugLogger
- import okio.FileSystem
- 
-@@ -33,6 +34,7 @@ fun coilImageLoader(
-     return ImageLoader.Builder(context)
-         .components {
-             add(imageAcceptHeaderInterceptor)
-+            add(SvgDecoder.Factory())
-         }
-         .memoryCache {
-             MemoryCache.Builder()
-```
-
-**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/ui/DesktopImageLoaderTest.kt` (modified, +38/-0)
-```diff
-@@ -3,12 +3,14 @@ package com.prof18.feedflow.desktop.ui
- import coil3.PlatformContext
- import coil3.executeBlocking
- import coil3.request.ImageRequest
-+import coil3.request.SuccessResult
- import com.sun.net.httpserver.HttpServer
- import java.net.InetSocketAddress
- import java.util.Base64
- import java.util.concurrent.atomic.AtomicReference
- import kotlin.test.Test
- import kotlin.test.assertEquals
-+import kotlin.test.assertIs
- 
- class DesktopImageLoaderTest {
- 
-@@ -43,7 +45,43 @@ class DesktopImageLoaderTest {
-         }
-     }
- 
-+    @Test
-+    fun `svg favicons decode into an image`() {
-+        // On this platform Coil renders SVG through Skia, not the decoder the mobile apps use.
-+        val server = HttpServer.create(InetSocketAddress(0), 0).apply {
-+            createContext("/favicon.svg") { exchange ->
-+                exchange.responseHeaders.add("Content-Type", "image/svg+xml")
-+                exchange.sendResponseHeaders(200, SVG_BYTES.size.toLong())
-+                exchange.responseBody.use { it.write(SVG_BYTES) }
-+            }
-+            start()
-+        }
-+        val imageLoader = coilImageLoader(
-+            context = PlatformContext.INSTANCE,
-+            debug = false,
-+        )
-+
-+        try {
-+            val result = imageLoader.executeBlocking(
-+                ImageRequest.Builder(PlatformContext.INSTANCE)
-+                    .data("http://127.0.0.1:${server.address.port}/favicon.svg")
-+                    .build(),
-+            )
-+
-+            val image = assertIs<SuccessResult>(result).image
-+            assertEquals(expected = 24, actual = image.width)
-+            assertEquals(expected = 12, actual = image.height)
-+        } finally {
-+            imageLoader.shutdown()
-+            server.stop(0)
-+        }
-+    }
-+
-     private companion object {
-+        val SVG_BYTES: ByteArray =
-+            """<svg xmlns="http://www.w3.org/2000/svg" width="24" height="12"><rect width="24" height="12" fill="#ff6600"/></svg>"""
-+                .toByteArray()
-+
-         val PNG_BYTES: ByteArray = Base64.getDecoder().decode(
-             "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+@@ -128,7 +128,7 @@ fun AddCategoryButton(
          )
+         Spacer(modifier = Modifier.width(Spacing.small))
+         Text(
+-            text = LocalFeedFlowStrings.current.addFeedCategoryTitle,
++            text = LocalFeedFlowStrings.current.newCategoryButton,
+             fontWeight = FontWeight.Medium,
+         )
+     }
 ```
 
-**File**: `feedSync/greader/src/commonMain/kotlin/com/prof18/feedflow/feedsync/greader/domain/GReaderRepository.kt` (modified, +2/-0)
+**File**: `docs/GLOSSARY.md` (added, +30/-0)
 ```diff
-@@ -174,6 +174,8 @@ class GReaderRepository internal constructor(
- 
-     suspend fun updateFavicons() =
-         withContext(dispatcherProvider.io) {
-+            // Singleton: without this the first lookup of a domain answers for the whole process.
-+            feedSourceLogoRetriever.invalidateLookupCaches()
-             gReaderClient.getFeedSourcesAndCategories().onSuccessSuspend { results ->
-                 val urlMaps = results.subscriptions.map { source ->
-                     source.id to feedSourceLogoRetriever.getFeedSourceLogoUrl(source.htmlUrl)
+@@ -0,0 +1,30 @@
++# FeedFlow glossary
++
++The canonical English words for FeedFlow's user-facing concepts. Use them in `strings.xml`, the website FAQ and store copy, and translate each one the same way everywhere. The same terms are the Weblate glossary of the `feedflow` project.
++
++English copy is US English and sentence case.
++
++| Term | Use | Avoid | Definition for translators |
++| --- | --- | --- | --- |
++| feed | feed, feeds | feed source, source, subscription, channel | A website's RSS, Atom or JSON feed that the user follows. |
++| Feeds | Feeds (section and screen title) | Feed Sources | The list of all feeds the user follows, grouped by category. |
++| pinned feeds | Pinned feeds, Pin, Unpin | Pinned Feed Sources, favorites | Feeds and categories the user keeps at the top of the sidebar. |
++| subscriptions | only for OPML import and export | subscriptions anywhere else | The feed list as stored in an OPML file, the format other feed readers use. |
++| feed name | feed name | feed source | The title of a feed, shown on each article. |
++| article | article, articles | item, post, entry, story | One entry of a feed: title, summary and link, which FeedFlow gets when it refreshes feeds. |
++| full article | full article | article content, web content | The whole text of an article's web page, which FeedFlow gets from the website for reader mode. |
++| offline copy | offline copy, offline copies | download, save, prefetch, cache | A full article stored on the device so it can be read without a connection. |
++| image cache | Clear image cache | downloaded images | Images stored on the device so they load faster. Only used for images. |
++| refresh | Refresh feeds, Background refresh | download, sync (for getting new articles), reload | Check the feeds for new articles. |
++| sync | sync, syncing | upload, refresh | Keep feeds, read status and bookmarks the same across the user's devices through an account. |
++| back up | Back up now (verb), backup (noun) | Backup (as a verb), Upload changes | Copy feeds, read status and bookmarks to a backup account (iCloud, Dropbox, Google Drive). |
++| account | account, sync account | service, provider | A connected iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin or BazQux account. |
++| bookmark | Bookmarks, bookmark (verb), bookmarked | saved, save for later, favorites | Articles the user keeps; they are never deleted automatically. |
++| category | category, New category | + Category, folder, group | A user-made group of feeds. |
++| Uncategorized | Uncategorized | No category | The group of feeds that have no category. |
++| feed settings | Feed settings | Edit feed | The screen with the options of a single feed. |
++| open website | Open website | Open feed website | Open the homepage of the feed's website in the browser. |
++| reader mode | Reader mode | Reader Mode, reader view | FeedFlow's built-in, distraction-free view of a full article. |
++| mark as read | Mark as read, Mark as unread, Mark all as read | Toggle read | Set an article's read status. |
++
++"Background sync" settings are still labelled with sync; they move to "Background refresh" when the notification and refresh settings are merged.
 ```
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-0)
+**File**: `e2e/maestro/android/fdroid/regression/133-home-sync-backup-action.yaml` (modified, +2/-2)
 ```diff
-@@ -183,6 +183,7 @@ google-play-services-auth = { module = "com.google.android.gms:play-services-aut
- immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
- io-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "io-coil" }
- io-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "io-coil" }
-+io-coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "io-coil" }
- jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
- junit = { module = "junit:junit", version.ref = "junit" }
- junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
+@@ -13,7 +13,7 @@ appId: com.prof18.feedflow.debug
+     text: "E2E Newest Unread Article.*"
+ - tapOn:
+     id: home_more_menu_button
+-- assertNotVisible: "Upload changes"
++- assertNotVisible: "Back up now"
+ - assertVisible: "Mark all as read"
+ - back
+ - assertVisible:
+@@ -31,7 +31,7 @@ appId: com.prof18.feedflow.debug
+ - assertVisible: "Nothing else to read here!"
+ - tapOn:
+     id: home_more_menu_button
+-- assertNotVisible: "Upload changes"
++- assertNotVisible: "Back up now"
+ - assertVisible: "Mark all as read"
+ - back
+ - tapOn: "Refresh feeds"
+```
+
+**File**: `e2e/maestro/android/regression/105-category-management.yaml` (modified, +2/-2)
+```diff
+@@ -17,15 +17,15 @@ appId: com.prof18.feedflow.debug
+     id: edit_feed_category_selector
+ - assertVisible: "Categories"
+ - tapOn:
+-    text: "Category"
++    text: "New category"
+ - tapOn:
+     text: "New category name"
+ - inputText: "Technology"
+ - assertVisible: "A category with this name already exists"
+ - tapOn:
+     text: "Close"
+ - tapOn:
+-    text: "Category"
++    text: "New category"
+ - tapOn:
+     text: "New category name"
+ - inputText: "E2E Created Category"
+```
+
+**File**: `e2e/maestro/android/regression/113-sync-storage-settings.yaml` (modified, +1/-1)
+```diff
+@@ -40,5 +40,5 @@ appId: com.prof18.feedflow.debug
+     timeout: 10000
+ - tapOn:
+     id: sync_storage_clear_downloaded
+-- assertVisible: "Clear downloaded articles?"
++- assertVisible: "Delete offline copies?"
+ - tapOn: "Cancel"
+```
+
+**File**: `e2e/maestro/android/regression/121-reading-behavior-secondary-settings.yaml` (modified, +4/-4)
+```diff
+@@ -12,11 +12,11 @@ appId: com.prof18.feedflow.debug
+ - tapOn:
+     id: settings_reading_behavior
+ - assertVisible: "Browser"
+-- assertVisible: "Save article content on open for offline reading"
+-- assertVisible: "Prefetch article content for offline reading"
++- assertVisible: "Keep offline copies of articles you open"
++- assertVisible: "Make offline copies when feeds refresh"
+ - assertVisible: "Mark as read when scrolling"
+-- tapOn: "Save article content on open for offline reading"
++- tapOn: "Keep offline copies of articles you open"
+ - tapOn: "Mark as read when scrolling"
+-- tapOn: "Prefetch article content for offline reading"
++- tapOn: "Make offline copies when feeds refresh"
+ - assertVisible: "Enabling this option will increase synchronization time and data usage.*"
+ - tapOn: "Confirm"
+```
+
+**File**: `e2e/maestro/android/regression/122-feed-list-settings-detail-controls.yaml` (modified, +2/-2)
+```diff
+@@ -16,8 +16,8 @@ appId: com.prof18.feedflow.debug
+ - tapOn: "Hide article date"
+ - assertVisible: "Hide unread indicator"
+ - tapOn: "Hide unread indicator"
+-- assertVisible: "Hide feed source"
+-- tapOn: "Hide feed source"
++- assertVisible: "Hide feed name"
++- tapOn: "Hide feed name"
+ - assertVisible: "Hide title from article description"
+ - tapOn: "Hide title from article description"
+ - tapOn: "Description lines"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1620** (2026-11-04): Merge localization into main (@github-actions[bot])
-- **PR #1619** (2026-11-04): Merge localization into main (@github-actions[bot])
-- **PR #1615** (2026-11-03): Update dependency Nuke to v13.2.1 (@renovate[bot])
-- **PR #1611** (2026-11-02): Merge localization into main (@github-actions[bot])
-- **PR #1610** (2026-11-01): Remove the iOS widget refresh button (@prof18)
-- **PR #1609** (2026-11-01): Fix compiler and Gradle deprecation warnings (@prof18)
+- **PR #1644** (2026-11-08): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1643** (2026-11-07): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1642** (2026-11-07): Add a UI glossary and align feed, backup, offline and category terms (@prof18)
+- **PR #1641** (2026-11-07): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1638** (2026-11-07): Merge localization into main (@github-actions[bot])
+- **PR #1636** (2026-11-07): Merge same-named categories when replaying cloud changes instead of failing sync (@prof18)
 
 ---
 
@@ -874,34 +858,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Maestro font tile assertion on Android and dismiss the keyboard in the iOS hide-
+## X. Remove the debug-only add-pixel button from iOS blocked words and stop the add b
 
 **RULE**:
-When implementing operations in `e2e/maestro/android/regression/150-reader-previous-and-font-menu.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e/maestro/ios/smoke/012-blocked-words.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `297ca86a`: Maestro font tile assertion on Android and dismiss the keyboard in the iOS hide-shorts flow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a717f945`: Remove the debug-only add-pixel button from iOS blocked words and stop the add button firing on any row tap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/maestro/android/regression/150-reader-previous-and-font-menu.yaml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/maestro/ios/smoke/012-blocked-words.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    checked: true
-    checked: true
-    checked: true
-    checked: true
+    id: blocked_words_input
+- inputText: "pixel"
+- tapOn:
+    id: blocked_words_add_button
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-    selected: true
-    selected: true
-    selected: true
-    selected: true
+    id: blocked_words_add_pixel_e2e
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `297ca86a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a717f945` are properly handled with clean fallback behavior.

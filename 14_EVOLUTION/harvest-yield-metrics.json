@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T15:42:39.982Z",
-  "total_cycles_completed": 8280,
-  "total_learnings_persisted": 8280,
-  "total_rules_promoted": 8066,
+  "last_updated": "2026-11-08T15:49:51.465Z",
+  "total_cycles_completed": 8282,
+  "total_learnings_persisted": 8282,
+  "total_rules_promoted": 8067,
   "history": [
-    {
-      "timestamp": "2026-11-07T22:16:03.676Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T22:16:04.474Z",
-      "repository": "mswjs/msw",
-      "learningId": "learn-github-mswjs-msw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T22:16:07.817Z",
       "repository": "joreilly/PeopleInSpace",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T15:42:39.982Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:49:45.625Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:49:51.465Z",
+      "repository": "prof18/feed-flow",
+      "learningId": "learn-github-prof18-feed-flow",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
