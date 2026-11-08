@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-HJ0V",
-    "timestamp": "2026-11-05T15:06:11.983Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "17b00c6cd1bb8840cd83ef30fcb3cdc20dc00b196b05d028792c1598b19c02b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-QBEE",
-    "timestamp": "2026-11-05T15:13:02.006Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "2e18488a5e26ad0be314aaec4b39af0c0b9c9ac1e656b2b5f914dab9fe63e601",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-01MT",
-    "timestamp": "2026-11-05T15:20:35.909Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "cb28df1b710a94f0e3d241698b61ab6864fc27e700bc030233391798be09a0d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-04PY",
     "timestamp": "2026-11-05T15:20:39.910Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -7492,6 +7447,51 @@
     "contentHash": "449aef3bd969944661711cb320c6c68cc471e34c4980c0ea82cc1761f191a21f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-YU67",
+    "timestamp": "2026-11-08T04:26:49.279Z",
+    "repository": "Jarvis322/macos-sysdata",
+    "learningId": "learn-github-jarvis322-macos-sysdata",
+    "contentHash": "f2312bae65b09026cf3b919401048a50996e5cb485e8ef1ef8e19b3ae70aa690",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-YWIH",
+    "timestamp": "2026-11-08T04:26:52.313Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "b88f5ace8777d5824640af0693b808d0d43aca8865ea056b760db0659777be10",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-YXQM",
+    "timestamp": "2026-11-08T04:26:53.902Z",
+    "repository": "InternScience/Sage-A1.5",
+    "learningId": "learn-huggingface-internscience-sage-a1-5",
+    "contentHash": "658abb8e55b3bd9efe9753349ccc2b72ea8df99ad8cb226066af2df6a0cf0885",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

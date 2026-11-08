@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T04:19:34.165Z",
+  "last_updated": "2026-11-08T04:26:53.809Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41823,14 +41823,19 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "cbccb455",
-      "content_hash": "1fb7a634997e4c7b173b19f88a186a2c7c8ac5af27e0c786f21dd341c02618f1",
+      "source_version": "e3334600",
+      "content_hash": "b88f5ace8777d5824640af0693b808d0d43aca8865ea056b760db0659777be10",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #22823 from nishant-devv/fix/nil-cluster-context-panic",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #22984 from ItsAbir005/fix/dashboard-edit-options-responsive",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -41919,7 +41924,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:27:17.098Z",
+      "verified_at": "2026-11-08T04:26:52.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128214,10 +128219,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
       "source_version": "hf-internscience-sage-a1.5",
-      "content_hash": "74f0ea1d4723a748e5998b9260165a32b71813c87e35d0aee57b7a55ba53f886",
+      "content_hash": "658abb8e55b3bd9efe9753349ccc2b72ea8df99ad8cb226066af2df6a0cf0885",
       "dossier_path": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "MoE Sparsity and Load Balancing Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Numerical Precision Separation for SSM States",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 737,
           "title": "Hybrid Attention Interval Invariant",
@@ -128232,6 +128247,11 @@
           "number": 4619,
           "title": "Multimodal Rotary Embedding Section Alignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5098,
+          "title": "Hybrid Attention Periodicity Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 6882,
@@ -128249,7 +128269,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:59:34.485Z",
+      "verified_at": "2026-11-08T04:26:53.785Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152770,14 +152790,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5098,
       "title": "Hybrid Attention Periodicity Invariant",
-      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
-      "source_version": "hf-zai-org-glm-5.3",
+      "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
+      "source_version": "hf-internscience-sage-a1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T01:29:12.417Z"
+      "verified_at": "2026-11-08T04:26:53.785Z"
     },
     "rule-5099": {
       "learning_id": "rule-5099",
@@ -182972,11 +182992,16 @@
       "slug": "jarvis322-macos-sysdata",
       "platform": "github",
       "source_url": "https://github.com/Jarvis322/macos-sysdata",
-      "source_version": "ebb7a5f7",
-      "content_hash": "1da88a084814287d334b4f534257c32fae4ab635be955f5ed8e11cdb8348adad",
+      "source_version": "bcfd205a",
+      "content_hash": "f2312bae65b09026cf3b919401048a50996e5cb485e8ef1ef8e19b3ae70aa690",
       "dossier_path": "07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "scan): give up on folders that stop answering",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 7088,
           "title": "shell): kill programs that ignore the timeout",
@@ -182988,7 +183013,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:39:51.389Z",
+      "verified_at": "2026-11-08T04:26:49.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

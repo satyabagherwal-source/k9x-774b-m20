@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md`  
 > **Source**: github ([https://github.com/Jarvis322/macos-sysdata](https://github.com/Jarvis322/macos-sysdata))  
-> **Source Version**: `ebb7a5f7`  
+> **Source Version**: `bcfd205a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:39:50.680Z  
+> **Timestamp**: 2026-11-08T04:26:47.825Z  
 > **Learning ID**: `learn-github-jarvis322-macos-sysdata`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Jarvis322/macos-sysdata](https://github.com/Jarvis322/macos-sysdata))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:39:50.672Z  
+> **Harvest Timestamp**: 2026-11-08T04:26:47.554Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: See what is really inside macOS System Data and delete it item by item. A free menu bar app that explains every category and shows each command before it runs.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1898 stars
+- **Stars / Engagement**: 2032 stars
 
 ---
 
@@ -1558,11 +1558,11 @@ enum DockerProjects {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24** (2026-10-02): **Cask `depends_on macos: :sonoma` blocks install on Sequoia/Tahoe — is newer macOS supported?**
-  *Symptoms*: ## What happened  Installing via Homebrew on macOS 26 (Tahoe) fails:  ``` $ brew install --cask Jarvis322/tap/sysdata ==> Fetching downloads for: jarvis322/tap/sysdata Error: This software does not run on macOS versions other than Sonoma. ```  ## Cause  The cask pins the installable macOS version to Sonoma only (`Casks/sysdata.rb`):  ```ruby depends_on macos: :sonoma ```  so Homebrew refuses to install on any other macOS release (Sequoia, Tahoe, ...).  ## Question / request  Does the app itself actually require Sonoma-specific APIs, or does it also work on newer macOS releases? If Sequoia/Tahoe are supported, could the cask restriction be relaxed to something like:  ```ruby depends_on macos: ">= :sonoma" ```  Thanks!  - macOS: 26.6.2 (Apple Silicon) - sysdata version in tap: 1.6.0
-
-- **Issue #23** (2026-09-29): **fix(localization): declare CFBundleLocalizations so macOS 27 matches non-English languages**
-  *Symptoms*: ## Problem  On macOS 27.0 the app renders entirely in English on non-English systems. With the system language set to Simplified Chinese, `String(localized:)` lookups against the SwiftPM resource bundle return the English keys.  Reproduced in a minimal GUI-app harness against the shipped app:  - system language: `zh-Hans-CN` - the resource bundle contains `zh-Hans.lproj` with a full translation - `String(localized: "Cancel", bundle:)` returns `Cancel` - `bundle.preferredLocalizations` returns `["en"]`  ## Root cause  macOS 27 gates `.lproj` matching against the user's languages on the main bundle declaring its own localizations. The interface strings live in the SwiftPM resource bundle (`SysDataMenu_SysDataMenu.bundle`), and the app's Info.plist declares nothing about localizations, so every language but the development region (`en`) is excluded from matching — even when the exact language is present in the resource bundle.  Declaring `CFBundleLocalizations` in the main app's Info.plist restores matching: the same harness then returns `取消`, and `preferredLocalizations` returns `["zh-Hans"]`.  ## Fix  Generate the `CFBundleLocalizations` array in `scripts/build-app.sh` from the `.lproj` folders, so the list cannot drift from the string catalog. 13 lines, build script only.  ## Testing  - Minimal harness: `Cancel` before, `取消` after - Built, installed and relaunched on a zh-Hans-CN system: menu bar UI renders in Chinese - Re-verified for Japanese (`キャンセル`) and German (`Abbreche
+- **Issue #27** (2026-11-06): **Bug: Scanning hangs at the last location (22/23 completed), progress cannot finish**
+  *Symptoms*: **macOS version:** macOS 27.2 (Apple M1 Pro)  **App version:** 1.11.1  **What you did** 1. Launched the application. 2. Started the system data scan/calculation. 3. Waited for the progress to iterate through the scanned locations.  **What happened** The progress bar got stuck at "Calculating size... Completed 22 of 23 locations" (the 23rd/last location). It hangs indefinitely with no further progress, preventing the scan from finishing.  **What expected** The application should successfully iterate through all 23 locations, complete the scan, and display the final results without freezing.  A screenshot of the row involved usually tells the whole story. [Optional: Attach a screenshot here if you can] 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for the report. I found and fixed one way the scan can stop at its last place: a command the app runs to measure something could leave a background process behind, and the app waited for that process to end, which could be never. The fix is in [1.11.2](https://github.com/Jarvis322/macos-sysdata/releases/tag/v1.11.2), out now:  ``` brew upgrade --cask jarvis322/tap/sysdata ```  or the app's own update check, or the disk image from the release page.  To make sure that is what you were seeing: if a scan still gets stuck on 1.11.2, could you run these two commands in Terminal while it is stuck and paste the output here?  ``` pgrep -lP $(pgrep -x SysDataMenu) sample SysDataMenu 3 -file ~/Desktop/sysdata-sample.txt ```  The first lists any program the app is still waiting on; the second writes a short trace to your Desktop that shows where it is stuck. Please attach that file too. 
+  > jiang@DanieldeMacBook-Pro ~ % pgrep -lP $(pgrep -x SysDataMenu) jiang@DanieldeMacBook-Pro ~ % sample SysDataMenu 3 -file ~/Desktop/sysdata-sample.txt Sampling process 2399 for 3 seconds with 1 millisecond of run time between samples Sampling completed, processing symbols... Sample analysis of process 2399 written to file /Users/jiang/Desktop/sysdata-sample.txt  [sysdata-sample.txt](https://github.com/user-attachments/files/34475714/sysdata-sample.txt)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1579,416 +1579,351 @@ enum DockerProjects {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a057ab16` (2026-10-23)
-**Commit Message**: fix(shell): kill programs that ignore the timeout
+### Incident Patch 1: `18f2dafd` (2026-11-06)
+**Commit Message**: fix(scan): give up on folders that stop answering
 
-A timeout sent SIGTERM only, so a program that ignored it held the wait
-forever. It is now killed after a grace period, and a timeout is
-reported by a flag rather than inferred from exit status 15. simctl
-calls get a timeout too: deletes run in sequence, and a wedged
-CoreSimulator blocked every later one, the weekly clean included.
+A folder read on a file system that has stopped answering, such as a
+network share that went away, a cloud-synced folder waiting on its
+provider or a stuck FUSE mount, blocks in the kernel for good. The
+sample attached to #27 showed two walks there, holding the scan at
+22 of 23.
 
-Commands now wait on a dispatch queue instead of a detached task, so a
-dozen slow probes no longer block the cooperative thread pool.
+Each walk now counts the entries it reads and is given up on after
+reading nothing for 30 seconds; a long walk that keeps reading is
+never cut short. The location is listed as could not be measured,
+without a size or a delete, and the catch-all is guarded the same way.
+Walks run on dispatch threads so blocked ones do not hold the
+concurrency pool, at most one per core and at user-initiated QoS,
+which keeps the scan as fast as before.
 
-**File**: `Sources/SysDataMenu/Services/Reclaimer.swift` (modified, +12/-7)
+Fixes #27
+
+**File**: `Sources/SysDataMenu/Probes/CatchAllProbes.swift` (modified, +20/-15)
 ```diff
-@@ -10,6 +10,11 @@ struct NeedsAdministrator: LocalizedError {
- /// Executes a `ReclaimAction`. Every filesystem mutation in the app goes
- /// through here.
- enum Reclaimer {
-+    /// Deletes run one batch after another, so a CoreSimulator that never
-+    /// answers would hold every later delete — the weekly clean included —
-+    /// behind it. An erase of a large device takes well under this.
-+    static let simulatorTimeout: Duration = .seconds(180)
-+
-     /// `preferTrash` moves user-owned paths to the Trash instead of deleting
-     /// them, so a Review item can be recovered for 30 days.
-     ///
-@@ -55,7 +60,7 @@ enum Reclaimer {
-             // clear failure. Ten minutes is far past any real clean.
-             let command = ([executable] + arguments).joined(separator: " ")
-             let result = try await Shell.run(executable, arguments, timeout: commandTimeout)
--            if result.status == SIGTERM {
-+            if result.timedOut {
-                 throw CommandError(command: command, result: CommandResult(
-                     status: SIGTERM,
-                     output: L("It was still running after %lld minutes, so it was stopped. Another program may be holding it; try again once that one has finished.",
-@@ -76,7 +81,7 @@ enum Reclaimer {
-             return false
- 
-         case .shutdownSimulators:
--            _ = try? await Shell.run("/usr/bin/xcrun", ["simctl", "shutdown", "all"])
-+            _ = try? await Shell.run("/usr/bin/xcrun", ["simctl", "shutdown", "all"], timeout: simulatorTimeout)
-             return false
- 
-         case .eraseSimulator(let udid):
-@@ -85,11 +90,11 @@ enum Reclaimer {
-             // refusal is retried once after shutting everything down, for when
-             // something booted it again in between.
-             let xcrun = "/usr/bin/xcrun"
--            _ = try? await Shell.run(xcrun, ["simctl", "shutdown", udid])
--            var result = try await Shell.run(xcrun, ["simctl", "erase", udid])
--            if !result.succeeded {
--                _ = try? await Shell.run(xcrun, ["simctl", "shutdown", "all"])
--                result = try await Shell.run(xcrun, ["simctl", "erase", udid])
-+            _ = try? await Shell.run(xcrun, ["simctl", "shutdown", udid], timeout: simulatorTimeout)
-+            var result = try await Shell.run(xcrun, ["simctl", "erase", udid], timeout: simulatorTimeout)
-+            if !result.succeeded && !result.timedOut {
-+                _ = try? await Shell.run(xcrun, ["simctl", "shutdown", "all"], timeout: simulatorTimeout)
-+                result = try await Shell.run(xcrun, ["simctl", "erase", udid], timeout: simulatorTimeout)
+@@ -218,22 +218,27 @@ struct LargeFolderProbe: StorageProbe {
+                     guard DiskSize.isOnBootVolume(child),
+                           !skipping.contains(DiskSize.realPath(child.path)) else { continue }
+                     group.addTask {
+-                        await Task.detached(priority: .utility) {
+-                            // Nothing under a claimed or excluded directory can
+-                            // ever be reported: `visit` returns on both before it
+-                            // looks at a size. Their bytes only ever fed the totals
+-                            // of parents, and a parent holding a claimed child is
+-                            // recursed into rather than listed, so leaving those
+-                            // bytes out cannot hide an item — a child that survives
+-                            // the filters is smaller than the reduced parent total
+-                            // by definition.
+-                            let sizes = DiskSize.directorySizes(
+-                                under: child, maxDepth: Self.maxDepth - 1, skipping: skipping
++                        // Nothing under a claimed or excluded directory can
++                        // ever be reported: `visit` returns on both before it
++                        // looks at a size. Their bytes only ever fed the totals
++                        // of parents, and a parent holding a claimed child is
++                        // recursed into rather than listed, so leaving those
++                        // bytes out cannot hide an item — a child that survives
++                        // the filters is smaller than the reduced parent total
++                        // by definition.
++                        let walked = await DiskSize.watched { progress in
++                            DiskSize.directorySizes(
++                                under: child, maxDepth: Self.maxDepth - 1, skipping: skipping, progress: progress
+                             )
+-                            var items: [StorageItem] = []
+-                            Self.visit(child, depth: 1, sizes: sizes, claimed: claimedPaths, excluded: excludedPaths, apps: apps, into: &items)
+-                            return items
+-                        }.value
++                        }
++                        guard let sizes = walked else {
++                            return [ProbeSupport.unansweredItem(
++                                id: "other-\(child.path)", category: .other, name: child.abbreviatedPath, url: child
++                            )]
++                        }
++                        var items: [StorageItem] = []
++                        Self.visit(child, depth: 1, sizes: sizes, claimed: claimedPaths, excluded: excludedPaths, apps: apps, into: &items)
++                        return items
+                     }
+                 }
              }
-             guard result.succeeded else {
-                 throw CommandError(command: "\(xcrun) simctl erase \(udid)", result: result)
 ```
 
-**File**: `Sources/SysDataMenu/Services/Shell.swift` (modified, +30/-6)
+**File**: `Sources/SysDataMenu/Probes/StorageProbe.swift` (modified, +23/-0)
 ```diff
-@@ -4,6 +4,10 @@ import os
- struct CommandResult: Sendable {
-     let status: Int32
-     let output: String
-+    /// Stopped by the timeout rather than ended by itself. Not inferred from
-+    /// the status: a program may exit 15 of its own accord, and one that
-+    /// ignored SIGTERM ends with SIGKILL's 9.
-+    var timedOut = false
+@@ -18,8 +18,16 @@ enum ProbeSupport {
+         action: ReclaimAction,
+         minimumBytes: Int64 = 1
+     ) async -> StorageItem? {
++        // Checked before the walk rather than inside it: most locations a
++        // probe asks about do not exist on a given Mac, and each would
++        // otherwise wait for a walk slot behind the real walks. What hangs
++        // on a file system that has stopped answering is reading a folder's
++        // entries, which the walk does and is watched for (#27).
+         guard url.exists else { return nil }
+         let measured = await DiskSize.measure(at: url)
++        if measured.stalled {
++            return unansweredItem(id: id, category: category, name: name, url: url)
++        }
+         guard measured.bytes >= minimumBytes else { return nil }
+         return StorageItem(
+             id: id,
+@@ -53,6 +61,21 @@ enum ProbeSupport {
+         }
+     }
  
-     var succeeded: Bool { status == 0 }
- }
-@@ -44,13 +48,24 @@ enum Shell {
-         mergeStderr: Bool = true,
-         timeout: Duration? = nil
-     ) async throws -> CommandResult {
--        try await Task.detached(priority: .userInitiated) {
--            try runBlocking(executable, arguments, mergeStderr: mergeStderr, timeout: timeout)
--        }.value
-+        // On a dispatch queue, not a detached task: the wait blocks its
-+        // thread for as long as the program runs, and a scan asks a dozen
-+        // programs at once. Blocking that many of the concurrency pool's
-+        // threads — one per core — stalls every other probe behind them.
-+        try await withCheckedThrowingContinuation { continuation in
-+            DispatchQueue.global(qos: .userInitiated).async {
-+                continuation.resume(with: Result {
-+                    try runBlocking(executable, arguments, mergeStderr: mergeStderr, timeout: timeout)
-+                })
++    /// A location whose file system stopped answering while it was measured.
++    ///
++    /// Listed rather than dropped, so the scan says where it gave up instead
++    /// of quietly showing less, and claimed, so the catch-all does not walk
++    /// into the same place. It has no size, so nothing offers to delete it.
++    static func unansweredItem(id: String, category: StorageCategory, name: String, url: URL) -> StorageItem {
++        StorageItem(
++            id: id, category: category, name: name,
++            detail: "Could not be measured: reading this folder stopped getting answers. It may be on a network drive, a disconnected disk, or in a cloud-synced folder.",
++            sizeBytes: nil, safety: .manual,
++            action: .manual("Open it in Finder to see what it is. If it is on a network or cloud drive, check that the drive is connected or the files are downloaded, then scan again."),
++            revealURL: url
++        )
++    }
++
+     /// Runs a JSON-producing command and decodes its top-level object.
+     static func json(_ executable: String, _ arguments: [String]) async -> [String: Any]? {
+         guard let result = try? await Shell.run(executable, arguments, mergeStderr: false, timeout: Shell.probeTimeout),
+```
+
+**File**: `Sources/SysDataMenu/Services/DiskSize.swift` (modified, +107/-5)
+```diff
+@@ -1,4 +1,5 @@
+ import Foundation
++import os
+ 
+ enum DiskSize {
+     /// What one walk of a location reports: how much it takes up, and when
+@@ -14,6 +15,104 @@ enum DiskSize {
+         /// Newest modification date under the location, or nil when it holds
+         /// no regular files.
+         var lastModified: Date?
++        /// The walk stopped getting answers and was given up on, so `bytes`
++        /// is not the size of the location (see `watched`).
++        var stalled = false
++    }
++
++    /// Counts the entries a walk has read, so a walk that has stopped reading
++    /// can be told apart from one that is merely long.
++    final class WalkProgress: Sendable {
++        private let entries = OSAllocatedUnfairLock(initialState: 0)
++
++        func advance() { entries.withLock { $0 += 1 } }
++        var count: Int { entries.withLock { $0 } }
++    }
++
++    /// How many walks read the disk at once. The concurrency pool used to
++    /// set this by having one thread per core; dispatch has no such limit,
++    /// and forty walks at once made the scan slower, not faster.
++    private static let walkSlots = WalkSlots(count: ProcessInfo.processInfo.activeProcessorCount)
++
++    /// A counting gate for walks. A slot is given back when its walk ends or
++    /// is given up on, whichever comes first, so walks stuck in the kernel
++    /// never hold slots the rest of the scan needs.
++    private actor WalkSlots {
++        private var free: Int
++        private var waiting: [CheckedContinuation<Void, Never>] = []
++
++        init(count: Int) { free = max(count, 1) }
++
++        func acquire() async {
++            if free > 0 {
++                free -= 1
++                return
++            }
++            await withCheckedContinuation { waiting.append($0) }
++        }
++
++        func release() {
++            if waiting.isEmpty {
++                free += 1
++            } else {
++                waiting.removeFirst().resume()
++            }
++        }
++    }
++
++    /// How long a walk may go without reading a single entry before the scan
++    /// stops waiting for it. A large folder keeps reading; this only ever
++    /// catches one whose file system has stopped answering.
++    static let stallLimit: Duration = .seconds(30)
++
++    /// Runs a walk off the concurrency pool and returns its result, or nil if
++    /// it read nothing for `stallLimit`.
++    ///
++    /// A directory read on a file system that has stopped answering — a
++    /// network share that went away, a cloud-synced folder waiting on its
++    /// provider, a stuck FUSE mount — blocks in the kernel and never returns,
++    /// and nothing can cancel it. The scan used to wait with it and sit at
++    /// "22 of 23" for good (#27). The walk still blocks, on a dispatch thread
++    /// that is left to it; the scan goes on without that location.
++    static func watched<T: Sendable>(
++        stallLimit: Duration = DiskSize.stallLimit, checkEvery: Duration = .seconds(2),
++        _ walk: @escaping @Sendable (WalkProgress) -> T
++    ) async -> T? {
++        let progress = WalkProgress()
++        let slots = walkSlots
++        await slots.acquire()
++        return await withCheckedContinuation { (continuation: CheckedContinuation<T?, Never>) in
++            let resumed = OSAllocatedUnfairLock(initialState: false)
++            let finish: @Sendable (T?) -> Void = { value in
++                let first = resumed.withLock { done in
++                    defer { done = true }
++                    return !done
++                }
++                guard first else { return }
++                continuation.resume(returning: value)
++                Task { await slots.release() }
++            }
++            // Not a detached task: a walk blocked in the kernel would hold one
++            // of the concurrency pool's few threads for good, and enough of
++            // them would stall every other probe. Dispatch adds threads.
++            // User-initiated, not utility: on a dispatch queue utility walks
++            // had their disk reads throttled, and the scan took 30% longer
++            // than the same walks run as utility tasks had.
++            DispatchQueue.global(qos: .userInitiated).async { finish(walk(progress)) }
++            Task.detached(priority: .utility) {
++                var lastCount = -1
++                var quietFor: Duration = .zero
++                while !resumed.withLock({ $0 }) {
++                    try? await Task.sleep(for: checkEvery)
++                    let count = progress.count
++                    if count == lastCount { quietFor += checkEvery } else { lastCount = count; quietFor = .zero }
++                    if quietFor >= stallLimit {
++                        finish(nil)
++                        return
++                    }
++                }
 +            }
 +        }
      }
  
-+    /// How long a program has to exit after SIGTERM before it is killed.
-+    private static let terminationGrace: Double = 5
+     /// Allocated bytes under `url`, following the same rules Finder uses for
+@@ -23,16 +122,15 @@ enum DiskSize {
+     }
+ 
+     static func measure(at url: URL, old
+```
+
+**File**: `Tests/SysDataMenuTests/StalledWalkTests.swift` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++import Foundation
++import Testing
++@testable import SysDataMenu
 +
++/// A directory read on a file system that stopped answering never returns.
++/// The scan must give up on that one location and finish (#27), and must
++/// never give up on a walk that is merely long.
++@Suite struct StalledWalkTests {
++    @Test(.timeLimit(.minutes(1))) func aWalkThatStopsReadingIsGivenUpOn() async {
++        let release = DispatchSemaphore(value: 0)
++        defer { release.signal() }
++
++        let result = await DiskSize.watched(stallLimit: .milliseconds(600), checkEvery: .milliseconds(100)) { progress in
++            progress.advance()
++            // Blocked, the way a read on a dead network share is.
++            release.wait()
++            return 42
++        }
++
++        #expect(result == nil)
++    }
++
++    /// Slow is not stalled: a walk that keeps reading entries is waited for
++    /// however long it takes.
++    @Test(.timeLimit(.minutes(1))) func aSlowWalkThatKeepsReadingIsWaitedFor() async {
++        let result = await DiskSize.watched(stallLimit: .milliseconds(600), checkEvery: .milliseconds(100)) { progress in
++            for _ in 0..<12 {
++                progress.advance()
++                Thread.sleep(forTimeInterval: 0.2)
++            }
++            return 42
++        }
++
++        #expect(result == 42, "2.4 s of steady reading outlasts the 0.6 s limit and still finishes")
++    }
++
++    @Test func anUnansweredLocationIsListedWithoutASizeOrADelete() {
++        let url = URL(fileURLWithPath: "/Volumes/share/stuck")
++        let item = ProbeSupport.unansweredItem(id: "x", category: .apps, name: "stuck", url: url)
++
++        #expect(item.sizeBytes == nil)
++        #expect(item.action.isManual, "a folder nobody could measure is not offered for deletion")
++        #expect(item.claimedURLs.contains(url), "the catch-all must not walk into it again")
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `32ecae38` (2026-11-06)
+**Commit Message**: fix(shell): stop waiting on children left running
+
+After a command exited normally, the output pipe was read until it
+closed. A child the command left behind, such as a daemon a CLI starts
+on first use or a shim's helper, keeps it open for as long as it lives,
+so the probe that ran the command never finished and the scan stayed
+at its last place. The pipe now gets two seconds after the exit; what
+the command wrote is already in it by then.
+
+Refs #27
+
+**File**: `Sources/SysDataMenu/Services/Shell.swift` (modified, +10/-4)
+```diff
+@@ -63,6 +63,8 @@ enum Shell {
+ 
+     /// How long a program has to exit after SIGTERM before it is killed.
+     private static let terminationGrace: Double = 5
++    /// How long the output pipe may stay open after the program has exited.
++    private static let pipeGrace: Double = 2
+ 
      /// The blocking half of `run`, kept synchronous because it waits on the
--    /// pipe and the process; it only ever runs on the detached task above.
-+    /// pipe and the process; it only ever runs on the queue above.
-     private static func runBlocking(
-         _ executable: String, _ arguments: [String], mergeStderr: Bool, timeout: Duration?
-     ) throws -> CommandResult {
-@@ -86,10 +101,16 @@ enum Shell {
-         // on another queue, and a pid is a plain number to hand across.
-         let pid = process.processIdentifier
-         let timedOut = OSAllocatedUnfairLock(initialState: false)
-+        let exited = OSAllocatedUnfairLock(initialState: false)
-         let deadline = timeout.map { limit in
-             let item = DispatchWorkItem {
-                 timedOut.withLock { $0 = true }
-                 kill(pid, SIGTERM)
-+                // A program that ignores SIGTERM — a wedged daemon client —
-+                // would otherwise hold `waitUntilExit` for good.
-+                DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + terminationGrace) {
-+                    if !exited.withLock({ $0 }) { kill(pid, SIGKILL) }
-+                }
-             }
-             let seconds = Double(limit.components.seconds) + Double(limit.components.attoseconds) / 1e18
-             // Not .utility: the disk walk runs at that level, and while a scan
-@@ -99,8 +120,10 @@ enum Shell {
-             return item
-         }
-         process.waitUntilExit()
-+        exited.withLock { $0 = true }
+     /// pipe and the process; it only ever runs on the queue above.
+@@ -123,11 +125,15 @@ enum Shell {
+         exited.withLock { $0 = true }
          deadline?.cancel()
--        if timedOut.withLock({ $0 }) {
-+        let wasStopped = timedOut.withLock { $0 }
-+        if wasStopped {
-             // Whatever still holds the pipe is not waited for.
+         let wasStopped = timedOut.withLock { $0 }
+-        if wasStopped {
+-            // Whatever still holds the pipe is not waited for.
++        // Whatever still holds the pipe is not waited for. After a timeout
++        // that is the program's own children; after a normal exit it is a
++        // child the program left behind — a daemon a CLI starts on first
++        // use, a shim's helper — which can live for as long as the Mac is
++        // up, and waiting for it held the scan at its last place (#27).
++        // What the program itself wrote is in the pipe by the time it
++        // exits, so a short grace reads all of it.
++        if wasStopped || ended.wait(timeout: .now() + pipeGrace) == .timedOut {
              pipe.fileHandleForReading.readabilityHandler = nil
-         } else {
-@@ -109,7 +132,8 @@ enum Shell {
+-        } else {
+-            ended.wait()
+         }
  
          return CommandResult(
-             status: process.terminationStatus,
--            output: String(decoding: output.withLock { $0 }, as: UTF8.self)
-+            output: String(decoding: output.withLock { $0 }, as: UTF8.self),
-+            timedOut: wasStopped
-         )
-     }
- 
 ```
 
----
-
-### Incident Patch 2: `4b05dd8a` (2026-10-23)
-**Commit Message**: fix(history): keep an unreadable log, lock writes
-
-An undecodable history.json read as empty, and the next scan saved over
-it, losing up to 180 days. The file is now moved aside first. The scan
-and a delete could also interleave their read-modify-write and drop a
-record; writes now take a lock, and a batch is written once.
-
-**File**: `Sources/SysDataMenu/Model/ScanModel.swift` (modified, +1/-3)
+**File**: `Tests/SysDataMenuTests/ShellTimeoutTests.swift` (modified, +15/-0)
 ```diff
-@@ -853,9 +853,7 @@ final class ScanModel {
-             // Written before the size is forgotten, and before the free
-             // space is re-read, so it records what was asked for even if
-             // the disk disagrees about what it got.
--            for item in affected {
--                ScanHistory.record(deleted: item, bytes: item.sizeBytes ?? 0)
--            }
-+            ScanHistory.record(deleted: affected.map { ($0, $0.sizeBytes ?? 0) })
-             history = ScanHistory.load()
-         }
-         items.removeAll { ids.contains($0.id) }
-```
-
-**File**: `Sources/SysDataMenu/Services/ScanHistory.swift` (modified, +44/-10)
-```diff
-@@ -106,7 +106,9 @@ enum ScanHistory {
-     // MARK: Writing
- 
-     static func record(_ items: [StorageItem], freeBytes: Int64, at date: Date = .now) {
--        var log = load()
-+        writeLock.lock()
-+        defer { writeLock.unlock() }
-+        guard var log = loadForWriting() else { return }
-         var sizes: [String: Int64] = [:]
-         var names: [String: String] = [:]
-         var categories: [String: String] = [:]
-@@ -128,15 +130,25 @@ enum ScanHistory {
-     }
- 
-     static func record(deleted item: StorageItem, bytes: Int64, at date: Date = .now) {
--        var log = load()
--        log.deletions.append(Deletion(
--            date: date,
--            itemID: item.id,
--            name: item.name,
--            category: item.category.rawValue,
--            paths: item.action.paths.map(\.path),
--            bytes: bytes
--        ))
-+        record(deleted: [(item, bytes)], at: date)
-+    }
-+
-+    /// A whole batch in one read and one write, rather than one per item.
-+    static func record(deleted batch: [(item: StorageItem, bytes: Int64)], at date: Date = .now) {
-+        guard !batch.isEmpty else { return }
-+        writeLock.lock()
-+        defer { writeLock.unlock() }
-+        guard var log = loadForWriting() else { return }
-+        for (item, bytes) in batch {
-+            log.deletions.append(Deletion(
-+                date: date,
-+                itemID: item.id,
-+                name: item.name,
-+                category: item.category.rawValue,
-+                paths: item.action.paths.map(\.path),
-+                bytes: bytes
-+            ))
-+        }
-         save(prune(log, now: date))
-     }
- 
-@@ -301,6 +313,28 @@ enum ScanHistory {
- 
-     // MARK: Storage
- 
-+    /// The scan records from a detached task and a delete from the main
-+    /// actor, each reading the file, appending and writing it back. Without
-+    /// this, a delete that lands while a scan is being written loses one of
-+    /// the two.
-+    private static let writeLock = NSLock()
-+
-+    /// The log to append to, or nil when there is a file that cannot be read
-+    /// and it could not be moved out of the way.
-+    ///
-+    /// `load()` answers an unreadable file with an empty log, which is right
-+    /// for showing it and wrong for writing: the next save would replace six
-+    /// months of history with one scan. The file is kept beside the new one
-+    /// instead, so a newer version's format or one damaged entry costs the
-+    /// trend lines, not the record.
-+    static func loadForWriting(at url: URL = fileURL) -> Log? {
-+        guard let data = try? Data(contentsOf: url) else { return Log() }
-+        if let log = try? decoder.decode(Log.self, from: data) { return log }
-+        let stamp = ISO8601DateFormatter().string(from: .now).replacingOccurrences(of: ":", with: "-")
-+        let aside = url.deletingLastPathComponent().appending(path: "history-unreadable-\(stamp).json")
-+        return (try? FileManager.default.moveItem(at: url, to: aside)) != nil ? Log() : nil
-+    }
-+
-     private static var decoder: JSONDecoder {
-         let decoder = JSONDecoder()
-         decoder.dateDecodingStrategy = .iso8601
-```
-
----
-
-### Incident Patch 3: `5a658400` (2026-11-02)
-**Commit Message**: fix(shrink): remove copies an interrupted shrink left
-
-A shrink cut short by a quit, crash or power loss left its hidden copy
-beside the folder: a partial compressed copy before the swap, the old
-original after it. Each copy's path is now journaled before it is made
-and cleared once it is gone, and launch deletes whatever the journal
-still lists. Only folders named the way a shrink names its copies are
-ever removed, whatever the journal says.
-
-**File**: `Sources/SysDataMenu/Model/ScanModel.swift` (modified, +2/-0)
-```diff
-@@ -156,6 +156,8 @@ final class ScanModel {
-         self.items = items
-         hiddenIDs = Set(UserDefaults.standard.stringArray(forKey: Self.hiddenKey) ?? [])
-         if scansAutomatically {
-+            // Before the first scan measures them as part of their folders.
-+            Task.detached(priority: .utility) { FolderCompression.removeLeftovers() }
-             Task { await runBackgroundScans() }
-         }
-     }
-```
-
-**File**: `Sources/SysDataMenu/Services/FolderCompression.swift` (modified, +55/-2)
-```diff
-@@ -83,7 +83,9 @@ enum FolderCompression {
-     /// Shrinks `folder` and returns what it took before and after. Runs off
-     /// the main actor; throws a `Refusal` without touching the folder when
-     /// it is not safe or not worth doing.
--    static func shrink(_ folder: URL, freeSpace: Int64 = DiskSize.freeSpace()) async throws -> Outcome {
-+    static func shrink(
-+        _ folder: URL, freeSpace: Int64 = DiskSize.freeSpace(), journal: UserDefaults = .standard
-+    ) async throws -> Outcome {
-         let name = folder.lastPathComponent
-         let values = try? folder.resourceValues(forKeys: [.volumeSupportsCompressionKey])
-         guard values?.volumeSupportsCompression == true else { throw Refusal.unsupportedVolume }
-@@ -102,7 +104,15 @@ enum FolderCompression {
-         // volume and Finder never shows the copy.
-         let copy = folder.deletingLastPathComponent()
-             .appending(path: ".\(name).sysdata-shrink-\(UUID().uuidString)")
--        defer { try? FileManager.default.removeItem(at: copy) }
-+        // Written down before the copy exists, so a crash at any point
-+        // leaves a note of what to clean up at the next launch.
-+        record(copy, inProgress: true, in: journal)
-+        defer {
-+            try? FileManager.default.removeItem(at: copy)
-+            if !FileManager.default.fileExists(atPath: copy.path) {
-+                record(copy, inProgress: false, in: journal)
-+            }
-+        }
- 
-         // `--noclone` is what makes this work: on APFS, ditto otherwise clones
-         // each file and the compression step never runs.
-@@ -133,6 +143,49 @@ enum FolderCompression {
-         return Outcome(before: original.allocatedBytes, after: copied.allocatedBytes)
-     }
- 
-+    // MARK: Leftovers
-+
-+    /// Copies being written or swapped right now. A shrink cut short — the
-+    /// app quit, crashed or the Mac lost power — leaves its copy beside the
-+    /// folder: a partial compressed copy before the swap, the old original
-+    /// after it. The folder itself is whole either way, because the swap is
-+    /// one rename, so the copy is always safe to delete.
-+    static let journalKey = "shrinkCopiesInProgress"
-+    private static let journalLock = NSLock()
-+
-+    private static func record(_ copy: URL, inProgress: Bool, in defaults: UserDefaults) {
-+        journalLock.withLock {
-+            var paths = Set(defaults.stringArray(forKey: journalKey) ?? [])
-+            if inProgress { paths.insert(copy.path) } else { paths.remove(copy.path) }
-+            defaults.set(paths.sorted(), forKey: journalKey)
-+        }
-+    }
-+
-+    /// Whether a path is named the way `shrink` names its copies. Nothing
-+    /// else is ever deleted from the journal, whatever it says.
-+    static func isShrinkCopy(_ url: URL) -> Bool {
-+        url.lastPathComponent.wholeMatch(of: /\..+\.sysdata-shrink-[0-9A-F]{8}(-[0-9A-F]{4}){3}-[0-9A-F]{12}/) != nil
-+    }
-+
-+    /// Deletes the copies an interrupted shrink left behind. Called once at
-+    /// launch. Returns what it removed.
-+    @discardableResult
-+    static func removeLeftovers(in defaults: UserDefaults = .standard) -> [URL] {
-+        let paths = journalLock.withLock { defaults.stringArray(forKey: journalKey) ?? [] }
-+        var removed: [URL] = []
-+        for path in paths {
-+            let copy = URL(fileURLWithPath: path)
-+            // Called at launch, before this app can have started a shrink of
-+            // its own, so nothing on the list is still being written.
-+            if isShrinkCopy(copy), FileManager.default.fileExists(atPath: copy.path) {
-+                guard (try? FileManager.default.removeItem(at: copy)) != nil else { continue }
-+                removed.append(copy)
-+            }
-+            record(copy, inProgress: false, in: defaults)
-+        }
-+        return removed
-+    }
-+
-     /// Walks `folder` without following links, the way `DiskSize` does.
-     static func survey(_ folder: URL) -> Survey {
-         var survey = Survey()
-```
-
-**File**: `Tests/SysDataMenuTests/FolderCompressionTests.swift` (modified, +48/-0)
-```diff
-@@ -117,4 +117,52 @@ import Testing
-         #expect(ScanModel.shrinkIdleDays(for: row("vm-x", .vms)) == nil)
-         #expect(ScanModel.shrinkIdleDays(for: row("ai-model", .ai)) == nil)
+@@ -37,4 +37,19 @@ struct ShellTimeoutTests {
+         #expect(result.succeeded)
+         #expect(result.output == "hello\n")
      }
 +
-+    private func journal() -> UserDefaults {
-+        let name = "sysdata-shrink-tests-\(UUID().uuidString)"
-+        let defaults = UserDefaults(suiteName: name)!
-+        defaults.removePersistentDomain(forName: name)
-+        return defaults
-+    }
-+
-+    @Test func aFinishedShrinkLeavesNothingInTheJournal() async throws {
-+        let root = try folder("journal")
-+        defer { try? FileManager.default.removeItem(at: root) }
-+        let defaults = journal()
-+
-+        _ = try await FolderCompression.shrink(root, freeSpace: plenty, journal: defaults)
-+
-+        #expect((defaults.stringArray(forKey: FolderCompression.journalKey) ?? []).isEmpty)
-+    }
-+
-+    /// What a crash mid-shrink leaves: a copy beside the folder and its path
-+    /// in the journal.
-+    @Test func anInterruptedShrinksCopyIsRemovedAtLaunch() throws {
-+        let parent = FileManager.default.temporaryDirectory.appending(path: "sysdata-leftover-\(UUID().uuidString)")
-+        defer { try? FileManager.default.removeItem(at: parent) }
-+        let copy = parent.appending(path: ".node_modules.sysdata-shrink-\(UUID().uuidString)")
-+        try FileManager.default.createDirectory(at: copy, withIntermediateDirectories: true)
-+        try Data("x".utf8).write(to: copy.appending(path: "file"))
-+        let defaults = journal()
-+        defaults.set([copy.path], forKey: FolderCompression.journalKey)
-+
-+        #expect(FolderCompression.removeLeftovers(in: defaults).map(\.path) == [copy.path])
-+        #expect(!FileManager.default.fileExists(atPath: copy.path))
-+        #expect((defaults.stringArray(forKey: FolderCompression.journalKey) ?? []).isEmpty)
-+    }
-+
-+    /// The journal is a list of paths to delete. Whatever ends up in it,
-+    /// only a folder named the way a shrink names its copy goes.
-+    @Test func onlyShrinkCopiesAreEverRemoved() throws {
-+        let precious = FileManager.default.temporaryDirectory.appending(path: "sysdata-precious-\(UUID().uuidString)")
-+        try FileManager.default.createDirectory(at: precious, withIntermediateDirectories: true)
-+        defer { try? FileManager.default.removeItem(at: precious) }
-+        let defaults = journal()
-+        defaults.set([precious.path], forKey: FolderCompression.journalKey)
-+
-+        #expect(FolderCompression.removeLeftovers(in: defaults).isEmpty)
-+        #expect(FileManager.default.fileExists(atPath: precious.path))
-+        #expect(!FolderCompression.isShrinkCopy(URL(fileURLWithPath: "/Users/me/node_modules")))
-+        #expect(FolderCompression.isShrinkCopy(URL(fileURLWithPath: "/x/.a.sysdata-shrink-\(UUID().uuidString)")))
++    /// A program that exits normally but leaves a child holding the output
++    /// pipe — a daemon a CLI starts on first use, a shim's helper — used to
++    /// leave the scan on "22 of 23" for as long as that child lived (#27).
++    /// The child here sleeps for 60 seconds; the run must not wait for it.
++    @Test(.timeLimit(.minutes(1))) func aChildLeftRunningAfterANormalExitIsNotWaitedFor() async throws {
++        let clock = ContinuousClock()
++        let start = clock.now
++        let result = try await Shell.run(
++            "/bin/sh", ["-c", "echo done; sleep 60 &"], timeout: .seconds(20)
++        )
++        #expect(result.succeeded)
++        #expect(result.output.contains("done"))
++        #expect(clock.now - start < .seconds(15))
 +    }
  }
 ```
@@ -2019,45 +1954,59 @@ ever removed, whatever the journal says.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. shell): kill programs that ignore the timeout
+## X. scan): give up on folders that stop answering
 
 **RULE**:
-When implementing operations in `Sources/SysDataMenu/Services/Reclaimer.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Jarvis322/macos-sysdata. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/SysDataMenu/Probes/CatchAllProbes.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Jarvis322/macos-sysdata. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a057ab16`: shell): kill programs that ignore the timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18f2dafd`: scan): give up on folders that stop answering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SysDataMenu/Services/Reclaimer.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SysDataMenu/Probes/CatchAllProbes.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// Deletes run one batch after another, so a CoreSimulator that never
-    /// answers would hold every later delete — the weekly clean included —
-    /// behind it. An erase of a large device takes well under this.
-    static let simulatorTimeout: Duration = .seconds(180)
-
-            if result.timedOut {
-            _ = try? await Shell.run("/usr/bin/xcrun", ["simctl", "shutdown", "all"], timeout: simulatorTimeout)
-            _ = try? await Shell.run(xcrun, ["simctl", "shutdown", udid], timeout: simulatorTimeout)
-            var result = try await Shell.run(xcrun, ["simctl", "erase", udid], timeout: simulatorTimeout)
-            if !result.succeeded && !result.timedOut {
-                _ = try? await Shell.run(xcrun, ["simctl", "shutdown", "all"], timeout: simulatorTimeout)
-                result = try await Shell.run(xcrun, ["simctl", "erase", udid], timeout: simulatorTimeout)
+                        // Nothing under a claimed or excluded directory can
+                        // ever be reported: `visit` returns on both before it
+                        // looks at a size. Their bytes only ever fed the totals
+                        // of parents, and a parent holding a claimed child is
+                        // recursed into rather than listed, so leaving those
+                        // bytes out cannot hide an item — a child that survives
+                        // the filters is smaller than the reduced parent total
+                        // by definition.
+                        let walked = await DiskSize.watched { progress in
+                            DiskSize.directorySizes(
+                                under: child, maxDepth: Self.maxDepth - 1, skipping: skipping, progress: progress
+                        }
+                        guard let sizes = walked else {
+                            return [ProbeSupport.unansweredItem(
+                                id: "other-\(child.path)", category: .other, name: child.abbreviatedPath, url: child
+                            )]
+                        }
+                        var items: [Stora
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            if result.status == SIGTERM {
-            _ = try? await Shell.run("/usr/bin/xcrun", ["simctl", "shutdown", "all"])
-            _ = try? await Shell.run(xcrun, ["simctl", "shutdown", udid])
-            var result = try await Shell.run(xcrun, ["simctl", "erase", udid])
-            if !result.succeeded {
-                _ = try? await Shell.run(xcrun, ["simctl", "shutdown", "all"])
-                result = try await Shell.run(xcrun, ["simctl", "erase", udid])
+                        await Task.detached(priority: .utility) {
+                            // Nothing under a claimed or excluded directory can
+                            // ever be reported: `visit` returns on both before it
+                            // looks at a size. Their bytes only ever fed the totals
+                            // of parents, and a parent holding a claimed child is
+                            // recursed into rather than listed, so leaving those
+                            // bytes out cannot hide an item — a child that survives
+                            // the filters is smaller than the reduced parent total
+                            // by definition.
+                            let sizes = DiskSize.directorySizes(
+                                under: child, maxDepth: Self.maxDepth - 1, skipping: skipping
+                            var items: [StorageItem] = []
+                            Self.visit(child, depth: 1, sizes: sizes, claimed: claimedPaths, excluded: excludedPaths, apps: apps, into: &items)
+                            return items
+                        }.value
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a057ab16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18f2dafd` are properly handled with clean fallback behavior.

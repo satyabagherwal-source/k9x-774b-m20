@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `cbccb455`  
+> **Source Version**: `e3334600`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T23:27:15.820Z  
+> **Timestamp**: 2026-11-08T04:26:50.231Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T23:27:15.570Z  
+> **Harvest Timestamp**: 2026-11-08T04:26:50.012Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -25,9 +25,9 @@
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `meshery/meshery`
 - **Description**: Meshery, the cloud native manager
-- **Primary Language / Ecosystem**: TypeScript
+- **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12145 stars
+- **Stars / Engagement**: 12147 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22945** (2026-11-06): **[mesheryctl] Remove unused errPatternMsg constant**
-  *Symptoms*: This PR fixes #22809  Removes the unused `errPatternMsg` constant in `design/error.go`. The same usage text is already inlined in `ErrDesignManifest`, `ErrDesignFileNotProvided` and `ErrDesignSourceType`, so nothing needs the constant.  Verified locally with golangci-lint v2.12.2 and the repo's `.github/.golangci.yml`: - Before the fix: `error.go:46:2: const errPatternMsg is unused (unused)` - After the fix: `0 issues.`  **Notes for Reviewers**  - This PR fixes #22809  **Signed commits** - [x] Yes, I signed my commits.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Chores**   * Removed unused internal command usage text. This cleanup does not change available commands, command output, or runtime behavior. There are no new features or user-visible behavior changes in this update.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #23000** (2026-11-08): **[mesheryctl] Reject unexpected positional arguments in system logout**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #22993  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  ## Changes  - `mesheryctl/internal/cli/root/system/logout.go`: use `cobra.NoArgs` instead of `cobra.MinimumNArgs(0)`, so unexpected positional arguments are rejected with a usage error before the logout handler runs. - `mesheryctl/internal/cli/root/system/logout_test.go`: add a test pinning the argument validator.  ## Before / After  Before (argument silently ignored, logout proceeds):  ``` $ mesheryctl system logout unexpected-arg logged out ```  After (usage error, exit code 1, token untouched; normal invocation unaffected):  ``` $ mesheryctl system logout unexpected-arg Error: unknown command "unexpected-arg" for "mesheryctl system logout"  $ mesheryctl system logout logged out ```  Note: the same `cobra.MinimumNArgs(0)` pattern exists in a few other commands (e.g. `system login`, `design list`, `filter list`). Out of scope for this PR per the issue; happy to open a follow-up if there's interest.  <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * The `logout` command rejects unexpected positional arguments. When invoked without arguments, it continues to log out and clear the token file. If an unexpected argument is supplied, the command is rejected
 
-- **Issue #22943** (2026-11-06): **[mesheryctl] perf result reads latency percentiles by position instead of by percentile**
-  *Symptoms*: ### Current Behavior `perf result` picks latency percentiles by position, using `Percentiles[0]` as P50, `[2]` as P90 and `[3]` as P99, and only when more than three are returned (`mesheryctl/internal/cli/root/perf/result.go`).  With `--options '{"Percentiles":[50,90,99]}'`, fortio returns three percentiles, so `--view` prints 0 for P50, P90 and P99. If the list has a different order, the values are labelled wrongly with no warning.  This came up in the review of #22939.  ### Desired Behavior `perf result` selects each latency by its `Percentile` value, so custom percentile lists show the right numbers.  ### Screenshots/Logs Found by reading the code. No failing test yet. I will add one with the fix.  ### Environment - Host OS: Linux (Ubuntu on WSL2) - Meshery Server Version: Not run - Meshery Client Version: master - Platform: Not deployed  ---  ### Contributor Resources  - ⌨️ [mesheryctl Contributing Guide](https://github.com/meshery/meshery/blob/master/mesheryctl/README.md) - [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4) - [mesheryctl Command Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) - [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) - ⌨️ [Meshkit errors guide](https://docs.meshery.io/project/contributing/contributing-error) - 🙋🏾🙋🏼 Questions: [Discussion Forum](ht
+- **Issue #22996** (2026-11-08): **[Server] Apply Additional Options saved from the UI to load tests**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #22897  Additional Options entered on the performance form didn't reach the load generator. The UI saves them as a one-element list (`"additional_options": ["{\"MethodOverride\":\"PUT\"}"]`), while `mesheryctl perf apply` saves a string. `LoadTestHandler` read only the string, so for a profile saved from the UI the options were dropped and the test ran without them, with no error.  The handler now reads both shapes through `savedAdditionalOptions`. An empty value, such as the `[""]` the UI saves for an empty field, still means no options.  The test runs a real 1-second fortio load test through `LoadTestHandler` against a local server that records the request methods, with a stub provider that returns the saved profile.  Before:              Error:      Not equal:                         expected: []string{"PUT"}                         actual  : []string{"GET"}             Messages:   request methods the target received     --- FAIL: TestLoadTestHandlerAppliesSavedAdditionalOptions (3.04s)         --- FAIL: TestLoadTestHandlerAppliesSavedAdditionalOptions/saved_by_the_UI (1.02s)         --- PASS: TestLoadTestHandlerAppliesSavedAdditionalOptions/saved_by_mesheryctl (1.01s)         --- PASS: TestLoadTestHandlerAppliesSavedAdditionalOptions/left_empty_in_the_UI (1.01s)     FAIL  After:      --- PASS: TestLoadTestHandlerAppliesSavedAdditionalOptions (3.05s)         --- PASS: TestLoadTestHandlerAppliesSavedAdditionalOptions/saved_by_the_UI 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,634 +825,313 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6be862f0` (2026-11-06)
-**Commit Message**: Merge pull request #22823 from nishant-devv/fix/nil-cluster-context-panic
+### Incident Patch 1: `8e11c507` (2026-11-07)
+**Commit Message**: Merge pull request #22984 from ItsAbir005/fix/dashboard-edit-options-responsive
 
-[Server] Prevent nil pointer dereference on in-cluster context discovery
+[UI] Fix dashboard edit options overflow on small screens
 
-**File**: `docs/data/errorref/meshery-server_errors_export.json` (modified, +2/-2)
+**File**: `ui/components/dashboard/index.tsx` (modified, +4/-0)
 ```diff
-@@ -2826,8 +2826,8 @@
-         "severity": "Alert",
-         "long_description": "",
-         "short_description": "Nil context generated from in cluster config",
--        "probable_cause": "",
--        "suggested_remediation": ""
-+        "probable_cause": "No contexts detected in the in-cluster kubeconfig.",
-+        "suggested_remediation": "Ensure Meshery is deployed with a valid service account in a Kubernetes cluster."
-       },
-       "1327": {
-         "name": "ErrFailToSaveContextCode",
+@@ -360,6 +360,10 @@ const Dashboard = () => {
+               justifyContent="flex-end"
+               alignItems="center"
+               flexWrap="wrap"
++              sx={{
++                width: '100%',
++                maxWidth: '100%',
++              }}
+             >
+               {topBarActions.map(({ key, ...layoutAction }) => (
+                 <LayoutActionButton {...layoutAction} key={key} />
 ```
 
-**File**: `server/handlers/error.go` (modified, +7/-1)
+**File**: `ui/components/dashboard/style.test.tsx` (added, +28/-0)
 ```diff
-@@ -263,8 +263,14 @@ var (
- func ErrGenerateClusterContext(err error) error {
- 	return errors.New(ErrGenerateClusterContextCode, errors.Alert, []string{"Failed to generate in cluster context."}, []string{err.Error()}, []string{}, []string{})
- }
+@@ -0,0 +1,28 @@
++import React from 'react';
++import { render, screen } from '@testing-library/react';
++import { SistentThemeProvider } from '@sistent/sistent';
++import { describe, expect, it } from 'vitest';
++import { DashboardActionsContainer } from './style';
 +
-+// ErrNilClusterContext occurs when no Kubernetes contexts are detected from in-cluster configuration.
- func ErrNilClusterContext(err error) error {
--	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{err.Error()}, []string{}, []string{})
-+	errStr := ""
-+	if err != nil {
-+		errStr = err.Error()
++describe('DashboardActionsContainer', () => {
++  it('renders with responsive wrapping and full width styles in the DOM', () => {
++    render(
++      <SistentThemeProvider initialMode="light">
++        <DashboardActionsContainer data-testid="dashboard-actions-container">
++          <div>Action 1</div>
++          <div>Action 2</div>
++        </DashboardActionsContainer>
++      </SistentThemeProvider>,
++    );
++
++    const container = screen.getByTestId('dashboard-actions-container');
++    expect(container).toBeInTheDocument();
++
++    const computedStyle = window.getComputedStyle(container);
++    expect(computedStyle.display).toBe('flex');
++    expect(computedStyle.flexWrap).toBe('wrap');
++    expect(computedStyle.width).toBe('100%');
++    expect(computedStyle.maxWidth).toBe('100%');
++    expect(computedStyle.justifyContent).toBe('flex-end');
++  });
++});
+```
+
+**File**: `ui/components/dashboard/style.ts` (modified, +2/-0)
+```diff
+@@ -148,6 +148,8 @@ export const DashboardActionsContainer = styled('div')(({ theme }) => ({
+   justifyContent: 'flex-end',
+   alignItems: 'center',
+   width: '100%',
++  maxWidth: '100%',
++  flexWrap: 'wrap',
+   marginTop: theme.spacing(-3),
+   marginBottom: theme.spacing(1.5),
+   [theme.breakpoints.down('sm')]: {
+```
+
+---
+
+### Incident Patch 2: `5c0e3e2b` (2026-11-07)
+**Commit Message**: [UI] Fix dashboard edit options overflow on small screens
+
+Signed-off-by: Abir Maity <[REDACTED_EMAIL]>
+
+**File**: `ui/components/dashboard/index.tsx` (modified, +4/-0)
+```diff
+@@ -360,6 +360,10 @@ const Dashboard = () => {
+               justifyContent="flex-end"
+               alignItems="center"
+               flexWrap="wrap"
++              sx={{
++                width: '100%',
++                maxWidth: '100%',
++              }}
+             >
+               {topBarActions.map(({ key, ...layoutAction }) => (
+                 <LayoutActionButton {...layoutAction} key={key} />
+```
+
+**File**: `ui/components/dashboard/style.test.tsx` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++import React from 'react';
++import { render, screen } from '@testing-library/react';
++import { SistentThemeProvider } from '@sistent/sistent';
++import { describe, expect, it } from 'vitest';
++import { DashboardActionsContainer } from './style';
++
++describe('DashboardActionsContainer', () => {
++  it('renders with responsive wrapping and full width styles in the DOM', () => {
++    render(
++      <SistentThemeProvider initialMode="light">
++        <DashboardActionsContainer data-testid="dashboard-actions-container">
++          <div>Action 1</div>
++          <div>Action 2</div>
++        </DashboardActionsContainer>
++      </SistentThemeProvider>,
++    );
++
++    const container = screen.getByTestId('dashboard-actions-container');
++    expect(container).toBeInTheDocument();
++
++    const computedStyle = window.getComputedStyle(container);
++    expect(computedStyle.display).toBe('flex');
++    expect(computedStyle.flexWrap).toBe('wrap');
++    expect(computedStyle.width).toBe('100%');
++    expect(computedStyle.maxWidth).toBe('100%');
++    expect(computedStyle.justifyContent).toBe('flex-end');
++  });
++});
+```
+
+**File**: `ui/components/dashboard/style.ts` (modified, +2/-0)
+```diff
+@@ -148,6 +148,8 @@ export const DashboardActionsContainer = styled('div')(({ theme }) => ({
+   justifyContent: 'flex-end',
+   alignItems: 'center',
+   width: '100%',
++  maxWidth: '100%',
++  flexWrap: 'wrap',
+   marginTop: theme.spacing(-3),
+   marginBottom: theme.spacing(1.5),
+   [theme.breakpoints.down('sm')]: {
+```
+
+---
+
+### Incident Patch 3: `0f7bf129` (2026-11-07)
+**Commit Message**: [Server] Apply Additional Options saved from the UI to load tests
+
+LoadTestHandler read additional_options from the profile metadata only as a string, which is how mesheryctl saves it. The UI saves it as a one-element list, so the type assertion failed and the test ran without the options and without an error. The handler now reads both shapes, and an empty value still means no options.
+
+Fixes #22897
+
+Signed-off-by: Barbie Rajput <[REDACTED_EMAIL]>
+
+**File**: `server/handlers/load_test_additional_options_test.go` (added, +108/-0)
+```diff
+@@ -0,0 +1,108 @@
++package handlers
++
++import (
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"sort"
++	"sync"
++	"testing"
++
++	"github.com/gofrs/uuid"
++	"github.com/gorilla/mux"
++	"github.com/meshery/meshery/server/models"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++// savedProfileProvider returns a saved performance profile and accepts the
++// test result, so LoadTestHandler can run a real load test without a database.
++type savedProfileProvider struct {
++	models.Provider
++	profile []byte
++}
++
++func (p *savedProfileProvider) GetPerformanceProfile(_ *http.Request, _ string) ([]byte, error) {
++	return p.profile, nil
++}
++
++func (p *savedProfileProvider) PublishResults(_ *http.Request, _ *models.MesheryResult, _ string) (string, error) {
++	return uuid.Must(uuid.NewV4()).String(), nil
++}
++
++// methodRecorder is a load test target that records the method of each request.
++type methodRecorder struct {
++	mu      sync.Mutex
++	methods map[string]bool
++}
++
++func (m *methodRecorder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
++	m.mu.Lock()
++	m.methods[r.Method] = true
++	m.mu.Unlock()
++	w.WriteHeader(http.StatusOK)
++}
++
++func (m *methodRecorder) seen() []string {
++	m.mu.Lock()
++	defer m.mu.Unlock()
++	methods := make([]string, 0, len(m.methods))
++	for method := range m.methods {
++		methods = append(methods, method)
 +	}
-+	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{errStr}, []string{"No contexts detected in the in-cluster kubeconfig."}, []string{"Ensure Meshery is deployed with a valid service account in a Kubernetes cluster."})
- }
- func ErrWriteResponse(err error) error {
- 	return errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{err.Error()}, []string{}, []string{})
-```
-
-**File**: `server/handlers/k8sconfig_handler.go` (modified, +6/-3)
-```diff
-@@ -531,6 +531,8 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
- 	writeJSONMessage(w, map[string]string{"status": "accepted"}, http.StatusAccepted)
- }
- 
-+// DiscoverK8SContextFromKubeConfig attempts to discover Kubernetes contexts from the filesystem
-+// kubeconfig, falling back to in-cluster configuration discovery when unavailable.
- func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
- 	var contexts []*models.K8sContext
- 	// userUUID := uuid.FromStringOrNil(userID)
-@@ -563,9 +565,10 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string,
- 		}
- 		if cc == nil {
- 			metadata["description"] = "No contexts detected in the in-cluster kubeconfig."
--
--			h.log.Warn(ErrNilClusterContext(err))
--			return contexts, err
-+			nilContextErr := ErrNilClusterContext(nil)
-+			metadata["error"] = nilContextErr
-+			h.log.Warn(nilContextErr)
-+			return contexts, nilContextErr
- 		}
- 		cc.DeploymentType = "in_cluster"
- 		conn, err := prov.SaveK8sContext(token, *cc, nil)
-```
-
-**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +46/-0)
-```diff
-@@ -2,7 +2,10 @@ package handlers
- 
- import (
- 	"errors"
-+	"strings"
- 	"testing"
++	sort.Strings(methods)
++	return methods
++}
 +
-+	meshkiterrors "github.com/meshery/meshkit/errors"
- )
- 
- // TestK8sEventMetadataHasError guards the decision that raises a Kubernetes
-@@ -70,6 +73,16 @@ func TestK8sEventMetadataHasError(t *testing.T) {
- 			},
- 			want: true,
- 		},
-+		{
-+			name: "in-cluster nil context error reports an error",
-+			eventMetadata: map[string]interface{}{
-+				"in-cluster": map[string]interface{}{
-+					"description": "No contexts detected in the in-cluster kubeconfig.",
-+					"error":       ErrNilClusterContext(nil),
-+				},
-+			},
-+			want: true,
-+		},
- 		{
- 			name: "non-map entries are ignored",
- 			eventMetadata: map[string]interface{}{
-@@ -87,3 +100,36 @@ func TestK8sEventMetadataHasError(t *testing.T) {
- 		})
- 	}
- }
++// TestLoadTestHandlerAppliesSavedAdditionalOptions runs a saved profile against
++// a local server and checks that the saved options reach the load generator,
++// whichever shape they were saved in.
++func TestLoadTestHandlerAppliesSavedAdditionalOptions(t *testing.T) {
++	const putOptions = `{"MethodOverride":"PUT"}`
 +
-+// TestErrNilClusterContext verifies that ErrNilClusterContext handles a nil error gracefully
-+// without panicking on err.Error(), and includes appropriate error code.
-+func TestErrNilClusterContext(t *testing.T) {
-+	testCases := []struct {
-+		name string
-+		err  error
++	tests := []struct {
++		name    string
++		options interface{}
++		want    string
 +	}{
-+		{
-+			name: "nil error",
-+			err:  nil,
-+		},
-+		{
-+			name: "non-nil error",
-+			err:  errors.New("in-cluster context not found"),
-+		},
++		// The UI saves the options as a one-element list.
++		{name: "saved by the UI", options: []interface{}{putOptions}, want: http.MethodPut},
++		// mesheryctl saves them as a string.
++		{name: "saved by mesheryctl", options: putOptions, want: http.MethodPut},
++		// The UI saves an empty field as a list holding an empty string.
++		{name: "left empty in the UI", options: []interface{}{""}, want: http.MethodGet},
 +	}
 +
-+	for _, tc := range testCases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			res := ErrNilClusterContext(tc.err)
-+			if res == nil {
-+				t.Fatal("expected non-nil error, got nil")
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			target := &methodRecorder{methods: map[string]bool{}}
++			server := httptest.NewServer(target)
++			defer server.Close()
++
++			profile, err := json.Marshal(models.PerformanceProfile{
++				Name:     "saved-profile",
++				Metadata: map[string]interface{}{"additional_options": tt.options},
++			})
++			require.NoError(t, err)
++
++			h := &Handler{config: &models.HandlerConfig{}, log: newTestLogger(t)}
++			query := url.Values{
++				"name": {"additional-options-test"},
++				"url":  {server.URL},
++				"t":    {"1"},
++				"dur":  {"s"},
++				"c":    {"1"},
++				"qps":  {"5"},
 +			}
-+			if code := meshkiterrors.GetCode(res); code != ErrNilClusterContextCode {
-+				t.Fatalf("expected error code %s, got %s", ErrNilClusterContextCode, code)
-+			}
-+			if tc.err != nil && !strings.Contains(res.Error(), tc.err.Error()) {
-+				t.Fatalf("expected error to contain %q, got %q", tc.err.Error(), res.Error())
-+			}
++			profileID := uuid.Must(uuid.NewV4()).String()
++			req := httptest.NewRequest(http.MethodGet, "/api/user/performance/profiles/"+profileID+"/run?"+query.Encode(), nil)
++			req = mux.SetURLVars(req, map[string]string{"id": profileID})
++			rec := httptest.NewRecorder()
++
++			h.LoadTestHandler(rec, req, &models.Preference{}, &models.User{}, &savedProfileProvider{profile: profile})
++
++			assert.Equal(t, []string{tt.want}, target.seen(), "request methods the target received")
 +		})
 +	}
 +}
 ```
 
----
-
-### Incident Patch 2: `e22ac81d` (2026-11-06)
-**Commit Message**: Merge branch 'master' into fix/nil-cluster-context-panic
-
-**File**: `mesheryctl/pkg/utils/helpers.go` (modified, +7/-5)
+**File**: `server/handlers/load_test_handler.go` (modified, +19/-5)
 ```diff
-@@ -384,10 +384,11 @@ func BackupConfigFile(cfgFile string) {
- 	if err != nil {
- 		Log.Fatal(err)
+@@ -202,11 +202,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
+ 		return
  	}
--	_, err = os.Create(cfgFile)
-+	f, err := os.Create(cfgFile)
- 	if err != nil {
- 		Log.Fatal(err)
- 	}
-+	_ = f.Close()
- }
  
- const (
-@@ -456,6 +457,9 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path
- 	if err != nil {
- 		return nil, err
- 	}
-+	defer func() {
-+		_ = file.Close()
-+	}()
- 	fileContents, err := io.ReadAll(file)
- 	if err != nil {
- 		return nil, err
-@@ -464,9 +468,6 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path
- 	if err != nil {
- 		return nil, err
- 	}
--	if err = file.Close(); err != nil {
--		return nil, err
+-	options, ok := performanceProfile.Metadata["additional_options"].(string)
+-
+-	if ok {
+-		loadTestOptions.Options = options
 -	}
++	loadTestOptions.Options = savedAdditionalOptions(performanceProfile.Metadata)
  
- 	body := new(bytes.Buffer)
- 	writer := multipart.NewWriter(body)
-@@ -577,10 +578,11 @@ func AskForConfirmation(s string) (bool, error) {
- // CreateConfigFile creates config file in Meshery Folder
- func CreateConfigFile() error {
- 	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
--		_, err := os.Create(DefaultConfigPath)
-+		f, err := os.Create(DefaultConfigPath)
- 		if err != nil {
- 			return err
- 		}
-+		_ = f.Close()
- 	}
- 	return nil
- }
-```
-
-**File**: `mesheryctl/pkg/utils/helpers_test.go` (modified, +38/-0)
-```diff
-@@ -867,3 +867,41 @@ func TestTrimFileExtension(t *testing.T) {
- 		})
+ 	if isSSLCertificateProvided {
+ 		var isErrLoadingCertificate bool
+@@ -588,6 +584,24 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
  	}
  }
-+
-+func TestUploadFileWithParams(t *testing.T) {
-+	origToken := TokenFlag
-+	defer func() { TokenFlag = origToken }()
-+	TokenFlag = GetToken(t)
-+
-+	tmpDir := t.TempDir()
-+	sampleFile := filepath.Join(tmpDir, "sample.txt")
-+	err := os.WriteFile(sampleFile, []byte("sample content for upload"), 0o600)
-+	if err != nil {
-+		t.Fatalf("failed to create temp file: %v", err)
+ 
++// savedAdditionalOptions returns the load generator options saved on a
++// performance profile. mesheryctl saves them as a string and the UI as a
++// one-element list of strings, so both shapes are read. An empty value means
++// no options.
++func savedAdditionalOptions(metadata map[string]interface{}) string {
++	switch options := metadata["additional_options"].(type) {
++	case string:
++		return options
++	case []interface{}:
++		for _, option := range options {
++			if s, ok := option.(string); ok && s != "" {
++				return s
++			}
++		}
 +	}
-+
-+	params := map[string]string{
-+		"token": "valid-token",
-+		"org":   "meshery",
-+	}
-+
-+	req, err := UploadFileWithParams("http://localhost:9081/api/upload", params, "file", sampleFile)
-+	if err != nil {
-+		t.Fatalf("UploadFileWithParams returned unexpected error: %v", err)
-+	}
-+	if req == nil {
-+		t.Fatal("UploadFileWithParams returned nil request")
-+	}
-+	if req.Method != http.MethodPost {
-+		t.Errorf("expected POST method, got %s", req.Method)
-+	}
-+	if !strings.HasPrefix(req.Header.Get("Content-Type"), "multipart/form-data") {
-+		t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
-+	}
-+
-+	nonExistent := filepath.Join(tmpDir, "does-not-exist.txt")
-+	_, err = UploadFileWithParams("http://localhost:9081/api/upload", params, "file", nonExistent)
-+	if err == nil {
-+		t.Error("expected error for non-existent file, got nil")
-+	}
++	return ""
 +}
-```
-
----
-
-### Incident Patch 3: `fa3473af` (2026-11-06)
-**Commit Message**: Merge pull request #22930 from mayank609/fix/filters-error-notifications
-
-[UI] Show error notifications when filter actions fail
-
-**File**: `ui/components/filters/Filters.constants.ts` (modified, +4/-0)
-```diff
-@@ -19,6 +19,10 @@ export const ACTION_TYPES = {
-     name: 'UPLOAD_FILTERS',
-     error_msg: 'Failed to upload filter file',
-   },
-+  UPDATE_FILTERS: {
-+    name: 'UPDATE_FILTERS',
-+    error_msg: 'Failed to update filter file',
-+  },
-   CLONE_FILTERS: {
-     name: 'CLONE_FILTER',
-     error_msg: 'Failed to clone filter file',
-```
-
-**File**: `ui/components/filters/Filters.fileActions.test.tsx` (modified, +163/-0)
-```diff
-@@ -46,6 +46,8 @@ import {
-   createHandlePublish,
-   createHandleClone,
-   createDeleteFilter,
-+  createErrorHandler,
-+  createFetchSchemaData,
- } from './Filters.fileActions';
- 
- const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
-@@ -89,6 +91,29 @@ describe('createHandleSubmit', () => {
-     });
-   });
- 
-+  it('reports a failed delete through the error handler', async () => {
-+    const errorHandler = vi.fn();
-+    const handleError = vi.fn(() => errorHandler);
-+    const notify = vi.fn();
 +
-+    const handleSubmit = createHandleSubmit({
-+      notify,
-+      handleError,
-+      showmodal: vi.fn().mockResolvedValueOnce('Delete'),
-+      resetSelectedRowData: vi.fn(() => vi.fn()),
-+      deleteFilterFile: vi.fn(() => reject()),
-+      uploadFilterFile: vi.fn(),
-+      updateFilterFile: vi.fn(),
-+    });
-+
-+    await handleSubmit({ data: '', name: 'foo', id: 'i-1', type: 'DELETE' });
-+    await flush();
-+
-+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'DELETE_FILTERS' }));
-+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
-+    expect(notify).not.toHaveBeenCalled();
-+  });
-+
-   it('aborts when modal cancels the delete', async () => {
-     const deleteFilterFile = vi.fn(() => wrap());
-     const showmodal = vi.fn().mockResolvedValueOnce('Cancel');
-@@ -165,6 +190,27 @@ describe('createHandleSubmit', () => {
-     });
-   });
- 
-+  it('reports a failed UPDATE as an update error, not an upload error', async () => {
-+    const errorHandler = vi.fn();
-+    const handleError = vi.fn(() => errorHandler);
-+
-+    const handleSubmit = createHandleSubmit({
-+      notify: vi.fn(),
-+      handleError,
-+      showmodal: vi.fn(),
-+      resetSelectedRowData: vi.fn(() => vi.fn()),
-+      deleteFilterFile: vi.fn(),
-+      uploadFilterFile: vi.fn(),
-+      updateFilterFile: vi.fn(() => reject()),
-+    });
-+
-+    await handleSubmit({ data: 'cfg', name: 'n', id: 'i-1', type: 'UPDATE' });
-+    await flush();
-+
-+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'UPDATE_FILTERS' }));
-+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
-+  });
-+
-   it('handles an UPDATE with the filter id, name and catalogData', async () => {
-     const updateFilterFile = vi.fn(() => wrap());
-     const handleSubmit = createHandleSubmit({
-@@ -321,6 +367,7 @@ describe('createHandleImportFilter', () => {
-     await flush();
- 
-     expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'UPLOAD_FILTERS' }));
-+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
-   });
- });
- 
-@@ -443,7 +490,37 @@ describe('createHandleClone', () => {
-   });
- });
- 
-+describe('createHandleClone errors', () => {
-+  it('reports a failed clone through the error handler', async () => {
-+    const errorHandler = vi.fn();
-+    const handleError = vi.fn(() => errorHandler);
-+    const clone = createHandleClone({
-+      cloneFilter: vi.fn(() => reject()),
-+      notify: vi.fn(),
-+      handleError,
-+    });
-+    clone('f-1', 'flt');
-+    await flush();
-+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'CLONE_FILTER' }));
-+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
-+  });
-+});
-+
- describe('createDeleteFilter', () => {
-+  it('reports a failed delete through the error handler', async () => {
-+    const errorHandler = vi.fn();
-+    const handleError = vi.fn(() => errorHandler);
-+    const del = createDeleteFilter({
-+      deleteFilterFile: vi.fn(() => reject()),
-+      notify: vi.fn(),
-+      handleError,
-+    });
-+    del('f-1');
-+    await flush();
-+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'DELETE_FILTERS' }));
-+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
-+  });
-+
-   it('deletes a filter and notifies on success', async () => {
-     const deleteFilterFile = vi.fn(() => wrap());
-     const notify = vi.fn();
-@@ -461,3 +538,89 @@ describe('createDeleteFilter', () => {
-     });
-   });
- });
-+
-+describe('createFetchSchemaData', () => {
-+  it('passes the fetched models to onModels', async () => {
-+    const models = [{ displayName: 'istio' }];
-+    const onModels = vi.fn();
-+    const handleError = vi.fn(() => vi.fn());
-+    const fetchSchemaData = createFetchSchemaData({
-+      getMeshModels: vi.fn().mockResolvedValue({ models }),
-+      onModels,
-+      handleError,
-+    });
-+
-+    await fetchSchemaData();
-+
-+    expect(onModels).toHaveBeenCalledWith(models);
-+    expect(handleError).not.toHaveBeenCalled();
-+  });
-+
-+  it('reports a failed model fetch through the error handler', async () => {
-+    const errorHandler = vi.fn();
-+    const handleError = vi.fn(() => errorHandler);
-+    const onModels = vi.fn();
-+    const fetchSchemaData = createFetchSchemaData({
-+      getMeshModels: vi.fn().mockRejectedValue(new Erro
-```
-
-**File**: `ui/components/filters/Filters.fileActions.ts` (modified, +61/-17)
-```diff
-@@ -6,11 +6,32 @@ import { getUnit8ArrayDecodedFile } from '../../utils/utils';
- import { trueRandom } from '../../lib/trueRandom';
- import downloadContent from '../../utils/fileDownloader';
- import { updateProgress } from '@/store/slices/mesheryUi';
-+import { formatApiError } from '../../utils/helpers/meshkitError';
- import { ACTION_TYPES } from './Filters.constants';
- 
- type Notify = (_args: { message: string; event_type: string; details?: string }) => void;
- 
--type ErrorHandler = (_action: { error_msg: string }) => (_error: Error | string) => void;
-+type ErrorHandler = (_action: { error_msg: string }) => (_error: unknown) => void;
-+
-+// Curried: call sites pass the action, then the raw error -
-+// `handleError(ACTION_TYPES.X)(error)`. The error is usually an RTK Query
-+// rejection object, so it goes through formatApiError instead of being
-+// stringified (which would show "[object Object]").
-+export function createErrorHandler({ notify }: { notify: Notify }): ErrorHandler {
-+  return (action) => (error) => {
-+    updateProgress({ showProgress: false });
-+    // formatApiError can throw on a malformed MeshKit envelope (e.g. a
-+    // non-array suggestedRemediation), which would skip the notification
-+    // and leave the rejection unhandled. Fall back to the action message.
-+    let message: string;
-+    try {
-+      ({ message } = formatApiError(error, action.error_msg));
-+    } catch {
-+      message = action.error_msg;
-+    }
-+    notify({ message, event_type: EVENT_TYPES.ERROR });
-+  };
-+}
- 
- type SubmitArgs = {
-   data: any;
-@@ -59,9 +80,9 @@ export function createHandleSubmit({
-           notify({ message: `"${name}" filter deleted`, event_type: EVENT_TYPES.SUCCESS });
-           resetSelectedRowData()();
-         })
--        .catch(() => {
-+        .catch((error) => {
-           updateProgress({ showProgress: false });
--          handleError(ACTION_TYPES.DELETE_FILTERS);
-+          handleError(ACTION_TYPES.DELETE_FILTERS)(error);
-         });
-     }
- 
-@@ -83,9 +104,9 @@ export function createHandleSubmit({
-         .then(() => {
-           updateProgress({ showProgress: false });
-         })
--        .catch(() => {
-+        .catch((error) => {
-           updateProgress({ showProgress: false });
--          handleError(ACTION_TYPES.UPLOAD_FILTERS);
-+          handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
-         });
-     }
- 
-@@ -101,9 +122,9 @@ export function createHandleSubmit({
-         .then(() => {
-           updateProgress({ showProgress: false });
-         })
--        .catch(() => {
-+        .catch((error) => {
-           updateProgress({ showProgress: false });
--          handleError(ACTION_TYPES.UPLOAD_FILTERS);
-+          handleError(ACTION_TYPES.UPDATE_FILTERS)(error);
-         });
-     }
-   };
-@@ -212,9 +233,9 @@ export function createHandleImportFilter({
-         });
-         getFilters();
-       })
--      .catch(() => {
-+      .catch((error) => {
-         updateProgress({ showProgress: false });
--        handleError(ACTION_TYPES.UPLOAD_FILTERS);
-+        handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
-       });
-   };
+ func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {
+ 	loadTestOptions.CACert = path
  }
-@@ -254,9 +275,9 @@ export function createHandleUnpublishModal({
-                 event_type: EVENT_TYPES.SUCCESS,
-               });
-             })
--            .catch(() => {
-+            .catch((error) => {
-               updateProgress({ showProgress: false });
--              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
-+              handleError(ACTION_TYPES.UNPUBLISH_CATALOG)(error);
-             });
-         }
-       };
-@@ -314,9 +335,9 @@ export function createHandlePublish({
-           });
-         }
-       })
--      .catch(() => {
-+      .catch((error) => {
-         updateProgress({ showProgress: false });
--        handleError(ACTION_TYPES.PUBLISH_CATALOG);
-+        handleError(ACTION_TYPES.PUBLISH_CATALOG)(error);
-       });
-   };
- }
-@@ -339,9 +360,9 @@ export function createHandleClone({ cloneFilter, notify, handleError }: CreateHa
-         updateProgress({ showProgress: false });
-         notify({ message: `"${name}" filter cloned`, event_type: EVENT_TYPES.SUCCESS });
-       })
--      .catch(() => {
-+      .catch((error) => {
-         updateProgress({ showProgress: false });
--        handleError(ACTION_TYPES.CLONE_FILTERS);
-+        handleError(ACTION_TYPES.CLONE_FILTERS)(error);
-       });
-   };
- }
-@@ -364,9 +385,32 @@ export function createDeleteFilter({
-         updateProgress({ showProgress: false });
-         notify({ message: `Filter deleted`, event_type: EVENT_TYPES.SUCCESS });
-       })
--      .catch(() => {
-+      .catch((error) => {
-         updateProgress({ showProgress: false });
--        handleError(ACTION_TYPES.DELETE_FILTERS);
-+        handleError(ACTION_TYPES.DELETE_FILTERS)(error);
-       });
-   };
- }
-+
-+type CreateFetchSchemaDataArgs = {
-+  getMeshModels: () => Promise<{ models?: any[] }>;
-+  onModels: (_models: any[] | undefined) => void;
-+  handleError: ErrorHandler;
-+};
-+
-+// Loads the mesh models used to build the publish schema
-```
-
-**File**: `ui/components/filters/Filters.tsx` (modified, +10/-18)
-```diff
-@@ -13,7 +13,6 @@ import { modifyRJSFSchema } from '../../utils/utils';
- import { getMeshModels } from '../../api/meshmodel';
- import _ from 'lodash';
- import { useNotification } from '../../utils/hooks/useNotification';
--import { EVENT_TYPES } from '../../lib/event-types';
- import {
-   CustomColumnVisibilityControl,
-   ResponsiveDataTable,
-@@ -44,16 +43,17 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
- import { isLocalProvider } from '@/utils/provider';
- import { ToolWrapper } from '@/assets/styles/general/tool.styles';
- import { useSelector } from 'react-redux';
--import { updateProgress } from '@/store/slices/mesheryUi';
- import { CreateButton, ViewSwitchButton, BtnText } from './Filters.styled';
- import YAMLEditor from './YAMLEditor';
- import ImportModal from './ImportModal';
- import PublishModal from './PublishModal';
--import { ACTION_TYPES, COLUMN_VIEWS } from './Filters.constants';
-+import { COLUMN_VIEWS } from './Filters.constants';
- import { buildFiltersColumns } from './Filters.columns';
- import { buildFiltersTableOptions } from './Filters.tableOptions';
- import {
-   createDeleteFilter,
-+  createErrorHandler,
-+  createFetchSchemaData,
-   createHandleClone,
-   createHandleDownload,
-   createHandleImportFilter,
-@@ -157,14 +157,7 @@ function MesheryFilters() {
-   const [updateFilterFile] = useUpdateFilterFileMutation();
-   const [uploadFilterFile] = useUploadFilterFileMutation();
- 
--  const handleError = (action: { error_msg: string }) => (error: Error | string) => {
--    updateProgress({ showProgress: false });
--    notify({
--      message: `${action.error_msg}: ${error}`,
--      event_type: EVENT_TYPES.ERROR,
--      details: error.toString(),
--    });
--  };
-+  const handleError = createErrorHandler({ notify });
- 
-   const handleSetFilters = (filters: any[] | undefined) => {
-     if (filters != undefined) {
-@@ -301,9 +294,10 @@ function MesheryFilters() {
-    * publish filter capability and setting the canPublishFilter state accordingly
-    */
-   useEffect(() => {
--    const fetchSchemaData = async () => {
--      try {
--        const { models } = await getMeshModels();
-+    const fetchSchemaData = createFetchSchemaData({
-+      getMeshModels,
-+      handleError,
-+      onModels: (models) => {
-         const modelNames = _.uniq(models?.map((model) => model.displayName));
-         modelNames.sort();
- 
-@@ -315,10 +309,8 @@ function MesheryFilters() {
-         );
-         setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
-         setMeshModels(models);
--      } catch {
--        handleError(ACTION_TYPES.SCHEMA_FETCH);
--      }
--    };
-+      },
-+    });
- 
-     if (capabilitiesData) {
-       // `capabilitiesData.capabilities` is the provider-declared feature list.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22945** (2026-11-06): [mesheryctl] Remove unused errPatternMsg constant (@ayanasarkar)
-- **PR #22939** (2026-11-06): [mesheryctl] Print perf result latencies in milliseconds (@BarbieRajput)
-- **PR #22938** (2026-11-06): [mesheryctl] Send saved headers, cookies and content type in perf apply (@BarbieRajput)
-- **PR #22930** (2026-11-06): [UI] Show error notifications when filter actions fail (@mayank609)
-- **PR #22927** (2026-11-06): [mesheryctl] Restore the adapter event stream and fail fast without it (@Eternity0207)
-- **PR #22926** (2026-11-06): [mesheryctl] Propagate errors and handle non-200 responses in registry update and publish (@aarushdubey)
+- **PR #23000** (2026-11-08): [mesheryctl] Reject unexpected positional arguments in system logout (@1107-1108)
+- **PR #22996** (2026-11-08): [Server] Apply Additional Options saved from the UI to load tests (@BarbieRajput)
+- **PR #22995** (2026-11-07): [Server] Keep a filter's file, visibility and created_at when updating it (@BarbieRajput)
+- **PR #22988** (2026-11-07): [UI] Notify when the SMP mesh list fails to load in the performance form (@mayank609)
+- **PR #22986** (2026-11-07): [UI] Show an error when deleting a performance profile fails (@mayank609)
+- **PR #22984** (2026-11-07): [UI] Fix dashboard edit options overflow on small screens (@ItsAbir005)
 
 ---
 
@@ -1472,30 +1151,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22823 from nishant-devv/fix/nil-cluster-context-panic
+## X. Merge pull request #22984 from ItsAbir005/fix/dashboard-edit-options-responsive
 
 **RULE**:
-When implementing operations in `docs/data/errorref/meshery-server_errors_export.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/components/dashboard/index.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6be862f0`: Merge pull request #22823 from nishant-devv/fix/nil-cluster-context-panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e11c507`: Merge pull request #22984 from ItsAbir005/fix/dashboard-edit-options-responsive. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/data/errorref/meshery-server_errors_export.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/components/dashboard/index.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
+```go
 // Verified production-grade fix pattern:
-        "probable_cause": "No contexts detected in the in-cluster kubeconfig.",
-        "suggested_remediation": "Ensure Meshery is deployed with a valid service account in a Kubernetes cluster."
+              sx={{
+                width: '100%',
+                maxWidth: '100%',
+              }}
 ```
 
 **NEGATIVE CONSTRAINT**:
-```typescript
+```go
 // Anti-pattern to NEVER write (induced failure mode):
-        "probable_cause": "",
-        "suggested_remediation": ""
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6be862f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e11c507` are properly handled with clean fallback behavior.

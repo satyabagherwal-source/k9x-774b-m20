@@ -8220,3 +8220,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-08T04:19:19.540Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `58de5a25` | Multi-dimensional audit evidence | 2026-11-08T04:19:27.733Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `bc14b52b` | Multi-dimensional audit evidence | 2026-11-08T04:19:34.265Z |
+| `learn-github-jarvis322-macos-sysdata` | `https://github.com/Jarvis322/macos-sysdata` | `bcfd205a` | Multi-dimensional audit evidence | 2026-11-08T04:26:49.283Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `e3334600` | Multi-dimensional audit evidence | 2026-11-08T04:26:52.330Z |
+| `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-11-08T04:26:53.906Z |

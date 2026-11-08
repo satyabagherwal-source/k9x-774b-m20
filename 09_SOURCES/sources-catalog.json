@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "cbccb455",
+    "sourceVersion": "e3334600",
     "license": "Apache-2.0",
-    "contentHash": "1fb7a634997e4c7b173b19f88a186a2c7c8ac5af27e0c786f21dd341c02618f1",
-    "lastHarvestedAt": "2026-11-06T23:27:17.215Z",
+    "contentHash": "b88f5ace8777d5824640af0693b808d0d43aca8865ea056b760db0659777be10",
+    "lastHarvestedAt": "2026-11-08T04:26:52.330Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -10505,8 +10505,8 @@
     "sourceUrl": "https://huggingface.co/InternScience/Sage-A1.5",
     "sourceVersion": "hf-internscience-sage-a1.5",
     "license": "Open-Source",
-    "contentHash": "74f0ea1d4723a748e5998b9260165a32b71813c87e35d0aee57b7a55ba53f886",
-    "lastHarvestedAt": "2026-11-04T17:59:34.576Z",
+    "contentHash": "658abb8e55b3bd9efe9753349ccc2b72ea8df99ad8cb226066af2df6a0cf0885",
+    "lastHarvestedAt": "2026-11-08T04:26:53.906Z",
     "learningId": "learn-huggingface-internscience-sage-a1-5"
   },
   "hf-recursivesi-flint": {
@@ -11933,10 +11933,10 @@
     "repository": "Jarvis322/macos-sysdata",
     "platform": "github",
     "sourceUrl": "https://github.com/Jarvis322/macos-sysdata",
-    "sourceVersion": "ebb7a5f7",
+    "sourceVersion": "bcfd205a",
     "license": "NOASSERTION",
-    "contentHash": "1da88a084814287d334b4f534257c32fae4ab635be955f5ed8e11cdb8348adad",
-    "lastHarvestedAt": "2026-11-05T03:39:51.507Z",
+    "contentHash": "f2312bae65b09026cf3b919401048a50996e5cb485e8ef1ef8e19b3ae70aa690",
+    "lastHarvestedAt": "2026-11-08T04:26:49.283Z",
     "learningId": "learn-github-jarvis322-macos-sysdata"
   },
   "hf-nvidia-nvidia-nemotronlabs-re-use": {
