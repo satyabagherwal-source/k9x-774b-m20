@@ -8184,3 +8184,4 @@ Every entry in this ledger must capture:
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `0544c112` | Multi-dimensional audit evidence | 2026-11-08T02:15:34.332Z |
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-08T02:15:41.291Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `2af367f7` | Multi-dimensional audit evidence | 2026-11-08T02:15:44.274Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T02:25:33.244Z |

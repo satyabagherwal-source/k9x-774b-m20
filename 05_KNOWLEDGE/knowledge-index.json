@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T02:15:44.190Z",
+  "last_updated": "2026-11-08T02:25:33.098Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -99587,10 +99587,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
       "source_version": "hf-comfy-org-moss-image",
-      "content_hash": "025227befb41029ba3ae9896eeb77922a3eb17d6527b3b9850e9a3776e55815c",
+      "content_hash": "035a0036483d1fdd41b82f1c4593fc65c269699637a7630e5d1f31d9f334d1ea",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Strict Model Artifact Path Canonicalization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Precision-Tiered Artifact Distribution",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1688,
           "title": "Heterogeneous Subsystem Precision Decoupling",
@@ -99642,7 +99652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:37:43.015Z",
+      "verified_at": "2026-11-08T02:25:33.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

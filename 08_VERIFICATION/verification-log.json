@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-7OXQ",
-    "timestamp": "2026-11-05T13:06:34.622Z",
-    "repository": "yikart/AiToEarn",
-    "learningId": "learn-github-yikart-aitoearn",
-    "contentHash": "68ffeefa52f3d64b35ada2fb7218ba41d27abbdf76d103e7e5b571cb3952104a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-GNE3",
     "timestamp": "2026-11-05T13:13:32.523Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7492,6 +7477,21 @@
     "contentHash": "844d6bac0c5a9d456005091ae2d9f474d0b6af4a95a45814f7bd2ba859c60d8d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-MVY1",
+    "timestamp": "2026-11-08T02:25:33.241Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "035a0036483d1fdd41b82f1c4593fc65c269699637a7630e5d1f31d9f334d1ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

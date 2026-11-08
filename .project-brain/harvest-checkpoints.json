@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T02:15:44.282Z",
+  "last_updated": "2026-11-08T02:25:33.253Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3261,14 +3261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-moss-image",
-      "content_hash": "025227befb41029ba3ae9896eeb77922a3eb17d6527b3b9850e9a3776e55815c",
-      "verified_at": "2026-11-04T10:37:43.091Z",
+      "content_hash": "035a0036483d1fdd41b82f1c4593fc65c269699637a7630e5d1f31d9f334d1ea",
+      "verified_at": "2026-11-08T02:25:33.253Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:37:43.091Z"
+      "last_updated": "2026-11-08T02:25:33.253Z"
     },
     "bvaughn/react-virtualized": {
       "repository": "bvaughn/react-virtualized",

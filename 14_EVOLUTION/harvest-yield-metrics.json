@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T02:15:44.279Z",
-  "total_cycles_completed": 8140,
-  "total_learnings_persisted": 8140,
-  "total_rules_promoted": 7818,
+  "last_updated": "2026-11-08T02:25:33.250Z",
+  "total_cycles_completed": 8141,
+  "total_learnings_persisted": 8141,
+  "total_rules_promoted": 7820,
   "history": [
-    {
-      "timestamp": "2026-11-07T03:14:25.382Z",
-      "repository": "giancarloerra/SocratiCode",
-      "learningId": "learn-github-giancarloerra-socraticode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T03:21:41.590Z",
       "repository": "u-root/u-root",
@@ -1403,6 +1396,13 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:25:33.250Z",
+      "repository": "Comfy-Org/MOSS-Image",
+      "learningId": "learn-huggingface-comfy-org-moss-image",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

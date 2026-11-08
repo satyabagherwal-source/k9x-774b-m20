@@ -2085,8 +2085,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
     "sourceVersion": "hf-comfy-org-moss-image",
     "license": "Open-Source",
-    "contentHash": "025227befb41029ba3ae9896eeb77922a3eb17d6527b3b9850e9a3776e55815c",
-    "lastHarvestedAt": "2026-11-04T10:37:43.085Z",
+    "contentHash": "035a0036483d1fdd41b82f1c4593fc65c269699637a7630e5d1f31d9f334d1ea",
+    "lastHarvestedAt": "2026-11-08T02:25:33.244Z",
     "learningId": "learn-huggingface-comfy-org-moss-image"
   },
   "bvaughn-react-virtualized": {

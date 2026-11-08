@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T02:15:46.861Z",
-    "lastVerified": "2026-11-08T02:15:46.861Z",
+    "lastChecked": "2026-11-08T02:25:35.814Z",
+    "lastVerified": "2026-11-08T02:25:35.814Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,8 +258,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T01:46:21.969Z",
-    "lastVerified": "2026-11-08T01:46:21.969Z",
+    "lastChecked": "2026-11-08T02:25:33.482Z",
+    "lastVerified": "2026-11-08T02:25:33.482Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -352,8 +352,8 @@
     "officialUrl": "https://github.com/pathwaycom/llm-app",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-06T19:23:51.196Z",
-    "lastVerified": "2026-11-06T19:23:51.196Z",
+    "lastChecked": "2026-11-08T02:25:30.878Z",
+    "lastVerified": "2026-11-08T02:25:30.878Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pathwaycom-serviette",
@@ -2080,12 +2080,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T22:05:18.937Z",
-    "lastVerified": "2026-11-07T22:05:18.937Z",
+    "lastChecked": "2026-11-08T02:25:28.366Z",
+    "lastVerified": "2026-11-08T02:25:28.366Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2094,7 +2094,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "40d08ee4"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -2292,9 +2293,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-05T23:01:51.699Z",
+    "lastChecked": "2026-11-08T02:25:18.371Z",
     "revisionIdentifier": "50824d0d",
-    "lastVerified": "2026-11-05T23:01:51.699Z"
+    "lastVerified": "2026-11-08T02:25:18.371Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -4640,9 +4641,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-06T21:13:44.120Z",
+    "lastChecked": "2026-11-08T02:25:25.881Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-06T21:13:44.121Z"
+    "lastVerified": "2026-11-08T02:25:25.881Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -9093,9 +9094,9 @@
   "xcodesorg-xcodesapp": {
     "name": "XcodesApp",
     "officialUrl": "https://github.com/XcodesOrg/XcodesApp",
-    "lastChecked": "2026-11-05T01:47:35.122Z",
+    "lastChecked": "2026-11-08T02:25:23.375Z",
     "revisionIdentifier": "45722c72",
-    "lastVerified": "2026-11-05T01:47:35.122Z"
+    "lastVerified": "2026-11-08T02:25:23.375Z"
   },
   "hf-pyannote-speaker-diarization-community-1": {
     "name": "pyannote/speaker-diarization-community-1",
@@ -12777,13 +12778,13 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T10:37:30.479Z",
-    "lastVerified": "2026-11-04T10:37:30.479Z",
+    "lastChecked": "2026-11-08T02:25:20.887Z",
+    "lastVerified": "2026-11-08T02:25:20.887Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "025227befb41029ba3ae9896eeb77922a3eb17d6527b3b9850e9a3776e55815c",
-    "promotedRulesCount": 3,
+    "contentHash": "035a0036483d1fdd41b82f1c4593fc65c269699637a7630e5d1f31d9f334d1ea",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
