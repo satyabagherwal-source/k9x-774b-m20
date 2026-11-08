@@ -20638,5 +20638,20 @@
     "qualityScore": 1137,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-07T21:41:34.279Z"
+  },
+  {
+    "name": "bla",
+    "fullName": "qybaihe/bla",
+    "url": "https://github.com/qybaihe/bla",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🛡️ BLA (Blind LLM Agents) — Adversarial defense shield that protects binaries, Electron apps, JS bundles, Python, and WebAssembly against AI reverse-engineering agents like REA. Poison -> Exhaust -> Hallucinate.",
+    "stars": 2866,
+    "forks": 362,
+    "openIssues": 7,
+    "language": "TypeScript",
+    "qualityScore": 1806,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-08T02:36:47.614Z"
   }
 ]

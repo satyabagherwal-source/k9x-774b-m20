@@ -8178,3 +8178,6 @@
 | `CYCLE-20261108-MVY1` | `2026-11-08T02:25:33.241Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`035a0036...`) |
 | `CYCLE-20261108-W92D` | `2026-11-08T02:32:50.149Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`d7915980...`) |
 | `CYCLE-20261108-W9N7` | `2026-11-08T02:32:50.899Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5085a886...`) |
+| `CYCLE-20261108-64SR` | `2026-11-08T02:40:31.179Z` | `qybaihe/bla` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c808c8b9...`) |
+| `CYCLE-20261108-66CE` | `2026-11-08T02:40:33.182Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`c984ece8...`) |
+| `CYCLE-20261108-6IQE` | `2026-11-08T02:40:49.238Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7cfe6fe1...`) |

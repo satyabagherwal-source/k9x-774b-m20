@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "41584c75",
+    "sourceVersion": "eba8be50",
     "license": "Apache-2.0",
-    "contentHash": "5b1ec118cd3eb95d02fc856b4cfb81cb712e1615f7f355a88b2b71b2d297a770",
-    "lastHarvestedAt": "2026-11-06T20:38:20.713Z",
+    "contentHash": "7cfe6fe1223979ef7dd28abf61628c09cb0843f94af2c6048799bbc5fa8b7360",
+    "lastHarvestedAt": "2026-11-08T02:40:49.250Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -8275,8 +8275,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "f9510553a6bffcac5fdf301a8a8a3452e61bb72d018594be0591854634d9c8c2",
-    "lastHarvestedAt": "2026-11-04T11:02:39.491Z",
+    "contentHash": "c984ece87c9ac652ce2342308f052d9c7aabd7cd1073de547575841a72ba7dd9",
+    "lastHarvestedAt": "2026-11-08T02:40:33.186Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4"
   },
   "sventiigi-whatsnewkit": {
@@ -12168,5 +12168,15 @@
     "contentHash": "8a1574a7511d269e2f01443a7eae23aa363b9dec51f588fd4f02efc37243a694",
     "lastHarvestedAt": "2026-11-07T21:44:05.593Z",
     "learningId": "learn-github-shifthackz-sdai-kmp"
+  },
+  "qybaihe-bla": {
+    "repository": "qybaihe/bla",
+    "platform": "github",
+    "sourceUrl": "https://github.com/qybaihe/bla",
+    "sourceVersion": "41345ff3",
+    "license": "MIT",
+    "contentHash": "c808c8b98f41ab026a0b19a9551a3b5cd427b836f704153c4e8f2b6531b8857d",
+    "lastHarvestedAt": "2026-11-08T02:40:31.183Z",
+    "learningId": "learn-github-qybaihe-bla"
   }
 }

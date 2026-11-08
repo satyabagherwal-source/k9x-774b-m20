@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T02:32:53.487Z",
-    "lastVerified": "2026-11-08T02:32:53.487Z",
+    "lastChecked": "2026-11-08T02:40:51.821Z",
+    "lastVerified": "2026-11-08T02:40:51.821Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -461,8 +461,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T02:03:04.566Z",
-    "lastVerified": "2026-11-08T02:03:04.566Z",
+    "lastChecked": "2026-11-08T02:40:44.730Z",
+    "lastVerified": "2026-11-08T02:40:44.730Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -555,14 +555,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T20:38:18.888Z",
-    "lastVerified": "2026-11-06T20:38:18.888Z",
+    "lastChecked": "2026-11-08T02:40:47.364Z",
+    "lastVerified": "2026-11-08T02:40:47.364Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "5b1ec118cd3eb95d02fc856b4cfb81cb712e1615f7f355a88b2b71b2d297a770",
+    "contentHash": "7cfe6fe1223979ef7dd28abf61628c09cb0843f94af2c6048799bbc5fa8b7360",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2267,12 +2267,12 @@
     "lastVerified": "2026-11-07T20:49:00.921Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T22:23:42.694Z",
-    "lastVerified": "2026-11-07T22:23:42.694Z",
+    "lastChecked": "2026-11-08T02:40:40.010Z",
+    "lastVerified": "2026-11-08T02:40:40.010Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2281,7 +2281,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "50301083"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -4782,9 +4783,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-06T21:29:05.868Z",
+    "lastChecked": "2026-11-08T02:40:37.312Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-06T21:29:05.868Z"
+    "lastVerified": "2026-11-08T02:40:37.312Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -9143,9 +9144,9 @@
   "swiftuix-swiftuix": {
     "name": "SwiftUIX",
     "officialUrl": "https://github.com/SwiftUIX/SwiftUIX",
-    "lastChecked": "2026-11-05T02:01:52.411Z",
+    "lastChecked": "2026-11-08T02:40:34.840Z",
     "revisionIdentifier": "3a99044b",
-    "lastVerified": "2026-11-05T02:01:52.411Z"
+    "lastVerified": "2026-11-08T02:40:34.840Z"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
     "name": "black-forest-labs/flux-3-image-klein-comfy",
@@ -12813,13 +12814,13 @@
     "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T10:57:25.549Z",
-    "lastVerified": "2026-11-04T10:57:25.549Z",
+    "lastChecked": "2026-11-08T02:40:32.855Z",
+    "lastVerified": "2026-11-08T02:40:32.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-    "contentHash": "f9510553a6bffcac5fdf301a8a8a3452e61bb72d018594be0591854634d9c8c2",
-    "promotedRulesCount": 3,
+    "contentHash": "c984ece87c9ac652ce2342308f052d9c7aabd7cd1073de547575841a72ba7dd9",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -14251,6 +14252,23 @@
     "contentHash": "8a1574a7511d269e2f01443a7eae23aa363b9dec51f588fd4f02efc37243a694",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "qybaihe-bla": {
+    "name": "qybaihe/bla",
+    "officialUrl": "https://github.com/qybaihe/bla",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-08T02:40:28.689Z",
+    "lastVerified": "2026-11-08T02:40:28.689Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-qybaihe-bla",
+    "contentHash": "c808c8b98f41ab026a0b19a9551a3b5cd427b836f704153c4e8f2b6531b8857d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

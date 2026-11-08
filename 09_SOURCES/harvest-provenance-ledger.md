@@ -8187,3 +8187,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T02:25:33.244Z |
 | `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-08T02:32:50.153Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `b17ad042` | Multi-dimensional audit evidence | 2026-11-08T02:32:50.903Z |
+| `learn-github-qybaihe-bla` | `https://github.com/qybaihe/bla` | `41345ff3` | Multi-dimensional audit evidence | 2026-11-08T02:40:31.183Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T02:40:33.186Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `eba8be50` | Multi-dimensional audit evidence | 2026-11-08T02:40:49.250Z |

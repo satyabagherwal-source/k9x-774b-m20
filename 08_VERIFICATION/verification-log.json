@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-GVH4",
-    "timestamp": "2026-11-05T13:13:43.000Z",
-    "repository": "openyurtio/openyurt",
-    "learningId": "learn-github-openyurtio-openyurt",
-    "contentHash": "695f2c26ada4bfa993c2beedf04763e794e4f06a4dce66556be1cef13ed1f642",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-PBZH",
-    "timestamp": "2026-11-05T13:20:17.645Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "51f7c8729cc54c72d8b29517aae04715575b7bc91555b83ea4d15a4c6f34c6ea",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-PNJC",
-    "timestamp": "2026-11-05T13:20:32.616Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "b0deb395e97788e210cc2cbb51943a783270fbc49da49694d1b6933e8d7af7e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-Y0X2",
     "timestamp": "2026-11-05T13:27:03.206Z",
     "repository": "restatedev/restate",
@@ -7490,6 +7445,51 @@
     "repository": "zarf-dev/zarf",
     "learningId": "learn-github-zarf-dev-zarf",
     "contentHash": "5085a88632b0309623304473a5fb569d63976809b537cf664b933f7f9b8d4850",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-64SR",
+    "timestamp": "2026-11-08T02:40:31.179Z",
+    "repository": "qybaihe/bla",
+    "learningId": "learn-github-qybaihe-bla",
+    "contentHash": "c808c8b98f41ab026a0b19a9551a3b5cd427b836f704153c4e8f2b6531b8857d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-66CE",
+    "timestamp": "2026-11-08T02:40:33.182Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+    "contentHash": "c984ece87c9ac652ce2342308f052d9c7aabd7cd1073de547575841a72ba7dd9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-6IQE",
+    "timestamp": "2026-11-08T02:40:49.238Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "7cfe6fe1223979ef7dd28abf61628c09cb0843f94af2c6048799bbc5fa8b7360",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

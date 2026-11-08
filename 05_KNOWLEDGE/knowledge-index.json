@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T02:32:50.808Z",
-  "total_verified_learnings": 1235,
+  "last_updated": "2026-11-08T02:40:49.127Z",
+  "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -43066,14 +43066,19 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "41584c75",
-      "content_hash": "5b1ec118cd3eb95d02fc856b4cfb81cb712e1615f7f355a88b2b71b2d297a770",
+      "source_version": "eba8be50",
+      "content_hash": "7cfe6fe1223979ef7dd28abf61628c09cb0843f94af2c6048799bbc5fa8b7360",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "enhance: bound memory of ORDER BY ... LIMIT in segcore SortBuffer with a selecti",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "merge adjacent integer ranges in OR chains (#54716)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43157,7 +43162,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:38:20.591Z",
+      "verified_at": "2026-11-08T02:40:49.096Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113574,7 +113579,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "f9510553a6bffcac5fdf301a8a8a3452e61bb72d018594be0591854634d9c8c2",
+      "content_hash": "c984ece87c9ac652ce2342308f052d9c7aabd7cd1073de547575841a72ba7dd9",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -113614,7 +113619,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T11:02:39.383Z",
+      "verified_at": "2026-11-08T02:40:33.043Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -186227,6 +186232,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-07T21:44:05.468Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-qybaihe-bla": {
+      "learning_id": "learn-github-qybaihe-bla",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "qybaihe/bla",
+      "repository": "qybaihe/bla",
+      "slug": "qybaihe-bla",
+      "platform": "github",
+      "source_url": "https://github.com/qybaihe/bla",
+      "source_version": "41345ff3",
+      "content_hash": "c808c8b98f41ab026a0b19a9551a3b5cd427b836f704153c4e8f2b6531b8857d",
+      "dossier_path": "07_PROJECT_LEARNING/qybaihe-bla-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/qybaihe-bla-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #110 from DeryFerd/fix/harden-failure-attribution",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-08T02:40:31.018Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

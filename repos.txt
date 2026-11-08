@@ -4938,3 +4938,7 @@ https://github.com/alchaincyf/nuwa-skill
 # --- Automatically Discovered by AI Scout Engine [2026-11-07T21:43:38.266Z] ---
 # [MOBILE-CROSS-PLATFORM] ShiftHackZ/SDAI-KMP (1137 score) - Stable Diffusion AI client app for Android and iOS
 https://github.com/ShiftHackZ/SDAI-KMP
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-08T02:40:24.194Z] ---
+# [AI-AGENTS] qybaihe/bla (1806 score) - 🛡️ BLA (Blind LLM Agents) — Adversarial defense shield that protects binaries, 
+https://github.com/qybaihe/bla
