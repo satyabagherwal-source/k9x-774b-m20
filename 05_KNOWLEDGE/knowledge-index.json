@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T18:38:42.657Z",
+  "last_updated": "2026-11-08T18:48:44.521Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33265,10 +33265,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "cefe03a3ef0816bb5a6f82e4d0079a16ed53453939b7d7630c46f17524a63515",
+      "content_hash": "ef2904b3c7afa80c1c73029690bc7f3103273d62e11081feaa0e9fa0b38ec938",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Linear-Attention / Softmax Attention Cache Segregation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "High-Precision SSM State Invariant under Quantization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1380,
           "title": "Hybrid Recurrent-Attention Precision Preservation Invariant",
@@ -33328,7 +33338,7 @@
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv"
       ],
-      "verified_at": "2026-11-05T02:33:00.305Z",
+      "verified_at": "2026-11-08T18:48:44.496Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57860,8 +57870,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "ed544602",
-      "content_hash": "cdce467c6c9d99135589110e0eee00561faf8b2bbc652439d3c3ecff2c32befd",
+      "source_version": "ac735a43",
+      "content_hash": "65d3c9c1d85845f424a2786d488d6ed0e3b50647b924c041f0d6fef59e5f115f",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -57873,6 +57883,11 @@
         {
           "number": null,
           "title": "[Doc] fix misleading comments after refactoring (#82580)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[BugFix][RB-1154] Keep timestamp values across a DST switch in Iceberg min/max o",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -57956,7 +57971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:44:03.658Z",
+      "verified_at": "2026-11-08T18:46:05.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

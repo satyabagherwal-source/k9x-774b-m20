@@ -8365,3 +8365,5 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `8ae1f91f` | Multi-dimensional audit evidence | 2026-11-08T18:18:57.941Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-08T18:27:57.943Z |
 | `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-08T18:38:42.755Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `ac735a43` | Multi-dimensional audit evidence | 2026-11-08T18:46:05.838Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-08T18:48:44.617Z |

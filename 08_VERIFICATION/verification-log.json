@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-EDOH",
-    "timestamp": "2026-11-06T13:27:26.657Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f86e01e04e232e4d3c5d45fdd9b1b6e7607b45cc1ef5b549f0c8d773362df004",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-NT6G",
-    "timestamp": "2026-11-06T13:34:46.648Z",
-    "repository": "asciinema/asciinema",
-    "learningId": "learn-github-asciinema-asciinema",
-    "contentHash": "ace48a1a2419bc56b02770b3b735751972d90f7298fa87fafcb97516106647bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-NX5X",
     "timestamp": "2026-11-06T13:34:51.813Z",
     "repository": "expo/expo",
@@ -7492,6 +7462,36 @@
     "contentHash": "56e4fe3c6a32388e6e0eef561287ab6296f1a3bc05e63d1e66506c977283a3d8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-NVGQ",
+    "timestamp": "2026-11-08T18:46:05.834Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "65d3c9c1d85845f424a2786d488d6ed0e3b50647b924c041f0d6fef59e5f115f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-R9Z9",
+    "timestamp": "2026-11-08T18:48:44.613Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "ef2904b3c7afa80c1c73029690bc7f3103273d62e11081feaa0e9fa0b38ec938",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

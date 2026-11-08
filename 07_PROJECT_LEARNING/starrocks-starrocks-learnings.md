@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `ed544602`  
+> **Source Version**: `ac735a43`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:44:01.940Z  
+> **Timestamp**: 2026-11-08T18:46:04.507Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:44:01.685Z  
+> **Harvest Timestamp**: 2026-11-08T18:46:03.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1818,330 +1818,557 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed544602` (2026-11-07)
-**Commit Message**: [Doc] fix misleading comments after refactoring (#82580)
+### Incident Patch 1: `ac735a43` (2026-11-08)
+**Commit Message**: [BugFix][RB-1154] Keep timestamp values across a DST switch in Iceberg min/max optimization and Delta data skipping (#82630)
 
-Signed-off-by: Aliaksei Dziomin <[REDACTED_EMAIL]>
-
-**File**: `be/src/exprs/like_predicate.cpp` (modified, +3/-2)
-```diff
-@@ -64,8 +64,9 @@ bool LikePredicate::hs_compile_database(const std::string& pattern, LikePredicat
-     }
- 
-     // Validate that a scratch space can be allocated for this database; if not, fall back to
--    // RE2 (matching the previous behavior). The real per-thread scratch is allocated later, in
--    // the THREAD_LOCAL prepare. The probe scratch is freed immediately.
-+    // RE2 (matching the previous behavior). The real per-thread scratch is allocated lazily on
-+    // first eval, via the FunctionContext thread-state registry (see _predicate_const_regex).
-+    // The probe scratch is freed immediately.
-     hs_scratch_t* probe_scratch = nullptr;
-     if (hs_alloc_scratch(database, &probe_scratch) != HS_SUCCESS) {
-         std::stringstream error;
-```
-
-**File**: `be/src/exprs/like_predicate.h` (modified, +2/-3)
-```diff
-@@ -175,9 +175,8 @@ class LikePredicate {
-     // FRAGMENT_LOCAL prepare path.
-     static Status setup_like_state(FunctionContext* context, LikePredicateState* state);
-     static Status setup_regex_state(FunctionContext* context, LikePredicateState* state);
--    // The compile-once LIKE/regex state read by eval: the shared FRAGMENT_LOCAL state, with a
--    // fallback to the THREAD_LOCAL state for unit tests that prepare only a single scope (the
--    // normal open flow always prepares FRAGMENT_LOCAL).
-+    // The compile-once LIKE/regex state read by eval: the shared FRAGMENT_LOCAL state, built
-+    // once in prepare and inherited by every cloned FunctionContext.
-     static LikePredicateState* shared_state(FunctionContext* context);
-     template <bool full_match>
-     static Status compile_with_hyperscan_or_re2(const std::string& pattern, LikePredicateState* state,
-```
-
----
-
-### Incident Patch 2: `6bfe78eb` (2026-11-07)
-**Commit Message**: [BugFix][RB-967] Keep array_agg(distinct) when array_agg_distinct has no overload for the argument type (#82531)
-
-Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
-Co-authored-by: stdpain <[REDACTED_EMAIL]>
-Co-authored-by: Hyper-FF <[REDACTED_EMAIL]>
+Signed-off-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/ast/expression/ExprUtils.java` (modified, +16/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/delta/ScalarOperationToDeltaLakeExpr.java` (modified, +61/-0)
 ```diff
-@@ -461,6 +461,22 @@ public static Function getBuiltinFunction(String name, Type[] argTypes, boolean
-         return GlobalStateMgr.getCurrentState().getFunction(searchDesc, mode);
+@@ -18,6 +18,7 @@
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.Lists;
+ import com.starrocks.common.util.TimeUtils;
++import com.starrocks.sql.ast.expression.BinaryType;
+ import com.starrocks.sql.optimizer.operator.scalar.BinaryPredicateOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.CastOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
+@@ -43,6 +44,7 @@
+ import java.time.LocalDateTime;
+ import java.time.ZoneId;
+ import java.time.ZoneOffset;
++import java.time.zone.ZoneOffsetTransition;
+ import java.util.List;
+ import java.util.Optional;
+ import java.util.Set;
+@@ -95,6 +97,9 @@ public io.delta.kernel.types.StructType getSchema() {
      }
  
-+    // Looks up the array_agg_distinct overload for rewriting array_agg(distinct x). Returns null when no overload
-+    // takes x's type: the non-strict lookup would otherwise return any overload x is castable to (e.g. DECIMALV2
-+    // for VARIANT), and since no cast is planned in between, the BE would read x's column as that type and crash.
-+    public static Function getArrayAggDistinctFunction(Type[] argTypes) {
-+        Function fn = getBuiltinFunction(FunctionSet.ARRAY_AGG_DISTINCT, argTypes,
-+                Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF);
-+        if (fn == null || argTypes.length != 1) {
-+            return null;
-+        }
-+        Type argType = argTypes[0];
-+        if (!argType.isNull() && !argType.matchesType(fn.getArgs()[0])) {
-+            return null;
-+        }
-+        return fn;
-+    }
+     private static class DeltaLakeExprVisitor extends ScalarOperatorVisitor<Predicate, DeltaLakeContext> {
++        // Under a NOT the converted predicate must be a subset of the original instead of a superset.
++        private boolean insideNot = false;
 +
-     public static boolean isAggregateFunction(String name) {
-         return GlobalStateMgr.getCurrentState().isAggregateFunction(name);
-     }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/transformation/MultiDistinctByMultiFuncRewriter.java` (modified, +11/-4)
-```diff
-@@ -20,6 +20,7 @@
- import com.starrocks.catalog.FunctionSet;
- import com.starrocks.server.GlobalStateMgr;
- import com.starrocks.sql.analyzer.DecimalV3FunctionAnalyzer;
-+import com.starrocks.sql.ast.expression.ExprUtils;
- import com.starrocks.sql.optimizer.OptExpression;
- import com.starrocks.sql.optimizer.OptimizerContext;
- import com.starrocks.sql.optimizer.operator.AggType;
-@@ -68,11 +69,16 @@ public List<OptExpression> transformImpl(OptExpression input, OptimizerContext c
-                     newAggOperator = buildMultiSumDistinct(oldFunctionCall);
-                     changed = true;
-                 } else if (oldFunctionCall.getFnName().equals(FunctionSet.ARRAY_AGG)) {
-+                    CallOperator arrayAggDistinct = null;
-                     if (oldFunctionCall.getColumnRefs().size() == 1 &&
-                             !oldFunctionCall.getColumnRefs().get(0).getType().isDecimalOfAnyVersion()) {
--                        newAggOperator = buildArrayAggDistinct(oldFunctionCall);
-+                        arrayAggDistinct = buildArrayAggDistinct(oldFunctionCall);
-+                    }
-+                    if (arrayAggDistinct != null) {
-+                        newAggOperator = arrayAggDistinct;
-                         changed = true;
-                     } else {
-+                        // no array_agg_distinct overload for this type, keep array_agg(distinct)
-                         newAggOperator = oldFunctionCall;
-                     }
-                 } else {
-@@ -190,9 +196,10 @@ private CallOperator buildMultiCountDistinct(CallOperator oldFunctionCall) {
-     }
+         private static DeltaDataType getResultType(String columnName, DeltaLakeContext context) {
+             Preconditions.checkNotNull(context);
+             return getColumnType(columnName, context);
+@@ -118,7 +123,10 @@ public Predicate visitCompoundPredicate(CompoundPredicateOperator operator, Delt
+                 if (operator.getChild(0) instanceof LikePredicateOperator) {
+                     return null;
+                 }
++                boolean outerInsideNot = insideNot;
++                insideNot = true;
+                 Predicate predicate = operator.getChild(0).accept(this, context);
++                insideNot = outerInsideNot;
  
-     private CallOperator buildArrayAggDistinct(CallOperator oldFunctionCall) {
--        Function searchDesc = new Function(new FunctionName(FunctionSet.ARRAY_AGG_DISTINCT),
--                oldFunctionCall.getFunction().getArgs(), InvalidType.INVALID, false);
--        Function fn = GlobalStateMgr.getCurrentState().getFunction(searchDesc, IS_NONSTRICT_SUPERTYPE_OF);
-+        Function fn = ExprUtils.getArrayAggDistinctFunction(oldFunctionCall.getFunction().getArgs());
-+        if (fn == null) {
-+            return null;
-+        }
+                 if (predicate != null) {
+                     return new Predicate("NOT", predicate);
+@@ -166,6 +174,14 @@ public Predicate visitBinaryPredicate(BinaryPredicateOperator operator, DeltaLak
+             }
  
-         return (CallOperator) scalarRewriter.rewrite(
-                 new CallOperator(FunctionSet.ARRAY_AGG_DISTINCT, fn.getReturnType(), oldFunctionCall.getChildren(),
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/transformation/SplitTwoPhaseAggRule.java` (modified, +18/-4)
-```diff
-@@ -88,6 +88,9 @@ public List<OptExpression> transform(OptExpression input, OptimizerContext conte
-             CallOperator aggregation = entry.getValue();
-             if (aggregation.isDistinct()) {
-                 CallOperator call = rewriteDistinctAggFn(aggregation);
-+                if (call == null) {
-+                    return List.of();
+             DeltaDataType resultType = getResultType(columnName, context);
++            if (resultType == DeltaDataType.TIMESTAMP && !context.isPartitionColumn(columnName)) {
++                LocalDateTime local = toLocalDateTime(operator.getChild(1));
++                ZoneOffsetTransition transition = local == null ? null :
++                        TimeUtils.getTimeZone().toZoneId().getRules().getTransition(local);
++                if (transition != null) {
++                    return convertAcrossTransition(column, operator.getBinaryType(), local, transition);
 +                }
-                 newAggMap.put(entry.getKey(), call);
++            }
+             Literal literal = getLiteral(operator.getChild(1), resultType, context.isPartitionColumn(columnName));
+ 
+             if (literal == null) {
+@@ -190,6 +206,51 @@ public Predicate visitBinaryPredicate(BinaryPredicateOperator operator, DeltaLak
              }
          }
-@@ -133,11 +136,22 @@ private CallOperator rewriteDistinctAggFn(CallOperator fnCall) {
-         } else if (functionName.equalsIgnoreCase(FunctionSet.ARRAY_AGG)) {
-             if (fnCall.getUsedColumns().isEmpty() && fnCall.getChild(0).getType().isDecimalOfAnyVersion()) {
-                 return fnCall;
--            } else {
--                return new CallOperator(FunctionSet.ARRAY_AGG_DISTINCT, fnCall.getType(), fnCall.getChildren(),
--                        ExprUtils.getBuiltinFunction(FunctionSet.ARRAY_AGG_DISTINCT, new Type[] {fnCall.getChild(0).getType()},
--                                IS_NONSTRICT_SUPERTYPE_OF), false);
-             }
-+            Type argType = fnCall.getChild(0).getType();
-+            Function arrayAggDistinctFn = ExprUtils.getArrayAggDistinctFunction(new Type[] {argType});
-+            if (arrayAggDistinctFn == null) {
-+                if (argType.isScalarType() || fnCall.getUsedColumns().isEmpty()) {
-+                    // e.g. VARIANT, VARBINARY, or a constant like map(2, 3): the one-phase path rejects them too and
-+                    // a constant has no column to split by, so fail with a clear message instead of leaving the
-+                    // optimizer without a plan
-+                    throw new StarRocksPlannerException(ErrorType.UNSUPPORTED,
-+                            "array_agg(distinct) does not support type %s", argType);
-+                }
-+                // no array_agg_distinct overload for this complex type column, so it can't be split this way
+ 
++        /**
++         * A TIMESTAMP constant is a local time in the session time zone. In a DST overlap it names two instants and in
++         * a gap none, so a single instant is neither a superset nor a subset of the original predicate: compare lower
++         * bounds with the earlier candidate instant and upper bounds with the later one, which keeps a superset.
++         * There is no subset to give under a NOT or for NE.
++         */
++        private Predicate convertAcrossTransition(Column column, BinaryType op, LocalDateTime local,
++                                                  ZoneOffsetTransition transition) {
++            if (insideNot) {
 +                return null;
 +            }
-+            return new CallOperator(FunctionSet.ARRAY_AGG_DISTINCT, fnCall.getType(), fnCall.getChildren(),
-+                    arrayAggDistinctFn, false);
- 
-         } else if (functionName.equals(FunctionSet.GROUP_CONCAT)) {
-             // all children of group_concat are constant
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/plan/PlanFragmentBuilder.java` (modified, +7/-4)
-```diff
-@@ -269,6 +269,7 @@
- 
- import static com.starrocks.catalog.Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF;
- import static com.starrocks.sql.common.ErrorType.INTERNAL_ERROR;
-+import static com.starrocks.sql.common.ErrorType.UNSUPPORTED;
- import static com.starrocks.sql.common.UnsupportedException.unsupportedException;
- import static com.starrocks.sql.optimizer.operator.scalar.ScalarOperator.isColumnEqualConstant;
- import static com.starrocks.thrift.PlanNodesConstants.ROW_ID_COLUMN_NAME;
-@@ -3189,10 +3190,12 @@ public void rewriteAggDistinctFirstStageFunction(List<FunctionCallExpr> aggregat
-                     replaceExpr.setType(functionCallExpr.getType());
-                 } else if (functionName.equals(FunctionSet.ARRAY_AGG)) {
-                     replaceExpr = new FunctionCallExpr(FunctionSet.ARRAY_AGG_DISTINCT, functionCallExpr.getParams());
--                    AggregateFunction fn =
--                            (AggregateFunction) ExprUtils.getBuiltinFunction(FunctionSet.ARRAY_AGG_DISTINCT,
--                                    functionCallExpr.getFn().getArgs(),
--                                    IS_NONSTRICT_SUPERTYPE_OF);
-+                    AggregateFunction fn = (AggregateFunction) ExprUtils.getArrayAggDistinctFunction(
-+                            functionCallExpr.getFn().getArgs());
-+                    if (fn == null) {
-+                        throw new StarRocksPlannerException(UNSUPPORTED,
-+                                "array_agg(distinct) does not support type %s", functionCallExpr.getChild(0).getType());
-+                    }
-                     fn = DecimalV3FunctionAnalyzer.rectifyAggregationFunction(
-                             fn, functionCallExpr.getFn().getArgs()[0], functionCallExpr.getFn().getReturnType());
- 
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/DistinctAggTest.java` (modified, +54/-0)
-```diff
-@@ -16,6 +16,7 @@
- 
- import com.google.common.collect.Lists;
- import com.starrocks.common.FeConstants;
-+import com.starrocks.sql.common.StarRocksPlannerException;
- import org.junit.jupiter.api.BeforeAll;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.params.ParameterizedTest;
-@@ -25,6 +26,8 @@
- import java.util.List;
- import java.util.stream.Stream;
- 
-+import static org.junit.jupiter.api.Assertions.assertThrows;
++            long before = toMicros(local, transition.getOffsetBefore());
++            long after = toMicros(local, transition.getOffsetAfter());
++            Literal earlier = Literal.ofTimestamp(Math.min(before, after));
++            Literal later = Literal.ofTimestamp(Math.max(before, after));
++            switch (op) {
++                case LT:
++                    return new Predicate("<", column, later);
++                case LE:
++                    return new Predicate("<=", column, later);
++                case GT:
++                    return new Predicate(">", column, earlier);
++                case GE:
++                    return new Predicate(">=", column, earlier);
++                case EQ:
++                    return new And(new Predicate(">=", column, earlier), new Predicate("<=", column, later));
++                default:
++                    return null;
++            }
++        }
 +
- public class DistinctAggTest extends PlanTestBase {
++        private static long toMicros(LocalDateTime local, ZoneOffset offset) {
++            return local.toEpochSecond(offset) * 1000 * 1000 + local.getNano() / 1000;
++        }
++
++        private static LocalDateTime toLocalDateTime(ScalarOperator operator) {
++            if (!(operator instanceof ConstantOperator constant) || constant.isNull()) {
++                return null;
++            }
++            if (constant.getType().isDatetime()) {
++                return constant.getDatetime();
++            }
++            return constant.castTo(DateType.DATETIME).map(ConstantOperator::getDatetime).orElse(null);
++        }
++
+
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/IcebergUtil.java` (modified, +42/-5)
+```diff
+@@ -248,16 +248,17 @@ public static Map<Integer, MinMaxValue> parseMinMaxValueBySlots(Schema schema,
+                     // Iceberg TIMESTAMP WITH TIME ZONE stores instants in UTC, while StarRocks compares DATETIME
+                     // values in the session timezone, so we convert file-level bounds into session-local micros
+                     // before sending them to BE.
+-                    //
+-                    // Note that this is an endpoint conversion on file-level min/max only. For timezones whose
+-                    // UTC offset changes over time (for example DST or historical rule changes), UTC->local is
+-                    // not strictly monotonic over an arbitrary interval, so the converted low/high remain a
+-                    // best-effort approximation rather than an exact local min/max for the full file.
+                     if (widenTimestampTz) {
+                         long[] bounds = widenedSessionTzBounds((Long) low, (Long) high);
+                         minMaxValue.minValue = bounds[0];
+                         minMaxValue.maxValue = bounds[1];
+                     } else {
++                        // The min/max optimization answers MIN/MAX with these values, so they must be exact.
++                        // UTC->local is not monotonic across a DST fall-back: give up the whole file there, as
++                        // for a promoted date bound above.
++                        if (!sessionTzEndpointsExact((Long) low, (Long) high)) {
++                            return new HashMap<>();
++                        }
+                         minMaxValue.minValue = adjustTimestampMicrosToSessionTz((Long) low);
+                         minMaxValue.maxValue = adjustTimestampMicrosToSessionTz((Long) high);
+                     }
+@@ -316,6 +317,42 @@ private static long saturatedAdd(long a, long b) {
+         return sum;
+     }
  
-     @BeforeAll
-@@ -126,6 +129,57 @@ void testDistinctArrayAggOnConstantSubqueryColumns() throws Exception {
-         assertNotContains(plan, "array_agg_distinct");
++    /**
++     * Whether the session-local times of {@code low} and {@code high} are the local min and max of every instant in
++     * [low, high]. UTC->local only steps back at a backward offset shift (a DST fall-back): a value just after the
++     * shift may read below local(low), or one just before it above local(high), only when the shift lies within its
++     * own size of that end, so only the transitions within the widest offset of either end are checked.
++     */
++    @VisibleForTesting
++    static boolean sessionTzEndpointsExact(long lowMicros, long highMicros) {
++        ZoneRules rules = TimeUtils.getTimeZone().toZoneId().getRules();
++        if (rules.isFixedOffset()) {
++            return true;
++        }
++        long localLow = adjustTimestampMicrosToSessionTz(lowMicros);
++        long localHigh = adjustTimestampMicrosToSessionTz(highMicros);
++        Instant low = microsToInstant(lowMicros);
++        Instant high = microsToInstant(highMicros);
++        long window = ZoneOffset.MAX.getTotalSeconds();
++        Instant highWindow = high.minusSeconds(window);
++        for (Instant from : List.of(low, highWindow.isAfter(low) ? highWindow : low)) {
++            Instant until = from.plusSeconds(window).isBefore(high) ? from.plusSeconds(window) : high;
++            for (ZoneOffsetTransition t = rules.nextTransition(from); t != null && !t.getInstant().isAfter(until);
++                    t = rules.nextTransition(t.getInstant())) {
++                if (!t.isOverlap()) {
++                    continue;
++                }
++                long at = t.getInstant().getEpochSecond() * 1_000_000L;
++                // the least local time after the shift, and the bound of those before it
++                if (at + t.getOffsetAfter().getTotalSeconds() * 1_000_000L < localLow
++                        || at + t.getOffsetBefore().getTotalSeconds() * 1_000_000L > localHigh) {
++                    return false;
++                }
++            }
++        }
++        return true;
++    }
++
+     private static long adjustTimestampMicrosToSessionTz(long micros) {
+         long seconds = Math.floorDiv(micros, 1_000_000L);
+         long microsRemainder = Math.floorMod(micros, 1_000_000L);
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/ScalarOperatorToIcebergExpr.java` (modified, +31/-0)
+```diff
+@@ -330,6 +330,15 @@ public Expression visitBinaryPredicate(BinaryPredicateOperator operator, Iceberg
+             if (literalValue == null) {
+                 return null;
+             }
++            LocalDateTime ambiguous = ambiguousLocalTime(operator.getChild(1), icebergType);
++            if (ambiguous != null) {
++                // The constant names two instants (DST overlap) or none (DST gap), so no single instant compares the
++                // same. Lower bounds take the earlier candidate and upper bounds the later one, a pruning-only
++                // superset: not valid under NOT, for NE or for strict conversion.
++                return context.isStrict() || context.isInsideNot() ? null : IcebergFunctionPreimage.compare(
++                        new IcebergFunctionPreimage.Column(columnName, icebergType),
++                        operator.getBinaryType(), ambiguous);
++            }
+             if (typeID == Type.TypeID.BOOLEAN) {
+                 literalValue = convertBoolLiteralValue(literalValue);
+             }
+@@ -401,6 +410,10 @@ public Expression visitInPredicate(InPredicateOperator operator, IcebergContext
+             if (literalValues.stream().anyMatch(Objects::isNull)) {
+                 return null;
+             }
++            // a constant in a DST overlap or gap has no single instant, see visitBinaryPredicate
++            if (operator.getListChildren().stream().anyMatch(child -> ambiguousLocalTime(child, icebergType) != null)) {
++                return null;
++            }
+ 
+             if (operator.isNotIn()) {
+                 return notIn(columnName, literalValues);
+@@ -471,6 +484,24 @@ private static IcebergFunctionPreimage.ColumnResolver resolver(IcebergContext co
+         };
+     }
+ 
++    /**
++     * The local time of a constant compared with a timestamptz column, when it falls in a DST overlap or gap of the
++     * session time zone; null otherwise.
++     */
++    private static LocalDateTime ambiguousLocalTime(ScalarOperator operator, Type icebergType) {
++        if (!Types.TimestampType.withZone().equals(icebergType) || !(operator instanceof ConstantOperator constant)
++                || constant.isNull()) {
++            return null;
++        }
++        Optional<ConstantOperator> datetime = constant.getType().isDatetime() ? Optional.of(constant)
++                : constant.castTo(DateType.DATETIME);
++        if (datetime.isEmpty() || datetime.get().isNull()) {
++            return null;
++        }
++        LocalDateTime local = datetime.get().getDatetime();
++        return TimeUtils.getTimeZone().toZoneId().getRules().getValidOffsets(local).size() == 1 ? null : local;
++    }
++
+     private static Object getLiteralValue(ScalarOperator operator, Type icebergType) {
+         if (operator == null) {
+             return null;
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/connector/delta/ScalarOperationToDeltaLakeExprTest.java` (modified, +133/-0)
+```diff
+@@ -15,6 +15,7 @@
+ package com.starrocks.connector.delta;
+ 
+ import com.starrocks.common.util.TimeUtils;
++import com.starrocks.qe.ConnectContext;
+ import com.starrocks.sql.ast.expression.BinaryType;
+ import com.starrocks.sql.optimizer.operator.scalar.BinaryPredicateOperator;
+ import com.starrocks.sql.optimizer.operator.scalar.CastOperator;
+@@ -29,6 +30,7 @@
+ import io.delta.kernel.expressions.AlwaysTrue;
+ import io.delta.kernel.expressions.And;
+ import io.delta.kernel.expressions.Column;
++import io.delta.kernel.expressions.Expression;
+ import io.delta.kernel.expressions.Literal;
+ import io.delta.kernel.expressions.Or;
+ import io.delta.kernel.expressions.Predicate;
+@@ -52,9 +54,11 @@
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ 
++import java.time.Instant;
+ import java.time.LocalDateTime;
+ import java.time.ZoneId;
+ import java.time.ZoneOffset;
++import java.time.temporal.ChronoUnit;
+ import java.util.ArrayList;
+ import java.util.HashSet;
+ import java.util.List;
+@@ -468,4 +472,133 @@ public void testConvertBinaryPredicate() {
+         expectedExpr = new Predicate("NOT", new Predicate("=", cDeltaIntCol, literal));
+         Assertions.assertEquals(convertExpr.toString(), expectedExpr.toString());
+     }
++
++    /**
++     * Evaluates a converted predicate on one value of c_timestamp (epoch micros); ALWAYS_TRUE keeps every file.
++     */
++    private static boolean eval(Expression expr, long micros) {
++        Predicate p = (Predicate) expr;
++        List<Expression> children = p.getChildren();
++        switch (p.getName()) {
++            case "ALWAYS_TRUE":
++                return true;
++            case "AND":
++                return eval(children.get(0), micros) && eval(children.get(1), micros);
++            case "OR":
++                return eval(children.get(0), micros) || eval(children.get(1), micros);
++            case "NOT":
++                return !eval(children.get(0), micros);
++            default:
++                int cmp = Long.compare(micros, (Long) ((Literal) children.get(1)).getValue());
++                return compare(p.getName(), cmp);
++        }
++    }
++
++    private static boolean compare(String op, int cmp) {
++        switch (op) {
++            case "=":
++                return cmp == 0;
++            case "<":
++                return cmp < 0;
++            case "<=":
++                return cmp <= 0;
++            case ">":
++                return cmp > 0;
++            case ">=":
++                return cmp >= 0;
++            case "!=":
++                return cmp != 0;
++            default:
++                throw new IllegalArgumentException(op);
++        }
++    }
++
++    private static String sqlOp(BinaryType op) {
++        switch (op) {
++            case EQ:
++                return "=";
++            case NE:
++                return "!=";
++            case LT:
++                return "<";
++            case LE:
++                return "<=";
++            case GT:
++                return ">";
++            default:
++                return ">=";
++        }
++    }
++
++    /**
++     * A non-partition TIMESTAMP constant is a local time in the session zone. Across a DST switch it names two
++     * instants or none, and data skipping must still keep every file holding a matching value.
++     */
++    @Test
++    public void testTimestampConstantAcrossDst() {
++        ConnectContext ctx = new ConnectContext();
++        ctx.getSessionVariable().setTimeZone("America/New_York");
++        ctx.setThreadLocalInfo();
++        try {
++            ZoneId zone = ZoneId.of("America/New_York");
++            ScalarOperationToDeltaLakeExpr converter = new ScalarOperationToDeltaLakeExpr();
++            ScalarOperationToDeltaLakeExpr.DeltaLakeContext context =
++                    new ScalarOperationToDeltaLakeExpr.DeltaLakeContext(schema, new HashSet<>());
++            List<Long> values = new ArrayList<>();
++            List<LocalDateTime> constants = new ArrayList<>();
++            for (List<String> range : List.of(List.of("2024-11-03T03:00:00Z", "2024-11-03T09:00:00Z"),
++                    List.of("2024-03-10T04:00:00Z", "2024-03-10T10:00:00Z"))) {
++                for (Instant t = Instant.parse(range.get(0)); t.isBefore(Instant.parse(range.get(1)));
++                        t = t.plusSeconds(300)) {
++                    values.add(ChronoUnit.MICROS.between(Instant.EPOCH, t));
++                }
++            }
++            for (LocalDateTime c = LocalDateTime.of(2024, 11, 3, 0, 30);
++                    c.isBefore(LocalDateTime.of(2024, 11, 3, 2, 45)); c = c.plusMinutes(15)) {
++                constants.add(c);
++            }
++            for (LocalDateTime c = LocalDateTime.of(2024, 3, 10, 1, 30);
++                    c.isBefore(LocalDateTime.of(2024, 3, 10, 3, 45)); c = c.plusMinutes(15)) {
++                constants.add(c);
++            }
++            BinaryType[] ops = {BinaryType.EQ, BinaryType.NE, BinaryType.LT, BinaryType.LE, BinaryType.GT,
++                    BinaryType.GE};
++    
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/connector/iceberg/IcebergFunctionPreimageTest.java` (modified, +60/-0)
+```diff
+@@ -452,6 +452,66 @@ public void testBareTimestampTzAcrossDst() {
+                         ConstantOperator.createDatetime(LocalDateTime.of(2024, 11, 3, 1, 30)))).toString());
      }
  
 +    @Test
-+    void testArrayAggDistinctOnTypeWithoutArrayAggDistinctOverload() throws Exception {
-+        // array_agg_distinct has no VARIANT or VARBINARY overload. The non-strict lookup used to return the DECIMALV2
-+        // overload without casting the argument, and the BE then read the column as DECIMALV2 and crashed.
-+        String[] sqls = {
-+                "select array_agg(distinct cast(t1a as variant)) from test_all_type",
-+                "select array_agg(distinct cast(t1a as variant)) from test_all_type group by t1b",
-+                "select count(distinct t1b), array_agg(distinct cast(t1a as variant)) from test_all_type",
-+                "select array_agg(distinct cast(t1a as variant)), array_agg(distinct t1b) from test_all_type group by t1c",
-+                "select array_agg(distinct to_binary(t1a)) from test_all_type",
-+                "select count(distinct t1b), array_agg(distinct to_binary(t1a)) from test_all_type",
-+        };
-+        try {
-+            // 0: auto, 1: one phase (PlanFragmentBuilder), 2: two phase (SplitTwoPhaseAggRule)
-+            for (int stage : new int[] {0, 1, 2}) {
-+                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
-+                for (String sql : sqls) {
-+                    try {
-+                        String plan = getVerboseExplain(sql);
-+                        assertNotContains(plan, "args: DECIMALV2");
-+                    } catch (StarRocksPlannerException e) {
-+                        assertContains(e.getMessage(), "array_agg(distinct) does not support type");
++    public void testPlainTimestampTzConstantAcrossDst() {
++        ConnectContext ctx = new ConnectContext();
++        ctx.getSessionVariable().setTimeZone("America/New_York");
++        ctx.setThreadLocalInfo();
++        ZoneId zone = ZoneId.of("America/New_York");
++        List<Instant> instants = new ArrayList<>();
++        for (Instant t = Instant.parse("2024-11-02T22:00:00Z"); t.isBefore(Instant.parse("2024-11-03T12:00:00Z"));
++                t = t.plusSeconds(300)) {
++            instants.add(t);
++        }
++        for (Instant t = Instant.parse("2024-03-10T03:00:00Z"); t.isBefore(Instant.parse("2024-03-10T12:00:00Z"));
++                t = t.plusSeconds(300)) {
++            instants.add(t);
++        }
++        List<LocalDateTime> constants = List.of(LocalDateTime.of(2024, 11, 3, 1, 30), LocalDateTime.of(2024, 11, 3, 1, 0),
++                LocalDateTime.of(2024, 11, 3, 2, 0), LocalDateTime.of(2024, 3, 10, 2, 30),
++                LocalDateTime.of(2024, 3, 10, 2, 0), LocalDateTime.of(2024, 3, 10, 3, 0));
++        for (LocalDateTime k : constants) {
++            for (BinaryType op : OPS) {
++                for (ConstantOperator constant : List.of(ConstantOperator.createDatetime(k),
++                        ConstantOperator.createVarchar(k.toString().replace('T', ' ') + ":00"))) {
++                    Expression derived = convert(new BinaryPredicateOperator(op, TZ, constant));
++                    Evaluator evaluator = new Evaluator(Types.StructType.of(SCHEMA.findField("tz")), derived);
++                    for (Instant instant : instants) {
++                        if (compare(op, LocalDateTime.ofInstant(instant, zone).compareTo(k))) {
++                            Assertions.assertTrue(
++                                    evaluator.eval(row(ChronoUnit.MICROS.between(Instant.EPOCH, instant))),
++                                    "tz " + op + " " + constant + " pruned " + instant);
++                        }
 +                    }
 +                }
 +            }
-+
-+            for (int stage : new int[] {1, 2}) {
-+                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
-+                StarRocksPlannerException e = assertThrows(StarRocksPlannerException.class,
-+                        () -> getVerboseExplain("select array_agg(distinct cast(t1a as variant)) from test_all_type"));
-+                assertContains(e.getMessage(), "array_agg(distinct) does not support type VARIANT");
-+                e = assertThrows(StarRocksPlannerException.class,
-+                        () -> getVerboseExplain("select array_agg(distinct to_binary(t1a)) from test_all_type"));
-+                assertContains(e.getMessage(), "array_agg(distinct) does not support type VARBINARY");
-+            }
-+
-+            // a constant complex argument has no column to split by, so it gets the same error in every stage
-+            // instead of "no executable plan"; a complex type column still plans through the multi-stage split
-+            for (int stage : new int[] {0, 1, 2, 3, 4}) {
-+                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
-+                StarRocksPlannerException e = assertThrows(StarRocksPlannerException.class,
-+                        () -> getVerboseExplain("select array_agg(distinct map(2, 3)) from t0"));
-+                assertContains(e.getMessage(), "array_agg(distinct) does not support type MAP");
-+            }
-+            connectContext.getSessionVariable().setNewPlanerAggStage(0);
-+            getVerboseExplain("select array_agg(distinct v3) from tarray");
-+        } finally {
-+            connectContext.getSessionVariable().setNewPlanerAggStage(0);
 +        }
++
++        // a constant in an overlap or gap has no exact form: not under NOT, for NE, for IN or for strict conversion
++        for (LocalDateTime k : List.of(LocalDateTime.of(2024, 11, 3, 1, 30), LocalDateTime.of(2024, 3, 10, 2, 30))) {
++            BinaryPredicateOperator eq = new BinaryPredicateOperator(BinaryType.EQ, TZ, ConstantOperator.createDatetime(k));
++            Assertions.assertEquals(Expressions.alwaysTrue(),
++                    convert(new CompoundPredicateOperator(CompoundPredicateOperator.CompoundType.NOT, eq)));
++            Assertions.assertEquals(Expressions.alwaysTrue(), convert(
++                    new BinaryPredicateOperator(BinaryType.NE, TZ, ConstantOperator.createDatetime(k))));
++            // IN keeps every candidate instant of the constant
++            Evaluator inEvaluator = new Evaluator(Types.StructType.of(SCHEMA.findField("tz")), convert(
++                    new InPredicateOperator(false, TZ, ConstantOperator.createDatetime(k),
++                            ConstantOperator.createDatetime(k.plusDays(1)))));
++            for (Instant instant : instants) {
++                LocalDateTime local = LocalDateTime.ofInstant(instant, zone);
++                if (local.equals(k) || local.equals(k.plusDays(1))) {
++                    Assertions.assertTrue(inEvaluator.eval(row(ChronoUnit.MICROS.between(Instant.EPOCH, instant))),
++                            "tz in " + k + " pruned " + instant);
++                }
++            }
++            Assertions.assertNull(converter.convertStrict(List.of(eq), context));
++        }
++        // an unambiguous constant converts exactly as before
++        Assertions.assertNotNull(converter.convertStrict(List.of(new BinaryPredicateOperator(BinaryType.EQ, TZ,
++                ConstantOperator.createDatetime(LocalDateTime.of(2024, 11, 3, 2, 0)))), context));
 +    }
 +
      @Test
-     void testMultiColumnCountDistinctKeepsDecimalPrecision() throws Exception {
-         // The if() wrapping the distinct columns must carry the precision/scale of its branches,
+     public void testInList() {
+         Expression derived = convert(new InPredicateOperator(false, year(D),
 ```
 
-**File**: `test/sql/test_agg_function/R/test_array_agg` (modified, +1/-1)
+**File**: `fe/fe-core/src/test/java/com/starrocks/connector/iceberg/IcebergUtilTest.java` (modified, +59/-3)
 ```diff
-@@ -1818,7 +1818,7 @@ select array_agg(map(2,3)) from ss;
- -- !result
- select array_agg(distinct map(2,3)) from ss;
- -- result:
--E: (1064, 'Unknown error')
-+E: (1064, 'array_agg(distinct) does not support type MAP<TINYINT,TINYINT>')
- -- !result
- select array_agg(null);
- -- result:
+@@ -322,9 +322,9 @@ public void testWidenedTimestampTzBoundsCoverOffsetChanges() {
+         ctx.setThreadLocalInfo();
+         try {
+             ctx.getSessionVariable().setTimeZone("America/New_York");
+-            IcebergUtil.MinMaxValue endpoints = IcebergUtil.parseMinMaxValueBySlots(
+-                    schema, lowerBounds, upperBounds, nullValueCounts, valueCounts, slots, false).get(5);
+-            Assertions.assertTrue((Long) endpoints.minValue > localOfHigh);
++            // the endpoint conversion would put min above a value of the file, so the min/max optimization gives up
++            Assertions.assertTrue(IcebergUtil.parseMinMaxValueBySlots(
++                    schema, lowerBounds, upperBounds, nullValueCounts, valueCounts, slots, false).isEmpty());
+ 
+             IcebergUtil.MinMaxValue widened = IcebergUtil.parseMinMaxValueBySlots(
+                     schema, lowerBounds, upperBounds, nullValueCounts, valueCounts, slots, true).get(5);
+@@ -375,6 +375,62 @@ public void testWidenedTimestampTzBoundsCoverOffsetChanges() {
+         }
+     }
+ 
++    @Test
++    public void testMinMaxOptGivesUpTimestampTzFileAcrossFallBack() {
++        Schema schema = new Schema(required(5, "ts_tz", Types.TimestampType.withZone()));
++        List<SlotDescriptor> slots = List.of(new SlotDescriptor(new SlotId(5), "ts_tz", DateType.DATETIME, true));
++        slots.get(0).setColumn(new Column("ts_tz", DateType.DATETIME, true));
++        java.util.function.BiFunction<String, String, Map<Integer, IcebergUtil.MinMaxValue>> parse = (lo, hi) -> {
++            long low = java.time.Instant.parse(lo).getEpochSecond() * 1_000_000L;
++            long high = java.time.Instant.parse(hi).getEpochSecond() * 1_000_000L;
++            return IcebergUtil.parseMinMaxValueBySlots(schema,
++                    Map.of(5, Conversions.toByteBuffer(Types.TimestampType.withZone(), low)),
++                    Map.of(5, Conversions.toByteBuffer(Types.TimestampType.withZone(), high)),
++                    Map.of(5, 0L), Map.of(5, 2L), slots, false);
++        };
++        ConnectContext ctx = new ConnectContext();
++        ctx.setThreadLocalInfo();
++        try {
++            ctx.getSessionVariable().setTimeZone("America/New_York");
++            // New York falls back at 2024-11-03 06:00Z: 01:10 EDT .. 01:20 EST may hold 01:00 EST, below 01:10
++            Assertions.assertTrue(parse.apply("2024-11-03T05:10:00Z", "2024-11-03T06:20:00Z").isEmpty());
++            // 00:30 EDT .. 01:30 EST may hold 01:59 EDT, above 01:30
++            Assertions.assertTrue(parse.apply("2024-11-03T04:30:00Z", "2024-11-03T06:30:00Z").isEmpty());
++            // a fall-back far from both ends cannot reach past them
++            IcebergUtil.MinMaxValue wide = parse.apply("2024-11-02T00:00:00Z", "2024-11-04T00:00:00Z").get(5);
++            assertEquals(java.time.LocalDateTime.parse("2024-11-01T20:00:00").toEpochSecond(java.time.ZoneOffset.UTC)
++                    * 1_000_000L, wide.minValue);
++            // spring-forward keeps the order
++            Assertions.assertFalse(parse.apply("2024-03-10T06:30:00Z", "2024-03-10T07:30:00Z").isEmpty());
++
++            // the endpoints are the local min and max exactly when kept
++            java.time.ZoneId zone = java.time.ZoneId.of("America/New_York");
++            java.time.Instant base = java.time.Instant.parse("2024-11-03T02:00:00Z");
++            for (int start = 0; start <= 300; start += 10) {
++                for (int len : new int[] {0, 20, 50, 70, 130, 300}) {
++                    java.time.Instant a = base.plusSeconds(start * 60L);
++                    java.time.Instant b = a.plusSeconds(len * 60L);
++                    long localA = java.time.LocalDateTime.ofInstant(a, zone).toEpochSecond(java.time.ZoneOffset.UTC);
++                    long localB = java.time.LocalDateTime.ofInstant(b, zone).toEpochSecond(java.time.ZoneOffset.UTC);
++                    // the ends and the half minutes between them, which reach past a shift on the minute grid
++                    boolean inside = true;
++                    for (java.time.Instant t = a.plusSeconds(30); t.isBefore(b); t = t.plusSeconds(60)) {
++                        long local = java.time.LocalDateTime.ofInstant(t, zone).toEpochSecond(java.time.ZoneOffset.UTC);
++                        inside &= localA <= local && local <= localB;
++                    }
++                    assertEquals(inside, IcebergUtil.sessionTzEndpointsExact(a.getEpochSecond() * 1_000_000L,
++                            b.getEpochSecond() * 1_000_000L), a + ".." + b);
++                }
++            }
++
++            // a fixed offset never gives up
++            ctx.getSessionVariable().setTimeZone("+08:00");
++            Assertions.assertFalse(parse.apply("2024-11-03T05:10:00Z", "2024-11-03T06:20:00Z").isEmpty());
++        } finally {
++            ConnectContext.remove();
++        }
++    }
++
+     private static org.apache.iceberg.Table tableWithProperty(String key, String value) {
+         org.apache.ice
 ```
 
 ---
 
-### Incident Patch 3: `fd2324ef` (2026-11-07)
-**Commit Message**: [Tool][RB-1330] Fix backend compilation with Clang 20 (#82609)
+### Incident Patch 2: `bf8e3267` (2026-11-08)
+**Commit Message**: [UT] Fix BE UT ASAN build with GCC in lake vacuum_test (#82622)
 
 Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
 Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
 
-**File**: `be/src/exec/pipeline/pipeline_driver_queue.cpp` (modified, +1/-1)
+**File**: `be/test/storage/lake/vacuum_test.cpp` (modified, +6/-0)
 ```diff
-@@ -29,7 +29,7 @@ namespace starrocks::pipeline {
+@@ -44,7 +44,13 @@
+ #include "test_util.h"
  
- namespace {
- // Leave headroom for runtime charged by concurrent executors before the next scheduling operation.
--constexpr int64_t kAccuTimeRebaseThreshold = std::numeric_limits<int64_t>::max() / 4;
-+constexpr double kAccuTimeRebaseThreshold = static_cast<double>(std::numeric_limits<int64_t>::max() / 4);
- } // namespace
- 
- /// QuerySharedDriverQueue.
-```
-
-**File**: `be/src/formats/parquet/statistics_helper.cpp` (modified, +3/-1)
-```diff
-@@ -60,7 +60,9 @@ Status StatisticsHelper::decode_min_max_into_columns(const MutableColumnPtr& min
-                 src_column->append_nulls(1);
-             } else {
-                 RETURN_IF_ERROR(PlainDecoder<int64_t>::decode(values[i], &decode_value));
--                src_column->append_numbers(&decode_value, sizeof(int64_t));
-+                if (src_column->append_numbers(&decode_value, sizeof(int64_t)) == 0) {
-+                    return Status::InternalError("Decode min-max column failed");
-+                }
-             }
-         }
-         return Status::OK();
+ #if defined(ADDRESS_SANITIZER)
++// clang's compiler-rt ships this header; gcc's libsanitizer exports the symbol but not the
++// header, so declare it ourselves there.
++#if __has_include(<sanitizer/allocator_interface.h>)
+ #include <sanitizer/allocator_interface.h>
++#else
++extern "C" size_t __sanitizer_get_current_allocated_bytes(void);
++#endif
+ #elif STARROCKS_ENABLE_JEMALLOC_MEM_HOOK
+ #include "jemalloc/jemalloc.h"
+ #endif
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #82617** (2026-11-07): [BugFix][RB-967] Keep array_agg(distinct) when array_agg_distinct has no overload for the argument type (backport #82531) (@mergify[bot])
-- **PR #82616** (2026-11-07): [BugFix][RB-967] Keep array_agg(distinct) when array_agg_distinct has no overload for the argument type (backport #82531) (@mergify[bot])
-- **PR #82615** (2026-11-07): [BugFix][RB-967] Keep array_agg(distinct) when array_agg_distinct has no overload for the argument type (backport #82531) (@mergify[bot])
-- **PR #82614** (2026-11-07): [Tool][RB-1330] Fix backend compilation with Clang 20 (backport #82609) (@mergify[bot])
-- **PR #82612** (2026-11-07): [BugFix][RB-1259] Close idle JDBC connection pools on BE/CN (backport #82532) (@mergify[bot])
-- **PR #82611** (2026-11-07): [BugFix][RB-1259] Close idle JDBC connection pools on BE/CN (backport #82532) (@mergify[bot])
+- **PR #82632** (2026-11-08): [BugFix][RB-1154] Keep timestamp values across a DST switch in Iceberg min/max optimization and Delta data skipping (backport #82630) (@mergify[bot])
+- **PR #82630** (2026-11-08): [BugFix][RB-1154] Keep timestamp values across a DST switch in Iceberg min/max optimization and Delta data skipping (@starrocks-bot[bot])
+- **PR #82629** (2026-11-08): [Enhancement][RB-225] Prune Iceberg row groups on predicates over functions of a column (backport #82628) (@mergify[bot])
+- **PR #82628** (2026-11-08): [Enhancement][RB-225] Prune Iceberg row groups on predicates over functions of a column (@starrocks-bot[bot])
+- **PR #82627** (2026-11-08): [Enhancement][RB-225] Add Iceberg rollback_to_timestamp and set_current_snapshot procedures (backport #82626) (@mergify[bot])
+- **PR #82626** (2026-11-08): [Enhancement][RB-225] Add Iceberg rollback_to_timestamp and set_current_snapshot procedures (@starrocks-bot[bot])
 
 ---
 
@@ -2161,31 +2388,47 @@ Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Doc] fix misleading comments after refactoring (#82580)
+## X. [BugFix][RB-1154] Keep timestamp values across a DST switch in Iceberg min/max o
 
 **RULE**:
-When implementing operations in `be/src/exprs/like_predicate.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/connector/delta/ScalarOperationToDeltaLakeExpr.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed544602`: [Doc] fix misleading comments after refactoring (#82580). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac735a43`: [BugFix][RB-1154] Keep timestamp values across a DST switch in Iceberg min/max optimization and Delta data skipping (#82630). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/exprs/like_predicate.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/connector/delta/ScalarOperationToDeltaLakeExpr.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    // RE2 (matching the previous behavior). The real per-thread scratch is allocated lazily on
-    // first eval, via the FunctionContext thread-state registry (see _predicate_const_regex).
-    // The probe scratch is freed immediately.
+import com.starrocks.sql.ast.expression.BinaryType;
+import java.time.zone.ZoneOffsetTransition;
+        // Under a NOT the converted predicate must be a subset of the original instead of a superset.
+        private boolean insideNot = false;
+
+                boolean outerInsideNot = insideNot;
+                insideNot = true;
+                insideNot = outerInsideNot;
+            if (resultType == DeltaDataType.TIMESTAMP && !context.isPartitionColumn(columnName)) {
+                LocalDateTime local = toLocalDateTime(operator.getChild(1));
+                ZoneOffsetTransition transition = local == null ? null :
+                        TimeUtils.getTimeZone().toZoneId().getRules().getTransition(local);
+                if (transition != null) {
+                    return convertAcrossTransition(column, operator.getBinaryType(), local, transition);
+                }
+            }
+        /**
+         * A TIMESTAMP constant is a local time in the session time zone. In a DST overlap it names two instants and in
+         * a gap none, so a single instant is neither a superset nor a subset of the original predicate: compare lower
+         * bounds with the earlier candidate instant and
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    // RE2 (matching the previous behavior). The real per-thread scratch is allocated later, in
-    // the THREAD_LOCAL prepare. The probe scratch is freed immediately.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed544602` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac735a43` are properly handled with clean fallback behavior.

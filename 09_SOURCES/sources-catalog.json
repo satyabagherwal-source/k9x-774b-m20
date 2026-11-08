@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "cefe03a3ef0816bb5a6f82e4d0079a16ed53453939b7d7630c46f17524a63515",
-    "lastHarvestedAt": "2026-11-05T02:33:00.430Z",
+    "contentHash": "ef2904b3c7afa80c1c73029690bc7f3103273d62e11081feaa0e9fa0b38ec938",
+    "lastHarvestedAt": "2026-11-08T18:48:44.617Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "ed544602",
+    "sourceVersion": "ac735a43",
     "license": "Apache-2.0",
-    "contentHash": "cdce467c6c9d99135589110e0eee00561faf8b2bbc652439d3c3ecff2c32befd",
-    "lastHarvestedAt": "2026-11-07T21:44:03.790Z",
+    "contentHash": "65d3c9c1d85845f424a2786d488d6ed0e3b50647b924c041f0d6fef59e5f115f",
+    "lastHarvestedAt": "2026-11-08T18:46:05.838Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {

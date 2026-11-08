@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T18:38:42.769Z",
-  "total_cycles_completed": 8321,
-  "total_learnings_persisted": 8321,
-  "total_rules_promoted": 8108,
+  "last_updated": "2026-11-08T18:48:44.633Z",
+  "total_cycles_completed": 8323,
+  "total_learnings_persisted": 8323,
+  "total_rules_promoted": 8111,
   "history": [
-    {
-      "timestamp": "2026-11-08T00:56:12.930Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T01:03:12.805Z",
-      "repository": "pointfreeco/swift-composable-architecture",
-      "learningId": "learn-github-pointfreeco-swift-composable-architecture",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T01:03:12.854Z",
       "repository": "ajeetdsouza/zoxide",
@@ -1403,6 +1389,20 @@
       "repository": "PrunaAI/P-H3-Image-Comfy",
       "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T18:46:05.853Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T18:48:44.633Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
