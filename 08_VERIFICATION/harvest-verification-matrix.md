@@ -8277,3 +8277,5 @@
 | `CYCLE-20261108-WJLT` | `2026-11-08T10:28:57.281Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`137fa529...`) |
 | `CYCLE-20261108-LOMS` | `2026-11-08T10:48:30.196Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule EXISTING` | Yes (`b98ec77b...`) |
 | `CYCLE-20261108-MHK4` | `2026-11-08T10:49:07.684Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`30108373...`) |
+| `CYCLE-20261108-AHRH` | `2026-11-08T11:07:47.693Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`a31d71b1...`) |
+| `CYCLE-20261108-I9NH` | `2026-11-08T11:13:50.429Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`ba1ebe0b...`) |

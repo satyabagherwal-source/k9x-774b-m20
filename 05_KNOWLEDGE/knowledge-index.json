@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T10:49:07.560Z",
+  "last_updated": "2026-11-08T11:13:50.347Z",
   "total_verified_learnings": 1238,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28737,10 +28737,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "86e1ea5267424e2b0d453067682345b2968a00392c9a653ea05b045e93d54cde",
+      "content_hash": "ba1ebe0b84b1f1bd101d882ea70f24e5b954bab3e19b29e085ed0252f63a1b38",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Bounded Gated Recurrence in Linear Attention State Retention",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Normalized Latent MoE Routing Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Attention-Residual Block-Periodic Interconnect Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 3244,
           "title": "Hybrid Attention Layer Indexing Integrity",
@@ -28800,7 +28815,7 @@
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4438bt",
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y"
       ],
-      "verified_at": "2026-11-04T21:58:20.473Z",
+      "verified_at": "2026-11-08T11:13:50.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46463,8 +46478,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "e059f4bc",
-      "content_hash": "cbf31917c9dfec607e49c39895a0ff40cc9545584bb57e30b231dfcd1caf2936",
+      "source_version": "713cc5a4",
+      "content_hash": "a31d71b1735ba63c8d776b1b8022b07dcea78264c7796467986348ade7e34bbe",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -46521,6 +46536,21 @@
         {
           "number": null,
           "title": "Disambiguation-Proof Lookahead Parsing for Overloaded Language Primitives",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Atomic Transactional Pre-Snapshot Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Lexical Distinctness in Declarative Namespaces",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Asymmetric Dynamic Axis Endpoint Binding Invariant",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -46814,7 +46844,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T09:32:11.979Z",
+      "verified_at": "2026-11-08T11:07:47.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

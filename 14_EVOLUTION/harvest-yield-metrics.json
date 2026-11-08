@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T10:49:07.702Z",
-  "total_cycles_completed": 8242,
-  "total_learnings_persisted": 8242,
-  "total_rules_promoted": 7997,
+  "last_updated": "2026-11-08T11:13:50.449Z",
+  "total_cycles_completed": 8244,
+  "total_learnings_persisted": 8244,
+  "total_rules_promoted": 8003,
   "history": [
-    {
-      "timestamp": "2026-11-07T20:42:11.534Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:42:14.730Z",
-      "repository": "rollup/rollup",
-      "learningId": "learn-github-rollup-rollup",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T20:42:33.543Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T10:49:07.702Z",
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T11:07:47.711Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T11:13:50.449Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T10:49:07.706Z",
+  "last_updated": "2026-11-08T11:13:50.453Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -305,14 +305,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3",
-      "content_hash": "86e1ea5267424e2b0d453067682345b2968a00392c9a653ea05b045e93d54cde",
-      "verified_at": "2026-11-04T21:58:20.606Z",
+      "content_hash": "ba1ebe0b84b1f1bd101d882ea70f24e5b954bab3e19b29e085ed0252f63a1b38",
+      "verified_at": "2026-11-08T11:13:50.452Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:58:20.606Z"
+      "last_updated": "2026-11-08T11:13:50.452Z"
     },
     "stabilityai/stable-diffusion-xl-base-1.0": {
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "cbf31917c9dfec607e49c39895a0ff40cc9545584bb57e30b231dfcd1caf2936",
-      "verified_at": "2026-11-08T09:32:12.118Z",
+      "content_hash": "a31d71b1735ba63c8d776b1b8022b07dcea78264c7796467986348ade7e34bbe",
+      "verified_at": "2026-11-08T11:07:47.715Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T09:32:12.118Z"
+      "last_updated": "2026-11-08T11:07:47.715Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",

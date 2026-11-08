@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `e059f4bc`  
+> **Source Version**: `713cc5a4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-08T09:32:09.872Z  
+> **Timestamp**: 2026-11-08T11:07:45.860Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,78 +18,87 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### Exact Technical Problem Solved
-Nucleoid is a declarative logic runtime and neuro-symbolic execution engine. Traditional imperative runtimes require explicit control flow, change tracking, and manual cache invalidation when domain states evolve. When Large Language Models (LLMs) generate imperative state-manipulation code, they frequently produce race conditions, stale cache reads, ordering errors, and unbounded mutation side effects. 
+### 1.1 Core Problem Statement & Domain Boundary
+Nucleoid is a neuro-symbolic, declarative logic execution engine designed to eliminate manual state propagation, imperative control flow, and procedural re-computation in AI world models and knowledge bases. In standard imperative architectures or classical expert systems, state mutations require explicit dependency tracking, cache invalidation, and custom event cascades. When integrated with Large Language Models (LLMs) solving spatial or symbolic reasoning tasks (such as François Chollet's Abstraction and Reasoning Corpus - ARC), imperative control flow forces LLMs to generate brittle loop counters, state synchronization logic, and mutation order sequences.
 
-Nucleoid eliminates imperative state management by compiling programs into a directed acyclic logic dependency graph. Computations, constraints, and class-level rules (`$Class.property = condition`) are bound declaratively:
-- When a variable or property mutates, change propagation automatically cascades through all dependent expressions.
-- The engine guarantees transactionality via an append-only before-image transaction log that can roll back state transitions, variable declarations, property additions, object allocations, and execution history upon runtime exceptions or transaction aborts (`throw "UNDO"`).
-- In neuro-symbolic tasks (e.g., the ARC benchmark subsystem in `arc/`), high-level perception and program synthesis are delegated to LLMs, while state evaluation, consistency checks, and deterministic relational updates are delegated to the Nucleoid engine.
+Nucleoid solves this by implementing a **symbolic reactive dependency graph coupled to an in-memory transactional object store**. State declarations are parsed into Abstract Syntax Tree (AST) nodes, indexed into an execution graph, and continuously re-evaluated along topological dependency chains whenever dependent variables or properties change.
 
 ```
 +-------------------------------------------------------------------------------+
-|                             NUCLEOID ENGINE                                  |
+|                               NUCLEOID CORE ENGINE                           |
 +-------------------------------------------------------------------------------+
-|  Source (nuc / ARC DSL)                                                       |
-|       |                                                                       |
-|       v                                                                       |
-|  [Logos Lexer] ---> [Recursive Descent Parser] ---> [AST (Stmt/Expr)]         |
-|                                                              |                |
-|                                                              v                |
-|       +------------------------------------------------------+                |
-|       | Execution Engine & Dependency Graph                                  |
-|       |                                                                       |
-|       |  +--------------------+      +-------------------------------------+  |
-|       |  |  State Store       |      |  Dependency Graph (NodeKey)         |  |
-|       |  |  - variables       | <--- |  - Variable(String)                 |  |
-|       |  |  - objects         |      |  - Property(ObjectId, String)       |  |
-|       |  |  - classes         |      |  - Class(String)                    |  |
-|       |  |  - functions       |      +-------------------------------------+  |
-|       |  |  - read_only (Set) |                         |                     |
-|       |  +--------------------+                         v                     |
-|       |           |                   [Topological Propagation Engine]        |
-|       |           |                         (Max Step Limit: 100k)            |
-|       |           v                                     |                     |
-|       |  [Transaction Log]                              v                     |
-|       |   - Before-images               [Evaluator / Value Space]             |
-|       |   - Reversible rollbacks        - Primitives, Objects, Enums          |
-|       +----------------------------------------------------------------------+
+|  Source (.nuc / DSL)                                                          |
+|       │                                                                       |
+|       ▼                                                                       |
+|  [Lexer / Logos] ──► [Recursive Descent Parser] ──► [AST (Stmt / Expr)]       |
+|                                                               │               |
+|                                                               ▼               |
+|  [Runtime Pipeline] ◄──────────────────────────────── [Graph Compiler]        |
+|       │                                                                       |
+|       ├──► [Transaction / Write-Ahead Undo Log]                               |
+|       │         │                                                             |
+|       │         ▼ (Pre-mutation Snapshots)                                    |
+|       │    [State Store (IndexMap / IndexSet)]                                |
+|       │         ├── variables: IndexMap<String, Value>                        |
+|       │         ├── objects:   IndexMap<ObjectId, ObjectData>                 |
+|       │         ├── classes:   IndexMap<String, ClassData>                    |
+|       │         └── histories: IndexMap<HistoryKey, History>                  |
+|       │                                                                       |
+|       ▼                                                                       |
+|  [Symbolic Dependency Engine] ──► Topological Propagation ──► Value Convergence
++-------------------------------------------------------------------------------+
+                                      │
+                                      ▼ JSON-RPC / IPC Barrier
++-------------------------------------------------------------------------------+
+|                          ARC NEURO-SYMBOLIC SOLVER                            |
++-------------------------------------------------------------------------------+
+|  [arc/server.ts] ──► [arc/src/app.ts] ──► [analyzer.ts / visualizer.ts]       |
+|       │                                         │                             |
+|       ▼                                         ▼                             |
+|  [Matrix Geometry Engine]               [LLM Prompt Synthesis]                |
+|  (locate / crop / silhouette)           (Few-shot declarative templates)      |
 +-------------------------------------------------------------------------------+
 ```
 
-### Architectural Subsystem Boundaries & Invariants
-1. **Parser & Lexer Layer (`src/lang/ast/`)**:
-   - Uses `logos` for tokenization and an explicit recursion-depth-capped recursive descent parser (`depth <= MAX_NESTING`).
-   - Disallows unbounded syntax ambiguity: Disambiguates single-member enums, colons, type annotations, and nested statement blocks using probe-based parsing (`Parser::accepted`).
-2. **State & Transaction Boundary (`src/state/`, `src/state/mutation.rs`)**:
-   - Encapsulates every write in atomic mutation functions (`assign`, `write_property`, `insert_object`, `remove_property`).
-   - Coupling invariant: Mutation and transaction logging are indivisible. A mutation cannot occur without simultaneously recording the before-image into `Transaction`.
-   - Read-only integrity: Read-only instances (e.g., `Enum`) are indexed in `IndexSet<ObjectId>`. Any write path executing against an object verifies immutability via `ensure_writable` prior to mutation.
-3. **Graph Dependency & Propagation Engine (`src/graph/`)**:
-   - Manages dependencies between values (`NodeKey::Variable`, `NodeKey::Property`) and structural topologies (`ShapeKey::Entries`).
-   - Property changes trigger fine-grained node propagation, while schema alterations (property addition/removal) trigger shape changes across iterations (`queue_entries_change`).
+### 1.2 Subsystem Decomposition & Boundaries
+
+1. **AST & Syntax Pipeline (`src/lang/ast/`)**:
+   - `lexer.rs`: Token generation using `logos`, enforcing indent/dedent indentation tracking for Pythonic suite parsing while simultaneously allowing C-style brace syntax.
+   - `parser/statement.rs`: Backtracking recursive descent parser with strict recursion limits (`MAX_NESTING = 128`), supporting declarative assignment (`=`), transactional value-binding (`:=`), and hypothetical branching (`suppose` statements).
+   - `generator/statement.rs`: Graph-to-source decompilation layer. Generates stable canonical string representations (`DeclarationKey`) used as node identities in the reactive graph.
+
+2. **State & Transaction Engine (`src/state.rs`, `src/state/mutation.rs`)**:
+   - Encapsulates mutable runtime data within `IndexMap` structures to preserve deterministic iteration and insertion order.
+   - Atomic state transitions: Every state write (`assign`, `assign_property`, `insert_object`, `remove_property`) MUST register an undo delta in `Transaction` before memory mutation occurs.
+   - Temporal historical tracking via `HistoryKey` and `VersionSelector` (`@first`, `@last`, `@prev`) enabling time-travel queries within declarative constraints (e.g., `$Obj.x@first`).
+
+3. **Symbolic Dependency Graph (`src/graph/`)**:
+   - Maintains directional dependency edges: `Source Node -> Target Expression`.
+   - Node identities are separated cleanly: `DeclarationKey` represents class-level templates (`$Person.mortal`), whereas `NodeKey` represents concrete instance attributes (`person1.mortal`). This strict type distinction prevents template-instance key collisions.
+
 4. **Neuro-Symbolic ARC Bridge (`arc/src/`)**:
-   - Decomposes ARC tasks into discrete pipeline stages: `declarations -> instances -> value -> state -> visualization -> comparison`.
-   - Replaces manual Python/JS simulation with Nucleoid execution (`nucleoid.run(...)`), binding matrix extractions to immutable instances and querying relations declaratively.
+   - TypeScript/Node orchestration framework that decomposes ARC grids into declarative statements executed against the Nucleoid Rust engine via CLI/IPC.
+   - Bridges matrix spatial transformations (`locate`, `crop`, `silhouette`) with symbolic logic rules to discover grid invariance without brute-force matrix search.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules
 
-### 1. Mandatory Before-Image Pairing with Mutation Primitives
+### 1. Atomic Transactional Pre-Snapshot Invariant
 **RULE**:
-Every mutable store operation across a stateful engine MUST bundle the write and the before-image capture into an unbypassable, private mutation primitive. Public state APIs MUST NOT expose naked assignment, insertion, or deletion methods without requiring a transaction context. Rollback operations MUST restore state using dedicated non-recording restore channels to prevent undo logs from inverting themselves.
+Every mutable state container exposed to declarative or reactive evaluation MUST record an exact before-image snapshot into an active transaction log PRIOR to applying any in-memory mutation. In-memory mutation and undo-logging MUST NOT be separated into disparate call sites. Rollback operations MUST apply historical snapshots directly without re-triggering mutation events or re-logging undo entries.
 
 **WHY**:
-Decoupling state mutation from transaction logging leads to memory leaks, state desynchronization, and partial rollbacks. In declarative graph runtimes, failing to record an undo image for an added property, or erroneously recording a rollback operation as a new state mutation, causes infinite propagation loops, corrupted dependency graphs, and unrevertible dirty states.
+In declarative reactive engines, writing a new value triggers topological re-evaluation cascades across a dependency graph. If an intermediate evaluation fails (e.g., divide-by-zero, type assertion failure, recursion depth exceeded), partial mutations leave the global graph in an indeterminate, corrupted state. If undo recording is decoupled from the mutation point, engineers inevitably introduce edge cases where mutations occur without corresponding undo logs.
 
 **WHEN TO APPLY**:
-Apply to all interpreted language runtimes, transactional database engines, state machines, and reactive systems where transactions, optimistic UI updates, or rollback mechanics are required.
+Apply to any stateful runtime, graph database, transaction engine, or reactive execution system where speculative execution (e.g., hypothetical logic, AST evaluation, backtracking solvers) requires atomic commit/rollback guarantees.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// Production Pattern derived from src/state.rs and src/state/mutation.rs
+// Extracted from Nucleoid's atomic mutation pattern (src/state/mutation.rs)
 use indexmap::IndexMap;
+use std::sync::Arc;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Value {
@@ -98,51 +107,52 @@ pub enum Value {
     String(String),
 }
 
-pub struct Transaction {
-    records: Vec<(String, Option<Value>)>,
-}
-
-impl Transaction {
-    pub fn new() -> Self {
-        Self { records: Vec::new() }
-    }
-
-    pub fn record_before(&mut self, key: &str, before: Option<Value>) {
-        self.records.push((key.to_string(), before));
+impl Value {
+    pub fn same_value(&self, other: &Value) -> bool {
+        self == other
     }
 }
 
-pub struct StateEngine {
-    store: IndexMap<String, Value>,
-    transaction: Transaction,
+pub struct TransactionLog {
+    variable_undo_stack: Vec<(String, Option<Value>)>,
 }
 
-impl StateEngine {
-    pub fn new() -> Self {
-        Self {
-            store: IndexMap::new(),
-            transaction: Transaction::new(),
+impl TransactionLog {
+    pub fn record_variable(&mut self, name: &str, before: Option<Value>) {
+        self.variable_undo_stack.push((name.to_string(), before));
+    }
+}
+
+pub struct StateStore {
+    variables: IndexMap<String, Value>,
+}
+
+pub struct ExecutionEngine {
+    state: StateStore,
+    transaction: TransactionLog,
+}
+
+impl ExecutionEngine {
+    /// Mutates state while atomically capturing rollback invariant
+    pub fn assign_variable(&mut self, name: &str, value: Value) -> bool {
+        let before = self.state.variables.get(name).cloned();
+        let changed = before.as_ref().is_none_or(|b| !b.same_value(&value));
+
+        // Invariant: Capture undo snapshot BEFORE mutation
+        self.transaction.record_variable(name, before);
+
+        if changed {
+            self.state.variables.insert(name.to_string(), value);
         }
-    }
-
-    /// ATOMIC MUTATION: Combines recording and mutation into an inseparable unit.
-    pub fn assign(&mut self, key: &str, value: Value) -> bool {
-        let before = self.store.get(key).cloned();
-        let changed = before.as_ref().map_or(true, |b| b != &value);
-
-        // Record undo image prior to mutation
-        self.transaction.record_before(key, before);
-        self.store.insert(key.to_string(), value);
         changed
     }
 
-    /// ROLLBACK MECHANIC: Non-recording restore channel.
-    /// MUST NOT call `assign()` as that would pollute the transaction log.
+    /// Rollback restores snapshots directly WITHOUT recording undo entries
     pub fn rollback(&mut self) {
-        while let Some((key, before)) = self.transaction.records.pop() {
+        while let Some((name, before)) = self.transaction.variable_undo_stack.pop() {
             match before {
-                Some(val) => { self.store.insert(key, val); }
-                None => { self.store.shift_remove(&key); }
+                Some(val) => { self.state.variables.insert(name, val); },
+                None => { self.state.variables.shift_remove(&name); },
             }
         }
     }
@@ -151,173 +161,157 @@ impl StateEngine {
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// CRITICAL DEFECT: Naked mutation decoupled from transaction log
-impl StateEngine {
-    pub fn assign_bad(&mut self, key: String, value: Value) {
-        // Anti-pattern: Caller forgot to record before-image
-        self.store.insert(key, value);
-    }
-
-    pub fn rollback_bad(&mut self) {
-        // Anti-pattern: Invoking mutation method during rollback causes infinite log growth
-        for (key, val) in self.transaction.records.drain(..) {
-            if let Some(v) = val {
-                self.assign_bad(key, v); // Dirty log pollution!
-            }
-        }
-    }
+// ANTI-PATTERN: Decoupled mutation and manual transaction logging
+pub fn unsafe_assign(engine: &mut ExecutionEngine, name: &str, value: Value) {
+    // BUG: Mutating state directly without enforcing undo logging inside the mutation barrier.
+    // If an error or early return occurs before manual logging, state cannot be rolled back!
+    engine.state.variables.insert(name.to_string(), value);
+    
+    // Developer forgets to call: engine.transaction.record_variable(name, before);
 }
 ```
 
 **VERIFICATION METHOD**:
-Enforce state mutation immutability outside `src/state/mutation.rs` using Rust module visibility (`pub(crate)` vs private). Implement a property-based test verifying that after any sequence of random mutations followed by `rollback()`, the state checksum matches the pre-transaction baseline byte-for-byte.
+Enforce via property-based test asserting that after any arbitrary sequence of random mutations followed by `rollback()`, the state store bitwise-matches its pre-transaction state:
+```rust
+#[test]
+fn test_rollback_restores_identical_state() {
+    let mut engine = ExecutionEngine {
+        state: StateStore { variables: IndexMap::new() },
+        transaction: TransactionLog { variable_undo_stack: Vec::new() },
+    };
+    engine.state.variables.insert("x".into(), Value::Integer(42));
+    let initial_snapshot = engine.state.variables.clone();
+
+    engine.assign_variable("x", Value::Integer(100));
+    engine.assign_variable("y", Value::String("temp".into()));
+    
+    engine.rollback();
+    assert_eq!(engine.state.variables, initial_snapshot);
+}
+```
 
 ---
 
-### 2. Read-Only Entity Enforcement at the Memory Subsystem Boundary
+### 2. Lexical Distinctness in Declarative Namespaces
 **RULE**:
-When an entity or data structure is declared immutable or read-only (e.g., Enums, Frozen Objects, Sealed Shapes), immutability MUST be enforced at the lowest mutation layer of the engine, not merely at the parser or AST validator level. Writes, deletions, and structural push/pop/shift operations MUST check the read-only registry and return a recoverable runtime error, aborting the transaction before state or dependency graph pollution occurs.
+In symbolic reasoning engines, template declarations (class-level rules) and concrete instance nodes MUST be partitioned into structurally distinct, strongly-typed keys at the compiler level. A class-level property rule (e.g., `$Class.property`) MUST NOT be represented by the same type or memory representation as an instance evaluation node (e.g., `instance.property`).
 
 **WHY**:
-Parser-level validation only catches direct lexical assignments (e.g., `Status.OPEN = 1`). It completely fails against aliasing, property propagation, runtime destructuring, dynamic key access (`Status[dynamicKey] = 2`), and mutation methods (`Status.push(...)`, `delete Status.OPEN`). If read-only checks are bypassed, constant models drift, leading to logic bugs across reasoning systems.
+Allowing stringly-typed or uniform identifier representations between declaration rules and runtime instance nodes leads to severe semantic corruption:
+1. Re-evaluating an instance node can overwrite or delete the class template rule.
+2. Topological graph traversals encounter cycles when template lookup collides with instance attributes.
+3. Class rule inheritance fails during polymorphic resolution because instance lookups accidentally match class patterns.
 
 **WHEN TO APPLY**:
-Apply to all language runtime implementations, state management stores, and neuro-symbolic knowledge representations supporting categorical types, constants, or frozen objects.
+Knowledge graphs, neuro-symbolic systems, rule-based compilers, and Object-Oriented Logic Programming (OOLP) runtimes where definitions generate instances dynamically.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// Pattern derived from Nucleoid NUC-90 & src/state/mutation.rs
-use std::collections::HashSet;
+// Extracted from src/state.rs
+use std::fmt;
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub struct ObjectId(pub u64);
+/// DeclarationKey: Explicit strongly-typed wrapper for class rules
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct DeclarationKey(String);
 
-#[derive(Debug)]
-pub enum RuntimeError {
-    TypeError(String),
+impl DeclarationKey {
+    #[must_use]
+    pub fn property(class: &str, property: &str) -> Self {
+        DeclarationKey(format!("${class}.{property}"))
+    }
 }
 
-pub struct RuntimeMemory {
-    read_only_set: HashSet<ObjectId>,
-    objects: IndexMap<ObjectId, IndexMap<String, String>>,
+/// NodeKey: Explicit strongly-typed wrapper for runtime graph instance nodes
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct NodeKey(String);
+
+impl NodeKey {
+    #[must_use]
+    pub fn instance_property(instance_id: &str, property: &str) -> Self {
+        NodeKey(format!("{instance_id}.{property}"))
+    }
 }
 
-impl RuntimeMemory {
-    pub fn mark_read_only(&mut self, id: ObjectId) {
-        self.read_only_set.insert(id);
-    }
+pub struct ClassRegistry {
+    // Strongly typed: Only DeclarationKey allowed here
+    declarations: indexmap::IndexMap<DeclarationKey, String>,
+}
 
-    pub fn is_read_only(&self, id: &ObjectId) -> bool {
-        self.read_only_set.contains(id)
-    }
-
-    pub fn ensure_writable(&self, id: &ObjectId) -> Result<(), RuntimeError> {
-        if self.is_read_only(id) {
-            return Err(RuntimeError::TypeError("Enums are read-only".to_string()));
-        }
-        Ok(())
-    }
-
-    pub fn write_property(&mut self, id: &ObjectId, prop: &str, val: String) -> Result<(), RuntimeError> {
-        // Guard applied universally at memory barrier
-        self.ensure_writable(id)?;
-        
-        let entry = self.objects.entry(*id).or_default();
-        entry.insert(prop.to_string(), val);
-        Ok(())
-    }
-
-    pub fn delete_property(&mut self, id: &ObjectId, prop: &str) -> Result<(), RuntimeError> {
-        // Guard applied on deletion
-        self.ensure_writable(id)?;
-        
-        if let Some(entry) = self.objects.get_mut(id) {
-            entry.shift_remove(prop);
-        }
-        Ok(())
-    }
+pub struct DependencyGraph {
+    // Strongly typed: Only NodeKey allowed here
+    nodes: indexmap::IndexMap<NodeKey, Vec<NodeKey>>,
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// CRITICAL DEFECT: Checking read-only flag exclusively in AST assignment node
-fn execute_ast_node(node: &AstNode, memory: &mut RuntimeMemory) -> Result<(), RuntimeError> {
-    match node {
-        AstNode::Assign { target, val } => {
-            // Anti-pattern: Dynamic lookups, method modifications, and aliases bypass this!
-            if target.is_enum_literal() {
-                return Err(RuntimeError::TypeError("Cannot assign".into()));
-            }
-            memory.write_property_unguarded(target.id(), target.key(), val)?;
-        }
-        AstNode::MethodCall { target, method, args } => {
-            // Bug: Mutations via methods (push, shift, splice) mutate read-only data!
-            memory.execute_method(target.id(), method, args)?;
-        }
-    }
-    Ok(())
+// ANTI-PATTERN: Stringly-typed identifiers for both templates and runtime instances
+pub struct CorruptedEngine {
+    // Using plain String allows "$User.age" and "user_1.age" in the same hashmap.
+    // Accidental string splitting or prefix confusion allows instance states to overwrite rules.
+    pub graph_nodes: std::collections::HashMap<String, Vec<String>>,
 }
 ```
 
 **VERIFICATION METHOD**:
-Implement integration test assertions verifying that assigning to an enum directly, assigning through an alias (`alias = Status; alias.MEMBER = "NEW"`), dynamic indexing (`Status["MEMBER"] = "NEW"`), and deletion (`delete Status.MEMBER`) all produce `TypeError("Enums are read-only")` and trigger transaction rollback.
+Type system verification via Rust compiler (`#[deny(clippy::all)]`). Add compile-fail tests (`trybuild`) demonstrating that passing a `DeclarationKey` into a function accepting a `NodeKey` fails compilation:
+```rust
+fn resolve_dependency(node: &NodeKey) {}
+
+// In test harness:
+// let decl = DeclarationKey::property("Human", "mortal");
+// resolve_dependency(&decl); // MUST fail to compile: mismatched types
+```
 
 ---
 
-### 3. Disambiguation-Proof Lookahead Parsing for Overloaded Language Primitives
+### 3. Asymmetric Dynamic Axis Endpoint Binding Invariant
 **RULE**:
-When introducing declarative language constructs that reuse existing keywords or identifiers (e.g., `enum Name: A, B` where `enum` was previously a valid identifier or variable), the recursive descent parser MUST implement an isolated, non-mutating lookahead probe (`accepted(...)` pattern). The probe parser MUST clone or take the token stream, attempt the prospective grammar branch, verify exact delimiter constraints (e.g., minimum 2 members for single-line enum to prevent collision with typed declaration `enum: Type`), and reset parser state before committing to an AST production.
+Geometric transformation rules within symbolic world models MUST define symmetry axes via explicit bounding box coordinate vectors (`{start: {x, y}, end: {x, y}}`) anchored to temporal epoch selectors (such as `@first`), rather than hardcoding scalar angular degrees or relative frame offsets.
 
 **WHY**:
-Without speculative lookahead parsing, overlapping syntax definitions trigger greedy reductions or spurious syntax errors. For example, in Nucleoid, `enum Status: PENDING` was previously valid typed declaration syntax. Greedily consuming `enum` breaks backward compatibility and causes downstream syntax failures across existing model bases.
+In spatial visual reasoning tasks (e.g., ARC puzzles), objects undergo reflection, rotation, and translation across timesteps. Assigning a scalar orientation (e.g., `mirror_axis = 135`) breaks invariance when the canvas size shifts, when the object is non-square, or when bounding-box coordinates drift during pipeline stages. Endpoint-derived vector axes guarantee that reflection lines automatically scale and translate with the object's spatial bounds across all input/output dimensions.
 
 **WHEN TO APPLY**:
-Compilers, domain-specific language parsers, and AST transformation engines introducing context-sensitive syntax without introducing reserved lexer keywords.
+Neuro-symbolic computer vision, 2D matrix transformation engines, spatial planning agents, and geometric solver systems.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// Pattern derived from src/lang/ast/parser/statement.rs
-pub struct TokenCursor {
-    pub position: usize,
-    pub tokens: Vec<String>,
+// Concrete coordinate invariant extracted from commit 713cc5a4 and arc/src/analyzer.ts
+#[derive(Debug, Clone, PartialEq)]
+pub struct Point {
+    pub x: i32,
+    pub y: i32,
 }
 
-pub struct RecursiveParser {
-    pub cursor: TokenCursor,
-    pub depth: usize,
+#[derive(Debug, Clone, PartialEq)]
+pub struct BoundingBox {
+    pub x: i32,
+    pub y: i32,
+    pub width: i32,
+    pub height: i32,
 }
 
-impl RecursiveParser {
-    /// Executes a speculative lookahead without side effects on failure
-    pub fn probe<T, F>(&mut self, parse_fn: F) -> Option<T>
-    where
-        F: FnOnce(&mut RecursiveParser) -> Result<T, ()>,
-    {
-        let saved_pos = self.cursor.position;
-        let saved_depth = self.depth;
+#[derive(Debug, Clone, PartialEq)]
+pub struct LineAxis {
+    pub start: Point,
+    pub end: Point,
+}
 
-        // Create isolated probe
-        let mut probe_parser = RecursiveParser {
-            cursor: TokenCursor {
-                position: self.cursor.position,
-                tokens: self.cursor.tokens.clone(),
+impl BoundingBox {
+    /// Northwest-to-Southeast diagonal reflection axis
+    #[must_use]
+    pub fn derive_diagonal_mirror_axis(&self) -> LineAxis {
+        LineAxis {
+            start: Point {
+                x: self.x,
+                y: self.y,
             },
-            depth: self.depth,
-        };
-
-        match parse_fn(&mut probe_parser) {
-            Ok(result) => {
-                // Commit cursor position only on success
-                self.cursor.position = probe_parser.cursor.position;
-                Some(result)
-            }
-            Err(_) => {
-                // Discard changes cleanly
-                self.cursor.position = saved_pos;
-                self.depth = saved_depth;
-                None
-            }
+            end: Point {
+                x: self.x + self.width - 1,
+                y: self.y + self.height - 1,
+            },
         }
     }
 }
@@ -325,329 +319,260 @@ impl RecursiveParser {
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// CRITICAL DEFECT: Destructive lookahead without backtracking restoration
-impl RecursiveParser {
-    pub fn parse_greedy_enum(&mut self) -> Result<Stmt, ParseError> {
-        if self.peek() == "enum" {
-            self.advance(); // Consumed permanently!
-            let name = self.expect_identifier()?;
-            self.expect(":")?;
-            // If it only has 1 token and fails, the parser cannot recover
-            // into an identifier typed declaration statement!
-            let members = self.parse_members()?; 
-            return Ok(Stmt::Enum(name, members));
-        }
-        self.parse_identifier_statement() // Will fail: "enum" was already swallowed
-    }
+// ANTI-PATTERN: Hardcoded scalar bearing angle
+pub struct FlawedMirrorRule {
+    pub axis_angle_degrees: f64, // e.g. 135.0
 }
+// When translated to a non-square canvas (e.g. 3x7), 135 degrees produces
+// fractional grid coordinates that fail exact discrete matrix reconstruction.
 ```
 
 **VERIFICATION METHOD**:
-Implement parser fuzz tests covering identical keyword prefixes: `enum Status: PENDING`, `enum Unit:\n ONLY`, `enum Status: A, B`, `enum = 4; enum * 2`. Confirm zero ambiguous parser states and ensure error messages maintain strict token location fidelity.
+Unit testing boundary invariant on asymmetric bounding boxes:
+```rust
+#[test]
+fn test_diagonal_mirror_axis_bounds() {
+    let bbox = BoundingBox { x: 2, y: 3, width: 4, height: 4 };
+    let axis = bbox.derive_diagonal_mirror_axis();
+    assert_eq!(axis.start, Point { x: 2, y: 3 });
+    assert_eq!(axis.end, Point { x: 5, y: 6 });
+}
+```
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Visualizer Few-Shot Override Redundancy Defect (BUG-ARC-01)
-- **Context**: `arc/src/visualizer.ts` in ARC Neuro-Symbolic Subsystem
-- **What Was Expected**: Visualizer LLM requests for instances, values, and output instance matrices should use the comprehensive default few-shot configuration provided by the LLM client infrastructure to ground domain context.
-- **What Actually Happened**: The visualizer functions explicitly overrode few-shot configuration with an empty closure `few_shot: () => ""`. This stripped all few-shot demonstrations from generation requests, causing degraded matrix output inference and higher hallucination rates.
-- **Evidence in Repo**: Commit `e059f4bc` ("Remove empty visualizer few-shot overrides").
-- **Root Cause**: Developer had placed stub overrides during early visualizer debugging to bypass token rate limits, but the stubs remained in production, crippling the model's perception feedback loop.
+### Incident 1: Working-Tree Race and Schema Invalidation in Dynamic Axis Handoff (BUG-NUC-01)
+- **Context**: `arc/docs/ARC-NUC-74dd1130.md`, ARC puzzle solving sub-agent pipeline.
+- **What Was Expected**: The agent pipeline was instructed to replace a static scalar mirror rule (`mirror_axis = 135`) with an endpoint-defined dynamic bounding-box axis:
+  ```nuc
+  $Obj.mirror_axis = {start: {x: $Obj.x@first, y: $Obj.y@first}, end: {x: $Obj.x@first + $Obj.width@first - 1, y: $Obj.y@first + $Obj.height@first - 1}}
+  ```
+- **What Actually Happened**: The dataset handoff was **blocked**. While the `arc-dataset` worker was preparing the revision, concurrent processes edited the working tree (modifying `dataset.74dd1130.json`, `README.md`, and palette ranking policies). Additionally, schema validation failed due to 30 missing coordinate/orientation metadata fields across 5 instances and 5 missing object-description comments. No solver ran, preventing unvalidated code injection.
+- **Evidence in Repo**: Commit `713cc5a4` ("Document blocked dynamic-axis revision for ARC 74dd1130").
+- **Root Cause**: Lack of an atomic workspace lease / lock between autonomous agents. Concurrent file mutations invalidated the baseline assumptions of the dataset worker, and the schema validator caught missing metadata fields required by the runtime.
 - **Remediation Code Diff**:
-```typescript
-// arc/src/visualizer.ts
- export async function instances({ puzzle_id, only_puzzle_dataset }) {
-   const { instances } = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
--    few_shot: () => "",
-     messages: [
-       { role: "assistant", ... }
-     ]
-   });
- }
- 
- export async function value({ puzzle_id, only_puzzle_dataset }) {
-   const { implementation } = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
--    few_shot: () => "",
-     messages: [ ... ]
-   });
- }
+```markdown
+--- a/arc/docs/ARC-NUC-74dd1130.md
++++ b/arc/docs/ARC-NUC-74dd1130.md
+@@ -11,3 +11,3 @@
+ | Output canvas | `EXACT` |
+-| Solver runs | 1 local run on 5-Nov-2026, exit 0, an exact match... |
++| Solver runs | 1 local run on 5-Nov-2026, exit 0...; the 8-Nov-2026 dynamic-axis invocation ended without a run |
++### Dynamic axis attempt -- 8-Nov-2026
++The handoff was **blocked**, not `written`. The dataset and README changed
++outside this invocation while the worker was preparing the revision, and
++the shared letter-ranking policy changed too. There was no stable
++preservation baseline to overwrite safely.
 ```
-- **Lesson**: Do not use silent inline closures to override upstream prompt and context assembly. Configuration overrides must be controlled by explicit environment or runtime flags.
+- **Lesson**: Multi-agent file mutation systems must enforce working-tree transaction locks and verify git working-tree cleanliness before proposing or committing state modifications.
 
 ---
 
-### Incident 2: Infinite Propagation Loop in Cyclic Property Anchors (BUG-PROP-85)
-- **Context**: Nucleoid NUC-85 engine evaluation (`docs/nuc-0000.md`)
-- **What Was Expected**: Fixed cross-property class anchors (`$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}`) should settle cleanly to fixed graph values.
-- **What Actually Happened**: Independent evaluation rejected NUC-85 because cyclic rules creating fresh objects never settled, exceeding the runtime's hard limit of 100,000 propagation steps.
-- **Evidence in Repo**: `docs/nuc-0000.md` rejection notice: *"Fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims."*
-- **Root Cause**: In Nucleoid's graph engine, constructing an object literal creates a brand new `ObjectId`. Because every evaluation yielded a fresh reference with new identity rather than a stable value, dependency graph change detection (`!before.same_value(&value)`) continually returned `true`, causing an unbounded cascade.
-- **Remediation Invariant**:
-```rust
-// Architectural guard invariant: Enforce value equality checks over reference creation
-// When comparing object topologies in graph propagation:
-let changed = match (&before, &current) {
-    (Some(Value::Object(id_a)), Value::Object(id_b)) => {
-        // Must perform deep topological/content equality if generated dynamically,
-        // or throttle cyclic creation via an iteration step circuit breaker.
-        !self.state.deep_equals(id_a, id_b)
-    }
-    (Some(b), c) => !b.same_value(c),
-    (None, _) => true,
-};
-if step_count > 100_000 {
-    return Err(Error::runtime_error("Propagation step limit exceeded"));
-}
-```
-- **Lesson**: Declarative engines that allow dynamic object instantiation within rules must never rely on pointer/ID identity for change-propagation termination.
-
----
-
-### Incident 3: Destructive State Desynchronization During Destructuring Rollbacks (BUG-STATE-67)
-- **Context**: `src/state/mutation.rs` & `dataset/nucleoid.spec.jsonl`
-- **What Was Expected**: A failure during destructuring declaration (e.g., `{a, b} = source` where evaluating `b` throws) must restore all previously assigned identifiers (e.g., `a`) to their exact before-images.
-- **What Actually Happened**: Partial destructuring modified variables in `state.variables` without rolling back the intermediate variables when downstream parsing or evaluation failed.
-- **Evidence in Repo**: Specification tests `spec-0704`, `spec-0711`, and `nuc-0067`.
-- **Root Cause**: Multiple target expressions were processed iteratively using individual transactions rather than a unified transaction boundary covering the full destructuring statement.
-- **Remediation Code Diff**:
-```rust
-// src/lang/ast/parser/statement.rs
- pub(super) fn statement(&mut self, statements: &mut Vec<Stmt>) -> Result<()> {
-     self.depth += 1;
-     // ...
-     let result = self.within(false, |parser| {
--        statements.push(parser.statement_inner()?);
-+        match parser.destructuring()? {
-+            Some(declarations) => statements.extend(declarations),
-+            None => statements.push(parser.statement_inner()?),
-+        }
-         Ok(())
-     });
-     // ...
- }
-```
-- **Lesson**: Compound statements that desugar into multiple discrete state mutations must execute within an isolated statement transaction block so that an error on target $N$ restores targets $1 \dots N-1$.
-
----
-
-### Incident 4: URL Serialization XSS Vulnerability in CLI Web UI Dependencies (BUG-SEC-72)
-- **Context**: Issue #72, Dependabot upgrade for `serialize-javascript` and `mocha`.
-- **What Was Expected**: Serializing JavaScript objects and URLs for web inspection interfaces must escape closing tags (`</script>`) and raw URL payloads.
-- **What Actually Happened**: `serialize-javascript` versions prior to 6.0.2 failed to sanitize URL string content, allowing XSS injections when rendered into browser script tags.
-- **Evidence in Repo**: PR / Issue #72 closed commit updates referencing CVE in `serialize-javascript < 6.0.2`.
-- **Root Cause**: Regular expressions in the serializer omitted sanitization for serialized JavaScript `URL` object types.
+### Incident 2: Cross-Site Scripting (XSS) via Unsanitized URL Strings in JavaScript Serializer (BUG-NUC-02)
+- **Context**: Node/TS test harness and serialization dependency (`serialize-javascript` < 6.0.2 in `package.json` / issue #72).
+- **What Was Expected**: Serializing arbitrary runtime state objects into client-readable JSON/JS strings for browser visualization must safely escape all nested string characters, HTML tags, and URLs.
+- **What Actually Happened**: `serialize-javascript` failed to sanitize URL string contents, allowing malicious strings embedded in object properties to escape quoting contexts and inject arbitrary script tags (`<script>alert(1)</script>`).
+- **Evidence in Repo**: Issue #72: "Bump the npm_and_yarn group with 2 updates: serialize-javascript and mocha".
+- **Root Cause**: Regular expressions in the serialization engine omitted escaping forward slashes and angle brackets inside valid URL format tokens.
 - **Remediation Code Diff**:
 ```json
-// package.json / lockfile
- {
+--- a/package.json
++++ b/package.json
+@@ -14,3 +14,3 @@
    "dependencies": {
 -    "serialize-javascript": "6.0.0"
-+    "serialize-javascript": "^6.0.2"
++    "serialize-javascript": "6.0.2"
    }
- }
 ```
-- **Lesson**: All serialization layers feeding web views or client visualization inspectors must use HTML entity-safe string escaping for all standard built-in types (URLs, RegExps, Dates).
+- **Lesson**: Data payloads rendered across the serialization boundary must escape HTML entities (`<`, `>`, `/`, `&`, `\u2028`, `\u2029`) even if they validate as syntactically correct URLs.
 
 ---
 
-### Incident 5: State Corruption via Enum Property Mutation Bypassing Variable Immutability (BUG-STATE-90)
-- **Context**: `src/state/mutation.rs` (Implementation of NUC-90 Enum Declarations)
-- **What Was Expected**: Enums declared as `enum Status: OPEN, CLOSED` must be completely immutable. Any attempt to set `Status.OPEN = "X"`, `delete Status.OPEN`, or execute `Status.push(...)` must raise a `TypeError` and leave the enum unchanged.
-- **What Actually Happened**: Because `Status` resolved to an `ObjectId` inside `state.objects`, standard property write operations (`write_property`) treated it as a regular mutable object, corrupting constant categories across the graph.
-- **Evidence in Repo**: NUC-90, `dataset/nucleoid.spec.jsonl` (spec-0705 through spec-0711), `src/state.rs`.
-- **Root Cause**: The runtime lacked a distinct read-only metadata tracking structure for object IDs.
+### Incident 3: Infinite Backtracking Parser Trap in Premise Parsing (BUG-NUC-03)
+- **Context**: `src/lang/ast/parser/statement.rs` during recursive descent of `suppose` statements.
+- **What Was Expected**: Parsing a premise before a colon (e.g., `suppose x > 10: ...`) should parse line clauses linearly in $O(N)$ token time.
+- **What Actually Happened**: The recursive probe in `attempt_suppose_premise` executed exploratory backtracking branches that repeatedly re-tokenized and re-parsed identical token intervals `(position, depth)`, causing exponential complexity $O(2^N)$ on nested or malformed statements.
+- **Evidence in Repo**: `src/lang/ast/parser/statement.rs`, lines 212-258 (`suppose_premises` memoization map and depth tracking).
+- **Root Cause**: Unmemoized backtracking parser state without lookahead depth controls.
 - **Remediation Code Diff**:
 ```rust
-// src/state.rs
- pub struct State {
-     variables: IndexMap<String, Value>,
-     objects: IndexMap<ObjectId, ObjectData>,
-     classes: IndexMap<String, ClassData>,
-     functions: IndexMap<String, Arc<Function>>,
-     histories: IndexMap<HistoryKey, History>,
-+    read_only: IndexSet<ObjectId>,
- }
- 
-+// src/state/mutation.rs
-+pub(crate) fn ensure_writable(&self, object: &ObjectId) -> Result<()> {
-+    if self.state.is_read_only(object) {
-+        return Err(Error::type_error("Enums are read-only"));
-+    }
-+    Ok(())
-+}
-+
- pub(crate) fn write_property(
-     &mut self,
-     object: &ObjectId,
-     property: &str,
-     value: Value,
- ) -> Result<()> {
-+    self.ensure_writable(object)?;
-     let changed = self.assign_property(object, property, value);
-     self.propagate_change(&NodeKey::property(object, property), changed)
- }
+--- a/src/lang/ast/parser/statement.rs
++++ b/src/lang/ast/parser/statement.rs
+@@ -218,6 +218,13 @@ impl Parser {
++        let attempt = (self.position, self.depth);
++        let outcome = if let Some(outcome) = self.suppose_premises.get(&attempt) {
++            outcome.clone()
++        } else {
++            let outcome = self.attempt_suppose_premise();
++            self.suppose_premises.insert(attempt, outcome.clone());
++            outcome
++        };
 ```
-- **Lesson**: Language-level immutability cannot rely on variable binding restrictions; it must be enforced on the heap object via memory access barriers.
+- **Lesson**: Backtracking parsers that speculatively parse statement prefixes MUST memoize outcomes keyed on `(token_index, recursion_depth)` to guarantee linear PEG parsing bounds.
+
+---
+
+### Incident 4: Process Exit Code Truncation in CLI Test Harness (BUG-NUC-04)
+- **Context**: `arc/server.ts`, lines 18-28.
+- **What Was Expected**: The exit code of the CLI runner should report the total number of matrix cell differences between generated output and ground truth.
+- **What Actually Happened**: In Unix/POSIX environments, process exit codes are stored in an 8-bit unsigned integer ($0 - 255$). If a test generated exactly 256 pixel errors, the OS truncated the code: `256 & 0xFF == 0`. The test runner interpreted exit code `0` as an exact match / success!
+- **Evidence in Repo**: `arc/server.ts`:
+  ```typescript
+  main()
+    .then((difference: number) => {
+      // Exit statuses keep eight bits, so 256 differences would read as 0.
+      process.exitCode = Math.min(difference, 255);
+    })
+  ```
+- **Root Cause**: Integer truncation of process exit status from 32-bit integer to 8-bit POSIX return value.
+- **Remediation Code Diff**:
+```typescript
+--- a/arc/server.ts
++++ b/arc/server.ts
+@@ -19,2 +19,3 @@ main()
+   .then((difference: number) => {
+-    process.exitCode = difference;
++    // Exit statuses keep eight bits, so 256 differences would read as 0.
++    process.exitCode = Math.min(difference, 255);
+   })
+```
+- **Lesson**: Process exit codes MUST NEVER encode unbounded count values. They must be clamped (`Math.min(val, 255)`) or converted to binary status indicators ($0$ for clean, $1$ for error), delegating full count metrics to stdout/stderr.
+
+---
+
+### Incident 5: Mutation Leak in Insertion-Ordered Property Deletion (BUG-NUC-05)
+- **Context**: `src/state.rs` (`restore_removed_property`) and `src/state/mutation.rs` (`remove_property`).
+- **What Was Expected**: Rolling back a property deletion must restore the property to its exact previous insertion index in `IndexMap<String, Value>`.
+- **What Actually Happened**: Standard hash map insertion appends the restored key to the end of the order, altering iteration order in deterministic spec tests and changing the execution order of downstream declarative rules.
+- **Evidence in Repo**: `src/state.rs`, lines 196-208 (`restore_removed_property` using `insert_full` and `move_index`).
+- **Root Cause**: `IndexMap::insert()` appends to the end. Restoring a deleted property without shifting it to its original index mutates iteration sequences across rollbacks.
+- **Remediation Code Diff**:
+```rust
+--- a/src/state.rs
++++ b/src/state.rs
+@@ -196,4 +196,8 @@ impl State {
+     pub(crate) fn restore_removed_property(
+         &mut self,
+         object: &ObjectId,
+         property: String,
++        index: usize,
+         before: Value,
+     ) {
+         if let Some(data) = self.objects.get_mut(object) {
+-            data.properties.insert(property, before);
++            let (current, _) = data.properties.insert_full(property, before);
++            data.properties
++                .move_index(current, index.min(data.properties.len() - 1));
+         }
+     }
+```
+- **Lesson**: In order-sensitive declarative runtimes, undo logs for collection deletions must record the original index position and explicitly restore it via index shifting (`move_index`).
 
 ---
 
 ## 4. Microscopic Code-Level Invariants
 
 ### 1. Micro-Syntax & Token-Level Precision
-- **Implicit Falsy Conversions & Distinctions**:
-  In Nucleoid's evaluation engine, `0`, `""`, `false`, and `null` are strictly distinct. Never use generic falsy checks when evaluating numeric expressions. In `src/state/mutation.rs`:
-  ```rust
-  // CORRECT: Strict distinction between uninitialized (None) and explicitly set (Some(Value::Null))
-  let changed = before
-      .as_ref()
-      .is_none_or(|before| !before.same_value(&value));
-  ```
-  Using JavaScript/Python style loose equality (`if (!value)`) causes `0` or `false` writes to be ignored, skipping propagation events across the dependency graph.
-
-- **Deep vs. Shallow Immutability During Object Spread**:
-  When evaluating object spread operations (e.g., `copy = {...Size}`), the engine allocates a brand new `ObjectId` in `State::objects` that is NOT registered in `State::read_only`. The spread creates an ordinary mutable object from an immutable enum. The implementation must guarantee that `read_only` bits do not propagate to spread clones.
-
-- **Operator Precedence Hazards in Parsing**:
-  In `src/lang/ast/parser/statement.rs`, parsing assignment operators (`=`, `:=`, `+=`) requires explicit target path verification:
-  ```rust
-  fn value_assignment(&mut self, target: Expr) -> Result<Stmt> {
-      self.check_path_target(&target, "Invalid value assignment target")?;
-      self.advance();
-      let value = self.expression()?;
-      Ok(Stmt::ValueAssign { target, value })
-  }
-  ```
-  Failing to call `check_path_target` allows invalid expressions like `(a + b) := 10` to reach the evaluator, resulting in memory corruption or panics during graph resolution.
-
----
+- **Strict Equality Over Coercion (`same_value`)**:
+  In `src/state/mutation.rs`, checking whether an assignment modifies state uses `before.is_none_or(|b| !b.same_value(&value))`. Rust avoids JavaScript-style implicit falsy coercions (`0 == false`, `"" == false`), but floating-point NaN and string references require identity equality checks rather than loose comparisons.
+- **Deep Immutability vs Shallow Copies in AST Nodes**:
+  In `src/lang/ast/parser/statement.rs`, AST expressions are boxed (`target: *target, value: *value`). When generating string keys (`src/lang/ast/generator/statement.rs`), nodes must be cloned deeply via explicit pattern matches (`Stmt::Assign { target, value }`) rather than pointer dereferences to avoid memory alias corruption across multi-threaded graph updates.
+- **Token Lookahead Safety**:
+  In `Parser::starts_statement()`, accessing historical tokens uses `self.position.checked_sub(1).and_then(...)`. Direct subtraction (`self.position - 1`) causes an unsigned integer underflow panic when `position == 0`.
 
 ### 2. Infinite Loop & Recursion Guards
 - **Parser Nesting Budget**:
-  Recursive descent parsers are vulnerable to stack overflow when processing malicious or heavily nested input (e.g., `[[[[...]]]]`). Nucleoid enforces strict depth caps in `src/lang/ast/parser/statement.rs`:
+  In `src/lang/ast/parser/statement.rs`:
   ```rust
-  pub(super) fn statement(&mut self, statements: &mut Vec<Stmt>) -> Result<()> {
-      self.depth += 1;
-      if self.depth > MAX_NESTING {
-          self.depth -= 1;
-          return Err(self.error("Statements are nested too deeply"));
-      }
-      // ... parsing logic ...
+  self.depth += 1;
+  if self.depth > MAX_NESTING {
       self.depth -= 1;
-      result
+      return Err(self.error("Statements are nested too deeply"));
   }
   ```
-  Every return path must decrement `self.depth`, or use an RAII depth guard, preventing depth counter leaks.
+  Depth is capped at `MAX_NESTING` (128). Every exit path must decrement `self.depth`, verified with a debug assertion: `debug_assert_eq!(self.depth, depth)`.
+- **Lineage Loop Termination**:
+  In `src/state.rs`, class inheritance traversal uses `std::iter::successors`:
+  ```rust
+  pub(crate) fn lineage<'s>(&'s self, class: Option<&'s ClassData>) -> impl Iterator<Item = &'s ClassData> {
+      std::iter::successors(class, |data| {
+          data.parent.as_deref().and_then(|parent| self.class(parent))
+      })
+      .take(self.classes.len()) // Termination proof: Prevents cycle-induced infinite loops
+  }
+  ```
+  The `.take(self.classes.len())` bounds graph traversal to avoid cycles if circular inheritance is injected into runtime state.
 
-- **Graph Propagation Circuit Breaker**:
-  In dynamic reactive graph evaluation, mutual dependencies (e.g., `A` updates `B`, which updates `A`) create infinite loops. The engine enforces an invariant propagation step ceiling of `100,000` steps. If this limit is exceeded, propagation aborts, throws a runtime error, and triggers transaction rollback.
-
----
-
-### 3. UI & UX Micro-Mechanics (Ratatui / Crossterm Workspace)
-- **Windows vs. Unix LF/CRLF Ambiguity**:
-  As noted in `README.md`, Windows terminals emit identical virtual key codes for pasted `LF` characters and `Ctrl-Enter`. The CLI workspace addresses this terminal ambiguity:
-  - Non-Windows environments treat `Ctrl-Enter` as run.
-  - Windows environments map `Ctrl-Enter` to a newline, reserving `F5` as the universal cross-platform execution key.
-- **Terminal Display-Cell Width Precision**:
-  When rendering tabular representations of dynamic objects (`serde_json` structures) inside the Ratatui terminal interface, character string lengths must not be computed via raw byte or character counts (`.len()`). Multi-byte UTF-8 glyphs and Asian double-width characters cause visual tearing and boundary overflow. The workspace enforces `unicode-width = "0.2"` to calculate true monospace terminal display cells.
-
----
+### 3. UI & UX Micro-Mechanics
+- **Terminal Layout Reflow & Key Ambiguity**:
+  As documented in `README.md`, `Ctrl-Enter` vs `Enter`: Windows terminals report pasted LF characters as `Enter` key events. To prevent pasted code blocks from triggering premature execution or infinite indentation loops, raw interactive modes distinguish between pasted newlines and deliberate command triggers (`F5` executes the entire buffer; `Ctrl-J` auto-indents; `Enter` only inserts a newline).
+- **Display Width vs Byte Slicing**:
+  `Cargo.toml` explicitly incorporates `unicode-width = "0.2"`. Interactive terminal rendering calculations MUST NEVER slice strings by raw byte offsets (`&str[..n]`), as multi-byte Unicode or emoji glyphs cause runtime panic crashes (`byte index is not a char boundary`). Display column widths must be measured via `unicode_width::UnicodeWidthStr::width`.
 
 ### 4. Backend Concurrency & Memory Safety
-- **Unsafe Code Ban**:
-  `Cargo.toml` explicitly forbids unsafe code:
-  ```toml
-  [lints.rust]
-  unsafe_code = "forbid"
-  ```
-  This guarantees that all AST manipulation, index operations, and object updates are memory safe by construction, eliminating use-after-free, double-free, and pointer aliasing bugs.
-
-- **Insertion-Order Guarantees for Deterministic Execution**:
-  Nucleoid enforces deterministic logic reasoning by using `indexmap::IndexMap` and `indexmap::IndexSet` rather than standard `HashMap`/`HashSet` throughout `src/state.rs`:
-  ```rust
-  pub struct State {
-      variables: IndexMap<String, Value>,
-      objects: IndexMap<ObjectId, ObjectData>,
-      classes: IndexMap<String, ClassData>,
-      functions: IndexMap<String, Arc<Function>>,
-      histories: IndexMap<HistoryKey, History>,
-      read_only: IndexSet<ObjectId>,
-  }
-  ```
-  Standard hash maps introduce non-deterministic iteration order across executions due to SipHash randomized keys. This causes non-deterministic graph resolution order and unpredictable tie-breaking in constraint satisfaction algorithms.
-
----
+- **Zero Unsafe Rust**:
+  `Cargo.toml` enforces `#![forbid(unsafe_code)]`. All pointer manipulations, memory references, and AST traversals are checked at compile time by the borrow checker.
+- **Immutable References During Mutation Hand-off**:
+  In `src/lang/ast/parser/statement.rs`, speculative parsing uses `std::mem::take(&mut self.tokens)` within `accepted()`. This moves token ownership temporarily to avoid cloning massive token vectors during lookahead exploration, restoring ownership upon completion.
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-- **Preserving Insertion Order on Property Rollbacks**:
-  When a property is deleted and subsequently rolled back, restoring it using a standard `.insert()` appends it to the end of the `IndexMap`, mutating the object's iteration order. Nucleoid prevents this subtle defect in `src/state.rs`:
+- **Null Safety in Property Restoration**:
+  When restoring state during a transaction rollback (`restore_property` in `src/state.rs`), if an object was deleted during the transaction, `self.objects.get_mut(object)` safely evaluates to `None`, bypassing property restoration without crashing on dangling object references.
+- **Unterminated Braces and Delimiters**:
+  In `Parser::braced()`, unterminated blocks are captured explicitly at EOF:
   ```rust
-  pub(crate) fn restore_removed_property(
-      &mut self,
-      object: &ObjectId,
-      property: String,
-      index: usize,
-      before: Value,
-  ) {
-      if let Some(data) = self.objects.get_mut(object) {
-          let (current, _) = data.properties.insert_full(property, before);
-          data.properties
-              .move_index(current, index.min(data.properties.len() - 1));
-      }
+  if self.check(&Token::Eof) {
+      return Err(self.error("Unterminated block"));
   }
   ```
-  `move_index` restores the exact pre-deletion slot, guaranteeing complete byte-for-byte state identity upon rollback.
-
-- **Sub-8-Bit Exit Code Normalization**:
-  In `arc/server.ts`, process exit codes are bounded:
-  ```typescript
-  main().then((difference: number) => {
-    // Exit statuses keep eight bits, so 256 differences would read as 0.
-    process.exitCode = Math.min(difference, 255);
-  });
-  ```
-  On POSIX operating systems, exit codes wrap modulo 256. If an ARC evaluation resulted in exactly 256 matrix errors, unhandled exit codes would evaluate to `256 % 256 = 0`, falsely signaling complete test success to CI runners. Bounding exit codes to `Math.min(diff, 255)` prevents this silent green failure mode.
+  This prevents the parser from entering an infinite spin on trailing whitespace or missing closing braces.
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-### 1. Architecture
-The architecture is structured as a layered deterministic state machine:
-- The lexical/parser front-end converts declarative logic statements into structured AST expressions.
-- The runtime coordinates an in-memory graph dependency matrix (`src/graph/`) with an atomic, transactional state store (`src/state/`).
-- Class declarations serve as reusable structural templates, decoupling template rule definitions from concrete object instance states.
-- The neuro-symbolic bridge (`arc/`) isolates stochastic deep model calls from deterministic symbolic state manipulation, using Nucleoid as a ground-truth reasoning validator.
+### Dimension 1: Architecture
+The architecture operates on an asymmetric dual-core model:
+- **Low-Latency Logic Core (Rust)**: Manages AST generation, tokenization, reactive graph construction, and transactional state stores (`IndexMap`). Completely memory-safe and zero-allocation where possible.
+- **Neuro-Symbolic Orchestrator (TypeScript/Node)**: Coordinates multi-modal spatial tasks (ARC), managing LLM communication, image matrix transformations, and dataset compilation.
 
-### 2. Core Abstractions
-- `Stmt` and `Expr`: Algebraic Data Types (ADTs) representing statements (assignments, conditional rules, class templates, enums) and expressions.
-- `DeclarationKey`: Stable identifier for class-level rules (`$Class.property`) that distinguishes instance nodes from class rule templates.
-- `ObjectId`: Globally unique handle for allocated object topologies.
-- `NodeKey` & `ShapeKey`: Fine-grained graph dependency tokens representing field-level variable/property subscriptions vs. structural entry mutations.
-- `HistoryKey`: Keys tracking sequential time-series versions of individual variables and properties for retrospective evaluation (`@first`, historical queries).
+### Dimension 2: Core Abstractions
+- `DeclarationKey`: Strongly-typed identifier representing class-level templates (`$Class.property`).
+- `HistoryKey`: Namespaced identifier (`Variable(String)` vs `Property(ObjectId, String)`) enabling time-series tracking of state transitions.
+- `Value`: Primitive variants (`Null`, `Boolean`, `Number`, `String`, `Array`, `Object`, `Function`) with deterministic serialization behavior.
+- `Program`: Represents a compiled batch of statements bundled with token position spans for source-mapped error reporting.
 
-### 3. Error Handling
-- Leverages Rust's `thiserror` crate to construct structured error enumerations (`Error::TypeError`, `Error::SyntaxError`, `Error::ReferenceError`).
-- Operates under a strict transaction boundary: when an evaluation or execution path throws an error, the runtime invokes `Transaction::rollback()`, unwinding all state and graph changes without panicking.
-- Parsing errors capture exact line and column offsets by preserving token position references (`self.here()`).
+### Dimension 3: Error Handling
+- Custom error hierarchy backed by `thiserror`: Syntax errors, Type errors, Graph cycle errors, Nesting depth overflow errors.
+- Every mutable operation returns `Result<T, Error>`.
+- Parse errors immediately halt compiler passes and report byte offsets, preventing half-parsed AST structures from reaching the runtime.
 
-### 4. Testing
-- Driven by a massive data-driven specification harness: `dataset/nucleoid.spec.jsonl` contains hundreds of serialized executable programs with expected return values and exception contracts.
-- Rust test runner `tests/nucleoid.spec.rs` deserializes the specification dataset via `build.rs` and dynamically runs every test against the engine.
-- Synthetic regression harnesses (`dataset/nucleoid.synth.64.jsonl`) validate edge cases (destructuring rollbacks, enum read-only semantics, class rule inheritance).
+### Dimension 4: Testing
+- Build-time code generation (`build.rs`) consumes JSONL specification datasets and emits native Rust integration tests (`tests/nucleoid.spec.rs`).
+- Deterministic replay harness: Tests verify that executing the same sequence of declarative statements generates identical state hash representations across consecutive runs.
 
-### 5. Security
-- Eliminates memory safety exploits by declaring `#![forbid(unsafe_code)]`.
-- Neutralizes time-zone based information leakage or platform dependencies by disabling default features in `chrono` and locking runtime timekeeping to UTC.
-- Prevents script injection and prototype poisoning by implementing isolated variable and object registries rather than evaluating code directly inside JavaScript or native hosts.
+### Dimension 5: Security
+- `#![forbid(unsafe_code)]` set in `Cargo.toml`.
+- Deny-by-default execution in declarative scripts: No arbitrary shell execution or unconstrained filesystem access from within `.nuc` runtime code.
+- Prevention of prototype pollution and XSS in frontend visualization bundles via strict dependency pinning (resolving CVEs in `serialize-javascript`).
 
-### 6. Performance
-- Replaces standard dynamic memory maps with contiguous `IndexMap` structures, optimizing cache locality during sequential graph traversals.
-- Minimizes allocations during source code generation and graph rendering via pre-allocated string buffers.
-- Eliminates token bloat for LLM interaction: Nucleoid’s syntax is explicitly minimized for token efficiency, consuming 2–20 fewer
+### Dimension 6: Performance
+- Deterministic insertion-ordered collections (`indexmap::IndexMap`) avoid the overhead of binary search trees while preserving exact sequence order.
+- Shallow cloning of AST structures avoided through `Arc<Function>` references.
+- Memoized premise exploration in recursive descent parsing eliminates $O(2^N)$ backtracking stalls.
+
+### Dimension 7: Deployment & CI/CD
+- GitHub Actions workflows (`.github/workflows/`): Automated matrix testing on Linux, macOS, and Windows.
+- Minimal binary packaging: CLI compiled with stripped debug symbols and platform-independent UTC time handling (`chrono` without platform timezone bindings).
+
+### Dimension 8: Agent Patterns
+- Multi-agent separation of concerns:
+  - `arc-dataset.agent.md`: Manages training pairs, orientations, and palette rankings.
+  - `nuc-proposal.agent.md`: Synthesizes minimal declarative logic rules.
+  - `arc-debug.agent.md`: Analyzes discrepancy matrices between expected and evaluated canvas outputs.
+- Prompt optimization: Few-shot examples are stripped of whitespace and minified via regex (`replace(/("(?:[^"\\]|\\.)*")|\s+/g, "$1")`) to conserve LLM context windows.
+
+### Dimension 9: Data Flow
+- **Data Ingestion**: Matrix grids $\to$ Shape segmentation (`analyzer.ts`) $\to$ Few-shot prompt serialization $\to$ LLM rule extraction

@@ -275,8 +275,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "86e1ea5267424e2b0d453067682345b2968a00392c9a653ea05b045e93d54cde",
-    "lastHarvestedAt": "2026-11-04T21:58:20.598Z",
+    "contentHash": "ba1ebe0b84b1f1bd101d882ea70f24e5b954bab3e19b29e085ed0252f63a1b38",
+    "lastHarvestedAt": "2026-11-08T11:13:50.443Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "e059f4bc",
+    "sourceVersion": "713cc5a4",
     "license": "Apache-2.0",
-    "contentHash": "cbf31917c9dfec607e49c39895a0ff40cc9545584bb57e30b231dfcd1caf2936",
-    "lastHarvestedAt": "2026-11-08T09:32:12.109Z",
+    "contentHash": "a31d71b1735ba63c8d776b1b8022b07dcea78264c7796467986348ade7e34bbe",
+    "lastHarvestedAt": "2026-11-08T11:07:47.696Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {

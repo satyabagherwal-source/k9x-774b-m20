@@ -8286,3 +8286,5 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `1d4faeaf` | Multi-dimensional audit evidence | 2026-11-08T10:28:57.284Z |
 | `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-08T10:48:30.200Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `f01dd925` | Multi-dimensional audit evidence | 2026-11-08T10:49:07.688Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `713cc5a4` | Multi-dimensional audit evidence | 2026-11-08T11:07:47.696Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-08T11:13:50.443Z |
