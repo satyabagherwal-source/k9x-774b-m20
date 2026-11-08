@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source**: github ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
-> **Source Version**: `dcc81ba3`  
+> **Source Version**: `81275065`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:09:41.112Z  
+> **Timestamp**: 2026-11-08T19:07:04.901Z  
 > **Learning ID**: `learn-github-matthart1983-netwatch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:09:36.514Z  
+> **Harvest Timestamp**: 2026-11-08T19:07:04.367Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Network diagnostics in your terminal. Inspect traffic, connections and network behaviour. Built with Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3581 stars
+- **Stars / Engagement**: 3584 stars
 
 ---
 
@@ -2158,193 +2158,302 @@ fn main() -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5a8c1739` (2026-11-07)
-**Commit Message**: fix(health): don't ask the second internet target behind a silent gateway (#187)
+### Incident Patch 1: `fc4b48fe` (2026-11-07)
+**Commit Message**: fix(sandbox): accept a denied TCP Fast Open send in the gap test (#196)
 
-With the gateway down, 1.1.1.1 gets no reply, so every cycle also probed
-8.8.8.8: about 6 s more (three ICMP and three TCP attempts at 1 s). It
-could not change the verdict, since a silent gateway takes the blame, and
-the longer cycles kept dns.failing from opening in the health lab's
-L-GW-DOWN on main after #184 (bc2a26d and 4567686).
+Linux 7.2 checks a MSG_FASTOPEN send against Landlock's connect rules
+(33cb713db016, "landlock: Fix TCP Fast Open connection bypass", Cc
+stable). parser_layer_leaves_fast_open_and_autobind_open expected the
+send to get out, so on a fixed kernel it failed with EACCES and stopped
+the Nix build, which runs the test suite.
 
-The fallback is now skipped when the cycle found no gateway or one that
-answered nothing. A gateway that could not be probed at all is unknown, not
-silent, so it still gets the second opinion.
+The test, renamed parser_layer_leaves_autobind_open_and_fast_open_to_the_kernel,
+now passes when the send is denied and nothing reaches the listener, or
+when it goes out and the data arrives. The autobind check is unchanged.
+The threat model and the SandboxReport doc scope the Fast Open gap to
+kernels without the fix; Landlock has no erratum for it, so the report
+does not claim it either way.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Fixes #192
 
-**File**: `CHANGELOG.md` (modified, +2/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +9/-0)
 ```diff
-@@ -46,7 +46,8 @@ All notable changes to NetWatch will be documented in this file.
- - **An internet outage now needs two providers to stop answering.** In a probe cycle where
-   1.1.1.1 gets no reply, the uptime log also asks 8.8.8.8, with the same ICMP-then-TCP/443
-   probe, and counts the internet as down only if neither answers. An outage at Cloudflare, or a
--  network that blocks 1.1.1.1, was reported as your ISP's. The dashboard's internet tile and
-+  network that blocks 1.1.1.1, was reported as your ISP's. It is not asked while the gateway
-+  answers nothing, since the gateway takes the blame then. The dashboard's internet tile and
-   Diagnose still read 1.1.1.1 alone, and `third_party_probes = false` stops both.
- - The release workflow publishes to crates.io by trusted publishing when the crate has
-   it set up, and with the stored token otherwise.
-```
-
-**File**: `docs/REFERENCE.md` (modified, +3/-3)
-```diff
-@@ -623,8 +623,8 @@ gateway: your router or LAN · internet: your ISP or beyond · dns: name resolut
-   failing. Latency spikes are not outages.
- - **The hop** is the nearest one that failed: the gateway (your router or LAN), the internet
-   probe (your ISP or beyond) or DNS alone.
--- **The internet probe** asks 1.1.1.1, and in a cycle where that gets no reply, 8.8.8.8 as
--  well. The internet counts as down only when neither answers, so an outage at one provider, or
-+- **The internet probe** asks 1.1.1.1, and in a cycle where that gets no reply but the gateway
-+  does, 8.8.8.8 as well. The internet counts as down only when neither answers, so an outage at one provider, or
-   a network that blocks it, is not reported as your ISP's.
- - **Not monitored** is time when no netwatch was running, or a gap of more than three minutes in
-   the log. It is never counted as up. Time when the internet probe could not be sent at all
-@@ -1120,7 +1120,7 @@ its default endpoints to the code.
- | What | When | Where it goes | What it carries |
- |------|------|---------------|-----------------|
- | Reference DNS query | Automatically | 1.1.1.1 | A query for `dns.google` |
--| Internet reachability | Automatically | 1.1.1.1, with a TCP fallback on port 443; 8.8.8.8 the same way, only when 1.1.1.1 did not answer | A probe, no data |
-+| Internet reachability | Automatically | 1.1.1.1, with a TCP fallback on port 443; 8.8.8.8 the same way, only when 1.1.1.1 did not answer and the gateway did | A probe, no data |
- | STUN | Automatically, about once a minute | `stun.l.google.com:19302`, `stun.cloudflare.com:3478` | A binding request, which reveals your public address to them |
- | Health probes | Automatically | Your gateway and the configured resolver | ICMP echoes, with TCP connects where those are dropped, and DNS queries |
- | Reverse DNS | Automatically, for addresses in this host's own connections | The system resolver | The addresses it looks up |
-```
-
-**File**: `docs/THREAT-MODEL.md` (modified, +1/-1)
-```diff
-@@ -392,7 +392,7 @@ default `trace_target` is 1.1.1.1. See
- | Service | Destination and disclosure |
- | --- | --- |
- | Reference DNS | 1.1.1.1, querying dns.google; off with third_party_probes = false |
--| Internet reachability | 1.1.1.1, TCP fallback on port 443; 8.8.8.8 the same way, only in a cycle 1.1.1.1 did not answer; off with third_party_probes = false |
-+| Internet reachability | 1.1.1.1, TCP fallback on port 443; 8.8.8.8 the same way, only in a cycle 1.1.1.1 did not answer and the gateway did; off with third_party_probes = false |
- | Startup trace | 1.1.1.1; TTL-limited trace (UDP, ICMP echo on Windows) on every TUI start, demo included; ignores trace_target; off with third_party_probes = false |
- | STUN | stun.l.google.com:19302 and stun.cloudflare.com:3478; public mapping; off with third_party_probes = false |
- | Traceroute on T | The selected peer on Connections or Topology; TTL-limited trace |
-```
-
-**File**: `src/collectors/health.rs` (modified, +51/-2)
-```diff
-@@ -198,7 +198,8 @@ pub const STUN_EVERY: u32 = 12;
- pub const INTERNET_TARGET: &str = "1.1.1.1";
+@@ -2,6 +2,15 @@
  
- /// Second internet target, asked only in a cycle where [`INTERNET_TARGET`]
--/// got no reply at all, with the same ICMP-then-TCP/443 probe. Google's
-+/// got no reply at all and the gateway did, with the same ICMP-then-TCP/443
-+/// probe. Google's
- /// resolver, on another operator's network from Cloudflare's, so the uptime
- /// log calls the internet down only when two unrelated networks stopped
- /// answering, not when one of them had an outage or this network blocks it.
-@@ -378,8 +379,13 @@ fn run_cycle(
-     if cancel.cancelled() {
-         return;
-     }
-+    // Whether this cycle found no gateway, or one that answered nothing. Then
-+    // the gateway takes the blame for any outage, so a second internet target
-+    // could not change the verdict, and only slows the cycle down.
-+    let mut gateway_silent = cycle.gateway.is_none();
-     if let Some(gw) = cycle.gateway {
-         let (rtt, loss) = probes.gateway(gw);
-+        gateway_silent = matches!(loss, Loss::Measured(pct) if pct >= 100.0);
-         let mut next = (**safe_read(snapshot, "health::probe::read_gw")).clone();
-         if next.completed.gateway_target.as_deref() != Some(gw) {
-             next.gateway_rtt_history.clear();
-@@ -485,7 +491,12 @@ fn run_cycle(
-         };
-         // A second opinion before the uptime log counts this cycle as lost,
-         // published in the same snapshot so the two always belong together.
-+        // Not while the gateway is silent: an unreachable target takes about
-+        // 6 s (three ICMP and three TCP attempts at 1 s), and a cycle that
-+        // much longer kept the health lab's dns.failing from opening behind a
-+        // dead gateway.
-         let fallback = (cycle.third_party
-+            && !gateway_silent
-             && matches!(loss, Loss::Measured(pct) if pct >= 100.0)
-             && !cancel.cancelled())
-         .then(|| probes.internet(INTERNET_FALLBACK_TARGET).1);
-@@ -1311,6 +1322,8 @@ mod tests {
-     struct FakeProbes {
-         asked: std::cell::RefCell<Vec<String>>,
-         internet: Vec<(&'static str, Loss)>,
-+        /// The gateway's loss; 0% when `None`.
-+        gateway: Option<Loss>,
+ All notable changes to NetWatch will be documented in this file.
+ 
++## [Unreleased]
++
++### Fixed
++- **The Nix build passes its tests on Linux 7.2.** A sandbox test expected a TCP Fast Open
++  send from a parser thread to get past the Landlock network deny. Linux 7.2 closes that gap,
++  and kernels with the stable backport may too, so the test failed and the build stopped
++  (#192). The test now accepts a denied send, as long as nothing reaches the listener, and
++  the threat model scopes the Fast Open gap to kernels without the fix.
++
+ ## [1.0.0-rc.1] - 2026-11-07
+ 
+ ### Added
+```
+
+**File**: `docs/THREAT-MODEL.md` (modified, +9/-6)
+```diff
+@@ -212,12 +212,15 @@ write: /dev/null
+    opened earlier, the filtered ones included, because threads share descriptors
+    (item 1); a test holds a UDP socket opened before the filter to that
+    ([filter tests](../src/sandbox/seccomp.rs#L1)). On a thread with socket(2) open,
+-   two TCP calls get past the deny. A TCP Fast Open send (`sendto` or
+-   `sendmsg` with `MSG_FASTOPEN`) opens a connection and delivers its data
+-   without connect(2), and listen(2) on an unbound socket takes an ephemeral port
+-   on every address without bind(2). Both work from a parser thread on Linux 7.1,
+-   and a test fails if that changes
+-   ([gap tests](../src/sandbox/linux.rs#L1122)). Accepting on a listener bound
++   two TCP calls get past the deny. listen(2) on an unbound socket takes an
++   ephemeral port on every address without bind(2); that works from a parser
++   thread on Linux 7.1, and a test fails if it changes. A TCP Fast Open send
++   (`sendto` or `sendmsg` with `MSG_FASTOPEN`) opens a connection and delivers
++   its data without connect(2) on kernels before 7.2. Linux 7.2 checks it
++   against the connect rules, and the fix is marked for stable kernels, so an
++   older kernel may have it too. Landlock has no erratum for it, so netwatch
++   cannot tell which kernels do, and the report does not claim it; the test
++   accepts either result ([gap tests](../src/sandbox/linux.rs#L1122)). Accepting on a listener bound
+    before entry is not mediated either, which is how the metrics threads serve.
+    Main, the network workers and the proc broker have no network restriction,
+    and a parser running injected code can reach them through shared memory
+```
+
+**File**: `src/sandbox/linux.rs` (modified, +18/-7)
+```diff
+@@ -1429,11 +1429,16 @@ mod tests {
      }
  
-     impl FakeProbes {
-@@ -1322,7 +1335,11 @@ mod tests {
-     impl Probes for FakeProbes {
-         fn gateway(&self, target: &str) -> (Option<f64>, Loss) {
-             self.saw(format!("gateway {target}"));
--            (Some(1.0), Loss::Measured(0.0))
-+            match self.gateway {
-+                Some(loss) if loss.pct() == Some(100.0) => (None, loss),
-+                Some(loss) => (Some(1.0), loss),
-+                None => (Some(1.0), Loss::Measured(0.0)),
+     #[test]
+-    fn parser_layer_leaves_fast_open_and_autobind_open() {
+-        // Landlock checks connect(2) and bind(2). A TCP Fast Open sendto
+-        // connects without the first, and listen(2) on an unbound socket
+-        // takes an ephemeral port on every address without the second. The
+-        // threat model says so; this fails if that changes under it.
++    fn parser_layer_leaves_autobind_open_and_fast_open_to_the_kernel() {
++        // Landlock checks connect(2) and bind(2). listen(2) on an unbound
++        // socket takes an ephemeral port on every address without the second;
++        // the threat model says so, and this fails if that changes under it.
++        // A TCP Fast Open sendto connects without the first on kernels before
++        // Linux 7.2, which checks it against the connect rules (33cb713db016,
++        // "landlock: Fix TCP Fast Open connection bypass", also marked for
++        // stable). Either the send is denied and nothing arrives, or it goes
++        // out. Landlock has no erratum for the fix, so nothing can tell which
++        // ahead of time (#192).
+         use nix::sys::socket::{
+             listen, sendto, socket, AddressFamily, Backlog, MsgFlags, SockFlag, SockType,
+             SockaddrIn,
+@@ -1489,9 +1494,15 @@ mod tests {
+         .join()
+         .unwrap();
+ 
+-        if let Some(sent) = sent {
++        outside.set_nonblocking(true).unwrap();
++        if sent == Some(Err(nix::errno::Errno::EACCES)) {
++            std::thread::sleep(std::time::Duration::from_millis(100));
++            match outside.accept() {
++                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {}
++                other => panic!("a denied Fast Open send reached the listener: {other:?}"),
 +            }
-         }
-         fn dns(&self, server: &str) -> (Option<f64>, Loss, DnsProbe) {
-             self.saw(format!("dns {server}"));
-@@ -1467,6 +1484,38 @@ mod tests {
-         let (asked, _) =
-             one_cycle_with(false, lost(vec![(INTERNET_TARGET, Loss::Measured(100.0))]));
-         assert!(!asked.iter().any(|a| a.contains("internet")), "{asked:?}");
-+
-+        // Nor behind a gateway that answered nothing: the gateway takes the
-+        // blame anyway, and the extra probe only stretched the cycle.
-+        let (asked, prober) = one_cycle_with(
-+            true,
-+            FakeProbes {
-+                internet: vec![(INTERNET_TARGET, Loss::Measured(100.0))],
-+                gateway: Some(Loss::Measured(100.0)),
-+                ..Default::default()
-+            },
-+        );
-+        assert!(
-+            !asked.iter().any(|a| a.contains(INTERNET_FALLBACK_TARGET)),
-+            "{asked:?}"
-+        );
-+        assert_eq!(prober.status().internet_fallback_loss, None);
-+
-+        // A gateway that could not be probed at all is unknown, not silent,
-+        // so the internet may yet take the blame and still gets the second
-+        // opinion.
-+        let (asked, _) = one_cycle_with(
-+            true,
-+            FakeProbes {
-+                internet: vec![(INTERNET_TARGET, Loss::Measured(100.0))],
-+                gateway: Some(Loss::Unmeasured("blocked")),
-+                ..Default::default()
-+            },
-+        );
-+        assert!(
-+            asked.iter().any(|a| a.contains(INTERNET_FALLBACK_TARGET)),
-+            "{asked:?}"
-+        );
-     }
- 
-     // ── loss model ─────────────────────────────────────────────────────
++        } else if let Some(sent) = sent {
+             assert_eq!(sent, Ok(9));
+-            outside.set_nonblocking(true).unwrap();
+             let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+             let mut accepted = loop {
+                 match outside.accept() {
+```
+
+**File**: `src/sandbox/mod.rs` (modified, +4/-4)
+```diff
+@@ -203,10 +203,10 @@ pub struct PlatformReport {
+     /// when the layer could not be built to ask.
+     pub landlock_availability: Option<&'static str>,
+     /// Linux: connect(2) and bind(2) on TCP sockets denied on this thread by
+-    /// its parser or capture layer. The network stays reachable: UDP, MPTCP,
+-    /// a TCP Fast Open send and listen(2) on an unbound socket all get past
+-    /// it (docs/THREAT-MODEL.md, item 4). Main and the network workers leave
+-    /// this false.
++    /// its parser or capture layer. The network stays reachable: UDP, MPTCP
++    /// and listen(2) on an unbound socket get past it, and so does a TCP Fast
++    /// Open send on kernels without the Linux 7.2 fix (docs/THREAT-MODEL.md,
++    /// item 4). Main and the network workers leave this false.
+     pub landlock_network_blocked: bool,
+     /// Linux: the layer this thread's role stacks on the filesystem one,
+     /// "parser" or "capture", whether or not the kernel enforced it. `None`
 ```
 
 ---
 
-### Incident Patch 2: `4567686b` (2026-11-07)
-**Commit Message**: fix(theme): darken graph peaks on a light background (#185)
+### Incident Patch 2: `81275065` (2026-11-08)
+**Commit Message**: fix(memory): turn transparent huge pages off at startup on Linux (#198)
 
-* fix(theme): darken graph peaks on a light background
+mimalloc 3 calls madvise(MADV_HUGEPAGE) on its arenas. With THP on
+`madvise` (Fedora, Ubuntu) or `always`, the kernel kept whole 2 MiB
+pages resident after a capture burst, and khugepaged (max_ptes_none 511)
+collapsed ranges mimalloc had released back into huge pages. RSS sat
+80 to 100 MiB above the live heap and rose with each burst, which is the
+flood soak's cycle-to-cycle growth that blocked 1.0.0.
 
-magnitude_ramp lightened the top two stops toward white. On paper's
-off-white that faded the peaks to 2.6:1 and 1.4:1. The top stops now move
-away from the background, as the floor moves toward it: lighter on a dark
-one, darker (by less, to keep the hue) on a light one. paper's peaks are
-9.5:1 and 13.1:1; the dark themes are unchanged.
+Evidence, three cycles of two-minute steps on the reference machine,
+with a driver that also counted live heap bytes:
+- THP on: RSS after udp-churn 57.7 / 117.2 / 128.5 MiB, live heap
+  11.7 / 18.0 / 21.5, AnonHugePages up to 102 MiB off-peak; mtu-tcp
+  peaks 355.1 / 357.9 / 360.3; 114.5 MiB after the paced steps.
+- MIMALLOC_ALLOW_THP=0: the same step 34.5 / 40.4 / 44.2 MiB, a steady
+  ~23 MiB above the live heap; peaks 327.5 / 334.4 / 335.9; 40.5 after.
+The live heap grows 6.3 then 3.5 MiB as the capped tables fill and drops
+back to 15 MiB once their entries expire, so nothing leaks.
 
-The contrast test now covers the whole ramp, baseline to peak, on every
-theme, and fails on the old ramp ("paper Rgb(0, 100, 40) flattens at 11").
+platform::disable_transparent_huge_pages() sets PR_SET_THP_DISABLE. main
+calls it first, and the flood soak driver does too so i
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
+```diff
+@@ -19,6 +19,13 @@ All notable changes to NetWatch will be documented in this file.
+   and kernels with the stable backport may too, so the test failed and the build stopped
+   (#192). The test now accepts a denied send, as long as nothing reaches the listener, and
+   the threat model scopes the Fast Open gap to kernels without the fix.
++- **Memory no longer creeps up after capture bursts on Linux.** mimalloc asks for transparent
++  huge pages on its arenas, so after a burst the kernel kept whole 2 MiB pages resident and
++  khugepaged collapsed released ranges back into them. RSS sat 80 to 100 MiB above the bytes
++  live on the heap and rose a little with each burst, which is what failed the flood soak's
++  plateau gate. netwatch now turns transparent huge pages off for itself at startup
++  (`PR_SET_THP_DISABLE`). In a three-cycle soak with two-minute steps, RSS after the cycles
++  fell from 115 to 41 MiB, and the peak under a full stream budget from 360 to 336 MiB.
+ 
+ ## [1.0.0-rc.1] - 2026-11-07
+ 
+```
+
+**File**: `Cargo.toml` (modified, +3/-0)
+```diff
+@@ -205,6 +205,9 @@ nix = { version = "0.31", features = ["term", "signal"] }
+ [target.'cfg(target_os = "linux")'.dependencies]
+ landlock = "0.4.7"
+ caps = "0.5"
++# prctl(PR_SET_THP_DISABLE) at startup (platform::disable_transparent_huge_pages).
++# The same nix as above, so nothing new is compiled.
++nix = { version = "0.31", features = ["process"] }
+ 
+ [target.'cfg(windows)'.dependencies]
+ windows-sys = { version = "0.61", features = [
+```
+
+**File**: `docs/PERFORMANCE.md` (modified, +2/-0)
+```diff
+@@ -39,6 +39,8 @@ The four runs dispatched together read +17.8 to +20.4, v0.40.0 among them. One c
+ 
+ One local run of `main` with a third cycle points the wrong way. Its peaks, all in the `mtu-tcp` phase, were 375.7 MiB in cycle 2 and 393.7 MiB in cycle 3, 18 MiB higher. Every other scenario except `bulk` also peaked about 8 to 20 MiB higher in cycle 3. Cycle 1 doesn't count: the machine suspended in the middle of it. That is one run, and runs vary by 7 MiB, but it reads as growth that continues after warm-up. Before 1.0.0, the soak is to compare a third cycle with the second, a 24-hour run is to show whether memory keeps climbing, and the growth is to be found or ruled out. A climb blocks 1.0.0.
+ 
++The growth was transparent huge pages, not a leak. A driver that also counted the bytes live on the heap ran three cycles of two-minute steps on the reference machine, once with huge pages and once without (`MIMALLOC_ALLOW_THP=0`), the two side by side. With them, RSS after `udp-churn` read 57.7, 117.2 and 128.5 MiB in the three cycles while the live heap read 11.7, 18.0 and 21.5 MiB, and outside the `mtu-tcp` peaks up to 102 MiB of RSS was huge pages. mimalloc asks for them on its arenas, and khugepaged collapses ranges it has released back into whole 2 MiB pages. Without them the same step read 34.5, 40.4 and 44.2 MiB, about 23 MiB above the live heap each time, and the `mtu-tcp` peaks were 327.5, 334.4 and 335.9 MiB. The live heap rises a few MiB per cycle as the capped tables fill (6.3, then 3.5), and falls back to 15 MiB in the paced steps once their entries expire. netwatch now turns huge pages off for itself at startup. The tables above are from before that change, and the next full soak replaces them.
++
+ ## Flood soak
+ 
+ Each run floods a veth pair in a private network namespace for an hour: two cycles of six scenarios, then paced rates, then ten minutes of the real daemon. A Python AF_PACKET generator sends the traffic, so the soak needs no extra packages. It offers up to about 1.5 million packets a second on the reference machine and about 350,000 on the runner. The harness can use tcpreplay for the replay scenario if asked.
+```
+
+**File**: `examples/flood_soak.rs` (modified, +2/-0)
+```diff
+@@ -142,6 +142,8 @@ fn parse() -> Result<Options> {
+ }
+ 
+ fn main() -> Result<()> {
++    // As `main` does, so RSS reads as the binary's.
++    netwatch::platform::disable_transparent_huge_pages();
+     let opts = parse()?;
+     match &opts.replay {
+         Some(dir) => replay(dir, opts.seconds),
+```
+
+**File**: `src/main.rs` (modified, +2/-0)
+```diff
+@@ -15,6 +15,8 @@ use std::mem::ManuallyDrop;
+ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+ 
+ fn main() -> Result<()> {
++    // Before the collectors allocate: see the function for the RSS it saves.
++    netwatch::platform::disable_transparent_huge_pages();
+     let args: Vec<String> = std::env::args().skip(1).collect();
+     let options = match netwatch::cli::parse(&args)? {
+         netwatch::cli::Command::Help => {
+```
+
+**File**: `src/platform/mod.rs` (modified, +33/-0)
+```diff
+@@ -28,6 +28,24 @@ pub mod socket_table;
+ #[cfg(target_os = "windows")]
+ pub mod windows;
+ 
++/// Turns transparent huge pages off for this process on Linux, and does
++/// nothing elsewhere. `main` calls it first, and the flood soak's driver does
++/// the same so its RSS reads as the binary's.
++///
++/// mimalloc asks for huge pages on its arenas (`madvise(MADV_HUGEPAGE)`). With
++/// THP set to `madvise` or `always`, the kernel backs every 2 MiB of an arena
++/// netwatch has touched, and khugepaged collapses ranges mimalloc had released
++/// back into huge pages. After a capture burst that left RSS 80 to 100 MiB
++/// above the bytes live on the heap, and a little higher each time the burst
++/// came back: the flood soak's cycle-to-cycle growth. Without huge pages RSS
++/// stays about 23 MiB above the live heap. The flag also covers the children
++/// netwatch starts, which is harmless for `ss` and `ip`. A kernel without the
++/// prctl (before 3.15) keeps huge pages.
++pub fn disable_transparent_huge_pages() {
++    #[cfg(target_os = "linux")]
++    let _ = nix::sys::prctl::set_thp_disable(true);
++}
++
+ /// The command the capture error and the Dashboard banner give for capture
+ /// without root on Linux. CAP_BPF and CAP_PERFMON are for eBPF attribution
+ /// (`sandbox/mod.rs`). It restricts the binary to a group before granting it,
+@@ -791,3 +809,18 @@ stat() { case ${3#"$PWD"/} in usr/* | local/* | store/* | profile/*) echo root ;
+         }
+     }
+ }
++
++#[cfg(all(test, target_os = "linux"))]
++mod huge_page_tests {
++    /// The kernel reports the flag back, and `THP_enabled` in
++    /// `/proc/self/status` reads 0, as it would for the binary.
++    #[test]
++    fn transparent_huge_pages_are_off_after_the_call() {
++        super::disable_transparent_huge_pages();
++        assert_eq!(nix::sys::prctl::get_thp_disable(), Ok(true));
++        let status = std::fs::read_to_string("/proc/self/status").unwrap();
++        if let Some(line) = status.lines().find(|l| l.starts_with("THP_enabled:")) {
++            assert_eq!(line.split_whitespace().nth(1), Some("0"), "{line}");
++        }
++    }
++}
+```
+
+---
+
+### Incident Patch 3: `f30ae2e6` (2026-11-07)
+**Commit Message**: fix(release): name pre-release packages as GitHub serves them, and keep :latest off them (#191)
+
+* fix(release): name pre-release packages as GitHub serves them
+
+GitHub turns a `~` in an asset's name into `.`, so 1.0.0-rc.1's SHA256SUMS
+listed netwatch_1.0.0~rc.1-1_amd64.deb while the release served
+netwatch_1.0.0.rc.1-1_amd64.deb, and `sha256sum -c` could not find the four
+packages. The release job now renames them before the sums and
+attestations. install-check's rpm job asks for the served name.
+
+rc.1's SHA256SUMS was replaced by hand with the corrected names; the hashes
+are unchanged.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): one Changed section
+* fix(release): keep :latest off a pre-release's container image
+
+contains(tag, '-') && '' || format(':latest') yields :latest whatever the
+tag: '' is falsy, so && '' falls through to ||. 1.0.0-rc.1 took :latest
+from 0.40.0. The non-empty value now sits in the && branch.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2352,180 +2461,102 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +3/-2)
+**File**: `.github/workflows/install-check.yml` (modified, +5/-3)
 ```diff
-@@ -51,12 +51,13 @@ All notable changes to NetWatch will be documented in this file.
- - The release workflow publishes to crates.io by trusted publishing when the crate has
-   it set up, and with the stored token otherwise.
- - `scripts/release.sh` signs the tag (`git tag -s`) when git has a `user.signingkey`.
--
--### Changed
- - README: the header keeps the CI, release and Terminal Trove badges and states platform
-   support in text. Related adds kernwatch and drops NetWatch Cloud.
+@@ -148,9 +148,11 @@ jobs:
+     steps:
+       - run: |
+           set -euo pipefail
+-          rpm_version=$(tr - '~' <<< "${VERSION}")
+-          curl -fsSLO "https://github.com/${REPO}/releases/download/${TAG}/netwatch-${rpm_version}-1.x86_64.rpm"
+-          dnf install -y "./netwatch-${rpm_version}-1.x86_64.rpm"
++          # The package's version is 1.0.0~rc.1, but GitHub serves a `~` in an
++          # asset's name as `.`.
++          rpm_file="netwatch-$(tr - . <<< "${VERSION}")-1.x86_64.rpm"
++          curl -fsSLO "https://github.com/${REPO}/releases/download/${TAG}/${rpm_file}"
++          dnf install -y "./${rpm_file}"
+           out=$(netwatch --version)
+           echo "$out"
+           grep -qF "${VERSION}" <<< "$out" ||
+```
+
+**File**: `.github/workflows/release.yml` (modified, +16/-1)
+```diff
+@@ -439,6 +439,17 @@ jobs:
+             scripts/static-asset-names.sh
+           fi
+ 
++      # GitHub replaces a `~` in an asset's name with `.`, so a pre-release's
++      # packages (netwatch_1.0.0~rc.1-1_amd64.deb) were served under names
++      # SHA256SUMS did not list, and `sha256sum -c` could not find them
++      # (1.0.0-rc.1). Renamed first, the sums, the attestations and the
++      # release all use the name GitHub serves. The version inside each
++      # package keeps its tilde.
++      - name: Name pre-release packages as GitHub serves them
++        run: |
++          shopt -s nullglob
++          for f in *~*; do mv -v "$f" "${f//\~/.}"; done
++
+       # Every shipped binary must carry the dependency list `cargo auditable`
+       # embeds. A build step that lost the wrapper still links fine, so
+       # check the artifacts rather than trust the build.
+@@ -574,9 +585,13 @@ jobs:
+           context: packaging/docker
+           platforms: linux/amd64,linux/arm64
+           push: true
++          # `cond && x || y` is the expression language's only conditional,
++          # and it yields y whenever x is falsy. The old form put '' in x, so
++          # it always yielded :latest, and 1.0.0-rc.1 took :latest from
++          # 0.40.0. The non-empty value goes in x.
+           tags: |
+             ghcr.io/${{ github.repository }}:${{ env.RELEASE_TAG }}
+-            ${{ contains(env.RELEASE_TAG, '-') && '' || format('ghcr.io/{0}:latest', github.repository) }}
++            ${{ !contains(env.RELEASE_TAG, '-') && format('ghcr.io/{0}:latest', github.repository) || '' }}
+ 
+       # The image's provenance, pushed to GHCR next to it. Verified with:
+       #   gh attestation verify oci://ghcr.io/matthart1983/netwatch:vX.Y.Z -R matthart1983/netwatch
+```
+
+**File**: `CHANGELOG.md` (modified, +9/-0)
+```diff
+@@ -5,6 +5,15 @@ All notable changes to NetWatch will be documented in this file.
+ ## [Unreleased]
  
  ### Fixed
-+- **`paper`'s graph peaks are readable.** The top of every graph was lightened toward white,
-+  which on `paper`'s off-white background faded the peaks to 1.4:1. On a light background
-+  they now darken instead, to 13:1, and the contrast test covers the whole ramp.
- - A pre-release tag would have failed the release build: `cargo generate-rpm` rejects a
-   hyphen in the version. It now gets `1.0.0~rc.1`. The tag also no longer reaches the apt
-   repository or COPR, where `1.0.0~rc.1` would have been offered as an upgrade.
++- **A pre-release's `SHA256SUMS` names its packages as GitHub serves them.** GitHub turns
++  a `~` in an asset's name into `.`, so 1.0.0-rc.1's sums listed `netwatch_1.0.0~rc.1-1_amd64.deb`
++  while the release served `netwatch_1.0.0.rc.1-1_amd64.deb`, and `sha256sum -c` could not
++  find the four packages. The release workflow renames them before the sums are taken.
++  1.0.0-rc.1's `SHA256SUMS` was replaced with the corrected names; the hashes are unchanged.
++- **A pre-release no longer takes the container image's `:latest`.** The release workflow's
++  condition always added `:latest`, so 1.0.0-rc.1 replaced 0.40.0 there, and
++  `docker run ghcr.io/matthart1983/netwatch` pulled the candidate. `:latest` was put back on
++  0.40.0 by re-running 0.40.0's own container job.
+ - **The Nix build passes its tests on Linux 7.2.** A sandbox test expected a TCP Fast Open
+   send from a parser thread to get past the Landlock network deny. Linux 7.2 closes that gap,
+   and kernels with the stable backport may too, so the test failed and the build stopped
 ```
 
-**File**: `src/graph.rs` (modified, +19/-7)
+**File**: `docs/PACKAGING.md` (modified, +1/-1)
 ```diff
-@@ -527,7 +527,8 @@ pub fn bright_token(c: Color) -> Color {
- }
- 
- /// The magnitude gradient: dim at the baseline, the series color in the
--/// middle, lightened at the peak.
-+/// middle, and at the peak moved further from the background: lighter on a
-+/// dark one, darker on a light one.
- ///
- /// This is btop's move, and the reason its graphs read as depth rather than as
- /// a solid block: a cell's color comes from *how high it sits*, so the shape of
-@@ -553,12 +554,21 @@ pub fn magnitude_ramp(base: Color, bg: Color) -> Ramp {
-         .map(|step| MIN_FADE_ALPHA + step as f32 / 100.0)
-         .find(|&alpha| contrast(fade_color(base, bg, alpha, false), behind) >= MIN_RAMP_CONTRAST)
-         .unwrap_or(1.0);
-+    // The peak moves away from the background as the floor moves toward it.
-+    // Lightened toward white on `paper`'s off-white, the top stops used to
-+    // fade to 1.4:1. On a light background they darken instead, and less far,
-+    // so they keep the hue rather than going to black.
-+    let (away, near, far) = if luminance(behind) < 0.18 {
-+        (Color::Rgb(255, 255, 255), 0.42, 0.76)
-+    } else {
-+        (Color::Rgb(0, 0, 0), 0.25, 0.5)
-+    };
-     Ramp::new(vec![
-         fade_color(base, bg, floor, false),
-         fade_color(base, bg, floor + (1.0 - floor) * 0.46, false),
-         base,
--        lighten(base, 0.42),
--        lighten(base, 0.76),
-+        lerp(base, away, near),
-+        lerp(base, away, far),
-     ])
- }
- 
-@@ -2061,10 +2071,12 @@ mod tests {
-     }
- 
-     /// `dark` resolved its upload series to (0, 0, 170), so the graph's lower half
--    /// all but vanished on a dark terminal. Nothing below the series colour may
--    /// fall under the floor, and the floor must not flatten the gradient.
-+    /// all but vanished on a dark terminal, and `paper`'s peaks lightened toward
-+    /// its off-white background until they were 1.4:1. No stop from the baseline
-+    /// to the peak may fall under the floor, and contrast has to climb the whole
-+    /// way up.
-     #[test]
--    fn every_theme_keeps_a_graph_readable_up_to_its_series_colour() {
-+    fn every_theme_keeps_a_graph_readable_from_baseline_to_peak() {
-         for name in crate::theme::THEME_NAMES {
-             let theme = crate::theme::by_name(name);
-             if theme.defers_to_terminal() {
-@@ -2074,7 +2086,7 @@ mod tests {
-             for base in [theme.rx_rate, theme.tx_rate] {
-                 let ramp = magnitude_ramp(base, theme.bg);
-                 let mut previous = 0.0;
--                for step in 0..=10 {
-+                for step in 0..=20 {
-                     let c = contrast(ramp.at(step as f32 / 20.0), behind);
-                     assert!(
-                         c >= MIN_RAMP_CONTRAST,
-```
-
----
-
-### Incident Patch 3: `09d497cc` (2026-11-07)
-**Commit Message**: README: trim header badges, fix Related (#186)
-
-- Header: CI and release badges plus the Terminal Trove award. Drops the
-  crates.io version, three separate download counters, the static
-  platform and licence badges, and the live Trendshift image. Platform
-  support is stated in text instead.
-- Heading uses "netwatch", as the rest of the README does, and is no
-  longer an <h1> nested inside a <p>.
-- Related: lowercase names, adds kernwatch, describes essh from its
-  own README, and drops the NetWatch Cloud sentence.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -43,6 +43,10 @@ All notable changes to NetWatch will be documented in this file.
-   it set up, and with the stored token otherwise.
- - `scripts/release.sh` signs the tag (`git tag -s`) when git has a `user.signingkey`.
- 
-+### Changed
-+- README: the header keeps the CI, release and Terminal Trove badges and states platform
-+  support in text. Related adds kernwatch and drops NetWatch Cloud.
-+
- ### Fixed
- - A pre-release tag would have failed the release build: `cargo generate-rpm` rejects a
-   hyphen in the version. It now gets `1.0.0~rc.1`. The tag also no longer reaches the apt
-```
-
-**File**: `README.md` (modified, +15/-19)
-```diff
-@@ -1,25 +1,21 @@
-+<h1 align="center">netwatch</h1>
-+
-+<p align="center">
-+  <strong>Network diagnostics in your terminal.</strong><br>
-+  Linux, macOS and Windows. FreeBSD best-effort.
-+</p>
-+
-+<p align="center">
-+  <a href="https://github.com/matthart1983/netwatch/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://github.com/matthart1983/netwatch/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status on main"></a>
-+  <a href="https://github.com/matthart1983/netwatch/releases/latest"><img src="https://img.shields.io/github/v/release/matthart1983/netwatch" alt="Latest release"></a>
-+</p>
-+
- <p align="center">
--  <h1 align="center">NetWatch</h1>
--  <p align="center">
--    <strong>Network diagnostics in your terminal.</strong>
--  </p>
--  <p align="center">
--    <a href="https://crates.io/crates/netwatch-tui"><img src="https://img.shields.io/crates/v/netwatch-tui.svg" alt="crates.io"></a>
--    <a href="https://crates.io/crates/netwatch-tui"><img src="https://img.shields.io/crates/d/netwatch-tui.svg" alt="downloads"></a>
--    <a href="https://github.com/matthart1983/netwatch/releases"><img src="https://img.shields.io/github/v/release/matthart1983/netwatch" alt="Release"></a>
--    <a href="https://github.com/matthart1983/netwatch/releases"><img src="https://img.shields.io/github/downloads/matthart1983/netwatch/total?label=GitHub%20downloads" alt="GitHub release downloads"></a>
--    <a href="https://anaconda.org/conda-forge/netwatch"><img src="https://img.shields.io/conda/dn/conda-forge/netwatch?label=conda%20downloads" alt="conda-forge downloads"></a>
--    <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue" alt="Platform">
--    <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
--  </p>
--  <p align="center">
--    <a title="Tool of The Week on Terminal Trove" href="https://terminaltrove.com/netwatch/"><img src="docs/media/terminal_trove_totw_badge.svg" alt="Terminal Trove Tool of The Week" height="54" /></a>
--    <a href="https://trendshift.io/repositories/22467?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-22467" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/22467/daily?language=Rust" alt="matthart1983%2Fnetwatch | Trendshift" width="250" height="55"/></a>
--  </p>
-+  <a title="Tool of The Week on Terminal Trove" href="https://terminaltrove.com/netwatch/"><img src="docs/media/terminal_trove_totw_badge.svg" alt="Terminal Trove Tool of The Week" height="54" /></a>
- </p>
- 
- <p align="center">
--  <img src="docs/media/demo-dense.gif" alt="NetWatch's dense view: a mirrored braille throughput graph with download above the axis and upload below, per-interface rates with sparklines, four-hop latency budgets, and a connection table with the selected socket's kernel TCP state" width="900">
-+  <img src="docs/media/demo-dense.gif" alt="netwatch's dense view: a mirrored braille throughput graph with download above the axis and upload below, per-interface rates with sparklines, four-hop latency budgets, and a connection table with the selected socket's kernel TCP state" width="900">
- </p>
- 
- <p align="center">
-@@ -152,7 +148,7 @@ Diagnose misread your network? [Open an issue](https://github.com/matthart1983/n
- 
- ## Related
- 
--[SysWatch](https://github.com/matthart1983/syswatch) and [DiskWatch](https://github.com/matthart1983/diskwatch) share the chrome. [ESSH](https://github.com/matthart1983/essh) is a Rust SSH client with the same look. [NetWatch Cloud](https://www.netwatchlabs.com) is hosted fleet monitoring built on the MIT [agent](https://github.com/matthart1983/netwatch-agent), [SDK](https://github.com/matthart1983/netwatch-sdk) and [dashboard](https://github.com/matthart1983/netwatch-dashboard).
-+[syswatch](https://github.com/matthart1983/syswatch) and [diskwatch](https://github.com/matthart1983/diskwatch) share the layout and palette. [kernwatch](https://github.com/matthart1983/kernwatch) covers Linux scheduling, memory pressure and block I/O. [essh](https://github.com/matthart1983/essh) keeps remote shells alive across connection drops, with the same look.
- 
- ## Thanks
+@@ -103,7 +103,7 @@ What each channel does with a hyphenated tag:
+ | GitHub release | published, marked pre-release; `/releases/latest` stays on the last release |
+ | crates.io | published; `cargo install` and `cargo binstall` take it only when asked for by version |
+ | GHCR | `:v1.0.0-rc.1`, never `:latest` |
+-| `.deb` / `.rpm` assets | `1.0.0~rc.1-1`, which both sort below `1.0.0` |
++| `.deb` / `.rpm` assets | version `1.0.0~rc.1-1`, which both sort below `1.0.0`; the file names say `1.0.0.rc.1`, since GitHub serves no `~` in an asset's name |
+ | apt repository, COPR | skipped: each has one channel that users upgrade from |
+ | Homebrew, Scoop, conda-forge | not picked up; they follow releases |
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #198** (2026-11-08): fix(memory): turn transparent huge pages off at startup on Linux (@matthart1983)
+- **PR #196** (2026-11-07): fix(sandbox): accept a denied TCP Fast Open send in the gap test (#192) (@matthart1983)
+- **PR #191** (2026-11-07): fix(release): name pre-release packages as GitHub serves them, and keep :latest off them (@matthart1983)
 - **PR #190** (2026-11-07): docs(performance): record the plateau gate exception for 1.0.0-rc.1 (@matthart1983)
 - **PR #189** (2026-11-07): Record the light demo in the paper theme (@matthart1983)
 - **PR #188** (2026-11-07): README: light-terminal demo at the top; re-record the dark demo on 0.40.0 (@matthart1983)
-- **PR #187** (2026-11-07): fix(health): don't ask the second internet target behind a silent gateway (@matthart1983)
-- **PR #186** (2026-11-07): README: trim header badges, fix Related (@matthart1983)
-- **PR #185** (2026-11-07): fix(theme): darken graph peaks on a light background (@matthart1983)
 
 ---
 
@@ -2545,13 +2576,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. health): don't ask the second internet target behind a silent gateway (#187)
+## X. sandbox): accept a denied TCP Fast Open send in the gap test (#196)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matthart1983/netwatch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5a8c1739`: health): don't ask the second internet target behind a silent gateway (#187). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc4b48fe`: sandbox): accept a denied TCP Fast Open send in the gap test (#196). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2559,15 +2590,22 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  network that blocks 1.1.1.1, was reported as your ISP's. It is not asked while the gateway
-  answers nothing, since the gateway takes the blame then. The dashboard's internet tile and
+## [Unreleased]
+
+### Fixed
+- **The Nix build passes its tests on Linux 7.2.** A sandbox test expected a TCP Fast Open
+  send from a parser thread to get past the Landlock network deny. Linux 7.2 closes that gap,
+  and kernels with the stable backport may too, so the test failed and the build stopped
+  (#192). The test now accepts a denied send, as long as nothing reaches the listener, and
+  the threat model scopes the Fast Open gap to kernels without the fix.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  network that blocks 1.1.1.1, was reported as your ISP's. The dashboard's internet tile and
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5a8c1739` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc4b48fe` are properly handled with clean fallback behavior.

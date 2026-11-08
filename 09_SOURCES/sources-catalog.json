@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "9063e9b6311b66d83a0027567e8c67b858628fd5c4aa4078b38defbc5beb93db",
-    "lastHarvestedAt": "2026-11-05T02:47:37.932Z",
+    "contentHash": "4d36e8c0930817074e77f323f3b4592a68bcc952563043712e887da28f8bf958",
+    "lastHarvestedAt": "2026-11-08T19:11:23.122Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -11913,10 +11913,10 @@
     "repository": "matthart1983/netwatch",
     "platform": "github",
     "sourceUrl": "https://github.com/matthart1983/netwatch",
-    "sourceVersion": "dcc81ba3",
+    "sourceVersion": "81275065",
     "license": "MIT",
-    "contentHash": "84d5a6720462e80949bdfa5d58a0743445c4124af1436286a84a7ea4bd4ac9c4",
-    "lastHarvestedAt": "2026-11-07T18:09:42.535Z",
+    "contentHash": "d4303cf46cd38d25a3d0259dc2a6125e1a5a0fd568aee688d7a940a610822f06",
+    "lastHarvestedAt": "2026-11-08T19:07:05.229Z",
     "learningId": "learn-github-matthart1983-netwatch"
   },
   "hf-prunaai-p-h3-image-comfy": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "f60f17fd",
+    "sourceVersion": "0007e8b9",
     "license": "Apache-2.0",
-    "contentHash": "e83da4bba5015fe9ce6507bf74fad45aaedf60206364b2fc7c3312313df2e254",
-    "lastHarvestedAt": "2026-11-07T22:08:03.840Z",
+    "contentHash": "68d4da4254d12c0e1de89fba7308b713d3900ebdb3858a4ee801a123bd141371",
+    "lastHarvestedAt": "2026-11-08T19:07:17.990Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

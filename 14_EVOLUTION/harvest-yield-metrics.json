@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T18:58:42.697Z",
-  "total_cycles_completed": 8324,
-  "total_learnings_persisted": 8324,
-  "total_rules_promoted": 8114,
+  "last_updated": "2026-11-08T19:11:23.128Z",
+  "total_cycles_completed": 8327,
+  "total_learnings_persisted": 8327,
+  "total_rules_promoted": 8118,
   "history": [
-    {
-      "timestamp": "2026-11-08T01:03:21.697Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T01:09:50.388Z",
-      "repository": "fastify/fastify",
-      "learningId": "learn-github-fastify-fastify",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T01:10:04.461Z",
-      "repository": "tursodatabase/libsql",
-      "learningId": "learn-github-tursodatabase-libsql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T01:17:53.873Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-08T18:58:42.697Z",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T19:07:05.238Z",
+      "repository": "matthart1983/netwatch",
+      "learningId": "learn-github-matthart1983-netwatch",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T19:07:18.005Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T19:11:23.128Z",
+      "repository": "Cloudflare/clef",
+      "learningId": "learn-huggingface-cloudflare-clef",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

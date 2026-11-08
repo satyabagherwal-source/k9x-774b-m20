@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T16:58:45.994Z",
+  "last_updated": "2026-11-08T19:07:05.236Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4193,6 +4193,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh"
+    },
+    {
+      "id": "CD-EV84",
+      "directive_title": "sandbox): accept a denied TCP Fast Open send in the gap test (#196)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "matthart1983/netwatch",
+      "source_commit": "81275065",
+      "date_staged": "2026-11-08",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-matthart1983-netwatch"
     }
   ]
 }

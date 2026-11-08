@@ -8368,3 +8368,6 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `ac735a43` | Multi-dimensional audit evidence | 2026-11-08T18:46:05.838Z |
 | `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-08T18:48:44.617Z |
 | `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-08T18:58:42.682Z |
+| `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `81275065` | Multi-dimensional audit evidence | 2026-11-08T19:07:05.229Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `0007e8b9` | Multi-dimensional audit evidence | 2026-11-08T19:07:17.990Z |
+| `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-08T19:11:23.122Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T18:58:42.569Z",
+  "last_updated": "2026-11-08T19:11:23.026Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22717,10 +22717,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "9063e9b6311b66d83a0027567e8c67b858628fd5c4aa4078b38defbc5beb93db",
+      "content_hash": "4d36e8c0930817074e77f323f3b4592a68bcc952563043712e887da28f8bf958",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Mixed-Precision State-Space Recurrent Accumulator Isolation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Zero-Token-Generation Deterministic Schema Scoring",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Mask-Gated Swish Output Decoupling for GQA Blocks",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 348,
           "title": "**Immutable Tokenizer Configuration Rule**",
@@ -22967,7 +22982,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-11-05T02:47:37.818Z",
+      "verified_at": "2026-11-08T19:11:22.990Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182029,8 +182044,8 @@
       "slug": "matthart1983-netwatch",
       "platform": "github",
       "source_url": "https://github.com/matthart1983/netwatch",
-      "source_version": "ee7d2174",
-      "content_hash": "662f844b747902face96d04b281ed3e94cd19bd746028dce3ea8c6368c864364",
+      "source_version": "81275065",
+      "content_hash": "d4303cf46cd38d25a3d0259dc2a6125e1a5a0fd568aee688d7a940a610822f06",
       "dossier_path": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "promoted_rules": [
@@ -182045,7 +182060,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:55:21.389Z",
+      "verified_at": "2026-11-08T19:07:05.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -184941,8 +184956,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "f60f17fd",
-      "content_hash": "e83da4bba5015fe9ce6507bf74fad45aaedf60206364b2fc7c3312313df2e254",
+      "source_version": "0007e8b9",
+      "content_hash": "68d4da4254d12c0e1de89fba7308b713d3900ebdb3858a4ee801a123bd141371",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -184962,6 +184977,11 @@
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
+          "number": null,
+          "title": "Use the empty-batch stream position only for consumption lag on transactional Ka",
+          "status": "WITHHELD_REJECT"
+        },
+        {
           "number": 7139,
           "title": "Add a README Docker quickstart and improve GitHub metadata (#20164)",
           "status": "PROMOTED_AND_VERIFIED"
@@ -184972,7 +184992,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:08:03.742Z",
+      "verified_at": "2026-11-08T19:07:17.877Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
