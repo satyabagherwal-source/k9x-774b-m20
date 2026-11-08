@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T05:11:38.679Z",
+  "last_updated": "2026-11-08T05:18:14.356Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "7fbe356eb930f6703e6cab8946cc3f1d4a0539e225600ddbd24510f0f24951e9",
-      "verified_at": "2026-11-06T23:20:02.722Z",
+      "content_hash": "93cd3ef9bb5e4e978f27c1a3b9160fa77f7d1aa19f22edc8a7073427398a75c9",
+      "verified_at": "2026-11-08T05:18:14.355Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T23:20:02.722Z"
+      "last_updated": "2026-11-08T05:18:14.355Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -15951,14 +15951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
-      "content_hash": "bc30b4c54d066eb8382c80d1266080452661bc903cdda1c596ee0d7ac61dc526",
-      "verified_at": "2026-11-04T18:42:19.036Z",
+      "content_hash": "4bd769bfa6070c46158db477f0d0ba25690e516718c5b7e5f4df52c6be812ea3",
+      "verified_at": "2026-11-08T05:18:09.366Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:42:19.036Z"
+      "last_updated": "2026-11-08T05:18:09.366Z"
     },
     "ornith-ai/Ornith-1.5-122B": {
       "repository": "ornith-ai/Ornith-1.5-122B",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T05:11:38.521Z",
+  "last_updated": "2026-11-08T05:18:14.252Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38659,14 +38659,19 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "e2501b0d",
-      "content_hash": "7fbe356eb930f6703e6cab8946cc3f1d4a0539e225600ddbd24510f0f24951e9",
+      "source_version": "bff93ff3",
+      "content_hash": "93cd3ef9bb5e4e978f27c1a3b9160fa77f7d1aa19f22edc8a7073427398a75c9",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "bump dependencies with critical security advisories (#4883)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Bump version: 0.42.0-beta.7 → 0.42.0-beta.8",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38755,7 +38760,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:20:02.584Z",
+      "verified_at": "2026-11-08T05:18:14.236Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133456,10 +133461,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
       "source_version": "hf-comfy-org-fibo-2.0",
-      "content_hash": "bc30b4c54d066eb8382c80d1266080452661bc903cdda1c596ee0d7ac61dc526",
+      "content_hash": "4bd769bfa6070c46158db477f0d0ba25690e516718c5b7e5f4df52c6be812ea3",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Binary Asset Format Translation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 3921,
           "title": "Tensor Key Fusion Invariant for Attention Mechanisms",
@@ -133504,6 +133514,11 @@
           "number": 6906,
           "title": "Tensor Key Fusion & Alignment Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Mixed-Precision Quantization Boundary Rule",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -133511,7 +133526,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:42:18.961Z",
+      "verified_at": "2026-11-08T05:18:09.242Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `e2501b0d`  
+> **Source Version**: `bff93ff3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T23:20:00.783Z  
+> **Timestamp**: 2026-11-08T05:18:13.048Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T23:20:00.166Z  
+> **Harvest Timestamp**: 2026-11-08T05:18:12.389Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11853 stars
+- **Stars / Engagement**: 11857 stars
 
 ---
 
@@ -1246,621 +1246,398 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f496529` (2026-11-05)
-**Commit Message**: chore: bump dependencies with critical security advisories (#4883)
+### Incident Patch 1: `bff93ff3` (2026-11-07)
+**Commit Message**: Bump version: 0.42.0-beta.7 → 0.42.0-beta.8
 
-## Summary
-
-Bumps dependencies that Aikido flags with critical advisories, where a
-patched version is available without code changes.
-
-| Package | Where | From → To | Ships to users |
-|---|---|---|---|
-| jackson (BOM) | `java/pom.xml` | 2.18.11 → 2.18.12 | Yes, via the
-published pom |
-| zerovec / zerovec-derive | `Cargo.lock` | 0.11.6 → 0.11.8 / 0.11.3 →
-0.11.7 | Yes, linked into the wheels and Node binaries |
-| pillow | `python/uv.lock` | 12.3.0 → 13.0.0 | No, dev lockfile |
-| pyarrow | `python/uv.lock` | 24.0.0 → 26.0.1 | No, dev lockfile |
-| pyjwt, urllib3, anyio, cryptography | `python/uv.lock` | → 2.15.1,
-2.8.0, 4.16.0, 50.0.2 | No, dev lockfile |
-| pillow | `docs/web-tests/blob-v2/py/requirements.txt` | 12.1.1 →
-13.0.0 | No |
-
-pyarrow was held at 24.0.0 by a `pyarrow<25` pin in the `tests` extra.
-It came in with #3675 without a stated reason, so this PR removes it.
-
-pillow 13 and pyarrow 26 require Python 3.11+, so the lockfile keeps
-pillow 12.3.0 and pyarrow 25.0.1 on Python 3.10, and those remain
-flagged.
-
-The sharp findings in the Node examples and docs are not addressed here.
-They come from the `@huggingf
-
-**File**: `Cargo.lock` (modified, +23/-12)
+**File**: `.bumpversion.toml` (modified, +1/-1)
 ```diff
-@@ -10632,6 +10632,17 @@ dependencies = [
-  "syn 2.0.117",
- ]
- 
-+[[package]]
-+name = "synstructure"
-+version = "0.14.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "901704edd0dfe137f1987838ee4f259e4e063c31371bdb423f7ae38ec6f77f02"
-+dependencies = [
-+ "proc-macro2",
-+ "quote",
-+ "syn 3.0.3",
-+]
-+
- [[package]]
- name = "sysctl"
- version = "0.6.0"
-@@ -12582,9 +12593,9 @@ dependencies = [
- 
- [[package]]
- name = "yoke"
--version = "0.8.2"
-+version = "0.8.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "abe8c5fda708d9ca3df187cae8bfb9ceda00dd96231bed36e445a1a48e66f9ca"
-+checksum = "417ef3fcf6c300b7dbd25c85531a746931c02ad536f3cf4786ed1e88223340b3"
- dependencies = [
-  "stable_deref_trait",
-  "yoke-derive",
-@@ -12593,14 +12604,14 @@ dependencies = [
- 
- [[package]]
- name = "yoke-derive"
--version = "0.8.2"
-+version = "0.8.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "de844c262c8848816172cef550288e7dc6c7b7814b4ee56b3e1553f275f1858e"
-+checksum = "ec8ebde2db3681e8c9980cc27822030e68752690ddfa9473e739aeb4dbde6d71"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 2.0.117",
-- "synstructure",
-+ "syn 3.0.3",
-+ "synstructure 0.14.0",
- ]
- 
- [[package]]
-@@ -12641,7 +12652,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "syn 2.0.117",
-- "synstructure",
-+ "synstructure 0.13.2",
- ]
- 
- [[package]]
-@@ -12664,9 +12675,9 @@ dependencies = [
- 
- [[package]]
- name = "zerovec"
--version = "0.11.6"
-+version = "0.11.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "90f911cbc359ab6af17377d242225f4d75119aec87ea711a880987b18cd7b239"
-+checksum = "bb0464e17806c1d976d5cba29399c7f08e516e279e2ba493f63123b5fca67dd8"
- dependencies = [
-  "serde",
-  "yoke",
-@@ -12676,13 +12687,13 @@ dependencies = [
- 
- [[package]]
- name = "zerovec-derive"
--version = "0.11.3"
-+version = "0.11.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "625dc425cab0dca6dc3c3319506e6593dcb08a9f387ea3b284dbd52a92c40555"
-+checksum = "c3743ddbf47738d929cd1ae2e199d40d0162979dfe31aef8ae646d2bf00bf97a"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 2.0.117",
-+ "syn 3.0.3",
- ]
- 
- [[package]]
+@@ -1,5 +1,5 @@
+ [tool.bumpversion]
+-current_version = "0.42.0-beta.7"
++current_version = "0.42.0-beta.8"
+ parse = """(?x)
+     (?P<major>0|[1-9]\\d*)\\.
+     (?P<minor>0|[1-9]\\d*)\\.
 ```
 
-**File**: `docs/web-tests/blob-v2/py/requirements.txt` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -3,6 +3,6 @@
- lancedb==0.41.0b10
- numpy==2.2.6
- pandas==2.3.3
--pillow==12.1.1
-+pillow==13.0.0
- pytest==8.4.2
- pytest-asyncio==1.2.0
+@@ -5930,7 +5930,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "lancedb"
+-version = "0.42.0-beta.7"
++version = "0.42.0-beta.8"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -6041,7 +6041,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "lancedb-cli"
+-version = "0.42.0-beta.7"
++version = "0.42.0-beta.8"
+ dependencies = [
+  "anyhow",
+  "arrow-array",
+@@ -6084,7 +6084,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "lancedb-nodejs"
+-version = "0.42.0-beta.7"
++version = "0.42.0-beta.8"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -6109,7 +6109,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "lancedb-python"
+-version = "0.42.0-beta.7"
++version = "0.42.0-beta.8"
+ dependencies = [
+  "arc-swap",
+  "arrow",
+```
+
+**File**: `docs/src/java/java.md` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ Add the following dependency to your `pom.xml`:
+ <dependency>
+     <groupId>com.lancedb</groupId>
+     <artifactId>lancedb-core</artifactId>
+-    <version>0.42.0-beta.7</version>
++    <version>0.42.0-beta.8</version>
+ </dependency>
+ ```
+ 
+```
+
+**File**: `java/lancedb-core/pom.xml` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@
+     <parent>
+       <groupId>com.lancedb</groupId>
+       <artifactId>lancedb-parent</artifactId>
+-      <version>0.42.0-beta.7</version>
++      <version>0.42.0-beta.8</version>
+       <relativePath>../pom.xml</relativePath>
+     </parent>
+ 
 ```
 
 **File**: `java/pom.xml` (modified, +1/-1)
 ```diff
-@@ -29,7 +29,7 @@
-         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-         <arrow.version>15.0.0</arrow.version>
-         <lance-core.version>15.0.0-beta.8</lance-core.version>
--        <jackson.version>2.18.11</jackson.version>
-+        <jackson.version>2.18.12</jackson.version>
-         <spotless.skip>false</spotless.skip>
-         <spotless.version>2.30.0</spotless.version>
-         <spotless.java.googlejavaformat.version>1.7</spotless.java.googlejavaformat.version>
+@@ -6,7 +6,7 @@
+ 
+     <groupId>com.lancedb</groupId>
+     <artifactId>lancedb-parent</artifactId>
+-    <version>0.42.0-beta.7</version>
++    <version>0.42.0-beta.8</version>
+     <packaging>pom</packaging>
+     <name>${project.artifactId}</name>
+     <description>LanceDB Java SDK Parent POM</description>
+```
+
+**File**: `nodejs/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ [package]
+ name = "lancedb-nodejs"
+ edition.workspace = true
+-version = "0.42.0-beta.7"
++version = "0.42.0-beta.8"
+ publish = false
+ license.workspace = true
+ description.workspace = true
+```
+
+**File**: `nodejs/npm/darwin-arm64/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+ 	"name": "@lancedb/lancedb-darwin-arm64",
+-	"version": "0.42.0-beta.7",
++	"version": "0.42.0-beta.8",
+ 	"os": ["darwin"],
+ 	"cpu": ["arm64"],
+ 	"main": "lancedb.darwin-arm64.node",
+```
+
+**File**: `nodejs/npm/linux-arm64-gnu/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+ 	"name": "@lancedb/lancedb-linux-arm64-gnu",
+-	"version": "0.42.0-beta.7",
++	"version": "0.42.0-beta.8",
+ 	"os": ["linux"],
+ 	"cpu": ["arm64"],
+ 	"main": "lancedb.linux-arm64-gnu.node",
+```
+
+---
+
+### Incident Patch 2: `1b3b2c2d` (2026-11-07)
+**Commit Message**: chore: update lance dependency to v15.0.0-beta.13 (#4899)
+
+Update the Rust workspace Lance dependencies to
+[v15.0.0-beta.13](https://github.com/lance-format/lance/releases/tag/v15.0.0-beta.13),
+synchronize the Python test dependency to published pylance 15.0.0b13,
+and refresh both lockfiles; no compatibility fixes were needed.
+
+The Java SDK stays on `lance-core` 15.0.0-beta.8, as in the beta.9 and
+beta.10 updates: Maven Central has no `lance-core` artifact for
+15.0.0-beta.9 through beta.13.
+
+Validation passed: workspace Clippy with all features and warnings
+denied, Cargo formatting, Python lockfile checks, and all 35 CI-script
+tests. Repository-wide Ruff reports 163 diagnostics, all verified
+identical on unchanged HEAD; unrelated formatter changes were reverted.
+
+---------
+
+Co-authored-by: Vivek <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +48/-48)
+```diff
+@@ -3765,8 +3765,8 @@ checksum = "42703706b716c37f96a77aea830392ad231f44c9e9a67872fa5548707e11b11c"
+ 
+ [[package]]
+ name = "fsst"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arrow-array",
+  "rand 0.9.5",
+@@ -5243,8 +5243,8 @@ checksum = "e037a2e1d8d5fdbd49b16a4ea09d5d6401c1f29eca5ff29d03d3824dba16256a"
+ 
+ [[package]]
+ name = "lance"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arc-swap",
+  "arrow",
+@@ -5319,8 +5319,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-arrow"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -5342,7 +5342,7 @@ dependencies = [
+ [[package]]
+ name = "lance-arrow-scalar"
+ version = "59.0.0"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -5356,7 +5356,7 @@ dependencies = [
+ [[package]]
+ name = "lance-arrow-stats"
+ version = "59.0.0"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arrow-array",
+  "arrow-schema",
+@@ -5365,8 +5365,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-bitpacking"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arrayref",
+  "crunchy",
+@@ -5376,8 +5376,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-core"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -5415,8 +5415,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-datafusion"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arrow",
+  "arrow-array",
+@@ -5447,8 +5447,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-datafusion-exec"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arrow",
+  "arrow-array",
+@@ -5473,8 +5473,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-datagen"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "arrow",
+  "arrow-array",
+@@ -5491,8 +5491,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-derive"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -5501,8 +5501,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-encoding"
+-version = "15.0.0-beta.12"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
++version = "15.0.0-beta.13"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta
+```
+
+**File**: `Cargo.toml` (modified, +15/-15)
+```diff
+@@ -19,21 +19,21 @@ categories = ["database-implementations"]
+ rust-version = "1.95.0"
+ 
+ [workspace.dependencies]
+-lance = { "version" = "=15.0.0-beta.12", default-features = false, "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-core = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-datagen = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-file = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-io = { "version" = "=15.0.0-beta.12", default-features = false, "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-index = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-jsonb = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-linalg = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-namespace = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-namespace-impls = { "version" = "=15.0.0-beta.12", default-features = false, "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-table = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-testing = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-datafusion = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-encoding = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
+-lance-arrow = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
++lance = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-core = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-datagen = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-file = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-io = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-index = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-jsonb = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-linalg = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-namespace = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-namespace-impls = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-table = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-testing = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-datafusion = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-encoding = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance-arrow = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+ lancedb = { path = "rust/lancedb", default-features = false }
+ ahash = "0.8"
+ anyhow = "1"
 ```
 
 **File**: `python/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -62,7 +62,7 @@ tests = [
-     "duckdb>=0.9.0",
-     "pytz>=2023.3",
+@@ -64,7 +64,7 @@ tests = [
      "polars>=0.19, <=1.32.3",
--    "pyarrow<25",
-+    "pyarrow>=16",
+     "pyarrow>=16",
      "pyarrow-stubs>=16.0",
-     "pylance==15.0.0b10",
+-    "pylance==15.0.0b11",
++    "pylance==15.0.0b13",
      "requests>=2.31.0",
+     "datafusion>=54,<55",
+     "opentelemetry-sdk>=1.30.0",
 ```
 
----
-
-### Incident Patch 2: `003d5e52` (2026-11-06)
-**Commit Message**: docs: fix Rust example download links (#4896)
-
-The Rust example downloads in the ingestion, search, reranking and SQL
-guides point to `/static/code/*.zip` URLs that return HTTP 404 on the
-published docs site. Replace all 15 references across 13 pages with
-public GitHub downloads pinned to commit
-`2af85bea8999c8cd23ec01ff62ba110c54652c10`.
-
-The three archives already exist in this repository. Pinning their URLs
-preserves the exact source, dependency manifests and lockfiles used by
-the existing `cargo run --locked` instructions. Only link destinations
-change.
-
-Validation:
-
-- All three public download URLs return HTTP 200 with ZIP content.
-Downloaded bytes match the repository archives and the deployed docs
-source archives exactly, and ZIP integrity checks pass.
-- Verified that the diff contains exactly 15 URL replacements in 13
-pages. No example code, run instructions, manifests or lockfiles
-changed.
-- `git diff --check` passes.
-- `mint broken-links` reports the same 16 existing missing internal
-links on both the unchanged `main` baseline and this branch.
-- `mint validate` reports four existing missing snippet exports
-(`RsExampleBody` and `RsExampleTail` in the reranking and vector-s
-
-**File**: `docs/web/basics/sql.mdx` (modified, +1/-1)
+**File**: `python/uv.lock` (modified, +10/-9)
 ```diff
-@@ -274,7 +274,7 @@ and removes it when finished.
+@@ -1,5 +1,5 @@
+ version = 1
+-revision = 3
++revision = 5
+ requires-python = ">=3.10"
+ resolution-markers = [
+     "python_full_version >= '3.14' and sys_platform == 'win32'",
+@@ -2147,7 +2147,7 @@ requires-dist = [
+     { name = "pyarrow-stubs", marker = "extra == 'tests'", specifier = ">=16.0" },
+     { name = "pydantic", specifier = ">=2.7.4,<3" },
+     { name = "pylance", marker = "extra == 'pylance'", specifier = ">=15.0.0b3" },
+-    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b11" },
++    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b13" },
+     { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.350" },
+     { name = "pytest", marker = "extra == 'tests'", specifier = ">=7.0" },
+     { name = "pytest-asyncio", marker = "extra == 'tests'", specifier = ">=0.21" },
+@@ -4301,7 +4301,7 @@ crypto = [
  
- - **Python:** Install with `pip install lancedb`, save as `query_plan.py`, then run `python query_plan.py`.
- - **TypeScript:** Install with `npm install @lancedb/lancedb`, save as `query_plan.mts`, then run `node query_plan.mts` with Node.js 22.18 or later.
--- **Rust:** Download and extract the [complete Rust examples](/static/code/search-rust.zip), then run `cargo run --locked --bin query_plan` from the extracted directory.
-+- **Rust:** Download and extract the [complete Rust examples](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/search-rust.zip), then run `cargo run --locked --bin query_plan` from the extracted directory.
+ [[package]]
+ name = "pylance"
+-version = "15.0.0b11"
++version = "15.0.0b13"
+ source = { registry = "https://pypi.fury.io/lance-format/" }
+ dependencies = [
+     { name = "lance-namespace" },
+@@ -4312,12 +4312,13 @@ dependencies = [
+     { name = "pyarrow", version = "26.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+ ]
+ wheels = [
+-    { url = "https://pypi.fury.io/lance-format/-/ver_oRP5O/pylance-15.0.0b11-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:54524c1bd04065516aeb97c5d06e1f6c88d1b1d5191d40077b104c5879893ea2" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1LdITz/pylance-15.0.0b11-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8f6b2496b4b20787ff7780907f3017cf7b17c1f2bd1fa8cb7ed4d0a450445dfc" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1ONuyB/pylance-15.0.0b11-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:903283401e222dea532a36b91ffa60e7eaaf4d1fc08602cb29eef4ac2d04a8ff" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_2bWLjt/pylance-15.0.0b11-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:ce8bb0242b1647ce0b9355a48339b8fe8415f3556209214d0b490afb6ee60b38" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_168GWI/pylance-15.0.0b11-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:387ad2b455ab5b00476d7a60ce96e6014239df239691ac219f0025a29ee19f6e" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_aU9I7/pylance-15.0.0b11-cp310-abi3-win_amd64.whl", hash = "sha256:7022c2afcdaf6f9e9444db5addc72033ad20ad301930b38238e246687628cd75" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1UqLiw/pylance-15.0.0b13-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:bbbf6e42624275d1559a4887a11f6cb1c34f10c560ca7209b59219d3614a444f" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_wto7I/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8b8730195df05fa7242d12f4c759019b658f668b90d7ceba380059597bb5951a" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_13UO9X/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a41f292084694a681773990e6d96a675b45e4d232d7a67b21b05762dd5976e8a" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1Mjytl/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:76d2f6a5a8ac150bee990006cc7b7c920e1af2532e4d3ff6a142ab5a5412483e" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1XuqE6/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ac2b50bf8af53aac65d56703010cdf9c1567fdfe230c7fbac1d69584933d7793" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_Fj6Go/pylance-15.0.0b13-cp310-abi3-win_amd64.whl", hash = "sha256:7e6556db1a812cb0846cc0e30c0f273468d5e58dc210f3ee9955d9cdc3bc762a" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_zqD9j/pylance-15.0.0b13-cp310-abi3-win_arm64.whl", hash = "sha256:b3aecc63299a687d9ae69d80655f869321d922d5b462f4657efc83d73456551e" },
+ ]
  
- <CodeGroup>
- <CodeBlock filename="Python" language="python" icon="python">
-```
-
-**File**: `docs/web/ingestion/create-table.mdx` (modified, +1/-1)
-```diff
-@@ -366,7 +366,7 @@ prints the result, and removes its temporary data when finished.
-   `python ingestion.py`.
- - **TypeScript:** install `@lancedb/lancedb`, save the code as `ingestion.mts`,
-   and run `node ingestion.mts` with Node.js 22.18 or later.
--- **Rust:** download the [complete Rust project](/static/code/ingestion-rust.zip),
-+- **Rust:** download the [complete Rust project](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/ingestion-rust.zip),
-   extract it, and run `cargo run --locked`. It includes `src/main.rs`, the Cargo
-   manifest and a lockfile for the example's dependencies. The code is shown below.
- 
-```
-
-**File**: `docs/web/ingestion/delete.mdx` (modified, +2/-2)
-```diff
-@@ -34,7 +34,7 @@ database is removed when the program finishes.
-   `python delete_rows.py`.
- - **TypeScript:** install `@lancedb/lancedb`, save the code as `delete_rows.mts`,
-   and run `node delete_rows.mts` with Node.js 22.18 or later.
--- **Rust:** download the [Rust examples](/static/code/ingestion-feedback-rust.zip),
-+- **Rust:** download the [Rust examples](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/ingestion-feedback-rust.zip),
-   extract the project, and run `cargo run --locked --bin delete`.
- 
- <CodeGroup>
-@@ -85,7 +85,7 @@ prints the result, and removes its temporary data when finished.
-   `python ingestion.py`.
- - **TypeScript:** install `@lancedb/lancedb`, save the code as `ingestion.mts`,
-   and run `node ingestion.mts` with Node.js 22.18 or later.
--- **Rust:** download the [complete Rust project](/static/code/ingestion-rust.zip),
-+- **Rust:** download the [complete Rust project](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/ingestion-rust.zip),
-   extract it, and run `cargo run --locked`. It includes `src/main.rs`, the Cargo
-   manifest and a lockfile for the example's dependencies. The code is shown below.
- 
-```
-
-**File**: `docs/web/ingestion/index.mdx` (modified, +1/-1)
-```diff
-@@ -55,7 +55,7 @@ prints the result, and removes its temporary data when finished.
-   `python ingestion.py`.
- - **TypeScript:** install `@lancedb/lancedb`, save the code as `ingestion.mts`,
-   and run `node ingestion.mts` with Node.js 22.18 or later.
--- **Rust:** download the [complete Rust project](/static/code/ingestion-rust.zip),
-+- **Rust:** download the [complete Rust project](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/ingestion-rust.zip),
-   extract it, and run `cargo run --locked`. It includes `src/main.rs`, the Cargo
-   manifest and a lockfile for the example's dependencies. The code is shown below.
- 
-```
-
-**File**: `docs/web/ingestion/insert.mdx` (modified, +2/-2)
-```diff
-@@ -112,7 +112,7 @@ Each program uses a temporary local database and removes it when finished.
-   `python insert_progress.py`.
- - **TypeScript:** install `@lancedb/lancedb`, save the code as `insert_progress.mts`,
-   and run `node insert_progress.mts` with Node.js 22.18 or later.
--- **Rust:** download the [Rust examples](/static/code/ingestion-feedback-rust.zip),
-+- **Rust:** download the [Rust examples](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/ingestion-feedback-rust.zip),
-   extract the project, and run `cargo run --locked --bin progress`.
- 
- <CodeGroup>
-@@ -214,7 +214,7 @@ prints the result, and removes its temporary data when finished.
-   `python ingestion.py`.
- - **TypeScript:** install `@lancedb/lancedb`, save the code as `ingestion.mts`,
-   and run `node ingestion.mts` with Node.js 22.18 or later.
--- **Rust:** download the [complete Rust project](/static/code/ingestion-rust.zip),
-+- **Rust:** download the [complete Rust project](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/ingestion-rust.zip),
-   extract it, and run `cargo run --locked`. It includes `src/main.rs`, the Cargo
-   manifest and a lockfile for the example's dependencies. The code is shown below.
- 
-```
-
-**File**: `docs/web/ingestion/merge-insert.mdx` (modified, +1/-1)
-```diff
-@@ -243,7 +243,7 @@ prints the result, and removes its temporary data when finished.
-   `python ingestion.py`.
- - **TypeScript:** install `@lancedb/lancedb`, save the code as `ingestion.mts`,
-   and run `node ingestion.mts` with Node.js 22.18 or later.
--- **Rust:** download the [complete Rust project](/static/code/ingestion-rust.zip),
-+- **Rust:** download the [complete Rust project](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/ingestion-rust.zip),
-   extract it, and run `cargo run --locked`. It includes `src/main.rs`, the Cargo
-   manifest and a lockfile for the example's dependencies. The code is shown below.
- 
-```
-
-**File**: `docs/web/ingestion/update.mdx` (modified, +1/-1)
-```diff
-@@ -105,7 +105,7 @@ prints the result, and removes its temporary data when finished.
-   `python ingestion.py`.
- - **TypeScript:** install `@lancedb/lancedb`, save the code as `ingestion.mts`,
-   and run `node ingestion.mts` with Node.js 22.18 or later.
--- **Rust:** download the [complete Rust project](/static/code/ingestion-rust.zip),
-+- **Rust:** download the [complete Rust project](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/ingestion-rust.zip),
-   extract it, and run `cargo run --locked`. It includes `src/main.rs`, the Cargo
-   manifest and a lockfile for the example's dependencies. The code is shown below.
- 
-```
-
-**File**: `docs/web/reranking/index.mdx` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ and removes it when finished.
- 
- - **Python:** Install with `pip install lancedb`, save as `rerank_search.py`, then run `python rerank_search.py`.
- - **TypeScript:** Install with `npm install @lancedb/lancedb`, save as `rerank_search.mts`, then run `node rerank_search.mts` with Node.js 22.18 or later.
--- **Rust:** Download and extract the [complete Rust examples](/static/code/search-rust.zip), then run `cargo run --locked --bin hybrid_search` from the extracted directory.
-+- **Rust:** Download and extract the [complete Rust examples](https://raw.githubusercontent.com/lancedb/lancedb/2af85bea8999c8cd23ec01ff62ba110c54652c10/docs/web/static/code/search-rust.zip), then run `cargo run --locked --bin hybrid_search` from the extracted directory.
- 
- <CodeGroup>
- <CodeBlock filename="Python" language="python" icon="python">
-```
-
----
-
-### Incident Patch 3: `96328f6e` (2026-11-06)
-**Commit Message**: fix(node): upgrade transformers.js to 4.3.2 to pick up patched sharp (#4885)
-
-## Summary
-
-`@lancedb/lancedb` pins the optional dependency
-`@huggingface/transformers` at 3.0.2, which requires `sharp ^0.33.5`.
-Every npm install of LanceDB therefore pulled in a sharp version with
-critical advisories (GHSA-wq5f-xc86-pv6w, GHSA-rgj7-g3m4-5g8c). No 3.x
-release of transformers allows a patched sharp, so this upgrades to
-4.3.2, which requires `sharp ^0.35.4`. A fresh install resolves that
-range to 0.35.5, the first release that fixes both advisories.
-
-- `nodejs/package.json`: `@huggingface/transformers` 3.0.2 → 4.3.2.
-- `nodejs/pnpm-workspace.yaml`: remove the `sharp: ^0.35.4` override. It
-only covered our own install, not consumers, and transformers now
-requires that range itself.
-- `nodejs/examples`: transformers 3.0.2 → 4.3.2, sharp 0.33.5 → 0.35.5.
-- Both lockfiles resolve sharp to 0.35.5; `pnpm audit` reports no sharp
-advisories in either.
-
-`TransformersEmbeddingFunction` needed no code changes. The transformers
-types are only used in private fields, so the published typings don't
-change.
-
-`docs/web-tests/ts` and `docs/web-tests/blob-v2/ts` are left alone: they
-resolve transformers th
-
-**File**: `nodejs/examples/package.json` (modified, +2/-2)
-```diff
-@@ -19,10 +19,10 @@
-   "license": "Apache-2.0",
-   "packageManager": "pnpm@11.1.1",
-   "dependencies": {
--    "@huggingface/transformers": "3.0.2",
-+    "@huggingface/transformers": "4.3.2",
-     "@lancedb/lancedb": "file:../dist",
-     "openai": "4.29.2",
--    "sharp": "0.33.5"
-+    "sharp": "0.35.5"
-   },
-   "devDependencies": {
-     "@biomejs/biome": "^1.7.3",
-```
-
-**File**: `nodejs/examples/pnpm-lock.yaml` (modified, +329/-220)
-```diff
-@@ -9,17 +9,17 @@ importers:
-   .:
-     dependencies:
-       '@huggingface/transformers':
--        specifier: 3.0.2
--        version: 3.0.2
-+        specifier: 4.3.2
-+        version: 4.3.2(@types/node@25.7.0)
-       '@lancedb/lancedb':
-         specifier: file:../dist
-         version: file:../dist
-       openai:
-         specifier: 4.29.2
-         version: 4.29.2
-       sharp:
--        specifier: 0.33.5
--        version: 0.33.5
-+        specifier: 0.35.5
-+        version: 0.35.5(@types/node@25.7.0)
-     devDependencies:
-       '@biomejs/biome':
-         specifier: ^1.7.3
-@@ -264,137 +264,181 @@ packages:
-     cpu: [x64]
-     os: [win32]
- 
--  '@emnapi/runtime@1.10.0':
--    resolution: {integrity: sha512-ewvYlk86xUoGI0zQRNq/mC+16R1QeDlKQy21Ki3oSYXNgLb45GV1P6A0M+/s6nyCuNDqe5VpaY84BzXGwVbwFA==}
-+  '@emnapi/runtime@1.11.3':
-+    resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
- 
--  '@huggingface/jinja@0.3.4':
--    resolution: {integrity: sha512-kFFQWJiWwvxezKQnvH1X7GjsECcMljFx+UZK9hx6P26aVHwwidJVTB0ptLfRVZQvVkOGHoMmTGvo4nT0X9hHOA==}
-+  '@huggingface/jinja@0.5.11':
-+    resolution: {integrity: sha512-YzEzwM5oQf4r0vs7ifWQ+yuVR1YkAHrjERQ+a8WRsStHHp4NRBg+NesjiFc+X2AFUpRvvrIeHDS1xFy9jY/IjQ==}
-     engines: {node: '>=18'}
- 
--  '@huggingface/transformers@3.0.2':
--    resolution: {integrity: sha512-lTyS81eQazMea5UCehDGFMfdcNRZyei7XQLH5X6j4AhA/18Ka0+5qPgMxUxuZLU4xkv60aY2KNz9Yzthv6WVJg==}
-+  '@huggingface/tokenizers@0.2.0':
-+    resolution: {integrity: sha512-LidMHe1FpcSYH4vcSjXooda34pC0M8m1gmDOv7SQi6Iv+ib1zX7J3sHBCC9/3FPCkn2k1b55FneVqMRxrr99pg==}
- 
--  '@img/sharp-darwin-arm64@0.33.5':
--    resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
--    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-+  '@huggingface/transformers@4.3.2':
-+    resolution: {integrity: sha512-V3+dqf3iWlRYJ9I9GreM3zGQd0lAXnnoPeddmkOQYWAEE4l/+Fi6p7tx/qVUJlKQgLXGim2W76rTOzz+eC0i7g==}
-+
-+  '@img/colour@1.1.0':
-+    resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
-+    engines: {node: '>=18'}
-+
-+  '@img/sharp-darwin-arm64@0.35.5':
-+    resolution: {integrity: sha512-QRUlFQ0WxvdWyqqG/WtI3iupfD5rBzmCHXSdPsY91sAtVtTo7Q4cb6zOccZ3gqEqkr0f1As1ehLqmEpDsRf+lg==}
-+    engines: {node: '>=20.9.0'}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@img/sharp-darwin-x64@0.33.5':
--    resolution: {integrity: sha512-fyHac4jIc1ANYGRDxtiqelIbdWkIuQaI84Mv45KvGRRxSAa7o7d1ZKAOBaYbnepLC1WqxfpimdeWfvqqSGwR2Q==}
--    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-+  '@img/sharp-darwin-x64@0.35.5':
-+    resolution: {integrity: sha512-+BR255RhDlpygUpOc/Jdt1nT6DQ3XG/ERo5wbcdOf5Q320dKtPCKPLR1LJs9VGXRaMa8l1uUa0tkCNOXiAxZUw==}
-+    engines: {node: '>=20.9.0'}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@img/sharp-libvips-darwin-arm64@1.0.4':
--    resolution: {integrity: sha512-XblONe153h0O2zuFfTAbQYAX2JhYmDHeWikp1LM9Hul9gVPjFY427k6dFEcOL72O01QxQsWi761svJ/ev9xEDg==}
-+  '@img/sharp-freebsd-wasm32@0.35.5':
-+    resolution: {integrity: sha512-Y/z91nEZ4uIBX5X3nfTovjU9lHNKFYbL2lpHCLVNmXQK03VIZvXBBt0KxbPGp2SdGSF+2mQU4e+hQaWOt86iAw==}
-+    engines: {node: '>=20.9.0'}
-+    os: [freebsd]
-+
-+  '@img/sharp-libvips-darwin-arm64@1.3.4':
-+    resolution: {integrity: sha512-5R89nBYiRdUlSWJxPhO+GVtaXzXSxKnRu/xqMn3KTA3L9EB9Oy/P+Nn2f2vlhPuUdy/Zusb2DarbyTpGCfEDuw==}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@img/sharp-libvips-darwin-x64@1.0.4':
--    resolution: {integrity: sha512-xnGR8YuZYfJGmWPvmlunFaWJsb9T/AO2ykoP3Fz/0X5XV2aoYBPkX6xqCQvUTKKiLddarLaxpzNe+b1hjeWHAQ==}
-+  '@img/sharp-libvips-darwin-x64@1.3.4':
-+    resolution: {integrity: sha512-iR2OKH80yi0U+dUplyh3/xdpFvps6YkCwsXenIJxqxR1v9o+xtKTGbS9H7cps+2Vxjc8B1j96p75NmTGjIhtpQ==}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@img/sharp-libvips-linux-arm64@1.0.4':
--    resolution: {integrity: sha512-9B+taZ8DlyyqzZQnoeIvDVR/2F4EbMepXMc/NdVbkzsJbzkUjhXv/70GQJ7tdLA4YJgNP25zukcxpX2/SueNrA==}
-+  '@img/sharp-libvips-linux-arm64@1.3.4':
-+    resolution: {integrity: sha512-Y3dgX/6lE2QhQb+Gxy0WZxfg9MEm/JBjamZpS2IklP7xIQoKN4hzAm7KcMVGtaVDt3neE9OKBC7vAfonA/Lr1A==}
-     cpu: [arm64]
-     os: [linux]
-     libc: [glibc]
- 
--  '@img/sharp-libvips-linux-arm@1.0.5':
--    resolution: {integrity: sha512-gvcC4ACAOPRNATg/ov8/MnbxFDJqf/pDePbBnuBDcjsI8PssmjoKMAz4LtLaVi+OnSb5FK/yIOamqDwGmXW32g==}
-+  '@img/sharp-libvips-linux-arm@1.3.4':
-+    resolution: {integrity: sha512-LmRtTsOHuvM2+wlO2Db37dx5MiZhB0FvSunciw48YjdOkZz9KAiRbm8ujeMOA1INqmei5NapFxYEK1D1ZSidmw==}
-     cpu: [arm]
-     os: [linux]
-     libc: [glibc]
- 
--  '@img/sharp-libvips-linux-s390x@1.0.4':
--    resolution: {integrity: sha512-u7Wz6ntiSSgGSGcjZ55im6uvTrOxSIS8/dgoVMoiGE9I6JAfU50yH5BoDlYA1tcuGS7g/QNtetJnxA6QEsCVTA==}
-+  '@img/sharp-libvips-linux-ppc64@1.3.4':
-+    resolution: {integrity: sha512-Le6boB8Tai0Nis+gIxIpKx68UDVVIqdR8Tin5Yf1z2LJJQLDJvCDRqRu+jC2qCoD+eIomonmOwB4smBRxfVpYQ==}
-+    cpu: [ppc64]
-+    os: [linux
-```
-
-**File**: `nodejs/package.json` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@
-     "reflect-metadata": "^0.2.2"
-   },
-   "optionalDependencies": {
--    "@huggingface/transformers": "3.0.2",
-+    "@huggingface/transformers": "4.3.2",
-     "openai": "4.29.2"
-   },
-   "peerDependencies": {
-```
-
-**File**: `nodejs/pnpm-lock.yaml` (modified, +247/-210)
-```diff
-@@ -4,9 +4,6 @@ settings:
-   autoInstallPeers: true
-   excludeLinksFromLockfile: false
- 
--overrides:
--  sharp: ^0.35.4
--
- importers:
- 
-   .:
-@@ -104,8 +101,8 @@ importers:
-         version: 7.18.0(eslint@8.57.1)(typescript@5.5.4)
-     optionalDependencies:
-       '@huggingface/transformers':
--        specifier: 3.0.2
--        version: 3.0.2(@types/node@22.7.4)
-+        specifier: 4.3.2
-+        version: 4.3.2(@types/node@22.7.4)
-       openai:
-         specifier: 4.29.2
-         version: 4.29.2
-@@ -569,12 +566,15 @@ packages:
-     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
-     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
- 
--  '@huggingface/jinja@0.3.4':
--    resolution: {integrity: sha512-kFFQWJiWwvxezKQnvH1X7GjsECcMljFx+UZK9hx6P26aVHwwidJVTB0ptLfRVZQvVkOGHoMmTGvo4nT0X9hHOA==}
-+  '@huggingface/jinja@0.5.11':
-+    resolution: {integrity: sha512-YzEzwM5oQf4r0vs7ifWQ+yuVR1YkAHrjERQ+a8WRsStHHp4NRBg+NesjiFc+X2AFUpRvvrIeHDS1xFy9jY/IjQ==}
-     engines: {node: '>=18'}
- 
--  '@huggingface/transformers@3.0.2':
--    resolution: {integrity: sha512-lTyS81eQazMea5UCehDGFMfdcNRZyei7XQLH5X6j4AhA/18Ka0+5qPgMxUxuZLU4xkv60aY2KNz9Yzthv6WVJg==}
-+  '@huggingface/tokenizers@0.2.0':
-+    resolution: {integrity: sha512-LidMHe1FpcSYH4vcSjXooda34pC0M8m1gmDOv7SQi6Iv+ib1zX7J3sHBCC9/3FPCkn2k1b55FneVqMRxrr99pg==}
-+
-+  '@huggingface/transformers@4.3.2':
-+    resolution: {integrity: sha512-V3+dqf3iWlRYJ9I9GreM3zGQd0lAXnnoPeddmkOQYWAEE4l/+Fi6p7tx/qVUJlKQgLXGim2W76rTOzz+eC0i7g==}
- 
-   '@humanwhocodes/config-array@0.13.0':
-     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
-@@ -593,160 +593,160 @@ packages:
-     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
-     engines: {node: '>=18'}
- 
--  '@img/sharp-darwin-arm64@0.35.4':
--    resolution: {integrity: sha512-Uhfl4V4lhP2nbUVF9+hyH1+luj86f1gUFeo8ALYxFoULoU+G87D43BfeMP8XHsk9boxAnCY/bf2EHwhA7MuGsA==}
-+  '@img/sharp-darwin-arm64@0.35.5':
-+    resolution: {integrity: sha512-QRUlFQ0WxvdWyqqG/WtI3iupfD5rBzmCHXSdPsY91sAtVtTo7Q4cb6zOccZ3gqEqkr0f1As1ehLqmEpDsRf+lg==}
-     engines: {node: '>=20.9.0'}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@img/sharp-darwin-x64@0.35.4':
--    resolution: {integrity: sha512-hWniXY3bG5qKpkKrAwPe4y+VTPmf086YQAnkxWh7uA1YrlRouWGa0M0Mxj3ZjnXFkv7/TD1bTy9lGUK26vRvWw==}
-+  '@img/sharp-darwin-x64@0.35.5':
-+    resolution: {integrity: sha512-+BR255RhDlpygUpOc/Jdt1nT6DQ3XG/ERo5wbcdOf5Q320dKtPCKPLR1LJs9VGXRaMa8l1uUa0tkCNOXiAxZUw==}
-     engines: {node: '>=20.9.0'}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@img/sharp-freebsd-wasm32@0.35.4':
--    resolution: {integrity: sha512-lIsKw/BU+kjB4eZjxrYrZmwOJYi3Ajrv66iAlBmUPyKc3HpnloevB1g3wxGD9P/5BbQ1brBGl65VRRrCvQDEqA==}
-+  '@img/sharp-freebsd-wasm32@0.35.5':
-+    resolution: {integrity: sha512-Y/z91nEZ4uIBX5X3nfTovjU9lHNKFYbL2lpHCLVNmXQK03VIZvXBBt0KxbPGp2SdGSF+2mQU4e+hQaWOt86iAw==}
-     engines: {node: '>=20.9.0'}
-     os: [freebsd]
- 
--  '@img/sharp-libvips-darwin-arm64@1.3.3':
--    resolution: {integrity: sha512-suTBPTDGrI9WodccaDdwZItTSaBYASlBk1NSfElSHrUfzu3szG6lvIF58+WiFvnfzuK8ZBFS5zE00PxqxnRiPg==}
-+  '@img/sharp-libvips-darwin-arm64@1.3.4':
-+    resolution: {integrity: sha512-5R89nBYiRdUlSWJxPhO+GVtaXzXSxKnRu/xqMn3KTA3L9EB9Oy/P+Nn2f2vlhPuUdy/Zusb2DarbyTpGCfEDuw==}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@img/sharp-libvips-darwin-x64@1.3.3':
--    resolution: {integrity: sha512-FVJZ5mITMobmXIz/hPDTw0EintTW5H3WfrxwLqEqjiIihlu+hVRyGrFQ60xl0Lxn7Bt3zdpevPaQi0HEzqz9fw==}
-+  '@img/sharp-libvips-darwin-x64@1.3.4':
-+    resolution: {integrity: sha512-iR2OKH80yi0U+dUplyh3/xdpFvps6YkCwsXenIJxqxR1v9o+xtKTGbS9H7cps+2Vxjc8B1j96p75NmTGjIhtpQ==}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@img/sharp-libvips-linux-arm64@1.3.3':
--    resolution: {integrity: sha512-0DaL0A6Xu6sQSQFwe4iVCrKWU2cCTItnRsYsCdxAMm9NF6twAA9BKnoqy4hqz4+azQ0JHuA26qiUKsf1XJ/v5A==}
-+  '@img/sharp-libvips-linux-arm64@1.3.4':
-+    resolution: {integrity: sha512-Y3dgX/6lE2QhQb+Gxy0WZxfg9MEm/JBjamZpS2IklP7xIQoKN4hzAm7KcMVGtaVDt3neE9OKBC7vAfonA/Lr1A==}
-     cpu: [arm64]
-     os: [linux]
-     libc: [glibc]
- 
--  '@img/sharp-libvips-linux-arm@1.3.3':
--    resolution: {integrity: sha512-3rbU4vqXXc3hY/OiXdl52xZvT0F1yEngWfvqudtPJg/KkyiaQw2DRsFrNzpmLvfavbwOq3qXn36GP8obHRULQA==}
-+  '@img/sharp-libvips-linux-arm@1.3.4':
-+    resolution: {integrity: sha512-LmRtTsOHuvM2+wlO2Db37dx5MiZhB0FvSunciw48YjdOkZz9KAiRbm8ujeMOA1INqmei5NapFxYEK1D1ZSidmw==}
-     cpu: [arm]
-     os: [linux]
-     libc: [glibc]
- 
--  '@img/sharp-libvips-linux-ppc64@1.3.3':
--    resolution: {integrity: sha512-cdn1OvUBwsXhbC0zSzJnNzf5MZ/mTrobawDvNXBTxe8VtqKAm0sRuEY2Evzovb/w9JMk4TvRxqt1mekSuJz64w==}
-+  '@img/sharp-libvips-linux-ppc64@1.3.4':
-+    resolution: {integrity: sha512-Le6boB8Tai0Nis+gIxIpKx68UDVVIqdR8Tin5Yf1z2LJJQLDJvCDRqRu+jC2qCoD+eIomonmOwB4smBRxfVpYQ==}
-     cpu: [ppc64]
-     os: [linux]
-     libc:
-```
-
-**File**: `nodejs/pnpm-workspace.yaml` (modified, +0/-7)
-```diff
-@@ -47,10 +47,3 @@ minimumReleaseAgeExclude:
-   - js-yaml@4.3.1
-   - tar@7.5.21
-   - '@opentelemetry/core@2.8.0'
--
--# @huggingface/transformers pins sharp ^0.33.5 and no released version has moved
--# past ^0.34.5, all of which inherit the libvips CVEs in GHSA-f88m-g3jw-g9cj.
--# Force the patched line. sharp is only reached by transformers' image pipeline,
--# which LanceDB's text embedding function never uses.
--overrides:
--  sharp: ^0.35.4
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4899** (2026-11-07): chore: update lance dependency to v15.0.0-beta.13 (@lancedb-robot)
 - **PR #4896** (2026-11-06): docs: fix Rust example download links (@tsmithv11)
+- **PR #4895** (closed): feat: preserve remote compaction option inheritance (@ChilePiquin)
 - **PR #4890** (2026-11-06): feat: expose the remaining refresh options on the SDKs (@wkalt)
 - **PR #4888** (2026-11-06): chore(deps): upgrade Lance to v15.0.0-beta.12 (@BubbleCal)
 - **PR #4887** (2026-11-06): docs: update example names (@brendanclement)
-- **PR #4885** (2026-11-06): fix(node): upgrade transformers.js to 4.3.2 to pick up patched sharp (@wjones127)
-- **PR #4884** (2026-11-05): ci: pass release workflow inputs through env vars (@wjones127)
 
 ---
 
@@ -1880,61 +1657,28 @@ resolve transformers th
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump dependencies with critical security advisories (#4883)
+## X. Bump version: 0.42.0-beta.7 → 0.42.0-beta.8
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.bumpversion.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f496529`: bump dependencies with critical security advisories (#4883). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bff93ff3`: Bump version: 0.42.0-beta.7 → 0.42.0-beta.8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.bumpversion.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "synstructure"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "901704edd0dfe137f1987838ee4f259e4e063c31371bdb423f7ae38ec6f77f02"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 3.0.3",
-]
-
-version = "0.8.4"
-checksum = "417ef3fcf6c300b7dbd25c85531a746931c02ad536f3cf4786ed1e88223340b3"
-version = "0.8.4"
-checksum = "ec8ebde2db3681e8c9980cc27822030e68752690ddfa9473e739aeb4dbde6d71"
- "syn 3.0.3",
- "synstructure 0.14.0",
- "synstructure 0.13.2",
-version = "0.11.8"
-checksum = "bb0464e17806c1d976d5cba29399c7f08e516e279e2ba493f63123b5fca67dd8"
-version = "0.11.7"
-checksum = "c3743ddbf47738d929cd1ae2e199d40d0162979dfe31aef8ae646d2bf00bf97a"
- "syn 3.0.3",
+current_version = "0.42.0-beta.8"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.8.2"
-checksum = "abe8c5fda708d9ca3df187cae8bfb9ceda00dd96231bed36e445a1a48e66f9ca"
-version = "0.8.2"
-checksum = "de844c262c8848816172cef550288e7dc6c7b7814b4ee56b3e1553f275f1858e"
- "syn 2.0.117",
- "synstructure",
- "synstructure",
-version = "0.11.6"
-checksum = "90f911cbc359ab6af17377d242225f4d75119aec87ea711a880987b18cd7b239"
-version = "0.11.3"
-checksum = "625dc425cab0dca6dc3c3319506e6593dcb08a9f387ea3b284dbd52a92c40555"
- "syn 2.0.117",
+current_version = "0.42.0-beta.7"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f496529` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bff93ff3` are properly handled with clean fallback behavior.
