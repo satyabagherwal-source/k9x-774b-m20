@@ -8223,3 +8223,6 @@ Every entry in this ledger must capture:
 | `learn-github-jarvis322-macos-sysdata` | `https://github.com/Jarvis322/macos-sysdata` | `bcfd205a` | Multi-dimensional audit evidence | 2026-11-08T04:26:49.283Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `e3334600` | Multi-dimensional audit evidence | 2026-11-08T04:26:52.330Z |
 | `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-11-08T04:26:53.906Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `b2bcbcf9` | Multi-dimensional audit evidence | 2026-11-08T04:33:48.347Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `5919d349` | Multi-dimensional audit evidence | 2026-11-08T04:33:53.346Z |
+| `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-08T04:33:56.524Z |

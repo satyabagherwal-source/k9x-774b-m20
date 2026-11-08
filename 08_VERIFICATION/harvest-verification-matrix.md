@@ -8214,3 +8214,6 @@
 | `CYCLE-20261108-YU67` | `2026-11-08T04:26:49.279Z` | `Jarvis322/macos-sysdata` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f2312bae...`) |
 | `CYCLE-20261108-YWIH` | `2026-11-08T04:26:52.313Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b88f5ace...`) |
 | `CYCLE-20261108-YXQM` | `2026-11-08T04:26:53.902Z` | `InternScience/Sage-A1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5098, Rule null, Rule null` | Yes (`658abb8e...`) |
+| `CYCLE-20261108-7TIV` | `2026-11-08T04:33:48.343Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a5f23b6a...`) |
+| `CYCLE-20261108-7XDR` | `2026-11-08T04:33:53.343Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`10fd17ab...`) |
+| `CYCLE-20261108-7ZU1` | `2026-11-08T04:33:56.521Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule 277` | Yes (`756c9a6f...`) |

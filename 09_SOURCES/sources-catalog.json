@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "f06f106b",
+    "sourceVersion": "b2bcbcf9",
     "license": "Apache-2.0",
-    "contentHash": "6aa1b4ff9f715f5d2e4d993b2a4641381c60689622ebcd46ec2c2be485ed29e1",
-    "lastHarvestedAt": "2026-11-06T14:33:55.501Z",
+    "contentHash": "a5f23b6aac0ab8bbd15731d21a3aff3302f4c490d9828a7c62fa00283afc6e6c",
+    "lastHarvestedAt": "2026-11-08T04:33:48.347Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -8063,10 +8063,10 @@
     "repository": "jacklandrin/OnlySwitch",
     "platform": "github",
     "sourceUrl": "https://github.com/jacklandrin/OnlySwitch",
-    "sourceVersion": "5366e006",
+    "sourceVersion": "5919d349",
     "license": "MIT",
-    "contentHash": "2124b75464d19edf2d80d3906aaddae9b5f713993244ba49784a7a2a0475aea0",
-    "lastHarvestedAt": "2026-11-05T03:46:28.670Z",
+    "contentHash": "10fd17ab2d50d6f64c90216ac89b45a940d8d7c167265e0e8dd3aa7061951668",
+    "lastHarvestedAt": "2026-11-08T04:33:53.346Z",
     "learningId": "learn-github-jacklandrin-onlyswitch"
   },
   "alin23-lunar": {
@@ -10525,8 +10525,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceVersion": "hf-qwen-qwen3-14b",
     "license": "Open-Source",
-    "contentHash": "11e9fba23bda0d6f8f6a0289e07b9490cc3479898000d0c91a2b38b512bc438b",
-    "lastHarvestedAt": "2026-11-04T18:06:05.796Z",
+    "contentHash": "756c9a6f36fe88877e4f93c64ba0d388af999bd4a6b8e34ef3d83eac85ecd86b",
+    "lastHarvestedAt": "2026-11-08T04:33:56.524Z",
     "learningId": "learn-huggingface-qwen-qwen3-14b"
   },
   "solaceproducts-solace-agent-mesh": {

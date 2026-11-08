@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T04:26:53.912Z",
-  "total_cycles_completed": 8179,
-  "total_learnings_persisted": 8179,
-  "total_rules_promoted": 7868,
+  "last_updated": "2026-11-08T04:33:56.538Z",
+  "total_cycles_completed": 8182,
+  "total_learnings_persisted": 8182,
+  "total_rules_promoted": 7873,
   "history": [
-    {
-      "timestamp": "2026-11-07T05:50:52.963Z",
-      "repository": "lingodotdev/lingo.dev",
-      "learningId": "learn-github-lingodotdev-lingo-dev",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T05:50:56.369Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T05:58:07.124Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T05:58:08.629Z",
       "repository": "medialab/xan",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-08T04:26:53.912Z",
       "repository": "InternScience/Sage-A1.5",
       "learningId": "learn-huggingface-internscience-sage-a1-5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T04:33:48.352Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T04:33:53.351Z",
+      "repository": "jacklandrin/OnlySwitch",
+      "learningId": "learn-github-jacklandrin-onlyswitch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T04:33:56.538Z",
+      "repository": "Qwen/Qwen3-14B",
+      "learningId": "learn-huggingface-qwen-qwen3-14b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

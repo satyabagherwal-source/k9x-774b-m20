@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T04:26:53.809Z",
+  "last_updated": "2026-11-08T04:33:56.454Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16087,14 +16087,19 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "f06f106b",
-      "content_hash": "6aa1b4ff9f715f5d2e4d993b2a4641381c60689622ebcd46ec2c2be485ed29e1",
+      "source_version": "b2bcbcf9",
+      "content_hash": "a5f23b6aac0ab8bbd15731d21a3aff3302f4c490d9828a7c62fa00283afc6e6c",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Drain credential helper fixture requests before exiting",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Serialize `gix-macros` trybuild suites on Windows",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16163,7 +16168,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:33:55.371Z",
+      "verified_at": "2026-11-08T04:33:48.250Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35409,11 +35414,16 @@
       "slug": "jacklandrin-onlyswitch",
       "platform": "github",
       "source_url": "https://github.com/jacklandrin/OnlySwitch",
-      "source_version": "5366e006",
-      "content_hash": "2124b75464d19edf2d80d3906aaddae9b5f713993244ba49784a7a2a0475aea0",
+      "source_version": "5919d349",
+      "content_hash": "10fd17ab2d50d6f64c90216ac89b45a940d8d7c167265e0e8dd3aa7061951668",
       "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Stop crashing when a music player quits while its state is polled",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2601,
           "title": "stabilize Dock preview positioning",
@@ -35450,7 +35460,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:46:28.603Z",
+      "verified_at": "2026-11-08T04:33:53.245Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70104,15 +70114,15 @@
       "learning_id": "rule-277",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 277,
-      "title": "BFloat16 Numerical Stability Invariant (Harvested from Qwen/Qwen-Image-2.1-Turbo)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "bfloat16 Numerical Stability Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-11-08T04:33:56.423Z"
     },
     "rule-278": {
       "learning_id": "rule-278",
@@ -128435,10 +128445,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
       "source_version": "hf-qwen-qwen3-14b",
-      "content_hash": "11e9fba23bda0d6f8f6a0289e07b9490cc3479898000d0c91a2b38b512bc438b",
+      "content_hash": "756c9a6f36fe88877e4f93c64ba0d388af999bd4a6b8e34ef3d83eac85ecd86b",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Dual-Mode Reasoning Switching Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Grouped Query Attention (GQA) KV Cache Memory Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 277,
+          "title": "bfloat16 Numerical Stability Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 4620,
           "title": "GQA KV-Cache Memory Invariant",
@@ -128480,7 +128505,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:06:05.729Z",
+      "verified_at": "2026-11-08T04:33:56.423Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
