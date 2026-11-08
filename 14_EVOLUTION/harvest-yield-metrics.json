@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T15:05:12.795Z",
-  "total_cycles_completed": 8268,
-  "total_learnings_persisted": 8268,
-  "total_rules_promoted": 8048,
+  "last_updated": "2026-11-08T15:12:29.478Z",
+  "total_cycles_completed": 8269,
+  "total_learnings_persisted": 8269,
+  "total_rules_promoted": 8050,
   "history": [
-    {
-      "timestamp": "2026-11-07T21:36:33.147Z",
-      "repository": "goodrain/rainbond",
-      "learningId": "learn-github-goodrain-rainbond",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T21:36:37.909Z",
       "repository": "citusdata/citus",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-08T15:05:12.795Z",
       "repository": "SupersonicLabs/Julia-1",
       "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T15:12:29.478Z",
+      "repository": "Comfy-Org/Wan-2.2",
+      "learningId": "learn-huggingface-comfy-org-wan-2-2",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T15:05:12.650Z",
+  "last_updated": "2026-11-08T15:12:29.332Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -169363,10 +169363,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Wan-2.2",
       "source_version": "hf-comfy-org-wan-2.2",
-      "content_hash": "4da86c4a8c9265715244b2fd2a938905ac79d08c06fb7e6f342e6d572231cb15",
+      "content_hash": "6451b5b394218e0e19f59cc450de910549c08a29ae184b9ae42182d65927a5d4",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Heterogeneous Model Artifact Normalization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dual-Stage Diffusion Model Separation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 6138,
           "title": "Heterogeneous Model Artifact Canonicalization",
@@ -169388,7 +169398,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:27:25.987Z",
+      "verified_at": "2026-11-08T15:12:29.307Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T15:05:15.343Z",
-    "lastVerified": "2026-11-08T15:05:15.343Z",
+    "lastChecked": "2026-11-08T15:12:32.053Z",
+    "lastVerified": "2026-11-08T15:12:32.053Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -460,12 +460,12 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T14:19:44.870Z",
-    "lastVerified": "2026-11-08T14:19:44.870Z",
+    "lastChecked": "2026-11-08T15:12:28.464Z",
+    "lastVerified": "2026-11-08T15:12:28.464Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -474,7 +474,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5bc314fd"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1260,12 +1261,12 @@
     "lastVerified": "2026-11-06T14:40:32.289Z"
   },
   "emberstack-kubernetes-reflector": {
-    "name": "emberstack/kubernetes-reflector",
+    "name": "kubernetes-reflector",
     "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
     "sourceType": "github",
     "technology": "C#",
-    "lastChecked": "2026-11-07T19:16:46.880Z",
-    "lastVerified": "2026-11-07T19:16:46.880Z",
+    "lastChecked": "2026-11-08T15:12:20.988Z",
+    "lastVerified": "2026-11-08T15:12:20.988Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
@@ -1274,7 +1275,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cf4e7963"
   },
   "freenet-freenet-core": {
     "name": "freenet-core",
@@ -2450,8 +2452,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T06:32:55.397Z",
-    "lastVerified": "2026-11-08T06:32:55.397Z",
+    "lastChecked": "2026-11-08T15:12:23.505Z",
+    "lastVerified": "2026-11-08T15:12:23.505Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -4782,12 +4784,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trailbaseio-trailbase": {
-    "name": "trailbaseio/trailbase",
+    "name": "trailbase",
     "officialUrl": "https://github.com/trailbaseio/trailbase",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T18:09:48.305Z",
-    "lastVerified": "2026-11-07T18:09:48.305Z",
+    "lastChecked": "2026-11-08T15:12:25.965Z",
+    "lastVerified": "2026-11-08T15:12:25.965Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trailbaseio-trailbase",
@@ -4796,7 +4798,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "30b864ff"
   },
   "actix-actix-web": {
     "name": "actix/actix-web",
@@ -6094,9 +6097,9 @@
   "gotham-rs-gotham": {
     "name": "gotham",
     "officialUrl": "https://github.com/gotham-rs/gotham",
-    "lastChecked": "2026-11-07T03:01:12.217Z",
+    "lastChecked": "2026-11-08T15:12:13.480Z",
     "revisionIdentifier": "53fe844b",
-    "lastVerified": "2026-11-07T03:01:12.217Z"
+    "lastVerified": "2026-11-08T15:12:13.480Z"
   },
   "hf-naiveai-naive-n0.5-flash": {
     "name": "NaiveAI/Naive-N0.5-Flash",
@@ -10447,9 +10450,9 @@
   "android-kotlin-multiplatform-samples": {
     "name": "kotlin-multiplatform-samples",
     "officialUrl": "https://github.com/android/kotlin-multiplatform-samples",
-    "lastChecked": "2026-11-05T09:35:16.476Z",
+    "lastChecked": "2026-11-08T15:12:18.467Z",
     "revisionIdentifier": "7844c733",
-    "lastVerified": "2026-11-05T09:35:16.476Z"
+    "lastVerified": "2026-11-08T15:12:18.467Z"
   },
   "samvelik-sitemap-checker": {
     "name": "sitemap-checker",
@@ -13449,13 +13452,13 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/Wan-2.2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T23:27:25.099Z",
-    "lastVerified": "2026-11-04T23:27:25.099Z",
+    "lastChecked": "2026-11-08T15:12:16.253Z",
+    "lastVerified": "2026-11-08T15:12:16.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-wan-2-2",
-    "contentHash": "4da86c4a8c9265715244b2fd2a938905ac79d08c06fb7e6f342e6d572231cb15",
-    "promotedRulesCount": 0,
+    "contentHash": "6451b5b394218e0e19f59cc450de910549c08a29ae184b9ae42182d65927a5d4",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

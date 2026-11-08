@@ -11625,8 +11625,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Wan-2.2",
     "sourceVersion": "hf-comfy-org-wan-2.2",
     "license": "Open-Source",
-    "contentHash": "4da86c4a8c9265715244b2fd2a938905ac79d08c06fb7e6f342e6d572231cb15",
-    "lastHarvestedAt": "2026-11-04T23:27:26.074Z",
+    "contentHash": "6451b5b394218e0e19f59cc450de910549c08a29ae184b9ae42182d65927a5d4",
+    "lastHarvestedAt": "2026-11-08T15:12:29.472Z",
     "learningId": "learn-huggingface-comfy-org-wan-2-2"
   },
   "vercel-labs-agent-desktop": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-KNCH",
-    "timestamp": "2026-11-05T22:08:31.793Z",
-    "repository": "software-mansion/react-native-screens",
-    "learningId": "learn-github-software-mansion-react-native-screens",
-    "contentHash": "7eb8cb7a63b374326f86b11cfe42c27ca01ef81c36436152a9074b2444c3a080",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-KT74",
     "timestamp": "2026-11-05T22:08:39.376Z",
     "repository": "apache/shardingsphere",
@@ -7490,6 +7475,21 @@
     "repository": "SupersonicLabs/Julia-1",
     "learningId": "learn-huggingface-supersoniclabs-julia-1",
     "contentHash": "26426e069f975aaac548b919b21d2eb345a463a2961aa27cd9c17c01c833c391",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-16AJ",
+    "timestamp": "2026-11-08T15:12:29.467Z",
+    "repository": "Comfy-Org/Wan-2.2",
+    "learningId": "learn-huggingface-comfy-org-wan-2-2",
+    "contentHash": "6451b5b394218e0e19f59cc450de910549c08a29ae184b9ae42182d65927a5d4",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {
