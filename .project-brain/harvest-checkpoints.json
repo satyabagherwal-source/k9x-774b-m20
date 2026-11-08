@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T17:59:05.547Z",
+  "last_updated": "2026-11-08T18:11:28.070Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -740,14 +740,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-psrben-visionhope",
-      "content_hash": "a0463eb6ae2be5f7994f6b5743146c18653dc69b1cdbb71b95d5381fb15f1ab0",
-      "verified_at": "2026-11-05T02:11:38.372Z",
+      "content_hash": "b1fce58d63ac6ff6444d6b0e7099e6ef5be71c77fb83cf095357c64b7eaa3484",
+      "verified_at": "2026-11-08T18:11:28.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T02:11:38.372Z"
+      "last_updated": "2026-11-08T18:11:28.069Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "3cff1c548364434a48e3749b0926d8641783e8f40d89173c560cfacf70a27119",
-      "verified_at": "2026-11-07T05:58:08.633Z",
+      "content_hash": "4c04f7bc1de36cd70eea897eef0705d309a7e2854e95e88a6b49e3ed857d7dca",
+      "verified_at": "2026-11-08T18:11:20.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:58:08.633Z"
+      "last_updated": "2026-11-08T18:11:20.818Z"
     },
     "onejs/one": {
       "repository": "onejs/one",

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-5GNA",
-    "timestamp": "2026-11-06T13:20:30.598Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "70e82a0df56f1c15b937148af7dbfc142004250248d31213375d1d2fbc41d05c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-E03L",
-    "timestamp": "2026-11-06T13:27:09.057Z",
-    "repository": "milind-soni/OpenMausBot",
-    "learningId": "learn-github-milind-soni-openmausbot",
-    "contentHash": "994a090d2ccc6ccf0747efa746cb2c083890fe9d8622794100ab46c0b85e4981",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-E6IV",
     "timestamp": "2026-11-06T13:27:17.383Z",
     "repository": "laurent22/joplin",
@@ -7492,6 +7462,36 @@
     "contentHash": "bca4a4dd81e7919695e0da2618b99854951540804e54f362c07d207bf8e3210a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-F6N8",
+    "timestamp": "2026-11-08T18:11:20.804Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "4c04f7bc1de36cd70eea897eef0705d309a7e2854e95e88a6b49e3ed857d7dca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-FC8D",
+    "timestamp": "2026-11-08T18:11:28.045Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "b1fce58d63ac6ff6444d6b0e7099e6ef5be71c77fb83cf095357c64b7eaa3484",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

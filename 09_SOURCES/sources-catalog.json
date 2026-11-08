@@ -595,8 +595,8 @@
     "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceVersion": "hf-psrben-visionhope",
     "license": "Open-Source",
-    "contentHash": "a0463eb6ae2be5f7994f6b5743146c18653dc69b1cdbb71b95d5381fb15f1ab0",
-    "lastHarvestedAt": "2026-11-05T02:11:38.363Z",
+    "contentHash": "b1fce58d63ac6ff6444d6b0e7099e6ef5be71c77fb83cf095357c64b7eaa3484",
+    "lastHarvestedAt": "2026-11-08T18:11:28.050Z",
     "learningId": "learn-huggingface-psrben-visionhope"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "b7bd8dc7",
+    "sourceVersion": "01ce2b3a",
     "license": "Unlicense",
-    "contentHash": "3cff1c548364434a48e3749b0926d8641783e8f40d89173c560cfacf70a27119",
-    "lastHarvestedAt": "2026-11-07T05:58:08.623Z",
+    "contentHash": "4c04f7bc1de36cd70eea897eef0705d309a7e2854e95e88a6b49e3ed857d7dca",
+    "lastHarvestedAt": "2026-11-08T18:11:20.808Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {

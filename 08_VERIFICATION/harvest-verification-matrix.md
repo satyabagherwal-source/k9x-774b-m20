@@ -8350,3 +8350,5 @@
 | `CYCLE-20261108-Q7CG` | `2026-11-08T17:51:55.312Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`2a6a636d...`) |
 | `CYCLE-20261108-ZDGH` | `2026-11-08T17:59:03.137Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`c298544f...`) |
 | `CYCLE-20261108-ZFB0` | `2026-11-08T17:59:05.532Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bca4a4dd...`) |
+| `CYCLE-20261108-F6N8` | `2026-11-08T18:11:20.804Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4c04f7bc...`) |
+| `CYCLE-20261108-FC8D` | `2026-11-08T18:11:28.045Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1274, Rule null` | Yes (`b1fce58d...`) |

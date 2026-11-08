@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T17:59:05.430Z",
+  "last_updated": "2026-11-08T18:11:27.952Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30460,10 +30460,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "a0463eb6ae2be5f7994f6b5743146c18653dc69b1cdbb71b95d5381fb15f1ab0",
+      "content_hash": "b1fce58d63ac6ff6444d6b0e7099e6ef5be71c77fb83cf095357c64b7eaa3484",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Mixer-to-Embedding Dimension Ratio Constraint",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 346,
           "title": "Dimensional Decoupling in Hierarchical Vision Backbones",
@@ -30582,7 +30587,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-11-05T02:11:38.250Z",
+      "verified_at": "2026-11-08T18:11:27.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41990,14 +41995,19 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "b7bd8dc7",
-      "content_hash": "3cff1c548364434a48e3749b0926d8641783e8f40d89173c560cfacf70a27119",
+      "source_version": "01ce2b3a",
+      "content_hash": "4c04f7bc1de36cd70eea897eef0705d309a7e2854e95e88a6b49e3ed857d7dca",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Fixing scrape streaming input",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Fixing quadratic perf issue wrt variadic args",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42041,7 +42051,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:58:08.493Z",
+      "verified_at": "2026-11-08T18:11:20.691Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -94668,15 +94678,15 @@
       "learning_id": "rule-1274",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1274,
-      "title": "Hierarchical Depth Asymmetry Invariant (Harvested from PSRben/VisionHOPE)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Hierarchical Depth Asymmetry Invariant",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.818Z"
+      "verified_at": "2026-11-08T18:11:27.928Z"
     },
     "rule-1275": {
       "learning_id": "rule-1275",

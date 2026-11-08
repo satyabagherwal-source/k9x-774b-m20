@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T17:59:05.542Z",
-  "total_cycles_completed": 8315,
-  "total_learnings_persisted": 8315,
-  "total_rules_promoted": 8101,
+  "last_updated": "2026-11-08T18:11:28.065Z",
+  "total_cycles_completed": 8317,
+  "total_learnings_persisted": 8317,
+  "total_rules_promoted": 8104,
   "history": [
-    {
-      "timestamp": "2026-11-08T00:49:00.321Z",
-      "repository": "sharkdp/fd",
-      "learningId": "learn-github-sharkdp-fd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T00:49:08.059Z",
-      "repository": "dosco/graphjin",
-      "learningId": "learn-github-dosco-graphjin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T00:49:13.446Z",
       "repository": "dragonflydb/dragonfly",
@@ -1403,6 +1389,20 @@
       "repository": "topgrade-rs/topgrade",
       "learningId": "learn-github-topgrade-rs-topgrade",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T18:11:20.815Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T18:11:28.065Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-psrben-visionhope",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
