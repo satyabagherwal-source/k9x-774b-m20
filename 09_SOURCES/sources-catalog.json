@@ -2143,10 +2143,10 @@
     "repository": "meta/docusaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/docusaurus",
-    "sourceVersion": "2a890559",
+    "sourceVersion": "c00f04e2",
     "license": "MIT",
-    "contentHash": "78b39fafb88a6d4c3c8a1c2dae1104efd7e1ddb31cd2f1f98d8045af2c1495ab",
-    "lastHarvestedAt": "2026-11-04T10:20:13.044Z",
+    "contentHash": "4e8dba8373053b346bcb6ae281bff6e64dde04d22ac6401d7ec7a0dd2bf98848",
+    "lastHarvestedAt": "2026-11-08T02:05:41.237Z",
     "learningId": "learn-github-meta-docusaurus"
   },
   "tabbyml-tabby": {

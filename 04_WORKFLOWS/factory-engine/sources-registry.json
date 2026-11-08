@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T01:56:35.480Z",
-    "lastVerified": "2026-11-08T01:56:35.480Z",
+    "lastChecked": "2026-11-08T02:05:43.817Z",
+    "lastVerified": "2026-11-08T02:05:43.817Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -133,12 +133,12 @@
     "revisionIdentifier": "51c1838b"
   },
   "mintplex-labs-anything-llm": {
-    "name": "Mintplex-Labs/anything-llm",
+    "name": "anything-llm",
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-06T19:09:48.942Z",
-    "lastVerified": "2026-11-06T19:09:48.942Z",
+    "lastChecked": "2026-11-08T02:03:02.158Z",
+    "lastVerified": "2026-11-08T02:03:02.158Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
@@ -147,7 +147,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "308b2766"
   },
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
@@ -460,8 +461,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T01:25:33.519Z",
-    "lastVerified": "2026-11-08T01:25:33.519Z",
+    "lastChecked": "2026-11-08T02:03:04.566Z",
+    "lastVerified": "2026-11-08T02:03:04.566Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1876,8 +1877,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T21:43:53.873Z",
-    "lastVerified": "2026-11-07T21:43:53.873Z",
+    "lastChecked": "2026-11-08T02:02:59.700Z",
+    "lastVerified": "2026-11-08T02:02:59.700Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -2104,12 +2105,12 @@
     "lastVerified": "2026-11-06T23:12:02.345Z"
   },
   "unhappychoice-gitlogue": {
-    "name": "unhappychoice/gitlogue",
+    "name": "gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T22:40:02.741Z",
-    "lastVerified": "2026-11-05T22:40:02.741Z",
+    "lastChecked": "2026-11-08T02:02:49.582Z",
+    "lastVerified": "2026-11-08T02:02:49.582Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-unhappychoice-gitlogue",
@@ -2118,7 +2119,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "195ff5b6"
   },
   "hf-fastino-gliner2.5-decide": {
     "name": "fastino/GLiNER2.5-Decide",
@@ -4528,9 +4530,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-11-06T20:59:13.287Z",
+    "lastChecked": "2026-11-08T02:02:57.082Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-11-06T20:59:13.287Z"
+    "lastVerified": "2026-11-08T02:02:57.082Z"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -9037,9 +9039,9 @@
   "ronitsingh10-finetune": {
     "name": "FineTune",
     "officialUrl": "https://github.com/ronitsingh10/FineTune",
-    "lastChecked": "2026-11-05T01:33:16.951Z",
+    "lastChecked": "2026-11-08T02:02:54.574Z",
     "revisionIdentifier": "2285279d",
-    "lastVerified": "2026-11-05T01:33:16.951Z"
+    "lastVerified": "2026-11-08T02:02:54.574Z"
   },
   "mrjackwills-oxker": {
     "name": "oxker",
@@ -12742,14 +12744,14 @@
     "officialUrl": "https://github.com/facebook/docusaurus",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T10:20:11.306Z",
-    "lastVerified": "2026-11-04T10:20:11.306Z",
+    "lastChecked": "2026-11-08T02:02:57.564Z",
+    "lastVerified": "2026-11-08T02:02:57.564Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-docusaurus",
-    "contentHash": "78b39fafb88a6d4c3c8a1c2dae1104efd7e1ddb31cd2f1f98d8045af2c1495ab",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "4e8dba8373053b346bcb6ae281bff6e64dde04d22ac6401d7ec7a0dd2bf98848",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

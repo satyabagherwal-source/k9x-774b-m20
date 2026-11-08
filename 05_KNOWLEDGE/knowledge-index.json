@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T01:56:32.770Z",
+  "last_updated": "2026-11-08T02:05:41.155Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -165495,11 +165495,26 @@
       "slug": "facebook-docusaurus",
       "platform": "github",
       "source_url": "https://github.com/facebook/docusaurus",
-      "source_version": "2a890559",
-      "content_hash": "78b39fafb88a6d4c3c8a1c2dae1104efd7e1ddb31cd2f1f98d8045af2c1495ab",
+      "source_version": "c00f04e2",
+      "content_hash": "4e8dba8373053b346bcb6ae281bff6e64dde04d22ac6401d7ec7a0dd2bf98848",
       "dossier_path": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Invariant URL Path Normalization in Static Site Hydration",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Guarded Concurrency Leaf Queue for Local I/O",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "HTTP Header Value Sanitization Against Latin-1 Invalidation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5942,
           "title": "ci): don't proxy our unscoped packages in the E2E Verdaccio registry (AI-assiste",
@@ -165516,7 +165531,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:20:12.940Z",
+      "verified_at": "2026-11-08T02:05:41.140Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

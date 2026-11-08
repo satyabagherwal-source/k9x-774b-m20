@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T01:56:32.871Z",
-  "total_cycles_completed": 8136,
-  "total_learnings_persisted": 8136,
-  "total_rules_promoted": 7810,
+  "last_updated": "2026-11-08T02:05:41.242Z",
+  "total_cycles_completed": 8137,
+  "total_learnings_persisted": 8137,
+  "total_rules_promoted": 7813,
   "history": [
-    {
-      "timestamp": "2026-11-07T03:01:28.770Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T03:01:31.300Z",
       "repository": "Ontos-AI/knowhere",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-08T01:56:32.871Z",
       "repository": "Agent-Field/agentfield",
       "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T02:05:41.242Z",
+      "repository": "meta/docusaurus",
+      "learningId": "learn-github-meta-docusaurus",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

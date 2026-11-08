@@ -8180,3 +8180,4 @@ Every entry in this ledger must capture:
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `92c959b6` | Multi-dimensional audit evidence | 2026-11-08T01:46:17.503Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `9ac008f9` | Multi-dimensional audit evidence | 2026-11-08T01:55:00.884Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `a31ceb62` | Multi-dimensional audit evidence | 2026-11-08T01:56:32.866Z |
+| `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `c00f04e2` | Multi-dimensional audit evidence | 2026-11-08T02:05:41.237Z |

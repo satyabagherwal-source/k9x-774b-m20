@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-XG3O",
-    "timestamp": "2026-11-05T12:58:36.612Z",
-    "repository": "alibaba/zvec",
-    "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "78a8f10f27921dd6db8bcdc30c2310c1e433c704ca3c3f61fc8b4a5036c60659",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-XGKZ",
     "timestamp": "2026-11-05T12:58:37.235Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7475,21 @@
     "repository": "Agent-Field/agentfield",
     "learningId": "learn-github-agent-field-agentfield",
     "contentHash": "238c1b485f1da73c830ef7bd19c6121e51004bc9051bbb19680b29401665c662",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-XC6P",
+    "timestamp": "2026-11-08T02:05:41.233Z",
+    "repository": "meta/docusaurus",
+    "learningId": "learn-github-meta-docusaurus",
+    "contentHash": "4e8dba8373053b346bcb6ae281bff6e64dde04d22ac6401d7ec7a0dd2bf98848",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
