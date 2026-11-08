@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T16:58:54.933Z",
+  "last_updated": "2026-11-08T17:06:13.076Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "93693f56429feec3b8fdd59a2d503b68873692dd707144c90d527463dc8d3b18",
-      "verified_at": "2026-11-05T01:15:06.891Z",
+      "content_hash": "c058816926a024a9ac04f00bc9ecf98dde063433f4d3d919df36b112049ece55",
+      "verified_at": "2026-11-08T17:05:56.900Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T01:15:06.891Z"
+      "last_updated": "2026-11-08T17:05:56.900Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "8fb132811524e7caf49ff06dccd1218faea4e86c859898234a91f99aff48a3e8",
-      "verified_at": "2026-11-08T02:57:04.494Z",
+      "content_hash": "d6cc03750e5f13a68baaaa124a98e4ef654c97d8af25f510f2033474b88498c7",
+      "verified_at": "2026-11-08T17:06:08.407Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:57:04.494Z"
+      "last_updated": "2026-11-08T17:06:08.407Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "0123a2ae2b8e5ea1fded844d866b0574e850c3bccba5b0984298d872bd6b5f0c",
-      "verified_at": "2026-11-08T03:54:27.572Z",
+      "content_hash": "bf2566942a5d6c0891a9c9f6b8e6172a4a33ea9311790322b42ac359a51ddc8a",
+      "verified_at": "2026-11-08T17:06:13.075Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:54:27.572Z"
+      "last_updated": "2026-11-08T17:06:13.075Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "203db3d89fd3874f283ab7c1a65eb234e1456ba3e7679d28324c8a7f099c7d75",
-      "verified_at": "2026-11-05T21:40:19.292Z",
+      "content_hash": "c179eb541739170a1b75c70e28ae0c42f1787cdf716a0c547fab404eb5d42e13",
+      "verified_at": "2026-11-08T17:06:10.650Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T21:40:19.292Z"
+      "last_updated": "2026-11-08T17:06:10.650Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T16:58:54.819Z",
+  "last_updated": "2026-11-08T17:06:12.972Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5475,8 +5475,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "80ec9bcd",
-      "content_hash": "0123a2ae2b8e5ea1fded844d866b0574e850c3bccba5b0984298d872bd6b5f0c",
+      "source_version": "3fd42218",
+      "content_hash": "bf2566942a5d6c0891a9c9f6b8e6172a4a33ea9311790322b42ac359a51ddc8a",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5503,6 +5503,11 @@
         {
           "number": null,
           "title": "skills): add verified live outcome writer in shadow mode (#369)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "memory): trim the embedding cache on every write; the agent explains its memory",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5711,7 +5716,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:54:27.406Z",
+      "verified_at": "2026-11-08T17:06:12.948Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19157,7 +19162,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "93693f56429feec3b8fdd59a2d503b68873692dd707144c90d527463dc8d3b18",
+      "content_hash": "c058816926a024a9ac04f00bc9ecf98dde063433f4d3d919df36b112049ece55",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -19235,7 +19240,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-11-05T01:15:06.756Z",
+      "verified_at": "2026-11-08T17:05:56.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55308,11 +55313,16 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "45300870",
-      "content_hash": "203db3d89fd3874f283ab7c1a65eb234e1456ba3e7679d28324c8a7f099c7d75",
+      "source_version": "45f16d5b",
+      "content_hash": "c179eb541739170a1b75c70e28ae0c42f1787cdf716a0c547fab404eb5d42e13",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(rust): bump log from 0.4.34 to 0.4.35",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1989,
           "title": "Merge pull request #1012 from oystersuki/fix/mysql-value-conversion-error",
@@ -55369,7 +55379,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T21:40:19.137Z",
+      "verified_at": "2026-11-08T17:06:10.519Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75413,13 +75423,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "1b0f754b",
-      "content_hash": "8fb132811524e7caf49ff06dccd1218faea4e86c859898234a91f99aff48a3e8",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "a0c210aa",
+      "content_hash": "d6cc03750e5f13a68baaaa124a98e4ef654c97d8af25f510f2033474b88498c7",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -75474,6 +75484,11 @@
         {
           "number": null,
           "title": "Merge pull request #4648 from aleo-labs-protocol/ci/gauntlet-gate-users",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4642 from aleo-labs-protocol/ci/run-simple-node-example-test",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -75602,7 +75617,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:57:04.358Z",
+      "verified_at": "2026-11-08T17:06:08.249Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

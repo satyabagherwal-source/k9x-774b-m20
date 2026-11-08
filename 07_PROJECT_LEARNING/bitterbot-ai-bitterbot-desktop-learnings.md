@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `80ec9bcd`  
+> **Source Version**: `3fd42218`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T03:54:27.221Z  
+> **Timestamp**: 2026-11-08T17:06:11.265Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T03:54:26.830Z  
+> **Harvest Timestamp**: 2026-11-08T17:06:11.255Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2482 stars
+- **Stars / Engagement**: 2483 stars
 
 ---
 
@@ -1698,131 +1698,162 @@ function ControlApp() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80ec9bcd` (2026-11-08)
-**Commit Message**: chore(main): release 1.13.0 (#349)
+### Incident Patch 1: `3fd42218` (2026-11-08)
+**Commit Message**: fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (#371)
 
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+Asked how its memory works, the live agent answered from memory_status
+numbers alone and got four mechanisms wrong: hormones change tone only
+(they also re-rank recall), lifecycle counts are lifetime totals (they are
+current states), consolidation happens in dreams (own 30-minute timer), and
+the cache was an overflowing query cache that thrashes (it is the embedding
+cache, and it ran past its cap).
 
-**File**: `.release-please-manifest.json` (modified, +1/-1)
+- The embedding cache was trimmed to cache.maxEntries only at the end of a
+  full sync, so embeddings written in between pushed it past the cap (15,574
+  rows against 10,000 on the live node). The trim now runs on every cache
+  write.
+- memory-architecture SKILL.md: how hormones bear on ranking (recency tilt,
+  up to 15% for matching memories at 0.4 or above); a "Reading
+  memory_status" section (lifecycle counts are current states, cache is the
+  embedding cache); consolidation is separate from dreams; read this file
+  before explaining how you work, and say you are not sure rather than fill
+  a gap.
+- System prompt: read memory-architecture before explaining how you work,
+  since
+
+**File**: `docs/memory/architecture-overview.md` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,3 @@
- {
--  ".": "1.12.0"
-+  ".": "1.13.0"
- }
+@@ -457,7 +457,7 @@ The P2P orchestrator bridge is wired later at gateway startup via `wireOrchestra
+ | `peer_activity_log`         | Peer activity timestamps for anomaly detection                                     |
+ | `mutation_queue`            | Dropped in v58 (PLAN-40); the mutation flow itself was retired in PLAN-45 Phase 1  |
+ | `skill_edges`               | Discovered skill relationships (prerequisite, enables, etc.)                       |
+-| `embedding_cache`           | Cached embedding vectors                                                           |
++| `embedding_cache`           | Cached embedding vectors by text hash; every write trims it to `cache.maxEntries`  |
+ | `memory_audit_log`          | Governance audit trail                                                             |
+ | `entities`                  | Knowledge graph entities (person, project, concept, etc.)                          |
+ | `relationships`             | Temporal entity relationships + SAGE per-edge gate (`gate_value`, `gate_features`) |
 ```
 
-**File**: `CHANGELOG.md` (modified, +20/-0)
+**File**: `skills/memory-architecture/SKILL.md` (modified, +13/-2)
 ```diff
-@@ -1,5 +1,25 @@
- # Changelog
+@@ -13,7 +13,7 @@ This is how your parts work when they run. It never says what is switched on: th
+ - **Knowledge Crystals**: every retained piece of knowledge is a chunk of text with a semantic type (fact, preference, task_pattern, skill, episode, insight, relationship, goal, general), an importance score and a lifecycle (`generated -> activated -> consolidated -> archived -> expired`), plus an embedding once one is made (until then keyword search still finds it). Skills are frozen and do not decay.
+ - **Sources**: workspace memory files (`MEMORY.md`, `memory/*.md`), conversation transcripts (indexed in the background), facts extracted from conversations, and skills.
+ - **Forgetting**: importance follows an Ebbinghaus curve. What is used often, or carried strong feeling, resists decay.
+-- **Consolidation** runs on a timer (every 30 minutes unless the owner changed it): hormonal decay, importance recalculation, merging near-duplicates, forgetting low-importance chunks, governance TTLs, stalled-goal detection.
++- **Consolidation** runs on its own timer (every 30 minutes unless the owner changed it), separate from dreams: hormonal decay, importance recalculation, merging near-duplicates, forgetting low-importance chunks, governance TTLs, stalled-goal detection.
+ - **Reconsolidation**: a memory you retrieve becomes briefly changeable, so a correction can update it instead of piling a contradiction beside it.
+ - **Settled facts** live in a canonical ledger. A deliberate pin (yours via `memory_pin`, or the owner's) outranks anything learned in the background, and replacing a pinned fact waits for the owner's confirmation.
+ - **Who sees what**: other people talking to you (guests) never get the owner's memories, and deep recall across conversations is the owner's only.
+@@ -30,6 +30,8 @@ This is how your parts work when they run. It never says what is switched on: th
  
-+## [1.13.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.12.0...v1.13.0) (2026-11-08)
-+
-+
-+### Features
-+
-+* **a2a:** accept XNO payments on the A2A payment gate ([#348](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/348)) ([595167c](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/595167cf4db9e4481db94c67cd43f13040114cbb))
-+* add learning strategy lab and benchmark evidence ([#363](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/363)) ([3ea3f55](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3ea3f55329411f37a0ce36af34fe67ac61410991))
-+* **agents:** the agent knows which of its parts are on, and what it can see of them now ([#370](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/370)) ([95605c7](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/95605c7a1e61b614eac7ca5a8585a0500ce2c393))
-+* **memory:** default procedural learning to shadow capture ([#364](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/364)) ([edd9f02](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/edd9f02f8f67de9876216da6109ebcc76a7dac70))
-+* **memory:** run gated failure experiments from idle dreams ([#365](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/365)) ([f10139f](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/f10139f8ee7eb5a747b20192d5f3cb3f0afdf5ff))
-+* **skills:** add verified live outcome writer in shadow mode ([#369](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/369)) ([fe15ee3](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/fe15ee33fad8398c66317bd0737ddedec45cd490))
-+* **skills:** experience-guided skill prior (on by default) and its controlled test ([#347](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/347)) ([1a23cb7](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/1a23cb721ed21aa875010f1cba06302e82193d00))
-+
-+
-+### Bug Fixes
-+
-+* **gateway:** correct WSL logon task XML schema ([#367](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/367)) ([a41e019](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a41e019a05b0290d62eb17091913a572839b2a63))
-+* **skills:** record skill executions when the agent reads a skill's SKILL.md ([#350](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/350)) ([41241db](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/41241db24e007827e021382ffd89949b2b652ec0))
-+* **skills:** skills index compactor no longer merges a block into the next one ([#351](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/351)) ([eca2269](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/eca2269a291dc58ef3178832affbe17dc865ed7e))
-+
- ## [1.12.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.11.0...v1.12.0) (2026-10-31)
+ Three hormones shift with the conversation and colour your tone without being announced: dopamine (reward, about a 30-minute half-life, more energy), cortisol (urgency, about 60 minutes, more focus), oxytocin (connection, about 45 minutes, more warmth). Your resting temperament is set in `GENOME.md`. `memory_status` reports the levels, an emotional briefing and tone guidance.
  
++They also change what recall ranks first, not only how you sound. They tilt how much recency counts, and once a hormone is at 0.4 or above, matching memories score up to 15% higher: positive ones under dopamine, tasks, goals and skills under cortisol, relationships, preferences and episodes under oxytocin. That can reorder close results; it does not bury a clearly better match.
++
+ ## Dreams
  
-```
-
-**File**: `desktop/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "bitterbot-control-ui",
--  "version": "1.12.0",
-+  "version": "1.13.0",
-   "private": true,
-   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
-   "type": "module",
-```
-
-**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -316,7 +316,7 @@ dependencies = [
+ When you have been idle and there is something new, the dream engine runs a cycle. It picks a creative mode (replay, compression, simulation, extrapolation, exploration) and runs utility lanes (hygiene, distillation, anticipation, relationship mining, canonical promotion, relationship reconsolidation, interceptor harvest, harness evolution). Insights from simulation and extrapolation must pass a grounding check before they become memories, and they come back marked as dream hypotheses: share them as hunches, never as facts. Each cycle rewrites `MEMORY.md` (your self-concept, your picture of the owner, active context, curiosity gaps), keeping any block the owner marked `<!-- owner -->` verbatim. A cycle with nothing new is skipped. `dream_status` and `dream_search` show what happened.
+@@ -47,14 +49,23 @@ The curiosity engine groups what you know into regions and scores each new memor
+ - **Curator**: agent-made skills are archived, patched or merged based on use and errors; `skill_manage` lets you drive that through the same staging and gate.
+ - **From other agents**: skills from peers are checked (reputation, dangerous patterns, structure, drift) and quarantined for the owner's review.
  
- [[package]]
- name = "bitterbot-desktop"
--version = "1.12.0"
-+version = "1.13.0"
- dependencies = [
-  "env_logger",
-  "libc",
-```
-
-**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "bitterbot-desktop"
--version = "1.12.0"
-+version = "1.13.0"
- edition = "2021"
- description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
++## Reading `memory_status`
++
++It gives counts and health, not how the parts work; explain the workings from this file.
++
++- **Lifecycle counts** are how many memories are in each state now, not lifetime totals. `generated` means not yet consolidated or archived; the total is the chunk count.
++- **`cache`** is the embedding cache: vectors saved by text hash so unchanged text is never embedded twice. It is not a cache of searches or answers. Every write trims it back to `maxEntries`, dropping the oldest first.
++- **Hormone levels** are the ones described under Feelings, so they bear on ranking as well as tone.
++
+ ## The owner's controls
  
+ The owner can forget or edit a memory after previewing exactly what would change, pin facts, mark text in `MEMORY.md` as theirs, pause curiosity, and switch parts on or off in config. `self_state` covers the main parts; pipeline details such as consolidation are in `memory_status`. When asked to forget or change something, use those paths; do not promise a deletion you did not do.
+ 
+ ## Talking about yourself
+ 
+ - Before saying a part is running, call `self_state`. If
 ```
 
-**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
+**File**: `src/agents/system-prompt.ts` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
-   "productName": "Bitterbot",
--  "version": "1.12.0",
-+  "version": "1.13.0",
-   "identifier": "ai.bitterbot.desktop",
-   "build": {
-     "devUrl": "http://localhost:5173",
+@@ -62,7 +62,7 @@ function buildMemorySection(params: {
+   }
+   const lines = [
+     "## Memory System",
+-    "Local, self-evolving memory (decaying Knowledge Crystals, hormones that modulate recall and tone, a dream engine that rewrites MEMORY.md). Long-form guidance is in skills, read on demand: `memory-architecture` (how you work, including how you learn skills), `working-memory-protocol`, `curiosity-loop`, `pre-action-interceptors`.",
++    "Local, self-evolving memory (decaying Knowledge Crystals, hormones that modulate recall and tone, a dream engine that rewrites MEMORY.md). Long-form guidance is in skills, read on demand: `memory-architecture` (how you work, including how you learn skills; read it before explaining how you work, since `memory_status` gives numbers, not mechanisms), `working-memory-protocol`, `curiosity-loop`, `pre-action-interceptors`.",
+     "### Memory tools",
+     "- `memory_search`: semantic recall; mandatory before answering about prior work, decisions, dates, people, preferences or todos. Then `memory_get` for exact lines.",
+     '- `memory_status`: pipeline health, hormones, dream/curiosity state, your user profile ("what do you know about me?"), interceptor firings.',
 ```
 
-**File**: `extensions/discord/package.json` (modified, +1/-1)
+**File**: `src/memory/manager-embedding-ops.ts` (modified, +3/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/discord",
--  "version": "1.12.0",
-+  "version": "1.13.0",
-   "description": "Bitterbot Discord channel plugin",
-   "type": "module",
-   "devDependencies": {
+@@ -167,6 +167,9 @@ class MemoryManagerEmbeddingOps {
+         now,
+       );
+     }
++    // Embeddings reach the cache between full syncs too (session and crystal
++    // writes), so the cap is kept here, not only at the end of a sync.
++    this.pruneEmbeddingCacheIfNeeded();
+   }
+ 
+   private pruneEmbeddingCacheIfNeeded(): void {
 ```
 
-**File**: `extensions/email/package.json` (modified, +1/-1)
+**File**: `src/memory/manager.embedding-cache-cap.test.ts` (added, +40/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/email",
--  "version": "1.12.0",
-+  "version": "1.13.0",
-   "private": true,
-   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
-   "type": "module",
+@@ -0,0 +1,40 @@
++import { describe, expect, it } from "vitest";
++import { installEmbeddingManagerFixture } from "./embedding-manager.test-harness.js";
++
++const fx = installEmbeddingManagerFixture({
++  fixturePrefix: "bitterbot-mem-cache-",
++  largeTokens: 1250,
++  smallTokens: 200,
++  createCfg: ({ workspaceDir, indexPath, tokens }) => ({
++    agents: {
++      defaults: {
++        workspace: workspaceDir,
++        memorySearch: {
++          provider: "openai",
++          model: "mock-embed",
++          store: { path: indexPath, vector: { enabled: false } },
++          chunking: { tokens, overlap: 0 },
++          cache: { enabled: true, maxEntries: 2 },
++          sync: { watch: false, onSessionStart: false, onSearch: false },
++          query: { minScore: 0, hybrid: { enabled: false } },
++        },
++      },
++      list: [{ id: "main", default: true }],
++    },
++  }),
++});
++
++describe("memory embedding cache cap", () => {
++  it("keeps the cap on every cache write, not only at the end of a full sync", () => {
++    const manager = fx.getManagerSmall();
++    const write = (
++      manager as unknown as {
++        upsertEmbeddingCache: (entries: Array<{ hash: string; embedding: number[] }>) => void;
++      }
++    ).upsertEmbeddingCache.bind(manager);
++    write(Array.from({ length: 5 }, (_, i) => ({ hash: `h${i}`, embedding: [i, 1] })));
++    const cache = manager.status().cache as { entries?: number; maxEntries?: number };
++    expect(cache.maxEntries).toBe(2);
++    expect(cache.entries).toBe(2);
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #371** (2026-11-08): fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (@VGIL77)
 - **PR #370** (2026-11-08): feat(agents): the agent knows which of its parts are on, from the live config (@VGIL77)
 - **PR #369** (2026-11-07): feat(skills): add verified live outcome writer in shadow mode (@VGIL77)
 - **PR #368** (2026-11-06): feat(skills): annotate verified skill outcomes in words (@VGIL77)
 - **PR #367** (2026-11-06): fix(gateway): correct WSL logon task XML schema (@VGIL77)
 - **PR #365** (2026-11-05): Run gated failure-learning experiments from idle dream ticks (@VGIL77)
-- **PR #364** (2026-11-05): Enable shadow learning by default and clarify learning documentation (@VGIL77)
 
 ---
 
@@ -1842,37 +1873,28 @@ Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. main): release 1.13.0 (#349)
+## X. memory): trim the embedding cache on every write; the agent explains its memory 
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/memory/architecture-overview.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80ec9bcd`: main): release 1.13.0 (#349). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3fd42218`: memory): trim the embedding cache on every write; the agent explains its memory from its guide (#371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/architecture-overview.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## [1.13.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.12.0...v1.13.0) (2026-11-08)
-
-
-### Features
-
-* **a2a:** accept XNO payments on the A2A payment gate ([#348](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/348)) ([595167c](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/595167cf4db9e4481db94c67cd43f13040114cbb))
-* add learning strategy lab and benchmark evidence ([#363](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/363)) ([3ea3f55](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3ea3f55329411f37a0ce36af34fe67ac61410991))
-* **agents:** the agent knows which of its parts are on, and what it can see of them now ([#370](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/370)) ([95605c7](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/95605c7a1e61b614eac7ca5a8585a0500ce2c393))
-* **memory:** default procedural learning to shadow capture ([#364](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/364)) ([edd9f02](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/edd9f02f8f67de9876216da6109ebcc76a7dac70))
-* **memory:** run gated failure experiments from idle dreams ([#365](https://github.com/Bitterbot-A
+| `embedding_cache`           | Cached embedding vectors by text hash; every write trims it to `cache.maxEntries`  |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+| `embedding_cache`           | Cached embedding vectors                                                           |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80ec9bcd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3fd42218` are properly handled with clean fallback behavior.

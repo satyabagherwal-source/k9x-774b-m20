@@ -8342,3 +8342,7 @@ Every entry in this ledger must capture:
 | `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `28528661` | Multi-dimensional audit evidence | 2026-11-08T16:58:44.275Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `06b6204e` | Multi-dimensional audit evidence | 2026-11-08T16:58:45.987Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4ac649be` | Multi-dimensional audit evidence | 2026-11-08T16:58:54.924Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-08T17:05:56.891Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `a0c210aa` | Multi-dimensional audit evidence | 2026-11-08T17:06:08.379Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `45f16d5b` | Multi-dimensional audit evidence | 2026-11-08T17:06:10.640Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `3fd42218` | Multi-dimensional audit evidence | 2026-11-08T17:06:13.066Z |
