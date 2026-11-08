@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-LWZD",
-    "timestamp": "2026-11-05T15:37:36.313Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "f76c81bcac26bc5fa934ddc464eed405fb4a9b4dda2a6ac34155612f90a9c3fb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-LYG7",
     "timestamp": "2026-11-05T15:37:38.215Z",
     "repository": "lioensky/VCPToolBox",
@@ -7492,6 +7477,21 @@
     "contentHash": "0f869480fdc3ab1e946b21e88ccd7d45aaf2f9e2e1fd4590bbb5a7287689ea80",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-YZGU",
+    "timestamp": "2026-11-08T04:54:55.758Z",
+    "repository": "unsloth/flint-GGUF",
+    "learningId": "learn-huggingface-unsloth-flint-gguf",
+    "contentHash": "9fd5ffa124c45d08443613b14843f6258f3033dba832b5cc351d63c55f998f82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

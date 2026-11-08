@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T04:42:31.883Z",
-    "lastVerified": "2026-11-08T04:42:31.883Z",
+    "lastChecked": "2026-11-08T04:54:58.316Z",
+    "lastVerified": "2026-11-08T04:54:58.316Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -462,8 +462,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T04:19:30.568Z",
-    "lastVerified": "2026-11-08T04:19:30.568Z",
+    "lastChecked": "2026-11-08T04:54:55.906Z",
+    "lastVerified": "2026-11-08T04:54:55.906Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1277,8 +1277,8 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T01:03:12.124Z",
-    "lastVerified": "2026-11-08T01:03:12.124Z",
+    "lastChecked": "2026-11-08T04:54:50.893Z",
+    "lastVerified": "2026-11-08T04:54:50.893Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -1906,12 +1906,12 @@
     "revisionIdentifier": "92514f9f"
   },
   "alibaba-zvec": {
-    "name": "alibaba/zvec",
+    "name": "zvec",
     "officialUrl": "https://github.com/alibaba/zvec",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-06T22:56:06.529Z",
-    "lastVerified": "2026-11-06T22:56:06.529Z",
+    "lastChecked": "2026-11-08T04:54:53.383Z",
+    "lastVerified": "2026-11-08T04:54:53.383Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alibaba-zvec",
@@ -1920,7 +1920,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "30d662db"
   },
   "michael-a-kuykendall-shimmy": {
     "name": "Michael-A-Kuykendall/shimmy",
@@ -3573,9 +3574,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-06T14:56:17.275Z",
+    "lastChecked": "2026-11-08T04:54:40.876Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-06T14:56:17.275Z"
+    "lastVerified": "2026-11-08T04:54:40.876Z"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
     "name": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -5853,12 +5854,12 @@
     "lastVerified": "2026-11-07T06:24:19.280Z"
   },
   "gocd-gocd": {
-    "name": "gocd/gocd",
+    "name": "gocd",
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-07T02:15:02.087Z",
-    "lastVerified": "2026-11-07T02:15:02.087Z",
+    "lastChecked": "2026-11-08T04:54:48.424Z",
+    "lastVerified": "2026-11-08T04:54:48.424Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
@@ -5867,7 +5868,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c52feb8b"
   },
   "hf-openbmb-minicpm-ocr-1.0": {
     "name": "openbmb/MiniCPM-OCR-1.0",
@@ -9521,9 +9523,9 @@
   "amosgyamfi-open-swiftui-animations": {
     "name": "open-swiftui-animations",
     "officialUrl": "https://github.com/amosgyamfi/open-swiftui-animations",
-    "lastChecked": "2026-11-05T04:00:34.383Z",
+    "lastChecked": "2026-11-08T04:54:45.948Z",
     "revisionIdentifier": "abc1d4ce",
-    "lastVerified": "2026-11-05T04:00:34.383Z"
+    "lastVerified": "2026-11-08T04:54:45.948Z"
   },
   "fabio-rovai-open-ontologies": {
     "name": "open-ontologies",
@@ -13100,13 +13102,13 @@
     "officialUrl": "https://huggingface.co/unsloth/flint-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T18:21:27.400Z",
-    "lastVerified": "2026-11-04T18:21:27.400Z",
+    "lastChecked": "2026-11-08T04:54:43.441Z",
+    "lastVerified": "2026-11-08T04:54:43.441Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-flint-gguf",
-    "contentHash": "63b59aad0909936785afd68235fadd7940f58c327bc528153b8696958ae7fcd2",
-    "promotedRulesCount": 2,
+    "contentHash": "9fd5ffa124c45d08443613b14843f6258f3033dba832b5cc351d63c55f998f82",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

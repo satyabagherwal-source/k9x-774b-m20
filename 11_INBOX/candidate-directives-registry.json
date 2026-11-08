@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T03:54:27.566Z",
+  "last_updated": "2026-11-08T04:54:55.774Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4138,6 +4138,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
+    },
+    {
+      "id": "CD-YZHA",
+      "directive_title": "GGUF Metadata Integrity Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "unsloth/flint-GGUF",
+      "source_commit": "hf-unsloth-f",
+      "date_staged": "2026-11-08",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-unsloth-flint-gguf"
     }
   ]
 }

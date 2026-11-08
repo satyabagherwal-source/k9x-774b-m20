@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T04:42:29.219Z",
+  "last_updated": "2026-11-08T04:54:55.635Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -130776,7 +130776,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/flint-GGUF",
       "source_version": "hf-unsloth-flint-gguf",
-      "content_hash": "63b59aad0909936785afd68235fadd7940f58c327bc528153b8696958ae7fcd2",
+      "content_hash": "9fd5ffa124c45d08443613b14843f6258f3033dba832b5cc351d63c55f998f82",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "promoted_rules": [
@@ -130793,7 +130793,7 @@
         {
           "number": 6890,
           "title": "MoE Quantization Fidelity Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 6891,
@@ -130806,7 +130806,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:21:36.335Z",
+      "verified_at": "2026-11-08T04:54:55.614Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180214,7 +180214,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T18:21:36.335Z"
+      "verified_at": "2026-11-08T04:54:55.614Z"
     },
     "rule-6891": {
       "learning_id": "rule-6891",
