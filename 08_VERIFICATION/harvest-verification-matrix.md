@@ -8340,3 +8340,6 @@
 | `CYCLE-20261108-CH6N` | `2026-11-08T17:13:15.263Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`2d996ffe...`) |
 | `CYCLE-20261108-WQTD` | `2026-11-08T17:29:00.865Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`7744a3ef...`) |
 | `CYCLE-20261108-WVKX` | `2026-11-08T17:29:07.041Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6d29002c...`) |
+| `CYCLE-20261108-5CV3` | `2026-11-08T17:35:42.687Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b6db71fa...`) |
+| `CYCLE-20261108-5EDP` | `2026-11-08T17:35:44.653Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cabe22bc...`) |
+| `CYCLE-20261108-5FT6` | `2026-11-08T17:35:46.506Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md` | Yes (`956a07de...`) |

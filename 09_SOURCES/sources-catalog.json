@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "d1774d10",
+    "sourceVersion": "4880fb84",
     "license": "Apache-2.0",
-    "contentHash": "0962ef1faf302411c0e77e46c88b996ca1d9057d8b673ed510764b2eac97b802",
-    "lastHarvestedAt": "2026-11-04T18:21:37.178Z",
+    "contentHash": "cabe22bc288fe4daf297808ffc4484998e6f70122b80079e701ffb7cd26559d7",
+    "lastHarvestedAt": "2026-11-08T17:35:44.656Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -8883,10 +8883,10 @@
     "repository": "joreilly/Confetti",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/Confetti",
-    "sourceVersion": "b97d2070",
+    "sourceVersion": "32c0714d",
     "license": "Apache-2.0",
-    "contentHash": "824491f06b835c9118d54fa560295d44b00819d1a17cd75cbe806e8426968391",
-    "lastHarvestedAt": "2026-11-02T16:47:54.838Z",
+    "contentHash": "b6db71fa892210db795e2f927a2376a30295bd236809130da1740d4e8a479645",
+    "lastHarvestedAt": "2026-11-08T17:35:42.689Z",
     "learningId": "learn-github-joreilly-confetti"
   },
   "m0ntydad0n-pseo-engine-oss": {
@@ -11405,8 +11405,8 @@
     "sourceUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
     "sourceVersion": "hf-prithivmlmods-gender-classifier-mini",
     "license": "Open-Source",
-    "contentHash": "8c916d7f4fb2604db35025b27fc485450576c7cc61c38c6531dbd396e0826ad7",
-    "lastHarvestedAt": "2026-11-05T01:40:49.489Z",
+    "contentHash": "956a07deccd4bf91fd9f6e243feb7b7b52cce67d2f390dbb438409be58e0773a",
+    "lastHarvestedAt": "2026-11-08T17:35:46.509Z",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini"
   },
   "hf-openbmb-minicpm-ocr-1.0": {

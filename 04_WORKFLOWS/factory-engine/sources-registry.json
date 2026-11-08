@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T17:29:11.732Z",
-    "lastVerified": "2026-11-08T17:29:11.732Z",
+    "lastChecked": "2026-11-08T17:35:49.041Z",
+    "lastVerified": "2026-11-08T17:35:49.041Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -459,12 +459,12 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T16:58:53.003Z",
-    "lastVerified": "2026-11-08T16:58:53.003Z",
+    "lastChecked": "2026-11-08T17:35:46.677Z",
+    "lastVerified": "2026-11-08T17:35:46.677Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -473,7 +473,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4ac649be"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1474,9 +1475,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-08T11:30:29.122Z",
+    "lastChecked": "2026-11-08T17:35:41.710Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-08T11:30:29.122Z"
+    "lastVerified": "2026-11-08T17:35:41.710Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2676,22 +2677,21 @@
     "lastVerified": "2026-11-06T20:59:10.810Z"
   },
   "nats-io-nats.go": {
-    "name": "nats.go",
+    "name": "nats-io/nats.go",
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T21:29:23.438Z",
-    "lastVerified": "2026-11-07T21:29:23.438Z",
+    "lastChecked": "2026-11-08T17:35:43.515Z",
+    "lastVerified": "2026-11-08T17:35:43.515Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "0962ef1faf302411c0e77e46c88b996ca1d9057d8b673ed510764b2eac97b802",
+    "contentHash": "cabe22bc288fe4daf297808ffc4484998e6f70122b80079e701ffb7cd26559d7",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d1774d10"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "infiniflow-infinity": {
     "name": "infinity",
@@ -3204,13 +3204,13 @@
     "officialUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T01:40:38.789Z",
-    "lastVerified": "2026-11-05T01:40:38.789Z",
+    "lastChecked": "2026-11-08T17:35:34.423Z",
+    "lastVerified": "2026-11-08T17:35:34.423Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-    "contentHash": "8c916d7f4fb2604db35025b27fc485450576c7cc61c38c6531dbd396e0826ad7",
-    "promotedRulesCount": 3,
+    "contentHash": "956a07deccd4bf91fd9f6e243feb7b7b52cce67d2f390dbb438409be58e0773a",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -5874,9 +5874,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-07T20:39:28.844Z",
+    "lastChecked": "2026-11-08T17:35:44.704Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-07T20:39:28.844Z"
+    "lastVerified": "2026-11-08T17:35:44.704Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7174,9 +7174,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-11-07T05:28:06.287Z",
+    "lastChecked": "2026-11-08T17:35:31.644Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-11-07T05:28:06.287Z"
+    "lastVerified": "2026-11-08T17:35:31.644Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -10773,22 +10773,21 @@
     "lastVerified": "2026-11-06T22:13:40.303Z"
   },
   "joreilly-confetti": {
-    "name": "Confetti",
+    "name": "joreilly/Confetti",
     "officialUrl": "https://github.com/joreilly/Confetti",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-05T11:45:16.192Z",
-    "lastVerified": "2026-11-05T11:45:16.192Z",
+    "lastChecked": "2026-11-08T17:35:41.363Z",
+    "lastVerified": "2026-11-08T17:35:41.363Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-joreilly-confetti",
-    "contentHash": "824491f06b835c9118d54fa560295d44b00819d1a17cd75cbe806e8426968391",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 1,
+    "contentHash": "b6db71fa892210db795e2f927a2376a30295bd236809130da1740d4e8a479645",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b97d2070"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "trybyte-app-sitemap-validator": {
     "name": "sitemap-validator",

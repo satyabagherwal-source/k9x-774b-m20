@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T17:29:06.947Z",
+  "last_updated": "2026-11-08T17:35:46.439Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36559,11 +36559,16 @@
       "slug": "joreilly-confetti",
       "platform": "github",
       "source_url": "https://github.com/joreilly/Confetti",
-      "source_version": "b97d2070",
-      "content_hash": "824491f06b835c9118d54fa560295d44b00819d1a17cd75cbe806e8426968391",
+      "source_version": "32c0714d",
+      "content_hash": "b6db71fa892210db795e2f927a2376a30295bd236809130da1740d4e8a479645",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Livery 1/6: sduiDebug variant and an empty :livery module (#2007)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2786,
           "title": "Merge pull request #1971 from joreilly/build-step",
@@ -36605,7 +36610,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:47:54.729Z",
+      "verified_at": "2026-11-08T17:35:42.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45472,11 +45477,16 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "d1774d10",
-      "content_hash": "0962ef1faf302411c0e77e46c88b996ca1d9057d8b673ed510764b2eac97b802",
+      "source_version": "4880fb84",
+      "content_hash": "cabe22bc288fe4daf297808ffc4484998e6f70122b80079e701ffb7cd26559d7",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[FIXED] Draining subscriptions resubscribed on reconnect (#2232)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1743,
           "title": "[FIXED] Pull consumer deadlock sending pull requests after Stop/Drain (#2165)",
@@ -45533,7 +45543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:21:37.048Z",
+      "verified_at": "2026-11-08T17:35:44.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155832,7 +155842,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
       "source_version": "hf-prithivmlmods-gender-classifier-mini",
-      "content_hash": "8c916d7f4fb2604db35025b27fc485450576c7cc61c38c6531dbd396e0826ad7",
+      "content_hash": "956a07deccd4bf91fd9f6e243feb7b7b52cce67d2f390dbb438409be58e0773a",
       "dossier_path": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "promoted_rules": [
@@ -155877,7 +155887,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:40:49.379Z",
+      "verified_at": "2026-11-08T17:35:46.419Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

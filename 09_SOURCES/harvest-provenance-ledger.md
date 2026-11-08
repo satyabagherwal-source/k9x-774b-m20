@@ -8349,3 +8349,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-08T17:13:15.268Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-08T17:29:00.869Z |
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `9599db1d` | Multi-dimensional audit evidence | 2026-11-08T17:29:07.045Z |
+| `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `32c0714d` | Multi-dimensional audit evidence | 2026-11-08T17:35:42.689Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `4880fb84` | Multi-dimensional audit evidence | 2026-11-08T17:35:44.656Z |
+| `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-08T17:35:46.509Z |
