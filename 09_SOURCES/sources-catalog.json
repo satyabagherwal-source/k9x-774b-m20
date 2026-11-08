@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "ad9b5734",
+    "sourceVersion": "4ac649be",
     "license": "Apache-2.0",
-    "contentHash": "3af5332f9cf43e43968f88d6ac5521a82821b312c8c26bd2edb468be82d806bf",
-    "lastHarvestedAt": "2026-11-08T15:42:39.976Z",
+    "contentHash": "5d38e97a72905c0b64df44ff76e661429095a0193d2a75ff7a7c6d06ef09d9eb",
+    "lastHarvestedAt": "2026-11-08T16:58:54.924Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "e19c0e02",
+    "sourceVersion": "06b6204e",
     "license": "Apache-2.0",
-    "contentHash": "ead5c9392066794260e0709d7817bc23af83eb93b142f6e4377eed2ad02f48f1",
-    "lastHarvestedAt": "2026-11-07T20:56:06.468Z",
+    "contentHash": "9a09fe1512e1d54acad4bfecb86919ce549385a9e51a6ef7add99364fa51dddb",
+    "lastHarvestedAt": "2026-11-08T16:58:45.987Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -8833,10 +8833,10 @@
     "repository": "mikepenz/multiplatform-markdown-renderer",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-    "sourceVersion": "86599b9d",
+    "sourceVersion": "28528661",
     "license": "Apache-2.0",
-    "contentHash": "12d2804ee3fcb38750be021f0070260aab45669afce25bfc85ecf13ae7202900",
-    "lastHarvestedAt": "2026-11-05T11:16:44.556Z",
+    "contentHash": "97e30a4570059ae3ef3e87b9de2016fad65bb3f037e4a00bf5c6b05966cd1f52",
+    "lastHarvestedAt": "2026-11-08T16:58:44.275Z",
     "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer"
   },
   "kamgurgul-cpu-info": {
@@ -11645,8 +11645,8 @@
     "sourceUrl": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
     "sourceVersion": "hf-efficient-large-model-open-h3-regenerate-2k",
     "license": "Open-Source",
-    "contentHash": "15835dbba0a9fe108f476d66bc12a9b9c5f409a1748430d0c68e7bb9dd248542",
-    "lastHarvestedAt": "2026-11-05T01:07:51.349Z",
+    "contentHash": "24d96531408462ac2475d39491b9bb9cd46d9d9d80aff5200713c711e18aca8f",
+    "lastHarvestedAt": "2026-11-08T16:58:38.472Z",
     "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k"
   },
   "hf-atomicchat-lfm3-1.7b-uncensored-gguf": {

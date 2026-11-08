@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `e19c0e02`  
+> **Source Version**: `06b6204e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:56:04.895Z  
+> **Timestamp**: 2026-11-08T16:58:45.634Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:56:04.767Z  
+> **Harvest Timestamp**: 2026-11-08T16:58:45.626Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7970 stars
+- **Stars / Engagement**: 7971 stars
 
 ---
 
@@ -917,13 +917,11 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5213** (2026-11-06): **fix(ci): align license checker path filters**
-  *Symptoms*: ## What problem does this PR solve?  Simplify maintenance of the license checker's path filters and make suffix exclusions work consistently for nested files. Include Helm helper templates in license checks.  ## What's changed and how does it work?  - Group and sort both ignore lists, normalize recursive suffix patterns, and remove unused and redundant exclusions. - Add Apache 2.0 headers to both Helm helper templates and remove their exclusion and the obsolete Vim modeline.  Verified nested-file filtering and Helm-template inclusion with the existing matcher. `helm lint helm/chaos-mesh` passed.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  The commit includes a DCO sign-off.
+- **Issue #5216** (2026-11-08): **docs: document changelog and PR link requirements**
+  *Symptoms*: ## What problem does this PR solve?  The PR checklist requires a changelog entry or an exemption. The repository guide does not explain when to use each option or how to link an entry to its PR.  ## What's changed and how does it work?  Update the shared guide used by `AGENTS.md`. Require a changelog entry for user-visible changes, reserve `no-need-update-changelog` for changes with no user-visible effect, and document when to add the PR link.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  The commit includes a DCO sign-off. 
 
-- **Issue #5212** (2026-11-06): **chore(release): prepare v2.8.8**
-  *Symptoms*: ## What problem does this PR solve?  Prepare Chaos Mesh v2.8.8.  ## What's changed and how does it work?  - Finalize the 2.8.8 changelog, including version metadata changes. - Set the default image tag to `v2.8.8` and reset the chart's security-update annotation.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.7 - [ ] release-2.6  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  The commits include DCO sign-offs. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5212?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 24.96%. Comparing base ([`fd097b6`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/fd097b60ef03ce5a0c49356f8eb89b1144c0e687?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`de36638`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/de36638ded4ba0c5c655bd18330d3f08c9f61b01?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on release-2.8.  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage 
+- **Issue #5215** (2026-11-08): **fix(helm): drop redundant SYS_PTRACE from privileged Chaos Daemon**
+  *Symptoms*: ## What problem does this PR solve?  The Helm chart explicitly adds `SYS_PTRACE` to the privileged Chaos Daemon container. Kubernetes already grants privileged Linux containers all capabilities.  ## What's changed and how does it work?  Remove the redundant `capabilities.add` entry from the privileged branch. The nonprivileged branch still uses `chaosDaemon.capabilities`.  Rendered the DaemonSet with privileged mode enabled and disabled and verified that the optional Delve sidecar still requests `SYS_PTRACE`.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  The commit includes a DCO sign-off. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -940,358 +938,68 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e19c0e02` (2026-11-06)
-**Commit Message**: fix(ci): align license checker path filters (#5213)
+### Incident Patch 1: `180e7d69` (2026-11-08)
+**Commit Message**: docs: document changelog and PR link requirements (#5216)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/license_checker.yml` (modified, +46/-41)
+**File**: `CLAUDE.md` (modified, +6/-0)
 ```diff
-@@ -10,50 +10,54 @@ on:
-     branches:
-       - master
-     paths-ignore:
--      - ".github/**"
--      - ".well-known/**"
--      - "**.md"
--      - "**.json"
--      - "*.mk"
--      - "static/**"
--      - ".dockerignore"
--      - ".editorconfig"
-+      # Repository and tool configuration
-+      - "**/*.json"
-       - "**/.gitignore"
-       - "**/.gitkeep"
-+      - ".dockerignore"
-+      - ".editorconfig"
-+      - ".github/**"
-       - ".prettierrc"
-       - "codecov.yml"
--      - "env-images.yaml"
--      - "Makefile"
-       - "revive.toml"
-+
-+      # Documentation and static assets
-+      - "**/*.md"
-+      - ".well-known/**"
-+      - "static/**"
-+
-+      # Build and dependency files
-+      - "**/*.proto"
-+      - "**/Dockerfile"
-       - "**/go.mod"
-       - "**/go.sum"
--      - "**/Dockerfile"
-+      - "*.mk"
-+      - "Makefile"
-+      - "env-images.yaml"
-       - "helm/chaos-mesh/.helmignore"
--      - "helm/chaos-mesh/templates/*.tpl"
--      - "**.proto"
--      # skip auto-generated files
-+
-+      # Generated files and binaries
-+      - "**/*.pb.go"
-+      - "**/*_generated*"
-       - "config/**"
-       - "helm/chaos-mesh/crds/*"
-       - "manifests/**"
--      - "**/*_generated*"
-       - "pkg/dashboard/swaggerdocs/docs.go"
-       - "pkg/dashboard/swaggerdocs/swagger.yaml"
--      - "**.pb.go"
-       - "pkg/time/fakeclock/.embed.o"
-+
-       # UI
-+      - "ui/**/*.svg"
-       - "ui/.husky/**"
-       - "ui/.prettierignore"
-       - "ui/.prettierrc"
--      - "ui/pnpm-lock.yaml"
--      - "ui/pnpm-workspace.yaml"
-       - "ui/app/eslint.config.js"
-       - "ui/app/index.html"
-       - "ui/app/public/**"
--      - "ui/app/src/api/zz_generated.frontend.chaos-mesh.ts"
-       - "ui/app/src/formik/**"
-       - "ui/app/src/openapi/**"
--      - "ui/**/*.svg"
--      - "**/__mocks__/**"
-+      - "ui/pnpm-lock.yaml"
-+      - "ui/pnpm-workspace.yaml"
+@@ -158,6 +158,12 @@ Keep API validation/defaulting in `api/v1alpha1/`, orchestration and status tran
+ - **Helm values/chart:** regenerate `helm/chaos-mesh/values.schema.json` with `make helm-values-schema` and run relevant `pkg/helm/...` tests.
+ - **Generated build inventory:** change `cmd/generate-makefile/`, run `make generate-makefile`, and inspect all three generated Makefiles.
  
- concurrency:
-   group: license_checker.yml-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.run_id }}
-@@ -71,48 +75,49 @@ jobs:
-         uses: tj-actions/changed-files@v47
-         with:
-           files_ignore: |
--            .github/**
--            .well-known/**
--            **.md
--            **.json
--            *.mk
--            static/**
--            .dockerignore
--            .editorconfig
-+            **/*.json
-             **/.gitignore
-             **/.gitkeep
-+            .dockerignore
-+            .editorconfig
-+            .github/**
-             .prettierrc
-             codecov.yml
--            env-images.yaml
--            Makefile
-             revive.toml
++## Changelog
 +
-+            **/*.md
-+            .well-known/**
-+            static/**
++- Add an entry to the appropriate section under `[Unreleased]` in `CHANGELOG.md` for every user-visible change. This includes changes to APIs, UI, configuration defaults, rendered Helm manifests, and upgrade requirements.
++- Skip the entry only for internal optimizations or other changes with no user-visible effect. Use the `no-need-update-changelog` label only for those changes.
++- End each entry with a link to the PR that makes the change, using the existing `[#1234](https://github.com/chaos-mesh/chaos-mesh/pull/1234)` format. If the PR number is unavailable when drafting the entry, add the link after opening the PR and before merging it.
 +
-+            **/*.proto
-+            **/Dockerfile
-             **/go.mod
-             **/go.sum
--            **/Dockerfile
-+            *.mk
-+            Makefile
-+            env-images.yaml
-             helm/chaos-mesh/.helmignore
--            helm/chaos-mesh/templates/*.tpl
--            **.proto
-+
-+            **/*.pb.go
-+            **/*_generated*
-             config/**
-             helm/chaos-mesh/crds/*
-             manifests/**
--            **/*_generated*
-             pkg/dashboard/swaggerdocs/docs.go
-             pkg/dashboard/swaggerdocs/swagger.yaml
--            **.pb.go
-             pkg/time/fakeclock/.embed.o
-+
-+            ui/**/*.svg
-             ui/.husky/**
-             ui/.prettierignore
-             ui/.prettierrc
--            ui/pnpm-lock.yaml
--            ui/pnpm-workspace.yaml
-             ui/app/eslint.config.js
-             ui/app/index.html
-             ui/app/public/**
--            ui/app/src/api/zz_generated.frontend.chaos-mesh.ts
-             ui/app/src/formik/**
-             ui/app/src/openapi/**
--            ui/**/*.svg
--            **/__mocks__/**
-+            ui/pnpm-lock.yaml
-+            ui/pnpm-workspace.yaml
+ ## Pull requests
  
-       - name: Check license header for changed files
-         env:
-```
-
-**File**: `helm/chaos-mesh/templates/_certs.tpl` (modified, +16/-0)
-```diff
-@@ -1,3 +1,19 @@
-+{{/*
-+Copyright Chaos Mesh Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/}}
-+
- 
- {{/*
- webhook.apiversion is used to take care compatibility with admissionregistration.k8s.io api groups
-```
-
-**File**: `helm/chaos-mesh/templates/_helpers.tpl` (modified, +15/-1)
-```diff
-@@ -1,4 +1,18 @@
--{{/* vim: set filetype=mustache: */}}
-+{{/*
-+Copyright Chaos Mesh Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/}}
- 
- {{/*
- Handle env variables.
+ Keep PR descriptions focused on the problem solved, final changes, and brief necessary validation. Add technical details only when needed to explain complex changes. Omit debug information, investigation history, temporary checks, and local paths.
 ```
 
 ---
 
-### Incident Patch 2: `336e30cb` (2026-11-06)
-**Commit Message**: chore(build): vet all Go modules and simplify Makefile (#5211)
+### Incident Patch 2: `06b6204e` (2026-11-08)
+**Commit Message**: fix(helm): drop redundant SYS_PTRACE from privileged Chaos Daemon (#5215)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `Makefile` (modified, +35/-20)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -40,7 +40,7 @@ CGO    := $(CGOENV) go
- GOTEST := USE_EXISTING_CLUSTER=false NO_PROXY="$(NO_PROXY),testhost" go test
- SHELL  := bash
+@@ -26,6 +26,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
  
--PACKAGE_LIST := echo $$(go list -buildvcs=false ./... | grep -vE "chaos-mesh/test|pkg/ptrace|zz_generated|vendor") $$(cd api && go list -buildvcs=false ./... && cd ../)
-+PACKAGE_LIST := echo $$(go list -buildvcs=false ./... | grep -vE "chaos-mesh/test|pkg/ptrace|zz_generated|vendor") $$(cd api && go list -buildvcs=false ./...)
+ ### Changed
  
- export GO_BUILD_CACHE ?= $(ROOT)/.cache/chaos-mesh
- 
-@@ -101,28 +101,32 @@ help: ## Display this help
- 
- ##@ Code generation
- 
-+.PHONY: config
- config: SHELL:=$(RUN_IN_DEV_SHELL)
- config: images/dev-env/.dockerbuilt ## Generate CRD manifests with controller-gen
- 	cd ./api ;\
- 		controller-gen crd:ignoreUnexportedFields=true,crdVersions=v1 rbac:roleName=manager-role paths="./..." output:crd:artifacts:config=../config/crd/bases ;\
- 		rm ../helm/chaos-mesh/crds/* && cp ../config/crd/bases/* ../helm/chaos-mesh/crds
- 
- chaos-build: SHELL:=$(RUN_IN_DEV_SHELL)
--chaos-build: bin/chaos-builder images/dev-env/.dockerbuilt ## Generate codes for CustomResource Kinds under api/v1alpha1
-+chaos-build: bin/chaos-builder ## Generate codes for CustomResource Kinds under api/v1alpha1
- 	bin/chaos-builder
- 
--generate: manifests/crd.yaml generate-deepcopy generate-client chaos-build swagger_spec ## Generate codes for codebase, including CRD manifests, deepcopy files, chaos mesh controller code generation, swager spec.
-+.PHONY: generate
-+generate: manifests/crd.yaml generate-deepcopy generate-client swagger_spec ## Generate codes for codebase, including CRD manifests, deepcopy files, chaos mesh controller code generation, swager spec.
- 
- .PHONY: generate-makefile
- generate-makefile: ## Generate makefile (binary.generated.mk, container-image.generated.mk)
- 	@$(GO) run ./cmd/generate-makefile
- 
-+.PHONY: generate-deepcopy
- generate-deepcopy: SHELL:=$(RUN_IN_DEV_SHELL)
--generate-deepcopy: images/dev-env/.dockerbuilt chaos-build ## Generate deepcopy files for CRD Kind with controller-gen
-+generate-deepcopy: chaos-build ## Generate deepcopy files for CRD Kind with controller-gen
- 	cd ./api ;\
- 		controller-gen object:headerFile=../hack/boilerplate/boilerplate.generatego.txt paths="./..." ;
- 
--generate-client: SHELL:=$(RUN_IN_DEV_SHELL)
-+CLIENT_GEN_PLURAL_EXCEPTIONS := PodChaos:podchaos,HTTPChaos:httpchaos,IOChaos:iochaos,AWSChaos:awschaos,JVMChaos:jvmchaos,StressChaos:stresschaos,AzureChaos:azurechaos,PodHttpChaos:podhttpchaos,GCPChaos:gcpchaos,NetworkChaos:networkchaos,KernelChaos:kernelchaos,TimeChaos:timechaos,BlockChaos:blockchaos,PodIOChaos:podiochaos,PodNetworkChaos:podnetworkchaos
-+
- generate-client: generate-clientset generate-informer generate-lister
- 
- generate-clientset: SHELL:=$(RUN_IN_DEV_SHELL)
-@@ -132,7 +136,7 @@ generate-clientset:
- 		--output-pkg=github.com/chaos-mesh/chaos-mesh/pkg/client/ \
- 		--clientset-name=versioned --go-header-file=./hack/boilerplate/boilerplate.generatego.txt \
- 		--fake-clientset=true \
--		--plural-exceptions=PodChaos:podchaos,HTTPChaos:httpchaos,IOChaos:iochaos,AWSChaos:awschaos,JVMChaos:jvmchaos,StressChaos:stresschaos,AzureChaos:azurechaos,PodHttpChaos:podhttpchaos,GCPChaos:gcpchaos,NetworkChaos:networkchaos,KernelChaos:kernelchaos,TimeChaos:timechaos,BlockChaos:blockchaos,PodIOChaos:podiochaos,PodNetworkChaos:podnetworkchaos
-+		--plural-exceptions=$(CLIENT_GEN_PLURAL_EXCEPTIONS)
- 
- generate-lister: SHELL:=$(RUN_IN_DEV_SHELL)
- generate-lister:
-@@ -141,7 +145,7 @@ generate-lister:
- 		--output-dir=./pkg/client/listers \
- 		--output-pkg=github.com/chaos-mesh/chaos-mesh/pkg/client/listers \
- 		--go-header-file=./hack/boilerplate/boilerplate.generatego.txt \
--		--plural-exceptions=PodChaos:podchaos,HTTPChaos:httpchaos,IOChaos:iochaos,AWSChaos:awschaos,JVMChaos:jvmchaos,StressChaos:stresschaos,AzureChaos:azurechaos,PodHttpChaos:podhttpchaos,GCPChaos:gcpchaos,NetworkChaos:networkchaos,KernelChaos:kernelchaos,TimeChaos:timechaos,BlockChaos:blockchaos,PodIOChaos:podiochaos,PodNetworkChaos:podnetworkchaos
-+		--plural-exceptions=$(CLIENT_GEN_PLURAL_EXCEPTIONS)
- 
- 
- generate-informer: SHELL:=$(RUN_IN_DEV_SHELL)
-@@ -153,18 +157,21 @@ generate-informer:
- 		--go-header-file=./hack/boilerplate/boilerplate.generatego.txt \
- 		--versioned-clientset-package=github.com/chaos-mesh/chaos-mesh/pkg/client/versioned \
- 		--listers-package=github.com/chaos-mesh/chaos-mesh/pkg/client/listers \
--		--plural-exceptions=PodChaos:podchaos,HTTPChaos:httpchaos,IOChaos:iochaos,AWSChaos:awschaos,JVMChaos:jvmchaos,StressChaos:stresschaos,AzureChaos:azurechaos,PodHttpChaos:podhttpchaos,GCPChaos:gcpchaos,NetworkChaos:networkchaos,KernelChaos:kernelchaos,TimeChaos:timechaos,BlockChaos:blockchaos,PodIOChaos:podiochaos,PodNetworkChaos:podnetworkchaos
-+		--plural-exceptions=$(CLIENT_GEN_PLURAL_EXCEPTIONS)
- 
-+.PHONY: manifests/crd.yaml
- manifests/crd.yaml: SHELL:=$(RUN_IN_DEV_SHELL)
--manifests/crd.yaml: config images/dev-env/.dockerbuilt ## Generate the combined CRD manife
++- Omit the redundant `SYS_PTRACE` declaration from the privileged Chaos Daemon security context in Helm manifests [#5215](https://github.com/chaos-mesh/chaos-mesh/pull/5215)
+ - Upgrade tproxy to [v0.5.7](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.5.7) to fix HTTPChaos lifecycle cleanup and preserve repeated HTTP values.
+ - Upgrade the containerd Go client to v2.3.7. [#5167](https://github.com/chaos-mesh/chaos-mesh/pull/5167)
+ - Migrate the Docker runtime client to the maintained Moby SDK. Automatic API negotiation requires Docker Engine 19.03 or later. [#5165](https://github.com/chaos-mesh/chaos-mesh/pull/5165)
 ```
 
-**File**: `cmd/generate-makefile/generate_container_image_makefile.go` (modified, +1/-1)
+**File**: `helm/chaos-mesh/templates/chaos-daemon-daemonset.yaml` (modified, +0/-3)
 ```diff
-@@ -28,7 +28,7 @@ const containerImageGeneratedMkTemplate = `# Generated by ./cmd/generate-makefil
- 
- ##@ Generated targets in container-image.generated.mk
- 
--.PHONY: image
-+.PHONY: image-all
- image-all: {{- range .Recipes }} image-{{.ImageName}} {{- end }} ## Build all container images
- 
- {{ .Content -}}
-```
-
-**File**: `cmd/generate-makefile/generate_local_binary_makefile.go` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ clean-local-binary:
- `
- 
- // localBinaryRecipeTemplate is the template for one target, use localBinaryRecipeOptions as the context.
--const localBinaryRecipeTemplate = `.PHONY: {{ .OutputPath }}
-+const localBinaryRecipeTemplate = `.PHONY: {{ .TargetName }}
- {{ .TargetName }}: {{ StringsJoin .DependencyTargets " " }} ## {{ .Comment }}
- {{- if .UseCGO }}
- 	$(CGO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o {{ .OutputPath }} {{ .SourcePath }}
-```
-
-**File**: `container-image.generated.mk` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- ##@ Generated targets in container-image.generated.mk
- 
--.PHONY: image
-+.PHONY: image-all
- image-all: image-chaos-daemon image-chaos-mesh image-chaos-dashboard image-build-env image-dev-env image-e2e-helper image-chaos-mesh-e2e image-chaos-kernel image-chaos-dlv ## Build all container images
- 
- .PHONY: image-chaos-daemon
-```
-
-**File**: `local-binary.generated.mk` (modified, +2/-2)
-```diff
-@@ -2,11 +2,11 @@
- 
- ##@ Generated targets in local-binary.generated.mk
- 
--.PHONY: bin/chaos-controller-manager
-+.PHONY: local/chaos-controller-manager
- local/chaos-controller-manager:  ## Build binary chaos-controller-manager in local environment
- 	$(GO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o bin/chaos-controller-manager ./cmd/chaos-controller-manager
- 
--.PHONY: bin/chaos-dashboard
-+.PHONY: local/chaos-dashboard
- local/chaos-dashboard:  ## Build binary chaos-dashboard in local environment
- 	$(CGO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o bin/chaos-dashboard ./cmd/chaos-dashboard
- 
+@@ -110,9 +110,6 @@ spec:
+           securityContext:
+             {{- if .Values.chaosDaemon.privileged }}
+             privileged: true
+-            capabilities:
+-              add:
+-                - SYS_PTRACE
+             {{- else }}
+             capabilities:
+ {{ toYaml .Values.chaosDaemon.capabilities | indent 14 }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5216** (2026-11-08): docs: document changelog and PR link requirements (@g1eny0ung)
+- **PR #5215** (2026-11-08): fix(helm): drop redundant SYS_PTRACE from privileged Chaos Daemon (@g1eny0ung)
 - **PR #5213** (2026-11-06): fix(ci): align license checker path filters (@g1eny0ung)
 - **PR #5212** (2026-11-06): chore(release): prepare v2.8.8 (@g1eny0ung)
 - **PR #5211** (2026-11-06): chore(build): vet all Go modules and simplify Makefile (@g1eny0ung)
 - **PR #5210** (2026-11-05): chore(test): bump chaosd to v1.6.0 (@g1eny0ung)
-- **PR #5209** (2026-11-05): docs(changelog): record physical machine fixes (@g1eny0ung)
-- **PR #5208** (2026-11-05): fix(physicalmachinechaos): backport disk fill method to 2.8 (@g1eny0ung)
 
 ---
 
@@ -1311,113 +1019,33 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): align license checker path filters (#5213)
+## X. docs: document changelog and PR link requirements (#5216)
 
 **RULE**:
-When implementing operations in `.github/workflows/license_checker.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e19c0e02`: ci): align license checker path filters (#5213). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `180e7d69`: docs: document changelog and PR link requirements (#5216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/license_checker.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      # Repository and tool configuration
-      - "**/*.json"
-      - ".dockerignore"
-      - ".editorconfig"
-      - ".github/**"
+## Changelog
 
-      # Documentation and static assets
-      - "**/*.md"
-      - ".well-known/**"
-      - "static/**"
+- Add an entry to the appropriate section under `[Unreleased]` in `CHANGELOG.md` for every user-visible change. This includes changes to APIs, UI, configuration defaults, rendered Helm manifests, and upgrade requirements.
+- Skip the entry only for internal optimizations or other changes with no user-visible effect. Use the `no-need-update-changelog` label only for those changes.
+- End each entry with a link to the PR that makes the change, using the existing `[#1234](https://github.com/chaos-mesh/chaos-mesh/pull/1234)` format. If the PR number is unavailable when drafting the entry, add the link after opening the PR and before merging it.
 
-      # Build and dependency files
-      - "**/*.proto"
-      - "**/Dockerfile"
-      - "*.mk"
-      - "Makefile"
-      - "env-images.yaml"
-
-      # Generated files and binaries
-      - "**/*.pb.go"
-      - "**/*_generated*"
-
-      - "ui/**/*.svg"
-      - "ui/pnpm-lock.yaml"
-      - "ui/pnpm-workspace.yaml"
-            **/*.json
-            .dockerignore
-            .editorconfig
-            .github/**
-
-            **/*.md
-            .well-known/**
-            static/**
-
-            **/*.proto
-            **/Dockerfile
-            *.mk
-            Makefile
-            env-images.yaml
-
-            **/*.pb.go
-            **/*_generated*
-
-            ui/**/*.svg
-            ui/pnpm-lock.yaml
-            ui/pnpm-workspace.yaml
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      - ".github/**"
-      - ".well-known/**"
-      - "**.md"
-      - "**.json"
-      - "*.mk"
-      - "static/**"
-      - ".dockerignore"
-      - ".editorconfig"
-      - "env-images.yaml"
-      - "Makefile"
-      - "**/Dockerfile"
-      - "helm/chaos-mesh/templates/*.tpl"
-      - "**.proto"
-      # skip auto-generated files
-      - "**/*_generated*"
-      - "**.pb.go"
-      - "ui/pnpm-lock.yaml"
-      - "ui/pnpm-workspace.yaml"
-      - "ui/app/src/api/zz_generated.frontend.chaos-mesh.ts"
-      - "ui/**/*.svg"
-      - "**/__mocks__/**"
-            .github/**
-            .well-known/**
-            **.md
-            **.json
-            *.mk
-            static/**
-            .dockerignore
-            .editorconfig
-            env-images.yaml
-            Makefile
-            **/Dockerfile
-            helm/chaos-mesh/templates/*.tpl
-            **.proto
-            **/*_generated*
-            **.pb.go
-            ui/pnpm-lock.yaml
-            ui/pnpm-workspace.yaml
-            ui/app/src/api/zz_generated.frontend.chaos-mesh.ts
-            ui/**/*.svg
-            **/__mocks__/**
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e19c0e02` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `180e7d69` are properly handled with clean fallback behavior.

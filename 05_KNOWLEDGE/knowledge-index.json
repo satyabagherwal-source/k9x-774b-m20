@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T16:51:11.548Z",
+  "last_updated": "2026-11-08T16:58:54.819Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7063,8 +7063,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "e19c0e02",
-      "content_hash": "ead5c9392066794260e0709d7817bc23af83eb93b142f6e4377eed2ad02f48f1",
+      "source_version": "06b6204e",
+      "content_hash": "9a09fe1512e1d54acad4bfecb86919ce549385a9e51a6ef7add99364fa51dddb",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -7144,7 +7144,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:56:06.371Z",
+      "verified_at": "2026-11-08T16:58:45.831Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43479,11 +43479,16 @@
       "slug": "mikepenz-multiplatform-markdown-renderer",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-      "source_version": "86599b9d",
-      "content_hash": "12d2804ee3fcb38750be021f0070260aab45669afce25bfc85ecf13ae7202900",
+      "source_version": "28528661",
+      "content_hash": "97e30a4570059ae3ef3e87b9de2016fad65bb3f037e4a00bf5c6b05966cd1f52",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): update mike penz internal projects (#662)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2778,
           "title": "Merge pull request #652 from mikepenz/test/detached-placement-regression",
@@ -43510,7 +43515,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T11:16:44.441Z",
+      "verified_at": "2026-11-08T16:58:44.135Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46768,8 +46773,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "ad9b5734",
-      "content_hash": "3af5332f9cf43e43968f88d6ac5521a82821b312c8c26bd2edb468be82d806bf",
+      "source_version": "4ac649be",
+      "content_hash": "5d38e97a72905c0b64df44ff76e661429095a0193d2a75ff7a7c6d06ef09d9eb",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -46861,6 +46866,11 @@
         {
           "number": null,
           "title": "Support Windows PowerShell 5 in run-puzzles script",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Require grammar docs to track proposals",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47154,7 +47164,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T15:42:39.846Z",
+      "verified_at": "2026-11-08T16:58:54.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170058,7 +170068,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
       "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "15835dbba0a9fe108f476d66bc12a9b9c5f409a1748430d0c68e7bb9dd248542",
+      "content_hash": "24d96531408462ac2475d39491b9bb9cd46d9d9d80aff5200713c711e18aca8f",
       "dossier_path": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "promoted_rules": [
@@ -170083,7 +170093,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:07:51.224Z",
+      "verified_at": "2026-11-08T16:58:38.330Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

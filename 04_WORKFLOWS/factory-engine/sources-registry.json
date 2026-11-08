@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T16:51:14.220Z",
-    "lastVerified": "2026-11-08T16:51:14.220Z",
+    "lastChecked": "2026-11-08T16:58:57.499Z",
+    "lastVerified": "2026-11-08T16:58:57.499Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -460,22 +460,21 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T16:14:27.445Z",
-    "lastVerified": "2026-11-08T16:14:27.445Z",
+    "lastChecked": "2026-11-08T16:58:53.003Z",
+    "lastVerified": "2026-11-08T16:58:53.003Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "3af5332f9cf43e43968f88d6ac5521a82821b312c8c26bd2edb468be82d806bf",
+    "contentHash": "5d38e97a72905c0b64df44ff76e661429095a0193d2a75ff7a7c6d06ef09d9eb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ad9b5734"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1114,9 +1113,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-08T09:51:56.166Z",
+    "lastChecked": "2026-11-08T16:58:44.466Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-08T09:51:56.166Z"
+    "lastVerified": "2026-11-08T16:58:44.466Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2352,13 +2351,13 @@
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T20:56:04.767Z",
-    "lastVerified": "2026-11-07T20:56:04.767Z",
+    "lastChecked": "2026-11-08T16:58:45.626Z",
+    "lastVerified": "2026-11-08T16:58:45.626Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "ead5c9392066794260e0709d7817bc23af83eb93b142f6e4377eed2ad02f48f1",
-    "promotedRulesCount": 1,
+    "contentHash": "9a09fe1512e1d54acad4bfecb86919ce549385a9e51a6ef7add99364fa51dddb",
+    "promotedRulesCount": 0,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -5592,9 +5591,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-07T20:02:08.669Z",
+    "lastChecked": "2026-11-08T16:58:46.966Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-07T20:02:08.669Z"
+    "lastVerified": "2026-11-08T16:58:46.966Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -6900,9 +6899,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-07T04:44:12.919Z",
+    "lastChecked": "2026-11-08T16:58:34.386Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-07T04:44:12.919Z"
+    "lastVerified": "2026-11-08T16:58:34.386Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -10692,14 +10691,14 @@
     "officialUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-05T11:16:43.247Z",
-    "lastVerified": "2026-11-05T11:16:43.247Z",
+    "lastChecked": "2026-11-08T16:58:42.775Z",
+    "lastVerified": "2026-11-08T16:58:42.775Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
-    "contentHash": "12d2804ee3fcb38750be021f0070260aab45669afce25bfc85ecf13ae7202900",
+    "contentHash": "97e30a4570059ae3ef3e87b9de2016fad65bb3f037e4a00bf5c6b05966cd1f52",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13500,12 +13499,12 @@
     "officialUrl": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T01:07:50.380Z",
-    "lastVerified": "2026-11-05T01:07:50.380Z",
+    "lastChecked": "2026-11-08T16:58:36.941Z",
+    "lastVerified": "2026-11-08T16:58:36.941Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-    "contentHash": "15835dbba0a9fe108f476d66bc12a9b9c5f409a1748430d0c68e7bb9dd248542",
+    "contentHash": "24d96531408462ac2475d39491b9bb9cd46d9d9d80aff5200713c711e18aca8f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

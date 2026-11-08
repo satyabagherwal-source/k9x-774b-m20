@@ -8338,3 +8338,7 @@ Every entry in this ledger must capture:
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `eb34c40c` | Multi-dimensional audit evidence | 2026-11-08T16:33:39.103Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `0230eea7` | Multi-dimensional audit evidence | 2026-11-08T16:33:43.477Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-08T16:51:11.645Z |
+| `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-08T16:58:38.472Z |
+| `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `28528661` | Multi-dimensional audit evidence | 2026-11-08T16:58:44.275Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `06b6204e` | Multi-dimensional audit evidence | 2026-11-08T16:58:45.987Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4ac649be` | Multi-dimensional audit evidence | 2026-11-08T16:58:54.924Z |

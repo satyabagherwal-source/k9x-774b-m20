@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T16:51:11.662Z",
-  "total_cycles_completed": 8294,
-  "total_learnings_persisted": 8294,
-  "total_rules_promoted": 8084,
+  "last_updated": "2026-11-08T16:58:54.930Z",
+  "total_cycles_completed": 8298,
+  "total_learnings_persisted": 8298,
+  "total_rules_promoted": 8086,
   "history": [
-    {
-      "timestamp": "2026-11-07T23:06:23.418Z",
-      "repository": "avajs/ava",
-      "learningId": "learn-github-avajs-ava",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T23:18:19.574Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T23:34:14.104Z",
-      "repository": "dubzzz/fast-check",
-      "learningId": "learn-github-dubzzz-fast-check",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T23:34:20.451Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T23:47:04.898Z",
       "repository": "faker-js/faker",
@@ -1403,6 +1375,34 @@
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:58:38.478Z",
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:58:44.281Z",
+      "repository": "mikepenz/multiplatform-markdown-renderer",
+      "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:58:45.996Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T16:58:54.930Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

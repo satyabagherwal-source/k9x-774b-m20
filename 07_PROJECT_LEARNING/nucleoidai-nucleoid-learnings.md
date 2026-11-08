@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `ad9b5734`  
+> **Source Version**: `4ac649be`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:42:38.110Z  
+> **Timestamp**: 2026-11-08T16:58:53.011Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:42:38.102Z  
+> **Harvest Timestamp**: 2026-11-08T16:58:53.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@
 ### Core Architecture Module: `src/lang/ast/generator/statement.rs`
 ```
 use super::{enum_source, has_binding_metadata, signature};
-use crate::lang::ast::{ClassDecl, Expr, Function, FunctionBody, Stmt};
+use crate::lang::ast::{ClassDecl, Expr, Function, FunctionBody, Stmt, UnaryOp};
 
 /// Renders a run of statements as the body of a block, which is what a block or
 /// branch is keyed by in the graph.
@@ -119,6 +119,13 @@ pub fn generate(statement: &Stmt) -> String {
 fn assignment_source(target: &Expr, value: &Expr) -> String {
     match (target, value) {
         (Expr::Identifier(name), Expr::Enum(members)) => enum_source(name, members),
+        (
+            _,
+            Expr::Unary {
+                operator: UnaryOp::Word,
+                operand,
+            },
+        ) => format!("{target} is {operand}"),
         _ => format!("{target}={value}"),
     }
 }
@@ -443,20 +450,30 @@ impl Parser {
                 self.nested_expression(Self::assertion_expression)
                     .map(Stmt::Expression)
             }
-            _ => {
-                let expression = self.expression()?;
-
-                if self.check(&Token::ColonAssign) {
-                    return self.value_assignment(expression);
-                }
-
-                if let Some(statement) = self.suppose_statement(&expression)? {
-                    return Ok(statement);
-                }
-
-                Ok(simple_statement(expression))
-            }
+            _ => self.expression_statement(),
         }
+    }
+
+    fn expression_statement(&mut self) -> Result<Stmt> {
+        let expression = self.expression()?;
+
+        if self.starts_is_assignment(&expression) {
+            return self.is_assignment(expression);
+        }
+
+        self.expression_tail(expression)
+    }
+
+    pub(super) fn expression_tail(&mut self, expression: Expr) -> Result<Stmt> {
+        if self.check(&Token::ColonAssign) {
+            return self.value_assignment(expression);
+        }
+
+        if let Some(statement) = self.suppose_statement(&expression)? {
+            return Ok(statement);
+        }
+
+        Ok(simple_statement(expression))
     }
 
     fn return_statement(&mut self) -> Result<Stmt> {
@@ -553,14 +570,7 @@ impl Parser {
         };
         let parsed = parse(&mut probe);
         self.tokens = probe.tokens;
-        parsed
-    }
-
-    pub(super) fn separates(&mut self, from: usize, colon: usize) -> bool {
-        self.accepted(|parser| {
-            parser.position = from;
-            parser.depth = parser.depth.saturating_sub(1);
-            let mut statements 
+ 
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1158,6 +1168,7 @@ export async function declarations({
   const { declarations, output_canvas } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
+    grammar: true,
     messages: [
       {
         role: "user",
@@ -1635,342 +1646,105 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad9b5734` (2026-11-08)
-**Commit Message**: Support Windows PowerShell 5 in run-puzzles script
+### Incident Patch 1: `351416af` (2026-11-08)
+**Commit Message**: Require grammar docs to track proposals
 
-Lower the script's required version from 7.0 to 5.0 and update the README to show `powershell` (with `pwsh` as the PowerShell 7 alternative).
+Update proposal guidance to keep `docs/grammar.md` aligned with syntax changes and report the change or its absence in the handoff.
 
-Process.Kill($true) is only available in PowerShell 7 (.NET Core). Add Stop-PuzzleProcess, which uses it there and otherwise walks the child process tree via CIM and stops each process, deepest first, ignoring processes that have already exited.
-
-**File**: `arc/README.md` (modified, +5/-2)
+**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +5/-1)
 ```diff
-@@ -79,12 +79,15 @@ without an additional library; an unknown option, or a value such as
- 
- ### Parallel local run
- 
--Run the five-puzzle batch from the repository root with PowerShell 7:
-+Run the five-puzzle batch from the repository root with Windows PowerShell 5
-+or PowerShell 7:
- 
- ```powershell
--pwsh -NoProfile -File .\arc\run-puzzles.ps1
-+powershell -NoProfile -File .\arc\run-puzzles.ps1
- ```
- 
-+Use `pwsh` instead of `powershell` for PowerShell 7.
-+
- The script starts `3aa6fb7a`, `0ca9ddb6`, `e9afcf9a`, `6fa7a44f`, and
- `d631b094` concurrently, using the same Bun, Nucleoid runtime, and OpenRouter
- setup as `bun run start`. These are live, paid OpenRouter calls.
+@@ -53,6 +53,9 @@ You draft and prototype exactly one added or updated NUC revision. Follow
+   unpaired new behavior still needs executed assertions/expected returns and
+   coverage. Never invent before-counts.
+ - Keep affected reference, synthesized sources, and rendered exports in sync.
++- Update `docs/grammar.md` in the same candidate whenever the change alters
++  what the lexer or parser accepts, under the skill's
++  [grammar rule](../skills/nuc-proposal/SKILL.md#update-the-grammar).
+ - Run the relevant development checks, but do not run `evaluate_proposal`,
+   write an acceptance report, or decide Accepted, Automatic-Accepted or
+   Rejected. Under the caller's
+@@ -92,7 +95,8 @@ Return the proposal path and Git blob revision, baseline revision and artifact
+ path, execution mode, confirmed proposal category and selection rationale when
+ applicable,
+ runtime applicability and supporting rationale, expected token ran/skipped policy,
+-candidate worktree, changed files, development and syntax-compatibility checks,
++candidate worktree, changed files, the `docs/grammar.md` change or why there is
++none, development and syntax-compatibility checks,
+ any supplied frozen rubric path/blob pin, any hint and how it was used or set
+ aside, and any blockers. Do not populate the independent evaluator's
+ assessment.
 ```
 
-**File**: `arc/run-puzzles.ps1` (modified, +41/-5)
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +15/-4)
 ```diff
-@@ -1,10 +1,49 @@
--#requires -Version 7.0
-+#requires -Version 5.0
+@@ -265,6 +265,17 @@ documents, never generated JSONL or exported Rust tests. When their sources
+ change, regenerate using `UPDATE_DATASET=1 cargo test --test dataset` and
+ `UPDATE_SPEC_TESTS=1 cargo build`.
  
- [CmdletBinding()]
- param()
++## Update the grammar
++
++Keep `docs/grammar.md`, the grammar taken from the lexer and parser, in step
++with every candidate. When a proposal changes what the lexer or parser accepts,
++such as a token, keyword, alias, contextual word, rule, lookahead, lowering,
++limit or layout rule, update the affected rules, notes and tables in the same
++candidate. Keep the file's PEG notation and syntax-tree node comments, and
++check each changed rule against the candidate parser. A proposal that leaves
++the accepted syntax unchanged leaves the file as it is. Either way, the handoff
++states the grammar change or why there is none.
++
+ ## Check and hand off
  
- $ErrorActionPreference = 'Stop'
- 
-+function Stop-PuzzleProcess {
-+    param([System.Diagnostics.Process]$Process)
-+
-+    if ($Process.HasExited) {
-+        return
-+    }
-+
-+    if ($PSVersionTable.PSVersion.Major -ge 7) {
-+        $Process.Kill($true)
-+    }
-+    else {
-+        $processes = @(Get-CimInstance -ClassName Win32_Process -Property ProcessId, ParentProcessId)
-+        $processIds = @($Process.Id)
-+
-+        for ($index = 0; $index -lt $processIds.Count; $index++) {
-+            $parentId = $processIds[$index]
-+            $processIds += @(
-+                $processes | Where-Object {
-+                    $_.ParentProcessId -eq $parentId -and $_.ProcessId -notin $processIds
-+                } | Select-Object -ExpandProperty ProcessId
-+            )
-+        }
-+
-+        [array]::Reverse($processIds)
-+        foreach ($processId in $processIds) {
-+            try {
-+                Stop-Process -Id $processId -Force -ErrorAction Stop
-+            }
-+            catch {
-+                if ($_.CategoryInfo.Category -ne [System.Management.Automation.ErrorCategory]::ObjectNotFound) {
-+                    throw
-+                }
-+            }
-+        }
-+    }
-+
-+    $Process.WaitForExit()
-+}
-+
- $puzzleIds = @(
-     '3aa6fb7a'
-     '0ca9ddb6'
-@@ -70,10 +109,7 @@ finally {
-         }
- 
-         try {
--            if (-not $run.Process.HasExited) {
--                $run.Process.Kill($true)
--                $run.Process.WaitForExit()
--            }
-+            Stop-PuzzleProcess -Process $run.Process
-         }
-         catch {
-             Write-Warning "Could not stop $($run.Puzzle): $($_.Exception.Message)"
+ Run the affected development tests, `cargo fmt --check`, and
+@@ -284,10 +295,10 @@ Return the proposal path and Git blob revision (`git hash-object` on the
+ proposal), accepted baseline revision and path, execution mode, confirmed
+ proposal category and selection rationale when applicable, runtime applicability
+ and supporting rationale, any hint and how it was used or set aside, candidate
+-worktree, changed files, development and syntax-compatibility checks, and
+-explicit blockers. State the expected token
+-policy, without claiming an unevaluated gate passed. Freeze the candidate after
+-handoff.
++worktree, changed files, the `docs/grammar.md` change or why there is none,
++development and syntax-compatibility checks, and explicit blockers. State the
++expected token policy, without claiming an unevaluated gate passed. Freeze the
++candidate after handoff.
+ Include the caller-frozen rubric path and Git blob pin when supplied, without
+ claiming a usefulness score; only the independent evaluator may create the
+ assessment after its checks. Keep scoring artifacts outside the repository.
 ```
 
 ---
 
-### Incident Patch 2: `254ab181` (2026-11-08)
-**Commit Message**: Normalize model-generated matrix colors
+### Incident Patch 2: `b8475e4c` (2026-11-08)
+**Commit Message**: Revert "Remove empty visualizer few-shot overrides"
 
-Convert single-digit string cells to numbers in analyzer and visualizer responses. Document matrix normalization and the parallel puzzle run.
+This reverts commit e059f4bca5192c8b076202f5fb7496e0af6b1b85.
 
-**File**: `arc/README.md` (modified, +27/-0)
+**File**: `arc/src/visualizer.ts` (modified, +3/-0)
 ```diff
-@@ -77,6 +77,25 @@ below the puzzle ID; a run without it does not mention the flag.
- without an additional library; an unknown option, or a value such as
- `--only-puzzle-dataset=true`, fails the run before any model call.
- 
-+### Parallel local run
-+
-+Run the five-puzzle batch from the repository root with PowerShell 7:
-+
-+```powershell
-+pwsh -NoProfile -File .\arc\run-puzzles.ps1
-+```
-+
-+The script starts `3aa6fb7a`, `0ca9ddb6`, `e9afcf9a`, `6fa7a44f`, and
-+`d631b094` concurrently, using the same Bun, Nucleoid runtime, and OpenRouter
-+setup as `bun run start`. These are live, paid OpenRouter calls.
-+
-+Each puzzle's standard output and standard error go to separate files in a
-+new `arc\logs\batch-*` directory. After all runs finish, a table shows each
-+puzzle's result, exit code, and elapsed seconds. `PASS` means an exact grid
-+match; `FAIL` means a mismatch or execution error; `NOT RUN` means the process
-+could not start. A failed puzzle does not cancel the others. The script exits
-+with `0` only when all five pass, and otherwise exits with `1`.
-+
- ### Genesis puzzle
- 
- `3aa6fb7a` is the genesis puzzle, the training puzzle the solver was originally
-@@ -2577,6 +2596,14 @@ colors as, ranked the same way, so a dataset crop is ranked by its own counts.
- It rejects any other cell, such as `10` or `J`, and it does not crop or modify
- the input.
- 
-+`Matrix.normalize(matrix)` returns a new matrix in which every cell written as
-+a one-digit string, such as `"8"`, becomes that number, `8`, so the model may
-+write a color either way. Every other cell stays as it is, and the input is not
-+modified. The analyzer and the visualizer apply it to every matrix the model
-+returns, the instance masks of the training pairs and of the test input and
-+each output instance matrix, before the solver crops, silhouettes, merges, or
-+scores them.
-+
- The same prediction path replays every training pair before predicting the
- held-out input. A training mismatch stops the run. Held-out predictions are
- frozen before expected outputs are accessed for exact-grid scoring, including
-```
-
-**File**: `arc/run-puzzles.ps1` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+#requires -Version 7.0
-+
-+[CmdletBinding()]
-+param()
-+
-+$ErrorActionPreference = 'Stop'
-+
-+$puzzleIds = @(
-+    '3aa6fb7a'
-+    '0ca9ddb6'
-+    'e9afcf9a'
-+    '6fa7a44f'
-+    'd631b094'
-+)
-+
-+$bun = (Get-Command bun -CommandType Application -ErrorAction Stop).Source
-+$batchId = '{0}-{1}' -f (Get-Date -Format 'yyyyMMdd-HHmmss'), [guid]::NewGuid().ToString('N')
-+$logDirectory = Join-Path $PSScriptRoot "logs\batch-$batchId"
-+New-Item -ItemType Directory -Path $logDirectory | Out-Null
-+
-+$runs = @()
-+
-+try {
-+    foreach ($puzzleId in $puzzleIds) {
-+        $stdout = Join-Path $logDirectory "$puzzleId.stdout.log"
-+        $stderr = Join-Path $logDirectory "$puzzleId.stderr.log"
-+        $run = [pscustomobject]@{
-+            Puzzle = $puzzleId
-+            Result = 'NOT RUN'
-+            ExitCode = $null
-+            Seconds = $null
-+            StartedAt = [datetime]::UtcNow
-+            Process = $null
-+        }
-+        $runs += $run
-+
-+        try {
-+            $run.Process = Start-Process -FilePath $bun `
-+                -ArgumentList @('run', 'start', $puzzleId) `
-+                -WorkingDirectory $PSScriptRoot -NoNewWindow -PassThru `
-+                -RedirectStandardOutput $stdout -RedirectStandardError $stderr
-+            # Retain the handle for processes that finish before collection.
-+            $null = $run.Process.Handle
-+            Write-Host "Started $puzzleId (PID $($run.Process.Id))"
-+        }
-+        catch {
-+            $_ | Out-String | Set-Content -LiteralPath $stderr
-+            Write-Warning "Could not start $puzzleId. See $stderr"
-+        }
-+    }
-+
-+    foreach ($run in $runs) {
-+        if ($null -eq $run.Process) {
-+            continue
-+        }
-+
-+        $run.Process.WaitForExit()
-+        $run.ExitCode = $run.Process.ExitCode
-+        $run.Result = if ($run.ExitCode -eq 0) { 'PASS' } else { 'FAIL' }
-+        $run.Seconds = [math]::Round(
-+            ($run.Process.ExitTime.ToUniversalTime() - $run.StartedAt).TotalSeconds,
-+            1
-+        )
-+    }
-+}
-+finally {
-+    foreach ($run in $runs) {
-+        if ($null -eq $run.Process) {
-+            continue
-+        }
-+
-+        try {
-+            if (-not $run.Process.HasExited) {
-+                $run.Process.Kill($true)
-+                $run.Process.WaitForExit()
-+            }
-+        }
-+        catch {
-+            Write-Warning "Could not stop $($run.Puzzle): $($_.Exception.Message)"
-+        }
-+        finally {
-+            $run.Process.Dispose()
-+        }
-+    }
-+}
-+
-+Write-Host "`nLogs: $logDirectory"
-+$runs | Format-Table Puzzle, Result, ExitCode, Seconds -AutoSize | Out-Host
-+
-+if (@($runs | Where-Object { $_.Result -ne 'PASS' }).Count -gt 0) {
-+    exit 1
-+}
-+
-+exit 0
-```
-
-**File**: `arc/src/analyzer.ts` (modified, +8/-1)
-```diff
-@@ -45,7 +45,7 @@ export async function instances({
- }) {
-   milestone.segmenting_training_objects();
- 
--  const { instances } = await llm.generate({
-+  const response = await llm.generate({
+@@ -14,6 +14,7 @@ export async function instances({
+   const response = await llm.generate({
      puzzle_id,
      only_puzzle_dataset,
++    few_shot: () => "",
      messages: [
-@@ -70,6 +70,13 @@ export async function instances({
-     ],
-   });
- 
-+  const instances = response.instances.map(
-+    ({ input_instance_matrix, output_instance_matrix }) => ({
-+      input_instance_matrix: Matrix.normalize(input_instance_matrix),
-+      output_instance_matrix: Matrix.normalize(output_instance_matrix),
-+    })
-+  );
-+
-   milestone.training_objects_segmented({ instances });
- 
-   return { instances };
-```
-
-**File**: `arc/src/lib/Matrix.ts` (modified, +9/-0)
-```diff
-@@ -38,6 +38,15 @@ export function locate(matrix) {
- }
- 
- const LETTERS: string = "ABCDEFGHI";
-+const DIGITS = [..."0123456789"];
-+
-+// Reads each cell written as a one-digit string, such as "8", as that number,
-+// so the model may write a color either way. Every other cell stays as it is.
-+export function normalize(matrix) {
-+  return matrix.map((row) =>
-+    row.map((value) => (DIGITS.includes(value) ? Number(value) : value))
-+  );
-+}
- 
- type Color = number | string;
- 
-```
-
-**File**: `arc/src/visualizer.ts` (modified, +10/-2)
-```diff
-@@ -11,7 +11,7 @@ export async function instances({
- }) {
-   milestone.segmenting_test_input({ test_input_matrix });
- 
--  const { instances } = await llm.generate({
-+  const response = await llm.generate({
+       {
+         role: "assistant",
+@@ -100,6 +101,7 @@ export async function value({
+   const { implementation } = await llm.generate({
      puzzle_id,
      only_puzzle_dataset,
++    few_shot: () => "",
      messages: [
-@@ -40,6 +40,10 @@ export async function instances({
-     ],
-   });
- 
-+  const instances = response.instances.map(({ input_instance_matrix }) => ({
-+    input_instance_matrix: Matrix.normalize(input_instance_matrix),
-+  }));
-+
-   milestone.test_input_segmented({ instances });
- 
-   return { instances };
-@@ -164,7 +168,7 @@ export async function output_instance_matrix({
- 
-   milestone.composing_output({ instance_name });
- 
--  const { output_instance_matrix } = await llm.generate({
-+  const response = await llm.generate({
+       {
+         role: "assistant",
+@@ -171,6 +173,7 @@ export async function output_instance_matrix({
+   const response = await llm.generate({
      puzzle_id,
      only_puzzle_dataset,
++    few_shot: () => "",
      messages: [
-@@ -209,6 +213,10 @@ export async function output_instance_matrix({
-     ],
-   });
- 
-+  const output_instance_matrix = Matrix.normalize(
-+    response.output_instance_matrix
-+  );
-+
-   milestone.output_composed({
-     instance_name,
-     input_instance_matrix,
+       {
+         role: "assistant",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1999,33 +1773,32 @@ Convert single-digit string cells to numbers in analyzer and visualizer response
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Support Windows PowerShell 5 in run-puzzles script
+## X. Require grammar docs to track proposals
 
 **RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/nuc-proposal.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad9b5734`: Support Windows PowerShell 5 in run-puzzles script. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `351416af`: Require grammar docs to track proposals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/nuc-proposal.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Run the five-puzzle batch from the repository root with Windows PowerShell 5
-or PowerShell 7:
-powershell -NoProfile -File .\arc\run-puzzles.ps1
-Use `pwsh` instead of `powershell` for PowerShell 7.
-
+- Update `docs/grammar.md` in the same candidate whenever the change alters
+  what the lexer or parser accepts, under the skill's
+  [grammar rule](../skills/nuc-proposal/SKILL.md#update-the-grammar).
+candidate worktree, changed files, the `docs/grammar.md` change or why there is
+none, development and syntax-compatibility checks,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Run the five-puzzle batch from the repository root with PowerShell 7:
-pwsh -NoProfile -File .\arc\run-puzzles.ps1
+candidate worktree, changed files, development and syntax-compatibility checks,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad9b5734` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `351416af` are properly handled with clean fallback behavior.
