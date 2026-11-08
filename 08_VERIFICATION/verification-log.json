@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-W5HJ",
-    "timestamp": "2026-11-05T19:29:30.823Z",
-    "repository": "Automattic/harper",
-    "learningId": "learn-github-automattic-harper",
-    "contentHash": "b7a6f5ab671c7ec9796f2831b449490fefeabf3c47f30510db73b23e9c7a9aed",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-758W",
     "timestamp": "2026-11-05T19:38:03.728Z",
     "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
@@ -7490,6 +7475,21 @@
     "repository": "moonshotai/Kimi-K3",
     "learningId": "learn-huggingface-moonshotai-kimi-k3",
     "contentHash": "ba1ebe0b84b1f1bd101d882ea70f24e5b954bab3e19b29e085ed0252f63a1b38",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-IP4N",
+    "timestamp": "2026-11-08T11:42:10.103Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "0f4585f32ba2f9c681ee177b41d2d4fc85ebf6913122e6b3e40a5a298d895f64",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

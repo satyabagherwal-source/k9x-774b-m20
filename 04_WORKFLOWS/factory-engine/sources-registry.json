@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T11:13:53.057Z",
-    "lastVerified": "2026-11-08T11:13:53.057Z",
+    "lastChecked": "2026-11-08T11:42:12.690Z",
+    "lastVerified": "2026-11-08T11:42:12.690Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T09:52:01.105Z",
-    "lastVerified": "2026-11-08T09:52:01.105Z",
+    "lastChecked": "2026-11-08T11:30:34.083Z",
+    "lastVerified": "2026-11-08T11:30:34.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1060,13 +1060,13 @@
     "officialUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T22:05:08.773Z",
-    "lastVerified": "2026-11-04T22:05:08.773Z",
+    "lastChecked": "2026-11-08T11:30:21.791Z",
+    "lastVerified": "2026-11-08T11:30:21.791Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "587b957ba8616540552ffe717504fa0dd308f536a1cf0955bf91419035fe2ea9",
-    "promotedRulesCount": 0,
+    "contentHash": "0f4585f32ba2f9c681ee177b41d2d4fc85ebf6913122e6b3e40a5a298d895f64",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1472,9 +1472,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-08T05:11:30.089Z",
+    "lastChecked": "2026-11-08T11:30:29.122Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-08T05:11:30.089Z"
+    "lastVerified": "2026-11-08T11:30:29.122Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4053,9 +4053,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-11-07T05:37:06.619Z",
+    "lastChecked": "2026-11-08T11:30:31.579Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-11-07T05:37:06.619Z"
+    "lastVerified": "2026-11-08T11:30:31.579Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -5375,12 +5375,12 @@
     "lastVerified": "2026-11-07T19:37:21.156Z"
   },
   "salvo-rs-salvo": {
-    "name": "salvo-rs/salvo",
+    "name": "salvo",
     "officialUrl": "https://github.com/salvo-rs/salvo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T23:11:53.962Z",
-    "lastVerified": "2026-11-06T23:11:53.962Z",
+    "lastChecked": "2026-11-08T11:30:19.146Z",
+    "lastVerified": "2026-11-08T11:30:19.146Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-salvo-rs-salvo",
@@ -5389,7 +5389,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e29dbf75"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
     "name": "meta-llama/Llama-2-7b-chat-hf",
@@ -10199,9 +10200,9 @@
   "touchlab-skie": {
     "name": "SKIE",
     "officialUrl": "https://github.com/touchlab/SKIE",
-    "lastChecked": "2026-11-05T07:34:39.078Z",
+    "lastChecked": "2026-11-08T11:30:24.089Z",
     "revisionIdentifier": "25bb2b91",
-    "lastVerified": "2026-11-05T07:34:39.078Z"
+    "lastVerified": "2026-11-08T11:30:24.089Z"
   },
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
@@ -14227,12 +14228,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aquasecurity-trivy-operator": {
-    "name": "aquasecurity/trivy-operator",
+    "name": "trivy-operator",
     "officialUrl": "https://github.com/aquasecurity/trivy-operator",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T17:22:24.987Z",
-    "lastVerified": "2026-11-07T17:22:24.987Z",
+    "lastChecked": "2026-11-08T11:30:26.636Z",
+    "lastVerified": "2026-11-08T11:30:26.636Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy-operator",
@@ -14241,7 +14242,8 @@
     "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b40091af"
   },
   "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic": {
     "name": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",

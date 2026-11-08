@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T11:13:50.449Z",
-  "total_cycles_completed": 8244,
-  "total_learnings_persisted": 8244,
-  "total_rules_promoted": 8003,
+  "last_updated": "2026-11-08T11:42:10.120Z",
+  "total_cycles_completed": 8245,
+  "total_learnings_persisted": 8245,
+  "total_rules_promoted": 8006,
   "history": [
-    {
-      "timestamp": "2026-11-07T20:42:33.543Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T20:49:00.565Z",
       "repository": "oxc-project/oxc",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-08T11:13:50.449Z",
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-moonshotai-kimi-k3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T11:42:10.120Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

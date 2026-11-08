@@ -8288,3 +8288,4 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `f01dd925` | Multi-dimensional audit evidence | 2026-11-08T10:49:07.688Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `713cc5a4` | Multi-dimensional audit evidence | 2026-11-08T11:07:47.696Z |
 | `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-08T11:13:50.443Z |
+| `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-08T11:42:10.107Z |

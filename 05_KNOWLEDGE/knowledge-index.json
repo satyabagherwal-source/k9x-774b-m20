@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T11:13:50.347Z",
+  "last_updated": "2026-11-08T11:42:10.001Z",
   "total_verified_learnings": 1238,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32002,10 +32002,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
       "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
-      "content_hash": "587b957ba8616540552ffe717504fa0dd308f536a1cf0955bf91419035fe2ea9",
+      "content_hash": "0f4585f32ba2f9c681ee177b41d2d4fc85ebf6913122e6b3e40a5a298d895f64",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Dual-Path Latent Autoencoder Precision Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Strict Cross-Attention Context Token Concatenation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Spatial Coordinate Conditioning Vector Normalization Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1162,
           "title": "Dual-Encoder Embedding Concatenation & Projection Invariant",
@@ -32105,7 +32120,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
       ],
-      "verified_at": "2026-11-04T22:05:10.509Z",
+      "verified_at": "2026-11-08T11:42:09.981Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
