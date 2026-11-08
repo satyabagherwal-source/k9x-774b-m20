@@ -8292,3 +8292,5 @@
 | `CYCLE-20261108-FYOH` | `2026-11-08T14:00:00.593Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`b1d6860a...`) |
 | `CYCLE-20261108-G0R3` | `2026-11-08T14:00:03.279Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7500d90...`) |
 | `CYCLE-20261108-MASL` | `2026-11-08T14:04:56.229Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bdeac2a1...`) |
+| `CYCLE-20261108-VSLS` | `2026-11-08T14:12:19.216Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1071, Rule null, Rule null` | Yes (`f5ee0b70...`) |
+| `CYCLE-20261108-VVG3` | `2026-11-08T14:12:22.899Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7c9dc880...`) |

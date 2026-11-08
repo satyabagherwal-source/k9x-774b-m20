@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T14:04:58.831Z",
-    "lastVerified": "2026-11-08T14:04:58.831Z",
+    "lastChecked": "2026-11-08T14:12:25.476Z",
+    "lastVerified": "2026-11-08T14:12:25.476Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,9 +369,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T12:21:46.426Z",
+    "lastChecked": "2026-11-08T14:12:21.513Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T12:21:46.426Z"
+    "lastVerified": "2026-11-08T14:12:21.513Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -793,12 +793,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kube-rs-kube": {
-    "name": "kube-rs/kube",
+    "name": "kube",
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T18:17:06.803Z",
-    "lastVerified": "2026-11-07T18:17:06.803Z",
+    "lastChecked": "2026-11-08T14:12:13.944Z",
+    "lastVerified": "2026-11-08T14:12:13.944Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
@@ -807,7 +807,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f0b9c443"
   },
   "defguard-defguard": {
     "name": "defguard",
@@ -1600,13 +1601,13 @@
     "officialUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T22:52:22.560Z",
-    "lastVerified": "2026-11-04T22:52:22.560Z",
+    "lastChecked": "2026-11-08T14:12:08.995Z",
+    "lastVerified": "2026-11-08T14:12:08.995Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "376117dbcd9953dd34298f8f9535a7f9f568ab7f3c6c733306a35413fbb224f1",
-    "promotedRulesCount": 0,
+    "contentHash": "f5ee0b70145d3894f7f9214b5f8cbdd975295f79d155367c17abb6f87ab985f0",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1999,14 +2000,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T05:57:07.319Z",
-    "lastVerified": "2026-11-08T05:57:07.319Z",
+    "lastChecked": "2026-11-08T14:12:20.321Z",
+    "lastVerified": "2026-11-08T14:12:20.321Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
+    "contentHash": "7c9dc880d9623227bfa010cf80d6a50701ebf2de2ae346c4badc64e63c7ef2b7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4428,12 +4429,12 @@
     "lastVerified": "2026-11-08T01:46:14.535Z"
   },
   "risingwavelabs-risingwave": {
-    "name": "risingwavelabs/risingwave",
+    "name": "risingwave",
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T06:24:31.385Z",
-    "lastVerified": "2026-11-07T06:24:31.385Z",
+    "lastChecked": "2026-11-08T14:12:18.994Z",
+    "lastVerified": "2026-11-08T14:12:18.994Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
@@ -4442,7 +4443,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "88b98114"
   },
   "wasm-bindgen-wasm-pack": {
     "name": "wasm-pack",
@@ -5742,8 +5744,8 @@
     "officialUrl": "https://github.com/mlua-rs/mlua",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T02:14:50.932Z",
-    "lastVerified": "2026-11-07T02:14:50.932Z",
+    "lastChecked": "2026-11-08T14:12:06.442Z",
+    "lastVerified": "2026-11-08T14:12:06.442Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mlua-rs-mlua",
@@ -10362,9 +10364,9 @@
   "zoontek-react-native-permissions": {
     "name": "react-native-permissions",
     "officialUrl": "https://github.com/zoontek/react-native-permissions",
-    "lastChecked": "2026-11-05T08:40:06.090Z",
+    "lastChecked": "2026-11-08T14:12:11.423Z",
     "revisionIdentifier": "4f9f820e",
-    "lastVerified": "2026-11-05T08:40:06.090Z"
+    "lastVerified": "2026-11-08T14:12:11.423Z"
   },
   "a4csi-schema-org-validate": {
     "name": "schema-org-validate",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T14:04:56.247Z",
+  "last_updated": "2026-11-08T14:12:22.913Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -410,14 +410,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
-      "content_hash": "376117dbcd9953dd34298f8f9535a7f9f568ab7f3c6c733306a35413fbb224f1",
-      "verified_at": "2026-11-04T22:52:23.689Z",
+      "content_hash": "f5ee0b70145d3894f7f9214b5f8cbdd975295f79d155367c17abb6f87ab985f0",
+      "verified_at": "2026-11-08T14:12:19.242Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:52:23.689Z"
+      "last_updated": "2026-11-08T14:12:19.242Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
-      "verified_at": "2026-11-08T05:57:07.912Z",
+      "content_hash": "7c9dc880d9623227bfa010cf80d6a50701ebf2de2ae346c4badc64e63c7ef2b7",
+      "verified_at": "2026-11-08T14:12:22.913Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T05:57:07.912Z"
+      "last_updated": "2026-11-08T14:12:22.913Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",

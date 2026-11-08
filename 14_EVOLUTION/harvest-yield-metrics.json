@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T14:04:56.244Z",
-  "total_cycles_completed": 8257,
-  "total_learnings_persisted": 8257,
-  "total_rules_promoted": 8031,
+  "last_updated": "2026-11-08T14:12:22.909Z",
+  "total_cycles_completed": 8259,
+  "total_learnings_persisted": 8259,
+  "total_rules_promoted": 8035,
   "history": [
-    {
-      "timestamp": "2026-11-07T21:10:22.564Z",
-      "repository": "TanStack/query",
-      "learningId": "learn-github-tanstack-query",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T21:10:24.199Z",
-      "repository": "mikepenz/AboutLibraries",
-      "learningId": "learn-github-mikepenz-aboutlibraries",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T21:10:32.667Z",
       "repository": "arangodb/arangodb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T14:04:56.244Z",
       "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
       "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T14:12:19.238Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T14:12:22.909Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

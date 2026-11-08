@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "376117dbcd9953dd34298f8f9535a7f9f568ab7f3c6c733306a35413fbb224f1",
-    "lastHarvestedAt": "2026-11-04T22:52:23.681Z",
+    "contentHash": "f5ee0b70145d3894f7f9214b5f8cbdd975295f79d155367c17abb6f87ab985f0",
+    "lastHarvestedAt": "2026-11-08T14:12:19.221Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "857c3163",
+    "sourceVersion": "e1cc41b3",
     "license": "Apache-2.0",
-    "contentHash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
-    "lastHarvestedAt": "2026-11-08T05:57:07.898Z",
+    "contentHash": "7c9dc880d9623227bfa010cf80d6a50701ebf2de2ae346c4badc64e63c7ef2b7",
+    "lastHarvestedAt": "2026-11-08T14:12:22.903Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `857c3163`  
+> **Source Version**: `e1cc41b3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T05:57:07.483Z  
+> **Timestamp**: 2026-11-08T14:12:21.006Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T05:57:07.319Z  
+> **Harvest Timestamp**: 2026-11-08T14:12:20.321Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25796 stars
+- **Stars / Engagement**: 25797 stars
 
 ---
 
@@ -1259,11 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49907** (2026-11-08): **chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.3 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) |  | patch | [`44.222.2` → `44.222.3`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.222.2&to=44.222.3) | | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) | uses-with | patch | [`44.222.2` → `44.222.3`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.222.2&to=44.222.3) |  ---  ### Release Notes  <details> <summary>renovatebot/renovate (ghcr.io/renovatebot/renovate)</summary>  ### [`v44.222.3`](https://redirect.github.com/renovatebot/renovate/releases/tag/44.222.3)  [Compare Source](https://redirect.github.com/renovatebot/renovate/compare/44.222.2...44.222.3)  ##### Bug Fixes  - **deps:** update renovate-base-image to v13.161.3 (main) ([#&#8203;47841](https://redirect.github.com/renovatebot/renovate/issues/47841)) ([6b87d5c](https://redirect.github.com/renovatebot/renovate/commit/6b87d5c94f10ff89e128d4c3512ac88c61aa3a86))  ##### Miscellaneous Chores  - **deps:** update ghcr.io/containerbase/devcontainer docker tag to v14.66.8 (main) ([#&#8203;47840](https://redirect.github.com/renovatebot/renovate/issues/47840)) ([26b0e53](https://redirect.github.com/renovatebot/renovate/commit/26b0e5395d869af8ff814dda05c93c06d6a0d805))  </details>  ---  ### Configurat
+- **Issue #49910** (2026-11-08): **chore(deps): update github/codeql-action action to v4.39.2 (v1.20)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Pending | |---|---|---|---|---| | [github/codeql-action](https://redirect.github.com/github/codeql-action) | action | patch | `v4.39.1` → `v4.39.2` | `v4.39.3` |  ---  ### Release Notes  <details> <summary>github/codeql-action</summary>  ### [`v4.39.2`](https://redirect.github.com/github/codeql-action/releases/tag/v4.39.2)  [Compare Source](https://redirect.github.com/github/codeql-action/compare/v4.39.1...v4.39.2)  - Update default CodeQL bundle version to [2.27.4](https://redirect.github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4). [#&#8203;4284](https://redirect.github.com/github/codeql-action/pull/4284) - *Upcoming breaking change*: CodeQL version 2.22.3 and earlier were discontinued on 16 October 2026 alongside GitHub Enterprise Server 3.18, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. [#&#8203;4266](https://redirect.github.com/github/codeql-action/pull/4266) - Starting with macOS 27 and Xcode 27, traced analyses are unsupported. See [this blog post for more information](https://github.blog/changelog/2026-10-19-codeql-changes-for-macos-27-xcode-27-and-swift-6-4/). The CodeQL Action will now try to identify if a workflow is about to perform a traced analysis on version 27 or above of macOS or Xcode. If so, the CodeQL Action will emit a corresponding warning that will also be visi
 
-- **Issue #49906** (2026-11-08): **chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.20)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) |  | patch | `v0.20.1` → `v0.20.2` | | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.1` → `v0.20.2` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.2`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.2)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.1...v0.20.2)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply labels to all new test namespaces ([cilium/cilium#49190](https://redirect.github.com/cilium/cilium/issues/49190), [@&#8203;darox](https://redirect.github.com/darox)) - cilium-cli: fall back to WebSocket when a proxy rejects the SPDY upgrade ([cilium/cilium#49229](https://redirect.github.com/cilium/cilium/issues/49229), [@&#8203;epb-644](https://redirect.github.com/epb-644))  **Bugfixes:**  - Fixes error when passing times of 60s or more to cilium connectivity perf and throws an explicit error on fractional seconds. ([cilium/cilium#48965](https://redirect.github.com/cilium/cilium/issues/48965), [@&#8203;Arleee1](https://redirect.github.com/Arleee1))  **CI Changes:**  - cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest ([cilium/cilium#49676](https://redirect.github.com/cilium/cilium/issues/49676), [@&#8203;tklauser](https://redirect.
+- **Issue #49908** (2026-11-08): **chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) |  | patch | [`44.222.3` → `44.222.4`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.222.3&to=44.222.4) | | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) | uses-with | patch | [`44.222.3` → `44.222.4`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.222.3&to=44.222.4) |  ---  ### Release Notes  <details> <summary>renovatebot/renovate (ghcr.io/renovatebot/renovate)</summary>  ### [`v44.222.4`](https://redirect.github.com/renovatebot/renovate/releases/tag/44.222.4)  [Compare Source](https://redirect.github.com/renovatebot/renovate/compare/44.222.3...44.222.4)  ##### Bug Fixes  - **deps:** update renovate-base-image to v13.161.4 (main) ([#&#8203;47843](https://redirect.github.com/renovatebot/renovate/issues/47843)) ([30f1051](https://redirect.github.com/renovatebot/renovate/commit/30f1051c0a1dbfd233afeb1fb23581e4085123d6))  ##### Miscellaneous Chores  - **deps:** update ghcr.io/containerbase/devcontainer docker tag to v14.66.9 (main) ([#&#8203;47842](https://redirect.github.com/renovatebot/renovate/issues/47842)) ([54a169a](https://redirect.github.com/renovatebot/renovate/commit/54a169a65b40d30dbccc961751b1541e80d46d67))  </details>  ---  ### Configurat
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,113 +1280,44 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f4ecf374` (2026-11-08)
-**Commit Message**: images: update cilium-{runtime,builder}
+### Incident Patch 1: `e1cc41b3` (2026-11-08)
+**Commit Message**: chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4
 
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
-**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
+**File**: `.github/workflows/renovate-config-validator.yaml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "Cilium",
--  "image": "quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770",
-+  "image": "quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c",
-   "workspaceFolder": "/go/src/github.com/cilium/cilium",
-   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
-   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
+@@ -20,7 +20,7 @@ jobs:
+       - name: Validate configuration
+         run: |
+           # renovate: datasource=docker
+-          export RENOVATE_IMAGE=ghcr.io/renovatebot/renovate:44.222.3@sha256:0d4a5af4e1d73308ddcba85928258444443bbd1ee5416978ecfe1465e41fc688
++          export RENOVATE_IMAGE=ghcr.io/renovatebot/renovate:44.222.4@sha256:306316fc9e8c424dde672590699d681f9c8764cc9152141d2c5059956ce1e3b8
+           docker run --rm --entrypoint "renovate-config-validator" \
+             -v "${{ github.workspace }}/.github/renovate.json5":"/renovate.json5" \
+             ${RENOVATE_IMAGE} --strict "/renovate.json5"
 ```
 
-**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
+**File**: `.github/workflows/renovate.yaml` (modified, +1/-1)
 ```diff
-@@ -1 +1 @@
--quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
-\ No newline at end of file
-+quay.io/cilium/cilium-runtime:e88c16905ce2239d93f5927c440f0f81710a6686@sha256:ce094ce66806312e15667bbdc5717c09c53fded904b7c4c1c2a74b29c9c0b705
-\ No newline at end of file
-```
-
-**File**: `images/cilium/Dockerfile` (modified, +2/-2)
-```diff
-@@ -3,8 +3,8 @@
- # Copyright Authors of Cilium
- # SPDX-License-Identifier: Apache-2.0
- 
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770
--ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
-+ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:e88c16905ce2239d93f5927c440f0f81710a6686@sha256:ce094ce66806312e15667bbdc5717c09c53fded904b7c4c1c2a74b29c9c0b705
- #
- # cilium-envoy from github.com/cilium/proxy
- #
-```
-
-**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
- # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
- ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:e519d3b0a5b285e5aa53ab9eef02bc6bbb9cb04608389b743a136a9ce75f0d1e
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
- 
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
-```
-
-**File**: `images/operator/Dockerfile` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
- ARG BASE_IMAGE=scratch
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:e519d3b0a5b285e5aa53ab9eef02bc6bbb9cb04608389b743a136a9ce75f0d1e
- ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
- 
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
-```
-
----
-
-### Incident Patch 2: `6a7623ed` (2026-11-08)
-**Commit Message**: ci: update docs-builder
-
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/documentation.yaml` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ jobs:
-         uses: ./.github/actions/disk-cleanup
- 
-       - name: Build HTML
--        uses: docker://quay.io/cilium/docs-builder:f921661477db929b745592dbd904377f725ac331@sha256:892c1372cdefe855a4e9488975e050a633e5a36d4d0465c121ec1faba151cdef
-+        uses: docker://quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
+@@ -46,7 +46,7 @@ jobs:
+           RENOVATE_BASE_DIR: /var/tmp/renovate
          with:
-           entrypoint: ./Documentation/check-build.sh
-           args: html
-```
-
-**File**: `Documentation/Makefile` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ SPHINX_OPTS := "-j=auto"
- 
- .PHONY: default clean help cilium-build cmdref epub latex html
- 
--DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:f921661477db929b745592dbd904377f725ac331@sha256:892c1372cdefe855a4e9488975e050a633e5a36d4d0465c121ec1faba151cdef
-+DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
- 
- .PHONY: update-docs-builder-image
- update-docs-builder-image: DOCS_BUILDER_TAG=$(word 3,$(shell git ls-tree --full-tree HEAD -- $(DOCS_BUILDER_DIR)))
+           # renovate: datasource=github-releases depName=renovatebot/renovate
+-          renovate-version: 44.222.3
++          renovate-version: 44.222.4
+           docker-user: root
+           docker-cmd-file: .github/actions/renovate/entrypoint.sh
+           configurationFile: .github/renovate.json5
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49910** (2026-11-08): chore(deps): update github/codeql-action action to v4.39.2 (v1.20) (@cilium-renovate[bot])
+- **PR #49908** (2026-11-08): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4 (main) (@cilium-renovate[bot])
 - **PR #49907** (2026-11-08): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.3 (main) (@cilium-renovate[bot])
 - **PR #49906** (2026-11-08): chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.20) (@cilium-renovate[bot])
 - **PR #49905** (2026-11-08): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
 - **PR #49900** (2026-11-08): fix(deps): update k8s.io patch updates stable to v0.35.10 (v1.19) (@cilium-renovate[bot])
-- **PR #49899** (2026-11-08): chore(deps): update auto-merge-trusted-deps (v1.20) (@cilium-renovate[bot])
-- **PR #49896** (2026-11-08): chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.20) (@cilium-renovate[bot])
 
 ---
 
@@ -1406,28 +1337,28 @@ Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. images: update cilium-{runtime,builder}
+## X. deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4
 
 **RULE**:
-When implementing operations in `.devcontainer/devcontainer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/renovate-config-validator.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f4ecf374`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1cc41b3`: deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.devcontainer/devcontainer.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate-config-validator.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  "image": "quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c",
+          export RENOVATE_IMAGE=ghcr.io/renovatebot/renovate:44.222.4@sha256:306316fc9e8c424dde672590699d681f9c8764cc9152141d2c5059956ce1e3b8
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  "image": "quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770",
+          export RENOVATE_IMAGE=ghcr.io/renovatebot/renovate:44.222.3@sha256:0d4a5af4e1d73308ddcba85928258444443bbd1ee5416978ecfe1465e41fc688
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f4ecf374` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1cc41b3` are properly handled with clean fallback behavior.

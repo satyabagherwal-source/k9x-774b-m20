@@ -8301,3 +8301,5 @@ Every entry in this ledger must capture:
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `c23311a8` | Multi-dimensional audit evidence | 2026-11-08T14:00:00.596Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `94805b90` | Multi-dimensional audit evidence | 2026-11-08T14:00:03.288Z |
 | `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-08T14:04:56.238Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-08T14:12:19.221Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e1cc41b3` | Multi-dimensional audit evidence | 2026-11-08T14:12:22.903Z |

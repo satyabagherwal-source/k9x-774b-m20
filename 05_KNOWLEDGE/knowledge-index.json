@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T14:04:56.158Z",
+  "last_updated": "2026-11-08T14:12:22.796Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7539,8 +7539,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "857c3163",
-      "content_hash": "c42effbc78bf2ebff7bf8866fd4a342632dcf354c7505b28c1cfcbed1ea6cd2e",
+      "source_version": "e1cc41b3",
+      "content_hash": "7c9dc880d9623227bfa010cf80d6a50701ebf2de2ae346c4badc64e63c7ef2b7",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7562,6 +7562,11 @@
         {
           "number": null,
           "title": "deps): update cilium/cilium-cli action to v0.20.2",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7810,7 +7815,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:57:07.802Z",
+      "verified_at": "2026-11-08T14:12:22.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27200,10 +27205,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "376117dbcd9953dd34298f8f9535a7f9f568ab7f3c6c733306a35413fbb224f1",
+      "content_hash": "f5ee0b70145d3894f7f9214b5f8cbdd975295f79d155367c17abb6f87ab985f0",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Inference Determinism & Reproducibility",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 272,
           "title": "Explicit Tensor Lifecycle Management in Diffusion Pipelines",
@@ -27251,6 +27261,16 @@
         {
           "number": "EXISTING",
           "title": "Configuration-Weight Consistency Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": null,
+          "title": "Tokenizer & Model Version Alignment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 1071,
+          "title": "Model Weight Integrity & Deterministic Loading",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -27312,7 +27332,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-11-04T22:52:23.573Z",
+      "verified_at": "2026-11-08T14:12:19.095Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -91502,14 +91522,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1071,
       "title": "Model Weight Integrity & Deterministic Loading",
-      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
-      "source_version": "hf-openmoss-team-moss-image-base",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T01:42:42.284Z"
+      "verified_at": "2026-11-08T14:12:19.095Z"
     },
     "rule-1072": {
       "learning_id": "rule-1072",

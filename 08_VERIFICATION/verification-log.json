@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-AQBE",
-    "timestamp": "2026-11-05T21:32:49.466Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "e41776c33e0a0d7b6b8aef6ff19470f2b4cef4bfc48855b5496a8080782436e1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-AWA4",
-    "timestamp": "2026-11-05T21:32:57.196Z",
-    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-    "contentHash": "d238bb557c44e115e1392290800e08f76ae0261a823b775e0f11c0c3d6614ad6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-K1UO",
     "timestamp": "2026-11-05T21:40:04.320Z",
     "repository": "davila7/claude-code-templates",
@@ -7490,6 +7460,36 @@
     "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
     "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
     "contentHash": "bdeac2a1b57655740c51790e2acb1aad60627db3fb39c8aa9dfbdb01481d6a6e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-VSLS",
+    "timestamp": "2026-11-08T14:12:19.216Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "f5ee0b70145d3894f7f9214b5f8cbdd975295f79d155367c17abb6f87ab985f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-VVG3",
+    "timestamp": "2026-11-08T14:12:22.899Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "7c9dc880d9623227bfa010cf80d6a50701ebf2de2ae346c4badc64e63c7ef2b7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
