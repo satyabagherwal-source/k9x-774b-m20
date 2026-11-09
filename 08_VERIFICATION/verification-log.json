@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-B3W5",
-    "timestamp": "2026-11-07T21:36:27.509Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "8feea5695581d4ecfc1841445d309c3fbe3d28a256c0335adf02edcb0b8fd482",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-B5ML",
-    "timestamp": "2026-11-07T21:36:29.757Z",
-    "repository": "vitest-dev/vitest",
-    "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "1b265e7902747b0c5714afaa12aadf7613f0b508c9be1b35c4470f82b0e67544",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-B88J",
-    "timestamp": "2026-11-07T21:36:33.139Z",
-    "repository": "goodrain/rainbond",
-    "learningId": "learn-github-goodrain-rainbond",
-    "contentHash": "e44b9b064a87a4d5edff8451ecaf20f65596e318b849003b1087c1b32aaef1a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-BBWL",
     "timestamp": "2026-11-07T21:36:37.893Z",
     "repository": "citusdata/citus",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "20c0fd89c42f52ff990641073d0e4d266ac75015f46710511fb32407b252343b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-ERA8",
+    "timestamp": "2026-11-09T13:46:44.768Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+    "contentHash": "a5ed876e2dab2e83df7ced43c12e38c5772bdbe67f86dfd1ff59fc5236b1fb2e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-ESV1",
+    "timestamp": "2026-11-09T13:46:46.813Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "42f115cb8dfdcdf06d7d0157487fd107e924555c0abdf16f79dcd7da21d37641",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-EWQS",
+    "timestamp": "2026-11-09T13:46:51.844Z",
+    "repository": "callstack/react-native-paper",
+    "learningId": "learn-github-callstack-react-native-paper",
+    "contentHash": "0a1b6674ac48485dbb97bf3f9c7c67764a7ba7edb8e9a911b145355e12169161",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

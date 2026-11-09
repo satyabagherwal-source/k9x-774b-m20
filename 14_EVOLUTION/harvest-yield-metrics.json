@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T13:34:34.509Z",
-  "total_cycles_completed": 8566,
-  "total_learnings_persisted": 8566,
-  "total_rules_promoted": 8393,
+  "last_updated": "2026-11-09T13:46:51.855Z",
+  "total_cycles_completed": 8569,
+  "total_learnings_persisted": 8569,
+  "total_rules_promoted": 8395,
   "history": [
-    {
-      "timestamp": "2026-11-08T21:46:52.301Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T21:47:04.764Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T22:00:46.433Z",
-      "repository": "ricursiveAI/Ripple-65B-Preview",
-      "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T22:00:48.643Z",
       "repository": "astral-sh/ruff",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-09T13:34:34.509Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T13:46:44.778Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T13:46:46.834Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T13:46:51.855Z",
+      "repository": "callstack/react-native-paper",
+      "learningId": "learn-github-callstack-react-native-paper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

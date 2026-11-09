@@ -8601,3 +8601,6 @@
 | `CYCLE-20261109-YUUR` | `2026-11-09T13:34:22.899Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4aa21afa...`) |
 | `CYCLE-20261109-YYJ5` | `2026-11-09T13:34:27.665Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`453c4cdf...`) |
 | `CYCLE-20261109-Z3SY` | `2026-11-09T13:34:34.498Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`20c0fd89...`) |
+| `CYCLE-20261109-ERA8` | `2026-11-09T13:46:44.768Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`a5ed876e...`) |
+| `CYCLE-20261109-ESV1` | `2026-11-09T13:46:46.813Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`42f115cb...`) |
+| `CYCLE-20261109-EWQS` | `2026-11-09T13:46:51.844Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0a1b6674...`) |

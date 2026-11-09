@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T13:34:34.341Z",
+  "last_updated": "2026-11-09T13:46:51.741Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6609,14 +6609,19 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "c8d8bab5",
-      "content_hash": "f7382675f779e18fe189a474ac8966066cfdd447d1f0802f9f2025bb791713fa",
+      "source_version": "c87c351a",
+      "content_hash": "0a1b6674ac48485dbb97bf3f9c7c67764a7ba7edb8e9a911b145355e12169161",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "chip): prevent label from overflowing close icon (#5169)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "text-input): keep a TextInput without a label visible while empty (#5191)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -6640,7 +6645,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T19:16:48.230Z",
+      "verified_at": "2026-11-09T13:46:51.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12938,8 +12943,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "19a7196c",
-      "content_hash": "65e30cd5468adb168dd37b92ed46df5e2eaf3772aa4aefa20efed5541243a643",
+      "source_version": "e2db494d",
+      "content_hash": "42f115cb8dfdcdf06d7d0157487fd107e924555c0abdf16f79dcd7da21d37641",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -12962,6 +12967,11 @@
           "number": null,
           "title": "Idle Event Polling and Exclusive-Bus Interference Mitigation",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #7476 from lennlouisgeek/feature/stm32c5-dac-v9",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2076,
@@ -13039,7 +13049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T08:24:03.163Z",
+      "verified_at": "2026-11-09T13:46:46.690Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76345,7 +76355,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "348b49659f2cab860d23e6bace9e05cb1cd5d0f7bf1c3a9e0121dfa948900e4b",
+      "content_hash": "a5ed876e2dab2e83df7ced43c12e38c5772bdbe67f86dfd1ff59fc5236b1fb2e",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -76354,7 +76364,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:05:59.025Z",
+      "verified_at": "2026-11-09T13:46:44.633Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

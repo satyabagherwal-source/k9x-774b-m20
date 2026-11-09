@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "348b49659f2cab860d23e6bace9e05cb1cd5d0f7bf1c3a9e0121dfa948900e4b",
-    "lastHarvestedAt": "2026-11-05T15:05:59.172Z",
+    "contentHash": "a5ed876e2dab2e83df7ced43c12e38c5772bdbe67f86dfd1ff59fc5236b1fb2e",
+    "lastHarvestedAt": "2026-11-09T13:46:44.772Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -3033,10 +3033,10 @@
     "repository": "callstack/react-native-paper",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-paper",
-    "sourceVersion": "c8d8bab5",
+    "sourceVersion": "c87c351a",
     "license": "MIT",
-    "contentHash": "f7382675f779e18fe189a474ac8966066cfdd447d1f0802f9f2025bb791713fa",
-    "lastHarvestedAt": "2026-11-06T19:16:48.327Z",
+    "contentHash": "0a1b6674ac48485dbb97bf3f9c7c67764a7ba7edb8e9a911b145355e12169161",
+    "lastHarvestedAt": "2026-11-09T13:46:51.848Z",
     "learningId": "learn-github-callstack-react-native-paper"
   },
   "tensorchord-pgvecto.rs": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "19a7196c",
+    "sourceVersion": "e2db494d",
     "license": "Apache-2.0",
-    "contentHash": "65e30cd5468adb168dd37b92ed46df5e2eaf3772aa4aefa20efed5541243a643",
-    "lastHarvestedAt": "2026-11-08T08:24:03.303Z",
+    "contentHash": "42f115cb8dfdcdf06d7d0157487fd107e924555c0abdf16f79dcd7da21d37641",
+    "lastHarvestedAt": "2026-11-09T13:46:46.817Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {

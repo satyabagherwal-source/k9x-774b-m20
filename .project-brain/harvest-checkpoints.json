@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T13:34:34.513Z",
+  "last_updated": "2026-11-09T13:46:51.859Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "348b49659f2cab860d23e6bace9e05cb1cd5d0f7bf1c3a9e0121dfa948900e4b",
-      "verified_at": "2026-11-05T15:05:59.181Z",
+      "content_hash": "a5ed876e2dab2e83df7ced43c12e38c5772bdbe67f86dfd1ff59fc5236b1fb2e",
+      "verified_at": "2026-11-09T13:46:44.781Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T15:05:59.181Z"
+      "last_updated": "2026-11-09T13:46:44.781Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -4671,14 +4671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-paper",
-      "content_hash": "f7382675f779e18fe189a474ac8966066cfdd447d1f0802f9f2025bb791713fa",
-      "verified_at": "2026-11-06T19:16:48.335Z",
+      "content_hash": "0a1b6674ac48485dbb97bf3f9c7c67764a7ba7edb8e9a911b145355e12169161",
+      "verified_at": "2026-11-09T13:46:51.858Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T19:16:48.335Z"
+      "last_updated": "2026-11-09T13:46:51.858Z"
     },
     "tensorchord/pgvecto.rs": {
       "repository": "tensorchord/pgvecto.rs",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "65e30cd5468adb168dd37b92ed46df5e2eaf3772aa4aefa20efed5541243a643",
-      "verified_at": "2026-11-08T08:24:03.323Z",
+      "content_hash": "42f115cb8dfdcdf06d7d0157487fd107e924555c0abdf16f79dcd7da21d37641",
+      "verified_at": "2026-11-09T13:46:46.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T08:24:03.323Z"
+      "last_updated": "2026-11-09T13:46:46.837Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",

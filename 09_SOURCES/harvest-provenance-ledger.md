@@ -8610,3 +8610,6 @@ Every entry in this ledger must capture:
 | `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `af701e99` | Multi-dimensional audit evidence | 2026-11-09T13:34:22.904Z |
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-09T13:34:27.671Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a0f8a379` | Multi-dimensional audit evidence | 2026-11-09T13:34:34.503Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-09T13:46:44.772Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `e2db494d` | Multi-dimensional audit evidence | 2026-11-09T13:46:46.817Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `c87c351a` | Multi-dimensional audit evidence | 2026-11-09T13:46:51.848Z |
