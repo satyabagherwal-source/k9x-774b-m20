@@ -1165,8 +1165,8 @@
     "sourceUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceVersion": "hf-nomic-ai-nomic-embed-text-v1.5",
     "license": "Open-Source",
-    "contentHash": "2283e5cfb380750f6c0aca9de3d7e2ff0f9e377d60f7c4190167249e52916bdd",
-    "lastHarvestedAt": "2026-11-05T09:12:17.850Z",
+    "contentHash": "94f04db82054b4517d14488d320e6780eaa4e03a19a708d317d15287e8c04ac0",
+    "lastHarvestedAt": "2026-11-09T03:03:44.636Z",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "7cf43de5",
+    "sourceVersion": "ba0b4a85",
     "license": "MIT",
-    "contentHash": "69c3896dcfd497240682830757797c3042e09a778becce928f2fbbf14efdc2f1",
-    "lastHarvestedAt": "2026-11-05T22:31:40.632Z",
+    "contentHash": "19baa6b96a016e4b507e9bcc9c4278d917f19e9d99ee3cf86ee576135ee5301c",
+    "lastHarvestedAt": "2026-11-09T03:05:11.671Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "9852feb1",
+    "sourceVersion": "c262c237",
     "license": "GPL-3.0",
-    "contentHash": "01bab7f13cf2d01547d247b5a9b57764f9714bb595d5c02431177982990b3641",
-    "lastHarvestedAt": "2026-11-05T20:00:12.114Z",
+    "contentHash": "32ec46b8b8a5df183099fa37136915aad3bce7dee3bf14e8f922567edbba815c",
+    "lastHarvestedAt": "2026-11-09T03:05:59.327Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {

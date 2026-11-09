@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T02:44:06.594Z",
+  "last_updated": "2026-11-09T03:05:59.231Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29562,7 +29562,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "2283e5cfb380750f6c0aca9de3d7e2ff0f9e377d60f7c4190167249e52916bdd",
+      "content_hash": "94f04db82054b4517d14488d320e6780eaa4e03a19a708d317d15287e8c04ac0",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [
@@ -29599,7 +29599,7 @@
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
       ],
-      "verified_at": "2026-11-05T09:12:17.721Z",
+      "verified_at": "2026-11-09T03:03:44.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43036,8 +43036,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "7cf43de5",
-      "content_hash": "69c3896dcfd497240682830757797c3042e09a778becce928f2fbbf14efdc2f1",
+      "source_version": "ba0b4a85",
+      "content_hash": "19baa6b96a016e4b507e9bcc9c4278d917f19e9d99ee3cf86ee576135ee5301c",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -43045,6 +43045,16 @@
           "number": null,
           "title": "Cap the CI runner build cache on the Blacksmith sticky disks (#5202)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "In-Target Filesystem Path Resolution Without Host Namespace Escape",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Backpressure-Bounded Asynchronous IO Streams via Semaphore Permits",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1787,
@@ -43112,7 +43122,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:31:40.557Z",
+      "verified_at": "2026-11-09T03:05:11.496Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63010,14 +63020,29 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "9852feb1",
-      "content_hash": "01bab7f13cf2d01547d247b5a9b57764f9714bb595d5c02431177982990b3641",
+      "source_version": "c262c237",
+      "content_hash": "32ec46b8b8a5df183099fa37136915aad3bce7dee3bf14e8f922567edbba815c",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "(bug) Keep input responsive when key events queue up behind a slow main thread (",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Dual-Phase Atomic Teardown for Realtime Audio Callbacks",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Startup Preference Reconciliation Prior to UI Framework Initialization",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Lossless Integer-Quantized Audio Transit for Remote LLM/ASR Gateways",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -63051,7 +63076,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T20:00:11.975Z",
+      "verified_at": "2026-11-09T03:05:59.196Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -8493,3 +8493,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-09T02:43:57.061Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `1157a070` | Multi-dimensional audit evidence | 2026-11-09T02:44:05.752Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `35fffd03` | Multi-dimensional audit evidence | 2026-11-09T02:44:06.710Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-09T03:03:44.636Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `ba0b4a85` | Multi-dimensional audit evidence | 2026-11-09T03:05:11.671Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `c262c237` | Multi-dimensional audit evidence | 2026-11-09T03:05:59.327Z |

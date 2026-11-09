@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T02:44:06.723Z",
+  "last_updated": "2026-11-09T03:05:59.337Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1550,14 +1550,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "content_hash": "2283e5cfb380750f6c0aca9de3d7e2ff0f9e377d60f7c4190167249e52916bdd",
-      "verified_at": "2026-11-05T09:12:17.860Z",
+      "content_hash": "94f04db82054b4517d14488d320e6780eaa4e03a19a708d317d15287e8c04ac0",
+      "verified_at": "2026-11-09T03:03:44.646Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T09:12:17.860Z"
+      "last_updated": "2026-11-09T03:03:44.646Z"
     },
     "google/gemma-4-26B-A4B-it": {
       "repository": "google/gemma-4-26B-A4B-it",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "69c3896dcfd497240682830757797c3042e09a778becce928f2fbbf14efdc2f1",
-      "verified_at": "2026-11-05T22:31:40.639Z",
+      "content_hash": "19baa6b96a016e4b507e9bcc9c4278d917f19e9d99ee3cf86ee576135ee5301c",
+      "verified_at": "2026-11-09T03:05:11.680Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:31:40.639Z"
+      "last_updated": "2026-11-09T03:05:11.680Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -15201,14 +15201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
-      "content_hash": "01bab7f13cf2d01547d247b5a9b57764f9714bb595d5c02431177982990b3641",
-      "verified_at": "2026-11-05T20:00:12.125Z",
+      "content_hash": "32ec46b8b8a5df183099fa37136915aad3bce7dee3bf14e8f922567edbba815c",
+      "verified_at": "2026-11-09T03:05:59.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T20:00:12.125Z"
+      "last_updated": "2026-11-09T03:05:59.336Z"
     },
     "vitest-dev/vitest": {
       "repository": "vitest-dev/vitest",

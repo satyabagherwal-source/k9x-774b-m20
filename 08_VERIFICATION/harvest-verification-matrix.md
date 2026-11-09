@@ -8484,3 +8484,6 @@
 | `CYCLE-20261109-QEBK` | `2026-11-09T02:43:57.056Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`b45ba569...`) |
 | `CYCLE-20261109-QL10` | `2026-11-09T02:44:05.748Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4600d494...`) |
 | `CYCLE-20261109-QLRM` | `2026-11-09T02:44:06.706Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`38119bcc...`) |
+| `CYCLE-20261109-FUNS` | `2026-11-09T03:03:44.632Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`94f04db8...`) |
+| `CYCLE-20261109-HPTF` | `2026-11-09T03:05:11.667Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`19baa6b9...`) |
+| `CYCLE-20261109-IQKY` | `2026-11-09T03:05:59.314Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`32ec46b8...`) |
