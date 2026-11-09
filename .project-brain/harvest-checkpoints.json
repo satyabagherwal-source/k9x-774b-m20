@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T01:06:01.993Z",
+  "last_updated": "2026-11-09T01:12:41.070Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "237ab97fa82edd6128b9e8baa96a6c2df337e6611f2ad7146eafaa950b0a56e8",
-      "verified_at": "2026-11-08T00:15:25.377Z",
+      "content_hash": "2aef9b2fc44b981e7a6d69fba9a80b2a04e0482cdf686b956cc1b5f763a6779b",
+      "verified_at": "2026-11-09T01:12:34.604Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:15:25.377Z"
+      "last_updated": "2026-11-09T01:12:34.604Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -14691,14 +14691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikelikesdesign-swiftui-experiments",
-      "content_hash": "a5c8f0c9a9c9940e861438dd145d7ef504c888aab86aee649551040733a45f39",
-      "verified_at": "2026-10-20T00:58:03.534Z",
+      "content_hash": "b026177aebd55bbe20372d651999ed0f3755d148b2f23b8a69d401cae60525c1",
+      "verified_at": "2026-11-09T01:12:39.642Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:58:03.534Z"
+      "last_updated": "2026-11-09T01:12:39.642Z"
     },
     "jsonld-java/jsonld-java": {
       "repository": "jsonld-java/jsonld-java",
@@ -17151,14 +17151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "content_hash": "ec9651b297afa7c99bbe5eb54540a41b2b00ea2e00f78251473d7bb8a4a2b383",
-      "verified_at": "2026-11-05T07:13:13.412Z",
+      "content_hash": "00132066f66a5f7190b36f81bbe55c3bf77361f1e02ef00c98ca6cca4070a1fb",
+      "verified_at": "2026-11-09T01:12:41.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:13:13.412Z"
+      "last_updated": "2026-11-09T01:12:41.069Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",

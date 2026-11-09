@@ -8452,3 +8452,6 @@
 | `CYCLE-20261109-2O24` | `2026-11-09T01:01:31.084Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`453472fd...`) |
 | `CYCLE-20261109-2S45` | `2026-11-09T01:01:36.341Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`13a0d394...`) |
 | `CYCLE-20261109-8H2Y` | `2026-11-09T01:06:01.978Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`da5159e3...`) |
+| `CYCLE-20261109-GW0R` | `2026-11-09T01:12:34.587Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2aef9b2f...`) |
+| `CYCLE-20261109-GZWX` | `2026-11-09T01:12:39.633Z` | `mikelikesdesign/SwiftUI-experiments` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/mikelikesdesign-swiftui-experiments-learnings.md` | Yes (`b026177a...`) |
+| `CYCLE-20261109-H10C` | `2026-11-09T01:12:41.052Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`00132066...`) |

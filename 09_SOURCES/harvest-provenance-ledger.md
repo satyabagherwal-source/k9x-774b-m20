@@ -8461,3 +8461,6 @@ Every entry in this ledger must capture:
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `4e28fc8c` | Multi-dimensional audit evidence | 2026-11-09T01:01:31.088Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b9fd8f07` | Multi-dimensional audit evidence | 2026-11-09T01:01:36.345Z |
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-09T01:06:01.982Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `a6ebf8b1` | Multi-dimensional audit evidence | 2026-11-09T01:12:34.597Z |
+| `learn-github-mikelikesdesign-swiftui-experiments` | `https://github.com/mikelikesdesign/SwiftUI-experiments` | `8deaa990` | Multi-dimensional audit evidence | 2026-11-09T01:12:39.636Z |
+| `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-09T01:12:41.055Z |

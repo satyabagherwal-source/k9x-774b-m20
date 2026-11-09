@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "71d99c7e",
+    "sourceVersion": "a6ebf8b1",
     "license": "NOASSERTION",
-    "contentHash": "237ab97fa82edd6128b9e8baa96a6c2df337e6611f2ad7146eafaa950b0a56e8",
-    "lastHarvestedAt": "2026-11-08T00:15:25.358Z",
+    "contentHash": "2aef9b2fc44b981e7a6d69fba9a80b2a04e0482cdf686b956cc1b5f763a6779b",
+    "lastHarvestedAt": "2026-11-09T01:12:34.597Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -9763,10 +9763,10 @@
     "repository": "mikelikesdesign/SwiftUI-experiments",
     "platform": "github",
     "sourceUrl": "https://github.com/mikelikesdesign/SwiftUI-experiments",
-    "sourceVersion": "b75268ca",
+    "sourceVersion": "8deaa990",
     "license": "MIT",
-    "contentHash": "a5c8f0c9a9c9940e861438dd145d7ef504c888aab86aee649551040733a45f39",
-    "lastHarvestedAt": "2026-10-20T00:58:03.526Z",
+    "contentHash": "b026177aebd55bbe20372d651999ed0f3755d148b2f23b8a69d401cae60525c1",
+    "lastHarvestedAt": "2026-11-09T01:12:39.636Z",
     "learningId": "learn-github-mikelikesdesign-swiftui-experiments"
   },
   "jsonld-java-jsonld-java": {
@@ -11415,8 +11415,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
     "sourceVersion": "hf-openbmb-minicpm-ocr-1.0",
     "license": "Open-Source",
-    "contentHash": "ec9651b297afa7c99bbe5eb54540a41b2b00ea2e00f78251473d7bb8a4a2b383",
-    "lastHarvestedAt": "2026-11-05T07:13:13.397Z",
+    "contentHash": "00132066f66a5f7190b36f81bbe55c3bf77361f1e02ef00c98ca6cca4070a1fb",
+    "lastHarvestedAt": "2026-11-09T01:12:41.055Z",
     "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {

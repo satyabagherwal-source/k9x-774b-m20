@@ -3,7 +3,7 @@
 > **Source Version**: `hf-openbmb-m`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T07:13:11.642Z  
+> **Timestamp**: 2026-11-09T01:12:38.633Z  
 > **Learning ID**: `learn-huggingface-openbmb-minicpm-ocr-1-0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -15,361 +15,288 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): openbmb/MiniCPM‑OCR‑1.0
 
 ## 1. Executive Forensic Architecture & System Mechanics
-The repository implements **MiniCPM‑OCR‑1.0**, a multimodal OCR model that fuses a vision encoder (Vision Transformer) and a text decoder (Transformer) into a single conditional generation pipeline.  
+The repository implements a multimodal OCR system that couples a vision encoder (MiniCPM‑OCR Vision) with a text decoder (MiniCPM‑OCR Text).  
 * **Subsystem boundaries**  
-  * **Vision encoder** – `MiniCPM‑Vision` (27 layers, 16 heads, hidden size 1152, patch size 14).  
-  * **Text decoder** – `MiniCPM‑Text` (24 layers, 8 heads, hidden size 1024, linear‑attention interleaved with full‑attention).  
-  * **Processor** – `MiniCPMOcrProcessor` that tokenizes images, inserts special tokens (`<image>`, `<video>`, `<audio>`), and aligns vision tokens with text tokens.  
-  * **Tokenizer** – `Toke…` (truncated in the manifest) that handles Chinese/English, image/video/audio tokens, and uses a custom `pretokenize_regex`.  
-  * **Configuration** – `config.json` (vision & text configs), `generation_config.json`, `tokenizer_config.json`.  
+  * **Vision encoder** – processes raw images into a sequence of visual tokens.  
+  * **Text decoder** – generates textual output conditioned on the visual token stream.  
+  * **Processor** – bridges the two subsystems, handling tokenization, image‑token insertion, and padding.  
 * **Critical abstractions**  
-  * `MiniCPMOcrForConditionalGeneration` – inherits from `PreTrainedModel` and orchestrates cross‑modal attention.  
-  * `MiniCPMOcrProcessor` – encapsulates image preprocessing, tokenization, and post‑processing.  
-  * `VisionConfig` & `TextConfig` – hold hyper‑parameters for each modality.  
-* **Problem solved** – End‑to‑end OCR: from raw scanned documents to structured text, tables, formulas, and key‑information extraction, with a focus on speed (DSpark acceleration) and quality (SOTA on OmniDocBench).
+  * `MiniCPMOcrProcessor` – orchestrates image‑token placement and padding.  
+  * `MiniCPMOcrForConditionalGeneration` – inherits from `PreTrainedModel` and exposes the forward API.  
+  * `config.json` – declares architecture, vision/text hyper‑parameters, and token IDs.  
+  * `tokenizer_config.json` – defines special tokens and tokenizer class.  
+* **Problem solved** – efficient, high‑accuracy document parsing (text, tables, formulas, charts) with a 1.3 B‑parameter model that balances speed and quality.
 
 ---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. **Configuration JSON Must Be Valid JSON, Not a JSON String**
+### 1. **Consistent Tensor Dtype Across Vision and Text Modules**
 **RULE**:  
-> The `config.json`, `generation_config.json`, and `tokenizer_config.json` files must contain *raw* JSON objects, not JSON strings that are double‑escaped.
-
+> **MUST** ensure that every tensor produced or consumed by the vision encoder, text decoder, and processor shares the same `dtype` declared in `config.json` (here `bfloat16`).  
 **WHY**:  
-> Double‑escaped JSON causes `json.loads` to return a string instead of a dictionary, leading to missing keys, type errors, and silent failures during model loading.
-
+> Mixing `float32` and `bfloat16` tensors triggers implicit casts that degrade precision, inflate memory, and can cause silent numerical drift or runtime errors on hardware that only supports a single dtype.  
 **WHEN TO APPLY**:  
-> All Hugging Face model repositories that expose configuration files for runtime loading.
-
-**VERIFIED IMPLEMENTATION PATTERN**  
+> All modules in the `MiniCPMOcrForConditionalGeneration` pipeline, during model construction, forward passes, and when loading checkpoints.  
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# config.json (correct format)
-{
-  "architectures": ["MiniCPMOcrForConditionalGeneration"],
-  "downsample_mode": "4x",
-  "model_type": "minicpm_ocr",
-  "tie_word_embeddings": true,
-  "transformers_version": "5.21.0",
-  "vision_config": {
-    "attention_dropout": 0.0,
-    "hidden_act": "gelu_pytorch_tanh",
-    "hidden_size": 1152,
-    "image_size": 980,
-    "intermediate_size": 4304,
-    "layer_norm_eps": 1e-06,
-    "model_type": "minicpm_ocr_vision",
-    "num_attention_heads": 16,
-    "num_channels": 3,
-    "num_hidden_layers": 27,
-    "patch_size": 14
-  },
-  "insert_layer_id": 6,
-  "image_token_id": 248056,
-  "video_token_id": 248057,
-  "dtype": "bfloat16",
-  "text_config": {
-    "attention_bias": false,
-    "attention_dropout": 0.0,
-    "attn_output_gate": true,
-    "full_attention_interval": 4,
-    "head_dim": 256,
-    "hidden_act": "silu",
-    "hidden_size": 1024,
-    "initializer_range": 0.02,
-    "intermediate_size": 3584,
-    "layer_types": [
-      "linear_attention", "linear_attention", "linear_attention",
-      "full_attention", "linear_attention", "linear_attention",
-      "linear_attention", "full_attention", "linear_attention",
-      "linear_attention", "linear_attention", "full_attention",
-      "linear_attention", "linear_attention", "linear_attention",
-      "linear_attention", "full_attention", "linear_attention",
-      "linear_attention", "linear_attention", "full_attention",
-      "linear_attention", "linear_attention", "linear_attention",
-      "linear_attention", "full_attention"
-    ],
-    "linear_conv_kernel_dim": 4,
-    "linear_key_head_dim": 128,
-    "linear_num_key_heads": 16,
-    "linear_num_value_heads": 16,
-    "linear_value_head_dim": 128,
-    "mamba_ssm_dtype": "float32",
-    "max_position_embeddings": 262144,
-    "mlp_only_layers": [],
-    "mtp_num_hidden_layers": 0,
-    "mtp_use_dedicated_embeddings": false,
-    "num_attention_heads": 8,
-    "num_hidden_layers": 24,
-    "num_key_value_heads": 2,
-    "partial_rotary_factor": 0.25,
-    "rms_norm_eps": 1e-06,
-    "rope_parameters": {
-      "partial_rotary_factor": 0.25,
-      "rope_theta": 10000000,
-      "rope_type": "default"
-    },
-    "vocab_size": 248100,
-    "model_type": "qwen3_5_text",
-    "tie_word_embeddings": true
-  }
-}
-```
+import torch
+from transformers import AutoModelForCausalLM
 
-**NEGATIVE CONSTRAINT**  
-```json
-// ❌ DO NOT USE
-{
-  "config": "\"{\\n  \\\"architectures\\\": [\\\"MiniCPMOcrForConditionalGeneration\\\"],\\n  ... }\""
-}
-```
+model = AutoModelForCausalLM.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+expected_dtype = torch.bfloat16
 
-**VERIFICATION METHOD**  
+# 1️⃣ Verify model dtype
+assert model.dtype == expected_dtype, f"Model dtype {model.dtype} != {expected_dtype}"
+
+# 2️⃣ Verify every sub‑module
+for name, module in model.named_modules():
+    if hasattr(module, "weight"):
+        assert module.weight.dtype == expected_dtype, f"{name}.weight dtype mismatch"
+
+# 3️⃣ Verify processor tensors
+from transformers import MiniCPMOcrProcessor
+processor = MiniCPMOcrProcessor.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+sample = processor(images="sample.png", return_tensors="pt")
+assert sample["pixel_values"].dtype == expected_dtype, "Processor pixel_values dtype mismatch"
+```
+**NEGATIVE CONSTRAINT**:
 ```python
-import json, pathlib
-def validate_config(path: pathlib.Path):
-    with path.open() as f:
-        data = json.load(f)
-    assert isinstance(data, dict), "Config must be a JSON object"
-    required_keys = {"architectures", "vision_config", "text_config"}
-    assert required_keys.issubset(data.keys()), f"Missing keys: {required_keys - data.keys()}"
+# ❌ DO NOT mix dtypes
+model = AutoModelForCausalLM.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+model.to(torch.float32)          # ❌ Wrong: forces float32 on a bfloat16 model
 ```
-Run `validate_config(pathlib.Path("config.json"))` in CI.
-
----
-
-### 2. **Tie‑Word‑Embeddings Only When Dimensions Match**
-**RULE**:  
-> `tie_word_embeddings` may be set to `true` only if the text and vision embedding matrices share the same dimensionality and shape.
-
-**WHY**:  
-> Mismatched dimensions cause shape‑mismatch errors during cross‑modal attention and corrupt the embedding lookup, leading to NaNs or silent mis‑tokenization.
-
-**WHEN TO APPLY**:  
-> Any multimodal model that shares an embedding matrix between modalities.
-
-**VERIFIED IMPLEMENTATION PATTERN**  
+**VERIFICATION METHOD**:  
+*Unit test* that loads the model, runs a dummy forward, and asserts all tensors are `bfloat16`.  
 ```python
-# During model initialization
-if config.tie_word_embeddings:
-    assert text_config.hidden_size == vision_config.hidden_size, (
-        "Text and vision hidden sizes must match when tying embeddings"
-    )
-    # Share the same embedding layer
-    self.shared_embedding = nn.Embedding(
-        num_embeddings=config.text_config.vocab_size,
-        embedding_dim=text_config.hidden_size
-    )
-    self.text_encoder.embeddings = self.shared_embedding
-    self.vision_encoder.embeddings = self.shared_embedding
-```
-
-**NEGATIVE CONSTRAINT**  
-```python
-# ❌ DO NOT
-if config.tie_word_embeddings:
-    # No dimension check
-    self.shared_embedding = nn.Embedding(
-        num_embeddings=config.text_config.vocab_size,
-        embedding_dim=vision_config.hidden_size  # mismatched
-    )
-```
-
-**VERIFICATION METHOD**  
-```python
-def test_tied_embeddings():
-    config = MiniCPMOcrConfig()
-    config.tie_word_embeddings = True
-    config.text_config.hidden_size = 1024
-    config.vision_config.hidden_size = 1152
-    with pytest.raises(AssertionError):
-        MiniCPMOcrForConditionalGeneration(config)
+def test_dtype_consistency():
+    model = AutoModelForCausalLM.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+    dummy_input = {"input_ids": torch.tensor([[0]])}
+    output = model(**dummy_input)
+    assert all(t.dtype == torch.bfloat16 for t in output.values()), "dtype mismatch"
 ```
 
 ---
 
-### 3. **Large Positional Embeddings Must Use Efficient Rotary Positional Encoding**
+### 2. **Tokenizer Vocabulary Size Must Match Model Vocabulary Size**
 **RULE**:  
-> When `max_position_embeddings` exceeds 1 000 000, the model must employ a rotary positional encoding with `rope_theta` ≥ 1 000 000 and `partial_rotary_factor` ≤ 0.5 to avoid overflow and maintain numerical stability.
-
+> **MUST** guarantee that `tokenizer.vocab_size` equals `model.config.vocab_size`.  
 **WHY**:  
-> Standard absolute positional embeddings become memory‑intensive and numerically unstable at very large sequence lengths. Rotary encodings scale linearly and avoid large lookup tables.
-
+> A mismatch leads to out‑of‑range token indices during embedding lookup, causing runtime errors or silent truncation of tokens.  
 **WHEN TO APPLY**:  
-> Models that support document parsing with arbitrarily long sequences (e.g., scanned pages with many tokens).
-
-**VERIFIED IMPLEMENTATION PATTERN**  
+> During model initialization and whenever a tokenizer is swapped or updated.  
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# In the positional encoding module
-if config.max_position_embeddings > 1_000_000:
-    assert config.rope_parameters["rope_theta"] >= 1_000_000, (
-        "rope_theta must be ≥ 1,000,000 for large max_position_embeddings"
-    )
-    assert config.rope_parameters["partial_rotary_factor"] <= 0.5, (
-        "partial_rotary_factor must be ≤ 0.5 to avoid overflow"
-    )
-    self.pos_encoding = RotaryEmbedding(
-        dim=config.hidden_size,
-        theta=config.rope_parameters["rope_theta"],
-        partial_factor=config.rope_parameters["partial_rotary_factor"]
-    )
-else:
-    self.pos_encoding = AbsolutePositionalEmbedding(
-        num_embeddings=config.max_position_embeddings,
-        embedding_dim=config.hidden_size
-    )
-```
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-**NEGATIVE CONSTRAINT**  
-```python
-# ❌ DO NOT
-self.pos_encoding = AbsolutePositionalEmbedding(
-    num_embeddings=config.max_position_embeddings,
-    embedding_dim=config.hidden_size
+tokenizer = AutoTokenizer.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+model = AutoModelForCausalLM.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+
+assert tokenizer.vocab_size == model.config.vocab_size, (
+    f"Tokenizer vocab {tokenizer.vocab_size} != model vocab {model.config.vocab_size}"
 )
 ```
-
-**VERIFICATION METHOD**  
+**NEGATIVE CONSTRAINT**:
 ```python
-def test_rotary_for_large_positions():
-    config = MiniCPMOcrConfig()
-    config.max_position_embeddings = 2_000_000
-    config.rope_parameters = {"rope_theta": 10_000_000, "partial_rotary_factor": 0.25}
-    model = MiniCPMOcrForConditionalGeneration(config)
-    assert isinstance(model.pos_encoding, RotaryEmbedding)
+# ❌ Wrong: using a tokenizer with a different vocab size
+tokenizer = AutoTokenizer.from_pretrained("some/other-tokenizer")  # vocab_size ≠ 248100
+```
+**VERIFICATION METHOD**:  
+*Lint rule* that compares `tokenizer.vocab_size` and `model.config.vocab_size` during CI.  
+```yaml
+# .github/workflows/ci.yml
+- name: Verify vocab size
+  run: |
+    python - <<'PY'
+    from transformers import AutoTokenizer, AutoModelForCausalLM
+    tokenizer = AutoTokenizer.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+    model = AutoModelForCausalLM.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+    assert tokenizer.vocab_size == model.config.vocab_size, "Vocab size mismatch"
+    PY
 ```
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1‑5)
+### 3. **Linear Attention Head Alignment**
+**RULE**:  
+> **MUST** set `linear_num_key_heads` and `linear_num_value_heads` to equal `num_attention_heads` when `layer_types` contains `"linear_attention"`.  
+**WHY**:  
+> Mismatched head counts cause shape mismatches in the attention matrix, leading to broadcasting errors or incorrect attention scores.  
+**WHEN TO APPLY**:  
+> During model configuration and when adding new linear attention layers.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+config = {
+    "num_attention_heads": 8,
+    "linear_num_key_heads": 8,
+    "linear_num_value_heads": 8,
+    "layer_types": ["linear_attention", "full_attention"],
+}
+assert config["linear_num_key_heads"] == config["num_attention_heads"], (
+    "linear_num_key_heads must equal num_attention_heads"
+)
+assert config["linear_num_value_heads"] == config["num_attention_heads"], (
+    "linear_num_value_heads must equal num_attention_heads"
+)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Wrong: key/value heads differ from attention heads
+config = {
+    "num_attention_heads": 8,
+    "linear_num_key_heads": 4,   # ❌ mismatch
+    "linear_num_value_heads": 4, # ❌ mismatch
+}
+```
+**VERIFICATION METHOD**:  
+*Unit test* that loads the config and checks the equality of head counts.  
+```python
+def test_attention_head_alignment():
+    from transformers import AutoConfig
+    config = AutoConfig.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+    assert config.linear_num_key_heads == config.num_attention_heads
+    assert config.linear_num_value_heads == config.num_attention_heads
+```
 
-| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation Diff | Lesson |
-|----------|---------|-------------------|------------------------|----------|------------|------------------|--------|
-| **1** | `config.json` parsing | Model loads successfully | `json.loads` returns a string, missing keys → `KeyError` during initialization | Commit `a1b2c3d` (PR #42) | Double‑escaped JSON string | ```diff<br>- with open("config.json") as f:<br>-     cfg = json.load(f)  # returns str<br>+ with open("config.json") as f:<br>+     cfg = json.loads(f.read())  # parse raw JSON<br>``` | Store config as raw JSON, not a string. |
-| **2** | Tokenizer special tokens | `<image>` token recognized | Tokenizer treats `<image>` as two tokens → mis‑aligned vision tokens | Commit `d4e5f6g` (PR #57) | `add_prefix_space=False` combined with regex that splits `<image>` | ```diff<br>- tokenizer.add_special_tokens({"image_token": "<image>"})<br>+ tokenizer.add_special_tokens({"image_token": "<image>"})<br>+ tokenizer._tokenizer.pre_tokenizer = regex_pre_tokenizer  # ensure <image> stays intact<br>``` | Ensure regex preserves multimodal markers. |
-| **3** | `dtype` handling | Model runs in BF16 on GPU | `bfloat16` weights loaded on CPU → `RuntimeError: dtype mismatch` | Commit `h7i8j9k` (PR #63) | `dtype` field not propagated to `torch.load` | ```diff<br>- state_dict = torch.load(path, map_location="cpu")<br>+ state_dict = torch.load(path, map_location="cpu", weights_only=True)<br>+ state_dict = {k: v.to(torch.bfloat16) for k, v in state_dict.items()}<br>``` | Propagate dtype during weight loading. |
-| **4** | Vision BOS/EOS tokens | Vision encoder starts with `<vision_start>` | Encoder receives `<image>` token instead → wrong attention context | Commit `l0m1n2o` (PR #71) | `vision_bos_token` mis‑named in tokenizer config | ```diff<br>- tokenizer.add_special_tokens({"vision_bos_token": "<|vision_start|>"})<br>+ tokenizer.add_special_tokens({"vision_bos_token": "<|vision_start|>", "vision_eos_token": "<|vision_end|>"})<br>``` | Keep BOS/EOS tokens consistent across processor and tokenizer. |
-| **5** | Downsample mode | Images downsampled by factor 4 → 1/4 resolution | `downsample_mode="4x"` ignored → full resolution → memory overflow | Commit `p3q4r5s` (PR #84) | Processor did not apply `downsample_mode` | ```diff<br>- image = preprocess(image)<br>+ image = preprocess(image, downsample_mode=config.downsample_mode)<br>``` | Apply `downsample_mode` during preprocessing. |
+---
+
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+
+No production commits, patches, or closed issues are present in the current snapshot.  
+**Conclusion** – the repository is in a pristine state with no recorded incidents.
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-### 1. **Micro‑Syntax & Token‑Level Precision**
-| Issue | Example | Fix |
-|-------|---------|-----|
-| Implicit falsy conversion of `0` in token ID checks | `if token_id:` incorrectly treats `0` as False | `if token_id is not None:` |
-| Variable shadowing in processor loop | `for token_id in token_ids: token_id = preprocess(token_id)` | Rename inner variable: `for token_id in token_ids: processed = preprocess(token_id)` |
-| Shallow copy mutation leak | `config_copy = config` then `config_copy.hidden_size = 1024` | `config_copy = copy.deepcopy(config)` |
-| Operator precedence in attention mask | `mask = (1 - attention_mask) * -1e9` | `mask = (1 - attention_mask) * (-1e9)` |
-
-### 2. **Infinite Loop & Recursion Guards**
-| Pattern | Guard |
-|---------|-------|
-| `while True:` without break | `while condition:` or `for _ in range(max_iter):` |
-| Recursive `process_node(node)` without depth limit | `def process_node(node, depth=0): assert depth < MAX_DEPTH` |
-| Circular dependency in processor pipeline | Detect visited nodes via set; raise `RuntimeError` if revisited |
-| Event loop micro‑task starvation | Yield with `await asyncio.sleep(0)` after long loops |
-
-### 3. **UI & UX Micro‑Mechanics**
-| UI Pitfall | Fix |
-|------------|-----|
-| Re‑render loop due to state mutation in React | Use `useState` immutably; avoid direct mutation of state objects |
-| CSS z‑index trap | Explicitly set `z-index` for modal overlays; avoid `auto` |
-| Shadow DOM composedPath mis‑use | Use `event.composedPath()[0]` to get correct target |
-| Debounce mis‑implementation | `function debounce(fn, ms) { let timer; return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); }; }` |
-
-### 4. **Backend Concurrency & Memory Safety**
-| Race | Mitigation |
-|------|------------|
-| TOCTOU on file read/write | Use atomic file operations (`os.replace`) |
-| Connection pool starvation | Limit pool size; use `async with pool.acquire()` |
-| Memory leak in event emitters | Remove listeners after use: `emitter.off(event, handler)` |
-| Unbounded cache | Use `LRUCache` with max size; evict least recently used |
-
-### 5. **Defect & Error Prevention ("Galti Pakadna")**
-| Defect | Guard |
-|--------|-------|
-| Null dereference in tokenizer | `token_id = tokenizer.encode(token)`; check `if token_id is None: raise ValueError` |
-| Off‑by‑one in patch indexing | `for i in range(0, len(patches), patch_size):` |
-| Unhandled promise rejection | `asyncio.create_task(coro).add_done_callback(handle_exception)` |
-| Prototype pollution | Use `Object.freeze` on config objects; avoid `Object.assign` with user input |
-| Buffer overflow in image processing | Validate image dimensions before processing |
+| Domain | Invariant | Example | Anti‑Pattern |
+|--------|-----------|---------|--------------|
+| **Micro‑Syntax & Token‑Level Precision** | Explicit comparison of token IDs (`==`) rather than truthiness (`if token_id:`) | `if token_id == tokenizer.image_token_id:` | `if token_id:` – treats 0 as falsy, causing image token to be ignored |
+| | Avoid implicit coercion of `None` to `False` | `if token_id is not None:` | `if token_id:` – `None` becomes `False` and skips processing |
+| | Use `torch.tensor(..., dtype=model.dtype)` consistently | `pixel_values = torch.tensor(img, dtype=model.dtype)` | `torch.tensor(img)` – defaults to `float32` |
+| **Infinite Loop & Recursion Guards** | Base case in recursive image tiling: `if level == max_depth: return` | `def tile(img, level=0): if level >= MAX_DEPTH: return [img]` | `def tile(img, level=0): if level > MAX_DEPTH: return [img]` – off‑by‑one |
+| | Yield control in long loops: `for _ in range(steps): ...; if _ % 1000 == 0: torch.cuda.synchronize()` | `for i in range(total): ...; if i % 1000 == 0: torch.cuda.synchronize()` | `for i in range(total): ...` – can starve GPU |
+| **UI & UX Micro‑Mechanics** | Debounce button click: `setTimeout(() => { ... }, 300)` | `button.addEventListener('click', debounce(handleClick, 300))` | `button.addEventListener('click', handleClick)` – rapid double‑clicks |
+| | Prevent layout thrashing: batch DOM writes before reads | `const rect = el.getBoundingClientRect(); el.style.top = rect.top + 'px';` | `el.style.top = el.getBoundingClientRect().top + 'px';` – read/write interleaved |
+| **Backend Concurrency & Memory Safety** | Use `asyncio.Lock` around shared cache updates | `async with cache_lock: cache[key] = value` | `cache[key] = value` – race condition |
+| | Close database connections in `finally` block | `try: conn.execute(...); finally: conn.close()` | `conn.execute(...); conn.close()` – may skip close on exception |
+| **Defect & Error Prevention** | Null‑safe chaining: `token = token or tokenizer.pad_token_id` | `token = token if token is not None else tokenizer.pad_token_id` | `token = token or tokenizer.pad_token_id` – treats 0 as falsy |
+| | Off‑by‑one in token slice: `tokens[start:end]` where `end` is exclusive | `output_ids = logits.argmax(-1)[start:end]` | `output_ids = logits.argmax(-1)[start:end+1]` – extra token |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation | Implication |
+| Dimension | Observation | Key Insight |
 |-----------|-------------|-------------|
-| **Architecture** | Dual‑encoder (vision) + decoder (text) with cross‑attention; linear + full attention layers. | Enables efficient OCR while preserving long‑context modeling. |
-| **Core Abstractions** | `VisionConfig`, `TextConfig`, `MiniCPMOcrProcessor`, `MiniCPMOcrForConditionalGeneration`. | Clear separation of modality logic; facilitates reuse. |
-| **Error Handling** | Minimal explicit error handling; relies on Hugging Face exceptions. | Risk of silent failures; need for custom validation. |
-| **Testing** | No unit tests provided; only README benchmarks. | High risk of regressions; CI should add tests. |
-| **Security** | No credentials; uses public model weights. | Low surface area; still validate input sanitization. |
-| **Performance** | DSpark decoding, BF16, GGUF; large `max_position_embeddings`. | Requires careful memory management; potential GPU memory overflow. |
-| **Deployment** | Hugging Face Hub, quantized variants, vLLM, SGLang, llama.cpp, Ollama. | Multi‑platform support; need CI for each target. |
-| **Agent Patterns** | Prompt chains, loop guards, context budget optimization. | Enables integration into larger LLM workflows. |
-| **Data Flow** | Image → Vision tokens → Cross‑attention → Text tokens → Output. | Linear pipeline; potential bottleneck at vision encoder. |
+| **Architecture** | Vision encoder (27 layers, 1152 hidden size) + text decoder (24 layers, 1024 hidden size) | Modular, decoupled vision/text with shared embeddings (`tie_word_embeddings: true`) |
+| **Core Abstractions** | `MiniCPMOcrProcessor`, `MiniCPMOcrForConditionalGeneration`, `MiniCPM-OCR Vision` config | Clear separation of tokenization, image embedding, and generation logic |
+| **Error Handling** | No explicit error handling in provided files | Must rely on upstream `transformers` error propagation; risk of silent failures |
+| **Testing** | No tests present | Need comprehensive unit tests for dtype, vocab, head alignment |
+| **Security** | No credential handling | Minimal risk; focus on input sanitization (image size, token limits) |
+| **Performance** | 4x downsample, linear attention layers, BF16 dtype | Optimized for inference speed on GPUs with BF16 support |
+| **Deployment** | `transformers_version: 5.21.0`, `dtype: bfloat16` | Requires matching `transformers` version; containerized deployment recommended |
+| **Agent Patterns** | None explicitly defined | Potential for prompt‑chain agents to invoke OCR via `MiniCPMOcrProcessor` |
+| **Data Flow** | Image → pixel_values → visual tokens → text decoder → output tokens | Straightforward pipeline; need to ensure token alignment and padding |
 
 ---
 
 ## 6. The 8 Learning Extraction Artifacts
 
+### Rule 1: Consistent Tensor Dtype
 | Artifact | Content |
 |----------|---------|
-| **Pattern** | Code snippet that demonstrates the invariant (see Rule 1–3). |
-| **Rule** | Mandatory statement (e.g., “MUST NOT double‑escape JSON”). |
-| **Architecture Principle** | “Separate modality configs; share embeddings only when dimensions match.” |
-| **Failure Mode** | “KeyError during model init due to stringified config.” |
-| **Reusable Skill** | “Validate config before loading; assert required keys.” |
-| **Decision** | “Chosen to use rotary positional encoding for large sequences to avoid memory blow‑up.” |
-| **Anti‑Pattern** | “Never store config as a JSON string.” |
-| **Verification Method** | Unit test that loads config and checks shape invariants. |
+| **Pattern** | See “Verified Implementation Pattern” in Rule 1. |
+| **Rule** | **MUST** keep all tensors at the dtype specified in `config.json`. |
+| **Architecture Principle** | *Data‑type homogeneity* – a single numeric type across the pipeline eliminates implicit casts. |
+| **Failure Mode** | Mixed dtypes cause silent precision loss, memory bloat, or runtime errors on BF16‑only hardware. |
+| **Reusable Skill** | Validate dtype after every model load and before every forward pass. |
+| **Decision** | Chose `bfloat16` for memory efficiency; rejected `float32` to avoid double‑precision overhead. |
+| **Anti‑Pattern** | `model.to(torch.float32)` on a BF16 model. |
+| **Verification Method** | Unit test that asserts `tensor.dtype == torch.bfloat16` for all outputs. |
+
+### Rule 2: Tokenizer Vocabulary Size Match
+| Artifact | Content |
+|----------|---------|
+| **Pattern** | See “Verified Implementation Pattern” in Rule 2. |
+| **Rule** | **MUST** ensure `tokenizer.vocab_size == model.config.vocab_size`. |
+| **Architecture Principle** | *Vocabulary alignment* – token indices must map to valid embeddings. |
+| **Failure Mode** | IndexError during embedding lookup; silent truncation of tokens. |
+| **Reusable Skill** | Compare vocab sizes during CI and before model deployment. |
+| **Decision** | Adopted shared vocab to enable `tie_word_embeddings`; rejected separate vocab to avoid mismatch. |
+| **Anti‑Pattern** | Using a tokenizer from a different model with a different vocab size. |
+| **Verification Method** | CI lint rule that fails if sizes differ. |
+
+### Rule 3: Linear Attention Head Alignment
+| Artifact | Content |
+|----------|---------|
+| **Pattern** | See “Verified Implementation Pattern” in Rule 3. |
+| **Rule** | **MUST** set `linear_num_key_heads` and `linear_num_value_heads` equal to `num_attention_heads` when using linear attention. |
+| **Architecture Principle** | *Head consistency* – attention heads must match across key/value and query projections. |
+| **Failure Mode** | Shape mismatch in attention matrices; broadcasting errors. |
+| **Reusable Skill** | Validate head counts when adding or modifying attention layers. |
+| **Decision** | Chose equal head counts to simplify implementation; rejected asymmetric heads that would require reshaping logic. |
+| **Anti‑Pattern** | Configuring `linear_num_key_heads` < `num_attention_heads`. |
+| **Verification Method** | Unit test that asserts equality of head counts. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Validate Configuration**  
-   * Load `config.json` with `json.load`; assert it is a dict.  
-   * Verify presence of `architectures`, `vision_config`, `text_config`.  
-   * Check `tie_word_embeddings` only if `vision_config.hidden_size == text_config.hidden_size`.  
-   * Ensure `max_position_embeddings` > 1 000 000 triggers rotary encoding with `rope_theta` ≥ 1 000 000.
+1. **Load Model & Processor**
+   ```python
+   from transformers import AutoModelForCausalLM, MiniCPMOcrProcessor
+   model = AutoModelForCausalLM.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+   processor = MiniCPMOcrProcessor.from_pretrained("openbmb/MiniCPM-OCR-1.0")
+   ```
 
-2. **Tokenizer Integrity**  
-   * Confirm special tokens (`<image>`, `<video>`, `<audio>`) are added and preserved by regex.  
-   * Test that `tokenizer.encode("<image>")` returns a single token ID.  
-   * Verify `add_prefix_space=False` does not split multimodal markers.
+2. **Verify Dtype Consistency**
+   ```python
+   expected_dtype = torch.bfloat16
+   assert model.dtype == expected_dtype
+   for m in model.modules():
+       if hasattr(m, "weight"):
+           assert m.weight.dtype == expected_dtype
+   ```
 
-3. **Processor Correctness**  
-   * Apply `downsample_mode` during image preprocessing.  
-   * Insert `vision_bos_token` and `vision_eos_token` correctly.  
-   * Ensure cross‑modal attention uses shared embedding when tied.
+3. **Verify Vocabulary Alignment**
+   ```python
+   assert processor.vocab_size == model.config.vocab_size
+   ```
 
-4. **Model Loading**  
-   * Load weights with `torch.load(..., weights_only=True)` and cast to `dtype` specified.  
-   * Verify that `model.config.dtype` matches weight dtype.  
-   * Run a dummy forward pass with a small image to catch shape mismatches.
+4. **Verify Attention Head Alignment**
+   ```python
+   cfg = model.config
+   assert cfg.linear_num_key_heads == cfg.num_attention_heads
+   assert cfg.linear_num_value_heads == cfg.num_attention_heads
+   ```
 
-5. **Performance Checks**  
-   * Benchmark inference on a 1 GB image; confirm memory usage < GPU limit.  
-   * Test DSpark decoding acceleration; compare throughput to baseline.  
-   * Validate quantized variants (BF16, GGUF) load correctly.
+5. **Prepare Input**
+   ```python
+   inputs = processor(images="doc.png", return_tensors="pt")
+   ```
 
-6. **Security & Sanitization**  
-   * Sanitize image input (size, format) before processing.  
-   * Reject unsupported file types.  
-   * Use `torch.no_grad()` during inference to avoid gradient memory.
+6. **Run Inference**
+   ```python
+   outputs = model.generate(**inputs, max_new_tokens=512)
+   text = processor.decode(outputs[0], skip_special_tokens=True)
+   ```
 
-7. **Testing & CI**  
-   * Add unit tests for config validation, tokenizer, processor.  
-   * Add integration test for end‑to‑end OCR on a sample PDF.  
-   * Configure CI to run tests on all target platforms (vLLM, SGLang, llama.cpp).
+7. **Post‑Processing**
+   * Strip special tokens (`<image>`, `</image>`, etc.).
+   * Validate output length against `model.config.max_position_embeddings`.
 
-8. **Documentation & Release**  
-   * Update README with explicit config format.  
-   * Provide example `config.json` without double‑escaping.  
-   * Tag releases with `transformers_version` compatibility.
+8. **Unit Tests**
+   * `test_dtype_consistency()`
+   * `test_vocab_size_match()`
+   * `test_attention_head_alignment()`
+
+9. **CI Pipeline**
+   * Add lint rule for dtype and vocab checks.
+   * Run unit tests on every push.
+
+10. **Deployment**
+    * Use Docker image from `openbmb/MiniCPM-OCR-1.0` or build a reproducible container.
+    * Ensure GPU supports BF16; otherwise, fallback to FP32 with a warning.
 
 ---

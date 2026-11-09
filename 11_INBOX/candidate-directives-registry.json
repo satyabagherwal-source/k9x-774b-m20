@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T01:01:25.366Z",
+  "last_updated": "2026-11-09T01:12:41.065Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4226,6 +4226,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-wzh4869-appports"
+    },
+    {
+      "id": "CD-H10P",
+      "directive_title": "Consistent Tensor Dtype",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-OCR-1.0",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0"
+    },
+    {
+      "id": "CD-H10P",
+      "directive_title": "Tokenizer Vocabulary Size Match",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-OCR-1.0",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0"
+    },
+    {
+      "id": "CD-H10P",
+      "directive_title": "Linear Attention Head Alignment",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-OCR-1.0",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0"
     }
   ]
 }

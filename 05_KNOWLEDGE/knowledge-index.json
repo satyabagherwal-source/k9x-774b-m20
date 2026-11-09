@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T01:06:01.883Z",
+  "last_updated": "2026-11-09T01:12:40.975Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42012,8 +42012,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "71d99c7e",
-      "content_hash": "237ab97fa82edd6128b9e8baa96a6c2df337e6611f2ad7146eafaa950b0a56e8",
+      "source_version": "a6ebf8b1",
+      "content_hash": "2aef9b2fc44b981e7a6d69fba9a80b2a04e0482cdf686b956cc1b5f763a6779b",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -42025,6 +42025,11 @@
         {
           "number": null,
           "title": "ci: stop fast-checks saving the shared Linux rust cache (#4724)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Correct stale comments in concurrent output, list rendering, and logging (#4731)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42103,7 +42108,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:15:25.220Z",
+      "verified_at": "2026-11-09T01:12:34.517Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43799,8 +43804,8 @@
       "slug": "mikelikesdesign-swiftui-experiments",
       "platform": "github",
       "source_url": "https://github.com/mikelikesdesign/SwiftUI-experiments",
-      "source_version": "b75268ca",
-      "content_hash": "a5c8f0c9a9c9940e861438dd145d7ef504c888aab86aee649551040733a45f39",
+      "source_version": "8deaa990",
+      "content_hash": "b026177aebd55bbe20372d651999ed0f3755d148b2f23b8a69d401cae60525c1",
       "dossier_path": "07_PROJECT_LEARNING/mikelikesdesign-swiftui-experiments-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikelikesdesign-swiftui-experiments-learnings.md",
       "promoted_rules": [
@@ -43815,7 +43820,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:58:03.455Z",
+      "verified_at": "2026-11-09T01:12:39.518Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157697,7 +157702,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
       "source_version": "hf-openbmb-minicpm-ocr-1.0",
-      "content_hash": "ec9651b297afa7c99bbe5eb54540a41b2b00ea2e00f78251473d7bb8a4a2b383",
+      "content_hash": "00132066f66a5f7190b36f81bbe55c3bf77361f1e02ef00c98ca6cca4070a1fb",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md",
       "promoted_rules": [
@@ -157710,6 +157715,21 @@
           "number": "EXISTING",
           "title": "Tokenizer Special‑Token Integrity",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": null,
+          "title": "**Consistent Tensor Dtype Across Vision and Text Modules**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "**Tokenizer Vocabulary Size Must Match Model Vocabulary Size**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "**Linear Attention Head Alignment**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 5329,
@@ -157747,7 +157767,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T07:13:13.292Z",
+      "verified_at": "2026-11-09T01:12:40.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
