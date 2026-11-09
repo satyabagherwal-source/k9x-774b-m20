@@ -95,8 +95,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "731d214e1c2fe4bc1991d735812e65cf9127aafd9469f0739d8d75dae04864f8",
-    "lastHarvestedAt": "2026-11-05T11:23:20.033Z",
+    "contentHash": "af35dc33957c72b02139fea8a777439056285f45e20f6ca2db18c1f80e89f44a",
+    "lastHarvestedAt": "2026-11-09T05:40:36.690Z",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl"
   },
   "hf-autotrust-gev-26b-decide": {
@@ -10563,10 +10563,10 @@
     "repository": "gauthierpiarrette/highball",
     "platform": "github",
     "sourceUrl": "https://github.com/gauthierpiarrette/highball",
-    "sourceVersion": "b4f4a5a6",
+    "sourceVersion": "8aacc6b0",
     "license": "GPL-3.0",
-    "contentHash": "841e6e01f3d30c111a2c3ad10ddc7af3b1341827db0144e4b8f15f4dac766e18",
-    "lastHarvestedAt": "2026-11-05T22:55:00.463Z",
+    "contentHash": "98e8be75d7aa7fd8c964e4c7b54f65b38329121371d5074da49807f98ee2a08f",
+    "lastHarvestedAt": "2026-11-09T05:40:43.179Z",
     "learningId": "learn-github-gauthierpiarrette-highball"
   },
   "hf-minimaxai-minimax-m3.1-flash": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T05:28:50.648Z",
-  "total_cycles_completed": 8487,
-  "total_learnings_persisted": 8487,
-  "total_rules_promoted": 8286,
+  "last_updated": "2026-11-09T05:40:43.194Z",
+  "total_cycles_completed": 8489,
+  "total_learnings_persisted": 8489,
+  "total_rules_promoted": 8287,
   "history": [
-    {
-      "timestamp": "2026-11-08T16:14:30.515Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T16:19:16.725Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T16:26:25.296Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -1403,6 +1389,20 @@
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-jialinyyzz-humanizer",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T05:40:36.695Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T05:40:43.194Z",
+      "repository": "gauthierpiarrette/highball",
+      "learningId": "learn-github-gauthierpiarrette-highball",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T05:28:50.651Z",
+  "last_updated": "2026-11-09T05:40:43.198Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1775,14 +1775,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "731d214e1c2fe4bc1991d735812e65cf9127aafd9469f0739d8d75dae04864f8",
-      "verified_at": "2026-11-05T11:23:20.039Z",
+      "content_hash": "af35dc33957c72b02139fea8a777439056285f45e20f6ca2db18c1f80e89f44a",
+      "verified_at": "2026-11-09T05:40:36.698Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:23:20.039Z"
+      "last_updated": "2026-11-09T05:40:36.698Z"
     },
     "autotrust/GEV-26B-Decide": {
       "repository": "autotrust/GEV-26B-Decide",
@@ -15876,14 +15876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gauthierpiarrette-highball",
-      "content_hash": "841e6e01f3d30c111a2c3ad10ddc7af3b1341827db0144e4b8f15f4dac766e18",
-      "verified_at": "2026-11-05T22:55:00.473Z",
+      "content_hash": "98e8be75d7aa7fd8c964e4c7b54f65b38329121371d5074da49807f98ee2a08f",
+      "verified_at": "2026-11-09T05:40:43.197Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:55:00.473Z"
+      "last_updated": "2026-11-09T05:40:43.197Z"
     },
     "MiniMaxAI/MiniMax-M3.1-Flash": {
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",

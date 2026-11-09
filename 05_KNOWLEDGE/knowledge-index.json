@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T05:28:50.525Z",
+  "last_updated": "2026-11-09T05:40:43.103Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20804,7 +20804,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "731d214e1c2fe4bc1991d735812e65cf9127aafd9469f0739d8d75dae04864f8",
+      "content_hash": "af35dc33957c72b02139fea8a777439056285f45e20f6ca2db18c1f80e89f44a",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -20900,7 +20900,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-11-05T11:23:19.949Z",
+      "verified_at": "2026-11-09T05:40:36.577Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132515,14 +132515,19 @@
       "slug": "gauthierpiarrette-highball",
       "platform": "github",
       "source_url": "https://github.com/gauthierpiarrette/highball",
-      "source_version": "b4f4a5a6",
-      "content_hash": "841e6e01f3d30c111a2c3ad10ddc7af3b1341827db0144e4b8f15f4dac766e18",
+      "source_version": "8aacc6b0",
+      "content_hash": "98e8be75d7aa7fd8c964e4c7b54f65b38329121371d5074da49807f98ee2a08f",
       "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "arm64-kk-wine11.18-r4: r3 with fixes for games beyond Forza Horizon 6 (releases",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "A variable typed in quotes reaches Wine without them. No shell reads the environ",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -132551,7 +132556,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:55:00.357Z",
+      "verified_at": "2026-11-09T05:40:43.082Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

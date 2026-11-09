@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source**: github ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
-> **Source Version**: `b4f4a5a6`  
+> **Source Version**: `8aacc6b0`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:54:58.581Z  
+> **Timestamp**: 2026-11-09T05:40:41.970Z  
 > **Learning ID**: `learn-github-gauthierpiarrette-highball`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:54:58.575Z  
+> **Harvest Timestamp**: 2026-11-09T05:40:41.964Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run Windows games on Apple Silicon — free, open source, with an open compatibility database that tells you what actually works.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2174 stars
+- **Stars / Engagement**: 2208 stars
 
 ---
 
@@ -1033,14 +1033,17 @@ for path in sys.argv[1:]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #659** (2026-11-06): **«Moon Mystery» no longer starts, crashes with every Engine & Mode**
+  *Symptoms*: ### What happened  Since positively reported #381 : it no longer suceeds to start  ```Error Couldn't start: "D:|SteamLibrary-Winisteamapps|common Mystery on the moon MoonMystery Binariest win641 MoonMystery-Win64-Shipping exeịi MoonMystery CreateProcess() returned 2. ```  <img width="400" height="259" alt="Image" src="https://github.com/user-attachments/assets/fe60e070-ac53-41bf-b1d4-a17b44dd467b" />  Tried different Engines & Modes – same error every time. Other (Steam) gums start & run properly, could be Game-specific.  ### Chip and macOS  Apple M5 Pro, macOS 27.2  ### Highball version  0.10.25  ### Log  ``` ~/Library/Application Support/Highball/logs/2026-11-05T202934Z-Games-steam.exe.log: # gin x64-crossover26.3-r29 bottle=Games renderer=dxvk # wine ~/Library/Application Support/Highball/bottles/Games/drive_c/Program Files (x86)/Steam/steam.exe -silent -applaunch 1933840 # sync=none winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-crossover26.3-r29/frameworks/renderer/d9vk/wine:~/Library/Application Support/Highball/engines/x64-crossover26.3-r29/frameworks/renderer/dxvk/wine # WINEDLLOVERRIDES=dxgi,d3d9,d3d10core,d3d11=n,b;winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN=1 # DXMT_LOG_PATH=C:\highball\logs # MVK_CONFIG_LOG_LEVEL=2 #   dxvk.enableAsync = False # note: restar
+  **Post-Mortem & Fix Analysis**:
+  > Thanks. Error 2 means Windows found no file at that path. The starter MoonMystery.exe runs fine, then fails to open MoonMystery-Win64-Shipping.exe inside Binaries\Win64. The game hasn't been updated since December 2024, so the likely change is the move to D:.  Two things to check. In Steam, the game's Properties, Installed Files, Verify integrity of game files, which puts back a file a move left out. And if any folder on that path, the game's folder or one above it, is a Finder alias rather than a real folder, Wine can't go through it, while a symlink made with ln -s works. Tell me what you find and I'll take it from there.
+  > > Thanks. Error 2 means Windows found no file at that path. The starter MoonMystery.exe runs fine, then fails to open MoonMystery-Win64-Shipping.exe inside Binaries\Win64. The game hasn't been updated since December 2024, so the likely change is the move to D:.  Aye - you we're right, somehow the Game dir within /steamapps/ was as zombie, Game dir there with Folder structure, but most Game files actually missing. Steam file integrity fixed the issue!  <img width="847" height="381" alt="Image" src="https://github.com/user-attachments/assets/9256f678-888b-46fc-9fc0-14f9202f939a" />  P.s. Game runs like a charm even on 3200x1800 Fullscreen using Highball 0.10.26 x64-crossover26.3-r29 ! Only occassional lags due to Shaders loading, but generally 60FPS+ solid.
+
 - **Issue #626** (2026-11-02): **VC++ not installing**
   *Symptoms*: ### What happened  <img width="949" height="702" alt="Image" src="https://github.com/user-attachments/assets/f38af6f0-4d46-4e68-9b9d-cad67f9d8373" />  ### Chip and macOS  Apple M4, macOS 27.0.1  ### Highball version  0.10.23  ### Log  ~/Library/Application Support/Highball/logs/2026-11-02T153953Z-Games-steam.exe.log: # gin x64-sikarugir10.0_6-r28 bottle=Games renderer=dxmt # wine ~/Library/Application Support/Highball/bottles/Games/drive_c/Program Files (x86)/Steam/steam.exe # sync=none (bottle asks msync) winver=win7 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/renderers/dxmt/wine:~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/frameworks/renderer/d9vk/wine # WINEDLLOVERRIDES=winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_LOG_PATH=C:\highball\logs # MVK_CONFIG_LOG_LEVEL=2 #   dxvk.enableAsync = False … 1 lines … 0024:err:environ:init_peb starting L"C:\\Program Files (x86)\\Steam\\steam.exe" in experimental wow64 mode … 10 lines … 0254:err:environ:init_peb starting L"C:\\Program Files (x86)\\Steam\\bin\\gldriverquery.exe" in experimental wow64 mode 0254:err:module:import_dll Library SDL2.dll (which is needed by L"C:\\Program Files (x86)\\Steam\\bin\\gldriverquery.exe") not found 0254:err:module:loader_init Importing dlls for L"C:\\Program Files (x86)\\Steam\\bin\\gldrive
   **Post-Mortem & Fix Analysis**:
   > Thanks for the report. Your environment is set to Windows 7, and the current Visual C++ installer quits with an error on Windows 7. I reproduced it here, and the next version of Highball makes the installer see Windows 10 so it works either way. Until then, in the environment's settings set Windows version to Windows 10, then press Try again.
   > Works, thx 
-
-- **Issue #618** (2026-11-05): **New environment vkd3d-proton works really well but use of controller causes crash.**
-  *Symptoms*: ### What happened  The new vkd3d-proton solution to the stuttering issue works amazingly well. However, the game crashes the moment a gamepad controller is used to control the game.  ### Chip and macOS  Apple M5 Max, macOS 27.2  ### Highball version  0.10.24  ### Log  ~/Library/Application Support/Highball/logs/2026-11-01T211923Z-Forza Horizon 6 2-steam.exe.log: # gin arm64-kk-wine11.18-r1 bottle=Forza Horizon 6 2 renderer=vkd3d # wine ~/Library/Application Support/Highball/bottles/Forza Horizon 6 2/drive_c/Program Files (x86)/Steam/steam.exe -silent -applaunch 2483190 # sync=msync winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/arm64-kk-wine11.18-r1/renderers/vkd3d/wine # WINEDLLOVERRIDES=dxgi,d3d11,d3d10core,d3d12,d3d12core=n,b;winemenubuilder.exe=d;gameoverlayrenderer64,gameoverlayrenderer=d;concrt140,msvcp140,msvcp140_1,msvcp140_2,msvcp140_atomic_wait,msvcp140_codecvt_ids,vccorlib140,vcomp140,vcruntime140,vcruntime140_1=n,b # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXVK_CONFIG=dxgi.maxVideoMemoryBudget=18432;dxgi.maxDeviceMemory=8192;dxgi.maxSharedMemory=8192;dxgi.customVendorId=8086;dxgi.customDeviceId=56a1;dxgi.customDeviceDesc="Intel(R) Arc(TM) A750 Graphics" # VKD3D_SHADER_MODEL=6_6 # VKD3D_FEATURE_LEVEL=12_1 # VKD3D_CONFIG=no_staggered_submit # VKD3D_SHADER_CACHE_PATH=C:\highball\cache\vkd3d\arm64-kk-wine11.18-r1-f7255a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1057,58 +1060,70 @@ for path in sys.argv[1:]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dbc36ebc` (2026-11-04)
-**Commit Message**: arm64-kk-wine11.18-r4: r3 with fixes for games beyond Forza Horizon 6 (releases engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054 and kosmickrisp-arm64-20261104T165852Z-push). The Khronos loader exports MoltenVK's vkGetMTLDeviceMVK, so GStreamer's VideoToolbox plugin loads and H.264 game videos play (ContractVille stayed black). patches-arm64 0053 and 0054 (upstream 1c2d909829c by Rémi Bernon) give legacy OpenGL contexts their extensions and the ES2 compatibility calls (Paperback: The Game crashed). KosmicKrisp patch 0008 gives LINEAR images Metal cannot back with a buffer a tiled texture with linear subresource layouts (Red Dead Redemption 2 aborted in Metal, now reaches its menu and the opening cutscene at 60 fps). Installed from the public releases on the M4: ContractVille reaches its menu after its intro video (46 fps), Paperback its title. Forza Horizon 6's route stays on r3. 83 engine tests pass. (#649)
+### Incident Patch 1: `d5af52ff` (2026-11-06)
+**Commit Message**: A variable typed in quotes reaches Wine without them. No shell reads the environment editor's values, so quotes around one went to the program as part of it, and macOS's text view turns typed quotes curly: a player's WINEDEBUG arrived as " loaddll” and Wine read no channel from it (highball-db#862). A value wrapped in one pair of quotes, straight or curly, now loses that pair; quotes inside a value stay (DXVK_CONFIG's customDeviceDesc="…"). (#654)
 
-**File**: `spike/engines/arm64-kk-wine11.18-r4.json` (added, +102/-0)
+**File**: `Sources/HighballKit/EnvText.swift` (modified, +13/-1)
 ```diff
-@@ -0,0 +1,102 @@
-+{
-+  "$schema": "https://highball.app/schemas/engine-manifest/v0",
-+  "id": "arm64-kk-wine11.18-r4",
-+  "displayName": "Wine 11.18 native arm64 (preview, KosmicKrisp) r4",
-+  "arch": "arm64",
-+  "minMacOS": "27.0",
-+  "requires": [],
-+  "channel": "preview",
-+  "direct3D9": "wined3d",
-+  "notes": [
-+    "r4 (2026-11-04): r3 with fixes for games beyond Forza Horizon 6. Video: GStreamer's VideoToolbox plugin imports MoltenVK's vkGetMTLDeviceMVK, which the Khronos loader this line ships as libMoltenVK.dylib lacked, so the plugin never loaded, no H.264 video played and a game waiting on its intro video stayed black (ContractVille). The loader now carries that call (highball-engine kosmickrisp-arm64/mvk_compat.c). OpenGL: Wine 11.18 marked no extension in a legacy (before 3.0) context, so a game asking for framebuffer objects there got nothing; patches-arm64 0054 is the upstream fix by Rémi Bernon (1c2d909829c). 0053 gives a legacy context GL_ARB_ES2_compatibility's five calls, as the Wine 11 line's 0021 does. Paperback: The Game needed both. KosmicKrisp: highball patch 0008 gives a LINEAR image Metal cannot back with a buffer (several levels or layers, or 3D) a tiled texture with linear-looking subresource layouts, as MoltenVK did; Red Dead Redemption 2 aborted in Metal during its first load before, and now reaches its menu and the opening cutscene at 60 fps. Every other file is r3's: FEX with ineshd's 0034, vkd3d-proton and DXVK. On a base M4 with macOS 27.0 FNAF, Among Us, the Half-Life 2 demo, WHERE SAFETY ENDS, Bloodbreaker, Portal, Portal 2, Big Walk, The Last Flame, The Sims Legacy Collection, ContractVille and Paperback reach their menus. Forza Horizon 6 was not run on r4, its route stays on r3.",
-+    "r3 (2026-11-03): r2 with FEX patch 0034 by ineshd. FEX patched an unaligned atomic in its code buffer without the MAP_JIT write permission the engine turns on, and Forza Horizon 6 crashed at xtajit64.dll+0x1177ac within a minute of a controller coming into use (highball#618). Every other archive is r2's. Tested by the contributor for 30 minutes with an Xbox controller on an M5; on an M4 here the engine boots and runs 32-bit and 64-bit programs.",
-+    "r2 (2026-11-01): r1 with a KosmicKrisp build that carries highball patch 0007, every other archive the same. Encoder end barriers ask for Device visibility instead of ResourceAlias, and HB_KK_NO_UBO_ROBUST=1, which a recipe asks for, drops the bounds check on constant buffer reads. Forza Horizon 6's benchmark on a base M4 at 1080p, Very Low, FSR Quality: GPU time per frame from 26.7 ms to about 21 ms, 36 to 43 fps uncapped. A new driver build means the shader cache fills again on the first start.",
-+    "r1 (2026-11-01): Forza Horizon 6's native route. Wine 11.18 with patches-arm64 through 0052, FEX 2610 with fex/patches through 0033, vkd3d-proton with renderers-arm64 through 0010, and KosmicKrisp (Mesa's Vulkan driver on Metal 4) with steamac's patches and kosmickrisp-arm64/highball in place of MoltenVK. A line of its own: Microsoft Flight Simulator 2024's engine and its offers do not move until a flight has run on these patches.",
-+    "The Khronos loader is engine/lib/libMoltenVK.dylib, the name winevulkan opens, and VK_DRIVER_FILES points it at the driver in renderers/kosmickrisp. Steam's browser runs without Chromium's sandbox (appDefaults): with the game's emulator switches its renderer dies at once inside the sandbox and is relaunched for good, so the sign-in window never comes (measured 2026-11-01).",
-+    "Known: a burst of stalls of several seconds in all, about half a minute into the first drive of a session on a warm shader cache, cause open. Measured only on a base M4 with 32 GB."
-+  ],
-+  "components": {
-+    "wine": {
-+      "kind": "engine",
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054/engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054.tar.gz",
-+      "size": 402959763,
-+      "sha256": "a4c16fbb2e1e527a2b0cc543a3e92bb1b7135ad5eacc0da1f863f625a6b38a39",
-+      "extract": {
-+        "into": "engine",
-+        "subpath": "engine"
-+      },
-+      "license": "LGPL-2.1+",
-+      "version": "wine-11.18 (WineHQ) Highball arm64 build 2026-11-04, patches-arm64 through 0054, FEX 2610 with fex/patches through 0034, Wine Mono 11.3.0 and Gecko 2.47.4 included",
-+      "note": "Built by highball-engine's build-arm64 workflow (run 41832138860) from branch arm64-games at 8b315e7: r3's sources plus patches-arm64 0053 and 0054."
-+    },
-+    "frameworks": {
-+      "kind": "frameworks",
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054/engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054.tar.gz",
-+      "size": 402959763,
-+      "sha256": "a4c16fbb2e1e527a2b0cc543a3e92bb1b7135ad5eacc0da1f863f625a6b38a39",
-+      "extrac
+@@ -19,14 +19,26 @@ public enum EnvText {
+             let parts = line.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false).map(String.init)
+             let key = parts.first?.trimmingCharacters(in: .whitespaces) ?? ""
+             if parts.count == 2, !key.isEmpty, key.range(of: "^[A-Za-z_][A-Za-z0-9_]*$", options: .regularExpression) != nil {
+-                env[key] = parts[1]
++                env[key] = unquoted(parts[1])
+             } else {
+                 ignored.append(line)
+             }
+         }
+         return Parsed(environment: env, ignored: ignored)
+     }
+ 
++    /// No shell reads these values, so quotes typed around one reached the program as part of it.
++    /// A value wrapped in one pair of quotes, straight or the curly ones macOS's text view types
++    /// for them, is taken without that pair: a player's WINEDEBUG arrived as `" loaddll”` and Wine
++    /// read no channel from it (highball-db#862). Quotes inside a value stay, as in DXVK_CONFIG's
++    /// customDeviceDesc="…".
++    static func unquoted(_ value: String) -> String {
++        let quotes: Set<Character> = ["\"", "'", "\u{201C}", "\u{201D}", "\u{201E}", "\u{2018}", "\u{2019}"]
++        guard value.count >= 2, let first = value.first, let last = value.last,
++              quotes.contains(first), quotes.contains(last) else { return value }
++        return String(value.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
++    }
++
+     public static func text(for environment: [String: String]) -> String {
+         environment.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: "\n")
+     }
+```
+
+**File**: `Tests/HighballKitTests/EnvTextTests.swift` (modified, +11/-0)
+```diff
+@@ -13,6 +13,17 @@ final class EnvTextTests: XCTestCase {
+         XCTAssertEqual(EnvText.parse("DXMT_METAL_HUD=").environment, ["DXMT_METAL_HUD": ""])
+     }
+ 
++    /// highball-db#862: macOS turned the typed quotes curly, and the value reached Wine with them.
++    func testAValueInOnePairOfQuotesLosesThem() {
++        let p = EnvText.parse("WINEDEBUG=\" loaddll\u{201D}\nA='x y'\nB=\u{201C}+seh\u{201D}\nC=dxgi.customDeviceDesc=\"Intel(R) Arc\"\nD=\"\nE=plain")
++        XCTAssertEqual(p.environment["WINEDEBUG"], "loaddll")
++        XCTAssertEqual(p.environment["A"], "x y")
++        XCTAssertEqual(p.environment["B"], "+seh")
++        XCTAssertEqual(p.environment["C"], "dxgi.customDeviceDesc=\"Intel(R) Arc\"", "quotes inside a value stay")
++        XCTAssertEqual(p.environment["D"], "\"", "a lone quote is not a pair")
++        XCTAssertEqual(p.environment["E"], "plain")
++    }
++
+     func testRoundTrip() {
+         let env = ["B": "2", "A": "1"]
+         XCTAssertEqual(EnvText.text(for: env), "A=1\nB=2")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #670** (2026-11-07): Empty store tab offers to connect that store (@gauthierpiarrette)
+- **PR #665** (2026-11-07): Show legendary's last lines when an Epic install fails (@gauthierpiarrette)
+- **PR #664** (2026-11-06): highball library lists every owned GOG game (@gauthierpiarrette)
+- **PR #655** (2026-11-06): firstrun-smoke asks a component URL again on 5xx (@gauthierpiarrette)
+- **PR #654** (2026-11-06): A variable typed in quotes reaches Wine without them (@gauthierpiarrette)
 - **PR #649** (2026-11-04): arm64-kk-wine11.18-r4 (@gauthierpiarrette)
-- **PR #647** (2026-11-04): highball tricks finds cabextract (@gauthierpiarrette)
-- **PR #646** (2026-11-04): Report attaches a log from the newest sitting (@gauthierpiarrette)
-- **PR #644** (2026-11-04): Wine 11 engines r30 and r31 (@gauthierpiarrette)
-- **PR #643** (closed): Wine 11 engines r30 and r31 (@gauthierpiarrette)
-- **PR #635** (closed): Gate runs without screen captures (@gauthierpiarrette)
 
 ---
 
@@ -1128,38 +1143,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. arm64-kk-wine11.18-r4: r3 with fixes for games beyond Forza Horizon 6 (releases 
+## X. A variable typed in quotes reaches Wine without them. No shell reads the environ
 
 **RULE**:
-When implementing operations in `spike/engines/arm64-kk-wine11.18-r4.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/HighballKit/EnvText.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dbc36ebc`: arm64-kk-wine11.18-r4: r3 with fixes for games beyond Forza Horizon 6 (releases engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054 and kosmickrisp-arm64-20261104T165852Z-push). The Khronos loader exports MoltenVK's vkGetMTLDeviceMVK, so GStreamer's VideoToolbox plugin loads and H.264 game videos play (ContractVille stayed black). patches-arm64 0053 and 0054 (upstream 1c2d909829c by Rémi Bernon) give legacy OpenGL contexts their extensions and the ES2 compatibility calls (Paperback: The Game crashed). KosmicKrisp patch 0008 gives LINEAR images Metal cannot back with a buffer a tiled texture with linear subresource layouts (Red Dead Redemption 2 aborted in Metal, now reaches its menu and the opening cutscene at 60 fps). Installed from the public releases on the M4: ContractVille reaches its menu after its intro video (46 fps), Paperback its title. Forza Horizon 6's route stays on r3. 83 engine tests pass. (#649). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d5af52ff`: A variable typed in quotes reaches Wine without them. No shell reads the environment editor's values, so quotes around one went to the program as part of it, and macOS's text view turns typed quotes curly: a player's WINEDEBUG arrived as " loaddll” and Wine read no channel from it (highball-db#862). A value wrapped in one pair of quotes, straight or curly, now loses that pair; quotes inside a value stay (DXVK_CONFIG's customDeviceDesc="…"). (#654). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `spike/engines/arm64-kk-wine11.18-r4.json`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballKit/EnvText.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-{
-  "$schema": "https://highball.app/schemas/engine-manifest/v0",
-  "id": "arm64-kk-wine11.18-r4",
-  "displayName": "Wine 11.18 native arm64 (preview, KosmicKrisp) r4",
-  "arch": "arm64",
-  "minMacOS": "27.0",
-  "requires": [],
-  "channel": "preview",
-  "direct3D9": "wined3d",
-  "notes": [
-    "r4 (2026-11-04): r3 with fixes for games beyond Forza Horizon 6. Video: GStreamer's VideoToolbox plugin imports MoltenVK's vkGetMTLDeviceMVK, which the Khronos loader this line ships as libMoltenVK.dylib lacked, so the plugin never loaded, no H.264 video played and a game waiting on its intro video stayed black (ContractVille). The loader now carries that call (highball-engine kosmickrisp-arm64/mvk_compat.c). OpenGL: Wine 11.18 marked no extension in a legacy (before 3.0) context, so a game asking for framebuffer objects there got nothing; patches-arm64 0054 is the upstream fix by Rémi Bernon (1c2d909829c). 0053 gives a legacy context GL_ARB_ES2_compatibility's five calls, as the Wine 11 line's 0021 does. Paperback: The Game needed both. KosmicKrisp: highball patch 0008 gives a LINEAR image Metal cannot back with a buffer (several levels or layers, or 3D) a tiled texture with linear-looking 
+                env[key] = unquoted(parts[1])
+    /// No shell reads these values, so quotes typed around one reached the program as part of it.
+    /// A value wrapped in one pair of quotes, straight or the curly ones macOS's text view types
+    /// for them, is taken without that pair: a player's WINEDEBUG arrived as `" loaddll”` and Wine
+    /// read no channel from it (highball-db#862). Quotes inside a value stay, as in DXVK_CONFIG's
+    /// customDeviceDesc="…".
+    static func unquoted(_ value: String) -> String {
+        let quotes: Set<Character> = ["\"", "'", "\u{201C}", "\u{201D}", "\u{201E}", "\u{2018}", "\u{2019}"]
+        guard value.count >= 2, let first = value.first, let last = value.last,
+              quotes.contains(first), quotes.contains(last) else { return value }
+        return String(value.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                env[key] = parts[1]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dbc36ebc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d5af52ff` are properly handled with clean fallback behavior.

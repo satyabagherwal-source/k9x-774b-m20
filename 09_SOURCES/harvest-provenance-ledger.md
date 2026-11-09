@@ -8531,3 +8531,5 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `70a60076` | Multi-dimensional audit evidence | 2026-11-09T05:26:07.778Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `f73bbd95` | Multi-dimensional audit evidence | 2026-11-09T05:26:11.701Z |
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-09T05:28:50.643Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T05:40:36.690Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `8aacc6b0` | Multi-dimensional audit evidence | 2026-11-09T05:40:43.179Z |

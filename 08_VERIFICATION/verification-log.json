@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-HQVF",
-    "timestamp": "2026-11-07T06:17:49.899Z",
-    "repository": "stakater/Reloader",
-    "learningId": "learn-github-stakater-reloader",
-    "contentHash": "f5a9616a21e1a6e0fc1afcac38498ed55217e14d551f21cf3c0a9d853e60421c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-HV3H",
-    "timestamp": "2026-11-07T06:17:55.373Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "80091f0b45951b9cd4487814821906e4bcbe48731aec764ea5f587e22e0d2775",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-QE3C",
     "timestamp": "2026-11-07T06:24:33.240Z",
     "repository": "risingwavelabs/risingwave",
@@ -7492,6 +7462,36 @@
     "contentHash": "b46f90753f79f5ea2e7fa14ae296a30295cc24307166dc8092abd39eabcb8899",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-1L1R",
+    "timestamp": "2026-11-09T05:40:36.687Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "af35dc33957c72b02139fea8a777439056285f45e20f6ca2db18c1f80e89f44a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-1Q20",
+    "timestamp": "2026-11-09T05:40:43.176Z",
+    "repository": "gauthierpiarrette/highball",
+    "learningId": "learn-github-gauthierpiarrette-highball",
+    "contentHash": "98e8be75d7aa7fd8c964e4c7b54f65b38329121371d5074da49807f98ee2a08f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
