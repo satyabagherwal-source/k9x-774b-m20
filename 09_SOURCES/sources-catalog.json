@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "38eefabb86be96b62e61198b82637355f98dccac4443a8efed24c6d676a8dc8b",
-    "lastHarvestedAt": "2026-11-05T08:31:51.691Z",
+    "contentHash": "6103c8b8e9fba96eb1019d2373e4d24aff6c4308a1c07e00e2f16ba5b587519e",
+    "lastHarvestedAt": "2026-11-09T02:14:32.726Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "30d662db",
+    "sourceVersion": "b0d0760a",
     "license": "Apache-2.0",
-    "contentHash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
-    "lastHarvestedAt": "2026-11-06T22:56:09.114Z",
+    "contentHash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
+    "lastHarvestedAt": "2026-11-09T02:14:46.321Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {

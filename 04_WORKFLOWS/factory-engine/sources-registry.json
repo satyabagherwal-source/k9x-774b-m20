@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T02:08:14.269Z",
-    "lastVerified": "2026-11-09T02:08:14.269Z",
+    "lastChecked": "2026-11-09T02:14:48.904Z",
+    "lastVerified": "2026-11-09T02:14:48.904Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T01:46:43.962Z",
+    "lastChecked": "2026-11-09T02:14:44.236Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T01:46:43.962Z"
+    "lastVerified": "2026-11-09T02:14:44.236Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1562,9 +1562,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-08T22:10:43.924Z",
+    "lastChecked": "2026-11-09T02:14:39.364Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-08T22:10:43.924Z"
+    "lastVerified": "2026-11-09T02:14:39.364Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -1662,8 +1662,8 @@
     "officialUrl": "https://github.com/cachix/devenv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T01:17:31.321Z",
-    "lastVerified": "2026-11-08T01:17:31.321Z",
+    "lastChecked": "2026-11-09T02:14:29.312Z",
+    "lastVerified": "2026-11-09T02:14:29.312Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cachix-devenv",
@@ -1914,22 +1914,21 @@
     "revisionIdentifier": "92514f9f"
   },
   "alibaba-zvec": {
-    "name": "zvec",
+    "name": "alibaba/zvec",
     "officialUrl": "https://github.com/alibaba/zvec",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-08T04:54:53.383Z",
-    "lastVerified": "2026-11-08T04:54:53.383Z",
+    "lastChecked": "2026-11-09T02:14:45.411Z",
+    "lastVerified": "2026-11-09T02:14:45.411Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
+    "contentHash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "30d662db"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "michael-a-kuykendall-shimmy": {
     "name": "Michael-A-Kuykendall/shimmy",
@@ -6370,8 +6369,8 @@
     "officialUrl": "https://github.com/octodns/octodns",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-08T05:40:42.949Z",
-    "lastVerified": "2026-11-08T05:40:42.949Z",
+    "lastChecked": "2026-11-09T02:14:36.771Z",
+    "lastVerified": "2026-11-09T02:14:36.771Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-octodns-octodns",
@@ -6423,13 +6422,13 @@
     "officialUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T08:30:14.469Z",
-    "lastVerified": "2026-11-05T08:30:14.469Z",
+    "lastChecked": "2026-11-09T02:14:31.879Z",
+    "lastVerified": "2026-11-09T02:14:31.879Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "38eefabb86be96b62e61198b82637355f98dccac4443a8efed24c6d676a8dc8b",
-    "promotedRulesCount": 3,
+    "contentHash": "6103c8b8e9fba96eb1019d2373e4d24aff6c4308a1c07e00e2f16ba5b587519e",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -12189,9 +12188,9 @@
   "rafsoh-dimeapp": {
     "name": "dimeApp",
     "officialUrl": "https://github.com/rafsoh/dimeApp",
-    "lastChecked": "2026-11-05T19:29:29.180Z",
+    "lastChecked": "2026-11-09T02:14:34.304Z",
     "revisionIdentifier": "0463cb8c",
-    "lastVerified": "2026-11-05T19:29:29.180Z"
+    "lastVerified": "2026-11-09T02:14:34.304Z"
   },
   "preactjs-preact": {
     "name": "preactjs/preact",

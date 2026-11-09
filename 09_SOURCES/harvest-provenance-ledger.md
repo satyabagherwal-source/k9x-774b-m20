@@ -8482,3 +8482,5 @@ Every entry in this ledger must capture:
 | `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `85de02c9` | Multi-dimensional audit evidence | 2026-11-09T02:01:15.159Z |
 | `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-09T02:08:02.737Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `d0885b8c` | Multi-dimensional audit evidence | 2026-11-09T02:08:11.686Z |
+| `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-11-09T02:14:32.726Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `b0d0760a` | Multi-dimensional audit evidence | 2026-11-09T02:14:46.321Z |

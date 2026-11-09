@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-HYYB",
-    "timestamp": "2026-11-07T03:02:03.059Z",
-    "repository": "LiquidAI/LFM3-Audio-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
-    "contentHash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-XSYU",
-    "timestamp": "2026-11-07T03:14:21.798Z",
-    "repository": "octodns/octodns",
-    "learningId": "learn-github-octodns-octodns",
-    "contentHash": "7aa5e24771b5465c97c15623e80d8e712ca997984689db47e9248fca6323cc03",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-XVQ6",
     "timestamp": "2026-11-07T03:14:25.374Z",
     "repository": "giancarloerra/SocratiCode",
@@ -7490,6 +7460,36 @@
     "repository": "DNSControl/dnscontrol",
     "learningId": "learn-github-dnscontrol-dnscontrol",
     "contentHash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-OKYA",
+    "timestamp": "2026-11-09T02:14:32.722Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "6103c8b8e9fba96eb1019d2373e4d24aff6c4308a1c07e00e2f16ba5b587519e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-OVFZ",
+    "timestamp": "2026-11-09T02:14:46.319Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

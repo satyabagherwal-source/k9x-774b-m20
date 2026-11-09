@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T02:08:11.609Z",
+  "last_updated": "2026-11-09T02:14:46.233Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1736,14 +1736,19 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "30d662db",
-      "content_hash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
+      "source_version": "b0d0760a",
+      "content_hash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build): add OSS fallbacks for Thrift and Boost downloads (#882)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci(deps): bump actions/setup-java from 6.1.0 to 6.2.0 (#884)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -1812,7 +1817,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:56:08.990Z",
+      "verified_at": "2026-11-09T02:14:46.217Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27475,7 +27480,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "38eefabb86be96b62e61198b82637355f98dccac4443a8efed24c6d676a8dc8b",
+      "content_hash": "6103c8b8e9fba96eb1019d2373e4d24aff6c4308a1c07e00e2f16ba5b587519e",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [
@@ -27537,7 +27542,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-11-05T08:31:51.576Z",
+      "verified_at": "2026-11-09T02:14:32.625Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

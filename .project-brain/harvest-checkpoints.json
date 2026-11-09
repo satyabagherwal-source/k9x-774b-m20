@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T02:08:11.704Z",
+  "last_updated": "2026-11-09T02:14:46.337Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1490,14 +1490,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "38eefabb86be96b62e61198b82637355f98dccac4443a8efed24c6d676a8dc8b",
-      "verified_at": "2026-11-05T08:31:51.708Z",
+      "content_hash": "6103c8b8e9fba96eb1019d2373e4d24aff6c4308a1c07e00e2f16ba5b587519e",
+      "verified_at": "2026-11-09T02:14:32.732Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:31:51.708Z"
+      "last_updated": "2026-11-09T02:14:32.732Z"
     },
     "FacebookAI/xlm-roberta-base": {
       "repository": "FacebookAI/xlm-roberta-base",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
-      "verified_at": "2026-11-06T22:56:09.133Z",
+      "content_hash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
+      "verified_at": "2026-11-09T02:14:46.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:56:09.133Z"
+      "last_updated": "2026-11-09T02:14:46.336Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
