@@ -8577,3 +8577,5 @@
 | `CYCLE-20261109-KEJO` | `2026-11-09T11:31:10.116Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5881e85e...`) |
 | `CYCLE-20261109-KH36` | `2026-11-09T11:31:13.410Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1756b1d3...`) |
 | `CYCLE-20261109-KUZT` | `2026-11-09T11:31:31.433Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`dd22413a...`) |
+| `CYCLE-20261109-E1QF` | `2026-11-09T11:54:13.191Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`2043a1da...`) |
+| `CYCLE-20261109-GXKZ` | `2026-11-09T11:56:27.779Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`393e882d...`) |

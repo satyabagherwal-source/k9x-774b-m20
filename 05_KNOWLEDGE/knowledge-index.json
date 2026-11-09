@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T11:31:31.352Z",
+  "last_updated": "2026-11-09T11:56:27.677Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32675,10 +32675,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "e352aef78be5f70b818addb4913aa2d9b7d58d038a2508bbbab4c40c553e70f7",
+      "content_hash": "393e882de1e9690228c890a84e4328495acd779987e341ab15a439271285609c",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Direct Pixel-Space Dynamic Range and Coordinate Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "High-Resolution Spatial Patchification Invertibility and Boundary Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 307,
           "title": "Pixel-Space Generative Fidelity Invariant",
@@ -32768,7 +32778,7 @@
         "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
         "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
       ],
-      "verified_at": "2026-11-05T13:54:54.361Z",
+      "verified_at": "2026-11-09T11:56:27.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62375,8 +62385,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "30b864ff",
-      "content_hash": "b464172f8b27841b40719d26fbeff421fca52a08362eabc07186860e8a8e8aa7",
+      "source_version": "047a8a24",
+      "content_hash": "2043a1da1cc20326b2aff4e35fa24da695cb8d94217d91afae5b76e73748ce28",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -62384,6 +62394,16 @@
           "number": null,
           "title": "Minor: more consistent UUID parsing.",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Two-Phase Staged Transactional Event Publishing for Embedded Databases",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Tier Secret Redaction on State Serialization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1914,
@@ -62431,7 +62451,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:09:50.128Z",
+      "verified_at": "2026-11-09T11:54:13.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T11:31:31.445Z",
+  "last_updated": "2026-11-09T11:56:27.801Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1967,14 +1967,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-iris-3b",
-      "content_hash": "e352aef78be5f70b818addb4913aa2d9b7d58d038a2508bbbab4c40c553e70f7",
-      "verified_at": "2026-11-05T13:54:54.454Z",
+      "content_hash": "393e882de1e9690228c890a84e4328495acd779987e341ab15a439271285609c",
+      "verified_at": "2026-11-09T11:56:27.801Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:54:54.454Z"
+      "last_updated": "2026-11-09T11:56:27.801Z"
     },
     "Infisical/infisical": {
       "repository": "Infisical/infisical",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "b464172f8b27841b40719d26fbeff421fca52a08362eabc07186860e8a8e8aa7",
-      "verified_at": "2026-11-07T18:09:50.258Z",
+      "content_hash": "2043a1da1cc20326b2aff4e35fa24da695cb8d94217d91afae5b76e73748ce28",
+      "verified_at": "2026-11-09T11:54:13.204Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:09:50.258Z"
+      "last_updated": "2026-11-09T11:54:13.204Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",

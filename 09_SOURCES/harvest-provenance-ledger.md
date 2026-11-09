@@ -8586,3 +8586,5 @@ Every entry in this ledger must capture:
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `d1514c25` | Multi-dimensional audit evidence | 2026-11-09T11:31:10.119Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `c1a97cbd` | Multi-dimensional audit evidence | 2026-11-09T11:31:13.413Z |
 | `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-09T11:31:31.437Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `047a8a24` | Multi-dimensional audit evidence | 2026-11-09T11:54:13.195Z |
+| `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-09T11:56:27.783Z |

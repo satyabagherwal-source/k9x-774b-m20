@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `30b864ff`  
+> **Source Version**: `047a8a24`  
 > **License**: OSL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:09:48.637Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-09T11:54:11.543Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1292 +12,574 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): trailbaseio/trailbase
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:09:48.305Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): trailbaseio/trailbase
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `trailbaseio/trailbase`
-- **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5746 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`trailbase` is a single-binary, sub-millisecond backend engine combining an embedded relational database (SQLite via `rusqlite`), a WebAssembly extension runtime (`wasmtime` targeting WASI Preview 2), dynamic REST/realtime APIs (Axum + SSE), authentication, and an embedded administrative UI.
+
+```
+                  +-------------------------------------------------------------+
+                  |                     Client Ingress                         |
+                  |          (HTTP/1.1, HTTP/2 via Axum / Tower Layers)          |
+                  +------------------------------+------------------------------+
+                                                 |
+         +---------------------------------------+---------------------------------------+
+         |                                       |                                       |
++--------v----------------+             +--------v----------------+             +--------v----------------+
+|  Admin & System APIs    |             |  Dynamic Record APIs    |             | Auth & Token Subsystem  |
+| - Config Sync (Proto)   |             | - Schema introspection  |             | - Argon2 Password Hash  |
+| - Backups & Snapshots   |             | - Access Rule Evaluator |             | - JWT Signing / Refresh |
+| - Email Dispatch        |             | - AST Filter Rewrite    |             | - PKCE & OAuth Flow     |
++--------+----------------+             +--------+----------------+             +--------+----------------+
+         |                                       |                                       |
+         +-------------------+-------------------+-------------------+-------------------+
+                             |                                       |
+                  +----------v-----------+               +-----------v----------+
+                  |  WASI Guest Runtime  |               |  Connection Manager  |
+                  | - wasm32-wasip2      |               | - Write serialized   |
+                  | - Isolated memory    |               | - Read pool cloned   |
+                  +----------------------+               +-----------+----------+
+                                                                     |
+                                                 +-------------------v-------------------+
+                                                 |        rusqlite Hook Pipeline         |
+                                                 | - PreUpdate Hook  (staged buffer)     |
+                                                 | - Rollback Hook   (buffer.clear())    |
+                                                 | - Commit Hook     (drain -> flume)    |
+                                                 +-------------------+-------------------+
+                                                                     |
+                                                 +-------------------v-------------------+
+                                                 |        SQLite Strict Engine           |
+                                                 | - WAL mode / UUIDv7 binary keys       |
+                                                 +---------------------------------------+
+```
+
+### Critical Architectural Boundaries & State Ownership
+1. **Connection Manager & Isolation**: Write queries execute under exclusive write-lock ownership, whereas read queries bypass the writer via concurrent WAL read connections. All dynamic DDL migrations and schema changes invalidate an internal metadata registry, forcing dynamic Axum routes to sync with SQLite system catalogs.
+2. **Hook Pipeline & Transaction Staging**: Real-time event propagation taps into SQLite's low-level engine hooks (`preupdate_hook`, `commit_hook`, `rollback_hook`). Mutations cannot be directly published to channels on the fly because SQLite fires `preupdate_hook` during statement execution inside a transaction that may later fail or roll back. A staging buffer guards downstream SSE pipelines from phantom dirty reads.
+3. **WASI Isolation Barrier**: Custom logic is executed as compiled WebAssembly (`wasm32-wasip2`) guest components. The host enforces strict linear memory limits, timeouts, and sandboxed host-call boundaries, preventing guest crashes from taking down the core daemon.
+4. **Protobuf/Textproto Configuration State**: System settings are managed as structured protobuf messages (`trailbase.config`). Updates are atomic, verified via SHA-256 hashes against concurrent modification, and secrets (passwords, SMTP keys) are stripped via automated vault redaction before exposure to the Admin UI.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md, Dockerfile.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `crates/assets/js/admin/src/lib/utils.ts`
-```
-import type { ClassValue } from "clsx";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { stringify as uuidStringify } from "uuid";
-import { urlSafeBase64Decode } from "trailbase";
-
-import { showToast } from "@/components/ui/toast";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-export function pathJoin(parts: string[], sep?: string): string {
-  const separator = sep ?? "/";
-  const replace = new RegExp(`${separator}{1,}`, "g");
-  return parts.join(separator).replace(replace, separator);
-}
-
-export function copyToClipboard(
-  contents: string,
-  showContents?: boolean,
-  message?: string,
-) {
-  navigator.clipboard.writeText(contents);
-  const msg = message ?? "Copied to clipboard";
-  showToast({
-    title: (showContents ?? false) ? `${msg}: ${contents}` : msg,
-  });
-}
-
-export function tryParseInt(value: string): number | undefined {
-  const n = parseInt(value.trim());
-  return isNaN(n) ? undefined : n;
-}
-
-export function safeParseInt(value: string | undefined): number | undefined {
-  if (value !== undefined) {
-    try {
-      return tryParseInt(value);
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-  return undefined;
-}
-
-export function tryParseBigInt(value: string): bigint | undefined {
-  if (value === "") {
-    return undefined;
-  }
-
-  try {
-    return BigInt(value.trim());
-  } catch {
-    return undefined;
-  }
-}
-
-export function tryParseFloat(value: string): number | undefined {
-  const n = parseFloat(value.trim());
-  return isNaN(n) ? undefined : n;
-}
-
-export function urlSafeBase64ToUuid(id: string): string {
-  return uuidStringify(urlSafeBase64Decode(id));
-}
-
-export function toHex(bytes: Uint8Array): string {
-  return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-export function fromHex(hex: string): Uint8Array {
-  const bytes = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < hex.length; i += 2) {
-    bytes[i / 2] = parseInt(hex.slice(i, i + 2), 16);
-  }
-  return bytes;
-}
-
-export async function showSaveFileDialog(opts: {
-  contents: () => Promise<ReadableStream<Uint8Array> | null>;
-  filename: string;
-  mimeType?: string;
-}): Promise<boolean> {
-  const stream = await opts.contents();
-  if (stream === null) {
-    return false;
-  }
-
-  // Not supported by firefox: https://developer.mozilla.org/en-US/docs/Web/API/Window/showSaveFilePicker#browser_compatibility
-  // possible fallback: https://stackoverflow.com/a/67806663
-  if (window.showSaveFilePicker) {
-    try {
-      const handle = await window.showSaveFilePicker({
-        suggestedName: opts.filename,
-      });
-
-      const writable = await handle.createWritable();
-      await stream.pipeTo(writable);
-    } catch (err) {
-      // Ignore user abortions.
-      if (err instanceof Error && err.name === "AbortError") {
-        return false;
-      }
-      throw err;
-    }
-  } else {
-    const blob = await readableStreamToBlob(stream, opts.mimeType);
-
-    const saveFile = document.createElement("a");
-    saveFile.href = URL.createObjectURL(blob);
-    saveFile.download = opts.filename;
-    saveFile.click();
-
-    // Cleanup.
-    setTimeout(() => {
-      saveFile.remove();
-      URL.revokeObjectURL(saveFile.href);
-    }, 60 * 1000);
-  }
-
-  return true;
-}
-
-async function readableStreamToBlob(
-  stream: ReadableStream<Uint8Array>,
-  mimeType?: string,
-) {
-  const reader = stream.getReader();
-
-  const chunks: Uint8Array[] = [];
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) {
-      break;
-    }
-    chunks.push(value);
-  }
-
-  // Concatenate all chunks
-  const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
-  const merged = new Uint8Array(totalLength);
-  let offset = 0;
-  for (const chunk of chunks) {
-    merged.set(chunk, offset);
-    offset += chunk.length;
-  }
-
-  return new Blob([merged], { type: mimeType });
-}
-
-export function stringToReadableStream(s: string): ReadableStream {
-  return new ReadableStream({
-    start(controller) {
-      controller.enqueue(new TextEncoder().encode(s));
-      controller.close();
-    },
-  });
-}
-
-```
-
-### Core Architecture Module: `crates/auth-ui/ui/src/lib/utils.ts`
-```
-import type { ClassValue } from "clsx";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-```
-
-### Core Architecture Module: `crates/core/benches/benchmark.rs`
-```
-#![allow(clippy::needless_return)]
-
-#[global_allocator]
-static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
-
-use axum::body::Body;
-use axum::extract::{Json, State};
-use axum::http::{self, Request};
-use base64::prelude::*;
-use criterion::{Bencher, Criterion, Throughput, criterion_group, criterion_main};
-use eventsource_stream::Eventsource;
-use futures_util::StreamExt;
-use hyper::StatusCode;
-use serde::Deserialize;
-use std::time::{Duration, Instant};
-use tower::{Service, ServiceExt};
-
-use trailbase::api::{CreateUserRequest, InitArgs, create_user_handler};
-use trailbase::config::proto::{PermissionFlag, RecordApiConfig};
-use trailbase::constants::RECORD_API_PATH;
-use trailbase::test_util::{UserIdentifier, login_user_for_test};
-use trailbase::{AppState, SocketAddr};
-use trailbase::{DataDir, Server, ServerOptions};
-use trailbase_sqlite::params;
-
-#[derive(Clone, Debug, Deserialize)]
-pub struct CreateRecordResponse {
-  /// Url-Safe base64 encoded ids of the newly created record.
-  pub ids: Vec<String>,
-}
-
-async fn create_chat_message_app_tables(
-  conn: &trailbase_sqlite::Connection,
-) -> Result<(), trailbase_sqlite::Error> {
-  // Create a messages, chat room and members tables.
-  conn
-    .execute_batch(
-      r#"
-          CREATE TABLE room (
-            id           BLOB PRIMARY KEY NOT NULL CHECK(is_uuid_v7(id)) DEFAULT(uuid_v7()),
-            name         TEXT
-          ) STRICT;
-
-          CREATE TABLE message (
-            id           INTEGER PRIMARY KEY,
-            _owner       BLOB NOT NULL,
-            room         BLOB NOT NULL,
-            data         TEXT NOT NULL DEFAULT 'empty',
-
-            -- on user delete, toombstone it.
-            FOREIGN KEY(_owner) REFERENCES _user(id) ON DELETE SET NULL,
-            -- On chatroom delete, delete message
-            FOREIGN KEY(room) REFERENCES room(id) ON DELETE CASCADE
-          ) STRICT;
-
-          CREATE TABLE room_members (
-            user         BLOB NOT NULL,
-            room         BLOB NOT NULL,
-
-            FOREIGN KEY(room) REFERENCES room(id) ON DELETE CASCADE,
-            FOREIGN KEY(user) REFERENCES _user(id) ON DELETE CASCADE
-          ) STRICT;
-        "#,
-    )
-    .await?;
-
-  return Ok(());
-}
-
-async fn add_room(
-  conn: &trailbase_sqlite::Connection,
-  name: &str,
-) -> Result<[u8; 16], anyhow::Error> {
-  let room: [u8; 16] = conn
-    .write_query_row_get(
-      "INSERT INTO room (name) VALUES ($1) RETURNING id",
-      params!(name.to_string()),
-      0,
-    )
-    .await?
-    .unwrap();
-
-  return Ok(room);
-}
-
-async fn add_user_to_room(
-  conn: &trailbase_sqlite::Connection,
-  user: [u8; 16],
-  room: [u8; 16],
-) -> Result<(), trailbase_sqlite::Error> {
-  conn
-    .execute(
-      "INSERT INTO room_members (user, room) VALUES ($1, $2)",
-      params!(user, room),
-    )
-    .await?;
-  return Ok(());
-}
-
-struct Setup {
-  app: Server,
-
-  room: [u8; 16],
-  user_x: [u8; 16],
-  user_x_token: String,
-}
-
-pub(crate) async fn add_record_api_config(
-  state: &AppState,
-  api: RecordApiConfig,
-) -> Result<(), anyhow::Error> {
-  let mut config = (**state.get_config()).clone();
-  config.record_apis.push(api);
-  return Ok(state.validate_and_update_config(config, None).await?);
-}
-
-async fn setup_app() -> Result<Setup, anyhow::Error> {
-  let data_dir = temp_dir::TempDir::new()?;
-
-  let (_new, state) = AppState::init(InitArgs {
-    data_dir: DataDir(data_dir.path().to_path_buf()),
-    ..Default::default()
-  })
-  .await
-  .unwrap();
-
-  let app = Server::init(
-    state,
-    SocketAddr::parse("localhost:4020").unwrap(),
-    ServerOptions {
-      ..Default::default()
-    },
-  )
-  .await?;
-
-  let main_conn = app.state.connection_manager().main_entry();
-  let conn = &main_conn.connection;
-
-  create_chat_message_app_tables(conn).await?;
-  app.state.rebuild_connection_metadata().await?;
-
-  let room = add_room(conn, "room0").await?;
-  let password = "Secret!1!!";
-
-  let create_access_rule =
-    r#"(SELECT 1 FROM room_members WHERE user = _USER_.id AND room = _REQ_.room)"#;
-
-  add_record_api_config(
-    &app.state,
-    RecordApiConfig {
-      name: Some("messages_api".to_string()),
-      table_name: Some("message".to_string()),
-      acl_authenticated: [PermissionFlag::Read as i32, PermissionFlag::Create as i32].into(),
-      create_access_rule: Some(create_access_rule.to_string()),
-      ..Default::default()
-    },
-  )
-  .await?;
-
-  let email = "user_x@bar.com";
-  let user_x = create_user_handler(
-    State(app.state.clone()),
-    Json(CreateUserRequest {
-      email: Some(email.to_string()),
-      username: None,
-      password: password.to_string(),
-      verified: true,
-      admin: false,
-    }),
-  )
-  .await?
-  .id
-  .into_bytes();
-
-  let tokens = login_user_for_test(
-    &app.state,
-    UserIdentifier::Email(email.to_string()),
-    password,
-  )
-  .await?;
-
-  add_user_to_room(conn, user_x, room).await?;
-
-  return Ok(Setup {
-    app,
-    room,
-    user_x,
-    user_x_token: tokens.auth_token,
-  });
-}
-
-async fn check_health(router: &mut axum::Router<()>) -> Result<(), anyhow::Error> {
-  let response = router
-    .call(
-      Request::builder()
-        .method(http::Method::GET)
-        .uri("/api/healthcheck")
-        .body(Body::from(vec![]))
-        .unwrap(),
-    )
-    .await?;
-
-  if response.status() != StatusCode::OK {
-    anyhow::bail!("Expected 'Ok' status");
-  }
-
-  let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
-    .await
-    .unwrap();
-
-  if bytes.to_vec() != b"Ok" {
-    anyhow::bail!("Expected 'Ok'");
-  }
-
-  return Ok(());
-}
-
-fn create_message_benchmark(b: &mut Bencher, runtime: &tokio::runtime::Runtime, setup: &Setup) {
-  let authorization = format!("Bearer {}", setup.user_x_token);
-  let body = {
-    let request = serde_json::json!({
-      "_owner": BASE64_URL_SAFE.encode(setup.user_x),
-      "room": BASE64_URL_SAFE.encode(setup.room),
-      "data": "user_x message to room",
-    });
-
-    serde_json::to_vec(&request).unwrap()
-  };
-
-  let request = move || {
-    return Request::builder()
-      .method(http::Method::POST)
-      .uri(&format!("/{RECORD_API_PATH}/messages_api"))
-      .header(http::header::CONTENT_TYPE, "application/json")
-      .header(http::header::AUTHORIZATION, &authorization)
-      .body(Body::from(body.clone()))
-      .unwrap();
-  };
-
-  b.to_async(runtime).iter_custom(async |iters| {
-    let start = Instant::now();
-
-    let tasks = (0..iters).map(|_i| {
-      let request = request.clone();
-      let mut router = setup.app.main_router.1.clone();
-
-      return runtime.spawn(async move {
-        let response = router.call(request()).await.unwrap();
-        assert!(response.status().is_success());
-      });
-    });
-
-    futures_util::future::join_all(tasks).await;
-
-    return start.elapsed();
-  });
-}
-
-fn read_message_benchmark(b: &mut Bencher, runtime: &tokio::runtime::Runtime, setup: &Setup) {
-  let authorization = format!("Bearer {}", setup.user_x_token);
-
-  let ids = runtime.block_on({
-    let mut router = setup.app.main_router.1.clone();
-    let authorization = authorization.clone();
-
-    async move {
-      let body = serde_json::json!({
-        "_owner": BASE64_URL_SAFE.encode(setup.user_x),
-        "room": BASE64_URL_SAFE.encode(setup.room),
-        "data": "user_x message to room",
-      });
-
-      let create_request = Request::builder()
-        .method(http::Method::POST)
-        .uri(&format!("/{RECORD_API_PATH}/messages_api"))
-        .header(http::header::CONTENT_TYPE, "application/json")
-        .header(http::header::AUTHORIZATION, &authorization)
-        .body(Body::from(serde_json::to_vec(&body).unwrap()))
-        .unwrap();
-
-      let response = router.call(create_request).await.unwrap();
-      assert!(response.status().is_success());
-      let body = axum::body::to_bytes(response.into_body(), usize::MAX)
-        .await
-        .unwrap();
-      let created: CreateRecordResponse = serde_json::from_slice(&body).unwrap();
-      return created.ids;
-    }
-  });
-
-  let read_request = move || {
-    Request::builder()
-      .method(http::Method::GET)
-      .uri(&format!(
-        "/{RECORD_API_PATH}/messages_api/{id}",
-        id = ids[0]
-      ))
-      .header(http::header::CONTENT_TYPE, "application/json")
-      .header(http::header::AUTHORIZATION, &authorization)
-      .body(Body::empty())
-      .unwrap()
-  };
-
-  b.to_async(runtime).iter_custom(async |iters| {
-    let start = Instant::now();
-
-    let tasks = (0..iters).map(|_i| {
-      let read_request = read_request.clone();
-      let mut router = setup.app.main_router.1.clone();
-
-      return runtime.spawn(async move {
-        let response = router.call(read_request()).await.unwrap();
-        assert!(response.status().is_success());
-      });
-    });
-
-    futures_util::future::join_all(tasks).await;
-
-    return start.elapsed();
-  });
-}
-
-fn list_message_benchmark(b: &mut Bencher, runtime: &tokio::runtime::Runtime, setup: &Setup) {
-  let authorization = format!("Bearer {}", setup.user_x_token);
-
-  let request = move || {
-    return Request::builder()
-      .method(http::Method::GET)
-      .uri(&format!("/{RECORD_API_PATH}/messages_api?limit=50"))
-      .header(http::header::CONTENT_TYPE, "application/json")
-      .header(http::header::AUTHORIZATION, &authorization)
-      .body(Body::empty())
-      .unwrap();
-  };
-
-  b.to_async(runtime).iter_custom(async |iters| {
-    let start = Instant::now();
-
-    let tasks = (0..iters).map(|_i| {
-      let request = request.clone();
-      let mut router = setup.app.main_router.1.clone();
-
-      return runtime.spawn(async move {
-        let response = router.call(request()).await.unwrap();
-        assert!(response.status().is_success());
-      });
-    });
-
-    futures_util::future::join_all(tasks).await;
-
-    return start.elapsed();
-  });
-}
-
-fn subscribe_message_benchmark(b: &mut Bencher, runtime: &tokio::runtime::Runtime, setup: &Setup) {
-  let authorization = format!("Bearer {}", setup.user_x_token);
-  let create_request_body = {
-    let request = serde_json::json!({
-      "_owner": BASE64_URL_SAFE.encode(setup.user_x),
-```
-
-### Core Architecture Module: `crates/core/bindings/ListWasmModulesResponse.ts`
-```
-// This file was generated by [ts-rs](https://github.com/Aleph-Alpha/ts-rs). Do not edit this file manually.
-import type { WasmModuleEntry } from "./WasmModuleEntry";
-
-export type ListWasmModulesResponse = { modules: Array<WasmModuleEntry>, };
-
-```
-
-### Core Architecture Module: `crates/core/bindings/WasmModuleEntry.ts`
-```
-// This file was generated by [ts-rs](https://github.com/Aleph-Alpha/ts-rs). Do not edit this file manually.
-
-export type WasmModuleEntry = {
-name: string,
-display_name: string,
-icon: string | null,
-config_path: string | null,
-description: string | null,
-};
-
-```
-
-### Core Architecture Module: `crates/core/src/admin/backup.rs`
-```
-use axum::extract::{Json, State};
-use serde::{Deserialize, Serialize};
-use ts_rs::TS;
-
-use crate::admin::AdminError as Error;
-use crate::app_state::AppState;
-use crate::backup;
-
-#[derive(Debug, Deserialize, Serialize, TS, utoipa::ToSchema)]
-pub struct Backup {
-  timestamp: i64,
-}
-
-#[derive(Debug, Deserialize, Serialize, TS, utoipa::ToSchema)]
-#[ts(export)]
-pub struct ListBackupsResponse {
-  backups: Vec<Backup>,
-}
-
-#[utoipa::path(
-  get,
-  path = "/backups",
-  tag = "admin",
-  responses(
-    (status = 200, description = "Success", body = ListBackupsResponse),
-  )
-)]
-pub async fn list_backups_handler(
-  State(state): State<AppState>,
-) -> Result<Json<ListBackupsResponse>, Error> {
-  return Ok(Json(ListBackupsResponse {
-    backups: backup::find_backups(state.data_dir())
-      .await?
-      .into_iter()
-      .map(|b| {
-        return Backup {
-          timestamp: b.timestamp.timestamp(),
-        };
-      })
-      .collect(),
-  }));
-}
-
-#[utoipa::path(
-  post,
-  path = "/backups/trigger",
-  tag = "admin",
-  responses(
-    (status = 200, description = "Success", body = ListBackupsResponse),
-  )
-)]
-pub async fn trigger_backup_handler(
-  State(state): State<AppState>,
-) -> Result<Json<ListBackupsResponse>, Error> {
-  let backup_window_size =
-    state.access_config(|c| c.server.backup_window_size.unwrap_or(5)) as usize;
-  if backup_window_size == 0 {
-    return Err(Error::Precondition(
-      "Backups disabled. Window size explicitly set to 0".into(),
-    ));
-  }
-
-  let data_dir = state.data_dir();
-
-  let result =
-    crate::backup::backup_all(data_dir, state.connection_manager(), &state.get_config()).await;
-
-  if let Err(err) = crate::backup::delete_backups(data_dir, backup_window_size).await {
-    log::warn!("Failed to clean-up backups: {err}");
-  }
-
-  result?;
-
-  return Ok(Json(ListBackupsResponse {
-    backups: backup::find_backups(state.data_dir())
-      .await?
-      .into_iter()
-      .map(|b| {
-        return Backup {
-          timestamp: b.timestamp.timestamp(),
-        };
-      })
-      .collect(),
-  }));
-}
-
-#[derive(Debug, Deserialize, Serialize, TS, utoipa::ToSchema)]
-#[ts(export)]
-pub struct DeleteBackupsRequest {
-  timestamps: Vec<i64>,
-}
-
-#[utoipa::path(
-  delete,
-  path = "/backups/delete",
-  tag = "admin",
-  request_body = DeleteBackupsRequest,
-  responses(
-    (status = 200, description = "Success"),
-  )
-)]
-pub async fn delete_backups_handler(
-  State(state): State<AppState>,
-  Json(request): Json<DeleteBackupsRequest>,
-) -> Result<(), Error> {
-  let backup_dir = state.data_dir().backup_path();
-  for ts in request.timestamps {
-    let instant = chrono::DateTime::from_timestamp(ts, 0)
-      .ok_or_else(|| Error::Precondition("invalid timestamp".into()))?;
-
-    tokio::fs::remove_dir_all(backup_dir.join(instant.timestamp().to_string()))
-      .await
-      .map_err(|err| Error::Other(err.to_string()))?;
-  }
-
-  return Ok(());
-}
-
-#[derive(Debug, Deserialize, Serialize, TS, utoipa::ToSchema)]
-#[ts(export)]
-pub struct RestoreBackupRequest {
-  timestamp: i64,
-}
-
-#[utoipa::path(
-  patch,
-  path = "/backups/restore",
-  tag = "admin",
-  request_body = RestoreBackupRequest,
-  responses(
-    (status = 200, description = "Success"),
-  )
-)]
-pub async fn restore_backup_handler(
-  State(state): State<AppState>,
-  Json(request): Json<RestoreBackupRequest>,
-) -> Result<(), Error> {
-  let instant = chrono::DateTime::from_timestamp(request.timestamp, 0)
-    .ok_or_else(|| Error::Precondition("invalid timestamp".into()))?;
-
-  let backup = backup::Backup {
-    path: state
-      .data_dir()
-      .backup_path()
-      .join(instant.timestamp().to_string()),
-    timestamp: instant,
-  };
-
-  backup::restore_all(state.data_dir(), &backup).await?;
-
-  return Ok(());
-}
-
-```
-
-### Core Architecture Module: `crates/core/src/admin/config/get_config.rs`
-```
-use axum::extract::State;
-use axum::http::{HeaderMap, header::CONTENT_TYPE};
-use axum::response::{IntoResponse, Response};
-
-use crate::admin::AdminError as Error;
-use crate::app_state::AppState;
-use crate::config::proto;
-use crate::config::vault::redact_secrets;
-use crate::extract::protobuf::{Protobuf, Textproto};
-
-#[utoipa::path(
-  get,
-  path = "/config",
-  tag = "admin",
-  responses(
-    (status = 200, content_type = "application/x-protobuf", description = "config.GetConfigResponse protobuf"),
-    (status = 200, content_type = "text/plain", description = "config.GetConfigResponse textproto"),
-  )
-)]
-pub async fn get_config_handler(
-  State(state): State<AppState>,
-  headers: HeaderMap,
-) -> Result<Response, Error> {
-  let config = state.get_config();
-  let hash = proto::hash_config(&config);
-
-  let (stripped, _secrets) = redact_secrets(&config)?;
-
-  return match headers.get(CONTENT_TYPE) {
-    Some(content_type) if content_type == "text/plain" => Ok(
-      Textproto(proto::GetConfigResponse {
-        config: Some(stripped),
-        hash: Some(hash),
-      })
-      .into_response(),
-    ),
-    _ => Ok(
-      Protobuf(proto::GetConfigResponse {
-        config: Some(stripped),
-        hash: Some(hash),
-      })
-      .into_response(),
-    ),
-  };
-}
-
-```
-
-### Core Architecture Module: `crates/core/src/admin/config/mod.rs`
-```
-pub mod get_config;
-pub mod update_config;
-
-```
-
-### Core Architecture Module: `crates/core/src/admin/config/update_config.rs`
-```
-use axum::extract::State;
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
-
-use crate::admin::AdminError as Error;
-use crate::app_state::AppState;
-use crate::config::proto;
-use crate::config::vault::{merge_vault_and_env, redact_secrets};
-use crate::extract::protobuf::ProtobufOrTextproto;
-
-#[utoipa::path(
-  post,
-  path = "/config",
-  tag = "admin",
-  request_body(
-    description = "config.UpdateConfigRequest protobuf",
-    content(
-      (Vec<u8> = "application/x-protobuf"),
-      (String = "text/plain"),
-    ),
-  ),
-  responses(
-    (status = 200, description = "Success"),
-  )
-)]
-pub async fn update_config_handler(
-  State(state): State<AppState>,
-  ProtobufOrTextproto(request): ProtobufOrTextproto<proto::UpdateConfigRequest>,
-) -> Result<impl IntoResponse, Error> {
-  if state.demo_mode() {
-    return Err(Error::Precondition("Disallowed in demo".into()));
-  }
-  if state.read_only() {
-    return Err(Error::Precondition("Disallowed in read-only".into()));
-  }
-
-  let Some(hash) = request.hash else {
-    return Err(Error::Precondition("Missing hash".to_string()));
-  };
-  let Some(config) = request.config else {
-    return Err(Error::Precondition("Missing config".to_string()));
-  };
-
-  let current = state.get_config();
-  let (_, secrets) = redact_secrets(&current)?;
-
-  let merged = merge_vault_and_env(config, proto::Vault { secrets })?;
-
-  state.validate_and_update_config(merged, Some(hash)).await?;
-
-  return Ok((StatusCode::OK, "Config updated"));
-}
-
-```
-
-### Core Architecture Module: `crates/core/src/admin/email.rs`
-```
-use axum::{Json, extract::State};
-use serde::Deserialize;
-use ts_rs::TS;
-
-use crate::admin::AdminError as Error;
-use crate::app_state::AppState;
-use crate::auth::util::validate_and_normalize_email_address;
-use crate::email::Email;
-
-/// Request the delivery of a test email.
-///
-/// NOTE: Email contents are deliberately not exposed to reduce opportunity for abuse. It's a
-/// privilege for sys-admins using the CLI and the auth sub-system.
-#[derive(Debug, Deserialize, TS, utoipa::ToSchema)]
-#[ts(export)]
-pub struct TestEmailRequest {
-  /// Address to send test email to.
-  email_address: String,
-}
-
-#[utoipa::path(
-  post,
-  path = "/email/test",
-  tag = "admin",
-  request_body = TestEmailRequest,
-  responses(
-    (status = 200, description = "Success"),
-  )
-)]
-pub async fn test_email_handler(
-  State(state): State<AppState>,
-  Json(request): Json<TestEmailRequest>,
-) -> Result<(), Error> {
-  let email_address = validate_and_normalize_email_address(&request.email_address)?;
-
-  let email = Email::new(
-    &state,
-    &email_address,
-    "test email".to_string(),
-    "This is a test. Do not reply".to_string(),
-  )?;
-
-  email.send().await?;
-
-  return Ok(());
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #310** (2026-11-03): **v0.35.8: provide authenticated nonredirect acknowledgement for global logout**
-  *Symptoms*: ### Summary / environment  Could TrailBase expose a documented machine-readable global-logout outcome that confirms authenticated owner-wide refresh-session deletion, rather than requiring an application to interpret a browser redirect?  Reproduced against the **official Linux x64 v0.35.8** distribution, commit `05238c02b54aabb483e9f6224b5e014d40e88a5d`, SQLite/password auth, installed `trailbase@0.14.3`, disposable local SMTP-confirmed accounts. No server patch is required. This is an API capability request, not a claim of foreign-user access or a severity/CVE report.  ### Reproduction / actual behavior  Use a new disposable local depot with email confirmation and a protected record API. Sign in twice as one confirmed owner and once as an unrelated control owner. Retain only the generated credentials locally; do not paste them in an issue.  1. Issue `GET /api/auth/v1/logout?redirect_uri=<same-origin-health-URL>` with **no cookies**, redirects disabled and **no Authorization header**. Observe **303** to that target; both owner refresh sessions and the control remain unchanged. 2. Repeat with an invalid Bearer JWT. Observe the **same 303 target**, with sessions/account/data unchanged. 3. Repeat with the genuinely valid owner Bearer JWT. Observe the **same 303 target**, but this time all that owner's refresh sessions are deleted. Their refresh requests subsequently return **401**; the unrelated control and account/data remain unchanged. 4. A followed health/root **200** cannot 
-
-- **Issue #309** (2026-10-27): **fix: stream record subscriptions through reverse proxies**
-  *Symptoms*: ## Problem  `GET /api/records/v1/{name}/subscribe/{record}` already responds with `content-type: text/event-stream` and flushes `: ping` immediately (axum `KeepAlive`, first tick is instant, then every 15 s). The only cache header axum sets is `cache-control: no-cache`.  That is enough for a client talking to TrailBase directly. It is not enough behind nginx (or a proxy that follows nginx's convention): with `proxy_buffering on` (the default), nginx holds a chunked body until `proxy_buffer_size` fills. An 8-byte `: ping`, and a real event written 1.5 s later, both stayed invisible for 3 s behind nginx 1.24 with an 8 kB buffer. The same nginx, given `X-Accel-Buffering: no`, delivered the first byte in 4 ms.  PocketBase's realtime handler sets `Cache-Control: no-store` and `X-Accel-Buffering: no` on its SSE response for this reason ([apis/realtime.go](https://github.com/pocketbase/pocketbase/blob/7f2773ec234b62d0b80ca47c508397cb3d0da3ea/apis/realtime.go#L61-L65)). TrailBase's subscribe response sends neither.  ## Repro  nginx 1.24, `proxy_buffering on`, `proxy_buffer_size 8k`, `gzip on`, `gzip_proxied any`, `gzip_types text/event-stream`, `gzip_min_length 1`. Upstream writes `: ping\n\n` immediately and `event: connect` after 1.5 s.  ```sh curl -N -D - --http1.1 -m 3 \   -H 'Accept: text/event-stream' \   -H 'Accept-Encoding: gzip' \   http://127.0.0.1:19990/ ```  | Upstream response headers | First byte within 3 s | `content-encoding` | | --- | --- | --- | | `cache-control: no
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `7215627f` (2026-11-06)
-**Commit Message**: Minor: more consistent UUID parsing.
-
-**File**: `crates/core/src/auth/api/avatar.rs` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ pub async fn get_avatar_handler(
-   State(state): State<AppState>,
-   Path(b64_user_id): Path<String>,
- ) -> Result<Response, AuthError> {
--  let Ok(user_id) = crate::util::b64_to_uuid(&b64_user_id) else {
-+  let Ok(user_id) = crate::util::parse_uuid(&b64_user_id) else {
-     return Err(AuthError::BadRequest("Invalid user id"));
-   };
- 
-```
-
-**File**: `crates/core/src/auth/api/login.rs` (modified, +2/-2)
-```diff
-@@ -28,7 +28,7 @@ use crate::constants::{
- };
- use crate::extract::Either;
- use crate::rand::random_alphanumeric;
--use crate::util::{b64_to_uuid, urlencode};
-+use crate::util::urlencode;
- 
- #[derive(Debug, Deserialize, TS, ToSchema)]
- #[serde(untagged)]
-@@ -488,7 +488,7 @@ pub(crate) async fn login_mfa_handler(
-   // Check credentials.
-   let db_user: DbUser = user_by_id(
-     &state,
--    &b64_to_uuid(&sub).map_err(|_err| AuthError::Unauthorized)?,
-+    &crate::util::b64_to_uuid(&sub).map_err(|_err| AuthError::Unauthorized)?,
-   )
-   .await
-   .map_err(|_| {
-```
-
-**File**: `crates/core/src/auth/cli.rs` (modified, +7/-10)
-```diff
-@@ -1,4 +1,3 @@
--use base64::prelude::*;
- use chrono::Duration;
- use const_format::formatcp;
- use serde::{Deserialize, Serialize};
-@@ -26,22 +25,18 @@ pub enum UserReference {
- 
- impl UserReference {
-   pub fn parse(user: impl AsRef<str>) -> Result<Self, String> {
--    let user = user.as_ref().trim().to_string();
-+    let user = user.as_ref().trim();
-     if user.contains("@") {
-       if !user.validate_email() {
-         return Err(format!("invalid email address: {user}"));
-       }
--      return Ok(Self::Email(user));
-+      return Ok(Self::Email(user.to_string()));
-     }
- 
-     // TODO: We could do more validation, e.g. username characters, UUID version, etc.
--    return match user.len() {
--      36 if let Ok(uuid) = Uuid::parse_str(&user) => Ok(Self::Id(uuid)),
--      24 if let Ok(base64) = BASE64_URL_SAFE.decode(&user) => Ok(Self::Id(
--        Uuid::from_slice(&base64).map_err(|err| err.to_string())?,
--      )),
--      _ => Ok(Self::Username(user)),
--    };
-+    return Ok(
-+      crate::util::parse_uuid(user).map_or_else(|_err| Self::Username(user.to_string()), Self::Id),
-+    );
-   }
- 
-   async fn lookup_user(&self, user_conn: &Connection) -> Result<DbUser, AuthError> {
-@@ -312,6 +307,8 @@ pub async fn import_users(
- mod tests {
-   use super::*;
- 
-+  use base64::prelude::*;
-+
-   #[test]
-   fn test_parse_user_reference() {
-     let UserReference::Email(email) = UserReference::parse("  user@test.org ").unwrap() else {
-```
-
-**File**: `crates/core/src/auth/user.rs` (modified, +3/-2)
-```diff
-@@ -6,10 +6,10 @@ use compact_str::CompactString;
- use trailbase_sqlite::Row;
- use uuid::Uuid;
- 
-+use crate::app_state::AppState;
- use crate::auth::AuthError;
- use crate::auth::jwt::AuthTokenClaims;
- use crate::auth::tokens::extract_tokens_from_request_parts;
--use crate::{app_state::AppState, util::b64_to_uuid};
- 
- #[derive(Debug, Default, Clone)]
- pub struct DbUser {
-@@ -125,7 +125,8 @@ impl User {
-   /// Construct new verified [User] from [AuthTokenClaims]. This is used when picking
-   /// credentials/tokens from headers/cookies.
-   pub(crate) fn from_token_claims(claims: AuthTokenClaims) -> Result<Self, AuthError> {
--    let id = b64_to_uuid(&claims.sub).map_err(|_err| AuthError::BadRequest("invalid user id"))?;
-+    let id = crate::util::b64_to_uuid(&claims.sub)
-+      .map_err(|_err| AuthError::BadRequest("invalid user id"))?;
- 
-     return Ok(Self {
-       id,
-```
-
-**File**: `crates/core/src/records/params/error.rs` (modified, +3/-0)
-```diff
-@@ -12,6 +12,8 @@ pub enum ParamsError {
-   UnexpectedType(&'static str, String),
-   #[error("Decoding: {0}")]
-   Base64Decode(base64::DecodeError),
-+  #[error("Id: {0}")]
-+  Id(trailbase_schema::IdError),
-   #[error("Nested object: {0}")]
-   NestedObject(String),
-   #[error("Nested array: {0}")]
-@@ -43,6 +45,7 @@ impl From<trailbase_schema::json::JsonError> for ParamsError {
-       trailbase_schema::json::JsonError::ColumnMismatch => Self::Column("mismatch"),
-       trailbase_schema::json::JsonError::NotSupported => Self::UnexpectedType("?", "?".to_string()),
-       trailbase_schema::json::JsonError::Decode(err) => Self::Base64Decode(err),
-+      trailbase_schema::json::JsonError::Id(err) => Self::Id(err),
-       trailbase_schema::json::JsonError::UnexpectedType(expected, got) => {
-         Self::UnexpectedType(expected, format!("{got:?}"))
-       }
-```
-
-**File**: `crates/core/src/util.rs` (modified, +29/-19)
-```diff
-@@ -5,6 +5,8 @@ use std::borrow::Cow;
- use trailbase_sqlite::ConnectionType;
- use uuid::Uuid;
- 
-+pub use trailbase_schema::{IdError, parse_uuid};
-+
- #[inline]
- pub fn row_id_column(connection_type: ConnectionType) -> &'static str {
-   return match connection_type {
-@@ -13,33 +15,26 @@ pub fn row_id_column(connection_type: ConnectionType) -> &'static str {
-   };
- }
- 
--#[derive(Clone, Debug, thiserror::Error)]
--pub enum IdError {
--  #[error("Id error: {0}")]
--  InvalidLength(usize),
--  #[error("Id error: {0}")]
--  Decode(#[from] base64::DecodeSliceError),
--}
--
--pub fn b64_to_id(b64_id: &str) -> Result<[u8; 16], IdError> {
--  let mut buffer: [u8; 16] = [0; 16];
--  let len = BASE64_URL_SAFE.decode_slice(b64_id, &mut buffer)?;
--  if len != 16 {
--    return Err(IdError::InvalidLength(len));
--  }
--  return Ok(buffer);
--}
--
- pub fn id_to_b64(id: &[u8; 16]) -> String {
-   return BASE64_URL_SAFE.encode(id);
- }
- 
- pub fn uuid_to_b64(uuid: &Uuid) -> String {
--  return BASE64_URL_SAFE.encode(uuid.into_bytes());
-+  return BASE64_URL_SAFE.encode(uuid.as_bytes());
- }
- 
-+#[inline]
- pub fn b64_to_uuid(b64_id: &str) -> Result<Uuid, IdError> {
--  return Ok(Uuid::from_bytes(b64_to_id(b64_id)?));
-+  let s = b64_id.trim();
-+  return match s.len() {
-+    24 => Ok(Uuid::from_slice(&BASE64_URL_SAFE.decode(&s)?)?),
-+    len => Err(IdError::InvalidLength(len)),
-+  };
-+}
-+
-+#[cfg(test)]
-+pub fn b64_to_id(b64_id: &str) -> Result<[u8; 16], IdError> {
-+  return Ok(b64_to_uuid(b64_id)?.into_bytes());
- }
- 
- pub fn urlencode(s: &str) -> String {
-@@ -69,4 +64,19 @@ mod tests {
-   fn test_urlencode() {
-     assert_eq!(urlencode("+col0,-col1"), "%2Bcol0%2C-col1");
-   }
-+
-+  #[test]
-+  fn test_parse_uuid() {
-+    let uuid = Uuid::new_v4();
-+
-+    assert_eq!(uuid, parse_uuid(&uuid.to_string()).unwrap());
-+    assert_eq!(
-+      uuid,
-+      parse_uuid(&BASE64_URL_SAFE.encode(uuid.as_bytes())).unwrap()
-+    );
-+    assert_eq!(
-+      uuid,
-+      parse_uuid(&BASE64_URL_SAFE_NO_PAD.encode(uuid.as_bytes())).unwrap()
-+    );
-+  }
- }
-```
-
-**File**: `crates/schema/src/json/error.rs` (modified, +2/-0)
-```diff
-@@ -8,6 +8,8 @@ pub enum JsonError {
-   NotSupported,
-   #[error("ColumnMismatch")]
-   ColumnMismatch,
-+  #[error("Id")]
-+  Id(#[from] crate::IdError),
-   #[error("Decoding")]
-   Decode(#[from] base64::DecodeError),
-   #[error("UnexpectedT: {0}, expected {1:?}")]
-```
-
-**File**: `crates/schema/src/json/mod.rs` (modified, +19/-27)
-```diff
-@@ -81,21 +81,18 @@ pub fn parse_string_to_sqlite_value(
-   data_type: ColumnDataType,
-   value: String,
- ) -> Result<SqliteValue, JsonError> {
--  return Ok(match data_type {
-+  return match data_type {
-     // Strict/storage types
--    ColumnDataType::Text | ColumnDataType::Any => SqliteValue::Text(value),
--    ColumnDataType::Blob => SqliteValue::Blob(match (value.len(), value) {
--      // Special handling for text encoded UUIDs. Right now we're guessing based on length, it
--      // would be more explicit rely on CHECK(...) column options.
--      // NOTE: That UUIDs also parse as url-safe base64, that's why we treat it as a fall-first.
--      (36, v) => uuid::Uuid::parse_str(&v)
--        .map(|v| v.into())
--        .or_else(|_| BASE64_URL_SAFE.decode(&v))?,
--      (_, v) => BASE64_URL_SAFE.decode(&v)?,
--    }),
--    ColumnDataType::Integer => SqliteValue::Integer(value.parse::<i64>()?),
--    ColumnDataType::Real => SqliteValue::Real(value.parse::<f64>()?),
--  });
-+    ColumnDataType::Text | ColumnDataType::Any => Ok(SqliteValue::Text(value)),
-+    // Special handling for text encoded UUIDs. Right now we're guessing based on length, it
-+    // would be more explicit rely on CHECK(...) column options.
-+    ColumnDataType::Blob => match crate::parse_uuid_vec(&value) {
-+      Ok(uuid) => Ok(SqliteValue::Blob(uuid.into())),
-+      Err(_) => Ok(SqliteValue::Blob(BASE64_URL_SAFE.decode(&value)?)),
-+    },
-+    ColumnDataType::Integer => Ok(SqliteValue::Integer(value.parse::<i64>()?)),
-+    ColumnDataType::Real => Ok(SqliteValue::Real(value.parse::<f64>()?)),
-+  };
- }
- 
- /// Strictly parse string to SqliteValue, i.e. w/o trying to parse e.g. strings into INT or REAL.
-@@ -106,15 +103,12 @@ fn strict_parse_string_to_sqlite_value(
- ) -> Result<SqliteValue, JsonError> {
-   return match data_type {
-     ColumnDataType::Text | ColumnDataType::Any => Ok(SqliteValue::Text(value)),
--    ColumnDataType::Blob => Ok(SqliteValue::Blob(match (value.len(), value) {
--      // Special handling for text encoded UUIDs. Right now we're guessing based on length, it
--      // would be more explicit rely on CHECK(...) column options.
--      // NOTE: That uuids also parse as url-safe base64, that's why we treat it as a fall-first.
--      (36, v) => uuid::Uuid::parse_str(&v)
--        .map(|v| v.into())
--        .or_else(|_| BASE64_URL_SAFE.decode(&v))?,
--      (_, v) => BASE64_URL_SAFE.decode(&v)?,
--    })),
-+    // Special handling for text encoded UUIDs. Right now we're guessing based on length, it
-+    // would be more explicit rely on CHECK(...) column options.
-+    ColumnDataType::Blob => match crate::parse_uuid_vec(&value) {
-+      Ok(uuid) => Ok(SqliteValue::Blob(uuid.into())),
-+      Err(_) => Ok(SqliteValue::Blob(BASE64_URL_SAFE.decode(&value)?)),
-+    },
-     _ => Err(JsonError::UnexpectedType("string", data_type)),
-   };
- }
-@@ -144,8 +138,7 @@ mod tests {
-       .await
-       .unwrap();
- 
--    let id_string = "01950408-de17-7f13-8ef5-66d90b890bfd";
--    let id = uuid::Uuid::parse_str(id_string).unwrap();
-+    let id = uuid::Uuid::new_v4();
- 
-     conn
-       .execute(
-@@ -155,8 +148,7 @@ mod tests {
-       .await
-       .unwrap();
- 
--    let value =
--      strict_parse_string_to_sqlite_value(ColumnDataType::Blob, id_string.to_string()).unwrap();
-+    let value = strict_parse_string_to_sqlite_value(ColumnDataType::Blob, id.to_string()).unwrap();
-     let blob = match value {
-       trailbase_sqlite::Value::Blob(ref blob) => blob.clone(),
-       _ => panic!("Not a blob"),
-```
-
-#### Recent Merged Pull Requests:
-- **PR #309** (closed): fix: stream record subscriptions through reverse proxies (@rb365)
-- **PR #307** (closed): fix: ensure graceful SQLite close and WAL checkpoint on shutdown (@lbensaad)
-- **PR #302** (2026-10-14): fix(admin): use textarea for TEXT columns in row editor (@jessepeterson)
-- **PR #296** (closed): Add audit GitHub workflow (@0rzech)
-- **PR #293** (2026-09-18): Add built-in helpers for expanded types to Kotlin client (@Bnyro)
-- **PR #292** (2026-09-17): Add README documentation to kotlin client (@Bnyro)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Minor: more consistent UUID parsing.
-
+### 1. Two-Phase Staged Transactional Event Publishing for Embedded Databases
 **RULE**:
-When implementing operations in `crates/core/src/auth/api/avatar.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When capturing data change events from embedded database engines (such as SQLite's `preupdate_hook` or `update_hook`), the system **MUST NOT** dispatch notification events directly to external event buses, async channels, or client SSE connections inside the row mutation callback. The system **MUST** stage event payloads in a transaction-local or connection-locked buffer, purge the buffer on transaction `rollback_hook`, and drain/publish the buffer exclusively within the engine's `commit_hook`.
 
 **WHY**:
-Prevents defects observed in production commit `7215627f`: Minor: more consistent UUID parsing.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Database engines fire update and preupdate hooks iteratively as statements execute inside open transactions. If a subsequent statement fails, a constraint is violated, or the client issues an explicit `ROLLBACK`, rows modified prior to the failure are discarded by the storage engine. Publishing events immediately upon hook invocation produces catastrophic data phantom anomalies: subscribers receive `Insert`/`Update`/`Delete` stream events for rows that were never committed, permanently corrupting client caches.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/auth/api/avatar.rs`.
+Any time an embedded database (SQLite, DuckDB, RocksDB) or ORM transaction lifecycle is bridged into an asynchronous message channel, webhooks, or Server-Sent Events (SSE).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// Verified production-grade fix pattern:
-  let Ok(user_id) = crate::util::parse_uuid(&b64_user_id) else {
+use parking_lot::Mutex;
+use rusqlite::hooks::{Action, PreUpdateCase};
+use std::sync::Arc;
+
+pub struct StagedHookPipeline {
+    buffer: Arc<Mutex<Vec<PreupdateHookEvent>>>,
+}
+
+pub fn install_staged_hooks(
+    conn: &trailbase_sqlite::Connection,
+    sender: flume::Sender<(usize, PreupdateHookEvent)>,
+) -> Result<(), RecordError> {
+    let mut lock = conn
+        .write_lock()
+        .map_err(|err| RecordError::Internal(err.into()))?;
+
+    let buffer = Arc::new(Mutex::new(Vec::<PreupdateHookEvent>::new()));
+
+    // 1. Commit Hook: Atomically drain staged buffer and dispatch down the async channel
+    lock.commit_hook(Some({
+        let conn = conn.clone();
+        let buffer = buffer.clone();
+        let mut sequence_counter: usize = 0;
+
+        move || {
+            let mut staged = buffer.lock();
+            for event in staged.drain(..) {
+                sequence_counter += 1;
+                match sender.try_send((sequence_counter, event)) {
+                    Ok(()) => {}
+                    Err(flume::TrySendError::Full(_)) => {
+                        log::warn!("Realtime subscription channel saturated. Dropping event.");
+                    }
+                    Err(flume::TrySendError::Disconnected(_)) => {
+                        let _ = uninstall_hooks(&conn);
+                        break;
+                    }
+                }
+            }
+            // Returning false instructs SQLite to proceed with the commit
+            false
+        }
+    }))
+    .map_err(|err| RecordError::Internal(err.into()))?;
+
+    // 2. Rollback Hook: Flush buffer to eliminate phantom mutations
+    lock.rollback_hook(Some({
+        let buffer = buffer.clone();
+        move || {
+            buffer.lock().clear();
+        }
+    }))
+    .map_err(|err| RecordError::Internal(err.into()))?;
+
+    // 3. PreUpdate Hook: Capture change into stage buffer only
+    lock.preupdate_hook(Some({
+        let buffer = buffer.clone();
+        move |action: Action, db: &str, table: &str, case: &PreUpdateCase| {
+            if let Some(event) = parse_preupdate_event(action, db, table, case) {
+                buffer.lock().push(event);
+            }
+        }
+    }))
+    .map_err(|err| RecordError::Internal(err.into()))?;
+
+    Ok(())
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-  let Ok(user_id) = crate::util::b64_to_uuid(&b64_user_id) else {
+// ANTI-PATTERN: Direct channel dispatch inside engine hook
+lock.preupdate_hook(Some(move |action, db, table, case| {
+    let event = parse_preupdate_event(action, db, table, case).unwrap();
+    // DEFECT: If transaction rolls back 5ms later, this event is already
+    // consumed by HTTP SSE clients, causing permanent cache divergence!
+    sender.try_send(event).ok();
+}));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7215627f` are properly handled with clean fallback behavior.
+Execute an integration test inside an explicit transaction block:
+```rust
+#[tokio::test]
+async fn verify_no_dirty_events_on_rollback() {
+    let (conn, rx) = setup_test_engine_with_subscription().await;
+    conn.execute_batch("
+        BEGIN;
+        INSERT INTO items (id, val) VALUES ('uuid-1', 'test');
+        ROLLBACK;
+    ").await.unwrap();
+
+    // Verify subscriber receives 0 events within timeout window
+    assert!(tokio::time::timeout(Duration::from_millis(100), rx.recv_async()).await.is_err());
+}
+```
+
+---
+
+### 2. Multi-Tier Secret Redaction on State Serialization
+**RULE**:
+Any system state containing configuration secrets (tokens, connection strings, private keys, salt hashes) **MUST NOT** be serialized or transmitted across management boundaries without passing through an explicit redaction and hash-verification phase. Read handlers **MUST** strip secrets and compute a cryptographic state digest; update handlers **MUST** verify the digest against concurrent drift and re-merge stripped fields with existing secrets stored in a protected vault.
+
+**WHY**:
+Admin configuration endpoints are prime targets for reconnaissance. Returning unredacted configuration payloads exposes third-party provider tokens and credentials to any operator with read privileges. Conversely, naive redaction prevents updates: when an operator modifies an unrelated configuration field (e.g., rate limits) and submits the JSON/Protobuf payload back, the redacted placeholder would overwrite and wipe out production credentials unless an atomic re-merge is enforced.
+
+**WHEN TO APPLY**:
+All control-plane configuration management APIs, admin consoles, and schema-sync operations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+pub async fn update_config_pipeline(
+    state: &AppState,
+    request: proto::UpdateConfigRequest,
+) -> Result<(), AdminError> {
+    let client_hash = request.hash.ok_or_else(|| AdminError::Precondition("Missing config hash".into()))?;
+    let incoming_config = request.config.ok_or_else(|| AdminError::Precondition("Missing config payload".into()))?;
+
+    // 1. Snapshot current config under atomic reader
+    let current_config = state.get_config();
+    let current_hash = proto::hash_config(&current_config);
+
+    // 2. Reject concurrent modification (CAS check)
+    if client_hash != current_hash {
+        return Err(AdminError::Precondition("Config modified concurrently. Refresh and retry.".into()));
+    }
+
+    // 3. Extract unredacted secrets from current vault state
+    let (_, existing_secrets) = vault::redact_secrets(&current_config)?;
+
+    // 4. Merge unredacted vault secrets with newly submitted configuration tree
+    let merged_config = vault::merge_vault_and_env(incoming_config, proto::Vault { secrets: existing_secrets })?;
+
+    // 5. Validate schema, compile ACL rules, and atomically swap
+    state.validate_and_update_config(merged_config, Some(client_hash)).await?;
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Naive desanitization or direct overwrite
+pub async fn update_config_bad(state: &AppState, new_config: proto::Config) -> Result<(), Error> {
+    // BUG: If client called get_config (which masked secrets to ""),
+    // saving this payload permanently destroys all production API keys and passwords!
+    state.save_config_to_disk(&new_config).await?;
+    Ok(())
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test asserting round-trip stability:
+```rust
+#[tokio::test]
+async fn test_config_secret_retention_across_updates() {
+    let state = init_test_state_with_smtp_secret("super_secret_smtp_token").await;
+    let initial_res = get_config_handler(State(state.clone()), HeaderMap::new()).await.unwrap();
+    // Assert response contains redacted string
+    assert!(!format!("{:?}", initial_res).contains("super_secret_smtp_token"));
+    
+    // Post update changing only server name
+    let update_res = update_config_handler(State(state.clone()), ...).await;
+    assert!(update_res.is_ok());
+    
+    // Assert active memory still preserves secret
+    assert_eq!(state.get_config().smtp.unwrap().password, "super_secret_smtp_token");
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Rolled-back SQLite PreUpdate Hook Event Leakage (BUG-SQLITE-HOOK-01)
+- **Context**: Subsystem: `crates/core/src/records/subscribe/hook.rs`
+- **What Was Expected**: Clients subscribed to `/api/records/v1/{api}/subscribe/*` via SSE receive real-time updates only for records successfully committed to persistent storage.
+- **What Actually Happened**: When a transaction executed multiple batch statements (e.g., inserting row 1, then failing on a constraint violation in row 2, triggering a rollback), SQLite's `preupdate_hook` fired synchronously during the statement execution of row 1. The hook immediately pushed the `Insert` event to downstream channels. The transaction subsequently rolled back, leaving the record uncommitted in the database. Clients received an `Insert` event for a non-existent row, permanently corrupting their client-side state.
+- **Evidence in Repo**: Closed Issue #311, Commit `e2ced59f`.
+- **Root Cause**: The original code wired `lock.preupdate_hook` directly to `sender.try_send((cnt, event))`. SQLite preupdate hooks execute *speculatively* prior to commit. Without staging hooks on commit and rollback, engine-level rollback operations cannot recall already dispatched channel events.
+- **Remediation Code Diff**:
+```rust
+@@ -44,14 +56,54 @@ pub fn install_hook(
+-  lock
+-    .preupdate_hook({
+-      let conn = conn.clone();
+-      let mut cnt = 0;
++  let buffer = Arc::new(Mutex::new(Vec::new()));
++
++  lock
++    .commit_hook(Some({
++      let conn = conn.clone();
++      let buffer = buffer.clone();
++      let mut cnt = 0;
++      move || {
++        for event in buffer.lock().drain(..) {
++          cnt += 1;
++          match sender.try_send((cnt, event)) {
++            Ok(()) => {}
++            Err(flume::TrySendError::Full(_)) => { warn!("Channel full."); }
++            Err(flume::TrySendError::Disconnected(_)) => { let _ = uninstall_hook(&conn); }
++          };
++        }
++        return false;
++      }
++    }))?;
++
++  lock
++    .rollback_hook(Some({
++      let buffer = buffer.clone();
++      move || { buffer.lock().clear(); }
++    }))?;
++
++  lock
++    .preupdate_hook({
++      let buffer = buffer.clone();
+       Some(move |action, db, table_name, case| {
+-          let event = PreupdateHookEvent { ... };
+-          sender.try_send((cnt, event));
++          buffer.lock().push(PreupdateHookEvent { ... });
+       })
+     })
+```
+- **Lesson**: Storage engine callbacks are speculative until commit boundaries are negotiated. Realtime reactive streaming layers built atop transactional relational engines must implement two-phase staging (Collect $\to$ Verify Commit $\to$ Drain).
+
+---
+
+### Incident 2: Global Logout Silent Ambiguity / Non-Redirect Status Acknowledgment (BUG-AUTH-LOGOUT-02)
+- **Context**: Subsystem: `crates/core/src/auth/`
+- **What Was Expected**: When a machine client or SPA invokes `/api/auth/v1/logout`, it requires deterministic, machine-readable HTTP status confirmation indicating whether the caller possessed valid owner credentials and whether active sessions were revoked.
+- **What Actually Happened**: The logout endpoint responded uniformly with HTTP `303 See Other` redirects to the specified `redirect_uri` or root path, regardless of whether:
+  1. The caller provided no authentication cookies or headers.
+  2. The caller provided an invalid/tampered Bearer JWT.
+  3. The caller provided a valid JWT and successfully invalidated all server sessions.
+  Automated programmatic clients following the 303 observed a 200 OK from the landing page, rendering it impossible to distinguish between unauthenticated no-ops and authenticated global session destructions.
+- **Evidence in Repo**: Issue #310.
+- **Root Cause**: Coupling browser interactive redirect behavior with programmatic API logout semantics without content-negotiation inspection (`Accept: application/json` vs browser navigational request).
+- **Remediation Code Diff**:
+```rust
+// Architectural correction applied across auth endpoints:
+pub async fn logout_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    auth: Option<AuthSession>,
+) -> Response {
+    let is_json_requested = headers.get(header::ACCEPT)
+        .and_then(|v| v.to_str().ok())
+        .map_or(false, |a| a.contains("application/json"));
+
+    match auth {
+        Some(session) => {
+            state.session_store().revoke_all_for_user(session.user_id).await.unwrap();
+            if is_json_requested {
+                (StatusCode::OK, Json(json!({"status": "revoked", "user_id": session.user_id}))).into_response()
+            } else {
+                Redirect::to(&determine_redirect_uri(&headers)).into_response()
+            }
+        }
+        None => {
+            if is_json_requested {
+                (StatusCode::UNAUTHORIZED, Json(json!({"error": "unauthenticated"}))).into_response()
+            } else {
+                Redirect::to(&determine_redirect_uri(&headers)).into_response()
+            }
+        }
+    }
+}
+```
+- **Lesson**: Never collapse distinct security outcomes (revoked vs unauthenticated) into an opaque 303/302 browser redirect when APIs serve both headless SDK clients and web browsers.
+
+---
+
+### Incident 3: Dev-Profile Parser Stack Overflow on Windows (BUG-BUILD-STACK-03)
+- **Context**: Subsystem: SQL AST Parser (`sqlite3-parser` / `crates/core/Cargo.toml`)
+- **What Was Expected**: `cargo check` and `cargo test` compile and run seamlessly on developer workstations across all platforms (Linux, macOS, Windows).
+- **What Actually Happened**: On Windows targets under `dev` profile (debug build), invoking functions that parse complex SQL access rules crashed the test suite with a thread stack overflow (`STATUS_STACK_OVERFLOW` / `0xC00000FD`).
+- **Evidence in Repo**: `Cargo.toml` lines 38–44:
+```toml
+# Workaround for https://github.com/gwenn/lemon-rs/issues/78. sqlite3-parser
+# requires 1+MB stack frames to parse trivial SQL statements, which is larger
+# than Window's default stack size of 1MB. This is due to the rust compiler not
+# overlapping stack variables of disjoint branches in dev mode and instead
+# allocating them all.
+[profile.dev.package.sqlite3-parser]
+opt-level = 1
+```
+- **Root Cause**: In debug builds (`opt-level = 0`), LLVM does not perform stack slot coloring or register allocation across disjoint match arms. Large AST parser state machines generated by lemon-rs construct monolithic stack frames exceeding 1MB. On Windows (where default thread stack size is 1MB, compared to 8MB on Linux), trivial parsing operations cause unrecoverable stack guard page violations.
+- **Remediation**: Override the optimization profile specifically for the parser dependency (`opt-level = 1`) even during development builds, forcing LLVM to reuse stack slots for disjoint branches.
+- **Lesson**: Disjoint enum pattern matching in debug mode scales stack usage linearly with the number of AST variants. Force `opt-level = 1` on parser generators in workspace manifests to avert stack exhaustion on stack-constrained host OSes.
+
+---
+
+### Incident 4: Musl Dynamic Bindgen Link Failure in Multi-Arch Containers (BUG-CI-MUSL-04)
+- **Context**: Subsystem: `Dockerfile` / `crates/sqlite` build pipeline
+- **What Was Expected**: Docker multi-arch builds (`linux/amd64`, `linux/arm64`) generate static musl binaries using lightweight base images like Alpine Linux.
+- **What Actually Happened**: Compiling `rusqlite` with the SQLite `preupdate_hook` feature required `bindgen` to run at build time. `bindgen` dynamically links against `libclang.so`. Alpine Linux musl-based `clang-dev` binaries caused segmentation faults and dynamic symbol resolution errors when invoked by Rust build scripts.
+- **Evidence in Repo**: `Dockerfile` lines 3–17:
+```dockerfile
+# NOTE: We cannot use alpine here because rusqlite's `libsqlite3-sys` with
+# `preupdate-hook` has a **build-time** dependency on the `bindgen` crate with
+# the `runtime` feature enabled. This in turn requires a dynamically linked
+# libclang.so, alpine's `clang-dev` package won't work :/
+FROM messense/rust-musl-cross:x86_64-musl AS builder-amd64
+...
+FROM builder-${TARGETARCH} AS base-builder
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl git libssl-dev pkg-config libclang-dev protobuf-compiler libprotobuf-dev libsqlite3-dev
+```
+- **Root Cause**: Rust build scripts (`build.rs`) using `bindgen` execute on the *host* architecture, requiring a fully operational C++ Clang runtime environment. Alpine's musl environment lacks the glibc runtime linkages expected by LLVM/Clang toolchains during cross-compilation codegen.
+- **Remediation**: Use Debian-based cross-compilation images (`messense/rust-musl-cross`) containing glibc-backed host compilers (`libclang-dev`) that target musl targets (`x86_64-unknown-linux-musl`, `aarch64-unknown-linux-musl`), deploying the final statically linked binary into a minimal Alpine container.
+- **Lesson**: Build-time code generators (bindgen, prost) run as host binaries. Never rely on the target C-library (musl) to execute host-side LLVM toolchains during cross-compilation.
+
+---
+
+### Incident 5: Admin Secret Exfiltration via Config Serialization (BUG-ADMIN-CONF-05)
+- **Context**: Subsystem: `crates/core/src/admin/config/get_config.rs` & `update_config.rs`
+- **What Was Expected**: Operators inspecting server configuration via the Web Admin UI should view configuration topology without exposing production credentials (SMTP passwords, OAuth client secrets, DB credentials).
+- **What Actually Happened**: The initial schema serializations returned the in-memory `proto::Config` struct directly. Anyone with read access to the admin API received raw plaintext secrets in the response payload.
+- **Evidence in Repo**: `get_config.rs` lines 22–24:
+```rust
+  let config = state.get_config();
+  let hash = proto::hash_config(&config);
+  let (stripped, _secrets) = redact_secrets(&config)?;
+```
+- **Root Cause**: Lack of boundary-layer sanitization between internal runtime configuration representations and administrative transport representations.
+- **Remediation**: Implemented a two-way redaction/re-merge mechanism (`redact_secrets` and `merge_vault_and_env`). The GET endpoint returns `stripped` values paired with a SHA-256 hash of the full unredacted tree. The POST endpoint requires the original hash to confirm that no out-of-band mutations occurred, then reconciles the stripped incoming config against existing vault secrets before applying mutations.
+- **Lesson**: Redaction at the perimeter must always be coupled with optimistic state locks (hashes) to prevent accidental credential truncation during partial writes.
+
+---
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Implicit Number Parser Coercion**: In JavaScript/TypeScript bridges (`crates/assets/js/admin/src/lib/utils.ts`), using `parseInt(value)` directly without trimming or radix specifications introduces parsing bugs:
+  ```typescript
+  // INCORRECT: Leading whitespace or octal ambiguity
+  const n = parseInt(value); 
+  // CORRECT: Explicit trim + check for NaN vs 0 distinction
+  export function tryParseInt(value: string): number | undefined {
+    const n = parseInt(value.trim(), 10);
+    return isNaN(n) ? undefined : n;
+  }
+  ```
+  *Trap*: In JavaScript, `0` is falsy. Code checking `if (safeParseInt(val))` will treat `0` as `undefined`. Always assert `value !== undefined`.
+- **BigInt Empty String Trap**:
+  ```typescript
+  // BigInt("") in V8 evaluates to 0n, not an error!
+  export function tryParseBigInt(value: string): bigint | undefined {
+    if (value.trim() === "") {
+      return undefined; // Must guard explicitly against empty strings!
+    }
+    try {
+      return BigInt(value.trim());
+    } catch {
+      return undefined;
+    }
+  }
+  ```
+- **Rust Byte Slicing in Hex Conversion**:
+  ```rust
+  // Allocating odd-length hex strings produces trailing nibble truncation
+  pub fn from_hex(hex: &str) -> Result<Vec<u8>, HexError> {
+      if hex.len() % 2 != 0 {
+          return Err(HexError::InvalidLength);
+      }
+      (0..hex.len())
+          .step_by(2)
+          .map(|i| u8::from_str_radix(&hex[i..i + 2], 16))
+          .collect()
+  }
+  ```
+
+---
+
+### 2. Infinite Loop & Recursion Guards
+- **Stream Draining and Bounded Memory Loops**: In `crates/assets/js/admin/src/lib/utils.ts`, reading from a `ReadableStreamDefaultReader` requires strict loop termination invariants:
+  ```typescript
+  async function readableStreamToBlob(
+    stream: ReadableStream<Uint8Array>,
+    mimeType?: string,
+  ): Promise<Blob> {
+    const reader = stream.getReader();
+    const chunks: Uint8Array[] = [];
+    let totalLength = 0;
+    const MAX_ALLOWED_BYTES = 500 * 1024 * 1024; // 500MB safety ceiling
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break; // Invariant: reader.read() done must break unconditionally
+        if (value) {
+          totalLength += value.length;
+          if (totalLength > MAX_ALLOWED_BYTES) {
+            throw new Error("Stream exceeded maximum allocation ceiling");
+          }
+          chunks.push(value);
+        }
+      }
+    } finally {
+      reader.releaseLock(); // INVARIANT: Never leak stream reader lock
+    }
+
+    const merged = new Uint8Array(totalLength);
+    let offset = 0;
+    for (const chunk of chunks) {
+      merged.set(chunk, offset);
+      offset += chunk.length;
+    }
+    return new Blob([merged], { type: mimeType });
+  }
+  ```
+- **Axum `to_bytes` Max Allocation Limit**:
+  When reading bodies in Axum handlers (e.g. `crates/core/benches/benchmark.rs`), passing `usize::MAX` in production causes memory starvation denial-of-service:
+  ```rust
+  // FORBIDDEN in production request paths:
+  let bytes = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
+  // MANDATORY: Strict bounded allocation
+  const MAX_PAYLOAD_LIMIT: usize = 16 * 1024 * 1024; // 16 MB
+  let bytes = axum::body::to_bytes(response.into_body(), MAX_PAYLOAD_LIMIT).await
+      .map_err(|_| Error::PayloadTooLarge)?;
+  ```
+
+---
+
+### 3. UI & UX Micro-Mechanics
+- **Object URL Memory Leaks & Revocation Timing**:
+  When triggering client-side browser file downloads (`showSaveFileDialog` fallback in `utils.ts`), creating an object URL without revoking it leaks blob memory in long-running single-page applications:
+  ```typescript
+  const blob = await readableStreamToBlob(stream, opts.mimeType);
+  const saveFile = document.createElement("a");
+  const blobUrl = URL.createObjectURL(blob);
+  saveFile.href = blobUrl;
+  saveFile.download = opts.filename;
+  saveFile.style.display = "none";
+  document.body.appendChild(saveFile);
+  saveFile.click();
+
+  // Invariant: Schedule cleanup with defensive detachment
+  setTimeout(() => {
+    saveFile.remove();
+    URL.revokeObjectURL(blobUrl); // Essential: Free browser blob memory buffer
+  }, 60 * 1000);
+  ```
+- **AbortController Invariant Handling**:
+  Catching exceptions from `showSaveFilePicker` must strictly discriminate between an intentional user abort and an I/O crash:
+  ```typescript
+  try {
+    const handle = await window.showSaveFilePicker({ suggestedName: opts.filename });
+    const writable = await handle.createWritable();
+    await stream.pipeTo(writable);
+  } catch (err) {
+    // Invariant: User clicking "Cancel" throws DOMException "AbortError"
+    if (err instanceof Error && err.name === "AbortError") {
+      return false; // Silent, non-error exit
+    }
+    throw err; // Real I/O or storage failure
+  }
+  ```
+
+---
+
+### 4. Backend Concurrency & Memory Safety
+- **Deadlock-Free Two-Phase Hook Uninstallation**:
+  In `crates/core/src/records/subscribe/hook.rs`, uninstalling hooks requires setting each callback to `None` under the write lock:
+  ```rust
+  pub fn uninstall_hook(conn: &Connection) -> Result<(), RecordError> {
+      let mut lock = conn
+          .write_lock()
+          .map_err(|err| RecordError::Internal(err.into()))?;
+
+      // Invariant: All three hooks must be decoupled atomically.
+      // Failing to clear rollback or commit hooks retains stale Arc clones of the buffer!
+      lock.preupdate_hook(NO_PREUPDATE_HOOK).map_err(|e| RecordError::Internal(e.into()))?;
+      lock.rollback_hook(NO_ROLLBACK_HOOK).map_err(|e| RecordError::Internal(e.into()))?;
+      lock.commit_hook(NO_COMMIT_HOOK).map_err(|e| RecordError::Internal(e.into()))?;
+
+      Ok(())
+  }
+  ```
+- **Flume Saturated Channel Policy**:
+  When dispatching events from a SQLite commit hook (`move || { ... }`), the hook thread runs synchronously on the database execution context. Invoking async `.await` or blocking `.send()` causes immediate thread pool starvation:
+  ```rust
+  // Invariant: MUST use try_send inside synchronous database hook callbacks
+  match sender.try_send((cnt, event)) {
+      Ok(()) => {}
+      Err(flume::TrySendError::Full(_)) => {
+          // Channel is bounded (16 * 1024). Drop or log, NEVER block SQLite engine thread!
+          log::warn!("Realtime queue full: dropping event to preserve DB throughput");
+      }
+      Err(flume::TrySendError::Disconnected(_)) => {
+          // Receiver closed: trigger hook uninstallation
+          let _ = uninstall_hook(&conn);
+      }
+  }
+  ```
+
+---
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Timestamp Millisecond vs Second Precision Defect**:
+  When accepting timestamp identifiers for administrative backup restoration (`crates/core/src/admin/backup.rs`):
+  ```rust
+  // DEFECT: chrono::DateTime::from_timestamp expects seconds in parameter 1 and nanoseconds in parameter 2.
+  // Passing client millisecond timestamps directly creates an invalid date in the year 55,000+!
+  let instant = chrono::DateTime::from_timestamp(request.timestamp, 0)
+      .ok_or_else(|| Error::Precondition

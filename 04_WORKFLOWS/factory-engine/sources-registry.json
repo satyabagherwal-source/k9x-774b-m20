@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T11:31:33.979Z",
-    "lastVerified": "2026-11-09T11:31:33.979Z",
+    "lastChecked": "2026-11-09T11:56:30.404Z",
+    "lastVerified": "2026-11-09T11:56:30.404Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -231,9 +231,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-09T04:42:16.672Z",
+    "lastChecked": "2026-11-09T11:50:00.954Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-09T04:42:16.672Z"
+    "lastVerified": "2026-11-09T11:50:00.954Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -369,9 +369,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T10:28:32.857Z",
+    "lastChecked": "2026-11-09T11:50:05.965Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T10:28:32.857Z"
+    "lastVerified": "2026-11-09T11:50:05.965Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1454,9 +1454,9 @@
   "maotoumao-musicfree": {
     "name": "MusicFree",
     "officialUrl": "https://github.com/maotoumao/MusicFree",
-    "lastChecked": "2026-11-06T14:56:22.271Z",
+    "lastChecked": "2026-11-09T11:49:55.961Z",
     "revisionIdentifier": "d118b18b",
-    "lastVerified": "2026-11-06T14:56:22.271Z"
+    "lastVerified": "2026-11-09T11:49:55.961Z"
   },
   "zeromicro-go-zero": {
     "name": "go-zero",
@@ -1804,9 +1804,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-08T16:01:15.897Z",
+    "lastChecked": "2026-11-09T11:49:58.504Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-08T16:01:15.897Z"
+    "lastVerified": "2026-11-09T11:49:58.504Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -4532,8 +4532,8 @@
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T06:42:09.341Z",
-    "lastVerified": "2026-11-08T06:42:09.341Z",
+    "lastChecked": "2026-11-09T11:49:50.982Z",
+    "lastVerified": "2026-11-09T11:49:50.982Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -4785,22 +4785,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trailbaseio-trailbase": {
-    "name": "trailbase",
+    "name": "trailbaseio/trailbase",
     "officialUrl": "https://github.com/trailbaseio/trailbase",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T15:12:25.965Z",
-    "lastVerified": "2026-11-08T15:12:25.965Z",
+    "lastChecked": "2026-11-09T11:50:06.953Z",
+    "lastVerified": "2026-11-09T11:50:06.953Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "b464172f8b27841b40719d26fbeff421fca52a08362eabc07186860e8a8e8aa7",
-    "promotedRulesCount": 1,
+    "contentHash": "2043a1da1cc20326b2aff4e35fa24da695cb8d94217d91afae5b76e73748ce28",
+    "promotedRulesCount": 2,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "30b864ff"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "actix-actix-web": {
     "name": "actix/actix-web",
@@ -8713,13 +8712,13 @@
     "officialUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T13:54:54.224Z",
-    "lastVerified": "2026-11-05T13:54:54.224Z",
+    "lastChecked": "2026-11-09T11:49:53.537Z",
+    "lastVerified": "2026-11-09T11:49:53.537Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "e352aef78be5f70b818addb4913aa2d9b7d58d038a2508bbbab4c40c553e70f7",
-    "promotedRulesCount": 0,
+    "contentHash": "393e882de1e9690228c890a84e4328495acd779987e341ab15a439271285609c",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

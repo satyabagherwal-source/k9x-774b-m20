@@ -1025,8 +1025,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "e352aef78be5f70b818addb4913aa2d9b7d58d038a2508bbbab4c40c553e70f7",
-    "lastHarvestedAt": "2026-11-05T13:54:54.447Z",
+    "contentHash": "393e882de1e9690228c890a84e4328495acd779987e341ab15a439271285609c",
+    "lastHarvestedAt": "2026-11-09T11:56:27.783Z",
     "learningId": "learn-huggingface-speridlabs-iris-3b"
   },
   "hf-qwen-qwen3-4b": {
@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "30b864ff",
+    "sourceVersion": "047a8a24",
     "license": "OSL-3.0",
-    "contentHash": "b464172f8b27841b40719d26fbeff421fca52a08362eabc07186860e8a8e8aa7",
-    "lastHarvestedAt": "2026-11-07T18:09:50.249Z",
+    "contentHash": "2043a1da1cc20326b2aff4e35fa24da695cb8d94217d91afae5b76e73748ce28",
+    "lastHarvestedAt": "2026-11-09T11:54:13.195Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
