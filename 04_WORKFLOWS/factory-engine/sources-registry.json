@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T10:07:59.680Z",
-    "lastVerified": "2026-11-09T10:07:59.680Z",
+    "lastChecked": "2026-11-09T10:31:25.576Z",
+    "lastVerified": "2026-11-09T10:31:25.576Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T08:38:00.126Z",
+    "lastChecked": "2026-11-09T10:28:32.857Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T08:38:00.126Z"
+    "lastVerified": "2026-11-09T10:28:32.857Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1154,14 +1154,14 @@
     "officialUrl": "https://github.com/NervJS/taro",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-06T14:25:31.072Z",
-    "lastVerified": "2026-11-06T14:25:31.072Z",
+    "lastChecked": "2026-11-09T10:28:27.267Z",
+    "lastVerified": "2026-11-09T10:28:27.267Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nervjs-taro",
-    "contentHash": "3f46b1d1d7cf487725716b8a362ceb3f82dfd1340eac39140345afe8860fe2c5",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "contentHash": "385071d303d68c9378b2d0b8b383ec703f30bbc3230054783ed6419e99fc2a1d",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1460,12 +1460,12 @@
     "lastVerified": "2026-11-06T14:56:22.271Z"
   },
   "zeromicro-go-zero": {
-    "name": "zeromicro/go-zero",
+    "name": "go-zero",
     "officialUrl": "https://github.com/zeromicro/go-zero",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T15:28:19.779Z",
-    "lastVerified": "2026-11-08T15:28:19.779Z",
+    "lastChecked": "2026-11-09T10:28:25.448Z",
+    "lastVerified": "2026-11-09T10:28:25.448Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeromicro-go-zero",
@@ -1474,7 +1474,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "17efbb51"
   },
   "rustcrypto-hashes": {
     "name": "hashes",
@@ -2366,8 +2367,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-09T04:00:39.906Z",
-    "lastVerified": "2026-11-09T04:00:39.906Z",
+    "lastChecked": "2026-11-09T10:28:27.918Z",
+    "lastVerified": "2026-11-09T10:28:27.918Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -4246,9 +4247,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-08T06:12:13.918Z",
+    "lastChecked": "2026-11-09T10:28:17.875Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-08T06:12:13.918Z"
+    "lastVerified": "2026-11-09T10:28:17.875Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -4526,9 +4527,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-08T14:19:38.656Z",
+    "lastChecked": "2026-11-09T10:28:30.409Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-08T14:19:38.656Z"
+    "lastVerified": "2026-11-09T10:28:30.409Z"
   },
   "aome510-spotify-player": {
     "name": "spotify-player",
@@ -8542,12 +8543,12 @@
     "officialUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T13:27:00.267Z",
-    "lastVerified": "2026-11-05T13:27:00.267Z",
+    "lastChecked": "2026-11-09T10:28:20.502Z",
+    "lastVerified": "2026-11-09T10:28:20.502Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "0a82d4049276a1709e44f39345675fcbf2459cbc252829e1c690c10f3597bd36",
+    "contentHash": "98ed1dfa8f19aaee246d3a4813ff52400f053e8a8ccf740ada9c0962e957d850",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

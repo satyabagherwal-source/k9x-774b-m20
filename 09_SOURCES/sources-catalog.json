@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "0a82d4049276a1709e44f39345675fcbf2459cbc252829e1c690c10f3597bd36",
-    "lastHarvestedAt": "2026-11-05T13:27:11.097Z",
+    "contentHash": "98ed1dfa8f19aaee246d3a4813ff52400f053e8a8ccf740ada9c0962e957d850",
+    "lastHarvestedAt": "2026-11-09T10:31:23.002Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "4cee4138",
+    "sourceVersion": "4380c4e2",
     "license": "NOASSERTION",
-    "contentHash": "3f46b1d1d7cf487725716b8a362ceb3f82dfd1340eac39140345afe8860fe2c5",
-    "lastHarvestedAt": "2026-11-06T14:25:42.460Z",
+    "contentHash": "385071d303d68c9378b2d0b8b383ec703f30bbc3230054783ed6419e99fc2a1d",
+    "lastHarvestedAt": "2026-11-09T10:31:21.777Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {

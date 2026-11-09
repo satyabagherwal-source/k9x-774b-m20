@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T10:07:57.083Z",
+  "last_updated": "2026-11-09T10:31:23.011Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1865,14 +1865,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-francisring-prism",
-      "content_hash": "0a82d4049276a1709e44f39345675fcbf2459cbc252829e1c690c10f3597bd36",
-      "verified_at": "2026-11-05T13:27:11.103Z",
+      "content_hash": "98ed1dfa8f19aaee246d3a4813ff52400f053e8a8ccf740ada9c0962e957d850",
+      "verified_at": "2026-11-09T10:31:23.011Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:27:11.103Z"
+      "last_updated": "2026-11-09T10:31:23.011Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -3726,14 +3726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nervjs-taro",
-      "content_hash": "3f46b1d1d7cf487725716b8a362ceb3f82dfd1340eac39140345afe8860fe2c5",
-      "verified_at": "2026-11-06T14:25:42.470Z",
+      "content_hash": "385071d303d68c9378b2d0b8b383ec703f30bbc3230054783ed6419e99fc2a1d",
+      "verified_at": "2026-11-09T10:31:21.787Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:25:42.470Z"
+      "last_updated": "2026-11-09T10:31:21.787Z"
     },
     "kubeedge/kubeedge": {
       "repository": "kubeedge/kubeedge",

@@ -8564,3 +8564,5 @@
 | `CYCLE-20261109-L4XQ` | `2026-11-09T10:07:45.470Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`e68472ed...`) |
 | `CYCLE-20261109-L82C` | `2026-11-09T10:07:49.524Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0078134c...`) |
 | `CYCLE-20261109-LDVX` | `2026-11-09T10:07:57.069Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`93ac4478...`) |
+| `CYCLE-20261109-FHRI` | `2026-11-09T10:31:21.774Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`385071d3...`) |
+| `CYCLE-20261109-FIPI` | `2026-11-09T10:31:22.998Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`98ed1dfa...`) |

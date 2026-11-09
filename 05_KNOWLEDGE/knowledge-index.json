@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T10:07:56.962Z",
+  "last_updated": "2026-11-09T10:31:22.855Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26170,10 +26170,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "0a82d4049276a1709e44f39345675fcbf2459cbc252829e1c690c10f3597bd36",
+      "content_hash": "98ed1dfa8f19aaee246d3a4813ff52400f053e8a8ccf740ada9c0962e957d850",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Dual-Stream Multimodal Sequence Parallel Padding Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Prefix Conditioning Mask Invariant for Image-to-Video (I2V) Diffusion",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 263,
           "title": "Sparse Mask Index Validation Invariant",
@@ -26253,7 +26263,7 @@
         "learn-huggingface-hf-francisring-prism-mv43jvl8",
         "learn-huggingface-hf-francisring-prism-mv4gsoqj"
       ],
-      "verified_at": "2026-11-05T13:27:11.028Z",
+      "verified_at": "2026-11-09T10:31:22.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46473,8 +46483,8 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "4cee4138",
-      "content_hash": "3f46b1d1d7cf487725716b8a362ceb3f82dfd1340eac39140345afe8860fe2c5",
+      "source_version": "4380c4e2",
+      "content_hash": "385071d303d68c9378b2d0b8b383ec703f30bbc3230054783ed6419e99fc2a1d",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
@@ -46482,6 +46492,16 @@
           "number": null,
           "title": "router): correct framework param type of createRouter/createMultiRouter (#19601)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Global Event Delegation Must Isolate Target-Level Attribute State",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Upstream Framework DOM Assumptions Must Be Guarded with Invariant Fallbacks",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1722,
@@ -46524,7 +46544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:25:42.339Z",
+      "verified_at": "2026-11-09T10:31:21.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

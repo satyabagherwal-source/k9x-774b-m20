@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T10:07:57.079Z",
-  "total_cycles_completed": 8529,
-  "total_learnings_persisted": 8529,
-  "total_rules_promoted": 8342,
+  "last_updated": "2026-11-09T10:31:23.008Z",
+  "total_cycles_completed": 8531,
+  "total_learnings_persisted": 8531,
+  "total_rules_promoted": 8346,
   "history": [
-    {
-      "timestamp": "2026-11-08T19:31:12.757Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T19:38:51.462Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T19:45:31.283Z",
       "repository": "ydb-platform/ydb",
@@ -1403,6 +1389,20 @@
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T10:31:21.783Z",
+      "repository": "NervJS/taro",
+      "learningId": "learn-github-nervjs-taro",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T10:31:23.008Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

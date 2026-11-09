@@ -8573,3 +8573,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-09T10:07:45.474Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `95cc6d95` | Multi-dimensional audit evidence | 2026-11-09T10:07:49.528Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `51395ef8` | Multi-dimensional audit evidence | 2026-11-09T10:07:57.073Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `4380c4e2` | Multi-dimensional audit evidence | 2026-11-09T10:31:21.777Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-09T10:31:23.002Z |
