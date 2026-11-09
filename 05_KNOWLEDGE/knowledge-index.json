@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T13:10:13.236Z",
+  "last_updated": "2026-11-09T13:26:55.150Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7138,8 +7138,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "06b6204e",
-      "content_hash": "9a09fe1512e1d54acad4bfecb86919ce549385a9e51a6ef7add99364fa51dddb",
+      "source_version": "1eefe2ef",
+      "content_hash": "c9877c344624fda9dd4061dc718b6738fcb5bcb6fd67fd468f54f74994f2ad09",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -7151,6 +7151,11 @@
         {
           "number": null,
           "title": "ci): align license checker path filters (#5213)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci: separate integration and E2E test triggers (#5219)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7219,7 +7224,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:58:45.831Z",
+      "verified_at": "2026-11-09T13:21:52.164Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62548,11 +62553,16 @@
       "slug": "transact-rs-sqlx",
       "platform": "github",
       "source_url": "https://github.com/transact-rs/sqlx",
-      "source_version": "7908fe79",
-      "content_hash": "e7d5560d8b762c5edba9438d0ae4b46b77575a2d5a56ab3bfb971483783b716e",
+      "source_version": "ae659a0c",
+      "content_hash": "12579a9eb5624c1f909f1b3777da98146027801d0c654381a903692b256eb6c9",
       "dossier_path": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "mysql): decode DECIMAL columns into integer types correctly (#4503)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3866,
           "title": "macros): tolerate unreadable dotenv with query source (#4371)",
@@ -62579,7 +62589,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T02:15:55.233Z",
+      "verified_at": "2026-11-09T13:21:44.713Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75404,10 +75414,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b",
-      "content_hash": "2d64e54deb24e72be59e038907e759b6cd94fdaca587f5520a16677aeb42fda6",
+      "content_hash": "36b08ff165c49f0f18df64919fc2f8f52d4c0e65b4f74cda846967ffdbf2da4a",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Attention-Convolution Layer Interleaving Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MoE Expert Load Balancing via Bias Correction",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Tied Embeddings for Parameter Efficiency",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 946,
           "title": "Hybrid Attention/Convolution Layer Interleaving Invariant",
@@ -75489,7 +75514,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:50:59.428Z",
+      "verified_at": "2026-11-09T13:26:55.122Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

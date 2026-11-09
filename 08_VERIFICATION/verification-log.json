@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-NPWT",
-    "timestamp": "2026-11-07T21:18:16.301Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "ceaa72f14fc3770936a0ef7484b3c8d5e53139b54f7a28a1d0a3701b3d1f9698",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-NQI6",
-    "timestamp": "2026-11-07T21:18:17.070Z",
-    "repository": "preactjs/preact",
-    "learningId": "learn-github-preactjs-preact",
-    "contentHash": "8be8e5531f1c80ddd8be2040d5dd635c20731de0257aea68194ccadb7e6d7879",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-O0AH",
-    "timestamp": "2026-11-07T21:18:29.753Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "b30a80a43f2951ff2b37dd695a3ba68670e69f96915604f186824984b2a38e82",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-1ZRB",
     "timestamp": "2026-11-07T21:29:22.247Z",
     "repository": "astral-sh/uv",
@@ -7492,6 +7447,51 @@
     "contentHash": "d53dbabbfba877090dcf4367baecc3158a90c3899ed50de7d1381e810ee2607d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-ILYW",
+    "timestamp": "2026-11-09T13:21:44.888Z",
+    "repository": "transact-rs/sqlx",
+    "learningId": "learn-github-transact-rs-sqlx",
+    "contentHash": "12579a9eb5624c1f909f1b3777da98146027801d0c654381a903692b256eb6c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-IROH",
+    "timestamp": "2026-11-09T13:21:52.289Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "c9877c344624fda9dd4061dc718b6738fcb5bcb6fd67fd468f54f74994f2ad09",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-P9G0",
+    "timestamp": "2026-11-09T13:26:55.248Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "36b08ff165c49f0f18df64919fc2f8f52d4c0e65b4f74cda846967ffdbf2da4a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

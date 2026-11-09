@@ -8604,3 +8604,6 @@ Every entry in this ledger must capture:
 | `learn-github-fission-fission` | `https://github.com/fission/fission` | `9cac7b02` | Multi-dimensional audit evidence | 2026-11-09T13:10:05.570Z |
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T13:10:10.911Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fbd810e8` | Multi-dimensional audit evidence | 2026-11-09T13:10:13.352Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `ae659a0c` | Multi-dimensional audit evidence | 2026-11-09T13:21:44.891Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `1eefe2ef` | Multi-dimensional audit evidence | 2026-11-09T13:21:52.292Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T13:26:55.260Z |

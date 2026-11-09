@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T13:10:13.363Z",
+  "last_updated": "2026-11-09T13:26:55.268Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2242,14 +2242,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "content_hash": "2d64e54deb24e72be59e038907e759b6cd94fdaca587f5520a16677aeb42fda6",
-      "verified_at": "2026-11-05T14:50:59.568Z",
+      "content_hash": "36b08ff165c49f0f18df64919fc2f8f52d4c0e65b4f74cda846967ffdbf2da4a",
+      "verified_at": "2026-11-09T13:26:55.267Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:50:59.568Z"
+      "last_updated": "2026-11-09T13:26:55.267Z"
     },
     "fishaudio/drama-3": {
       "repository": "fishaudio/drama-3",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "9a09fe1512e1d54acad4bfecb86919ce549385a9e51a6ef7add99364fa51dddb",
-      "verified_at": "2026-11-08T16:58:45.999Z",
+      "content_hash": "c9877c344624fda9dd4061dc718b6738fcb5bcb6fd67fd468f54f74994f2ad09",
+      "verified_at": "2026-11-09T13:21:52.298Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:58:45.999Z"
+      "last_updated": "2026-11-09T13:21:52.298Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -8046,14 +8046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-transact-rs-sqlx",
-      "content_hash": "e7d5560d8b762c5edba9438d0ae4b46b77575a2d5a56ab3bfb971483783b716e",
-      "verified_at": "2026-11-01T02:15:55.346Z",
+      "content_hash": "12579a9eb5624c1f909f1b3777da98146027801d0c654381a903692b256eb6c9",
+      "verified_at": "2026-11-09T13:21:44.898Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T02:15:55.346Z"
+      "last_updated": "2026-11-09T13:21:44.898Z"
     },
     "bergside/typeui": {
       "repository": "bergside/typeui",

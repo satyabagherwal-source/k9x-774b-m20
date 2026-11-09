@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T13:10:13.358Z",
-  "total_cycles_completed": 8560,
-  "total_learnings_persisted": 8560,
-  "total_rules_promoted": 8383,
+  "last_updated": "2026-11-09T13:26:55.265Z",
+  "total_cycles_completed": 8563,
+  "total_learnings_persisted": 8563,
+  "total_rules_promoted": 8388,
   "history": [
-    {
-      "timestamp": "2026-11-08T21:24:47.844Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T21:33:21.886Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-openai-whisper-large-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T21:33:25.192Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T21:33:33.599Z",
       "repository": "freenet/freenet-core",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T13:21:44.896Z",
+      "repository": "transact-rs/sqlx",
+      "learningId": "learn-github-transact-rs-sqlx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T13:21:52.296Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T13:26:55.265Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

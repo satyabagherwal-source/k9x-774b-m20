@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "2d64e54deb24e72be59e038907e759b6cd94fdaca587f5520a16677aeb42fda6",
-    "lastHarvestedAt": "2026-11-05T14:50:59.547Z",
+    "contentHash": "36b08ff165c49f0f18df64919fc2f8f52d4c0e65b4f74cda846967ffdbf2da4a",
+    "lastHarvestedAt": "2026-11-09T13:26:55.260Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "06b6204e",
+    "sourceVersion": "1eefe2ef",
     "license": "Apache-2.0",
-    "contentHash": "9a09fe1512e1d54acad4bfecb86919ce549385a9e51a6ef7add99364fa51dddb",
-    "lastHarvestedAt": "2026-11-08T16:58:45.987Z",
+    "contentHash": "c9877c344624fda9dd4061dc718b6738fcb5bcb6fd67fd468f54f74994f2ad09",
+    "lastHarvestedAt": "2026-11-09T13:21:52.292Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -5283,10 +5283,10 @@
     "repository": "transact-rs/sqlx",
     "platform": "github",
     "sourceUrl": "https://github.com/transact-rs/sqlx",
-    "sourceVersion": "7908fe79",
+    "sourceVersion": "ae659a0c",
     "license": "Apache-2.0",
-    "contentHash": "e7d5560d8b762c5edba9438d0ae4b46b77575a2d5a56ab3bfb971483783b716e",
-    "lastHarvestedAt": "2026-11-01T02:15:55.337Z",
+    "contentHash": "12579a9eb5624c1f909f1b3777da98146027801d0c654381a903692b256eb6c9",
+    "lastHarvestedAt": "2026-11-09T13:21:44.891Z",
     "learningId": "learn-github-transact-rs-sqlx"
   },
   "bergside-typeui": {

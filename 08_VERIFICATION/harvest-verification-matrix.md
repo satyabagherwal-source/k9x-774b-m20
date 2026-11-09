@@ -8595,3 +8595,6 @@
 | `CYCLE-20261109-3MDA` | `2026-11-09T13:10:05.566Z` | `fission/fission` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0b944e32...`) |
 | `CYCLE-20261109-3QHC` | `2026-11-09T13:10:10.896Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`fe6c4aa8...`) |
 | `CYCLE-20261109-3SDG` | `2026-11-09T13:10:13.348Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d53dbabb...`) |
+| `CYCLE-20261109-ILYW` | `2026-11-09T13:21:44.888Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`12579a9e...`) |
+| `CYCLE-20261109-IROH` | `2026-11-09T13:21:52.289Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c9877c34...`) |
+| `CYCLE-20261109-P9G0` | `2026-11-09T13:26:55.248Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`36b08ff1...`) |
