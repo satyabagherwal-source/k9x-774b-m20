@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T16:26:07.095Z",
+  "last_updated": "2026-11-09T16:33:39.734Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "642b8118ae31fe3e05720bf03c6965c6644f0e2ab95b88b8c107b6cb1655b283",
-      "verified_at": "2026-11-09T09:16:31.368Z",
+      "content_hash": "9971903d80d5d6e8f64b4be438ee37489752cef737823e84b1d9555392955f88",
+      "verified_at": "2026-11-09T16:33:36.199Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T09:16:31.368Z"
+      "last_updated": "2026-11-09T16:33:36.199Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "204c22ebc95c92e0289046143f330c5f8dce47e1ca717ddc87e3d8f49f8440f1",
-      "verified_at": "2026-11-07T21:10:32.670Z",
+      "content_hash": "2fb8b84cfd71001f88ce4867dacd135975a308fc4ed2b1f281a7f42da9ce941b",
+      "verified_at": "2026-11-09T16:33:39.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T21:10:32.670Z"
+      "last_updated": "2026-11-09T16:33:39.733Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "ba834839433faa76a42aeb050f5514ce54c75068433d28ef12069009ccc86ac6",
-      "verified_at": "2026-11-08T14:41:45.610Z",
+      "content_hash": "012c2baefb2c5b8a40129e788ab31b50ba84ea83dac261c66d45e698e0df91ad",
+      "verified_at": "2026-11-09T16:33:28.618Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T14:41:45.610Z"
+      "last_updated": "2026-11-09T16:33:28.618Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -17196,14 +17196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
-      "content_hash": "09ba6d961ac2f8ba9be033e57fcd97ea51a142563e26b8d42be08a5e700c8a65",
-      "verified_at": "2026-11-05T17:14:50.735Z",
+      "content_hash": "18ea9359dd429b6a53605f5ef3b62610424d3dad6fa9fe796fde878c74087d38",
+      "verified_at": "2026-11-09T16:33:38.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T17:14:50.735Z"
+      "last_updated": "2026-11-09T16:33:38.080Z"
     },
     "fabio-rovai/open-ontologies": {
       "repository": "fabio-rovai/open-ontologies",

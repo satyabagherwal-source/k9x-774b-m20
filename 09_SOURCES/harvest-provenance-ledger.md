@@ -8642,3 +8642,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-09T16:26:05.067Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e9799367` | Multi-dimensional audit evidence | 2026-11-09T16:26:06.740Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `91a45282` | Multi-dimensional audit evidence | 2026-11-09T16:26:07.076Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `c1668355` | Multi-dimensional audit evidence | 2026-11-09T16:33:28.591Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `0505091a` | Multi-dimensional audit evidence | 2026-11-09T16:33:36.188Z |
+| `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T16:33:38.070Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `0084887c` | Multi-dimensional audit evidence | 2026-11-09T16:33:39.715Z |

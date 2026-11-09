@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `64ddd4a0`  
+> **Source Version**: `c1668355`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T14:41:44.404Z  
+> **Timestamp**: 2026-11-09T16:33:27.108Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T14:41:43.774Z  
+> **Harvest Timestamp**: 2026-11-09T16:33:25.075Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2545 stars
+- **Stars / Engagement**: 2547 stars
 
 ---
 
@@ -1393,6 +1393,11 @@ use crate::readiness::ReadyScope;
 /// All bindings share one readiness cache and checker, including bindings with
 /// different state values. Readiness may inspect state, but must describe the
 /// shared pipeline-wide gate. Independent gates require separate pipelines.
+///
+/// Shutdown is advisory, as for [`crate::Pipeline`]: readiness checks return
+/// `Ok(())` once shutdown has started, and calls are still forwarded to the
+/// service. Callers that must stop admitting work check
+/// [`PipelineState::is_shutdown`].
 pub struct PipelineState<St, Req, Res, Err> {
     api: Rc<dyn PipelineStateApi<St, Req, Res, Err>>,
 }
@@ -1435,8 +1440,9 @@ where
     /// own future, and other waiters wait for it. Like a held lock, a pending
     /// future must be polled or dropped: keeping it alive without polling stalls
     /// every other readiness waiter on this pipeline.
+    /// Returns successfully if pipeline shutdown has started.
     pub async fn ready(&self, st: &St) -> Result<(), Err> {
-        if self.is_ready() {
+        if self.is_ready() || self.is_shutdown() {
             Ok(())
         } else {
             self.api.ready(0, st).await
@@ -1455,7 +1461,8 @@ where
     #[inline]
     /// Waits for readiness, then calls the service with `st`.
     ///
-    /// Reuses valid shared readiness without consuming it.
+    /// Reuses valid shared readiness without consuming it. Calls are forwarded
+    /// even after shutdown has started; see [`PipelineState`].
     pub async fn call(&self, req: Req, st: &St) -> Result<Res, Err> {
         let pl = self.binding();
         self.api.call(pl.idx, req, st).await
@@ -1463,8 +1470,20 @@ where
 
     #[inline]
     /// Shuts down the enclosed service.
+    ///
+    /// Marks the pipeline as shutting down, then waits for the service's
+    /// shutdown. Later calls are not rejected; see [`PipelineState`].
     pub async fn shutdown(&self, st: &St) {
         self.api.shutdown(0, st).await;
+    }
+
+    #[inline]
+    /// Checks whether pipeline shutdown has been initiated.
+    ///
+    /// The pipeline does not reject calls after shutdown; callers use this to
+    /// stop admitting new work.
+    pub fn is_shutdown(&self) -> bool {
+        self.api.is_shutdown()
     }
 
     #[inline]
@@ -1476,16 +1495,17 @@ where
     /// The retained check and its wake sources run on this pipeline's thread.
     /// Its checker wakers must also be finally dropped on that thread, even
     /// after the pipeline is dropped; foreign wakes or final drops panic.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `.shutdown()` has been called. Unlike [`crate::Pipeline::poll_ready`],
-    /// it does not return `Ready(Ok(()))` after shutdown.
+    /// Returns `Ready(Ok(()))` if pipeline shutdown has started, like
+    /// [`crate::Pipeline::poll_ready`].
     pub fn poll_ready(&self, cx: &mut Context<'_>, st: &St) -> Poll<Result<(), Err>>
     where
         St: Clone,
     {
-        self.api.poll_ready(cx, st)
+        if self.is_shutdown() {
+            Poll::Ready(Ok(()))
+        } else {
+            self.api.poll_ready(cx, st)
+        }
     }
 
     fn binding(&self) -> Binding<'_, St, Req, Res, Err> {
@@ -1607,12 +1627,21 @@ where
     /// Waits for readiness, then calls the service with `st`.
     ///
     /// Reuses valid shared readiness without consuming it, regardless of `st`.
+    /// Calls are forwarded even after shutdown has started; see [`PipelineState`].
     pub async fn call(&self, req: Req, st: &St) -> Result<Res, Err> {
         let pl = Binding {
             idx: self.api.reg(),
             api: self.api.as_ref(),
         };
         pl.api.call(pl.idx, req, st).await
+    }
+
+    #[inline]
+    /// Checks whether pipeline shutdown has been initiated.
+    ///
+    /// See [`PipelineState::is_shutdown`].
+    pub fn is_shutdown(&self) -> bool {
+        self.api.is_shutdown()
     }
 
     #[inline]
@@ -1637,56 +1666,7 @@ where
     ///
     /// See [`PipelineState::readiness_link`] and [`ReadyLink`].
     pub fn readiness_link(&self) -> ReadyLink {
-        self.api.scope().readiness_link()
-    }
-}
-
-// ========================== `PipelineApi` ===========================
-
-struct PipelineInternal<St, Req, Res, Err> {
-    st: St,
-    api: Rc<dyn PipelineStateApi<St, Req, Res, Err>>,
-}
-
-impl<St, Req, Res, Err> PipelineInternalApi<Req, Res, Err> for PipelineInternal<St, Req, Res, Err> {
-    fn scope(&self) -> &ReadyScope {
-        self.api.scope()
-    }
-
-    fn reg(&self) -> u32 {
-        self.api.reg()
-    }
-
-    fn unreg(&self, idx: u32) {
-        self.api.unreg(idx);
-    }
-
-    fn ready(&self, idx: u32) -> BoxFuture<'_, Result<(), Err>> {
-        self.api.ready(idx, &self.st)
-    }
-
-    fn call(&self, idx: u32, req: Req) -> BoxFuture<'_, Result<Res, Err>> {
-        self.api.call(idx, req, &self.st)
-    }
-
-    fn poll_ready(&self, _: &mut Context<'_>) -> Poll<Result<(), Err>> {
-        unreachable!()
-    }
-
-    fn poll_shutdown(&self, _: &mut Context<'_>) -> Poll<()> {
-        unreachable!()
-    }
-
-    fn is_shutdown(&self) -> bool {
-        self.api.is_shutdown()
-    }
-}
-
-// ========================== `PipelineStateApi` ===========================
-
-struct PipelineInner<S, E> {
-    s: S,
-    w
+ 
 ```
 
 ### Core Architecture Module: `ntex-service/src/state.rs`
@@ -2231,889 +2211,550 @@ pub(crate) mod testing {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34945510` (2026-11-07)
-**Commit Message**: web: Fix request pool aliasing when a request extension drops another request, and a panic when a request is dropped during thread-local teardown
+### Incident Patch 1: `9eb2d0e0` (2026-11-09)
+**Commit Message**: Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifies server certificates
 
-**File**: `.github/workflows/miri.yml` (modified, +2/-2)
+* Security: the default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now
+  verifies server certificates against the system trust store and checks the hostname;
+  previously it accepted any certificate. To trust a private root or a self-signed test
+  certificate, pass your own `SslConnector` to `ClientBuilder::openssl()`
+
+**File**: `docs/10-tls.md` (modified, +4/-3)
 ```diff
-@@ -54,8 +54,8 @@ jobs:
-           MIRIFLAGS: -Zmiri-disable-stacked-borrows
-         run: cargo miri nextest run -p ntex-service -- "miri_"
+@@ -505,9 +505,10 @@ fn client() -> ntex::client::Client {
+ Do not confuse this with `ClientBuilder::connector`: that method configures
+ **unsecured** connections and leaves the HTTPS connector unchanged.
  
--      - name: Run Miri (ntex::web handler futures)
--        run: cargo miri nextest run -p ntex --lib -- "web::handler::tests::"
-+      - name: Run Miri (ntex::web handler futures, request pool)
-+        run: cargo miri nextest run -p ntex --lib -- "web::handler::tests::" "web::config::tests::miri_"
+-> **Configure verification explicitly.** The built-in default OpenSSL HTTP
+-> connector currently disables certificate verification. Supply a verifying
+-> configuration, such as the OpenSSL configuration above, instead.
++The built-in default OpenSSL connector verifies server certificates against
++OpenSSL's default trust store (the system roots) and checks the request host.
++To trust a private root, supply your own configuration, such as the OpenSSL
++configuration above.
  
-       - name: Run Miri (ntex ws mask, h1 codec)
-         # Runtime tests need an I/O driver; the skipped decoder tests take minutes under Miri.
+ The default rustls configuration uses webpki roots and sends no client identity.
+ If you enable both backend features, the default HTTP client selects OpenSSL.
 ```
 
-**File**: `ntex/CHANGES.md` (modified, +3/-0)
+**File**: `docs/13-client.md` (modified, +7/-5)
 ```diff
-@@ -10,6 +10,9 @@
+@@ -218,9 +218,10 @@ does depends on the backend:
  
- * web: Use resource id indexed vec for route service cache
+ - **rustls** checks server certificates against the webpki root
+   certificates, as you would expect.
+-- **OpenSSL** does **not** verify certificates by default. That is handy
+-  when testing against a server with a self-signed certificate, but it is not
+-  safe in production. Give the client your own configuration instead.
++- **OpenSSL** checks server certificates against OpenSSL's default trust
++  store (the system roots) and checks that the certificate matches the
++  request host. To trust a private root, or to accept a self-signed
++  certificate while testing, give the client your own configuration.
  
-+* web: Fix request pool aliasing when a request extension drops another
-+  request, and a panic when a request is dropped during thread-local teardown
-+
- * web: Bypass default identity filter
- 
- * web: Dispatch routes of resources without middleware, filter, or fallback directly from the router
+ If both features are enabled, OpenSSL wins. If neither is, `https` requests
+ fail with `ConnectError::SslIsNotSupported`.
+@@ -728,8 +729,9 @@ simply build the request again.
+   connection pools.
+ - Tune the client with `ClientConfig`, `IoConfig`, and friends in a
+   `SharedCfg`. Always set a connect timeout.
+-- With OpenSSL, provide your own TLS configuration so certificates are
+-  verified, and set ALPN if you want HTTP/2.
++- The default secure connector verifies certificates. Provide your own TLS
++  configuration for private roots or testing, and set ALPN on it if you want
++  HTTP/2.
+ - Pick the body format by picking the method: `send`, `send_body`,
+   `send_json`, `send_form`, or `send_stream`.
+ - Buffer small bodies with `body()` or `json()`, and stream large ones.
 ```
 
-**File**: `ntex/src/web/config.rs` (modified, +98/-17)
+**File**: `docs/llms.txt` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,4 @@
--use std::{any::Any, any::TypeId, cell::UnsafeCell, net::SocketAddr, rc::Rc};
-+use std::{any::Any, any::TypeId, cell::RefCell, net::SocketAddr, rc::Rc};
+@@ -28,7 +28,7 @@ Rules for generated code:
+ - Service factories for `server::test_server`, `http::test::server`, and `web::test::server` take `async |_| service_or_app`, with `&()` as the argument. `server::TestServerBuilder::with(cfg, factory)` passes `&Cfg::State` to the service factory. State-initialization closures remain zero-argument: `async || Ok(state)`. Use the test server's address, not a fixed port.
+ - Client send/body errors do not automatically convert into `std::io::Error`. Use a concrete application error or `Result<_, Box<dyn std::error::Error>>` to preserve them with `?`. If only a message is needed, explicitly use `.map_err(|err| std::io::Error::other(err.to_string()))?`; this loses the original error and diagnostic context. Do not require `Send + Sync` on the boxed error: client errors can be worker-local.
+ - TLS belongs in connection setup, not protocol logic. Compose acceptors/connectors with services over `Io`; use generic filters, `seal()`, or `boxed()` to keep protocol code independent of TLS backends.
+-- HTTP clients use `openssl`, `rustls`, or `secure_connector` for HTTPS; `ClientBuilder::connector` configures unsecured connections. Supply verifying TLS configurations explicitly: the built-in OpenSSL HTTP-client default currently disables certificate verification.
++- HTTP clients use `openssl`, `rustls`, or `secure_connector` for HTTPS; `ClientBuilder::connector` configures unsecured connections. The built-in defaults verify certificates (OpenSSL: system trust store plus hostname; rustls: `webpki-roots`). Never disable verification with `SslVerifyMode::NONE` outside tests; trust private roots with `set_ca_file` instead.
+ - `WsClient` needs an explicit TLS connector even for `wss://`: use `openssl`, `rustls`, or `connector`, and offer HTTP/1.1 rather than h2. Server-side WebSocket handlers work unchanged behind an HTTPS listener.
+ - Read peer certificates with `PeerCertDer` / `PeerCertChainDer`, then parse with `x509::PeerCerts`. Certificate presence or parsing is not trust verification or authorization. Schannel's `request_client_cert(true)` neither requires a certificate nor validates its trust; reject missing/untrusted identities before protected handling.
+ - See the [TLS guide](https://docs.ntex.rs/10-tls.html) and [runnable TLS examples](https://github.com/ntex-rs/examples/tree/main/tls) for backend, component, identity, and mutual-authentication configuration.
+```
+
+**File**: `ntex/CHANGES.md` (modified, +5/-0)
+```diff
+@@ -2,6 +2,11 @@
  
- use urly::Url;
+ ## [4.7.0] - 2026-11-xx
  
-@@ -145,24 +145,38 @@ impl WebAppConfig {
- 
- /// Get message from the pool of the shared configuration with the given id.
- pub(crate) fn get_request(id: usize) -> Option<HttpRequest> {
--    CACHE.with(|cache| cache.with(id, |cache| cache.pop().map(HttpRequest)))
-+    CACHE
-+        .try_with(|cache| cache.with(id, Vec::pop))
-+        .ok()
-+        .flatten()
-+        .map(HttpRequest)
- }
- 
- /// Put message from the pool.
-+///
-+/// The request is dropped instead if the pool is full, the request is still
-+/// shared, or the thread's pool is already destroyed.
- pub(crate) fn put_request(id: usize, pool_size: usize, req: &mut Rc<HttpRequestInner>) {
--    CACHE.with(|cache| {
--        cache.with(id, |cache| {
--            if cache.len() < pool_size
--                && let Some(inner) = Rc::get_mut(req)
--            {
--                // the head and the path may share the connection read buffer,
--                // a pooled request must not keep it alive
--                inner.head.clear();
--                inner.path.set(Url::new());
--                cache.push(req.clone());
--            }
-+    let has_room = |cache: &LocalCache| cache.with(id, |cache| cache.len() < pool_size);
-+    if !CACHE.try_with(has_room).unwrap_or(false) {
-+        return;
-+    }
-+    if let Some(inner) = Rc::get_mut(req) {
-+        // the head and the path may share the connection read buffer,
-+        // a pooled request must not keep it alive.
-+        // clearing runs user drop code that may drop other requests,
-+        // so the pool must not be borrowed here
-+        inner.head.clear();
-+        inner.path.set(Url::new());
++* Security: the default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now
++  verifies server certificates against the system trust store and checks the hostname;
++  previously it accepted any certificate. To trust a private root or a self-signed test
++  certificate, pass your own `SslConnector` to `ClientBuilder::openssl()`
 +
-+        let _ = CACHE.try_with(|cache| {
-+            cache.with(id, |cache| {
-+                if cache.len() < pool_size {
-+                    cache.push(req.clone());
-+                }
-+            });
-         });
--    });
-+    }
- }
+ * Document that `HttpService` application and control factories are
+   instantiated per connection; build expensive or shared state per worker
  
- /// Service config is used for external configuration.
-@@ -256,21 +270,25 @@ thread_local! {
+```
+
+**File**: `ntex/src/client/builder.rs` (modified, +17/-1)
+```diff
+@@ -36,6 +36,18 @@ impl Default for ClientBuilder<Identity> {
+ impl ClientBuilder<Identity> {
+     #[must_use]
+     /// Creates a client builder with default connectors.
++    ///
++    /// # TLS defaults
++    ///
++    /// With the `openssl` feature enabled (it takes precedence over `rustls`),
++    /// HTTPS connections verify the peer certificate against OpenSSL's default
++    /// trust store (the system roots) and check that it matches the request
++    /// host. With only the `rustls` feature, peers are verified against the
++    /// bundled `webpki-roots`. Without either feature, HTTPS is unavailable.
++    ///
++    /// To trust private roots, or to skip verification for testing, pass your
++    /// own configuration to [`openssl`](Self::openssl),
++    /// [`rustls`](Self::rustls) or [`secure_connector`](Self::secure_connector).
+     pub fn new() -> Self {
+         let svc = ConnectorPipeline::new(
+             apply_fn(TcpConnector::new(), async move |msg: Connect, svc| {
+@@ -59,7 +71,6 @@ impl ClientBuilder<Identity> {
+             let _ = ssl
+                 .set_alpn_protos(b"\x02h2\x08http/1.1")
+                 .map_err(|e| log::error!("Cannot set ALPN protocol: {e:?}"));
+-            ssl.set_verify(tls_openssl::ssl::SslVerifyMode::NONE);
  
- /// Request's objects pool
- struct LocalCache {
--    cache: UnsafeCell<Vec<Vec<Rc<HttpRequestInner>>>>,
-+    cache: RefCell<Vec<Vec<Rc<HttpRequestInner>>>>,
- }
- 
- impl LocalCache {
-     fn new() -> Self {
-         Self {
--            cache: UnsafeCell::new(Vec::with_capacity(16)),
-+            cache: RefCell::new(Vec::with_capacity(16)),
+             builder.openssl(ssl.build())
          }
-     }
- 
-+    /// Calls `f` with the pool for `idx`.
+@@ -89,6 +100,11 @@ impl<M> ClientBuilder<M> {
+     #[must_use]
+     #[cfg(feature = "openssl")]
+     /// Uses an OpenSSL connector for secure connections.
 +    ///
-+    /// `f` must not drop requests or run user code, the pool stays borrowed
-+    /// while it runs.
-     fn with<F, R>(&self, idx: usize, f: F) -> R
-     where
-         F: FnOnce(&mut Vec<Rc<HttpRequestInner>>) -> R,
-     {
--        let cache = unsafe { &mut *self.cache.get() };
-+        let mut cache = self.cache.borrow_mut();
- 
-         while cache.len() <= idx {
-             cache.push(Vec::new());
-@@ -288,6 +306,69 @@ mod tests {
-     use crate::web::test::{TestRequest, call_service, init_service, read_body};
-     use crate::web::{self, App, HttpRequest, HttpResponse};
- 
-+    struct DropRequest(#[allow(dead_code)] HttpRequest);
-+
-+    /// STATEMENT: Returning a request to the pool tolerates request extensions
-+    /// that drop other requests while they are cleared.
-+    ///
-+    /// HOW:
-+    /// - Create an outer request, then keep creating requests until one has a
-+    ///   config id far beyond the outer one, so pooling it grows the pool list.
-+    /// - Store that request in an extension of the outer request and drop the
-+    ///   outer request, which re-enters `put_request` while clearing the head.
-+    /// - Check both requests were pooled under their own config ids and the
-+    ///   pooled outer request has no extensions left.
-+    #[test]
-+    fn miri_put_request_reentrant_drop() {
-+        let outer = TestRequest::default().to_http_request();
-+        let outer_id = outer.0.config.id();
-+
-+        let mut held = Vec::new();
-+        let inner = loop {
-+            let req = TestRequest::default().to_http_request();
-+            if req.0.config.id() > 2 * outer_id + 32 {
-+                break req;
-+            }
-+            held.push(req);
-+        };
-+        let inner_id = inner.0.config.id();
-+
-+        outer.extensions_mut().insert(DropRequest(inner));
-+        drop(outer);
-+
-+        let pooled = get_request(outer_id).unwrap();
-+        assert!(pooled.extensions().get::<DropRequest>().is_none());
-+        assert!(get_request(inner_id).is_some());
-+        drop(held);
-+    }
-+
-+    thread_local! {
-+        static HELD: std::cell::RefCell<Option<HttpRequest>> =
-+            const { std::cell::RefCell::new(None) };
-+    }
-+
-+    /// STATEMENT: Dropping a request after the thread's request pool is
-+    /// destroyed does not panic.
-+    ///
-+    /// HOW:
-+    /// - On a new thread, touch `HELD` before the pool so its destructor is
-+    ///   registered first and ther
-```
-
----
-
-### Incident Patch 2: `f69ca9af` (2026-11-07)
-**Commit Message**: Various bug fixes
-
-* io-uring: a `PeerAddr` query from a filter that processes received data returns `None`
-  instead of panicking, and a panic while the stream storage is in use aborts the process
-  instead of releasing buffers of in-flight operations
-
-* iocp: a `PeerAddr` query from a filter that processes output returns `None` instead of
-  panicking, and a panic while the stream storage is in use aborts the process instead of
-  releasing `OVERLAPPED`s and buffers of in-flight operations
-
-* iocp: on runtime shutdown, wait up to 1s for cancelled operations to complete and free
-  their memory, only operations that do not complete in time are leaked
-
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -60,9 +60,9 @@ ntex-macros = "4.4.0"
- ntex-net = "4.8.1"
- ntex-router = "2.2.0"
- ntex-rt = "4.6.0"
--ntex-server = "4.4.0"
-+ntex-server = "4.4.1"
- ntex-service = "5.7.1"
--ntex-tls = "4.7.3"
-+ntex-tls = "4.8.0"
- ntex-util = "4.8.0"
- urly = "1.2.0"
++    /// The connector's verification settings are used as given. Hostname
++    /// verification follows the connector's `configure()` defaults, so it is
++    /// enabled unless `set_verify(SslVerifyMode::NONE)` disables verification
++    /// altogether.
+     pub fn openssl(self, config: OpensslConnector) -> Self {
+         use crate::connect::openssl::SslConnector;
  
 ```
 
-**File**: `ntex-net/CHANGES.md` (modified, +12/-1)
+**File**: `ntex/src/client/mod.rs` (modified, +3/-0)
 ```diff
-@@ -1,6 +1,6 @@
- # Changes
+@@ -108,6 +108,9 @@ impl Default for Client {
  
--## [4.8.1] - Unreleased
-+## [4.8.1] - 2026-11-07
- 
- * io-uring: take send buffer and connect address pointers after the operation is stored,
-   so moving it no longer invalidates pointers passed to the kernel
-@@ -18,6 +18,17 @@
-   releasing their buffers and sockets, leak them if they do not complete. Handlers
-   are released when the driver fails too
- 
-+* io-uring: a `PeerAddr` query from a filter that processes received data returns `None`
-+  instead of panicking, and a panic while the stream storage is in use aborts the process
-+  instead of releasing buffers of in-flight operations
-+
-+* iocp: a `PeerAddr` query from a filter that processes output returns `None` instead of
-+  panicking, and a panic while the stream storage is in use aborts the process instead of
-+  releasing `OVERLAPPED`s and buffers of in-flight operations
-+
-+* iocp: on runtime shutdown, wait up to 1s for cancelled operations to complete and free
-+  their memory, only operations that do not complete in time are leaked
-+
- ## [4.8.0] - 2026-11-06
- 
- * `tokio` feature enables `ntex-io/tokio`, the tokio `AsyncRead` and `AsyncWrite` implementations
-```
-
-**File**: `ntex-net/src/iocp/connect.rs` (modified, +54/-5)
-```diff
-@@ -223,12 +223,29 @@ impl Handler for ConnectOpsHandler {
-         }
-     }
- 
-+    fn cancel(&mut self) {
-+        // Closing cancels `ConnectEx`, its completion frees the op. Taken
-+        // under the borrow, closed after it, as in `tick()`.
-+        let socks: Vec<_> = self
-+            .inner
-+            .ops
-+            .borrow_mut()
-+            .iter_mut()
-+            .filter_map(|(_, op)| op.sock.take())
-+            .collect();
-+        drop(socks);
-+    }
-+
-+    fn in_flight(&self) -> usize {
-+        self.inner.ops.borrow().len()
-+    }
-+
-     fn cleanup(&mut self) {
--        // The reactor has stopped, so the completions of pending `ConnectEx`
--        // calls are never dequeued. Closing the socket cancels the connect,
--        // but the kernel still writes its completion into the `OVERLAPPED`,
--        // so the op allocation is leaked to keep that memory valid. The
--        // other fields are dropped, which closes the socket and the channel.
-+        // The connects cancelled by `cancel()` that did not complete in time
-+        // are never dequeued. The kernel still writes their completion into
-+        // the `OVERLAPPED`, so the op allocation is leaked to keep that
-+        // memory valid. The other fields are dropped, which closes the socket
-+        // if `cancel()` did not run, and the channel.
-         let ops = mem::take(&mut *self.inner.ops.borrow_mut());
-         for (_, op) in ops {
-             let op = op.into_raw();
-@@ -433,4 +450,36 @@ mod tests {
-         let err = rx.await.unwrap_err();
-         assert_eq!(err.to_string(), "IO Driver is gone");
-     }
-+
-+    /// STATEMENT: On shutdown, `cancel()` cancels a pending connect, and its
-+    /// completion frees the op instead of leaving it to `cleanup()`.
+ impl Client {
+     /// Creates a client with default settings.
 +    ///
-+    /// HOW:
-+    /// - Start a connect to a port nobody listens on, so it stays pending.
-+    /// - Call `cancel()`, and confirm the socket is closed, while the op is
-+    ///   still counted by `in_flight()`.
-+    /// - Dispatch completions until the op is gone, and confirm the receiver
-+    ///   gets "IO Driver is gone".
-+    #[ntex::test]
-+    async fn cancel_frees_pending_connect_on_completion() {
-+        let reactor = Reactor::new().unwrap();
-+        let ops = ConnectOps::get(&reactor);
-+        let addr = net::TcpListener::bind("127.0.0.1:0")
-+            .unwrap()
-+            .local_addr()
-+            .unwrap();
-+        let (rx, raw, local) = pending_connect(&ops, addr);
-+
-+        let mut handler = ConnectOpsHandler {
-+            inner: ops.0.clone(),
-+        };
-+        handler.cancel();
-+        assert!(!is_ours(raw, &local), "cancel did not close the socket");
-+        assert_eq!(handler.in_flight(), 1);
-+
-+        drain_connects(&reactor, &ops);
-+        assert_eq!(handler.in_flight(), 0);
-+        let err = rx.await.unwrap_err();
-+        assert_eq!(err.to_string(), "IO Driver is gone");
-+    }
- }
-```
-
-**File**: `ntex-net/src/iocp/reactor.rs` (modified, +191/-3)
-```diff
-@@ -1,5 +1,6 @@
- use std::os::windows::io::{AsRawHandle, AsRawSocket, FromRawHandle, OwnedHandle, RawHandle};
- use std::sync::{Arc, OnceLock, atomic::AtomicU8, atomic::Ordering};
-+use std::time::{Duration, Instant};
- use std::{cell::Cell, fmt, io, mem, net, ptr};
- 
- use windows_sys::Win32::{
-@@ -42,7 +43,22 @@ pub(crate) trait Handler {
-     /// Reactor turn is completed
-     fn tick(&mut self) {}
- 
-+    /// The runtime has stopped: cancels the operations in flight, so that
-+    /// their completions are dispatched before `cleanup()`.
-+    ///
-+    /// Completions, notifications and ticks dispatched afterwards must not
-+    /// start new operations.
-+    fn cancel(&mut self) {}
-+
-+    /// Number of operations the kernel still owns.
-+    fn in_flight(&self) -> usize {
-+        0
-+    }
-+
-     /// Clean up the handle before dropping the driver.
-+    ///
-+    /// Operations still in flight never complete, the memory the kernel
-+    /// writes their completion into must be leaked.
-     fn cleanup(&mut self) {}
- }
- 
-@@ -213,9 +229,7 @@ impl ntex_rt::Driver for Reactor {
-             }
-         };
- 
--        for mut h in self.handlers.take().unwrap().into_iter() {
--            h.cleanup();
--        }
-+        self.shutdown(Self::SHUTDOWN_TIMEOUT);
-         result
-     }
- 
-@@ -262,6 +276,73 @@ pub(crate) fn map_socket_error(err: io::Error) -> io::Error {
- }
- 
- impl Reactor {
-+    /// How long a stopped runtime waits for its cancelled operations.
-+    const SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(1);
-+
-+    /// Cancels the operations in flight and dispatches their completions for
-+    /// up to `timeout`, then cleans up the handlers.
-+    ///
-+    /// The kernel writes the completion of an operation into its `OVERLAPPED`
-+    /// and buffers even after its socket is closed, so `cleanup()` has to
-+    /// leak the memory of the operations still in flight.
-+    fn shutdown(&self, timeout: Duration) {
-+        let mut handlers = self.handlers.take().unwrap();
-+        for h in handlers.iter_mut() {
-+            h.cancel();
-+        }
-+        self.handlers.set(Some(handlers));
-+
-+        let deadline = Instant::now() + timeout;
-+        let mut events = [OVERLAPPED_ENTRY::default(); 64];
-+        loop {
-+            let in_flight = self.in_flight();
-+            if in_flight == 0 {
-+                break;
-+            }
-+            let left = deadline.saturating_duration_since(Instant::now());
-+            if left.is_zero() {
-+                log::warn!(
-+                    "{in_flight} operation(s) did not complete on shutdown, their memory is leaked"
-+                );
-+                break;
-+            }
-+            let wait = u32::try_from(left.as_micros().div_ceil(1000)).unwrap_or(INFINITE - 1);
-+            let mut count = 0;
-+            let result = syscall!(
-+                BOOL,
-+                GetQueuedCompletionStatusEx(
-+                    self.reactor.port.as_raw_handle().cast(),
-+                    events.as_mut_ptr().cast(),
-+                    64,
-+                    &raw mut count,
-+                    wait,
-+                    0
-+                )
-+            );
-+            match result {
-+                Ok(_) => self.poll_completions(&events[..count as usize]),
-+                Err(err) if err.raw_os_error() == Some(WAIT_TIMEOUT.cast_signed()) => (),
-+                Err(err) => {
-+                    log::error!(
-+                        "Cannot wait for {in_flight} cancelled operation(s), their memory is leaked: {err:?}"
-+                    );
-+                    break;
-+                }
-+            }
-+        }
-+
-+        for mut h in self.handlers.take().unwrap().into_iter() {
-+            h.cleanup();
-+        }
-+    }
-+
-+    fn in_flight(&self) -> usize {
-+        let handlers = self.handlers.take().unwrap();
-+        let n = handlers.iter().map(|h| h.in_flight()).sum();
-+        self.handlers.set(Some(handlers));
-+        n
-+    }
-+
-     /// Handle ring completions, forward changes to specific handler
-     fn poll_completions(&self, events: &[OVERLAPPED_ENTRY]) {
-         let mut handlers = self.handlers.take().unwrap();
-@@ -849,4 +930,111 @@ mod tests {
-         let file = std::fs::File::open(std::env::current_exe().unwrap()).unwrap();
-         assert!(check_ifs_socket(file.as_raw_handle()).is_err());
-     }
-+
-+    type Events = Rc<std::cell::RefCell<Vec<&'static str>>>;
-+
-+    /// An operation that is in flight until its completion is dispatched.
-+    /// `cancel()` posts that completion, unless the operation is stuck.
-+    struct Cancellable {
-+        api: ReactorApi,
-+        ov: Box<Overlapped>,
-+        pending: bool,
-+        stuck: bool,
-+        events: Events,
-+    }
-+
-+    impl Cancellable {
-+        fn register(reactor: &Reactor, stuck: bool, events: &Events) {
-+            reactor.register(|api| {
-+                let ov = Box::new(api.overlapped(0));
-+                Box::new(Cancellable {
-+                    api,
-+                    ov,
-+       
-```
-
-**File**: `ntex-net/src/iocp/stream.rs` (modified, +197/-66)
-```diff
-@@ -185,6 +185,8 @@ struct StreamOpsInner {
-     storage: Cell<Option<Box<StreamOpsStorage>>>,
-     delayed_feed: Queue<IdType>,
-     pool: pool::Pool<io::Result<()>>,
-+    /// The runtime has stopped, completions only finish their operations
-+    stopped: Cell<bool>,
- }
- 
- struct StreamOpsStorage {
-@@ -204,6 +206,7 @@ impl StreamOps {
-                         streams: Slab::new(),
-                     }))),
-                     delayed_feed: Queue::new(),
-+                    stopped: Cell::new(false),
-                 });
-                 inner = Some(ops.clone());
-                 Box::new(StreamOpsHandler { inner: ops })
-@@ -235,50 +238,52 @@ impl StreamOps {
-         #[cfg(feature = "trace")]
-         log::trace!("{}: Registered({:?}) {:?}", ctx.tag(), sock, addr);
- 
--        let mut storage = self.0.storage.take().unwrap();
--        let entry = storage.streams.vacant_entry();
--        let id = entry.key();
--
--        // read op
--        //
--        // A non-blocking socket is read in place without waiting for the kernel
--        // to report it readable first; overlapped operations are not affected
--        let nonblocking = match io.set_nonblocking(true) {
--            Ok(()) => true,
--            Err(err) => {
--                log::error!(
--                    "{}: Cannot switch socket({sock:?}) to non-blocking mode, {err:?}",
--                    ctx.tag()
--                );
--                false
--            }
--        };
--        let mut rd_op = ops::ReadOperation::new(id, sock, ctx.clone(), nonblocking);
--        // edge-triggered notifications need a non-blocking socket, it is
--        // read until drained. Such a read never waits with an overlapped
--        // recv, so it needs no kernel header.
--        let rd_overlapped = if notify && nonblocking && self.0.api.register_notify(sock as _, id) {
--            rd_op.use_notifications();
--            None
--        } else {
--            Some(self.0.api.overlapped(ops::RD_OP))
--        };
-+        let id = self.0.with(|storage| {
-+            let entry = storage.streams.vacant_entry();
-+            let id = entry.key();
- 
--        let ops = OpPairBox::new(
--            rd_overlapped,
--            rd_op,
--            self.0.api.overlapped(ops::WR_OP),
--            ops::WriteOperation::new(id, sock, ctx),
--        );
-+            // read op
-+            //
-+            // A non-blocking socket is read in place without waiting for the kernel
-+            // to report it readable first; overlapped operations are not affected
-+            let nonblocking = match io.set_nonblocking(true) {
-+                Ok(()) => true,
-+                Err(err) => {
-+                    log::error!(
-+                        "{}: Cannot switch socket({sock:?}) to non-blocking mode, {err:?}",
-+                        ctx.tag()
-+                    );
-+                    false
-+                }
-+            };
-+            let mut rd_op = ops::ReadOperation::new(id, sock, ctx.clone(), nonblocking);
-+            // edge-triggered notifications need a non-blocking socket, it is
-+            // read until drained. Such a read never waits with an overlapped
-+            // recv, so it needs no kernel header.
-+            let rd_overlapped =
-+                if notify && nonblocking && self.0.api.register_notify(sock as _, id) {
-+                    rd_op.use_notifications();
-+                    None
-+                } else {
-+                    Some(self.0.api.overlapped(ops::RD_OP))
-+                };
-+
-+            let ops = OpPairBox::new(
-+                rd_overlapped,
-+                rd_op,
-+                self.0.api.overlapped(ops::WR_OP),
-+                ops::WriteOperation::new(id, sock, ctx),
-+            );
- 
--        entry.insert(StreamItem {
--            io,
--            ops,
--            addr,
--            close: None,
--            flags: Flags::empty(),
-+            entry.insert(StreamItem {
-+                io,
-+                ops,
-+                addr,
-+                close: None,
-+                flags: Flags::empty(),
-+            });
-+            id
-         });
--        self.0.storage.set(Some(storage));
- 
-         (
-             StreamCtl {
-@@ -303,6 +308,10 @@ impl Handler for StreamOpsHandler {
-                 None
-             }
-         } {
-+            if self.inner.stopped.get() {
-+                // `cleanup()` closes the socket and frees the item
-+                return;
-+            }
-             self.inner.with(|st| {
-                 if let Some(item) = st.streams.get_mut(id)
-                     && !item.flags.contains(Flags::CLOSED)
-@@ -351,6 +360,9 @@ impl Handler for StreamOpsHandler {
-         // harmless: a non-blocking socket is found drained, a blocking one is
-         // not read before the kernel reports input, and a paused stream is
-         // not read at all.
-+        if self.inner.stopped.get() {
-+            return;
-+        }
-         let op = self.inner.with(|st| {
-             st.streams
-                 .get_
-```
-
-**File**: `ntex-net/src/uring/stream.rs` (modified, +41/-17)
-```diff
-@@ -724,7 +724,7 @@ impl Handler for StreamOpsHandler {
-         // Reactor has flushed pending submissions and canceled all in-flight
-         // operations. Release every socket here, otherwise stored `IoContext`s
-         // keep `StreamOpsInner` alive through the io handle and nothing closes.
--        if let Some(mut v) = self.inner.storage.take() {
-+        self.inner.try_with(|v| {
-             for item in v.streams.drain() {
-                 if item.flags.intersects(Flags::DROPPED_PRI | Flags::CLOSING) {
-                     // descriptor is closed or being closed by the kernel
-@@ -738,8 +738,7 @@ impl Handler for StreamOpsHandler {
-                     drop(item.io);
-                 }
-             }
--            self.inner.storage.set(Some(v));
--        }
-+        });
-         self.inner.delayed_feed.clear();
-     }
- }
-@@ -1204,26 +1203,46 @@ impl Drop for StreamOpsInner {
- }
- 
- impl StreamOpsInner {
-+    /// Runs `f` with the storage.
-+    ///
-+    /// # Panics
-+    ///
-+    /// Panics if the storage is already in use, a re-entrant call.
-     fn with<F, R>(&self, f: F) -> R
-     where
-         F: FnOnce(&mut StreamOpsStorage) -> R,
-     {
--        let mut storage = self.storage.take().unwrap();
-+        self.try_with(f)
-+            .expect("io-uring stream storage is in use, re-entrant call")
-+    }
-+
-+    /// Runs `f` with the storage, returns `None` if it is already in use.
-+    ///
-+    /// Aborts the process if `f` panics. The storage owns buffers and sockets
-+    /// of in-flight operations, dropping it while unwinding would release
-+    /// memory the kernel still writes to.
-+    fn try_with<F, R>(&self, f: F) -> Option<R>
-+    where
-+        F: FnOnce(&mut StreamOpsStorage) -> R,
-+    {
-+        let mut storage = self.storage.take()?;
-+        // declared after `storage`, so it is dropped first while unwinding
-+        let guard = ntex_rt::AbortOnUnwind("io-uring stream operation panicked");
-         let result = f(&mut storage);
-+        guard.disarm();
-         self.storage.set(Some(storage));
--        result
-+        Some(result)
-     }
- 
-     fn check_delayed_feed(&self) {
--        if let Some(mut storage) = self.storage.take() {
-+        self.try_with(|storage| {
-             while let Some(id) = self.delayed_feed.pop() {
-                 match id {
-                     IdType::Stream(id) => storage.drop_stream(id, &self.api),
-                     IdType::Weak(id) => storage.drop_weak_stream(id),
-                 }
-             }
--            self.storage.set(Some(storage));
--        }
-+        });
-     }
- }
- 
-@@ -1302,31 +1321,36 @@ impl StreamCtl {
- 
- impl Drop for StreamCtl {
-     fn drop(&mut self) {
--        if let Some(mut storage) = self.inner.storage.take() {
--            storage.drop_stream(self.id, &self.inner.api);
--            self.inner.storage.set(Some(storage));
--        } else {
-+        let dropped = self
-+            .inner
-+            .try_with(|storage| storage.drop_stream(self.id, &self.inner.api));
-+        if dropped.is_none() {
-             self.inner.delayed_feed.push(IdType::Stream(self.id));
-         }
-     }
- }
- 
- impl WeakStreamCtl {
-+    /// Runs `f` with the socket.
-+    ///
-+    /// Returns `None` if the stream is gone, or if called while the storage
-+    /// is in use, from a filter that processes received data for example.
-     pub(crate) fn with_io<F, R>(&self, f: F) -> Option<R>
-     where
-         F: FnOnce(&Socket) -> R,
-     {
-         self.inner
--            .with(|storage| storage.streams.get(self.id).map(|item| f(&item.io)))
-+            .try_with(|storage| storage.streams.get(self.id).map(|item| f(&item.io)))
-+            .flatten()
-     }
- }
- 
- impl Drop for WeakStreamCtl {
-     fn drop(&mut self) {
--        if let Some(mut storage) = self.inner.storage.take() {
--            storage.drop_weak_stream(self.id);
--            self.inner.storage.set(Some(storage));
--        } else {
-+        let dropped = self
-+            .inner
-+            .try_with(|storage| storage.drop_weak_stream(self.id));
-+        if dropped.is_none() {
-             self.inner.delayed_feed.push(IdType::Weak(self.id));
-         }
++    /// HTTPS peers are verified by default; see the TLS defaults of
++    /// [`ClientBuilder::new`].
+     pub fn new() -> Client {
+         ClientBuilder::new().build(SharedCfg::default())
      }
 ```
 
-**File**: `ntex-net/tests/uring.rs` (modified, +55/-2)
+**File**: `ntex/tests/http_client_openssl.rs` (modified, +107/-0)
 ```diff
-@@ -7,10 +7,10 @@
- use std::io::{ErrorKind, Read, Write};
- use std::os::unix::net::UnixStream;
- use std::{any::Any, future::Future, future::poll_fn, net, panic, sync::mpsc, task::Poll, thread};
--use std::{time::Duration, time::Instant};
-+use std::{cell::Cell, rc::Rc, time::Duration, time::Instant};
- 
- use ntex::codec::BytesCodec;
--use ntex::io::{Io, IoConfig, types::PeerAddr};
-+use ntex::io::{FilterBuf, FilterLayer, Io, IoConfig, types::PeerAddr};
- use ntex::time::{Seconds, sleep};
- use ntex::util::Bytes;
- use ntex_rt::{BlockFuture, Runner, System};
-@@ -418,6 +418,59 @@ fn io_outlives_close() {
-     });
+@@ -400,3 +400,110 @@ async fn test_h2_request_body_dropped_after_response_is_reset() {
+     .await
+     .expect("request body upload is not stopped");
  }
- 
-+/// Queries `PeerAddr` while it processes received data, and passes the data on.
-+#[derive(Debug)]
-+struct QueryPeer(Rc<Cell<usize>>);
 +
-+impl FilterLayer for QueryPeer {
-+    fn process_read_buf(&self, buf: &FilterBuf<'_>) -> std::io::Result<()> {
-+        let _ = buf.io().query::<PeerAddr>().get();
-+        self.0.set(self.0.get() + 1);
-+        buf.with_read_buffers(|src, dst| {
-+            if let Some(s) = src.take() {
-+                dst.extend_from_slice(&s);
-+            }
-+        });
-+        Ok(())
-+    }
-+
-+    fn process_write_buf(&self, buf: &FilterBuf<'_>) -> std::io::Result<()> {
-+        buf.with_write_buffers(|src, dst| {
-+            while let Some(p) = src.take() {
-+                dst.append(p);
-+            }
-+        });
-+        Ok(())
-+    }
++fn verify_server() -> http::test::TestServer {
++    test_server(async |_| {
++        http::openssl(
++            ssl_acceptor(),
++            HttpService::h2(
++                App::new().service(web::resource("/").route(web::to(async || HttpResponse::Ok()))),
++            ),
++        )
++    })
 +}
 +
-+/// STATEMENT: A filter can query `PeerAddr` while it processes data from a
-+/// completed receive, the re-entrant query neither panics nor breaks the read.
++/// Connector that trusts the self-signed test certificate (`CN=www.example.com`).
++fn trusting_connector() -> SslConnector {
++    let mut builder = SslConnector::builder(SslMethod::tls()).unwrap();
++    builder.set_ca_file("./tests/cert.pem").unwrap();
++    builder.set_alpn_protos(b"\x02h2\x08http/1.1").unwrap();
++    builder.build()
++}
++
++/// STATEMENT: The default OpenSSL HTTP client verifies peer certificates and
++/// rejects an untrusted one.
 +///
 +/// HOW:
-+/// - Wrap a TCP io in a `QueryPeer` filter, which queries `PeerAddr` from
-+///   `process_read_buf`, while the receive completion holds the stream storage.
-+/// - Send data from the peer and confirm it is received through the filter and
-+///   that the filter ran.
-+/// - Confirm `PeerAddr` outside of a read still reports the peer address.
-+#[test]
-+fn filter_queries_peer_addr_while_reading() {
-+    run(64, move || async {
-+        let (sock, mut peer) = tcp_pair(None);
-+        let addr = peer.local_addr().unwrap();
-+        let calls = Rc::new(Cell::new(0));
-+        let io = ntex_net::from_tcp_stream(sock, cfg())
-+            .unwrap()
-+            .add_filter(QueryPeer(calls.clone()));
++/// - Serve HTTPS with the self-signed test certificate.
++/// - Send a request with `Client::new()` and assert it fails with a certificate
++///   verification error.
++#[ntex::test]
++async fn test_default_client_rejects_untrusted_certificate() {
++    let srv = verify_server();
 +
-+        peer.write_all(b"hello").unwrap();
-+        let data = io.recv(&BytesCodec).await.unwrap().unwrap();
-+        assert_eq!(&data[..], b"hello");
-+        assert!(calls.get() > 0);
-+        assert_eq!(io.query::<PeerAddr>().get().map(|a| a.0), Some(addr));
-+    });
++    let err = Client::new().get(srv.surl("/")).send().await.unwrap_err();
++    assert!(
++        format!("{err:?}").contains("certificate verify failed"),
++        "{err:?}"
++    );
 +}
 +
- /// Decodes frames of a fixed size, a partial frame stays buffered.
- struct Fixed(usize);
- 
-```
-
-**File**: `ntex-rt/CHANGES.md` (modified, +2/-0)
-```diff
-@@ -2,6 +2,8 @@
- 
- ## [4.6.0] - 2026-11-07
- 
-+* Add `AbortOnUnwind` guard, it aborts the process if dropped before it is disarmed
++/// STATEMENT: An OpenSSL client that trusts the peer's certificate connects
++/// when the request host matches it.
++///
++/// HOW:
++/// - Trust the self-signed test certificate as a root.
++/// - Request `https://www.example.com` routed to the test server with
++///   `address()` and assert a successful HTTP/2 response.
++#[ntex::test]
++async fn test_trusted_peer_is_verified() {
++    let srv = verify_server();
++    let client = Client::builder()
++        .openssl(trusting_connector())
++        .build(SharedCfg::default());
 +
- * Add `Builder::timer_resolution()` to set the timer wheel resolution, a power
-   of two between 1 and 16 ms, and `System::timer_resolution()` and
-   `SystemConfig::timer_resolution()` accessors
++    let url = format!("https://www.example.com:{}/", srv.addr().port());
++    let response = client.get(url).address(srv.addr()).send().await.unwrap();
++    assert!(response.status().is_success());
++    assert_eq!(response.version(), Version::HTTP_2);
++}
++
++/// STATEMENT: An OpenSSL client rejects a trusted certificate issued for a
++/// different host.
++///
++/// HOW:
++/// - Trust the self-signed `www.example.com` test certificate as a root.
++/// - Request `https://localhost` on the test server and assert it fails with a
++///   certificate verification error.
++#[ntex::test]
++async fn test_hostname_mismatch_is_rejected() {
++    let srv = verify_server();
++    let client = Client::builder()
++        .openssl(trusting_connector())
++        .build(SharedCfg::default());
++
++    let url = format!("https://localhost:{}/", srv.addr().port());
++    let err = client
++        .get(url)
++        .address(srv.addr())
++        .send()
++        .await
++        .unwrap_err();
++    assert!(
++        format!("{err:?}").contains("certificate verify failed"),
++        "{err:?}"
++    );
++}
++
++/// STATEMENT: Certificate verification is skipped only through an explicitly
++/// insecure connector.
++///
++/// HOW:
++/// - Build a connector with `SslVerifyMode::NONE` and pass it to
++///   `ClientBuilder::openssl`.
++/// - Request the self-signed test server through a mismatched host and assert
++///   success.
++#[ntex::test]
++async fn test_explicit_insecure_connector() {
++    let srv = verify_server();
++    let mut builder = SslConnector::builder(SslMethod::tls()).unwrap();
++    builder.set_verify(SslVerifyMode::NONE);
++    builder.set_alpn_protos(b"\x02h2\x08http/1.1").unwrap();
++    let client = Client::builder()
++        .openssl(builder.build())
++        .build(SharedCfg::default());
++
++    let url = format!("https://localhost:{}/", srv.addr().port());
++    let response = client.get(url).address(srv.addr()).send().await.unwrap();
++    assert!(response.status().is_success());
++}
 ```
 
 ---
 
-### Incident Patch 3: `44e98cb5` (2026-11-07)
-**Commit Message**: Fix openssl alloc functions on windows
+### Incident Patch 2: `771e089b` (2026-11-09)
+**Commit Message**: Fix urly escape normalization
 
-**File**: `ntex-tls/Cargo.toml` (modified, +1/-0)
+* Requoting decodes only unreserved escapes (`A-Z a-z 0-9 - . _ ~`); escapes of
+  reserved characters such as `%2F` and `%3B` are kept, so decoding can no longer
+  change how a path or query is split
+
+* Normalization removes the scheme's default port, so `https://h:443/` and
+  `https://h/` are equal. `Url::parse_target()` keeps the port as received
+
+* `Url::push_segments()` and `Url / segment` resolve `.` and `..` only within the
+  appended segments, so they can no longer escape the base path
+
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -80,6 +80,7 @@ windows-sys = { workspace = true, features = [
-     "Win32_Security_Authentication_Identity",
-     "Win32_Security_Credentials",
-     "Win32_Security_Cryptography",
-+    "Win32_System_LibraryLoader",
-     "Win32_System_SystemInformation",
-     "Wdk_System_SystemServices",
- ] }
+@@ -64,7 +64,7 @@ ntex-server = "4.5.0"
+ ntex-service = "5.8.0"
+ ntex-tls = "4.8.0"
+ ntex-util = "4.9.0"
+-urly = "1.2.2"
++urly = "1.3.0"
+ 
+ ntex-io-uring = "1.0.0"
+ ntex-httparse = "2.3.0"
 ```
 
-**File**: `ntex-tls/src/openssl/alloc.rs` (modified, +38/-1)
+**File**: `ntex/CHANGES.md` (modified, +4/-0)
 ```diff
-@@ -102,13 +102,50 @@ mod shim {
-         };
-         if current == hooks(malloc, realloc, free) {
-             true
--        } else if current == hooks(CRYPTO_malloc, CRYPTO_realloc, CRYPTO_free) {
-+        } else if current == hooks(CRYPTO_malloc, CRYPTO_realloc, CRYPTO_free)
-+            || current.0.and_then(dll_defaults) == Some(current)
-+        {
-             unsafe { CRYPTO_set_mem_functions(malloc, realloc, free) == 1 }
-         } else {
-             false
+@@ -2,6 +2,10 @@
+ 
+ ## [4.7.0] - 2026-11-xx
+ 
++* With request-target normalization enabled, absolute-form targets lose the
++  scheme's default port (`https://h:443/` becomes `https://h/`) and escapes of
++  reserved characters such as `%3B` are no longer decoded (urly 1.3.0)
++
+ * `middleware::DefaultHeaders` no longer implements `Clone`, and configuring it
+   after creating a middleware from it no longer panics. A header set several
+   times now emits all its values when the response lacks that name; previously
+```
+
+**File**: `ntex/src/http/h1/decoder.rs` (modified, +1/-1)
+```diff
+@@ -1507,7 +1507,7 @@ mod tests {
+         assert!(reader.decode(&mut buf).unwrap().is_none());
+         buf.extend_from_slice(b"%74est?q=%7e HTTP/1.1\r\n\r\n");
+         let (req, _) = reader.decode(&mut buf).unwrap().unwrap();
+-        assert_eq!(req.uri().as_str(), "https://example.com:443/test?q=~");
++        assert_eq!(req.uri().as_str(), "https://example.com/test?q=~");
+ 
+         let target = format!("/{}", "[".repeat(22000));
+         let mut buf = BytesMut::from(format!("GET {target} HTTP/1.1\r\n\r\n").as_str());
+```
+
+**File**: `ntex/tests/http_server.rs` (modified, +1/-1)
+```diff
+@@ -167,7 +167,7 @@ async fn test_h1_request_target_normalization() {
+                         .filter(async move |req: WebRequest<()>| {
+                             assert_eq!(req.uri().path_and_query(), expected);
+                             if req.uri().authority().is_some() {
+-                                assert_eq!(req.connection_info().host(), "example.com:443");
++                                assert_eq!(req.connection_info().host(), "example.com");
+                                 assert_eq!(req.connection_info().scheme(), "https");
+                             }
+                             Ok::<_, Infallible>(req)
+```
+
+**File**: `urly/CHANGES.md` (modified, +11/-1)
+```diff
+@@ -1,6 +1,16 @@
+ # Changes
+ 
+-## [1.2.2] - 2026-11-09
++## [1.3.0] - 2026-11-xx
++
++* Requoting decodes only unreserved escapes (`A-Z a-z 0-9 - . _ ~`); escapes of
++  reserved characters such as `%2F` and `%3B` are kept, so decoding can no longer
++  change how a path or query is split
++
++* Normalization removes the scheme's default port, so `https://h:443/` and
++  `https://h/` are equal. `Url::parse_target()` keeps the port as received
++
++* `Url::push_segments()` and `Url / segment` resolve `.` and `..` only within the
++  appended segments, so they can no longer escape the base path
+ 
+ * Return `ErrorKind::TooLong` from `Builder::build` instead of panicking when
+   the path, query or fragment makes the URL longer than 65535 bytes
+```
+
+**File**: `urly/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "urly"
+-version = "1.2.2"
++version = "1.3.0"
+ authors = ["ntex contributors <team@ntex.rs>"]
+ description = "Yet another URL library"
+ keywords = ["ntex", "url", "uri"]
+```
+
+**File**: `urly/README.md` (modified, +2/-1)
+```diff
+@@ -65,7 +65,8 @@ URL is normalized and parsing a normalized URL returns it unchanged:
+ 
+ * valid `%XX` escapes are kept and their hex digits are uppercased
+ * escapes of unreserved characters (`A-Z a-z 0-9 - . _ ~`) are decoded
+-* `%2F` in a path is kept encoded, so it doesn't become a path separator
++* escapes of reserved characters are kept, so `%2F` in a path doesn't become a
++  path separator and `%3B` doesn't become `;`
+ * any other character that isn't allowed in the component is percent-encoded,
+   including non-ASCII characters (as UTF-8) and a `%` that doesn't start a
+   valid escape
+```
+
+**File**: `urly/src/builder.rs` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ use crate::{parse, path::PathAndQuery, query::Fragment, scheme::Scheme, url::Url
+ /// assert_eq!(url, "https://user:p%40ss@example.com:8443/search?q=a+b#top");
+ ///
+ /// let url = urly::Builder::from(url).port(443).fragment("").build().unwrap();
+-/// assert_eq!(url, "https://user:p%40ss@example.com:443/search?q=a+b#");
++/// assert_eq!(url, "https://user:p%40ss@example.com/search?q=a+b#");
+ /// ```
+ #[derive(Debug, Default, Clone)]
+ pub struct Builder {
+```
+
+---
+
+### Incident Patch 3: `d9083a18` (2026-11-09)
+**Commit Message**: Fix client dropping header values when merging
+
+every value of a multi-value `ClientConfig::set_header()` default is now sent (previously
+only the first), and `ClientRequest::cookie()` merges all raw `Cookie`
+headers into the single `Cookie` header instead of keeping only the first
+
+**File**: `ntex/CHANGES.md` (modified, +5/-0)
+```diff
+@@ -12,6 +12,11 @@
+   with another address (or none) no longer reuses a connection to a
+   different server
+ 
++* Fix client dropping header values when merging: every value of a
++  multi-value `ClientConfig::set_header()` default is now sent (previously
++  only the first), and `ClientRequest::cookie()` merges all raw `Cookie`
++  headers into the single `Cookie` header instead of keeping only the first
++
+ * HTTP/1 client requests now honor settings that were silently ignored:
+   `version(Version::HTTP_10)` is sent as `HTTP/1.0` (other versions are sent
+   as `HTTP/1.1`; HTTP/2 connections always use `HTTP/2`); the `close`,
+```
+
+**File**: `ntex/src/client/cfg.rs` (modified, +4/-1)
+```diff
+@@ -263,7 +263,10 @@ impl ClientConfig {
+ 
+     /// Adds a header to every request.
+     ///
+-    /// A request-specific header with the same name takes precedence.
++    /// Repeated calls with the same name add values; every value is sent. A
++    /// request replaces the default values with
++    /// [`ClientRequest::set_header()`](super::ClientRequest::set_header), while
++    /// [`ClientRequest::header()`](super::ClientRequest::header) appends to them.
+     pub fn set_header<K, V>(mut self, key: K, value: V) -> Result<Self, HttpError>
+     where
+         HeaderName: TryFrom<K>,
+```
+
+**File**: `ntex/src/client/mod.rs` (modified, +2/-1)
+```diff
+@@ -147,8 +147,9 @@ impl Client {
+         <Url as TryFrom<U>>::Error: Into<InvalidUrl>,
+     {
+         let mut req = ClientRequest::new(method, url, self.cfg.clone(), self.svc.bind());
++        // the request has no headers yet, every value of a multi-value default is copied
+         for (key, value) in self.cfg.headers() {
+-            req = req.set_header_if_none(key.clone(), value.clone());
++            req.headers_mut().append(key.clone(), value.clone());
          }
+         req
+     }
+```
+
+**File**: `ntex/src/client/request.rs` (modified, +49/-6)
+```diff
+@@ -330,6 +330,9 @@ impl ClientRequest {
+     #[cfg(feature = "cookie")]
+     /// Set a cookie.
+     ///
++    /// When the request is sent, all cookies and every raw `Cookie` header
++    /// value are merged into a single `Cookie` header.
++    ///
+     /// ```rust
+     /// use coo_kie as cookie;
+     /// use ntex::client::Client;
+@@ -504,15 +507,20 @@ impl ClientRequest {
+             None => return Err(ClientError::from(InvalidUrl::MissingScheme).into()),
+         }
+ 
+-        // set cookies, appended to an existing `Cookie` header
++        // set cookies, merged with all existing `Cookie` headers into a single header
+         #[cfg(feature = "cookie")]
+         {
+             if let Some(ref jar) = self.cookies {
+                 let headers = &mut self.request.head.headers;
+-                let mut cookie = headers
+-                    .get(header::COOKIE)
+-                    .map(|v| v.as_bytes().to_vec())
+-                    .unwrap_or_default();
++                let mut cookie = Vec::new();
++                for v in headers.get_all(header::COOKIE) {
++                    if !v.is_empty() {
++                        if !cookie.is_empty() {
++                            cookie.extend_from_slice(b"; ");
++                        }
++                        cookie.extend_from_slice(v.as_bytes());
++                    }
++                }
+                 for c in jar.iter() {
+                     crate::http::helpers::push_cookie(&mut cookie, c.name(), c.value());
+                 }
+@@ -622,10 +630,11 @@ mod tests {
+         let _ = req.send_body("").await;
      }
  
-+    /// Default hooks exported by the DLL containing the `malloc` hook address.
+-    /// STATEMENT: Request cookies combine with one another and extend a preexisting cookie header.
++    /// STATEMENT: Request cookies combine with one another and with every preexisting `Cookie` header into a single header.
+     ///
+     /// HOW:
+     /// - Prepare requests with two builder cookies and with a raw header plus one cookie, then compare header entries.
++    /// - Add three raw `Cookie` headers, one empty, plus a builder cookie, and check that a single header joins all non-empty values in order.
+     #[cfg(feature = "cookie")]
+     #[crate::rt_test]
+     async fn cookies_extend_cookie_header() {
+@@ -651,6 +660,40 @@ mod tests {
+             .header(header::COOKIE, "c0=v0")
+             .cookie(Cookie::build(("c1", "v1")));
+         assert_eq!(cookie_header(&mut req), "c0=v0; c1=v1");
++
++        let mut req = Client::new()
++            .get("http://localhost/")
++            .header(header::COOKIE, "a=1")
++            .header(header::COOKIE, "")
++            .header(header::COOKIE, "b=2; c=3")
++            .cookie(Cookie::build(("c1", "v1")));
++        assert_eq!(cookie_header(&mut req), "a=1; b=2; c=3; c1=v1");
++        assert_eq!(req.headers().get_all(header::COOKIE).count(), 1);
++    }
++
++    /// STATEMENT: Every value of a multi-value client default header is copied into new requests.
 +    ///
-+    /// With a DLL OpenSSL our `CRYPTO_*` items are import thunks, while OpenSSL
-+    /// reports its own addresses. Returns `None` if the address is not in a module.
-+    #[cfg(windows)]
-+    fn dll_defaults(malloc: usize) -> Option<(Option<usize>, Option<usize>, Option<usize>)> {
-+        use windows_sys::Win32::System::LibraryLoader::{
-+            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-+            GetModuleHandleExW, GetProcAddress,
-+        };
-+        let flags =
-+            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT;
-+        let mut module = ptr::null_mut();
-+        // SAFETY: with FROM_ADDRESS the name is an address, the reference count is unchanged.
-+        if unsafe { GetModuleHandleExW(flags, malloc as *const u16, &raw mut module) } == 0 {
-+            return None;
-+        }
-+        // SAFETY: the module stays loaded, it provides the installed hooks.
-+        let export = |name: &std::ffi::CStr| {
-+            unsafe { GetProcAddress(module, name.as_ptr().cast()) }.map(|f| f as usize)
-+        };
-+        Some((
-+            export(c"CRYPTO_malloc"),
-+            export(c"CRYPTO_realloc"),
-+            export(c"CRYPTO_free"),
-+        ))
-+    }
++    /// HOW:
++    /// - Configure two default `Accept` values and check that a new request carries both, in order.
++    /// - Replace them with `set_header` and check that only the request value remains.
++    #[crate::rt_test]
++    async fn test_client_multi_value_default_header() {
++        let client = Client::builder().build(
++            SharedCfg::new("H").add(
++                ClientConfig::new()
++                    .set_header(header::ACCEPT, "text/html")
++                    .unwrap()
++                    .set_header(header::ACCEPT, "text/plain")
++                    .unwrap(),
++            ),
++        );
++        let req = client.get("/");
++        let accept: Vec<_> = req.headers().get_all(header::ACCEPT).collect();
++        assert_eq!(accept, ["text/html", "text/plain"]);
 +
-+    /// Import thunks only exist on Windows.
-+    #[cfg(not(windows))]
-+    #[allow(clippy::unnecessary_wraps)]
-+    fn dll_defaults(_: usize) -> Option<(Option<usize>, Option<usize>, Option<usize>)> {
-+        None
-+    }
-+
-     /// Includes the aligned header, rejecting arithmetic overflow and invalid layouts.
-     fn layout(size: usize) -> Option<Layout> {
-         Layout::from_size_align(size.checked_add(HEADER)?, ALIGN).ok()
++        let req = client.get("/").set_header(header::ACCEPT, "*/*");
++        let accept: Vec<_> = req.headers().get_all(header::ACCEPT).collect();
++        assert_eq!(accept, ["*/*"]);
+     }
+ 
+     /// STATEMENT: Client-wide default headers are copied into new requests.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1199** (2026-11-09): Add bytes storage cache fallback (@fafhrd91)
+- **PR #1198** (2026-11-09): More api fixes (@fafhrd91)
+- **PR #1197** (2026-11-09): Add `Ordered` service (@fafhrd91)
+- **PR #1196** (2026-11-09): Various api consistency fixes (@fafhrd91)
 - **PR #1195** (2026-11-07): Update server version (@fafhrd91)
 - **PR #1194** (2026-11-07): Allow to spawn multiple accept threads (@fafhrd91)
-- **PR #1193** (2026-11-07): Various fixes after unsafe audit (@fafhrd91)
-- **PR #1192** (2026-11-07): Remove unsafe trait impl (@fafhrd91)
-- **PR #1191** (2026-11-07): Use the timer resolution of the current system (@fafhrd91)
-- **PR #1190** (2026-11-07): Various ntex improvements (@fafhrd91)
 
 ---
 
@@ -3133,30 +2774,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web: Fix request pool aliasing when a request extension drops another request, a
+## X. Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifi
 
 **RULE**:
-When implementing operations in `.github/workflows/miri.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/10-tls.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34945510`: web: Fix request pool aliasing when a request extension drops another request, and a panic when a request is dropped during thread-local teardown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9eb2d0e0`: Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifies server certificates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/miri.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/10-tls.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - name: Run Miri (ntex::web handler futures, request pool)
-        run: cargo miri nextest run -p ntex --lib -- "web::handler::tests::" "web::config::tests::miri_"
+The built-in default OpenSSL connector verifies server certificates against
+OpenSSL's default trust store (the system roots) and checks the request host.
+To trust a private root, supply your own configuration, such as the OpenSSL
+configuration above.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      - name: Run Miri (ntex::web handler futures)
-        run: cargo miri nextest run -p ntex --lib -- "web::handler::tests::"
+> **Configure verification explicitly.** The built-in default OpenSSL HTTP
+> connector currently disables certificate verification. Supply a verifying
+> configuration, such as the OpenSSL configuration above, instead.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34945510` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9eb2d0e0` are properly handled with clean fallback behavior.

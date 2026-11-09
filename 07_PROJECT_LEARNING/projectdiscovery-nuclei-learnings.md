@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `afb307a5`  
+> **Source Version**: `0505091a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T09:16:29.471Z  
+> **Timestamp**: 2026-11-09T16:33:34.290Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T09:10:00.867Z  
+> **Harvest Timestamp**: 2026-11-09T16:33:34.282Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32706 stars
+- **Stars / Engagement**: 32726 stars
 
 ---
 
@@ -475,19 +475,7 @@ func (e *Engine) ExecuteScanWithOpts(ctx context.Context, templatesList []*templ
 
 	totalReqBeforeCluster := getRequestCount(templatesList) * int(target.Count())
 
-	// attempt to cluster templates if noCluster is false
-	var finalTemplates []*templates.Template
-	clusterCount := 0
-	if !noCluster {
-		var clusterMappings map[string][]string
-		finalTemplates, clusterCount, clusterMappings = templates.ClusterTemplates(templatesList, e.executerOpts)
-		// Store cluster mappings in executerOpts for SDK access (thread-safe)
-		if clusterMappings != nil {
-			e.executerOpts.ClusterMappings = types.NewClusterMappingsMap(clusterMappings)
-		}
-	} else {
-		finalTemplates = templatesList
-	}
+	finalTemplates, clusterCount := e.clusterTemplates(templatesList, noCluster)
 
 	totalReqAfterClustering := getRequestCount(finalTemplates) * int(target.Count())
 
@@ -621,6 +609,20 @@ func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*template
 		return true
 	})
 	return results
+}
+
+// clusterTemplates merges templates that send identical requests unless
+// noCluster is set, and returns the templates to run with the number merged.
+func (e *Engine) clusterTemplates(templatesList []*templates.Template, noCluster bool) ([]*templates.Template, int) {
+	if noCluster {
+		return templatesList, 0
+	}
+	finalTemplates, clusterCount, clusterMappings := templates.ClusterTemplates(templatesList, e.executerOpts)
+	// Store cluster mappings in executerOpts for SDK access (thread-safe)
+	if clusterMappings != nil {
+		e.executerOpts.ClusterMappings = types.NewClusterMappingsMap(clusterMappings)
+	}
+	return finalTemplates, clusterCount
 }
 
 // expectedWork returns the requests and the tasks the target-bound templates
@@ -999,6 +1001,167 @@ func (e *Engine) taskTracker() progress.TaskTracker {
 	tracker, _ := e.executerOpts.Progress
 ```
 
+### Core Architecture Module: `pkg/core/plan.go`
+```
+package core
+
+import (
+	"crypto/sha256"
+	"encoding/hex"
+	"slices"
+	"strings"
+
+	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
+	"github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
+)
+
+// PlanEntry is one unit of work a scan runs: a template, a cluster of
+// templates sharing one request, or a workflow, on one target.
+type PlanEntry struct {
+	// ID identifies the entry across runs of the same plan.
+	ID string `json:"id"`
+	// Target is empty for self-contained templates, which run once.
+	Target string `json:"target,omitempty"`
+	// IP is the address the target is pinned to, when it is.
+	IP        string   `json:"ip,omitempty"`
+	Templates []string `json:"templates"`
+	Protocol  string   `json:"protocol"`
+	// Requests is what the templates declare, the count -stats starts from.
+	// The scan sends fewer when a request needs a value the target lacks,
+	// such as {{DN}} on an ip.
+	Requests int `json:"requests"`
+	// Cost is Requests weighted by how long one request of the protocol
+	// takes, in http requests.
+	Cost int `json:"cost"`
+	// Dynamic marks entries whose requests depend on responses: workflows
+	// (only the root is counted), flows and fuzzing.
+	Dynamic bool `json:"dynamic,omitempty"`
+	// AlternativeTo is the id of an entry running the same origin-scoped
+	// template on the same origin. Workers race for an origin, so the scan
+	// runs whichever of the group claims it first, and another only when
+	// that run fails. Totals count the group once.
+	AlternativeTo string `json:"alternative-to,omitempty"`
+}
+
+// Plan reports the work ExecuteScanWithOpts would do with the same arguments,
+// without sending anything. It applies the same clustering, per-target
+// profiles and once-per-origin rule, so a pair is listed only if the scan
+// would run it. Later targets of an origin-scoped template are listed as
+// alternatives to the first, since the scan retries them when a run fails.
+func (e *Engine) Plan(templatesList []*templates.Template, target provider.InputProvider, noCluster bool, emit func(PlanEntry)) {
+	finalTemplates, _ := e.clusterTemplates(templatesList, noCluster)
+	// clustering does not keep an order; a plan is diffed and edited, so it does
+	finalTemplates = slices.SortedFunc(slices.Values(finalTemplates), func(a, b *templates.Template) int {
+		return strings.Compare(a.ID, b.ID)
+	})
+
+	var targetBound []*templates.Template
+	for _, template := range finalTemplates {
+		if template.SelfContained {
+			emit(withPlanID(planEntry(template, &contextargs.MetaInput{}, nil)))
+		} else {
+			targetBound = append(targetBound, template)
+		}
+	}
+
+	// entries are emitted as they are planned, so memory does not grow with
+	// the plan; only the first id per origin is kept
+	originIDs := make(map[string]string)
+	target.Iterate(func(value *contextargs.MetaInput) bool {
+		selection := e.selectionFor(value)
+		for _, template := range targetBound {
+			if selection != nil && !template.SelectedBy(selection) {
+				continue
+			}
+			entry := withPlanID(planEntry(template, value, selection))
+			if key, scoped := originScopeKey(template, value); scoped {
+				if id, seen := originIDs[key]; seen {
+					entry.AlternativeTo = id
+				} else {
+					originIDs[key] = entry.ID
+				}
+			}
+			emit(entry)
+		}
+		return true
+	})
+}
+
+func withPlanID(entry PlanEntry) PlanEntry {
+	entry.ID = planEntryID(entry)
+	return entry
+}
+
+// protocolCost is how many http requests one request of a protocol is worth
+// in time. Measured per call against a CDN-fronted site, where an http
+// request took about 15ms: a javascript call adds about 150ms of runtime, a
+// headless page load with waitload took about 1s. Unlisted protocols cost
+// about one round trip, like http.
+var protocolCost = map[types.ProtocolType]int{
+	types.JavascriptProtocol: 10,
+	types.HeadlessProtocol:   60,
+}
+
+func planEntry(template *templates.Template, value *contextargs.MetaInput, selection protocols.TemplateSelection) PlanEntry {
+	entry := PlanEntry{
+		Target:    value.Input,
+		IP:        value.CustomIP,
+		Templates: []string{template.ID},
+		Protocol:  template.Type().String(),
+		Requests:  template.TotalRequests,
+		Dynamic:   template.Flow != "" || template.IsFuzzableRequest(),
+	}
+	weight := func(protocol types.ProtocolType) int { return max(protocolCost[protocol], 1) }
+
+	switch {
+	case template.CompiledWorkflow != nil:
+		// only the root of a workflow is certain to run; subtemplates depend
+		// on what it matches
+		entry.Requests = 0
+		for _, workflow := range template.CompiledWorkflow.Workflows {
+			for _, executer := range workflow.Executers {
+				requests := executer.Executer.Requests()
+				entry.Requests += requests
+				entry.Cost += requests * weight(executer.TemplateType)
+			}
+		}
+		entry.Dynamic = true
+	case isCluster(template):
+		cluster := template.Executer.(*templates.ClusterExecuter)
+		entry.Templates = slices.Sorted(slices.Values(cluster.TemplateIDs(selection)))
+		// TotalRequests of a cluster counts only its http and dns requests,
+		// so an ssl cluster would show none
+		entry.Requests = cluster.Requests()
+		entry.Cost = entry.Requests * weight(template.Type())
+	case len(template.RequestsQueue) > 0:
+		// each block is weighted by its own protocol, so a template mixing
+		// http with javascript is not priced as all http
+		for _, request := range template.RequestsQueue {
+			entry.Cost += request.Requests() * weight(request.Type())
+		}
+	default:
+		entry.Cost = entry.Requests * weight(template.Type())
+	}
+	return entry
+}
+
+func isCluster(template *templates.Template) bool {
+	_, ok := template.Executer.(*templates.ClusterExecuter)
+	return ok
+}
+
+// planEntryID derives the id from what the entry runs, so planning the same
+// scan again yields the same ids.
+func planEntryID(entry PlanEntry) string {
+	sum := sha256.Sum256([]byte(entry.Target + "\x00" + entry.IP + "\x00" + strings.Join(entry.Templates, "\x00")))
+	return hex.EncodeToString(sum[:8])
+}
+
+```
+
 ### Core Architecture Module: `pkg/core/workflow_execute.go`
 ```
 package core
@@ -1351,117 +1514,6 @@ type ipOptions struct {
 
 ```
 
-### Core Architecture Module: `pkg/installer/util.go`
-```
-package installer
-
-import (
-	"bufio"
-	"bytes"
-	"fmt"
-	"io"
-	"io/fs"
-	"net/http"
-	"os"
-	"path/filepath"
-	"sort"
-
-	"github.com/Masterminds/semver/v3"
-	"github.com/projectdiscovery/gologger"
-	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/config"
-	"github.com/projectdiscovery/utils/errkit"
-)
-
-// GetNewTemplatesInVersions returns templates path of all newly added templates
-// in these versions
-func GetNewTemplatesInVersions(versions ...string) []string {
-	allTemplates := []string{}
-	for _, v := range versions {
-		if v == config.DefaultConfig.TemplateVersion {
-			allTemplates = append(allTemplates, config.DefaultConfig.GetNewAdditions()...)
-			continue
-		}
-		_, err := semver.NewVersion(v)
-		if err != nil {
-			gologger.Error().Msgf("%v is not a valid semver version. skipping", v)
-			continue
-		}
-		if config.IsOutdatedVersion(v, "v8.8.4") {
-			// .new-additions was added in v8.8.4 any version before that is not supported
-			gologger.Error().Msgf(".new-additions support was added in v8.8.4 older versions are not supported")
-			continue
-		}
-
-		arr, err := getNewAdditionsFileFromGitHub(v)
-		if err != nil {
-			gologger.Error().Msgf("failed to fetch new additions for %v got: %v", v, err)
-			continue
-		}
-		allTemplates = append(allTemplates, arr...)
-	}
-	return allTemplates
-}
-
-func getNewAdditionsFileFromGitHub(version string) ([]string, error) {
-	resp, err := retryableHttpClient.Get(fmt.Sprintf("https://raw.githubusercontent.com/projectdiscovery/nuclei-templates/%s/.new-additions", version))
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, errkit.New("version not found")
-	}
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	templatesList := []string{}
-	scanner := bufio.NewScanner(bytes.NewReader(data))
-	for scanner.Scan() {
-		text := scanner.Text()
-		if text == "" {
-			continue
-		}
-		if config.IsTemplate(text) {
-			templatesList = append(templatesList, text)
-		}
-	}
-	return templatesList, nil
-}
-
-func PurgeEmptyDirectories(dir string) {
-	alldirs := []string{}
-	_ = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-		if d.IsDir() {
-			alldirs = append(alldirs, path)
-		}
-		return nil
-	})
-	// sort in ascending order
-	sort.Strings(alldirs)
-	// reverse the order
-	sort.Sort(sort.Reverse(sort.StringSlice(alldirs)))
-
-	for _, d := range alldirs {
-		if isEmptyDir(d) {
-			_ = os.RemoveAll(d)
-		}
-	}
-}
-
-func isEmptyDir(dir string) bool {
-	hasFiles := false
-	_ = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-		if !d.IsDir() {
-			hasFiles = true
-			return io.EOF
-		}
-		return nil
-	})
-	return !hasFiles
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1486,46 +1538,762 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `afb307a5` (2026-11-09)
-**Commit Message**: chore(deps): bump crate-ci/typos (#8094)
+### Incident Patch 1: `72e5254c` (2026-11-09)
+**Commit Message**: Merge pull request #8082 from furious-05/fix/mssql-fastdialer
 
-Bumps the workflows group with 1 update: [crate-ci/typos](https://github.com/crate-ci/typos).
+fix(js/mssql): route connections through fastdialer and improve error…
 
+**File**: `pkg/js/libs/mssql/mssql.go` (modified, +87/-16)
+```diff
+@@ -9,11 +9,58 @@ import (
+ 	"net/url"
+ 	"strings"
+ 
+-	_ "github.com/microsoft/go-mssqldb"
++	gomssql "github.com/microsoft/go-mssqldb"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/js/utils"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
+ )
+ 
++// mssqlCustomDialer routes connection dialing through Nuclei's fastdialer.
++// Implementing HostDialer ensures the driver delegates hostname resolution to the dialer
++// rather than using the local OS net.LookupIP, keeping DNS resolution, scan proxies,
++// and dial-time network policies strictly enforced.
++type mssqlCustomDialer struct {
++	executionId string
++	host        string
++}
++
++var _ gomssql.HostDialer = (*mssqlCustomDialer)(nil)
++
++func (d *mssqlCustomDialer) DialContext(ctx context.Context, network, addr string) (net.Conn, error) {
++	dialers := protocolstate.GetDialersWithId(d.executionId)
++	if dialers == nil {
++		return nil, fmt.Errorf("dialers not initialized for %s", d.executionId)
++	}
++	targetHost, _, err := net.SplitHostPort(addr)
++	if err != nil {
++		targetHost = addr
++	}
++	if !protocolstate.IsHostAllowed(d.executionId, targetHost) {
++		return nil, protocolstate.ErrHostDenied.Msgf(targetHost)
++	}
++	return dialers.Fastdialer.Dial(ctx, network, addr)
++}
++
++func (d *mssqlCustomDialer) HostName() string {
++	return d.host
++}
++
++func openDB(executionId, target, username, password, dbName string) (*sql.DB, error) {
++	host, _, err := net.SplitHostPort(target)
++	if err != nil {
++		host = target
++	}
++	connString := mssqlConnString(target, username, password, dbName)
++	connector, err := gomssql.NewConnector(connString)
++	if err != nil {
++		return nil, err
++	}
++	connector.Dialer = &mssqlCustomDialer{
++		executionId: executionId,
++		host:        host,
++	}
++	return sql.OpenDB(connector), nil
++}
++
+ type (
+ 	// Client is a client for MS SQL database.
+ 	// Internally client uses microsoft/go-mssqldb driver.
+@@ -67,9 +114,7 @@ func connect(ctx context.Context, executionId string, host string, port int, use
+ 
+ 	target := net.JoinHostPort(host, fmt.Sprintf("%d", port))
+ 
+-	connString := mssqlConnString(target, username, password, dbName)
+-
+-	db, err := sql.Open("sqlserver", connString)
++	db, err := openDB(executionId, target, username, password, dbName)
+ 	if err != nil {
+ 		return false, err
+ 	}
+@@ -79,23 +124,50 @@ func connect(ctx context.Context, executionId string, host string, port int, use
+ 
+ 	_, err = db.ExecContext(ctx, "select 1")
+ 	if err != nil {
+-		switch {
+-		case strings.Contains(err.Error(), "connect: connection refused"):
+-			fallthrough
+-		case strings.Contains(err.Error(), "no pg_hba.conf entry for host"):
+-			fallthrough
+-		case strings.Contains(err.Error(), "network unreachable"):
+-			fallthrough
+-		case strings.Contains(err.Error(), "reset"):
+-			fallthrough
+-		case strings.Contains(err.Error(), "i/o timeout"):
++		if isNetworkError(err) {
+ 			return false, err
+ 		}
+ 		return false, nil
+ 	}
+ 	return true, nil
+ }
+ 
++// isNetworkError reports whether an error indicates a network, dialer,
++// timeout, or policy failure as opposed to a server-side authentication rejection.
++func isNetworkError(err error) bool {
++	if err == nil {
++		return false
++	}
++	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
++		return true
++	}
++	var netErr net.Error
++	if errors.As(err, &netErr) {
++		return true
++	}
++	errStr := strings.ToLower(err.Error())
++	for _, marker := range []string{
++		"connection refused",
++		"actively refused",
++		"port closed",
++		"unable to open tcp connection",
++		"network unreachable",
++		"connection reset",
++		"i/o timeout",
++		"connection timed out",
++		"context canceled",
++		"deadline exceeded",
++		"dialers not initialized",
++		"network policy",
++		"host denied",
++	} {
++		if strings.Contains(errStr, marker) {
++			return true
++		}
++	}
++	return false
++}
++
+ // IsMssql checks if the given host is running MS SQL database.
+ // If the host is running MS SQL database, it returns true.
+ // If the host is not running MS SQL database, it returns false.
+@@ -156,9 +228,8 @@ func (c *MSSQLClient) ExecuteQuery(ctx context.Context, host string, port int, u
+ 	}
+ 
+ 	target := net.JoinHostPort(host, fmt.Sprintf("%d", port))
+-	connString := mssqlConnString(target, username, password, dbName)
+ 
+-	db, err := sql.Open("sqlserver", connString)
++	db, err := openDB(executionId, target, username, password, dbName)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+```
 
-Updates `crate-ci/typos` from 1.51.1 to 1.52.0
-- [Release notes](https://github.com/crate-ci/typos/releases)
-- [Changelog](https://github.com/crate-ci/typos/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/crate-ci/typos/compare/v1.51.1...v1.52.0)
+**File**: `pkg/js/libs/mssql/mssql_test.go` (modified, +120/-0)
+```diff
+@@ -1,9 +1,18 @@
+ package mssql
+ 
+ import (
++	"context"
++	"errors"
++	"net"
++	"strconv"
+ 	"testing"
++	"time"
+ 
++	gomssql "github.com/microsoft/go-mssqldb"
+ 	"github.com/microsoft/go-mssqldb/msdsn"
++	"github.com/projectdiscovery/goflags"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -33,3 +42,114 @@ func TestConnectionStringKeepsPlainDatabaseName(t *testing.T) {
+ 
+ 	require.Equal(t, "master", cfg.Database)
+ }
++
++func TestOpenDBUsesCustomFastdialer(t *testing.T) {
++	execID := "mssql-opendb-test"
++	require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: execID}))
++	t.Cleanup(func() { protocolstate.Close(execID) })
++
++	db, err := openDB(execID, "127.0.0.1:1433", "user", "pass", "master")
++	require.NoError(t, err)
++	require.NotNil(t, db)
++	_ = db.Close()
++}
++
++func TestMssqlDialerEnforcesNetworkPolicy(t *testing.T) {
++	execID := "mssql-policy-test"
++	require.NoError(t, protocolstate.Init(&types.Options{
++		ExecutionId:    execID,
++		ExcludeTargets: goflags.StringSlice{"denied.host"},
++	}))
++	t.Cleanup(func() { protocolstate.Close(execID) })
++
++	dialer := &mssqlCustomDialer{
++		executionId: execID,
++		host:        "denied.host",
++	}
++	require.Equal(t, "denied.host", dialer.HostName())
++	var _ gomssql.HostDialer = dialer
++
++	_, err := dialer.DialContext(context.Background(), "tcp", "denied.host:1433")
++	require.Error(t, err)
++	require.Contains(t, err.Error(), "network policy")
++
++	uninitDialer := &mssqlCustomDialer{
++		executionId: "nonexistent-exec-id",
++		host:        "example.com",
++	}
++	_, err = uninitDialer.DialContext(context.Background(), "tcp", "example.com:1433")
++	require.Error(t, err)
++	require.Contains(t, err.Error(), "dialers not initialized")
++}
++
++func TestConnectFailsFastOnClosedPort(t *testing.T) {
++	execID := "mssql-closed-port-test"
++	require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: execID}))
++	t.Cleanup(func() { protocolstate.Close(execID) })
++
++	ln, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++	_, portStr, err := net.SplitHostPort(ln.Addr().String())
++	require.NoError(t, err)
++	port, err := strconv.Atoi(portStr)
++	require.NoError(t, err)
++	_ = ln.Close()
++
++	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
++	defer cancel()
++
++	ok, err := connect(ctx, execID, "127.0.0.1", port, "user", "pass", "master")
++	require.Error(t, err)
++	require.False(t, ok)
++}
++
++func TestConnectWithCanceledContext(t *testing.T) {
++	execID := "mssql-canceled-ctx-test"
++	require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: execID}))
++	t.Cleanup(func() { protocolstate.Close(execID) })
++
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel() // Cancel immediately
++
++	ok, err := connect(ctx, execID, "127.0.0.1", 1433, "user", "pass", "master")
++	require.Error(t, err)
++	require.False(t, ok)
++}
++
++func TestIsNetworkError(t *testing.T) {
++	require.True(t, isNetworkError(errors.New("connect: connection refused")))
++	require.True(t, isNetworkError(errors.New("No connection could be made because the target machine actively refused it.")))
++	require.True(t, isNetworkError(errors.New("unable to open tcp connection with host '127.0.0.1:1433': cause=\"port closed or filtered\"")))
++	require.True(t, isNetworkError(errors.New("network unreachable")))
++	require.True(t, isNetworkError(errors.New("connection reset by peer")))
++	require.True(t, isNetworkError(errors.New("i/o timeout")))
++	require.True(t, isNetworkError(context.Canceled))
++	require.True(t, isNetworkError(context.DeadlineExceeded))
++	require.True(t, isNetworkError(protocolstate.ErrHostDenied.Msgf("127.0.0.1")))
++
++	// Server-side responses / authentication failures are not network errors
++	require.False(t, isNetworkError(nil))
++	require.False(t, isNetworkError(errors.New("mssql: Login failed for user 'sa'")))
++	require.False(t, isNetworkError(errors.New("mssql: Cannot open database \"secret\" requested by the login")))
++	require.False(t, isNetworkError(errors.New("mssql: Password has expired")))
++	require.False(t, isNetworkError(errors.New("mssql: Permission denied to database")))
++	require.False(t, isNetworkError(errors.New("mssql: Password must be reset")))
++	require.False(t, isNetworkError(errors.New("mssql: The query timed out")))
++}
++
++func TestExecuteQueryUsesFastdialer(t *testing.T) {
++	execID := "mssql-execute-query-test"
++	require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: execID}))
++	t.Cleanup(func() { protocolstate.Close(execID) })
++
++	client := &MSSQLClient{}
++	ctx := context.WithValue(context.Background(), "executionId", execID) //nolint:staticcheck // SA1029: executionId string key matches goja runtime injection
++
++	// Denied host should fail policy check immediately
++	_, err := client.ExecuteQuery(ctx, "denied.host", 1433, "user", "pass", "master", "SELECT 1")
++	require.Error(t, err)
++
++	// Closed port should fail
++	_, 
+```
 
 ---
-updated-dependencies:
-- dependency-name: crate-ci/typos
-  dependency-version: 1.52.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: workflows
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 2: `947bf26d` (2026-11-09)
+**Commit Message**: Merge pull request #8093 from hakarrr/fix-signature-cache-trust-7663
 
-**File**: `.github/workflows/typos.yaml` (modified, +1/-1)
+fix(templates): never trust cached verification verdicts (#7663)
+
+**File**: `pkg/catalog/loader/loader_test.go` (modified, +128/-0)
 ```diff
-@@ -17,4 +17,4 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v7
--      - uses: crate-ci/typos@v1.51.1
-+      - uses: crate-ci/typos@v1.52.0
+@@ -2,6 +2,7 @@ package loader
+ 
+ import (
+ 	"bytes"
++	"crypto/sha256"
+ 	"os"
+ 	"path/filepath"
+ 	"reflect"
+@@ -19,6 +20,7 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/loader/workflow"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
++	templatesigner "github.com/projectdiscovery/nuclei/v3/pkg/templates/signer"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/utils"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/stats"
+ 	"github.com/stretchr/testify/require"
+@@ -685,9 +687,135 @@ http:
+ 	loaded := loadSingleTemplateForTest(t, templatePath, "loader-unsigned-flow-template")
+ 	require.Len(t, loaded, 1)
+ 	require.Equal(t, "unsigned-flow-template", loaded[0].ID)
++	require.False(t, loaded[0].Verified)
+ 	require.Equal(t, initialUnverifiedJavascript, stats.GetValue(templates.SkippedUnverifiedJavascriptTemplateStats))
+ }
+ 
++func contentDigestForLoaderTest(data []byte) [32]byte {
++	dataDigest := sha256.Sum256(data)
++	return sha256.Sum256(dataDigest[:])
++}
++
++func loadTemplateWithPoisonedMetadata(t *testing.T, templatePath, executionID string, source []byte, disableUnsigned bool) []*templates.Template {
++	t.Helper()
++
++	fileInfo, err := os.Stat(templatePath)
++	require.NoError(t, err)
++
++	metadataIndex, err := metadataindex.NewIndex(t.TempDir())
++	require.NoError(t, err)
++	metadataIndex.Set(templatePath, &metadataindex.Metadata{
++		ID:                  "poisoned",
++		FilePath:            templatePath,
++		ModTime:             fileInfo.ModTime(),
++		Name:                "Poisoned",
++		Authors:             []string{"pdteam"},
++		Severity:            "info",
++		Verified:            true,
++		TemplateVerifier:    "projectdiscovery/nuclei-templates",
++		VerifierFingerprint: templatesigner.DefaultTemplateVerifiers[0].Fingerprint(),
++		ContentDigest:       contentDigestForLoaderTest(source),
++		Validation:          metadataindex.ValidationStrict,
++	})
++
++	options := testutils.DefaultOptions.Copy()
++	options.Logger = &gologger.Logger{}
++	options.ExecutionId = executionID
++	options.DisableUnsignedTemplates = disableUnsigned
++	options.TemplateLoadingConcurrency = 1
++	testutils.Init(options)
++	t.Cleanup(func() {
++		testutils.Cleanup(options)
++	})
++
++	catalog := disk.NewCatalog("")
++	executerOpts := testutils.NewMockExecuterOptions(options, nil)
++	executerOpts.Catalog = catalog
++	executerOpts.Parser = templates.NewParser()
++	executerOpts.Logger = options.Logger
++
++	workflowLoader, err := workflow.NewLoader(executerOpts)
++	require.NoError(t, err)
++	executerOpts.WorkflowLoader = workflowLoader
++
++	loaderConfig := NewConfig(options, catalog, executerOpts)
++	loaderConfig.MetadataIndex = metadataIndex
++	store, err := New(loaderConfig)
++	require.NoError(t, err)
++
++	loaded, err := store.LoadTemplates([]string{templatePath})
++	require.NoError(t, err)
++	return loaded
++}
++
++func TestLoadTemplatesIgnoresSelfConsistentCacheForJavascript(t *testing.T) {
++	templatePath := filepath.Join(t.TempDir(), "poisoned-javascript.yaml")
++	source := []byte(`id: poisoned-cached-javascript
++
++info:
++  name: Poisoned Cached Javascript
++  author: pdteam
++  severity: info
++
++javascript:
++  - init: |
++      set("init-status", "executed")
++    code: |
++      Export("poisoned-cached-javascript")
++`)
++	require.NoError(t, os.WriteFile(templatePath, source, 0o600))
++
++	loaded := loadTemplateWithPoisonedMetadata(t, templatePath, "loader-poisoned-javascript", source, false)
++	require.Empty(t, loaded)
++}
++
++func TestLoadTemplatesAllowsUnsignedFlowDespitePoisonedCache(t *testing.T) {
++	templatePath := filepath.Join(t.TempDir(), "poisoned-flow.yaml")
++	source := []byte(`id: poisoned-cached-flow
++
++info:
++  name: Poisoned Cached Flow
++  author: pdteam
++  severity: info
++
++flow: http(1)
++
++http:
++  - method: GET
++    path:
++      - "{{BaseURL}}"
++`)
++	require.NoError(t, os.WriteFile(templatePath, source, 0o600))
++
++	loaded := loadTemplateWithPoisonedMetadata(t, templatePath, "loader-poisoned-flow", source, false)
++	require.Len(t, loaded, 1)
++	require.Equal(t, "poisoned-cached-flow", loaded[0].ID)
++	require.False(t, loaded[0].Verified)
++	require.True(t, loaded[0].IsFlowTemplate())
++}
++
++func TestLoadTemplatesSkipsPoisonedHttpWhenUnsignedDisabled(t *testing.T) {
++	templatePath := filepath.Join(t.TempDir(), "poisoned-http.yaml")
++	source := []byte(`id: poisoned-cached-http
++
++info:
++  name: Poisoned Cached HTTP
++  author: pdteam
++  severity: info
++
++http:
++  - method: GET
++    path:
++      - "{{BaseURL}}"
++`)
++	require.NoError(t, os.WriteFile(templatePath, source, 0o600))
++
++	initialUnverified := stats.GetValue(templates.SkippedUnverifiedTemplateStats)
++	loaded := loadTemplateWithPoisonedMetadata(t, templatePath, "loader-poisoned-http-dut", source, true)
++	require.Empty(t, loaded)
++	require.Equal(t, initialUnverified+1, stats.GetValue(templates.SkippedUnverifiedTemplateStats))
++}
++
+ func TestLoadTemplatesDoesNotRequireGlobalMatchersFlagToLoadTemplate(t *testing.T) {
+ 	templatePath := filepath.Join(t.TempDi
+```
+
+**File**: `pkg/templates/compile.go` (modified, +6/-35)
+```diff
+@@ -912,29 +912,14 @@ func applyTemplateVerification(template *Template, data []byte) {
+ 	}
+ 
+ 	options := template.Options
+-	verificationDigest, digestErr := templateVerificationDigest(data, template)
++	verificationDigest, _ := templateVerificationDigest(data, template)
+ 	template.verificationDigest = verificationDigest
+ 
+-	// check if the template is verified
+-	// only valid templates can be verified or signed
+-	if digestErr == nil && options.TemplateVerificationCallback != nil && options.TemplatePath != "" {
+-		if cached := options.TemplateVerificationCallback(options.TemplatePath); cached != nil {
+-			if cached.ContentDigest == verificationDigest && cached.ContentDigest != ([sha256.Size]byte{}) && cachedTemplateVerificationIsTrusted(cached) {
+-				template.Verified = cached.Verified
+-				template.TemplateVerifier = cached.Verifier
+-				template.verifierFingerprint = cached.VerifierFingerprint
+-				options.TemplateVerifier = cached.Verifier
+-				// Mirror verification onto options for execution-time checks.
+-				options.Verified = cached.Verified
+-				//nolint
+-				if !(template.Verified && template.TemplateVerifier == "projectdiscovery/nuclei-templates") {
+-					template.Options.RawTemplate = data
+-				}
+-
+-				return
+-			}
+-		}
+-	}
++	// index.gob is an unauthenticated local file. A forged entry can pair
++	// Verified=true with a trusted fingerprint and a digest of the
++	// unsigned payload, so never copy a cached verdict. Always verify
++	// against DefaultTemplateVerifiers. Unsigned templates still
++	// short-circuit in ExtractSignatureAndContent with no ECDSA.
+ 
+ 	var verifier *signer.TemplateSigner
+ 
+@@ -973,20 +958,6 @@ func (template *Template) VerifierFingerprint() [sha256.Size]byte {
+ 	return template.verifierFingerprint
+ }
+ 
+-func cachedTemplateVerificationIsTrusted(cached *protocols.TemplateVerification) bool {
+-	if !cached.Verified || cached.VerifierFingerprint == ([sha256.Size]byte{}) {
+-		return false
+-	}
+-
+-	for _, verifier := range signer.DefaultTemplateVerifiers {
+-		if verifier.Identifier() == cached.Verifier && verifier.Fingerprint() == cached.VerifierFingerprint {
+-			return true
+-		}
+-	}
+-
+-	return false
+-}
+-
+ func templateVerificationDigest(data []byte, template *Template) ([sha256.Size]byte, error) {
+ 	componentDigests := make([]byte, 0, sha256.Size*(len(template.GetFileImports())+1))
+ 	dataDigest := sha256.Sum256(data)
+```
+
+**File**: `pkg/templates/compile_test.go` (modified, +369/-33)
+```diff
+@@ -726,6 +726,9 @@ func TestParseTemplateExecutesJavascriptInitAfterVerification(t *testing.T) {
+ 		testutils.Cleanup(options)
+ 	})
+ 
++	signer := ciTemplateSigner(t)
++	withDefaultTemplateSigner(t, signer)
++
+ 	executerOptions := testutils.NewMockExecuterOptions(options, nil)
+ 	executerOptions.TemplatePath = "verified-javascript-init.yaml"
+ 	templateSource := `id: verified-javascript-init
+@@ -741,12 +744,7 @@ javascript:
+     code: |
+       Export("verified-javascript-init")
+ `
+-	executerOptions.TemplateVerificationCallback = func(templatePath string) *protocols.TemplateVerification {
+-		require.Equal(t, executerOptions.TemplatePath, templatePath)
+-		return trustedVerificationForTest(templateSource)
+-	}
+-
+-	template, err := templates.ParseTemplateFromReader(strings.NewReader(templateSource), nil, executerOptions)
++	template, err := templates.ParseTemplateFromReader(strings.NewReader(signTemplateForTest(t, signer, templateSource)), nil, executerOptions)
+ 	require.NoError(t, err)
+ 	require.True(t, template.Verified)
+ 	require.True(t, template.Options.Verified)
+@@ -761,6 +759,9 @@ func TestParseTemplateExecutesPreprocessedJavascriptInitAfterVerification(t *tes
+ 		testutils.Cleanup(options)
+ 	})
+ 
++	signer := ciTemplateSigner(t)
++	withDefaultTemplateSigner(t, signer)
++
+ 	executerOptions := testutils.NewMockExecuterOptions(options, nil)
+ 	executerOptions.TemplatePath = "verified-preprocessed-javascript-init.yaml"
+ 	templateSource := `id: verified-preprocessed-javascript-init
+@@ -776,12 +777,7 @@ javascript:
+     code: |
+       Export("verified-preprocessed-javascript-init")
+ `
+-	executerOptions.TemplateVerificationCallback = func(templatePath string) *protocols.TemplateVerification {
+-		require.Equal(t, executerOptions.TemplatePath, templatePath)
+-		return trustedVerificationForTest(templateSource)
+-	}
+-
+-	template, err := templates.ParseTemplateFromReader(strings.NewReader(templateSource), nil, executerOptions)
++	template, err := templates.ParseTemplateFromReader(strings.NewReader(signTemplateForTest(t, signer, templateSource)), nil, executerOptions)
+ 	require.NoError(t, err)
+ 	require.True(t, template.Verified)
+ 	require.True(t, template.Options.Verified)
+@@ -809,12 +805,46 @@ func trustedVerificationForTest(data string, importedContents ...string) *protoc
+ 	}
+ }
+ 
++// ciTemplateSigner returns a signer backed by the CI test keypair.
++func ciTemplateSigner(t *testing.T) *templatesigner.TemplateSigner {
++	t.Helper()
++
++	s, err := templatesigner.NewTemplateSignerFromFiles("signer/testdata/ci.crt", "signer/testdata/ci-private-key.pem")
++	require.NoError(t, err)
++
++	return s
++}
++
++// withDefaultTemplateSigner prepends the given signer to the default
++// verifiers for the duration of the test.
++func withDefaultTemplateSigner(t *testing.T, s *templatesigner.TemplateSigner) {
++	t.Helper()
++
++	original := templatesigner.DefaultTemplateVerifiers
++	templatesigner.DefaultTemplateVerifiers = append([]*templatesigner.TemplateSigner{s}, original...)
++	t.Cleanup(func() {
++		templatesigner.DefaultTemplateVerifiers = original
++	})
++}
++
++// signTemplateForTest returns src with a valid signature appended by the
++// given signer. When importPaths are non-empty the signature also binds the
++// contents of those files, read from disk at signing time.
++func signTemplateForTest(t *testing.T, s *templatesigner.TemplateSigner, src string, importPaths ...string) string {
++	t.Helper()
++
++	signable := &templates.Template{ImportedFiles: importPaths}
++	signature, err := s.Sign([]byte(src), signable)
++	require.NoError(t, err)
++
++	return src + "\n" + signature
++}
++
+ func TestParseTemplateVerificationUsesLoadedImportContents(t *testing.T) {
+ 	options := testutils.DefaultOptions.Copy()
+ 	loadedCode := `Export("loaded-import")`
+-	diskCode := `Export("disk-import")`
+ 	importPath := filepath.Join(t.TempDir(), "import.js")
+-	require.NoError(t, os.WriteFile(importPath, []byte(diskCode), 0o600))
++	require.NoError(t, os.WriteFile(importPath, []byte(loadedCode), 0o600))
+ 	options.LoadHelperFileFunction = func(helperFile, _ string, _ catalog.Catalog) (io.ReadCloser, error) {
+ 		require.Equal(t, importPath, helperFile)
+ 		return io.NopCloser(strings.NewReader(loadedCode)), nil
+@@ -836,12 +866,11 @@ info:
+ javascript:
+   - code: %q
+ `, importPath)
+-	executerOptions.TemplateVerificationCallback = func(templatePath string) *protocols.TemplateVerification {
+-		require.Equal(t, executerOptions.TemplatePath, templatePath)
+-		return trustedVerificationForTest(templateSource, loadedCode)
+-	}
+ 
+-	template, err := templates.ParseTemplateFromReader(strings.NewReader(templateSource), nil, executerOptions)
++	signer := ciTemplateSigner(t)
++	withDefaultTemplateSigner(t, signer)
++
++	template, err := templates.ParseTemplateFromReader(strings.NewReader(signTemplateForTest(t, signer, templateSource, importPath)), nil, executerOptions)
+ 	require.NoError(t, err)
+ 	require.True(t, template.Verified)
+ 	require.Equal(t, loadedCode, template.RequestsJavascript[0].Code)
+@@ -863,11 
+```
+
+---
+
+### Incident Patch 3: `5e3854e0` (2026-11-09)
+**Commit Message**: Merge pull request #8091 from projectdiscovery/dwisiswant0/fix/deps/bump-golang-org-x-net-brotli-and-klauspost
+
+fix(deps): bump golang.org/x/net, brotli, and klauspost/compress
+
+**File**: `go.mod` (modified, +9/-9)
+```diff
+@@ -18,7 +18,7 @@ require (
+ 	github.com/alecthomas/chroma/v2 v2.27.0
+ 	github.com/alexsnet/go-vnc v0.1.0
+ 	github.com/alitto/pond v1.9.2
+-	github.com/andybalholm/brotli v1.2.0
++	github.com/andybalholm/brotli v1.2.7
+ 	github.com/andygrunwald/go-jira v1.16.1
+ 	github.com/antchfx/htmlquery v1.3.7
+ 	github.com/antchfx/xmlquery v1.4.4
+@@ -63,7 +63,7 @@ require (
+ 	github.com/jhump/protoreflect v1.17.0
+ 	github.com/julienschmidt/httprouter v1.3.0
+ 	github.com/kitabisa/go-ci v1.0.3
+-	github.com/klauspost/compress v1.18.7
++	github.com/klauspost/compress v1.20.2
+ 	github.com/leslie-qiwa/flat v0.0.0-20230424180412-f9d1cf014baa
+ 	github.com/lib/pq v1.12.3
+ 	github.com/logrusorgru/aurora/v4 v4.0.0
+@@ -129,14 +129,14 @@ require (
+ 	go.mongodb.org/mongo-driver v1.17.9
+ 	go.uber.org/multierr v1.11.0
+ 	golang.org/x/exp v0.0.0-20260527015227-08cc5374adb3
+-	golang.org/x/net v0.59.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/oauth2 v0.36.0
+-	golang.org/x/sync v0.23.0
+-	golang.org/x/sys v0.48.0
+-	golang.org/x/term v0.46.0
+-	golang.org/x/text v0.42.0
++	golang.org/x/sync v0.24.0
++	golang.org/x/sys v0.49.0
++	golang.org/x/term v0.47.0
++	golang.org/x/text v0.43.0
+ 	golang.org/x/time v0.15.0
+-	golang.org/x/tools v0.49.0
++	golang.org/x/tools v0.51.0
+ 	google.golang.org/grpc v1.83.2
+ 	google.golang.org/protobuf v1.36.11
+ 	gopkg.in/yaml.v3 v3.0.1
+@@ -455,7 +455,7 @@ require (
+ 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
+ 	goftp.io/server/v2 v2.0.1 // indirect
+ 	golang.org/x/arch v0.3.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+ 	google.golang.org/api v0.264.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+```
+
+**File**: `go.sum` (modified, +18/-18)
+```diff
+@@ -170,8 +170,8 @@ github.com/alicebob/miniredis/v2 v2.38.0 h1:nZAzCR+Lj+Vxk4ZXzm2NuKq2O33RXj1XxJ2e
+ github.com/alicebob/miniredis/v2 v2.38.0/go.mod h1:TcL7YfarKPGDAthEtl5NBeHZfeUQj6OXMm/+iu5cLMM=
+ github.com/alitto/pond v1.9.2 h1:9Qb75z/scEZVCoSU+osVmQ0I0JOeLfdTDafrbcJ8CLs=
+ github.com/alitto/pond v1.9.2/go.mod h1:xQn3P/sHTYcU/1BR3i86IGIrilcrGC2LiS+E2+CJWsI=
+-github.com/andybalholm/brotli v1.2.0 h1:ukwgCxwYrmACq68yiUqwIWnGY0cTPox/M94sVwToPjQ=
+-github.com/andybalholm/brotli v1.2.0/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
++github.com/andybalholm/brotli v1.2.7 h1:UgafRPGMam5ySHfRkhthMqOFA6IFoeF3D7mWIDLjG5A=
++github.com/andybalholm/brotli v1.2.7/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
+ github.com/andybalholm/cascadia v1.3.4 h1:vM2lgh0Vru9Vwyfm4cQqWP2HHMW0u0+2PAW7Q38Qufg=
+ github.com/andybalholm/cascadia v1.3.4/go.mod h1:BLRmbRjpEtNKieZOCCvYj4RqN+KRA41GBe/5O+G93kM=
+ github.com/andygrunwald/go-jira v1.16.1 h1:WoQEar5XoDRAibOgKzTFELlPNlKAtnfWr296R9zdFLA=
+@@ -749,8 +749,8 @@ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+o
+ github.com/kitabisa/go-ci v1.0.3 h1:JmIUIvcercRQc/9x/v02ydCCqU4MadSHaNaOF8T2pGA=
+ github.com/kitabisa/go-ci v1.0.3/go.mod h1:e3wBSzaJbcifXrr/Gw2ZBLn44MmeqP5WySwXyHlCK/U=
+ github.com/klauspost/compress v1.4.1/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid v1.2.0/go.mod h1:Pj4uuM528wm8OyEC2QMXAi2YiTZ96dNQPGgoMS4s3ek=
+ github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
+ github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
+@@ -1335,8 +1335,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
+ golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
+ golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
+ golang.org/x/crypto v0.31.0/go.mod h1:kDsLvtWBEx7MV9tJOj9bnXsPbxwJQ6csT/x4KIN4Ssk=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
+@@ -1424,8 +1424,8 @@ golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
+ golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
+ golang.org/x/net v0.25.0/go.mod h1:JkAGAh7GEvH74S6FOH42FLoXpXbE/aqXSrIQjXgsiwM=
+ golang.org/x/net v0.33.0/go.mod h1:HXLR5J+9DxmrqMwG9qjGCxZ+zKXxBru04zlTvWlWuN4=
+-golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
+-golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+@@ -1452,8 +1452,8 @@ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+ golang.org/x/sync v0.6.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+ golang.org/x/sync v0.7.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+ golang.org/x/sync v0.10.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -1518,8 +1518,8 @@ golang.org/x/sys
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8095** (closed): chore(deps): bump the modules group across 1 directory with 18 updates (@dependabot[bot])
 - **PR #8094** (2026-11-09): chore(deps): bump crate-ci/typos from 1.51.1 to 1.52.0 in the workflows group (@dependabot[bot])
-- **PR #8076** (2026-11-06): fix(core): avoid nested workflow deadlock at template concurrency limit (@VISHNU0906)
-- **PR #8075** (2026-11-06): feat(js): add MQTT JavaScript library (@furious-05)
-- **PR #8072** (2026-11-06): Upgrade github.com/alecthomas/chroma to latest (@AdallomRoy)
-- **PR #8071** (2026-11-06): fix(js): isolate JS objects and handle missing connections (@dwisiswant0)
-- **PR #8068** (2026-11-05): keep template screenshots in a nuclei directory without local file access (@Mzack9999)
+- **PR #8093** (2026-11-09): fix(templates): never trust cached verification verdicts (#7663) (@hakarrr)
+- **PR #8091** (2026-11-09): fix(deps): bump golang.org/x/net, brotli, and klauspost/compress (@dwisiswant0)
+- **PR #8086** (2026-11-09): give openssl an address that the network policy allows (@Mzack9999)
+- **PR #8084** (2026-11-09): pin template dns resolver names to an allowed address (@Mzack9999)
 
 ---
 
@@ -1545,28 +2313,76 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump crate-ci/typos (#8094)
+## X. Merge pull request #8082 from furious-05/fix/mssql-fastdialer
 
 **RULE**:
-When implementing operations in `.github/workflows/typos.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/js/libs/mssql/mssql.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `afb307a5`: deps): bump crate-ci/typos (#8094). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72e5254c`: Merge pull request #8082 from furious-05/fix/mssql-fastdialer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/typos.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/js/libs/mssql/mssql.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - uses: crate-ci/typos@v1.52.0
+	gomssql "github.com/microsoft/go-mssqldb"
+// mssqlCustomDialer routes connection dialing through Nuclei's fastdialer.
+// Implementing HostDialer ensures the driver delegates hostname resolution to the dialer
+// rather than using the local OS net.LookupIP, keeping DNS resolution, scan proxies,
+// and dial-time network policies strictly enforced.
+type mssqlCustomDialer struct {
+	executionId string
+	host        string
+}
+
+var _ gomssql.HostDialer = (*mssqlCustomDialer)(nil)
+
+func (d *mssqlCustomDialer) DialContext(ctx context.Context, network, addr string) (net.Conn, error) {
+	dialers := protocolstate.GetDialersWithId(d.executionId)
+	if dialers == nil {
+		return nil, fmt.Errorf("dialers not initialized for %s", d.executionId)
+	}
+	targetHost, _, err := net.SplitHostPort(addr)
+	if err != nil {
+		targetHost = addr
+	}
+	if !protocolstate.IsHostAllowed(d.executionId, targetHost) {
+		return nil, protocolstate.ErrHostDenied.Msgf(targetHost)
+	}
+	return dialers.Fastdialer.Dial(ctx, network, addr)
+}
+
+func (d *mssqlCustomDialer) HostName() string {
+	return d.host
+}
+
+func openDB(executionId, target, username, password, dbName string) (*sql.DB, error) {
+	host, _, err := net.SplitHostPort(target)
+	i
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      - uses: crate-ci/typos@v1.51.1
+	_ "github.com/microsoft/go-mssqldb"
+	connString := mssqlConnString(target, username, password, dbName)
+
+	db, err := sql.Open("sqlserver", connString)
+		switch {
+		case strings.Contains(err.Error(), "connect: connection refused"):
+			fallthrough
+		case strings.Contains(err.Error(), "no pg_hba.conf entry for host"):
+			fallthrough
+		case strings.Contains(err.Error(), "network unreachable"):
+			fallthrough
+		case strings.Contains(err.Error(), "reset"):
+			fallthrough
+		case strings.Contains(err.Error(), "i/o timeout"):
+	connString := mssqlConnString(target, username, password, dbName)
+	db, err := sql.Open("sqlserver", connString)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `afb307a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72e5254c` are properly handled with clean fallback behavior.

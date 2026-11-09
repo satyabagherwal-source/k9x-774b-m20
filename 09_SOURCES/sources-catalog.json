@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "afb307a5",
+    "sourceVersion": "0505091a",
     "license": "MIT",
-    "contentHash": "642b8118ae31fe3e05720bf03c6965c6644f0e2ab95b88b8c107b6cb1655b283",
-    "lastHarvestedAt": "2026-11-09T09:16:31.359Z",
+    "contentHash": "9971903d80d5d6e8f64b4be438ee37489752cef737823e84b1d9555392955f88",
+    "lastHarvestedAt": "2026-11-09T16:33:36.188Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "034a10b2",
+    "sourceVersion": "0084887c",
     "license": "NOASSERTION",
-    "contentHash": "204c22ebc95c92e0289046143f330c5f8dce47e1ca717ddc87e3d8f49f8440f1",
-    "lastHarvestedAt": "2026-11-07T21:10:32.662Z",
+    "contentHash": "2fb8b84cfd71001f88ce4867dacd135975a308fc4ed2b1f281a7f42da9ce941b",
+    "lastHarvestedAt": "2026-11-09T16:33:39.715Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "64ddd4a0",
+    "sourceVersion": "c1668355",
     "license": "Apache-2.0",
-    "contentHash": "ba834839433faa76a42aeb050f5514ce54c75068433d28ef12069009ccc86ac6",
-    "lastHarvestedAt": "2026-11-08T14:41:45.594Z",
+    "contentHash": "012c2baefb2c5b8a40129e788ab31b50ba84ea83dac261c66d45e698e0df91ad",
+    "lastHarvestedAt": "2026-11-09T16:33:28.591Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -11435,8 +11435,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
     "sourceVersion": "hf-liquidai-lfm3-omni-2b",
     "license": "Open-Source",
-    "contentHash": "09ba6d961ac2f8ba9be033e57fcd97ea51a142563e26b8d42be08a5e700c8a65",
-    "lastHarvestedAt": "2026-11-05T17:14:50.726Z",
+    "contentHash": "18ea9359dd429b6a53605f5ef3b62610424d3dad6fa9fe796fde878c74087d38",
+    "lastHarvestedAt": "2026-11-09T16:33:38.070Z",
     "learningId": "learn-huggingface-liquidai-lfm3-omni-2b"
   },
   "fabio-rovai-open-ontologies": {

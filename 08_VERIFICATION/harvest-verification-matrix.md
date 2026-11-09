@@ -8633,3 +8633,7 @@
 | `CYCLE-20261109-3O1Z` | `2026-11-09T16:26:05.063Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`bd6fc8da...`) |
 | `CYCLE-20261109-3PCG` | `2026-11-09T16:26:06.736Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ffd2ccd3...`) |
 | `CYCLE-20261109-3PLS` | `2026-11-09T16:26:07.072Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e3df911e...`) |
+| `CYCLE-20261109-D6A3` | `2026-11-09T16:33:28.587Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`012c2bae...`) |
+| `CYCLE-20261109-DC52` | `2026-11-09T16:33:36.182Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9971903d...`) |
+| `CYCLE-20261109-DDLE` | `2026-11-09T16:33:38.066Z` | `LiquidAI/LFM3-Omni-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md` | Yes (`18ea9359...`) |
+| `CYCLE-20261109-DEV3` | `2026-11-09T16:33:39.711Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4429` | Yes (`2fb8b84c...`) |

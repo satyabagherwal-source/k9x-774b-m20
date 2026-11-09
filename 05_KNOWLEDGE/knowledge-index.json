@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T16:26:06.971Z",
+  "last_updated": "2026-11-09T16:33:39.609Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3269,8 +3269,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "034a10b2",
-      "content_hash": "204c22ebc95c92e0289046143f330c5f8dce47e1ca717ddc87e3d8f49f8440f1",
+      "source_version": "0084887c",
+      "content_hash": "2fb8b84cfd71001f88ce4867dacd135975a308fc4ed2b1f281a7f42da9ce941b",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -3312,7 +3312,7 @@
         {
           "number": 4429,
           "title": "Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 4711,
@@ -3345,7 +3345,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:10:32.542Z",
+      "verified_at": "2026-11-09T16:33:39.583Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47637,8 +47637,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "64ddd4a0",
-      "content_hash": "ba834839433faa76a42aeb050f5514ce54c75068433d28ef12069009ccc86ac6",
+      "source_version": "c1668355",
+      "content_hash": "012c2baefb2c5b8a40129e788ab31b50ba84ea83dac261c66d45e698e0df91ad",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -47650,6 +47650,11 @@
         {
           "number": null,
           "title": "web: Fix request pool aliasing when a request extension drops another request, a",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifi",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47728,7 +47733,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T14:41:45.473Z",
+      "verified_at": "2026-11-09T16:33:28.457Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52311,8 +52316,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "afb307a5",
-      "content_hash": "642b8118ae31fe3e05720bf03c6965c6644f0e2ab95b88b8c107b6cb1655b283",
+      "source_version": "0505091a",
+      "content_hash": "9971903d80d5d6e8f64b4be438ee37489752cef737823e84b1d9555392955f88",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -52349,6 +52354,11 @@
         {
           "number": null,
           "title": "deps): bump crate-ci/typos (#8094)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #8082 from furious-05/fix/mssql-fastdialer",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52487,7 +52497,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T09:16:31.226Z",
+      "verified_at": "2026-11-09T16:33:36.039Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143448,13 +143458,13 @@
       "rule_number": 4429,
       "title": "Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "f2f80ab7",
+      "source_version": "0084887c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T19:45:16.689Z"
+      "verified_at": "2026-11-09T16:33:39.583Z"
     },
     "rule-4430": {
       "learning_id": "rule-4430",
@@ -160975,7 +160985,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
       "source_version": "hf-liquidai-lfm3-omni-2b",
-      "content_hash": "09ba6d961ac2f8ba9be033e57fcd97ea51a142563e26b8d42be08a5e700c8a65",
+      "content_hash": "18ea9359dd429b6a53605f5ef3b62610424d3dad6fa9fe796fde878c74087d38",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
       "promoted_rules": [
@@ -160995,7 +161005,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:14:50.561Z",
+      "verified_at": "2026-11-09T16:33:37.917Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

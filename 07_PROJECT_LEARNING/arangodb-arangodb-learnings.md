@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `034a10b2`  
+> **Source Version**: `0084887c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:10:31.021Z  
+> **Timestamp**: 2026-11-09T16:33:39.210Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:10:30.761Z  
+> **Harvest Timestamp**: 2026-11-09T16:33:39.202Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1662,245 +1662,75 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5695d39` (2026-11-06)
-**Commit Message**: [COR-1111] Fix fullCount double-counting for empty COLLECT AGGREGATE (#23604)
+### Incident Patch 1: `0084887c` (2026-11-09)
+**Commit Message**: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
 
-* Fix fullCount double-counting for COLLECT WITH COUNT
-
-* Fix fullCount double-counting for empty COLLECT AGGREGATE
-
-* Addressed review comments
-
-* Clean fullCount changelog notes for devel
-
-**File**: `CHANGELOG` (modified, +9/-41)
+**File**: `CHANGELOG` (modified, +3/-6)
 ```diff
-@@ -1,6 +1,15 @@
+@@ -1,6 +1,9 @@
  4.0.0 (XXXX-XX-XX)
  ------------------
  
-+* Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
-+  when used with LIMIT and {fullCount: true}. The single result row was counted
-+  twice: once when produced and again during the fullCount skip phase.
++* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
++  dependencies.
 +
-+* Fixed an issue where AQL COLLECT AGGREGATE without group keys reported an
-+  incorrect fullCount for empty input when used with LIMIT and {fullCount: true}.
-+  The single result row was counted twice: once when produced and again during
-+  the fullCount phase.
-+
- * API versions now have the full form `vMAJOR.MINOR-BRANCH`, e.g. `v1.0-4`,
-   as reported by `GET /_api/version`.
-   Clients can send an `x-arango-api-version` header with the version they
-@@ -573,47 +582,6 @@
+ * Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
+   when used with LIMIT and {fullCount: true}. The single result row was counted
+   twice: once when produced and again during the fullCount skip phase.
+@@ -31,9 +34,6 @@
+   distances computed, heap updates, coarse search and list scan time) in query
+   statistics and in the profile output.
+ 
+-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+-  dependencies.
+-
+ * Updated ArangoDB Starter to v0.20.0-preview-20.
+ 
+ * The AQL optimizer lets a sorted COLLECT reuse a preceding SORT only if the
+@@ -587,9 +587,6 @@
  
  * Remove FoxxMaster code.
  
+-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+-  dependencies.
 -
--3.12.14 (XXXX-XX-XX)
----------------------
--
--* Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
--  when used with LIMIT and {fullCount: true}. The single result row was counted
--  twice: once when produced and again during the fullCount skip phase.
--
--3.12.13 (2026-10-28)
----------------------
--
--* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a `COLLECT`
--  return the number of rows the subquery produces after the `COLLECT` and any
--  `FILTER` following it. For example,
--  `LENGTH(FOR d IN coll COLLECT WITH COUNT INTO c FILTER c > 0 RETURN true)`
--  returns `1` for a non-empty collection. The `optimize-count` optimizer rule is
--  not applied to such subqueries. Before, such expressions could return `null`
--  or `0`.
--
--* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index lookups
--  in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with an index on
--  each attribute, the query returns the rows of every lookup, no matter how many
--  rows each lookup produces. Affected versions skipped the remaining lookups
--  when the rows found so far added up to an exact multiple of 1000, and the
--  query silently returned too few results.
--
--* COR-1209: Fixed a crash that occurs when a license is being activated.
--
--* BTS-2497: Fixed AQL wrong result: ALL_SHORTEST_PATHS inside a loop returns no
--  paths for every row after one whose search is empty or starts at the target.
--
--* COR-1045: Fixed a server crash when SEARCH on a search-alias view referenced a
--  field not covered by the inverted index and the query ran with
--  `failOnWarning: true`.
--
--* COR-1031: Adapt permissions for `PUT /_api/query/properties`: the endpoint now
--  asks the new permission `UpdateQueryProperties`, which is scoped to the
--  database of the request, instead of the admin permission `AdminAqlQueries`.
--  With classic authentication it requires read-write access to that database and
--  not read-write access to `_system`. Returns TRI_ERROR_FORBIDDEN on failure.
--
- * Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-   dependencies.
+ * Updated ArangoDB Starter to v0.19.30.
  
+ * COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list, ==,
 ```
 
-**File**: `arangod/Aql/Executor/SortedCollectExecutor.cpp` (modified, +5/-0)
+**File**: `VERSIONS` (modified, +3/-3)
 ```diff
-@@ -327,6 +327,8 @@ auto SortedCollectExecutor::produceRows(AqlItemBlockInputRange& inputRange,
-         // by definition we need to emit one collect row
-         _currentGroup.writeToOutput(
-             output, InputAqlItemRow{CreateInvalidInputRowHint{}});
-+        // Already reported. fullCount fast-forward must not count it again.
-+        _haveSeenData = true;
-       }
-       break;
-     }
-@@ -451,6 +453,9 @@ auto SortedCollectExecutor::skipRowsRange(AqlItemBlockInputRange& inputRange,
-         if (_infos.getGroupRegisters().empty()) {
-           // by definition we need to emit one collect row
-           clientCall.didSkip(1);
-+          // The row was already skipped. Do not count it again during
-+          // the subsequent fullCount fast-forward.
-+          _haveSeenData = true;
-         }
-       } else {
-         if (_currentGroup.isValid()) {
+@@ -6,8 +6,8 @@ GCC_LINUX "13.2.0"
+ CLANG_LINUX "19.1.7"
+ OPENSSL_LINUX "3.5.9"
+ USE_RCLONE "true"
+-RCLONE_GO "1.26.10-60c5ceb_20261025121659"
++RCLONE_GO "1.26.10-3e15daf_20261109131457"
+ RCLONE_VERSION "1.75.1"
+-RCLONE_SHA256_AMD64 "eea373d11983607664980b9f3b6ce96450b2af0ed4c467f1a8380c79ffe037ea"
+-RCLONE_SHA256_ARM64 "8a8d59b513a68a04e82c2fbff75e7ae5f709cb53f18404edc1ea5996b1f90b64"
++RCLONE_SHA256_AMD64 "1f107ab7dfd836ccc7748d42d80796537e308101ace8fd17ae85dbe78993965d"
++RCLONE_SHA256_ARM64 "d195faf74a5fac20bba18eb1688bf0d0de35b3064f9b7416ca1c7538beba8ccc"
+ MINIMAL_DEBUG_INFO "On"
 ```
 
-**File**: `tests/Aql/Executor/SortedCollectExecutorTest.cpp` (modified, +98/-0)
-```diff
-@@ -1059,4 +1059,102 @@ INSTANTIATE_TEST_CASE_P(SortedCollectExecutor, SortedCollectExecutorTestSplit,
-                         ::testing::Values(splitIntoBlocks<2, 3>,
-                                           splitIntoBlocks<3, 4>, splitStep<2>));
- 
-+// COLLECT AGGREGATE without group keys emits one row for empty input.
-+// Once produced, this row must not be counted again during fullCount
-+// fast-forward.
-+TEST(SortedCollectExecutorEmptyAggregate,
-+     produceThenFullCountDoesNotDoubleCount) {
-+  arangodb::GlobalResourceMonitor global{};
-+  arangodb::ResourceMonitor monitor{global};
-+  AqlItemBlockManager itemBlockManager{monitor};
-+
-+  mocks::MockAqlServer server{};
-+  std::shared_ptr<arangodb::aql::Query> fakedQuery = server.createFakeQuery();
-+
-+  std::vector<std::pair<RegisterId, RegisterId>> groupRegisters;
-+  std::vector<std::pair<RegisterId, RegisterId>> aggregateRegisters{{1, 0}};
-+  std::vector<std::string> aggregateTypes{"MAX"};
-+  std::vector<std::pair<std::string, RegisterId>> variables;
-+  RegisterId collectRegister = RegisterPlan::MaxRegisterId;
-+  RegisterId expressionRegister = RegisterPlan::MaxRegisterId;
-+
-+  auto registerInfos = RegisterInfos(RegIdSet{0}, RegIdSet{1}, 1, 2, RegIdSet{},
-+                                     RegIdSetStack{{}});
-+  auto executorInfos = SortedCollectExecutorInfos(
-+      std::move(groupRegisters), collectRegister, expressionRegister, nullptr,
-+      std::move(aggregateTypes), std::move(variables),
-+      std::move(aggregateRegisters), &VPackOptions::Defaults,
-+      fakedQuery->resourceMonitor());
-+
-+  auto input = VPackParser::fromJson("[]");
-+  SingleRowFetcherHelper<BlockPassthrough::Disable> fetcher(
-+      itemBlockManager, input->steal(), false);
-+  SortedCollectExecutor testee(fetcher, executorInfos);
-+
-+  AqlItemBlockInputRange inputRange(MainQueryState::DONE);
-+  SharedAqlItemBlockPtr outputBlock =
-+      itemBlockManager.requestBlock(1, registerInfos.numberOfOutputRegisters());
-+  OutputAqlItemRow result(outputBlock, registerInfos.getOutputRegisters(),
-+                          registerInfos.registersToKeep(),
-+                          registerInfos.registersToClear(), {});
-+
-+  auto [state, stats, upstreamCall] = testee.produceRows(inputRange, result);
-+  ASSERT_EQ(ExecutorState::DONE, state);
-+  ASSERT_EQ(1, result.numRowsWritten());
-+  AqlValue aggregate = outputBlock->getValue(0, 1);
-+  EXPECT_TRUE(aggregate.isNull(false));
-+
-+  AqlCall fullCountSkip{0, true, 0, AqlCall::LimitType::HARD};
-+  auto [skipState, skipStats, skipped, skipCall] =
-+      testee.skipRowsRange(inputRange, fullCountSkip);
-+  EXPECT_EQ(ExecutorState::DONE, skipState);
-+  EXPECT_EQ(0, skipped);
-+}
-+
-+// The empty input row may be skipped before being produced, for example
-+// due to a LIMIT offset. The subsequent fullCount fast-forward must not
-+// count it again.
-+TEST(SortedCollectExecutorEmptyAggregate, skipThenFullCountDoesNotDoubleCount) {
-+  arangodb::GlobalResourceMonitor global{};
-+  arangodb::ResourceMonitor monitor{global};
-+  AqlItemBlockManager itemBlockManager{monitor};
-+
-+  mocks::MockAqlServer server{};
-+  std::shared_ptr<arangodb::aql::Query> fakedQuery = server.createFakeQuery();
-+
-+  std::vector<std::pair<RegisterId, RegisterId>> groupRegisters;
-+  std::vector<std::pair<RegisterId, RegisterId>> aggregateRegisters{{1, 0}};
-+  std::vector<std::string> aggregateTypes{"MAX"};
-+  std::vector<std::pair<std::string, RegisterId>> variables;
-+  RegisterId collectRegister = RegisterPlan::MaxRegisterId;
-+  RegisterId expressionRegister = RegisterPlan::MaxRegisterId;
-+
-+  auto registerInfos = RegisterInfos(RegIdSet{0}, RegIdSet{1}, 1, 2, RegIdSet{},
-+                                     RegIdSetStack{{}});
-+  auto executorInfos = SortedCollectExecutorInfos(
-+      std::move(groupRegisters), collectRegister, expressionRegister, nullptr,
-+      std::move(aggregateTypes), std::move(variables),
-+      std::move(aggregateRegisters), &VPackOptions::Defaults,
-+      fakedQuery->resourceMonitor());
-+
-+  auto input = VPackParser::fromJson("[]");
-+  SingleRowFetcherHelper<BlockPassthrough::Disable> fetcher(
-+      itemBlockManager, input->steal(), false);
-+  SortedCollectExecutor testee(fetcher, executorInfos);
-+
-+  AqlItemBlockInputRange inputRange(MainQueryState::DONE);
-+
-+  AqlCall offsetSkip{1};
-+  auto [skipState, skipStats, skipped, skipCall] =
-+      testee.skipRowsRange(inputRange, offsetSkip);
-+  EXPECT_EQ(ExecutorState::DONE, skipState);
-+  EXPECT_EQ(1, skipped);
-+
-+  AqlCall fullCountSkip{0, true, 0, AqlCall::LimitType::HARD};
-+  auto [fullCountState, fullCountStats, fullCountSkipped, fullCountCall] =
-+      testee.skipRowsRange(inputRange, fullCountSkip);
-+  EXPECT_EQ(ExecutorState::DONE, fullCountState);
-+  EXPECT_EQ(0, fullCountSkipped);
-+}
-+
- }  // namespace arangodb::tests::aql
-```
+---
 
-**File**: `tests/js/client/aql/aql-fullcount.js` (modified, +21/-0)
+### Incident Patch 2: `392f3415` (2026-11-09)
+**Commit Message**: Fix PROTECTED branch ruleset fir CircleCI
+
+**File**: `.circleci/base_config.yml` (modified, +1/-1)
 ```diff
-@@ -256,6 +256,27 @@ function optimizerFullcountTestSuite () {
- 
-       assertEqual([3], result.toArray());
-       assertEqual(1, result.getExtra().stats.fullCount);
-+    },
-+
-+   // COLLECT AGGREGATE without group keys returns one row even for empty input.
-+   // Ensure fullCount does not count this row twice.
-+    testCollectAggregateEmptyInputLimitFullCount : function () {
-+      let result = executeQuery(
-+        "FOR doc IN UnitTestsCollection FILTER false COLLECT AGGREGATE m = MAX(doc.values) LIMIT 0, 1 RETURN m",
-+        null, { fullCount: true });
-+
-+      assertEqual([null], result.toArray());
-+      assertEqual(1, result.getExtra().stats.fullCount);
-+    },
-+
-+    // If the empty row is skipped first, fullCount must still count it only once.
-+    testCollectAggregateEmptyInputOffsetFullCount : function () {
-+      let result = executeQuery(
-+        "FOR doc IN UnitTestsCollection FILTER false COLLECT AGGREGATE m = MAX(doc.values) LIMIT 1, 1 RETURN m",
-+        null, { fullCount: true });
-+
-+      assertEqual([], result.toArray());
-+      assertEqual(1, result.getExtra().stats.fullCount);
-     }
- 
-   };
+@@ -775,7 +775,7 @@ jobs:
+             LIST=.circleci/required-checks.txt
+             # PR pipelines run on the head branch, so the protected branch
+             # cannot be derived from CIRCLE_BRANCH.
+-            PROTECTED=4.0
++            PROTECTED=devel
+             DRIFT=0
+             if [ ! -s "${LIST}" ]; then
+               echo "ERROR: ${LIST} is missing or empty. Commit the required-check inventory." >&2
 ```
 
 #### Recent Merged Pull Requests:
@@ -1929,13 +1759,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [COR-1111] Fix fullCount double-counting for empty COLLECT AGGREGATE (#23604)
+## X. Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
 
 **RULE**:
 When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5695d39`: [COR-1111] Fix fullCount double-counting for empty COLLECT AGGREGATE (#23604). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0084887c`: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
@@ -1943,46 +1773,21 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
-  when used with LIMIT and {fullCount: true}. The single result row was counted
-  twice: once when produced and again during the fullCount skip phase.
-
-* Fixed an issue where AQL COLLECT AGGREGATE without group keys reported an
-  incorrect fullCount for empty input when used with LIMIT and {fullCount: true}.
-  The single result row was counted twice: once when produced and again during
-  the fullCount phase.
+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+  dependencies.
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+  dependencies.
 
-3.12.14 (XXXX-XX-XX)
+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+  dependencies.
 
-* Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
-  when used with LIMIT and {fullCount: true}. The single result row was counted
-  twice: once when produced and again during the fullCount skip phase.
-
-3.12.13 (2026-10-28)
-
-* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a `COLLECT`
-  return the number of rows the subquery produces after the `COLLECT` and any
-  `FILTER` following it. For example,
-  `LENGTH(FOR d IN coll COLLECT WITH COUNT INTO c FILTER c > 0 RETURN true)`
-  returns `1` for a non-empty collection. The `optimize-count` optimizer rule is
-  not applied to such subqueries. Before, such expressions could return `null`
-  or `0`.
-
-* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index lookups
-  in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with an index on
-  each attribute, the query returns the rows of every lookup, no matter how many
-  rows each lookup produces. Affected versions skipped the remaining lookups
-  when the rows found so far added up to an exact multiple of 1000, and the
-  query silently returned too few results.
-
-* COR-1209: Fixed a crash that occurs wh
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5695d39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0084887c` are properly handled with clean fallback behavior.
