@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T07:13:17.799Z",
-  "total_cycles_completed": 8503,
-  "total_learnings_persisted": 8503,
-  "total_rules_promoted": 8302,
+  "last_updated": "2026-11-09T07:24:59.809Z",
+  "total_cycles_completed": 8506,
+  "total_learnings_persisted": 8506,
+  "total_rules_promoted": 8306,
   "history": [
-    {
-      "timestamp": "2026-11-08T17:29:00.874Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T17:29:07.051Z",
-      "repository": "kamgurgul/cpu-info",
-      "learningId": "learn-github-kamgurgul-cpu-info",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T17:35:42.701Z",
-      "repository": "joreilly/Confetti",
-      "learningId": "learn-github-joreilly-confetti",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T17:35:44.660Z",
       "repository": "nats-io/nats.go",
@@ -1403,6 +1382,27 @@
       "repository": "Cactus-Compute/whistle",
       "learningId": "learn-huggingface-cactus-compute-whistle",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T07:20:59.734Z",
+      "repository": "storybookjs/storybook",
+      "learningId": "learn-github-storybookjs-storybook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T07:21:03.803Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T07:24:59.809Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

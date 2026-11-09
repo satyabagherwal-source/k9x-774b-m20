@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T07:13:17.804Z",
+  "last_updated": "2026-11-09T07:24:59.813Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -245,14 +245,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "content_hash": "387de9c9c6fa66e67ab3052056b10705a1b7e57d2ddd15faf23d1ddbdb4c9b51",
-      "verified_at": "2026-11-05T12:22:52.669Z",
+      "content_hash": "1bf5d705ced4dabad949b9055a0a829da1e4616b53939a30dcf583ba7608b3f3",
+      "verified_at": "2026-11-09T07:24:59.812Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:22:52.669Z"
+      "last_updated": "2026-11-09T07:24:59.812Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "30108373fd8b4619bef4aca330996b872d4f479e2a45394dff94f84e38b627b4",
-      "verified_at": "2026-11-08T10:49:07.706Z",
+      "content_hash": "c703dddfb3226782142de84355decdcd4ff996794945b207638c60cbfcca9296",
+      "verified_at": "2026-11-09T07:21:03.806Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T10:49:07.706Z"
+      "last_updated": "2026-11-09T07:21:03.806Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "d2fb52f2b9c01a07311acce6c907ac555fd8edb7939f43d479751df6e49c26a9",
-      "verified_at": "2026-11-06T00:02:55.303Z",
+      "content_hash": "4866bb9ad501ba5c96414f7fd973aee2e1b98ecd934cf31bbf83b2bb584e33b5",
+      "verified_at": "2026-11-09T07:20:59.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T00:02:55.303Z"
+      "last_updated": "2026-11-09T07:20:59.737Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",

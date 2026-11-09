@@ -8547,3 +8547,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T07:05:52.164Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `f480836a` | Multi-dimensional audit evidence | 2026-11-09T07:05:58.611Z |
 | `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-09T07:13:17.792Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `44ea08ae` | Multi-dimensional audit evidence | 2026-11-09T07:20:59.719Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `c37639d3` | Multi-dimensional audit evidence | 2026-11-09T07:21:03.797Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-09T07:24:59.795Z |
