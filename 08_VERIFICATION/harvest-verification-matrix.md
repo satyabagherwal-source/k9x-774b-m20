@@ -8458,3 +8458,6 @@
 | `CYCLE-20261109-PIYH` | `2026-11-09T01:19:17.561Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`0b8c13a3...`) |
 | `CYCLE-20261109-YMEK` | `2026-11-09T01:26:21.932Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`ba2c1b44...`) |
 | `CYCLE-20261109-YOXP` | `2026-11-09T01:26:25.213Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f6dc6dc2...`) |
+| `CYCLE-20261109-E3PD` | `2026-11-09T01:38:24.193Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`11bfe9e3...`) |
+| `CYCLE-20261109-E6J1` | `2026-11-09T01:38:27.853Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d90ec9c4...`) |
+| `CYCLE-20261109-EH3B` | `2026-11-09T01:38:41.543Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a5116771...`) |

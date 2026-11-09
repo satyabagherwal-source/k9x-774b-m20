@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `b9fd8f07`  
+> **Source Version**: `b5be13f4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:01:34.510Z  
+> **Timestamp**: 2026-11-09T01:38:39.772Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:01:34.502Z  
+> **Harvest Timestamp**: 2026-11-09T01:38:39.764Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,283 +2203,243 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9fd8f07` (2026-11-09)
-**Commit Message**: fix: piped stdin read twice or rejected in 7 commands (#5012)
+### Incident Patch 1: `b5be13f4` (2026-11-09)
+**Commit Message**: perf(stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (#5013)
 
-* fix: piped stdin read twice or rejected in 7 commands
+* perf(stats): use qsv-stats ByteKey for weighted mode/cardinality tracking
 
-A sweep comparing `cat big.csv | qsv <cmd>` against the same file (input
-larger than the 128 KiB read buffer) found commands that read stdin a
-second time, consuming the stream, or that rejected `-`:
+With --weight, stats tracks modes, antimodes and cardinality in
+weighted_modes, a HashMap<Vec<u8>, f64> that allocated one heap buffer per
+distinct value. Key it by stats::ByteKey instead, as #5011 did for the
+unweighted Frequencies tracker: values up to 23 bytes are stored inline.
+Lookups probe with ByteKeyRef, so a hit still allocates nothing.
+ByteKey hashes, compares and orders exactly like [u8], so modes and
+antimodes come out in the same order.
 
-- input --skip-lastlines: counted rows first, so it wrote no rows from
-  stdin (exit 0). Now spools stdin to a temp file when the flag is set.
-- partition with `-`: only no-input stdin was spooled, so the key pass
-  consumed `-` stdin: no files for small input, a CSV error for large.
-- split --chunks with `-`: same; small input became one chunk
-  ("Rows/chunk: 0"), large input a CSV error. Both now spool `-` too.
-- searchset: always counted rows with a second reader, failing past
-  ~64 KiB of piped input. Now counts only for the progress bar (never
-  shown for stdin) and reports the rows it read in --json.
-- frequency: only JSON output spooled stdin, so CSV output lost the
-  <ALL_UNIQUE> shortcut (it needs the stats cache and a row count) and
-  listed an all-unique column's values. Now stdin is always spooled.
-- sniff, extsort: `-` was opened as a file path ("No such
+Release build, 1M-row NYC 311 file, --weight "Unique Key", both run
+orders, byte-identical output:
+- --cardinality --mode: 12-13% faster, 22% less peak RSS (unindexed);
+  19-20% faster, 10% less (indexed)
+- --everything: 13-14% faster, 20% less (unindexed); 21-23% faster,
+  36% less (indexed)
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): stats --weight ByteKey tracking (#5013)
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(stats): weighted modes with heap-spilled keys merged across chunks
+
+Every weighted fixture used 1-2 character values, s
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`applydp --batch 0` works from stdin** ([#5005](https://github.com/dathere/qsv/pull/5005)). It counted rows first, which consumed stdin and left only the header; it now reads stdin in one batch, as `py` does.
- - **`geocode --batch 0` no longer drops rows from piped stdin** ([#5009](https://github.com/dathere/qsv/pull/5009)). Counting rows to size the batch consumed the stream, so rows past the first 128 KiB were silently lost, with exit 0 (also in 28.0.0). It now reads stdin in one batch without counting, as the `census` and `geoclient` back ends already did.
- - **`template`: legacy time zone aliases such as `"EST"` and `"US/Eastern"` work on every system** ([#5010](https://github.com/dathere/qsv/pull/5010), via [minijinja#1008](https://github.com/mitsuhiko/minijinja/issues/1008)). `datetimeformat(tz=...)` failed with "unknown timezone" where the OS time zone database lacks them, e.g. Ubuntu 26.04 without `tzdata-legacy`. qsv now bundles the time zone database as a fallback (about 200 KiB); OS data still takes precedence.
-+- **`input --skip-lastlines` works from stdin** ([#5012](https://github.com/dathere/qsv/pull/5012)). It counted the rows first, which consumed stdin, so it wrote no rows (exit 0, also in 28.0.0). Stdin is now saved to a temp file when the flag is set.
-+- **`partition` and `split --chunks` work with `-` for stdin** ([#5012](https://github.com/dathere/qsv/pull/5012)). Only stdin with no input argument was saved to a temp file, so with `-` `partition` wrote no files and `split --chunks` wrote a single chunk, both exit 0, or failed with a CSV error on larger input (also in 28.0.0).
-+- **`searchset` no longer fails on large piped input** ([#5012](https://github.com/dathere/qsv/pull/5012)). It always counted rows with a second reader, which consumed stdin past the first ~64 KiB (also in 28.0.0). It now counts only for the progress bar, and `--json` reports the rows it read.
-+- **`frequency` shows `<ALL_UNIQUE>` for all-unique columns from stdin** ([#5012](https://github.com/dathere/qsv/pull/5012)). Only `--json` output saved stdin to a temp file, so CSV output listed the column's values instead (also in 28.0.0). Stdin is now always saved to a temp file.
-+- **`sniff -` and `extsort -` read stdin** ([#5012](https://github.com/dathere/qsv/pull/5012)). `-` was treated as a file path ("No such file or directory"); omitting the input already worked.
- - **`to`: clearer error when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). It said "No data on stdin" even when data was piped. It now says no input CSV was given and to use `-` to read stdin.
- - **tests: `template_contrib_functions` no longer depends on the legacy `EST` zone alias** ([#5002](https://github.com/dathere/qsv/pull/5002)). `ubuntu-latest` is now Ubuntu 26.04, which ships aliases such as `EST` and `US/Eastern` only in the optional `tzdata-legacy` package, so the test failed on every Linux run. It now uses `Etc/GMT+5` (the same fixed UTC−5 offset). If you use `datetimeformat(tz=...)` in `template`, prefer canonical IANA names for the same reason.
+@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
+ ### Changed
+ - **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected.
++- **`stats --weight`: mode, antimode and cardinality tracking is faster and uses less memory** ([#5013](https://github.com/dathere/qsv/pull/5013)). The weighted tracker now stores short values inline too, as #5011 did for unweighted `stats`. On a 1M-row file with `--weight`, `--cardinality --mode` is 12–20% faster, and `--everything` on an indexed file is 21–23% faster with 36% less peak memory. Output is unchanged.
+ - **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
+ - **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
+   - **`IS DISTINCT FROM` binds tighter than `AND`/`OR`** ([#30367](https://github.com/pola-rs/polars/pull/30367)). `a IS DISTINCT FROM b AND c OR d` is now `((a IS DISTINCT FROM b) AND c) OR d`; before, the `AND`/`OR` became part of the right operand.
 ```
 
-**File**: `src/cmd/extsort.rs` (modified, +5/-1)
+**File**: `src/cmd/stats.rs` (modified, +10/-10)
 ```diff
-@@ -90,7 +90,11 @@ struct Args {
- const RW_BUFFER_CAPACITY: usize = 1_000_000; // 1 MB
+@@ -4370,7 +4370,7 @@ struct WhichStats {
+     /// function rejects the bad combinations.
+     approx_quantiles:     bool,
+     /// When true, use the Apache `DataSketches` `HyperLogLog` engine for the cardinality
+-    /// column instead of the exact `Frequencies<ByteKey>` / `HashMap<Vec<u8>, f64>` tracker.
++    /// column instead of the exact `Frequencies<ByteKey>` / `HashMap<ByteKey, f64>` tracker.
+     /// `--infer-boolean` forces this off in `run()` (HLL's ~1.5% RSE breaks
+     /// `cardinality == 2` checks). Independent of `approx_quantiles`.
+     approx_cardinality:   bool,
+@@ -4623,7 +4623,7 @@ struct Stats {
+     // Counted-runs frequency map: one entry per UNIQUE value (vs the previous
+     // Unsorted<Vec<u8>> which buffered every sample - one alloc+copy per row).
+     modes:          Option<Frequencies<stats::ByteKey>>, // 48 bytes - used for mode/cardinality
+-    weighted_modes: Option<HashMap<Vec<u8>, f64>>,       // 48 bytes - weighted mode/antimode
++    weighted_modes: Option<HashMap<stats::ByteKey, f64>>, // 48 bytes - weighted mode/antimode
  
- pub fn run(argv: &[&str]) -> CliResult<()> {
--    let args: Args = util::get_args(USAGE, argv)?;
-+    let mut args: Args = util::get_args(USAGE, argv)?;
-+    // `-` means stdin, the same as no input
-+    if args.arg_input.as_deref() == Some("-") {
-+        args.arg_input = None;
-+    }
+     // CACHE LINE 5+: Sorting-based statistics
+     #[allow(clippy::struct_field_names)]
+@@ -5381,14 +5381,14 @@ impl Stats {
+             // Existing-key updates don't grow the map, so check the cap only on the
+             // new-key branch — this preserves the get_mut fast path AND ensures the
+             // tracker never exceeds `cap` entries (peak == cap exactly).
+-            if let Some(val) = wm.get_mut(sample) {
++            if let Some(val) = wm.get_mut(stats::ByteKeyRef::new(sample)) {
+                 *val += weight;
+             } else if cap > 0 && wm.len() as u64 >= cap {
+                 // Adding a new key would push len to cap + 1; drop instead.
+                 self.weighted_modes = None;
+                 self.modes_dropped = true;
+             } else {
+-                wm.insert(sample.to_vec(), weight);
++                wm.insert(stats::ByteKey::from_slice(sample), weight);
+             }
+         } else if let Some(v) = self.modes.as_mut() {
+             // Unweighted modes: Frequencies::len() == unique values seen (true
+@@ -5818,7 +5818,7 @@ impl Stats {
+                         );
+                     } else {
+                         // Collect modes (values with max weight) in deterministic order
+-                        let mut modes_keys: Vec<&Vec<u8>> = weighted_modes_map
++                        let mut modes_keys: Vec<&stats::ByteKey> = weighted_modes_map
+                             .iter()
+                             .filter(|&(_, &weight)| (weight - max_weight).abs() < 1e-10)
+                             .map(|(value, _)| value)
+@@ -5830,7 +5830,7 @@ impl Stats {
+                         }
+                         // Collect antimodes (values with min weight) in deterministic order
+                         // Sort first, then truncate to MAX_ANTIMODES for deterministic output
+-                        let mut antimodes_keys: Vec<&Vec<u8>> = weighted_modes_map
++                        let mut antimodes_keys: Vec<&stats::ByteKey> = weighted_modes_map
+                             .iter()
+                             .filter(|&(_, &weight)| (weight - min_weight).abs() < 1e-10)
+                             .map(|(value, _)| value)
+@@ -5845,7 +5845,7 @@ impl Stats {
  
-     // check if tmp dir exists
-     let tmp_dir = match &args.flag_tmp_dir {
+                         let modes_count = modes_keys.len();
+ 
+-                        // Format modes - work with &Vec<u8> references directly,
++                        // Format modes - work with &ByteKey references directly,
+                         // avoiding heap allocation from .cloned().collect()
+                         let modes_list = if visualize_ws {
+                             modes_keys
+@@ -5873,7 +5873,7 @@ impl Stats {
+                             )
+                         });
+ 
+-                        // Format antimodes - work with &Vec<u8> references directly,
++                        // Format antimodes - work with &ByteKey references directly,
+                         // avoiding heap allocation from .cloned().collect()
+                         let antimodes_list = format_antimodes(
+                             &antimodes_keys,
+@@ -6038,8 +6038,8 @@ impl Stats {
+                         let mut keys = wm.keys();
+                         // safety: len() == 2 was just checked
+                         (
+-                            String::from_utf8_lossy(keys.next().unwrap()),
+-                            String::from_utf8_lossy(keys.next().unwrap()),
++                            String::from_utf8_lossy(keys.next().unwrap().as_slice()),
++                            String::from_utf8_lossy(keys.next().unwrap().as_slice()),
+                         )
+                     },
+                     _ => (
 ```
 
-**File**: `src/cmd/frequency.rs` (modified, +16/-10)
+**File**: `tests/test_stats.rs` (modified, +91/-0)
 ```diff
-@@ -1059,17 +1059,23 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         return fail_clierror!("--frequency-jsonl requires a file input, not stdin.");
+@@ -10303,6 +10303,97 @@ fn stats_weighted_all_distinct_values_still_report_the_heaviest_mode() {
      }
- 
--    // if stdin and args.flag_json is true, save stdin to tempfile
--    // so we can derive stats
--    let mut stdin_temp_file;
-+    // save stdin to a temp file so we can derive stats: the <ALL_UNIQUE> shortcut and JSON
-+    // output need the stats cache's cardinalities and a row count, and stdin can be read only
-+    // once. process_input registers the spool as stdin's, so stdin's delimiter rules still
-+    // apply, and the TempDir (which also holds the stats cache files) is removed when run()
-+    // returns. The Frequent Items sketch streams stdin and skips stats, so its CSV output
-+    // isn't spooled.
-+    let _stdin_spool_dir;
-     let is_json = args.flag_json || args.flag_pretty_json || args.flag_toon;
--    if is_stdin && is_json {
--        let temp_dir = std::env::temp_dir();
--        stdin_temp_file = tempfile::Builder::new()
--            .suffix(".csv")
--            .tempfile_in(&temp_dir)?;
--        io::copy(&mut io::stdin(), &mut stdin_temp_file)?;
--        args.arg_input = Some(stdin_temp_file.path().to_string_lossy().to_string());
-+    let is_frequent_items = args
-+        .flag_sketch_method
-+        .eq_ignore_ascii_case("frequent_items");
-+    if is_stdin && (is_json || !is_frequent_items) {
-+        let spool_dir = tempfile::tempdir()?;
-+        let spooled = util::process_input(vec![std::path::PathBuf::from("-")], &spool_dir, "")?;
-+        // safety: process_input returns at least one path or an error
-+        args.arg_input = Some(spooled[0].to_string_lossy().into_owned());
-+        _stdin_spool_dir = spool_dir;
-         rconfig = args.rconfig();
-     }
- 
-```
-
-**File**: `src/cmd/input.rs` (modified, +12/-1)
-```diff
-@@ -109,7 +109,7 @@ struct Args {
  }
  
- pub fn run(argv: &[&str]) -> CliResult<()> {
--    let args: Args = util::get_args(USAGE, argv)?;
-+    let mut args: Args = util::get_args(USAGE, argv)?;
- 
-     let trim_setting = match (args.flag_trim_headers, args.flag_trim_fields) {
-         (false, false) => csv::Trim::None,
-@@ -147,6 +147,17 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-             })
-         });
- 
-+    // --skip-lastlines counts the rows before reading them, and stdin can be read only once,
-+    // so spool stdin to a temp file first. The TempDir must outlive the reader below.
-+    let _stdin_spool_dir;
-+    if args.flag_skip_lastlines.is_some() && matches!(args.arg_input.as_deref(), None | Some("-")) {
-+        let spool_dir = tempfile::tempdir()?;
-+        let spooled = util::process_input(vec![std::path::PathBuf::from("-")], &spool_dir, "")?;
-+        // safety: process_input returns at least one path or an error
-+        args.arg_input = Some(spooled[0].to_string_lossy().into_owned());
-+        _stdin_spool_dir = spool_dir;
++#[test]
++fn stats_weighted_modes_long_keys_merge_across_chunks() {
++    // The weighted tracker keys values by ByteKey, which stores up to 23 bytes inline and
++    // spills longer ones to the heap. Mix both kinds (long ones sharing a prefix), spread the
++    // repeats over every parallel chunk, and check the merged mode, cardinality and the
++    // sorted, truncated antimode list.
++    // qsv caps --jobs/QSV_MAX_JOBS at the CPU count, and 1 job is a single chunk with no merge,
++    // so this needs >= 2 cores (same guard as frequency_parallel_worker_panic_is_an_error).
++    let cores = std::thread::available_parallelism().map_or(1, std::num::NonZeroUsize::get);
++    if cores < 2 {
++        eprintln!(
++            "skipping stats_weighted_modes_long_keys_merge_across_chunks: needs >= 2 cores to \
++             exercise the chunk merge (have {cores})"
++        );
++        return;
 +    }
++    let wrk = Workdir::new("stats_weighted_modes_long_keys_merge_across_chunks");
++    let prefix = "a-value-long-enough-to-spill-to-the-heap-";
++    let mode_key = format!("{prefix}mode");
++    let runner_up = format!("{prefix}runner-up");
++    // 6 + 5 + 4 repeated rows, interleaved so each chunk gets some of every key
++    let mut repeated = Vec::new();
++    for i in 0..6 {
++        repeated.push(mode_key.clone());
++        if i < 5 {
++            repeated.push(runner_up.clone());
++        }
++        if i < 4 {
++            repeated.push("short".to_string());
++        }
++    }
++    // 12 singletons (weight 1 each): 6 long, 6 short, so more than the 10 antimodes kept
++    let mut singletons: Vec<String> = (0..6).map(|i| format!("{prefix}single-{i:02}")).collect();
++    singletons.extend((0..6).map(|i| format!("s{i}")));
 +
-     let mut rconfig = Config::new(args.arg_input.as_ref())
-         .delimiter(args.flag_delimiter)
-         .no_headers(true)
-```
-
-**File**: `src/cmd/partition.rs` (modified, +10/-28)
-```diff
-@@ -101,34 +101,16 @@ struct Args {
- pub fn run(argv: &[&str]) -> CliResult<()> {
-     let mut args: Args = util::get_args(USAGE, argv)?;
- 
--    // if no input file is provided, use stdin and save to a temp file
--    if args.arg_input.is_none() {
--        // Get or initialize temp directory that persists until program exit
--        let temp_dir =
--            crate::config::TEMP_FILE_DIR.get_or_init(|| tempfile::TempDir::new().unwrap().keep());
--
--        // Create a temporary file with .csv extension to store stdin input
--        let mut temp_file = tempfile::Builder::new()
--            .suffix(".csv")
--            .tempfile_in(temp_dir)?;
--        io::copy(&mut io::stdin(), &mut temp_file)?;
--
--        // Keep temp file from being deleted when it goes out of scope;
--        // it will be deleted when the program exits when TEMP_FILE_DIR is cleaned up.
--        let (_, temp_path) = temp_file
--            .keep()
--            .map_err(|e| format!("Failed to keep temporary stdin file: {e}"))?;
--
--        // Round-tripping through `String` requires UTF-8; bail out cleanly on
--        // exotic temp paths instead of panicking or silently corrupting via
--        // lossy conversion.
--        let temp_path_str = temp_path.to_str().ok_or_else(|| {
--            format!(
--                "Temporary stdin file path is not valid UTF-8: {}",
--                temp_path.display()
--            )
--        })?;
--        args.arg_input = Some(temp_path_str.to_owned());
-+    // stdin (no input, or `-`) is read more than once (key pass + write passes), so save it
-+    // to a temp file. process_input registers the spool as stdin's, so stdin's delimiter
-+    // rules still apply; the TempDir is removed when run() returns.
-+    let _stdin_spool_dir;
-+    if matches!(args.arg_input.as_deref(), None | Some("-")) {
-+        let spool_dir = tempfile::tempdir()?;
-+        let spooled = util::process_input(vec![std::path::PathBuf::from("-")], &spool_dir, "")?;
-+        // safety: process_input returns at least one path or an error
-+        args.arg_input = Some(spooled[0].to_string_lossy().into_owned());
-+        _stdin_spool_dir = spool_dir;
-     }
- 
-     fs::create_dir_all(&args.arg_outdir)?;
-```
-
-**File**: `src/cmd/searchset.rs` (modified, +10/-2)
-```diff
-@@ -289,13 +289,20 @@ impl Args {
-             wtr.write_record(&headers)?;
-         }
- 
--        let record_count = util::count_rows(rconfig)?;
-         // prep progress bar
-         #[cfg(any(feature = "feature_capable", feature = "lite"))]
-         let show_progress = (self.flag_progressbar || util::get_envvar_flag("QSV_PROGRESSBAR"))
-             && !rconfig.is_stdin();
-         #[cfg(any(feature = "feature_capable", feature = "lite"))]
-         let progress = ProgressBar::with_draw_target(None, ProgressDrawTarget::stderr_with_hz(5));
-+        // counting rows reads the input a second time, which would consume stdin before `rdr`
-+        // reads it, so only count for the progress bar (which is never shown for stdin)
-+        #[cfg(any(feature = "feature_capable", feature = "lite"))]
-+        let record_count = if show_progress {
-+            util::count_rows(rconfig)?
-+        } else {
-+            0
-+        };
-         #[cfg(any(feature = "feature_capable", feature = "lite"))]
-         if show_progress {
-             util::prep_progress(&progress, record_count);
-@@ -408,7 +415,8 @@ impl Args {
-             let json = json!({
-                 "rows_with_matches": match_row_ctr,
-                 "total_matches": total_matches,
--                "record_count": record_count,
-+                // --json turns off --quick, so the loop read every record
-+                "record_count": row_ctr,
-             });
-             eprintln!("{json}");
-         } else {
-```
-
-**File**: `src/cmd/sniff.rs` (modified, +5/-1)
-```diff
-@@ -843,7 +843,11 @@ fn cleanup_tempfile(
- }
- 
- pub fn run(argv: &[&str]) -> CliResult<()> {
--    let args: Args = util::get_args(USAGE, argv)?;
-+    let mut args: Args = util::get_args(USAGE, argv)?;
-+    // `-` means stdin, the same as no input
-+    if args.arg_input.as_deref() == Some("-") {
-+        args.arg_input = None;
++    let mut data = vec![svec!["value", "weight"]];
++    let mut singles = singletons.iter();
++    for (i, v) in repeated.iter().enumerate() {
++        data.push(vec![v.clone(), "1".to_string()]);
++        if i % 2 == 1
++            && let Some(s) = singles.next()
++        {
++            data.push(vec![s.clone(), "1".to_string()]);
++        }
 +    }
- 
-     let rt = tokio::runtime::Runtime::new().unwrap();
-     rt.block_on(sniff_main(args))?;
-```
-
-**File**: `src/cmd/split.rs` (modified, +10/-22)
-```diff
-@@ -187,28 +187,16 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
- 
-     fs::create_dir_all(&args.arg_outdir)?;
- 
--    // if no input file is provided, use stdin and save to a temp file
--    if args.arg_input.is_none() {
--        // Get or initialize temp directory that persists until program exit
--        let temp_dir =
--            crate::config::TEMP_FILE_DIR.get_or_init(|| tempfile::TempDir::new().unwrap().keep());
--
--        // Create a temporary file with .csv extension to store stdin input
--        let mut temp_file = tempfile::Builder::new()
--            .suffix(".csv")
--            .tempfile_in(temp_dir)?;
--        io::copy(&mut io::stdin(), &mut temp_file)?;
--
--        // Get path as string, unwrap is safe as temp files are always valid UTF-8
--        let temp_path = temp_file.path().to_str().unwrap().to_string();
--
--        // Keep temp file from being deleted when it goes out of scope
--        // it will be deleted when the program exits when TEMP_FILE_DIR is deleted
--        temp_file
--            .keep()
--            .map_err(|e| format!("Failed to keep temporary stdin file: {e}"))?;
--
--        args.arg_input = Some(temp_path);
-+    // stdin (no input, or `-`) can be read only once, but --chunks counts the rows first,
-+    // so save it to a temp file. process_input registers the spool as stdin's, so stdin's
-+    // delimiter rules still apply; the TempDir is removed when run() returns.
-+    let _stdin_spool_dir;
-+    if matches!(args.arg_input.as_deref(), None | Some("-")) {
-+        let spool_dir = tempfile::tempdir()?;
-+        let spooled = util::process_input(vec![std::path::PathBuf::from("-")], &spool_dir, "")?;
-+        // safety: process_input returns at least one path or an error
-+        args.arg_input = Some(spooled[0].to_string_lossy().into_owned());
-+        _stdin_spool_dir = spool_dir;
-     }
- 
-     if let Some(kb_size) = args.flag_kb_size {
++    for s in singles {
++        data.push(vec![s.clone(), "1".to_string()]);
++    }
++    assert_eq!(data.len() - 1, 27);
++    wrk.create_indexed("data.csv", data);
++
++    let mut cmd = wrk.command("stats");
++    cmd.args([
++        "--weight",
++        "weight",
++        "--cardinality",
++        "--mode",
++        "--jobs",
++        "2",
++    ])
++    .arg("data.csv")
++    // pin 2 jobs regardless of the caller's QSV_MAX_JOBS, and use CPU-based chunking
++    // (2 chunks of 14 and 13 rows) so the chunk merge really runs
++    .env("QSV_MAX_JOBS", "2")
++    .env("QSV_STATS_CHUNK_MEMORY_MB", "-1")
++    .env("QSV_ANTIMODES_LEN", "0");
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    let headers = &got[0];
++    let row = &got[1];
++    let col = |name: &str| {
++        let idx = headers
++            .iter()
++            .position(|h| h == name)
++            .unwrap_or_else(|| panic!("missing column {name}"));
++        row[idx].as_str()
++    };
++
++    assert_eq!(col("field"), "value");
++    assert_eq!(col("cardinality"), "15");
++    assert_eq!(col("mode"), mode_key);
++    assert_eq!(col("mode_count"), "1");
++    assert_eq!(col("mode_occurrences"), "6");
++
++    let mut sorted = singletons.clone();
++    sorted.sort_unstable();
++    let expected_antimodes = format!("*PREVIEW: {}", sorted[..10].join("|"));
++    assert_eq!(col("antimode"), expected_antimodes);
++    assert_eq!(col("antimode_count"), "12");
++    assert_eq!(col("antimode_occurrences"), "1");
++}
++
+ #[test]
+ fn stats_antimodes_len_zero_disables_truncation_without_panicking() {
+     // QSV_ANTIMODES_LEN=0 is documented as "disable length limiting"; it maps to usize::MAX,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5013** (2026-11-09): perf(stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (@jqnatividad)
 - **PR #5012** (2026-11-09): fix: piped stdin read twice or rejected in 7 commands (@jqnatividad)
 - **PR #5011** (2026-11-08): perf(stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking (@jqnatividad)
 - **PR #5010** (2026-11-08): fix(template): legacy time zone aliases fall back to a bundled tzdb (@jqnatividad)
 - **PR #5009** (2026-11-07): fix(geocode): --batch 0 no longer drops rows from piped stdin (@jqnatividad)
 - **PR #5008** (2026-11-07): fix(cat): rowskey writes nothing for empty input (@jqnatividad)
-- **PR #5007** (2026-11-06): fix(cat): error on empty stdin when no input is given (@jqnatividad)
 
 ---
 
@@ -2499,13 +2459,13 @@ second time, consuming the stream, or that rejected `-`:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. piped stdin read twice or rejected in 7 commands (#5012)
+## X. stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (#5013)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9fd8f07`: piped stdin read twice or rejected in 7 commands (#5012). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b5be13f4`: stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (#5013). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2513,11 +2473,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`input --skip-lastlines` works from stdin** ([#5012](https://github.com/dathere/qsv/pull/5012)). It counted the rows first, which consumed stdin, so it wrote no rows (exit 0, also in 28.0.0). Stdin is now saved to a temp file when the flag is set.
-- **`partition` and `split --chunks` work with `-` for stdin** ([#5012](https://github.com/dathere/qsv/pull/5012)). Only stdin with no input argument was saved to a temp file, so with `-` `partition` wrote no files and `split --chunks` wrote a single chunk, both exit 0, or failed with a CSV error on larger input (also in 28.0.0).
-- **`searchset` no longer fails on large piped input** ([#5012](https://github.com/dathere/qsv/pull/5012)). It always counted rows with a second reader, which consumed stdin past the first ~64 KiB (also in 28.0.0). It now counts only for the progress bar, and `--json` reports the rows it read.
-- **`frequency` shows `<ALL_UNIQUE>` for all-unique columns from stdin** ([#5012](https://github.com/dathere/qsv/pull/5012)). Only `--json` output saved stdin to a temp file, so CSV output listed the column's values instead (also in 28.0.0). Stdin is now always saved to a temp file.
-- **`sniff -` and `extsort -` read st
+- **`stats --weight`: mode, antimode and cardinality tracking is faster and uses less memory** ([#5013](https://github.com/dathere/qsv/pull/5013)). The weighted tracker now stores short values inline too, as #5011 did for unweighted `stats`. On a 1M-row file with `--weight`, `--cardinality --mode` is 12–20% faster, and `--everything` on an indexed file is 21–23% faster with 36% less peak memory. Output is unchanged.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2527,4 +2483,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9fd8f07` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b5be13f4` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T01:26:25.224Z",
+  "last_updated": "2026-11-09T01:38:41.556Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1415,14 +1415,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "content_hash": "b318cd6de4f83bffb48b7db0c3808751d75eac83e87fa10813e7b8ddd80fcffe",
-      "verified_at": "2026-11-05T07:34:40.069Z",
+      "content_hash": "11bfe9e38f3d132261ceea797bab0530926ba950774821c33158fc334d00849d",
+      "verified_at": "2026-11-09T01:38:24.206Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:34:40.069Z"
+      "last_updated": "2026-11-09T01:38:24.206Z"
     },
     "NaiveAI/Naive-N0.5-Flash": {
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "13a0d394e2efe9dcc72867bcf11d1c691957222af8809b97de15ad54a2a55dc2",
-      "verified_at": "2026-11-09T01:01:36.354Z",
+      "content_hash": "a51167715690f8d706a917fd87bd8adb9f1dcb12f216b9fe585eb4698059c306",
+      "verified_at": "2026-11-09T01:38:41.556Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:01:36.354Z"
+      "last_updated": "2026-11-09T01:38:41.556Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -3861,14 +3861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-bat",
-      "content_hash": "929c1a4acbdd8025b47717b4815c315683b4b4be043b0f5fb6613bb10cc29f0b",
-      "verified_at": "2026-11-08T00:41:40.886Z",
+      "content_hash": "d90ec9c4c652ac007b49fd755a610afde75903b2f78e7690e8ab8ad9bc6f0088",
+      "verified_at": "2026-11-09T01:38:27.876Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:41:40.886Z"
+      "last_updated": "2026-11-09T01:38:27.876Z"
     },
     "karakeep-app/karakeep": {
       "repository": "karakeep-app/karakeep",

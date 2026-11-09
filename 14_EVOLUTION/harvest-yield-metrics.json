@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T01:26:25.221Z",
-  "total_cycles_completed": 8423,
-  "total_learnings_persisted": 8423,
-  "total_rules_promoted": 8225,
+  "last_updated": "2026-11-09T01:38:41.552Z",
+  "total_cycles_completed": 8426,
+  "total_learnings_persisted": 8426,
+  "total_rules_promoted": 8227,
   "history": [
-    {
-      "timestamp": "2026-11-08T08:24:03.320Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T08:24:58.239Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T08:25:04.107Z",
-      "repository": "SwiftWebUI/SwiftWebUI",
-      "learningId": "learn-github-swiftwebui-swiftwebui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T08:49:00.225Z",
       "repository": "temporalio/temporal",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-09T01:26:25.221Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:38:24.202Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:38:27.872Z",
+      "repository": "sharkdp/bat",
+      "learningId": "learn-github-sharkdp-bat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:38:41.552Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T01:26:25.135Z",
+  "last_updated": "2026-11-09T01:38:41.447Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10102,8 +10102,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "b9fd8f07",
-      "content_hash": "13a0d394e2efe9dcc72867bcf11d1c691957222af8809b97de15ad54a2a55dc2",
+      "source_version": "b5be13f4",
+      "content_hash": "a51167715690f8d706a917fd87bd8adb9f1dcb12f216b9fe585eb4698059c306",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10150,6 +10150,11 @@
         {
           "number": null,
           "title": "piped stdin read twice or rejected in 7 commands (#5012)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (#5013)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10503,7 +10508,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:01:36.218Z",
+      "verified_at": "2026-11-09T01:38:41.423Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33682,7 +33687,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "b318cd6de4f83bffb48b7db0c3808751d75eac83e87fa10813e7b8ddd80fcffe",
+      "content_hash": "11bfe9e38f3d132261ceea797bab0530926ba950774821c33158fc334d00849d",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "promoted_rules": [
@@ -33729,7 +33734,7 @@
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6",
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
       ],
-      "verified_at": "2026-11-05T07:34:39.955Z",
+      "verified_at": "2026-11-09T01:38:24.069Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55988,14 +55993,19 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "c231941d",
-      "content_hash": "929c1a4acbdd8025b47717b4815c315683b4b4be043b0f5fb6613bb10cc29f0b",
+      "source_version": "6561174a",
+      "content_hash": "d90ec9c4c652ac007b49fd755a610afde75903b2f78e7690e8ab8ad9bc6f0088",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #4094 from nikarh/cue-lang",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4119 from FFspiky/test/highlight-color-tty",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56034,7 +56044,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:41:40.736Z",
+      "verified_at": "2026-11-09T01:38:27.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

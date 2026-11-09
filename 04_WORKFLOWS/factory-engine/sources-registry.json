@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T01:26:27.805Z",
-    "lastVerified": "2026-11-09T01:26:27.805Z",
+    "lastChecked": "2026-11-09T01:38:44.152Z",
+    "lastVerified": "2026-11-09T01:38:44.152Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -259,14 +259,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:01:34.502Z",
-    "lastVerified": "2026-11-09T01:01:34.502Z",
+    "lastChecked": "2026-11-09T01:38:39.764Z",
+    "lastVerified": "2026-11-09T01:38:39.764Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "13a0d394e2efe9dcc72867bcf11d1c691957222af8809b97de15ad54a2a55dc2",
+    "contentHash": "a51167715690f8d706a917fd87bd8adb9f1dcb12f216b9fe585eb4698059c306",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1114,9 +1114,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-08T21:16:41.227Z",
+    "lastChecked": "2026-11-09T01:38:30.670Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-08T21:16:41.227Z"
+    "lastVerified": "2026-11-09T01:38:30.670Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -1224,14 +1224,14 @@
     "officialUrl": "https://github.com/sharkdp/bat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T00:41:39.389Z",
-    "lastVerified": "2026-11-08T00:41:39.389Z",
+    "lastChecked": "2026-11-09T01:38:26.482Z",
+    "lastVerified": "2026-11-09T01:38:26.482Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "929c1a4acbdd8025b47717b4815c315683b4b4be043b0f5fb6613bb10cc29f0b",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 11,
+    "contentHash": "d90ec9c4c652ac007b49fd755a610afde75903b2f78e7690e8ab8ad9bc6f0088",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1484,9 +1484,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-08T04:09:58.017Z",
+    "lastChecked": "2026-11-09T01:38:33.199Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-08T04:09:58.017Z"
+    "lastVerified": "2026-11-09T01:38:33.199Z"
   },
   "ajeetdsouza-zoxide": {
     "name": "ajeetdsouza/zoxide",
@@ -6006,9 +6006,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-08T05:02:03.734Z",
+    "lastChecked": "2026-11-09T01:38:28.113Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-08T05:02:03.734Z"
+    "lastVerified": "2026-11-09T01:38:28.113Z"
   },
   "rqlite-rqlite": {
     "name": "rqlite/rqlite",
@@ -6049,12 +6049,12 @@
     "officialUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T07:34:36.684Z",
-    "lastVerified": "2026-11-05T07:34:36.684Z",
+    "lastChecked": "2026-11-09T01:38:23.155Z",
+    "lastVerified": "2026-11-09T01:38:23.155Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "b318cd6de4f83bffb48b7db0c3808751d75eac83e87fa10813e7b8ddd80fcffe",
+    "contentHash": "11bfe9e38f3d132261ceea797bab0530926ba950774821c33158fc334d00849d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -12062,9 +12062,9 @@
   "heckj-swiftui-notes": {
     "name": "swiftui-notes",
     "officialUrl": "https://github.com/heckj/swiftui-notes",
-    "lastChecked": "2026-11-05T18:53:35.509Z",
+    "lastChecked": "2026-11-09T01:38:25.531Z",
     "revisionIdentifier": "e7884cce",
-    "lastVerified": "2026-11-05T18:53:35.509Z"
+    "lastVerified": "2026-11-09T01:38:25.531Z"
   },
   "webpack-webpack": {
     "name": "webpack/webpack",

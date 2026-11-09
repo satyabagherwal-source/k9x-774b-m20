@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-IWWA",
-    "timestamp": "2026-11-07T02:06:47.818Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "9ea0bc8a383777064667e28d6133cfbb097cd766692dfd5dd4f0a565f5708ff3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-TO65",
-    "timestamp": "2026-11-07T02:15:09.725Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "0cdfaeeee7554133d5d362c2fc2cdb6fd3da0eb7738aeb4e9b8917edf7a7c549",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-TO7C",
-    "timestamp": "2026-11-07T02:15:09.768Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "857fcc76c1660f813949b68fdb4f44e3d93ccf04c9cbc015e83a6ab2d1260eeb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-5T6Z",
     "timestamp": "2026-11-07T02:24:36.107Z",
     "repository": "BuilderIO/builder",
@@ -7490,6 +7445,51 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-E3PD",
+    "timestamp": "2026-11-09T01:38:24.193Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "11bfe9e38f3d132261ceea797bab0530926ba950774821c33158fc334d00849d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-E6J1",
+    "timestamp": "2026-11-09T01:38:27.853Z",
+    "repository": "sharkdp/bat",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "d90ec9c4c652ac007b49fd755a610afde75903b2f78e7690e8ab8ad9bc6f0088",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-EH3B",
+    "timestamp": "2026-11-09T01:38:41.543Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "a51167715690f8d706a917fd87bd8adb9f1dcb12f216b9fe585eb4698059c306",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
