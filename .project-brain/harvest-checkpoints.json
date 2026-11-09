@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T12:52:43.408Z",
+  "last_updated": "2026-11-09T13:10:13.363Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2213,14 +2213,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "content_hash": "91c2ebd9a7b0346755f0941e3fbb44c982676ef29b068a0239f37a6cd1d665b6",
-      "verified_at": "2026-11-05T14:43:24.020Z",
+      "content_hash": "fe6c4aa8fba078495935e7b89d42dd90653e9849436a6fb4a105ef0c56bed3b4",
+      "verified_at": "2026-11-09T13:10:10.921Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:43:24.020Z"
+      "last_updated": "2026-11-09T13:10:10.921Z"
     },
     "Leonxlnx/taste-skill": {
       "repository": "Leonxlnx/taste-skill",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "7235e3911b35fce84a78fdceef4e712091bf521fc6daf0f87445722b79da2d86",
-      "verified_at": "2026-11-09T12:13:13.598Z",
+      "content_hash": "d53dbabbfba877090dcf4367baecc3158a90c3899ed50de7d1381e810ee2607d",
+      "verified_at": "2026-11-09T13:10:13.362Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:13:13.598Z"
+      "last_updated": "2026-11-09T13:10:13.362Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -3546,14 +3546,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fission-fission",
-      "content_hash": "3926dd9198818ba121bb932b931f782728906d87fbfd28e05d1c070674578109",
-      "verified_at": "2026-10-27T11:56:13.078Z",
+      "content_hash": "0b944e32c1e3becc96e9a8e7e3a0d0af24267dd718787f9707e77290fdf8d35b",
+      "verified_at": "2026-11-09T13:10:05.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:56:13.078Z"
+      "last_updated": "2026-11-09T13:10:05.590Z"
     },
     "smallstep/cli": {
       "repository": "smallstep/cli",

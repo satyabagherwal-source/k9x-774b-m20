@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T12:52:43.285Z",
+  "last_updated": "2026-11-09T13:10:13.236Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15066,11 +15066,16 @@
       "slug": "fission-fission",
       "platform": "github",
       "source_url": "https://github.com/fission/fission",
-      "source_version": "ae2aabf5",
-      "content_hash": "3926dd9198818ba121bb932b931f782728906d87fbfd28e05d1c070674578109",
+      "source_version": "9cac7b02",
+      "content_hash": "0b944e32c1e3becc96e9a8e7e3a0d0af24267dd718787f9707e77290fdf8d35b",
       "dossier_path": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspo",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1709,
           "title": "Remove low-evidence Go patterns; fix --graceperiod defaulting to 0 (#3684)",
@@ -15092,7 +15097,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:56:12.997Z",
+      "verified_at": "2026-11-09T13:10:05.440Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47675,8 +47680,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "cacd3a8d",
-      "content_hash": "7235e3911b35fce84a78fdceef4e712091bf521fc6daf0f87445722b79da2d86",
+      "source_version": "fbd810e8",
+      "content_hash": "d53dbabbfba877090dcf4367baecc3158a90c3899ed50de7d1381e810ee2607d",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47813,6 +47818,11 @@
         {
           "number": null,
           "title": "NUC 96 At Variables",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Allocate NUCs before drafting",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48106,7 +48116,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T12:13:13.448Z",
+      "verified_at": "2026-11-09T13:10:13.211Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75708,10 +75718,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
       "source_version": "hf-autotrust-jev-35b-nvfp4",
-      "content_hash": "91c2ebd9a7b0346755f0941e3fbb44c982676ef29b068a0239f37a6cd1d665b6",
+      "content_hash": "fe6c4aa8fba078495935e7b89d42dd90653e9849436a6fb4a105ef0c56bed3b4",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Selective Quantization Boundary Integrity in Hybrid MoE Architectures",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hybrid Attention Layer Type Consistency in Configuration",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "NVFP4 Dequantization Precision Guard for Router Logits",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1003,
           "title": "Hybrid Precision MoE Routing Integrity",
@@ -75768,7 +75793,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:43:23.883Z",
+      "verified_at": "2026-11-09T13:10:10.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

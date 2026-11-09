@@ -1425,8 +1425,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceVersion": "hf-autotrust-jev-35b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "91c2ebd9a7b0346755f0941e3fbb44c982676ef29b068a0239f37a6cd1d665b6",
-    "lastHarvestedAt": "2026-11-05T14:43:24.010Z",
+    "contentHash": "fe6c4aa8fba078495935e7b89d42dd90653e9849436a6fb4a105ef0c56bed3b4",
+    "lastHarvestedAt": "2026-11-09T13:10:10.911Z",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4"
   },
   "leonxlnx-taste-skill": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "cacd3a8d",
+    "sourceVersion": "fbd810e8",
     "license": "Apache-2.0",
-    "contentHash": "7235e3911b35fce84a78fdceef4e712091bf521fc6daf0f87445722b79da2d86",
-    "lastHarvestedAt": "2026-11-09T12:13:13.589Z",
+    "contentHash": "d53dbabbfba877090dcf4367baecc3158a90c3899ed50de7d1381e810ee2607d",
+    "lastHarvestedAt": "2026-11-09T13:10:13.352Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2273,10 +2273,10 @@
     "repository": "fission/fission",
     "platform": "github",
     "sourceUrl": "https://github.com/fission/fission",
-    "sourceVersion": "ae2aabf5",
+    "sourceVersion": "9cac7b02",
     "license": "Apache-2.0",
-    "contentHash": "3926dd9198818ba121bb932b931f782728906d87fbfd28e05d1c070674578109",
-    "lastHarvestedAt": "2026-10-27T11:56:13.070Z",
+    "contentHash": "0b944e32c1e3becc96e9a8e7e3a0d0af24267dd718787f9707e77290fdf8d35b",
+    "lastHarvestedAt": "2026-11-09T13:10:05.570Z",
     "learningId": "learn-github-fission-fission"
   },
   "smallstep-cli": {

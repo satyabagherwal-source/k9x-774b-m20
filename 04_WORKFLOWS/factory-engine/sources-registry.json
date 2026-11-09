@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T12:52:46.011Z",
-    "lastVerified": "2026-11-09T12:52:46.011Z",
+    "lastChecked": "2026-11-09T13:10:15.961Z",
+    "lastVerified": "2026-11-09T13:10:15.961Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -462,12 +462,12 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T12:13:11.265Z",
-    "lastVerified": "2026-11-09T12:13:11.265Z",
+    "lastChecked": "2026-11-09T13:10:11.059Z",
+    "lastVerified": "2026-11-09T13:10:11.059Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "7235e3911b35fce84a78fdceef4e712091bf521fc6daf0f87445722b79da2d86",
+    "contentHash": "d53dbabbfba877090dcf4367baecc3158a90c3899ed50de7d1381e810ee2607d",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -747,9 +747,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-09T05:26:04.751Z",
+    "lastChecked": "2026-11-09T13:10:02.103Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-09T05:26:04.751Z"
+    "lastVerified": "2026-11-09T13:10:02.103Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1870,9 +1870,9 @@
   "infinitered-reactotron": {
     "name": "reactotron",
     "officialUrl": "https://github.com/infinitered/reactotron",
-    "lastChecked": "2026-11-06T18:54:33.396Z",
+    "lastChecked": "2026-11-09T13:09:57.043Z",
     "revisionIdentifier": "3e480ab0",
-    "lastVerified": "2026-11-06T18:54:33.396Z"
+    "lastVerified": "2026-11-09T13:09:57.043Z"
   },
   "loft-sh-vcluster": {
     "name": "loft-sh/vcluster",
@@ -2279,11 +2279,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "fission-fission": {
-    "name": "fission",
+    "name": "fission/fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-11-08T16:51:04.114Z",
-    "revisionIdentifier": "ae2aabf5",
-    "lastVerified": "2026-11-08T16:51:04.114Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-09T13:10:03.358Z",
+    "lastVerified": "2026-11-09T13:10:03.358Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fission-fission",
+    "contentHash": "0b944e32c1e3becc96e9a8e7e3a0d0af24267dd718787f9707e77290fdf8d35b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tailscale-tailscale": {
     "name": "tailscale",
@@ -4859,9 +4869,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-08T07:21:53.182Z",
+    "lastChecked": "2026-11-09T13:09:52.105Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-08T07:21:53.182Z"
+    "lastVerified": "2026-11-09T13:09:52.105Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -5128,9 +5138,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-08T15:49:54.379Z",
+    "lastChecked": "2026-11-09T13:10:04.585Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-08T15:49:54.379Z"
+    "lastVerified": "2026-11-09T13:10:04.585Z"
   },
   "telemt-telemt": {
     "name": "telemt",
@@ -8937,13 +8947,13 @@
     "officialUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T14:43:22.807Z",
-    "lastVerified": "2026-11-05T14:43:22.807Z",
+    "lastChecked": "2026-11-09T13:09:54.660Z",
+    "lastVerified": "2026-11-09T13:09:54.660Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "91c2ebd9a7b0346755f0941e3fbb44c982676ef29b068a0239f37a6cd1d665b6",
-    "promotedRulesCount": 0,
+    "contentHash": "fe6c4aa8fba078495935e7b89d42dd90653e9849436a6fb4a105ef0c56bed3b4",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

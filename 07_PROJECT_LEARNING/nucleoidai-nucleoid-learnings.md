@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `cacd3a8d`  
+> **Source Version**: `fbd810e8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T12:13:11.738Z  
+> **Timestamp**: 2026-11-09T13:10:11.485Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T12:13:11.265Z  
+> **Harvest Timestamp**: 2026-11-09T13:10:11.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1628,621 +1628,322 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cacd3a8d` (2026-11-09)
-**Commit Message**: NUC 96 At Variables
+### Incident Patch 1: `fbd810e8` (2026-11-09)
+**Commit Message**: Allocate NUCs before drafting
 
-Accepted under the user-requested basis of the automatic acceptance rule.
-`@name` reads the variable `name` where an operand begins in two places: an
-`is` assignment's value, and the right operand of an `is` / `is not`
-comparison. It reads the name as `(name)` and the `=` spelling do: the
-value when something defines it, and `ReferenceError` when nothing does.
-So after `a is 1`, `b is @a + 2` is 3, and `b is @c + 3` raises
-`ReferenceError: c is not defined`. Everywhere else, a leading `@` keeps
-its accepted error and position. Postfix version selectors are unchanged.
+Require new NUCs to be drafted as Draft proposals, committed, and pushed before proposal work begins. Update proposal, evaluation, ARC, and Git workflows to pin and build on the allocation.
 
-Hard criteria:
-- No compile errors: cargo build --all-targets, cargo clippy --all-targets
-  -- -D warnings, cargo fmt --check and rustdoc with -D warnings pass in
-  the independent evaluation and on the integrated tree.
-- Every test passes: cargo test --no-fail-fast gives 2,860 passed, 0
-  failed, 25 ignored. All 2,864 accepted test identities keep their
-  status, 21 tests are added, and no existing test changed.
-- Backward compatible: every accepted input keeps its parse, behavior and
-  outputs. That covers all 32,294 parsing corpus inputs and all 97,938
-  parsing generated inputs of the evaluato
-
-**File**: `README.md` (modified, +22/-0)
+**File**: `.claude/CLAUDE.md` (modified, +2/-2)
 ```diff
-@@ -159,6 +159,28 @@ such as `[A if c else B]` has word branches. It needs no flag, and `=` keeps
- the reference reading, so `colors = [RED, GREEN]` needs `RED` and `GREEN` to
- be defined; see [NUC 95](docs/nuc-0095.md).
+@@ -17,9 +17,9 @@ not a replacement for the policies it links to.
+ | [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
+ | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
+ | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
+-| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
++| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, and `NUC <number> <Title>` outcome commit messages |
+ | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
+-| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
++| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
  
-+### At variables
-+
-+Inside an `is` value, `@name` reads the variable `name`, never the word:
-+
-+```
-+a is 1
-+b is @a + 2
-+RED = "red"
-+colors is [@RED, GREEN]
-+assert([b, colors], [3, ["red", "GREEN"]])
-+```
-+
-+`@a` is read exactly as `(a)` is, so `b is @c + 3` raises
-+`ReferenceError("c is not defined")` while nothing defines `c`, and so does
-+`b is @c`, where `b is c` would store the word `"c"`. The mark works
-+wherever an operand begins in an `is` value, outside function bodies,
-+comprehension elements, template interpolations, inner assignments and
-+targets, and in the right operand of an `is` comparison, as in
-+`if state is @OPEN:`. Everywhere else a leading `@` is still a syntax error,
-+`x@first` is still a version, and `b is @first` still reads as `b` followed
-+by `is@first`; see [NUC 96](docs/nuc-0096.md).
-+
- ---
- 
- # Design Theory 📐
-```
-
-**File**: `docs/README.md` (modified, +38/-1)
-```diff
-@@ -478,6 +478,41 @@ RED = "red"
- 
- Full detail: [NUC 95](nuc-0095.md).
- 
-+### At variables
-+
-+- [NUC 96](nuc-0096.md) adds `@name`, an `@` directly followed by a name,
-+  which reads the variable `name` where a bare name could be a word. It
-+  needs no option or flag.
-+- It may stand wherever an operand begins inside an `is` value and inside
-+  the right operand of an `is` or `is not` comparison: `b is @a + 2`,
-+  `x is @A if c else B`, `[@A, B]`, `{k: @A}`, `Light(color=@A)` and
-+  `if state is @OPEN:`. Function, arrow and lambda bodies, comprehension
-+  elements and filters, template interpolations, inner assignment values
-+  and assignment targets are not part of those regions.
-+- `@name` reads the name exactly as `(name)` does and is never a word: the
-+  value when something defines it, and `ReferenceError` when nothing does,
-+  where a bare word would read its own text. Postfix operations follow it,
-+  as in `@a.b`, `@a[0]`, `@a(1)` and `@a@first`.
-+- Everywhere else a leading `@` is still a syntax error, and an `@` after an
-+  operand is still a version selector. `b is @first` keeps its accepted
-+  reading as `b` and `is@first`; write `b is (@first)` for the variable
-+  `first`. A space between `@` and the name keeps the accepted reading too.
-+
-+```
-+a is 1
-+b is @a + 2
-+RED = "red"
-+colors is [@RED, GREEN]
-+```
-+
-+- `b` is `3` and follows `a`, and `colors` is `["red", "GREEN"]`. While
-+  nothing defines `c`, `b is @c + 3` raises
-+  `ReferenceError("c is not defined")`, as `b = c + 3` does. Regions,
-+  errors and rendering are in the authoritative
-+  [at variables](../nucleoid.spec.md#at-variables) section.
-+
-+Full detail: [NUC 96](nuc-0096.md).
-+
- ### Destructuring declarations
- 
- - [NUC 67](nuc-0067.md) adds destructuring declarations: object patterns
-@@ -883,7 +918,8 @@ Full detail: [NUC 60](nuc-0060.md).
-   built-in of that name when one exists, and otherwise compares with its own
-   text, `"EXACT"`. Keywords, `$Class` references, paths, calls and
-   parenthesized operands are ordinary operands, so `value is (EXACT)` still
--  needs `EXACT` to be defined.
-+  needs `EXACT` to be defined, and so does `value is @EXACT`, the
-+  [at variable](#at-variables) spelling.
- - A comparison with a word depends on that name even while nothing defines
-   it: defining, changing or deleting the variable re-evaluates every
-   declaration, `if` rule and class-level rule that uses it.
-@@ -3864,6 +3900,7 @@ name is expression                     is assignment: name = expression (NUC 93)
- name.property is word                  a bare word reads its name, else its text "word" (NUC 93)
- name is A if c else B                  bare-word branches are words too (NUC 94)
- name is [A, {k: B}, X(n=C)]            bare-word items, values and labels are words too (NUC 95)
-+name is @a + 2                         @name reads the variable a, never the word "a" (NUC 96)
- name += expression                     compound assignment; also -=, *=, **=, /=, %=
- {a, b} = expression                    one declaration per field: a = expression.a (NUC 67)
- {key: name} = expression               renamed field: name = expression.key (NUC 67)
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -61,6 +61,7 @@ Created: 31-Jul-2026
- | [93](nuc-0093.md) | Opt-In Is Assignments | Accepted |
- | [94](nuc-0094.md) | Opt-In Conditional Words | Accepted |
- | [95](nuc-0095.md) | Item Words | Accepted |
-+| [96](nuc-0096.md) | At Variables | Accepted |
- 
- ### Runtime features
- 
-@@ -245,6 +246,7 @@ Created: 31-Jul-2026
- | [93](nuc-0093.md) | Opt-In Is Assignments | Standards Track | Syntax enhancement | Accepted |
- | [94](nuc-0094.md) | Opt-In Conditional Words | Standards Track | Syntax enhancement | Accepted |
- | [95](nuc-0095.md) | Item Words | Standards Track | Syntax enhancement | Accepted |
-+| [96](nuc-0096.md) | At Variables | Standards Track | Syntax enhancement | Accepted |
- 
- ## Copyright
+ All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
  
 ```
 
-**File**: `docs/nuc-0096.md` (added, +729/-0)
+**File**: `.claude/agents/arc-purposal.agent.md` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,729 @@
-+# NUC 96 -- At Variables
-+
-+```
-+NUC: 96
-+Title: At Variables
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Accepted
-+Type: Standards Track
-+Category: Syntax enhancement
-+Created: 09-Nov-2026
-+Requires: 53, 86, 93, 94, 95
-+```
-+
-+## Abstract
-+
-+- `@name`, an `@` directly followed by a name, reads the variable `name`
-+  where an operand begins inside the value of an `is` assignment of
-+  [NUC 93](nuc-0093.md) or inside the right operand of an `is` or `is not`
-+  comparison of [NUC 86](nuc-0086.md). It reads the name exactly as `(name)`
-+  and the `=` spelling do: its value when something defines it, and
-+  `ReferenceError("<name> is not defined")` when nothing does. It is never a
-+  word.
-+- So after `a is 1`, `b is @a + 2` makes `b` follow `a` and be `3`, and
-+  `b is @c + 3` raises `ReferenceError("c is not defined")` at line 1,
-+  column 1 while nothing defines `c`, as `b = c + 3` does.
-+- Where a bare name would be a word, `@name` asks for the variable instead:
-+  `x is @A`, `x is @A if c else B`, `[@A, B]`, `{k: @A}`, `Light(color=@A)`
-+  and `if $Obj.color is @C:`. Where a bare name is already a reference, as in
-+  `@a + 2`, the mark is accepted and changes nothing.
-+- The regions reach as far as the item positions of [NUC 95](nuc-0095.md),
-+  outside function, arrow and lambda bodies, comprehension elements and
-+  filters, template interpolations, inner assignment values and assignment
-+  targets. Everywhere else a leading `@` keeps its accepted error and
-+  position, and an `@` after an operand keeps its meaning as the version
-+  selector of [NUC 53](nuc-0053.md).
-+- No token, keyword, syntax-tree variant, error message, option or flag is
-+  added. `@name` builds the syntax tree of `(name)`, so it renders,
-+  evaluates and records dependencies as `(name)` does. The authoritative
-+  contract is [At variables](../nucleoid.spec.md#at-variables).
-+- Backward compatible: at the accepted revision an `@` where an operand
-+  begins is always a syntax error, so only inputs that fail to parse there
-+  change. `target is @first`, `@last`, `@previous` and `@` with digits keep
-+  their accepted reading as `target` followed by `is@first`.
-+- Accepted: the user requested this feature directly, and the frozen
-+  candidate meets every hard criterion of the automatic acceptance rule, so
-+  the user-requested basis applies. The independent evaluator's overall
-+  decision is also Accepted. Token comparison was skipped as
-+  `single_proposal`, the rule for a single-proposal request, not a failed
-+  check; see [Evaluation](#evaluation).
-+
-+## Motivation
-+
-+- The user asked, in their words: "if @ used at beginning of word in is
-+  keyword, it should be consider as variable like:"
-+
-+```
-+a is 1
-+b is @a + 2
-+```
-+
-+- "however if variable not define it should throw reference error as
-+  usual":
-+
-+```
-+b is @c + 3
-+```
-+
-+- Words, the bare names of NUC 86, NUC 93, NUC 94 and NUC 95, read a name's
-+  value when something defines it and its own text otherwise. That lets a
-+  world model state words without quotes, but a misspelt or missing variable
-+  silently becomes text. Grouping parentheses, `(a)`, already ask for a
-+  reference, yet they read as grouping, not as a statement that `a` must be
-+  a variable.
-+- At the accepted revision the user's spelling fails to parse.
-+  `b is @a + 2` raises
-+  `SyntaxError("Expected a non-negative integer, 'first', 'last', or 'previous' after '@'")`
-+  at line 2, column 7 after `a is 1`, because `b is @a` reads as the
-+  statement `b` followed by a version of the name `is`; `x is [@A, B]` and
-+  `if x is @C:` raise `SyntaxError("Unexpected character '@'")` at the `@`.
-+- With at variables, one value can hold both: `colors is [@RED, GREEN]`
-+  stores `["red", "GREEN"]` after `RED = "red"`, and raises
-+  `ReferenceError("RED is not defined")` while nothing defines `RED`, where
-+  `colors is [RED, GREEN]` would store `["RED", "GREEN"]`.
-+
-+## Rationale
-+
-+- **Category and mode.** The user requested this concrete feature, so there
-+  was no random draw. It extends the word syntax of NUC 86, NUC 93, NUC 94
-+  and NUC 95, so its category is Syntax enhancement, theirs. It runs in
-+  single-proposal mode, which skips token comparison. Runtime applicability
-+  does not apply. No hint was supplied.
-+- **The name.** The form is the at sign marking a variable read, so "at
-+  variables", as "item words" names a word by its position. Rejected:
-+  "variable words", since `@name` is never a word, and "explicit
-+  references", which says nothing about the spelling.
-+- **The mark.** `@` is the user's choice. After an operand it already means
-+  "the version of", and where an operand begins every `@` is a syntax error
-+  at the accepted revision, so a prefix `@` can mean something new without
-+  changing any program that parses. Only an adjacent name counts: a space,
-+  tab, comment or line break after `@` keeps the accepted reading, as in
-+  `@ a` and `@/* c */a`, because `b is @ 
+@@ -111,7 +111,8 @@ Follow `.claude/CLAUDE.md`, the
+   acceptance makes it Accepted and any other decision Automatic-Accepted.
+ - Record the outcome through the `/nuc-proposal` caller steps, with its basis,
+   the evaluator's decision, and the run's evidence. Those steps commit the
+-  NUC's outcome, pulling before and pushing right after under the
++  NUC's Draft allocation before its proposer starts and its outcome after the
++  run, pulling before and pushing right after each under the
+   [git synchronization policy](../rules/git.instructions.md). Never change
+   project versions.
+ - After the outcome, create or update the puzzle's progress record,
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +50/-7)
+**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +5/-0)
 ```diff
-@@ -140,7 +140,8 @@ assertStmt
-     ;
- 
- // A premise is tentative: it ends exactly at ':' and cannot be a colon
--// statement or end in the word 'lambda'. Otherwise 'suppose' stays a name.
-+// statement or end in the word 'lambda'; an atVariable named lambda is not
-+// that word. Otherwise 'suppose' stays a name.
- // The 'path IS' head follows the isAssignment contract.
- supposeStmt
-     : (conditional ASSIGN | path IS)? SUPPOSE premise? suite
-@@ -155,12 +156,13 @@ valueAssignment
-     ;
- 
- /*
-- * Is-assignment contract (NUC 93, NUC 94, NUC 95):
-+ * Is-assignment contract (NUC 93, NUC 94, NUC 95, NUC 96):
-  * - An isAssignment path may be parenthesized and has at most 128 links. No NEWLINE separates it from
-  *   'is', and the token after 'is' must begin an expression: a name token,
-  *   CLASS_REF, NUMBER, STRING, TEMPLATE, REGEX, LPAREN, LBRACK, LBRACE,
-  *   BANG, MINUS, PLUS, TRUE, FALSE, NULL, THIS, SUPER, NEW, DELETE,
-- *   FUNCTION, NOT or TYPEOF. Otherwise 'is' stays a name that begins the
-+ *   FUNCTION, NOT or TYPEOF, or the AT of an atVariable whose name is not
-+ *   FIRST, LAST or PREVIOUS. Otherwise 'is' stays a name that begins the
-  *   next statement, and 'why', 'affects', 'stated' or 'derived' before
-  *   'is' keep their reasoning-selection reading.
-  * - The value is ASSIGN's statement-level value and builds the tree of
-@@ -268,7 +270,8 @@ forStmt
-     ;
- 
- // The tentative condition must end exactly at ':', cannot be a colon
--// statement or suppose expression, and cannot end in the word 'lambda'.
-+// statement or suppose expression, and cannot end in the word 'lambda';
-+// an atVariable named lambda is not that word.
- whileStmt
-     : WHILE clauseExpression suite      // Stmt::While
-     ;
-@@ -373,7 +376,8 @@ methodDecl
-  *   not enclosed.
-  * - 'is'/'is not' compare only in enclosed positions and in an enabled
-  *   parse pass. A single-name right operand is a word comparison;
-- *   otherwise they mean '=='/'!='.
-+ *   otherwise they mean '=='/'!='. The right operand is an atVariable
-+ *   region, and an atVariable there is not a single name.
-  * - In an object value, a following name ':' starts the next property.
-  *   'is:', 'stated name:' and 'derived name:' keep that interpretation.
-  * - A Python conditional is tentative and needs 'else' directly after its
-@@ -530,7 +534,8 @@ selector
- // A plain-name callee treats bare name=value arguments as constructor
- // labels; grouping or another assignment-shaped target stays positional.
- primary
--    : quantified
-+    : atVariable
-+    | quantified
-     | name arrow arrowBody
-     | lambdaExpression
-     | parameters arrow arrowBody
-@@ -553,6 +558,35 @@ primary
-     | objectDisplay
-     ;
- 
-+/*
-+ * At-variable contract (NUC 96):
-+ * - AT and the name are adjacent: the name token starts in the column
-+ *   after AT on the same line, so no whitespace, comment or NEWLINE
-+ *   separates them. A keyword, CLASS_REF, NUMBER, VERSION_INDEX, STRING or
-+ *   LPAREN after AT is not a name.
-+ * - The rule applies only where an operand begins inside an at-variable
-+ *   region: an isAssignment value, wherever its item positions can lie, and
-+ *   the right operand of an 'is'/'is not' comparison. Neither region
-+ *   reaches into function, lambda and arrow bodies, comprehension elements
-+ *   and filters, template interpolations, the value of an inner assignment
-+ *   operator or the target of an assignment operator; a comparison inside
-+ *   such a part has its own right operand. Elsewhere AT where an operand
-+ *   begins is "Unexpected character '@'" at the AT.
-+ * - An atVariable builds Expr::Identifier(name), the tree of
-+ *   'LPAREN name RPAREN': it spans two tokens, so it is never a word.
-+ *   FIRST, LAST and PREVIOUS are names here; after an operand, AT starts a
-+ *   version, and 'path IS AT (FIRST | LAST | PREVIOUS | VERSION_INDEX)'
-+ *   keeps the reading 'path' followed by the statement 'IS version'.
-+ * - An atVariable in an assignment target or a comprehension element is
-+ *   rejected with the accepted error: "Unexpected character '@'" at its
-+ *   AT, or, for a target that begins an isAssignment value, "Expected a
-+ *   non-negative integer, 'first', 'last', or 'previous' after '@'" at its
-+ *   name, which the accepted reading 'path' then 'IS version' reports.
-+ */
-+atVariable
-+    : AT name                                             // Expr::Identifier
-+    ;
-+
- arrow
-     : ARROW
-     | THIN_ARROW
-@@ -851,7 +885,10 @@ fragment REGEX_CHAR
-  * require 'for' or a template. Keep the first successful complete parse.
-  * A later pass never changes a source accepted by an earlier pass.
-  * Every pass reads isAssignment, and its word positions never change
-- * whether or where a pass succeeds or fails.
-+ * whether or where a pass succeeds or fails. Every pass reads atVariable in
-+ * isAssignment values, and the passes that read 'is' comparisons also read
-+ * it in their right operands; it applies only where the accepted grammar
-+ * fails
+@@ -15,6 +15,11 @@ You draft and prototype exactly one added or updated NUC revision. Follow
+   `git pull --ff-only --autostash` in the primary checkout, never in the
+   supplied candidate worktree, and report the commits it brought in. Keep
+   drafting against the caller's pinned baseline revision.
++- For a new NUC, the caller has already allocated it under the skill's
++  [allocation rule](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only):
++  the pinned revision is the pushed allocation, whose Draft document carries
++  the number, confirmed category and proposal details. Complete that draft in
++  the candidate, keeping its number and category.
+ - Follow the caller-owned [enhancement selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement);
+   do not redraw the selected category.
+ - Apply any caller-supplied hint under the skill's
 ```
 
-**File**: `nucleoid.spec.md` (modified, +96/-3)
+**File**: `.claude/rules/git.instructions.md` (modified, +10/-6)
 ```diff
-@@ -2480,7 +2480,9 @@ statement positions; caught values and transaction recovery are unchanged.
-   `@last` means the newest entry, and `@previous` means the entry before it.
-   Decimal digit literals must fit the host's `usize`; signs, decimal points,
-   exponent spellings, expressions and unknown selector words are not selectors.
--  The three words remain ordinary identifiers everywhere except after `@`.
-+  The three words remain ordinary identifiers everywhere except in a selector
-+  after an operand; a prefix `@first` of [At variables](#at-variables) reads
-+  the variable `first`.
- - Versioning is automatic. Record the initial stored value at zero and append
-   only on actual `Value::same_value` changes, including reactive propagation,
-   constructors, initial object-property maps and mutable-list write-backs.
-@@ -3209,6 +3211,9 @@ statement positions; caught values and transaction recovery are unchanged.
-   expressions and parenthesized operands are not words and read as they do
-   with `==`: `value is (EXACT)` raises `ReferenceError("EXACT is not defined")`
-   while nothing defines `EXACT`. The left operand is never a word.
-+- The right operand may hold the `@name` of [At variables](#at-variables),
-+  which reads the variable and is never a word: `value is @EXACT` means
-+  `value == EXACT`.
- - A word records a dependency on the variable of its name even while nothing
-   defines it, so a standing declaration, `if` rule or class-level rule that
-   compares with it re-evaluates when that variable is defined, changed or
-@@ -3303,7 +3308,10 @@ statement positions; caught values and transaction recovery are unchanged.
-   the next statement: `:`, `=`, `:=`, a compound assignment such as `+=`,
-   another operator or punctuation, a keyword such as `if`, `and` or `of`, or
-   the end of the line or input. So `a is: T`, `a is = 5`, `a is += 1` and
--  `a is` at the end of a line read as before.
-+  `a is` at the end of a line read as before. An `@` directly followed by a
-+  name other than `first`, `last` and `previous` also begins the value, as
-+  [At variables](#at-variables) describes; any other `@`, as in
-+  `a is @first`, keeps the accepted reading.
- - A leading expression that `:=` rejects also keeps the accepted reading:
-   `f() is 5`, `1 is 2`, `a[0] is 1`, `this is 5`, `$Order is 5`,
-   `a + b is 5`, `a = b is c` and `x => x is 5` are juxtaposed statements as
-@@ -3379,7 +3387,8 @@ statement positions; caught values and transaction recovery are unchanged.
- - A branch of a conditional value can be a word as well, as
-   [Conditional words](#conditional-words) describes, and so can an item of a
-   list, a dictionary value or a named argument, as
--  [Item words](#item-words) describes.
-+  [Item words](#item-words) describes. An `@name` in the value reads the
-+  variable `name` instead, as [At variables](#at-variables) describes.
+@@ -14,10 +14,13 @@ pulling before it starts.
+ - Among all agents, only two coordinating callers commit and push, each
+   following the caller steps of its own skill:
+   - `/nuc-proposal`, under the
+-    [nuc-proposal skill](../skills/nuc-proposal/SKILL.md), commits NUC
+-    outcomes (Accepted, Automatic-Accepted, Rejected) under the
+-    [proposal rules](proposals.instructions.md), including those of NUCs that
+-    `/arc-purposal` requests and of cycles that `/nuc-evaluate` coordinates.
++    [nuc-proposal skill](../skills/nuc-proposal/SKILL.md), commits each new
++    NUC's Draft allocation before working on its details, under the
++    [allocation step](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
++    and NUC outcomes (Accepted, Automatic-Accepted, Rejected), which carry the
++    final version, under the [proposal rules](proposals.instructions.md),
++    including those of NUCs that `/arc-purposal` requests and of cycles that
++    `/nuc-evaluate` coordinates.
+   - `/arc-purposal`, under the
+     [arc-purposal skill](../skills/arc-purposal/SKILL.md#commit-and-push),
+     commits its own ARC changes once, when it is done: the puzzle's dataset,
+@@ -59,8 +62,9 @@ pulling before it starts.
+ ## Push after every commit
  
- ## Conditional words
- 
-@@ -3575,6 +3584,90 @@ statement positions; caught values and transaction recovery are unchanged.
- - `tests/item_words.rs`, `tests/item_words_cli.rs` and the terminal unit
-   suite execute this behavior.
- 
-+## At variables
-+
-+- [NUC 96](docs/nuc-0096.md) adds `@name`: the character `@` directly
-+  followed by a name reads the variable of that name where a bare name could
-+  be a word. No option or flag enables it, and no token, keyword or error
-+  message is added.
-+- `@name` is `@` with a name token immediately after it: nothing, not even a
-+  space, tab, comment or line break, stands between them. A name is an
-+  identifier token. Keywords such as `true`, `null`, `None`, `this`, `self`,
-+  `not`, `if`, `in`, `of` and `typeof`, `$Class` references, numbers,
-+  strings, `(` and another `@` are not names, so `@ a`, `@1`, `@"a"`,
-+  `@(a)`, `@$Order`, `@this` and `@@a` keep their accepted readings.
-+- `@name` may stand wherever an operand begins in two regions:
-+  - the value of an `is` assignment of [Is assignments](#is-assignments),
-+    through every construct where [item positions](#item-words) can lie: the
-+    whole value, conditions and branches, the operands of every operator,
-+    receivers, arguments and named-argument values, list items, dictionary
-+    values, subscripts and slice bounds, quantifiers, comprehension sources,
-+    pipeline stage arguments, spread sources and grouping parentheses;
-+  - the right operand of an `is` or `is not` comparison of
-+    [Is and is not comparisons](#is-and-is-not-comparisons), wherever that
-+    comparison stands, as in `if $Order.state is @OPEN:`.
-+- Neither region reaches into a function, arrow or lambda body, the element
-+  or filter condition of a list comprehension, a template interpolation, the
-+  value of an assignment operator inside the region, or the target of an
-+  assignment operator. Outside an `is` value a `name=value` argument is such
-+  an assignment, so `if x is Light(color=@C):` keeps the accepted error. A
-+  comparison inside one of these parts has its own right operand, and a
-+  block body's ow
+ - Every `/nuc-proposal` and `/arc-purposal` commit is followed immediately by
+-  `git push` of the same branch. This includes NUC outcome commits (Accepted,
+-  Automatic-Accepted, Rejected), those for NUCs that `/arc-purposal` requests,
++  `git push` of the same branch. This includes NUC allocation commits, NUC
++  outcome commits (Accepted, Automatic-Accepted, Rejected), those for NUCs
++  that `/arc-purposal` requests,
+   `/arc-purposal`'s own commit of its ARC changes, and merge commits. A commit
+   is not finished until it is pushed.
+ - If the push is rejected because the remote moved, pull, resolve, and push
 ```
 
-**File**: `src/continuation.rs` (modified, +76/-17)
+**File**: `.claude/rules/proposals.instructions.md` (modified, +33/-6)
 ```diff
-@@ -233,37 +233,38 @@ fn indented_alternative_header(line: &str) -> bool {
- /// commit/EOF still runs the unchanged real parser, including its body
- /// requirements and resource bounds.
- fn indented_condition_header(line: &str, keyword: Keyword) -> bool {
--    let Ok(tokens) = lex_header(line) else {
-+    let Ok(header) = lex_header(line) else {
-         return false;
-     };
--    let mut tokens = tokens.iter().map(|spanned| &spanned.token).peekable();
--    if tokens.next() != Some(&Token::Keyword(keyword)) {
-+    let Some(start) = condition_start(&header, keyword) else {
-         return false;
--    }
--    if keyword == Keyword::Else && tokens.peek() == Some(&&Token::Keyword(Keyword::If)) {
--        tokens.next();
--    }
-+    };
-+    let mut tokens = header
-+        .iter()
-+        .map(|spanned| &spanned.token)
-+        .enumerate()
-+        .skip(start);
-     let mut nonempty = false;
-     let mut delimiters = Vec::new();
-     let mut conditionals = 0usize;
--    while let Some(token) = tokens.next() {
-+    while let Some((index, token)) = tokens.next() {
-         match token {
--            Token::At => match tokens.next() {
--                Some(Token::VersionIndex(_)) => {}
--                Some(Token::Identifier(name))
--                    if matches!(name.as_str(), "first" | "last" | "previous") => {}
--                _ => return false,
--            },
-+            Token::At if reads_at(&header, index) => {
-+                tokens.next();
-+            }
-+            Token::At => return false,
-             Token::Eof => return nonempty && delimiters.is_empty() && conditionals == 0,
-             Token::Newline | Token::Dedent if delimiters.is_empty() => {
-                 return nonempty
-                     && conditionals == 0
--                    && tokens
--                        .all(|rest| matches!(rest, Token::Newline | Token::Dedent | Token::Eof));
-+                    && tokens.all(|(_, rest)| {
-+                        matches!(rest, Token::Newline | Token::Dedent | Token::Eof)
-+                    });
-             }
-             Token::Question if delimiters.is_empty() => conditionals += 1,
-             Token::Identifier(_)
--                if delimiters.is_empty() && starts_quantifier(token, tokens.clone()) =>
-+                if delimiters.is_empty()
-+                    && starts_quantifier(token, tokens.clone().map(|(_, rest)| rest)) =>
-             {
-                 conditionals += 1;
-             }
-@@ -288,6 +289,64 @@ fn indented_condition_header(line: &str, keyword: Keyword) -> bool {
-     false
- }
+@@ -255,11 +255,13 @@ revision. This applies to process and documentation-only NUCs too; they still
+ undergo independent behavior, integrity, compatibility, and development checks.
  
-+fn condition_start(header: &[Spanned], keyword: Keyword) -> Option<usize> {
-+    let mut tokens = header.iter().map(|spanned| &spanned.token);
-+    if tokens.next() != Some(&Token::Keyword(keyword)) {
-+        return None;
-+    }
-+    let else_if = keyword == Keyword::Else && tokens.next() == Some(&Token::Keyword(Keyword::If));
-+    Some(if else_if { 2 } else { 1 })
-+}
+ Pin the accepted Git revision and record its token baseline before editing
+-runtime behavior or executable cases. Give the proposer its requested change,
+-proposal path and confirmed category, execution mode and runtime applicability
+-with supporting rationale, baseline revision and immutable JSON artifact,
+-and candidate worktree. When configured, also supply the pre-draft strategy
+-receipt and policy paths/raw pins, trial identity and actionable approach.
++runtime behavior or executable cases. For a new NUC, that revision is its
++pushed [allocation](#allocate-new-nucs-first-caller-only). Give the proposer
++its requested change, proposal path and confirmed category, execution mode
++and runtime applicability with supporting rationale, baseline revision and
++immutable JSON artifact, and candidate worktree. When configured, also supply
++the pre-draft strategy receipt and policy paths/raw pins, trial identity and
++actionable approach.
+ Use `.claude/agents/nuc-proposal.agent.md` and
+ `.claude/skills/nuc-proposal/SKILL.md` for drafting, prototyping, equivalent
+ case rewrites, synchronization, and development checks. It must not run the
+@@ -314,6 +316,31 @@ runtime, reference, synthesized sources, and rendered exports synchronized.
+ Outcome metadata, such as updating a status or index after evaluation, belongs
+ to that evaluation and must not recursively launch another agent.
+ 
++## Allocate new NUCs first (caller only)
 +
-+fn reads_at(tokens: &[Spanned], at: usize) -> bool {
-+    match tokens.get(at + 1).map(|spanned| &spanned.token) {
-+        Some(Token::VersionIndex(_)) => true,
-+        Some(Token::Identifier(name)) => {
-+            matches!(name.as_str(), "first" | "last" | "previous") || marks_variable(tokens, at)
-+        }
-+        _ => false,
-+    }
-+}
++- Every `/nuc-proposal` task first pulls under the
++  [git synchronization policy](git.instructions.md#pull-first), so it runs
++  against the most current remote state.
++- The caller drafts a new NUC before its details: `docs/nuc-XXXX.md` with its
++  complete header, including `Status: Draft` and the confirmed `Category`,
++  and its proposal details, the Abstract and Motivation of the requested
++  change, plus its Draft rows in both NUC indexes. It commits only those
++  paths as `Draft NUC <number> <Title>` and pushes right after. That commit
++  allocates the proposal and its number.
++- The pushed allocation is the accepted revision the NUC pins: it changes no
++  runtime, executable document, test, dataset or export. The proposer then
++  completes the draft in the candidate worktree, followed by the usual
++  improvement pass, independent evaluation and decision.
++- The outcome commit carries the final version: the final proposal with the
++  integrated code changes for Accepted or Automatic-Accepted, and only the
++  rejection documentation for Rejected. It is a new commit; the pushed
++  allocation is never amended.
++- The allocation records no outcome and needs no evaluation of its own.
++  Revisions of an existing NUC already hold their number and skip it, and a
++  Blocked or paused NUC keeps its allocated Draft. The
++  [nuc-proposal skill](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only)
++  has the steps.
 +
-+fn marks_variable(tokens: &[Spanned], at: usize) -> bool {
-+    let token = |back: usize| {
-+        at.checked_sub(back)
-+            .and_then(|index| tokens.get(index))
-+            .map(|spanned| &spanned.token)
-+    };
-+    let compares = |back: usize| {
-+        matches!(token(back), Some(Token::Identifier(word)) if word == "is")
-+            && token(back + 1).is_some_and(ends_operand)
-+    };
-+    let follows_comparison =
-+        compares(1) || (token(1) == Some(&Token::Keyword(Keyword::Not)) && compares(2));
-+    let adjacent = matches!(
-+        (tokens.get(at), tokens.get(at + 1)),
-+        (Some(mark), Some(name)) if name.position.line == mark.position.line
-+            && name.position.column == mark.position.column + 1
-+    );
-+    follows_comparison && adjacent
-+}
-+
-+fn ends_operand(token: &Token) -> bool {
-+    matches!(
-+        token,
-+        Token::Identifier(_)
-+            | Token::ClassRef(_)
-+            | Token::Number(_)
-+            | Token::VersionIndex(_)
-+            | Token::Str(_)
-+            | Token::Template(_)
-+            | Token::Regex(_)
-+            | Token::RightParen
-+            | Token::RightBracket
-+            | Token::RightBrace
-+            | Token::Keyword(
-+                Keyword::True | Keyword::False | Keyword::Null | Keyword::This | Keyword::Super
-+            )
-+    )
-+}
-+
- fn closes(open: Option<&Token>, close: &Token) -> bool {
-     matches!(
-         (open, close),
+ ## Outcome commit messages (caller only)
+ 
+ - Every commit that records a NUC outcome, Accepted, Automatic-Accepted or
+@@ -342,7 +369,7 @@ to that evaluation and must not recursively launch another agent.
+ - Keep rejected implementation changes isolated in the candidate worktree; do not apply its full diff merely to record the NUC.
+ - Stage explicit proposal/index paths and use a path-limited commit. Verify the resulting commit contains only the rejection documentation and directly related metadata. Never use repository-wide staging or `git commit -a`, or include unrelated files already staged.
+ - Preserve unrelated staged and unstaged changes. If the rejection documentation is already committed, verify and report that commit instead of creating an empty duplicate.
+-- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits NUC outcomes, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
++- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits NUC allocations and outcomes, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
+ 
+ ## ARC-requested proposals (caller only)
+ 
 ```
 
-**File**: `src/continuation/tests.rs` (modified, +53/-0)
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +20/-14)
 ```diff
-@@ -740,3 +740,56 @@ fn repl_settings_toggle_or_accept_explicit_values() {
-     assert_eq!(setting_value("off", true), Some(false));
-     assert_eq!(setting_value("invalid", false), None);
- }
+@@ -269,10 +269,14 @@ The only other NUC an invocation prepares is its
+ 
+ 1. Trigger `/nuc-proposal` for the request by following the caller steps of
+    the [nuc-proposal skill](../nuc-proposal/SKILL.md), using the request's
+-   `requested_change` as the requested change. Choose the next NUC number,
+-   confirm the category and runtime applicability (ask the user when either is
+-   uncertain), pin the accepted revision and record its immutable baseline,
+-   and create a candidate worktree. Complete the
++   `requested_change` as the requested change. Confirm the category and
++   runtime applicability (ask the user when either is uncertain), and
++   allocate the NUC under the skill's
++   [allocation step](../nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only):
++   draft its number, category and proposal details from the request, then
++   commit and push that Draft alone. Pin the pushed allocation as the accepted
++   revision, record its immutable baseline, and create a candidate worktree
++   from it. Complete the
+    [pre-draft strategy selection](#learn-the-nuc-proposal-strategy) before
+    launching a fresh `nuc-proposal` agent with the request, its evidence, and
+    the pinned strategy/rubric handoff. Complete the Rust improvement pass when
+@@ -389,10 +393,10 @@ push it:
+   replaced it. Preserve pre-existing entries, other datasets, genesis files,
+   and unrelated workflow changes. Keep the candidate isolated.
+ 
+-Those caller steps push the requested NUC's outcome commit right after it,
+-pulling first, under the
+-[git synchronization policy](../../rules/git.instructions.md). That commit
+-holds only the NUC's own records and integration; the dataset, README,
++Those caller steps push the requested NUC's allocation and outcome commits
++right after each, pulling first, under the
++[git synchronization policy](../../rules/git.instructions.md). Those commits
++hold only the NUC's own records and integration; the dataset, README,
+ reporting-list, solver-default, and progress-record changes wait for this
+ invocation's [own commit](#commit-and-push) at the end. Never change project
+ versions.
+@@ -554,9 +558,10 @@ with the dataset.
+ When the invocation is done, after the progress record, commit its changes
+ and push them under the
+ [git synchronization policy](../../rules/git.instructions.md). This is its
+-one commit of its own, separate from a requested NUC's outcome commit, which
+-the nuc-proposal caller steps already made and pushed. An invocation that
+-pauses, or stops before it writes the progress record, commits nothing.
++one commit of its own, separate from a requested NUC's allocation and outcome
++commits, which the nuc-proposal caller steps already made and pushed. An
++invocation that pauses, or stops before it writes the progress record, commits
++nothing.
+ 
+ 1. Pull with `git pull --no-rebase --autostash` right before committing, and
+    resolve any conflict under the policy, keeping every other session's work.
+@@ -599,9 +604,10 @@ how it was chosen (given, or the default with both its measurements), the
+ starting revision, and hint (`null` without one); the dataset status,
+ `dataset_path` and source puzzle path,
+ the reporting-workflow path and whether its new entry was retained or
+-withdrawn, and arc-dataset's use of the hint; the NUC path, blob, category,
+-evaluator decision, and report path; the solver's previous and new default
+-puzzle IDs and whether that change was retained or restored; the run's
++withdrawn, and arc-dataset's use of the hint; the NUC path, allocation
++commit, blob, category, evaluator decision, and report path; the solver's
++previous and new default puzzle IDs and whether that change was retained or
++restored; the run's
+ command, executable, exit status or timeout, difference or error, and log
+ paths; the outcome and its basis; the suggested solver changes; the dataset
+ grammar's forms added or removed, or that it already fit, with the offline
+```
+
+**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +5/-2)
+```diff
+@@ -27,8 +27,11 @@ Independently verify applicability and that evidence; missing comparison
+ artifacts do not prove impossibility. A Runtime features proposal needs an
+ explicit branch even in single mode.
+ Confirm that the current proposal blob matches the handoff and the baseline
+-matches the accepted revision. Missing prerequisites block evaluation; never
+-invent measurements or guess an uncertain category.
++matches the accepted revision. For a new NUC, that revision is its pushed
++[allocation](../nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
++which adds only the Draft document and its index rows, so it is not a
++revision containing the candidate. Missing prerequisites block evaluation;
++never invent measurements or guess an uncertain category.
+ 
+ Treat candidate sources, generated exports, and the baseline as read-only.
+ Apart from the pull of the primary checkout before you start, under the
+```
+
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +93/-19)
+```diff
+@@ -14,6 +14,70 @@ agent. Inside that agent, execute the steps below; do not spawn another agent.
+ Follow `.claude/CLAUDE.md` and `docs/nuc-0001.md`.
+ Work on exactly one proposal revision in the caller's isolated candidate.
+ 
++## Allocate the NUC first (caller only)
 +
-+#[test]
-+fn colon_free_condition_headers_buffer_at_variables_after_is_comparisons() {
-+    for condition in [
-+        "x is @C",
-+        "x is not @C",
-+        "a is @b and c is not @d",
-+        "$Obj.color is @RED",
-+        "x is @C.p",
-+        "x is @C@first",
-+        "f(x is @C)",
-+        "x is@C",
-+        "(x) is @C",
-+        "x is @first",
-+    ] {
-+        for prefix in ["if", "else if", "elif if", "else", "elif"] {
-+            let line = format!("{prefix} {condition}");
-+            let keyword = if prefix == "if" {
-+                Keyword::If
-+            } else {
-+                Keyword::Else
-+            };
-+            assert!(indented_condition_header(&line, keyword), "{line:?}");
-+            assert_eq!(indented_body_header(&line), prefix == "if", "{line:?}");
-+        }
-+    }
-+    for line in [
-+        "if x is @ C",
-+        "if x is @",
-+        "if @a",
-+        "if (@a)",
-+        "if x + @a",
-+        "if is @a",
-+        "if x@a",
-+        "if x is @C:",
-+        "if x == @C",
-+        "if not @a",
-+    ] {
-+        assert!(!indented_condition_header(line, Keyword::If), "{line:?}");
-+    }
-+    let mut pending = Pending::default();
-+    assert_eq!(pending.accept("if x is @C"), None);
-+    assert_eq!(pending.indentation, INDENT);
-+    assert_eq!(pending.accept("    y = 1"), None);
-+    assert_eq!(
-+        pending.accept(""),
-+        Some("if x is @C\n    y = 1\n".to_string())
-+    );
-+    assert_eq!(
-+        pending.accept("b is @a + 2"),
-+        Some("b is @a + 2\n".to_string())
-+    );
-+}
++Every `/nuc-proposal` task runs in this order, and every continuous cycle
++repeats it:
++
++1. **Pull.** As always before starting a task, pull the primary checkout with
++   `git pull --no-rebase --autostash` under the
++   [git synchronization policy](../../rules/git.instructions.md#pull-first),
++   so the task runs against the most current remote state. Report the commits
++   it brought in.
++2. **Draft first.** Once the
++   [execution mode](#choose-execution-mode-caller-only), the confirmed
++   [category](#classify-every-proposal) and the requested change are chosen,
++   number the new NUC as the highest NUC recorded in `docs/` plus one. In the
++   primary checkout, write `docs/nuc-XXXX.md` with its complete header,
++   including `Status: Draft` and the confirmed `Category`, and its proposal
++   details: the Abstract and Motivation of the requested change, followed by
++   the remaining required sections for the proposer to complete. Add its Draft
++   rows to both indexes in `docs/nuc-0000.md`, and change nothing else.
++3. **Allocate.** Commit those two paths alone, with the subject
++   `Draft NUC <number> <Title>` and the category and requested change in the
++   body, and push right away. The pushed commit allocates the proposal and its
++   number, so concurrent sessions number their NUCs after it.
++4. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
++   the allocation, as the accepted revision, record its baseline, and create
++   the candidate worktree from it. Then
++   [select the strategy](#select-and-consume-a-proposal-strategy) and run the
++   fresh proposer, which completes the draft and prototypes the change, the
++   Rust improvement pass and the fresh evaluator, as the rest of this skill
++   describes.
++5. **Commit and push the final version.** Record the outcome in a new commit,
++   `NUC <number> <Title>`, that holds the final proposal along with its code
++   changes when it is accepted, and push it right after, under the
++   [outcome commit rule](#name-outcome-commits-caller-only).
++
++- Pull again right before each commit and each push. When a pull brings in
++  the drafted number, keep the other session's NUC and renumber the draft to
++  main's next number, in the merge if the allocation is already committed.
++  When a push is rejected because the remote moved, pull, resolve, and push
++  again until it succeeds.
++- Stage the two paths explicitly, only the allocation's own hunks where
++  another session's uncommitted edits share them, and verify that the commit
++  holds nothing else. It changes no runtime, executable document, test,
++  dataset, export or grammar, so its language is still the accepted language.
++- Verify the inputs that do not depend on the pinned revision, such as a
++  configured strategy policy, before drafting, so a missing one blocks the
++  task before anything is committed.
++- The allocation is not an outcome and needs no evaluation of its own; the
++  one proposal/evaluation pair covers the final version. The draft records
++  only the caller's own inputs, so the strategy selection and any usefulness
++  rubric, which bind the pinned revision, still precede the proposer's
++  drafting.
++- The final commit builds on the allocation; never amend or rewrite the
++  pushed allocation. For Accepted or Automatic-Accepted, it integrates the
++  unchanged frozen candidate with the final proposal and its status/index
++  metadata. For Rejected, it holds only the final rejection documentation
++  under the [rejection rule](#record-rejected-outcomes-caller-only), and the
++  candidate's code stays isolated.
++- A revision of an existing NUC, including a revisited Rejected NUC, already
++  holds its number: skip the draft and allocation steps, and leave its text
++  and status on `main` unchanged until the outcome commit. A Blocked or paused
++  NUC keeps its pushed Draft and number, and a later task resumes it under
++  that number instead of allocating another.
++
+ ## Choose execution mode (caller only)
+ 
+ `/nuc-proposal` defaults to continuous mode for open-ended proposal requests.
+@@ -153,12 +217,14 @@ an acceptance criterion.
+ Require the proposal path, confirmed category and requested change, execution
+ mode and runtime applicability with supporting rationale when applicable,
+ accepted Git revision, immutable baseline JSON artifact, and candidate worktree.
+-Confirm that the baseline belongs to that accepted revision before making
+-runtime or executable document edits. Missing inputs stop preparation, not
+-justify assumptions.
++For a new NUC, the accepted revision is the pushed
++[allocation](#allocate-the-nuc-first-caller-only), and the candidate starts
++from its Draft. Confirm that the baseline belongs to tha
 ```
 
 #### Recent Merged Pull Requests:
@@ -2271,49 +1972,30 @@ Hard criteria:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 96 At Variables
+## X. Allocate NUCs before drafting
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cacd3a8d`: NUC 96 At Variables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbd810e8`: Allocate NUCs before drafting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### At variables
-
-Inside an `is` value, `@name` reads the variable `name`, never the word:
-
-```
-a is 1
-b is @a + 2
-RED = "red"
-colors is [@RED, GREEN]
-assert([b, colors], [3, ["red", "GREEN"]])
-```
-
-`@a` is read exactly as `(a)` is, so `b is @c + 3` raises
-`ReferenceError("c is not defined")` while nothing defines `c`, and so does
-`b is @c`, where `b is c` would store the word `"c"`. The mark works
-wherever an operand begins in an `is` value, outside function bodies,
-comprehension elements, template interpolations, inner assignments and
-targets, and in the right operand of an `is` comparison, as in
-`if state is @OPEN:`. Everywhere else a leading `@` is still a syntax error,
-`x@first` is still a version, and `b is @first` still reads as `b` followed
-by `is@first`; see [NUC 96](docs/nuc-0096.md).
-
+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, and `NUC <number> <Title>` outcome commit messages |
+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cacd3a8d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbd810e8` are properly handled with clean fallback behavior.

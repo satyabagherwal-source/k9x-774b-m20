@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fission-fission-learnings.md`  
 > **Source**: github ([https://github.com/fission/fission](https://github.com/fission/fission))  
-> **Source Version**: `ae2aabf5`  
+> **Source Version**: `9cac7b02`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:56:12.659Z  
+> **Timestamp**: 2026-11-09T13:10:04.108Z  
 > **Learning ID**: `learn-github-fission-fission`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fission-fission-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fission/fission](https://github.com/fission/fission))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:56:12.404Z  
+> **Harvest Timestamp**: 2026-11-09T13:10:03.358Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast and Simple Serverless Functions for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 8939 stars
+- **Stars / Engagement**: 8944 stars
 
 ---
 
@@ -1040,241 +1040,310 @@ func FunctionOwnerRef(fn *Function) metav1.OwnerReference {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae2aabf5` (2026-10-26)
-**Commit Message**: Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, misc patches (#3745)
+### Incident Patch 1: `2a08f8c0` (2026-11-09)
+**Commit Message**: Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspost CVE fixes (#3748)
 
-* Bump Go toolchain to 1.27.3 (closes GO-2026-6809)
+* Bump k8s.io/* to v0.37.2 (patch) with code-generator and authn/kubernetes rider
 
-go.mod and test/benchmark/go.mod move from 1.27.2 to 1.27.3, which fixes
-crypto/x509's trust of compromised intermediate certificates. The router's
-streaming path reaches x509.Certificate.Verify, so govulncheck reported the
-vulnerability as reachable.
+Patch bump across the k8s core family (api, apimachinery, client-go,
+apiextensions-apiserver, metrics, code-generator) plus the
+go-containerregistry authn/kubernetes pseudo-version, which requires
+k8s v0.37 minimum. Regenerated pkg/generated picks up the client-go
+v0.37.2 applyconfig tag change and DiscoveryInterfaces rename.
 
-CI takes the toolchain from go.mod (go-version-file), so no workflow change
-is needed.
+* Bump transport: x/net v0.62.0, grpc v1.85.0, x/crypto post-tag fix
 
-* Bump controller-tools to v0.23.0 and regenerate the CRDs
+x/net v0.62.0 closes GO-2026-6866 and GO-2026-6860 (module-level).
+x/crypto moves to the post-v0.58.0 commit that fixes GO-2026-5932
+(no v0.58.1 tag exists yet); it stays indirect.
 
-controller-gen v0.23 emits the validation markers that upstream k8s 0.37
-puts on PodSpec.evictionResponders (minLength on the responder name,
-0-100000 on priority, maxItems 10 on the list), so crds/v1 gains those
-constraints alongside the new version stamp.
+* Bump misc deps: brotli v1.2.7, klauspost/compress v1.20.2, pgx v5.12.0, ojg, prometheus/common, pflag, sqlite, go-snaps
 
-v0.23.0 still targets k8s v0.37.0, so the k8s core group stays put.
+brotli v1.2.7 closes GO-2026-6888 (excessive memory allocation on
+crafted brotli streams, called from the router streaming reader and
+fetcher websocket handler) and klauspost/compress v1.20.2 closes
+GO-2026-6865 (panic on two-block frames, called from the package zip
+writer). The rest are routine minor/patch b
 
-* Bump misc dependencies (go-snaps 0.5.24, ojg 1.28.8, sqlite 1.61.0)
-
-Routine patch/minor updates with no CVEs attached; modernc.org/sqlite
-pulls libc v1.79.0 and the x/mod+x/tools pair along with it. The nested
-test/benchmark module is re-tidied to match.
-
-**File**: `crds/v1/fission.io_canaryconfigs.yaml` (modified, +1/-1)
+**File**: `.claude/resources/fission-dep-groups.md` (modified, +6/-0)
 ```diff
-@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
- kind: CustomResourceDefinition
- metadata:
-   annotations:
--    controller-gen.kubebuilder.io/version: v0.22.0
-+    controller-gen.kubebuilder.io/version: v0.23.0
-   name: canaryconfigs.fission.io
- spec:
-   group: fission.io
+@@ -51,6 +51,12 @@ If you bump into / out of controller-runtime v0.24, replicate these:
+ `hack/update-codegen.sh` copies upstream code-generator out of the module cache at whatever version `go.mod` requires, so bump it with the `k8s.io/*` group.
+ **After** a k8s bump, run `make codegen` + `make generate-crds` and commit the regenerated `pkg/generated/` + `crds/v1/` **in the same commit** as the k8s bump.
+ 
++Local-env note: if the PATH `go` binary is older than this module's `go` directive (e.g. a Nix go 1.26 while `go.mod` says `go 1.27.3`),
++`make codegen` fails in register-gen with `method must have no type parameters` on stdlib `math/rand/v2`.
++The generator is built by `go install` inside the copied code-generator module (whose own `go` directive is older), so it compiles with the old local go/types,
++which then rejects the newer stdlib's generic methods. Run `GOTOOLCHAIN=go1.27.3 make codegen` to force the matching toolchain.
++CI is unaffected — every workflow installs Go from `go-version-file: go.mod`.
++
+ `github.com/google/go-containerregistry/pkg/authn/kubernetes` is published only as pseudo-versions, and every snapshot after 2026-08-31 requires `k8s.io/* v0.37`.
+ A `go get` of a newer snapshot silently pulls k8s core up a minor; keep it on its current pseudo-version until the k8s-minor lockstep commit, and bump it there.
+ 
 ```
 
-**File**: `crds/v1/fission.io_environments.yaml` (modified, +9/-1)
+**File**: `.mergify.yml` (modified, +6/-6)
 ```diff
-@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
- kind: CustomResourceDefinition
- metadata:
-   annotations:
--    controller-gen.kubebuilder.io/version: v0.22.0
-+    controller-gen.kubebuilder.io/version: v0.23.0
-   name: environments.fission.io
- spec:
-   group: fission.io
-@@ -5867,6 +5867,7 @@ spec:
-                                 Domain names *.k8s.io and *.kubernetes.io are reserved.
-                                 This field must be unique for each responder.
-                                 This field is required.
-+                              minLength: 1
-                               type: string
-                             priority:
-                               description: |-
-@@ -5883,12 +5884,15 @@ spec:
-                                 The interval 0-999 is reserved for responders with *.k8s.io suffix.
-                                 This field is required.
-                               format: int32
-+                              maximum: 100000
-+                              minimum: 0
-                               type: integer
-                           required:
-                           - name
-                           - priority
-                           type: object
-                           x-kubernetes-map-type: atomic
-+                        maxItems: 10
-                         type: array
-                         x-kubernetes-list-map-keys:
-                         - name
-@@ -16378,6 +16382,7 @@ spec:
-                                 Domain names *.k8s.io and *.kubernetes.io are reserved.
-                                 This field must be unique for each responder.
-                                 This field is required.
-+                              minLength: 1
-                               type: string
-                             priority:
-                               description: |-
-@@ -16394,12 +16399,15 @@ spec:
-                                 The interval 0-999 is reserved for responders with *.k8s.io suffix.
-                                 This field is required.
-                               format: int32
-+                              maximum: 100000
-+                              minimum: 0
-                               type: integer
-                           required:
-                           - name
-                           - priority
-                           type: object
-                           x-kubernetes-map-type: atomic
-+                        maxItems: 10
-                         type: array
-                         x-kubernetes-list-map-keys:
-                         - name
+@@ -6,12 +6,12 @@ pull_request_rules:
+       - label=ready-to-merge
+       - label!=hold-off-merging
+       - check-success=CodeQL-Build
+-      - check-success=CodeQL
+-      - check-success=lint 
+-      - check-success=upgrade-test (kindest/node:v1.23.17, ubuntu-latest)
+-      - check-success=integration-test (v1.23.17, ubuntu-latest)
+-      - check-success=integration-test (v1.25.11, ubuntu-latest)
+-      - check-success=integration-test (v1.27.3, ubuntu-latest)
++      - check-success=lint
++      - check-success=upgrade-test (v1.32.11, ubuntu-24.04, latest)
++      - check-success=upgrade-test (v1.32.11, ubuntu-24.04, skip-level)
++      - check-success=integration-test (v1.32.11, ubuntu-24.04)
++      - check-success=integration-test (v1.34.8, ubuntu-24.04)
++      - check-success=integration-test (v1.36.1, ubuntu-24.04)
+     actions:
+       merge:
+         method: squash
 ```
 
-**File**: `crds/v1/fission.io_fissiontenants.yaml` (modified, +1/-1)
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
- kind: CustomResourceDefinition
- metadata:
-   annotations:
--    controller-gen.kubebuilder.io/version: v0.22.0
-+    controller-gen.kubebuilder.io/version: v0.23.0
-   name: fissiontenants.fission.io
- spec:
-   group: fission.io
+@@ -160,7 +160,7 @@ delete-crds:
+ 
+ ### Cleanup
+ clean:
+-	@rm -f dist/
++	@rm -rf dist/
+ 
+ ### Misc
+ generate-swagger-doc:
 ```
 
-**File**: `crds/v1/fission.io_functionaliases.yaml` (modified, +1/-1)
+**File**: `go.mod` (modified, +24/-23)
 ```diff
-@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
- kind: CustomResourceDefinition
- metadata:
-   annotations:
--    controller-gen.kubebuilder.io/version: v0.22.0
-+    controller-gen.kubebuilder.io/version: v0.23.0
-   name: functionaliases.fission.io
- spec:
-   group: fission.io
+@@ -12,33 +12,33 @@ require (
+ 	github.com/dustin/go-humanize v1.1.0
+ 	github.com/fatih/color v1.19.0
+ 	github.com/fsnotify/fsnotify v1.10.1
+-	github.com/gkampitakis/go-snaps v0.5.24
++	github.com/gkampitakis/go-snaps v0.5.25
+ 	github.com/go-git/go-git/v5 v5.19.3
+ 	github.com/go-logr/logr v1.4.4
+ 	github.com/golang-jwt/jwt/v4 v4.5.2
+ 	github.com/google/go-cmp v0.7.0
+ 	github.com/google/go-containerregistry v0.22.1
+-	github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261013193525-92aac6186bc4
+-	github.com/jackc/pgx/v5 v5.11.0
++	github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261026195947-bc0638f2d173
++	github.com/jackc/pgx/v5 v5.12.0
+ 	github.com/johannesboyne/gofakes3 v1.2.0
+ 	github.com/kedacore/keda/v2 v2.21.0
+ 	github.com/mholt/archives v0.1.5
+ 	github.com/minio/minio-go/v7 v7.4.1
+ 	github.com/moby/moby/api v1.56.1
+ 	github.com/moby/moby/client v0.6.2
+ 	github.com/modelcontextprotocol/go-sdk v1.8.0
+-	github.com/ohler55/ojg v1.28.8
++	github.com/ohler55/ojg v1.28.9
+ 	github.com/ory/dockertest/v3 v3.12.0
+ 	github.com/prometheus/client_golang v1.25.0
+ 	github.com/prometheus/client_model v0.6.3
+-	github.com/prometheus/common v0.72.1
++	github.com/prometheus/common v0.73.1
+ 	github.com/prometheus/otlptranslator v1.0.0
+ 	github.com/robfig/cron/v3 v3.0.1
+ 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
+ 	github.com/sanketsudake/go-portless v0.4.0
+ 	github.com/sanketsudake/go-portless/k8s v0.3.0
+ 	github.com/spf13/cobra v1.10.2
+-	github.com/spf13/pflag v1.0.10
++	github.com/spf13/pflag v1.1.0
+ 	github.com/stretchr/testify v1.12.1
+ 	go.opentelemetry.io/contrib/bridges/otelzap v0.21.0
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0
+@@ -57,22 +57,22 @@ require (
+ 	go.opentelemetry.io/otel/trace v1.47.0
+ 	go.uber.org/goleak v1.3.0
+ 	go.uber.org/zap v1.28.0
+-	golang.org/x/net v0.61.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/sync v0.24.0
+ 	golang.org/x/term v0.47.0
+-	google.golang.org/grpc v1.84.0
+-	k8s.io/api v0.37.1
+-	k8s.io/apiextensions-apiserver v0.37.1
+-	k8s.io/apimachinery v0.37.1
+-	k8s.io/client-go v0.37.1
+-	k8s.io/code-generator v0.37.1
++	google.golang.org/grpc v1.85.0
++	k8s.io/api v0.37.2
++	k8s.io/apiextensions-apiserver v0.37.2
++	k8s.io/apimachinery v0.37.2
++	k8s.io/client-go v0.37.2
++	k8s.io/code-generator v0.37.2
+ 	k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3
+ 	k8s.io/klog/v2 v2.140.0
+-	k8s.io/metrics v0.37.1
+-	modernc.org/sqlite v1.61.0
++	k8s.io/metrics v0.37.2
++	modernc.org/sqlite v1.62.0
+ 	pgregory.net/rapid v1.3.0
+ 	sigs.k8s.io/controller-runtime v0.25.2
+-	sigs.k8s.io/gateway-api v1.6.3
++	sigs.k8s.io/gateway-api v1.7.0
+ 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2
+ 	sigs.k8s.io/yaml v1.6.0
+ )
+@@ -86,7 +86,7 @@ require (
+ 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
+ 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
+ 	github.com/STARRY-S/zip v0.2.3 // indirect
+-	github.com/andybalholm/brotli v1.2.3 // indirect
++	github.com/andybalholm/brotli v1.2.7 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/bmatcuk/doublestar/v4 v4.0.2 // indirect
+ 	github.com/bodgit/plumbing v1.3.0 // indirect
+@@ -153,7 +153,7 @@ require (
+ 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+ 	github.com/jackc/pgpassfile v1.0.0 // indirect
+ 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+-	github.com/jackc/puddle/v2 v2.2.2 // indirect
++	github.com/jackc/puddle/v2 v2.2.3 // indirect
+ 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+ 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
+ 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
+@@ -162,7 +162,7 @@ require (
+ 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/kevinburke/ssh_config v1.2.0 // indirect
+-	github.com/klauspost/compress v1.20.1 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
+ 	github.com/klauspost/crc32 v1.3.0 // indirect
+ 	github.com/klauspost/pgzip v1.2.6 // indirect
+@@ -189,6 +189,7 @@ require (
+ 	github.com/opencontainers/go-digest v1.0.0 // indirect
+ 	github.com/opencontainers/image-spec v1.1.1 // indirect
+ 	github.com/opencontainers/runc v1.3.6 // indirect
++	github.com/pandatix/go-abnf v0.5.3 // indirect
+ 	github.com/philhofer/fwd v1.2.0 // indirect
+ 	github.com/pierrec/lz4/v4 v4.1.31 // indirect
+ 	github.com/pjbgf/sha1cd v0.7.0 // indirect
+@@ -226,12 +227,12 @@ require (
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
+-	golang.org/x/crypto v0.58.0 // indirect
++	golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2 // indirect
+ 	golang.org/x/mod v0.42.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
+-	golang.org/x/time v0.15.0 // indirect
++	golang.org/x/time 
 ```
 
-**File**: `crds/v1/fission.io_functions.yaml` (modified, +5/-1)
+**File**: `go.sum` (modified, +56/-54)
 ```diff
-@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
- kind: CustomResourceDefinition
- metadata:
-   annotations:
--    controller-gen.kubebuilder.io/version: v0.22.0
-+    controller-gen.kubebuilder.io/version: v0.23.0
-   name: functions.fission.io
- spec:
-   group: fission.io
-@@ -5502,6 +5502,7 @@ spec:
-                             Domain names *.k8s.io and *.kubernetes.io are reserved.
-                             This field must be unique for each responder.
-                             This field is required.
-+                          minLength: 1
-                           type: string
-                         priority:
-                           description: |-
-@@ -5518,12 +5519,15 @@ spec:
-                             The interval 0-999 is reserved for responders with *.k8s.io suffix.
-                             This field is required.
-                           format: int32
-+                          maximum: 100000
-+                          minimum: 0
-                           type: integer
-                       required:
-                       - name
-                       - priority
-                       type: object
-                       x-kubernetes-map-type: atomic
-+                    maxItems: 10
-                     type: array
-                     x-kubernetes-list-map-keys:
-                     - name
+@@ -44,8 +44,8 @@ github.com/ProtonMail/go-crypto v1.3.0 h1:ILq8+Sf5If5DCpHQp4PbZdS1J7HDFRXz/+xKBi
+ github.com/ProtonMail/go-crypto v1.3.0/go.mod h1:9whxjD8Rbs29b4XWbB8irEcE8KHMqaR2e7GWU1R+/PE=
+ github.com/STARRY-S/zip v0.2.3 h1:luE4dMvRPDOWQdeDdUxUoZkzUIpTccdKdhHHsQJ1fm4=
+ github.com/STARRY-S/zip v0.2.3/go.mod h1:lqJ9JdeRipyOQJrYSOtpNAiaesFO6zVDsE8GIGFaoSk=
+-github.com/andybalholm/brotli v1.2.3 h1:8H1qwOkl2LPfjf3YezB90JnCliZb6SInJ/OJkEbA5NQ=
+-github.com/andybalholm/brotli v1.2.3/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
++github.com/andybalholm/brotli v1.2.7 h1:UgafRPGMam5ySHfRkhthMqOFA6IFoeF3D7mWIDLjG5A=
++github.com/andybalholm/brotli v1.2.7/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
+ github.com/anishathalye/porcupine v1.3.1 h1:fBZ4/NGNPnIDdd6xNtrNk9/GiEQ0L4FO5+scINN+t0E=
+ github.com/anishathalye/porcupine v1.3.1/go.mod h1:WM0SsFjWNl2Y4BqHr/E/ll2yY1GY1jqn+W7Z/84Zoog=
+ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
+@@ -176,8 +176,8 @@ github.com/fxamacker/cbor/v2 v2.9.3 h1:oQBnFATpNdY8gJHTndDDv5Xl4QqNaz51G5LLEPhng
+ github.com/fxamacker/cbor/v2 v2.9.3/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
+ github.com/gkampitakis/ciinfo v0.3.4 h1:5eBSibVuSMbb/H6Elc0IIEFbkzCJi3lm94n0+U7Z0KY=
+ github.com/gkampitakis/ciinfo v0.3.4/go.mod h1:1NIwaOcFChN4fa/B0hEBdAb6npDlFL8Bwx4dfRLRqAo=
+-github.com/gkampitakis/go-snaps v0.5.24 h1:oyQ/CQA4s0nkVm6CLlM2GJSU8e4p6KGPZbrSCnTNBzE=
+-github.com/gkampitakis/go-snaps v0.5.24/go.mod h1:uy3lVzCCRRsAwYqSocyw5fY8xRLCYEfqoOJNxr8HonM=
++github.com/gkampitakis/go-snaps v0.5.25 h1:ZE3iiQcS2WDV08JdUc+wVpHb6JEnLC+hlo9v8/YqZoQ=
++github.com/gkampitakis/go-snaps v0.5.25/go.mod h1:uy3lVzCCRRsAwYqSocyw5fY8xRLCYEfqoOJNxr8HonM=
+ github.com/gliderlabs/ssh v0.3.8 h1:a4YXD1V7xMF9g5nTkdfnja3Sxy1PVDCj1Zg4Wb8vY6c=
+ github.com/gliderlabs/ssh v0.3.8/go.mod h1:xYoytBv1sV0aL3CavoDuJIQNURXkkfPA/wxQ1pL1fAU=
+ github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 h1:+zs/tPmkDkHx3U66DAb0lQFJrpS6731Oaa12ikc+DiI=
+@@ -278,8 +278,8 @@ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
+ github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
+ github.com/google/go-containerregistry v0.22.1 h1:RZuuSYhTvlDvtsK+NkutoCZ//C0X2ebLK8X8l3ULs84=
+ github.com/google/go-containerregistry v0.22.1/go.mod h1:bJR35SK8XgisYmhg/FMQ/5RK0S/XrOAqLBV5/LR2XE0=
+-github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261013193525-92aac6186bc4 h1:73D7f/eA05ea94q4mYS8VHKx2SeYYPHbyuBL3giTdjU=
+-github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261013193525-92aac6186bc4/go.mod h1:LI3ZSbqmFw4vxcBwMdG8h6blxTu6LyjIR9TQyOmEhRM=
++github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261026195947-bc0638f2d173 h1:zWrZht3lpXnp7+jRhewVLpzbRbT36bRqxgDOS0QR7UE=
++github.com/google/go-containerregistry/pkg/authn/kubernetes v0.0.0-20261026195947-bc0638f2d173/go.mod h1:LI3ZSbqmFw4vxcBwMdG8h6blxTu6LyjIR9TQyOmEhRM=
+ github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
+ github.com/google/gofuzz v1.2.0 h1:xRy4A+RhZaiKjJ1bPfwQ8sedCA+YS2YcCHW6ec7JMi0=
+ github.com/google/gofuzz v1.2.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
+@@ -322,10 +322,10 @@ github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsI
+ github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
+ github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
+ github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761/go.mod h1:5TJZWKEWniPve33vlWYSoGYefn3gLQRzjfDlhSJ9ZKM=
+-github.com/jackc/pgx/v5 v5.11.0 h1:IzBBtyK9AHqf98cctWFifYSci2hgQR/cd56wB4p+ogg=
+-github.com/jackc/pgx/v5 v5.11.0/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
+-github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
+-github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
++github.com/jackc/pgx/v5 v5.12.0 h1:hWwax8YiGT0YiN50U1oIDn5kgR7KC2tG3rmavwpPkxY=
++github.com/jackc/pgx/v5 v5.12.0/go.mod h1:u2Fi6no03HCSBYE+ZVdLxbwdu3xyi2vU+K/YNJioSds=
++github.com/jackc/puddle/v2 v2.2.3 h1:f8HoREISb3l5eO9coPgK7U3hKLhWGokOFVcThl5jrao=
++github.com/jackc/puddle/v2 v2.2.3/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
+ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
+ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
+ github.com/jcmturner/aescts/v2 v2.0.0 h1:9YKLH6ey7H4eDBXW8khjYslgyqG2xZikXP0EQFKrle8=
+@@ -354,8 +354,8 @@ github.com/kevinburke/ssh_config v1.2.0 h1:x584FjTGwHzMwvHx18PXxbBVzfnxogHaAReU4
+ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF4nAY/ojJ6r6mM=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+ gith
 ```
 
-**File**: `crds/v1/fission.io_functionversions.yaml` (modified, +5/-1)
+**File**: `pkg/generated/applyconfiguration/core/v1/canaryconfig.go` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
- kind: CustomResourceDefinition
- metadata:
-   annotations:
--    controller-gen.kubebuilder.io/version: v0.22.0
-+    controller-gen.kubebuilder.io/version: v0.23.0
-   name: functionversions.fission.io
- spec:
-   group: fission.io
-@@ -5584,6 +5584,7 @@ spec:
-                                 Domain names *.k8s.io and *.kubernetes.io are reserved.
-                                 This field must be unique for each responder.
-                                 This field is required.
-+                              minLength: 1
-                               type: string
-                             priority:
-                               description: |-
-@@ -5600,12 +5601,15 @@ spec:
-                                 The interval 0-999 is reserved for responders with *.k8s.io suffix.
-                                 This field is required.
-                               format: int32
-+                              maximum: 100000
-+                              minimum: 0
-                               type: integer
-                           required:
-                           - name
-                           - priority
-                           type: object
-                           x-kubernetes-map-type: atomic
-+                        maxItems: 10
-                         type: array
-                         x-kubernetes-list-map-keys:
-                         - name
+@@ -17,7 +17,7 @@ import (
+ //
+ // CanaryConfig is for canary deployment of two functions.
+ type CanaryConfigApplyConfiguration struct {
+-	metav1.TypeMetaApplyConfiguration    `json:",inline"`
++	metav1.TypeMetaApplyConfiguration    `json:""`
+ 	*metav1.ObjectMetaApplyConfiguration `json:"metadata,omitempty"`
+ 	Spec                                 *CanaryConfigSpecApplyConfiguration   `json:"spec,omitempty"`
+ 	Status                               *CanaryConfigStatusApplyConfiguration `json:"status,omitempty"`
 ```
 
-**File**: `crds/v1/fission.io_httptriggers.yaml` (modified, +1/-1)
+**File**: `pkg/generated/applyconfiguration/core/v1/environment.go` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
- kind: CustomResourceDefinition
- metadata:
-   annotations:
--    controller-gen.kubebuilder.io/version: v0.22.0
-+    controller-gen.kubebuilder.io/version: v0.23.0
-   name: httptriggers.fission.io
- spec:
-   group: fission.io
+@@ -17,7 +17,7 @@ import (
+ //
+ // Environment is environment for building and running user functions.
+ type EnvironmentApplyConfiguration struct {
+-	metav1.TypeMetaApplyConfiguration    `json:",inline"`
++	metav1.TypeMetaApplyConfiguration    `json:""`
+ 	*metav1.ObjectMetaApplyConfiguration `json:"metadata,omitempty"`
+ 	Spec                                 *EnvironmentSpecApplyConfiguration   `json:"spec,omitempty"`
+ 	Status                               *EnvironmentStatusApplyConfiguration `json:"status,omitempty"`
 ```
 
-**File**: `crds/v1/fission.io_kuberneteswatchtriggers.yaml` (modified, +1/-1)
+**File**: `pkg/generated/applyconfiguration/core/v1/fissiontenant.go` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
- kind: CustomResourceDefinition
- metadata:
-   annotations:
--    controller-gen.kubebuilder.io/version: v0.22.0
-+    controller-gen.kubebuilder.io/version: v0.23.0
-   name: kuberneteswatchtriggers.fission.io
- spec:
-   group: fission.io
+@@ -22,7 +22,7 @@ import (
+ // fission.io/enabled=true on a Namespace is sugar the controller
+ // materializes into one of these. See docs/multiple-namespace/prd.md.
+ type FissionTenantApplyConfiguration struct {
+-	metav1.TypeMetaApplyConfiguration    `json:",inline"`
++	metav1.TypeMetaApplyConfiguration    `json:""`
+ 	*metav1.ObjectMetaApplyConfiguration `json:"metadata,omitempty"`
+ 	Spec                                 *FissionTenantSpecApplyConfiguration   `json:"spec,omitempty"`
+ 	Status                               *FissionTenantStatusApplyConfiguration `json:"status,omitempty"`
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3750** (2026-11-09): chore(release): prepare 1.28 (@sanketsudake)
+- **PR #3749** (2026-11-09): CI tool refresh 2026-11-09: helm v4.3.1, kind v0.33.0, Envoy Gateway v1.10.0, cosign v3.1.4, golangci-lint v2.15.0 (@sanketsudake)
+- **PR #3748** (2026-11-09): Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspost CVE fixes (@sanketsudake)
+- **PR #3747** (closed): chore(deps): bump the go-dependencies group with 13 updates (@dependabot[bot])
 - **PR #3745** (2026-10-26): Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, misc patches (@sanketsudake)
 - **PR #3743** (2026-10-22): chore(deps): bump the github-actions group with 5 updates (@dependabot[bot])
-- **PR #3741** (2026-10-15): Bump k8s to v0.37.1 with controller-runtime v0.25.2 (@sanketsudake)
-- **PR #3740** (closed): chore(deps): bump the go-dependencies group across 1 directory with 5 updates (@dependabot[bot])
-- **PR #3739** (2026-10-14): storagesvc/client: serve the S3 test fixture in-process with gofakes3 (@sanketsudake)
-- **PR #3738** (2026-10-14): CI tool refresh 2026-10: helm v4.3.0, skaffold v2.25.0, Envoy Gateway v1.9.2 (@sanketsudake)
 
 ---
 
@@ -1294,28 +1363,33 @@ test/benchmark module is re-tidied to match.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, mi
+## X. Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspo
 
 **RULE**:
-When implementing operations in `crds/v1/fission.io_canaryconfigs.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fission/fission. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/resources/fission-dep-groups.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fission/fission. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae2aabf5`: Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, misc patches (#3745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a08f8c0`: Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspost CVE fixes (#3748). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `crds/v1/fission.io_canaryconfigs.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/resources/fission-dep-groups.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    controller-gen.kubebuilder.io/version: v0.23.0
+Local-env note: if the PATH `go` binary is older than this module's `go` directive (e.g. a Nix go 1.26 while `go.mod` says `go 1.27.3`),
+`make codegen` fails in register-gen with `method must have no type parameters` on stdlib `math/rand/v2`.
+The generator is built by `go install` inside the copied code-generator module (whose own `go` directive is older), so it compiles with the old local go/types,
+which then rejects the newer stdlib's generic methods. Run `GOTOOLCHAIN=go1.27.3 make codegen` to force the matching toolchain.
+CI is unaffected — every workflow installs Go from `go-version-file: go.mod`.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    controller-gen.kubebuilder.io/version: v0.22.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae2aabf5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a08f8c0` are properly handled with clean fallback behavior.

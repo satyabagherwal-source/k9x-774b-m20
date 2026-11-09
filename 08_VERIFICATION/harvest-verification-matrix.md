@@ -8592,3 +8592,6 @@
 | `CYCLE-20261109-D8FJ` | `2026-11-09T12:49:34.447Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`74b9be77...`) |
 | `CYCLE-20261109-DAN8` | `2026-11-09T12:49:37.316Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8339467f...`) |
 | `CYCLE-20261109-HA7U` | `2026-11-09T12:52:43.386Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`16da8514...`) |
+| `CYCLE-20261109-3MDA` | `2026-11-09T13:10:05.566Z` | `fission/fission` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0b944e32...`) |
+| `CYCLE-20261109-3QHC` | `2026-11-09T13:10:10.896Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`fe6c4aa8...`) |
+| `CYCLE-20261109-3SDG` | `2026-11-09T13:10:13.348Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d53dbabb...`) |

@@ -8601,3 +8601,6 @@ Every entry in this ledger must capture:
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `7d46258d` | Multi-dimensional audit evidence | 2026-11-09T12:49:34.451Z |
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `942b6cfa` | Multi-dimensional audit evidence | 2026-11-09T12:49:37.320Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-09T12:52:43.390Z |
+| `learn-github-fission-fission` | `https://github.com/fission/fission` | `9cac7b02` | Multi-dimensional audit evidence | 2026-11-09T13:10:05.570Z |
+| `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T13:10:10.911Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fbd810e8` | Multi-dimensional audit evidence | 2026-11-09T13:10:13.352Z |
