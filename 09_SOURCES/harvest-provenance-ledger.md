@@ -8511,3 +8511,5 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `7541db92` | Multi-dimensional audit evidence | 2026-11-09T04:10:28.553Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `5fe4ab06` | Multi-dimensional audit evidence | 2026-11-09T04:10:32.752Z |
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-09T04:12:34.195Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-09T04:20:07.119Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `533e89d6` | Multi-dimensional audit evidence | 2026-11-09T04:20:08.709Z |

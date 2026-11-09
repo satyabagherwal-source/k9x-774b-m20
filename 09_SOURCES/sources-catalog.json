@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "35905d2b72e515569588a50659110e8c186204320f2a9e6966c09ab4df796944",
-    "lastHarvestedAt": "2026-11-05T10:16:07.483Z",
+    "contentHash": "837bc09cea08b11d0c832b3f6ff18abda8be9fb978f0bfadae9d620df87ca74d",
+    "lastHarvestedAt": "2026-11-09T04:20:07.119Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "accccc85",
+    "sourceVersion": "533e89d6",
     "license": "MIT",
-    "contentHash": "8abbb3eed6c21000ed1d760a33b6e10afb4b8ff136bcc0e8dec94256e95f1b67",
-    "lastHarvestedAt": "2026-11-08T03:07:49.302Z",
+    "contentHash": "9fc22120a8c140cf239fdb9193a730dba6e0af276c6b411e287f11b2e0fe3ae0",
+    "lastHarvestedAt": "2026-11-09T04:20:08.709Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `accccc85`  
+> **Source Version**: `533e89d6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T03:07:47.907Z  
+> **Timestamp**: 2026-11-09T04:20:07.135Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T03:07:46.428Z  
+> **Harvest Timestamp**: 2026-11-09T04:20:07.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3473 stars
+- **Stars / Engagement**: 3479 stars
 
 ---
 
@@ -1741,11 +1741,11 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1284** (2026-11-08): **iOS: Activity on the Sessions page, Sleep, and Settings → Activity (1.0.2)**
-  *Symptoms*: Brings Activity to the iOS app, as the desktop app has it since #1262, and bumps the app to 1.0.2 for a TestFlight build.  **What it adds (with Activity on; off by default)** - Sessions page: Pinned, then one Activity list; Working, Asleep and Archived folded at the foot (Archived shows 10, then "Show N more"). Waiting is drawn exactly as Working; a woke chat shows "Woke" with an alarm glyph; an asleep chat says when it wakes. - Sleep from a swipe or the long-press menu (In 1 Hour, In 3 Hours, This Evening, Tomorrow, Next Week, Custom… with the system date picker). Wake, and Stop Waiting for a chat waiting on a process. - Settings → Activity: the switch, folding working chats, and auto-archive of idle chats with the desktop's exclusions. While Activity is on, a working or waiting chat can't be archived. - Rust core: session rows carry the sleep state and whether a wait is on a process; `ChatIndicator::Waiting` reaches the phone; `sleepSession` and `stopWaiting` calls.  **Tests:** 6 Activity UI flows and 15 Swift unit tests pass in light and dark; `cargo test -p zeron-client` passes. The existing iOS suites show no new failures (the 7 that fail on base still fail the same way).  **What behaves differently with Activity off:** the Sessions "…" menu gains an Activity toggle and "Activity Settings…"; Settings → Sessions gains an Activity row. Nothing else.  Cherry-picked from `zeron/ios-activity` (on `zeron/zgx`) onto main; both picks applied cleanly.  🤖 Generated with [Claude C
+- **Issue #1298** (2026-11-08): **Codex usage and banked resets load again for user-scoped logins**
+  *Symptoms*: Codex usage limits and banked resets stopped loading for ChatGPT logins whose ID token carries a user id.  The engine keys such an account as `{user}::{workspace}`, so two seats in one team stay apart, but OpenAI's usage answer reports only the workspace. `refresh_codex_usage` and `codex_slot_auth` compared that answer with the whole key, so every successful probe was thrown away as missing credentials. The UI kept an old cached snapshot: no fresh week/5-hour bars, and no banked resets on Settings → Providers. Both now compare against the workspace part of the key.  Split out of #1292 by @laurentcodes (their commit, unchanged); the rest of #1292 stays there.  Tests: - `codex_usage_loads_for_a_login_whose_key_carries_the_user_id` (new): fails on main, passes here. - `cargo test -p zeron-engine --lib agent_accounts`: 92 passed, 0 failed.  What behaves differently: for these logins, the Codex usage bars refresh again, and banked resets appear on the Codex card. Nothing changes for other logins.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796772459&installation_model_id=425430&pr_number=1298&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1298&signature=a0d088d9531dd48c6778b8934acfbfeda700581c8e40792ee6015257f2a10edd"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comment
 
-- **Issue #1282** (2026-11-08): **edge: an oversize checkpoint is refused before it's read**
-  *Symptoms*: Engines from before checkpoint parts post a long chat's whole snapshot (35 MB and more) as one checkpoint, get 413, and post it again a few seconds later. The edge read every byte of each before refusing it.  **Change:** `/chat2/{id}/checkpoint` and `/checkpoint-part` read their bodies through `readCapped` (new `edge/src/read-capped.ts`): - a declared `content-length` past the cap gets 413 before any byte is read; - a body with no declared length is read only until it passes the cap, then cancelled; - a body within the cap is read as before.  **Checks:** `tsc` clean; `npm test` passes (new `src/read-capped.test.ts`: a declared-oversize body is refused with at most a couple of chunks pulled; an undeclared one stops just past the cap; bodies within the cap come back whole). The one flaky workerd test (`usernames` public-card rate limit) also fails intermittently on main.  **Rollback:** revert this PR (CI redeploys main), or `wrangler rollback` to the previous version.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796687297&installation_model_id=425430&pr_number=1282&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1282&signature=bcc3eee8e2c8e124733418377c8d27da5b762e6c69381531b1afa782169a76ae"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/cod
+- **Issue #1297** (2026-11-09): **Linux: a dropped image no longer crashes the window with "texture must exist"**
+  *Symptoms*: A Linux user's window aborted on 0.2.138 (beta). The background engine kept running.  ``` panicked at crates/gpui_wgpu/src/wgpu_atlas.rs:146:36: texture must exist panicked at wgpu-hal-29.0.4/src/vulkan/swapchain/native.rs:359:58: Trying to destroy a SwapchainAcquireSemaphore that is still in use by a SurfaceTexture panic in a destructor during cleanup ```  **Cause.** `Window::drop_image` freed an image's atlas tiles right away, and with them the whole atlas texture when those were its last tiles. Zeron drops images in several places: evicted tool images (`tool_images.rs`), visuals (`visuals.rs`), and browser frames on resize (`browser/linux`). The window can then present its last frame again without redrawing it, for example during high-rate input or on a forced present on Wayland. That frame still names the freed texture, so the lookup panicked. A second panic during the unwind aborted the process.  **Fix.** This PR only moves pins: - zui `b564a34` → `15ee708` (zeronsh/zui#19, stacked on zeronsh/zui#18). Dropped images stay in the atlas until the next draw. A scene that still names a freed texture is skipped and redrawn instead of panicking. - gpui-base `59f8924` → `cab50b0` (zeronsh/gpui-component#7, stacked on zeronsh/gpui-component#6), so it shares the same zui.  **Merge order.** zui#18 → zui#19, and gpui-component#6 → #7. The pinned commits can already be fetched through their PR refs, the way `b564a34` is today, so this PR doesn't wait on those merges.  **Tests.** - Th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,281 +1762,285 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c0695e35` (2026-11-07)
-**Commit Message**: ui: test sessions carry no wait
+### Incident Patch 1: `533e89d6` (2026-11-09)
+**Commit Message**: Linux: a dropped image no longer crashes the window with "texture must exist" (#1297)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+* Linux: keep dropped images on screen until the next frame, not a crash
 
-**File**: `crates/ui/examples/macos-resource-profile.rs` (modified, +1/-0)
+Pins zui 15ee708, which keeps a dropped image's atlas tiles until the next
+draw and lets the wgpu renderer skip, then redraw, a scene that names a
+freed atlas texture. Before, re-presenting a frame after an image was
+dropped (an evicted tool image or visual, a resized browser frame) could
+abort the window with "texture must exist" in wgpu_atlas.rs.
+
+* Pin gpui-base cab50b0 so it shares zui 15ee708 with Zeron
+
+zeronsh/gpui-component#7 moves gpui-base to the same zui; without it the
+lock carried two copies of zui.
+
+**File**: `Cargo.lock` (modified, +21/-21)
 ```diff
-@@ -152,6 +152,7 @@ fn main() -> anyhow::Result<()> {
-                             terminal_activity: None,
-                             running_subagents: 0,
-                             background_tasks: Vec::new(),
-+                            waiting: None,
-                             chat_id: "profile".into(),
-                             device_id: "local".into(),
-                             status: if streaming {
+@@ -1650,7 +1650,7 @@ dependencies = [
+ [[package]]
+ name = "collections"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "gpui_util",
+  "indexmap",
+@@ -2454,7 +2454,7 @@ dependencies = [
+ [[package]]
+ name = "derive_refineable"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -3839,7 +3839,7 @@ dependencies = [
+ [[package]]
+ name = "gpui"
+ version = "0.2.2"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "accesskit",
+  "anyhow",
+@@ -3925,7 +3925,7 @@ dependencies = [
+ [[package]]
+ name = "gpui-base"
+ version = "0.5.2"
+-source = "git+https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a#59f89243cea79dd70eb7a619b3930c374ef6958a"
++source = "git+https://github.com/zeronsh/gpui-component?rev=cab50b071497683a119ae0e4038880f195c0f23f#cab50b071497683a119ae0e4038880f195c0f23f"
+ dependencies = [
+  "aho-corasick",
+  "anyhow",
+@@ -3955,7 +3955,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_linux"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "accesskit",
+  "accesskit_unix",
+@@ -4007,7 +4007,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_macos"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "accesskit",
+  "accesskit_macos",
+@@ -4056,7 +4056,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_macros"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "heck 0.5.0",
+  "proc-macro2",
+@@ -4067,7 +4067,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_platform"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "console_error_panic_hook",
+  "gpui",
+@@ -4080,7 +4080,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_shared_string"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "schemars",
+  "serde",
+@@ -4090,7 +4090,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_tokio"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "anyhow",
+  "gpui",
+@@ -4101,7 +4101,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_util"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "anyhow",
+  "log",
+@@ -4111,7 +4111,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_web"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -4135,7 +4135,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_wgpu"
+ version = "0.1.
 ```
 
-**File**: `crates/ui/src/transcript.rs` (modified, +1/-0)
+**File**: `Cargo.toml` (modified, +7/-4)
 ```diff
-@@ -15553,6 +15553,7 @@ mod tests {
-                             terminal_activity: None,
-                             running_subagents: 0,
-                             background_tasks: Vec::new(),
-+                            waiting: None,
-                             chat_id: "chat".into(),
-                             device_id: "test".into(),
-                             status: zeron_proto::SessionStatus::Working,
+@@ -113,15 +113,18 @@ loro-protocol = "0.3"
+ # Atlas tiles updated in place from pixels or imported dma-bufs, display-rate
+ # frame callbacks in inactive windows, and Wayland frames that no longer stop
+ # after a forced draw (b564a34, zeronsh/zui#18).
+-gpui = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
+-gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9", features = [
++# Dropped images stay in the atlas until the next draw, so presenting the last
++# frame again no longer aborts with "texture must exist" (15ee708,
++# zeronsh/zui#19; gpui-base cab50b0, zeronsh/gpui-component#7).
++gpui = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be" }
++gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be", features = [
+     "wayland",
+     "x11",
+     "font-kit",
+     "runtime_shaders",
+ ] }
+-gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
+-gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "59f89243cea79dd70eb7a619b3930c374ef6958a" }
++gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be" }
++gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "cab50b071497683a119ae0e4038880f195c0f23f" }
+ 
+ # diffs
+ similar = "2"
 ```
 
 ---
 
-### Incident Patch 2: `f6d5d063` (2026-11-06)
-**Commit Message**: Provider update rig: isolated and runnable on Linux
+### Incident Patch 2: `adf87317` (2026-11-08)
+**Commit Message**: fix: load codex usage for logins keyed by user and workspace
 
-Every provider but the target is pinned away: discovery searches /usr/local/bin,
-and the engine checks every provider before the rig can disable any. npm comes
-from the registry, since a distribution's can't be copied, and without its builtin
-config, which says prefix=/usr/local. system_git only checks, as the README says.
-pnpm lives where pnpm setup puts it on each system. Adds Linux results, and repairs
-the README's double-encoded punctuation.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `scripts/provider-update-rig/README.md` (modified, +47/-15)
+**File**: `crates/engine/src/agent_accounts.rs` (modified, +10/-2)
 ```diff
-@@ -2,16 +2,18 @@
+@@ -3230,7 +3230,7 @@ impl AgentAccounts {
+         )
+         .await?;
+         if let Some(account_id) = str_field(&body, "account_id")
+-            && account_id != slot.account_key
++            && account_id != codex_workspace(&slot.account_key)
+         {
+             return Err(ProbeError::NoCredentials {
+                 why: NoCredentials::Missing,
+@@ -4051,6 +4051,14 @@ fn parse_codex_auth(auth: serde_json::Value) -> Option<Detected> {
+     })
+ }
  
- Proves that updating an agent CLI from Zeron updates it through whatever
- installed it (npm, pnpm, bun, Homebrew, WinGet, Scoop, the CLI's own
--updaterâ€¦), on a throwaway engine that can't touch anything real.
-+updater…), on a throwaway engine that can't touch anything real.
- 
- Each run starts the real `zeron-engine` binary with:
- 
- - its own port (`ZERON_IPC_PORT`, never 27654) and data dir (`ZERON_DATA_DIR`),
- - a fake `HOME` and XDG dirs inside the run's folder,
- - a Finder-like `PATH` (`/usr/bin:/bin:/usr/sbin:/sbin` plus the sandbox's
-   node), and `ZERON_NO_LOGIN_SHELL=1`, so it can't borrow the shell's PATH,
--- every provider disabled except the one under test,
--- that provider pointed at a sandboxed install (`PI_EXECUTABLE=â€¦` and so on).
-+- every provider disabled except the one under test, and pinned to a path
-+  that doesn't exist (discovery also searches `/usr/local/bin`, and the engine
-+  checks every provider as it starts, before the rig can disable any),
-+- that provider pointed at a sandboxed install (`PI_EXECUTABLE=…` and so on).
- 
- It then runs `CheckHarnessUpdates`, then `ApplyHarnessUpdate` while watching
- `WatchHarnessUpdates`, printing each phase with a timestamp, and finally
-@@ -34,8 +36,9 @@ cargo build --manifest-path scripts/provider-update-rig/rigclient/Cargo.toml
- 
- ## macOS and Linux
- 
--Needs `node` and `bun` on PATH (they're copied, never modified) and network
--access to registry.npmjs.org and cursor.com.
-+Needs `node`, `npm` and `bun` on PATH (`node` and `bun` are copied, nothing is
-+modified) and network access to registry.npmjs.org and cursor.com. The rig's
-+own promises are tested by `python3 scripts/provider-update-rig/rig_test.py`.
- 
- ```sh
- export RIG_DIR=$(mktemp -d)/rig
-@@ -55,11 +58,11 @@ minutes per engine. Results on macOS (Apple silicon, 2026-11-06):
- | Scenario | What it is | before | after |
- |---|---|---|---|
- | `npm_nvm` | Pi installed by an nvm Node's npm; no nvm on PATH | updated 1.4.0â†’1.5.0 in 4.2 s | updated in 5.1 s |
--| `pnpm_global` | Pi from `pnpm add -g`; no `PNPM_HOME` in the engine's env | **failed in 0.5 s**: "Run pnpm setupâ€¦" | updated in 3.1 s |
-+| `pnpm_global` | Pi from `pnpm add -g`; no `PNPM_HOME` in the engine's env | **failed in 0.5 s**: "Run pnpm setup…" | updated in 3.1 s |
- | `bun_global` | Pi from `bun add -g` | **failed**: bun wrote a second copy to `~/.cache/.bun` (it follows `XDG_CACHE_HOME`), the launcher stayed on 1.4.0 | updated in 1.5 s |
- | `hermes_channel` | Hermes on a release channel (fake, real `--check` wording) | **check failed**: "no recognizable verdict" | updated in 0.06 s |
- | `grok_fails` | updater touches its install, then fails (fake) | failed, then a second view opened and **the error was gone in 0.12 s** (back to "available") | failed; still "failed" with its reason after a second view opened |
--| `grok_prompt` | updater asks `[y/N]` and waits (fake) | **stuck "installing"** (it would have waited 30 minutes) | failed in 10.0 s: grok stopped to ask "â€¦Replace it? [y/N]" |
-+| `grok_prompt` | updater asks `[y/N]` and waits (fake) | **stuck "installing"** (it would have waited 30 minutes) | failed in 10.0 s: grok stopped to ask "…Replace it? [y/N]" |
- | `cursor_native` | cursor-agent two releases behind (fake updater, real release feed) | "manual-action-required", no update offered | offered 2026.11.05, updated in 0.25 s |
- 
- ### Linux only (personal-metal)
-@@ -83,13 +86,42 @@ minutes per engine. Results on macOS (Apple silicon, 2026-11-06):
-    ```
-    Expect `canApply=False` and `manual=sudo apt install --only-upgrade git`
-    (or `sudo dnf upgrade git` / `sudo pacman -S git`). The `before` engine
--   says `canApply=True` (it would have run the CLI's own updater).
-+   says `canApply=True` and `failed`: `git` has no `update`, like a CLI whose
-+   distribution stripped its updater.
- 4. If Linuxbrew is installed and has any formula with a `bin/` (for
-    example `jq`), check it read-only: start the `after` engine as in the
-    rig, with `GROK_EXECUTABLE=/home/linuxbrew/.linuxbrew/bin/jq`, and run
--   `CheckHarnessUpdates`. Expect no "manages â€¦, not â€¦" error (the brew
-+   `CheckHarnessUpdates`. Expect no "manages …, not …" error (the brew
-    owns its prefix). Don't apply.
- 
-+On a shared machine, run every rig command inside a read-only root, so a
-+mistake can't reach anything real and `pkill` sees only the rig's processes:
++// account keys put the user id before "::" so team seats sharing a workspace
++// stay distinct (`parse_codex_auth`), but openai only ever reports the workspace
++fn codex_workspace(account_key: &str) -> &str {
++    account_key
++        .rsplit_once("::")
++        .map_or(account_key, |(_, workspace)| workspace)
++}
 +
-+```sh
-+bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --bind "$R" "$R" \
-+  --unshare-pid --die-with-parent --new-session <command>
-+```
-+
-+### Results on Linux (personal-metal, Ubuntu, 2026-11-06)
-+
-+`before` is `zeron/zgx` 48a0dcbc, `after` this branch. Both ran in that read-only
-+root, and `after` is the build with the system-package fix. Times are to the
-+APPLY RESULT.
-+
-+| Scenario | before | after |
-+|---|---|---|
-+| Unit tests | n/a | `harness_updates` 83 pass, `cmd_shim` 6 pass. On the pushed branch 2 failed on Linux: one read this machine's real `/
+ fn codex_slot_auth(slot: &Slot) -> Result<(&str, &str), EngineError> {
+     let detected = parse_codex_auth(slot.credentials.clone())
+         .ok_or_else(|| EngineError::Other("This Codex login needs to be refreshed.".into()))?;
+@@ -4064,7 +4072,7 @@ fn codex_slot_auth(slot: &Slot) -> Result<(&str, &str), EngineError> {
+     match (account_id, access_token) {
+         (Some(account_id), Some(access_token))
+             if !access_token.is_empty()
+-                && account_id == slot.account_key
++                && account_id == codex_workspace(&slot.account_key)
+                 && detected.account_key == slot.account_key =>
+         {
+             Ok((access_token, account_id))
 ```
 
-**File**: `scripts/provider-update-rig/rig.py` (modified, +50/-20)
+**File**: `crates/engine/src/agent_accounts/provider_tests.rs` (modified, +60/-0)
 ```diff
-@@ -22,6 +22,10 @@
- PI_OLD = "1.4.0"
- ALL = ["claude-code", "codex", "cursor", "devin", "grok", "hermes", "pi", "opencode",
-        "antigravity", "muse", "fx"]
-+PINS = {"claude-code": "CLAUDE_CODE_EXECUTABLE", "codex": "CODEX_EXECUTABLE", "cursor": "CURSOR_SDK_SHIM_EXECUTABLE",
-+        "devin": "DEVIN_EXECUTABLE", "grok": "GROK_EXECUTABLE", "hermes": "HERMES_EXECUTABLE", "pi": "PI_EXECUTABLE",
-+        "opencode": "OPENCODE_EXECUTABLE", "antigravity": "ANTIGRAVITY_ACP_EXECUTABLE", "muse": "MUSE_EXECUTABLE",
-+        "fx": "FX_EXECUTABLE"}
+@@ -1924,6 +1924,66 @@ fn codex_auth(email: &str, account_id: &str) -> String {
+     .to_string()
+ }
  
- 
- def free_port():
-@@ -54,9 +58,14 @@ def npm_nvm(home):
-     return "pi", {"PI_EXECUTABLE": f"{prefix}/bin/pi"}, f"{prefix}/bin/pi", 240, {}
- 
- 
-+def pnpm_home_under(platform=sys.platform):
-+    """Where `pnpm setup` puts PNPM_HOME on this system, under HOME."""
-+    return "Library/pnpm" if platform == "darwin" else ".local/share/pnpm"
++#[tokio::test]
++async fn codex_usage_loads_for_a_login_whose_key_carries_the_user_id() {
++    let server = MockServer::start(move |method, path, _| match (method, path) {
++        ("GET", "/backend-api/wham/usage") => (
++            200,
++            serde_json::json!({
++                "account_id": "acct-team",
++                "plan_type": "plus",
++                "rate_limit": {
++                    "primary_window": { "used_percent": 12, "limit_window_seconds": 18000 },
++                    "secondary_window": { "used_percent": 40, "limit_window_seconds": 604800 },
++                },
++                "rate_limit_reset_credits": { "available_count": 1 },
++            })
++            .to_string(),
++        ),
++        ("GET", "/backend-api/wham/rate-limit-reset-credits") => (
++            200,
++            serde_json::json!({
++                "available_count": 1,
++                "credits": [
++                    { "id": "credit-1", "reset_type": "codex_rate_limits", "status": "available",
++                      "title": "Full reset (Weekly + 5 hr)", "expires_at": "2030-01-04T02:01:00Z" },
++                ]
++            })
++            .to_string(),
++        ),
++        _ => (404, String::new()),
++    })
++    .await;
++    let tmp = tempfile::tempdir().unwrap();
++    let (accounts, config) = accounts_with(tmp.path(), mocked(&server.base));
++    let id_token = jwt(serde_json::json!({
++        "email": "ada@example.com",
++        "https://api.openai.com/auth": {
++            "chatgpt_account_id": "acct-team",
++            "chatgpt_user_id": "user-ada",
++            "chatgpt_plan_type": "plus",
++        },
++    }));
++    write(
++        &config.codex_home.join("auth.json"),
++        &serde_json::json!({
++            "tokens": { "id_token": id_token, "access_token": "codex-access", "account_id": "acct-team" }
++        })
++        .to_string(),
++    );
 +
++    let codex = rows(&accounts.list(true).await.unwrap(), HarnessId::Codex);
++    assert_eq!(codex.len(), 1);
++    let fractions: Vec<f32> = codex[0].usage_windows.iter().map(|w| w.used_fraction).collect();
++    assert_eq!(fractions.len(), 2, "{:?}", codex[0].usage_windows);
++    assert!((fractions[0] - 0.12).abs() < 1e-6);
++    assert!((fractions[1] - 0.40).abs() < 1e-6);
++    assert_eq!(
++        codex[0].codex_reset_credits.as_ref().map(|c| c.available_count),
++        Some(1)
++    );
++}
 +
- def pnpm_global(home):
-     """Pi installed with `pnpm add -g` (PNPM_HOME set in the user's shell only)."""
--    pnpm_home = os.path.join(home, "Library/pnpm")
-+    pnpm_home = os.path.join(home, pnpm_home_under())
-     os.makedirs(pnpm_home)
-     env = {"HOME": home, "PNPM_HOME": pnpm_home, "PATH": f"{pnpm_home}:{SYSNODE}:{GUI_PATH}"}
-     run([PNPM, "add", "-g", f"{PI}@{PI_OLD}"], env)
-@@ -145,7 +154,7 @@ def cursor_native(home):
- def system_git(home):
-     """Linux: a CLI the distribution's package manager owns. `git` stands in
-     (its `version` answers like Grok's); nothing is applied, only checked."""
--    return "grok", {"GROK_EXECUTABLE": "/usr/bin/git"}, "/usr/bin/git", 3, {}
-+    return "grok", {"GROK_EXECUTABLE": "/usr/bin/git"}, "/usr/bin/git", 3, {"check_only": True}
- 
- 
- SCENARIOS = {f.__name__: f for f in [npm_nvm, pnpm_global, bun_global, hermes_channel,
-@@ -157,6 +166,24 @@ def client(*args, timeout=None):
-     return r.stdout.strip() + (("\n" + r.stderr.strip()) if r.returncode else "")
- 
- 
-+def engine_env(home, data, port, path, harness, extra_env, root):
-+    """The engine's whole environment. Every provider but the target is pinned
-+    to a path that doesn't exist: discovery also searches fixed places such as
-+    /usr/local/bin, and the engine checks every provider as it starts, before
-+    the rig can disable any. A target with no pin of its own (cursor_native) is
-+    found by discovery under the fake HOME."""
-+    pins = {var: os.path.join(root, "not-installed", h) for h, var in PINS.items() if h != harness}
-+    return {
-+        "HOME": home, "PATH": path, "TMPDIR": os.environ.get("TMPDIR", "/tmp"),
-+        "ZERON_DATA_DIR": data, "ZERON_IPC_PORT": str(port), "ZERON_NO_LOGIN_SHELL": "1",
-+        "ZERON_WORKOS_CLIENT_ID": "", "ZERON_EDGE_URL": "http://127.0.0.1:1",
-+        "ZERON_DISABLE_NOTIFICATIONS": "1", "ZERON_AUTO_UPDATE": "0",
-+        "XDG_CONFIG_HOME": f"{home}/.config", "XDG_DATA_HOME": f"{home}/.local/share",
-+        "XDG_CACHE_HOME": f"{home}/.cache", "RUST_LOG": "warn",
-+        **pins, **extra_env,
-+    }
-+
-+
- def scenario(engine, label, name):
-     root = os.path.join(S, "runs", f"{label}-{name}")
-     shutil.rmtree(root, ignore_errors=True)
-@@ -167,15 +194,7 @@ def scenario(engine, label, name):
-     print(f"\n=== {label} :: {name} ({harness}) — setup {time.time()-t0:.1f}s")
-     port = free_port()
-     path = ":".join(p for p in [extra.get("PATH_EXTRA"), SYSNODE, GUI_PATH] if p)
--    env = {
--        "HOME": home, "PATH": path, "TMPDIR": os.environ.get("TMPDIR", "/tmp"),
--        "ZERON_DATA_DIR": data, "ZERON_IPC_PORT": str(port), "ZERON_NO_LOGIN_SHELL": "1",
--        "ZERON_WORKOS_CLIENT_ID": "", "ZERON_EDGE_URL": "http://127.0.0.1:1",
--        "ZERON_DISABLE_NOTIFICATIONS": "1", "ZERON_AUTO_UPDATE": "0",
--        "XDG_CONFIG_HOME": f"{home}/.config", "XDG_DATA_HOME": f"{home}/.local/share",
--        "XDG_CACHE_HOME": f"{home}/.cache", "RUST_LOG": "warn",
--        **extra_env,
--    }
-+    env = engine_env(home, data, port, path, harness, extra_env, root)
-     log = open(os.path.join(root, "engine.log"), "w")
-     proc = subprocess.Popen([engine], env=env, cwd=root, stdout=log, stderr=log, start_new_session=True)
-     try:
-@@ -192,6 +211,10 @@ def scenario(engine, label, name):
-                   f"error={(row.get('error') or {}).get('message')} manual={row.get('manualCommand')}")
-         except Exception:
-             print(f"check ({time.time()-t:.1f}s): {out}")
-+        if extra.get("check_only"):
-+            print("status after the check:")
-+            print(client("watch", str(port), data, "WatchHarnessUpdates", "{}", "1", harness))
-+            return
-         print(f"apply (watching {secs}s):")
-         print(client("applywatch", str(port), data, harness, str(secs)))
-         if extra.get("view_after"):
-@@ -215,27 +238,34 @@ def scenario(engine, label, name):
- 
- 
- def setup():
--    """Copies of node+npm (from the `node` on PATH) and bun, and pnpm installed
--    with that npm, all under RIG_DIR/tools. Reads the real tools, writes only there."""
-+    """Copies of node and 
-```
-
-**File**: `scripts/provider-update-rig/rig_test.py` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+#!/usr/bin/env python3
-+"""The rig's own promises: python3 scripts/provider-update-rig/rig_test.py"""
-+import os, sys, tempfile, unittest
-+
-+os.environ.setdefault("RIG_DIR", tempfile.gettempdir())
-+os.environ.setdefault("RIGCLIENT", "/nonexistent/rigclient")
-+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-+import rig
-+
-+
-+class RigIsolation(unittest.TestCase):
-+    def test_every_other_provider_is_pinned_inside_the_run(self):
-+        env = rig.engine_env("/run/home", "/run/data", 1234, "/usr/bin", "pi",
-+                             {"PI_EXECUTABLE": "/run/home/pi"}, "/run")
-+        self.assertEqual(env["PI_EXECUTABLE"], "/run/home/pi")
-+        self.assertEqual(sorted(rig.PINS), sorted(rig.ALL))
-+        for harness, var in rig.PINS.items():
-+            if harness != "pi":
-+                self.assertTrue(env[var].startswith("/run/not-installed/"), var)
-+
-+    def test_a_target_found_by_discovery_is_not_pinned_away(self):
-+        env = rig.engine_env("/run/home", "/run/data", 1234, "/usr/bin", "cursor", {}, "/run")
-+        self.assertNotIn(rig.PINS["cursor"], env)
-+        self.assertIn(rig.PINS["claude-code"], env)
-+
-+    def test_pnpm_lives_where_pnpm_setup_puts_it(self):
-+        self.assertEqual(rig.pnpm_home_under("linux"), ".local/share/pnpm")
-+        self.assertEqual(rig.pnpm_home_under("darwin"), "Library/pnpm")
-+
-+    def test_the_system_package_row_never_applies(self):
-+        with tempfile.TemporaryDirectory() as home:
-+            self.assertTrue(rig.system_git(home)[4].get("check_only"))
-+
-+
-+if __name__ == "__main__":
-+    unittest.main()
+ #[tokio::test]
+ async fn codex_banked_resets_list_persist_and_redeem_against_the_mock() {
+     // Who the usage endpoint says the token belongs to (a mismatch: another).
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1298** (2026-11-08): Codex usage and banked resets load again for user-scoped logins (@wingleeio)
+- **PR #1297** (2026-11-09): Linux: a dropped image no longer crashes the window with "texture must exist" (@katulevskiy)
+- **PR #1296** (closed): feat(zgx): attach file and side-chat tabs as composer context (@jsgrrchg)
+- **PR #1292** (closed): fix: new chat project, codex usage, and composer invocations (@laurentcodes)
 - **PR #1284** (2026-11-08): iOS: Activity on the Sessions page, Sleep, and Settings → Activity (1.0.2) (@wingleeio)
-- **PR #1282** (2026-11-08): edge: an oversize checkpoint is refused before it's read (@wingleeio)
-- **PR #1280** (2026-11-07): edge: a chat2 checkpoint past one request's most can come in parts (@wingleeio)
-- **PR #1274** (2026-11-07): Add iOS App Store link to landing page (@SinaKhalili)
-- **PR #1271** (2026-11-07): Zeron 0.2.138 (@wingleeio)
-- **PR #1264** (2026-11-06): Limit background Git scans to viewed chats (@xzebra)
+- **PR #1283** (2026-11-08): zgx on Windows: the panel level with the chat page, and chimes that play (@hoangvu12)
 
 ---
 
@@ -2056,28 +2060,46 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui: test sessions carry no wait
+## X. Linux: a dropped image no longer crashes the window with "texture must exist" (#
 
 **RULE**:
-When implementing operations in `crates/ui/examples/macos-resource-profile.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c0695e35`: ui: test sessions carry no wait. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `533e89d6`: Linux: a dropped image no longer crashes the window with "texture must exist" (#1297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ui/examples/macos-resource-profile.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                            waiting: None,
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/gpui-component?rev=cab50b071497683a119ae0e4038880f195c0f23f#cab50b071497683a119ae0e4038880f195c0f23f"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+s
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a#59f89243cea79dd70eb7a619b3930c374ef6958a"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+s
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c0695e35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `533e89d6` are properly handled with clean fallback behavior.

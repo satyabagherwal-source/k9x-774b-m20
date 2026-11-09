@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T04:12:34.100Z",
+  "last_updated": "2026-11-09T04:20:08.605Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26513,7 +26513,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "35905d2b72e515569588a50659110e8c186204320f2a9e6966c09ab4df796944",
+      "content_hash": "837bc09cea08b11d0c832b3f6ff18abda8be9fb978f0bfadae9d620df87ca74d",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [
@@ -26575,7 +26575,7 @@
         "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
         "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
       ],
-      "verified_at": "2026-11-05T10:16:07.300Z",
+      "verified_at": "2026-11-09T04:20:06.975Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67105,8 +67105,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "accccc85",
-      "content_hash": "8abbb3eed6c21000ed1d760a33b6e10afb4b8ff136bcc0e8dec94256e95f1b67",
+      "source_version": "533e89d6",
+      "content_hash": "9fc22120a8c140cf239fdb9193a730dba6e0af276c6b411e287f11b2e0fe3ae0",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -67118,6 +67118,11 @@
         {
           "number": null,
           "title": "ui: test sessions carry no wait",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Linux: a dropped image no longer crashes the window with \"texture must exist\" (#",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67181,7 +67186,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:07:49.183Z",
+      "verified_at": "2026-11-09T04:20:08.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
