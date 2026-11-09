@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T07:01:05.931Z",
+  "last_updated": "2026-11-09T10:59:42.002Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4314,6 +4314,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-matrixorigin-matrixone"
+    },
+    {
+      "id": "CD-FXO2",
+      "directive_title": "NUC 1 NUC Purpose and Guidelines",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "4b4d45bf",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

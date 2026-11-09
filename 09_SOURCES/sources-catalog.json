@@ -585,8 +585,8 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "716a55d12a1039b74072f0bbc5ca71c58cbf7f12deb33dd7f607f0d40b705b5c",
-    "lastHarvestedAt": "2026-11-05T13:33:37.279Z",
+    "contentHash": "7260c45ebe8bdcf9ac2e385b4af9603a66bbfaeb85f2a280b3665a20eff49deb",
+    "lastHarvestedAt": "2026-11-09T11:04:02.291Z",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2"
   },
   "hf-psrben-visionhope": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "95ca01b3",
+    "sourceVersion": "4b4d45bf",
     "license": "Apache-2.0",
-    "contentHash": "c516f17ef37ee4b6cabba8b73bd96c5e1b7bdf40ae19e534f0d1f703e2a0704e",
-    "lastHarvestedAt": "2026-11-09T09:14:10.969Z",
+    "contentHash": "97bddb16a5647a464aacaab17dc75629f70f360ca51b2b2b898e9630d898d356",
+    "lastHarvestedAt": "2026-11-09T10:59:41.996Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "3852755e",
+    "sourceVersion": "bc458019",
     "license": "Apache-2.0",
-    "contentHash": "1002b5867f9e12721f9e7f3b4f3289119e309a46f4a47fe5dcfdd4e7add16fdc",
-    "lastHarvestedAt": "2026-11-07T19:37:21.464Z",
+    "contentHash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
+    "lastHarvestedAt": "2026-11-09T10:59:35.994Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -11613,10 +11613,10 @@
     "repository": "krishhgg/Insomnia",
     "platform": "github",
     "sourceUrl": "https://github.com/krishhgg/Insomnia",
-    "sourceVersion": "b8e7e20d",
+    "sourceVersion": "1044770e",
     "license": "MIT",
-    "contentHash": "9d34de9e4b8805a38f1a3aae73b52f21a70ca7dfde7f001ac91608eee0a18d26",
-    "lastHarvestedAt": "2026-10-31T00:52:52.257Z",
+    "contentHash": "f0bc9a12bf5221da8a1a71f92ebbde4cf6e79ba90a6c5669be5e56b7d464b3af",
+    "lastHarvestedAt": "2026-11-09T10:59:33.779Z",
     "learningId": "learn-github-krishhgg-insomnia"
   },
   "hf-comfy-org-wan-2.2": {

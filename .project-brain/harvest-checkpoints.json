@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T10:31:23.011Z",
+  "last_updated": "2026-11-09T11:04:02.299Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1880,14 +1880,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "716a55d12a1039b74072f0bbc5ca71c58cbf7f12deb33dd7f607f0d40b705b5c",
-      "verified_at": "2026-11-05T13:33:37.284Z",
+      "content_hash": "7260c45ebe8bdcf9ac2e385b4af9603a66bbfaeb85f2a280b3665a20eff49deb",
+      "verified_at": "2026-11-09T11:04:02.298Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:33:37.284Z"
+      "last_updated": "2026-11-09T11:04:02.298Z"
     },
     "ZHangZHengEric/Sage": {
       "repository": "ZHangZHengEric/Sage",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "c516f17ef37ee4b6cabba8b73bd96c5e1b7bdf40ae19e534f0d1f703e2a0704e",
-      "verified_at": "2026-11-09T09:14:10.990Z",
+      "content_hash": "97bddb16a5647a464aacaab17dc75629f70f360ca51b2b2b898e9630d898d356",
+      "verified_at": "2026-11-09T10:59:42.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T09:14:10.990Z"
+      "last_updated": "2026-11-09T10:59:42.007Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "1002b5867f9e12721f9e7f3b4f3289119e309a46f4a47fe5dcfdd4e7add16fdc",
-      "verified_at": "2026-11-07T19:37:21.470Z",
+      "content_hash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
+      "verified_at": "2026-11-09T10:59:36.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:37:21.470Z"
+      "last_updated": "2026-11-09T10:59:36.002Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -17481,14 +17481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-krishhgg-insomnia",
-      "content_hash": "9d34de9e4b8805a38f1a3aae73b52f21a70ca7dfde7f001ac91608eee0a18d26",
-      "verified_at": "2026-10-31T00:52:52.267Z",
+      "content_hash": "f0bc9a12bf5221da8a1a71f92ebbde4cf6e79ba90a6c5669be5e56b7d464b3af",
+      "verified_at": "2026-11-09T10:59:33.797Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:52:52.267Z"
+      "last_updated": "2026-11-09T10:59:33.797Z"
     },
     "Comfy-Org/Wan-2.2": {
       "repository": "Comfy-Org/Wan-2.2",

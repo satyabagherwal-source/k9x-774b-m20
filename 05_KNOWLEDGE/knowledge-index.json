@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T10:31:22.855Z",
+  "last_updated": "2026-11-09T11:04:02.179Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17014,14 +17014,19 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "3852755e",
-      "content_hash": "1002b5867f9e12721f9e7f3b4f3289119e309a46f4a47fe5dcfdd4e7add16fdc",
+      "source_version": "bc458019",
+      "content_hash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "http): compare the IPv6 zone identifier exactly in SameOrigin (#24071)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "add tags to trivy testcase (#24338)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -17100,7 +17105,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:37:21.377Z",
+      "verified_at": "2026-11-09T10:59:35.854Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29745,10 +29750,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "716a55d12a1039b74072f0bbc5ca71c58cbf7f12deb33dd7f607f0d40b705b5c",
+      "content_hash": "7260c45ebe8bdcf9ac2e385b4af9603a66bbfaeb85f2a280b3665a20eff49deb",
       "dossier_path": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Deterministic EOT/Thinking Termination Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Mutually Exclusive Speculative Model Subsystem Loading Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Static FP8 Block128 Quantization Invariant with Scale Clamping",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1370,
           "title": "Invariant Reward Length-Penalty Normalization in Group-Relative Policy Optimization",
@@ -29784,7 +29804,7 @@
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv47ewm0",
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv4kon4a"
       ],
-      "verified_at": "2026-11-05T13:33:37.201Z",
+      "verified_at": "2026-11-09T11:04:02.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47600,8 +47620,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "95ca01b3",
-      "content_hash": "c516f17ef37ee4b6cabba8b73bd96c5e1b7bdf40ae19e534f0d1f703e2a0704e",
+      "source_version": "4b4d45bf",
+      "content_hash": "97bddb16a5647a464aacaab17dc75629f70f360ca51b2b2b898e9630d898d356",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -48026,7 +48046,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T09:14:10.842Z",
+      "verified_at": "2026-11-09T10:59:41.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168357,11 +168377,16 @@
       "slug": "krishhgg-insomnia",
       "platform": "github",
       "source_url": "https://github.com/krishhgg/Insomnia",
-      "source_version": "b8e7e20d",
-      "content_hash": "9d34de9e4b8805a38f1a3aae73b52f21a70ca7dfde7f001ac91608eee0a18d26",
+      "source_version": "1044770e",
+      "content_hash": "f0bc9a12bf5221da8a1a71f92ebbde4cf6e79ba90a6c5669be5e56b7d464b3af",
       "dossier_path": "07_PROJECT_LEARNING/krishhgg-insomnia-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/krishhgg-insomnia-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #154 from krishhgg/integration/recovery-launcher",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 5972,
           "title": "Install, uninstall: check Kong's client against a code requirement",
@@ -168373,7 +168398,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:52:52.155Z",
+      "verified_at": "2026-11-09T10:59:33.636Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

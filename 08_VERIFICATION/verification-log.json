@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-XQKG",
-    "timestamp": "2026-11-07T20:02:04.864Z",
-    "repository": "sveltejs/svelte",
-    "learningId": "learn-github-sveltejs-svelte",
-    "contentHash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-XS7X",
-    "timestamp": "2026-11-07T20:02:07.005Z",
-    "repository": "lysine-dev/okio",
-    "learningId": "learn-github-lysine-dev-okio",
-    "contentHash": "ff47fce6181ac4aee833384e24e3b6a792ff8d307876fc046baff21a76a9c779",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-7D9S",
-    "timestamp": "2026-11-07T20:09:34.192Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "fcd8924d041803d1512947a1ff52dbdae4454b724f0bbb9d8faaddaac85fcb24",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-G7XP",
-    "timestamp": "2026-11-07T20:16:27.181Z",
-    "repository": "vitejs/vite",
-    "learningId": "learn-github-vitejs-vite",
-    "contentHash": "5613a3206eacce9994be57af93933c0f827d99c5b6e350f14e3b66a49f4a0b59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-GBSB",
     "timestamp": "2026-11-07T20:16:32.171Z",
     "repository": "siderolabs/talos",
@@ -7492,6 +7432,66 @@
     "contentHash": "98ed1dfa8f19aaee246d3a4813ff52400f053e8a8ccf740ada9c0962e957d850",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-FRBK",
+    "timestamp": "2026-11-09T10:59:33.776Z",
+    "repository": "krishhgg/Insomnia",
+    "learningId": "learn-github-krishhgg-insomnia",
+    "contentHash": "f0bc9a12bf5221da8a1a71f92ebbde4cf6e79ba90a6c5669be5e56b7d464b3af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-FT13",
+    "timestamp": "2026-11-09T10:59:35.991Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-FXNS",
+    "timestamp": "2026-11-09T10:59:41.992Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "97bddb16a5647a464aacaab17dc75629f70f360ca51b2b2b898e9630d898d356",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-LII7",
+    "timestamp": "2026-11-09T11:04:02.287Z",
+    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+    "contentHash": "7260c45ebe8bdcf9ac2e385b4af9603a66bbfaeb85f2a280b3665a20eff49deb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T10:31:23.008Z",
-  "total_cycles_completed": 8531,
-  "total_learnings_persisted": 8531,
-  "total_rules_promoted": 8346,
+  "last_updated": "2026-11-09T11:04:02.296Z",
+  "total_cycles_completed": 8535,
+  "total_learnings_persisted": 8535,
+  "total_rules_promoted": 8351,
   "history": [
-    {
-      "timestamp": "2026-11-08T19:45:31.283Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T19:49:21.737Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-google-electra-base-discriminator",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T19:50:27.651Z",
-      "repository": "duongductrong/Snapzy",
-      "learningId": "learn-github-duongductrong-snapzy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T20:02:51.203Z",
-      "repository": "signerlabs/ShipSwift",
-      "learningId": "learn-github-signerlabs-shipswift",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T20:02:53.966Z",
       "repository": "skyhook-io/radar",
@@ -1403,6 +1375,34 @@
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-francisring-prism",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T10:59:33.794Z",
+      "repository": "krishhgg/Insomnia",
+      "learningId": "learn-github-krishhgg-insomnia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T10:59:35.999Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T10:59:42.004Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T11:04:02.296Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

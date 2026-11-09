@@ -8566,3 +8566,7 @@
 | `CYCLE-20261109-LDVX` | `2026-11-09T10:07:57.069Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`93ac4478...`) |
 | `CYCLE-20261109-FHRI` | `2026-11-09T10:31:21.774Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`385071d3...`) |
 | `CYCLE-20261109-FIPI` | `2026-11-09T10:31:22.998Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`98ed1dfa...`) |
+| `CYCLE-20261109-FRBK` | `2026-11-09T10:59:33.776Z` | `krishhgg/Insomnia` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f0bc9a12...`) |
+| `CYCLE-20261109-FT13` | `2026-11-09T10:59:35.991Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`49c27c60...`) |
+| `CYCLE-20261109-FXNS` | `2026-11-09T10:59:41.992Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`97bddb16...`) |
+| `CYCLE-20261109-LII7` | `2026-11-09T11:04:02.287Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`7260c45e...`) |
