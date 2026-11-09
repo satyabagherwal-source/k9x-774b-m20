@@ -1095,8 +1095,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "6d0925d88cd2491437399568931b53c74c3a0c7201633ac3e89ef0a43286e526",
-    "lastHarvestedAt": "2026-11-05T07:53:34.028Z",
+    "contentHash": "0414e4041dd3836fcb89cdb9818803ede93cf09f0b66b4d6f066b064ff2a0036",
+    "lastHarvestedAt": "2026-11-09T01:53:11.348Z",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "deefd0e0",
+    "sourceVersion": "a2fda9d5",
     "license": "MIT",
-    "contentHash": "bb8b367b7adee588b430653de44a0bb48c7dba8ef220d0671e51cbb3ebf92244",
-    "lastHarvestedAt": "2026-11-08T00:56:01.187Z",
+    "contentHash": "c94837453fdb7f2848813ac39618b6b473db9f961d3061d56a6bf1879e06fe15",
+    "lastHarvestedAt": "2026-11-09T01:53:15.859Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "0186d63c",
+    "sourceVersion": "be138254",
     "license": "NOASSERTION",
-    "contentHash": "dc3fa3c3faa11c8f749c0a57ca245e6cd395f5c3f2bf94cae854b39bbc47f466",
-    "lastHarvestedAt": "2026-11-08T21:33:33.595Z",
+    "contentHash": "54e817adc56ee62cc4a99e41aba035e6921d3029f0c5c7996130a1a36fb9b603",
+    "lastHarvestedAt": "2026-11-09T01:53:24.407Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

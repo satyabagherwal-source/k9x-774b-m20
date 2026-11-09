@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `deefd0e0`  
+> **Source Version**: `a2fda9d5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:55:59.903Z  
+> **Timestamp**: 2026-11-09T01:53:14.937Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:55:58.667Z  
+> **Harvest Timestamp**: 2026-11-09T01:53:14.932Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41160 stars
+- **Stars / Engagement**: 41158 stars
 
 ---
 
@@ -1845,387 +1845,791 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `549ff01e` (2026-11-07)
-**Commit Message**: fix(release): handle Windows cleanup and align kit lock [skip ci]
+### Incident Patch 1: `0d1ffc1c` (2026-11-08)
+**Commit Message**: fix(engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list
 
-Strip Windows PowerShell's UTF8 BOM before parsing normal cleanup
-receipts. Run the existing bounded exact-private-path cleanup fallback
-on failures even when its controller has already exited, verify its
-returned path and zero remaining Terminal processes, and retain the
-original failure result.
+Reproduced from a founder session on a 0.10.3 dev build (artifacts
+subagent-failures-20261107): sub-agents died with "Child usage settlement
+failed", a turn failed on "native usage journal capacity reached before
+dispatch", and two workers returned Anthropic 400 "tools.17.custom.name".
 
-Use Cargo's conservative offline update for the standalone vendored
-kit lock: app-server-protocol0.10.3 and its declared chrono edge. Root
-Cargo.lock and runtime Rust sources are unchanged from4ba0c656ac9c.
+- Anthropic client: tool names were sent raw, so a name such as web.run (from
+  tool_search) invalidated the whole request. Outbound tool declarations,
+  replayed tool_use blocks, tool_choice and the omitted-tool list now use
+  to_api_tool_name, and streamed and non-streamed tool_use names are decoded
+  with from_api_tool_name, matching the chat and responses clients.
+- Usage journal: MAX_RUNTIME_USAGE_RECORDS_PER_OWNER 64 -> 256. Children share
+  the session's journal owner and the workflow default is 64 live agents with a
+  ceiling of 128, so a full fan-out plus the parent exceeded 64. be43ea93fd
+  already makes the overflow non-fatal; this keeps the receipts.
+- Turn start (CW-6633, #6184): the heartbeat stayed Idle until TurnStarted, so
+  a wait before it produced no log, no stall record an
 
-Verified on the frozen4ba+these2paths: existing standalone kit themes
-14passed/0failed; surfaces3passed/0failed, both locked/offline with
-source unchanged and disk guard retained. Node syntax and diff checks
-exit0. Independent review confirms both Windows findings are closed.
-Actual PowerShell/Windows execution remains pending finalCI.
-
-Mac4ba CLI build and strict HTTP admission/recovery observations passed;
-Linux4ba-equivalent CLI build passed with full4270source invariants.
-Those executables retain their exact4ba identity and scope; this commit
-is not a claim that they were rebuilt from the later script/kit-lock
-meta
-
-**File**: `scripts/release/windows-terminal-clipboard.mjs` (modified, +15/-11)
+**File**: `CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -120,7 +120,7 @@ try {
-   receipt.stash = { path: stashFile, sha256: createHash('sha256').update(stashBytes).digest('hex'), records: 1, exactDraftMatch: true, normalization: 'CRLF to LF only' };
-   assert.equal(await desktopClosed, 0, desktopError);
-   assert.equal(desktopError, '', 'no desktop errors');
--  receipt.cleanup = JSON.parse(await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8'));
-+  receipt.cleanup = JSON.parse((await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8')).replace(/^\uFEFF/, ''));
-   assert.equal(receipt.cleanup.terminal, terminal, 'cleanup used the owned Terminal path');
-   assert.equal(receipt.cleanup.remaining, 0, 'owned Terminal processes are gone');
-   receipt.result = 'passed';
-@@ -135,18 +135,22 @@ try {
-         await fs.writeFile(path.join(evidence, 'cancel'), 'retire owned Terminal');
-         await Promise.race([desktopClosed, delay(5000)]);
-       } catch (error) { receipt.desktop.cancelError = String(error); }
--      if (desktop.exitCode === null && desktop.signalCode === null) {
--        try {
--          const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
--            '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
--          { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
--          receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
--        } catch (error) {
--          receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
--        }
--        receipt.desktop.killRequestedAt = new Date().toISOString(); desktop.kill();
-+    }
-+    if (receipt.result !== 'passed') {
-+      try {
-+        const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
-+          '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
-+        { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
-+        receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
-+        assert.equal(receipt.desktop.fallbackCleanup.terminal, terminal, 'fallback cleanup used the owned Terminal path');
-+        assert.equal(receipt.desktop.fallbackCleanup.remaining, 0, 'fallback cleanup retired the owned Terminal');
-+      } catch (error) {
-+        receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
-       }
+@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
++- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
++- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
++- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
++- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
++- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
+ - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
+```
+
+**File**: `crates/app-server/src/acp_server.rs` (modified, +1/-1)
+```diff
+@@ -481,7 +481,7 @@ impl AcpServer {
+         let sessions =
+             codewhale_engine::session_manager::SessionManager::new(self.sessions_dir.clone())
+                 .ok()
+-                .and_then(|manager| manager.list_sessions().ok())
++                .map(|manager| manager.list_sessions_lenient())
+                 .unwrap_or_default();
+         let sessions: Vec<Value> = sessions
+             .into_iter()
+```
+
+**File**: `crates/engine/src/client/anthropic.rs` (modified, +35/-7)
+```diff
+@@ -34,14 +34,19 @@ use codewhale_models::tool_projection::{
+     RouteToolProjection, ToolSchemaProjection, description_with_constraint_note, forced_tool_name,
+     project_tool_schema,
+ };
+-use codewhale_models::{ContentBlock, MessageRequest, MessageResponse, StreamEvent, Usage};
++use codewhale_models::{
++    ContentBlock, ContentBlockStart, MessageRequest, MessageResponse, StreamEvent, Usage,
++};
+ use codewhale_runtime::config::wire_model_for_provider_route;
+ use codewhale_runtime::logging;
+ 
+ use super::CodewhaleClient;
+ use super::prepared::WireDialect;
+ use super::role_placement::{RolePlacement, role_placement};
+-use super::wire::{extract_sse_data_value, next_sse_line, push_sse_event_data};
++use super::wire::{
++    extract_sse_data_value, from_api_tool_name, next_sse_line, push_sse_event_data,
++    to_api_tool_name,
++};
+ 
+ /// Maximum `cache_control` breakpoints Anthropic accepts per request.
+ const MAX_CACHE_BREAKPOINTS: usize = 4;
+@@ -120,7 +125,7 @@ impl CodewhaleClient {
+                         constraint_note,
+                     } => {
+                         let mut value = json!({
+-                            "name": tool.name,
++                            "name": to_api_tool_name(&tool.name),
+                             "description": description_with_constraint_note(
+                                 &tool.description,
+                                 constraint_note,
+@@ -137,7 +142,7 @@ impl CodewhaleClient {
+                     }
+                     ToolSchemaProjection::Omitted { .. } => {
+                         omitted_logical_names.push(tool.name.clone());
+-                        omitted_tool_names.push(tool.name.clone());
++                        omitted_tool_names.push(to_api_tool_name(&tool.name));
+                     }
+                 }
+             }
+@@ -520,12 +525,26 @@ fn discard_provider_execution_ids(value: &mut Value) {
      }
-+    if (desktop.exitCode === null && desktop.signalCode === null) {
-+      receipt.desktop.killRequestedAt = new Date().toISOString(); desktop.kill();
+ }
+ 
++fn decode_tool_use_names(value: &mut Value) {
++    let Some(content) = value.get_mut("content").and_then(Value::as_array_mut) else {
++        return;
++    };
++    for block in content.iter_mut() {
++        if block.get("type").and_then(Value::as_str) == Some("tool_use")
++            && let Some(name) = block.get("name").and_then(Value::as_str)
++        {
++            block["name"] = json!(from_api_tool_name(name));
++        }
 +    }
-     await desktopClosed;
-   }
-   await fs.writeFile(path.join(evidence, 'receipt.json'), JSON.stringify(receipt, null, 2));
++}
++
+ fn decode_anthropic_message(mut value: Value) -> Result<MessageResponse> {
+     discard_provider_execution_ids(&mut value);
+     if let Some(usage) = value.get_mut("usage") {
+         *usage = json!(parse_anthropic_usage(usage));
+     }
+     normalize_redacted_thinking_blocks(&mut value);
++    decode_tool_use_names(&mut value);
+     serde_json::from_value(value).context("Failed to decode Anthropic Messages response")
+ }
+ 
+@@ -777,7 +796,7 @@ fn anthropic_tool_choice(tool_choice: &Value, model: &str) -> Value {
+         Some("auto") => json!({ "type": "auto" }),
+         Some("none") => json!({ "type": "none" }),
+         Some("any" | "required") => json!({ "type": "any" }),
+-        Some(name) => json!({ "type": "tool", "name": name }),
++        Some(name) => json!({ "type": "tool", "name": to_api_tool_name(name) }),
+         None => tool_choice.clone(),
+     }
+ }
+@@ -925,7 +944,7 @@ fn content_block_to_anthropic(block: &ContentBlock) -> Option<Value> {
+         } => Some(json!({
+             "type": "tool_use",
+             "id": id,
+-            "name": name,
++            "name": to_api_tool_name(name),
+             "input": input,
+         })),
+         ContentBlock::ToolResult {
+@@ -1084,7 +1103,16 @@ fn convert_anthropic_sse_data(data: &str) -> Option<Result<StreamEvent>> {
+         // Local-only receipt: the legacy path ignored it (not a provider
+         // type), so it stays ignored rather than decoding.
+         Ok(StreamEvent::ToolProjectionWarning { .. }) => None,
+-        Ok(event) => Some(Ok(event)),
++        Ok(mut event) => {
++            if let StreamEvent::ContentBlockStart {
++                content_block: ContentBlockStart::ToolUse { name, .. },
++                ..
++            } = &mut event
++            {
++                *name = from_api_tool_name(name);
++            }
++            Some(Ok(event))
++        }
+         Err(error) => {
+             // Cold path, reached only when direct decode fails: invalid JSON
+             // and unknown types keep their exact legacy outcomes.
 ```
 
-**File**: `vendor/codewhale-ratatui/Cargo.lock` (modified, +3/-2)
+**File**: `crates/engine/src/core/engine.rs` (modified, +6/-0)
 ```diff
-@@ -100,8 +100,9 @@ dependencies = [
+@@ -6768,6 +6768,12 @@ impl Engine {
+         review: Option<codewhale_protocol::op::ReviewOperation>,
+     ) -> SendMessageOutcome {
+         let setup_timing = codewhale_runtime::logging::PhaseTimer::start("turn_setup");
++        self.turn_heartbeat.enter(
++            turn_heartbeat::TurnPhase::Preparing,
++            Some("starting the turn".to_string()),
++            Some(turn_heartbeat::PREPARING_PHASE_BOUND),
++        );
++        let _pre_turn_idle = turn_heartbeat::IdleOnDrop(Arc::clone(&self.turn_heartbeat));
+         let is_review = review.is_some();
+         let TurnSpec {
+             profile_constitution,
+```
+
+**File**: `crates/engine/src/cost_status.rs` (modified, +1/-1)
+```diff
+@@ -1272,7 +1272,7 @@ fn with_pending_state_mut<R>(f: impl FnOnce(&mut ScopedPendingBackgroundCost) ->
+ /// This journal is deliberately separate from the TUI pending-money pool:
+ /// taking one runtime owner's records cannot steal or reset the foreground
+ /// session's `/cost` state.
+-const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 64;
++const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 256;
  
- [[package]]
- name = "codewhale-app-server-protocol"
--version = "0.10.2"
-+version = "0.10.3"
- dependencies = [
-+ "chrono",
-  "serde",
-  "serde_json",
- ]
-@@ -110,8 +111,8 @@ dependencies = [
- name = "codewhale-protocol"
- version = "0.10.3"
- dependencies = [
-- "codewhale-app-server-protocol",
-  "chrono",
-+ "codewhale-app-server-protocol",
-  "serde",
-  "serde_json",
-  "uuid",
+ #[derive(Default)]
+ struct OwnerRuntimeUsageJournal {
+```
+
+**File**: `crates/engine/src/session_manager.rs` (modified, +23/-0)
+```diff
+@@ -5888,6 +5888,29 @@ impl SessionManager {
+             .collect())
+     }
+ 
++    pub fn list_sessions_lenient(&self) -> Vec<SessionMetadata> {
++        let catalog = match self.scan_session_records() {
++            Ok(catalog) => catalog,
++            Err(error) => {
++                tracing::warn!(%error, "session listing failed; showing no sessions");
++                return Vec::new();
++            }
++        };
++        if let Some(warning) = catalog.warning() {
++            tracing::warn!(%warning, "session listing is incomplete; showing the readable ones");
++        }
++        let mut sessions: Vec<_> = catalog
++            .records
++            .into_iter()
++            .map(|(_, mut metadata)| {
++                self.apply_late_usage_to_metadata(&mut metadata);
++                metadata
++            })
++            .collect();
++        sessions.sort_by_key(|session| std::cmp::Reverse(session.updated_at));
++        sessions
++    }
++
+     pub fn list_sessions_with_recovery(
+         &self,
+     ) -> std::io::Result<(
+```
+
+**File**: `crates/runtime/src/runtime_control.rs` (modified, +17/-14)
+```diff
+@@ -20,20 +20,23 @@ where
+     static SLOTS: std::sync::OnceLock<std::sync::Arc<tokio::sync::Semaphore>> =
+         std::sync::OnceLock::new();
+     const PERMIT_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
+-    let permit = tokio::time::timeout(
+-        PERMIT_WAIT,
+-        SLOTS
+-            .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
+-            .clone()
+-            .acquire_owned(),
+-    )
+-    .await
+-    .map_err(|_| {
+-        anyhow::anyhow!(
+-            "blocking work is queued behind earlier jobs that have not finished within {}s",
+-            PERMIT_WAIT.as_secs()
+-        )
+-    })??;
++    let slots = SLOTS
++        .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
++        .clone();
++    if slots.available_permits() == 0 {
++        tracing::warn!(
++            target: "turn",
++            "owner_work is waiting: all 4 blocking slots are held by earlier jobs"
++        );
++    }
++    let permit = tokio::time::timeout(PERMIT_WAIT, slots.acquire_owned())
++        .await
++        .map_err(|_| {
++            anyhow::anyhow!(
++                "blocking work is queued behind earlier jobs that have not finished within {}s",
++                PERMIT_WAIT.as_secs()
++            )
++        })??;
+     tokio::task::spawn_blocking(move || {
+         #[cfg(any(test, feature = "test-support"))]
+         let _membership = crate::test_support::join_env_scope(env_ticket);
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +6/-0)
+```diff
+@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
++- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
++- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
++- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
++- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
++- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
+ - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
 ```
 
 ---
 
-### Incident Patch 2: `92c26895` (2026-11-07)
-**Commit Message**: docs(changelog): record today's plugin stage and Windows release fixes
+### Incident Patch 2: `a2fda9d5` (2026-11-09)
+**Commit Message**: fix(engine): let sub-agent shells run beside a peer's write claim; repair stale candidate tests
 
-Root asked for every change landed today to have a 0.10.3 note. Three
-landed without one: 91fd65705a (stages appearing during a registry load
-now take the restage checks), 67de548a97 (Windows import floor: ARM64
-pairs qualified by the native probe, x64 pairs recorded as documented
-contracts) and 549ff01ebb (terminal-clipboard harness BOM and cleanup
-fallback, vendored kit lock). Lint, style, test-table, ratchet and website
-docs commits change no product behavior and get no entry.
+The write-claim ledger still coordinates bounded File/Edit/Patch targets, but a
+child's shell no longer waits on a peer's claim: the execution envelope,
+sandbox and approval posture already govern executable work. The old refusal
+told analysis agents to re-run with read_only=true, which burned steps without
+protecting a peer's files. The contention refusal now names only bounded write
+tools, and Run verifiers remain guarded.
 
-Only these three lines are committed; another session's uncommitted
-CHANGELOG text stays in the working copy.
+Repairs three stale candidate assertions:
+- the app-server settings test expected the retired `operate` spelling to
+  persist; it now asserts the documented Work (`agent`) normalization.
+- the mailbox test expected snapshot.mode == "operate"; it now expects the
+  Work wire value.
+- the parent prompt+catalog ceiling re-measured at 94,121B (was 92,100B) after
+  the deliberate tool-text expansion; the read-only child envelope still fits.
+The shell tests that execute a command now run on the engine's large stack so
+they exercise the policy instead of overflowing the test thread.
 
-Verified: scripts/sync-changelog.sh --check up to date on the committed
-pair.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -283,6 +283,7 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Fixed
- 
-+- **Plugin stages created during a registry load are checked:** a plugin whose staged copy appears while the registry is loading now goes through the same restage lock, receipt and policy checks as any other stage instead of being left unstaged; invalid bytes are still refused and stay in the failure cache.
- - **Host-provided model clients:** keep configured session isolation and
-   approval deadlines when optional credential preflight fails.
- - **Runtime SDK exports:** include the existing thread-scoped Git, snapshot,
-@@ -553,6 +554,8 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Maintenance
- 
-+- **Windows release harness:** the terminal-clipboard check strips Windows PowerShell's UTF-8 BOM before parsing cleanup receipts and still runs the bounded private-path cleanup fallback after its controller has exited; the vendored terminal kit lock follows Protocol 0.10.3.
-+- **Windows release import floor:** the 10 ARM64 import pairs that the native export probe resolved on Windows 11 ARM64 are qualified, and 12 x64 pairs are recorded as documented API contracts until a native x64 export probe exists. The Windows 10 build 14393 floor, the guard and the x86 profile are unchanged; the next frozen candidate's import job is the real check.
- - MCP regression fixtures retain private extension-host roots and wait for their own workers to finish, preventing parallel checks from borrowing a deleted fixture home. Production connection and credential policy is unchanged.
- - **Independent terminal kit candidate 0.2.0:** its workflow totals use `u64`, and its existing avatar API reexports the shared Protocol contract. All local consumers pin 0.2.0. Protocol 0.10.3 must be published and verified before the kit, followed by the dependent Engine packages; each publication retains its separate approval.
- - **`codewhale-plugins` crate:** plugin discovery, review, install and marketplace parsing move out of `codewhale-tui` into a new crate; MCP server config types move to `codewhale-mcp`, and the skill parse core and recommendations to `codewhale-skill-install`. Review and trust behavior is unchanged. (S19, #5316)
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -283,6 +283,7 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Fixed
- 
-+- **Plugin stages created during a registry load are checked:** a plugin whose staged copy appears while the registry is loading now goes through the same restage lock, receipt and policy checks as any other stage instead of being left unstaged; invalid bytes are still refused and stay in the failure cache.
- - **Host-provided model clients:** keep configured session isolation and
-   approval deadlines when optional credential preflight fails.
- - **Runtime SDK exports:** include the existing thread-scoped Git, snapshot,
-@@ -553,6 +554,8 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Maintenance
- 
-+- **Windows release harness:** the terminal-clipboard check strips Windows PowerShell's UTF-8 BOM before parsing cleanup receipts and still runs the bounded private-path cleanup fallback after its controller has exited; the vendored terminal kit lock follows Protocol 0.10.3.
-+- **Windows release import floor:** the 10 ARM64 import pairs that the native export probe resolved on Windows 11 ARM64 are qualified, and 12 x64 pairs are recorded as documented API contracts until a native x64 export probe exists. The Windows 10 build 14393 floor, the guard and the x86 profile are unchanged; the next frozen candidate's import job is the real check.
- - MCP regression fixtures retain private extension-host roots and wait for their own workers to finish, preventing parallel checks from borrowing a deleted fixture home. Production connection and credential policy is unchanged.
- - **Independent terminal kit candidate 0.2.0:** its workflow totals use `u64`, and its existing avatar API reexports the shared Protocol contract. All local consumers pin 0.2.0. Protocol 0.10.3 must be published and verified before the kit, followed by the dependent Engine packages; each publication retains its separate approval.
- - **`codewhale-plugins` crate:** plugin discovery, review, install and marketplace parsing move out of `codewhale-tui` into a new crate; MCP server config types move to `codewhale-mcp`, and the skill parse core and recommendations to `codewhale-skill-install`. Review and trust behavior is unchanged. (S19, #5316)
-```
-
----
-
-### Incident Patch 3: `062b885d` (2026-11-08)
-**Commit Message**: fix(tui): park the hidden cursor at the focused modal input for IMEs
-
-Refs #2323. Input methods place their candidate and preedit window at
-the terminal cursor. With a modal open (for example /config search or
-its value editor) the TUI hides the cursor but left it wherever the
-frame happened to end, usually the composer underneath, so the Pinyin
-candidate window appeared far from the field being typed into.
-Committed-text routing was already fixed by f9210a4428; this is the
-remaining position half.
-
-When a frame draws no visible cursor, the frame loop now moves the
-still-hidden cursor to the top modal's input anchor. ModalView gains
-input_anchor() (default None); ConfigView records its search caret or
-its editor value caret during render; any other modal falls back to the
-bottom-left cell inside its occupied region. Nothing becomes visible;
-only the position an IME reads changes.
-
-Verification: the batch's six commits were tested as one change on Boat farm VMs
-(Linux x86_64), shipping only `git diff <base> <final>`, so no other
-session's uncommitted files took part. cargo test --locked --lib with
-filters over config, runtime, engine, app-server, tui and cli on base
-3631a174f6: 459 
+Verification: cargo test -p codewhale-engine --lib, exact filters:
+child_write_tool_fails_
 
 **File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -309,6 +309,12 @@ until the matching tag, packages, checksums, and release assets exist.
+@@ -238,6 +238,13 @@ until the matching tag, packages, checksums, and release assets exist.
  
- ### Fixed
+ ### Changed
  
-+- **IME candidate window under modals:** the hidden terminal cursor now
-+  follows the caret in `/config` search and its value editor, so the
-+  input-method candidate window can appear there instead of over the
-+  composer. Real Pinyin input on macOS and Windows is not yet confirmed.
-+  Thanks [@cmdcorp6534](https://github.com/cmdcorp6534) for the report
-+  (Refs #2323).
- - **Sub-agents beside an older session:** while a Codewhale 0.10.2 session
-   still uses a folder's older delegated-agent store, a 0.10.3 session in the
-   same folder keeps working sub-agents with private state that is not saved,
-@@ -625,6 +631,7 @@ until the matching tag, packages, checksums, and release assets exist.
++- **Sub-agent shell runs no longer wait on a peer's write claim.** A child that
++  holds a shared write claim can run `bash` while another child writes; the
++  claim still coordinates bounded `File`/`Edit`/`Patch` targets, and the
++  execution envelope, sandbox and approval posture govern executable work. A
++  bounded write tool whose target overlaps a live peer still refuses. The old
++  refusal told analysis agents to re-run with `read_only=true`, which cost
++  steps without protecting a peer's files.
+ - **The footer cost chip shows confirmed dollars only.** A session with some unpriced turns shows exactly the confirmed amount, such as `$0.34`, instead of `subtotal 0.34 + unknown (request outcome unknown)`, and a session with nothing priced shows no cost at all instead of `cost: unknown (…)`. The accounting is unchanged: unpriced turns stay excluded rather than guessed, and `/cost` still lists each one with its reason, now in plain words ("the provider never confirmed the request finished", "this session predates cost tracking"). The price view says `unknown` for a session with no confirmed price.
+ - **Sub-agents and goals by default.** The constitution now tells the agent to start independent parts of a request as parallel sub-agents in one message, keep working while their results arrive on their own, and end the turn when only waiting remains; to give each child a complete prompt and its own files; to inspect a write-capable child's evidence, review the diff and run the checks itself; to have an independent reviewer try to refute a non-trivial change before calling it done; and to start a goal for any request, in any language, whose verifiable end state needs more than one turn. Sub-agents, workflows and goals within the current request are in scope; spending real money (purchases, paid providers, billing) still needs the user's express authorization. Cost alone is not a reason to stop; only limits the user or configuration sets apply. **This changes the session-pinned prompt and tool descriptions, so each session re-pins its prompt cache once after upgrade.**
+ - **Operate's contract is retired.** The Engine no longer appends the Operate contract to a session; its review, cost and evidence rules now live in the constitution for every session. Saved sessions that contain it still replay.
+```
+
+**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +3/-3)
+```diff
+@@ -289,7 +289,7 @@ async fn http_and_web_server_thread_manager_installs_configured_workshop_byte_bu
+ }
  
- ### Contributors
+ #[test]
+-fn runtime_tui_settings_reject_legacy_modes_and_do_not_save_env_overlays() -> Result<()> {
++fn runtime_tui_settings_normalize_legacy_modes_and_do_not_save_env_overlays() -> Result<()> {
+     let _lock = lock_test_env();
+     let tmp = tempfile::tempdir()?;
+     let settings_dir = tmp.path().join(".codewhale");
+@@ -315,10 +315,10 @@ fn runtime_tui_settings_reject_legacy_modes_and_do_not_save_env_overlays() -> Re
+     );
  
-+- **[@cmdcorp6534](https://github.com/cmdcorp6534)** — reported the Chinese input-method candidate window appearing away from the field being typed into ([#2323](https://github.com/codewhale-hq/Codewhale/issues/2323)).
- - **[@Asteria1028](https://github.com/Asteria1028)** — reported pasted clipboard images piling up with no way to remove them ([#7221](https://github.com/codewhale-hq/Codewhale/issues/7221)).
- - **[@zhuowp](https://github.com/zhuowp)** (git author `z27014`) — added bounded HTTP rate-limit recovery and corrected retry deadlines, quota guidance and recovery receipts ([#7220](https://github.com/codewhale-hq/Codewhale/pull/7220)).
- - **[@printf033](https://github.com/printf033)** — enabled exclusive rename on Android so Fleet publication does not fall back to SELinux-denied hard links (`fbe9f24ee`).
+     persist_runtime_tui_setting("default_mode", "operate")
+-        .expect("operate is a valid startup mode");
++        .expect("operate is a retired spelling accepted as Work");
+     assert_eq!(
+         codewhale_runtime::settings::Settings::load_persisted()?.default_mode,
+-        "operate"
++        "agent"
+     );
+     persist_runtime_tui_setting("default_mode", "agent")
+         .expect("agent should be a valid startup mode");
+```
+
+**File**: `crates/engine/src/core/engine/tests/test_cases_18.rs` (modified, +1/-1)
+```diff
+@@ -1011,7 +1011,7 @@ async fn full_mailbox_posture_update_supersedes_queued_change_mode() {
+     .expect("snapshot after mailbox drain")
+     .expect("session snapshot");
+ 
+-    assert_eq!(snapshot.mode, "operate");
++    assert_eq!(snapshot.mode, "agent");
+     let authority = handle.runtime_permission_authority();
+     assert_eq!(authority.approval_mode, ApprovalMode::Auto);
+     assert!(!authority.auto_approve);
+```
+
+**File**: `crates/engine/src/tools/subagent/engine.rs` (modified, +24/-25)
+```diff
+@@ -417,30 +417,29 @@ impl ChildAuthority {
+             // The typed read-only boundary above already rejected mutation.
+             && !self.write_is_denied()
+             && !is_internal_coordination_state_tool(name)
+-            // A shell run the read-only classifier proves mutation-free cannot
+-            // collide with the peer's writes no matter how contended the
+-            // checkout is, so the gate below does not apply to it.
+-            && !proven_readonly_shell_run(name, input)
+-            && (is_unbounded_shell_run(name, input)
+-                || registry.get(name).is_some_and(|spec| {
+-                    let canonical = canonical_action_alias(name, input);
+-                    let is_shell_control = matches!(
+-                        canonical,
+-                        "exec_shell_wait" | "exec_shell_interact" | "exec_shell_cancel"
+-                    );
+-                    let capabilities = spec.capabilities();
+-                    !is_shell_control
+-                        && (spec.approval_requirement_for(input) == ApprovalRequirement::Suggest
+-                            || (!spec.is_read_only_for(input)
+-                                && capabilities.iter().any(|capability| {
+-                                    matches!(
+-                                        capability,
+-                                        ToolCapability::WritesFiles
+-                                            | ToolCapability::ExecutesCode
+-                                            | ToolCapability::Network
+-                                    )
+-                                })))
+-                }))
++            // Shell runs are governed by the execution envelope, sandbox and
++            // approval posture. The write claim coordinates bounded file
++            // tools; it no longer denies a child its shell while a peer writes.
++            && !is_unbounded_shell_run(name, input)
++            && registry.get(name).is_some_and(|spec| {
++                let canonical = canonical_action_alias(name, input);
++                let is_shell_control = matches!(
++                    canonical,
++                    "exec_shell_wait" | "exec_shell_interact" | "exec_shell_cancel"
++                );
++                let capabilities = spec.capabilities();
++                !is_shell_control
++                    && (spec.approval_requirement_for(input) == ApprovalRequirement::Suggest
++                        || (!spec.is_read_only_for(input)
++                            && capabilities.iter().any(|capability| {
++                                matches!(
++                                    capability,
++                                    ToolCapability::WritesFiles
++                                        | ToolCapability::ExecutesCode
++                                        | ToolCapability::Network
++                                )
++                            })))
++            })
+         {
+             let held = self.coordination_manager.clone().read_owned().await;
+             let owner = self.owner_agent_id.clone();
+@@ -459,7 +458,7 @@ impl ChildAuthority {
+             .map_err(|error| admission_denied(error.to_string()))?;
+             if !blocking_peers.is_empty() {
+                 return Err(admission_denied(format!(
+-                    "Tool {name} cannot prove a bounded file target or read-only execution while peers are writing in this shared checkout (blocking peers: {}). Use a bounded write tool, a proven read-only command, or bash with read_only=true for analysis under native enforcement. Executable work that needs writes requires worktree isolation. Disjoint write_roots alone do not constrain arbitrary code.",
++                    "Tool {name} cannot prove a bounded file target while peers are writing in this shared checkout (blocking peers: {}). Use a bounded write tool, or run executable work that needs writes in an isolated worktree. Disjoint write_roots alone do not constrain arbitrary code.",
+                     blocking_peers.join(", ")
+                 )));
+             }
+```
+
+**File**: `crates/engine/src/tools/subagent/mod.rs` (modified, +0/-16)
+```diff
+@@ -21890,22 +21890,6 @@ fn is_unbounded_shell_run(name: &str, input: &Value) -> bool {
+     canonical_action_alias(name, input) == "exec_shell"
+ }
+ 
+-/// Whether this exact call is a shell run the agent read-only classifier
+-/// proves mutation-free, or native read-only mode enforces — the contention carve-out.
+-///
+-/// This shares its classifier with `bounded_readonly_bash_evidence` but not
+-/// its role restriction, deliberately: the envelope helper's carve-out
+-/// *grants* shell to inspection roles that otherwise lack it, so it is scoped
+-/// to them; the contention gate grants nothing — shell authority, posture, and
+-/// the envelope have already settled by the time it runs — and asks only
+-/// whether this call can collide with a live peer's writes. A proven
+-/// read-only `ls` cannot, whichever role runs it. An explicit read_only=true
+-/// call likewise cannot: the shared bash executor requires native read-only
+-/// enforcement or refuses the call before process spawn.
+-fn proven_readonly_shell_run(name: &str, input: &Value) -> bool {
+-    is_unbounded_shell_run(name, input) && crate::tools::shell::agent_readonly_bash_input(input)
+-}
+-
+ /// Parameter names whose *value* is a location to reach, rather than content.
+ ///
+ /// Deliberately a name list and not a scan of every string: a network-denied
+```
+
+**File**: `crates/engine/src/tools/subagent/tests.rs` (modified, +56/-54)
+```diff
+@@ -14226,8 +14226,25 @@ fn subagent_registry_with_mcp_action(auto_approve: bool) -> (ChildCoreProbe, tem
+     (registry, home)
+ }
+ 
+-#[tokio::test]
+-async fn child_write_tool_fails_closed_outside_registered_scope() {
++#[test]
++fn child_write_tool_fails_closed_outside_registered_scope() {
++    std::thread::Builder::new()
++        .stack_size(codewhale_runtime::CODEWHALE_MAIN_STACK_BYTES)
++        .spawn(|| {
++            tokio::runtime::Builder::new_multi_thread()
++                .worker_threads(2)
++                .thread_stack_size(codewhale_runtime::CODEWHALE_MAIN_STACK_BYTES)
++                .enable_all()
++                .build()
++                .unwrap()
++                .block_on(child_write_tool_fails_closed_outside_registered_scope_body());
++        })
++        .unwrap()
++        .join()
++        .unwrap();
++}
++
++async fn child_write_tool_fails_closed_outside_registered_scope_body() {
+     let _env_lock = crate::test_support::lock_test_env();
+     let home = tempdir().expect("isolated CODEWHALE_HOME");
+     let _codewhale_home = crate::test_support::EnvVarGuard::set("CODEWHALE_HOME", home.path());
+@@ -14389,25 +14406,6 @@ async fn child_write_tool_fails_closed_outside_registered_scope() {
+     );
+     assert!(!err.contains("agents/coordinate"), "{err}");
+     assert!(!tmp.path().join("docs/no.txt").exists());
+-    for (tool_name, input, target) in [(
+-        "Bash",
+-        json!({"action": "run", "command": "touch outside/canonical.txt"}),
+-        "outside/canonical.txt",
+-    )] {
+-        let shell_err = registry
+-            .execute("agent_scoped", tool_name, input)
+-            .await
+-            .expect_err("unbounded shared-workspace shell must fail")
+-            .to_string();
+-        assert!(
+-            shell_err.contains("cannot prove a bounded file target"),
+-            "{tool_name}: {shell_err}"
+-        );
+-        assert!(
+-            !tmp.path().join(target).exists(),
+-            "{tool_name} created {target} outside its registered claim"
+-        );
+-    }
+     let run_err = registry
+         .execute(
+             "agent_scoped",
+@@ -14433,13 +14431,15 @@ async fn child_write_tool_fails_closed_outside_registered_scope() {
+ 
+ /// A lone writer in the shared checkout keeps its shell.
+ ///
+-/// The gate above exists so concurrent children cannot overwrite each other.
+-/// With no second writer there is nothing to collide with, and refusing the
+-/// shell there bought no safety: the same child may already write these paths
+-/// through `File`. It only pushed builders toward worktree isolation, which
+-/// puts their work in a checkout the operator never looks at.
+-#[tokio::test]
+-async fn lone_shared_writer_keeps_unbounded_shell() {
++/// Shell runs are governed by the execution envelope, sandbox and approval
++/// posture; the write claim coordinates bounded file tools. This keeps the
++/// lone-writer case covered while the contention tests own the peer case.
++#[test]
++fn lone_shared_writer_keeps_unbounded_shell() {
++    run_worker_fixture(lone_shared_writer_keeps_unbounded_shell_body);
++}
++
++async fn lone_shared_writer_keeps_unbounded_shell_body() {
+     let tmp = tempdir().expect("tempdir");
+     let manager = new_shared_subagent_manager(tmp.path().to_path_buf(), 4);
+     {
+@@ -14542,8 +14542,12 @@ fn contended_builder_registry(
+ /// `is_unbounded_shell_run` unconditionally, so a provably read-only `ls` was
+ /// refused whenever a peer held a claim — even though the ledger had already
+ /// proven the two claims disjoint at admission.
+-#[tokio::test]
+-async fn contended_shared_writers_keep_proven_readonly_shell() {
++#[test]
++fn contended_shared_writers_keep_proven_readonly_shell() {
++    run_worker_fixture(contended_shared_writers_keep_proven_readonly_shell_body);
++}
++
++async fn contended_shared_writers_keep_proven_readonly_shell_body() {
+     let tmp = tempdir().expect("tempdir");
+     std::fs::create_dir_all(tmp.path().join("src")).unwrap();
+     let manager = new_shared_subagent_manager(tmp.path().to_path_buf(), 4);
+@@ -14581,11 +14585,15 @@ async fn contended_shared_writers_keep_proven_readonly_shell() {
+     }
+ }
+ 
+-/// The same contention still refuses a shell call the classifier cannot prove
+-/// read-only — and the refusal names the blocking peer and its remediation so
+-/// the child can recover instead of retrying blindly.
+-#[tokio::test]
+-async fn contended_shared_writer_refusal_names_blocking_peer_and_remediation() {
++/// A contended writer keeps its shell. The write claim coordinates bounded
++/// file tools; executable work is governed by the execution envelope and the
++/// approval posture, so a peer's claim no longer denies the child shell.
++#[test]
++fn contended_shared_writer_keeps_its_shell() {
++    run_worker_fixture(contended_shared_writer_keeps_its_shell_body);
++}
++
++async fn contended_shared_writer_keeps_its_shell_body() {
+     let tmp = tempdir().expect("tempdir");
+     std::fs::create_dir_all(tmp.path().join("src")).unwrap();
+     let manager = new_sh
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -309,6 +309,12 @@ until the matching tag, packages, checksums, and release assets exist.
+@@ -238,6 +238,13 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Changed
+ 
++- **Sub-agent shell runs no longer wait on a peer's write claim.** A child that
++  holds a shared write claim can run `bash` while another child writes; the
++  claim still coordinates bounded `File`/`Edit`/`Patch` targets, and the
++  execution envelope, sandbox and approval posture govern executable work. A
++  bounded write tool whose target overlaps a live peer still refuses. The old
++  refusal told analysis agents to re-run with `read_only=true`, which cost
++  steps without protecting a peer's files.
+ - **The footer cost chip shows confirmed dollars only.** A session with some unpriced turns shows exactly the confirmed amount, such as `$0.34`, instead of `subtotal 0.34 + unknown (request outcome unknown)`, and a session with nothing priced shows no cost at all instead of `cost: unknown (…)`. The accounting is unchanged: unpriced turns stay excluded rather than guessed, and `/cost` still lists each one with its reason, now in plain words ("the provider never confirmed the request finished", "this session predates cost tracking"). The price view says `unknown` for a session with no confirmed price.
+ - **Sub-agents and goals by default.** The constitution now tells the agent to start independent parts of a request as parallel sub-agents in one message, keep working while their results arrive on their own, and end the turn when only waiting remains; to give each child a complete prompt and its own files; to inspect a write-capable child's evidence, review the diff and run the checks itself; to have an independent reviewer try to refute a non-trivial change before calling it done; and to start a goal for any request, in any language, whose verifiable end state needs more than one turn. Sub-agents, workflows and goals within the current request are in scope; spending real money (purchases, paid providers, billing) still needs the user's express authorization. Cost alone is not a reason to stop; only limits the user or configuration sets apply. **This changes the session-pinned prompt and tool descriptions, so each session re-pins its prompt cache once after upgrade.**
+ - **Operate's contract is retired.** The Engine no longer appends the Operate contract to a session; its review, cost and evidence rules now live in the constitution for every session. Saved sessions that contain it still replay.
+```
+
+---
+
+### Incident Patch 3: `74713ec7` (2026-11-08)
+**Commit Message**: fix(app-server): gate file reverts on trust; repair the failures hosted CI surfaced
+
+The first hosted run on the mode-retirement candidate (c50612d6ab) failed in
+four jobs, none of them flaky.
+
+Lint and Parity: clippy's `single_element_loop` on two `for mode in
+[AppMode::Agent]` loops left behind by the Operate removal (plan_handoff.rs:151,
+codemode.rs:1604). Both are straight-line assertions now.
+
+Test (all three platforms): three app-server tests.
+- `create_thread_..._named_permission_posture` sent `mode: "operate"` and
+  expected it echoed back. The runtime normalizes the retired spelling to Work,
+  so it now asserts `agent`, which is the alias contract the release notes
+  promise.
+- `file_revert_route_validates_body_then_trust_then_ownership` expected a
+  `409` naming trusted mode for an untrusted thread and got the
+  "restore point is unavailable" conflict instead, because the route had **no
+  trust gate at all** — an untrusted thread that named a restore point it owned
+  could rewrite workspace files. The gate now sits after body validation and
+  before ownership, exactly the order its name describes, and refuses with the
+  same wording the TUI's undo gate uses.
+- `memory_wor
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -375,6 +375,7 @@ until the matching tag, packages, checksums, and release assets exist.
  
  ### Fixed
  
-+- **IME candidate window under modals:** the hidden terminal cursor now
-+  follows the caret in `/config` search and its value editor, so the
-+  input-method candidate window can appear there instead of over the
-+  composer. Real Pinyin input on macOS and Windows is not yet confirmed.
-+  Thanks [@cmdcorp6534](https://github.com/cmdcorp6534) for the report
-+  (Refs #2323).
- - **Sub-agents beside an older session:** while a Codewhale 0.10.2 session
-   still uses a folder's older delegated-agent store, a 0.10.3 session in the
-   same folder keeps working sub-agents with private state that is not saved,
-@@ -625,6 +631,7 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Contributors
- 
-+- **[@cmdcorp6534](https://github.com/cmdcorp6534)** — reported the Chinese input-method candidate window appearing away from the field being typed into ([#2323](https://github.com/codewhale-hq/Codewhale/issues/2323)).
- - **[@Asteria1028](https://github.com/Asteria1028)** — reported pasted clipboard images piling up with no way to remove them ([#7221](https://github.com/codewhale-hq/Codewhale/issues/7221)).
- - **[@zhuowp](https://github.com/zhuowp)** (git author `z27014`) — added bounded HTTP rate-limit recovery and corrected retry deadlines, quota guidance and recovery receipts ([#7220](https://github.com/codewhale-hq/Codewhale/pull/7220)).
- - **[@printf033](https://github.com/printf033)** — enabled exclusive rename on Android so Fleet publication does not fall back to SELinux-denied hard links (`fbe9f24ee`).
++- **Reverting a file requires a trusted thread.** The Runtime API's file-revert route refuses an untrusted thread with a `409` that names `/trust` or Full Access, matching the TUI's undo gate, and answers that refusal before it looks at snapshot ownership. Before, an untrusted thread that named a restore point it owned could rewrite workspace files.
+ - **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
+ - **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
+ - **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
 ```
 
-**File**: `crates/tui/src/tui/ui/frame.rs` (modified, +10/-1)
+**File**: `crates/app-server/src/runtime_api.rs` (modified, +10/-0)
 ```diff
-@@ -2331,9 +2331,18 @@ pub(crate) fn draw_app_frame_inner(
-             terminal.clear()?;
-         }
-         let mut cursor_pos = None;
--        terminal.draw(|f| cursor_pos = render(f, app, config))?;
-+        let mut frame_area = ratatui::layout::Rect::default();
-+        terminal.draw(|f| {
-+            frame_area = f.area();
-+            cursor_pos = render(f, app, config);
-+        })?;
-         app.pet_watch.present(terminal.backend_mut())?;
-         finish_frame_cursor(terminal, cursor_pos)?;
-+        if cursor_pos.is_none()
-+            && let Some(anchor) = app.view_stack.cursor_anchor(frame_area)
-+        {
-+            terminal.set_cursor_position(anchor)?;
-+        }
-         Ok(())
-     });
-     if resized.is_some() {
+@@ -9894,6 +9894,16 @@ async fn revert_thread_file(
+         .thread_restore_guard(&id)
+         .await
+         .map_err(map_thread_err)?;
++    // Reverting is a workspace mutation, gated where the TUI gates the same
++    // operation and before ownership, so an untrusted caller gets the
++    // actionable refusal instead of a hint about another thread's snapshots.
++    if !(thread.trust_mode || thread.auto_approve) {
++        return Err(ApiError::conflict(
++            "Refusing to revert workspace files outside trusted mode. \
++             Turn on /trust or switch this thread to Full Access, then revert again.",
++        )
++        .with_code(PATCH_UNDO_UNTRUSTED));
++    }
+     // The restore points this thread owns: the receipts on its own turns
+     // (including turns a fork cloned). Read under the restore reservation, so
+     // no turn is recording one meanwhile.
 ```
 
-**File**: `crates/tui/src/tui/views/mod.rs` (modified, +60/-0)
+**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +7/-6)
 ```diff
-@@ -1247,6 +1247,9 @@ pub trait ModalView: std::any::Any {
-     fn occupied_region(&self, area: Rect) -> Rect {
-         area
-     }
-+    fn input_anchor(&self) -> Option<(u16, u16)> {
-+        None
-+    }
-     fn update_subagents(&mut self, _agents: &[SubAgentResult]) -> bool {
-         false
-     }
-@@ -1368,6 +1371,22 @@ impl ViewStack {
-         self.views.last().map(|view| view.kind())
-     }
+@@ -11169,7 +11169,7 @@ async fn create_thread_normalizes_and_persists_named_permission_posture() -> Res
+         .error_for_status()?
+         .json()
+         .await?;
+-    assert_eq!(created["mode"], "operate");
++    assert_eq!(created["mode"], "agent");
+     assert_eq!(created["permission_posture"], "auto_review");
+     assert_eq!(created["auto_approve"], false);
+     assert_eq!(created["trust_mode"], false);
+@@ -17817,9 +17817,10 @@ async fn memory_all_scope_includes_workspace_notes() -> Result<()> {
+ }
  
-+    pub fn cursor_anchor(&self, area: Rect) -> Option<(u16, u16)> {
-+        let view = self.views.last()?;
-+        view.input_anchor().or_else(|| {
-+            let region = view.occupied_region(area);
-+            (region.width > 0 && region.height > 0).then(|| {
-+                (
-+                    region
-+                        .x
-+                        .saturating_add(1)
-+                        .min(region.right().saturating_sub(1)),
-+                    region.bottom().saturating_sub(2).max(region.y),
-+                )
-+            })
-+        })
-+    }
-+
-     pub(crate) fn remove_owned_evidence_pagers(&mut self) {
-         let top = self.top_identity();
-         self.views.retain_mut(|view| {
-@@ -2252,6 +2271,7 @@ pub struct ConfigView {
-     /// Selection-anchored scroll actually used by the last render; keeps the
-     /// panel scroll rail truthful when the stored scroll predates a resize.
-     last_render_scroll: Cell<usize>,
-+    last_input_anchor: Cell<Option<(u16, u16)>>,
-     /// Exact painted cells of each list row; a click selects a row only when
-     /// it lands inside one of these rects.
-     last_row_hitboxes: RefCell<Vec<(Rect, usize)>>,
-@@ -2998,6 +3018,7 @@ impl ConfigView {
-             locale: app.ui_locale,
-             last_visible_rows: Cell::new(0),
-             last_render_scroll: Cell::new(0),
-+            last_input_anchor: Cell::new(None),
-             last_row_hitboxes: RefCell::new(Vec::new()),
-             last_choice_hitboxes: RefCell::new(Vec::new()),
-             last_editor_controls: RefCell::new(Vec::new()),
-@@ -4204,6 +4225,10 @@ impl ModalView for ConfigView {
-         ModalKind::Config
-     }
+ #[tokio::test]
+-async fn memory_workspace_scope_without_a_remote_is_a_client_error() -> Result<()> {
+-    // A workspace with no origin remote has no workspace memory: asking for
+-    // that scope is the caller's error, as it already is for create.
++async fn memory_workspace_scope_without_a_remote_resolves_from_the_work_tree() -> Result<()> {
++    // A work tree with no origin remote has no repository identity, so the
++    // workspace scope keys on the work-tree path itself: asking for it is a
++    // real, empty scope rather than the caller's error.
+     let root = std::env::temp_dir().join(format!("cw-memory-no-remote-{}", Uuid::new_v4()));
+     let _lock = lock_test_env();
+     let home = root.join("home");
+@@ -17849,12 +17850,12 @@ async fn memory_workspace_scope_without_a_remote_is_a_client_error() -> Result<(
+         .get(format!("http://{addr}/v1/memory?scope=workspace"))
+         .send()
+         .await?;
+-    assert_eq!(listed.status(), StatusCode::BAD_REQUEST);
++    assert_eq!(listed.status(), StatusCode::OK);
+     let cleared = client
+         .delete(format!("http://{addr}/v1/memory?scope=workspace"))
+         .send()
+         .await?;
+-    assert_eq!(cleared.status(), StatusCode::BAD_REQUEST);
++    assert_eq!(cleared.status(), StatusCode::OK);
+     let all: serde_json::Value = client
+         .get(format!("http://{addr}/v1/memory"))
+         .send()
+```
+
+**File**: `crates/engine/src/tools/codemode.rs` (modified, +17/-14)
+```diff
+@@ -1601,20 +1601,23 @@ mod tests {
+         use codewhale_config::AppMode;
+         use std::collections::HashSet;
+         let empty = HashSet::new();
+-        for mode in [AppMode::Agent] {
+-            let mut catalog = Vec::new();
+-            crate::core::engine::tool_catalog::ensure_advanced_tooling(
+-                &mut catalog,
+-                mode,
+-                &empty,
+-                ToolMode::Direct,
+-            );
+-            let tool = catalog
+-                .iter()
+-                .find(|tool| tool.name == EXECUTE_TOOLS_TOOL_NAME)
+-                .unwrap_or_else(|| panic!("{mode:?} catalog must advertise execute_tools"));
+-            assert_eq!(tool.defer_loading, Some(true), "{mode:?} must defer it");
+-        }
++        let mut catalog = Vec::new();
++        crate::core::engine::tool_catalog::ensure_advanced_tooling(
++            &mut catalog,
++            AppMode::Agent,
++            &empty,
++            ToolMode::Direct,
++        );
++        let tool = catalog
++            .iter()
++            .find(|tool| tool.name == EXECUTE_TOOLS_TOOL_NAME)
++            .unwrap_or_else(|| panic!("{:?} catalog must advertise execute_tools", AppMode::Agent));
++        assert_eq!(
++            tool.defer_loading,
++            Some(true),
++            "{:?} must defer it",
++            AppMode::Agent
++        );
+         let mut catalog = Vec::new();
+         crate::core::engine::tool_catalog::ensure_advanced_tooling(
+             &mut catalog,
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -375,6 +375,7 @@ until the matching tag, packages, checksums, and release assets exist.
  
-+    fn input_anchor(&self) -> Option<(u16, u16)> {
-+        self.last_input_anchor.get()
-+    }
-+
-     fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
-         self
-     }
-@@ -4447,7 +4472,9 @@ impl ModalView for ConfigView {
+ ### Fixed
  
-         let inner =
-             render_underwater_surface(area, buf, self.tr(MessageId::ConfigModalTitle).to_string());
-+        self.last_input_anchor.set(None);
-         let mut choice_rail = None;
-+        let mut value_line_row = None;
-         let (lines, footer) = if let Some(edit) = self.editing.as_ref() {
-             *self.last_choice_hitboxes.borrow_mut() = Vec::new();
-             *self.last_editor_controls.borrow_mut() = Vec::new();
-@@ -4605,6 +4632,7 @@ impl ModalView for ConfigView {
-                     )));
-                 }
-             } else {
-+                value_line_row = Some(lines.len());
-                 lines.push(render_config_editor_value_line(edit, self.locale));
-                 if spacious {
-                     lines.push(Line::from(""));
-@@ -4643,6 +4671,27 @@ impl ModalView for ConfigView {
-             .style(Style::default().fg(palette::TEXT_PRIMARY))
-             .scroll((0, 0))
-             .render(body, buf);
-+        if let (Some(edit), Some(row)) = (self.editing.as_ref(), value_line_row)
-+            && let Ok(row) = u16::try_from(row)
-+            && row < body.height
-+            && body.width > 0
-+        {
-+            use codewhale_tui_kit::ui_text::text_display_width;
-+            let caret = if edit.select_all {
-+                edit.buffer.len()
-+            } else {
-+                edit.cursor
-+            };
-+            let typed: String = edit.buffer.iter().take(caret).collect();
-+            let offset = text_display_width(&self.tr(MessageId::ConfigEditNewLabel))
-+                .saturating_add(text_display_width(&typed));
-+            let x = body
-+                .x
-+                .saturating_add(u16::try_from(offset).unwrap_or(u16::MAX))
-+                .min(body.right().saturating_sub(1));
-+            self.last_input_anchor
-+                .set(Some((x, body.y.saturating_add(row))));
-+        }
-         if let Some((rail, total, offset, visible)) = choice_rail {
-             render_panel_scroll_rail(rail, buf, total, offset, visible, true);
++- **Reverting a file requires a trusted thread.** The Runtime API's file-revert route refuses an untrusted thread with a `409` that names `/trust` or Full Access, matching the TUI's undo gate, and answers that refusal before it looks at snapshot ownership. Before, an untrusted thread that named a restore point it owned could rewrite workspace files.
+ - **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
+ - **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
+ - **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
+```
+
+**File**: `crates/tui/src/tui/plan_handoff.rs` (modified, +5/-3)
+```diff
+@@ -148,9 +148,11 @@ mod tests {
+             TurnOutcomeStatus::Completed,
+             prose
+         ));
+-        for mode in [AppMode::Agent] {
+-            assert!(!plan_ready(mode, TurnOutcomeStatus::Completed, prose));
+-        }
++        assert!(!plan_ready(
++            AppMode::Agent,
++            TurnOutcomeStatus::Completed,
++            prose
++        ));
+         for status in [TurnOutcomeStatus::Interrupted, TurnOutcomeStatus::Failed] {
+             assert!(!plan_ready(AppMode::Plan, status, prose));
          }
-@@ -5620,6 +5669,17 @@ impl ConfigView {
-                 },
-                 buf,
-             );
-+            if header.width > 0 {
-+                use codewhale_tui_kit::ui_text::text_display_width;
-+                let offset = text_display_width(&self.tr(MessageId::ConfigSearchLabel))
-+                    .saturating_add(text_display_width(&self.filter));
-+                let x = header
-+                    .x
-+                    .saturating_add(u16::try_from(offset).unwrap_or(u16::MAX))
-+                    .min(header.right().saturating_sub(1));
-+                self.last_input_anchor
-+                    .set(Some(
+```
+
+**File**: `web/data/features.generated.json` (modified, +2/-2)
+```diff
+@@ -2,7 +2,7 @@
+   "format": "codewhale.features.v1",
+   "source": {
+     "path": "docs/features.toml",
+-    "sha256": "a706bf367123e5689548f7b2b1c7698ce6873dab6fec2b42ee60bef71b95d193"
++    "sha256": "c2caf85cd1dd0d95e0b566c12af6ec67b5a476cf5810312bb309d35744d08d3f"
+   },
+   "features": [
+     {
+@@ -360,7 +360,7 @@
+     {
+       "id": "modes",
+       "name": "Modes",
+-      "summary": "Plan, Work and Operate modes set what the agent may do in a session; a finished plan offers to start the work.",
++      "summary": "Plan and Work modes set what the agent may do in a session; a finished plan offers to start the work.",
+       "status": "stable",
+       "surfaces": {
+         "tui": "stable",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2254,47 +2658,32 @@ filters over config, runtime, engine, app-server, tui and cli on base
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): handle Windows cleanup and align kit lock [skip ci]
+## X. engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog
 
 **RULE**:
-When implementing operations in `scripts/release/windows-terminal-clipboard.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `549ff01e`: release): handle Windows cleanup and align kit lock [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d1ffc1c`: engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/release/windows-terminal-clipboard.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  receipt.cleanup = JSON.parse((await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8')).replace(/^\uFEFF/, ''));
-    }
-    if (receipt.result !== 'passed') {
-      try {
-        const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
-          '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
-        { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
-        receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
-        assert.equal(receipt.desktop.fallbackCleanup.terminal, terminal, 'fallback cleanup used the owned Terminal path');
-        assert.equal(receipt.des
+- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
+- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
+- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
+- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
+- **Windows uninstall remove
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  receipt.cleanup = JSON.parse(await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8'));
-      if (desktop.exitCode === null && desktop.signalCode === null) {
-        try {
-          const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
-            '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
-          { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
-          receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
-        } catch (error) {
-          receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
-        }
-    
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `549ff01e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d1ffc1c` are properly handled with clean fallback behavior.

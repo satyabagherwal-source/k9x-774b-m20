@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T01:46:49.181Z",
+  "last_updated": "2026-11-09T01:53:24.349Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8706,13 +8706,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "c50612d6",
-      "content_hash": "11be18443b3612d162e9c77da41e374c0e570a0d1de8c549bd85401b372f68a6",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "a2fda9d5",
+      "content_hash": "c94837453fdb7f2848813ac39618b6b473db9f961d3061d56a6bf1879e06fe15",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -8840,7 +8840,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:16:36.798Z",
+      "verified_at": "2026-11-09T01:53:15.791Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15323,8 +15323,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "0186d63c",
-      "content_hash": "dc3fa3c3faa11c8f749c0a57ca245e6cd395f5c3f2bf94cae854b39bbc47f466",
+      "source_version": "be138254",
+      "content_hash": "54e817adc56ee62cc4a99e41aba035e6921d3029f0c5c7996130a1a36fb9b603",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15361,6 +15361,11 @@
         {
           "number": null,
           "title": "config): bootstrap from compiled-in gateways when the index is down (#6146)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "config): skip a bad gateway entry instead of failing startup (#6149)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15579,7 +15584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:33:33.515Z",
+      "verified_at": "2026-11-09T01:53:24.334Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29662,7 +29667,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "6d0925d88cd2491437399568931b53c74c3a0c7201633ac3e89ef0a43286e526",
+      "content_hash": "0414e4041dd3836fcb89cdb9818803ede93cf09f0b66b4d6f066b064ff2a0036",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "promoted_rules": [
@@ -29709,7 +29714,7 @@
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
       ],
-      "verified_at": "2026-11-05T07:53:33.914Z",
+      "verified_at": "2026-11-09T01:53:11.267Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

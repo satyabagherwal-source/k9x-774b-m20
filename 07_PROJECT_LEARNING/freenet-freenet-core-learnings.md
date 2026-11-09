@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `0186d63c`  
+> **Source Version**: `be138254`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T21:33:32.324Z  
+> **Timestamp**: 2026-11-09T01:53:23.236Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T21:33:32.319Z  
+> **Harvest Timestamp**: 2026-11-09T01:53:23.231Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6146** (2026-11-08): **fix(config): bootstrap from compiled-in gateways when the index is down**
-  *Symptoms*: ## Problem  A node gets its gateways from the remote index at startup and, if that fetch fails, from the `gateways.toml` cache written by its last successful fetch. Two cases were left with no way to bootstrap:  - **First boot with the index unreachable.** A peer with no cache refused to start ("Cannot initialize node without gateways"). - **An old cache.** A node never learned about a gateway added to the index after its cache was written. If the hosts in its cache went down, it had no entry point, even if another gateway was up.  A third problem showed up in review. `NodeConfig::new` resolved every gateway with `?`, so a single hostname that no longer resolves stopped the node from starting. That hostname might be a retired gateway still in a cache. The index file itself warns about this: its old DNS names are kept alive "because a peer holding an older copy of this file still resolves them".  ## Solution  - **Compiled-in fallback list.** `FALLBACK_GATEWAYS` in `config.rs` mirrors the index as hostname plus X25519 key; the entries match the live index byte for byte.   - It is used only when the index was asked and returned nothing: an error or an empty body.   - It is never used under `--skip-load-from-network`, so isolated test networks cannot learn about production gateways.   - It is merged after the cache and deduplicated by address. On a collision the cached entry wins.   - A successful fetch never consults it, so the index stays authoritative and retiring a gateway st
+- **Issue #6149** (2026-11-09): **fix(config): skip a bad gateway entry instead of failing startup**
+  *Symptoms*: ## Problem  One bad gateway entry could stop a node from starting, or block it from applying the remote gateway index. #6146 fixed the unresolvable-hostname case; these paths remained.  ## Paths fixed  - **`NodeConfig::new` (node.rs):** a gateway key file that was missing, unreadable, not hex, the wrong length, or still legacy RSA PEM after the retries now skips that gateway with a WARN naming the address, key path and reason. If no gateway is usable, a non-gateway still fails with "no configured gateway could be used (N skipped): ..." listing the reasons (first 5, then "and N more"). A gateway still starts with none. - **`load_gateways_from_index` (config.rs):** every per-gateway step used `?`, so one 404 on a key failed the whole load and peers kept their stale cache. Each entry is now resolved on its own; a failure skips just that entry. Key fetches run concurrently (8 at a time), so a slow key host costs one 30 s timeout rather than one per gateway. - **A partial index never shrinks the cache.** If an entry's key fetch fails (timeout, 5xx, 404) the previously fetched key file is reused. If there is none, the cached entry for that address is carried into the set that replaces and is saved over `gateways.toml`, so the #4275 "dropped" warning does not fire for it. A brand-new gateway whose key is not served yet is simply not added. If NO index entry is usable the load is empty and `build()` falls back to the cache plus the compiled-in gateways as before. - **Key cache overwr
 
-- **Issue #6137** (2026-11-07): **docs: retire the contract-removal plan from conformance docs**
-  *Symptoms*: ## Problem  Nodes will not remove contracts for breaking a merge law. The decision is recorded at https://github.com/freenet/freenet-core/issues/5906#issuecomment-6677346389. The conformance code docs still described removal as the plan: the module docs called a violation "eventually meant to justify deleting a contract", `policy` said "Deletion is the last step of the RFC's deployment plan", and several docs called `would_remove` "the number the enforcement gate is judged on".  ## Solution  Documentation only. The docs now say: - removal was the RFC #5320 plan and is superseded, with a link to the decision; - verifier, `fdev verify-merge` and shadow results are diagnostics recorded locally; - nodes instead decline work a contract with a lawful merge never needs: a payload already merged into the node's current state is not merged again (`ring::applied_payloads`, #6125); - the removal machinery (`EnforcementMode::Enforce`, `ConformanceAction::Remove`, `RemovalTier`, the shadow `would_remove` count) is retained, unreachable and not planned to be enabled. Removing that code is left to a separate decision.  Files: `crates/core/src/conformance.rs` and `conformance/{policy,property,shadow,status,capture}.rs`, plus `.claude/rules/contracts.md`. No code paths, enums, config or CLI output change; `Enforce` stays unreachable exactly as before. One test doc and one assertion message in `shadow.rs` were reworded.  Left as is: the `fdev verify-merge` error text ("Most laws are removal-el
+- **Issue #6148** (2026-11-08): **test: wait for node-a's full mesh before choosing the delegate E2E probe**
+  *Symptoms*: ## Problem  `test_delegate_subscribe_reaches_the_network_for_an_unseen_contract` fails intermittently under CPU load with "node-a peers: [only node-d]", before any delegate request is made. It was seen once in a full-suite run and reproduced 1 in 18 runs with 6 concurrent loops.  The helper `a_node_without_the_contract` snapshots node-a's connected peers right after `health_check_readiness`. That check only means each node answers; it does not mean the mesh has formed. With a single peer, no salt can satisfy the key search, so the helper bails.  ## Approach  Before taking the snapshot, poll node-a's diagnostics every 500 ms until it is connected to every other node. The harness targets a full mesh (`min_connections = node_count - 1`), so this wait is legitimate. It fails with a clear message after 300 s (one loaded local run needed 111 s to reach a full mesh). The wait counts distinct peer addresses, so a duplicate connection entry cannot end it early. No retries, no fixed sleeps, no `#[ignore]`.  ## Testing  Under 8 concurrent loops x 5 runs, 40/40 passed with the fix. Without it, 1 of 18 runs failed at 6 concurrent loops. The sample is small relative to the failure rate, so it supports the fix rather than proving it.  [AI-assisted - Claude] 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,243 +1759,1125 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0186d63c` (2026-11-08)
-**Commit Message**: fix(config): bootstrap from compiled-in gateways when the index is down (#6146)
+### Incident Patch 1: `be138254` (2026-11-09)
+**Commit Message**: fix(config): skip a bad gateway entry instead of failing startup (#6149)
 
-**File**: `crates/core/src/config.rs` (modified, +417/-9)
+**File**: `crates/core/src/config.rs` (modified, +643/-66)
 ```diff
-@@ -83,6 +83,32 @@ const APPLICATION: &str = "Freenet";
+@@ -10,7 +10,6 @@ use std::{
+     time::Duration,
+ };
  
- const FREENET_GATEWAYS_INDEX: &str = "https://freenet.org/keys/gateways.toml";
- 
-+/// Official gateways compiled into the binary as `("host:port", hex X25519
-+/// public key)`, mirroring [`FREENET_GATEWAYS_INDEX`]. The address is spelled
-+/// exactly as the index spells it (`hostname = "..."`), because entries are
-+/// deduplicated against the cached index by [`Address`] equality and
-+/// `Address::Hostname` never equals the same gateway as `Address::Host`.
-+///
-+/// Used only when the remote index was fetched and returned nothing, merged
-+/// AFTER the on-disk `gateways.toml` cache (the cache wins on an address
-+/// collision). A successful fetch never consults this list, so the remote index
-+/// stays authoritative and a gateway is still retired by editing the index.
-+///
-+/// Without it, a first boot with the index unreachable refuses to start, and a
-+/// node holding an old cache never learns a gateway added since. When a gateway
-+/// is added to the index, add it here too: a list whose entries all share one
-+/// host does not survive that host's outage.
-+const FALLBACK_GATEWAYS: &[(&str, &str)] = &[
-+    (
-+        "gw1.freenet.org:31337",
-+        "25836988b1d2449f7971a3c553dc896619a170d9c6ad46e75c2443778d70585a",
-+    ),
-+    (
-+        "gw2.freenet.org:31338",
-+        "a7e93b2b0f6c353a66a115b618547bcb739353f4640f1431cae91833beaf690c",
-+    ),
-+];
-+
- #[derive(clap::Parser, Debug, Clone)]
- pub struct ConfigArgs {
-     /// Node operation mode. Default is network mode.
-@@ -801,7 +827,8 @@ impl ConfigArgs {
- 
-     /// Parse the command line arguments and return the configuration.
-     pub async fn build(self) -> anyhow::Result<Config> {
--        self.build_with_gateways_index(FREENET_GATEWAYS_INDEX).await
-+        self.build_with_gateway_sources(FREENET_GATEWAYS_INDEX, FALLBACK_GATEWAYS)
-+            .await
+-use anyhow::Context;
+ use directories::ProjectDirs;
+ use either::Either;
+ use serde::{Deserialize, Serialize};
+@@ -1238,16 +1237,24 @@ impl ConfigArgs {
+         let remotely_loaded_gateways = if mode == OperationMode::Local {
+             Gateways::default()
+         } else if !self.network_api.skip_load_from_network {
+-            load_gateways_from_index(gateways_index, &config_paths.secrets_dir)
+-                .await
+-                .inspect_err(|error| {
++            match load_gateways_from_index(gateways_index, &config_paths.secrets_dir).await {
++                Ok(load) => {
++                    let cache = fs::read_to_string(&gateways_file)
++                        .ok()
++                        .and_then(|content| parse_gateways_toml(&content, "gateways.toml").ok())
++                        .map(|cache| cache.gateways)
++                        .unwrap_or_default();
++                    keep_cached_entries_for_unusable(load.gateways, &load.unusable, &cache)
++                }
++                Err(error) => {
+                     tracing::error!(
+                         error = %error,
+                         index = gateways_index,
+                         "Failed to load gateways from index"
+                     );
+-                })
+-                .unwrap_or_default()
++                    Gateways::default()
++                }
++            }
+         } else if let Some(gateways) = self.network_api.gateways {
+             let gateways = gateways
+                 .into_iter()
+@@ -6636,7 +6643,144 @@ pub fn set_logger(
      }
+ }
  
-     /// Build the configuration, fetching the remote gateway index from
-@@ -811,7 +838,22 @@ impl ConfigArgs {
-     /// [`FREENET_GATEWAYS_INDEX`] constant. Tests inject a local mock-server
-     /// URL so the remote-fetch path is exercised deterministically without
-     /// reaching out to `freenet.org` (which would be slow and flaky in CI).
--    async fn build_with_gateways_index(mut self, gateways_index: &str) -> anyhow::Result<Config> {
-+    ///
-+    /// Uses NO compiled-in fallback gateways, so a test that drives the fetch
-+    /// into failure never ends up dialing the production gateways.
-+    #[cfg(test)]
-+    async fn build_with_gateways_index(self, gateways_index: &str) -> anyhow::Result<Config> {
-+        self.build_with_gateway_sources(gateways_index, &[]).await
+-async fn load_gateways_from_index(url: &str, pub_keys_dir: &Path) -> anyhow::Result<Gateways> {
++/// Parse the remote gateway index, dropping an entry that does not deserialize
++/// instead of rejecting the whole index.
++///
++/// The index is shared by every node, so a single malformed entry (a gateway
++/// added without its `public_key`, say) would otherwise make every peer ignore
++/// the update. The strict whole-document parse is tried first; the per-entry
++/// fallback runs only for a document that is valid TOML with a `gateways`
++/// array. A document-level failure (not TOML, or no `gateways` array) is still
++/// an error, never swallowed into an empty list. (A hand-edited local
++/// `gateways.toml` is deliberately NOT parsed this way: see
++/// [`parse_gateways_toml`].)
++fn parse_index_tolerating_bad_entries(content: &str, source: &str) -> anyhow::Result<Gateways> {
++    let strict_error = match parse_gateways_toml(content, source) {
++        Ok(gateways) => return Ok(gateways),
++        Err(e) => e,
++    };
++    let table: toml::Table = toml::from_str(content)?;
++    let Some(toml::Value::Array(entries)) = table.get("gateways") else {
++        return Err(strict_error.into());
++    };
++    let mut gateways = Vec::with_capacity(entries.len());
++    for (index, entry) in entries.iter().enumerate() {
++        let mut single = toml::Table::new();
++        single.insert("gateways".into(), toml::Value::Array(vec![entry.clone()]));
++        let parsed = toml::to_string(&single)
++            .map_err(anyhow::Error::from)
++            .and_then(|doc| parse_gateways_toml(&doc, source).map_err(anyhow::Error::from));
++        match parsed {
++            Ok(mut one) => gateways.append(&mut one.gateways),
++            // The address (when there is one) and position identify the entry;
++            // the raw entry is not logged, so a bad one cannot flood the log.
++            Err(error) => tracing::warn!(
++                entry_index = index,
++                address = %entry
++                    .get("address")
++                    .map(|a| a.to_string())
++                    .unwrap_or_else(|| "<none>".to_string()),
++                error = %error,
++                "Skipping malformed gateway entry in the remote index"
++            ),
++        }
 +    }
++    Ok(Gateways { gateways })
++}
 +
-+    /// Build the configuration from the remote index at `gateways_index`,
-+    /// with `fallback_gateways` (see [`FALLBACK_GATEWAYS`]) merged in after
-+    /// the on-disk cache when that fetch returns nothing.
-+    async fn build_with_gateway_sources(
-+        mut self,
-+        gateways_index: &str,
-+        fallback_gateways: &[(&str, &str)],
-+    ) -> anyhow::Result<Config> {
-         let cfg = if let Some(path) = self.config_paths.config_dir.as_ref() {
-             if !path.exists() {
-                 return Err(anyhow::Error::new(std::io::Error::new(
-@@ -1334,6 +1376,24 @@ impl ConfigArgs {
-                 );
-             }
- 
-+            // The compiled-in list stands in for the remote index, so it is
-+            // used exactly when the index was asked and gave nothing — never
-+            // under --skip-load-from-network, whose isolated networks must not
-+            // learn the production gateways. It is merged after the cache
-+            // below, so a cached entry wins on an address collision.
-+            //
-+            // A cached entry wins even if the compiled-in key for the same
-+            // address is newer: the cache usually came from a live fetch (or
-+            // from an earlier offline boot, whose fallback key file this call
-+            // rewrites anyway), and a stale key costs only that one gateway's
-+            // handshake. Local mode never
-+            // reaches this branch.
-+            let fallback = if remote_fetch_failed {
-+                compiled_fallback_gateways(fallback_gateways, &config_paths.secrets_dir(mode))
-+            } else {
-+                Gateways::default()
-+            };
++/// Why fetching one index gateway's key failed. The two are logged apart: a
++/// local disk problem is the operator's to fix, a bad remote key is not.
++enum IndexKeyError {
++    /// The key could not be fetched, or what was served is not a usable key.
++    Unusable(anyhow::Error),
++    /// The key was fetched and is valid but could not be stored locally.
++    LocalWrite(anyhow::Error),
++}
 +
-             let mut gateways = match File::open(&*gateways_file) {
-                 Ok(mut file) => {
-                     let mut content = String::new();
-@@ -1367,6 +1427,7 @@ impl ConfigArgs {
-                         && !self.network_api.is_gateway
-                         && mode == OperationMode::Network
-                         && remotely_loaded_gateways.gateways.is_empty()
-+                        && fallback.gateways.is_empty()
-                         && !has_cli_gateways
-                     {
-                         let hint = if remote_fetch_failed {
-@@ -1389,7 +1450,8 @@ impl ConfigArgs {
-             
++/// A key file already in `pub_keys_dir` for this gateway that holds a valid
++/// X25519 key, from an earlier successful fetch.
++fn cached_gateway_key(gateway: &GatewayConfig, pub_keys_dir: &Path) -> Option<PathBuf> {
++    let path = pub_keys_dir.join(gateway.public_key_path.file_name()?);
++    let content = fs::read_to_string(&path).ok()?;
++    matches!(hex::decode(content.trim()), Ok(bytes) if bytes.len() == 32).then_some(path)
++}
++
++/// Fetch one index gateway's public key into `pub_keys_dir` and return the
++/// local path. The body is validated BEFORE it is written, so a bad response
++/// can never overwrite a good cached key of the same 
 ```
 
-**File**: `crates/core/src/node.rs` (modified, +100/-1)
+**File**: `crates/core/src/node.rs` (modified, +205/-13)
 ```diff
-@@ -666,6 +666,8 @@ impl NodeConfig {
+@@ -15,15 +15,12 @@
+ //! The main node data structure and execution loop.
+ //! See [`../../architecture.md`](../../architecture.md) for a high-level overview of the node's role and the event loop interactions.
  
-         let mut gateways = Vec::with_capacity(config.gateways.len());
+-use anyhow::Context;
+ use freenet_stdlib::{
+     client_api::{ClientRequest, ErrorKind},
+     prelude::ContractInstanceId,
+ };
+ use std::{
+     borrow::Cow,
+-    fs::File,
+-    io::Read,
+     net::{IpAddr, SocketAddr, ToSocketAddrs},
+     sync::Arc,
+     time::Duration,
+@@ -668,6 +665,9 @@ impl NodeConfig {
          let mut gateway_addrs = Vec::with_capacity(config.gateways.len());
-+        // The last resolution failure, returned only if NO gateway resolved.
-+        let mut unresolved_error = None;
+         // The last resolution failure, returned only if NO gateway resolved.
+         let mut unresolved_error = None;
++        // Why each gateway with an unusable key was skipped; reported (all of
++        // them, capped) only if NO gateway was usable.
++        let mut skipped_reasons: Vec<String> = Vec::new();
          for gw in &config.gateways {
              let GatewayConfig {
                  address,
-@@ -739,14 +741,37 @@ impl NodeConfig {
-                 continue;
-             }
+@@ -677,13 +677,29 @@ impl NodeConfig {
  
--            let address = Self::parse_socket_addr(address).await?;
-+            // One unresolvable gateway must not stop the node: a cached or
-+            // compiled-in hostname outlives its DNS record once that gateway is
-+            // retired, and the remaining gateways can still bootstrap us. The
-+            // skip lasts for this process: a gateway that failed to resolve
-+            // only transiently is not retried until the next start.
-+            let address = match Self::parse_socket_addr(address).await {
-+                Ok(address) => address,
-+                Err(error) => {
-+                    tracing::warn!(
-+                        address = ?address,
-+                        error = %error,
-+                        "Skipping gateway whose address cannot be resolved"
-+                    );
-+                    unresolved_error = Some(error);
-+                    continue;
-+                }
-+            };
-             gateway_addrs.push(address);
-             let peer_key_location = PeerKeyLocation::new(transport_pub_key, address);
-             let location = location
-                 .map(Location::new)
-                 .unwrap_or_else(|| Location::from_address(&address));
-             gateways.push(InitPeerNode::new(peer_key_location, location));
+             // Wait for the public key file to be in X25519 hex format.
+             // The gateway may still be initializing and converting from RSA PEM.
++            //
++            // A key that is missing, unreadable, or malformed skips THIS
++            // gateway with a warning rather than failing startup: the key files
++            // come from a remote index and a cache, so one bad entry (a key the
++            // index lists before it serves it, a truncated download) must not
++            // stop the node bootstrapping through the other gateways.
+             let mut key_bytes = None;
+             for attempt in 0..10 {
+-                let mut key_file = File::open(public_key_path).with_context(|| {
+-                    format!("failed loading gateway pubkey from {public_key_path:?}")
+-                })?;
+-                let mut buf = String::new();
+-                key_file.read_to_string(&mut buf)?;
++                let buf = match std::fs::read_to_string(public_key_path) {
++                    Ok(buf) => buf,
++                    Err(e) => {
++                        tracing::warn!(
++                            public_key_path = ?public_key_path,
++                            address = ?address,
++                            error = %e,
++                            "Skipping gateway whose public key cannot be read"
++                        );
++                        skipped_reasons.push(format!(
++                            "{address:?}: failed loading gateway pubkey from {public_key_path:?}: {e}"
++                        ));
++                        break;
++                    }
++                };
+                 let buf = buf.trim();
+ 
+                 // Check for legacy RSA PEM format - gateway may still be initializing
+@@ -701,27 +717,42 @@ impl NodeConfig {
+                             public_key_path = ?public_key_path,
+                             "Gateway public key still in RSA PEM format after 5s. Skipping this gateway."
+                         );
++                        skipped_reasons.push(format!(
++                            "{address:?}: public key {public_key_path:?} still in legacy RSA PEM format"
++                        ));
+                         break;
+                     }
+                 }
+ 
+                 match hex::decode(buf) {
+                     Ok(bytes) if bytes.len() == 32 => {
+                         key_bytes = Some(bytes);
+-                        break;
+                     }
+                     Ok(bytes) => {
+-                        anyhow::bail!(
+-                            "invalid gateway pubkey length {} (expected 32) from {public_key_path:?}",
++                        tracing::warn!(
++                            public_key_path = ?public_key_path,
++                            address = ?address,
++                            "Skipping gateway with invalid public key length {} (expected 32)",
+                             bytes.len()
+                         );
++                        skipped_reasons.push(format!(
++                            "{address:?}: invalid gateway pubkey length {} (expected 32) from {public_key_path:?}",
++                            bytes.len()
++                        ));
+                     }
+                     Err(e) => {
+-                        anyhow::bail!(
+-                            "failed to decode gateway pubkey hex from {public_key_path:?}: {e}"
++                        tracing::warn!(
++                            public_key_path = ?public_key_path,
++                            address = ?address,
++                            error = %e,
++                            "Skipping gateway whose public key is not valid hex"
+                         );
++                        skipped_reasons.push(format!(
++                            "{address:?}: failed to decode gateway pubkey hex from {public_key_path:?}: {e}"
++                        ));
+                     }
+      
+```
+
+---
+
+### Incident Patch 2: `54444b8e` (2026-11-08)
+**Commit Message**: fix(transport): judge a QUIC send's write gap on connection progress (#6128)
+
+**File**: `.claude/rules/transport.md` (modified, +99/-10)
+```diff
+@@ -853,7 +853,12 @@ Rate calculation on every rate update (peer_connection::paced_rate; #6047):
+   packet. Not charged, as on UDP: one-packet Shorts and control frames,
+   which never wait behind data. With no limit nothing is paced. A write
+   reserves with reserve_within, limited to what the send's current deadline
+-  leaves, and waits in the send's own task; a refused reservation takes
++  leaves for its stage (with the stream open, its own gap, never the
++  connection's window: bounded::SendProgress::time_left; the window would let
++  the queue hold about 10 s of the rate instead of 5 s, refusing more opens;
++  a wait for a pipe's source is not a step, so after a slow chunk the next
++  write may be offered little and refused mid-stream, as in #6126),
++  and waits in the send's own task; a refused reservation takes
+   nothing and ends the send NotOpened(Paced) before the stream opened
+   (header and metadata are taken before open_uni) or Failed(Paced) after
+   (the stream is reset). A message the pacer refused that UDP then sent is
+@@ -1828,6 +1833,55 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
+   (STREAM_INACTIVITY_TIMEOUT) and inbound_stream_age_limit(len); a plain
+   Duration is one deadline for all of it. A send from a source waits for the
+   first chunk for the gap, counted in total, and open runs from when it arrives.
++  The gap is judged on CONNECTION progress (bounded::ConnectionWatch): a node
++  send runs out of gap only once its own gap has passed AND nothing on the
++  connection was newly acknowledged (recycle::AckProgress) for
++  STALL_PROGRESS_WINDOW (10 s), the stall count's rule. An egress cap hold of
++  this connection's transmit (recycle::cap_held, its own record) also counts,
++  but only within route::hold_credit of the connection's last acknowledgement:
++  the window, or socket::cap_transmit_wait (the longest one transmit can wait
++  at the cap, the derivation cap_hold_validity also uses) if longer. That is
++  10 s at 1 MB/s, about 13.3 s at 100 kB/s, about 19.8 s at 64 KiB/s, about
++  124 s at 10 kB/s and about 6.8 h at 50 B/s. The last acknowledgement is the
++  path's record (QuicPath::last_acked), kept by the stall count at settles and
++  by every send's watch at its wakes, so a new send whose first transmits wait
++  past its gap in a deep cap queue on a live path is credited. The record
++  holds the count with the time (bounded::AckRecord), so a count it has not
++  seen (an acknowledgement after the last settle or wake) is dated at the new
++  send's start rather than missed. A connection
++  nothing has acknowledged for the credit gets nothing from holds: a dark
++  connection's own probes wait for a saturated cap too, and counted without
++  that limit they kept a dark send going for 32 s. For the
++  credit after its last ack a dark path's own held probes do still count (on
++  main they counted for as long as they were held). Under random loss the 384 KiB send window drains at Cubic's window per
++  round trip, so writes wait past 5 s while acks still arrive; failing them
++  reset streams the peer was receiving (E5B9-LAB, 8 MiB at 5% loss and 200 ms
++  failed). The connection is read at the timer's wakes, so a send that stops
++  moving ends at its own gap or within 2 x STALL_PROGRESS_WINDOW of the last
++  move, never past total. It gives nothing until a wake during the send has
++  seen a move, so a path dark before the send fails it at 5 s with no cap
++  holding its transmits; where the cap holds them, at most at the record's
++  last acknowledgement plus hold_credit plus one window (after an idle
++  spell, a capped path that went dark gets one such credit from its first
++  new send, whose start dates the keepalive acknowledgements from before it
++  went dark); a path that
++  goes dark mid-send fails it at 12 to 22 s (its own early acknowledgements
++  are a move; 22 s when one lands just after the 2 s first wake; pinned at
++  12 s by
++  a_path_dark_mid_send_fails_within_two_windows_and_goes_suspect). Nothing
++  while the send waits for its own source (the connection is not what holds
++  it; a stalled source is bounded by the send's own gap, as pipe_stream's 5 s
++  upstream inactivity bounds it on UDP; the receiver's QUIC reader idles at
++  30 s in production. A SeqCst flag handshake wakes the loop to re-arm when
++  that drops an extended deadline, once: a timer already armed at the own gap
++  is not re-armed), and nothing without a CappedCubic
++  controller. Control sends have no gap. A receiver reads every announced
++  stream to its end whatever its consumer does (push_fragment does not wait);
++  its one wait is announcing a stream into a full channel, bounded by
++  inbound_stream_age_limit(len), the sender's total, so the two give up
++  together. With keepalive PINGs (15 s apart) as its only acknowledgements, at
++  most two wakes in a row (10 s apart) can each see a new one, so they alone
++  extend a stopped send by at most two wakes. Argued, not tested.
+   One t
+```
+
+**File**: `crates/core/src/transport/quic.rs` (modified, +27/-10)
+```diff
+@@ -218,7 +218,8 @@ pub(crate) struct EndpointCore {
+     /// The endpoint's health, handed to each connection (its watcher, and
+     /// its closer, which does not count a close after an adapter panic).
+     health: Arc<EndpointHealth>,
+-    /// The QUIC transmits the egress cap holds (`socket::CapHolds`).
++    /// Empty hold records for the endpoint's cap; each connection gets a copy
++    /// of its own (`socket::CapHolds`, `socket::with_poller_holds`).
+     cap_holds: Arc<socket::CapHolds>,
+     /// Test hooks that inject faults into quinn's drivers.
+     #[cfg(any(test, feature = "testing"))]
+@@ -423,6 +424,17 @@ fn require_unwinding(unwinds: bool) -> io::Result<()> {
+ /// ([`require_unwinding`]).
+ pub(crate) const UNWINDS: bool = cfg!(panic = "unwind");
+ 
++impl EndpointCore {
++    /// Connection pollers this endpoint's socket built outside
++    /// `socket::with_poller_holds`: their cap holds go into a record nobody
++    /// reads. Expected 0 (quinn 0.11.12 builds one elsewhere only on a
++    /// rebind, which needs migration, which is off).
++    #[cfg(test)]
++    pub(crate) fn fallback_pollers(&self) -> u64 {
++        self.cap_holds.fallback_pollers()
++    }
++}
++
+ impl QuicEndpoint {
+     /// Build an endpoint over `socket`, which must be the socket the
+     /// listener reads (it fills the QUIC ingress queue), bound at
+@@ -863,17 +875,19 @@ impl QuicEndpoint {
+             .sources
+             .allow(addr)
+             .ok_or(QuicConnectError::AllowSetFull)?;
+-        let connecting = self
+-            .endpoint
+-            .connect_with(config, addr, config::SERVER_NAME)?;
++        let holds = Arc::new(self.cap_holds.like());
++        let connecting = socket::with_poller_holds(&holds, || {
++            self.endpoint
++                .connect_with(config, addr, config::SERVER_NAME)
++        })?;
+         let connection = connecting.await?;
+         Ok(QuicConnection::new(
+             connection,
+             permit,
+             None,
+             peer,
+             self.health.clone(),
+-            self.cap_holds.clone(),
++            holds,
+         ))
+     }
+ }
+@@ -922,7 +936,7 @@ impl EndpointCore {
+                 config: Arc::new(config),
+                 peer: expected,
+                 hold,
+-                cap_holds: self.cap_holds.clone(),
++                cap_holds: Arc::new(self.cap_holds.like()),
+             });
          }
-+        // A gateway may run with no bootstrap peers (isolated gateways are a
-+        // valid configuration), so only a peer that needs one fails here.
-+        if gateways.is_empty() && !config.is_gateway {
-+            if let Some(error) = unresolved_error {
-+                return Err(error.context("no configured gateway address could be resolved"));
-+            }
-+        }
-         tracing::info!(
-             "Node will be listening at {}:{} internal address",
-             config.network_api.address,
-@@ -7219,6 +7244,80 @@ mod tests {
+     }
+@@ -942,7 +956,7 @@ pub(crate) struct QuicIncoming {
+     peer: PeerKey,
+     /// Keeps the address bound to `peer` while the attempt lives.
+     hold: KeyHold,
+-    /// The endpoint's record of cap-held transmits.
++    /// The connection's own record of cap-held transmits, given to its poller.
+     cap_holds: Arc<socket::CapHolds>,
+ }
+ 
+@@ -998,7 +1012,9 @@ impl QuicIncoming {
+     /// `a_*_panic_during_connect_ends_the_handshake` tests.
+     #[cfg_attr(not(test), allow(dead_code))]
+     pub(crate) async fn establish(self) -> Result<QuicConnection, quinn::ConnectionError> {
+-        let connection = self.incoming.accept_with(self.config)?.await?;
++        let connecting =
++            socket::with_poller_holds(&self.cap_holds, || self.incoming.accept_with(self.config))?;
++        let connection = connecting.await?;
+         Ok(QuicConnection::new(
+             connection,
+             self.permit,
+@@ -1020,7 +1036,8 @@ pub(crate) struct QuicConnection {
+     closer: QuicCloser,
+     /// The key the peer proved in the handshake.
+     peer: PeerKey,
+-    /// The endpoint's record of cap-held transmits, for the path's watch.
++    /// This connection's record of cap-held transmits, for the path's watch,
++    /// stall count and send gaps.
+     cap_holds: Arc<socket::CapHolds>,
+ }
+ 
+@@ -1125,7 +1142,7 @@ impl QuicConnection {
+         self.closer.close(code);
+     }
+ 
+-    /// The endpoint's record of the QUIC transmits its egress cap holds.
++    /// This connection's record of the QUIC transmits the egress cap holds.
+     pub(crate) fn cap_holds(&self) -> Arc<socket::CapHolds> {
+         self.cap_holds.clone()
+     }
+```
+
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +41/-7)
+```diff
+@@ -166,7 +166,7 @@ use crate::transport::peer_connection::{embeds_metadata, fits_one_packet};
+ 
+ #[cfg_attr(not(test), allow(unused_imports))]
+ pub(crate) use bounded::{BoundedSend, MaybeDelivered, NotOpened, SendDeadlines, SendFailure};
+-use bounded::{SendProgress, bounded_send};
++use bounded::{ConnectionProgress, SendProgress, bounded_send};
+ pub(crate) use inbound::{InboundShort, InboundStreamArrival};
+ #[cfg(test)]
+ pub(crate) use route::STALLED_SENDS_LIMIT;
+@@ -678,6 +678,16 @@ pub(crate) struct QuicPath {
+     counted_as_data_path: std::sync::atomic::AtomicBool,
+     /// Send timeouts while nothing is acknowledged ([`route::StallCount`]).
+     stall: parking_lot::Mutex<route::StallCount>,
++    /// The [`bounded::QuietProof`] sends that ran out of gap left, read (not
++    /// taken) by every settle; a proof of the same counts is merged into it.
++    quiet: Arc<parking_lot::Mutex<Option<bounded::QuietProof>>>,
++    /// The connection's acknowledged count and when it was last seen to
++    /// move, on the path's clock ([`bounded::AckRecord`]); the count at build
++    /// and the build time to start, as for the stall count, so a path dark
++    /// from its start has its first sends' cap holds credited for one
++    /// `route::hold_credit` after it is built (seconds at a high cap, minutes
++    /// at a low one).
++    last_acked: Arc<bounded::AckRecord>,
+     /// The connection's count of acknowledged packets, `None` if its controller
+     /// does not keep one.
+     ack_progress: Option<recycle::AckProgress>,
+@@ -847,9 +857,10 @@ impl QuicPath {
+                  send timeout counts toward the stall close"
+             );
+         }
++        let built_at = time.now_nanos();
+         let stall = route::StallCount::new(
+             ack_progress.as_ref().map(recycle::AckProgress::acked),
+-            time.now_nanos(),
++            built_at,
+         );
+         let heard = Arc::new(recycle::PeerHeard::default());
+         #[cfg_attr(not(test), allow(unused_mut))]
+@@ -880,6 +891,11 @@ impl QuicPath {
+                 send_data: AtomicU8::new(SEND_DATA_NEVER),
+                 counted_as_data_path: std::sync::atomic::AtomicBool::new(false),
+                 stall: parking_lot::Mutex::new(stall),
++                quiet: Arc::default(),
++                last_acked: Arc::new(bounded::AckRecord::new(
++                    ack_progress.as_ref().map_or(0, recycle::AckProgress::acked),
++                    built_at,
++                )),
+                 ack_progress,
+                 suspect_since_acked: parking_lot::Mutex::new(None),
+                 suspect: std::sync::atomic::AtomicBool::new(false),
+@@ -1128,6 +1144,18 @@ impl QuicPath {
          );
      }
  
-+    /// A gateway whose hostname no longer resolves (a retired gateway still in
-+    /// a cache or in the compiled-in fallback list) is skipped, so the node
-+    /// still starts with the gateways that do resolve. Only when NONE resolve
-+    /// is it an error. Before, the first unresolvable entry aborted startup.
-+    #[tokio::test]
-+    async fn unresolvable_gateway_is_skipped_not_fatal() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let key_path = dir.path().join("gw.pub");
-+        std::fs::write(
-+            &key_path,
-+            hex::encode(TransportKeypair::new().public().as_bytes()),
-+        )
-+        .unwrap();
-+        // RFC 6761: `.invalid` never resolves.
-+        let unresolvable = GatewayConfig {
-+            address: Address::Hostname("retired-gateway.invalid:31337".to_string()),
-+            public_key_path: key_path.clone(),
-+            location: None,
-+        };
-+        let resolvable_addr: SocketAddr = "127.0.0.1:31337".parse().unwrap();
-+        let resolvable = GatewayConfig {
-+            address: Address::HostAddress(resolvable_addr),
-+            public_key_path: key_path,
-+            location: None,
-+        };
-+        let build = |gateways: Vec<GatewayConfig>, id: &str, is_gateway: bool| {
-+            let id = id.to_string();
-+            async move {
-+                let mut config = crate::config::ConfigArgs {
-+                    id: Some(id),
-+                    mode: Some(crate::contract::OperationMode::Local),
-+                    ..Default::default()
++    /// What a send's gap reads of this path's connection
++    /// ([`bounded::ConnectionProgress`]); `None` when the controller counts no
++    /// acknowledgements, and then only the send's own gap applies.
++    fn connection_progress(&self) -> Option<ConnectionProgress> {
++        self.ack_progress.clone().map(|acks| ConnectionProgress {
++            acks,
++            cap_holds: self.connection.cap_holds(),
++            quiet: self.quiet.clone(),
++            last_acked: self.last_acked.clone(),
++        })
++    }
++
+     /// Send one serialized message. Tests only, with no deadline; nodes use
+     /// [`Self::send_short_bounded`].
+     #[cfg(test)]
+@@ -1146,7 +1174,7 @@ impl QuicPath {
+         deadlines: impl Into<SendDeadlines>,
+         payload: &[u8],
+     ) -> BoundedSend {
+-        bounded_send(time, deadlines, |progress| {
++        bounded_send(time, deadlines, self.connection_progress(), |progress| {
+             self.send_short_with(payload, None, progress)
+         })
+         .await
+@@ -1207,7 +1235,7 @@ impl QuicPath {
+         control: QuicControl,
+     ) -> BoundedSend {
+         let payload = control.encode();
+-        bounded_send(time, timeout, |progress| {
++        bounded_send(time, timeout, None, |progress| {
+             self.send_control_with(&payload[..], progress)
+         })
+         .await
+@@ -1242,7 +1270,7 @@ impl QuicPath {
+         payload: Bytes,
+         observer: Option<&dyn StreamProgressObserver>,
+     ) -> BoundedSend {
+-        bounded_send(time, deadlines, |progress| {
++        bounded_send(time, deadlines, self.connection_progress(), |progress| {
+             self.send_stream_with(stream_id, metadata, payload, observer, progress)
+         })
+         .await
+@@ -1355,7 +1383,7 @@ impl QuicPath {
+             total: deadlines.total - waited,
+             ..deadlines
+         };
+-        bounded_send(time, deadlines, |progress| {
++        bounded_send(time, deadlines, self.connection_progress(), |progress| {
+             self.send_stream_chunks_with(
+                 stream_id, total_len, metadata, first, chunks, observer, progress,
+             )
+@@ -1381,6 +1409,7 @@ impl QuicPath {
+         let metadata = frame_metadata(metadata);
+         let header = FrameHeader::stream(stream_id, total_len, metadata.len())?;
+      
+```
+
+**File**: `crates/core/src/transport/quic/path/bounded.rs` (modified, +392/-16)
+```diff
+@@ -30,7 +30,10 @@ use std::sync::Arc;
+ use std::sync::atomic::{AtomicBool, AtomicU8, AtomicU64, Ordering};
+ use std::time::Duration;
+ 
++use super::super::recycle::{AckProgress, cap_held};
++use super::super::socket::{CapHoldReading, CapHolds};
+ use super::QuicSendError;
++use super::route::{STALL_PROGRESS_WINDOW, hold_credit};
+ use crate::simulation::TimeSource;
+ use crate::transport::peer_connection::streaming::STREAM_INACTIVITY_TIMEOUT;
+ use crate::transport::peer_connection::{fits_one_packet, inbound_stream_age_limit};
+@@ -54,7 +57,10 @@ pub(crate) struct SendDeadlines {
+     /// up to the end of the stream being sent. Not applied to the wait for the
+     /// acknowledgement: quinn's writes return once it has buffered the bytes,
+     /// so that wait includes a send window of backlog and says nothing about
+-    /// a stall. `None`: only `total` applies.
++    /// a stall. `None`: only `total` applies. A send given its connection's
++    /// progress ([`ConnectionProgress`]) runs out of gap only once the
++    /// connection has also gone [`STALL_PROGRESS_WINDOW`] with nothing newly
++    /// acknowledged.
+     pub(crate) gap: Option<Duration>,
+     /// From the start of the send to its end, whatever the send is doing.
+     pub(crate) total: Duration,
+@@ -176,6 +182,16 @@ struct ProgressState {
+     stage: AtomicU8,
+     /// When the send last made progress, on `now`.
+     last_step: AtomicU64,
++    /// The send is waiting for its own source, not for the connection.
++    on_source: AtomicBool,
++    /// The armed timer is past the send's own gap because of the connection's
++    /// progress, so a wait for the source would bring the deadline earlier.
++    extended: AtomicBool,
++    /// Told when a wait for the source starts while `extended`.
++    source_wait: tokio::sync::Notify,
++    /// Timers armed by [`bounded_send`]. Tests only.
++    #[cfg(test)]
++    arms: AtomicU64,
+     now: Box<dyn Fn() -> u64 + Send + Sync>,
+     /// The send's deadlines and its start on `now`, so a pacer can refuse a
+     /// wait that would reach the current one. `None`: no deadline.
+@@ -192,6 +208,11 @@ impl SendProgress {
+         Self(Arc::new(ProgressState {
+             stage: AtomicU8::new(STAGE_OPENING),
+             last_step: AtomicU64::new(0),
++            on_source: AtomicBool::new(false),
++            extended: AtomicBool::new(false),
++            source_wait: tokio::sync::Notify::new(),
++            #[cfg(test)]
++            arms: AtomicU64::new(0),
+             now: Box::new(|| 0),
+             deadlines: None,
+             refused: AtomicBool::new(false),
+@@ -203,18 +224,36 @@ impl SendProgress {
+         Self(Arc::new(ProgressState {
+             stage: AtomicU8::new(STAGE_OPENING),
+             last_step: AtomicU64::new(time.now_nanos()),
++            on_source: AtomicBool::new(false),
++            extended: AtomicBool::new(false),
++            source_wait: tokio::sync::Notify::new(),
++            #[cfg(test)]
++            arms: AtomicU64::new(0),
+             now: Box::new(move || time.now_nanos()),
+             deadlines: Some((deadlines, started)),
+             refused: AtomicBool::new(false),
+         }))
+     }
+ 
+-    /// How long until the send's current deadline. `Duration::MAX` for a send
+-    /// with none.
++    /// How long a pacer may make the send wait: until the send's own
++    /// deadline for its stage (its own gap while the stream is open, never
++    /// the connection's window), so no later than the deadline its timer
++    /// enforces, which is never earlier. `Duration::MAX` for a send with none.
++    ///
++    /// Not the window: that would let the pacer's queue hold up to the window
++    /// of the rate (about 10 s) where #6126 bounds it at the gap (5 s), so
++    /// later opens, limited to their 2 s open deadline, would be refused for
++    /// longer and more data would go to UDP. A live lossy path does not need
++    /// it: its long waits are quinn's, after the pacer's take, and the write
++    /// they end in is a step, so the next take is offered a fresh gap.
++    /// A wait for the source is not a step, though: after a slow chunk the
++    /// next take may be offered little or nothing, and a refusal mid-stream
++    /// drops the message (`Failed(Paced)`). That is #6126's behaviour on main,
++    /// not changed here.
+     pub(super) fn time_left(&self) -> Duration {
+         match &self.0.deadlines {
+             Some((deadlines, started)) => Duration::from_nanos(
+-                self.deadline(deadlines, *started)
++                self.deadline(deadlines, *started, 0)
+                     .saturating_sub((self.0.now)()),
+             ),
+             None => Duration::MAX,
+@@ -241,6 +280,28 @@ impl SendProgress {
+         self.0.last_step.store((self.0.now)(), Ordering::Release);
+     }
+ 
++    /// The send starts (`true`) or stops waiting for its source's next chunk.
++    /// The connection's progress does not extend the gap meanwhile: it is not
++    /// what holds the send ([`ConnectionWatch`])
+```
+
+**File**: `crates/core/src/transport/quic/path/route.rs` (modified, +112/-16)
+```diff
+@@ -35,7 +35,7 @@ use std::time::Duration;
+ 
+ use super::super::recycle::{self, ACK_WATCH_WINDOW, cap_held};
+ use super::super::socket::CapHoldReading;
+-use super::bounded::{BoundedSend, MaybeDelivered, NotOpened, SendFailure};
++use super::bounded::{BoundedSend, MaybeDelivered, NotOpened, QuietProof, SendFailure};
+ use super::{QuicPath, QuicSendError, stop_code};
+ use crate::transport::metrics::QuicCloseCode;
+ 
+@@ -183,6 +183,21 @@ fn timed_out(outcome: &BoundedSend) -> bool {
+ /// timeout counts against it: the acknowledgement watch's window.
+ pub(crate) const STALL_PROGRESS_WINDOW: Duration = ACK_WATCH_WINDOW;
+ 
++/// How long after a connection's last acknowledgement an egress cap hold of
++/// its transmits still counts as progress: the window, or the longest one
++/// transmit can wait at this cap ([`socket::cap_transmit_wait`]), whichever is
++/// longer. A live path whose transmits the cap holds is acknowledged again
++/// within that; a held transmit on a connection nothing has acknowledged for
++/// longer is no evidence it is alive (a dark connection's own probes wait for a
++/// saturated cap too, and counted without that limit they kept a dark
++/// send going for 32 s). 10 s (the window) at 1 MB/s, about 13.3 s at
++/// 100 kB/s, about 19.8 s at 64 KiB/s, longer at lower caps.
++///
++/// [`socket::cap_transmit_wait`]: super::super::socket::cap_transmit_wait
++pub(crate) fn hold_credit(cap: &CapHoldReading) -> Duration {
++    STALL_PROGRESS_WINDOW.max(cap.longest_wait)
++}
++
+ /// What [`StallCount::take`] decided.
+ #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+ pub(crate) struct StallVerdict {
+@@ -219,10 +234,21 @@ pub(crate) struct StallVerdict {
+ /// consumer stays stalled past the window while nothing else on the path is
+ /// acknowledged reads as a stalled path.
+ ///
+-/// An egress cap hold counts as progress, as it does for the acknowledgement
+-/// watch (`recycle::cap_held`): while `total-bandwidth-limit` holds the node's
+-/// QUIC transmits nothing can be acknowledged, one held transmit can wait for
+-/// longer than the window at a low cap, and the path itself is not stalled.
++/// An egress cap hold of this connection's transmit counts as progress, as it
++/// does for the acknowledgement watch (`recycle::cap_held`), while
++/// `total-bandwidth-limit` holds them nothing can be acknowledged; but only
++/// for [`hold_credit`] after the connection's last acknowledgement (the window,
++/// or the longest one transmit can wait at the cap if that is longer). A held
++/// transmit on a connection nothing has acknowledged for longer is no evidence
++/// it is alive: a dark connection's own probes wait for a saturated cap too.
++/// The record is the connection's own
++/// (`socket::with_poller_holds`): a node-wide one would read as progress on
++/// every path whenever any connection is held, and on a node whose cap binds
++/// this count would never fire.
++///
++/// A [`QuietProof`] a timed-out send left dates the progress this sees
++/// ([`Self::take`]), so a path that went dark mid-send counts its first
++/// timeout.
+ ///
+ /// A send the path's pacer refused ([`NotOpened::Paced`], [`SendFailure::Paced`])
+ /// is not a timeout and never counts: this side held it back. A pacer's waits
+@@ -237,6 +263,9 @@ pub(crate) struct StallCount {
+     /// When the count last moved, or the cap last held a transmit, on the
+     /// path's clock.
+     progressed_at: u64,
++    /// When the count last moved (or the path was built), on the path's clock.
++    /// A cap hold is progress only within [`hold_credit`] of it.
++    acked_at: u64,
+     /// The cap's holds at the last settle, and since when a hold has been
+     /// reported with no new hold event (`recycle::cap_held`).
+     cap: Option<CapHoldReading>,
+@@ -251,38 +280,66 @@ impl StallCount {
+             in_a_row: 0,
+             acked,
+             progressed_at: now_nanos,
++            acked_at: now_nanos,
+             cap: None,
+             hold_unchanged_since: None,
+         }
+     }
+ 
+     /// Take `outcome`, with the connection's acknowledged-packet count `acked`
+-    /// (`None` when the controller does not count them) and the egress cap's
+-    /// holds `cap`, at `now_nanos`: whether it counted, and whether the path
+-    /// should close now (once, at the limit).
++    /// (`None` when the controller does not count them) and the connection's
++    /// egress cap holds `cap`, at `now_nanos`: whether it counted, and whether
++    /// the path should close now (once, at the limit).
++    ///
++    /// Progress seen here is dated `now_nanos`. If `quiet` (a send that ran out
++    /// of gap, [`QuietProof`]) still matches the counts, nothing moved after its
++    /// `since`, and the last progress is dated no later than that, whether this
++    /// settle or an earlier one saw it.
+     pub(crate) fn take(
+         &mut self,
+         outcome: &BoundedSend,
+         source_stalled: bool,
+         acked: Option<u64>,
+         cap: CapHoldReading,
++        quiet: Option<Quie
+```
+
+**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +1329/-21)
+```diff
+@@ -2560,11 +2560,22 @@ struct LossCount {
+ /// A seeded loss of `percent` of datagrams in both directions on `network`;
+ /// the counts of what it saw and dropped.
+ fn seeded_loss(network: &str, percent: u64) -> Arc<LossCount> {
++    seeded_loss_from(network, percent, 0x5940_0006, None)
++}
++
++/// [`seeded_loss`] from draw state `seed`, with every delivered datagram
++/// delayed by `one_way` if given.
++fn seeded_loss_from(
++    network: &str,
++    percent: u64,
++    seed: u64,
++    one_way: Option<Duration>,
++) -> Arc<LossCount> {
+     use crate::transport::in_memory_socket::{
+         PacketDeliveryDecision, set_packet_delivery_callback,
+     };
+     use std::sync::atomic::Ordering::Relaxed;
+-    let state = Arc::new(std::sync::atomic::AtomicU64::new(0x5940_0006));
++    let state = Arc::new(std::sync::atomic::AtomicU64::new(seed));
+     let count = Arc::new(LossCount::default());
+     let counted = count.clone();
+     set_packet_delivery_callback(
+@@ -2573,23 +2584,107 @@ fn seeded_loss(network: &str, percent: u64) -> Arc<LossCount> {
+             counted.seen.fetch_add(1, Relaxed);
+             // A fixed linear congruential sequence, one draw per datagram.
+             let next = state
+-                .fetch_update(
+-                    std::sync::atomic::Ordering::Relaxed,
+-                    std::sync::atomic::Ordering::Relaxed,
+-                    |x| Some(x.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1)),
+-                )
++                .fetch_update(Relaxed, Relaxed, |x| {
++                    Some(x.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1))
++                })
+                 .unwrap_or_default();
+             if (next >> 33) % 100 < percent {
+                 counted.dropped.fetch_add(1, Relaxed);
+                 PacketDeliveryDecision::Drop
+             } else {
+-                PacketDeliveryDecision::Deliver
++                match one_way {
++                    Some(delay) => PacketDeliveryDecision::DelayedDelivery(delay),
++                    None => PacketDeliveryDecision::Deliver,
 +                }
-+                .build()
+             }
+         })),
+     );
+     count
+ }
+ 
++/// A streamed send over a path with 5% random loss and a 200 ms round trip:
++/// the 384 KiB send buffer drains at cwnd/RTT, so a write waits past the 5 s
++/// gap while the connection keeps acknowledging. The gap counts only when
++/// nothing on the connection was acknowledged for `STALL_PROGRESS_WINDOW`, so
++/// the send completes. Before, it timed out (`SendFailure::TimedOut`) and went
++/// to UDP from the start.
++#[test]
++fn a_lossy_path_finishes_a_stream_whose_writes_wait_past_the_gap() {
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let network = "quic-path-lossy-gap";
++        let loss = seeded_loss_from(network, 5, 0x5940_0007, Some(Duration::from_millis(100)));
++        let p = paths(network, 47, QuicPathLimits::DEFAULT).await;
++        let (a, time) = (p.a.clone(), p.time());
++        const LEN: usize = 8 * MIB;
++        let gaps = Arc::new(WriteGaps::new(time.clone()));
++        let watched = gaps.clone();
++        let sent = p
++            .drive(async move {
++                a.send_stream_bounded(
++                    &time,
++                    SendDeadlines::stream(LEN as u64),
++                    StreamId::next(),
++                    None,
++                    payload(LEN).into(),
++                    Some(&*watched),
++                )
 +                .await
-+                .expect("build Config");
-+                config.gateways = gateways;
-+                config.is_gateway = is_gateway;
-+                NodeConfig::new(config).await
-+            }
-+        };
-+
-+        let node_config = build(
-+            vec![unresolvable.clone(), resolvable],
-+            "unresolvable-gw-skipped",
-+            false,
-+        )
-+        .await
-+        .expect("one unresolvable gateway must not stop the node");
-+        assert_eq!(
-+            node_config
-+                .gateways
-+                .iter()
-+                .map(|gw| gw.peer_key_location.socket_addr())
-+                .collect::<Vec<_>>(),
-+            vec![Some(resolvable_addr)]
++            })
++            .await;
++        let (seen, dropped) = (
++            loss.seen.load(std::sync::atomic::Ordering::Relaxed),
++            loss.dropped.load(std::sync::atomic::Ordering::Relaxed),
 +        );
-+
-+        let Err(err) = build(vec![unresolvable.clone()], "unresolvable-gw-only", false).await
-+        else {
-+            panic!("with no gateway resolvable, startup must still fail");
-+        };
++        crate::transport::in_memory_socket::set_packet_delivery_callback(network, None);
++        // The draw drops 5%; 3% is a floor with room for the draw's
++        // variation, so a change that left the run nearly lossless fails here.
 +        assert!(
-+            format!("{err:#}").contains("no configured gateway address could be resolved"),
-+     
++            dropped * 100 >= seen * 3,
++            "the loss happened: {dropped} of {seen}"
++        );
++        // Without a write that waited past the 5 s gap this test would pass on
++        // main too.
++        let longest = gaps.longest();
++        assert!(
++            longest > super::super::super::peer_connection::streaming::STREAM_INACTIVITY_TIMEOUT,
++            "a write waited past the gap: longest {longest:?}"
++        );
++        assert!(matches!(sent, BoundedSend::Sent), "{sent:?}");
++    })
++}
++
++/// The longest wait between two fragments a send handed to quinn.
++struct WriteGaps {
++    time: VirtualTime,
++    last: std::sync::atomic::AtomicU64,
++    longest: std::sync::atomic::AtomicU64,
++}
++
++impl WriteGaps {
++    fn new(time: VirtualTime) -> Self {
++        let now = time.now_nanos();
++        Self {
++            time,
++            last: std::sync::atomic::AtomicU64::new(now),
++            longest: std::sync::atomic::AtomicU64::new(0),
++        }
++    }
++
++    fn longest(&self) -> Duration {
++        Durat
+```
+
+**File**: `crates/core/src/transport/quic/path/tests/pacer.rs` (modified, +256/-2)
+```diff
+@@ -259,7 +259,13 @@ fn bytes_taken_for_a_write_not_made_go_back() {
+         let _seed = GlobalRng::seed_guard(SEED);
+         let p = paths("quic-pacer-give-back", 123, QuicPathLimits::DEFAULT).await;
+         // Header and metadata go at once; the first fragment is granted after
+-        // 10 s, past the 5 s gap.
++        // 30 s, ignoring the limit it is offered (a real pacer would refuse
++        // any wait past the 5 s gap, which is how this case arises: a pacer
++        // that waits longer than it said). 30 s is past the gap and past the
++        // connection's window too: the header's acknowledgement, seen at the
++        // first wake (the 2 s open deadline), extends the deadline to 12 s,
++        // and nothing moves after it, since the send waits on the pacer. A
++        // 10 s grant would finish inside that window and the send complete.
+         let pacer = Scripted::new(&p.time(), usize::MAX, Duration::ZERO);
+         struct SlowAfterFirst(Arc<Scripted>);
+         impl SendPacer for SlowAfterFirst {
+@@ -269,7 +275,7 @@ fn bytes_taken_for_a_write_not_made_go_back() {
+                 Ok(if first {
+                     Duration::ZERO
+                 } else {
+-                    Duration::from_secs(10)
++                    Duration::from_secs(30)
+                 })
+             }
+             fn give_back(&self, bytes: usize) {
+@@ -602,3 +608,251 @@ fn a_pacer_wait_never_marks_a_step() {
+         );
+     }
+ }
++
++/// A pacer that grants every reservation at once until `slow_from`
++/// reservations have been made, then makes each wait `wait`, refusing one whose
++/// wait would reach the limit it is offered, as `LimitPacer` does. Records the
++/// limits it was offered.
++struct Honest {
++    slow_from: usize,
++    wait: Duration,
++    calls: AtomicUsize,
++    limits: parking_lot::Mutex<Vec<Duration>>,
++    given_back: AtomicUsize,
++    time: VirtualTime,
++}
++
++impl Honest {
++    fn new(time: &VirtualTime, slow_from: usize, wait: Duration) -> Arc<Self> {
++        Arc::new(Self {
++            slow_from,
++            wait,
++            calls: AtomicUsize::new(0),
++            limits: parking_lot::Mutex::new(Vec::new()),
++            given_back: AtomicUsize::new(0),
++            time: time.clone(),
++        })
++    }
++}
++
++impl SendPacer for Honest {
++    fn reserve_within(&self, _bytes: usize, limit: Duration) -> Result<Duration, Duration> {
++        self.limits.lock().push(limit);
++        let wait = if self.calls.fetch_add(1, Ordering::Relaxed) < self.slow_from {
++            Duration::ZERO
++        } else {
++            self.wait
++        };
++        if wait < limit { Ok(wait) } else { Err(wait) }
++    }
++
++    fn give_back(&self, bytes: usize) {
++        self.given_back.fetch_add(bytes, Ordering::Relaxed);
++    }
++
++    fn charge(&self, bytes: usize) -> usize {
++        bytes
++    }
++
++    fn sleep(
++        &self,
++        wait: Duration,
++    ) -> std::pin::Pin<Box<dyn std::future::Future<Output = ()> + Send>> {
++        self.time.sleep_cancelable(wait)
++    }
++}
++
++/// A pacer is offered at most the send's own gap, never the
++/// connection's window, so its queue holds no more than #6126 allowed. Over
++/// the lossy path of
++/// `a_lossy_path_finishes_a_stream_whose_writes_wait_past_the_gap`, where
++/// quinn makes writes wait past the gap and the connection's window carries
++/// the send, every reservation is offered at most 5 s and the send completes:
++/// the long waits are quinn's, after a reservation, and the write they end in
++/// is a step, so the next reservation is offered a fresh gap.
++#[test]
++fn a_pacer_is_offered_at_most_the_gap_on_a_lossy_live_path() {
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let network = "quic-pacer-lossy-window";
++        let loss = seeded_loss_from(network, 5, 0x5940_0007, Some(Duration::from_millis(100)));
++        let p = paths(network, 47, QuicPathLimits::DEFAULT).await;
++        let pacer = Scripted::new(&p.time(), usize::MAX, Duration::ZERO);
++        p.a.pace_with(pacer.clone());
++        let (elapsed, outcome) = time_a_stream(&p, 8 * MIB).await;
++        crate::transport::in_memory_socket::set_packet_delivery_callback(network, None);
++        let dropped = loss.dropped.load(Ordering::Relaxed);
++        assert!(dropped > 0, "the loss happened");
++        assert!(matches!(outcome, BoundedSend::Sent), "{outcome:?}");
++        let gap = crate::transport::peer_connection::streaming::STREAM_INACTIVITY_TIMEOUT;
++        assert!(
++            elapsed > gap,
++            "premise: the send outlived its own gap: {elapsed:?}"
++        );
++        let longest = pacer
++            .limits
++            .lock()
++            .iter()
++            .copied()
++            .max()
++            .expect("the send was paced");
++        assert!(longest <= gap, "offered {longest:?}, past the gap");
++    });
++}
++
++/// Long pacer waits inside the gap on a live connection: every fragment after
++/// the header waits 4 s, under the 5
+```
+
+**File**: `crates/core/src/transport/quic/path/tests/route.rs` (modified, +284/-18)
+```diff
+@@ -206,59 +206,101 @@ fn timeouts_count_only_once_nothing_is_acknowledged_for_the_window() {
+     assert!(count.take_uncapped(&timeouts()[1], false, Some(41), quiet_again));
+ }
+ 
+-/// A hold of the egress cap counts as progress, so a path the cap holds for longer
+-/// than the window is not stalled; once the hold ends, timeouts past the window
+-/// count again. A hold reported with no new event past its validity is a poller
+-/// left behind and does not count.
++/// A hold of the egress cap counts as progress, but only within the window of
++/// the connection's last acknowledgement (a dark connection's own probes, held
++/// by a saturated cap, read as progress). An acknowledgement at 5 s
++/// and a hold live from then on: no timeout counts while the hold is within the
++/// window of it (to 15 s); after that the hold counts for nothing, the last
++/// progress stays at 15 s, and from 25 s eight timeouts close the path. A hold
++/// reported with no new event past its validity is a poller left behind and
++/// does not count.
+ #[test]
+ fn a_cap_hold_counts_as_progress() {
+     let reading = |holds, held_now| CapHoldReading {
+         holds,
+         held_now,
+         validity: Duration::from_secs(60),
++        longest_wait: Duration::ZERO,
+     };
+     let mut count = StallCount::new(Some(0), 0);
+-    for second in 0..30u64 {
+-        let now = QUIET + second * SECOND;
++    let acked = 5 * SECOND;
++    assert!(
++        !count
++            .take(
++                &timeouts()[2],
++                false,
++                Some(1),
++                reading(1, true),
++                None,
++                acked
++            )
++            .quiet_timeout
++    );
++    for second in 1..=10u64 {
++        let now = acked + second * SECOND;
+         assert!(
+             !count
+-                .take(&timeouts()[2], false, Some(0), reading(1, true), now)
+-                .close
++                .take(&timeouts()[2], false, Some(1), reading(1, true), None, now)
++                .quiet_timeout,
++            "held at {second} s after the acknowledgement: progress"
+         );
+     }
+-    // The hold ends: past the window, eight close the path.
+-    let free = QUIET + 30 * SECOND + QUIET;
+-    for _ in 1..STALLED_SENDS_LIMIT {
++    for second in 11..20u64 {
++        let now = acked + second * SECOND;
+         assert!(
+             !count
+-                .take(&timeouts()[2], false, Some(0), reading(1, false), free)
+-                .close
++                .take(&timeouts()[2], false, Some(1), reading(1, true), None, now)
++                .quiet_timeout,
++            "within the window of the last progress (15 s)"
++        );
++    }
++    let late = acked + 20 * SECOND;
++    for _ in 1..STALLED_SENDS_LIMIT {
++        let verdict = count.take(&timeouts()[2], false, Some(1), reading(1, true), None, late);
++        assert!(
++            verdict.quiet_timeout && !verdict.close,
++            "the hold no longer counts"
+         );
+     }
+     assert!(
+         count
+-            .take(&timeouts()[2], false, Some(0), reading(1, false), free)
+-            .close
++            .take(&timeouts()[2], false, Some(1), reading(1, true), None, late)
++            .close,
++        "eight timeouts with only a hold close the path"
+     );
+ 
+     // A hold that stays reported with no new event outlives its validity.
+     let mut count = StallCount::new(Some(0), 0);
+     assert!(
+         !count
+-            .take(&timeouts()[2], false, Some(0), reading(7, true), 0)
++            .take(&timeouts()[2], false, Some(0), reading(7, true), None, 0)
+             .close
+     );
+     let stale = 61 * SECOND + QUIET;
+     for _ in 1..STALLED_SENDS_LIMIT {
+         assert!(
+             !count
+-                .take(&timeouts()[2], false, Some(0), reading(7, true), stale)
++                .take(
++                    &timeouts()[2],
++                    false,
++                    Some(0),
++                    reading(7, true),
++                    None,
++                    stale
++                )
+                 .close
+         );
+     }
+     assert!(
+         count
+-            .take(&timeouts()[2], false, Some(0), reading(7, true), stale)
++            .take(
++                &timeouts()[2],
++                false,
++                Some(0),
++                reading(7, true),
++                None,
++                stale
++            )
+             .close
+     );
+ }
+@@ -464,3 +506,227 @@ fn a_refusal_stops_new_sends_on_the_path() {
+         p.a.debug_assert_carries_data();
+     });
+ }
++
++/// A [`QuietProof`](super::super::bounded::QuietProof) dates the progress the
++/// stall count sees from its `since`, so a timeout right after a path went dark
++/// mid-send counts; one whose counts no longer match the connection's (an
++/// acknowledgement or a cap hold came after it) is ignored, and the progress is
++/// dated when it is seen.
++#[test]
++fn a_quiet_proof_dates_progress_only_while_its_counts_match() {
++    use super::super::bounded::QuietProof;
++    let f
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6149** (2026-11-09): fix(config): skip a bad gateway entry instead of failing startup (@sanity)
+- **PR #6148** (2026-11-08): test: wait for node-a's full mesh before choosing the delegate E2E probe (@sanity)
 - **PR #6146** (2026-11-08): fix(config): bootstrap from compiled-in gateways when the index is down (@sanity)
 - **PR #6137** (2026-11-07): docs: retire the contract-removal plan from conformance docs (@sanity)
 - **PR #6135** (closed): fix(config): honour data_dir from config.toml on default installs (@sanity)
 - **PR #6131** (2026-11-06): test(util): count the summary thread's allows in the rate-limit stress test (@sanity)
-- **PR #6130** (2026-11-07): feat: user-approved app grants for native clients (#5264) (@sanity)
-- **PR #6129** (2026-11-07): fix(ring): run the disk-usage walk inline on simulation hosts (@sanity)
 
 ---
 
@@ -2015,13 +2897,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config): bootstrap from compiled-in gateways when the index is down (#6146)
+## X. config): skip a bad gateway entry instead of failing startup (#6149)
 
 **RULE**:
 When implementing operations in `crates/core/src/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0186d63c`: config): bootstrap from compiled-in gateways when the index is down (#6146). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be138254`: config): skip a bad gateway entry instead of failing startup (#6149). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/config.rs`.
@@ -2029,37 +2911,41 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Official gateways compiled into the binary as `("host:port", hex X25519
-/// public key)`, mirroring [`FREENET_GATEWAYS_INDEX`]. The address is spelled
-/// exactly as the index spells it (`hostname = "..."`), because entries are
-/// deduplicated against the cached index by [`Address`] equality and
-/// `Address::Hostname` never equals the same gateway as `Address::Host`.
+            match load_gateways_from_index(gateways_index, &config_paths.secrets_dir).await {
+                Ok(load) => {
+                    let cache = fs::read_to_string(&gateways_file)
+                        .ok()
+                        .and_then(|content| parse_gateways_toml(&content, "gateways.toml").ok())
+                        .map(|cache| cache.gateways)
+                        .unwrap_or_default();
+                    keep_cached_entries_for_unusable(load.gateways, &load.unusable, &cache)
+                }
+                Err(error) => {
+                    Gateways::default()
+                }
+            }
+/// Parse the remote gateway index, dropping an entry that does not deserialize
+/// instead of rejecting the whole index.
 ///
-/// Used only when the remote index was fetched and returned nothing, merged
-/// AFTER the on-disk `gateways.toml` cache (the cache wins on an address
-/// collision). A successful fetch never consults this list, so the remote index
-/// stays authoritative and a gateway is still retired by editing the index.
-///
-/// Without it, a first boot with the index unreachable refuses to start, and a
-/// node holding an old cache never learns a gateway added since. When a gateway
-/// is added to the index, add it here too: a list whose entries all share one
-/// host does not survive that host's outage.
-const FALLBACK_GATEWAYS: &[(&str, &str)] = &[
-    (
-        "gw1.freenet.org:31337",
-        "25836988b1d2449f7971a3c553dc896619a170d9c6ad46e75c2443778d70585a",
-    ),
-    (
-        "gw2.freenet.org:31338",
-        "a7e93
+/// The index is shared by every node, so a single malformed entry (a gateway
+/// added without its `public_key`, say) would otherwise make every peer ignore
+/// the update. The strict whole-document parse is tried first; the per-entry
+/// fallback runs only for a document that is valid TOML with a `gateways`
+/// array. A document-level failure (not TOML, or no `gateways` array) is still
+/// an error, never swallowed into an empty list. (A
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        self.build_with_gateways_index(FREENET_GATEWAYS_INDEX).await
-    async fn build_with_gateways_index(mut self, gateways_index: &str) -> anyhow::Result<Config> {
+use anyhow::Context;
+            load_gateways_from_index(gateways_index, &config_paths.secrets_dir)
+                .await
+                .inspect_err(|error| {
+                })
+                .unwrap_or_default()
+async fn load_gateways_from_index(url: &str, pub_keys_dir: &Path) -> anyhow::Result<Gateways> {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0186d63c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be138254` are properly handled with clean fallback behavior.

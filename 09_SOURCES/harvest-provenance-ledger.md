@@ -8474,3 +8474,6 @@ Every entry in this ledger must capture:
 | `learn-github-pointfreeco-sqlite-data` | `https://github.com/pointfreeco/sqlite-data` | `38b64aa6` | Multi-dimensional audit evidence | 2026-11-09T01:46:42.191Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `0d7daaab` | Multi-dimensional audit evidence | 2026-11-09T01:46:48.034Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0d01dff9` | Multi-dimensional audit evidence | 2026-11-09T01:46:49.282Z |
+| `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-09T01:53:11.348Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `a2fda9d5` | Multi-dimensional audit evidence | 2026-11-09T01:53:15.859Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `be138254` | Multi-dimensional audit evidence | 2026-11-09T01:53:24.407Z |
