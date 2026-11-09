@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T08:16:28.070Z",
-  "total_cycles_completed": 8515,
-  "total_learnings_persisted": 8515,
-  "total_rules_promoted": 8319,
+  "last_updated": "2026-11-09T08:51:39.835Z",
+  "total_cycles_completed": 8518,
+  "total_learnings_persisted": 8518,
+  "total_rules_promoted": 8325,
   "history": [
-    {
-      "timestamp": "2026-11-08T18:11:20.815Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T18:11:28.065Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T18:18:43.023Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T18:18:57.948Z",
       "repository": "trinodb/trino",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-09T08:16:28.070Z",
       "repository": "expo/expo",
       "learningId": "learn-github-expo-expo",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T08:39:39.726Z",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T08:43:55.006Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T08:51:39.835Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

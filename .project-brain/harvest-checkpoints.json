@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T08:16:28.074Z",
+  "last_updated": "2026-11-09T08:51:39.839Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "6009dc64c6cea9fb0a3637397f3a96ee6eb392ad3f9b15b2d49af1170f68c049",
-      "verified_at": "2026-11-06T13:42:07.801Z",
+      "content_hash": "0b8a3436d540af7ef6eca724634e0976e93d05c54c2ab21278a3f632b4cfa6c5",
+      "verified_at": "2026-11-09T08:39:39.729Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:42:07.801Z"
+      "last_updated": "2026-11-09T08:39:39.729Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "b53c219c69895b740f8c0c7dea7d6c4370cf7ad81a42623294715c048aecc3e8",
-      "verified_at": "2026-11-08T22:59:40.789Z",
+      "content_hash": "15c351be2c01789d3462662b30551656554d5a9c06792e85f3301893321a5008",
+      "verified_at": "2026-11-09T08:43:55.009Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:59:40.789Z"
+      "last_updated": "2026-11-09T08:43:55.009Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -17166,14 +17166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-      "content_hash": "4a5bb7b1a9c3ae31771c09883a21728a0ec243aa70c94f382835e66aef989577",
-      "verified_at": "2026-11-05T12:58:21.136Z",
+      "content_hash": "11cc36fba094f6717479a39f6da9f46c5b0d169a074b6ec0e0c3640179746797",
+      "verified_at": "2026-11-09T08:51:39.838Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:58:21.136Z"
+      "last_updated": "2026-11-09T08:51:39.838Z"
     },
     "meta/folly": {
       "repository": "meta/folly",

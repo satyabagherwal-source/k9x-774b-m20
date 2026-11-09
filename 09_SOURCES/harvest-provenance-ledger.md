@@ -8559,3 +8559,6 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `dab1739d` | Multi-dimensional audit evidence | 2026-11-09T07:55:25.955Z |
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-09T08:07:23.867Z |
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `52915f0d` | Multi-dimensional audit evidence | 2026-11-09T08:16:28.055Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `002eb155` | Multi-dimensional audit evidence | 2026-11-09T08:39:39.721Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `a50d9dbb` | Multi-dimensional audit evidence | 2026-11-09T08:43:55.001Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-09T08:51:39.821Z |

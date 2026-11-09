@@ -8550,3 +8550,6 @@
 | `CYCLE-20261109-UYRK` | `2026-11-09T07:55:25.952Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f926dad0...`) |
 | `CYCLE-20261109-ACPK` | `2026-11-09T08:07:23.864Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`25508992...`) |
 | `CYCLE-20261109-M0LW` | `2026-11-09T08:16:28.052Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`8e333507...`) |
+| `CYCLE-20261109-FUF9` | `2026-11-09T08:39:39.717Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`0b8a3436...`) |
+| `CYCLE-20261109-LBED` | `2026-11-09T08:43:54.997Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`15c351be...`) |
+| `CYCLE-20261109-VA21` | `2026-11-09T08:51:39.817Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 458, Rule null` | Yes (`11cc36fb...`) |

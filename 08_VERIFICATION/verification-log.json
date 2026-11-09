@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-288Z",
-    "timestamp": "2026-11-07T19:09:35.171Z",
-    "repository": "open-ani/animeko",
-    "learningId": "learn-github-open-ani-animeko",
-    "contentHash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-BI5S",
-    "timestamp": "2026-11-07T19:16:47.920Z",
-    "repository": "Viggle/Viggle-Remake",
-    "learningId": "learn-huggingface-viggle-viggle-remake",
-    "contentHash": "f9fc6692b7eee36093d4edcb72ec185becd2742042e879d83929fbc8c0f74c35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-BIRE",
-    "timestamp": "2026-11-07T19:16:48.698Z",
-    "repository": "emberstack/kubernetes-reflector",
-    "learningId": "learn-github-emberstack-kubernetes-reflector",
-    "contentHash": "23a637a9f5070f1bb347ef12b421e58c1678b12b10e1bca09c823da988698852",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-K5QT",
     "timestamp": "2026-11-07T19:23:31.733Z",
     "repository": "alchaincyf/nuwa-skill",
@@ -7490,6 +7445,51 @@
     "repository": "expo/expo",
     "learningId": "learn-github-expo-expo",
     "contentHash": "8e333507852436d72901cc9e07fb02d3587a8bbce2d81b10f267a606aeecc4df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-FUF9",
+    "timestamp": "2026-11-09T08:39:39.717Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "0b8a3436d540af7ef6eca724634e0976e93d05c54c2ab21278a3f632b4cfa6c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-LBED",
+    "timestamp": "2026-11-09T08:43:54.997Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "15c351be2c01789d3462662b30551656554d5a9c06792e85f3301893321a5008",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-VA21",
+    "timestamp": "2026-11-09T08:51:39.817Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+    "contentHash": "11cc36fba094f6717479a39f6da9f46c5b0d169a074b6ec0e0c3640179746797",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

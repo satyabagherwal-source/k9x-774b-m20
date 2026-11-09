@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T08:16:30.663Z",
-    "lastVerified": "2026-11-09T08:16:30.663Z",
+    "lastChecked": "2026-11-09T08:51:42.430Z",
+    "lastVerified": "2026-11-09T08:51:42.430Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T07:32:04.038Z",
+    "lastChecked": "2026-11-09T08:38:00.126Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T07:32:04.038Z"
+    "lastVerified": "2026-11-09T08:38:00.126Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -781,13 +781,13 @@
     "officialUrl": "https://github.com/dkhamsing/open-source-ios-apps",
     "sourceType": "github",
     "technology": "Multi-language",
-    "lastChecked": "2026-11-06T13:41:49.986Z",
-    "lastVerified": "2026-11-06T13:41:49.986Z",
+    "lastChecked": "2026-11-09T08:37:54.745Z",
+    "lastVerified": "2026-11-09T08:37:54.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "6009dc64c6cea9fb0a3637397f3a96ee6eb392ad3f9b15b2d49af1170f68c049",
-    "promotedRulesCount": 3,
+    "contentHash": "0b8a3436d540af7ef6eca724634e0976e93d05c54c2ab21278a3f632b4cfa6c5",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -1098,8 +1098,8 @@
     "officialUrl": "https://github.com/Kong/kubernetes-ingress-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T14:48:56.820Z",
-    "lastVerified": "2026-11-08T14:48:56.820Z",
+    "lastChecked": "2026-11-09T08:37:52.896Z",
+    "lastVerified": "2026-11-09T08:37:52.896Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kong-kubernetes-ingress-controller",
@@ -2000,22 +2000,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T03:21:40.843Z",
-    "lastVerified": "2026-11-09T03:21:40.843Z",
+    "lastChecked": "2026-11-09T08:38:01.284Z",
+    "lastVerified": "2026-11-09T08:38:01.284Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "b53c219c69895b740f8c0c7dea7d6c4370cf7ad81a42623294715c048aecc3e8",
+    "contentHash": "15c351be2c01789d3462662b30551656554d5a9c06792e85f3301893321a5008",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e97cfe9b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j",
@@ -4071,9 +4070,9 @@
   "fujiapple852-trippy": {
     "name": "trippy",
     "officialUrl": "https://github.com/fujiapple852/trippy",
-    "lastChecked": "2026-11-08T05:47:58.231Z",
+    "lastChecked": "2026-11-09T08:37:45.232Z",
     "revisionIdentifier": "54c8f399",
-    "lastVerified": "2026-11-08T05:47:58.231Z"
+    "lastVerified": "2026-11-09T08:37:45.232Z"
   },
   "hf-qwen-qwen3-0.6b": {
     "name": "Qwen/Qwen3-0.6B",
@@ -4242,9 +4241,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-08T13:06:16.120Z",
+    "lastChecked": "2026-11-09T08:37:57.766Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-08T13:06:16.120Z"
+    "lastVerified": "2026-11-09T08:37:57.766Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -8405,13 +8404,13 @@
     "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T12:58:20.120Z",
-    "lastVerified": "2026-11-05T12:58:20.120Z",
+    "lastChecked": "2026-11-09T08:37:47.835Z",
+    "lastVerified": "2026-11-09T08:37:47.835Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-    "contentHash": "4a5bb7b1a9c3ae31771c09883a21728a0ec243aa70c94f382835e66aef989577",
-    "promotedRulesCount": 0,
+    "contentHash": "11cc36fba094f6717479a39f6da9f46c5b0d169a074b6ec0e0c3640179746797",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

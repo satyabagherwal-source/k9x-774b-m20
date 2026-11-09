@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T08:16:27.776Z",
+  "last_updated": "2026-11-09T08:51:39.727Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7609,8 +7609,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "e97cfe9b",
-      "content_hash": "b53c219c69895b740f8c0c7dea7d6c4370cf7ad81a42623294715c048aecc3e8",
+      "source_version": "a50d9dbb",
+      "content_hash": "15c351be2c01789d3462662b30551656554d5a9c06792e85f3301893321a5008",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7642,6 +7642,11 @@
         {
           "number": null,
           "title": "network driver: program RX queue flow steering",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "gateway-api: scope GAMMA ingestion to the reconciled service",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7890,7 +7895,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:59:40.679Z",
+      "verified_at": "2026-11-09T08:43:54.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11245,8 +11250,8 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "d9f7beef",
-      "content_hash": "6009dc64c6cea9fb0a3637397f3a96ee6eb392ad3f9b15b2d49af1170f68c049",
+      "source_version": "002eb155",
+      "content_hash": "0b8a3436d540af7ef6eca724634e0976e93d05c54c2ab21278a3f632b4cfa6c5",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
@@ -11263,6 +11268,16 @@
         {
           "number": null,
           "title": "**Rule #3 – “Generated Markdown Must Contain a Machine‑Readable Anchor Block for Every Entry”**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Single Source of Truth (SSOT) Static Artifact Generation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Normalized Array Serialization & Whitespace Preservation",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -11336,7 +11351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:42:07.671Z",
+      "verified_at": "2026-11-09T08:39:39.498Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84186,15 +84201,15 @@
       "learning_id": "rule-458",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 458,
-      "title": "Multi-Token Prediction (MTP) Speculative Rollback Contract (Harvested from orcarouter/OrcaSAQ-2-27B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Multi-Token Prediction (MTP) Speculative Rollback Contract",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.811Z"
+      "verified_at": "2026-11-09T08:51:39.696Z"
     },
     "rule-459": {
       "learning_id": "rule-459",
@@ -159300,10 +159315,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
-      "content_hash": "4a5bb7b1a9c3ae31771c09883a21728a0ec243aa70c94f382835e66aef989577",
+      "content_hash": "11cc36fba094f6717479a39f6da9f46c5b0d169a074b6ec0e0c3640179746797",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "High-Throughput MoE Hardware-Software Co-Design Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Acoustic-Sequence Packed Attention Mask Isolation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 458,
+          "title": "Multi-Token Prediction (MTP) Speculative Rollback Contract",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 6349,
           "title": "Audio-to-LLM Temporal Decimation and Alignment Invariant",
@@ -159325,7 +159355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:58:21.024Z",
+      "verified_at": "2026-11-09T08:51:39.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

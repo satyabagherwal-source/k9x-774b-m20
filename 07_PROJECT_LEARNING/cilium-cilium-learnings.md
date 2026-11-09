@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `e97cfe9b`  
+> **Source Version**: `a50d9dbb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T22:59:39.248Z  
+> **Timestamp**: 2026-11-09T08:43:53.342Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T22:59:39.242Z  
+> **Harvest Timestamp**: 2026-11-09T08:38:01.284Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25799 stars
+- **Stars / Engagement**: 25801 stars
 
 ---
 
@@ -1280,514 +1280,430 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e97cfe9b` (2026-10-04)
-**Commit Message**: network driver: program RX queue flow steering
+### Incident Patch 1: `a50d9dbb` (2026-08-25)
+**Commit Message**: gateway-api: scope GAMMA ingestion to the reconciled service
 
-Install exact destination IP, port, and protocol rules that direct a
-Pod's traffic to the physical queue reserved for its allocation, for
-IPv4 and IPv6 TCP and UDP.
+The GAMMA reconciler runs once per Service and selects Routes naming
+that Service as a parent. Ingestion then walked every Service ParentRef
+on those Routes, so a Route parented by several Services contributed
+listeners for all of them to whichever Service was being reconciled,
+putting another Service's configuration in its CiliumEnvoyConfig.
 
-Treat the NIC as the source of truth for rule ownership. Reserved RX
-queues are managed by the RX queue manager and excluded from RSS. The
-manager reads the NIC’s steering rules and manages any rule that sends
-traffic to a reserved queue, regardless of what the rule matches. It
-removes stale rules or rules created by something else, so it does not
-need to save rule locations. Rules that send traffic elsewhere, such as
-to a virtual function, are left alone.
+Pass the reconciled Service as GammaInput.SourceService and skip parents
+that do not match it. A nil SourceService keeps the previous behavior,
+so existing conformance fixtures are unaffected.
 
-Drivers are not required to choose rule locations themselves, and many
-do not. Let the driver choose only when it reports that it can, and
-otherwise place new rules at the lowest unused locations within the rule
-table.
+Signed-off-by: Martin Lindberg <[REDACTED_EMAIL]>
 
-Make the queue reservation the single owner of a queue's rules.
-Programming the rules, reserving the queue, and releasing it all happen
-under the reservation lock. An update only applies while the queue is
-still reserved by its allocation, so a delayed update for an allocation
-that has been freed cannot
-
-**File**: `pkg/networkdriver/rxqueue/flow.go` (added, +247/-0)
+**File**: `operator/pkg/gateway-api/gamma_reconcile.go` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,247 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// Copyright Authors of Cilium
-+
-+package rxqueue
-+
-+import (
-+	"errors"
-+	"fmt"
-+	"net"
-+	"net/netip"
-+	"reflect"
-+	"slices"
-+
-+	"github.com/vishvananda/netlink"
-+	"golang.org/x/sys/unix"
-+	corev1 "k8s.io/api/core/v1"
-+	kube_types "k8s.io/apimachinery/pkg/types"
-+
-+	"github.com/cilium/cilium/pkg/networkdriver/types"
-+)
-+
-+var (
-+	netlinkNetDevRxFlowInsert = netlink.NetDevRxFlowInsert
-+	netlinkNetDevRxFlowDelete = netlink.NetDevRxFlowDelete
-+	netlinkNetDevRxFlowList   = netlink.NetDevRxFlowList
-+	netlinkNetDevRxFlowGet    = netlink.NetDevRxFlowGet
-+
-+	netlinkNetDevRxFlowActionGet = netlink.NetDevRxFlowActionGet
-+
-+	netlinkNetDevRxFlowTableGet = netlink.NetDevRxFlowTableGet
-+)
-+
-+// SyncRXFlows makes flows the only flow steering rules that direct traffic to
-+// queueID, provided that reserved queue still belongs to shareID, and does
-+// nothing otherwise. Rules are programmed while holding the reservation lock,
-+// so an update for an allocation that has been freed cannot reach a queue that
-+// was reserved again in the meantime.
-+func (d *RXQueueDevice) SyncRXFlows(shareID kube_types.UID, queueID uint32, flows []types.RXQueueFlow) error {
-+	if d.reservations == nil {
-+		return fmt.Errorf("%w: RX queue reservation state is unavailable", errInvalidAllocation)
-+	}
-+	d.reservations.mu.Lock()
-+	defer d.reservations.mu.Unlock()
-+	owner, reserved := d.reservations.owners[queueID]
-+	if !reserved || shareID == "" || owner != shareID {
-+		return nil
-+	}
-+	return syncRXFlows(d.PhysicalIfName, queueID, flows)
-+}
-+
-+// syncRXFlows makes flows the only flow steering rules on ifName that direct
-+// traffic to queueID. The queue is reserved for one allocation, so any other
-+// rule that targets it is removed. Callers hold the reservation lock.
-+func syncRXFlows(ifName string, queueID uint32, flows []types.RXQueueFlow) error {
-+	desired := make(map[types.RXQueueFlow]struct{}, len(flows))
-+	for _, flow := range flows {
-+		flow.DestinationIP = flow.DestinationIP.Unmap()
-+		if _, err := rxFlowMatch(flow); err != nil {
-+			return err
-+		}
-+		desired[flow] = struct{}{}
-+	}
-+	present, err := removeRXFlows(ifName, queueID, desired)
-+	if err != nil {
-+		return err
-+	}
-+
-+	var missing []types.RXQueueFlow
-+	for flow := range desired {
-+		if _, found := present[flow]; !found {
-+			missing = append(missing, flow)
-+		}
-+	}
-+	if len(missing) == 0 {
-+		return nil
-+	}
-+	locations, err := newRXFlowLocations(ifName, len(missing))
-+	if err != nil {
-+		return err
-+	}
-+
-+	var errs []error
-+	for i, flow := range missing {
-+		errs = append(errs, insertRXFlow(ifName, queueID, flow, locations[i]))
-+	}
-+	return errors.Join(errs...)
-+}
-+
-+// newRXFlowLocations returns n locations for new rules on ifName. Drivers are
-+// not required to choose rule locations themselves. Those that do report it,
-+// and get RX_CLS_LOC_ANY; for the others, the lowest unused locations within
-+// the rule table are used.
-+func newRXFlowLocations(ifName string, n int) ([]uint32, error) {
-+	table, err := netlinkNetDevRxFlowTableGet(ifName)
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to read the RX flow rule table of %s: %w", ifName, err)
-+	}
-+	locations := make([]uint32, 0, n)
-+	if table.SpecialLocations {
-+		for range n {
-+			locations = append(locations, netlink.RX_CLS_LOC_ANY)
-+		}
-+		return locations, nil
-+	}
-+
-+	used, err := netlinkNetDevRxFlowList(ifName)
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to list RX flow rules on %s: %w", ifName, err)
-+	}
-+	for location := uint32(0); len(locations) < n; location++ {
-+		if table.Size != 0 && location >= table.Size {
-+			return nil, fmt.Errorf("RX flow rule table of %s is full", ifName)
-+		}
-+		if !slices.Contains(used, location) {
-+			locations = append(locations, location)
-+		}
-+	}
-+	return locations, nil
-+}
-+
-+// removeRXFlows deletes every rule on ifName that delivers traffic directly to
-+// queueID unless it is a desired flow, whatever the rule matches on, and
-+// returns the desired flows that remain.
-+func removeRXFlows(ifName string, queueID uint32, desired map[types.RXQueueFlow]struct{}) (map[types.RXQueueFlow]struct{}, error) {
-+	locations, err := netlinkNetDevRxFlowList(ifName)
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to list RX flow rules on %s: %w", ifName, err)
-+	}
-+
-+	present := make(map[types.RXQueueFlow]struct{})
-+	var errs []error
-+	for _, location := range locations {
-+		action, err := netlinkNetDevRxFlowActionGet(ifName, location)
-+		switch {
-+		case errors.Is(err, unix.ENOENT):
-+			continue
-+		case err != nil:
-+			errs = append(errs, fmt.Errorf("failed to read RX flow rule %s/%d: %w", ifName, location, err))
-+			continue
-+		case !deliversToQueue(action, queueID):
-+			continue
-+		}
-+
-+		// Keep the rule only if it is exactly a desired flow. A rule that
-+		// NetDevRxFlow cannot represent was not installed by the driver.
-+		rule, err := netlinkNetDevRxFlowGet(ifName, location)
-+		switch {
-+		case errors.Is(err, unix.ENOENT)
-```
-
-**File**: `pkg/networkdriver/rxqueue/flow_test.go` (added, +174/-0)
-```diff
-@@ -0,0 +1,174 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// Copyright Authors of Cilium
-+
-+package rxqueue
-+
-+import (
-+	"maps"
-+	"net"
-+	"net/netip"
-+	"slices"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+	"github.com/vishvananda/netlink"
-+	corev1 "k8s.io/api/core/v1"
-+	kube_types "k8s.io/apimachinery/pkg/types"
-+
-+	"github.com/cilium/cilium/pkg/networkdriver/types"
-+)
-+
-+func testFlow(addr string, port uint16, protocol corev1.Protocol) types.RXQueueFlow {
-+	return types.RXQueueFlow{
-+		DestinationIP:   netip.MustParseAddr(addr),
-+		DestinationPort: port,
-+		Protocol:        protocol,
-+	}
-+}
-+
-+func (f *fakeNetlink) steeredFlows(queueID uint32) []types.RXQueueFlow {
-+	var flows []types.RXQueueFlow
-+	for _, location := range slices.Sorted(maps.Keys(f.flows)) {
-+		rule := f.flows[location]
-+		if flow, ok := rxFlowFromMatch(rule.Match); ok && rule.Action.Queue == queueID {
-+			flows = append(flows, flow)
-+		}
-+	}
-+	return flows
-+}
-+
-+func TestSyncRXFlows(t *testing.T) {
-+	fake := newFakeNetlink(8, 8)
-+	fake.install(t)
-+	tcp4 := testFlow("192.0.2.10", 9000, corev1.ProtocolTCP)
-+	udp6 := testFlow("2001:db8::10", 9000, corev1.ProtocolUDP)
-+
-+	// Rules that deliver elsewhere, including to queue 7 of a virtual
-+	// function, belong to someone else and must survive.
-+	foreign := netlink.NetDevRxFlow{Match: netlink.EtherFlow{}, Action: netlink.NetDevRxFlowAction{Queue: 3}, Location: 1}
-+	fake.flows[1] = foreign
-+	fake.flows[4] = netlink.NetDevRxFlow{Match: netlink.EtherFlow{}, Action: netlink.NetDevRxFlowAction{Queue: 7}, Location: 4}
-+	fake.flowActions[4] = netlink.NetDevRxFlowAction{VF: 1, Queue: 7}
-+	// A rule that targets the reserved queue is removed even if this package
-+	// cannot represent what it matches, such as a VLAN-qualified rule.
-+	fake.flows[2] = netlink.NetDevRxFlow{Action: netlink.NetDevRxFlowAction{Queue: 7}, Location: 2}
-+	fake.flowGetErrors[2] = netlink.ErrNotImplemented
-+
-+	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{tcp4, udp6}))
-+	require.ElementsMatch(t, []types.RXQueueFlow{tcp4, udp6}, fake.steeredFlows(7))
-+	require.Equal(t, 2, fake.flowInserts)
-+	require.NotContains(t, fake.flows, uint32(2))
-+
-+	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{udp6, tcp4}))
-+	require.Equal(t, 2, fake.flowInserts, "existing rules are adopted")
-+
-+	// A changed selector replaces the stale rule, and so does any other rule
-+	// that directs traffic to the reserved queue.
-+	fake.flows[3] = netlink.NetDevRxFlow{Match: netlink.EtherFlow{}, Action: netlink.NetDevRxFlowAction{Queue: 7}, Location: 3}
-+	tcp4Moved := testFlow("192.0.2.10", 9001, corev1.ProtocolTCP)
-+	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{tcp4Moved, udp6}))
-+	require.ElementsMatch(t, []types.RXQueueFlow{tcp4Moved, udp6}, fake.steeredFlows(7))
-+	require.NotContains(t, fake.flows, uint32(3))
-+
-+	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, nil))
-+	require.Empty(t, fake.steeredFlows(7))
-+	require.Equal(t, foreign, fake.flows[1])
-+	require.Contains(t, fake.flows, uint32(4))
-+
-+	require.ErrorIs(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{
-+		testFlow("192.0.2.10", 0, corev1.ProtocolTCP),
-+	}), errInvalidAllocation)
-+}
-+
-+func TestRXFlowFromMatchRequiresExactShape(t *testing.T) {
-+	flow := testFlow("2001:db8::10", 443, corev1.ProtocolTCP)
-+	match, err := rxFlowMatch(flow)
-+	require.NoError(t, err)
-+	got, ok := rxFlowFromMatch(match)
-+	require.True(t, ok)
-+	require.Equal(t, flow, got)
-+
-+	widened := match.(netlink.TCP6Flow)
-+	widened.DstIPMask = net.IP(net.CIDRMask(64, 128))
-+	_, ok = rxFlowFromMatch(widened)
-+	require.False(t, ok)
-+}
-+
-+// TestSyncRXFlowsRequiresQueueOwner replays an update that was delayed until
-+// its allocation had been freed and the queue reserved for another share.
-+func TestSyncRXFlowsRequiresQueueOwner(t *testing.T) {
-+	fake := newFakeNetlink(8, 8)
-+	fake.install(t)
-+	advertised := testDevice(8)
-+	first, second := testShareID, kube_types.UID("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
-+	firstFlow := testFlow("192.0.2.10", 9000, corev1.ProtocolTCP)
-+	secondFlow := testFlow("192.0.2.11", 9000, corev1.ProtocolTCP)
-+
-+	// A rule left on the queue, for example when cilium-agent stopped before
-+	// it could free an allocation, is removed when the queue is reserved.
-+	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{secondFlow}))
-+	device, err := advertised.Setup(testAllocation(first))
-+	require.NoError(t, err)
-+	prepared := device.(*RXQueueDevice)
-+	require.Equal(t, uint32(7), prepared.PhysicalQueueID)
-+	require.Empty(t, fake.steeredFlows(7))
-+
-+	require.NoError(t, advertised.SyncRXFlows(first, 7, []types.RXQueueFlow{firstFlow}))
-+	require.Equal(t, []types.RXQueueFlow{firstFlow}, fake.steeredFlows(7))
-+
-+	// Freeing the allocation removes its rules before releasing the queue.
-+	require.NoError(t, prepared.Free(testAllocation(first)))
-+	require.Empty(t, fake.flows)
-+	device, err = advertised.Set
-```
-
-**File**: `pkg/networkdriver/rxqueue/reservation.go` (modified, +17/-4)
-```diff
-@@ -74,6 +74,11 @@ func (d *RXQueueDevice) reserve(allocation types.DeviceAllocation, candidates []
- 		if queue.Lease != nil {
- 			continue
- 		}
-+		// Clear any steering rules targeting this queue before allocating it.
-+		// Old rules may remain if cilium-agent stopped before completing cleanup.
-+		if err := syncRXFlows(d.PhysicalIfName, queueID, nil); err != nil {
-+			return nil, fmt.Errorf("failed to clear RX flow rules for %s/%d: %w", d.PhysicalIfName, queueID, err)
-+		}
+@@ -119,11 +119,11 @@ func (r *gammaReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
+ 	httpRoutes := r.filterHTTPRoutesByService(originalSvc, httpRouteList.Items)
+ 	grpcRoutes := r.filterGRPCRoutesByService(originalSvc, grpcRouteList.Items)
  
- 		d.reservations.owners[queueID] = allocation.ShareID
- 		return d.preparedForAllocation(allocation.ShareID, podIfName, queueID), nil
-@@ -105,15 +110,23 @@ func (d *RXQueueDevice) restoreReservation() error {
- 	return nil
- }
+-	// TODO(youngnick): GammaHTTPRoutes needs to be updated now that we have a source Service.
+ 	httpListeners := ingestion.GammaHTTPRoutes(r.logger, ingestion.GammaInput{
+-		HTTPRoutes: httpRoutes,
+-		GRPCRoutes: grpcRoutes,
+-		Services:   servicesList.Items,
++		HTTPRoutes:    httpRoutes,
++		GRPCRoutes:    grpcRoutes,
++		Services:      servicesList.Items,
++		SourceService: originalSvc,
  
--func (d *RXQueueDevice) releaseReservation() {
-+// releaseReservation removes the rules that target the queue and returns it to
-+// the reserved pool. Both happen under the reservation lock, so no flow update
-+// can program the queue in between.
-+func (d *RXQueueDevice) releaseReservation() error {
- 	if d.reservations == nil {
--		return
-+		return nil
- 	}
- 	d.reservations.mu.Lock()
- 	defer d.reservations.mu.Unlock()
--	if d.reservations.owners[d.PhysicalQueueID] == d.ShareID {
--		delete(d.reservations.owners, d.PhysicalQueueID)
-+	if d.reservations.owners[d.PhysicalQueueID] != d.ShareID {
-+		return nil
- 	}
-+	if err := syncRXFlows(d.PhysicalIfName, d.PhysicalQueueID, nil); err != nil {
-+		return fmt.Errorf("failed to remove RX flow rules for %s/%d: %w", d.PhysicalIfName, d.PhysicalQueueID, err)
-+	}
-+	delete(d.reservations.owners, d.PhysicalQueueID)
-+	return nil
- }
- 
- func (d *RXQueueDevice) preparedForAllocation(shareID kube_types.UID, podIfName string, physicalQueueID uint32) *RXQueueDevice {
-```
-
-**File**: `pkg/networkdriver/rxqueue/rxqueue.go` (modified, +1/-2)
-```diff
-@@ -581,8 +581,7 @@ func (d *RXQueueDevice) Free(allocation types.DeviceAllocation) error {
- 		return fmt.Errorf("%w: %s/%d", errActiveLease, d.PhysicalIfName, d.PhysicalQueueID)
- 	}
- 
--	d.releaseReservation()
--	return nil
-+	return d.releaseReservation()
- }
- 
- func (d *RXQueueDevice) Match(filter v2alpha1.CiliumNetworkDriverDeviceFilter) bool {
-```
-
-**File**: `pkg/networkdriver/rxqueue/rxqueue_test.go` (modified, +97/-2)
-```diff
-@@ -6,6 +6,7 @@ package rxqueue
- import (
- 	"context"
- 	"errors"
-+	"maps"
- 	"net"
- 	"slices"
- 	"testing"
-@@ -53,6 +54,15 @@ type fakeNetlink struct {
- 	ringsSetError  error
- 	ignoreRSSSet   bool
- 	ignoreRingsSet bool
-+	flows          map[uint32]netlink.NetDevRxFlow
-+	flowGetErrors  map[uint32]error
-+	// flowActions overrides the queue action derived from a rule.
-+	flowActions   map[uint32]netlink.NetDevRxFlowAction
-+	flowInserts   int
-+	flowDeletes   int
-+	flowTableSize uint32
-+	// flowSpecialLocations reports driver-chosen rule locations as supported.
-+	flowSpecialLocations bool
- }
- 
- func newFakeNetlink(maxRXQueues, realRXQueues int, _ ...kube_types.UID) *fakeNetlink {
-@@ -73,8 +83,14 @@ func newFakeNetlink(maxRXQueues, realRXQueues int, _ ...kube_types.UID) *fakeNet
- 		links: map[string]netlink.Link{
- 			testPhysicalIfName: physical,
- 		},
--		leases:       make(map[uint32]*netlink.NetDevQueueLease),
--		realRXQueues: realRXQueues,
-+		leases:        make(map[uint32]*netlink.NetDevQueueLease),
-+		flows:         make(map[uint32]netlink.NetDevRxFlow),
-+		flowGetErrors: make(map[uint32]error),
-+		flowActions:   make(map[uint32]netlink.NetDevRxFlowAction),
-+		flowTableSize: 1024,
-+		// Like bnxt, the fake driver chooses rule locations itself.
-+		flowSpecialLocations: true,
-+		realRXQueues:         realRXQueues,
- 		rss: netlink.NetDevRSS{
- 			HashFunction:        netlink.NetDevRSSHashFunctionToeplitz,
- 			IndirectionTable:    indirectionTable,
-@@ -101,7 +117,19 @@ func (f *fakeNetlink) install(t *testing.T) {
- 	originalRSSSet := netlinkNetDevRSSSet
- 	originalRingsGet := netlinkNetDevRingsGet
- 	originalRingsSet := netlinkNetDevRingsSet
-+	originalFlowInsert := netlinkNetDevRxFlowInsert
-+	originalFlowDelete := netlinkNetDevRxFlowDelete
-+	originalFlowList := netlinkNetDevRxFlowList
-+	originalFlowGet := netlinkNetDevRxFlowGet
-+	originalFlowTableGet := netlinkNetDevRxFlowTableGet
-+	originalFlowActionGet := netlinkNetDevRxFlowActionGet
- 	t.Cleanup(func() {
-+		netlinkNetDevRxFlowInsert = originalFlowInsert
-+		netlinkNetDevRxFlowDelete = originalFlowDelete
-+		netlinkNetDevRxFlowList = originalFlowList
-+		netlinkNetDevRxFlowGet = originalFlowGet
-+		netlinkNetDevRxFlowTableGet = originalFlowTableGet
-+		netlinkNetDevRxFlowActionGet = originalFlowActionGet
- 		netlinkLinkByName = originalLinkByName
- 		netlinkNetDevQueueGet = originalQueueGet
- 		netlinkNetDevRSSGet = originalRSSGet
-@@ -110,6 +138,7 @@ func (f *fakeNetlink) install(t *testing.T) {
- 		netlinkNetDevRingsSet = originalRingsSet
+ 		ReferenceGrants: grants.Items,
  	})
- 
-+	f.installFlows()
- 	netlinkLinkByName = func(name string) (netlink.Link, error) {
- 		link, exists := f.links[name]
- 		if !exists {
-@@ -178,6 +207,72 @@ func (f *fakeNetlink) install(t *testing.T) {
- 	}
- }
- 
-+// installFlows replaces the ethtool RX flow steering calls with an in-memory
-+// rule table. Locations returned for RX_CLS_LOC_ANY start at 100.
-+func (f *fakeNetlink) installFlows() {
-+	netlinkNetDevRxFlowInsert = func(ifName string, flow netlink.NetDevRxFlow) (uint32, error) {
-+		if ifName != testPhysicalIfName {
-+			return 0, unix.ENODEV
-+		}
-+		f.flowInserts++
-+		if flow.Location == netlink.RX_CLS_LOC_ANY && !f.flowSpecialLocations {
-+			return 0, unix.EINVAL
-+		}
-+		if flow.Location == netlink.RX_CLS_LOC_ANY {
-+			flow.Location = 100
-+			for f.flows[flow.Location].Match != nil {
-+				flow.Location++
-+			}
-+		}
-+		f.flows[flow.Location] = flow
-+		return flow.Location, nil
-+	}
-+	netlinkNetDevRxFlowDelete = func(ifName string, location uint32) error {
-+		if _, found := f.flows[location]; !found {
-+			return unix.ENOENT
-+		}
-+		f.flowDeletes++
-+		delete(f.flows, location)
-+		return nil
-+	}
-+	netlinkNetDevRxFlowList = func(ifName string) ([]uint32, error) {
-+		if ifName != testPhysicalIfName {
-+			return nil, unix.ENODEV
-+		}
-+		return slices.Sorted(maps.Keys(f.flows)), nil
-+	}
-+	netlinkNetDevRxFlowTableGet = func(ifName string) (*netlink.NetDevRxFlowTable, error) {
-+		if ifName != testPhysicalIfName {
-+			return nil, unix.ENODEV
-+		}
-+		return &netlink.NetDevRxFlowTable{
-+			Rules:            uint32(len(f.flows)),
-+			Size:             f.flowTableSize,
-+			SpecialLocations: f.flowSpecialLocations,
-+		}, nil
-+	}
-+	netlinkNetDevRxFlowActionGet = func(ifName string, location uint32) (*netlink.NetDevRxFlowAction, error) {
-+		flow, found := f.flows[location]
-+		if !found {
-+			return nil, unix.ENOENT
-+		}
-+		if action, overridden := f.flowActions[location]; overridden {
-+			return &action, nil
-+		}
-+		return &flow.Action, nil
-+	}
-+	netlinkNetDevRxFlowGet = func(ifName string, location uint32) (*netlink.NetDevRxFlow, error) {
-+		if err := f.flowGetErrors[location]; err != nil {
-+			return nil, err
-+		}
-+		flow, found := f.flows[location]
-+		if !found {
-+			return nil, unix.ENOENT
-+		}
-+		return &flow, nil
-+	}
-+}
-+
- func testDevice(total int) *RXQueueDevice {
- 	return testDeviceWithCount(total, defaultReservedRXQueues)
- }
+```
+
+**File**: `operator/pkg/gateway-api/gamma_reconcile_test.go` (modified, +1/-0)
+```diff
+@@ -88,6 +88,7 @@ func Test_gammaReconciler_Reconcile(t *testing.T) {
+ 		{name: "mesh-frontend", serviceKey: []types.NamespacedName{serviceKeyEchoV2}},
+ 		{name: "mesh-matching", serviceKey: []types.NamespacedName{serviceKeyEcho}},
+ 		{name: "mesh-ports", serviceKey: []types.NamespacedName{serviceKeyEchoV1, serviceKeyEchoV2}},
++		{name: "mesh-multi-parent", serviceKey: []types.NamespacedName{serviceKeyEchoV1, serviceKeyEchoV2}},
+ 		{name: "mesh-query-param-matching", serviceKey: []types.NamespacedName{serviceKeyEcho}},
+ 		{name: "mesh-redirect-host-and-status", serviceKey: []types.NamespacedName{serviceKeyEcho}},
+ 		{name: "mesh-redirect-path", serviceKey: []types.NamespacedName{serviceKeyEcho}},
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/input/grpcroute-mesh-multi-parent-grpc.yaml` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++# The GRPCRoute is parented by both echo-v2 and the shared echo Service.
++# Reconciling echo-v2 must only program the echo-v2 parent.
++apiVersion: gateway.networking.k8s.io/v1
++kind: GRPCRoute
++metadata:
++  name: mesh-multi-parent-grpc
++  namespace: gateway-conformance-mesh
++spec:
++  parentRefs:
++    - group: ""
++      kind: Service
++      name: echo-v2
++      port: 7070
++    - group: ""
++      kind: Service
++      name: echo
++      port: 7070
++  rules:
++    - backendRefs:
++        - name: echo-v2
++          port: 7070
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/input/httproute-mesh-multi-parent.yaml` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++# The HTTPRoute is parented by both echo-v1 and the shared echo Service.
++# Reconciling echo-v1 must only program the echo-v1 parent.
++apiVersion: gateway.networking.k8s.io/v1
++kind: HTTPRoute
++metadata:
++  name: mesh-multi-parent
++  namespace: gateway-conformance-mesh
++spec:
++  parentRefs:
++    - group: ""
++      kind: Service
++      name: echo-v1
++      port: 80
++    - group: ""
++      kind: Service
++      name: echo
++      port: 80
++  rules:
++    - filters:
++        - type: ResponseHeaderModifier
++          responseHeaderModifier:
++            set:
++              - name: X-Header-Set
++                value: v1
++      backendRefs:
++        - name: echo-v1
++          port: 80
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/output/cec-echo-v1.yaml` (added, +112/-0)
+```diff
+@@ -0,0 +1,112 @@
++metadata:
++  creationTimestamp: null
++  annotations:
++    cec.cilium.io/use-original-source-address: "true"
++  labels:
++    gateway.networking.k8s.io/gateway-name: mesh-multi-parent
++  name: echo-v1
++  namespace: gateway-conformance-mesh
++  ownerReferences:
++    - apiVersion: gateway.networking.k8s.io/v1
++      controller: true
++      kind: HTTPRoute
++      name: mesh-multi-parent
++      uid: ""
++  resourceVersion: "1"
++spec:
++  backendServices:
++    - name: echo-v1
++      namespace: gateway-conformance-mesh
++      number:
++        - "80"
++  resources:
++    - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
++      filterChains:
++        - filterChainMatch:
++            transportProtocol: raw_buffer
++          filters:
++            - name: envoy.filters.network.http_connection_manager
++              typedConfig:
++                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
++                commonHttpProtocolOptions:
++                  maxStreamDuration: 0s
++                httpFilters:
++                  - name: envoy.filters.http.grpc_web
++                    typedConfig:
++                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
++                  - name: envoy.filters.http.grpc_stats
++                    typedConfig:
++                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_stats.v3.FilterConfig
++                      emitFilterState: true
++                      enableUpstreamStats: true
++                  - name: envoy.filters.http.router
++                    typedConfig:
++                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
++                internalAddressConfig: {}
++                rds:
++                  routeConfigName: listener-insecure
++                statPrefix: listener-insecure
++                streamIdleTimeout: 300s
++                upgradeConfigs:
++                  - upgradeType: websocket
++                useRemoteAddress: true
++      listenerFilters:
++        - name: envoy.filters.listener.tls_inspector
++          typedConfig:
++            "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
++      name: listener
++      socketOptions:
++        - description: Enable TCP keep-alive (default to enabled)
++          intValue: "1"
++          level: "1"
++          name: "9"
++        - description: TCP keep-alive idle time (in seconds) (defaults to 10s)
++          intValue: "10"
++          level: "6"
++          name: "4"
++        - description: TCP keep-alive probe intervals (in seconds) (defaults to 5s)
++          intValue: "5"
++          level: "6"
++          name: "5"
++        - description: TCP keep-alive probe max failures.
++          intValue: "10"
++          level: "6"
++          name: "6"
++    - "@type": type.googleapis.com/envoy.config.route.v3.RouteConfiguration
++      name: listener-insecure
++      virtualHosts:
++        - domains:
++            - "*"
++          name: "*"
++          routes:
++            - match:
++                prefix: /
++              responseHeadersToAdd:
++                - appendAction: OVERWRITE_IF_EXISTS_OR_ADD
++                  header:
++                    key: X-Header-Set
++                    value: v1
++              route:
++                cluster: gateway-conformance-mesh:echo-v1:80
++                maxStreamDuration:
++                  maxStreamDuration: 0s
++    - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
++      edsClusterConfig:
++        serviceName: gateway-conformance-mesh/echo-v1:80
++      name: gateway-conformance-mesh:echo-v1:80
++      outlierDetection:
++        splitExternalLocalOriginErrors: true
++      type: EDS
++      typedExtensionProtocolOptions:
++        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
++          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
++          commonHttpProtocolOptions:
++            idleTimeout: 60s
++          useDownstreamProtocolConfig:
++            http2ProtocolOptions: {}
++  services:
++    - listener: ""
++      name: echo-v1
++      namespace: gateway-conformance-mesh
++      ports:
++        - 80
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/output/cec-echo-v2.yaml` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++metadata:
++  creationTimestamp: null
++  annotations:
++    cec.cilium.io/use-original-source-address: "true"
++  labels:
++    gateway.networking.k8s.io/gateway-name: mesh-multi-parent-grpc
++  name: echo-v2
++  namespace: gateway-conformance-mesh
++  ownerReferences:
++    - apiVersion: gateway.networking.k8s.io/v1
++      controller: true
++      kind: GRPCRoute
++      name: mesh-multi-parent-grpc
++      uid: ""
++  resourceVersion: "1"
++spec:
++  backendServices:
++    - name: echo-v2
++      namespace: gateway-conformance-mesh
++      number:
++        - "7070"
++  resources:
++    - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
++      filterChains:
++        - filterChainMatch:
++            transportProtocol: raw_buffer
++          filters:
++            - name: envoy.filters.network.http_connection_manager
++              typedConfig:
++                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
++                commonHttpProtocolOptions:
++                  maxStreamDuration: 0s
++                httpFilters:
++                  - name: envoy.filters.http.grpc_web
++                    typedConfig:
++                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
++                  - name: envoy.filters.http.grpc_stats
++                    typedConfig:
++                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_stats.v3.FilterConfig
++                      emitFilterState: true
++                      enableUpstreamStats: true
++                  - name: envoy.filters.http.router
++                    typedConfig:
++                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
++                internalAddressConfig: {}
++                rds:
++                  routeConfigName: listener-insecure
++                statPrefix: listener-insecure
++                streamIdleTimeout: 300s
++                upgradeConfigs:
++                  - upgradeType: websocket
++                useRemoteAddress: true
++      listenerFilters:
++        - name: envoy.filters.listener.tls_inspector
++          typedConfig:
++            "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
++      name: listener
++      socketOptions:
++        - description: Enable TCP keep-alive (default to enabled)
++          intValue: "1"
++          level: "1"
++          name: "9"
++        - description: TCP keep-alive idle time (in seconds) (defaults to 10s)
++          intValue: "10"
++          level: "6"
++          name: "4"
++        - description: TCP keep-alive probe intervals (in seconds) (defaults to 5s)
++          intValue: "5"
++          level: "6"
++          name: "5"
++        - description: TCP keep-alive probe max failures.
++          intValue: "10"
++          level: "6"
++          name: "6"
++    - "@type": type.googleapis.com/envoy.config.route.v3.RouteConfiguration
++      name: listener-insecure
++      virtualHosts:
++        - domains:
++            - "*"
++          name: "*"
++          routes:
++            - match:
++                prefix: /
++              route:
++                cluster: gateway-conformance-mesh:echo-v2:7070
++                maxStreamDuration:
++                  maxStreamDuration: 0s
++    - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
++      edsClusterConfig:
++        serviceName: gateway-conformance-mesh/echo-v2:7070
++      name: gateway-conformance-mesh:echo-v2:7070
++      outlierDetection:
++        splitExternalLocalOriginErrors: true
++      type: EDS
++      typedExtensionProtocolOptions:
++        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
++          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
++          commonHttpProtocolOptions:
++            idleTimeout: 60s
++          useDownstreamProtocolConfig:
++            http2ProtocolOptions: {}
++  services:
++    - listener: ""
++      name: echo-v2
++      namespace: gateway-conformance-mesh
++      ports:
++        - 7070
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/output/grpcroute-mesh-multi-parent-grpc.yaml` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++apiVersion: gateway.networking.k8s.io/v1
++kind: GRPCRoute
++metadata:
++  name: mesh-multi-parent-grpc
++  namespace: gateway-conformance-mesh
++spec:
++  parentRefs:
++    - group: ""
++      kind: Service
++      name: echo-v2
++      port: 7070
++    - group: ""
++      kind: Service
++      name: echo
++      port: 7070
++  rules:
++    - backendRefs:
++        - name: echo-v2
++          port: 7070
++status:
++  parents:
++    - conditions:
++        - lastTransitionTime: "2025-06-19T03:21:44Z"
++          message: Accepted GRPCRoute
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: "2025-06-19T03:21:44Z"
++          message: Service reference is valid
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++      controllerName: io.cilium/gateway-controller
++      parentRef:
++        group: ""
++        kind: Service
++        name: echo-v2
++        port: 7070
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/output/httproute-mesh-multi-parent.yaml` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++apiVersion: gateway.networking.k8s.io/v1
++kind: HTTPRoute
++metadata:
++  name: mesh-multi-parent
++  namespace: gateway-conformance-mesh
++spec:
++  parentRefs:
++    - group: ""
++      kind: Service
++      name: echo-v1
++      port: 80
++    - group: ""
++      kind: Service
++      name: echo
++      port: 80
++  rules:
++    - backendRefs:
++        - name: echo-v1
++          port: 80
++      filters:
++        - responseHeaderModifier:
++            set:
++              - name: X-Header-Set
++                value: v1
++          type: ResponseHeaderModifier
++status:
++  parents:
++    - conditions:
++        - lastTransitionTime: "2025-06-19T03:21:44Z"
++          message: Accepted HTTPRoute
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: "2025-06-19T03:21:44Z"
++          message: Service reference is valid
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++      controllerName: io.cilium/gateway-controller
++      parentRef:
++        group: ""
++        kind: Service
++        name: echo-v1
++        port: 80
 ```
 
 #### Recent Merged Pull Requests:
@@ -1816,67 +1732,34 @@ that has been freed cannot
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. network driver: program RX queue flow steering
+## X. gateway-api: scope GAMMA ingestion to the reconciled service
 
 **RULE**:
-When implementing operations in `pkg/networkdriver/rxqueue/flow.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `operator/pkg/gateway-api/gamma_reconcile.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e97cfe9b`: network driver: program RX queue flow steering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a50d9dbb`: gateway-api: scope GAMMA ingestion to the reconciled service. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/networkdriver/rxqueue/flow.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `operator/pkg/gateway-api/gamma_reconcile.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// SPDX-License-Identifier: Apache-2.0
-// Copyright Authors of Cilium
-
-package rxqueue
-
-import (
-	"errors"
-	"fmt"
-	"net"
-	"net/netip"
-	"reflect"
-	"slices"
-
-	"github.com/vishvananda/netlink"
-	"golang.org/x/sys/unix"
-	corev1 "k8s.io/api/core/v1"
-	kube_types "k8s.io/apimachinery/pkg/types"
-
-	"github.com/cilium/cilium/pkg/networkdriver/types"
-)
-
-var (
-	netlinkNetDevRxFlowInsert = netlink.NetDevRxFlowInsert
-	netlinkNetDevRxFlowDelete = netlink.NetDevRxFlowDelete
-	netlinkNetDevRxFlowList   = netlink.NetDevRxFlowList
-	netlinkNetDevRxFlowGet    = netlink.NetDevRxFlowGet
-
-	netlinkNetDevRxFlowActionGet = netlink.NetDevRxFlowActionGet
-
-	netlinkNetDevRxFlowTableGet = netlink.NetDevRxFlowTableGet
-)
-
-// SyncRXFlows makes flows the only flow steering rules that direct traffic to
-// queueID, provided that reserved queue still belongs to shareID, and does
-// nothing otherwise. Rules are programmed while holding the reservation lock,
-// so an update for an allocation that has been freed cannot reach a queue that
-// was reserved again in the meantime.
-func (d *RXQueueDevice) SyncRXFlows(shareID kube_types.UID, queueID uint32, flows []types.RXQueueFlow) error {
-	if d.reservations == nil {
-		return fmt
+		HTTPRoutes:    httpRoutes,
+		GRPCRoutes:    grpcRoutes,
+		Services:      servicesList.Items,
+		SourceService: originalSvc,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	// TODO(youngnick): GammaHTTPRoutes needs to be updated now that we have a source Service.
+		HTTPRoutes: httpRoutes,
+		GRPCRoutes: grpcRoutes,
+		Services:   servicesList.Items,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e97cfe9b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a50d9dbb` are properly handled with clean fallback behavior.
