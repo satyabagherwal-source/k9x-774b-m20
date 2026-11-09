@@ -8693,3 +8693,8 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `16f3ce5c` | Multi-dimensional audit evidence | 2026-11-09T23:07:30.086Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `429abfaf` | Multi-dimensional audit evidence | 2026-11-09T23:07:33.430Z |
 | `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T23:10:18.937Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `7a9b20cd` | Multi-dimensional audit evidence | 2026-11-09T23:17:46.566Z |
+| `learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-09T23:17:47.183Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `296fac67` | Multi-dimensional audit evidence | 2026-11-09T23:17:49.681Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `7c445c0c` | Multi-dimensional audit evidence | 2026-11-09T23:17:52.990Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `b7e625df` | Multi-dimensional audit evidence | 2026-11-09T23:17:55.262Z |

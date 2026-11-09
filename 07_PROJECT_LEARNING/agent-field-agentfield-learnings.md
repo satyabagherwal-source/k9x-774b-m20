@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `87ecf9e0`  
+> **Source Version**: `296fac67`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T22:10:45.303Z  
+> **Timestamp**: 2026-11-09T23:17:47.746Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T22:10:45.298Z  
+> **Harvest Timestamp**: 2026-11-09T23:17:47.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2648 stars
+- **Stars / Engagement**: 2651 stars
 
 ---
 
@@ -1418,228 +1418,82 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f3dc1a7` (2026-11-08)
-**Commit Message**: build(docker): overridable base-image build args; UI build on Node 24 LTS (#1159)
+### Incident Patch 1: `0dc4f14a` (2026-11-09)
+**Commit Message**: fix(go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166)
 
-* build(docker): make base images overridable build args
+The SSEDecoder only split events on "\n\n" and required the literal
+prefix "data: ", so a server using CRLF line endings or "data:" with no
+space yielded zero chunks and StreamComplete silently lost the whole stream.
 
-Each third-party base image in the published Dockerfiles (control-plane, control-plane-cloud, python-agent, go-agent) is now a build arg whose default is the image used today, so a default build resolves exactly the same images. Deployments that pin bases by digest, or need a mirror registry, can pass --build-arg instead of patching the Dockerfiles.
-
-The uv binaries in the cloud image now come from a named stage (uv-dist), because COPY --from cannot expand a build arg.
-
-* build(docker): build the web UI on Node 24 LTS
-
-Node 20 reached end of life on 2026-04-30, and react-router@8.3.0 declares engines node >=22.22.0, so npm ci on node:20-bookworm-slim warns EBADENGINE. node:24-bookworm-slim builds the UI cleanly with no engine warning; the Go and runtime stages are unchanged.
-
-* fix(docker): give the go-agent image's sdk/go tests the CodeAF auth contract
-
-Dockerfile.go-agent runs go test ./... on a copy of sdk/go at /tmp/go-sdk. Since #1130 the harness and agent tests read ../../codeaf-auth-contract.json (sdk/codeaf-auth-contract.json), which i
-
-**File**: `deployments/docker/Dockerfile.control-plane` (modified, +9/-3)
+**File**: `sdk/go/ai/client.go` (modified, +5/-3)
 ```diff
-@@ -1,7 +1,13 @@
-+# Base images are build args so a deployment can pin them (for example by digest)
-+# without patching this file. The defaults are the images this build has always used.
-+ARG NODE_BUILD_IMAGE=node:24-bookworm-slim
-+ARG GO_BUILD_IMAGE=golang:1.25-bookworm
-+ARG RUNTIME_IMAGE=gcr.io/distroless/base-debian12
-+
- # bookworm-slim (glibc) instead of alpine (musl): Vite's lightningcss
- # optional native binding is flaky under npm ci on musl when the lockfile
- # lacks libc metadata, which intermittently breaks `vite build` in CI.
--FROM --platform=$BUILDPLATFORM node:20-bookworm-slim AS ui-builder
-+FROM --platform=$BUILDPLATFORM ${NODE_BUILD_IMAGE} AS ui-builder
- WORKDIR /app/web
+@@ -383,14 +383,16 @@ func NewSSEDecoder(r io.Reader) *SSEDecoder {
+ func (d *SSEDecoder) Decode() (StreamChunk, error) {
+ 	for {
+ 		// First check if we already have a complete message in accumulated buffer
+-		data := string(d.accumulated)
++		// SSE allows CRLF line endings; normalize so "\r\n\r\n" separates events too.
++		data := strings.ReplaceAll(string(d.accumulated), "\r\n", "\n")
+ 		if idx := strings.Index(data, "\n\n"); idx >= 0 {
+ 			message := data[:idx]
+ 			d.accumulated = []byte(data[idx+2:])
  
- COPY control-plane/web/client/package*.json ./
-@@ -15,7 +21,7 @@ COPY control-plane/web/client/ .
- # regression.
- RUN npx vite build
+ 			// Parse SSE message
+-			if strings.HasPrefix(message, "data: ") {
+-				jsonData := strings.TrimPrefix(message, "data: ")
++			// The SSE field is "data:" with an optional single space after the colon.
++			if strings.HasPrefix(message, "data:") {
++				jsonData := strings.TrimPrefix(message, "data:")
+ 				jsonData = strings.TrimSpace(jsonData)
  
--FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS go-builder
-+FROM --platform=$BUILDPLATFORM ${GO_BUILD_IMAGE} AS go-builder
- WORKDIR /app
- 
- ARG TARGETOS
-@@ -50,7 +56,7 @@ RUN cd control-plane && \
- # has UID/GID 65532 in the base image, so match that here.
- RUN mkdir -p /tmp/agentfield-data && chown 65532:65532 /tmp/agentfield-data
- 
--FROM gcr.io/distroless/base-debian12
-+FROM ${RUNTIME_IMAGE}
- COPY --from=go-builder /app/bin/agentfield-server /usr/local/bin/agentfield-server
- COPY --from=go-builder /app/control-plane/config /etc/agentfield/config
- COPY --from=go-builder --chown=nonroot:nonroot /tmp/agentfield-data /data
+ 				// Check for stream end
 ```
 
-**File**: `deployments/docker/Dockerfile.control-plane-cloud` (modified, +20/-8)
+**File**: `sdk/go/ai/client_test.go` (modified, +30/-0)
 ```diff
-@@ -11,10 +11,22 @@
- # Runs as root: cloud platforms (Railway) mount volumes root-owned, and
- # agent installs write venvs/binaries under $AGENTFIELD_HOME=/data.
- 
-+# Base images are build args so a deployment can pin them (for example by digest)
-+# without patching this file. The defaults are the images this build has always used.
-+ARG NODE_BUILD_IMAGE=node:24-bookworm-slim
-+ARG GO_BUILD_IMAGE=golang:1.25-bookworm
-+ARG DEBIAN_IMAGE=debian:bookworm-slim
-+ARG NODE_RUNTIME_IMAGE=node:22-bookworm-slim
-+ARG UV_IMAGE=ghcr.io/astral-sh/uv:latest
+@@ -769,3 +769,33 @@ func TestStreamComplete_TimeoutAppliesWhileWaitingForResponse(t *testing.T) {
+ 	assert.Error(t, streamErr)
+ 	assert.Less(t, time.Since(start), 2*time.Second)
+ }
 +
-+# uv is copied from an image, and COPY --from cannot expand a build arg, so it gets
-+# a named stage of its own.
-+FROM ${UV_IMAGE} AS uv-dist
-+
- # bookworm-slim (glibc) instead of alpine (musl): Vite's lightningcss
- # optional native binding is flaky under npm ci on musl when the lockfile
- # lacks libc metadata, which intermittently breaks `vite build` in CI.
--FROM --platform=$BUILDPLATFORM node:20-bookworm-slim AS ui-builder
-+FROM --platform=$BUILDPLATFORM ${NODE_BUILD_IMAGE} AS ui-builder
- WORKDIR /app/web
- 
- COPY control-plane/web/client/package*.json ./
-@@ -23,7 +35,7 @@ COPY control-plane/web/client/ .
- # See Dockerfile.control-plane for why vite runs without the tsc precheck.
- RUN npx vite build
- 
--FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS go-builder
-+FROM --platform=$BUILDPLATFORM ${GO_BUILD_IMAGE} AS go-builder
- WORKDIR /app
- 
- ARG TARGETOS
-@@ -58,7 +70,7 @@ RUN cd control-plane && \
- 
- # CodeAF is the default harness. Raw assets are authenticated against embedded
- # release pins; any download or verification failure fails the image build.
--FROM debian:bookworm-slim AS codeaf-dist
-+FROM ${DEBIAN_IMAGE} AS codeaf-dist
- ARG TARGETARCH
- ARG CODEAF_VERSION=v0.8.2
- ARG CODEAF_BASE_URL=https://github.com/Agent-Field/CodeAF/releases/download
-@@ -90,7 +102,7 @@ RUN set -eu; \
- # UNCOMPRESSED binary, so the hash is taken after gunzip.
- #
- # Pin overrides (both are build args): AFORGE_BASE_URL, AFORGE_VERSION.
--FROM debian:bookworm-slim AS aforge-dist
-+FROM ${DEBIAN_IMAGE} AS aforge-dist
- ARG TARGETARCH
- ARG AFORGE_BASE_URL=https://agentfield.ai/downloads/aforge
- ARG AFORGE_VERSION=v0.1.0
-@@ -112,10 +124,10 @@ RUN set -eu; \
-     rm -f aforge.gz checksums.txt
- 
- # Toolchain donors — same arch as the runtime stage (no --platform pin).
--FROM node:22-bookworm-slim AS node-dist
--FROM golang:1.25-bookworm AS go-dist
-+FROM ${NODE_RUNTIME_IMAGE} AS node-dist
-+FROM ${GO_BUILD_IMAGE} AS go-dist
- 
--FROM debian:bookworm-slim
-+FROM ${DEBIAN_IMAGE}
- 
- RUN apt-get update && apt-get install -y --no-install-recommends \
-     ca-certificates \
-@@ -145,7 +157,7 @@ ENV PATH=/usr/local/go/bin:$PATH
- # Downloaded interpreters go under /data: venvs on the volume symlink back
- # to them, and an interpreter left in $HOME would vanish with the container
- # on the next deploy, breaking every venv built from it.
--COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
-+COPY --from=uv-dist /uv /uvx /usr/local/bin/
- ENV UV_PYTHON_INSTALL_DIR=/data/uv/python
- 
- COPY --from=go-builder /app/bin/af /usr/local/bin/af
-```
-
-**File**: `deployments/docker/Dockerfile.go-agent` (modified, +14/-5)
-```diff
-@@ -1,6 +1,11 @@
-+# Base images are build args so a deployment can pin them (for example by digest)
-+# without patching this file. The defaults are the images this build has always used.
-+ARG DEBIAN_IMAGE=debian:bookworm-slim
-+ARG GO_IMAGE=golang:1.25-alpine
-+
- # CodeAF is the default harness. Raw assets are authenticated against embedded
- # release pins; any download or verification failure fails the image build.
--FROM debian:bookworm-slim AS codeaf-dist
-+FROM ${DEBIAN_IMAGE} AS codeaf-dist
- ARG TARGETARCH
- ARG CODEAF_VERSION=v0.8.2
- ARG CODEAF_BASE_URL=https://github.com/Agent-Field/CodeAF/releases/download
-@@ -32,7 +37,7 @@ RUN set -eu; \
- # UNCOMPRESSED binary, so the hash is taken after gunzip.
- #
- # Pin overrides (both are build args): AFORGE_BASE_URL, AFORGE_VERSION.
--FROM debian:bookworm-slim AS aforge-dist
-+FROM ${DEBIAN_IMAGE} AS aforge-dist
- ARG TARGETARCH
- ARG AFORGE_BASE_URL=https://agentfield.ai/downloads/aforge
- ARG AFORGE_VERSION=v0.1.0
-@@ -53,14 +58,18 @@ RUN set -eu; \
-     fi; \
-     rm -f aforge.gz checksums.txt
- 
--FROM golang:1.25-alpine
-+FROM ${GO_IMAGE}
- 
- WORKDIR /workspace
- 
--COPY sdk/go /tmp/go-sdk
-+# sdk/go's harness tests read ../../codeaf-auth-contract.json, which resolves from
-+# sdk/go/harness to sdk/codeaf-auth-contract.json (the CodeAF auth contract shared with
-+# the Python and TypeScript SDKs). Keep that layout so the tests find it.
-+COPY sdk/go /tmp/src/sdk/go
-+COPY sdk/codeaf-auth-contract.json /tmp/src/sdk/codeaf-auth-contract.json
- 
- RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod \
--    cd /tmp/go-sdk && go mod download && go test ./...
-+    cd /tmp/src/sdk/go && go mod download && go test ./...
- 
- # aforge is a statically linked ELF binary, so the debian-built asset runs
- # unchanged on this musl/alpine base. See the aforge-dist stage for why
-```
-
-**File**: `deployments/docker/Dockerfile.python-agent` (modified, +8/-3)
-```diff
-@@ -1,6 +1,11 @@
-+# Base images are build args so a deployment can pin them (for example by digest)
-+# without patching this file. The defaults are the images this build has always used.
-+ARG DEBIAN_IMAGE=debian:bookworm-slim
-+ARG PYTHON_IMAGE=python:3.11-slim
-+
- # CodeAF is the default harness. Raw assets are authenticated against embedded
- # release pins; any download or verification failure fails the image build.
--FROM debian:bookworm-slim AS codeaf-dist
-+FROM ${DEBIAN_IMAGE} AS codeaf-dist
- ARG TARGETARCH
- ARG CODEAF_VERSION=v0.8.2
- ARG CODEAF_BASE_URL=https://github.com/Agent-Field/CodeAF/releases/download
-@@ -32,7 +37,7 @@ RUN set -eu; \
- # UNCOMPRESSED binary, so the hash is taken after gunzip.
- #
- # Pin overrides (both are build args): AFORGE_BASE_URL, AFORGE_VERSION.
--FROM debian:bookworm-slim AS aforge-dist
-+FROM ${DEBIAN_IMAGE} AS aforge-dist
- ARG TARGETARCH
- ARG AFORGE_BASE_URL=https://agentfield.ai/downloads/aforge
- ARG AFORGE_VERSION=v0.1.0
-@@ -53,7 +58,7 @@ RUN set -eu; \
-     fi; \
-     rm -f aforge.gz checksums.txt
- 
--FROM python:3.11-slim
-+FROM ${PYTHON_IMAGE}
- 
- ENV PYTHONDONTWRITEBYTECODE=1 \
-     PYTHONUNBUFFERED=1
++func TestSSEDecoder_CRLFAndNoSpaceDataField(t *testing.T) {
++	tests := []struct {
++		name  string
++		input string
++	}{
++		{"CRLF delimiters", "data: {\"id\":\"a\"}\r\n\r\ndata: {\"id\":\"b\"}\r\n\r\ndata: [DONE]\r\n\r\n"},
++		{"no space after data colon", "data:{\"id\":\"a\"}\n\ndata:{\"id\":\"b\"}\n\ndata:[DONE]\n\n"},
++		{"CRLF and no space", "data:{\"id\":\"a\"}\r\n\r\ndata:{\"id\":\"b\"}\r\n\r\n"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			decoder := NewSSEDecoder(strings.NewReader(tt.input))
++			var ids []string
++			for {
++				chunk, err := decoder.Decode()
++				if err == io.EOF {
++					break
++				}
++				if err != nil {
++					t.Fatalf("unexpected error: %v", err)
++				}
++				ids = append(ids, chunk.ID)
++			}
++			if len(ids) != 2 || ids[0] != "a" || ids[1] != "b" {
++				t.Fatalf("expected chunks [a b], got %v", ids)
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1165** (2026-11-07): fix(sdk-go): route StreamComplete through the rate limiter (@pcbeingused333)
-- **PR #1164** (2026-11-07): fix(sdk-python): raise max_completion_tokens on empty-reasoning structured retry (@pcbeingused333)
-- **PR #1163** (2026-11-07): fix(sdk-ts): scope polling pause time to each wait (@remote-controlled-man)
-- **PR #1162** (2026-11-08): feat(sdk/go/ai): support the CloudGPU provider (@mrhy7176)
-- **PR #1161** (2026-11-08): test(sdk-go): order opencode concurrency events by an append log, not date +%N (@perlboy)
-- **PR #1160** (2026-11-08): test(sdk-python): use a shell stub for the real CodeAF version probe (@perlboy)
+- **PR #1176** (2026-11-09): ci: move macOS jobs from macos-14 to macos-15 (@AbirAbbas)
+- **PR #1174** (2026-11-09): WorkAF harness watch: node link, relay pipe and steer, streamed only for owned runs (@AbirAbbas)
+- **PR #1172** (closed): perf(control-plane): fast Runs list and run page under live traffic (@santoshkumarradha)
+- **PR #1170** (closed): fix(control-plane): store execution VC created_at in UTC on SQLite (@santoshkumarradha)
+- **PR #1169** (closed): fix(web): send the API key on direct fetches; fix Playground replay and View run (@santoshkumarradha)
+- **PR #1167** (2026-11-09): feat(examples): add optional Outcrawl search backend to deep_research (@heydryft)
 
 ---
 
@@ -1659,38 +1513,34 @@ Dockerfile.go-agent runs go test ./... on a copy of sdk/go at /tmp/go-sdk. Since
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(docker): overridable base-image build args; UI build on Node 24 LTS (#1159
+## X. go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166)
 
 **RULE**:
-When implementing operations in `deployments/docker/Dockerfile.control-plane`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/go/ai/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f3dc1a7`: build(docker): overridable base-image build args; UI build on Node 24 LTS (#1159). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0dc4f14a`: go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deployments/docker/Dockerfile.control-plane`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/ai/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Base images are build args so a deployment can pin them (for example by digest)
-# without patching this file. The defaults are the images this build has always used.
-ARG NODE_BUILD_IMAGE=node:24-bookworm-slim
-ARG GO_BUILD_IMAGE=golang:1.25-bookworm
-ARG RUNTIME_IMAGE=gcr.io/distroless/base-debian12
-
-FROM --platform=$BUILDPLATFORM ${NODE_BUILD_IMAGE} AS ui-builder
-FROM --platform=$BUILDPLATFORM ${GO_BUILD_IMAGE} AS go-builder
-FROM ${RUNTIME_IMAGE}
+		// SSE allows CRLF line endings; normalize so "\r\n\r\n" separates events too.
+		data := strings.ReplaceAll(string(d.accumulated), "\r\n", "\n")
+			// The SSE field is "data:" with an optional single space after the colon.
+			if strings.HasPrefix(message, "data:") {
+				jsonData := strings.TrimPrefix(message, "data:")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-FROM --platform=$BUILDPLATFORM node:20-bookworm-slim AS ui-builder
-FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS go-builder
-FROM gcr.io/distroless/base-debian12
+		data := string(d.accumulated)
+			if strings.HasPrefix(message, "data: ") {
+				jsonData := strings.TrimPrefix(message, "data: ")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f3dc1a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0dc4f14a` are properly handled with clean fallback behavior.

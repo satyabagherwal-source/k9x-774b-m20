@@ -8684,3 +8684,8 @@
 | `CYCLE-20261109-FW69` | `2026-11-09T23:07:30.081Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md` | Yes (`cc1d8508...`) |
 | `CYCLE-20261109-FYR6` | `2026-11-09T23:07:33.426Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0b117dd7...`) |
 | `CYCLE-20261109-JIGK` | `2026-11-09T23:10:18.932Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`02c31304...`) |
+| `CYCLE-20261109-T3UQ` | `2026-11-09T23:17:46.562Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md` | Yes (`5d432681...`) |
+| `CYCLE-20261109-T4BV` | `2026-11-09T23:17:47.179Z` | `ccore/Qwen3.5-4B-GLB-3D-Coder` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule null` | Yes (`503bc0f2...`) |
+| `CYCLE-20261109-T699` | `2026-11-09T23:17:49.677Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1289b8ba...`) |
+| `CYCLE-20261109-T8T6` | `2026-11-09T23:17:52.986Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0c18d800...`) |
+| `CYCLE-20261109-TAKA` | `2026-11-09T23:17:55.258Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`34313097...`) |

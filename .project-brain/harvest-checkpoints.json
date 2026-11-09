@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T23:10:18.949Z",
+  "last_updated": "2026-11-09T23:17:55.273Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "e29f2ba6c161266b5e8228270a17407a74d87cafbf9e1a3180c09491854dec16",
-      "verified_at": "2026-11-09T14:35:38.443Z",
+      "content_hash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
+      "verified_at": "2026-11-09T23:17:52.999Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T14:35:38.443Z"
+      "last_updated": "2026-11-09T23:17:52.999Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "655b5c202b32b3229b2bea26b118c8dda7924027ca1bf3b9ea9f1a73348c4729",
-      "verified_at": "2026-11-08T22:10:46.892Z",
+      "content_hash": "1289b8bafa0e5a8ff0d67dda0c9126eb751fda86b5910d56fdc0a5c7070d2f4d",
+      "verified_at": "2026-11-09T23:17:49.691Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:10:46.892Z"
+      "last_updated": "2026-11-09T23:17:49.691Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "1a308824e88c60fb2c6be0ce236e92127848feb3d847a390ccbe75424f5e0096",
-      "verified_at": "2026-11-09T04:10:28.565Z",
+      "content_hash": "5d4326814472d60debf7b25295bc11dc8001ff31ccc47adf15f14f665e242f6a",
+      "verified_at": "2026-11-09T23:17:46.581Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:10:28.565Z"
+      "last_updated": "2026-11-09T23:17:46.581Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "9d5cae168aaa2e2fd1c10e07cb9e494e50303e226e6a2a208c4a4ac938bd6437",
-      "verified_at": "2026-11-08T21:07:00.230Z",
+      "content_hash": "34313097b1a1a3583cbdf0dd571cd9f47efee32f0fb20f45d44e360943d16b6f",
+      "verified_at": "2026-11-09T23:17:55.272Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:07:00.230Z"
+      "last_updated": "2026-11-09T23:17:55.272Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -18081,14 +18081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-      "content_hash": "61eb1300a7b2202ba2be191703e35b421fdb08b1a99267106b2f8bb2a0f38932",
-      "verified_at": "2026-11-05T19:38:03.751Z",
+      "content_hash": "503bc0f225bee856d7b4413b941c3d86fd403442a553235c72e89e7dc59dc192",
+      "verified_at": "2026-11-09T23:17:47.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:38:03.751Z"
+      "last_updated": "2026-11-09T23:17:47.194Z"
     },
     "davila7/claude-code-templates": {
       "repository": "davila7/claude-code-templates",

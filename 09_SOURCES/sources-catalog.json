@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "92bfc001",
+    "sourceVersion": "7c445c0c",
     "license": "NOASSERTION",
-    "contentHash": "e29f2ba6c161266b5e8228270a17407a74d87cafbf9e1a3180c09491854dec16",
-    "lastHarvestedAt": "2026-11-09T14:35:38.423Z",
+    "contentHash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
+    "lastHarvestedAt": "2026-11-09T23:17:52.990Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "87ecf9e0",
+    "sourceVersion": "296fac67",
     "license": "Apache-2.0",
-    "contentHash": "655b5c202b32b3229b2bea26b118c8dda7924027ca1bf3b9ea9f1a73348c4729",
-    "lastHarvestedAt": "2026-11-08T22:10:46.884Z",
+    "contentHash": "1289b8bafa0e5a8ff0d67dda0c9126eb751fda86b5910d56fdc0a5c7070d2f4d",
+    "lastHarvestedAt": "2026-11-09T23:17:49.681Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "703f25d7",
+    "sourceVersion": "7a9b20cd",
     "license": "MIT",
-    "contentHash": "1f482b0d83f1e76495bc92a7955a21ec9d77fa0033875b4ca455daa70298fa7e",
-    "lastHarvestedAt": "2026-11-07T02:54:26.323Z",
+    "contentHash": "5d4326814472d60debf7b25295bc11dc8001ff31ccc47adf15f14f665e242f6a",
+    "lastHarvestedAt": "2026-11-09T23:17:46.566Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "4303c987",
+    "sourceVersion": "b7e625df",
     "license": "Apache-2.0",
-    "contentHash": "9d5cae168aaa2e2fd1c10e07cb9e494e50303e226e6a2a208c4a4ac938bd6437",
-    "lastHarvestedAt": "2026-11-08T21:07:00.215Z",
+    "contentHash": "34313097b1a1a3583cbdf0dd571cd9f47efee32f0fb20f45d44e360943d16b6f",
+    "lastHarvestedAt": "2026-11-09T23:17:55.262Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -12015,8 +12015,8 @@
     "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
     "sourceVersion": "hf-ccore-qwen3.5-4b-glb-3d-coder",
     "license": "Open-Source",
-    "contentHash": "61eb1300a7b2202ba2be191703e35b421fdb08b1a99267106b2f8bb2a0f38932",
-    "lastHarvestedAt": "2026-11-05T19:38:03.732Z",
+    "contentHash": "503bc0f225bee856d7b4413b941c3d86fd403442a553235c72e89e7dc59dc192",
+    "lastHarvestedAt": "2026-11-09T23:17:47.183Z",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder"
   },
   "davila7-claude-code-templates": {

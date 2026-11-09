@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ccore-qwe`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T19:38:01.922Z  
+> **Timestamp**: 2026-11-09T23:17:45.351Z  
 > **Learning ID**: `learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -15,244 +15,236 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): ccore/Qwen3.5‑4B‑GLB‑3D‑Coder
 
 ## 1. Executive Forensic Architecture & System Mechanics
-| Subsystem | Responsibility | Key Artifacts | Interaction |
-|-----------|----------------|---------------|-------------|
-| **Model Core** | Fine‑tuned Qwen3.5‑4B for 3D asset generation | `config.json`, `generation_config.json`, `tokenizer_config.json` | Loads via `transformers.AutoModelForCausalLM` |
-| **Tokenizer** | Handles multimodal tokens (`<|image_pad|>`, `<|vision_start|>`, etc.) | `tokenizer_config.json` | Provides `tokenizer.encode`/`decode` to the core |
-| **Generation Engine** | Produces Three.js code from prompt | `generation_config.json` | Calls `model.generate` with sampling parameters |
-| **Deployment Layer** | Hugging Face Hub hosting, GGUF weight conversion | README, weight files | Exposes `pipeline_tag: text‑generation` |
-| **Documentation & Showcase** | RIFTWARD demo, community demos | README, images, GIFs | Demonstrates end‑to‑end pipeline |
+The repository is a fine‑tuned **Qwen3.5‑4B** checkpoint that has been adapted to generate **Three.js** scenes from natural‑language prompts.  
+The model is a **conditional generation** architecture (`Qwen3_5ForConditionalGeneration`) that combines a **text encoder‑decoder** with a **vision transformer** to embed image, video, and audio modalities.  
 
-**Architectural Boundaries**
+| Subsystem | Key Files | Core Responsibility | Interaction |
+|-----------|-----------|----------------------|-------------|
+| **Tokenizer** | `tokenizer_config.json` | Maps raw text to token IDs, injects modality‑specific special tokens (`<|vision_start|>`, `<|image_pad|>`, etc.). | Provides input to the model; must preserve token‑id mapping across fine‑tuning. |
+| **Model** | `config.json` | Holds architecture parameters: 32 text layers, 24 vision layers, mixed‑precision (`float32` text, `bfloat16` vision), linear/full attention mix, MLP gating. | Receives tokenized input, produces logits for next‑token prediction. |
+| **Generation** | `generation_config.json` | Sampling hyper‑parameters (`do_sample`, `temperature`, `top_k`, `top_p`, `repetition_penalty`). | Drives the inference loop; must be tuned to avoid repetitive or incoherent code. |
+| **Data** | `README.md` + dataset link | Describes training data (3,918 validated GLB assets) and usage instructions. | Provides context for expected input length and modality usage. |
 
-1. **Model vs. Tokenizer** – The model is agnostic to token semantics; the tokenizer supplies multimodal token IDs.  
-2. **Text vs. Vision Config** – Separate `text_config` and `vision_config` blocks enforce distinct dtypes (`float32` vs. `bfloat16`) and attention patterns.  
-3. **Generation vs. Inference** – `generation_config.json` contains sampling hyper‑parameters; the core model is stateless and can be reused across multiple inference requests.  
+**Critical boundaries**
 
-**Critical Subsystem Abstractions**
+* **Text vs Vision** – The model expects a **single token stream** that may contain modality markers. The vision encoder processes image patches; the text decoder must correctly interpret the embedded vision tokens.
+* **Special‑token handling** – The tokenizer defines **no BOS token** (`bos_token_id: null`) but uses `<|im_start|>` and `<|im_end|>` for chat‑style prompts. The generation config must respect these tokens to avoid truncated or duplicated code.
+* **Precision** – Text layers use `float32`; vision layers use `bfloat16`. Mixing these without careful casting can lead to silent precision loss or overflow.
 
-- **`Qwen3_5ForConditionalGeneration`** – Exposes `forward` with `past_key_values` for caching.  
-- **`Qwen3_5Tokenizer`** – Implements `add_special_tokens` for multimodal markers.  
-- **`GenerationConfig`** – Encapsulates `do_sample`, `temperature`, `top_k`, `top_p`, etc.  
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. [Uniform Dtype Consistency Across Modalities]
+### 1. Special‑Token Consistency Rule
 **RULE**:  
-**MUST** enforce that the `dtype` specified in `text_config` and `vision_config` match the dtype of the underlying model weights and the runtime tensor precision.
+> **MUST** ensure that every special token used in the tokenizer has a corresponding unique, non‑conflicting token ID in the model configuration and that the generation pipeline respects the presence or absence of a BOS token.
 
 **WHY**:  
-Mismatched dtypes cause silent precision loss or runtime errors when the model attempts to cast tensors between `float32` and `bfloat16`. This can lead to degraded generation quality or out‑of‑memory crashes on GPU.
+Missing or duplicated special‑token IDs cause the model to mis‑align the input sequence, leading to truncated code, duplicated prompts, or generation of invalid syntax. The absence of a BOS token (`bos_token_id: null`) means the model will not prepend a start token; if the generation logic still expects one, it will produce incomplete outputs.
 
 **WHEN TO APPLY**:  
-During model initialization, weight loading, and any custom fine‑tuning pipeline that modifies `config.json`.
+* Text generation pipelines that use chat‑style prompts (`<|im_start|>`, `<|im_end|>`).  
+* Fine‑tuning or re‑tokenizing workflows that modify the special‑token list.  
+* Deployment scripts that load the tokenizer and model separately.
 
-**VERIFIED IMPLEMENTATION PATTERN**:
+**VERIFIED IMPLEMENTATION PATTERN**  
 ```python
-from transformers import AutoConfig, AutoModelForCausalLM
+# tokenizer_config.json
+{
+  "bos_token_id": null,
+  "eos_token_id": 248046,
+  "pad_token_id": 248044,
+  "extra_special_tokens": [
+    "<|im_start|>", "<|im_end|>",
+    "<|vision_start|>", "<|vision_end|>",
+    "<|image_pad|>", "<|video_pad|>", "<|audio_pad|>"
+  ]
+}
 
-config = AutoConfig.from_pretrained("ccore/Qwen3.5-4B-GLB-3D-Coder")
-assert config.text_config["dtype"] == config.vision_config["dtype"], \
-    "Text and vision dtypes must match the model's dtype"
+# model config
+{
+  "text_config": {
+    "bos_token_id": null,
+    "eos_token_id": 248046,
+    "pad_token_id": 248044,
+    "vocab_size": 248320
+  }
+}
 
-model = AutoModelForCausalLM.from_pretrained(
-    "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    torch_dtype=getattr(torch, config.text_config["dtype"])
-)
-```
+# generation pipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
-**NEGATIVE CONSTRAINT**:
-```python
-# BAD: Mixing dtypes without validation
-model = AutoModelForCausalLM.from_pretrained(
-    "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    torch_dtype=torch.float32  # hard‑coded, may not match vision_config
-)
-```
+tokenizer = AutoTokenizer.from_pretrained("ccore/Qwen3.5-4B-GLB-3D-Coder")
+model = AutoModelForCausalLM.from_pretrained("ccore/Qwen3.5-4B-GLB-3D-Coder")
 
-**VERIFICATION METHOD**:  
-Unit test that loads the config and asserts equality of `dtype` fields; linter rule that flags hard‑coded dtype strings.
-
----
-
-### 2. [Mandatory Cache Activation for Generation]
-**RULE**:  
-**MUST** set `use_cache=True` in both `config.json` and `generation_config.json` for all inference pipelines that rely on past key/value caching.
-
-**WHY**:  
-Disabling cache forces the model to recompute attention for every token, incurring exponential time growth and memory pressure. This is especially critical for long‑prompt 3D generation where token counts can exceed 10k.
-
-**WHEN TO APPLY**:  
-During any pipeline that calls `model.generate` with `max_new_tokens > 0`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-generation_config = GenerationConfig.from_pretrained(
-    "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    use_cache=True,
+prompt = "<|im_start|>User: Generate a Three.js scene for a floating island.<|im_end|>"
+input_ids = tokenizer(prompt, return_tensors="pt").input_ids
+generated_ids = model.generate(
+    input_ids,
     do_sample=True,
     temperature=0.8,
     top_k=40,
-    top_p=0.95
+    top_p=0.95,
+    repetition_penalty=1.0,
+    pad_token_id=tokenizer.pad_token_id
 )
+print(tokenizer.decode(generated_ids[0], skip_special_tokens=True))
 ```
 
-**NEGATIVE CONSTRAINT**:
+**NEGATIVE CONSTRAINT**  
 ```python
-# BAD: Cache disabled, leading to O(n^2) attention
-generation_config = GenerationConfig.from_pretrained(
-    "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    use_cache=False
-)
+# BAD: Hard‑coding a BOS token that does not exist in the tokenizer
+tokenizer.add_special_tokens({"bos_token": "<|bos|>"})  # <|bos|> not in vocab
 ```
 
-**VERIFICATION METHOD**:  
-Integration test that measures generation time for a 10k‑token prompt; assert that time does not exceed a threshold when `use_cache=True`.
+**VERIFICATION METHOD**  
+* **Unit test** – Verify that `tokenizer.convert_tokens_to_ids` returns the same ID for each special token defined in `config.json`.  
+* **Lint rule** – Enforce that `bos_token_id` in `config.json` matches `tokenizer.bos_token_id` (or is `null`).  
+* **Runtime assertion** – During inference, assert that `input_ids[0][0]` is not the BOS token ID if `bos_token_id` is `null`.
 
 ---
 
-### 3. [Explicit BOS/EOS Token Definition]
+### 2. Mixed‑Precision Consistency Rule
 **RULE**:  
-**MUST** define `bos_token_id` and `eos_token_id` in `text_config` and ensure they are present in the tokenizer’s special token mapping.
+> **MUST** keep the precision of all tensors that cross the text‑vision boundary consistent, and **MUST NOT** perform implicit casting that discards precision or introduces NaNs.
 
 **WHY**:  
-Missing BOS/EOS tokens break sequence boundaries, causing the model to generate incomplete or malformed Three.js code. It also hampers loss calculation during fine‑tuning.
+The text encoder/decoder operates in `float32`, while the vision encoder uses `bfloat16`. If the model concatenates or adds tensors of different dtypes without explicit casting, the lower‑precision tensor will be promoted to `float32`, potentially causing silent precision loss or, in extreme cases, overflow/underflow. This can corrupt the attention scores and lead to nonsensical code generation.
 
 **WHEN TO APPLY**:  
-During tokenizer creation and model configuration loading.
+* During model construction (e.g., `from_pretrained` loading).  
+* When adding custom layers that mix vision and text features.  
+* In inference pipelines that manually manipulate hidden states.
 
-**VERIFIED IMPLEMENTATION PATTERN**:
+**VERIFIED IMPLEMENTATION PATTERN**  
 ```python
-tokenizer = AutoTokenizer.from_pretrained(
-    "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    bos_token="<|im_start|>",
-    eos_token="<|im_end|>"
-)
-assert tokenizer.bos_token_id is not None, "bos_token_id must be set"
-assert tokenizer.eos_token_id is not None, "eos_token_id must be set"
+# In the model's forward method
+def forward(self, input_ids, vision_features=None):
+    # Text path
+    text_embeds = self.text_embed(input_ids)  # float32
+
+    # Vision path
+    if vision_features is not None:
+        vision_embeds = self.vision_embed(vision_features)  # bfloat16
+        # Explicit cast to float32 before concatenation
+        vision_embeds = vision_embeds.to(torch.float32)
+
+    # Concatenate
+    combined = torch.cat([text_embeds, vision_embeds], dim=1)
+    # Continue with float32 operations
+    logits = self.output_layer(combined)
+    return logits
 ```
 
-**NEGATIVE CONSTRAINT**:
+**NEGATIVE CONSTRAINT**  
 ```python
-# BAD: Relying on implicit None values
-tokenizer = AutoTokenizer.from_pretrained("ccore/Qwen3.5-4B-GLB-3D-Coder")
-# tokenizer.bos_token_id may be None, leading to generation errors
+# BAD: Implicit promotion without cast
+vision_embeds = self.vision_embed(vision_features)  # bfloat16
+combined = torch.cat([text_embeds, vision_embeds], dim=1)  # PyTorch promotes to float32 silently
 ```
 
-**VERIFICATION METHOD**:  
-Unit test that checks `tokenizer.bos_token_id` and `tokenizer.eos_token_id` are not `None`; lint rule that flags missing special token definitions.
+**VERIFICATION METHOD**  
+* **Static analysis** – Use `torch.autograd.detect_anomaly` to flag dtype mismatches.  
+* **Unit test** – Feed a dummy vision tensor and assert that the resulting hidden state dtype is `torch.float32`.  
+* **Runtime check** – After each concatenation, assert `combined.dtype == torch.float32`.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation |
-|----------|---------|-------------------|------------------------|----------|------------|-------------|
-| **None** | – | – | – | – | – | – |
-
-**Observation**: The repository contains no commit history, issue logs, or patch files. Consequently, no concrete incidents were identified. All analysis below is derived from static artifacts.
+No production commits, bug reports, or patches were found in the repository history.  
+The repository contains only the checkpoint files and a README; therefore, no real incidents can be documented.
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-### 1. Micro‑Syntax & Token‑Level Precision
-- **JSON Stringification Trap**: `config.json` and `generation_config.json` are stored as *escaped JSON strings* inside a JSON file. Parsing them requires a double `json.loads`.  
-  ```python
-  raw = open("config.json").read()
-  config = json.loads(json.loads(raw))  # two loads
-  ```
-  *Bug*: A single `json.loads` yields a string, not a dict, causing `KeyError` on access.
-
-- **Falsy Zero vs. Null**: In `tokenizer_config.json`, `pad_token_id` is set to `248044`. If a downstream component treats `0` as falsy, it may incorrectly skip padding.  
-  ```python
-  if tokenizer.pad_token_id:  # false if pad_token_id == 0
-      # skip padding logic
-  ```
-
-- **Operator Precedence**: In `generation_config.json`, `do_sample` is `true`. If a developer writes `do_sample = True or False`, Python will evaluate `True or False` as `True`, but in JavaScript `true || false` is also `true`. However, if combined with `&&`, precedence matters: `do_sample = true && false` yields `false`. Ensure parentheses when mixing logical ops.
-
-### 2. Infinite Loop & Recursion Guards
-- **Attention Layer Recursion**: The `layer_types` array alternates between `linear_attention` and `full_attention`. A mis‑indexed loop that iterates over `layer_types` without bounds can cause infinite recursion if `full_attention` calls itself. Guard with `if index < len(layer_types)`.
-
-- **Event Loop Starvation**: The model’s `generate` method may block the event loop if called synchronously in an async context. Wrap in `await` or use `asyncio.to_thread`.
-
-### 3. UI & UX Micro‑Mechanics
-- **Three.js Re‑render Thrashing**: The generated HTML includes a `<script>` that calls `renderer.render(scene, camera)` inside `requestAnimationFrame`. If the script also modifies the scene graph in the same frame, it can cause thrashing. Ensure updates happen before the next frame.
-
-- **DOM Event Retargeting**: The `Export GLB` button uses a `<button>` inside a Shadow DOM. Event listeners must use `composedPath()` to capture the click event; otherwise, the event may be blocked.
-
-### 4. Backend Concurrency & Memory Safety
-- **TOCTOU in Tokenization**: If the tokenizer reads a file for special tokens after the model has loaded, a race can occur. Use a lock or load tokens synchronously before model initialization.
-
-- **Connection Pool Starvation**: The Hugging Face Hub client may reuse HTTP connections. Ensure `max_connections` is set high enough for concurrent inference requests.
-
-### 5. Defect & Error Prevention (“Galti Pakadna”)
-- **Null/Undefined Chaining**: In JavaScript, accessing `tokenizer.special_tokens_map.bos_token` without checking for `tokenizer.special_tokens_map` can throw. Use optional chaining: `tokenizer.special_tokens_map?.bos_token`.
-
-- **Off‑by‑One in Token Count**: When slicing the generated token list, ensure `tokens[:max_new_tokens]` is used, not `tokens[1:max_new_tokens]`.
-
-- **Unhandled Promise Rejections**: The `generate` call returns a promise; always attach `.catch()` or use `try/await`.
+| Domain | Invariant | Example | Rationale |
+|--------|-----------|---------|-----------|
+| **Micro‑Syntax & Token‑Level Precision** | **Never rely on implicit truthiness of numeric token IDs.** | ```python if token_id: ...``` | `0` is a valid token ID; using it as a boolean will skip the token. |
+| | **Avoid variable shadowing in nested scopes.** | ```for token_id in token_ids: ...``` inside a function that also has a global `token_id`. | Shadowing can silently change the token ID used for decoding. |
+| | **Use explicit type coercion when mixing `int` and `float` token IDs.** | ```token_id = int(token_id)``` | Prevents accidental truncation of large IDs. |
+| **Infinite Loop & Recursion Guards** | **Always provide a base case for recursive generation helpers.** | ```def generate_code(depth): if depth > MAX_DEPTH: return ""``` | Prevents stack overflow when generating deeply nested code. |
+| | **Cap loop iterations for sampling.** | ```for _ in range(min(1000, remaining_tokens))``` | Avoids runaway token generation when `max_new_tokens` is mis‑configured. |
+| | **Detect circular references in object graphs before serialization.** | ```if obj in visited: raise ValueError("Circular reference")``` | Prevents `RecursionError` during JSON/GLB export. |
+| **UI & UX Micro‑Mechanics** | **Debounce rapid user input to avoid thrashing.** | ```setTimeout(() => generate(), 200)``` | Prevents multiple concurrent generation requests that overload the server. |
+| | **Avoid re‑render loops by checking state equality.** | ```if (prevCode !== newCode) setCode(newCode)``` | Stops React from re‑rendering on every keystroke. |
+| | **Use `pointer-events: none` on overlay elements that block interaction.** | ```<div style="pointer-events:none">...</div>``` | Prevents accidental click blocking. |
+| **Backend Concurrency & Memory Safety** | **Use connection pools with a maximum idle timeout.** | ```pool = createPool({max: 10, idleTimeoutMillis: 30000})``` | Avoids resource exhaustion. |
+| | **Clear event listeners after use.** | ```emitter.removeAllListeners('data')``` | Prevents memory leaks from lingering callbacks. |
+| | **Guard against TOCTOU in file writes.** | ```fs.openSync(path, 'wx')``` | Ensures exclusive creation, preventing race writes. |
+| **Defect & Error Prevention ("Galti Pakadna")** | **Always use optional chaining for nested properties.** | ```obj?.child?.value``` | Avoids `TypeError: Cannot read property 'child' of undefined`. |
+| | **Check array bounds before access.** | ```if (index < array.length) { ... }``` | Prevents `IndexError`. |
+| | **Handle promise rejections explicitly.** | ```await promise.catch(err => handle(err))``` | Avoids silent unhandled rejections. |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observations | Invariants |
-|-----------|--------------|------------|
-| **Architecture** | Fine‑tuned Qwen3.5‑4B with 32 layers; alternating linear/full attention. | Keep layer count consistent with `num_hidden_layers`. |
-| **Core Abstractions** | `Qwen3_5ForConditionalGeneration`, `Qwen3_5Tokenizer`. | Expose `forward` with `past_key_values`. |
-| **Error Handling** | No explicit error handling in config; rely on transformers defaults. | Validate config fields before loading. |
-| **Testing** | No tests present. | Add unit tests for config parsing, tokenizer mapping, and generation output length. |
-| **Security** | No credentials; public weights. | Ensure `tokenizer_config.json` does not expose secrets. |
-| **Performance** | Linear attention reduces complexity; `full_attention_interval=4`. | Verify that `full_attention_interval` aligns with `layer_types`. |
-| **Deployment** | Hosted on Hugging Face Hub; GGUF weights. | Use `transformers_version` 5.20.2 for compatibility. |
-| **Agent Patterns** | None explicitly defined. | Provide a prompt‑chain example for generating Three.js code. |
-| **Data Flow** | Tokenization → Model → Generation → Three.js. | Ensure token IDs for multimodal markers are correctly mapped. |
+| Dimension | Observations | Implications |
+|-----------|--------------|--------------|
+| **Architecture** | 32 text layers, 24 vision layers, mixed linear/full attention. | Modular design allows swapping attention types; however, the heavy use of linear attention may degrade quality on very long sequences. |
+| **Core Abstractions** | `Qwen3_5ForConditionalGeneration` exposes a unified `forward` that accepts `input_ids` and optional `vision_features`. | The abstraction hides modality details but requires careful dtype handling. |
+| **Error Handling** | No explicit error handling in config; relies on Hugging Face defaults. | Potential silent failures if special tokens are missing or dtype mismatches occur. |
+| **Testing** | No unit tests present. | High risk of regressions; recommended to add tests for token mapping and dtype consistency. |
+| **Security** | Tokenizer uses `errors: "replace"`; no sanitization of user input. | Risk of injection attacks if the model is exposed via a public API. |
+| **Performance** | `max_position_embeddings: 262144` and `full_attention_interval: 4` aim for long‑context support. | Memory usage can spike; linear attention mitigates but may still be heavy for GPU memory. |
+| **Deployment** | `transformers_version: 5.20.2`; uses GGUF weights. | Requires matching runtime; container images must include the correct transformer version. |
+| **Agent Patterns** | Generation config uses sampling (`do_sample: true`). | Agents must manage temperature, top‑k/p, and repetition penalty to avoid repetitive code. |
+| **Data Flow** | Input passes through tokenizer → model → generation. | Data must be correctly batched; padding and special tokens must be preserved across the pipeline. |
 
 ---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-| Artifact | Example |
-|----------|---------|
-| **Pattern** | `AutoModelForCausalLM.from_pretrained` with `torch_dtype` matching config. |
-| **Rule** | `use_cache` must be `True` for long‑prompt generation. |
-| **Architecture Principle** | Separate text and vision configs to allow modality‑specific optimizations. |
-| **Failure Mode** | Cache disabled → exponential time growth. |
-| **Reusable Skill** | Validate config fields before model load. |
-| **Decision** | Chose `bfloat16` for vision to reduce memory; rejected `float32` due to GPU memory limits. |
-| **Anti‑Pattern** | Hard‑coding dtype strings in code. |
-| **Verification Method** | Unit test asserting `config.text_config["dtype"] == config.vision_config["dtype"]`. |
+| Artifact | Rule 1 (Special‑Token Consistency) | Rule 2 (Mixed‑Precision Consistency) |
+|----------|------------------------------------|--------------------------------------|
+| **Pattern** | Tokenizer + model config share identical special‑token IDs; generation pipeline respects `bos_token_id: null`. | Explicit dtype cast before concatenation of vision and text embeddings. |
+| **Rule** | **MUST** keep special‑token IDs consistent across tokenizer and model; **MUST NOT** hard‑code a BOS token that is absent. | **MUST** cast vision tensors to `float32` before mixing; **MUST NOT** rely on implicit promotion. |
+| **Architecture Principle** | *Token‑ID Symmetry*: The tokenizer and model must be a single source of truth for special tokens. | *Precision Harmony*: Mixed‑precision components must agree on data types at every boundary. |
+| **Failure Mode** | Missing BOS token → truncated code; duplicate IDs → duplicated prompts. | Implicit dtype promotion → NaNs in attention scores; precision loss → incorrect code generation. |
+| **Reusable Skill** | Validate token‑ID mapping via a script that cross‑checks `tokenizer_config.json` and `config.json`. | Insert explicit `.to(torch.float32)` before any concatenation of vision and text tensors. |
+| **Decision** | Chose to keep `bos_token_id: null` to match the chat‑style prompt format; alternative was to add a BOS token, which would require retraining. | Chose `bfloat16` for vision to reduce memory; alternative `float32` would double memory usage. |
+| **Anti‑Pattern** | Hard‑coding a BOS token that is not in the vocabulary. | Concatenating `float32` and `bfloat16` tensors without casting. |
+| **Verification Method** | Unit test that `tokenizer.convert_tokens_to_ids` matches `config.json` IDs; lint rule for `bos_token_id`. | Runtime assertion that concatenated tensor dtype is `float32`; unit test with dummy vision tensor. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Load Configuration**
-   - `config = AutoConfig.from_pretrained(repo)`
-   - Assert `config.text_config["dtype"] == config.vision_config["dtype"]`
-2. **Instantiate Tokenizer**
-   - `tokenizer = AutoTokenizer.from_pretrained(repo, bos_token="<|im_start|>", eos_token="<|im_end|>")`
-   - Verify `tokenizer.bos_token_id` and `tokenizer.eos_token_id` are not `None`
-3. **Instantiate Model**
-   - `model = AutoModelForCausalLM.from_pretrained(repo, torch_dtype=getattr(torch, config.text_config["dtype"]))`
-4. **Set Generation Config**
-   - `gen_cfg = GenerationConfig.from_pretrained(repo, use_cache=True, do_sample=True, temperature=0.8, top_k=40, top_p=0.95)`
-5. **Generate Text**
-   - `inputs = tokenizer(prompt, return_tensors="pt")`
-   - `outputs = model.generate(**inputs, **gen_cfg.to_dict())`
-6. **Post‑Process**
-   - `generated_code = tokenizer.decode(outputs[0], skip_special_tokens=True)`
-   - Validate that `generated_code` contains `<script>` tags and `export GLB` button
-7. **Testing**
-   - Unit test: `assert len(outputs[0]) <= max_new_tokens`
-   - Integration test: `assert "Three.js" in generated_code`
-8. **Deployment**
-   - Push to Hugging Face Hub with `transformers_version=5.20.2`
-   - Ensure `generation_config.json` and `tokenizer_config.json` are not stringified
-9. **Monitoring**
-   - Log generation latency; flag if > 2× baseline
-   - Monitor GPU memory usage; enforce `torch_dtype` limits
+1. **Tokenizer‑Model Consistency**
+   - Load `tokenizer_config.json` and `config.json`.
+   - Assert that `bos_token_id`, `eos_token_id`, `pad_token_id`, and `vocab_size` match.
+   - Verify that every token in `extra_special_tokens` has a unique ID.
+
+2. **Special‑Token Handling**
+   - Ensure the generation pipeline does **not** prepend a BOS token when `bos_token_id` is `null`.
+   - If a BOS token is required, add it to the tokenizer and update `config.json`.
+
+3. **Mixed‑Precision Boundary Checks**
+   - Identify all points where vision and text tensors are combined.
+   - Insert explicit `.to(torch.float32)` casts before concatenation.
+   - Run a smoke test with dummy data to confirm no dtype warnings.
+
+4. **Sampling Hyper‑Parameters**
+   - Validate that `temperature`, `top_k`, `top_p`, and `repetition_penalty` are set to sensible defaults.
+   - Add a unit test that generates a short prompt and checks for repetitive tokens.
+
+5. **Resource Management**
+   - Configure a connection pool with a maximum idle timeout.
+   - Clear event listeners after each inference request.
+
+6. **Security Hardening**
+   - Sanitize user prompts to escape any code that could be executed on the server.
+   - Use `errors: "replace"` only for non‑critical tokenization; consider stricter handling for production.
+
+7. **Testing & CI**
+   - Add unit tests for token mapping, dtype consistency, and generation output length.
+   - Integrate a linter rule that flags hard‑coded special tokens.
+   - Set up a CI job that runs the smoke test on every push.
+
+8. **Documentation**
+   - Update the README to include the special‑token mapping table.
+   - Document the mixed‑precision requirement in the deployment guide.
 
 ---

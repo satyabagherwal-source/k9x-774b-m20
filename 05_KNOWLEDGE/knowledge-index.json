@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T23:10:18.820Z",
+  "last_updated": "2026-11-09T23:17:55.151Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -841,8 +841,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "87ecf9e0",
-      "content_hash": "655b5c202b32b3229b2bea26b118c8dda7924027ca1bf3b9ea9f1a73348c4729",
+      "source_version": "296fac67",
+      "content_hash": "1289b8bafa0e5a8ff0d67dda0c9126eb751fda86b5910d56fdc0a5c7070d2f4d",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -869,6 +869,11 @@
         {
           "number": null,
           "title": "build(docker): overridable base-image build args; UI build on Node 24 LTS (#1159",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -912,7 +917,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:10:46.770Z",
+      "verified_at": "2026-11-09T23:17:49.547Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15499,8 +15504,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "92bfc001",
-      "content_hash": "e29f2ba6c161266b5e8228270a17407a74d87cafbf9e1a3180c09491854dec16",
+      "source_version": "7c445c0c",
+      "content_hash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15552,6 +15557,11 @@
         {
           "number": null,
           "title": "build: make the Windows target pass clippy over all targets, and lint it in CI (",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15770,7 +15780,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T14:35:38.296Z",
+      "verified_at": "2026-11-09T23:17:52.753Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64608,8 +64618,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "4303c987",
-      "content_hash": "9d5cae168aaa2e2fd1c10e07cb9e494e50303e226e6a2a208c4a4ac938bd6437",
+      "source_version": "b7e625df",
+      "content_hash": "34313097b1a1a3583cbdf0dd571cd9f47efee32f0fb20f45d44e360943d16b6f",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -64626,6 +64636,11 @@
         {
           "number": null,
           "title": "Merge pull request #38464 from vespa-engine/johsol/add-foreach-field-to-language",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #38475 from vespa-engine/bratseth/avoid-deprecation",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64719,7 +64734,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:07:00.096Z",
+      "verified_at": "2026-11-09T23:17:55.125Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65460,13 +65475,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "wcandillon-react-native-skia",
+      "slug": "shopify-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
-      "source_version": "7541db92",
-      "content_hash": "1a308824e88c60fb2c6be0ce236e92127848feb3d847a390ccbe75424f5e0096",
-      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "7a9b20cd",
+      "content_hash": "5d4326814472d60debf7b25295bc11dc8001ff31ccc47adf15f14f665e242f6a",
+      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -65534,7 +65549,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:10:28.410Z",
+      "verified_at": "2026-11-09T23:17:46.395Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -188728,7 +188743,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-glb-3d-coder",
-      "content_hash": "61eb1300a7b2202ba2be191703e35b421fdb08b1a99267106b2f8bb2a0f38932",
+      "content_hash": "503bc0f225bee856d7b4413b941c3d86fd403442a553235c72e89e7dc59dc192",
       "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
       "promoted_rules": [
@@ -188746,6 +188761,16 @@
           "number": null,
           "title": "[Explicit BOS/EOS Token Definition]",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Special‑Token Consistency Rule",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": null,
+          "title": "Mixed‑Precision Consistency Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -188753,7 +188778,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:38:03.619Z",
+      "verified_at": "2026-11-09T23:17:47.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

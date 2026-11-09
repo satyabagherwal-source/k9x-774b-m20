@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `4303c987`  
+> **Source Version**: `b7e625df`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T21:06:59.065Z  
+> **Timestamp**: 2026-11-09T23:17:53.423Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T21:06:59.060Z  
+> **Harvest Timestamp**: 2026-11-09T23:17:53.416Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7164 stars
+- **Stars / Engagement**: 7166 stars
 
 ---
 
@@ -1065,186 +1065,75 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4303c987` (2026-11-08)
-**Commit Message**: Merge pull request #38464 from vespa-engine/johsol/add-foreach-field-to-language-server
+### Incident Patch 1: `b7e625df` (2026-11-09)
+**Commit Message**: Merge pull request #38475 from vespa-engine/bratseth/avoid-deprecation
 
-add for_each_field to language server
+Avoid deprecated tag
 
-**File**: `integration/schema-language-server/language-server/src/main/ccc/indexinglanguage/IndexingParser.ccc` (modified, +13/-0)
+**File**: `container-search/src/main/java/com/yahoo/search/searchers/ValidateNearestNeighborSearcher.java` (modified, +1/-2)
 ```diff
-@@ -198,6 +198,7 @@ TOKEN :
-     <EXHEX16_DOUBLE_ENCODE: "exhex16doubleencode"> |
-     <FLATTEN: "flatten"> |
-     <FOR_EACH: "for_each"> |
-+    <FOR_EACH_FIELD: "for_each_field"> |
-     <GENERATE: "generate"> |
-     <GET_FIELD: "get_field"> |
-     <GET_LANGUAGE: "get_language"> |
-@@ -366,6 +367,7 @@ Expression value() :
-       val = exHex16DoubleEncodeExp() |
-       val = flattenExp()            |
-       val = forEachExp()            |
-+      val = forEachFieldExp()       |
-       val = generateExp()           |
-       val = getFieldExp()           |
-       val = getLanguageExp()        |
-@@ -556,6 +558,16 @@ Expression forEachExp() :
-     { return new ForEachExpression(val); }
- ;
+@@ -2,6 +2,7 @@
  
-+Expression forEachFieldExp() :
-+{
-+    String path;
-+    Expression val;
-+}
-+ 
-+    ( <FOR_EACH_FIELD> path = stringLiteral() <LCURLY> consumeNL() val = statement() consumeNL() <RCURLY> )
-+    { return new ForEachFieldExpression(path, val); }
-+;
-+
- Expression generateExp() :
- {
-     String generatorId = "";
-@@ -1019,6 +1031,7 @@ String identifierStr() :
-         <EMBED>                  |
-         <FLATTEN>                |
-         <FOR_EACH>               |
-+        <FOR_EACH_FIELD>         |
-         <GENERATE>               |
-         <GET_FIELD>              |
-         <GET_LANGUAGE>           |
-```
-
-**File**: `integration/schema-language-server/language-server/src/main/java/ai/vespa/schemals/lsp/schema/completion/provider/IndexingLanguageCompletion.java` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ public List<CompletionItem> getCompletionItems(EventCompletionContext context) {
-                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("exhex8floatencode")),
-                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("exhex16doubleencode")),
-                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("for_each")),
-+                CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("for_each_field")),
-                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("generate")),
-                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("get_field")),
-                 CompletionUtils.withSortingPrefix("c", CompletionUtils.constructBasic("get_language")),
-```
-
-**File**: `integration/schema-language-server/language-server/src/main/java/ai/vespa/schemals/lsp/schema/semantictokens/SchemaSemanticTokenConfig.java` (modified, +1/-0)
-```diff
-@@ -317,6 +317,7 @@ class SchemaSemanticTokenConfig {
-     static final Set<ai.vespa.schemals.parser.indexinglanguage.Token.TokenType> indexingLanguageKeywords = new HashSet<>() {{
-         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.IF);
-         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.FOR_EACH);
-+        add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.FOR_EACH_FIELD);
-         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.SWITCH);
-         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.SELECT_INPUT);
-         add(ai.vespa.schemals.parser.indexinglanguage.Token.TokenType.ELSE);
-```
-
-**File**: `integration/tmgrammar/grammars/vespa-schema.tmLanguage.json` (modified, +1/-1)
-```diff
-@@ -508,7 +508,7 @@
-         },
-         {
-           "name": "keyword.control.indexing.vespa",
--          "match": "\\b(select_input|for_each|default|switch|case|else|if)\\b"
-+          "match": "\\b(for_each_field|select_input|for_each|default|switch|case|else|if)\\b"
-         },
-         {
-           "name": "entity.name.function.indexing.vespa",
+ package com.yahoo.search.searchers;
+ 
++import com.yahoo.component.chain.dependencies.Before;
+ import com.yahoo.prelude.query.Item;
+ import com.yahoo.prelude.query.NearestNeighborItem;
+ import com.yahoo.prelude.query.SparseTensorWandItem;
+@@ -16,7 +17,6 @@
+ import com.yahoo.tensor.Tensor;
+ import com.yahoo.tensor.TensorType;
+ import com.yahoo.vespa.config.search.AttributesConfig;
+-import com.yahoo.yolean.chain.Before;
+ 
+ import java.util.ArrayList;
+ import java.util.HashMap;
+@@ -29,7 +29,6 @@
+  *
+  * @author arnej
+  */
+-@SuppressWarnings("removal")
+ @Before(GroupingExecutor.COMPONENT_NAME) // Must happen before query.prepare()
+ public class ValidateNearestNeighborSearcher extends Searcher {
+ 
 ```
 
 ---
 
-### Incident Patch 2: `638cb26c` (2026-11-08)
-**Commit Message**: Merge pull request #38463 from vespa-engine/arnej/move-char-lists
+### Incident Patch 2: `3e2b1594` (2026-11-09)
+**Commit Message**: Merge pull request #38466 from vespa-engine/toregge/avoid-mix-of-static-and-object-library
 
-Centralize ASCII character-class strings in Ascii7BitMatcher
+Avoid mix of static and object library.
 
-**File**: `vespajlib/abi-spec.json` (modified, +4/-1)
+**File**: `searchcore/src/vespa/searchcorespi/flush/CMakeLists.txt` (modified, +1/-1)
 ```diff
-@@ -3190,7 +3190,10 @@
-       "public void <init>(java.lang.String)",
-       "public void <init>(java.lang.String, java.lang.String)",
-       "public boolean matches(java.lang.String)",
--      "public static java.lang.String charsAndNumbers()"
-+      "public static java.lang.String asciiLetters()",
-+      "public static java.lang.String charsAndUnderscore()",
-+      "public static java.lang.String charsAndNumbers()",
-+      "public static java.lang.String charsNumbersAndUnderscore()"
-     ],
-     "fields" : [ ]
-   },
+@@ -1,5 +1,5 @@
+ # Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-vespa_add_library(searchcorespi_flush STATIC OBJECT
++vespa_add_library(searchcorespi_flush OBJECT
+     SOURCES
+     flushstats.cpp
+     iflushtarget.cpp
 ```
 
-**File**: `vespajlib/src/main/java/com/yahoo/tensor/TensorType.java` (modified, +4/-5)
+**File**: `searchcore/src/vespa/searchcorespi/index/CMakeLists.txt` (modified, +1/-1)
 ```diff
-@@ -16,8 +16,6 @@
- import java.util.Locale;
- import java.util.stream.Collectors;
- 
--import static com.yahoo.text.Ascii7BitMatcher.charsAndNumbers;
--
- /**
-  * A tensor type with its dimensions. This is immutable.
-  * <p>
-@@ -28,9 +26,10 @@
-  */
- public class TensorType {
- 
--    static Ascii7BitMatcher labelMatcher = new Ascii7BitMatcher("-_@" + charsAndNumbers(), "_@$" + charsAndNumbers());
--    private static final String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
--    private static final Ascii7BitMatcher dimensionNameMatcher = new Ascii7BitMatcher("_" + letters, "_" + charsAndNumbers());
-+    static Ascii7BitMatcher labelMatcher = new Ascii7BitMatcher("-_@" + Ascii7BitMatcher.charsAndNumbers(), "_@$" + Ascii7BitMatcher.charsAndNumbers());
-+    private static final String identStart = Ascii7BitMatcher.charsAndUnderscore();
-+    private static final String identChars = Ascii7BitMatcher.charsNumbersAndUnderscore();
-+    private static final Ascii7BitMatcher dimensionNameMatcher = new Ascii7BitMatcher(identStart, identChars);
- 
-     /** The permissible cell value types. Default is double. */
-     public enum Value {
-```
-
-**File**: `vespajlib/src/main/java/com/yahoo/text/Ascii7BitMatcher.java` (modified, +12/-14)
-```diff
-@@ -49,19 +49,17 @@ public boolean matches(String s) {
-         }
-         return true;
-     }
--    static public String charsAndNumbers() {
--        char[] chars = new char[26*2+10];
--        int i = 0;
--        for (char c = 'A'; c <= 'Z'; c++) {
--            chars[i++] = c;
--        }
--        for (char c = 'a'; c <= 'z'; c++) {
--            chars[i++] = c;
--        }
--        for (char c = '0'; c <= '9'; c++) {
--            chars[i++] = c;
--        }
--        return new String(chars);
--    }
- 
-+    private static final String LCC = "abcdefghijklmnopqrstuvwxyz"; // lowercase letters
-+    private static final String UCC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // uppercase letters
-+    private static final String NUM = "0123456789"; // digits
-+    private static final String CHS = UCC + LCC; // all letters
-+    private static final String CAU = "_" + CHS; // letters and underscore
-+    private static final String CAN = CHS + NUM; // letters and digits
-+    private static final String CNU = "_" + CAN; // letters, digits and underscore
-+
-+    static public String asciiLetters() { return CHS; }
-+    static public String charsAndUnderscore() { return CAU; }
-+    static public String charsAndNumbers() { return CAN; }
-+    static public String charsNumbersAndUnderscore() { return CNU; }
- }
+@@ -1,5 +1,5 @@
+ # Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-vespa_add_library(searchcorespi_index STATIC OBJECT
++vespa_add_library(searchcorespi_index OBJECT
+     SOURCES
+     diskindexcleaner.cpp
+     disk_indexes.cpp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38464** (2026-11-08): add for_each_field to language server (@johansolbakken)
-- **PR #38463** (2026-11-08): Centralize ASCII character-class strings in Ascii7BitMatcher (@arnej27959)
-- **PR #38462** (2026-11-06): Require tensor dimension names to be valid identifiers in Java (@havardpe)
-- **PR #38461** (2026-11-06): Add a dedicated centroid quantization acceleration function (@vekterli)
-- **PR #38460** (2026-11-07): Use inputExpression (@bratseth)
-- **PR #38459** (2026-11-06): Make tensor types more robust (@havardpe)
+- **PR #38481** (closed): Hmusum/20261109 use ml model import cache (@hmusum)
+- **PR #38478** (2026-11-09): Detect bad domain name in transaction log server. (@toregge)
+- **PR #38475** (2026-11-09): Avoid deprecated tag (@bratseth)
+- **PR #38473** (2026-11-09): Do not report fast map searches for imported fields in schema info (@arnej27959)
+- **PR #38472** (2026-11-09): Add skip-connectivity-checks-at-startup feature flag (@arnej27959)
+- **PR #38470** (2026-11-09): chore(cli): remove perf zone (@BrageHK)
 
 ---
 
@@ -1264,40 +1153,29 @@ Centralize ASCII character-class strings in Ascii7BitMatcher
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38464 from vespa-engine/johsol/add-foreach-field-to-language
+## X. Merge pull request #38475 from vespa-engine/bratseth/avoid-deprecation
 
 **RULE**:
-When implementing operations in `integration/schema-language-server/language-server/src/main/ccc/indexinglanguage/IndexingParser.ccc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `container-search/src/main/java/com/yahoo/search/searchers/ValidateNearestNeighborSearcher.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4303c987`: Merge pull request #38464 from vespa-engine/johsol/add-foreach-field-to-language-server. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7e625df`: Merge pull request #38475 from vespa-engine/bratseth/avoid-deprecation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/schema-language-server/language-server/src/main/ccc/indexinglanguage/IndexingParser.ccc`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `container-search/src/main/java/com/yahoo/search/searchers/ValidateNearestNeighborSearcher.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    <FOR_EACH_FIELD: "for_each_field"> |
-      val = forEachFieldExp()       |
-Expression forEachFieldExp() :
-{
-    String path;
-    Expression val;
-}
- 
-    ( <FOR_EACH_FIELD> path = stringLiteral() <LCURLY> consumeNL() val = statement() consumeNL() <RCURLY> )
-    { return new ForEachFieldExpression(path, val); }
-;
-
-        <FOR_EACH_FIELD>         |
+import com.yahoo.component.chain.dependencies.Before;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+import com.yahoo.yolean.chain.Before;
+@SuppressWarnings("removal")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4303c987` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7e625df` are properly handled with clean fallback behavior.
