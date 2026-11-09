@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T23:50:50.506Z",
+  "last_updated": "2026-11-09T00:06:14.386Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29088,10 +29088,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
       "source_version": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
-      "content_hash": "4df4459b8dbe5f074d61ac96f78ae296d7ddd469bb15f169626a2381279e8e68",
+      "content_hash": "b07be66d734d4300c8f757d7ef2c1a41563a742b832c309791910b2694d8e39f",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Strict Chat-Template Turn-Alternation Invariant with System Collapsing",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Zero-Loss Sparse-MoE Routing Numerical Stability Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -29109,7 +29120,7 @@
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3wzmkj",
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4bppvo"
       ],
-      "verified_at": "2026-11-05T06:21:35.270Z",
+      "verified_at": "2026-11-09T00:06:01.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54416,8 +54427,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "bd7f87eb",
-      "content_hash": "6ab6b1368a6c1166a0a0138310e761e014287441ae8bce3f83a0bddc09531d0c",
+      "source_version": "08a261a0",
+      "content_hash": "435172c71cdc8f01d87613c9342ba7fe4c372ab5625fe0f29ca421f44e4580f1",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -54429,6 +54440,21 @@
         {
           "number": null,
           "title": "Merge pull request #5019 from rtk-ai/fix/swap-exclude-by-path",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Pre-Execution Agent Interceptor Fail-Open Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Monotonic Token Shrinkage Invariant (`never_worse`)",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Path-Anchored Subprocess Tokenization Gate Rule",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -54502,7 +54528,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:52:58.576Z",
+      "verified_at": "2026-11-09T00:06:14.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

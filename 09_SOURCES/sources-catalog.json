@@ -985,8 +985,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
     "license": "Open-Source",
-    "contentHash": "4df4459b8dbe5f074d61ac96f78ae296d7ddd469bb15f169626a2381279e8e68",
-    "lastHarvestedAt": "2026-11-05T06:21:35.355Z",
+    "contentHash": "b07be66d734d4300c8f757d7ef2c1a41563a742b832c309791910b2694d8e39f",
+    "lastHarvestedAt": "2026-11-09T00:06:01.332Z",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1"
   },
   "hf-deepseek-ai-deepseek-v3": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "bd7f87eb",
+    "sourceVersion": "08a261a0",
     "license": "Apache-2.0",
-    "contentHash": "6ab6b1368a6c1166a0a0138310e761e014287441ae8bce3f83a0bddc09531d0c",
-    "lastHarvestedAt": "2026-11-07T22:52:58.645Z",
+    "contentHash": "435172c71cdc8f01d87613c9342ba7fe4c372ab5625fe0f29ca421f44e4580f1",
+    "lastHarvestedAt": "2026-11-09T00:06:14.482Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

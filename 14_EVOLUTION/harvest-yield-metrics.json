@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T23:50:50.659Z",
-  "total_cycles_completed": 8404,
-  "total_learnings_persisted": 8404,
-  "total_rules_promoted": 8201,
+  "last_updated": "2026-11-09T00:06:14.488Z",
+  "total_cycles_completed": 8406,
+  "total_learnings_persisted": 8406,
+  "total_rules_promoted": 8206,
   "history": [
-    {
-      "timestamp": "2026-11-08T06:25:44.901Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T06:32:59.745Z",
-      "repository": "FastVideo/FastH3-Omni-Comfy",
-      "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T06:42:25.246Z",
       "repository": "baidu/Unlimited-OCR-2",
@@ -1403,6 +1389,20 @@
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T00:06:01.338Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T00:06:14.488Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

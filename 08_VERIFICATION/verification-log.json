@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-PNTT",
-    "timestamp": "2026-11-06T22:56:05.345Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "d2cc3a7b26296f4abf5bbec7ed42daf76e561f8dcd983192c6eba327f50c7924",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-PODP",
-    "timestamp": "2026-11-06T22:56:06.061Z",
-    "repository": "bee-san/Ciphey",
-    "learningId": "learn-github-bee-san-ciphey",
-    "contentHash": "a06e39b2747175a596c29e450dfaf97b432d7d9a225652bc81f8b926b7e16983",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-PQQE",
     "timestamp": "2026-11-06T22:56:09.110Z",
     "repository": "alibaba/zvec",
@@ -7492,6 +7462,36 @@
     "contentHash": "cb90c093965bf3f0c12c489120c988c46e7e6455f45731dbeb37c4f2628932b8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-3ASW",
+    "timestamp": "2026-11-09T00:06:01.328Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "b07be66d734d4300c8f757d7ef2c1a41563a742b832c309791910b2694d8e39f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-3KY7",
+    "timestamp": "2026-11-09T00:06:14.479Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "435172c71cdc8f01d87613c9342ba7fe4c372ab5625fe0f29ca421f44e4580f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
