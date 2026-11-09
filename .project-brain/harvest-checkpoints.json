@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T02:01:15.170Z",
+  "last_updated": "2026-11-09T02:08:11.704Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1475,14 +1475,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "content_hash": "197559f43a30893064ee02a258791a36b9c7db83041cfe043257d95da044fdf0",
-      "verified_at": "2026-11-05T08:15:04.599Z",
+      "content_hash": "9848cfd07622d41ea8ea63b16fffac813dfab7df6950db697339c5f020887c05",
+      "verified_at": "2026-11-09T02:08:02.745Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:15:04.599Z"
+      "last_updated": "2026-11-09T02:08:02.745Z"
     },
     "jonatasgrosman/wav2vec2-large-xlsr-53-japanese": {
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "85d62eb80c43cd84e7f13a5d6c1bea7a05019b2d71f185aaf8bcf51058bd7ea1",
-      "verified_at": "2026-11-07T03:01:26.873Z",
+      "content_hash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
+      "verified_at": "2026-11-09T02:08:11.703Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T03:01:26.873Z"
+      "last_updated": "2026-11-09T02:08:11.703Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T02:01:15.045Z",
+  "last_updated": "2026-11-09T02:08:11.609Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11333,14 +11333,19 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "ff1fd540",
-      "content_hash": "85d62eb80c43cd84e7f13a5d6c1bea7a05019b2d71f185aaf8bcf51058bd7ea1",
+      "source_version": "d0885b8c",
+      "content_hash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "upgrade to the latest tomontime/dns patches (#5066)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "p/LUADNS): batch record changes into bulk API calls (#5047)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11389,7 +11394,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:01:26.762Z",
+      "verified_at": "2026-11-09T02:08:11.588Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21152,7 +21157,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
       "source_version": "hf-baai-bge-reranker-v2-m3",
-      "content_hash": "197559f43a30893064ee02a258791a36b9c7db83041cfe043257d95da044fdf0",
+      "content_hash": "9848cfd07622d41ea8ea63b16fffac813dfab7df6950db697339c5f020887c05",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "promoted_rules": [
@@ -21189,7 +21194,7 @@
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy",
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp"
       ],
-      "verified_at": "2026-11-05T08:15:04.445Z",
+      "verified_at": "2026-11-09T02:08:02.621Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

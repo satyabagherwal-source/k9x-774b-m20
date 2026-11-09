@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T02:01:17.743Z",
-    "lastVerified": "2026-11-09T02:01:17.743Z",
+    "lastChecked": "2026-11-09T02:08:14.269Z",
+    "lastVerified": "2026-11-09T02:08:14.269Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,12 +255,12 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:38:39.764Z",
-    "lastVerified": "2026-11-09T01:38:39.764Z",
+    "lastChecked": "2026-11-09T02:08:13.886Z",
+    "lastVerified": "2026-11-09T02:08:13.886Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -269,7 +269,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b5be13f4"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1478,9 +1479,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-08T22:00:52.733Z",
+    "lastChecked": "2026-11-09T02:08:08.759Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-08T22:00:52.733Z"
+    "lastVerified": "2026-11-09T02:08:08.759Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -1587,8 +1588,8 @@
     "officialUrl": "https://github.com/googleworkspace/cli",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T01:09:40.952Z",
-    "lastVerified": "2026-11-08T01:09:40.952Z",
+    "lastChecked": "2026-11-09T02:07:58.736Z",
+    "lastVerified": "2026-11-09T02:07:58.736Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-googleworkspace-cli",
@@ -1830,9 +1831,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-11-08T04:42:28.757Z",
+    "lastChecked": "2026-11-09T02:08:11.262Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-11-08T04:42:28.757Z"
+    "lastVerified": "2026-11-09T02:08:11.262Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB",
@@ -6288,22 +6289,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dnscontrol-dnscontrol": {
-    "name": "dnscontrol",
+    "name": "DNSControl/dnscontrol",
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T05:33:07.709Z",
-    "lastVerified": "2026-11-08T05:33:07.709Z",
+    "lastChecked": "2026-11-09T02:08:10.470Z",
+    "lastVerified": "2026-11-09T02:08:10.470Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "85d62eb80c43cd84e7f13a5d6c1bea7a05019b2d71f185aaf8bcf51058bd7ea1",
+    "contentHash": "b259f7d34abdb79a8024cd71d345218cbd474ad0c4627f57751fb2e59c93f37d",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ff1fd540"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-zookeeper": {
     "name": "zookeeper",
@@ -6346,12 +6346,12 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T08:13:51.658Z",
-    "lastVerified": "2026-11-05T08:13:51.658Z",
+    "lastChecked": "2026-11-09T02:08:01.640Z",
+    "lastVerified": "2026-11-09T02:08:01.640Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "197559f43a30893064ee02a258791a36b9c7db83041cfe043257d95da044fdf0",
+    "contentHash": "9848cfd07622d41ea8ea63b16fffac813dfab7df6950db697339c5f020887c05",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -12165,9 +12165,9 @@
   "mikeroyal-apple-silicon-guide": {
     "name": "Apple-Silicon-Guide",
     "officialUrl": "https://github.com/mikeroyal/Apple-Silicon-Guide",
-    "lastChecked": "2026-11-05T19:22:13.070Z",
+    "lastChecked": "2026-11-09T02:08:03.833Z",
     "revisionIdentifier": "7e58c7d7",
-    "lastVerified": "2026-11-05T19:22:13.070Z"
+    "lastVerified": "2026-11-09T02:08:03.833Z"
   },
   "tanstack-query": {
     "name": "TanStack/query",

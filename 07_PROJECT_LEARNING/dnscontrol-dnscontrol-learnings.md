@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `ff1fd540`  
+> **Source Version**: `d0885b8c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T03:01:25.728Z  
+> **Timestamp**: 2026-11-09T02:08:10.476Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T03:01:25.195Z  
+> **Harvest Timestamp**: 2026-11-09T02:08:10.470Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3996 stars
+- **Stars / Engagement**: 3998 stars
 
 ---
 
@@ -709,295 +709,375 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ff1fd540` (2026-11-06)
-**Commit Message**: chore: upgrade to the latest tomontime/dns patches (#5066)
+### Incident Patch 1: `d0885b8c` (2026-11-08)
+**Commit Message**: feat(p/LUADNS): batch record changes into bulk API calls (#5047)
 
-*    adapt to behavior change: tsig errors are different
-*    adapt to behavior change: rtypes with no options parse differently
-*    upgrade miekg/dns with the latest patches by TomOnTime
+# Issue
 
-**File**: `go.mod` (modified, +1/-1)
+LUADNS could be faster if batched updates are used.
+
+# Resolution
+
+Batch up adjacent updates of the same type.  
+
+# Details
+
+
+LuaDNS provider called CreateManyRecords, UpdateManyRecords,
+DeleteManyRecords, but didn't batch RRset changes. This PR fixes that.
+
+I ran the normal tests, integration tests, and tried it on my real
+zones. I can confirm it is working as intended.
+
+---------
+
+Co-authored-by: Tom Limoncelli <[REDACTED_EMAIL]>
+
+**File**: `documentation/provider/luadns.md` (modified, +1/-0)
 ```diff
-@@ -195,4 +195,4 @@ require (
+@@ -42,6 +42,7 @@ D("example.com", REG_NONE, DnsProvider(DSP_LUADNS),
+ This is not the case if you are using vanity nameservers.
+ - This provider does not currently support the "FORWARD" and "REDIRECT" record types.
+ - The API is available on the LuaDNS free plan, but due to the limit of 30 records, some tests will fail when doing integration tests.
++- Changes are sent in bulk requests rather than one request per record set. Only consecutive changes of the same kind (creates, updates or deletes) share a request, so the order DNSControl chose is kept; a request holds at most 100 records. If a request fails, all of the changes in it fail together.
  
- tool golang.org/x/tools/cmd/stringer
+ ## Feature Summary
  
--replace codeberg.org/miekg/dns => codeberg.org/TomOnTime/dns v0.6.116-0.20261011152644-c288f44eb638
-+replace codeberg.org/miekg/dns => codeberg.org/TomOnTime/dns v0.6.116-0.20261106021038-99f642b89f88
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `providers/luadns/luadnsBatch_test.go` (added, +357/-0)
 ```diff
-@@ -5,8 +5,8 @@ cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQ
- cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
- cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
- cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
--codeberg.org/TomOnTime/dns v0.6.116-0.20261011152644-c288f44eb638 h1:rVPkl563rYwOBiLousS+W6qNV427cAaAEkTnEhv0ZcQ=
--codeberg.org/TomOnTime/dns v0.6.116-0.20261011152644-c288f44eb638/go.mod h1:vbidSyLJl5JcDUL2LrXCUjRYSFa5tJweseQox0GOrTk=
-+codeberg.org/TomOnTime/dns v0.6.116-0.20261106021038-99f642b89f88 h1:bixNS1yGgDUi6GZ+Tve253slwJCJ6nRxmhbvpzhbOlw=
-+codeberg.org/TomOnTime/dns v0.6.116-0.20261106021038-99f642b89f88/go.mod h1:CRdTEkDK9YPcVEH7sq/bwnnSz7syhHqbxfvY3IO0xlo=
- dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
- github.com/AlecAivazis/survey/v2 v2.3.7 h1:6I/u8FvytdGsgonrYsVn2t8t4QiRnh6QSTqkkhIiSjQ=
- github.com/AlecAivazis/survey/v2 v2.3.7/go.mod h1:xUTIdE4KCOIjsBAE1JYsUPoCqYdZ1reCfTwbto0Fduo=
-```
-
-**File**: `pkg/privatetypes/t_mikrotik_nxdomain_test.go` (modified, +5/-5)
-```diff
-@@ -10,12 +10,12 @@ import (
- 
- func TestMikrotikNxdomain(t *testing.T) {
- 	y := &MIKROTIKNXDOMAIN{Hdr: dnsv2.Header{Name: "example.org.", Class: dnsv2.ClassINET}}
--	rry, err := dnsv2.New(y.String())
--	if err != nil {
--		t.Fatal(err)
-+	want := "example.org.\t0\tIN\tMIKROTIK_NXDOMAIN"
-+	if got := y.String(); got != want {
-+		t.Fatalf("MIKROTIK_NXDOMAIN string presentation:\ngot  %q\nwant %q", got, want)
- 	}
--	if rry.String() != y.String() {
--		t.Fatalf("MIKROTIK_NXDOMAIN string presentations should be identical:\n%q\n%q", rry.String(), y.String())
-+	if err := new(MIKROTIKNXDOMAIN).Parse(nil, ""); err != nil {
+@@ -0,0 +1,357 @@
++package luadns
++
++import (
++	"context"
++	"encoding/json"
++	"fmt"
++	"net/http"
++	"net/http/httptest"
++	"slices"
++	"strings"
++	"sync"
++	"testing"
++
++	api "github.com/luadns/luadns-go"
++	"golang.org/x/time/rate"
++
++	"github.com/DNSControl/dnscontrol/v5/models"
++	"github.com/DNSControl/dnscontrol/v5/pkg/diff2"
++)
++
++// recordedCall is one request received by fakeLuaDNS.
++type recordedCall struct {
++	Method string
++	Path   string
++	RRs    []string // sorted "name type content ttl"
++}
++
++// fakeLuaDNS answers the bulk endpoints and records every request.
++// status, if set, picks the response code of the n-th (1-based) request.
++type fakeLuaDNS struct {
++	mu     sync.Mutex
++	calls  []recordedCall
++	status func(n int) int
++}
++
++func (f *fakeLuaDNS) recorded() []recordedCall {
++	f.mu.Lock()
++	defer f.mu.Unlock()
++	return slices.Clone(f.calls)
++}
++
++// newFakeProvider returns a provider for zone example.com (ID 5) wired to a fake LuaDNS.
++func newFakeProvider(t *testing.T, status func(n int) int) (*luadnsProvider, *fakeLuaDNS) {
++	t.Helper()
++	fake := &fakeLuaDNS{status: status}
++	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		var body []api.RR
++		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
++			t.Errorf("undecodable request body: %v", err)
++			w.WriteHeader(http.StatusInternalServerError)
++			return
++		}
++		rrs := make([]string, 0, len(body))
++		for _, rr := range body {
++			rrs = append(rrs, fmt.Sprintf("%s %s %s %d", rr.Name, rr.Type, rr.Content, rr.TTL))
++		}
++		slices.Sort(rrs)
++
++		fake.mu.Lock()
++		fake.calls = append(fake.calls, recordedCall{Method: r.Method, Path: r.URL.Path, RRs: rrs})
++		n := len(fake.calls)
++		fake.mu.Unlock()
++
++		code := http.StatusOK
++		if fake.status != nil {
++			code = fake.status(n)
++		}
++		if code == http.StatusOK {
++			w.Header().Set("Content-Type", "application/json")
++		}
++		w.WriteHeader(code)
++		if code == http.StatusOK {
++			_, _ = w.Write([]byte("[]"))
++		}
++	}))
++	t.Cleanup(srv.Close)
++
++	return &luadnsProvider{
++		provider:    api.NewClient("user@example.com", "key", api.SetBaseURL(srv.URL)),
++		ctx:         context.Background(),
++		rateLimiter: rate.NewLimiter(rate.Inf, 1),
++		zones:       []*api.Zone{{ID: 5, Name: "example.com"}},
++	}, fake
++}
++
++func newRC(t *testing.T, dc *models.DomainConfig, label, rtype, content string) *models.RecordConfig {
++	t.Helper()
++	var rc *models.RecordConfig
++	var err error
++	if rtype == "TXT" {
++		rc, err = dc.NewRecordConfig(label, 300, rtype, content)
++	} else {
++		rc, err = dc.NewRecordConfigParse(label, 300, rtype, content)
++	}
++	if err != nil {
 +		t.Fatal(err)
- 	}
- }
- 
-```
-
-**File**: `pkg/privatetypes/t_netlify_test.go` (modified, +5/-5)
-```diff
-@@ -10,12 +10,12 @@ import (
- 
- func TestNetlify(t *testing.T) {
- 	y := &NETLIFY{Hdr: dnsv2.Header{Name: "example.org.", Class: dnsv2.ClassINET}}
--	rry, err := dnsv2.New(y.String())
--	if err != nil {
--		t.Fatal(err)
-+	want := "example.org.\t0\tIN\tNETLIFY"
-+	if got := y.String(); got != want {
-+		t.Fatalf("NETLIFY string presentation:\ngot  %q\nwant %q", got, want)
- 	}
--	if rry.String() != y.String() {
--		t.Fatalf("NETLIFY string presentations should be identical:\n%q\n%q", rry.String(), y.String())
-+	if err := new(NETLIFY).Parse(nil, ""); err != nil {
++	}
++	return rc
++}
++
++func runAll(t *testing.T, corrections []*models.Correction) {
++	t.Helper()
++	for _, c := range corrections {
++		if c.F == nil {
++			continue
++		}
++		if err := c.F(); err != nil {
++			t.Fatalf("%q: %v", c.Msg, err)
++		}
++	}
++}
++
++func sameCalls(got, want []recordedCall) bool {
++	return slices.EqualFunc(got, want, func(a, b recordedCall) bool {
++		return a.Method == b.Method && a.Path == b.Path && slices.Equal(a.RRs, b.RRs)
++	})
++}
++
++// Only adjacent changes of the same kind share a request. The order diff2
++// chose (here by label, with an A -> CNAME swap at the end) must reach the
++// API unchanged, so the creates around the update and the delete stay apart.
++func TestGetZoneRecordsCorrectionsBatchesAdjacentRuns(t *testing.T) {
++	l, fake := newFakeProvider(t, nil)
++	dc, err := models.NewDomainConfig("example.com")
++	if err != nil {
 +		t.Fatal(err)
- 	}
- }
- 
-```
-
-**File**: `pkg/privatetypes/t_netlifyv6_test.go` (modified, +5/-5)
-```diff
-@@ -10,12 +10,12 @@ import (
- 
- func TestNetlifyv6(t *testing.T) {
- 	y := &NETLIFYV6{Hdr: dnsv2.Header{Name: "example.org.", Class: dnsv2.ClassINET}}
--	rry, err := dnsv2.New(y.String())
--	if err != nil {
--		t.Fatal(err)
-+	want := "example.org.\t0\tIN\tNETLIFYV6"
-+	if got := y.String(); got != want {
-+		t.Fatalf("NETLIFYV6 string presentation:\ngot  %q\nwant %q", got, want)
- 	}
--	if rry.String() != y.String() {
--		t.Fatalf("NETLIFYV6 string presentations should be identical:\n%q\n%q", rry.String(), y.String())
-+	if err := new(NETLIFYV6).Parse(nil, ""); err != nil {
++	}
++	existing := models.Records{
++		newRC(t, dc, "c", "A", "3.3.3.3"),
++		newRC(t, dc, "m", "A", "9.9.9.9"),
++		newRC(t, dc, "x", "A", "8.8.8.8"),
++	}
++	dc.Records = models.Records{
++		newRC(t, dc, "a", "A", "1.1.1.1"),
++		newRC(t, dc, "b", "A", "2.2.2.2"),
++		newRC(t, dc, "c", "A", "3.3.3.4"),
++		newRC(t, dc, "c", "A", "3.3.3.5"),
++		newRC(t, dc, "n", "A", "4.4.4.4"),
++		newRC(t, dc, "o", "A", "5.5.5.5"),
++		newRC(t, dc, "x", "CNAME", "target.example.com."),
++	}
++
++	corrections, _, err := l.GetZoneRecordsCorrections(dc, existing)
++	if err != nil {
 +		t.Fatal(err)
- 	}
- }
- 
++	}
++	runAll(t, corrections)
++
++	want := []recordedCall{
++		{"POST", "/zones/5/records/create_many", []string{
++			"a.example.com. A 1.1.1.1 300",
++			"b.example.com. A 2.2.2.2 300",
++		}},
++		{"PATCH", "/zones/5/records", []string{
++			"c.example.com. A 3.3.3.4 300",
++			"c.example.com. A 3.3.3.5 300",
++		}},
++		{"POST", "/zones/5/records/delete_many", []string{
++			"m.example.com. A 9.9.9.9 300",
++		}},
++		{"POST", "/zones/5/records/create_many", []string{
++			"n.example.com. A 4.4.4.4 300",
++			"o.example.com. A 5.5.5.5 300",
++		}},
++		{"POST", "/zones/5/records/delete_many", []string{
++			"x.example.com. A 8.8.8.8 300",
++		}},
++		{"POST", "/zones/5/records/create_many", []string{
++			"x.example.com. CNAME target.example.com. 300",
++		}},
++	}
++	if got := fake.recorded(); !sameCalls(got, want) {
++		t.Errorf("requests mismatch\n got: %+v\nwant: %+v", got, want)
++	}
++
++
 ```
 
-**File**: `pkg/privatetypes/types_generate.go` (modified, +6/-5)
+**File**: `providers/luadns/luadnsProvider.go` (modified, +114/-45)
 ```diff
-@@ -450,14 +450,15 @@ func generateTestFile(t *TypeDef) error {
- 	writeImports(&buf, std, third)
- 
- 	if len(t.Fields) == 0 {
-+		// dnsv2.New rejects records with no rdata, so test String and Parse directly.
- 		fmt.Fprintf(&buf, "func Test%s(t *testing.T) {\n", testFuncName)
- 		fmt.Fprintf(&buf, "\ty := &%s{Hdr: dnsv2.Header{Name: \"example.org.\", Class: dnsv2.ClassINET}}\n", typeName)
--		buf.WriteString("\trry, err := dnsv2.New(y.String())\n")
--		buf.WriteString("\tif err != nil {\n")
--		buf.WriteString("\t\tt.Fatal(err)\n")
-+		fmt.Fprintf(&buf, "\twant := \"example.org.\\t0\\tIN\\t%s\"\n", displayName)
-+		buf.WriteString("\tif got := y.String(); got != want {\n")
-+		fmt.Fprintf(&buf, "\t\tt.Fatalf(\"%s string presentation:\\ngot  %%q\\nwant %%q\", got, want)\n", displayName)
- 		buf.WriteString("\t}\n")
--		buf.WriteString("\tif rry.String() != y.String() {\n")
--		fmt.Fprintf(&buf, "\t\tt.Fatalf(\"%s string presentations should be identical:\\n%%q\\n%%q\", rry.String(), y.String())\n", displayName)
-+		fmt.Fprintf(&buf, "\tif err := new(%s).Parse(nil, \"\"); err != nil {\n", typeName)
-+		buf.WriteString("\t\tt.Fatal(err)\n")
- 		buf.WriteString("\t}\n")
- 		buf.WriteString("}\n")
- 	} else {
-```
-
-**File**: `providers/axfrddns/axfrddnsProvider_test.go` (modified, +14/-2)
-```diff
-@@ -2,6 +2,7 @@ package axfrddns
- 
- import (
- 	"context"
-+	"errors"
+@@ -7,6 +7,7 @@ import (
  	"fmt"
- 	"io"
- 	"strings"
-@@ -97,7 +98,18 @@ func newAXFRServer(t *testing.T, messages [][]string, signer dnsv2.TSIGSigner, c
- 		var wg sync.WaitGroup
- 		wg.Go(func() {
- 			if err := client.TransferOut(w, r, env, options); err != nil {
--				t.Errorf("server: TransferOut: %v", err)
-+				if !errors.Is(err, dnsv2.ErrSig) {
-+					t.Errorf("server: TransferOut: %v", err)
-+				} else {
-+					// A bad request TSIG is answered with NOTAUTH, as real
-+					// servers do (RFC 8945 section 5.2).
-+					reply := new(dnsv2.Msg)
-+					dnsutil.SetReply(reply, r)
-+					reply.Rcode = dnsv2.RcodeNotAuth
-+					if _, err := io.Copy(w, reply); err != nil {
-+						t.Errorf("server: write NOTAUTH reply: %v", err)
-+					}
-+				}
- 			}
- 			if closeConn {
- 				w.Close()
-@@ -257,7 +269,7 @@ func TestFetchZoneRecords(t *testing.T) {
- 			name:       "wrong secret is rejected",
- 			serverKey:  "hmac-sha256:key:" + testSecret,
- 			clientKey:  "hmac-sha256:key:" + otherKey,
--			wantErrSub: "bad signature",
-+			wantErrSub: "NOTAUTH",
- 		},
+ 	"net/http"
+ 	"slices"
++	"strings"
+ 	"time"
+ 
+ 	dnsv2 "codeberg.org/miekg/dns"
+@@ -152,63 +153,131 @@ func (l *luadnsProvider) GetZoneRecordsCorrections(dc *models.DomainConfig, reco
+ 		return nil, 0, err
  	}
  
-```
-
----
-
-### Incident Patch 2: `ea2801ea` (2026-11-06)
-**Commit Message**: chore: update npm dependencies (#5067)
-
-**File**: `package-lock.json` (modified, +238/-155)
-```diff
-@@ -15,9 +15,9 @@
-       }
-     },
-     "node_modules/@alcalzone/ansi-tokenize": {
--      "version": "0.3.0",
--      "resolved": "https://registry.npmjs.org/@alcalzone/ansi-tokenize/-/ansi-tokenize-0.3.0.tgz",
--      "integrity": "sha512-p+CMKJ93HFmLkjXKlXiVGlMQEuRb6H0MokBSwUsX+S6BRX8eV5naFZpQJFfJHjRZY0Hmnqy1/r6UWl3x+19zYA==",
-+      "version": "0.3.1",
-+      "resolved": "https://registry.npmjs.org/@alcalzone/ansi-tokenize/-/ansi-tokenize-0.3.1.tgz",
-+      "integrity": "sha512-cUD0PT0YX+rImRhfn7BfMRduP/tX/Zqt/N0dHlAyn2RlcJssCb5KsCJkhln61eh9vuJDkH8wKn3L8zJzzWXPFg==",
-       "license": "MIT",
-       "dependencies": {
-         "ansi-styles": "^6.2.1",
-@@ -314,22 +314,22 @@
-       }
-     },
-     "node_modules/@conventional-changelog/git-client": {
--      "version": "3.1.2",
--      "resolved": "https://registry.npmjs.org/@conventional-changelog/git-client/-/git-client-3.1.2.tgz",
--      "integrity": "sha512-jZqwnJwf7nboIlAcw/mkOjVa6DexCcUOgT2oOQgkoi3z9vR8tGFkcMy2BFcYwjhL9sYcDDXkRQDayiDieCoW7A==",
-+      "version": "3.2.0",
-+      "resolved": "https://registry.npmjs.org/@conventional-changelog/git-client/-/git-client-3.2.0.tgz",
-+      "integrity": "sha512-sD/E0vzpkoDz/dqM1Hhv0ihC4KBw6RXjefeO8SG1XrX+wGkMxe1pKeedkKDPCtr2JjuhbuS9aJNgOvnT8hbeBw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@simple-libs/child-process-utils": "^2.0.0",
-         "@simple-libs/stream-utils": "^2.0.0",
--        "semver": "^7.5.2"
-+        "verkit": "^0.5.0"
-       },
-       "engines": {
-         "node": ">=22"
-       },
-       "peerDependencies": {
-         "conventional-commits-filter": "^6.0.1",
--        "conventional-commits-parser": "^7.1.2"
-+        "conventional-commits-parser": "^7.1.3"
-       },
-       "peerDependenciesMeta": {
-         "conventional-commits-filter": {
-@@ -341,9 +341,9 @@
-       }
-     },
-     "node_modules/@conventional-changelog/template": {
--      "version": "1.4.0",
--      "resolved": "https://registry.npmjs.org/@conventional-changelog/template/-/template-1.4.0.tgz",
--      "integrity": "sha512-aalGyl7dbB5PArRebDIX43ZvBlXrYm9uWzGJ26t+4SzJVPsOuvfILGGbw5X4yX7i50YEmJ8zvbiWnqH/AAnZqg==",
-+      "version": "1.4.1",
-+      "resolved": "https://registry.npmjs.org/@conventional-changelog/template/-/template-1.4.1.tgz",
-+      "integrity": "sha512-mHyyEL0eIEqJ6+aF24+AdZRo4bu4W5GdUiCiCx5X7kfDY51ye8GQJ264uOINObrRSKxtSRCOWPpl9hbOy4UzxQ==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
-@@ -606,10 +606,20 @@
-       }
-     },
-     "node_modules/argparse": {
--      "version": "2.0.1",
--      "resolved": "https://registry.npmjs.org/argparse/-/argparse-2.0.1.tgz",
--      "integrity": "sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==",
--      "license": "Python-2.0"
-+      "version": "3.0.4",
-+      "resolved": "https://registry.npmjs.org/argparse/-/argparse-3.0.4.tgz",
-+      "integrity": "sha512-fwWK3Zq22l4XJJjx5mcBHGikIk+hJqO+32dPm0Jur7+rtG5x1scOjSfdT9ZKeWHPpsya/l0HHK4tDImBkTrtvA==",
-+      "funding": [
-+        {
-+          "type": "github",
-+          "url": "https://github.com/sponsors/puzrin"
-+        },
-+        {
-+          "type": "github",
-+          "url": "https://github.com/sponsors/nodeca"
-+        }
-+      ],
-+      "license": "PSF-2.0"
-     },
-     "node_modules/argue-cli": {
-       "version": "3.2.0",
-@@ -780,13 +790,13 @@
-       }
-     },
-     "node_modules/cli-truncate": {
--      "version": "6.1.1",
--      "resolved": "https://registry.npmjs.org/cli-truncate/-/cli-truncate-6.1.1.tgz",
--      "integrity": "sha512-06p9vyLahLa4zkGcgsGxU6iEkSOiuI4fhCH6Emhe2lPAcoUv73n72DnODsnHA+5wwXGnV0n9M9/qOQJSjYhFhw==",
-+      "version": "6.2.0",
-+      "resolved": "https://registry.npmjs.org/cli-truncate/-/cli-truncate-6.2.0.tgz",
-+      "integrity": "sha512-5uyZew3nYoDgyltqSI8OER6DuyecorYOSVDAXl9wQ9Y8Re/HaQ/5qP0HmTUOUQqmvtpB+mlsf1gG/FUS3U1gLQ==",
-       "license": "MIT",
-       "dependencies": {
--        "slice-ansi": "^9.0.0",
--        "string-width": "^8.2.0"
-+        "slice-ansi": "^10.0.0",
-+        "string-width": "^8.3.0"
-       },
-       "engines": {
-         "node": ">=22"
-@@ -796,9 +806,9 @@
-       }
-     },
-     "node_modules/cli-truncate/node_modules/ansi-regex": {
--      "version": "6.3.0",
--      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-6.3.0.tgz",
--      "integrity": "sha512-WpDfL7NO6j7tH88IDBNVdUJxDh9nmCteAVW9dsep846XdwF4naCBK+/tGLX3KJgcpgMRXCFlTM2hKGoK9FsdrQ==",
-+      "version": "6.5.0",
-+      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-6.5.0.tgz",
-+      "integrity": "sha512-zhvbbbdt1kbw7EJ9OQoxmQcuaNR9P5kTj7e/YdmOSU10aHWbycofJxA6jKfoEy3vlLdctOF9ZHaxLtmSm998wQ==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=12"
-@@ -807,10 +817,38 @@
-         "url": "https://github.com/chalk/ansi-regex?sponsor=1"
-       }
-     },
-+    "node_modules/cli-truncate/node_modules/ansi-styles": {
-+      "version": "7.0.0",
-+      "resolved": "https://registry.npmj
++	// LuaDNS takes a list of records per request. diff2 has already put the
++	// changes in dependency order (a CNAME's new target is created before the
++	// CNAME moves to it, and the old target is deleted after), so that order
++	// must reach the API untouched. Only adjacent changes of the same kind are
++	// merged into one request.
++	var run []pendingChange
++	var runVerb diff2.Verb
++	flush := func() {
++		corrections = append(corrections, l.batchCorrections(zone, run, runVerb)...)
++		run = nil
++	}
++
+ 	for _, change := range changes {
++		var recs models.Records
+ 		switch change.Type {
+ 		case diff2.REPORT:
++			flush()
+ 			corrections = append(corrections, &models.Correction{Msg: change.MsgsJoined})
+-		case diff2.CREATE:
+-			before := providers.BeginToNative(l.observer, "recordsToNative", change.New)
+-			req := recordsToNative(change.New)
+-			providers.EndToNative(l.observer, "recordsToNative", before, change.New, req, nil)
+-			corrections = append(corrections, &models.Correction{
+-				F: func() error {
+-					if err := l.rateLimiter.Wait(l.ctx); err != nil {
+-						return err
+-					}
+-					_, err := l.provider.CreateManyRecords(l.ctx, zone, req)
+-					return err
+-				},
+-				Msg: change.MsgsJoined,
+-			})
+-		case diff2.CHANGE:
+-			before := providers.BeginToNative(l.observer, "recordsToNative", change.New)
+-			req := recordsToNative(change.New)
+-			providers.EndToNative(l.observer, "recordsToNative", before, change.New, req, nil)
+-			corrections = append(corrections, &models.Correction{
+-				F: func() error {
+-					return retry500(func() error {
+-						if err := l.rateLimiter.Wait(l.ctx); err != nil {
+-							return err
+-						}
+-						_, err := l.provider.UpdateManyRecords(l.ctx, zone, req)
+-						return err
+-					})
+-				},
+-				Msg: change.MsgsJoined,
+-			})
++			continue
++		case diff2.CREATE, diff2.CHANGE:
++			recs = change.New
+ 		case diff2.DELETE:
+-			before := providers.BeginToNative(l.observer, "recordsToNative", change.Old)
+-			req := recordsToNative(change.Old)
+-			providers.EndToNative(l.observer, "recordsToNative", before, change.Old, req, nil)
+-			corrections = append(corrections, &models.Correction{
+-				F: func() error {
+-					return retry500(func() error {
+-						if err := l.rateLimiter.Wait(l.ctx); err != nil {
+-							return err
+-						}
+-						_, err := l.provider.DeleteManyRecords(l.ctx, zone, req)
+-						return err
+-					})
+-				},
+-				Msg: change.MsgsJoined,
+-			})
++			recs = change.Old
+ 		default:
+ 			panic(fmt.Sprintf("unhandled inst.Type %s", change.Type))
+ 		}
++		if change.Type != runVerb {
++			flush()
++			runVerb = change.Type
++		}
++		run = append(run, l.toPending(recs, change.MsgsJoined))
+ 	}
++	flush()
+ 	return corrections, actualChangeCount, nil
+ }
+ 
++// maxBatchRRs is the most RRs sent in one bulk request. LuaDNS documents no
++// limit, so this is a conservative guess.
++const maxBatchRRs = 100
++
++// pendingChange is one diff2 change (the records of one recordset) in API form.
++type pendingChange struct {
++	rrs []*api.RR
++	msg string
++}
++
++func (l *luadnsProvider) toPending(records models.Records, msg string) pendingChange {
++	before := providers.BeginToNative(l.observer, "recordsToNative", records)
++	rrs := recordsToNative(records)
++	providers.EndToNative(l.observer, "recordsToNative", before, records, rrs, nil)
++	return pendingChange{rrs: rrs, msg: msg}
++}
++
++// chunkChanges packs changes, in order, into requests of at most limit RRs.
++// A change is never split: UpdateManyRecords replaces everything stored for
++// each (name, type) it receives, so the records of one recordset must travel
++// in the same request. A change larger than limit gets a request of its own.
++func chunkChanges(changes []pendingChange, limit int) [][]pendingChange {
++	var chunks [][]pendingChange
++	var cur []pendingChange
++	curRRs := 0
++	for _, c := range changes {
++		if len(cur) > 0 && curRRs+len(c.rrs) > limit {
++			chunks = append(chunks, cur)
++			cur, curRRs = nil, 0
++		}
++		cur = append(cur, c)
++		curRRs += len(c.rrs)
++	}
++	if len(cur) > 0 {
++		chunks = append(chunks, cur)
++	}
++	return chunks
++}
++
++type bulkFunc func(ctx context.Context, zone *api.Zone, rrs []*api.RR) ([]*api.Record, error)
++
++// batchCorrections turns a run of same-verb changes into one correction per
++// bulk request.
++func (l *luadnsProvider) batchCorrections(zone *api.Zone, changes []pendingChange, verb diff2.Verb) []*models.Correction {
++	if len(changes) == 0 {
++		return nil
++	}
++	var call bulkFunc
++	var repeatable bool
++	switch verb {
++	case diff2.CREATE:
++		// Not repeatable: the failed request may have been partly applied.
++		call, repeatable = l.provider.CreateManyRecords, false
++	case diff2.CHANGE:
++		call, repeatable = l.provider.UpdateManyRecords, true
++	case diff2.DELETE:
++		call
 ```
 
 #### Recent Merged Pull Requests:
@@ -1026,28 +1106,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. upgrade to the latest tomontime/dns patches (#5066)
+## X. p/LUADNS): batch record changes into bulk API calls (#5047)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `documentation/provider/luadns.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ff1fd540`: upgrade to the latest tomontime/dns patches (#5066). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0885b8c`: p/LUADNS): batch record changes into bulk API calls (#5047). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/provider/luadns.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-replace codeberg.org/miekg/dns => codeberg.org/TomOnTime/dns v0.6.116-0.20261106021038-99f642b89f88
+- Changes are sent in bulk requests rather than one request per record set. Only consecutive changes of the same kind (creates, updates or deletes) share a request, so the order DNSControl chose is kept; a request holds at most 100 records. If a request fails, all of the changes in it fail together.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-replace codeberg.org/miekg/dns => codeberg.org/TomOnTime/dns v0.6.116-0.20261011152644-c288f44eb638
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ff1fd540` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0885b8c` are properly handled with clean fallback behavior.

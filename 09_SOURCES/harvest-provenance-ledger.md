@@ -8480,3 +8480,5 @@ Every entry in this ledger must capture:
 | `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `1bb06205` | Multi-dimensional audit evidence | 2026-11-09T02:01:01.542Z |
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-09T02:01:10.160Z |
 | `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `85de02c9` | Multi-dimensional audit evidence | 2026-11-09T02:01:15.159Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-09T02:08:02.737Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `d0885b8c` | Multi-dimensional audit evidence | 2026-11-09T02:08:11.686Z |

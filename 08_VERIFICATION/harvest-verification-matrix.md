@@ -8471,3 +8471,5 @@
 | `CYCLE-20261109-771E` | `2026-11-09T02:01:01.538Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`169daebc...`) |
 | `CYCLE-20261109-7DOR` | `2026-11-09T02:01:10.155Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule null` | Yes (`9e0170ef...`) |
 | `CYCLE-20261109-7HJN` | `2026-11-09T02:01:15.155Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`01cd1a55...`) |
+| `CYCLE-20261109-G819` | `2026-11-09T02:08:02.733Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`9848cfd0...`) |
+| `CYCLE-20261109-GEXU` | `2026-11-09T02:08:11.682Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b259f7d3...`) |
