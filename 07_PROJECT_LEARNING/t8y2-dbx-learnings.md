@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `bc14b52b`  
+> **Source Version**: `0d01dff9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T04:19:32.318Z  
+> **Timestamp**: 2026-11-09T01:46:47.380Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T04:19:32.309Z  
+> **Harvest Timestamp**: 2026-11-09T01:46:47.371Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 29500 stars
+- **Stars / Engagement**: 29581 stars
 
 ---
 
@@ -2018,90 +2018,21 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df9dddf6` (2026-11-08)
-**Commit Message**: fix(release): make stable promotion reruns idempotent
+### Incident Patch 1: `1fd5f9c3` (2026-11-08)
+**Commit Message**: fix(release): retry agent R2 uploads and resume driver sync
 
-A promotion rerun feeds the already-promoted manifest back into the channel
-preparation, which dropped promoted_from and made the immutable R2 manifest
-look different, aborting the rerun before aliases, packages and notifications.
-Keep the recorded beta build when the input is already promoted, and resume the
-versioned R2 upload by size instead of re-pushing the whole release.
+The first attempt of the agents release uploaded the JRE tarballs in one
+unretried `aws s3 cp`, so a single R2 response timeout failed the whole
+release after every build had succeeded. Retry each upload, and sync the
+version-scoped driver packages by size so a retry only sends what is missing.
 
-**File**: `.github/scripts/prepare-channel-manifest.mjs` (modified, +10/-1)
+**File**: `.github/workflows/agents-release.yml` (modified, +19/-5)
 ```diff
-@@ -39,8 +39,17 @@ if (manifest.version !== baseVersion && manifest.version !== tagVersion && !prom
- // The promoted binary keeps its beta build version, which the stable manifest
- // no longer exposes. Record it so an installed beta build can recognise that
- // it is the build that was promoted.
-+// Rerunning a promotion feeds the already-promoted manifest back in, and it
-+// must stay byte-identical: dropping promoted_from would lose the build
-+// provenance the installed beta uses to recognise itself.
-+const alreadyPromoted =
-+  channel === "stable" &&
-+  promoted === "true" &&
-+  manifest.is_promoted === true &&
-+  typeof manifest.promoted_from === "string" &&
-+  manifest.promoted_from.length > 0;
- if (promotesBetaBuild) manifest.promoted_from = manifest.version;
--else delete manifest.promoted_from;
-+else if (!alreadyPromoted) delete manifest.promoted_from;
- manifest.version = channel === "beta" ? tagVersion : baseVersion;
- manifest.channel = channel;
- manifest.release_tag = tag;
-```
-
-**File**: `.github/scripts/prepare-channel-manifest.test.mjs` (modified, +17/-0)
-```diff
-@@ -68,6 +68,23 @@ test("records the promoted beta build in the stable manifest", async () => {
-   assert.equal(JSON.parse(await readFile(output, "utf8")).promoted_from, "0.6.60-beta.20261028.1");
- });
- 
-+test("keeps an already-promoted manifest byte-identical on a promotion rerun", async () => {
-+  const { input, output } = await fixture();
-+  const promoted = {
-+    version: "0.6.60",
-+    platforms: { "darwin-aarch64": {} },
-+    channel: "stable",
-+    release_tag: "v0.6.60",
-+    is_promoted: true,
-+    promoted_from: "0.6.60-beta.20261028.1",
-+    published_at: "2026-10-28T00:00:00.000Z",
-+  };
-+  await writeFile(input, JSON.stringify(promoted));
-+  const result = await run([input, output, "stable", "v0.6.60", "true", "2026-10-28T00:00:00.000Z"]);
-+  assert.equal(result.code, 0, result.stderr);
-+  assert.deepEqual(JSON.parse(await readFile(output, "utf8")), promoted);
-+});
-+
- test("omits promoted_from when the stable manifest is not a promoted beta build", async () => {
-   const { input, output } = await fixture();
-   await writeFile(input, JSON.stringify({ version: "0.6.60", platforms: {}, promoted_from: "0.6.60-beta.20261028.1" }));
-```
-
-**File**: `.github/workflows/publish-packages.yml` (modified, +20/-5)
-```diff
-@@ -461,19 +461,34 @@ jobs:
+@@ -1879,23 +1879,37 @@ jobs:
+           R2_ENDPOINT: "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+           R2_BUCKET: "s3://${{ secrets.R2_BUCKET_NAME }}"
          run: |
-           set -euo pipefail
-           endpoint="https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
--          manifest_key="releases/stable/${{ steps.version.outputs.tag }}/latest.json"
-+          bucket="s3://${{ secrets.R2_BUCKET_NAME }}"
-+          tag="${{ steps.version.outputs.tag }}"
-+          manifest_key="releases/stable/${tag}/latest.json"
-           if aws s3api head-object --bucket "${{ secrets.R2_BUCKET_NAME }}" --key "$manifest_key" --endpoint-url "$endpoint" >/dev/null 2>&1; then
--            aws s3 cp "s3://${{ secrets.R2_BUCKET_NAME }}/${manifest_key}" "$RUNNER_TEMP/existing-stable-manifest.json" --endpoint-url "$endpoint"
-+            aws s3 cp "${bucket}/${manifest_key}" "$RUNNER_TEMP/existing-stable-manifest.json" --endpoint-url "$endpoint"
-             # sync-changelog fills in `notes` after a successful publish, so a
-             # rerun must not treat that field as a content change.
-             if ! cmp -s <(jq -S 'del(.notes)' assets/latest.json) <(jq -S 'del(.notes)' "$RUNNER_TEMP/existing-stable-manifest.json"); then
--              echo "::error::Immutable stable manifest already exists for ${{ steps.version.outputs.tag }} with different contents."
-+              echo "::error::Immutable stable manifest already exists for ${tag} with different contents."
-               exit 1
-             fi
-             echo "Stable manifest already exists with identical contents; continuing idempotently."
-           fi
--          aws s3 sync ./assets "s3://${{ secrets.R2_BUCKET_NAME }}/releases/stable/${{ steps.version.outputs.tag }}/" \
--            --endpoint-url "$endpoint"
++          set -euo pipefail
 +          retry() {
 +            local attempt
 +            for attempt in 1 2 3; do
@@ -2113,288 +2044,581 @@ versioned R2 upload by size instead of re-pushing the whole release.
 +            done
 +            return 1
 +          }
-+          # The versioned directory is immutable for this tag, so compare sizes:
-+          # a rerun resumes instead of re-uploading the whole release.
-+          retry aws s3 sync ./assets "${bucket}/releases/stable/${tag}/" \
-+            --endpoint-url "$endpoint" --size-only
-         env:
-           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+           # Always upload the current registry.
+-          aws s3 cp release/agent-registry.json \
++          retry aws s3 cp release/agent-registry.json \
+             "$R2_BUCKET/agents/agent-registry.json" \
+             --endpoint-url "$R2_ENDPOINT"
+           echo "Uploaded agent-registry.json"
+ 
+-          # Upload all single-driver packages concurrently.
+-          aws s3 cp release/ "$R2_BUCKET/agents/drivers/" \
+-            --recursive \
++          # Upload all single-driver packages concurrently. Package names carry
++          # the driver version, so the size check makes a retry resume after a
++          # transient R2 failure instead of re-uploading every driver again.
++          retry aws s3 sync release/ "$R2_BUCKET/agents/drivers/" \
+             --exclude "*" \
+             --include "dbx-agent-*.tar.zst" \
+             --include "dbx-agent-*.tar.zst.delta" \
++            --size-only \
+             --endpoint-url "$R2_ENDPOINT"
+           echo "Uploaded single-driver packages"
+ 
+           # Upload JRE packages concurrently, always overwriting the stable names.
+-          aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
++          retry aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
+             --recursive \
+             --exclude "*" \
+             --include "dbx-jre-*.tar.zst" \
 ```
 
 ---
 
-### Incident Patch 2: `833a2314` (2026-11-08)
-**Commit Message**: fix(release): mirror stable aliases without R2 object tagging
+### Incident Patch 2: `5f1b876d` (2026-11-08)
+**Commit Message**: fix(oracle): scope trigger listings by TABLE_OWNER
 
-The alias step downloaded the whole promoted release and re-uploaded it to
-both aliases, so each promotion pushed ~4.4 GiB through the runner and could
-die on a multipart InvalidPart, leaving releases/stable/latest.json on the
-previous version. Copy the immutable objects with s3api copy-object (R2 does
-not implement the tagging calls aws s3 cp/sync make), prune stale keys, and
-only send the small channel manifests through the runner.
+Closes #13498
 
-**File**: `.github/workflows/publish-packages.yml` (modified, +46/-16)
+**File**: `agents/common/src/main/java/com/dbx/agent/OracleTriggerReader.java` (modified, +19/-0)
 ```diff
-@@ -707,23 +707,53 @@ jobs:
-         run: |
-           set -euo pipefail
-           endpoint="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
--          source="s3://${R2_BUCKET_NAME}/releases/stable/${TAG}/"
--          # R2 rejects the tagging headers the CLI sends on bucket-to-bucket copies
--          # (GetObjectTagging, x-amz-tagging-directive), so download the immutable
--          # directory once and upload it to each alias, like a first publish does.
--          assets="$RUNNER_TEMP/stable-aliases"
--          mkdir -p "${assets}"
--          aws s3 sync "${source}" "${assets}/" --endpoint-url "${endpoint}"
--          for alias in stable/latest latest; do
--            aws s3 sync "${assets}/" "s3://${R2_BUCKET_NAME}/releases/${alias}/" \
--              --endpoint-url "${endpoint}" \
--              --cache-control "no-cache" \
--              --delete
-+          bucket="s3://${R2_BUCKET_NAME}"
-+          tag_prefix="releases/stable/${TAG}/"
-+          retry() {
-+            local attempt
-+            for attempt in 1 2 3; do
-+              if "$@"; then
-+                return 0
-+              fi
-+              echo "::warning::R2 alias publish attempt ${attempt}/3 failed: $*"
-+              sleep $((attempt * 15))
-+            done
-+            return 1
-+          }
-+          mapfile -t asset_keys < <(
-+            aws s3api list-objects-v2 --bucket "$R2_BUCKET_NAME" --prefix "$tag_prefix" \
-+              --endpoint-url "$endpoint" --output json | jq -r '.Contents[]?.Key'
-+          )
-+          test "${#asset_keys[@]}" -gt 0
-+          # R2 rejects the tagging headers aws s3 cp/sync send on bucket-to-bucket
-+          # copies (GetObjectTagging -> NotImplemented), and re-uploading the whole
-+          # release through the runner twice kept dying on multipart InvalidPart,
-+          # so copy the immutable objects server-side instead.
-+          for alias in releases/stable/latest/ releases/latest/; do
-+            for key in "${asset_keys[@]}"; do
-+              retry aws s3api copy-object --bucket "$R2_BUCKET_NAME" \
-+                --copy-source "${R2_BUCKET_NAME}/${key}" --key "${alias}${key#"$tag_prefix"}" \
-+                --endpoint-url "$endpoint" >/dev/null
-+            done
-+            mapfile -t alias_keys < <(
-+              aws s3api list-objects-v2 --bucket "$R2_BUCKET_NAME" --prefix "$alias" \
-+                --endpoint-url "$endpoint" --output json | jq -r '.Contents[]?.Key'
-+            )
-+            for key in "${alias_keys[@]}"; do
-+              if ! printf '%s\n' "${asset_keys[@]}" | grep -Fxq "${tag_prefix}${key#"$alias"}"; then
-+                retry aws s3api delete-object --bucket "$R2_BUCKET_NAME" --key "$key" \
-+                  --endpoint-url "$endpoint" >/dev/null
-+              fi
-+            done
-           done
--          aws s3 cp "${assets}/latest.json" "s3://${R2_BUCKET_NAME}/releases/stable/latest.json" \
--            --endpoint-url "${endpoint}" --cache-control "no-cache"
--          aws s3 cp "${assets}/latest.json" "s3://${R2_BUCKET_NAME}/releases/latest/latest.json" \
--            --endpoint-url "${endpoint}" --cache-control "no-cache"
-+          # The channel pointers are small single PUTs; send them through the
-+          # runner so the alias manifests keep their no-cache metadata.
-+          aws s3 cp "${bucket}/${tag_prefix}latest.json" "$RUNNER_TEMP/stable-latest.json" \
-+            --endpoint-url "$endpoint"
-+          retry aws s3 cp "$RUNNER_TEMP/stable-latest.json" "${bucket}/releases/stable/latest.json" \
-+            --endpoint-url "$endpoint" --cache-control "no-cache"
-+          retry aws s3 cp "$RUNNER_TEMP/stable-latest.json" "${bucket}/releases/latest/latest.json" \
-+            --endpoint-url "$endpoint" --cache-control "no-cache"
+@@ -77,6 +77,25 @@ private static void attach(ObjectInfo object, TriggerInfo trigger) {
+         object.setParent_name(parent == null ? null : parent.name());
+     }
  
-       - name: Keep latest five versioned releases in R2
-         continue-on-error: true
++    /**
++     * Schema-level trigger objects for the object tree's "触发器" group.
++     *
++     * <p>Unlike {@link #listTriggers}, this returns every trigger owned by the schema,
++     * including schema- and database-scoped triggers, as lightweight {@link ObjectInfo}
++     * rows that the tree expands and enriches on demand. The generic JDBC table/routine
++     * metadata never lists triggers, so the JDBC agent's schema object group is otherwise
++     * empty for Oracle connections (#13498).</p>
++     */
++    public List<ObjectInfo> listSchemaObjects(String owner) throws SQLException {
++        List<ObjectInfo> objects = new ArrayList<>();
++        for (TriggerInfo trigger : summaries("t.OWNER = ?", List.of(owner), false)) {
++            ObjectInfo object = new ObjectInfo(trigger.getName(), "TRIGGER", owner, null);
++            attach(object, trigger);
++            objects.add(object);
++        }
++        return objects;
++    }
++
+     private TriggerInfo unavailable(ObjectInfo object, String owner, OracleTriggerMetadata.ReadState failure) {
+         TriggerInfo trigger = new TriggerInfo(object.getName(), "", "");
+         Map<String, OracleTriggerMetadata.ReadState> reads = new LinkedHashMap<>();
+```
+
+**File**: `agents/common/src/main/java/com/dbx/agent/StandardJdbcMetadata.java` (modified, +34/-0)
+```diff
+@@ -151,11 +151,45 @@ public List<ObjectInfo> listObjects(
+                 && !configuredDatabase.trim().isEmpty()) {
+                 appendRoutines(result, meta, profile.getEscapeSchemaWildcards(), configuredDatabase, schema, schema);
+             }
++            // The generic JDBC table/routine metadata never lists Oracle triggers, so the
++            // schema "触发器" group is empty for JDBC Oracle connections unless we read them
++            // directly from the dictionary (#13498). Non-Oracle databases either lack the
++            // dictionary views or don't expose triggers this way, so the query is Oracle-only.
++            if (isOracle(meta)) {
++                try {
++                    result.addAll(new OracleTriggerReader(conn, oracleEngine(meta)).listSchemaObjects(schema));
++                } catch (Exception | AbstractMethodError ignored) {
++                    // Trigger metadata is best-effort; never fail the whole object group.
++                }
++            }
+             result.sort(Comparator.comparing(ObjectInfo::getName));
+             return normalized.filterObjects(result);
+         });
+     }
+ 
++    private static boolean isOracle(DatabaseMetaData meta) {
++        try {
++            String productName = meta.getDatabaseProductName();
++            return productName != null
++                && (productName.toLowerCase(Locale.ROOT).contains("oracle")
++                    || productName.toLowerCase(Locale.ROOT).contains("oceanbase"));
++        } catch (Exception | AbstractMethodError ignored) {
++            return false;
++        }
++    }
++
++    private static String oracleEngine(DatabaseMetaData meta) {
++        try {
++            String productName = meta.getDatabaseProductName();
++            if (productName != null && productName.toLowerCase(Locale.ROOT).contains("oceanbase")) {
++                return "oceanbase-oracle";
++            }
++        } catch (Exception | AbstractMethodError ignored) {
++            // fall through to plain oracle
++        }
++        return "oracle";
++    }
++
+     public List<String> listDataTypes(Connection conn) {
+         return unchecked(() -> {
+             Set<String> seen = new LinkedHashSet<>();
+```
+
+**File**: `agents/common/src/test/java/com/dbx/agent/OracleTriggerReaderTest.java` (modified, +17/-0)
+```diff
+@@ -59,6 +59,23 @@ void enrichesOnlyTheSelectedPageWithoutLoadingSourceOrRewritingOtherRows() throw
+         }
+     }
+ 
++    @Test
++    void listsSchemaLevelTriggerObjectsForTheTreeGroup() throws Exception {
++        try (Connection connection = fixture()) {
++            OracleTriggerReader reader = new OracleTriggerReader(connection, "oceanbase-oracle");
++            List<ObjectInfo> objects = reader.listSchemaObjects(OWNER);
++            assertEquals(1, objects.size());
++            ObjectInfo trigger = objects.get(0);
++            assertEquals("TRIGGER", trigger.getObject_type());
++            assertEquals(NAME, trigger.getName());
++            assertEquals(OWNER, trigger.getSchema());
++            assertNotNull(trigger.getTrigger());
++            assertEquals(PARENT_OWNER, trigger.getParent_schema());
++            assertEquals(" Parent ", trigger.getParent_name());
++            assertFalse(trigger.getValid());
++        }
++    }
++
+     @Test
+     void missingColumnsStayUnknownRatherThanDisabledOrValid() throws Exception {
+         try (Connection connection = fixture()) {
+```
+
+**File**: `agents/common/src/test/java/com/dbx/agent/StandardJdbcMetadataTest.java` (modified, +149/-0)
+```diff
+@@ -5,6 +5,7 @@
+ import org.junit.jupiter.params.provider.CsvSource;
+ 
+ import java.lang.reflect.InvocationHandler;
++import java.lang.reflect.InvocationTargetException;
+ import java.lang.reflect.Method;
+ import java.lang.reflect.Proxy;
+ import java.sql.Connection;
+@@ -20,9 +21,11 @@
+ import java.util.Map;
+ import java.util.concurrent.atomic.AtomicReference;
+ import java.util.concurrent.atomic.AtomicInteger;
++import java.util.stream.Collectors;
+ 
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertNotNull;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ 
+ class StandardJdbcMetadataTest {
+@@ -878,6 +881,152 @@ void completionEscapesExactParentTable(String escape, String table, String expec
+         assertEquals(table, result.getCandidates().get(0).getParent_name());
+     }
+ 
++    @Test
++    void listsOracleTriggersInTheSchemaObjectGroup() throws Exception {
++        try (Connection connection = oracleFixture()) {
++            List<ObjectInfo> objects = StandardJdbcMetadata.INSTANCE.listObjects(
++                connection, oracleProfile(), "ORCL", "APP", MetadataListConstraints.NONE);
++
++            List<ObjectInfo> triggers = objects.stream()
++                .filter(object -> "TRIGGER".equals(object.getObject_type()))
++                .collect(Collectors.toList());
++            assertEquals(1, triggers.size());
++            ObjectInfo trigger = triggers.get(0);
++            assertEquals("Trigger A", trigger.getName());
++            assertEquals("APP", trigger.getSchema());
++            assertNotNull(trigger.getTrigger());
++            assertEquals("Trigger A", trigger.getTrigger().getName());
++            assertEquals("PARENT_OWNER", trigger.getParent_schema());
++            assertEquals("PARENT_TABLE", trigger.getParent_name());
++        }
++    }
++
++    @Test
++    void nonOracleConnectionsNeverReadTheOracleTriggerDictionary() {
++        AtomicInteger preparedStatements = new AtomicInteger();
++        DatabaseMetaData meta = proxy(DatabaseMetaData.class, new MethodHandler() {
++            @Override
++            public Object handle(Method method, Object[] args) {
++                if ("getTables".equals(method.getName())) {
++                    return rows(row("TABLE_NAME", "T", "TABLE_TYPE", "TABLE", "REMARKS", null));
++                }
++                if ("getDatabaseProductName".equals(method.getName())) {
++                    return "PostgreSQL";
++                }
++                if ("getTableTypes".equals(method.getName())) {
++                    return rows(row("TABLE_TYPE", "TABLE"));
++                }
++                return defaultValue(method.getReturnType());
++            }
++        });
++        Connection conn = proxy(Connection.class, new MethodHandler() {
++            @Override
++            public Object handle(Method method, Object[] args) {
++                if ("getMetaData".equals(method.getName())) {
++                    return meta;
++                }
++                if ("prepareStatement".equals(method.getName())) {
++                    preparedStatements.incrementAndGet();
++                }
++                return defaultValue(method.getReturnType());
++            }
++        });
++
++        List<ObjectInfo> objects = StandardJdbcMetadata.INSTANCE.listObjects(
++            conn, profile, "postgres", "public", MetadataListConstraints.NONE);
++        assertEquals(0, preparedStatements.get());
++        assertTrue(objects.stream().noneMatch(object -> "TRIGGER".equals(object.getObject_type())));
++    }
++
++    @Test
++    void oracleTriggerReadFailureKeepsTheRestOfTheObjectGroup() throws Exception {
++        try (Connection h2 = oracleH2Fixture()) {
++            h2.createStatement().execute("DROP TABLE ALL_TRIGGERS");
++            List<ObjectInfo> objects = StandardJdbcMetadata.INSTANCE.listObjects(
++                asOracleConnection(h2), oracleProfile(), "ORCL", "APP", MetadataListConstraints.NONE);
++            assertTrue(objects.stream().noneMatch(object -> "TRIGGER".equals(object.getObject_type())));
++        }
++    }
++
++    private static JdbcAgentProfile oracleProfile() {
++        return new JdbcAgentProfile(
++            "oracle.jdbc.OracleDriver",
++            "jdbc:oracle:thin:@{host}:{port}/{database}",
++            1521,
++            false,
++            Collections.singleton("SYS"),
++            Arrays.asList("TABLE", "VIEW")
++        );
++    }
++
++    /**
++     * An Oracle-flavoured connection whose ALL_TRIGGERS dictionary answers the
++     * schema-level trigger query used by the object tree's 触发器 group.
++     */
++    private static Connection oracleFixture() throws Exception {
++        return asOracleConnection(oracleH2Fixture());
++    }
++
++    private static Connection oracleH2Fixture() throws Exception {
++        Connection h2 = java.sql.DriverManager.getConnection(
++            "jdbc:h2:mem:" + java.util.UUID.randomUUID() + ";MODE=Oracle
+```
+
+**File**: `agents/drivers/oracle-go/main.go` (modified, +1/-1)
+```diff
+@@ -262,7 +262,7 @@ LEFT JOIN ALL_SOURCE s
+   ON s.OWNER = t.OWNER
+  AND s.NAME = t.TRIGGER_NAME
+  AND s.TYPE = 'TRIGGER'
+-WHERE t.OWNER = :1
++WHERE t.TABLE_OWNER = :1
+   AND t.TABLE_NAME = :2
+   AND t.BASE_OBJECT_TYPE IN ('TABLE', 'VIEW')
+ ORDER BY t.TRIGGER_NAME, s.LINE`
+```
+
+**File**: `agents/drivers/oracle-go/main_test.go` (modified, +7/-2)
+```diff
+@@ -2750,8 +2750,13 @@ func TestOracleListTriggersSQLLoadsSourceWithoutLongColumns(t *testing.T) {
+ 	if strings.Contains(sqlText, "TRIGGER_BODY") {
+ 		t.Fatalf("trigger listing should avoid Oracle LONG trigger bodies, got: %s", oracleListTriggersSQL)
+ 	}
+-	if !strings.Contains(sqlText, "T.OWNER = :1") || !strings.Contains(sqlText, "T.TABLE_NAME = :2") {
+-		t.Fatalf("trigger listing should stay scoped to the selected schema and table, got: %s", oracleListTriggersSQL)
++	// Strict TABLE_OWNER scoping matches every sibling trigger path (the Rust
++	// reader, the Java agent, the DDL loader in this file, DBeaver) and keeps
++	// oracle_table_triggers' inventory OWNER match intact; an OR OWNER branch
++	// would list same-named tables in other schemas and then hard-fail that
++	// inventory check (#13498 review).
++	if !strings.Contains(sqlText, "T.TABLE_OWNER = :1") || !strings.Contains(sqlText, "T.TABLE_NAME = :2") || strings.Contains(sqlText, "T.OWNER = :1") {
++		t.Fatalf("trigger listing should scope strictly by the base table owner and table, got: %s", oracleListTriggersSQL)
+ 	}
+ }
+ 
+```
+
+**File**: `crates/dbx-core/src/schema/oracle_table_triggers.rs` (modified, +18/-13)
+```diff
+@@ -1,6 +1,6 @@
+ use super::*;
+ use dbx_sql::object_source_sql::{
+-    oracle_trigger_ddl_sources, oracle_trigger_enabled, oracle_trigger_metadata_matches,
++    oracle_trigger_ddl_sources_with_table_owner, oracle_trigger_enabled, oracle_trigger_metadata_matches,
+     oracle_trigger_source_with_create,
+ };
+ 
+@@ -36,18 +36,20 @@ pub(super) async fn enrich(
+         }
+     };
+     for trigger in triggers.iter_mut().filter(|trigger| incomplete(trigger)) {
+-        let mut rows = inventory.rows.iter().filter(|row| {
+-            row.first().and_then(serde_json::Value::as_str) == Some(schema)
+-                && row.get(1).and_then(serde_json::Value::as_str) == Some(trigger.name.as_str())
+-        });
++        // The listing admits triggers owned by other schemas (TABLE_OWNER
++        // match), so rows are keyed by name here and the row's actual OWNER is
++        // recorded instead of being required to equal the queried schema
++        // (#13498 review).
++        let mut rows = inventory
++            .rows
++            .iter()
++            .filter(|row| row.get(1).and_then(serde_json::Value::as_str) == Some(trigger.name.as_str()));
+         let row =
+             rows.next().ok_or_else(|| format!("{schema}.{}: trigger identity changed; compare again", trigger.name))?;
+-        if rows.next().is_some()
+-            || row.get(2).and_then(serde_json::Value::as_str) != Some(schema)
+-            || row.get(3).and_then(serde_json::Value::as_str) != Some(table)
+-        {
++        if rows.next().is_some() || row.get(3).and_then(serde_json::Value::as_str) != Some(table) {
+             return Err(format!("{schema}.{}: trigger table identity changed; compare again", trigger.name));
+         }
++        let trigger_owner = row.first().and_then(serde_json::Value::as_str).unwrap_or(schema);
+         let enabled = match row.get(4).and_then(serde_json::Value::as_str) {
+             Some("ENABLED") => true,
+             Some("DISABLED") => false,
+@@ -63,12 +65,15 @@ pub(super) async fn enrich(
+             return Err(format!("{schema}.{}: trigger firing state changed; compare again", trigger.name));
+         }
+         let missing_source = trigger.statement.as_deref().is_none_or(|source| source.trim().is_empty());
++        // A cross-schema trigger's ALL_SOURCE rows live under its actual OWNER,
++        // so both the source lookup and the identity check use trigger_owner
++        // rather than the queried schema (#13498 review).
+         let source = if missing_source {
+             match get_object_source_core(
+                 state,
+                 connection_id,
+                 database,
+-                schema,
++                trigger_owner,
+                 &trigger.name,
+                 db::ObjectSourceKind::Trigger,
+                 None,
+@@ -97,7 +102,7 @@ pub(super) async fn enrich(
+             }
+         };
+         if source.name != trigger.name
+-            || source.schema.as_deref() != Some(schema)
++            || source.schema.as_deref() != Some(trigger_owner)
+             || source.object_type != db::ObjectSourceKind::Trigger
+         {
+             return Err(format!("{schema}.{}: trigger source identity changed; compare again", trigger.name));
+@@ -112,15 +117,15 @@ pub(super) async fn enrich(
+                 continue;
+             }
+         };
+-        let definitions = match oracle_trigger_ddl_sources(&full, schema) {
++        let definitions = match oracle_trigger_ddl_sources_with_table_owner(&full, trigger_owner, schema) {
+             Ok(definitions) => definitions,
+             Err(_) => {
+                 log::warn!("Trigger metadata remains incomplete for {schema}.{}: invalid declaration", trigger.name);
+                 continue;
+             }
+         };
+         if definitions.len() != 1
+-            || definitions[0].owner != schema
++            || definitions[0].owner != trigger_owner
+             || definitions[0].name != trigger.name
+             || definitions[0].table_owner != schema
+             || definitions[0].table != table
+```
+
+**File**: `crates/dbx-sql-core/src/object_source_sql.rs` (modified, +7/-6)
+```diff
+@@ -17,12 +17,13 @@ pub use oracle_trigger::{
+ mod oracle_routines;
+ pub use oracle_indexes::{
+     extract_oracle_table_triggers, oracle_index_ddl_sources, oracle_table_created_index_identities,
+-    oracle_trigger_ddl_sources, oracle_trigger_definitions_match, oracle_trigger_enabled,
+-    oracle_trigger_metadata_matches, oracle_trigger_source_with_create, order_oracle_trigger_sources,
+-    parse_oracle_table_ddl, rebase_oracle_table_ddl, rebase_oracle_trigger_ddl, separate_oracle_supporting_indexes,
+-    separate_oracle_supporting_indexes_with_retained, split_oracle_table_ddl, split_oracle_table_ddl_with_retained,
+-    OracleDdlNameMapping, OracleIndexDdlSource, OracleSupportingIndexDdl, OracleSupportingIndexIdentity,
+-    OracleTableConstraintSource, OracleTableDdlParts, OracleTableDdlSource, OracleTriggerDdlSource,
++    oracle_trigger_ddl_sources, oracle_trigger_ddl_sources_with_table_owner, oracle_trigger_definitions_match,
++    oracle_trigger_enabled, oracle_trigger_metadata_matches, oracle_trigger_source_with_create,
++    order_oracle_trigger_sources, parse_oracle_table_ddl, rebase_oracle_table_ddl, rebase_oracle_trigger_ddl,
++    separate_oracle_supporting_indexes, separate_oracle_supporting_indexes_with_retained, split_oracle_table_ddl,
++    split_oracle_table_ddl_with_retained, OracleDdlNameMapping, OracleIndexDdlSource, OracleSupportingIndexDdl,
++    OracleSupportingIndexIdentity, OracleTableConstraintSource, OracleTableDdlParts, OracleTableDdlSource,
++    OracleTriggerDdlSource,
+ };
+ pub use oracle_routines::{
+     analyze_oracle_package_body_draft, analyze_oracle_routine_draft, compact_oracle_ddl,
 ```
 
 ---
 
-### Incident Patch 3: `a6d5a4fd` (2026-11-07)
-**Commit Message**: fix(settings): re-sync sidebar page size draft after apply
+### Incident Patch 3: `9eb7dfb9` (2026-11-08)
+**Commit Message**: fix(postgres): surface underlying server errors
 
-**File**: `apps/desktop/src/components/editor/EditorSettingsDialog.vue` (modified, +3/-0)
+Closes #13016
+
+**File**: `Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -2788,6 +2788,9 @@ async function persistSettings() {
-     sidebar_table_page_size: editSidebarTablePageSize.value,
-   });
-   editMetadataCacheMaxMemoryMb.value = settingsStore.desktopSettings.metadata_cache_max_memory_mb;
-+  // 同理：≤0 会被 normalizeDesktopSettings 回退默认值，回填草稿避免 hasChanges() 粘住
-+  // （与 #9881 快捷键 / #13233 超时同一类）。
-+  editSidebarTablePageSize.value = settingsStore.desktopSettings.sidebar_table_page_size ?? DEFAULT_SIDEBAR_TABLE_PAGE_SIZE;
-   desktopCloseBehaviorResetPending.value = false;
-   hasImportedSettingsPendingApply.value = false;
-   if (sidebarObjectDisplayChanged) {
+@@ -7200,7 +7200,7 @@ dependencies = [
+ [[package]]
+ name = "postgres-protocol"
+ version = "0.6.12"
+-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=ac8ad476de59093d33ab9f294531c956e0c6a724#ac8ad476de59093d33ab9f294531c956e0c6a724"
++source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
+ dependencies = [
+  "base64 0.23.0",
+  "byteorder",
+@@ -7219,7 +7219,7 @@ dependencies = [
+ [[package]]
+ name = "postgres-types"
+ version = "0.2.14"
+-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=ac8ad476de59093d33ab9f294531c956e0c6a724#ac8ad476de59093d33ab9f294531c956e0c6a724"
++source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
+ dependencies = [
+  "bytes",
+  "chrono",
+@@ -10291,7 +10291,7 @@ dependencies = [
+ [[package]]
+ name = "tokio-postgres"
+ version = "0.7.18"
+-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=ac8ad476de59093d33ab9f294531c956e0c6a724#ac8ad476de59093d33ab9f294531c956e0c6a724"
++source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
+ dependencies = [
+  "async-trait",
+  "byteorder",
 ```
 
-**File**: `apps/desktop/src/components/editor/__tests__/EditorSettingsDialog.sidebarTablePageSize.integration.spec.ts` (added, +242/-0)
+**File**: `Cargo.toml` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,242 @@
-+// @vitest-environment happy-dom
-+
-+import { createApp, defineComponent, h, nextTick, type App } from "vue";
-+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-+import { createPinia } from "pinia";
-+import { DEFAULT_DESKTOP_SETTINGS, DEFAULT_EDITOR_SETTINGS, type DesktopSettings } from "@/stores/settingsStore";
-+
-+const hoisted = vi.hoisted(() => ({
-+  shortcuts: {} as Record<string, string>,
-+  desktop: null as DesktopSettings | null,
-+  closes: [] as boolean[],
-+  updateDesktopCalls: [] as Array<Partial<DesktopSettings>>,
-+}));
-+
-+vi.mock("vue-i18n", async () => {
-+  const { ref } = await import("vue");
-+  const locale = ref("en");
-+  const t = (key: string) => key;
-+  return {
-+    createI18n: () => ({ global: { t, locale }, install: () => undefined }),
-+    useI18n: () => ({ t, locale }),
-+  };
-+});
-+
-+vi.mock("@/components/ui/dialog", async () => {
-+  const { defineComponent, h } = await import("vue");
-+  const passthrough = defineComponent({
-+    setup(_props, { slots }) {
-+      return () => h("div", slots.default?.());
-+    },
-+  });
-+  return {
-+    Dialog: defineComponent({
-+      props: { open: { type: Boolean, default: false } },
-+      setup:
-+        (props, { slots }) =>
-+        () =>
-+          props.open ? h("div", slots.default?.()) : null,
-+    }),
-+    DialogContent: passthrough,
-+    DialogFooter: passthrough,
-+    DialogHeader: passthrough,
-+    DialogTitle: passthrough,
-+  };
-+});
-+
-+vi.mock("@/components/ui/button", async () => {
-+  const { defineComponent, h } = await import("vue");
-+  return {
-+    Button: defineComponent({
-+      inheritAttrs: false,
-+      setup(props, { attrs, slots }) {
-+        return () => h("button", { ...attrs, disabled: (props as { disabled?: boolean }).disabled ? true : undefined }, slots.default?.());
-+      },
-+      props: { disabled: { type: Boolean, default: false } },
-+    }),
-+  };
-+});
-+
-+vi.mock("@/components/settings/ChangelogPanel.vue", async () => {
-+  const { defineComponent } = await import("vue");
-+  return { default: defineComponent({ setup: () => () => null }) };
-+});
-+
-+vi.mock("@/stores/connectionStore", () => ({
-+  useConnectionStore: () => ({
-+    connections: [],
-+    sidebarLayout: { groups: [], order: [] },
-+    activeConnectionId: null,
-+    getConfig: () => null,
-+    databaseCompatibilityMode: () => null,
-+    refreshAllTree: vi.fn(async () => undefined),
-+    refreshSidebarObjectPagination: vi.fn(async () => undefined),
-+  }),
-+}));
-+
-+vi.mock("@/stores/settingsStore", async (importOriginal) => {
-+  const actual = await importOriginal<typeof import("@/stores/settingsStore")>();
-+  hoisted.desktop = { ...actual.DEFAULT_DESKTOP_SETTINGS };
-+  const store = {
-+    settingsPageActive: false,
-+    editorSettings: {
-+      ...actual.DEFAULT_EDITOR_SETTINGS,
-+      get shortcuts() {
-+        return hoisted.shortcuts;
-+      },
-+    },
-+    get desktopSettings() {
-+      if (!hoisted.desktop) throw new Error("desktop settings were not initialized");
-+      return hoisted.desktop;
-+    },
-+    mcpGlobalPolicy: { configured: false, readOnly: false },
-+    aiConfigs: [],
-+    aiDefaultTemplatesByDbType: {},
-+    defaultAiMode: "ask",
-+    restoreLastConversation: false,
-+    initMcpGlobalPolicy: vi.fn(async () => undefined),
-+    updateMcpGlobalPolicy: vi.fn(async () => undefined),
-+    initAiConfigs: vi.fn(async () => undefined),
-+    initDesktopSettings: vi.fn(async () => undefined),
-+    updateEditorSettingsAndPersist: vi.fn(async () => undefined),
-+    updateEditorSettings: vi.fn(),
-+    persistEditorSettings: vi.fn(async () => undefined),
-+    updateDesktopSettings: vi.fn(async (partial: Partial<DesktopSettings>) => {
-+      hoisted.updateDesktopCalls.push(partial);
-+      // Mirror production: persist path runs normalizeDesktopSettings so ≤0 falls back.
-+      hoisted.desktop = actual.normalizeDesktopSettings({ ...hoisted.desktop, ...partial });
-+    }),
-+    reloadAiConfigs: vi.fn(async () => undefined),
-+    removeTemplateFromDefaultAndLastUsed: vi.fn(),
-+    setDefaultTemplatesForDbType: vi.fn(),
-+    updateAiConfigItem: vi.fn(),
-+    createAiConfig: vi.fn(),
-+    deleteAiConfig: vi.fn(),
-+    setDefaultAiConfig: vi.fn(),
-+    setDefaultAiMode: vi.fn(),
-+    setRestoreLastConversation: vi.fn(),
-+  };
-+  return { ...actual, useSettingsStore: () => store };
-+});
-+
-+vi.mock("@/lib/backend/api", async (importOriginal) => {
-+  const actual = await importOriginal<typeof import("@/lib/backend/api")>();
-+  return {
-+    ...actual,
-+    loadHistoryRetentionLimit: async () => 5000,
-+    saveHistoryRetentionLimit: async () => undefined,
-+    loadMcpHistoryRetentionLimit: async () => 5000,
-+    saveMcpHistoryRetentionLimit: async () => undefined,
-+    cleanupMcpHistoryRetention: async () => 0,
-+  };
-+});
-+
-+import EditorSettingsDialog from "../EditorSettingsDialog.vue";
-+import { TooltipProvider } from "@/components/ui/tooltip";
-+
-+if (!("ResizeObserver" in globalThis)) {
-+  (globalThis as unknown 
+@@ -36,9 +36,9 @@ pageant = { path = "vendor/pageant" }
+ # (MicrosoftEdge/WebView2Feedback#5650, see
+ # vendor/wry/src/webview2/clipboard_history.rs).
+ wry = { path = "vendor/wry" }
+-tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "ac8ad476de59093d33ab9f294531c956e0c6a724" }
+-postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "ac8ad476de59093d33ab9f294531c956e0c6a724" }
+-postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "ac8ad476de59093d33ab9f294531c956e0c6a724" }
++tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
++postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
++postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
+ # Temporary compatibility patches for deprecated sha256_password accounts and
+ # rustls dangerous-mode connections to legacy certificates. Remove after upstream support lands.
+ mysql_async = { git = "https://github.com/t8y2/mysql_async.git", rev = "4cd84d86bb86b060320ce3459561e8093e4422fa" }
 ```
 
-**File**: `apps/desktop/src/stores/__tests__/settingsStore.spec.ts` (modified, +7/-0)
+**File**: `crates/dbx-driver-postgres/src/postgres.rs` (modified, +119/-9)
 ```diff
-@@ -1087,6 +1087,13 @@ describe("normalizeDesktopSettings", () => {
-     expect(normalizeDesktopSettings({ metadata_cache_max_memory_mb: 513 }).metadata_cache_max_memory_mb).toBe(64);
-   });
+@@ -82,7 +82,7 @@ pub fn gaussdb_identifier_quote_for_compatibility_mode(compatibility_mode: &str)
+ pub async fn opengauss_compatibility_mode(pool: &Pool) -> Result<Option<String>, String> {
+     let client = checkout_postgres_client(pool, None, super::connection_timeout()).await?;
+     let client = &EncodingClient::new(&client);
+-    let row = postgres_query_one_cached(client, GAUSSDB_COMPATIBILITY_SQL, &[]).await.map_err(|e| e.to_string())?;
++    let row = postgres_query_one_cached(client, GAUSSDB_COMPATIBILITY_SQL, &[]).await.map_err(pg_error_to_string)?;
+     Ok(row.try_get::<_, Option<String>>(0).ok().flatten().filter(|value| !value.trim().is_empty()))
+ }
  
-+  it("falls back non-positive sidebar table page sizes to the default", () => {
-+    expect(normalizeDesktopSettings({}).sidebar_table_page_size).toBe(1000);
-+    expect(normalizeDesktopSettings({ sidebar_table_page_size: 500 }).sidebar_table_page_size).toBe(500);
-+    expect(normalizeDesktopSettings({ sidebar_table_page_size: 0 }).sidebar_table_page_size).toBe(1000);
-+    expect(normalizeDesktopSettings({ sidebar_table_page_size: -10 }).sidebar_table_page_size).toBe(1000);
-+  });
-+
-   it("defaults DuckDB worker process isolation to disabled for old settings", () => {
-     expect(normalizeDesktopSettings({}).duckdb_worker_process_isolation).toBe(false);
-   });
+@@ -1558,9 +1558,9 @@ fn escape_tsvector_lexeme(value: &str) -> String {
+ fn pg_error_to_string(err: impl Into<PgError>) -> String {
+     let err = err.into();
+     let Some(db_error) = err.as_db_error() else {
+-        return err.to_string();
++        return error_with_sources_to_string(&err);
+     };
+-    let mut message = pg_db_error_to_string(db_error);
++    let mut message = db_error.to_string();
+     // Carry the server-reported cursor position across the `db` layer's
+     // `Result<_, String>` boundary; `query.rs` resolves it against the executed
+     // statement and strips the suffix before the message reaches any client.
+@@ -1577,7 +1577,7 @@ fn pg_error_to_string(err: impl Into<PgError>) -> String {
+ /// be resolved against the user's SQL and point at the wrong place.
+ fn pg_error_to_string_plain(err: impl Into<PgError>) -> String {
+     let err = err.into();
+-    err.as_db_error().map(pg_db_error_to_string).unwrap_or_else(|| err.to_string())
++    err.as_db_error().map(pg_db_error_to_string).unwrap_or_else(|| error_with_sources_to_string(&err))
+ }
+ 
+ /// Tries each SQL tier in `tiers` in order (most-capable first), via `run`,
+@@ -1816,7 +1816,11 @@ fn pg_pool_error_to_string(err: PoolError) -> String {
+ }
+ 
+ fn should_retry_postgres_text_query(err: &PgError) -> bool {
+-    let message = err.as_db_error().map(ToString::to_string).unwrap_or_else(|| err.to_string()).to_ascii_lowercase();
++    let message = err
++        .as_db_error()
++        .map(ToString::to_string)
++        .unwrap_or_else(|| error_with_sources_to_string(err))
++        .to_ascii_lowercase();
+     should_retry_postgres_text_query_message(&message)
+ }
+ 
+@@ -1834,7 +1838,8 @@ fn should_retry_postgres_stale_cache(err: &PgError) -> bool {
+             db_error.message(),
+         );
+     }
+-    should_retry_postgres_stale_cache_fields(None, None, &err.to_string())
++    let message = error_with_sources_to_string(err);
++    should_retry_postgres_stale_cache_fields(None, None, &message)
+ }
+ 
+ fn should_retry_postgres_stale_cache_fields(sqlstate: Option<&str>, routine: Option<&str>, message: &str) -> bool {
+@@ -1850,7 +1855,8 @@ fn should_fallback_postgres_missing_prepared_statement(err: &PgError) -> bool {
+             db_error.message(),
+         );
+     }
+-    should_fallback_postgres_missing_prepared_statement_fields(None, &err.to_string())
++    let message = error_with_sources_to_string(err);
++    should_fallback_postgres_missing_prepared_statement_fields(None, &message)
+ }
+ 
+ fn should_fallback_postgres_missing_prepared_statement_fields(sqlstate: Option<&str>, message: &str) -> bool {
+@@ -3932,7 +3938,7 @@ fn database_storage_sql() -> &'static str {
+ pub async fn list_databases(pool: &Pool) -> Result<Vec<DatabaseInfo>, String> {
+     let client = checkout_postgres_client(pool, None, super::connection_timeout()).await?;
+     let client = &EncodingClient::new(&client);
+-    let rows = postgres_query_cached(client, list_databases_sql(), &[]).await.map_err(|e| e.to_string())?;
++    let rows = postgres_query_cached(client, list_databases_sql(), &[]).await.map_err(pg_error_to_string)?;
+ 
+     Ok(rows.iter().map(|row| DatabaseInfo { name: pg_row_try_string(row, 0), ..Default::default() }).collect())
+ }
+@@ -3943,7 +3949,7 @@ pub async fn list_opengauss_databases(pool: &Pool) -> Result<Vec<DatabaseInfo>,
+     let rows = match postgres_query_cached(client, list_opengauss_databases_sql(), &[]).await {
+         Ok(rows) => rows,
+         Err(primary_error) => {
+-            let primary_error = primary_error.to_string();
++            let primary_error = pg_error_to_string(primary_error);
+             return postgres_query_cached(client, list_databases_sql(), &[])
+                 .await
+                 .map(|rows| {
+@@ -3952,6 +3958,7 @@ pub async fn list_opengauss_databases(pool: &Pool) -> Result<Vec<DatabaseInfo>,
+                         .collect()
+                 })
+                 .map_err(|fallback_error| {
++                    let fallback_error = pg_error_to_string(fallback_error);
+                     format!(
+                         "openGauss database compatibility lookup failed: {primary_error}; database list fallback failed: {fallback_error}"
+                     )
+@@ -17877,6 +17884,109 @@ mod tests {
+         let other_schema = format!("CREATE OR REPLACE PROCEDURE oth
+```
+
+**File**: `flake.nix` (modified, +2/-2)
+```diff
+@@ -217,8 +217,8 @@
+                 "sha256-8lWgsdTuLTgOmzP7tXmA9LnomOE0wjxXsCBw9NEMt2o=";
+               "git+https://github.com/t8y2/mysql_async.git?rev=2be6e392eb9b06d20dcd2d8ed8eae748d413c9ec#2be6e392eb9b06d20dcd2d8ed8eae748d413c9ec" =
+                 "sha256-tMFvmypIBh1GHg3cLFWmLf6N1wrwKPlzx2G/MHwtlFM=";
+-              "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=115f9fef10f0fc3669b5337955e4eb461fc349a6#115f9fef10f0fc3669b5337955e4eb461fc349a6" =
+-                "sha256-HRbYVSD7iIwG3m1tOGoIZy0xAZwALWIpTtakVSYPIYI=";
++              "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" =
++                "sha256-NkSST+xuE8NCVobwmX5j87WY+zXU6aWHMSR0LFjn8UA=";
+             };
+           };
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14556** (2026-11-08): feat(editor): save routine definitions to database (@Acd-kk)
+- **PR #14553** (2026-11-08): feat(elasticsearch): add per-connection index search (@ThugKd)
 - **PR #14545** (2026-11-08): feat(query): add configurable shortcut to copy the active result (@imcman)
 - **PR #14542** (2026-11-07): fix(grid): Oracle 无主键查询结果与表数据页签对齐 keyless 可编辑性 (@dienaso)
 - **PR #14541** (2026-11-07): fix(export): TDengine 标识符改用反引号，双引号在 TDengine 中是字符串字面量 (@dienaso)
 - **PR #14539** (2026-11-07): fix(mcp): dbx_add_connection 补齐 Nacos external_config 与桌面端默认上下文 (@dienaso)
-- **PR #14538** (2026-11-07): fix(grid): release canvas backing stores when cached tabs deactivate (@lcq928)
-- **PR #14537** (2026-11-07): feat(import): MySQL import generate column support fixed value #14503 (@javalover123)
 
 ---
 
@@ -2414,37 +2638,50 @@ only send the small channel manifests through the runner.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): make stable promotion reruns idempotent
+## X. release): retry agent R2 uploads and resume driver sync
 
 **RULE**:
-When implementing operations in `.github/scripts/prepare-channel-manifest.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/agents-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df9dddf6`: release): make stable promotion reruns idempotent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fd5f9c3`: release): retry agent R2 uploads and resume driver sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/prepare-channel-manifest.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/agents-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-// Rerunning a promotion feeds the already-promoted manifest back in, and it
-// must stay byte-identical: dropping promoted_from would lose the build
-// provenance the installed beta uses to recognise itself.
-const alreadyPromoted =
-  channel === "stable" &&
-  promoted === "true" &&
-  manifest.is_promoted === true &&
-  typeof manifest.promoted_from === "string" &&
-  manifest.promoted_from.length > 0;
-else if (!alreadyPromoted) delete manifest.promoted_from;
+          set -euo pipefail
+          retry() {
+            local attempt
+            for attempt in 1 2 3; do
+              if "$@"; then
+                return 0
+              fi
+              echo "::warning::R2 upload attempt ${attempt}/3 failed: $*"
+              sleep $((attempt * 15))
+            done
+            return 1
+          }
+          retry aws s3 cp release/agent-registry.json \
+          # Upload all single-driver packages concurrently. Package names carry
+          # the driver version, so the size check makes a retry resume after a
+          # transient R2 failure instead of re-uploading every driver again.
+          retry aws s3 sync release/ "$R2_BUCKET/agents/drivers/" \
+            --size-only \
+          retry aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-else delete manifest.promoted_from;
+          aws s3 cp release/agent-registry.json \
+          # Upload all single-driver packages concurrently.
+          aws s3 cp release/ "$R2_BUCKET/agents/drivers/" \
+            --recursive \
+          aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df9dddf6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fd5f9c3` are properly handled with clean fallback behavior.

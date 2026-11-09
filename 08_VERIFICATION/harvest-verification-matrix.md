@@ -8461,3 +8461,7 @@
 | `CYCLE-20261109-E3PD` | `2026-11-09T01:38:24.193Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`11bfe9e3...`) |
 | `CYCLE-20261109-E6J1` | `2026-11-09T01:38:27.853Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d90ec9c4...`) |
 | `CYCLE-20261109-EH3B` | `2026-11-09T01:38:41.543Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a5116771...`) |
+| `CYCLE-20261109-OKOT` | `2026-11-09T01:46:32.765Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`618658b7...`) |
+| `CYCLE-20261109-ORYK` | `2026-11-09T01:46:42.188Z` | `pointfreeco/sqlite-data` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5429f33...`) |
+| `CYCLE-20261109-OWGU` | `2026-11-09T01:46:48.030Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`58f6c89c...`) |
+| `CYCLE-20261109-OXFI` | `2026-11-09T01:46:49.278Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1e978e9d...`) |

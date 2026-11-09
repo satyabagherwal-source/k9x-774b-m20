@@ -1085,8 +1085,8 @@
     "sourceUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
     "sourceVersion": "hf-naiveai-naive-n0.5-flash",
     "license": "Open-Source",
-    "contentHash": "a9df434d37187f094573ff1d5d8662f94446005ec62a876b45ecba2934252d25",
-    "lastHarvestedAt": "2026-11-05T07:41:59.801Z",
+    "contentHash": "618658b742582c4ad799967cea2f1d3fa06ba8f39bfc121d081c23ceb56c5f35",
+    "lastHarvestedAt": "2026-11-09T01:46:32.769Z",
     "learningId": "learn-huggingface-naiveai-naive-n0-5-flash"
   },
   "hf-openai-clip-vit-base-patch32": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "274eaf91",
+    "sourceVersion": "0d7daaab",
     "license": "Apache-2.0",
-    "contentHash": "6ae481b2646d116e137ed1b0ca27bb06b2f4f56673971ff53c998dfd92086aaa",
-    "lastHarvestedAt": "2026-11-08T21:24:47.063Z",
+    "contentHash": "58f6c89c45620eff14305853073ea01c4341119ec5af0fe8cc90dec6c8a43029",
+    "lastHarvestedAt": "2026-11-09T01:46:48.034Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "bc14b52b",
+    "sourceVersion": "0d01dff9",
     "license": "Apache-2.0",
-    "contentHash": "449aef3bd969944661711cb320c6c68cc471e34c4980c0ea82cc1761f191a21f",
-    "lastHarvestedAt": "2026-11-08T04:19:34.265Z",
+    "contentHash": "1e978e9dc7a58da8c4e6dc54b5a0446d20d3188f89822303fde165fe7c3e5e88",
+    "lastHarvestedAt": "2026-11-09T01:46:49.282Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -9953,10 +9953,10 @@
     "repository": "pointfreeco/sqlite-data",
     "platform": "github",
     "sourceUrl": "https://github.com/pointfreeco/sqlite-data",
-    "sourceVersion": "567ff298",
+    "sourceVersion": "38b64aa6",
     "license": "MIT",
-    "contentHash": "4ac2589c8f0a164978cc720c3c2f1a2d018c8fcaf354b2c8e4ccb8436e236630",
-    "lastHarvestedAt": "2026-11-05T19:00:17.994Z",
+    "contentHash": "f5429f330d60eeba993ab419d6618435a8ab4eefd9795ffbef2ac1a43fbbfb16",
+    "lastHarvestedAt": "2026-11-09T01:46:42.191Z",
     "learningId": "learn-github-pointfreeco-sqlite-data"
   },
   "sveltejs-svelte": {

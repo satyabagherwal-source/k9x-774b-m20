@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md`  
 > **Source**: github ([https://github.com/pointfreeco/sqlite-data](https://github.com/pointfreeco/sqlite-data))  
-> **Source Version**: `567ff298`  
+> **Source Version**: `38b64aa6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:00:17.019Z  
+> **Timestamp**: 2026-11-09T01:46:40.744Z  
 > **Learning ID**: `learn-github-pointfreeco-sqlite-data`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pointfreeco/sqlite-data](https://github.com/pointfreeco/sqlite-data))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:00:15.902Z  
+> **Harvest Timestamp**: 2026-11-09T01:46:40.737Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fast, lightweight replacement for SwiftData, powered by SQL and supporting CloudKit synchronization.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1958 stars
+- **Stars / Engagement**: 1960 stars
 
 ---
 
@@ -654,19 +654,20 @@ extension DatabaseWriter where Self == DatabaseQueue {
         fatalError()
       }
 
-      modifications = database.state.withValue { state in
-        zoneIDs.reduce(into: [CKRecord]()) {
-          accum,
-          zoneID in
-          accum += ((state.storage[zoneID]?.records.values).map { Array($0) } ?? [])
-            .map { $0.copy() as! CKRecord }
-            .filter {
-              precondition(
-                $0._recordChangeTag != nil,
-                "Records stored in database should have their 'recordChangeTag' assigned."
-              )
-              return $0._recordChangeTag! > self.state.changeTag.value
-            }
+      modifications = state.withState { syncEngineState in
+        let currentChangeTag = syncEngineState.changeTag
+        return database.state.withValue { dbState in
+          zoneIDs.reduce(into: [CKRecord]()) { accum, zoneID in
+            accum += ((dbState.storage[zoneID]?.records.values).map { Array($0) } ?? [])
+              .map { $0.copy() as! CKRecord }
+              .filter {
+                precondition(
+                  $0._recordChangeTag != nil,
+                  "Records stored in database should have their 'recordChangeTag' assigned."
+                )
+                return $0._recordChangeTag! > currentChangeTag
+              }
+          }
         }
       }
 
@@ -683,8 +684,8 @@ extension DatabaseWriter where Self == DatabaseQueue {
       guard !modifications.isEmpty || !deletions.isEmpty
       else { return }
 
-      state.changeTag.withValue { changeTag in
-        changeTag = modifications.compactMap(\._recordChangeTag).max() ?? changeTag
+      state.withState {
+        $0.changeTag = modifications.compactMap(\._recordChangeTag).max() ?? $0.changeTag
       }
 
       await parentSyncEngine.handleEvent(
@@ -694,18 +695,14 @@ extension DatabaseWriter where Self == DatabaseQueue {
     }
 
     package func sendChanges(_ options: CKSyncEngine.SendChangesOptions) async throws {
-
-      if !parentSyncEngine.syncEngine(for: database.databaseScope).state.pendingDatabaseChanges
-        .isEmpty
-      {
-
+      if !state.pendingDatabaseChanges.isEmpty {
         try await parentSyncEngine.processPendingDatabaseChanges(scope: database.databaseScope)
       }
-      if !parentSyncEngine.syncEngine(for: database.databaseScope).state.pendingRecordZoneChanges
-        .isEmpty
-      {
-
-        try await parentSyncEngine.processPendingRecordZoneChanges(scope: database.databaseScope)
+      if !state.pendingRecordZoneChanges.isEmpty || state.hasPendingUntrackedChanges {
+        try await parentSyncEngine.processPendingRecordZoneChanges(
+          options: options,
+          scope: database.databaseScope
+        )
       }
     }
 
@@ -746,14 +743,14 @@ extension DatabaseWriter where Self == DatabaseQueue {
 
   @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
   package final class MockSyncEngineState: CKSyncEngineStateProtocol {
-    package let changeTag = LockIsolated(0)
-    package let _pendingRecordZoneChanges = LockIsolated<
-      OrderedSet<CKSyncEngine.PendingRecordZoneChange>
-    >([]
-    )
-    package let _pendingDatabaseChanges = LockIsolated<
-      OrderedSet<CKSyncEngine.PendingDatabaseChange>
-    >([])
+    package struct State: Sendable {
+      package var changeTag = 0
+      package var hasPendingUntrackedChanges = false
+      package var pendingDatabaseChanges: OrderedSet<CKSyncEngine.PendingDatabaseChange> = []
+      package var pendingRecordZoneChanges: OrderedSet<CKSyncEngine.PendingRecordZoneChange> = []
+    }
+
+    private let state = LockIsolated(State())
     private let fileID: StaticString
     private let filePath: StaticString
     private let line: UInt
@@ -771,40 +768,54 @@ extension DatabaseWriter where Self == DatabaseQueue {
       self.column = column
     }
 
+    package func withState<T: Sendable>(
+      _ operation: @Sendable (inout State) throws -> T
+    ) rethrows -> T {
+      try state.withValue(operation)
+    }
+
     package var pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange] {
-      _pendingRecordZoneChanges.withValue { Array($0) }
+      withState { Array($0.pendingRecordZoneChanges) }
     }
 
     package var pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange] {
-      _pendingDatabaseChanges.withValue { Array($0) }
+      withState { Array($0.pendingDatabaseChanges) }
+    }
+
+    package var hasPendingUntrackedChanges: Bool {
+      get { withState(\.hasPendingUntrackedChanges) }
+      set { withState { $0.hasPendingUntrackedChanges = newValue } }
     }
 
     package func removePendingChanges() {
-      _pendingDatabaseChanges.withValue { $0.removeAll() }
-      _pendingRecordZoneChanges.withValue { $0.removeAll() }
+      withState {
+        $0.pendingDatabaseChanges.removeAll()
+        $0.pendingRecordZoneChanges.removeAll()
+        $0.hasPendingUntrackedChanges = false
+      }
     }
 
     package func add(pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange]) {
-      self._pendingRecordZoneChanges.withValue {
-        $0.append(contentsOf: pendingRecordZoneChanges)
+      withState {
+        $0.pendingRecordZoneChanges.append(contentsOf: pendingRecordZoneChanges)
       }
     }
 
     package func remove(pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange]) {
-      self._pendingRecordZoneChanges.withValue {
-        $0.subtract(pendingRecordZoneChanges)
+      withState {
+        $0.pendingRecordZoneChanges.subtract(pendingRecordZoneChanges)
       }
     }
 
     package func add(pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange]) {
-      self._pendingDatabaseChanges.withValue {
-        $0.append(contentsOf: pendingDatabaseChanges)
+      withState {
+        $0.pendingDatabaseChanges.append(contentsOf: pendingDatabaseChanges)
       }
     }
 
     package func remove(pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange]) {
-      self._pendingDatabaseChanges.withValue {
-        $0.subtract(pendingDatabaseChanges)
+      withState {
+        $0.pendingDatabaseChanges.subtract(pendingDatabaseChanges)
       }
     }
   }
@@ -828,7 +839,10 @@ extension DatabaseWriter where Self == DatabaseQueue {
       column: UInt = #column
     ) async throws -> SendRecordsCallback {
       let syncEngine = syncEngine(for: scope)
-      guard !syncEngine.state.pendingRecordZoneChanges.isEmpty
+      guard
+        syncEngine.state.withState({
+          !$0.pendingRecordZoneChanges.isEmpty || $0.hasPendingUntrackedChanges
+        })
       else {
         reportIssue(
           "Processing empty set of record zone changes.",
@@ -874,6 +888,7 @@ extension DatabaseWriter where Self == DatabaseQueue {
       }
       guard let batch
       else {
+        syncEngine.state.withState { $0.hasPendingUntrackedChanges = false }
         return SendRecordsCallback {}
       }
 
@@ -895,21 +910,7 @@ extension DatabaseWriter where Self == DatabaseQueue {
         case .success(let record):
           savedRecords.append(record)
         case .failure(let error as CKError):
-          guard let record = batch.recordsToSave.first(where: { $0.recordID == recordID })
-          else { fatalError("\(recordID.debugDescription) not found in pending changes") }
-          failedRecordSaves.append((record: record, error: error))
-        case .failure:
-          fatalError("Mocks should only raise 'CKError' values.")
-        }
-      }
-      for (recordID, result) in deleteResults {
-        switch result {
-        case .success:
-          deletedRecordIDs.append(recordID)
-        case .failure(let error as CKError):
-          failedRecordDeletes[recordID] = error
-        case .failure:
-          fatalError("Mocks should only raise 'CKError' values
+          guard let record = batch.recordsToS
 ```
 
 ### Core Architecture Module: `Sources/SQLiteData/CloudKit/Internal/StateSerialization.swift`
@@ -1069,11 +1070,11 @@ extension DatabaseWriter where Self == DatabaseQueue {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #565** (2026-11-05): **CloudKit sync can stall when syncing large datasets, resulting in missing records**
+  *Symptoms*: ### Description  CloudKit sync can stall midway through processing a large record set. This can occur both on initial sync and incremental sync if the number of records needing to be pulled down is high enough (on the order of thousands). The end result when this occurs is older database records being missing indefinitely, despite new data syncing in as expected. There is no recovery path to restore the missing records, and restarting the app does not help.  Root cause (as discussed on Slack): missing transient error handling and recovery around SyncEngine batched record download call `CKDatabase.records(...)` ([SyncEngine.swift:1565](https://github.com/pointfreeco/sqlite-data/blob/1.12.1/Sources/SQLiteData/CloudKit/SyncEngine.swift#L1565)). The primary transient error thrown which triggers this issue is HTTP 429 / [CKError.requestRateLimited](https://developer.apple.com/documentation/cloudkit/ckerror/requestratelimited?changes=_2)  Earlier reports: this issue is related to https://github.com/pointfreeco/sqlite-data/issues/432, created in March 2026 and since closed due to some uncertainty about the source of the problem. I'm opening a new issue to act as a clean slate since we now know the source of the issue is in SQLiteData.  ### Checklist  - [x] I wrote this in my own words, and aimed to be as succinct as possible, even if I used AI to help research its content. - [x] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [x] I have determ
+
 - **Issue #558** (2026-10-06): **Package fails to build on Xcode 27 (Variable initialization expression of Sharing.Shared)**
   *Symptoms*: ### Description  Hello,  When building my project using the new Xcode 27 (build 27A266a), I noticed the following failure:  ``` undefined symbols for architecture arm64:   "variable initialization expression of Sharing.Shared.(__generation in _02BAFA3D923A53DF643BF6C71BB0CD51) : SwiftUI.State<Swift.Int>", referenced from:       Sharing.Shared.init<A where A == A1.Value, A1: Sharing.SharedKey>(A1) -> Sharing.Shared<A> in Sharing.o ld: symbol(s) not found for architecture arm64 /Users/jamal/Development/Briefcase/Briefcase.xcodeproj: BriefcaseCore: clang: error: linker command failed with exit code 1 (use -v to see invocation) ```  This looks similar to this issue in swift-sharing. https://github.com/pointfreeco/swift-sharing/pull/216  Looks like the fix went in version [2.8.1](https://github.com/pointfreeco/swift-sharing/releases/tag/2.8.1) of swift-sharing.  But the latest of Package.swift in sqlite-data [1.12.0](https://github.com/pointfreeco/sqlite-data/blob/1.12.0/Package.swift]) is still referencing version 2.3.0    ### Checklist  - [x] I wrote this in my own words, and aimed to be as succinct as possible, even if I used AI to help research its content. - [ ] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [ ] I have determined whether this bug is also reproducible in a vanilla GRDB project. - [x] If possible, I've reproduced the issue using the `main` branch of this package. - [x] This issue hasn't been addressed in an [existing Git
-
-- **Issue #557** (2026-11-04): **Quick repeated calls to `await @Fetch*.load(...).task` inside `.task` modifier can result in stale query results**
-  *Symptoms*: ### Description  (originally reported in [Slack #sqlite-data channel](https://pointfreecommunity.slack.com/archives/C08CZUG4Z9D/p1787686999128779))  Quick repeating calls to `load` can occur naturally in situations like handling a deep link on application start: the application first loads the initial/default query, followed by a quick reload to process the deep link.  Investigation reveals that awaiting the `FetchSubscription.task` is what triggers this bug. There's a race between the cancellation of the task (which will occur when the await is situated inside a view's `.task` modifier) and the handling of the new load. If the cancel wins, it prevents the new load from succeeding, resulting in stale data.  See attached demo app for a controllable repro - [SubscriptionTaskReloadRaceApp_1.12.0.zip](https://github.com/user-attachments/files/32867056/SubscriptionTaskReloadRaceApp_1.12.0.zip). The app cycles between query states A -> B -> C -> D, which each have their respective expected results ([A,A..], [B, B, ..], etc.). The app will halt whenever displayed results do not match expected results based on the most recent load call. Lowering the  "Replacement load delay" to below 100ms reliably triggers the mismatch/stale results state. [repro video](https://github.com/user-attachments/assets/c5028883-a3f0-495b-ac7a-3ea657b0d6cf)  ### Checklist  - [x] I wrote this in my own words, and aimed to be as succinct as possible, even if I used AI to help research its content. - [x] I hav
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1090,622 +1091,36 @@ extension DatabaseWriter where Self == DatabaseQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c0fea63` (2026-11-03)
-**Commit Message**: ID `@Fetch*.load` events to fix cancel race (#536)
+### Incident Patch 1: `38b64aa6` (2026-11-06)
+**Commit Message**: Fix RateLimitingTests initializer.
 
-* ID `@Fetch*.load` events to fix cancel race
-
-* Fix
-
-* small clean up
-
----------
-
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-
-**File**: `Sources/SQLiteData/Fetch.swift` (modified, +23/-7)
+**File**: `Tests/SQLiteDataTests/CloudKitTests/RateLimitingTests.swift` (modified, +7/-2)
 ```diff
-@@ -39,12 +39,16 @@ public struct Fetch<Value: Sendable>: Sendable {
-     private let box: FetchBox<Value>
-     private let state: SwiftUI.State<FetchBox<Value>>
-     private let generation = SwiftUI.State(wrappedValue: 0)
-+
-+    var loadGeneration: LoadGeneration { state.wrappedValue.loadGeneration }
-   #else
-     /// The underlying shared reader powering the property wrapper.
-     ///
-     /// Shared readers come from the [Sharing](https://github.com/pointfreeco/swift-sharing)
-     /// package, a general solution to observing and persisting changes to external data sources.
-     public let sharedReader: SharedReader<Value>
-+
-+    let loadGeneration = LoadGeneration()
-   #endif
- 
-   /// Data associated with the underlying query.
-@@ -58,7 +62,10 @@ public struct Fetch<Value: Sendable>: Sendable {
-   /// ``isLoading``, and ``publisher``.
-   public var projectedValue: Self {
-     get { self }
--    nonmutating set { sharedReader.projectedValue = newValue.sharedReader.projectedValue }
-+    nonmutating set {
-+      loadGeneration.invalidate()
-+      sharedReader.projectedValue = newValue.sharedReader.projectedValue
-+    }
-   }
- 
-   /// Returns a ``sharedReader`` for the given key path.
-@@ -127,8 +134,15 @@ public struct Fetch<Value: Sendable>: Sendable {
-     _ request: some FetchKeyRequest<Value>,
-     database: (any DatabaseReader)? = nil
-   ) async throws -> FetchSubscription {
--    try await sharedReader.load(.fetch(request, database: database))
--    return FetchSubscription(sharedReader: sharedReader)
-+    try await withSubscription {
-+      try await sharedReader.load(.fetch(request, database: database))
-+    }
-+  }
-+
-+  private func withSubscription(_ load: () async throws -> Void) async throws -> FetchSubscription {
-+    let token = loadGeneration.begin()
-+    try await load()
-+    return FetchSubscription(sharedReader: sharedReader, token: token)
-   }
- 
-   #if !canImport(SwiftUI)
-@@ -183,8 +197,9 @@ extension Fetch {
-     database: (any DatabaseReader)? = nil,
-     scheduler: some ValueObservationScheduler & Hashable
-   ) async throws -> FetchSubscription {
--    try await sharedReader.load(.fetch(request, database: database, scheduler: scheduler))
--    return FetchSubscription(sharedReader: sharedReader)
-+    try await withSubscription {
-+      try await sharedReader.load(.fetch(request, database: database, scheduler: scheduler))
-+    }
-   }
- }
- 
-@@ -249,8 +264,9 @@ extension Fetch: Equatable where Value: Equatable {
-       database: (any DatabaseReader)? = nil,
-       animation: Animation?
-     ) async throws -> FetchSubscription {
--      try await sharedReader.load(.fetch(request, database: database, animation: animation))
--      return FetchSubscription(sharedReader: sharedReader)
-+      try await withSubscription {
-+        try await sharedReader.load(.fetch(request, database: database, animation: animation))
-+      }
-     }
-   }
- #endif
-```
-
-**File**: `Sources/SQLiteData/FetchAll+Sections.swift` (modified, +46/-26)
-```diff
-@@ -196,7 +196,8 @@ extension FetchAll {
-   ///   - database: The database to read from. A value of `nil` will use the default database
-   ///     (`@Dependency(\.defaultDatabase)`).
-   public init<
--    V: QueryRepresentable, From: StructuredQueriesCore.Table
-+    V: QueryRepresentable,
-+    From: StructuredQueriesCore.Table
-   >(
-     wrappedValue: [Element] = [],
-     _ statement: Select<V, From, ()>,
-@@ -232,7 +233,9 @@ extension FetchAll {
-   ///     (`@Dependency(\.defaultDatabase)`).
-   @_documentation(visibility: private)
-   public init<
--    V: QueryRepresentable, From: StructuredQueriesCore.Table, J: StructuredQueriesCore.Table
-+    V: QueryRepresentable,
-+    From: StructuredQueriesCore.Table,
-+    J: StructuredQueriesCore.Table
-   >(
-     wrappedValue: [Element] = [],
-     _ statement: Select<V, From, J>,
-@@ -371,7 +374,8 @@ extension FetchAll {
-   /// - Returns: A subscription associated with the observation.
-   @discardableResult
-   public func load<
--    V: QueryRepresentable, From: StructuredQueriesCore.Table
-+    V: QueryRepresentable,
-+    From: StructuredQueriesCore.Table
-   >(
-     _ statement: Select<V, From, ()>,
-     @_SectionBuilder<String?> sectionBy sectioning: (From.TableColumns) -> _Sectioning<String?>?,
-@@ -404,7 +408,9 @@ extension FetchAll {
-   @_documentation(visibility: private)
-   @discardableResult
-   public func load<
--    V: QueryRepresentable, From: StructuredQueriesCore.Table, J: StructuredQueriesCore.Table
-+    V: QueryRepresentable,
-+    From: StructuredQueriesCore.Table,
-+    J: StructuredQueriesCore.Table
-   >(
-     _ statement: Select<V, From, J>,
-     @_SectionBuilder<String?> sectionBy sectioning: (From.TableColumns, J.TableColumns) ->
-@@ -522,14 +528,15 @@ extension FetchAll {
-     guard let sectioning else {
-       removeSections()
-       let statement: Select<From, From, ()> = statement.selectStar()
--      try await sharedReader.load(
--        FetchKey(
--          request: FetchAllStatementValueRequest(statement: statement),
--          database: database,
--          scheduler: scheduler
-+      return try await withSubscription {
-+        try await sharedReader.load(
-+          FetchKey(
-+            request: FetchAllStatementValueRequest(statement: statement),
-+            database: database,
-+            scheduler: scheduler
-+          )
-         )
--      )
--      return FetchSubscription(sharedReader: sharedReader)
-+      }
-     }
-     return try await loadSections(
-       request: FetchAllSectionedStatementValueRequest(statement: statement, sectionBy: sectioning),
-@@ -553,14 +560,15 @@ extension FetchAll {
-     defer {
-       sharedReader.projectedValue = sectionedReader.elements.projectedValue
-     }
--    try await sectionedReader.load(
--      FetchKey(
--        request: request,
--        database: database,
--        scheduler: scheduler
-+    return try await withSubscription {
-+      try await sectionedReader.load(
-+        FetchKey(
-+          request: request,
-+          database: database,
-+          scheduler: scheduler
-+        )
-       )
--    )
--    return FetchSubscription(sharedReader: sharedReader, sectionedReader: sectionedReader)
-+    }
-   }
- }
- 
-@@ -714,7 +722,8 @@ extension FetchAll {
-   ///   - scheduler: The scheduler to observe from. By default, database observation is performed
-   ///     asynchronously on the main queue.
-   public init<
--    V: QueryRepresentable, From: StructuredQueriesCore.Table
-+    V: QueryRepresentable,
-+    From: StructuredQueriesCore.Table
-   >(
-     wrappedValue: [Element] = [],
-     _ statement: Select<V, From, ()>,
-@@ -753,7 +762,9 @@ extension FetchAll {
-   ///     asynchronously on the main queue.
-   @_documentation(visibility: private)
-   public init<
--    V: QueryRepresentable, From: StructuredQueriesCore.Table, J: StructuredQueriesCore.Table
-+    V: QueryRepresentable,
-+    From: StructuredQueriesCore.Table,
-+    J: StructuredQueriesCore.Table
-   >(
-     wrappedValue: [Element] = [],
-     _ statement: Select<V, From, J>,
-@@ -905,7 +916,8 @@ extension FetchAll {
-   /// - Returns: A subscription associated with the observation.
-   @discardableResult
-   public func load<
--    V: QueryRepresentable, From: StructuredQueriesCore.Table
-+    V: QueryRepresentable,
-+    From: StructuredQueriesCore.Table
-   >(
-     _ statement: Select<V, From, ()>,
-     @_SectionBuilder<String?> sectionBy sectioning: (From.TableColumns) -> _Sectioning<String?>?,
-@@ -941,7 +953,9 @@ extension FetchAll {
-   @_documentation(visibility: private)
-   @discardableResult
-   public func load<
--    V: QueryRepresentable, From: StructuredQueriesCore.Table, J: StructuredQueriesCore.Table
-+    V: QueryRepresentable,
-+    From: StructuredQueriesCore.Table,
-+    J: StructuredQueriesCore.Table
-   >(
-     _ statement: Select<V, From, J>,
-     @_SectionBuilder<String?> sectionBy sectioning: (From.TableColumns, J.TableColumns) ->
-@@ -1155,7 +1169,8 @@ extension FetchAll {
-     ///     the fetched results.
-     @available(iOS 17, macOS 14, tvOS 17, wa
-```
-
-**File**: `Sources/SQLiteData/FetchAll.swift` (modified, +36/-20)
-```diff
-@@ -48,6 +48,8 @@ public struct FetchAll<Element: Sendable>: Sendable {
-     private let box: FetchAllBox<Element>
-     private let state: SwiftUI.State<FetchAllBox<Element>>
-     private let generation = SwiftUI.State(wrappedValue: 0)
-+
-+    var loadGeneration: LoadGeneration { state.wrappedValue.loadGeneration }
-   #else
-     /// The underlying shared reader powering the property wrapper.
-     ///
-@@ -59,6 +61,8 @@ public struct FetchAll<Element: Sendable>: Sendable {
-       SharedReader(value: ResultsSectionCollection())
- 
-     let sectioning = LockIsolated<_Sectioning<String?>?>(nil)
-+
-+    let loadGeneration = LoadGeneration()
-   #endif
- 
-   /// A collection of data associated with the underlying query.
-@@ -73,6 +77,7 @@ public struct FetchAll<Element: Sendable>: Sendable {
-   public var projectedValue: Self {
-     get { self }
-     nonmutating set {
-+      loadGeneration.invalidate()
-       sharedReader.projectedValue = newValue.sharedReader.projectedValue
-       sectionedReader.projectedValue = newValue.sectionedReader.projectedValue
-       sectioning.setValue(newValue.sectioning.value)
-@@ -247,13 +252,22 @@ public struct FetchAll<Element: Sendable>: Sendable {
-     V.QueryOutput: Sendable
-   {
-     removeSections()
--    try await sharedReader.load(
--      .fetch(
--        FetchAllStatementValueRequest(statement: statement),
--        database: database
-+    return try await withSubscription {
-+      try await sharedReader.load(
-+        .fetch(
-+          FetchAllStatementValueRequest(statement: statement),
-+          database: database
-+        )
-       )
--    )
--    return FetchSubscription(sharedReader: sharedReader)
-+    }
-+  }
-+
-+  func withSubscription(_ load: () async throws -> Void) async throws -> FetchSubscription {
-+    let token = loadGeneration.begin()
-+    try await load()
-+    return sectioning.value == nil
-+      ? FetchSubscription(sharedReader: sharedReader, token: token)
-+      : FetchSubscription(sharedReader: sharedReader, sectionedReader: sectionedReader, token: token)
-   }
- 
-   #if !canImport(SwiftUI)
-@@ -435,14 +449,15 @@ extension FetchAll {
-     V.QueryOutput: Sendable
-   {
-     removeSections()
--    try await sharedReader.load(
--      .fetch(
--        FetchAllStatementValueRequest(statement: statement),
--        database: database,
--        scheduler: scheduler
-+    return try await withSubscription {
-+      try await sharedReader.load(
-+        .fetch(
-+          FetchAllStatementValueRequest(statement: statement),
-+          database: database,
-+          scheduler: scheduler
-+        )
-       )
--    )
--    return FetchSubscription(sharedReader: sharedReader)
-+    }
-   }
- }
- 
-@@ -635,14 +650,15 @@ extension FetchAll: Equatable where Element: Equatable {
-       V.QueryOutput: Sendable
-     {
-       removeSections()
--      try await sharedReader.load(
--        .fetch(
--          FetchAllStatementValueRequest(statement: statement),
--          database: database,
--          animation: animation
-+      return try await withSubscription {
-+        try await sharedReader.load(
-+          .fetch(
-+            FetchAllStatementValueRequest(statement: statement),
-+            database: database,
-+            animation: animation
-+          )
-         )
--      )
--      return FetchSubscription(sharedReader: sharedReader)
-+      }
-     }
-   }
- #endif
-```
-
-**File**: `Sources/SQLiteData/FetchOne.swift` (modified, +79/-56)
-```diff
-@@ -39,12 +39,16 @@ public struct FetchOne<Value: Sendable>: Sendable {
-     private let box: FetchBox<Value>
-     private let state: SwiftUI.State<FetchBox<Value>>
-     private let generation = SwiftUI.State(wrappedValue: 0)
-+
-+    var loadGeneration: LoadGeneration { state.wrappedValue.loadGeneration }
-   #else
-     /// The underlying shared reader powering the property wrapper.
-     ///
-     /// Shared readers come from the [Sharing](https://github.com/pointfreeco/swift-sharing)
-     /// package, a general solution to observing and persisting changes to external data sources.
-     public let sharedReader: SharedReader<Value>
-+
-+    let loadGeneration = LoadGeneration()
-   #endif
- 
-   /// A value associated with the underlying query.
-@@ -58,7 +62,10 @@ public struct FetchOne<Value: Sendable>: Sendable {
-   /// ``isLoading``, and ``publisher``.
-   public var projectedValue: Self {
-     get { self }
--    nonmutating set { sharedReader.projectedValue = newValue.sharedReader.projectedValue }
-+    nonmutating set {
-+      loadGeneration.invalidate()
-+      sharedReader.projectedValue = newValue.sharedReader.projectedValue
-+    }
-   }
- 
-   /// Returns a ``sharedReader`` for the given key path.
-@@ -408,10 +415,11 @@ public struct FetchOne<Value: Sendable>: Sendable {
-   where
-     Value == V.QueryOutput
-   {
--    try await sharedReader.load(
--      .fetch(FetchOneStatementValueRequest(statement: statement), database: database)
--    )
--    return FetchSubscription(sharedReader: sharedReader)
-+    try await withSubscription {
-+      try await sharedReader.load(
-+        .fetch(FetchOneStatementValueRequest(statement: statement), database: database)
-+      )
-+    }
-   }
- 
-   /// Replaces the wrapped value with data from the given query.
-@@ -429,10 +437,11 @@ public struct FetchOne<Value: Sendable>: Sendable {
-   where
-     Value == V.QueryOutput?
-   {
--    try await sharedReader.load(
--      .fetch(FetchOneStatementOptionalValueRequest(statement: statement), database: database)
--    )
--    return FetchSubscription(sharedReader: sharedReader)
-+    try await withSubscription {
-+      try await sharedReader.load(
-+        .fetch(FetchOneStatementOptionalValueRequest(statement: statement), database: database)
-+      )
-+    }
-   }
- 
-   /// Replaces the wrapped value with data from the given query.
-@@ -454,10 +463,11 @@ public struct FetchOne<Value: Sendable>: Sendable {
-     S.Joins == ()
-   {
-     let statement = statement.selectStar().asSelect().limit(1)
--    try await sharedReader.load(
--      .fetch(FetchOneStatementOptionalValueRequest(statement: statement), database: database)
--    )
--    return FetchSubscription(sharedReader: sharedReader)
-+    return try await withSubscription {
-+      try await sharedReader.load(
-+        .fetch(FetchOneStatementOptionalValueRequest(statement: statement), database: database)
-+      )
-+    }
-   }
- 
-   /// Replaces the wrapped value with data from the given query.
-@@ -478,10 +488,11 @@ public struct FetchOne<Value: Sendable>: Sendable {
-     S.QueryValue: StructuredQueriesCore._OptionalProtocol,
-     Value == S.QueryValue.QueryOutput
-   {
--    try await sharedReader.load(
--      .fetch(FetchOneStatementOptionalProtocolRequest(statement: statement), database: database)
--    )
--    return FetchSubscription(sharedReader: sharedReader)
-+    try await withSubscription {
-+      try await sharedReader.load(
-+        .fetch(FetchOneStatementOptionalProtocolRequest(statement: statement), database: database)
-+      )
-+    }
-   }
- 
-   /// Replaces the wrapped value with data from the given query.
-@@ -501,10 +512,17 @@ public struct FetchOne<Value: Sendable>: Sendable {
-     Value: StructuredQueriesCore._OptionalProtocol,
-     Value.QueryOutput == Value
-   {
--    try await sharedReader.load(
--      .fetch(FetchOneStatementOptionalProtocolRequest(statement: statement), database: database)
--    )
--    return FetchSubscription(sharedReader: sharedReader)
-+    try await withSubscription {
-+      try await sharedReader.load(
-+        .fetch(FetchOneStatementOptionalProtocolRequest(statement: statement), database: database)
-+      )
-+    }
-+  }
-+
-+  private func withSubscription(_ load: () async throws -> Void) async throws -> FetchSubscription {
-+    let token = loadGeneration.begin()
-+    try await load()
-+    return FetchSubscription(sharedReader: sharedReader, token: token)
-   }
- 
-   #if !canImport(SwiftUI)
-@@ -918,14 +936,15 @@ extension FetchOne {
-   where
-     Value == V.QueryOutput
-   {
--    try await sharedReader.load(
--      .fetch(
--        FetchOneStatementValueRequest(statement: statement),
--        database: database,
--        scheduler: scheduler
-+    try await withSubscription {
-+      try await sharedReader.load(
-+        .fetch(
-+          FetchOneStatementValueRequest(statement: statement),
-+          database: database,
-+          scheduler: scheduler
-+        )
-       )
--    )
--    return FetchSubscription(sharedReader: sharedReader)
-+    }
-   }
- 
-   /// Replaces the wrapped v
-```
-
-**File**: `Sources/SQLiteData/FetchSubscription.swift` (modified, +13/-6)
-```diff
-@@ -18,18 +18,25 @@ public struct FetchSubscription: Sendable {
-   let cancellable = LockIsolated<Task<Void, any Error>?>(nil)
-   let onCancel: @Sendable () -> Void
- 
--  init<Value>(sharedReader: SharedReader<Value>) {
--    onCancel = { sharedReader.projectedValue = SharedReader(value: sharedReader.wrappedValue) }
-+  init<Value>(sharedReader: SharedReader<Value>, token: LoadGeneration.Token) {
-+    onCancel = {
-+      token.ifValid {
-+        sharedReader.projectedValue = SharedReader(value: sharedReader.wrappedValue)
-+      }
-+    }
-   }
- 
-   init<Element: Sendable>(
-     sharedReader: SharedReader<[Element]>,
--    sectionedReader: SharedReader<ResultsSectionCollection<Element, String?>>
-+    sectionedReader: SharedReader<ResultsSectionCollection<Element, String?>>,
-+    token: LoadGeneration.Token
-   ) {
-     onCancel = {
--      let sections = sectionedReader.wrappedValue
--      sectionedReader.projectedValue = SharedReader(value: sections)
--      sharedReader.projectedValue = SharedReader(value: sections.elements)
-+      token.ifValid {
-+        let sections = sectionedReader.wrappedValue
-+        sectionedReader.projectedValue = SharedReader(value: sections)
-+        sharedReader.projectedValue = SharedReader(value: sections.elements)
-+      }
-     }
-   }
- 
-```
-
-**File**: `Sources/SQLiteData/Internal/FetchBox.swift` (modified, +4/-0)
-```diff
-@@ -6,6 +6,7 @@
- 
-   final class FetchBox<Value: Sendable>: Sendable {
-     let sharedReader: SharedReader<Value>
-+    let loadGeneration = LoadGeneration()
-     private let storage = LockIsolated(Storage())
- 
-     var fetchKeyID: FetchKeyID? {
-@@ -25,6 +26,7 @@
-         return true
+@@ -21,8 +21,13 @@
        }
-       guard isAdopted else { return }
-+      loadGeneration.invalidate()
-       sharedReader.projectedValue = other.sharedReader.projectedValue
-     }
  
-@@ -48,6 +50,7 @@
-     let sharedReader: SharedReader<[Element]>
-     let sectionedReader: SharedReader<ResultsSectionCollection<Element, String?>>
-     let sectioning = LockIsolated<_Sectioning<String?>?>(nil)
-+    let loadGeneration = LoadGeneration()
-     private let storage = LockIsolated(Storage())
- 
-     var fetchKeyID: FetchKeyID? {
-@@ -68,6 +71,7 @@
-         return true
-       }
-       guard isAdopted else { return }
-+      loadGeneration.invalidate()
-       sharedReader.projectedValue = other.sharedReader.projectedValue
-       sectionedReader.projectedValue = other.sectionedReader.projectedValue
-       sectioning.setValue(other.sectioning.value)
-```
-
-**File**: `Sources/SQLiteData/Internal/LoadGeneration.swift` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+import ConcurrencyExtras
-+import Foundation
-+
-+final class LoadGeneration: Sendable {
-+  private let count = LockIsolated(0)
-+
-+  func begin() -> Token {
-+    count.withValue {
-+      $0 += 1
-+      return Token(loadGeneration: self, generation: $0)
-+    }
-+  }
-+
-+  func invalidate() {
-+    count.withValue {
-+      $0 += 1
-+    }
-+  }
-+
-+  struct Token: Sendable {
-+    fileprivate let loadGeneration: LoadGeneration
-+    fileprivate let generation: Int
-+
-+    func ifValid(_ body: @Sendable () -> Void) {
-+      loadGeneration.count.withValue {
-+        guard $0 == generation else { return }
-+        body()
-+      }
-+    }
-+  }
-+}
-```
-
-**File**: `Tests/SQLiteDataTests/FetchSubscriptionTests.swift` (modified, +18/-0)
-```diff
-@@ -53,6 +53,24 @@ import Testing
-     #expect(didComplete.value)
-   }
- 
-+  @Test func staleCancellationDoesNotStopNewerLoad() async throws {
-+    @FetchAll var records: [Record]
-+
-+    let firstSubscription = try await $records.load(Record.all)
-+    let task = Task {
-+      try? await firstSubscription.task
-+    }
-+    try await $records.load(Record.where { $0.id > 0 })
-+    task.cancel()
-+    await task.value
-+
-+    try await database.write { db in
-+      try Record.insert { Record.Draft() }.execute(db)
-+    }
-+    try await $records.load()
-+    #expect(records.count == 1)
-+  }
-+
-   @Test func cancellingOneFetchDoesNotCancelAnother() async throws {
-     @FetchAll var records1: [Record]
-     #expect(records1.count == 0)
+       @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+-      override init() async throws {
+-        try await super.init()
++      override init(
++        fileID: StaticString = #fileID,
++        filePath: StaticString = #filePath,
++        line: UInt = #line,
++        column: UInt = #column
++      ) async throws {
++        try await super.init(fileID: fileID, filePath: filePath, line: line, column: column)
+         try $_isRateLimitingDisabled.withValue(true) {
+           _ = try database.modifyRecords(
+             saving: [CKRecord(recordType: "A", recordID: recordID)],
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #576** (2026-11-05): Always enqueue pending record changes when preparing batches (@mbrandonw)
+- **PR #574** (2026-11-05): Properly track modificationDate in mock database (@mbrandonw)
 - **PR #571** (2026-11-03): Fix sorting of records when processing batches. (@mbrandonw)
-- **PR #564** (2026-11-02): Support rate limiting in mock database. (@mbrandonw)
-- **PR #562** (2026-10-09): Add missing visionOS argument for when using UTF8Span to produce CollationOrder (@bobek-balinek)
-- **PR #548** (closed): Keep children of never-uploaded parents and retry `quotaExceeded` saves (@jalalawqati)
-- **PR #546** (2026-09-14): Update CloudKit sync docs link (@DominikGrodl)
-- **PR #544** (closed): Disable unused Sharing traits (@Econa77)
+- **PR #569** (2026-11-05): Handle CloudKit rate limiting (@stephencelis)
+- **PR #568** (closed): Don't delete a child whose parent was never uploaded (@mario-luis-dev)
+- **PR #567** (2026-11-05): Cache unsynced records (@stephencelis)
 
 ---
 
@@ -1725,56 +1140,35 @@ Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ID `@Fetch*.load` events to fix cancel race (#536)
+## X. RateLimitingTests initializer.
 
 **RULE**:
-When implementing operations in `Sources/SQLiteData/Fetch.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/sqlite-data. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Tests/SQLiteDataTests/CloudKitTests/RateLimitingTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/sqlite-data. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c0fea63`: ID `@Fetch*.load` events to fix cancel race (#536). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38b64aa6`: RateLimitingTests initializer.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SQLiteData/Fetch.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/SQLiteDataTests/CloudKitTests/RateLimitingTests.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-
-    var loadGeneration: LoadGeneration { state.wrappedValue.loadGeneration }
-
-    let loadGeneration = LoadGeneration()
-    nonmutating set {
-      loadGeneration.invalidate()
-      sharedReader.projectedValue = newValue.sharedReader.projectedValue
-    }
-    try await withSubscription {
-      try await sharedReader.load(.fetch(request, database: database))
-    }
-  }
-
-  private func withSubscription(_ load: () async throws -> Void) async throws -> FetchSubscription {
-    let token = loadGeneration.begin()
-    try await load()
-    return FetchSubscription(sharedReader: sharedReader, token: token)
-    try await withSubscription {
-      try await sharedReader.load(.fetch(request, database: database, scheduler: scheduler))
-    }
-      try await withSubscription {
-        try await sharedReader.load(.fetch(request, database: database, animation: animation))
-      }
+      override init(
+        fileID: StaticString = #fileID,
+        filePath: StaticString = #filePath,
+        line: UInt = #line,
+        column: UInt = #column
+      ) async throws {
+        try await super.init(fileID: fileID, filePath: filePath, line: line, column: column)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-    nonmutating set { sharedReader.projectedValue = newValue.sharedReader.projectedValue }
-    try await sharedReader.load(.fetch(request, database: database))
-    return FetchSubscription(sharedReader: sharedReader)
-    try await sharedReader.load(.fetch(request, database: database, scheduler: scheduler))
-    return FetchSubscription(sharedReader: sharedReader)
-      try await sharedReader.load(.fetch(request, database: database, animation: animation))
-      return FetchSubscription(sharedReader: sharedReader)
+      override init() async throws {
+        try await super.init()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c0fea63` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38b64aa6` are properly handled with clean fallback behavior.

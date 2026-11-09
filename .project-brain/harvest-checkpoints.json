@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T01:38:41.556Z",
+  "last_updated": "2026-11-09T01:46:49.292Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1430,14 +1430,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "content_hash": "a9df434d37187f094573ff1d5d8662f94446005ec62a876b45ecba2934252d25",
-      "verified_at": "2026-11-05T07:41:59.807Z",
+      "content_hash": "618658b742582c4ad799967cea2f1d3fa06ba8f39bfc121d081c23ceb56c5f35",
+      "verified_at": "2026-11-09T01:46:32.778Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:41:59.807Z"
+      "last_updated": "2026-11-09T01:46:32.778Z"
     },
     "openai/clip-vit-base-patch32": {
       "repository": "openai/clip-vit-base-patch32",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "b3c2809d029c22cacd86f3618d002191303b72219c7d63e4b15ff38ab80079df",
-      "verified_at": "2026-11-08T23:43:48.138Z",
+      "content_hash": "58f6c89c45620eff14305853073ea01c4341119ec5af0fe8cc90dec6c8a43029",
+      "verified_at": "2026-11-09T01:46:48.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:43:48.139Z"
+      "last_updated": "2026-11-09T01:46:48.044Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "449aef3bd969944661711cb320c6c68cc471e34c4980c0ea82cc1761f191a21f",
-      "verified_at": "2026-11-08T04:19:34.282Z",
+      "content_hash": "1e978e9dc7a58da8c4e6dc54b5a0446d20d3188f89822303fde165fe7c3e5e88",
+      "verified_at": "2026-11-09T01:46:49.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:19:34.282Z"
+      "last_updated": "2026-11-09T01:46:49.292Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -14976,14 +14976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pointfreeco-sqlite-data",
-      "content_hash": "4ac2589c8f0a164978cc720c3c2f1a2d018c8fcaf354b2c8e4ccb8436e236630",
-      "verified_at": "2026-11-05T19:00:18.001Z",
+      "content_hash": "f5429f330d60eeba993ab419d6618435a8ab4eefd9795ffbef2ac1a43fbbfb16",
+      "verified_at": "2026-11-09T01:46:42.200Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:00:18.001Z"
+      "last_updated": "2026-11-09T01:46:42.200Z"
     },
     "sveltejs/svelte": {
       "repository": "sveltejs/svelte",

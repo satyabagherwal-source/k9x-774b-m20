@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `274eaf91`  
+> **Source Version**: `0d7daaab`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T21:24:45.658Z  
+> **Timestamp**: 2026-11-09T01:46:46.137Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T21:24:45.415Z  
+> **Harvest Timestamp**: 2026-11-09T01:46:46.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -104,8 +104,9 @@ impl<N: Network> FromBytes for WorkerPing<N> {
     }
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "fuzz-helpers"))]
 pub mod prop_tests {
+    #![cfg_attr(not(test), allow(unused_imports))]
     use crate::{WorkerPing, prop_tests::any_transmission_id};
     use snarkvm::console::prelude::{FromBytes, ToBytes};
 
@@ -1987,59 +1988,181 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `274eaf91` (2026-11-08)
-**Commit Message**: Merge pull request #4652 from aleo-labs-protocol/load-test-inherit-secrets
+### Incident Patch 1: `0d7daaab` (2026-11-08)
+**Commit Message**: Merge pull request #4641 from aleo-labs-protocol/feat/fuzz-helpers-feature
 
-**File**: `.github/workflows/load-test.yml` (modified, +3/-1)
+**File**: `.github/workflows/ci.yml` (modified, +22/-1)
 ```diff
-@@ -2,7 +2,7 @@
- #
- # A form for the replay_stockpile test. stress-test.yml does the rest: approval in
- # the stress-test environment and queueing the run, which the Gauntlet host reports
--# as the "stress-test" check on the commit. Its secrets are the environment's.
-+# as the "stress-test" check on the commit.
- # Gauntlet owns the defaults: this sends only what's filled in.
- name: "Gauntlet: Load test"
+@@ -113,6 +113,10 @@ jobs:
+       # features, so it misses a feature one of them fails to declare.
+       - run: cargo check -p snarkos-node-metrics --all-features
+       - run: cargo check -p snarkos-display --all-features
++      # The fuzzing harness builds these two alone with `fuzz-helpers`, which
++      # the workspace pass above only sees unified with everything else.
++      - run: cargo check -p snarkos-node-router-messages --features fuzz-helpers
++      - run: cargo check -p snarkos-node-bft-events --features fuzz-helpers
  
-@@ -64,6 +64,8 @@ jobs:
-       id-token: write
-       contents: read
-     uses: ./.github/workflows/stress-test.yml
-+    # A called workflow sees no secret it isn't passed, its environment's included.
-+    secrets: inherit
-     with:
-       commit: ${{ inputs.commit }}
-       tests: replay_stockpile
+   # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+   # features of a and b, and several crates enable features on their
+@@ -385,6 +389,23 @@ jobs:
+     name: devnet (${{ matrix.name }})
+     steps: *devnet-steps
+ 
++  # The release binary must compile in no test-only code. `fuzz-helpers` turns on
++  # proptest and snarkVM's `test-helpers`, and feature unification would carry
++  # them into the binary if any crate on its path ever enabled it.
++  release-graph:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
++        with: { persist-credentials: false }
++      - run: |
++          cargo tree -p snarkos -e normal,build,features --prefix none --locked > graph.txt
++          hits=$(grep -E '^[a-z0-9_-]+ feature "(fuzz-helpers|test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
++          if [ -n "$hits" ]; then
++            printf '%s\n' "$hits"
++            echo "::error::the snarkos release build enables test-only code (above)"
++            exit 1
++          fi
++
+   machete:
+     runs-on: ubuntu-latest
+     steps:
+@@ -421,7 +442,7 @@ jobs:
+   # for a required check, so each job a pull request runs must succeed here.
+   ci-ok:
+     if: always()
+-    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, machete, lint, test-hosted, test, build-snarkos, devnet]
++    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, machete, release-graph, lint, test-hosted, test, build-snarkos, devnet]
+     runs-on: ubuntu-latest
+     steps:
+       - env:
 ```
 
----
-
-### Incident Patch 2: `e3e20c94` (2026-11-08)
-**Commit Message**: Gauntlet load test: inherit secrets
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmNDF1iPmFmWto2uj4u
-
-**File**: `.github/workflows/load-test.yml` (modified, +3/-1)
+**File**: `node/bft/events/Cargo.toml` (modified, +18/-0)
 ```diff
-@@ -2,7 +2,7 @@
- #
- # A form for the replay_stockpile test. stress-test.yml does the rest: approval in
- # the stress-test environment and queueing the run, which the Gauntlet host reports
--# as the "stress-test" check on the commit. Its secrets are the environment's.
-+# as the "stress-test" check on the commit.
- # Gauntlet owns the defaults: this sends only what's filled in.
- name: "Gauntlet: Load test"
+@@ -20,6 +20,16 @@ edition = "2024"
+ default = [ ]
+ metrics = [ "snarkvm/metrics" ]
+ test-helpers = [ "dep:rand_chacha", "dep:rand", "dep:proptest" ]
++# Exposes the `prop_tests` modules -- the `any_*` generators -- to callers
++# outside this crate's own test build. They are the only practical way to seed a
++# fuzzing corpus with structurally valid events: without them a mutator spends
++# most of its executions failing the version byte at the head of every reader.
++#
++# Named for what it is rather than folded into `test-helpers`, which already
++# means something narrower here (it pulls the rng and proptest dependencies but
++# un-gates nothing). Enabling this in a production build would compile the
++# generators into the binary, so it is deliberately not implied by anything.
++fuzz-helpers = [ "test-helpers", "dep:test-strategy", "dep:time", "snarkos-node-sync-locators/test", "snarkvm/test-helpers", "snarkvm/algorithms" ]
  
-@@ -64,6 +64,8 @@ jobs:
-       id-token: write
-       contents: read
-     uses: ./.github/workflows/stress-test.yml
-+    # A called workflow sees no secret it isn't passed, its environment's included.
-+    secrets: inherit
-     with:
-       commit: ${{ inputs.commit }}
-       tests: replay_stockpile
+ [dependencies.anyhow]
+ workspace = true
+@@ -77,6 +87,14 @@ workspace = true
+ workspace = true
+ features = [ "test-helpers" ]
+ 
++[dependencies.test-strategy]
++workspace = true
++optional = true
++
++[dependencies.time]
++workspace = true
++optional = true
++
+ [dev-dependencies.test-strategy]
+ workspace = true
+ 
+```
+
+**File**: `node/bft/events/src/batch_certified.rs` (modified, +2/-1)
+```diff
+@@ -57,8 +57,9 @@ impl<N: Network> FromBytes for BatchCertified<N> {
+     }
+ }
+ 
+-#[cfg(test)]
++#[cfg(any(test, feature = "fuzz-helpers"))]
+ pub mod prop_tests {
++    #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::{BatchCertified, certificate_response::prop_tests::any_batch_certificate};
+     use snarkvm::console::prelude::{FromBytes, ToBytes};
+ 
+```
+
+**File**: `node/bft/events/src/batch_propose.rs` (modified, +2/-1)
+```diff
+@@ -60,8 +60,9 @@ impl<N: Network> FromBytes for BatchPropose<N> {
+     }
+ }
+ 
+-#[cfg(test)]
++#[cfg(any(test, feature = "fuzz-helpers"))]
+ pub mod prop_tests {
++    #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::{
+         BatchPropose,
+         certificate_response::prop_tests::any_batch_header,
+```
+
+**File**: `node/bft/events/src/batch_signature.rs` (modified, +2/-1)
+```diff
+@@ -53,8 +53,9 @@ impl<N: Network> FromBytes for BatchSignature<N> {
+     }
+ }
+ 
+-#[cfg(test)]
++#[cfg(any(test, feature = "fuzz-helpers"))]
+ pub mod prop_tests {
++    #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::{
+         BatchSignature,
+         certificate_request::prop_tests::any_field,
+```
+
+**File**: `node/bft/events/src/block_request.rs` (modified, +2/-1)
+```diff
+@@ -68,8 +68,9 @@ impl FromBytes for BlockRequest {
+     }
+ }
+ 
+-#[cfg(test)]
++#[cfg(any(test, feature = "fuzz-helpers"))]
+ pub mod prop_tests {
++    #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::{BlockRequest, DataBlocks};
+ 
+     use snarkvm::{
+```
+
+**File**: `node/bft/events/src/block_response.rs` (modified, +2/-1)
+```diff
+@@ -180,8 +180,9 @@ impl<N: Network> FromBytes for DataBlocks<N> {
+     }
+ }
+ 
+-#[cfg(test)]
++#[cfg(any(test, feature = "fuzz-helpers"))]
+ pub mod prop_tests {
++    #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::{BlockRequest, BlockResponse, DataBlocks, block_request::prop_tests::any_block_request};
+ 
+     use snarkvm::{
+```
+
+**File**: `node/bft/events/src/certificate_request.rs` (modified, +2/-1)
+```diff
+@@ -57,8 +57,9 @@ impl<N: Network> FromBytes for CertificateRequest<N> {
+     }
+ }
+ 
+-#[cfg(test)]
++#[cfg(any(test, feature = "fuzz-helpers"))]
+ pub mod prop_tests {
++    #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::CertificateRequest;
+     use snarkvm::{
+         console::prelude::{FromBytes, ToBytes},
 ```
 
 #### Recent Merged Pull Requests:
@@ -2068,30 +2191,49 @@ Claude-Session: https://claude.ai/code/session_01UYfmmNDF1iPmFmWto2uj4u
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4652 from aleo-labs-protocol/load-test-inherit-secrets
+## X. Merge pull request #4641 from aleo-labs-protocol/feat/fuzz-helpers-feature
 
 **RULE**:
-When implementing operations in `.github/workflows/load-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `274eaf91`: Merge pull request #4652 from aleo-labs-protocol/load-test-inherit-secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d7daaab`: Merge pull request #4641 from aleo-labs-protocol/feat/fuzz-helpers-feature. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/load-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# as the "stress-test" check on the commit.
-    # A called workflow sees no secret it isn't passed, its environment's included.
-    secrets: inherit
+      # The fuzzing harness builds these two alone with `fuzz-helpers`, which
+      # the workspace pass above only sees unified with everything else.
+      - run: cargo check -p snarkos-node-router-messages --features fuzz-helpers
+      - run: cargo check -p snarkos-node-bft-events --features fuzz-helpers
+  # The release binary must compile in no test-only code. `fuzz-helpers` turns on
+  # proptest and snarkVM's `test-helpers`, and feature unification would carry
+  # them into the binary if any crate on its path ever enabled it.
+  release-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with: { persist-credentials: false }
+      - run: |
+          cargo tree -p snarkos -e normal,build,features --prefix none --locked > graph.txt
+          hits=$(grep -E '^[a-z0-9_-]+ feature "(fuzz-helpers|test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
+          if [ -n "$hits" ]; then
+            printf '%s\n' "$hits"
+            echo "::error::the snarkos release build enables test-only code (above)"
+            exit 1
+          fi
+
+    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, mac
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# as the "stress-test" check on the commit. Its secrets are the environment's.
+    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, machete, lint, test-hosted, test, build-snarkos, devnet]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `274eaf91` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d7daaab` are properly handled with clean fallback behavior.

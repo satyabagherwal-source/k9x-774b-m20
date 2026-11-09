@@ -8470,3 +8470,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-11-09T01:38:24.197Z |
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `6561174a` | Multi-dimensional audit evidence | 2026-11-09T01:38:27.857Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b5be13f4` | Multi-dimensional audit evidence | 2026-11-09T01:38:41.547Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-11-09T01:46:32.769Z |
+| `learn-github-pointfreeco-sqlite-data` | `https://github.com/pointfreeco/sqlite-data` | `38b64aa6` | Multi-dimensional audit evidence | 2026-11-09T01:46:42.191Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `0d7daaab` | Multi-dimensional audit evidence | 2026-11-09T01:46:48.034Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0d01dff9` | Multi-dimensional audit evidence | 2026-11-09T01:46:49.282Z |

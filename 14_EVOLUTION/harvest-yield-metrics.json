@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T01:38:41.552Z",
-  "total_cycles_completed": 8426,
-  "total_learnings_persisted": 8426,
-  "total_rules_promoted": 8227,
+  "last_updated": "2026-11-09T01:46:49.288Z",
+  "total_cycles_completed": 8430,
+  "total_learnings_persisted": 8430,
+  "total_rules_promoted": 8230,
   "history": [
-    {
-      "timestamp": "2026-11-08T08:49:00.225Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T08:58:20.424Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T09:29:06.029Z",
-      "repository": "webrtc-rs/webrtc",
-      "learningId": "learn-github-webrtc-rs-webrtc",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T09:30:15.136Z",
-      "repository": "jellyfin/Swiftfin",
-      "learningId": "learn-github-jellyfin-swiftfin",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T09:31:59.323Z",
       "repository": "Qwen/Qwen3.8-27B",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-09T01:38:41.552Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:46:32.775Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:46:42.197Z",
+      "repository": "pointfreeco/sqlite-data",
+      "learningId": "learn-github-pointfreeco-sqlite-data",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:46:48.040Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:46:49.288Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
