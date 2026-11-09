@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source**: github ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
-> **Source Version**: `3ae87e70`  
+> **Source Version**: `d5e2183a`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:40:07.706Z  
+> **Timestamp**: 2026-11-09T05:07:07.601Z  
 > **Learning ID**: `learn-github-iliyami-macsai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:40:07.699Z  
+> **Harvest Timestamp**: 2026-11-09T05:07:07.592Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mac Sai: the open-source Mac cleaner, optimizer, and malware scanner. A free, Apple-notarized alternative to CleanMyMac, built with Swift 6 and SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2092 stars
+- **Stars / Engagement**: 2125 stars
 
 ---
 
@@ -813,7 +813,7 @@ public actor FileTreeScanner {
         .totalFileSizeKey, .totalFileAllocatedSizeKey,
         .isDirectoryKey, .isSymbolicLinkKey, .isPackageKey,
         .contentModificationDateKey, .creationDateKey,
-        .contentTypeKey, .nameKey, .isHiddenKey,
+        .contentTypeKey, .nameKey, .isHiddenKey, .linkCountKey,
     ]
 
     public init() {}
@@ -880,6 +880,7 @@ public actor FileTreeScanner {
 
         var nodeMap: [String: FileNode] = [key(root): rootNode]
         var iterationCount = 0
+        var hardLinks = HardLinkTracker()
 
         while let obj = enumerator.nextObject() {
             if Task.isCancelled { break }
@@ -891,8 +892,11 @@ public actor FileTreeScanner {
 
             guard let fileURL = obj as? URL else { continue }
             guard let values = try? fileURL.resourceValues(forKeys: keys) else { continue }
-            let size = UInt64(values.totalFileAllocatedSize ?? values.fileAllocatedSize ?? values.fileSize ?? 0)
             let isDir = values.isDirectory ?? false
+            // Later links to an already-counted inode keep their node at size 0.
+            let size = isDir || hardLinks.shouldCount(fileURL, linkCount: values.linkCount)
+                ? UInt64(values.totalFileAllocatedSize ?? values.fileAllocatedSize ?? values.fileSize ?? 0)
+                : 0
             let ext = values.name?.components(separatedBy: ".").last?.lowercased() ?? fileURL.pathExtension.lowercased()
 
             let node = FileNode(
@@ -931,7 +935,7 @@ public actor FileTreeScanner {
         let fm = FileManager.default
         guard let children = try? fm.contentsOfDirectory(
             at: root,
-            includingPropertiesForKeys: [.isDirectoryKey, .nameKey, .fileAllocatedSizeKey],
+            includingPropertiesForKeys: [.isDirectoryKey, .nameKey, .fileAllocatedSizeKey, .linkCountKey],
             options: []
         ) else {
             return []
@@ -939,25 +943,31 @@ public actor FileTreeScanner {
 
         var nodes: [FileNode] = []
         var scanned = 0
+        // Shared across children so a file linked from two top-level folders
+        // is counted under the first one only, matching `du`.
+        var hardLinks = HardLinkTracker()
 
         for child in children.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
             if Task.isCancelled { break }
 
             let values = try? child.resourceValues(
-                forKeys: [.isDirectoryKey, .nameKey, .fileAllocatedSizeKey])
+                forKeys: [.isDirectoryKey, .nameKey, .fileAllocatedSizeKey, .linkCountKey])
             let isDir = values?.isDirectory ?? false
             let name = values?.name ?? child.lastPathComponent
             let ext = (name as NSString).pathExtension.lowercased()
-            var total = UInt64(values?.fileAllocatedSize ?? 0)
+            var total = isDir || hardLinks.shouldCount(child, linkCount: values?.linkCount)
+                ? UInt64(values?.fileAllocatedSize ?? 0)
+                : 0
 
             if isDir, let enumerator = fm.enumerator(
                 at: child,
-                includingPropertiesForKeys: [.fileAllocatedSizeKey],
+                includingPropertiesForKeys: [.fileAllocatedSizeKey, .linkCountKey],
                 options: [.skipsPackageDescendants]
             ) {
                 // Accumulate allocated size only. Reading `fileAllocatedSize` is
                 // metadata, so dataless iCloud files are counted at their local
-                // footprint without triggering a download.
+                // footprint without triggering a download. Hard links count
+                // once per inode.
                 while let obj = enumerator.nextObject() {
                     if Task.isCancelled { break }
                     scanned += 1
@@ -966,7 +976,8 @@ public actor FileTreeScanner {
                         await Task.yield()
                     }
                     guard let url = obj as? URL,
-                          let v = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey])
+                          let v = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey, .linkCountKey]),
+                          hardLinks.shouldCount(url, linkCount: v.linkCount)
                     else { continue }
                     total += UInt64(v.fileAllocatedSize ?? 0)
                 }
@@ -1704,462 +1715,305 @@ public enum SharedAppState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ae87e70` (2026-11-04)
-**Commit Message**: Add signed in-app updates with release notes and relaunch (#255)
+### Incident Patch 1: `d5e2183a` (2026-11-07)
+**Commit Message**: Find more hidden disk usage: OpenClaw logs, uv cache, pnpm stores, Docker disk image, and fix hard link double counting (#266)
 
-* Coordinate cleanup activity with update installation
+* Surface OpenClaw logs under User Log Files (#1)
 
-* Add signed in-app updates with Sparkle
+OpenClaw writes gateway connection-retry logs to ~/.openclaw and the
+folder outlives the app, so it can quietly grow to tens of GB. Scan
+~/.openclaw/logs and stray *.log files elsewhere in ~/.openclaw as part
+of User Log Files. Config, credentials and the agent workspace are never
+targeted.
 
-* Avoid isolated setter thunks in update settings
+* Add uv cache to Package Manager Caches (#2)
 
-* Fail closed when signed update artifacts do not verify
+uv (Python package manager) keeps its cache at ~/.cache/uv on macOS,
+which can grow to tens of GB and was not reported by any scan. List it
+(plus the legacy ~/Library/Caches/uv) under Package Manager Caches, and
+keep the legacy path out of User Caches like Homebrew and pip.
 
-* Address updater review with full binary audits and curated feeds
+* Find pnpm stores and show Docker Desktop's disk image
 
-* Remove trailing blank line in update gate tests
+pnpm keeps one store folder per layout version under ~/Library/pnpm/store
+(and the XDG and pre-7 locations) and never removes the old one after an
+upgrade, so a Mac can carry tens of GB of unused v3/v10 stores. List each
+version folder as one item under Package Manager Caches, sized by its whole
+subtree and labeled current or older-and-unused, pl
 
-* Fix staged-update termination and complete release checks
-
-* Complete updater review and add cancellable preparation
-
-**File**: `.github/workflows/ci.yml` (modified, +12/-1)
+**File**: `Sources/MacClean/Core/Cleaner/CleaningEngine.swift` (modified, +5/-3)
 ```diff
-@@ -22,11 +22,22 @@ jobs:
-       - name: Verify VERSION ↔ MCConstants.appVersion sync
-         run: bash scripts/check-version-sync.sh
+@@ -417,16 +417,18 @@ public actor CleaningEngine {
+         let fm = FileManager.default
+         guard let enumerator = fm.enumerator(
+             at: url,
+-            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .isRegularFileKey],
++            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .isRegularFileKey, .linkCountKey],
+             options: []
+         ) else { return 0 }
  
-+      - name: Validate update build configuration
-+        run: |
-+          python3 scripts/test-update-configuration.py
-+          bash -n scripts/build-dmg.sh scripts/generate-update-feed.sh
-+
-       - name: Build
-         run: swift build
- 
-+      - name: Verify signed update release failures
-+        run: |
-+          python3 scripts/test-update-feed.py
-+          python3 scripts/test-publish-update-feed.py
-+          python3 scripts/test-network-surface.py
-+
-       - name: Verify network surface (inspect the built binary)
--        run: bash scripts/check-network-surface.sh
-+        run: bash scripts/check-network-surface.sh "$(swift build --show-bin-path)/MacClean"
- 
-       - name: Run Tests (XCTest with code coverage)
-         run: swift test --enable-code-coverage
+         var total: UInt64 = 0
++        var hardLinks = HardLinkTracker()
+         for case let fileURL as URL in enumerator {
+             let values = try? fileURL.resourceValues(forKeys: [
+-                .totalFileAllocatedSizeKey, .isRegularFileKey,
++                .totalFileAllocatedSizeKey, .isRegularFileKey, .linkCountKey,
+             ])
+-            if values?.isRegularFile == true {
++            if values?.isRegularFile == true,
++               hardLinks.shouldCount(fileURL, linkCount: values?.linkCount) {
+                 total += UInt64(values?.totalFileAllocatedSize ?? 0)
+             }
+         }
 ```
 
-**File**: `.github/workflows/publish-update-feed.yml` (added, +43/-0)
+**File**: `Sources/MacClean/Core/Scanner/FileTreeScanner.swift` (modified, +19/-8)
 ```diff
-@@ -0,0 +1,43 @@
-+name: Publish curated update feed
-+
-+# Required maintainer step AFTER publishing a stable release and curating its
-+# notes. Run again after editing those notes. Uses the existing signing secret;
-+# no personal token or release event (which GITHUB_TOKEN may suppress) is needed.
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      release_tag:
-+        description: "Published latest stable tag with final curated notes (vX.Y.Z)"
-+        required: true
-+        type: string
-+
-+permissions:
-+  contents: write
-+
-+concurrency:
-+  group: publish-stable-update-feed
-+  cancel-in-progress: false
-+
-+jobs:
-+  publish:
-+    runs-on: macos-15
-+    environment: sparkle-release
-+    steps:
-+      - uses: actions/checkout@v6
-+
-+      - name: Resolve pinned Sparkle tools
-+        run: swift package resolve
-+
-+      - name: Verify publication and signing fixtures
-+        run: |
-+          python3 scripts/test-update-feed.py
-+          python3 scripts/test-publish-update-feed.py
-+
-+      - name: Publish from final release notes
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          RELEASE_TAG: ${{ inputs.release_tag }}
-+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
-+          SPARKLE_PUBLIC_ED_KEY: ${{ vars.SPARKLE_PUBLIC_ED_KEY }}
-+          SPARKLE_FEED_URL: ${{ vars.SPARKLE_FEED_URL }}
-+        run: python3 scripts/publish-update-feed.py
+@@ -7,7 +7,7 @@ public actor FileTreeScanner {
+         .totalFileSizeKey, .totalFileAllocatedSizeKey,
+         .isDirectoryKey, .isSymbolicLinkKey, .isPackageKey,
+         .contentModificationDateKey, .creationDateKey,
+-        .contentTypeKey, .nameKey, .isHiddenKey,
++        .contentTypeKey, .nameKey, .isHiddenKey, .linkCountKey,
+     ]
+ 
+     public init() {}
+@@ -74,6 +74,7 @@ public actor FileTreeScanner {
+ 
+         var nodeMap: [String: FileNode] = [key(root): rootNode]
+         var iterationCount = 0
++        var hardLinks = HardLinkTracker()
+ 
+         while let obj = enumerator.nextObject() {
+             if Task.isCancelled { break }
+@@ -85,8 +86,11 @@ public actor FileTreeScanner {
+ 
+             guard let fileURL = obj as? URL else { continue }
+             guard let values = try? fileURL.resourceValues(forKeys: keys) else { continue }
+-            let size = UInt64(values.totalFileAllocatedSize ?? values.fileAllocatedSize ?? values.fileSize ?? 0)
+             let isDir = values.isDirectory ?? false
++            // Later links to an already-counted inode keep their node at size 0.
++            let size = isDir || hardLinks.shouldCount(fileURL, linkCount: values.linkCount)
++                ? UInt64(values.totalFileAllocatedSize ?? values.fileAllocatedSize ?? values.fileSize ?? 0)
++                : 0
+             let ext = values.name?.components(separatedBy: ".").last?.lowercased() ?? fileURL.pathExtension.lowercased()
+ 
+             let node = FileNode(
+@@ -125,33 +129,39 @@ public actor FileTreeScanner {
+         let fm = FileManager.default
+         guard let children = try? fm.contentsOfDirectory(
+             at: root,
+-            includingPropertiesForKeys: [.isDirectoryKey, .nameKey, .fileAllocatedSizeKey],
++            includingPropertiesForKeys: [.isDirectoryKey, .nameKey, .fileAllocatedSizeKey, .linkCountKey],
+             options: []
+         ) else {
+             return []
+         }
+ 
+         var nodes: [FileNode] = []
+         var scanned = 0
++        // Shared across children so a file linked from two top-level folders
++        // is counted under the first one only, matching `du`.
++        var hardLinks = HardLinkTracker()
+ 
+         for child in children.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
+             if Task.isCancelled { break }
+ 
+             let values = try? child.resourceValues(
+-                forKeys: [.isDirectoryKey, .nameKey, .fileAllocatedSizeKey])
++                forKeys: [.isDirectoryKey, .nameKey, .fileAllocatedSizeKey, .linkCountKey])
+             let isDir = values?.isDirectory ?? false
+             let name = values?.name ?? child.lastPathComponent
+             let ext = (name as NSString).pathExtension.lowercased()
+-            var total = UInt64(values?.fileAllocatedSize ?? 0)
++            var total = isDir || hardLinks.shouldCount(child, linkCount: values?.linkCount)
++                ? UInt64(values?.fileAllocatedSize ?? 0)
++                : 0
+ 
+             if isDir, let enumerator = fm.enumerator(
+                 at: child,
+-                includingPropertiesForKeys: [.fileAllocatedSizeKey],
++                includingPropertiesForKeys: [.fileAllocatedSizeKey, .linkCountKey],
+                 options: [.skipsPackageDescendants]
+             ) {
+                 // Accumulate allocated size only. Reading `fileAllocatedSize` is
+                 // metadata, so dataless iCloud files are counted at their local
+-                // footprint without triggering a download.
++                // footprint without triggering a download. Hard links count
++                // once per inode.
+                 while let obj = enumerator.nextObject() {
+                     if Task.isCancelled { break }
+                     scanned += 1
+@@ -160,7 +170,8 @@ public actor FileTreeScanner {
+                         await Task.yield()
+                     }
+                     guard let url = obj as? URL,
+-                          let v = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey])
++                          let v = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey, .linkCountKey]),
++                          hardLinks.shouldCount(url, linkCount: v.linkCount)
+                     else { continue }
+                     total += UInt64(v.fileAllocatedSize ?? 0)
+                 }
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +17/-3)
+**File**: `Sources/MacClean/Modules/DiskHogs/DiskHogsClient.swift` (modified, +12/-0)
 ```diff
-@@ -98,7 +98,11 @@ jobs:
-         run: swift build -c release
+@@ -45,6 +45,18 @@ public struct DiskHogsClient: Sendable {
+         return .rows(DockerSystemDFParser.parse(outcome.stdoutText))
+     }
  
-       - name: Run tests
--        run: swift test
-+        run: |
-+          swift test
-+          python3 scripts/test-update-feed.py
-+          python3 scripts/test-publish-update-feed.py
-+          python3 scripts/test-network-surface.py
- 
-       # --- Signing & notarization ---------------------------------------------
-       # All secrets live in GitHub repo settings; nothing sensitive is committed.
-@@ -148,6 +152,9 @@ jobs:
-         env:
-           APPLE_DEVELOPER_ID: ${{ secrets.APPLE_DEVELOPER_ID }}
-           NOTARY_PROFILE: MacSai
-+          BUILD_NUMBER: ${{ github.run_number }}
-+          SPARKLE_FEED_URL: ${{ vars.SPARKLE_FEED_URL }}
-+          SPARKLE_PUBLIC_ED_KEY: ${{ vars.SPARKLE_PUBLIC_ED_KEY }}
-         run: |
-           # Export so build-dmg.sh names the DMG / Info.plist with this version
-           # (the beta tag's version, which differs from the committed VERSION).
-@@ -170,10 +177,11 @@ jobs:
-         run: |
-           VERSION="${{ steps.version.outputs.version }}"
-           TAG="${{ steps.version.outputs.tag }}"
-+          ASSETS=(".build/MacSai-${VERSION}.dmg")
- 
-           if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
-             gh release create "$TAG" \
--              ".build/MacSai-${VERSION}.dmg" \
-+              "${ASSETS[@]}" \
-               --title "Mac Sai $TAG (beta)" \
-               --prerelease \
-               --notes "$(cat <<EOF
-@@ -197,7 +205,7 @@ jobs:
-             # this release itself, which produced "vX...vX" links.
-             PREV_TAG="$(git tag --sort=-creatordate | grep -vx "$TAG" | grep -v -e '-' | head -1 || true)"
-             gh release create "$TAG" \
--              ".build/MacSai-${VERSION}.dmg" \
-+              "${ASSETS[@]}" \
-               --title "Mac Sai $TAG" \
-               --generate-notes \
-               ${PREV_TAG:+--notes-start-tag "$PREV_TAG"} \
-@@ -229,6 +237,12 @@ jobs:
-         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 
-+      - name: Publish curated appcast reminder
-+        if: steps.version.outputs.prerelease == 'false' && vars.SPARKLE_FEED_URL != ''
-+        run: |
-+          echo "Curate the published release notes, then run Publish curated update feed for this stable tag." >> "$GITHUB_STEP_SUMMARY"
-+          echo "The new latest release has no appcast until that required step succeeds. Do not rerun Release to edit the feed." >> "$GITHUB_STEP_SUMMARY"
++    /// Disk space Docker Desktop's virtual disk takes, nil when there is none.
++    /// Read from the file, so it shows even while Docker is stopped. The
++    /// image is sparse, so the allocated size is what it really costs.
++    public func dockerDiskImageSize() -> UInt64? {
++        let sizes = MCConstants.dockerDesktopDiskImages.compactMap { url -> UInt64? in
++            guard let values = try? url.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey])
++            else { return nil }
++            return UInt64(values.totalFileAllocatedSize ?? values.fileAllocatedSize ?? 0)
++        }
++        return sizes.isEmpty ? nil : sizes.reduce(0, +)
++    }
 +
-       - name: Update Homebrew cask in tap repo
-         if: steps.version.outputs.prerelease != 'true'
-         run: |
+     /// Unavailable devices and deletable older runtimes. Both empty when the
+     /// Mac has no Xcode.
+     public func simulators() async -> (devices: [SimulatorDevice], runtimes: [SimulatorRuntime]) {
 ```
 
-**File**: `Package.swift` (modified, +4/-1)
+**File**: `Sources/MacClean/Modules/ProjectJunk/ProjectJunkScanner.swift` (modified, +5/-3)
 ```diff
-@@ -14,15 +14,18 @@ let package = Package(
-     ],
-     dependencies: [
-         .package(url: "https://github.com/groue/GRDB.swift.git", from: "7.0.0"),
-+        .package(url: "https://github.com/sparkle-project/Sparkle", exact: "2.10.1"),
-     ],
-     targets: [
-         .executableTarget(
-             name: "MacClean",
-             dependencies: [
-                 "MacCleanKit",
-                 .product(name: "GRDB", package: "GRDB.swift"),
-+                .product(name: "Sparkle", package: "Sparkle"),
-             ],
--            path: "Sources/MacClean"
-+            path: "Sources/MacClean",
-+            linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"])]
-         ),
-         .executableTarget(
-             name: "MacCleanMenu",
+@@ -148,16 +148,18 @@ public struct ProjectJunkScanner: Sendable {
+     static func directoryBytes(_ url: URL) -> UInt64 {
+         guard let enumerator = FileManager.default.enumerator(
+             at: url,
+-            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .isRegularFileKey],
++            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .isRegularFileKey, .linkCountKey],
+             options: []
+         ) else { return 0 }
+         var total: UInt64 = 0
++        var hardLinks = HardLinkTracker()
+         for case let fileURL as URL in enumerator {
+             if Task.isCancelled { break }
+             let values = try? fileURL.resourceValues(forKeys: [
+-                .totalFileAllocatedSizeKey, .isRegularFileKey,
++                .totalFileAllocatedSizeKey, .isRegularFileKey, .linkCountKey,
+             ])
+-            if values?.isRegularFile == true {
++            if values?.isRegularFile == true,
++               hardLinks.shouldCount(fileURL, linkCount: values?.linkCount) {
+                 total += UInt64(values?.totalFileAllocatedSize ?? 0)
+             }
+         }
 ```
 
-**File**: `README.de.md` (modified, +48/-13)
+**File**: `Sources/MacClean/Modules/SystemJunk/AppLeftoversScanner.swift` (modified, +8/-4)
 ```diff
-@@ -320,12 +320,13 @@ Glaub uns nicht einfach. Sowohl der Quellcode als auch der laufende Prozess sind
- **1. Durchsuche den Quellcode nach Netzwerk-APIs**
+@@ -102,21 +102,25 @@ public enum AppLeftoversScanner {
  
- ```bash
--rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
-+rg -n 'URLSession|NSURLConnection|Sparkle|SecTrustEvaluate' Sources --glob '*.swift'
- ```
- 
--Du solltest nur je drei Netzwerkpfade sehen, alle optional und alle nur lesend:
-+Die optionalen Netzwerkzugriffe sind unten aufgeführt. Die lokale Bereinigung überträgt weder Scanergebnisse noch Dateilisten:
- 
--- `Sources/MacCleanKit/UpdateChecker.swift`: die optionale Update-Prüfung von Mac Sai (in den Einstellungen abschaltbar)
-+- `Sources/MacClean/Services/SelfUpdateController.swift`: Sparkle prüft den im signierten Programm hinterlegten HTTPS-Feed und lädt signierte Versionshinweise und Update-Archive. Automatische Prüfungen und automatisches Laden/Installieren sind getrennte Einstellungen; Systemprofiling und JavaScript in Versionshinweisen sind deaktiviert. Siehe [Update-Einrichtung](docs/IN_APP_UPDATES.md). Bei konfigurierten Direktinstallationen sind automatische Update-Prüfungen standardmäßig aktiviert und laufen einmal täglich; jede Anfrage enthält die Versionen der App und von Sparkle im User-Agent, und die Prüfungen lassen sich in den Einstellungen abschalten.
-+- `Sources/MacCleanKit/UpdateChecker.swift`: Homebrew-Update-Prüfungen und die Release-Seite als Rückfall für Builds ohne eingerichteten signierten Feed
- - `Sources/MacClean/Modules/Updater/UpdaterModule.swift`: die vom Benutzer ausgelöste Prüfung der Sparkle-Feeds *anderer Apps*, wenn du den Updater öffnest
- - `Sources/MacCleanKit/MalwareBazaarFeed.swift`: der optionale Download von MalwareBazaar-Hashes. Er läuft nur, wenn du deinen eigenen abuse.ch-Auth-Key hinterlegst und unter Einstellungen > Malware-Datenbanken auf Jetzt aktualisieren klickst. Jede Anfrage sendet nur deinen Auth-Key und die Abfrage, niemals Datei-Hashes oder Pfade. Passt ein heruntergeladener Hash zu einer signierten Datei, fragt macOS bei Apple nach, ob ihr Signaturzertifikat widerrufen wurde, dieselbe Prüfung wie bei Gatekeeper; die Anfrage betrifft das Zertifikat, nicht deine Dateien
- 
-@@ -334,28 +335,62 @@ Es gibt nirgends im Code Analytik, einen Crash-Reporter oder ein Tracker-SDK.
- **2. Beobachte den laufenden Prozess**
- 
- ```bash
--lsof -i -P -n | grep -i 'MacClean\|Mac Sai\|MacSai' || echo "no network sockets"
-+(
-+MACSAI_APP=$(cd "/Applications/Mac Sai.app" && pwd -P) || exit 1
-+MACSAI_PIDS=$(ps -ww -axo pid=,comm= | awk -v bundle="$MACSAI_APP/" '
-+  { pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
-+    if (index($0, bundle) == 1) print pid }' | paste -sd, -)
-+if [ -n "$MACSAI_PIDS" ]; then
-+  ps -p "$MACSAI_PIDS" -o pid=,comm=
-+  lsof -nP -a -p "$MACSAI_PIDS" -i
-+else
-+  echo "No running executables from this Mac Sai bundle"
-+fi
-+)
- ```
- 
--Erwartet: keine aufgebauten Verbindungen, solange du nur lokal bereinigst. Little Snitch oder LuLu machen dieselbe Prüfung sichtbar.
-+Diese Momentaufnahme wählt PIDs anhand der ausführbaren Dateien im angegebenen App-Bundle aus und schließt fremde Installer-/Updater-Prozesse aus. An andere Orte kopierte Sparkle-Helfer und die macOS-Vertrauensdienste liegen außerhalb dieser Auswahl; beobachte sie mit einer prozessbezogenen Firewall. Führe den Befehl während einer Prüfung oder eines Downloads aus, um kurzlebige Verbindungen zu sehen.
-+
-+Wenn keine Update-Prüfung, kein Download und keine optionale Malware-Verifikation laufen, öffnet die lokale Bereinigung keine Netzwerkverbindung. Beobachte bei Updates auch die Sparkle-Unterprozesse; Apple-Zertifikatsprüfungen laufen über die Vertrauensdienste von macOS. Little Snitch oder LuLu zeigen diese Verbindungen ebenfalls.
- 
- **3. Untersuche die Binärdatei, die du tatsächlich installiert hast**
- 
--Der Quellcode und die signierte Binärdatei sind verschiedene Artefakte, die stärkste Prüfung läuft also gegen die App auf deiner Festplatte, nicht gegen dieses Repo. Nach `brew install --cask mac-sai`:
-+Für eine Installation per DMG oder Homebrew braucht diese Schleife nur die macOS-Kommandozeilenwerkzeuge, keinen Quellcode-Checkout und kein Python. Sie liest alle sieben enthaltenen Binärdateien und zeigt häufige Netzwerkimporte, statische URLs und Tracker-Zeichenfolgen zur manuellen Prüfung:
- 
- ```bash
--APP="/Applications/Mac Sai.app/Contents/MacOS/MacClean"
-+(
-+MACSAI_APP="/Applications/Mac Sai.app"
-+MACSAI_SPARKLE="$MACSAI_APP/Contents/Frameworks/Sparkle.framework/Versions/B"
-+for MACSAI_BINARY in \
-+  "$MACSAI_APP/Contents/MacOS/MacClean" \
-+  "$MACSAI_APP/Contents/Library/LoginItems/MacCleanMenu.app/Contents/MacOS/MacCleanMenu" \
-+  "$MACSAI_SPARKLE/Sparkle" "$MACSAI_SPARKLE/Autoupdate" \
-+  "$MACSAI_SPARKLE/Updater.app/Contents/MacOS/Updater" \
-+  "$MACSAI_SPARKLE/XPCServices/Downloader.xpc/Contents/MacOS/Downloader" \
-+  "$MACSAI_SPARKLE/XPCServices/Installer.xpc/Contents/MacOS/Installer"
-+do
-+  printf '\n%s\n' "$MACSAI_BINARY"
-+  MACSAI_IMPORTS=$(nm -uj "$MACSAI_BIN
+     /// Recursive byte size of a file or directory. Bounded by the entry's own
+     /// subtree; used only to show the user how much each leftover reclaims.
+-    private static func directorySize(at url: URL) -> UInt64 {
++    static func directorySize(at url: URL) -> UInt64 {
+         let fm = FileManager.default
+         var values = try? url.resourceValues(forKeys: [.isDirectoryKey, .totalFileAllocatedSizeKey, .fileAllocatedSizeKey])
+         if values?.isDirectory != true {
+             return UInt64(values?.totalFileAllocatedSize ?? values?.fileAllocatedSize ?? 0)
+         }
+         var total: UInt64 = 0
++        var hardLinks = HardLinkTracker()
+         if let enumerator = fm.enumerator(
+             at: url,
+-            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey],
++            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .linkCountKey],
+             options: []
+         ) {
+             for case let fileURL as URL in enumerator {
+-                values = try? fileURL.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey])
+-                guard values?.isRegularFile == true else { continue }
++                // Stores can hold hundreds of thousands of files; stop promptly on cancel.
++                if Task.isCancelled { break }
++                values = try? fileURL.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .linkCountKey])
++                guard values?.isRegularFile == true,
++                      hardLinks.shouldCount(fileURL, linkCount: values?.linkCount) else { continue }
+                 total += UInt64(values?.totalFileAllocatedSize ?? values?.fileAllocatedSize ?? 0)
+             }
+         }
 ```
 
-**File**: `README.fr.md` (modified, +48/-13)
+**File**: `Sources/MacClean/Modules/SystemJunk/DeletedUsersScanner.swift` (modified, +4/-2)
 ```diff
-@@ -320,12 +320,13 @@ Ne nous croyez pas sur parole. Le code source comme le processus en cours d'exé
- **1. Cherchez dans le code les API réseau**
- 
- ```bash
--rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
-+rg -n 'URLSession|NSURLConnection|Sparkle|SecTrustEvaluate' Sources --glob '*.swift'
- ```
- 
--Vous ne devriez jamais voir que trois chemins réseau, tous optionnels et en lecture seule :
-+Les accès réseau facultatifs sont indiqués ci-dessous. Le nettoyage local n’envoie ni résultats d’analyse ni listes de fichiers :
- 
--- `Sources/MacCleanKit/UpdateChecker.swift` : la vérification optionnelle des mises à jour de Mac Sai (désactivable dans les Réglages)
-+- `Sources/MacClean/Services/SelfUpdateController.swift`: Sparkle consulte le flux HTTPS inscrit dans l’application signée et télécharge les notes de version et les archives de mise à jour signées. La recherche automatique et le téléchargement/installation automatiques sont des réglages distincts ; le profilage système et JavaScript dans les notes sont désactivés. Voir la [configuration des mises à jour](docs/IN_APP_UPDATES.md). Pour les installations directes configurées, la recherche automatique des mises à jour est activée par défaut et a lieu une fois par jour ; chaque requête contient les versions de l’application et de Sparkle dans le User-Agent, et cette recherche peut être désactivée dans Réglages.
-+- `Sources/MacCleanKit/UpdateChecker.swift`: les vérifications Homebrew et la page des versions en solution de repli pour les builds sans flux signé configuré
- - `Sources/MacClean/Modules/Updater/UpdaterModule.swift` : la vérification, déclenchée par l'utilisateur, des flux Sparkle *d'autres apps* lorsque vous ouvrez l'Updater
- - `Sources/MacCleanKit/MalwareBazaarFeed.swift` : le téléchargement optionnel des hachages MalwareBazaar. Il ne s'exécute que si vous ajoutez votre propre Auth-Key abuse.ch et cliquez sur Mettre à jour maintenant dans Réglages > Bases de logiciels malveillants. Chaque requête n'envoie que votre Auth-Key et la requête, jamais de hachages ni de chemins de fichiers. Lorsqu'un hachage téléchargé correspond à un fichier signé, macOS demande à Apple si son certificat de signature a été révoqué, la même vérification que celle de Gatekeeper ; cette requête porte sur le certificat, pas sur vos fichiers
- 
-@@ -334,28 +335,62 @@ Il n'y a aucun SDK d'analytique, de rapport de plantage ou de traqueur nulle par
- **2. Observez le processus en direct**
- 
- ```bash
--lsof -i -P -n | grep -i 'MacClean\|Mac Sai\|MacSai' || echo "no network sockets"
-+(
-+MACSAI_APP=$(cd "/Applications/Mac Sai.app" && pwd -P) || exit 1
-+MACSAI_PIDS=$(ps -ww -axo pid=,comm= | awk -v bundle="$MACSAI_APP/" '
-+  { pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
-+    if (index($0, bundle) == 1) print pid }' | paste -sd, -)
-+if [ -n "$MACSAI_PIDS" ]; then
-+  ps -p "$MACSAI_PIDS" -o pid=,comm=
-+  lsof -nP -a -p "$MACSAI_PIDS" -i
-+else
-+  echo "No running executables from this Mac Sai bundle"
-+fi
-+)
- ```
- 
--Attendu : aucune connexion établie tant que vous ne faites que nettoyer localement. Little Snitch ou LuLu rendent la même vérification visuelle.
-+Cet instantané sélectionne les PID selon le chemin des exécutables dans le paquet choisi, ce qui exclut les processus Installer/Updater sans rapport. Les assistants Sparkle copiés ailleurs et les services de confiance de macOS sont hors de cette sélection ; utilisez un pare-feu qui distingue les processus pour les observer. Exécutez la commande pendant une recherche ou un téléchargement pour voir les connexions brèves.
-+
-+Lorsque les vérifications/téléchargements de mises à jour et la vérification facultative des logiciels malveillants sont inactifs, le nettoyage local n’ouvre aucune connexion réseau. Pendant une mise à jour, observez aussi les sous-processus Sparkle ; les vérifications de certificats Apple passent par les services de confiance de macOS. Little Snitch ou LuLu permettent également de les visualiser.
- 
- **3. Inspectez le binaire que vous avez réellement installé**
- 
--Le code source et le binaire signé sont deux artefacts différents, la vérification la plus forte s'exécute donc contre l'app sur votre disque, pas contre ce dépôt. Après `brew install --cask mac-sai` :
-+Pour une installation par DMG ou Homebrew, cette boucle ne demande que les outils en ligne de commande de macOS, sans copie du code ni Python. Elle lit les sept binaires fournis et affiche les imports réseau courants, les URL statiques et les chaînes de traceurs pour une inspection manuelle :
- 
- ```bash
--APP="/Applications/Mac Sai.app/Contents/MacOS/MacClean"
-+(
-+MACSAI_APP="/Applications/Mac Sai.app"
-+MACSAI_SPARKLE="$MACSAI_APP/Contents/Frameworks/Sparkle.framework/Versions/B"
-+for MACSAI_BINARY in \
-+  "$MACSAI_APP/Contents/MacOS/MacClean" \
-+  "$MACSAI_APP/Contents/Library/LoginItems/MacCleanMenu.app/Contents/MacOS/MacCleanMenu" \
-+  "$MACSAI_SPARKLE/Sparkle" "$MACSAI_SPARKLE/Autoupdate" \
-+  "$MACSAI_SPARKLE/Updater.app/Contents/MacOS/Up
+@@ -75,12 +75,14 @@ public enum DeletedUsersScanner {
+     private static func directorySize(_ url: URL) -> UInt64 {
+         guard let enumerator = FileManager.default.enumerator(
+             at: url,
+-            includingPropertiesForKeys: [.totalFileAllocatedSizeKey],
++            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .linkCountKey],
+             options: [.skipsHiddenFiles]
+         ) else { return 0 }
+         var total: UInt64 = 0
++        var hardLinks = HardLinkTracker()
+         while let fileURL = enumerator.nextObject() as? URL {
+-            let v = try? fileURL.resourceValues(forKeys: [.totalFileAllocatedSizeKey])
++            let v = try? fileURL.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .linkCountKey])
++            guard hardLinks.shouldCount(fileURL, linkCount: v?.linkCount) else { continue }
+             total += UInt64(v?.totalFileAllocatedSize ?? 0)
+         }
+         return total
 ```
 
-**File**: `README.md` (modified, +48/-13)
+**File**: `Sources/MacClean/Modules/SystemJunk/PnpmStoreScanner.swift` (added, +29/-0)
 ```diff
-@@ -320,12 +320,13 @@ Do not take our word for it. Both the source and the running process are checkab
- **1. Search the source for networking APIs**
- 
- ```bash
--rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
-+rg -n 'URLSession|NSURLConnection|Sparkle|SecTrustEvaluate' Sources --glob '*.swift'
- ```
- 
--You should only ever see three network paths, all optional and all read-only:
-+The optional network paths are disclosed below. Local cleaning does not upload scan results or file lists:
- 
--- `Sources/MacCleanKit/UpdateChecker.swift`: the optional Mac Sai update check (turn it off in Settings)
-+- `Sources/MacClean/Services/SelfUpdateController.swift`: Sparkle checks the HTTPS feed sealed into the signed app and downloads signed release notes and update archives. Automatic checks and automatic download/install are separate settings; system profiling and release-note JavaScript are disabled. See [update setup](docs/IN_APP_UPDATES.md). For configured direct installations, automatic update checks are on by default and run once a day; each request includes the app and Sparkle versions in the User-Agent, and checks can be turned off in Settings.
-+- `Sources/MacCleanKit/UpdateChecker.swift`: Homebrew update checks and the release-page fallback for builds without a configured signed feed
- - `Sources/MacClean/Modules/Updater/UpdaterModule.swift`: the user-driven check of *other apps'* Sparkle feeds when you open the Updater
- - `Sources/MacCleanKit/MalwareBazaarFeed.swift`: the opt-in MalwareBazaar hash download. It only runs when you add your own abuse.ch Auth-Key and press Update Now in Settings > Malware Databases. Each request sends only your Auth-Key and the query, never file hashes or paths. When a downloaded hash matches a signed file, macOS asks Apple whether its signing certificate was revoked, the same check Gatekeeper makes; that request is about the certificate, not your files
- 
-@@ -334,28 +335,62 @@ There is no analytics, crash reporter, or tracker SDK anywhere in the codebase.
- **2. Watch the live process**
- 
- ```bash
--lsof -i -P -n | grep -i 'MacClean\|Mac Sai\|MacSai' || echo "no network sockets"
-+(
-+MACSAI_APP=$(cd "/Applications/Mac Sai.app" && pwd -P) || exit 1
-+MACSAI_PIDS=$(ps -ww -axo pid=,comm= | awk -v bundle="$MACSAI_APP/" '
-+  { pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
-+    if (index($0, bundle) == 1) print pid }' | paste -sd, -)
-+if [ -n "$MACSAI_PIDS" ]; then
-+  ps -p "$MACSAI_PIDS" -o pid=,comm=
-+  lsof -nP -a -p "$MACSAI_PIDS" -i
-+else
-+  echo "No running executables from this Mac Sai bundle"
-+fi
-+)
- ```
- 
--Expected: no established connections while you are only cleaning locally. Little Snitch or LuLu make the same check visual.
-+This snapshot selects PIDs by executable paths inside the chosen app bundle, so unrelated Installer/Updater processes are excluded. Sparkle helpers copied elsewhere and macOS trust services are outside this snapshot; use a process-aware firewall to observe those. Run it while checking or downloading an update to catch short-lived connections.
+@@ -0,0 +1,29 @@
++import Foundation
++import MacCleanKit
 +
-+With update checks/downloads and optional malware verification inactive, local cleaning opens no network connection. Include Sparkle’s child processes when observing an update; Apple certificate checks run through macOS trust services. Little Snitch or LuLu can show these connections too.
- 
- **3. Inspect the binary you actually installed**
- 
--The source and the signed binary are different artifacts, so the strongest check runs against the app on your disk, not this repo. After `brew install --cask mac-sai`:
-+For a DMG or Homebrew installation, this loop needs only macOS command-line tools, with no source checkout or Python. It reads all seven bundled binaries and lists common network imports, static URLs and tracker strings for manual inspection:
- 
- ```bash
--APP="/Applications/Mac Sai.app/Contents/MacOS/MacClean"
-+(
-+MACSAI_APP="/Applications/Mac Sai.app"
-+MACSAI_SPARKLE="$MACSAI_APP/Contents/Frameworks/Sparkle.framework/Versions/B"
-+for MACSAI_BINARY in \
-+  "$MACSAI_APP/Contents/MacOS/MacClean" \
-+  "$MACSAI_APP/Contents/Library/LoginItems/MacCleanMenu.app/Contents/MacOS/MacCleanMenu" \
-+  "$MACSAI_SPARKLE/Sparkle" "$MACSAI_SPARKLE/Autoupdate" \
-+  "$MACSAI_SPARKLE/Updater.app/Contents/MacOS/Updater" \
-+  "$MACSAI_SPARKLE/XPCServices/Downloader.xpc/Contents/MacOS/Downloader" \
-+  "$MACSAI_SPARKLE/XPCServices/Installer.xpc/Contents/MacOS/Installer"
-+do
-+  printf '\n%s\n' "$MACSAI_BINARY"
-+  MACSAI_IMPORTS=$(nm -uj "$MACSAI_BINARY") || exit 1
-+  printf '%s\n' "$MACSAI_IMPORTS" | grep -Ei \
-+    'URLSession|URLConnection|CFNetwork|Network|nw_|DNSService|NetService|curl_|^_(socket|connect|connectx|send|recv)([$]|$)' || true
-+  MACSAI_STRINGS=$(strings -a "$MACSAI_BINARY") || exit 1
-+  printf '%s\n' "$MACSAI_STRINGS" | grep -Ei \
-+    '://|sentry|firebase|mixpanel|amplitude|bugsnag|crashlytics|posthog|appsflyer' || true
-+done
-+)
-+```
- 
--# Networking classes the binary imports (only URLSession appears):
--nm
++/// Lists each pnpm store version folder (`store/v10`, `store/v3`, ...) as one
++/// item sized by its whole subtree. A store holds far too many files to list
++/// one by one, and the version is what tells the user which one is stale.
++enum PnpmStoreScanner {
++    static func scan(roots: [URL] = MCConstants.pnpmStoreRoots) -> [FileItem] {
++        let fm = FileManager.default
++        let folders = roots.flatMap { root in
++            (try? fm.contentsOfDirectory(at: root, includingPropertiesForKeys: [.isDirectoryKey, .isSymbolicLinkKey]))?
++                .filter {
++                    let values = try? $0.resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey])
++                    return values?.isDirectory == true && values?.isSymbolicLink != true
++                } ?? []
++        }
++        return PnpmStore.versions(in: folders).compactMap { version in
++            let size = AppLeftoversScanner.directorySize(at: version.url)
++            guard size > 0 else { return nil }
++            return FileItem(
++                url: version.url,
++                name: version.displayName,
++                size: size,
++                allocatedSize: size,
++                isDirectory: true
++            )
++        }
++    }
++}
 ```
 
-**File**: `README.ru.md` (modified, +48/-13)
+**File**: `Sources/MacClean/Modules/SystemJunk/SystemJunkModule.swift` (modified, +2/-0)
 ```diff
-@@ -316,12 +316,13 @@ Mac Sai подписан идентификатором Apple **Developer ID** 
- **1. Поиск сетевых API в исходниках**
- 
- ```bash
--rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
-+rg -n 'URLSession|NSURLConnection|Sparkle|SecTrustEvaluate' Sources --glob '*.swift'
- ```
- 
--Вы должны увидеть ровно три сетевых пути, все необязательные и только на чтение:
-+Необязательные сетевые обращения перечислены ниже. Локальная очистка не передаёт результаты сканирования или списки файлов:
- 
--- `Sources/MacCleanKit/UpdateChecker.swift`: необязательная проверка обновлений Mac Sai (отключается в настройках)
-+- `Sources/MacClean/Services/SelfUpdateController.swift`: Sparkle проверяет HTTPS-ленту, указанную в подписанном приложении, и загружает подписанные описания и архивы обновлений. Автоматическая проверка и автоматическая загрузка с установкой включаются отдельно; отправка системного профиля и JavaScript в описаниях отключены. См. [настройку обновлений](docs/IN_APP_UPDATES.md). В настроенных сборках для прямой установки автоматическая проверка обновлений включена по умолчанию и выполняется раз в сутки; каждый запрос содержит версии приложения и Sparkle в User-Agent, а проверки можно отключить в Настройках.
-+- `Sources/MacCleanKit/UpdateChecker.swift`: проверка обновлений Homebrew и переход на страницу релизов в сборках без настроенной подписанной ленты
- - `Sources/MacClean/Modules/Updater/UpdaterModule.swift`: запускаемая пользователем проверка лент Sparkle *других приложений* при открытии модуля «Обновления»
- - `Sources/MacCleanKit/MalwareBazaarFeed.swift`: необязательная загрузка хешей MalwareBazaar. Она выполняется, только если вы добавили собственный Auth-Key abuse.ch и нажали «Обновить сейчас» в разделе «Настройки» > «Базы вредоносного ПО». Каждый запрос передаёт только ваш Auth-Key и сам запрос, но никогда не хеши файлов и не пути. Если загруженный хеш совпадает с подписанным файлом, macOS запрашивает у Apple, не отозван ли его сертификат подписи (та же проверка, что и у Gatekeeper); этот запрос касается сертификата, а не ваших файлов
- 
-@@ -330,28 +331,62 @@ rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
- **2. Наблюдение за живым процессом**
- 
- ```bash
--lsof -i -P -n | grep -i 'MacClean\|Mac Sai\|MacSai' || echo "no network sockets"
-+(
-+MACSAI_APP=$(cd "/Applications/Mac Sai.app" && pwd -P) || exit 1
-+MACSAI_PIDS=$(ps -ww -axo pid=,comm= | awk -v bundle="$MACSAI_APP/" '
-+  { pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
-+    if (index($0, bundle) == 1) print pid }' | paste -sd, -)
-+if [ -n "$MACSAI_PIDS" ]; then
-+  ps -p "$MACSAI_PIDS" -o pid=,comm=
-+  lsof -nP -a -p "$MACSAI_PIDS" -i
-+else
-+  echo "No running executables from this Mac Sai bundle"
-+fi
-+)
- ```
- 
--Ожидание: при обычной локальной очистке установленных соединений нет. Little Snitch или LuLu делают ту же проверку наглядной.
-+Этот снимок выбирает PID по путям исполняемых файлов внутри указанного приложения, поэтому посторонние процессы Installer/Updater не попадают в выборку. Помощники Sparkle, скопированные в другие каталоги, и системные службы доверия macOS находятся за её пределами; для них используйте межсетевой экран с учётом процессов. Повторяйте команду во время проверки или загрузки обновления, чтобы увидеть короткие соединения.
-+
-+Если проверка и загрузка обновлений, а также необязательная проверка вредоносного ПО не выполняются, локальная очистка не открывает сетевые соединения. При обновлении учитывайте дочерние процессы Sparkle; проверка сертификатов Apple выполняется системными службами доверия macOS. Соединения также можно наблюдать в Little Snitch или LuLu.
- 
- **3. Проверьте бинарник, который вы на самом деле установили**
- 
--Исходный код и подписанный бинарник представляют собой два разных артефакта, поэтому самая надёжная проверка выполняется по приложению на вашем диске, а не по этому репозиторию. После `brew install --cask mac-sai`:
-+Для установки из DMG или Homebrew достаточно средств командной строки macOS; исходники и Python не нужны. Этот цикл читает все семь бинарных компонентов и выводит распространённые сетевые импорты, статические URL и строки трекеров для ручной проверки:
- 
- ```bash
--APP="/Applications/Mac Sai.app/Contents/MacOS/MacClean"
-+(
-+MACSAI_APP="/Applications/Mac Sai.app"
-+MACSAI_SPARKLE="$MACSAI_APP/Contents/Frameworks/Sparkle.framework/Versions/B"
-+for MACSAI_BINARY in \
-+  "$MACSAI_APP/Contents/MacOS/MacClean" \
-+  "$MACSAI_APP/Contents/Library/LoginItems/MacCleanMenu.app/Contents/MacOS/MacCleanMenu" \
-+  "$MACSAI_SPARKLE/Sparkle" "$MACSAI_SPARKLE/Autoupdate" \
-+  "$MACSAI_SPARKLE/Updater.app/Contents/MacOS/Updater" \
-+  "$MACSAI_SPARKLE/XPCServices/Downloader.xpc/Contents/MacOS/Downloader" \
-+  "$MACSAI_SPARKLE/XPCServices/Installer.xpc/Contents/MacOS/Installer"
-+do
-+  printf '\n%s\n' "$MACSAI_BINARY"
-+  MACSAI_IMPORTS=$(nm -uj "$MACSAI_BINARY") || exit 1
-+  printf '%s\n' "$MACSAI_IMPORTS" | grep -Ei \
-+    'URLSession|URLConnection|CFNetwork|Network|nw_|DNSService|NetService|curl_|^_(soc
+@@ -91,6 +91,8 @@ public struct SystemJunkModule: ScanModule {
+                                 NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) != nil
+                             }
+                         )
++                    } else if let packageManagers = cat as? PackageManagerCachesCategory {
++                        filtered += PnpmStoreScanner.scan(roots: packageManagers.pnpmStoreRoots)
+                     } else if let brokenLogin = cat as? BrokenLoginItemsCategory {
+                         filtered = brokenLogin.filterBroken(
+                             items,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #271** (2026-11-06): README: list all 12 interface languages (@iliyami)
+- **PR #270** (2026-11-06): Use the Mac Sai team address for sponsor and funding contact (@iliyami)
+- **PR #269** (2026-11-06): Refresh README and sponsor page stats (@iliyami)
 - **PR #268** (2026-11-03): Add a supporters list for memberships (@iliyami)
+- **PR #266** (2026-11-07): Find more hidden disk usage: OpenClaw logs, uv cache, pnpm stores, Docker disk image, and fix hard link double counting (@mehdiraized)
 - **PR #265** (closed): Surface OpenClaw logs (~/.openclaw) under User Log Files (@mehdiraized)
-- **PR #264** (closed): Add uv cache to Package Manager Caches (@mehdiraized)
-- **PR #263** (closed): Find pnpm stores and show Docker Desktop disk image (@mehdiraized)
-- **PR #261** (2026-10-29): Show swap under memory and add opt-in swap and memory pressure alerts (@iliyami)
-- **PR #260** (2026-10-28): README: live stats and a sponsor page with audience and rates (@iliyami)
 
 ---
 
@@ -2179,39 +2033,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add signed in-app updates with release notes and relaunch (#255)
+## X. Find more hidden disk usage: OpenClaw logs, uv cache, pnpm stores, Docker disk i
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/MacClean/Core/Cleaner/CleaningEngine.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ae87e70`: Add signed in-app updates with release notes and relaunch (#255). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d5e2183a`: Find more hidden disk usage: OpenClaw logs, uv cache, pnpm stores, Docker disk image, and fix hard link double counting (#266). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/MacClean/Core/Cleaner/CleaningEngine.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-      - name: Validate update build configuration
-        run: |
-          python3 scripts/test-update-configuration.py
-          bash -n scripts/build-dmg.sh scripts/generate-update-feed.sh
-
-      - name: Verify signed update release failures
-        run: |
-          python3 scripts/test-update-feed.py
-          python3 scripts/test-publish-update-feed.py
-          python3 scripts/test-network-surface.py
-
-        run: bash scripts/check-network-surface.sh "$(swift build --show-bin-path)/MacClean"
+            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .isRegularFileKey, .linkCountKey],
+        var hardLinks = HardLinkTracker()
+                .totalFileAllocatedSizeKey, .isRegularFileKey, .linkCountKey,
+            if values?.isRegularFile == true,
+               hardLinks.shouldCount(fileURL, linkCount: values?.linkCount) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-        run: bash scripts/check-network-surface.sh
+            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .isRegularFileKey],
+                .totalFileAllocatedSizeKey, .isRegularFileKey,
+            if values?.isRegularFile == true {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ae87e70` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d5e2183a` are properly handled with clean fallback behavior.

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T04:59:48.805Z",
-    "lastVerified": "2026-11-09T04:59:48.805Z",
+    "lastChecked": "2026-11-09T05:07:14.499Z",
+    "lastVerified": "2026-11-09T05:07:14.499Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T04:27:38.968Z",
+    "lastChecked": "2026-11-09T05:07:14.486Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T04:27:38.968Z"
+    "lastVerified": "2026-11-09T05:07:14.486Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -540,8 +540,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T00:39:14.193Z",
-    "lastVerified": "2026-11-09T00:39:14.193Z",
+    "lastChecked": "2026-11-09T05:07:09.550Z",
+    "lastVerified": "2026-11-09T05:07:09.550Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2935,9 +2935,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-11-08T03:35:36.786Z",
+    "lastChecked": "2026-11-09T05:06:59.480Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-11-08T03:35:36.786Z"
+    "lastVerified": "2026-11-09T05:06:59.480Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -3185,12 +3185,12 @@
     "revisionIdentifier": "c6d10667"
   },
   "pingcap-autoflow": {
-    "name": "pingcap/autoflow",
+    "name": "autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T06:59:41.695Z",
-    "lastVerified": "2026-11-08T06:59:41.695Z",
+    "lastChecked": "2026-11-09T05:07:11.991Z",
+    "lastVerified": "2026-11-09T05:07:11.991Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-autoflow",
@@ -3199,7 +3199,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "01cdf88f"
   },
   "hf-prithivmlmods-gender-classifier-mini": {
     "name": "prithivMLmods/Gender-Classifier-Mini",
@@ -7448,8 +7449,8 @@
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T08:22:13.039Z",
-    "lastVerified": "2026-11-08T08:22:13.039Z",
+    "lastChecked": "2026-11-09T05:07:07.001Z",
+    "lastVerified": "2026-11-09T05:07:07.001Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
@@ -7500,12 +7501,12 @@
     "officialUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T10:57:58.246Z",
-    "lastVerified": "2026-11-05T10:57:58.246Z",
+    "lastChecked": "2026-11-09T05:07:02.255Z",
+    "lastVerified": "2026-11-09T05:07:02.255Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "713ab4badd503600d63dda62fbb4b7daeda132dd6d5da168621b1dce3df5db70",
+    "contentHash": "a8205af389f86ef22b2c5fcb078d354a556aa104d6a1806b3f08bea3c33f3c42",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -12651,14 +12652,14 @@
     "officialUrl": "https://github.com/iliyami/MacSai",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-05T22:40:07.699Z",
-    "lastVerified": "2026-11-05T22:40:07.699Z",
+    "lastChecked": "2026-11-09T05:07:07.592Z",
+    "lastVerified": "2026-11-09T05:07:07.592Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "a61e1065f95484610c5d43ccb8c9b5180e9723c3365215d4b21b657db079637a",
+    "contentHash": "ffad54f66e3aac389405d93d36be6624c295003db21c930e572f62686d1dd805",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

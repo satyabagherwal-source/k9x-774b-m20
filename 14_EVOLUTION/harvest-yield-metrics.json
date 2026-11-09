@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T04:59:36.851Z",
-  "total_cycles_completed": 8479,
-  "total_learnings_persisted": 8479,
-  "total_rules_promoted": 8276,
+  "last_updated": "2026-11-09T05:07:09.014Z",
+  "total_cycles_completed": 8481,
+  "total_learnings_persisted": 8481,
+  "total_rules_promoted": 8277,
   "history": [
-    {
-      "timestamp": "2026-11-08T15:42:39.982Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T15:49:45.625Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T15:49:51.465Z",
       "repository": "prof18/feed-flow",
@@ -1403,6 +1389,20 @@
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T05:07:03.543Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T05:07:09.014Z",
+      "repository": "iliyami/MacSai",
+      "learningId": "learn-github-iliyami-macsai",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

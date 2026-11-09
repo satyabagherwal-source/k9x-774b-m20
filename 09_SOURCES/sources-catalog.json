@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "713ab4badd503600d63dda62fbb4b7daeda132dd6d5da168621b1dce3df5db70",
-    "lastHarvestedAt": "2026-11-05T10:57:59.280Z",
+    "contentHash": "a8205af389f86ef22b2c5fcb078d354a556aa104d6a1806b3f08bea3c33f3c42",
+    "lastHarvestedAt": "2026-11-09T05:07:03.537Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -1303,10 +1303,10 @@
     "repository": "iliyami/MacSai",
     "platform": "github",
     "sourceUrl": "https://github.com/iliyami/MacSai",
-    "sourceVersion": "3ae87e70",
+    "sourceVersion": "d5e2183a",
     "license": "BSD-3-Clause",
-    "contentHash": "a61e1065f95484610c5d43ccb8c9b5180e9723c3365215d4b21b657db079637a",
-    "lastHarvestedAt": "2026-11-05T22:40:09.296Z",
+    "contentHash": "ffad54f66e3aac389405d93d36be6624c295003db21c930e572f62686d1dd805",
+    "lastHarvestedAt": "2026-11-09T05:07:08.998Z",
     "learningId": "learn-github-iliyami-macsai"
   },
   "duty1g-x64dbg-mcp-server": {

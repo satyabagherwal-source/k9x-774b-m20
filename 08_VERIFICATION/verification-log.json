@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-J387",
-    "timestamp": "2026-11-07T05:50:52.951Z",
-    "repository": "lingodotdev/lingo.dev",
-    "learningId": "learn-github-lingodotdev-lingo-dev",
-    "contentHash": "76f6566eb3b3a580ff5514c1ae74685fba1642f4f3fb854d47a285d1afcc3ddd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-J5US",
-    "timestamp": "2026-11-07T05:50:56.356Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "de664776ee1fc47211a591c649f33c1c7ba2426487e11cebfade4a714b0c1455",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-SE8A",
     "timestamp": "2026-11-07T05:58:07.114Z",
     "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -7492,6 +7462,36 @@
     "contentHash": "007f65081cac007f0c32a17dd4ea0426b466e6885df936f0210afa807f469c55",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-UFOT",
+    "timestamp": "2026-11-09T05:07:03.533Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "a8205af389f86ef22b2c5fcb078d354a556aa104d6a1806b3f08bea3c33f3c42",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-UJWJ",
+    "timestamp": "2026-11-09T05:07:08.995Z",
+    "repository": "iliyami/MacSai",
+    "learningId": "learn-github-iliyami-macsai",
+    "contentHash": "ffad54f66e3aac389405d93d36be6624c295003db21c930e572f62686d1dd805",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
