@@ -8512,3 +8512,5 @@
 | `CYCLE-20261109-7UGJ` | `2026-11-09T04:49:29.587Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`9becab61...`) |
 | `CYCLE-20261109-7W3E` | `2026-11-09T04:49:31.706Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dd639d46...`) |
 | `CYCLE-20261109-81DG` | `2026-11-09T04:49:38.548Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`864a5937...`) |
+| `CYCLE-20261109-KTYB` | `2026-11-09T04:59:35.459Z` | `heymrun/heym` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`83deca4a...`) |
+| `CYCLE-20261109-KV0P` | `2026-11-09T04:59:36.841Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`007f6508...`) |

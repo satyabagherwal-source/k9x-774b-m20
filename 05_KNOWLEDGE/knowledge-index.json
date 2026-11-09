@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T04:49:38.458Z",
-  "total_verified_learnings": 1241,
+  "last_updated": "2026-11-09T04:59:36.731Z",
+  "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -21017,7 +21017,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
       "source_version": "hf-baai-bge-large-en-v1.5",
-      "content_hash": "d1c805b7636147463bad9354a1716e2dd2cee4ca8aae25f7e2f531239e846d93",
+      "content_hash": "007f65081cac007f0c32a17dd4ea0426b466e6885df936f0210afa807f469c55",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -21109,7 +21109,7 @@
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx"
       ],
-      "verified_at": "2026-11-05T10:50:38.815Z",
+      "verified_at": "2026-11-09T04:59:36.705Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -188517,6 +188517,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-08T22:26:15.036Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-heymrun-heym": {
+      "learning_id": "learn-github-heymrun-heym",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "heymrun/heym",
+      "repository": "heymrun/heym",
+      "slug": "heymrun-heym",
+      "platform": "github",
+      "source_url": "https://github.com/heymrun/heym",
+      "source_version": "bb769ab7",
+      "content_hash": "83deca4a0984e8b770ad84d74fd7a1787ce9d71fee239f777751a99dada2cb68",
+      "dossier_path": "07_PROJECT_LEARNING/heymrun-heym-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/heymrun-heym-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "docker): drop build leftovers from the release and backend images",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-09T04:59:35.340Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

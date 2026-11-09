@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "d1c805b7636147463bad9354a1716e2dd2cee4ca8aae25f7e2f531239e846d93",
-    "lastHarvestedAt": "2026-11-05T10:50:38.932Z",
+    "contentHash": "007f65081cac007f0c32a17dd4ea0426b466e6885df936f0210afa807f469c55",
+    "lastHarvestedAt": "2026-11-09T04:59:36.845Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -12228,5 +12228,15 @@
     "contentHash": "c65e2ece084fc9416838af1b675b7f1a73961ab0dd07e8c6d09ee0f5feee8d21",
     "lastHarvestedAt": "2026-11-08T22:26:15.129Z",
     "learningId": "learn-github-wquguru-cicada"
+  },
+  "heymrun-heym": {
+    "repository": "heymrun/heym",
+    "platform": "github",
+    "sourceUrl": "https://github.com/heymrun/heym",
+    "sourceVersion": "bb769ab7",
+    "license": "NOASSERTION",
+    "contentHash": "83deca4a0984e8b770ad84d74fd7a1787ce9d71fee239f777751a99dada2cb68",
+    "lastHarvestedAt": "2026-11-09T04:59:35.463Z",
+    "learningId": "learn-github-heymrun-heym"
   }
 }

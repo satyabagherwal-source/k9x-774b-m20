@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T04:49:38.570Z",
+  "last_updated": "2026-11-09T04:59:36.856Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1715,14 +1715,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
-      "content_hash": "d1c805b7636147463bad9354a1716e2dd2cee4ca8aae25f7e2f531239e846d93",
-      "verified_at": "2026-11-05T10:50:38.941Z",
+      "content_hash": "007f65081cac007f0c32a17dd4ea0426b466e6885df936f0210afa807f469c55",
+      "verified_at": "2026-11-09T04:59:36.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T10:50:38.941Z"
+      "last_updated": "2026-11-09T04:59:36.855Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",
@@ -18404,6 +18404,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-08T22:26:15.138Z"
+    },
+    "heymrun/heym": {
+      "repository": "heymrun/heym",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-heymrun-heym",
+      "content_hash": "83deca4a0984e8b770ad84d74fd7a1787ce9d71fee239f777751a99dada2cb68",
+      "verified_at": "2026-11-09T04:59:35.484Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-09T04:59:35.484Z"
     }
   },
   "repos": {

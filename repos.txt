@@ -4962,3 +4962,7 @@ https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-08T22:26:04.379Z] ---
 # [MOBILE-CROSS-PLATFORM] wquguru/cicada (1310 score) - 知了 Cicada · 任何会议和直播的实时字幕、同声传译、AI 会议纪要，Mac、Windows、Linux、Android 免费开源。Live subtit
 https://github.com/wquguru/cicada
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-09T04:59:28.126Z] ---
+# [AI-AGENTS] heymrun/heym (947 score) - Build agentic systems. Run them with confidence. Orchestrate agents, automate bu
+https://github.com/heymrun/heym

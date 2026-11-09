@@ -20719,5 +20719,20 @@
     "qualityScore": 1310,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-08T22:24:18.677Z"
+  },
+  {
+    "name": "heym",
+    "fullName": "heymrun/heym",
+    "url": "https://github.com/heymrun/heym",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Build agentic systems. Run them with confidence. Orchestrate agents, automate business processes, inspect every execution, and keep humans in control. Deploy Heym on your own infrastructure.",
+    "stars": 1522,
+    "forks": 120,
+    "openIssues": 0,
+    "language": "Python",
+    "qualityScore": 947,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-09T04:56:04.341Z"
   }
 ]
