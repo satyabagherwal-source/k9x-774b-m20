@@ -675,8 +675,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
     "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
     "license": "Open-Source",
-    "contentHash": "351efccb44144d4c4d51a4f679fca75bf1fe4e216609e7dec960f5fefc12ca38",
-    "lastHarvestedAt": "2026-11-05T11:53:10.586Z",
+    "contentHash": "29d8a078936c0676a9f98b2b5fdd24d013233aeba3efba679279e6c4f0110644",
+    "lastHarvestedAt": "2026-11-09T06:38:53.443Z",
     "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf"
   },
   "hf-cloudflare-clef": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "b2bcbcf9",
+    "sourceVersion": "865a2448",
     "license": "Apache-2.0",
-    "contentHash": "a5f23b6aac0ab8bbd15731d21a3aff3302f4c490d9828a7c62fa00283afc6e6c",
-    "lastHarvestedAt": "2026-11-08T04:33:48.347Z",
+    "contentHash": "149c1f894b674a0f91c99c90274e094fb3f83b908b90ce6cddf36867a4ea31a5",
+    "lastHarvestedAt": "2026-11-09T06:38:54.296Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {

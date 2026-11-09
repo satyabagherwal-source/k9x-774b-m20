@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T06:32:27.421Z",
+  "last_updated": "2026-11-09T06:38:54.238Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16353,8 +16353,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "b2bcbcf9",
-      "content_hash": "a5f23b6aac0ab8bbd15731d21a3aff3302f4c490d9828a7c62fa00283afc6e6c",
+      "source_version": "865a2448",
+      "content_hash": "149c1f894b674a0f91c99c90274e094fb3f83b908b90ce6cddf36867a4ea31a5",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -16366,6 +16366,11 @@
         {
           "number": null,
           "title": "Serialize `gix-macros` trybuild suites on Windows",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "gix-status): read rename candidate metadata from the open file",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16434,7 +16439,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:33:48.250Z",
+      "verified_at": "2026-11-09T06:38:54.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33595,7 +33600,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "351efccb44144d4c4d51a4f679fca75bf1fe4e216609e7dec960f5fefc12ca38",
+      "content_hash": "29d8a078936c0676a9f98b2b5fdd24d013233aeba3efba679279e6c4f0110644",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [
@@ -33688,7 +33693,7 @@
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
       ],
-      "verified_at": "2026-11-05T11:53:10.451Z",
+      "verified_at": "2026-11-09T06:38:53.350Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

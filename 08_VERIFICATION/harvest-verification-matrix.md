@@ -8529,3 +8529,5 @@
 | `CYCLE-20261109-QU61` | `2026-11-09T06:00:14.905Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dea001b9...`) |
 | `CYCLE-20261109-XEYN` | `2026-11-09T06:05:21.791Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 537, Rule null` | Yes (`605c2d53...`) |
 | `CYCLE-20261109-W9DQ` | `2026-11-09T06:32:27.518Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`8298b451...`) |
+| `CYCLE-20261109-4J5R` | `2026-11-09T06:38:53.439Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`29d8a078...`) |
+| `CYCLE-20261109-4JTH` | `2026-11-09T06:38:54.293Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`149c1f89...`) |

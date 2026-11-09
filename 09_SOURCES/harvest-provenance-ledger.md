@@ -8538,3 +8538,5 @@ Every entry in this ledger must capture:
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `4d5f787b` | Multi-dimensional audit evidence | 2026-11-09T06:00:14.909Z |
 | `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-09T06:05:21.795Z |
 | `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-09T06:32:27.522Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-09T06:38:53.443Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `865a2448` | Multi-dimensional audit evidence | 2026-11-09T06:38:54.296Z |

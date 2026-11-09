@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T06:32:27.542Z",
+  "last_updated": "2026-11-09T06:38:54.303Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "351efccb44144d4c4d51a4f679fca75bf1fe4e216609e7dec960f5fefc12ca38",
-      "verified_at": "2026-11-05T11:53:10.596Z",
+      "content_hash": "29d8a078936c0676a9f98b2b5fdd24d013233aeba3efba679279e6c4f0110644",
+      "verified_at": "2026-11-09T06:38:53.450Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:53:10.596Z"
+      "last_updated": "2026-11-09T06:38:53.450Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "a5f23b6aac0ab8bbd15731d21a3aff3302f4c490d9828a7c62fa00283afc6e6c",
-      "verified_at": "2026-11-08T04:33:48.355Z",
+      "content_hash": "149c1f894b674a0f91c99c90274e094fb3f83b908b90ce6cddf36867a4ea31a5",
+      "verified_at": "2026-11-09T06:38:54.303Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:33:48.355Z"
+      "last_updated": "2026-11-09T06:38:54.303Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
