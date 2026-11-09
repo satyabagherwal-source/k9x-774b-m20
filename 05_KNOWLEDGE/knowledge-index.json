@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T03:05:59.231Z",
+  "last_updated": "2026-11-09T03:21:52.561Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26408,10 +26408,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "source_version": "hf-google-gemma-4-26b-a4b-it",
-      "content_hash": "ef4890f4e8c0489ef6b5678f30a5014287c4c0e38328d2c31bdb095474f2e46a",
+      "content_hash": "4273a4968f708c6ff479c4b9575d9baa7d14bab876018f33f8455f9845e5efc1",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "MoE Expert Selection Sparsity Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 962,
           "title": "Dual-Phase Hybrid RoPE & KV-Cache Decoupling Rule",
@@ -26430,6 +26435,11 @@
         {
           "number": 969,
           "title": "Hybrid Attention Layer Interleaving Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 971,
+          "title": "Multimodal Token Boundary Integrity",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -26460,7 +26470,7 @@
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l",
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4dv0ce"
       ],
-      "verified_at": "2026-11-05T09:21:00.119Z",
+      "verified_at": "2026-11-09T03:21:52.536Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47280,8 +47290,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "82b87745",
-      "content_hash": "9408e76a3d4380588780e25500ed263286ae58bade2b28c9b9bd95ca617897b1",
+      "source_version": "4b105861",
+      "content_hash": "4f2667fa5bc898086fc07bf80f793fea94da30d6ac402a4ab8e72d671e5476fa",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47686,7 +47696,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:28:14.740Z",
+      "verified_at": "2026-11-09T03:21:49.712Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -91043,7 +91053,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-05T09:21:00.119Z"
+      "verified_at": "2026-11-09T03:21:52.536Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -91063,15 +91073,15 @@
       "learning_id": "rule-971",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 971,
-      "title": "Multimodal Token Boundary Integrity (Harvested from google/gemma-4-31B-it)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Multimodal Token Boundary Integrity",
+      "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+      "source_version": "hf-google-gemma-4-26b-a4b-it",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-11-09T03:21:52.536Z"
     },
     "rule-972": {
       "learning_id": "rule-972",

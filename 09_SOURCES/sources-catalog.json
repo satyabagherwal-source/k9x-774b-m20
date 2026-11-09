@@ -1185,8 +1185,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
     "license": "Open-Source",
-    "contentHash": "ef4890f4e8c0489ef6b5678f30a5014287c4c0e38328d2c31bdb095474f2e46a",
-    "lastHarvestedAt": "2026-11-05T09:21:00.248Z",
+    "contentHash": "4273a4968f708c6ff479c4b9575d9baa7d14bab876018f33f8455f9845e5efc1",
+    "lastHarvestedAt": "2026-11-09T03:21:52.649Z",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it"
   },
   "infisical-infisical": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "82b87745",
+    "sourceVersion": "4b105861",
     "license": "Apache-2.0",
-    "contentHash": "9408e76a3d4380588780e25500ed263286ae58bade2b28c9b9bd95ca617897b1",
-    "lastHarvestedAt": "2026-11-09T02:28:14.865Z",
+    "contentHash": "4f2667fa5bc898086fc07bf80f793fea94da30d6ac402a4ab8e72d671e5476fa",
+    "lastHarvestedAt": "2026-11-09T03:21:49.862Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {

@@ -8487,3 +8487,5 @@
 | `CYCLE-20261109-FUNS` | `2026-11-09T03:03:44.632Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`94f04db8...`) |
 | `CYCLE-20261109-HPTF` | `2026-11-09T03:05:11.667Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`19baa6b9...`) |
 | `CYCLE-20261109-IQKY` | `2026-11-09T03:05:59.314Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`32ec46b8...`) |
+| `CYCLE-20261109-340Y` | `2026-11-09T03:21:49.858Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`4f2667fa...`) |
+| `CYCLE-20261109-366D` | `2026-11-09T03:21:52.645Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule null, Rule 971` | Yes (`4273a496...`) |

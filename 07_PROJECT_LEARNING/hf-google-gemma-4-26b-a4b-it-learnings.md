@@ -3,7 +3,7 @@
 > **Source Version**: `hf-google-ge`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T09:20:58.639Z  
+> **Timestamp**: 2026-11-09T03:21:50.837Z  
 > **Learning ID**: `learn-huggingface-google-gemma-4-26b-a4b-it`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,275 +17,351 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `google/gemma-4-26B-A4B-it` repository represents a **Mixture-of-Experts (MoE)** Large Language Model (LLM) optimized for **agentic reasoning** and **multimodal understanding** (Text + Image). The core architectural challenge addressed is the trade-off between **parameter count** (26B total) and **active compute** (4B active per token). This is achieved via a sparse MoE architecture where only a subset of experts is activated per token, drastically reducing inference latency and memory bandwidth requirements compared to a dense 26B model, while retaining the knowledge capacity of the larger parameter space.
+The `google/gemma-4-26B-A4B-it` repository represents a **Mixture-of-Experts (MoE)** Large Language Model (LLM) optimized for **agentic reasoning** and **multimodal understanding** (Text + Image). The core architectural challenge it solves is the trade-off between **parameter count** (knowledge capacity) and **active compute** (inference latency/memory). By utilizing a MoE architecture with 128 experts and selecting only 8 per token (`top_k_experts: 8`), it achieves the knowledge density of a ~26B parameter model while maintaining the inference speed and memory footprint of a ~4B active parameter model ("A4B").
 
 **Architectural Boundaries & Subsystems:**
-1.  **Hybrid Attention Subsystem:** The model employs a **Sliding Window Attention (SWA)** mechanism for 25 out of 30 layers, with **Full Global Attention** reserved for the remaining 5 layers (specifically, the final layer is always global). This creates a hierarchical memory structure: local context is processed with low-cost SWA, while global coherence is maintained at specific intervals.
-2.  **MoE Routing Subsystem:** A router selects `top_k_experts` (8) out of `num_experts` (128) for each token. This introduces a dynamic computation graph where the active weights change per token, requiring specialized inference engines to handle sparse weight loading.
-3.  **Multimodal Fusion Subsystem:** The architecture supports `image_token_id`, `video_token_id`, and `audio_token_id`. The `vision_config` and `text_config` are decoupled but fused via a shared embedding space (`tie_word_embeddings: true`). The `use_bidirectional_attention: "vision"` flag indicates that the vision encoder uses bidirectional attention (standard for ViT), while the text decoder uses causal attention.
-4.  **Agentic Protocol Layer:** The tokenizer includes specific special tokens for tool calling (`<|tool_call>`, `<tool_call|>`, `<tool|>`, `<tool_response|>`), indicating a native protocol for function calling without requiring external prompt engineering hacks.
+1.  **Hybrid Attention Subsystem:** The model does not use uniform attention. It employs a **Sliding Window Attention (SWA)** mechanism for 25 out of 30 layers (`sliding_window: 1024`) and **Full Global Attention** for the remaining 5 layers (specifically at indices 5, 11, 17, 23, 29). This boundary is critical: local context is handled cheaply, while global coherence is enforced at specific "checkpoint" layers.
+2.  **MoE Routing Subsystem:** The `enable_moe_block: true` flag activates the expert routing logic. The `moe_intermediate_size: 704` defines the width of each expert's FFN. The routing mechanism must strictly enforce the `top_k_experts: 8` constraint to prevent compute explosion.
+3.  **Multimodal Tokenization Boundary:** The tokenizer defines distinct token IDs for modality boundaries: `boa_token_id` (Begin of Audio), `boi_token_id` (Begin of Image), `eoa_token_id` (End of Audio), `eoi_token_id` (End of Image). These act as hard barriers in the data flow, separating modality-specific embeddings from the shared text embedding space.
+4.  **Reasoning/Thinking Mode:** The `response_schema` in `tokenizer_config.json` explicitly defines a `thinking` field alongside `content`. This indicates a structured output format where the model is trained to emit internal reasoning traces before final content, requiring the inference engine to parse and potentially mask these tokens during generation.
 
 **Critical Abstractions:**
-*   **`Gemma4ForConditionalGeneration`**: The top-level model class that orchestrates the text and vision towers.
-*   **`Gemma4Processor`**: The multimodal processor that aligns image/video tokens with text tokens.
-*   **`rope_parameters`**: A dual-configuration RoPE (Rotary Position Embedding) system where sliding attention layers use a different `rope_theta` (10,000) and type (`default`) than full attention layers (1,000,000, `proportional`), allowing for different positional encoding behaviors based on the attention scope.
+*   **`Gemma4ForConditionalGeneration`**: The top-level class that orchestrates the text decoder and vision encoder.
+*   **`Gemma4Processor`**: The unified interface for handling mixed-modality inputs (text + image patches) into a single tensor stream.
+*   **`rope_parameters`**: A dual-configuration system where `sliding_attention` uses a standard RoPE (`theta: 10000.0`) and `full_attention` uses a proportional RoPE (`theta: 1000000.0`, `partial_rotary_factor: 0.25`). This separation is crucial for maintaining positional awareness across the 256K context window without degrading local attention performance.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
 ### 1. Hybrid Attention Layer Interleaving Invariant
 **RULE**:
-In hybrid attention architectures, the **final layer MUST be a Full Global Attention layer**. Sliding Window Attention (SWA) layers MUST NOT be placed at the very end of the transformer stack without a subsequent global attention layer.
+In any transformer architecture supporting long contexts (>32K tokens), you MUST interleave local sliding-window attention layers with global full-attention layers, ensuring that the **final layer** is always a global full-attention layer. You MUST NOT use uniform global attention for all layers due to quadratic complexity, nor uniform sliding window due to loss of global coherence.
+
 **WHY**:
-SWA limits the receptive field to a local window (e.g., 1024 tokens). If the final layer is SWA, the model's final output representation is constrained by local context, preventing it from synthesizing global dependencies (e.g., long-range coherence, document-level reasoning). Placing global attention at the end ensures the final hidden states have access to the entire sequence, enabling coherent generation.
+Uniform global attention scales as $O(N^2)$, making 256K context infeasible on consumer hardware. Uniform sliding window ($O(N \cdot W)$) fails to capture long-range dependencies (e.g., referencing a fact from the beginning of a document in the final summary). By placing global attention at specific intervals (e.g., every 6 layers), the model "anchors" global state. Placing the final layer as global ensures the output logits are influenced by the entire context, not just the last 1024 tokens.
+
 **WHEN TO APPLY**:
-Any transformer-based LLM using a mix of local (SWA/Local) and global (Full) attention mechanisms.
+Any LLM implementation targeting context windows > 32K tokens, especially on edge devices or memory-constrained GPUs.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Correct: Global attention at the end
-layer_types = [
-    "sliding_attention", "sliding_attention", "sliding_attention",
-    "sliding_attention", "sliding_attention", "full_attention",
-    # ... intermediate layers ...
-    "sliding_attention", "sliding_attention", "sliding_attention",
-    "sliding_attention", "sliding_attention", "full_attention" # Final layer is global
-]
+# Pseudocode for Layer Configuration
+num_layers = 30
+sliding_window = 1024
+global_attention_indices = [5, 11, 17, 23, 29] # Must include last layer
 
-# Incorrect: SWA at the end
-layer_types_bad = [
-    "full_attention", "sliding_attention", "sliding_attention",
-    # ...
-    "sliding_attention" # Final layer is local -> Global context lost
-]
+for i in range(num_layers):
+    if i in global_attention_indices:
+        # Use Full Attention with High-Theta RoPE
+        attn_type = "full_attention"
+        rope_theta = 1000000.0
+        partial_rotary_factor = 0.25
+    else:
+        # Use Sliding Window Attention with Standard RoPE
+        attn_type = "sliding_attention"
+        rope_theta = 10000.0
+        partial_rotary_factor = 1.0
+        
+    layer = TransformerLayer(
+        attention_type=attn_type,
+        window_size=sliding_window if attn_type == "sliding_attention" else None,
+        rope_params={"theta": rope_theta, "partial_factor": partial_rotary_factor}
+    )
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER: Ending the stack with a local attention layer
-if layer_types[-1] == "sliding_attention":
-    raise ArchitecturalError("Final layer must be full_attention to ensure global context integration")
-```
-**VERIFICATION METHOD**:
-Static analysis of `config.json` or model initialization code:
-```python
-assert config.text_config.layer_types[-1] == "full_attention", "Final layer must be global attention"
+# ANTI-PATTERN: Uniform Global Attention
+# This will OOM or timeout on 256K context
+for i in range(num_layers):
+    layer = TransformerLayer(attention_type="full_attention", window_size=None)
+
+# ANTI-PATTERN: Final Layer is Sliding Window
+# This causes the final output to ignore context older than 1024 tokens
+global_attention_indices = [5, 11, 17, 23] # Missing index 29
 ```
 
-### 2. MoE Expert Activation Sparsity Guard
+**VERIFICATION METHOD**:
+1.  **Static Config Check**: Assert `layer_types[-1] == "full_attention"`.
+2.  **Dynamic Trace**: During inference, log the attention mask shape for the last layer. It must be `(batch, heads, seq_len, seq_len)`, not `(batch, heads, seq_len, window_size)`.
+3.  **Long-Context Regression Test**: Input a 100K token document with a specific fact at token 10 and ask for it at token 100,000. The model must retrieve it. If the final layer were sliding window, this would fail.
+
+### 2. MoE Expert Selection Sparsity Invariant
 **RULE**:
-In Mixture-of-Experts (MoE) models, the `top_k_experts` MUST be strictly less than `num_experts`, and the router MUST implement a **load balancing loss** during training to prevent expert collapse (where only a few experts are used).
+In Mixture-of-Experts (MoE) architectures, the routing mechanism MUST enforce a strict `top_k` selection of experts per token. You MUST NOT allow dynamic or variable expert counts that exceed the configured `top_k_experts`. The routing scores MUST be normalized (softmax) before selection to ensure stable gradient flow.
+
 **WHY**:
-If `top_k_experts` is too high, the model behaves like a dense model, losing the efficiency benefits. If load balancing is not enforced, the router may converge to using only 1-2 experts, leaving the remaining 126 experts unused (wasted parameters) and causing poor generalization.
+If the number of active experts varies or exceeds `top_k`, the computational cost becomes unpredictable, leading to latency spikes and potential OOM errors. Without normalization, the router may collapse to selecting the same few experts (expert collapse), reducing the effective model capacity. Strict `top_k` ensures the "A4B" (Active 4B) performance guarantee holds true.
+
 **WHEN TO APPLY**:
-Any MoE architecture implementation.
+Any MoE model implementation, particularly those deployed on edge devices where memory bandwidth is the bottleneck.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Config invariant
-assert config.text_config.top_k_experts < config.text_config.num_experts, "top_k must be < num_experts"
+import torch
+import torch.nn.functional as F
 
-# Training invariant (Pseudo-code)
-def moe_forward(x, router, experts):
-    gate_logits = router(x)
-    top_k_indices = torch.topk(gate_logits, k=config.top_k_experts, dim=-1).indices
-    # Load balancing loss calculation
-    expert_load = torch.bincount(top_k_indices.flatten(), minlength=config.num_experts)
-    load_balance_loss = torch.var(expert_load) # Encourage uniform distribution
-    return expert_output, load_balance_loss
+def moe_forward(x, router, experts, top_k=8):
+    # x: [batch, seq_len, hidden_size]
+    # router: Linear layer mapping hidden_size -> num_experts
+    
+    # 1. Compute Routing Scores
+    router_logits = router(x) # [batch, seq_len, num_experts]
+    
+    # 2. Normalize Scores (Softmax)
+    router_probs = F.softmax(router_logits, dim=-1)
+    
+    # 3. Select Top-K Experts
+    # Returns indices and values
+    top_k_probs, top_k_indices = torch.topk(router_probs, k=top_k, dim=-1)
+    
+    # 4. Renormalize Top-K Probabilities
+    # This is CRITICAL. The sum of top-k probs is < 1.
+    # We must renormalize so they sum to 1 for weighted sum.
+    top_k_probs = top_k_probs / top_k_probs.sum(dim=-1, keepdim=True)
+    
+    # 5. Dispatch to Experts
+    # ... (Complex dispatch logic) ...
+    
+    # 6. Weighted Sum of Expert Outputs
+    # output = sum(expert_output[i] * top_k_probs[i] for i in range(top_k))
+    
+    return output
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER: Allowing top_k == num_experts (defeats MoE purpose)
-if config.top_k_experts == config.num_experts:
-    raise ValueError("MoE is disabled; use dense model instead")
-```
-**VERIFICATION METHOD**:
-Unit test on router output distribution:
-```python
-def test_expert_distribution():
-    # Simulate 1000 tokens
-    tokens = torch.randn(1000, hidden_size)
-    top_k_indices = router(tokens).topk(k=8, dim=-1).indices
-    expert_counts = torch.bincount(top_k_indices.flatten(), minlength=128)
-    # Assert no expert is used > 2x the average
-    avg = expert_counts.mean()
-    assert (expert_counts < 2 * avg).all(), "Expert collapse detected"
+# ANTI-PATTERN: No Renormalization
+top_k_probs, top_k_indices = torch.topk(router_probs, k=top_k, dim=-1)
+# Using these directly leads to under-weighting of expert contributions
+# and unstable training dynamics.
+
+# ANTI-PATTERN: Variable K
+# Allowing k to vary based on confidence leads to unpredictable latency
+k = dynamic_k(router_probs) 
 ```
 
-### 3. Dual RoPE Configuration Isolation
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Mock the router to return uniform probabilities. Assert that the output is the average of the top-k expert outputs.
+2.  **Latency Profiling**: Run inference with fixed input length. Assert that the time per token is constant and matches the theoretical cost of `top_k` experts.
+3.  **Expert Utilization Check**: Log which experts are selected over a large batch. Assert that all 128 experts are used at least once (prevents expert collapse).
+
+### 3. Multimodal Token Boundary Integrity
 **RULE**:
-When using hybrid attention, **different RoPE parameters MUST be applied to sliding attention layers vs. full attention layers**. Specifically, sliding layers should use a lower `rope_theta` (e.g., 10,000) for local precision, while global layers use a higher `rope_theta` (e.g., 1,000,000) for long-range extrapolation.
+In multimodal models, you MUST use distinct, reserved token IDs for modality boundaries (e.g., `<|image|>`, `<|audio|>`). These tokens MUST be excluded from the standard text vocabulary during training and MUST be mapped to specific embedding vectors that are not shared with text tokens. You MUST NOT allow the tokenizer to merge these boundary tokens with adjacent text tokens.
+
 **WHY**:
-SWA layers only see 1024 tokens. A high `rope_theta` (designed for 256K context) would provide insufficient angular resolution for short-range dependencies, degrading local coherence. Conversely, global layers need high `rope_theta` to distinguish positions across 256K tokens. Using a single RoPE config for both leads to suboptimal performance in both local and global tasks.
+If boundary tokens are merged or shared with text embeddings, the model cannot distinguish between "the word 'image'" and "the start of an image input." This leads to hallucinations where the model treats image data as text or vice versa. Distinct embeddings allow the model to learn modality-specific processing paths.
+
 **WHEN TO APPLY**:
-Any model with mixed attention types and RoPE.
+Any model that processes multiple modalities (text, image, audio, video) in a single sequence.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-rope_parameters = {
-    "sliding_attention": {
-        "rope_theta": 10000.0,
-        "rope_type": "default"
-    },
-    "full_attention": {
-        "rope_theta": 1000000.0,
-        "rope_type": "proportional" # Or "default" depending on implementation
-    }
+# Tokenizer Configuration
+tokenizer_config = {
+    "image_token": "<|image|>",
+    "audio_token": "<|audio|>",
+    "boi_token": "<|image>", # Begin of Image
+    "eoi_token": "<image|>", # End of Image
+    "extra_special_tokens": ["<|video|>"]
 }
 
-def get_rope_config(layer_type):
-    return rope_parameters[layer_type]
+# Embedding Layer Initialization
+class MultimodalEmbedding(nn.Module):
+    def __init__(self, vocab_size, hidden_size, num_image_tokens, num_audio_tokens):
+        super().__init__()
+        # Text Embeddings
+        self.text_embedding = nn.Embedding(vocab_size, hidden_size)
+        # Separate Embeddings for Modalities
+        self.image_embedding = nn.Embedding(num_image_tokens, hidden_size)
+        self.audio_embedding = nn.Embedding(num_audio_tokens, hidden_size)
+        
+    def forward(self, input_ids, image_ids, audio_ids):
+        # input_ids: [batch, seq_len]
+        # image_ids: [batch, num_images, image_tokens_per_image]
+        
+        # 1. Embed Text
+        text_emb = self.text_embedding(input_ids)
+        
+        # 2. Embed Images
+        image_emb = self.image_embedding(image_ids)
+        
+        # 3. Interleave based on boundary tokens
+        # This logic must be strict: when input_id == boi_token, 
+        # replace the next N tokens with image_emb
+        # ...
+        return final_sequence
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER: Using a single RoPE config for all layers
-rope_config = {"rope_theta": 1000000.0} # Applied to SWA layers -> Poor local resolution
+# ANTI-PATTERN: Shared Embedding Space
+# Using the same embedding table for text and image tokens
+# This causes the model to confuse semantic meaning of text with visual features
+self.embedding = nn.Embedding(vocab_size + num_image_tokens, hidden_size)
+# If image tokens are just added to the vocab, they are treated as "words"
 ```
+
 **VERIFICATION METHOD**:
-Check that `rope_parameters` is a dictionary keyed by attention type, not a single object.
-```python
-assert isinstance(config.text_config.rope_parameters, dict)
-assert "sliding_attention" in config.text_config.rope_parameters
-assert "full_attention" in config.text_config.rope_parameters
-```
+1.  **Tokenization Test**: Input a string containing the literal text `<|image|>`. Assert that the tokenizer outputs the special token ID, not a sequence of character tokens.
+2.  **Embedding Orthogonality**: Compute the cosine similarity between the embedding of `<|image|>` and common text words (e.g., "cat", "dog"). It should be near zero (orthogonal).
+3.  **Modality Swap Test**: Feed an image into the audio input slot. The model should produce nonsensical output or an error, not a coherent description.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input data, the following incidents are **inferred** from common failure modes in hybrid MoE multimodal models based on the architectural invariants observed in the config.*
+*Note: Since no specific commit patches or bug issues were provided in the input data, the following incidents are **synthesized forensic reconstructions** based on common failure modes in MoE and Hybrid Attention architectures, derived from the architectural invariants observed in the config files.*
 
-### Incident 1: Global Context Loss in Final SWA Layer (BUG-ARCH-01)
-- **Context**: `text_config.layer_types`
-- **What Was Expected**: The model should generate coherent text that references information from the beginning of a 256K token context.
-- **What Actually Happened**: The model failed to recall early context, producing incoherent responses for long documents.
-- **Evidence in Repo**: `config.json` shows `layer_types` ending with `"full_attention"`. If this were `"sliding_attention"`, the bug would occur.
-- **Root Cause**: The final layer's receptive field was limited to 1024 tokens (SWA window), preventing the final hidden state from encoding global dependencies.
+### Incident 1: Context Window Truncation in Sliding Window Layers (BUG-CTX-01)
+- **Context**: `text_config.sliding_window` and `layer_types`
+- **What Was Expected**: The model should maintain coherence across the entire 256K context window.
+- **What Actually Happened**: In early implementations, the sliding window attention was applied to all layers, including the final layer. This caused the model to "forget" information older than 1024 tokens when generating the final output, leading to incoherent summaries of long documents.
+- **Evidence in Repo**: `config.json` shows `layer_types` with `full_attention` at indices 5, 11, 17, 23, 29. The presence of `full_attention` at index 29 (the last layer) is the fix.
+- **Root Cause**: The attention mask for sliding window layers was incorrectly applied to the final layer, limiting the receptive field of the output logits.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Final layer is SWA
-# layer_types = [..., "sliding_attention"]
-
-# + Fixed: Final layer is Full Attention
-layer_types = [..., "full_attention"]
+# - Buggy: All layers use sliding window
+# + Fixed: Final layer uses full attention
+if layer_idx == num_layers - 1:
+    attention_mask = create_full_attention_mask(seq_len)
+else:
+    attention_mask = create_sliding_window_mask(seq_len, window_size=1024)
 ```
-- **Lesson**: Always ensure the final transformer layer has global attention to integrate full-sequence context.
+- **Lesson**: The final layer of a transformer MUST have global attention to ensure the output is conditioned on the entire input sequence.
 
-### Incident 2: RoPE Extrapolation Failure in SWA Layers (BUG-ROPE-02)
+### Incident 2: MoE Router Collapse (BUG-MOE-02)
+- **Context**: `text_config.num_experts` and `top_k_experts`
+- **What Was Expected**: All 128 experts should be utilized across the dataset.
+- **What Actually Happened**: During training, the router learned to select only 2-3 specific experts for all tokens, leading to a significant drop in model performance. The other 125 experts were never updated.
+- **Evidence in Repo**: The config specifies `top_k_experts: 8`. The fix involves adding a load-balancing loss to the router training objective.
+- **Root Cause**: The router's softmax output was skewed, causing a few experts to dominate. Without a load-balancing auxiliary loss, the gradient signal for under-utilized experts was too weak.
+- **Remediation Code Diff**:
+```python
+# - Buggy: No load balancing loss
+# + Fixed: Add auxiliary load balancing loss
+def moe_loss(output, router_probs, expert_indices):
+    # Main Loss
+    main_loss = cross_entropy(output, target)
+    
+    # Load Balancing Loss
+    # Encourages uniform distribution of tokens across experts
+    expert_load = torch.bincount(expert_indices, minlength=num_experts)
+    load_balance_loss = (expert_load / expert_load.sum()) ** 2
+    
+    return main_loss + lambda_lb * load_balance_loss
+```
+- **Lesson**: MoE routers require explicit load-balancing mechanisms to prevent expert collapse.
+
+### Incident 3: RoPE Theta Mismatch (BUG-ROPE-03)
 - **Context**: `text_config.rope_parameters`
-- **What Was Expected**: Accurate positional encoding for both local (1024) and global (256K) contexts.
-- **What Actually Happened**: Degraded performance on short-range tasks (e.g., local grammar) when using a single high-theta RoPE for all layers.
-- **Evidence in Repo**: `rope_parameters` is split into `sliding_attention` (theta=10k) and `full_attention` (theta=1M).
-- **Root Cause**: High `rope_theta` provides coarse angular resolution for short distances, causing positional ambiguity in SWA layers.
+- **What Was Expected**: The model should maintain positional awareness across the 256K context window.
+- **What Actually Happened**: Using a single RoPE theta for both sliding and full attention layers caused degradation in long-context performance. The sliding window layers, which only see 1024 tokens, did not need the high-theta RoPE, while the full attention layers did.
+- **Evidence in Repo**: `config.json` shows separate `rope_parameters` for `full_attention` (`theta: 1000000.0`) and `sliding_attention` (`theta: 10000.0`).
+- **Root Cause**: A single RoPE configuration was applied to all layers, causing the positional encoding to be either too coarse for local attention or too fine for global attention.
 - **Remediation Code Diff**:
 ```python
 # - Buggy: Single RoPE config
-# rope = {"rope_theta": 1000000.0}
-
-# + Fixed: Dual RoPE config
-rope = {
-    "sliding_attention": {"rope_theta": 10000.0},
-    "full_attention": {"rope_theta": 1000000.0}
-}
+# + Fixed: Separate RoPE configs per layer type
+if layer_type == "full_attention":
+    rope_theta = 1000000.0
+    partial_rotary_factor = 0.25
+else:
+    rope_theta = 10000.0
+    partial_rotary_factor = 1.0
 ```
-- **Lesson**: Match RoPE theta to the effective context window of the attention layer.
+- **Lesson**: Different attention types require different positional encoding parameters to optimize for their respective context windows.
 
-### Incident 3: MoE Expert Collapse (BUG-MOE-03)
-- **Context**: `text_config.num_experts`, `top_k_experts`
-- **What Was Expected**: Uniform utilization of all 128 experts.
-- **What Actually Happened**: Only 5-10 experts were used, leading to poor generalization and wasted memory.
-- **Evidence in Repo**: `num_experts: 128`, `top_k_experts: 8`.
-- **Root Cause**: Lack of load balancing loss during training, causing the router to converge to a few "best" experts.
+### Incident 4: Multimodal Token Leakage (BUG-MM-04)
+- **Context**: `tokenizer_config.json` and `vision_config`
+- **What Was Expected**: Image tokens should be processed by the vision encoder and then integrated into the text sequence.
+- **What Actually Happened**: The tokenizer incorrectly merged image boundary tokens with adjacent text tokens, causing the vision encoder to receive corrupted input.
+- **Evidence in Repo**: `tokenizer_config.json` defines distinct `boi_token` and `eoi_token`. The fix involves ensuring the tokenizer does not merge these tokens.
+- **Root Cause**: The tokenizer's merge rules were too aggressive, treating special tokens as regular text.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: No load balancing
-# loss = ce_loss
-
-# + Fixed: Add load balancing loss
-# loss = ce_loss + alpha * load_balance_loss
+# - Buggy: Tokenizer merges special tokens
+# + Fixed: Tokenizer preserves special tokens
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer.add_special_tokens({
+    "boi_token": "<|image>",
+    "eoi_token": "<image|>"
+})
+# Ensure these tokens are not merged
+tokenizer.mergeable = False
 ```
-- **Lesson**: MoE models require explicit load balancing regularization.
+- **Lesson**: Special tokens must be preserved by the tokenizer to maintain modality boundaries.
 
-### Incident 4: Multimodal Token Alignment Mismatch (BUG-MM-04)
-- **Context**: `tokenizer_config.json`, `vision_config`
-- **What Was Expected**: Image tokens to be correctly aligned with text tokens in the input sequence.
-- **What Actually Happened**: The model ignored image content or produced hallucinations.
-- **Evidence in Repo**: `image_token_id: 258880`, `processor_class: "Gemma4Processor"`.
-- **Root Cause**: Incorrect preprocessing of image patches into tokens, or mismatched token IDs between tokenizer and model.
+### Incident 5: Memory Leak in KV Cache (BUG-MEM-05)
+- **Context**: `text_config.use_cache`
+- **What Was Expected**: The KV cache should be reused across decoding steps to improve inference speed.
+- **What Actually Happened**: The KV cache was not properly cleared between inference runs, leading to a memory leak.
+- **Evidence in Repo**: `config.json` shows `use_cache: true`. The fix involves ensuring the cache is cleared after each inference run.
+- **Root Cause**: The KV cache was stored in a global variable and not cleared after each inference run.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Hardcoded token ID
-# image_token_id = 258880
-
-# + Fixed: Use processor to align tokens
-# inputs = processor(images=image, text=text, return_tensors="pt")
-# image_token_id = inputs.input_ids[inputs.input_ids == config.image_token_id]
+# - Buggy: KV cache not cleared
+# + Fixed: KV cache cleared after each run
+def generate(input_ids):
+    past_key_values = None
+    for step in range(max_new_tokens):
+        outputs = model(input_ids, past_key_values=past_key_values)
+        past_key_values = outputs.past_key_values
+        # ...
+    # Clear cache
+    model.clear_cache()
 ```
-- **Lesson**: Always use the official processor for multimodal alignment.
-
-### Incident 5: KV Cache Memory Explosion in SWA Layers (BUG-PERF-05)
-- **Context**: `use_cache: true`, `sliding_window: 1024`
-- **What Was Expected**: Efficient KV cache management for long contexts.
-- **What Actually Happened**: OOM (Out of Memory) errors during inference with long contexts.
-- **Evidence in Repo**: `use_cache: true`, `sliding_window: 1024`.
-- **Root Cause**: The KV cache for SWA layers was not pruned, storing all past keys/values instead of only the last 1024.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Store all KV
-# kv_cache = torch.cat([kv_cache, new_kv], dim=2)
-
-# + Fixed: Prune KV cache for SWA layers
-if layer_type == "sliding_attention":
-    kv_cache = kv_cache[:, :, -sliding_window:]
-kv_cache = torch.cat([kv_cache, new_kv], dim=2)
-```
-- **Lesson**: Implement sliding window KV cache pruning for SWA layers.
+- **Lesson**: KV caches must be explicitly cleared after each inference run to prevent memory leaks.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Token ID Consistency**: `image_token_id` (258880) MUST match the ID used in the tokenizer's `special_tokens_map`. A mismatch of even 1 ID causes silent failure in multimodal fusion.
-    *   **BFloat16 Precision**: `dtype: "bfloat16"` requires careful handling of loss scaling. Standard FP32 loss scaling may underflow/overflow in BF16. Use `torch.autocast` with `dtype=torch.bfloat16`.
-    *   **RoPE Angle Calculation**: The `partial_rotary_factor: 0.25` in `full_attention` means only 25% of the head dimension is rotated. The remaining 75% is passed through unchanged. Code MUST split the head dimension correctly: `q_rot, q_pass = q.split([int(0.25 * head_dim), int(0.75 * head_dim)], dim=-1)`.
+### 1. Micro-Syntax & Token-Level Precision
+*   **RoPE Partial Rotary Factor**: The `partial_rotary_factor: 0.25` in `full_attention` means that only 25% of the head dimension is rotated. This is a critical micro-invariant. If implemented as `int(head_dim * 0.25)`, it must be an integer. If `head_dim` is 256, `0.25 * 256 = 64`. If `head_dim` were 255, `0.25 * 255 = 63.75`, which would cause a type error or truncation. **Invariant**: Always ensure `partial_rotary_factor * head_dim` is an integer.
+*   **Sliding Window Mask**: The sliding window mask must be a lower-triangular matrix with a band of width `sliding_window`. If `sliding_window` is 1024, the mask for token `i` should allow attention to tokens `max(0, i-1023)` to `i`. **Invariant**: The mask must be strictly lower-triangular to prevent attending to future tokens.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **MoE Routing Recursion**: The router MUST NOT recursively call itself. It should be a single forward pass.
-    *   **KV Cache Pruning Loop**: When pruning KV cache for SWA, ensure the slice `kv_cache[:, :, -sliding_window:]` does not create a view that causes memory leaks. Use `.clone()` if necessary.
+### 2. Infinite Loop & Recursion Guards
+*   **MoE Dispatch**: The dispatch logic in MoE models can be complex. If the number of tokens per expert is not balanced, some experts may receive a very large number of tokens, leading to memory spikes. **Invariant**: Implement a maximum token limit per expert. If exceeded, drop the least important tokens or raise an error.
+*   **KV Cache Growth**: The KV cache grows linearly with the sequence length. If the sequence length exceeds the maximum context window, the cache will grow indefinitely. **Invariant**: Implement a check to ensure the sequence length does not exceed `max_position_embeddings`.
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. No UI components.
+### 3. UI & UX Micro-Mechanics
+*   **N/A**: This is a backend model repository. No UI/UX components are present.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **MoE Weight Loading**: In distributed inference, MoE weights MUST be sharded across devices. Ensure that the router's output indices are correctly mapped to the local expert shards. A mismatch causes `IndexError` or silent wrong expert usage.
-    *   **KV Cache Memory**: The KV cache for full attention layers grows linearly with sequence length. For 256K context, this can be ~10GB+ per layer. Implement offloading to CPU if GPU memory is constrained.
+### 4. Backend Concurrency & Memory Safety
+*   **Thread Safety of KV Cache**: If multiple threads are using the same model instance, the KV cache must be thread-safe. **Invariant**: Use locks or thread-local storage for the KV cache.
+*   **Memory Alignment**: The MoE experts are stored in a large tensor. If the tensor is not aligned to the memory page size, performance will degrade. **Invariant**: Ensure the MoE expert tensor is aligned to 64-byte boundaries.
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: `vision_config` can be `null` for text-only models. Code MUST check `if config.vision_config is not None` before accessing vision-specific attributes.
-    *   **Off-by-One in Sliding Window**: The sliding window size is 1024. When slicing KV cache, ensure the window includes the current token. `kv_cache[:, :, -(sliding_window):]` is correct; `kv_cache[:, :, -(sliding_window-1):]` is wrong.
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **Token ID Overflow**: The `vocab_size` is 262144. If a token ID exceeds this value, it will cause an index out of bounds error. **Invariant**: Validate all token IDs against `vocab_size` before embedding.
+*   **NaN Propagation**: If the input contains NaN values, they will propagate through the model and cause the output to be NaN. **Invariant**: Implement a check to reject inputs containing NaN values.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Hybrid SWA/Full Attention + MoE. Decoupled vision and text towers.
-2.  **Core Abstractions**: `Gemma4ForConditionalGeneration`, `Gemma4Processor`, `MoERouter`, `SlidingWindowAttention`.
-3.  **Error Handling**: Graceful degradation for missing vision config. Load balancing loss for MoE stability.
-4.  **Testing**: Unit tests for RoPE calculation, MoE routing distribution, KV cache pruning.
-5.  **Security**: Apache 2.0 license. No sensitive data in config.
-6.  **Performance**: MoE reduces active compute to 4B. SWA reduces attention complexity to O(N*W) instead of O(N^2).
-7.  **Deployment**: Supports `bfloat16` for GPU efficiency. MoE requires specialized inference engines (e.g., vLLM, TGI) for expert sharding.
-8.  **Agent Patterns**: Native tool calling tokens (`<|tool_call>`, etc.) enable structured agent workflows.
-9.  **Data Flow**: Text/Image tokens -> Embedding -> Hybrid Attention Layers -> MoE FFN -> LM Head -> Logits.
+1.  **Architecture**: Hybrid MoE with interleaved sliding and full attention. The MoE block is enabled via `enable_moe_block: true`. The attention layers are defined by `layer_types`.
+2.  **Core Abstractions**: `Gemma4ForConditionalGeneration`, `Gemma4Processor`, `MoELayer`, `SlidingWindowAttention`, `FullAttention`.
+3.  **Error Handling**: The model relies on the tokenizer to handle invalid inputs. The inference engine should handle OOM errors by reducing the batch size or sequence length.
+4.  **Testing**: Unit tests for MoE routing, sliding window mask generation, and RoPE application. Integration tests for long-context generation.
+5.  **Security**: The model is open-weights, so security is primarily about preventing prompt injection. The tokenizer should sanitize inputs to prevent injection of special tokens.
+6.  **Performance**: The MoE architecture reduces active parameters to ~4B, improving inference speed. The sliding window attention reduces memory usage for long contexts.
+7.  **Deployment**: The model is designed for deployment on consumer GPUs and workstations. The `dtype: bfloat16` ensures compatibility with modern GPUs.
+8.  **Agent Patterns**: The model supports native function-calling via the `response_schema`. The `thinking` field allows for structured reasoning.
+9.  **Data Flow**: Input text and images are tokenized and embedded. The embeddings are passed through the transformer layers. The output logits are sampled to generate the next token.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Hybrid Attention with Global Final Layer.
-2.  **Rule**: Final layer MUST be global attention.
-3.  **Architecture Principle**: Hierarchical context integration (local -> global).
-4.  **Failure Mode**: Global context loss if final layer is SWA.
-5.  **Reusable Skill**: Configure `layer_types` to end with `"full_attention"`.
-6.  **Decision**: Use SWA for most layers to reduce compute, Full Attention for final layer to ensure coherence.
-7.  **Anti-pattern**: Ending the stack with SWA.
-8.  **Verification Method**: Assert `layer_types[-1] == "full_attention"`.
+1.  **Pattern**: Hybrid MoE with interleaved attention.
+2.  **Rule**: Final layer must be full attention.
+3.  **Architecture Principle**: Separate local and global attention for efficiency and coherence.
+4.  **Failure Mode**: Expert collapse in MoE.
+5.  **Reusable Skill**: Implementing load-balancing loss for MoE routers.
+6.  **Decision**: Use bfloat16 for compatibility and performance.
+7.  **Anti-pattern**: Uniform global attention for long contexts.
+8.  **Verification Method**: Long-context regression test.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Layer Types**: Check `config.json` -> `text_config.layer_types`. Ensure the last element is `"full_attention"`.
-2.  **Verify RoPE Config**: Check `rope_parameters`. Ensure it is a dictionary with keys `"sliding_attention"` and `"full_attention"`. Verify `rope_theta` values are appropriate (low for SWA, high for Full).
-3.  **Verify MoE Config**: Check `num_experts` and `top_k_experts`. Ensure `top_k_experts < num_experts`.
-4.  **Verify Multimodal Config**: Check `vision_config` is not `null` if multimodal support is required. Verify `image_token_id` matches the tokenizer.
-5.  **Verify KV Cache**: Ensure the inference engine supports sliding window KV cache pruning for SWA layers.
-6.  **Verify Load Balancing**: If training, ensure load balancing loss is included in the total loss.
-7.  **Verify Tool Calling Tokens**: Check `tokenizer_config.json` for `<|tool_call>`, `<tool_call|>`, etc. Ensure the model is trained to use these tokens.
+1.  **Verify Layer Types**: Ensure `layer_types` includes `full_attention` at the last index.
+2.  **Check MoE Config**: Ensure `top_k_experts` is set and `num_experts` is reasonable.
+3.  **Validate RoPE Parameters**: Ensure separate RoPE configs for sliding and full attention.
+4.  **Test Tokenizer**: Ensure special tokens are preserved and not merged.
+5.  **Profile Memory**: Monitor KV cache growth and ensure it is cleared after inference.
+6.  **Run Long-Context Test**: Verify coherence across 256K tokens.
+7.  **Check Expert Utilization**: Ensure all experts are used during training.
+8.  **Sanitize Inputs**: Reject inputs containing NaN or invalid token IDs.

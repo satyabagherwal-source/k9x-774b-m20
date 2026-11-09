@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T02:44:06.717Z",
+  "last_updated": "2026-11-09T03:21:49.869Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4270,6 +4270,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-dathere-qsv"
+    },
+    {
+      "id": "CD-3419",
+      "directive_title": "Write ARC dataset colors as numbers again",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "4b105861",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

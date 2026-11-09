@@ -8496,3 +8496,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-09T03:03:44.636Z |
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `ba0b4a85` | Multi-dimensional audit evidence | 2026-11-09T03:05:11.671Z |
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `c262c237` | Multi-dimensional audit evidence | 2026-11-09T03:05:59.327Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4b105861` | Multi-dimensional audit evidence | 2026-11-09T03:21:49.862Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-09T03:21:52.649Z |

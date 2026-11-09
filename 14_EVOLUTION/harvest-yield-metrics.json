@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T03:05:59.333Z",
-  "total_cycles_completed": 8452,
-  "total_learnings_persisted": 8452,
-  "total_rules_promoted": 8251,
+  "last_updated": "2026-11-09T03:21:52.665Z",
+  "total_cycles_completed": 8454,
+  "total_learnings_persisted": 8454,
+  "total_rules_promoted": 8254,
   "history": [
-    {
-      "timestamp": "2026-11-08T13:59:55.730Z",
-      "repository": "rainbow-me/rainbow",
-      "learningId": "learn-github-rainbow-me-rainbow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T13:59:56.678Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T14:00:00.608Z",
       "repository": "pixeltable/pixeltable",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-09T03:05:59.333Z",
       "repository": "TypeWhisper/typewhisper-mac",
       "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T03:21:49.871Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T03:21:52.665Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

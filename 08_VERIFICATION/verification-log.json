@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-XVSU",
-    "timestamp": "2026-11-07T04:10:24.702Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "cc8b08467583e2144cdddbf067acbcc9b63877f4056a6a8caaf6ffaea037fda0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-XXGU",
-    "timestamp": "2026-11-07T04:10:26.862Z",
-    "repository": "fb55/css-select",
-    "learningId": "learn-github-fb55-css-select",
-    "contentHash": "dbaced49ddbd27be812fa8390f87d6991bd0ba511a45a667c36c18faafcd10d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-XZ7Z",
     "timestamp": "2026-11-07T04:10:29.135Z",
     "repository": "software-mansion/react-native-gesture-handler",
@@ -7490,6 +7460,36 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "learningId": "learn-github-typewhisper-typewhisper-mac",
     "contentHash": "32ec46b8b8a5df183099fa37136915aad3bce7dee3bf14e8f922567edbba815c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-340Y",
+    "timestamp": "2026-11-09T03:21:49.858Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "4f2667fa5bc898086fc07bf80f793fea94da30d6ac402a4ab8e72d671e5476fa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-366D",
+    "timestamp": "2026-11-09T03:21:52.645Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "4273a4968f708c6ff479c4b9575d9baa7d14bab876018f33f8455f9845e5efc1",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
