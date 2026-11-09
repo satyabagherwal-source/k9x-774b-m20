@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T16:18:36.354Z",
-  "total_cycles_completed": 8595,
-  "total_learnings_persisted": 8595,
-  "total_rules_promoted": 8419,
+  "last_updated": "2026-11-09T16:26:07.082Z",
+  "total_cycles_completed": 8598,
+  "total_learnings_persisted": 8598,
+  "total_rules_promoted": 8421,
   "history": [
-    {
-      "timestamp": "2026-11-08T23:29:17.491Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T23:36:20.880Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T23:36:22.541Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T23:43:48.009Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-09T16:18:36.354Z",
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T16:26:05.073Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T16:26:06.762Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T16:26:07.082Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

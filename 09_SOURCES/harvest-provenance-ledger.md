@@ -8639,3 +8639,6 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `ec498292` | Multi-dimensional audit evidence | 2026-11-09T16:18:30.458Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-09T16:18:32.647Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `95a0477a` | Multi-dimensional audit evidence | 2026-11-09T16:18:36.348Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-09T16:26:05.067Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e9799367` | Multi-dimensional audit evidence | 2026-11-09T16:26:06.740Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `91a45282` | Multi-dimensional audit evidence | 2026-11-09T16:26:07.076Z |

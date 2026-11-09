@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `a50d9dbb`  
+> **Source Version**: `e9799367`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T08:43:53.342Z  
+> **Timestamp**: 2026-11-09T16:26:05.237Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T08:38:01.284Z  
+> **Harvest Timestamp**: 2026-11-09T16:26:05.230Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25801 stars
+- **Stars / Engagement**: 25804 stars
 
 ---
 
@@ -1259,11 +1259,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49910** (2026-11-08): **chore(deps): update github/codeql-action action to v4.39.2 (v1.20)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Pending | |---|---|---|---|---| | [github/codeql-action](https://redirect.github.com/github/codeql-action) | action | patch | `v4.39.1` → `v4.39.2` | `v4.39.3` |  ---  ### Release Notes  <details> <summary>github/codeql-action</summary>  ### [`v4.39.2`](https://redirect.github.com/github/codeql-action/releases/tag/v4.39.2)  [Compare Source](https://redirect.github.com/github/codeql-action/compare/v4.39.1...v4.39.2)  - Update default CodeQL bundle version to [2.27.4](https://redirect.github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4). [#&#8203;4284](https://redirect.github.com/github/codeql-action/pull/4284) - *Upcoming breaking change*: CodeQL version 2.22.3 and earlier were discontinued on 16 October 2026 alongside GitHub Enterprise Server 3.18, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. [#&#8203;4266](https://redirect.github.com/github/codeql-action/pull/4266) - Starting with macOS 27 and Xcode 27, traced analyses are unsupported. See [this blog post for more information](https://github.blog/changelog/2026-10-19-codeql-changes-for-macos-27-xcode-27-and-swift-6-4/). The CodeQL Action will now try to identify if a workflow is about to perform a traced analysis on version 27 or above of macOS or Xcode. If so, the CodeQL Action will emit a corresponding warning that will also be visi
+- **Issue #49923** (2026-11-09): **v1.19 Backports 2026-11-09**
+  *Symptoms*:  * [ ] #47746 (@ajmmm)  * [x] #48207 (@pchaigno)  * [ ] #48491 (@ajmmm)  * [ ] #49066 (@maxskokov) :warning: resolved conflicts  * [ ] #48313 (@SatyamPandey-07)  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  47746 48207 48491 49066 48313 ``` 
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
-- **Issue #49908** (2026-11-08): **chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) |  | patch | [`44.222.3` → `44.222.4`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.222.3&to=44.222.4) | | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) | uses-with | patch | [`44.222.3` → `44.222.4`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.222.3&to=44.222.4) |  ---  ### Release Notes  <details> <summary>renovatebot/renovate (ghcr.io/renovatebot/renovate)</summary>  ### [`v44.222.4`](https://redirect.github.com/renovatebot/renovate/releases/tag/44.222.4)  [Compare Source](https://redirect.github.com/renovatebot/renovate/compare/44.222.3...44.222.4)  ##### Bug Fixes  - **deps:** update renovate-base-image to v13.161.4 (main) ([#&#8203;47843](https://redirect.github.com/renovatebot/renovate/issues/47843)) ([30f1051](https://redirect.github.com/renovatebot/renovate/commit/30f1051c0a1dbfd233afeb1fb23581e4085123d6))  ##### Miscellaneous Chores  - **deps:** update ghcr.io/containerbase/devcontainer docker tag to v14.66.9 (main) ([#&#8203;47842](https://redirect.github.com/renovatebot/renovate/issues/47842)) ([54a169a](https://redirect.github.com/renovatebot/renovate/commit/54a169a65b40d30dbccc961751b1541e80d46d67))  </details>  ---  ### Configurat
+- **Issue #49918** (2026-11-09): **chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.19)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) |  | patch | `v0.20.1` → `v0.20.2` | | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.1` → `v0.20.2` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.2`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.2)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.1...v0.20.2)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply labels to all new test namespaces ([cilium/cilium#49190](https://redirect.github.com/cilium/cilium/issues/49190), [@&#8203;darox](https://redirect.github.com/darox)) - cilium-cli: fall back to WebSocket when a proxy rejects the SPDY upgrade ([cilium/cilium#49229](https://redirect.github.com/cilium/cilium/issues/49229), [@&#8203;epb-644](https://redirect.github.com/epb-644))  **Bugfixes:**  - Fixes error when passing times of 60s or more to cilium connectivity perf and throws an explicit error on fractional seconds. ([cilium/cilium#48965](https://redirect.github.com/cilium/cilium/issues/48965), [@&#8203;Arleee1](https://redirect.github.com/Arleee1))  **CI Changes:**  - cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest ([cilium/cilium#49676](https://redirect.github.com/cilium/cilium/issues/49676), [@&#8203;tklauser](https://redirect.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,439 +1282,289 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a50d9dbb` (2026-08-25)
-**Commit Message**: gateway-api: scope GAMMA ingestion to the reconciled service
+### Incident Patch 1: `e9799367` (2026-11-05)
+**Commit Message**: maps/lxcmap: use map registry for cilium_lxc map
 
-The GAMMA reconciler runs once per Service and selects Routes naming
-that Service as a parent. Ingestion then walked every Service ParentRef
-on those Routes, so a Route parented by several Services contributed
-listeners for all of them to whichever Service was being reconciled,
-putting another Service's configuration in its CiliumEnvoyConfig.
+Using the map registry we obtain some advantages:
+* we handle the `BPF_F_NO_PREALLOC` flag at load time instead of compile
+time.
+* if in the future we allow to change dimension of the map at load time
+everything is already in place.
 
-Pass the reconciled Service as GammaInput.SourceService and skip parents
-that do not match it. A nil SourceService keeps the previous behavior,
-so existing conformance fixtures are unaffected.
+Signed-off-by: Andrea Terzolo <[REDACTED_EMAIL]>
 
-Signed-off-by: Martin Lindberg <[REDACTED_EMAIL]>
-
-**File**: `operator/pkg/gateway-api/gamma_reconcile.go` (modified, +4/-4)
+**File**: `bpf/lib/eps.h` (modified, +2/-2)
 ```diff
-@@ -119,11 +119,11 @@ func (r *gammaReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
- 	httpRoutes := r.filterHTTPRoutesByService(originalSvc, httpRouteList.Items)
- 	grpcRoutes := r.filterGRPCRoutesByService(originalSvc, grpcRouteList.Items)
+@@ -52,8 +52,8 @@ struct {
+ 	__type(key, struct endpoint_key);
+ 	__type(value, struct endpoint_info);
+ 	__uint(pinning, LIBBPF_PIN_BY_NAME);
+-	__uint(max_entries, ENDPOINTS_MAP_SIZE);
+-	__uint(map_flags, CONDITIONAL_PREALLOC | BPF_F_RDONLY_PROG_COND);
++	__uint(max_entries, 65536);
++	__uint(map_flags, BPF_F_RDONLY_PROG_COND);
+ } cilium_lxc __section_maps_btf;
  
--	// TODO(youngnick): GammaHTTPRoutes needs to be updated now that we have a source Service.
- 	httpListeners := ingestion.GammaHTTPRoutes(r.logger, ingestion.GammaInput{
--		HTTPRoutes: httpRoutes,
--		GRPCRoutes: grpcRoutes,
--		Services:   servicesList.Items,
-+		HTTPRoutes:    httpRoutes,
-+		GRPCRoutes:    grpcRoutes,
-+		Services:      servicesList.Items,
-+		SourceService: originalSvc,
+ static __always_inline __maybe_unused const struct endpoint_info *
+```
+
+**File**: `bpf/node_config.h` (modified, +1/-2)
+```diff
+@@ -27,7 +27,6 @@
+ #define LB4_REVERSE_NAT_SK_MAP_SIZE 262144
  
- 		ReferenceGrants: grants.Items,
- 	})
+ #define LB_MAGLEV_LUT_SIZE 32749
+-#define ENDPOINTS_MAP_SIZE 65536
+ #define METRICS_MAP_SIZE 65536
+ #define CILIUM_LB_REV_NAT_MAP_MAX_ENTRIES	65536
+ #define CILIUM_LB_SERVICE_MAP_MAX_ENTRIES	65536
+@@ -42,7 +41,7 @@
+ #define EGRESS_POLICY_MAP_SIZE 16384
+ #define L2_RESPONDER_MAP4_SIZE 4096
+ #define L2_RESPONDER_MAP6_SIZE 4096
+-#define POLICY_PROG_MAP_SIZE ENDPOINTS_MAP_SIZE
++#define POLICY_PROG_MAP_SIZE 65536
+ #define CILIUM_IPV4_FRAG_MAP_MAX_ENTRIES 8192
+ #define CILIUM_IPV6_FRAG_MAP_MAX_ENTRIES 8192
+ 
 ```
 
-**File**: `operator/pkg/gateway-api/gamma_reconcile_test.go` (modified, +1/-0)
+**File**: `daemon/infraendpoints/infra_ip_allocation_test.go` (modified, +0/-1)
 ```diff
-@@ -88,6 +88,7 @@ func Test_gammaReconciler_Reconcile(t *testing.T) {
- 		{name: "mesh-frontend", serviceKey: []types.NamespacedName{serviceKeyEchoV2}},
- 		{name: "mesh-matching", serviceKey: []types.NamespacedName{serviceKeyEcho}},
- 		{name: "mesh-ports", serviceKey: []types.NamespacedName{serviceKeyEchoV1, serviceKeyEchoV2}},
-+		{name: "mesh-multi-parent", serviceKey: []types.NamespacedName{serviceKeyEchoV1, serviceKeyEchoV2}},
- 		{name: "mesh-query-param-matching", serviceKey: []types.NamespacedName{serviceKeyEcho}},
- 		{name: "mesh-redirect-host-and-status", serviceKey: []types.NamespacedName{serviceKeyEcho}},
- 		{name: "mesh-redirect-path", serviceKey: []types.NamespacedName{serviceKeyEcho}},
+@@ -404,7 +404,6 @@ func Test_getCiliumHostIPsFromFile(t *testing.T) {
+ #define HOST_ID 1
+ #define WORLD_ID 2
+ #define CILIUM_LB_MAP_MAX_ENTRIES 65536
+-#define ENDPOINTS_MAP_SIZE 65535
+ #define LPM_MAP_SIZE 16384
+ #define POLICY_MAP_SIZE 16384
+ #define IPCACHE_MAP_SIZE 512000
 ```
 
-**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/input/grpcroute-mesh-multi-parent-grpc.yaml` (added, +21/-0)
+**File**: `pkg/datapath/linux/config/config.go` (modified, +0/-2)
 ```diff
-@@ -0,0 +1,21 @@
-+# The GRPCRoute is parented by both echo-v2 and the shared echo Service.
-+# Reconciling echo-v2 must only program the echo-v2 parent.
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: GRPCRoute
-+metadata:
-+  name: mesh-multi-parent-grpc
-+  namespace: gateway-conformance-mesh
-+spec:
-+  parentRefs:
-+    - group: ""
-+      kind: Service
-+      name: echo-v2
-+      port: 7070
-+    - group: ""
-+      kind: Service
-+      name: echo
-+      port: 7070
-+  rules:
-+    - backendRefs:
-+        - name: echo-v2
-+          port: 7070
+@@ -28,7 +28,6 @@ import (
+ 	ipcachemap "github.com/cilium/cilium/pkg/maps/ipcache"
+ 	"github.com/cilium/cilium/pkg/maps/l2respondermap"
+ 	"github.com/cilium/cilium/pkg/maps/l2v6respondermap"
+-	"github.com/cilium/cilium/pkg/maps/lxcmap"
+ 	"github.com/cilium/cilium/pkg/maps/metricsmap"
+ 	"github.com/cilium/cilium/pkg/maps/nodemap"
+ 	"github.com/cilium/cilium/pkg/maps/policymap"
+@@ -164,7 +163,6 @@ func (h *HeaderfileWriter) writeNodeConfig(w io.Writer, cfg *config.Config, with
+ 	cDefinesMap["CILIUM_LB_MAGLEV_MAP_MAX_ENTRIES"] = fmt.Sprintf("%d", cfg.LBConfig.LBMaglevMapEntries)
+ 	cDefinesMap["CILIUM_LB_SKIP_MAP_MAX_ENTRIES"] = fmt.Sprintf("%d", lbmaps.SkipLBMapMaxEntries)
+ 
+-	cDefinesMap["ENDPOINTS_MAP_SIZE"] = fmt.Sprintf("%d", lxcmap.MaxEntries)
+ 	cDefinesMap["METRICS_MAP_SIZE"] = fmt.Sprintf("%d", metricsmap.MaxEntries)
+ 	cDefinesMap["IPCACHE_MAP_SIZE"] = fmt.Sprintf("%d", ipcachemap.MaxEntries)
+ 	cDefinesMap["NODE_MAP_SIZE"] = fmt.Sprintf("%d", h.nodeMap.Size())
 ```
 
-**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/input/httproute-mesh-multi-parent.yaml` (added, +27/-0)
+**File**: `pkg/datapath/maps/maps_generated.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,27 @@
-+# The HTTPRoute is parented by both echo-v1 and the shared echo Service.
-+# Reconciling echo-v1 must only program the echo-v1 parent.
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: HTTPRoute
-+metadata:
-+  name: mesh-multi-parent
-+  namespace: gateway-conformance-mesh
-+spec:
-+  parentRefs:
-+    - group: ""
-+      kind: Service
-+      name: echo-v1
-+      port: 80
-+    - group: ""
-+      kind: Service
-+      name: echo
-+      port: 80
-+  rules:
-+    - filters:
-+        - type: ResponseHeaderModifier
-+          responseHeaderModifier:
-+            set:
-+              - name: X-Header-Set
-+                value: v1
-+      backendRefs:
-+        - name: echo-v1
-+          port: 80
+@@ -727,7 +727,7 @@ func newCiliumLXCSpec(btf *btf.Spec) *ebpf.MapSpec {
+ 		ValueSize:  48,
+ 		Value:      anyTypeByName(btf, "endpoint_info"),
+ 		MaxEntries: 65536,
+-		Flags:      unix.BPF_F_NO_PREALLOC | unix.BPF_F_RDONLY_PROG,
++		Flags:      unix.BPF_F_RDONLY_PROG,
+ 		Pinning:    ebpf.PinByName,
+ 	}
+ }
 ```
 
-**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/output/cec-echo-v1.yaml` (added, +112/-0)
+**File**: `pkg/maps/lxcmap/cell.go` (modified, +29/-2)
 ```diff
-@@ -0,0 +1,112 @@
-+metadata:
-+  creationTimestamp: null
-+  annotations:
-+    cec.cilium.io/use-original-source-address: "true"
-+  labels:
-+    gateway.networking.k8s.io/gateway-name: mesh-multi-parent
-+  name: echo-v1
-+  namespace: gateway-conformance-mesh
-+  ownerReferences:
-+    - apiVersion: gateway.networking.k8s.io/v1
-+      controller: true
-+      kind: HTTPRoute
-+      name: mesh-multi-parent
-+      uid: ""
-+  resourceVersion: "1"
-+spec:
-+  backendServices:
-+    - name: echo-v1
-+      namespace: gateway-conformance-mesh
-+      number:
-+        - "80"
-+  resources:
-+    - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
-+      filterChains:
-+        - filterChainMatch:
-+            transportProtocol: raw_buffer
-+          filters:
-+            - name: envoy.filters.network.http_connection_manager
-+              typedConfig:
-+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-+                commonHttpProtocolOptions:
-+                  maxStreamDuration: 0s
-+                httpFilters:
-+                  - name: envoy.filters.http.grpc_web
-+                    typedConfig:
-+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
-+                  - name: envoy.filters.http.grpc_stats
-+                    typedConfig:
-+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_stats.v3.FilterConfig
-+                      emitFilterState: true
-+                      enableUpstreamStats: true
-+                  - name: envoy.filters.http.router
-+                    typedConfig:
-+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-+                internalAddressConfig: {}
-+                rds:
-+                  routeConfigName: listener-insecure
-+                statPrefix: listener-insecure
-+                streamIdleTimeout: 300s
-+                upgradeConfigs:
-+                  - upgradeType: websocket
-+                useRemoteAddress: true
-+      listenerFilters:
-+        - name: envoy.filters.listener.tls_inspector
-+          typedConfig:
-+            "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
-+      name: listener
-+      socketOptions:
-+        - description: Enable TCP keep-alive (default to enabled)
-+          intValue: "1"
-+          level: "1"
-+          name: "9"
-+        - description: TCP keep-alive idle time (in seconds) (defaults to 10s)
-+          intValue: "10"
-+          level: "6"
-+          name: "4"
-+        - description: TCP keep-alive probe intervals (in seconds) (defaults to 5s)
-+          intValue: "5"
-+          level: "6"
-+          name: "5"
-+        - description: TCP keep-alive probe max failures.
-+          intValue: "10"
-+          level: "6"
-+          name: "6"
-+    - "@type": type.googleapis.com/envoy.config.route.v3.RouteConfiguration
-+      name: listener-insecure
-+      virtualHosts:
-+        - domains:
-+            - "*"
-+          name: "*"
-+          routes:
-+            - match:
-+                prefix: /
-+              responseHeadersToAdd:
-+                - appendAction: OVERWRITE_IF_EXISTS_OR_ADD
-+                  header:
-+                    key: X-Header-Set
-+                    value: v1
-+              route:
-+                cluster: gateway-conformance-mesh:echo-v1:80
-+                maxStreamDuration:
-+                  maxStreamDuration: 0s
-+    - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
-+      edsClusterConfig:
-+        serviceName: gateway-conformance-mesh/echo-v1:80
-+      name: gateway-conformance-mesh:echo-v1:80
-+      outlierDetection:
-+        splitExternalLocalOriginErrors: true
-+      type: EDS
-+      typedExtensionProtocolOptions:
-+        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
-+          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
-+          commonHttpProtocolOptions:
-+            idleTimeout: 60s
-+          useDownstreamProtocolConfig:
-+            http2ProtocolOptions: {}
-+  services:
-+    - listener: ""
-+      name: echo-v1
-+      namespace: gateway-conformance-mesh
-+      ports:
-+        - 80
+@@ -7,8 +7,10 @@ import (
+ 	"fmt"
+ 
+ 	"github.com/cilium/hive/cell"
++	"golang.org/x/sys/unix"
+ 
+ 	"github.com/cilium/cilium/pkg/bpf"
++	mapregistry "github.com/cilium/cilium/pkg/maps/registry"
+ 	"github.com/cilium/cilium/pkg/metrics"
+ 	"github.com/cilium/cilium/pkg/option"
+ )
+@@ -19,13 +21,26 @@ var Cell = cell.Module(
+ 	"eBPF map which manages all local endpoints",
+ 
+ 	cell.Provide(newLXCMap),
++	cell.Invoke(configure),
+ )
+ 
+-func newLXCMap(lifecycle cell.Lifecycle, registry *metrics.Registry) bpf.MapOut[Map] {
+-	lxcMap := newMap(registry)
++func newLXCMap(
++	lifecycle cell.Lifecycle,
++	metrics *metrics.Registry,
++	reg *mapregistry.MapRegistry,
++) bpf.MapOut[Map] {
++	lxcMap := &lxcMap{}
+ 
+ 	lifecycle.Append(cell.Hook{
+ 		OnStart: func(context cell.HookContext) error {
++			var err error
++			lxcMap.bpfMap, err = bpf.NewMapFromRegistry(reg, mapName, &EndpointKey{}, &EndpointInfo{})
++			if err != nil {
++				return fmt.Errorf("create LXC map from registry: %w", err)
++			}
++			lxcMap.bpfMap.WithCache().WithPressureMetric(metrics).
++				WithEvents(option.Config.GetEventBufferConfig(mapName))
++
+ 			if err := lxcMap.init(); err != nil {
+ 				return fmt.Errorf("failed to init lxc map: %w", err)
+ 			}
+@@ -47,3 +62,15 @@ func newLXCMap(lifecycle cell.Lifecycle, registry *metrics.Registry) bpf.MapOut[
+ 
+ 	return bpf.NewMapOut(Map(lxcMap))
+ }
++
++func configure(reg *mapregistry.MapRegistry) error {
++	flags := uint32(unix.BPF_F_RDONLY_PROG)
++	if !option.Config.PreAllocateMaps {
++		flags |= unix.BPF_F_NO_PREALLOC
++	}
++
++	return reg.Modify(mapName, func(m *mapregistry.MapSpecPatch) {
++		m.Flags = flags
++		m.MaxEntries = uint32(MaxEntries)
++	})
++}
 ```
 
-**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/output/cec-echo-v2.yaml` (added, +107/-0)
+**File**: `pkg/maps/lxcmap/lxcmap.go` (modified, +0/-19)
 ```diff
-@@ -0,0 +1,107 @@
-+metadata:
-+  creationTimestamp: null
-+  annotations:
-+    cec.cilium.io/use-original-source-address: "true"
-+  labels:
-+    gateway.networking.k8s.io/gateway-name: mesh-multi-parent-grpc
-+  name: echo-v2
-+  namespace: gateway-conformance-mesh
-+  ownerReferences:
-+    - apiVersion: gateway.networking.k8s.io/v1
-+      controller: true
-+      kind: GRPCRoute
-+      name: mesh-multi-parent-grpc
-+      uid: ""
-+  resourceVersion: "1"
-+spec:
-+  backendServices:
-+    - name: echo-v2
-+      namespace: gateway-conformance-mesh
-+      number:
-+        - "7070"
-+  resources:
-+    - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
-+      filterChains:
-+        - filterChainMatch:
-+            transportProtocol: raw_buffer
-+          filters:
-+            - name: envoy.filters.network.http_connection_manager
-+              typedConfig:
-+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-+                commonHttpProtocolOptions:
-+                  maxStreamDuration: 0s
-+                httpFilters:
-+                  - name: envoy.filters.http.grpc_web
-+                    typedConfig:
-+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
-+                  - name: envoy.filters.http.grpc_stats
-+                    typedConfig:
-+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_stats.v3.FilterConfig
-+                      emitFilterState: true
-+                      enableUpstreamStats: true
-+                  - name: envoy.filters.http.router
-+                    typedConfig:
-+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-+                internalAddressConfig: {}
-+                rds:
-+                  routeConfigName: listener-insecure
-+                statPrefix: listener-insecure
-+                streamIdleTimeout: 300s
-+                upgradeConfigs:
-+                  - upgradeType: websocket
-+                useRemoteAddress: true
-+      listenerFilters:
-+        - name: envoy.filters.listener.tls_inspector
-+          typedConfig:
-+            "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
-+      name: listener
-+      socketOptions:
-+        - description: Enable TCP keep-alive (default to enabled)
-+          intValue: "1"
-+          level: "1"
-+          name: "9"
-+        - description: TCP keep-alive idle time (in seconds) (defaults to 10s)
-+          intValue: "10"
-+          level: "6"
-+          name: "4"
-+        - description: TCP keep-alive probe intervals (in seconds) (defaults to 5s)
-+          intValue: "5"
-+          level: "6"
-+          name: "5"
-+        - description: TCP keep-alive probe max failures.
-+          intValue: "10"
-+          level: "6"
-+          name: "6"
-+    - "@type": type.googleapis.com/envoy.config.route.v3.RouteConfiguration
-+      name: listener-insecure
-+      virtualHosts:
-+        - domains:
-+            - "*"
-+          name: "*"
-+          routes:
-+            - match:
-+                prefix: /
-+              route:
-+                cluster: gateway-conformance-mesh:echo-v2:7070
-+                maxStreamDuration:
-+                  maxStreamDuration: 0s
-+    - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
-+      edsClusterConfig:
-+        serviceName: gateway-conformance-mesh/echo-v2:7070
-+      name: gateway-conformance-mesh:echo-v2:7070
-+      outlierDetection:
-+        splitExternalLocalOriginErrors: true
-+      type: EDS
-+      typedExtensionProtocolOptions:
-+        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
-+          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
-+          commonHttpProtocolOptions:
-+            idleTimeout: 60s
-+          useDownstreamProtocolConfig:
-+            http2ProtocolOptions: {}
-+  services:
-+    - listener: ""
-+      name: echo-v2
-+      namespace: gateway-conformance-mesh
-+      ports:
-+        - 7070
+@@ -8,15 +8,10 @@ import (
+ 	"log/slog"
+ 	"net/netip"
+ 
+-	"github.com/cilium/ebpf"
+-	"golang.org/x/sys/unix"
+-
+ 	"github.com/cilium/cilium/pkg/bpf"
+ 	eptypes "github.com/cilium/cilium/pkg/endpoint/types"
+ 	"github.com/cilium/cilium/pkg/identity"
+ 	"github.com/cilium/cilium/pkg/mac"
+-	"github.com/cilium/cilium/pkg/metrics"
+-	"github.com/cilium/cilium/pkg/option"
+ )
+ 
+ const (
+@@ -55,20 +50,6 @@ type lxcMap struct {
+ 	bpfMap *bpf.Map
+ }
+ 
+-func newMap(registry *metrics.Registry) *lxcMap {
+-	return &lxcMap{
+-		bpfMap: bpf.NewMap(mapName,
+-			ebpf.Hash,
+-			&EndpointKey{},
+-			&EndpointInfo{},
+-			MaxEntries,
+-			unix.BPF_F_RDONLY_PROG,
+-		).
+-			WithCache().WithPressureMetric(registry).
+-			WithEvents(option.Config.GetEventBufferConfig(mapName)),
+-	}
+-}
+-
+ // OpenMap opens the pre-initialized LXC map for access.
+ // This should only be used from components which aren't capable of using hive - mainly the cilium-dbg.
+ // It needs to initialized beforehand via the Cilium Agent.
 ```
 
-**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/output/grpcroute-mesh-multi-parent-grpc.yaml` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: GRPCRoute
-+metadata:
-+  name: mesh-multi-parent-grpc
-+  namespace: gateway-conformance-mesh
-+spec:
-+  parentRefs:
-+    - group: ""
-+      kind: Service
-+      name: echo-v2
-+      port: 7070
-+    - group: ""
-+      kind: Service
-+      name: echo
-+      port: 7070
-+  rules:
-+    - backendRefs:
-+        - name: echo-v2
-+          port: 7070
-+status:
-+  parents:
-+    - conditions:
-+        - lastTransitionTime: "2025-06-19T03:21:44Z"
-+          message: Accepted GRPCRoute
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: "2025-06-19T03:21:44Z"
-+          message: Service reference is valid
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+      controllerName: io.cilium/gateway-controller
-+      parentRef:
-+        group: ""
-+        kind: Service
-+        name: echo-v2
-+        port: 7070
-```
+---
 
-**File**: `operator/pkg/gateway-api/testdata/gamma/mesh-multi-parent/output/httproute-mesh-multi-parent.yaml` (added, +44/-0)
+### Incident Patch 2: `e4c31528` (2026-11-04)
+**Commit Message**: datapath: remove some unneeded `__maybe_unused` from `bpf_lxc.c`
+
+Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
+
+**File**: `bpf/bpf_lxc.c` (modified, +8/-8)
 ```diff
-@@ -0,0 +1,44 @@
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: HTTPRoute
-+metadata:
-+  name: mesh-multi-parent
-+  namespace: gateway-conformance-mesh
-+spec:
-+  parentRefs:
-+    - group: ""
-+      kind: Service
-+      name: echo-v1
-+      port: 80
-+    - group: ""
-+      kind: Service
-+      name: echo
-+      port: 80
-+  rules:
-+    - backendRefs:
-+        - name: echo-v1
-+          port: 80
-+      filters:
-+        - responseHeaderModifier:
-+            set:
-+              - name: X-Header-Set
-+                value: v1
-+          type: ResponseHeaderModifier
-+status:
-+  parents:
-+    - conditions:
-+        - lastTransitionTime: "2025-06-19T03:21:44Z"
-+          message: Accepted HTTPRoute
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: "2025-06-19T03:21:44Z"
-+          message: Service reference is valid
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+      controllerName: io.cilium/gateway-controller
-+      parentRef:
-+        group: ""
-+        kind: Service
-+        name: echo-v1
-+        port: 80
+@@ -766,7 +766,7 @@ ipv6_forward_to_destination(struct __ctx_buff *ctx, struct ipv6hdr *ip6,
+ 		}
+ 	}
+ 
+-pass_to_stack: __maybe_unused
++pass_to_stack:
+ 	/* See IPv4 path for comments. */
+ 	if (!CONFIG(enable_bpf_routing) && from_l7lb &&
+ 	    ctx_get_ifindex(ctx) != CONFIG(cilium_host_ifindex))
+@@ -800,7 +800,7 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 		.reason = TRACE_REASON_UNKNOWN,
+ 		.monitor = 0,
+ 	};
+-	bool __maybe_unused skip_tunnel = false;
++	bool skip_tunnel = false;
+ 	bool hairpin_flow = false;
+ 	enum ct_status ct_status;
+ 	__u8 policy_match_type = POLICY_MATCH_NONE;
+@@ -1084,7 +1084,7 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
+ 			    struct trace_ctx *trace,
+ 			    __s8 *ext_err)
+ {
+-	struct remote_endpoint_info __maybe_unused fake_info = {0};
++	struct remote_endpoint_info fake_info = {0};
+ 	int ret;
+ 
+ 	if (CONFIG(srv6_cfg).enable) {
+@@ -1293,7 +1293,7 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
+ 		}
+ 	}
+ 
+-pass_to_stack: __maybe_unused
++pass_to_stack:
+ 	/* With per-endpoint routes, the `cil_lxc_policy_egress` will be
+ 	 * tail called from cil_to_container for packets sent by a L7 LB.
+ 	 * In case of a local backend, we execute this code already from the
+@@ -1332,7 +1332,7 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 		.reason = TRACE_REASON_UNKNOWN,
+ 		.monitor = 0,
+ 	};
+-	bool __maybe_unused skip_tunnel = false;
++	bool skip_tunnel = false;
+ 	bool hairpin_flow = false; /* endpoint wants to access itself via service IP */
+ 	__u8 policy_match_type = POLICY_MATCH_NONE;
+ 	struct ct_buffer4 *ct_buffer;
+@@ -1569,7 +1569,7 @@ TAIL_CT_LOOKUP4(CILIUM_CALL_IPV4_CT_EGRESS, tail_ipv4_ct_egress, CT_EGRESS,
+ 		CILIUM_CALL_IPV4_FROM_LXC_CONT, tail_handle_ipv4_cont)
+ 
+ static __always_inline int __tail_handle_ipv4(struct __ctx_buff *ctx,
+-					      __s8 *ext_err __maybe_unused)
++					      __s8 *ext_err)
+ {
+ 	void *data, *data_end;
+ 	struct iphdr *ip4;
+@@ -1764,7 +1764,7 @@ ipv6_policy(struct __ctx_buff *ctx, struct ipv6hdr *ip6, __u32 src_label,
+ 	union v6addr orig_sip __align_stack_8;
+ 	__u8 policy_match_type = POLICY_MATCH_NONE;
+ 	__u8 audited = 0;
+-	__maybe_unused union v6addr loopback_addr;
++	union v6addr loopback_addr;
+ 	__u32 cookie = 0;
+ 
+ 	ipv6_addr_copy(&orig_sip, (union v6addr *)&ip6->saddr);
+@@ -2411,7 +2411,7 @@ int cil_lxc_policy(struct __ctx_buff *ctx)
+  * a L7 LB.
+  */
+ __section_entry
+-int cil_lxc_policy_egress(struct __ctx_buff *ctx __maybe_unused)
++int cil_lxc_policy_egress(struct __ctx_buff *ctx)
+ {
+ 	if (!CONFIG(enable_l7_lb))
+ 		return CTX_ACT_OK;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49923** (2026-11-09): v1.19 Backports 2026-11-09 (@pippolo84)
+- **PR #49918** (2026-11-09): chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.19) (@cilium-renovate[bot])
 - **PR #49910** (2026-11-08): chore(deps): update github/codeql-action action to v4.39.2 (v1.20) (@cilium-renovate[bot])
 - **PR #49908** (2026-11-08): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4 (main) (@cilium-renovate[bot])
 - **PR #49907** (2026-11-08): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.3 (main) (@cilium-renovate[bot])
 - **PR #49906** (2026-11-08): chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.20) (@cilium-renovate[bot])
-- **PR #49905** (2026-11-08): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
-- **PR #49900** (2026-11-08): fix(deps): update k8s.io patch updates stable to v0.35.10 (v1.19) (@cilium-renovate[bot])
 
 ---
 
@@ -1732,34 +1584,30 @@ Signed-off-by: Martin Lindberg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gateway-api: scope GAMMA ingestion to the reconciled service
+## X. maps/lxcmap: use map registry for cilium_lxc map
 
 **RULE**:
-When implementing operations in `operator/pkg/gateway-api/gamma_reconcile.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bpf/lib/eps.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a50d9dbb`: gateway-api: scope GAMMA ingestion to the reconciled service. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9799367`: maps/lxcmap: use map registry for cilium_lxc map. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `operator/pkg/gateway-api/gamma_reconcile.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/lib/eps.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		HTTPRoutes:    httpRoutes,
-		GRPCRoutes:    grpcRoutes,
-		Services:      servicesList.Items,
-		SourceService: originalSvc,
+	__uint(max_entries, 65536);
+	__uint(map_flags, BPF_F_RDONLY_PROG_COND);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// TODO(youngnick): GammaHTTPRoutes needs to be updated now that we have a source Service.
-		HTTPRoutes: httpRoutes,
-		GRPCRoutes: grpcRoutes,
-		Services:   servicesList.Items,
+	__uint(max_entries, ENDPOINTS_MAP_SIZE);
+	__uint(map_flags, CONDITIONAL_PREALLOC | BPF_F_RDONLY_PROG_COND);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a50d9dbb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9799367` are properly handled with clean fallback behavior.

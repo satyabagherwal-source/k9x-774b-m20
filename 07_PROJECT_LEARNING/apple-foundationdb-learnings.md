@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `7e7611f8`  
+> **Source Version**: `91a45282`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:03:28.258Z  
+> **Timestamp**: 2026-11-09T16:26:05.523Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:03:27.844Z  
+> **Harvest Timestamp**: 2026-11-09T16:26:05.515Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16845 stars
+- **Stars / Engagement**: 16849 stars
 
 ---
 
@@ -1956,280 +1956,365 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7e7611f8` (2026-11-06)
-**Commit Message**: Reject --system-metadata and drop the system backup range machinery it fed (#14392)
+### Incident Patch 1: `91a45282` (2026-11-09)
+**Commit Message**: Reject starting a backup at a location used by another running backup (#14451)
 
-getSystemBackupRanges() returns an empty list. It was populated once, for
-tenants and for blob granules, and both features have since been deleted
-(#12583, #12435), so every range it ever carried is gone. --system-metadata
-appends that list to backupKeys and nothing else, so the flag can only produce
-an empty range list and trip ASSERT(!ranges.empty()) in runRestore. Reject it
-with the reason, pointing at --user-data or explicit -k ranges. Populating the
-list instead would mean newly deciding which system ranges belong in a backup,
-which no requirement asks for.
+Two backups writing the same container corrupt each other, and nothing
+stopped a second tag from starting on a URL that a running backup uses.
 
-An empty range list also made several things no-ops:
+- IBackupContainer::getLocation(): where a container's files live,
+  ignoring credentials, URL parameters and proxy. Blobstore uses host,
+  port, bucket (default applied) and the data path built from the
+  normalized prefix and name; file:// uses the normalized path.
+- FileBackupAgent::findRunningBackupAtLocation(): returns the tag of a
+  runnable backup on another tag at the same location, read in the
+  caller's transaction so concurrent submits conflict.
+- submitBackup, fdbbackup modify -d and fdbbackup start -n reject such
+  a location with backup_error. Finished or aborted backups do not hold
+  their location, and the same tag can restart on its own URL.
+- Unit test for the location compare, an opt-in BackupS3BlobCorrectness
+  probe enabled in BackupS3BlobBulkLoadIncrementalRejected.toml, and an
+  fdbbackup step in blob_backup_restore_test.sh.
 
-- systemBackupMutationMask() built a map from those ranges, so it was a single
-  all-false range. Both of its callers, shouldBackup() on the commit proxy and
-  isCandidateBackupMessage() in the backup worker, therefore already reduced to
-  the normalKeys-or-metadataVersionKey test. Delete the mask and write that
-  test directly. This also removes a KeyRangeMap lookup from a per-mutation
-  path.
-- addDefaultBackupRanges() iterated the empty list after adding normalKeys.
-- isDefaultBackup
+rdar://191428032
 
-**File**: `fdbbackup/backup.cpp` (modified, +6/-3)
+**File**: `documentation/sphinx/source/backups.rst` (modified, +2/-2)
 ```diff
-@@ -4197,9 +4197,12 @@ int main(int argc, char* argv[]) {
- 		if (restoreUserKeys) {
- 			backupKeys.push_back_deep(backupKeys.arena(), normalKeys);
- 		} else if (restoreSystemKeys) {
--			for (const auto& r : getSystemBackupRanges()) {
--				backupKeys.push_back_deep(backupKeys.arena(), r);
--			}
-+			// The ranges this selected belonged to tenants and blob granules, both since removed (#12583,
-+			// #12435), so it can only produce an empty range list and trip the assert in runRestore.
-+			fprintf(stderr,
-+			        "ERROR: --system-metadata selects no key ranges in this version: the tenant and blob granule "
-+			        "system ranges it covered have been removed. Use --user-data, or name ranges with -k.\n");
-+			return FDB_EXIT_ERROR;
- 		}
+@@ -288,7 +288,7 @@ The following options apply to most subcommands:
+ ``start``
+ ---------
  
- 		switch (programExe) {
+-The ``start`` subcommand is used to start a backup.  If there is already a backup in progress, the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
++The ``start`` subcommand is used to start a backup.  If there is already a backup in progress on the tag, or a backup on another tag is running at the same location (for a blob store URL, the same host, port, bucket, prefix, and backup name, regardless of credentials and other URL parameters), the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
+ 
+ ::
+ 
+@@ -329,7 +329,7 @@ The ``modify`` subcommand is used to modify parameters of a running backup.  All
+    user@host$ fdbbackup modify [-t <TAG>] [-d <BACKUP_URL>] [-s <DURATION>] [--active-snapshot-interval <DURATION>] [--verify-uid <UID>]
+ 
+ ``-d <BACKUP_URL>``
+-  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.
++  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.  The new location cannot be one that a backup on another tag is running at.
+ 
+ ``-s <DURATION>`` or ``--snapshot-interval <DURATION>``  
+   Sets a new duration for backup snapshots, in seconds.
 ```
 
-**File**: `fdbclient/BackupAgentBase.cpp` (modified, +0/-15)
+**File**: `fdbbackup/backup.cpp` (modified, +26/-0)
 ```diff
-@@ -1309,28 +1309,13 @@ std::string const BackupAgentBase::defaultTagName = "default";
- 
- void addDefaultBackupRanges(Standalone<VectorRef<KeyRangeRef>>& backupKeys) {
- 	backupKeys.push_back_deep(backupKeys.arena(), normalKeys);
--
--	for (auto& r : getSystemBackupRanges()) {
--		backupKeys.push_back_deep(backupKeys.arena(), r);
--	}
- }
- 
- VectorRef<KeyRangeRef> const& getSystemBackupRanges() {
- 	static Standalone<VectorRef<KeyRangeRef>> systemBackupRanges;
- 	return systemBackupRanges;
- }
- 
--KeyRangeMap<bool> const& systemBackupMutationMask() {
--	static KeyRangeMap<bool> mask;
--	if (mask.size() == 1) {
--		for (auto r : getSystemBackupRanges()) {
--			mask.insert(r, true);
--		}
--	}
--
--	return mask;
--}
--
- KeyRangeRef const& getDefaultBackupSharedRange() {
- 	static KeyRangeRef defaultSharedRange(""_sr, ""_sr);
- 	return defaultSharedRange;
-```
-
-**File**: `fdbclient/include/fdbclient/BackupAgent.h` (modified, +1/-20)
-```diff
-@@ -1067,30 +1067,11 @@ void addDefaultBackupRanges(Standalone<VectorRef<KeyRangeRef>>& backupKeys);
- // Return a vector containing the key ranges in system key-space that should be backed up in a default backup.
- VectorRef<KeyRangeRef> const& getSystemBackupRanges();
- 
--// Return a key-range map that can be used to check whether a system key is a candidate backup key (i.e. whether it is
--// part of any system backup ranges).
--KeyRangeMap<bool> const& systemBackupMutationMask();
--
- // Returns true if the given set of ranges exactly matches the set of ranges included in a default backup.
- template <class Container>
- bool isDefaultBackup(Container ranges) {
- 	std::unordered_set<KeyRangeRef> uniqueRanges(ranges.begin(), ranges.end());
--	auto& systemBackupRanges = getSystemBackupRanges();
--
--	if (uniqueRanges.size() != systemBackupRanges.size() + 1) {
--		return false;
--	}
--
--	if (!uniqueRanges.contains(normalKeys)) {
--		return false;
--	}
--	for (auto range : getSystemBackupRanges()) {
--		if (!uniqueRanges.contains(range)) {
--			return false;
--		}
--	}
--
--	return true;
-+	return uniqueRanges.size() == 1 && uniqueRanges.contains(normalKeys);
- }
- 
- // Returns a key-range used to denote that a shared mutation stream belongs to the default backup set.
-```
-
-**File**: `fdbserver/backupworker/BackupWorker.cpp` (modified, +2/-14)
-```diff
-@@ -88,20 +88,8 @@ struct VersionedMessage {
- 		if (!isThisMessageMutation(m))
- 			return false;
- 
--		// Return true if the mutation intersects any legal backup ranges
--		if (normalKeys.contains(m->param1) || m->param1 == metadataVersionKey) {
--			return true;
--		} else if (m->type != MutationRef::Type::ClearRange) {
--			return systemBackupMutationMask().rangeContaining(m->param1).value();
--		} else {
--			for (auto& r : systemBackupMutationMask().intersectingRanges(KeyRangeRef(m->param1, m->param2))) {
--				if (r->value()) {
--					return true;
--				}
--			}
--
--			return false;
--		}
-+		// Only normalKeys and the metadata version key are legal backup ranges.
-+		return normalKeys.contains(m->param1) || m->param1 == metadataVersionKey;
- 	}
- };
- 
-```
-
-**File**: `fdbserver/commitproxy/CommitProxyServer.cpp` (modified, +1/-12)
-```diff
-@@ -664,18 +664,7 @@ void CommitBatchContext::checkHotShards() {
- // Check whether the mutation intersects any legal backup ranges
- // If so, it will be clamped to the intersecting range(s) later
- inline bool shouldBackup(MutationRef const& m) {
--	if (normalKeys.contains(m.param1) || m.param1 == metadataVersionKey) {
--		return true;
--	} else if (m.type != MutationRef::Type::ClearRange) {
--		return systemBackupMutationMask().rangeContaining(m.param1).value();
--	} else {
--		for (auto& r : systemBackupMutationMask().intersectingRanges(KeyRangeRef(m.param1, m.param2))) {
--			if (r->value()) {
--				return true;
--			}
--		}
--	}
--	return false;
-+	return normalKeys.contains(m.param1) || m.param1 == metadataVersionKey;
- }
- 
- // Find the set of logs the batch is sent to. An empty set indicates it cannot be
-```
-
-**File**: `fdbserver/logsystem/ApplyMetadataMutation.cpp` (modified, +0/-9)
-```diff
-@@ -994,15 +994,6 @@ class ApplyMetadataMutationsImpl {
- 						break;
- 					}
- 				}
--				auto& systemBackupRanges = getSystemBackupRanges();
--				for (auto r = systemBackupRanges.begin(); !foundKey && r != systemBackupRanges.end(); ++r) {
--					for (auto& it : vecBackupKeys->intersectingRanges(*r)) {
--						if (it.value().contains(logDestination)) {
--							foundKey = true;
--							break;
--						}
--					}
--				}
- 				if (!foundKey) {
- 					auto logRanges = vecBackupKeys->modify(singleKeyRange(metadataVersionKey));
- 					for (auto logRange : logRanges) {
-```
-
----
-
-### Incident Patch 2: `751bb5c7` (2026-11-06)
-**Commit Message**: Emit a JSON error document when a --json command fails (#14168)
-
-* Emit a JSON error document when a --json command fails
-
-The --json commands wrote nothing to stdout on failure, reporting only plain text
-on stderr, so a consumer could not distinguish a failure from an empty result.
-
-fdbbackup status, fdbbackup describe and fdbrestore status now print
-{"SchemaVersion": ..., "error": ...} to stdout before rethrowing. The "error" key
-is the one fdbbackup query already emits rather than a second spelling for the
-same concept. stderr keeps its human-readable message.
-
-fdbrestore status moves into a statusRestore() wrapper so it handles errors the
-way statusBackup() and describeBackup() already do, instead of mapping over the
-future inline.
-
-Failures that happen before a command runs -- an unreadable cluster file, an
-unknown option -- are still plain text, since --json cannot be known to have been
-requested when argument parsing itself failed.
-
-* Drop explanatory comment above printJsonError
-
-**File**: `fdbbackup/backup.cpp` (modified, +30/-6)
-```diff
-@@ -2031,6 +2031,13 @@ Future<Void> statusDBBackup(Database src, Database dest, std::string tagName, in
+@@ -1872,6 +1872,23 @@ Future<Void> submitDBBackup(Database src,
  	}
  }
  
-+static void printJsonError(std::string errorMessage) {
-+	JsonBuilderObject doc;
-+	doc.setKey("SchemaVersion", "1.0.0");
-+	doc.setKey("error", errorMessage);
-+	printf("%s\n", doc.getJson().c_str());
-+}
-+
- Future<Void> statusBackup(Database db, std::string tagName, ShowErrors showErrors, bool json) {
- 	try {
- 		FileBackupAgent backupAgent;
-@@ -2041,6 +2048,26 @@ Future<Void> statusBackup(Database db, std::string tagName, ShowErrors showError
- 	} catch (Error& e) {
- 		if (e.code() == error_code_actor_cancelled)
- 			throw;
-+		if (json)
-+			printJsonError(e.what());
-+		fprintf(stderr, "ERROR: %s\n", e.what());
-+		throw;
++// Fails with backup_error if a backup on a tag other than tagName is running at bc's location.
++static Future<Void> checkBackupLocationNotInUse(Reference<ReadYourWritesTransaction> tr,
++                                                Reference<IBackupContainer> bc,
++                                                std::string tagName) {
++	Optional<std::string> conflictingTag = co_await FileBackupAgent::findRunningBackupAtLocation(tr, bc, tagName);
++	if (conflictingTag.present()) {
++		TraceEvent(SevWarnAlways, "BackupLocationInUse")
++		    .detail("TagName", tagName)
++		    .detail("ConflictingTag", conflictingTag.get())
++		    .detail("Location", bc->getLocation());
++		fprintf(stderr,
++		        "ERROR: The backup location is already in use by the running backup on tag `%s'.\n",
++		        printable(StringRef(conflictingTag.get())).c_str());
++		throw backup_error();
 +	}
 +}
 +
-+// Prints `fdbrestore status` for one tag, or for every tag when tag is empty.
-+Future<Void> statusRestore(Database db, Key tag, bool json) {
-+	try {
-+		FileBackupAgent backupAgent;
+ Future<Void> submitBackup(Database db,
+                           std::string url,
+                           Optional<std::string> proxy,
+@@ -1905,6 +1922,14 @@ Future<Void> submitBackup(Database db,
+ 				}
+ 			}
+ 
++			// submitBackup appends a unique directory to file:// URLs, so only blobstore locations can collide.
++			if (url.find("file://") != 0) {
++				Reference<IBackupContainer> bc = IBackupContainer::openContainer(url, proxy, {}, 0);
++				co_await runRYWTransaction(db, [=](Reference<ReadYourWritesTransaction> tr) {
++					return checkBackupLocationNotInUse(tr, bc, tagName);
++				});
++			}
 +
-+		std::string statusText =
-+		    co_await (json ? backupAgent.restoreStatusJSON(db, tag) : backupAgent.restoreStatus(db, tag));
-+		printf("%s\n", statusText.c_str());
-+	} catch (Error& e) {
-+		if (e.code() == error_code_actor_cancelled)
-+			throw;
-+		if (json)
-+			printJsonError(e.what());
- 		fprintf(stderr, "ERROR: %s\n", e.what());
- 		throw;
+ 			if (waitForCompletion) {
+ 				printf("Submitted and now waiting for the backup on tag `%s' to complete. (DRY RUN)\n",
+ 				       printable(StringRef(tagName)).c_str());
+@@ -2901,6 +2926,7 @@ Future<Void> modifyBackup(Database db, std::string tagName, BackupModifyOptions
+ 				                         options.proxy,
+ 				                         options.encryptionKeyFile,
+ 				                         prevContainer->getEncryptionBlockSize());
++				co_await checkBackupLocationNotInUse(tr, bc, tagName);
+ 				try {
+ 					co_await timeoutError(bc->create(), 30);
+ 				} catch (Error& e) {
+```
+
+**File**: `fdbbackup/tests/blob_backup_restore_test.sh` (modified, +99/-0)
+```diff
+@@ -179,6 +179,99 @@ function verify_backup_key_prefix_layout {
+   return 0
+ }
+ 
++# Run fdbbackup and check the outcome. Commands expected to fail log to location_in_use_logs, which
++# grep_for_severity40 skips, because fdbbackup traces any failure at Severity 40.
++# $1 build directory, $2 scratch directory, $3 "ok", or the message the command must fail with,
++# $4+ fdbbackup arguments
++function fdbbackup_expect {
++  local local_build_dir="${1}"
++  local local_scratch_dir="${2}"
++  local expected="${3}"
++  local logdir="${local_scratch_dir}"
++  if [[ "${expected}" != "ok" ]]; then
++    logdir="${local_scratch_dir}/location_in_use_logs"
++    mkdir -p "${logdir}"
++  fi
++  local output
++  local exit_code=0
++  output=$("${local_build_dir}/bin/fdbbackup" "${@:4}" --log "--logdir=${logdir}" 2>&1) || exit_code=$?
++  if [[ "${expected}" == "ok" ]]; then
++    if (( exit_code != 0 )); then
++      err "fdbbackup ${*:4} failed: ${output}"
++      return 1
++    fi
++  elif (( exit_code == 0 )) || ! output_contains "${output}" "${expected}"; then
++    err "fdbbackup ${*:4} did not fail with '${expected}': ${output}"
++    return 1
++  fi
++  return 0
++}
++
++# Abort a backup started by test_backup_location_in_use. abort disables idle backup workers
++# concurrently, which can fail its own commit with commit_unknown_result; the retry then finds the
++# backup already aborted, so "not running" counts as aborted.
++# $1 build directory, $2 scratch directory, $3+ fdbbackup abort arguments
++function abort_in_use_backup {
++  local local_build_dir="${1}"
++  local local_scratch_dir="${2}"
++  local logdir="${local_scratch_dir}/location_in_use_logs"
++  mkdir -p "${logdir}"
++  local output
++  local exit_code=0
++  output=$("${local_build_dir}/bin/fdbbackup" abort "${@:3}" --log "--logdir=${logdir}" 2>&1) || exit_code=$?
++  if (( exit_code != 0 )) && ! output_contains "${output}" "A backup was not running on tag"; then
++    err "fdbbackup abort ${*:3} failed: ${output}"
++    return 1
++  fi
++  return 0
++}
++
++# A backup must not start, or be moved by modify, onto a location that a backup on another tag
++# is running at. Once that backup is aborted, the location can be reused by any tag.
++# $1 build directory, $2 scratch directory, $3 credentials file
++function test_backup_location_in_use {
++  local local_build_dir="${1}"
++  local local_scratch_dir="${2}"
++  local credentials="${3}"
++
++  local params="${query_str}"
++  if [[ -n "${BACKUP_URL_KEY_PREFIX}" ]]; then
++    params="${params}&prefix=${BACKUP_URL_KEY_PREFIX}"
++  fi
++  # Nested under this run's container so the existing cleanup removes it too.
++  local name="${url_path_prefix}/${test}/in_use"
++  local in_use_url="blobstore://${host}/${name}?${params}"
++  # The same location with the parameters reversed and a trailing slash on the name.
++  local respelled_url
++  respelled_url="blobstore://${host}/${name}/?$(awk -F'&' '{ for (i = NF; i > 1; i--) printf "%s&", $i; print $1 }' <<< "${params}")"
++  local other_url="blobstore://${host}/${name}_other?${params}"
++  local tag_a="${TAG}_in_use_a"
++  local tag_b="${TAG}_in_use_b"
++  local in_use="already in use by the running backup on tag \`${tag_a}'"
++  local run=(fdbbackup_expect "${local_build_dir}" "${local_scratch_dir}")
++  local abort=(abort_in_use_backup "${local_build_dir}" "${local_scratch_dir}")
++  # abort does not take --blob-credentials.
++  local cluster=("-C" "${local_scratch_dir}/loopback_cluster/fdb.cluster" "${KNOBS[@]}")
++  local args=("${cluster[@]}" "--blob-credentials" "${credentials}")
++
++  "${run[@]}" ok start -z -t "${tag_a}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${run[@]}" "${in_use}" start -z -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${run[@]}" "${in_use}" start -n -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${run[@]}" "${in_use}" start -z -t "${tag_b}" -d "${respelled_url}" "${args[@]}" || return 1
++  "${run[@]}" ok start -n -t "${tag_b}" -d "${other_url}" "${args[@]}" || return 1
++  "${run[@]}" ok start -z -t "${tag_b}" -d "${other_url}" "${args[@]}" || return 1
++  "${run[@]}" "${in_use}" modify -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${abort[@]}" -t "${tag_b}" "${cluster[@]}" || return 1
++  "${abort[@]}" -t "${tag_a}" "${cluster[@]}" || return 1
++  # Aborted backups no longer hold the location, for the same tag or another one.
++  "${run[@]}" ok start -z -t "${tag_a}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${abort[@]}" -t "${tag_a}" "${cluster[@]}" || return 1
++  "${run[@]}" ok start -z -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${abort[@]}" -t "${tag_b}" "${cluster[@]}" || return 1
++  log "Verified a backup location in use by another tag is rejected"
++  return 0
++}
++
+ # Run a backup to s3 and then a restore.
+ # $1 The url to use
+ # $2 the scratch directory
+@@ -249,6 +342,12 @@ function test_s3_backup_and_restore {
+     return 1
+   fi
+ 
++  log "Test backup location in use"
++  if ! test_backup_location_in_use "${local_build_dir
+```
+
+**File**: `fdbclient/BackupContainerBlobStore.cpp` (modified, +65/-1)
+```diff
+@@ -27,6 +27,8 @@
+ #include "flow/Platform.h"
+ #include "flow/UnitTest.h"
+ 
++#include <boost/algorithm/string/case_conv.hpp>
++
+ class BackupContainerBlobStoreImpl {
+ public:
+ 	// Backup files to under a single folder prefix with subfolders for each named backup
+@@ -141,7 +143,7 @@ class BackupContainerBlobStoreImpl {
+ const std::string BackupContainerBlobStoreImpl::DATAFOLDER = "data";
+ const std::string BackupContainerBlobStoreImpl::INDEXFOLDER = "backups";
+ 
+-std::string BackupContainerBlobStore::dataPath(const std::string& path) {
++std::string BackupContainerBlobStore::dataPath(const std::string& path) const {
+ 	// if a key prefix was given, the entire layout lives under it.
+ 	// if backup, include the backup data prefix.
+ 	// if m_name ends in a trailing slash, don't add another
+@@ -286,6 +288,22 @@ std::string BackupContainerBlobStore::getPrefix() const {
+ 	return m_prefix;
+ }
+ 
++std::string BackupContainerBlobStore::getLocation() const {
++	// Spell the service as a port, so a URL without one matches the same URL with the default port.
++	std::string service = m_bstore->service.empty() ? m_bstore->defaultService() : m_bstore->service;
++	if (service == "https") {
++		service = "443";
++	} else if (service == "http") {
++		service = "80";
++	}
++	// Bucket names cannot contain '/', so the data path that follows keeps the location unambiguous.
++	return format("blobstore://%s:%s/%s/%s",
++	              boost::algorithm::to_lower_copy(m_bstore->host).c_str(),
++	              service.c_str(),
++	              m_bucket.c_str(),
++	              dataPath("").c_str());
++}
++
+ TEST_CASE("/backup/containers/blobstore/encryptionSetup") {
+ 	std::string keyFile = joinPath(params.getDataDir(), "encryption-key");
+ 	co_await BackupContainerFileSystem::createTestEncryptionKeyFile(keyFile);
+@@ -379,3 +397,49 @@ TEST_CASE("/backup/containers/blobstore/prefix") {
+ 
+ 	return Void();
+ }
++
++TEST_CASE("/backup/containers/location") {
++	// Non-AWS hosts need an explicit region to parse.
++	auto location = [](const std::string& url) {
++		return IBackupContainer::openContainer(url, {}, {}, 0)->getLocation();
++	};
++	const std::string base = location("blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1");
++
++	// Credentials, parameter order, other parameters, host case and slashes around the prefix are ignored.
++	for (auto same :
++	     { "blobstore://other:creds@host.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1",
++	       "blobstore://host.example.com:8080/name?region=r1&prefix=p1/p2&bucket=bkt",
++	       "blobstore://ak:sk@HOST.example.com:8080/name?bucket=bkt&prefix=/p1/p2/&sc=0&region=r2",
++	       "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1&header=x-a:b&cu=1",
++	       // A trailing slash on the name does not change the data path.
++	       "blobstore://ak:sk@host.example.com:8080/name/?bucket=bkt&prefix=p1/p2&region=r1" }) {
++		ASSERT_EQ(location(same), base);
++	}
++	ASSERT_EQ(location("blobstore://h:80/n?region=r1"), location("blobstore://h:80/n?bucket=FDB_BACKUPS_V2&region=r1"));
++	// A missing port is the default port for the connection type.
++	ASSERT_EQ(location("blobstore://h/n?region=r1"), location("blobstore://h:443/n?region=r1"));
++	ASSERT_EQ(location("blobstore://h/n?region=r1"), location("blobstore://h:https/n?region=r1"));
++	ASSERT_EQ(location("blobstore://h/n?region=r1&sc=0"), location("blobstore://h:80/n?region=r1&sc=0"));
++	ASSERT_NE(location("blobstore://h/n?region=r1"), location("blobstore://h:80/n?region=r1"));
++	ASSERT_NE(location("blobstore://h/n?region=r1&sc=0"), location("blobstore://h:443/n?region=r1&sc=0"));
++	// Different prefix and name splits can address the same data objects.
++	ASSERT_EQ(location("blobstore://h:80/b?prefix=a/data&region=r1"),
++	          location("blobstore://h:80/data/b?prefix=a&region=r1"));
++
++	for (auto different : { "blobstore://ak:sk@other.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8081/name?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt2&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1/p3&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name2?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name/sub?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080//name?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "file:///p1/p2/data/name" }) {
++		ASSERT_NE(location(different), base);
++	}
++
++	ASSERT_EQ(location("file:///backups/a"), location("file:///backups/a/"));
++	AS
+```
+
+**File**: `fdbclient/BackupContainerBlobStore.h` (modified, +3/-1)
+```diff
+@@ -39,7 +39,7 @@ class BackupContainerBlobStore final : public BackupContainerFileSystem, Referen
+ 	// if not used for backup, don't prefix paths with fdbbackup-specific logic
+ 	bool isBackup;
+ 
+-	std::string dataPath(const std::string& path);
++	std::string dataPath(const std::string& path) const;
+ 
+ 	// Get the path of the backups's index entry
+ 	std::string indexEntry();
+@@ -138,6 +138,8 @@ class BackupContainerBlobStore final : public BackupContainerFileSystem, Referen
+ 	std::string getBucket() const;
+ 
+ 	std::string getPrefix() const;
++
++	std::string getLocation() const final;
+ };
+ 
+ #endif
+```
+
+**File**: `fdbclient/BackupContainerLocalDirectory.cpp` (modified, +4/-0)
+```diff
+@@ -355,6 +355,10 @@ Future<Void> BackupContainerLocalDirectory::deleteContainer(int* pNumDeleted) {
+ 	});
+ }
+ 
++std::string BackupContainerLocalDirectory::getLocation() const {
++	return "file://" + m_path;
++}
++
+ TEST_CASE("/backup/containers/localdir/rejectsEscapingPaths") {
+ 	// Nothing is read or written: every name below is rejected before the container directory is touched.
+ 	auto bc = makeReference<BackupContainerLocalDirectory>(
+```
+
+**File**: `fdbclient/BackupContainerLocalDirectory.h` (modified, +2/-0)
+```diff
+@@ -56,6 +56,8 @@ class BackupContainerLocalDirectory : public BackupContainerFileSystem,
+ 
+ 	Future<Void> deleteContainer(int* pNumDeleted) final;
+ 
++	std::string getLocation() const final;
++
+ private:
+ 	std::string m_path;
+ };
+```
+
+**File**: `fdbclient/BlobStoreCommon.cpp` (modified, +1/-1)
+```diff
+@@ -688,7 +688,7 @@ Future<IBlobStoreEndpoint::ReusableConnection> connect_impl(Reference<IBlobStore
+ 			fprintf(stderr, "ERROR: Port can't be empty when using HTTP proxy.\n");
+ 			throw connection_failed();
+ 		}
+-		service = b->knobs.secure_connection ? "https" : "http";
++		service = b->defaultService();
  	}
-@@ -2524,6 +2551,8 @@ Future<Void> describeBackup(const char* name,
- 	} catch (Error& e) {
- 		if (e.code() == error_code_actor_cancelled)
- 			throw;
-+		if (json)
-+			printJsonError(e.what());
- 		fprintf(stderr, "ERROR: %s\n", e.what());
- 		throw;
- 	}
-@@ -4404,12 +4433,7 @@ int main(int argc, char* argv[]) {
- 				// If no tag is specifically provided then print all tag status, don't just use "default"
- 				if (tagProvided)
- 					tag = tagName;
--				f = stopAfter(
--				    map(jsonOutput ? ba.restoreStatusJSON(db, KeyRef(tag)) : ba.restoreStatus(db, KeyRef(tag)),
--				        [](std::string s) -> Void {
--					        printf("%s\n", s.c_str());
--					        return Void();
--				        }));
-+				f = stopAfter(statusRestore(db, tag, jsonOutput));
- 				break;
- 			default:
- 				throw restore_error();
+ 	bool isTLS = b->knobs.isTLS();
+ 	Reference<IConnection> conn;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2258,35 +2343,30 @@ requested when argument parsing itself failed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reject --system-metadata and drop the system backup range machinery it fed (#143
+## X. Reject starting a backup at a location used by another running backup (#14451)
 
 **RULE**:
-When implementing operations in `fdbbackup/backup.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `documentation/sphinx/source/backups.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7e7611f8`: Reject --system-metadata and drop the system backup range machinery it fed (#14392). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91a45282`: Reject starting a backup at a location used by another running backup (#14451). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbbackup/backup.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/sphinx/source/backups.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-			// The ranges this selected belonged to tenants and blob granules, both since removed (#12583,
-			// #12435), so it can only produce an empty range list and trip the assert in runRestore.
-			fprintf(stderr,
-			        "ERROR: --system-metadata selects no key ranges in this version: the tenant and blob granule "
-			        "system ranges it covered have been removed. Use --user-data, or name ranges with -k.\n");
-			return FDB_EXIT_ERROR;
+The ``start`` subcommand is used to start a backup.  If there is already a backup in progress on the tag, or a backup on another tag is running at the same location (for a blob store URL, the same host, port, bucket, prefix, and backup name, regardless of credentials and other URL parameters), the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
+  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.  The new location cannot be one that a backup on another tag is running at.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-			for (const auto& r : getSystemBackupRanges()) {
-				backupKeys.push_back_deep(backupKeys.arena(), r);
-			}
+The ``start`` subcommand is used to start a backup.  If there is already a backup in progress, the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
+  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7e7611f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91a45282` are properly handled with clean fallback behavior.

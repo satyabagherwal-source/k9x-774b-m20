@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T16:18:36.241Z",
+  "last_updated": "2026-11-09T16:26:06.971Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2842,14 +2842,19 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "7e7611f8",
-      "content_hash": "3f545a33095de7d8792140cc60da784fcb53589087a73a1f04ca19bb0122e8a0",
+      "source_version": "91a45282",
+      "content_hash": "e3df911e483a6e6cfed9835f556d9a2dbfa4865b38ad6f380a978ea519877f3c",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Reject --system-metadata and drop the system backup range machinery it fed (#143",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Reject starting a backup at a location used by another running backup (#14451)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2918,7 +2923,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:03:29.933Z",
+      "verified_at": "2026-11-09T16:26:06.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7629,8 +7634,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "a50d9dbb",
-      "content_hash": "15c351be2c01789d3462662b30551656554d5a9c06792e85f3301893321a5008",
+      "source_version": "e9799367",
+      "content_hash": "ffd2ccd36238b11fd650bfb973f5f56aae1720951ff5dfc59d31bacbbe3d8bd6",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7667,6 +7672,11 @@
         {
           "number": null,
           "title": "gateway-api: scope GAMMA ingestion to the reconciled service",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "maps/lxcmap: use map registry for cilium_lxc map",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7915,7 +7925,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T08:43:54.867Z",
+      "verified_at": "2026-11-09T16:26:06.603Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77691,7 +77701,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
-      "content_hash": "d457e1df6229522eca0379cd8d08e0d64b42fed03e6e7359f31e5b92d4f80f01",
+      "content_hash": "bd6fc8dab6f78b89892319089c9775bc5a08a66e7964d58567ce72370e584322",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "promoted_rules": [
@@ -77716,7 +77726,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:07:16.464Z",
+      "verified_at": "2026-11-09T16:26:04.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

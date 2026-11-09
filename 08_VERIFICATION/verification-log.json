@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-Y3ZG",
-    "timestamp": "2026-11-07T23:18:19.564Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "be6ed8a8d1d6fdb9f2b17fc3e0f111f39d21ae69f81c900e44a2e96be1429585",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-IKI5",
-    "timestamp": "2026-11-07T23:34:14.093Z",
-    "repository": "dubzzz/fast-check",
-    "learningId": "learn-github-dubzzz-fast-check",
-    "contentHash": "f47b38de595f0c6676ad7b4d447fdc5ebc50003fa1f8482573e3fb9230dcd35a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-IPE9",
-    "timestamp": "2026-11-07T23:34:20.433Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "5eee18c8bf6442f5b14aec48b56adb0d141f57d0cea133177a56a1406299c40c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-Z394",
     "timestamp": "2026-11-07T23:47:04.888Z",
     "repository": "faker-js/faker",
@@ -7490,6 +7445,51 @@
     "repository": "rqlite/rqlite",
     "learningId": "learn-github-rqlite-rqlite",
     "contentHash": "47d6ca5e739a8027bb9683646b42ee38fec985728b1ed57bc169c1e616c756ac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-3O1Z",
+    "timestamp": "2026-11-09T16:26:05.063Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "bd6fc8dab6f78b89892319089c9775bc5a08a66e7964d58567ce72370e584322",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-3PCG",
+    "timestamp": "2026-11-09T16:26:06.736Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "ffd2ccd36238b11fd650bfb973f5f56aae1720951ff5dfc59d31bacbbe3d8bd6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-3PLS",
+    "timestamp": "2026-11-09T16:26:07.072Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "e3df911e483a6e6cfed9835f556d9a2dbfa4865b38ad6f380a978ea519877f3c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

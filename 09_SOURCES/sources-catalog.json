@@ -1695,8 +1695,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
     "license": "Open-Source",
-    "contentHash": "d457e1df6229522eca0379cd8d08e0d64b42fed03e6e7359f31e5b92d4f80f01",
-    "lastHarvestedAt": "2026-11-05T17:07:16.598Z",
+    "contentHash": "bd6fc8dab6f78b89892319089c9775bc5a08a66e7964d58567ce72370e584322",
+    "lastHarvestedAt": "2026-11-09T16:26:05.067Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017"
   },
   "tw93-pake": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "a50d9dbb",
+    "sourceVersion": "e9799367",
     "license": "Apache-2.0",
-    "contentHash": "15c351be2c01789d3462662b30551656554d5a9c06792e85f3301893321a5008",
-    "lastHarvestedAt": "2026-11-09T08:43:55.001Z",
+    "contentHash": "ffd2ccd36238b11fd650bfb973f5f56aae1720951ff5dfc59d31bacbbe3d8bd6",
+    "lastHarvestedAt": "2026-11-09T16:26:06.740Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "7e7611f8",
+    "sourceVersion": "91a45282",
     "license": "Apache-2.0",
-    "contentHash": "3f545a33095de7d8792140cc60da784fcb53589087a73a1f04ca19bb0122e8a0",
-    "lastHarvestedAt": "2026-11-07T21:03:30.060Z",
+    "contentHash": "e3df911e483a6e6cfed9835f556d9a2dbfa4865b38ad6f380a978ea519877f3c",
+    "lastHarvestedAt": "2026-11-09T16:26:07.076Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
