@@ -8597,3 +8597,7 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `0297b7e9` | Multi-dimensional audit evidence | 2026-11-09T12:29:45.450Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-09T12:42:11.390Z |
 | `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `7367af35` | Multi-dimensional audit evidence | 2026-11-09T12:42:12.478Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `04649fe7` | Multi-dimensional audit evidence | 2026-11-09T12:49:30.118Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `7d46258d` | Multi-dimensional audit evidence | 2026-11-09T12:49:34.451Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `942b6cfa` | Multi-dimensional audit evidence | 2026-11-09T12:49:37.320Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-09T12:52:43.390Z |

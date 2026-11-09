@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T12:42:12.489Z",
+  "last_updated": "2026-11-09T12:52:43.408Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2141,14 +2141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "content_hash": "4db6aab4e042983330f02856e5757d01aa36e2191396cee5ce685c05ff7c085f",
-      "verified_at": "2026-11-05T14:30:06.888Z",
+      "content_hash": "16da8514e1fc6cd2c9ae53c38efadbc59e0734dfec9c781e76c822651b2cdd94",
+      "verified_at": "2026-11-09T12:52:43.407Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:30:06.888Z"
+      "last_updated": "2026-11-09T12:52:43.407Z"
     },
     "ccfos/nightingale": {
       "repository": "ccfos/nightingale",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "46e27ebd06413587039646ed3903a6deb594a758074d5f629430d0248b5ad4f3",
-      "verified_at": "2026-11-08T16:33:39.114Z",
+      "content_hash": "8339467fd1dada35e40655e7edeb5d1efd26295945e270603fadf2c8bc0b145a",
+      "verified_at": "2026-11-09T12:49:37.329Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:33:39.114Z"
+      "last_updated": "2026-11-09T12:49:37.330Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "889013507fae303c182038bc636d597302463eaf9fbb92c94b89c6e8b7678d7e",
-      "verified_at": "2026-11-06T15:27:36.825Z",
+      "content_hash": "74b9be778f20e07180013cbec7b888f0de52a29bf104536fb13e58bffda877be",
+      "verified_at": "2026-11-09T12:49:34.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T15:27:36.825Z"
+      "last_updated": "2026-11-09T12:49:34.460Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "edffb67202321c7d8fdba92fc33a5e64f30aa2c21f2f27b07fc91a743f2834d5",
-      "verified_at": "2026-11-08T07:15:20.451Z",
+      "content_hash": "960e37fd10091aab83bafd5757051a2e37f533bfe4863994c95e09cdbaa06ecd",
+      "verified_at": "2026-11-09T12:49:30.127Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T07:15:20.451Z"
+      "last_updated": "2026-11-09T12:49:30.127Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",

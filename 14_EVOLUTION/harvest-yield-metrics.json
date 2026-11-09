@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T12:42:12.485Z",
-  "total_cycles_completed": 8553,
-  "total_learnings_persisted": 8553,
-  "total_rules_promoted": 8373,
+  "last_updated": "2026-11-09T12:52:43.403Z",
+  "total_cycles_completed": 8557,
+  "total_learnings_persisted": 8557,
+  "total_rules_promoted": 8378,
   "history": [
-    {
-      "timestamp": "2026-11-08T21:07:00.220Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T21:16:35.282Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T21:16:36.909Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T21:16:42.044Z",
-      "repository": "hmlongco/Factory",
-      "learningId": "learn-github-hmlongco-factory",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T21:24:36.328Z",
       "repository": "biomejs/biome",
@@ -1403,6 +1375,34 @@
       "repository": "react-navigation/react-navigation",
       "learningId": "learn-github-react-navigation-react-navigation",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T12:49:30.124Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T12:49:34.456Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T12:49:37.326Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T12:52:43.403Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `af6a474b`  
+> **Source Version**: `04649fe7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T07:15:19.522Z  
+> **Timestamp**: 2026-11-09T12:49:28.684Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T07:15:19.163Z  
+> **Harvest Timestamp**: 2026-11-09T12:49:26.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24931 stars
+- **Stars / Engagement**: 24938 stars
 
 ---
 
@@ -1332,13 +1332,13 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4399** (2026-11-08): **fix(bump): preserve equals in reference version requirements**
-  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  The bump script now preserves a leading `=` in matching dependency version requirements and writes the full new version. Other matching references continue to use the version with trailing zeros removed.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/6b38c7cf99863c4e7f8b836a0d8969a99f1e43be">6b38c7c</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/bump-equals-other-reference-version">t3/bump-equals-other...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/77429bdb804367fd91849e987f8537d19610373e">77429bd</a></th> <th scope="col">+/-</th> </tr> <tr> <td>85%</td> <td>85%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  
+- **Issue #4404** (2026-11-08): **perf(http): copy large HTTP/1 chunks that would cost more to hold**
+  *Symptoms*: <!-- Thanks for considering contributing actix! --> <!-- Please fill out the following to get your PR reviewed quicker. -->  ## PR Type  <!-- What kind of change does this PR make? --> <!-- Bug Fix / Feature / Refactor / Code Style / Other -->  Perf  ## PR Checklist  <!-- Check your PR fulfills the following items. --> <!-- For draft PRs check the boxes as you complete them. -->  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  <!-- Describe the current and new behavior. --> <!-- Emphasize any breaking changes. -->  The follow-up I promised on #4302. Holding a large chunk until it's written costs more than copying it in three cases:  - A chunk with spare capacity, like the `String` behind `.json()`, keeps all of it until the client has read the body. It now goes through the write buffer, as before #4302. - A stream without vectored writes, like tokio-openssl's, takes the head and the chunk in two writes. It now copies the chunk too, as hyper does. - The emptied write buffer stays allocated beside a held chunk. It's now released until the chunk is written.  Bytes each connection holds with 200 clients that never read, from a counting allocator in a one-worker server, main at 934f037 against this PR:  | Body | main (KB) | this PR
 
-- **Issue #4398** (2026-11-08): **fix(http): preserve framing after bodiless responses**
-  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  The HTTP/1 client now treats informational responses, 204 responses, and 304 responses as bodyless, regardless of `Content-Length` or `Transfer-Encoding` headers. This prevents body decoding from consuming bytes that belong to the next response. Tests cover HTTP/1.0 and HTTP/1.1 framing headers and verify that a following response remains separately decodable. The 304 integration test now confirms that the client reads no body.
+- **Issue #4402** (2026-11-08): **feat(http): add infallible body stream constructors**
+  *Symptoms*: ## PR Type  Feature  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  Add `BodyStream::from_infallible()` and `SizedStream::from_infallible()` constructors for streams of `Bytes` that cannot yield errors. The sized constructor accepts the total byte count. Both constructors skip empty chunks and expose the adapter type as `body::InfallibleStream`.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/ba5c8fb9762eb706008ffc02b8c68a82a6fdd65d">ba5c8fb</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/from-infallible-todo">t3/from-infallible-t...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/b91ff91b943f63b7b2272d387f2befe6b000318c">b91ff91</a></th> <th scope="col">+/-</th> </tr> <tr> <td>85%</td> <td>85%</td> <td>0%</td> </tr> </table>  <details> <summary>View coverage of the 5 most impacted files.</summary>  <table> <tr> <th scope="col">File</th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/ba5c8fb9762eb706008ffc02b8c68a82a6fdd65d">ba5c8fb</a></th> <th scope="col"><span id="cc-branch-ba
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1355,42 +1355,36 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `af6a474b` (2026-11-08)
-**Commit Message**: fix(bump): preserve equals in reference version requirements (#4399)
+### Incident Patch 1: `9fffe2d3` (2026-11-08)
+**Commit Message**: fix(http): send HTTP/2 GOAWAY during graceful shutdown (#4401)
 
-**File**: `scripts/bump` (modified, +8/-4)
-```diff
-@@ -123,13 +123,17 @@ if [ "$UPDATE_REFERENCES" = 'y' ] || [ "$UPDATE_REFERENCES" = 'Y' ]; then
- 
-     for f in $(fd Cargo.toml); do
-         sed -i.bak -E \
--            "s/^(${PACKAGE_NAME} ?= ?\")[^\"]+(\")$/\1${NEW_VERSION_SPEC}\2/g" $f
-+            -e "s/^(${PACKAGE_NAME} ?= ?\")=[^\"]+(\")$/\1=${NEW_VERSION}\2/g" \
-+            -e "s/^(${PACKAGE_NAME} ?= ?\")[^=\"][^\"]*(\")$/\1${NEW_VERSION_SPEC}\2/g" $f
-         sed -i.bak -E \
--            "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")[^\"]+(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
-+            -e "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")=[^\"]+(\".*)$/\1=${NEW_VERSION}\2/g" \
-+            -e "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")[^=\"][^\"]*(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
-         sed -i.bak -E \
--            "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")[^\"]+(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
-+            -e "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")=[^\"]+(\".*)$/\1=${NEW_VERSION}\2/g" \
-+            -e "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")[^=\"][^\"]*(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
-         sed -i.bak -E \
--            "s/^(.*version ?= ?\")[^\"]+(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
-+            -e "s/^(.*version ?= ?\")=[^\"]+(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1=${NEW_VERSION}\2/g" \
-+            -e "s/^(.*version ?= ?\")[^=\"][^\"]*(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
- 
-         # remove backup file
-         rm -f $f.bak
-```
+* feat(http): send GOAWAY to HTTP/2 connections on shutdown and max age
 
----
+The HTTP/2 dispatcher now polls the graceful shutdown signal and calls
+h2's `Connection::graceful_shutdown()`, so in-flight streams finish and
+the connection closes instead of holding workers until the shutdown
+timeout.
 
-### Incident Patch 2: `0e58b426` (2026-11-08)
-**Commit Message**: fix(http): preserve framing after bodiless responses (#4398)
+Add an opt-in `h2_max_connection_age` (with +/-10% jitter) on
+`ServiceConfigBuilder`, `HttpServiceBuilder`, and `HttpServer` that
+triggers the same graceful shutdown, so long-lived HTTP/2 clients behind
+layer 4 load balancers reconnect to new instances.
 
-- Ignore framing headers for informational, 204, and 304 responses
-- Keep subsequent HTTP/1 responses available for decoding
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+(cherry picked from commit 5c7cb0e535786ea164b6ec512d0312e9fab73db3)
+
+* fix(http): limit GOAWAY change to graceful server shutdown
+
+* test(http): move GOAWAY regression into server tests
+
+* docs: remove redundant actix-web GOAWAY changelog entry
+
+* test(http): run GOAWAY server on the Tokio test runtime
+
+---------
+
+Co-authored-by: Mohamed Elsharnouby <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `actix-http/CHANGES.md` (modified, +2/-0)
 ```diff
@@ -1398,122 +1392,350 @@ Observed empirical fixes and code patches:
  
  ## Unreleased
  
-+- Fix HTTP/1 client response framing for informational, 204, and 304 responses to prevent consumption of the next response.
++- Send GOAWAY to HTTP/2 connections during graceful server shutdown and close them once their in-flight streams finish.
 +
- ## 3.20.3
+ ## 3.20.4
  
- - Disable large-window Brotli decompression. [GHSA-7p9w-p5qm-5gc5](https://github.com/actix/actix-web/security/advisories/GHSA-7p9w-p5qm-5gc5)
+ - Fix HTTP/1 client response framing for informational, 204, and 304 responses to prevent consumption of the next response.
 ```
 
-**File**: `actix-http/src/h1/decoder.rs` (modified, +38/-1)
+**File**: `actix-http/src/h2/dispatcher.rs` (modified, +24/-1)
 ```diff
-@@ -438,7 +438,14 @@ impl MessageType for ResponseHead {
-         }
+@@ -23,7 +23,7 @@ use tokio::time::{sleep, Sleep};
  
-         // message payload
--        let decoder = if let PayloadLength::Payload(pl) = length {
-+        let decoder = if (status.is_informational() && status != StatusCode::SWITCHING_PROTOCOLS)
-+            || status == StatusCode::NO_CONTENT
-+            || status == StatusCode::NOT_MODIFIED
-+        {
-+            // RFC 9112 §6.3: these responses end after the headers, regardless of framing.
-+            // Reading a body would consume bytes from the next response.
-+            PayloadType::None
-+        } else if let PayloadLength::Payload(pl) = length {
-             pl
-         } else if status == StatusCode::SWITCHING_PROTOCOLS {
-             // switching protocol or connect
-@@ -1187,6 +1194,36 @@ mod tests {
-         assert_eq!(chunk, PayloadItem::Chunk(Bytes::from_static(b"test data")));
+ use crate::{
+     body::{BodySize, BoxBody, MessageBody},
+-    config::ServiceConfig,
++    config::{GracefulShutdownFuture, ServiceConfig},
+     header::{
+         HeaderName, HeaderValue, CONNECTION, CONTENT_LENGTH, DATE, TRANSFER_ENCODING, UPGRADE,
+     },
+@@ -42,6 +42,7 @@ pin_project! {
+         config: ServiceConfig,
+         peer_addr: Option<net::SocketAddr>,
+         ping_pong: Option<H2PingPong>,
++        graceful_shutdown: Option<GracefulShutdownFuture>,
+         _phantom: PhantomData<B>
      }
+ }
+@@ -70,16 +71,36 @@ where
+             ping_pong: conn.ping_pong().unwrap(),
+         });
  
-+    #[test]
-+    fn test_response_bodiless_status_ignores_framing_headers() {
-+        for version in ["HTTP/1.0", "HTTP/1.1"] {
-+            for status in [100, 102, 103, 199, 204, 304] {
-+                for framing in [
-+                    "",
-+                    "Content-Length: 5\r\n",
-+                    "Transfer-Encoding: chunked\r\n",
-+                ] {
-+                    let head = format!("{version} {status} Response\r\n{framing}\r\n");
-+                    let next = "HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nok";
-+                    let mut buf = BytesMut::from(format!("{head}{next}").as_str());
-+                    let mut reader = MessageDecoder::<ResponseHead>::default();
++        let graceful_shutdown = config.graceful_shutdown();
 +
-+                    let (_, payload) = reader.decode(&mut buf).unwrap().unwrap();
-+                    assert!(
-+                        matches!(payload, PayloadType::None),
-+                        "Request should not be decoded as having a body: {head:?}",
-+                    );
-+                    assert_eq!(&buf[..], next.as_bytes());
+         Self {
+             flow,
+             config,
+             peer_addr,
+             connection: conn,
+             conn_data: conn_data.0.map(Rc::new),
+             ping_pong,
++            graceful_shutdown,
+             _phantom: PhantomData,
+         }
+     }
 +
-+                    // Check second request is decoded separately.
-+                    let (msg, _) = reader.decode(&mut buf).unwrap().unwrap();
-+                    assert_eq!(msg.status, StatusCode::OK);
-+                    assert_eq!(&buf[..], b"ok");
-+                }
-+            }
++    /// Starts a graceful shutdown when the server shutdown signal is ready.
++    fn poll_shutdown(&mut self, cx: &mut Context<'_>) {
++        let shutdown = self
++            .graceful_shutdown
++            .as_mut()
++            .is_some_and(|signal| signal.as_mut().poll(cx).is_ready());
++
++        if shutdown {
++            self.graceful_shutdown = None;
++
++            // Sends GOAWAY, then a second GOAWAY with the last processed stream ID after a PING
++            // round trip. `poll_accept` keeps driving in-flight streams and returns `None` once
++            // they have all finished.
++            self.connection.graceful_shutdown();
 +        }
 +    }
+ }
+ 
+ struct H2PingPong {
+@@ -110,6 +131,8 @@ where
+     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+         let this = self.get_mut();
+ 
++        this.poll_shutdown(cx);
 +
-     #[test]
-     fn hrs_multiple_content_length() {
-         expect_parse_err!(&mut BytesMut::from(
+         loop {
+             match Pin::new(&mut this.connection).poll_accept(cx)? {
+                 Poll::Ready(Some((req, tx))) => {
 ```
 
-**File**: `actix-http/tests/test_server.rs` (modified, +2/-8)
+**File**: `actix-http/tests/test_server.rs` (modified, +70/-0)
 ```diff
-@@ -951,10 +951,6 @@ async fn h1_on_connect() {
- /// https://datatracker.ietf.org/doc/html/rfc7232#section-4.1
- #[actix_rt::test]
- async fn not_modified_spec_h1() {
--    // TODO: this test needing a few seconds to complete reveals some weirdness with either the
--    // dispatcher or the client, though similar hangs occur on other tests in this file, only
--    // succeeding, it seems, because of the keepalive timer
--
-     static CL: header::HeaderName = header::CONTENT_LENGTH;
+@@ -1129,3 +1129,73 @@ async fn h2_flow_control_window_sizes() {
  
-     let mut srv = test_server(|| {
-@@ -1020,10 +1016,8 @@ async fn not_modified_spec_h1() {
-         res.headers().get(&CL),
-         Some(&header::HeaderValue::from_static("4")),
-     );
--    // server does not prevent payload from being sent but clients may choose not to read it
--    // TODO: this is probably a bug in the client, especially since CL header can differ in length
--    // from the body
--    assert!(!srv.load_body(res).await.unwrap().is_empty());
-+    // RFC 9112 §6.3: the client must not read a body for a 304 response.
-+    assert!(srv.load_body(res).await.unwrap().is_empty());
- 
-     // TODO: add stream response tests
- 
+     srv.stop().await;
+ }
++
++#[cfg(feature = "http2")]
++#[tokio::test]
++async fn h2_graceful_shutdown_sends_goaway() {
++    use actix_web::{web, App, HttpResponse, HttpServer};
++    use tokio::sync::Notify;
++
++    let started = Arc::new(Notify::new());
++    let handler_started = started.clone();
++    let listener = net::TcpListener::bind("127.0.0.1:0").unwrap();
++    let addr = listener.local_addr().unwrap();
++
++    let server = HttpServer::new(move || {
++        App::new()
++            .app_data(web::Data::from(handler_started.clone()))
++            .route(
++                "/slow",
++                web::get().to(|started: web::Data<Notify>| async move {
++                    started.notify_one();
++                    sleep(Duration::from_millis(500)).await;
++                    HttpResponse::Ok().finish()
++                }),
++            )
++    })
++    .workers(1)
++    .disable_signals()
++    .shutdown_timeout(30)
++    .listen_auto_h2c(listener)
++    .unwrap()
++    .run();
++
++    let handle = server.handle();
++    let server = tokio::spawn(server);
++    let stream = tokio::net::TcpStream::connect(addr).await.unwrap();
++    let (client, conn) = h2::client::handshake(stream).await.unwrap();
++    let conn = tokio::spawn(conn);
++
++    let mut client = client.ready().await.unwrap();
++    let request = http::Request::get("http://localhost/slow")
++        .body(())
++        .unwrap();
++    let (slow, _) = client.send_request(request, true).unwrap();
++    started.notified().await;
++
++    let stopping = Instant::now();
++    let stop = tokio::spawn(async move { handle.stop(true).await });
++
++    assert_eq!(
++        slow.await.unwrap().status(),
++        200,
++        "in-flight stream failed on shutdown"
++    );
++
++    conn.await.unwrap().unwrap();
++    stop.await.unwrap();
++    let stopped_after = stopping.elapsed();
++
++    assert!(
++        client.ready().await.is_err(),
++        "closed connection accepted a new stream"
++    );
++
++    server.await.unwrap().unwrap();
++
++    // Without GOAWAY the client keeps the connection open and actix waits the full 30s.
++    assert!(
++        stopped_after < Duration::from_secs(5),
++        "shutdown waited for the timeout: {stopped_after:?}"
++    );
++}
 ```
 
 ---
 
-### Incident Patch 3: `832fc0b2` (2026-11-08)
-**Commit Message**: chore: remove fmt requirement from template since CI catches this anyway
+### Incident Patch 2: `934f0374` (2026-11-08)
+**Commit Message**: fix: enable TCP_NODELAY by default (#4395)
 
-**File**: `.github/PULL_REQUEST_TEMPLATE.md` (modified, +0/-1)
+**File**: `actix-http/CHANGES.md` (modified, +1/-0)
 ```diff
-@@ -16,7 +16,6 @@ PR_TYPE
- - [ ] Tests for the changes have been added / updated.
- - [ ] Documentation comments have been added / updated.
- - [ ] A changelog entry has been made for the appropriate packages.
--- [ ] Format code with the latest stable rustfmt.
- - [ ] (Team) Label with affected crates and semver status.
+@@ -2,6 +2,7 @@
  
- ## Overview
+ ## Unreleased
+ 
++- Enable `TCP_NODELAY` by default on accepted TCP connections.
+ - Add `BodyStream::from_infallible()` constructor.
+ - Add `SizedStream::from_infallible()` constructor.
+ - Write large fixed-length response bodies from their own buffer instead of copying them into the connection's write buffer, to lower peak memory while they are written.
+```
+
+**File**: `actix-http/src/builder.rs` (modified, +3/-1)
+```diff
+@@ -48,7 +48,7 @@ where
+             keep_alive: KeepAlive::default(),
+             client_request_timeout: Duration::from_secs(5),
+             client_disconnect_timeout: Duration::ZERO,
+-            tcp_nodelay: None,
++            tcp_nodelay: Some(true),
+             secure: false,
+             local_addr: None,
+             h1_allow_half_closed: true,
+@@ -135,6 +135,8 @@ where
+     }
+ 
+     /// Sets `TCP_NODELAY` value on accepted TCP connections.
++    ///
++    /// Enabled by default.
+     pub fn tcp_nodelay(mut self, nodelay: bool) -> Self {
+         self.tcp_nodelay = Some(nodelay);
+         self
+```
+
+**File**: `actix-http/src/config.rs` (modified, +4/-2)
+```diff
+@@ -106,6 +106,8 @@ impl ServiceConfigBuilder {
+     }
+ 
+     /// Sets `TCP_NODELAY` preference for accepted TCP connections.
++    ///
++    /// Defaults to `Some(true)`. Use `None` to keep the socket setting unchanged.
+     pub fn tcp_nodelay(mut self, nodelay: Option<bool>) -> Self {
+         self.inner.tcp_nodelay = nodelay;
+         self
+@@ -204,7 +206,7 @@ impl Default for Inner {
+             client_disconnect_timeout: Duration::ZERO,
+             secure: false,
+             local_addr: None,
+-            tcp_nodelay: None,
++            tcp_nodelay: Some(true),
+             date_service: DateService::new(),
+             h1_allow_half_closed: true,
+             h1_write_buffer_size: DEFAULT_H1_WRITE_BUFFER_SIZE,
+@@ -230,7 +232,7 @@ impl ServiceConfig {
+             client_disconnect_timeout,
+             secure,
+             local_addr,
+-            tcp_nodelay: None,
++            tcp_nodelay: Some(true),
+             date_service: DateService::new(),
+             h1_allow_half_closed: true,
+             h1_write_buffer_size: DEFAULT_H1_WRITE_BUFFER_SIZE,
+```
+
+**File**: `actix-web/CHANGES.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## Unreleased
+ 
++- Enable `TCP_NODELAY` by default on accepted TCP connections.
++
+ ## 4.18.2
+ 
+ - Increase the default form payload limit to 32 KiB.
+```
+
+**File**: `actix-web/src/server.rs` (modified, +2/-3)
+```diff
+@@ -123,7 +123,7 @@ where
+             config: Arc::new(Mutex::new(Config {
+                 host: None,
+                 keep_alive: KeepAlive::default(),
+-                tcp_nodelay: None,
++                tcp_nodelay: Some(true),
+                 client_request_timeout: Duration::from_secs(5),
+                 client_disconnect_timeout: Duration::from_secs(1),
+                 h1_allow_half_closed: true,
+@@ -170,8 +170,7 @@ where
+ 
+     /// Sets `TCP_NODELAY` value on accepted TCP connections.
+     ///
+-    /// By default, accepted TCP connections keep the OS default.
+-    /// This method overrides that behavior for all accepted TCP connections.
++    /// Enabled by default to send small writes without waiting for an acknowledgement.
+     pub fn tcp_nodelay(self, enabled: bool) -> Self {
+         self.config.lock().unwrap().tcp_nodelay = Some(enabled);
+         self
+```
+
+**File**: `actix-web/tests/test_httpserver.rs` (modified, +25/-14)
+```diff
+@@ -444,15 +444,15 @@ async fn test_start_ssl() {
+     srv.stop(false).await;
+ }
+ 
+-async fn assert_tcp_nodelay_config(nodelay: bool) {
++async fn assert_tcp_nodelay_config(nodelay: Option<bool>) {
+     let addr = actix_test::unused_addr();
+     let (tx, rx) = mpsc::channel();
+ 
+     thread::spawn(move || {
+         actix_rt::System::new()
+             .block_on(async move {
+                 let srv = HttpServer::new(move || {
+-                    let expected = nodelay;
++                    let expected = nodelay.unwrap_or(true);
+ 
+                     App::new().service(web::resource("/").route(web::to(
+                         move |req: HttpRequest| {
+@@ -469,16 +469,22 @@ async fn assert_tcp_nodelay_config(nodelay: bool) {
+                         },
+                     )))
+                 })
+-                .workers(1)
+-                .tcp_nodelay(nodelay)
+-                .on_connect(move |io, ext| {
+-                    if let Some(io) = io.downcast_ref::<actix_web::rt::net::TcpStream>() {
+-                        ext.insert(io.nodelay().unwrap());
+-                    }
+-                })
+-                .bind(format!("{}", addr))
+-                .unwrap()
+-                .run();
++                .workers(1);
++
++                let srv = match nodelay {
++                    Some(enabled) => srv.tcp_nodelay(enabled),
++                    None => srv,
++                };
++
++                let srv = srv
++                    .on_connect(move |io, ext| {
++                        if let Some(io) = io.downcast_ref::<actix_web::rt::net::TcpStream>() {
++                            ext.insert(io.nodelay().unwrap());
++                        }
++                    })
++                    .bind(format!("{}", addr))
++                    .unwrap()
++                    .run();
+ 
+                 tx.send(srv.handle()).unwrap();
+                 srv.await
+@@ -500,12 +506,12 @@ async fn assert_tcp_nodelay_config(nodelay: bool) {
+ 
+ #[actix_rt::test]
+ async fn test_tcp_nodelay_enabled() {
+-    assert_tcp_nodelay_config(true).await;
++    assert_tcp_nodelay_config(Some(true)).await;
+ }
+ 
+ #[actix_rt::test]
+ async fn test_tcp_nodelay_disabled() {
+-    assert_tcp_nodelay_config(false).await;
++    assert_tcp_nodelay_config(Some(false)).await;
+ }
+ 
+ #[actix_rt::test]
+@@ -552,3 +558,8 @@ async fn test_dual_stack_ipv6_on_windows() {
+ 
+     srv.stop(false).await;
+ }
++
++#[actix_rt::test]
++async fn test_tcp_nodelay_default() {
++    assert_tcp_nodelay_config(None).await;
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4404** (2026-11-08): perf(http): copy large HTTP/1 chunks that would cost more to hold (@johncarmack1984)
+- **PR #4402** (2026-11-08): feat(http): add infallible body stream constructors (@robjtede)
+- **PR #4401** (2026-11-08): fix(http): send HTTP/2 GOAWAY during graceful shutdown (@robjtede)
+- **PR #4400** (2026-11-09): feat: enable automatic h2c detection by default (@robjtede)
 - **PR #4399** (2026-11-08): fix(bump): preserve equals in reference version requirements (@robjtede)
 - **PR #4398** (2026-11-08): fix(http): preserve framing after bodiless responses (@robjtede)
-- **PR #4397** (2026-11-08): feat(multipart): limit parts per form (@robjtede)
-- **PR #4391** (2026-11-06): fix(errors): normalize error and panic messages (@robjtede)
-- **PR #4390** (2026-11-06): docs(web): hyphenate URL-encoded terminology (@robjtede)
-- **PR #4389** (2026-11-06): chore: import pin_project macro consistently (@robjtede)
 
 ---
 
@@ -1533,38 +1755,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump): preserve equals in reference version requirements (#4399)
+## X. http): send HTTP/2 GOAWAY during graceful shutdown (#4401)
 
 **RULE**:
-When implementing operations in `scripts/bump`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `actix-http/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `af6a474b`: bump): preserve equals in reference version requirements (#4399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9fffe2d3`: http): send HTTP/2 GOAWAY during graceful shutdown (#4401). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/bump`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-http/CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            -e "s/^(${PACKAGE_NAME} ?= ?\")=[^\"]+(\")$/\1=${NEW_VERSION}\2/g" \
-            -e "s/^(${PACKAGE_NAME} ?= ?\")[^=\"][^\"]*(\")$/\1${NEW_VERSION_SPEC}\2/g" $f
-            -e "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")=[^\"]+(\".*)$/\1=${NEW_VERSION}\2/g" \
-            -e "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")[^=\"][^\"]*(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
-            -e "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")=[^\"]+(\".*)$/\1=${NEW_VERSION}\2/g" \
-            -e "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")[^=\"][^\"]*(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
-            -e "s/^(.*version ?= ?\")=[^\"]+(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1=${NEW_VERSION}\2/g" \
-            -e "s/^(.*version ?= ?\")[^=\"][^\"]*(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
+- Send GOAWAY to HTTP/2 connections during graceful server shutdown and close them once their in-flight streams finish.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            "s/^(${PACKAGE_NAME} ?= ?\")[^\"]+(\")$/\1${NEW_VERSION_SPEC}\2/g" $f
-            "s/^(${PACKAGE_NAME} ?=.*version ?= ?\")[^\"]+(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
-            "s/^(.*package ?= ?\"${PACKAGE_NAME}\".*version ?= ?\")[^\"]+(\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
-            "s/^(.*version ?= ?\")[^\"]+(\".*package ?= ?\"${PACKAGE_NAME}\".*)$/\1${NEW_VERSION_SPEC}\2/g" $f
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `af6a474b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9fffe2d3` are properly handled with clean fallback behavior.

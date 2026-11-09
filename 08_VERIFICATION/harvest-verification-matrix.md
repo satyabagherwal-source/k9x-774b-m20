@@ -8588,3 +8588,7 @@
 | `CYCLE-20261109-NQZR` | `2026-11-09T12:29:45.447Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fc454b91...`) |
 | `CYCLE-20261109-3QKA` | `2026-11-09T12:42:11.386Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 2007, Rule null` | Yes (`4c854bb4...`) |
 | `CYCLE-20261109-3REI` | `2026-11-09T12:42:12.474Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`174bfa9f...`) |
+| `CYCLE-20261109-D536` | `2026-11-09T12:49:30.114Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`960e37fd...`) |
+| `CYCLE-20261109-D8FJ` | `2026-11-09T12:49:34.447Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`74b9be77...`) |
+| `CYCLE-20261109-DAN8` | `2026-11-09T12:49:37.316Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8339467f...`) |
+| `CYCLE-20261109-HA7U` | `2026-11-09T12:52:43.386Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`16da8514...`) |

@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "4db6aab4e042983330f02856e5757d01aa36e2191396cee5ce685c05ff7c085f",
-    "lastHarvestedAt": "2026-11-05T14:30:06.871Z",
+    "contentHash": "16da8514e1fc6cd2c9ae53c38efadbc59e0734dfec9c781e76c822651b2cdd94",
+    "lastHarvestedAt": "2026-11-09T12:52:43.390Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "eb34c40c",
+    "sourceVersion": "942b6cfa",
     "license": "Apache-2.0",
-    "contentHash": "46e27ebd06413587039646ed3903a6deb594a758074d5f629430d0248b5ad4f3",
-    "lastHarvestedAt": "2026-11-08T16:33:39.103Z",
+    "contentHash": "8339467fd1dada35e40655e7edeb5d1efd26295945e270603fadf2c8bc0b145a",
+    "lastHarvestedAt": "2026-11-09T12:49:37.320Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "487676ec",
+    "sourceVersion": "7d46258d",
     "license": "Apache-2.0",
-    "contentHash": "889013507fae303c182038bc636d597302463eaf9fbb92c94b89c6e8b7678d7e",
-    "lastHarvestedAt": "2026-11-06T15:27:36.818Z",
+    "contentHash": "74b9be778f20e07180013cbec7b888f0de52a29bf104536fb13e58bffda877be",
+    "lastHarvestedAt": "2026-11-09T12:49:34.451Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "af6a474b",
+    "sourceVersion": "04649fe7",
     "license": "Apache-2.0",
-    "contentHash": "edffb67202321c7d8fdba92fc33a5e64f30aa2c21f2f27b07fc91a743f2834d5",
-    "lastHarvestedAt": "2026-11-08T07:15:20.438Z",
+    "contentHash": "960e37fd10091aab83bafd5757051a2e37f533bfe4863994c95e09cdbaa06ecd",
+    "lastHarvestedAt": "2026-11-09T12:49:30.118Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {

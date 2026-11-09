@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T12:42:12.344Z",
+  "last_updated": "2026-11-09T12:52:43.285Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -537,8 +537,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "af6a474b",
-      "content_hash": "edffb67202321c7d8fdba92fc33a5e64f30aa2c21f2f27b07fc91a743f2834d5",
+      "source_version": "04649fe7",
+      "content_hash": "960e37fd10091aab83bafd5757051a2e37f533bfe4863994c95e09cdbaa06ecd",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -550,6 +550,11 @@
         {
           "number": null,
           "title": "bump): preserve equals in reference version requirements (#4399)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "http): send HTTP/2 GOAWAY during graceful shutdown (#4401)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -603,7 +608,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T07:15:20.360Z",
+      "verified_at": "2026-11-09T12:49:29.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35046,8 +35051,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "eb34c40c",
-      "content_hash": "46e27ebd06413587039646ed3903a6deb594a758074d5f629430d0248b5ad4f3",
+      "source_version": "942b6cfa",
+      "content_hash": "8339467fd1dada35e40655e7edeb5d1efd26295945e270603fadf2c8bc0b145a",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -35069,6 +35074,11 @@
         {
           "number": null,
           "title": "plugins/wasm-go/extensions/frontend-gray/util/utils.go:337 - nil rule dereferenc",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): bump istio to pick up SRDS gateway cache fix (#5323)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -35107,7 +35117,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:33:38.971Z",
+      "verified_at": "2026-11-09T12:49:37.187Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52590,14 +52600,19 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "487676ec",
-      "content_hash": "889013507fae303c182038bc636d597302463eaf9fbb92c94b89c6e8b7678d7e",
+      "source_version": "7d46258d",
+      "content_hash": "74b9be778f20e07180013cbec7b888f0de52a29bf104536fb13e58bffda877be",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "CouchDB replication crash on error responses (#9406)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Docs: load the search modal and cookie banner CSS on demand (#9431)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52641,7 +52656,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:27:36.734Z",
+      "verified_at": "2026-11-09T12:49:34.319Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75771,10 +75786,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "4db6aab4e042983330f02856e5757d01aa36e2191396cee5ce685c05ff7c085f",
+      "content_hash": "16da8514e1fc6cd2c9ae53c38efadbc59e0734dfec9c781e76c822651b2cdd94",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Linear-Attention/Full-Attention Interleaved KV-Cache Boundary Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Slice Canvas MRoPE Coordinate Orthogonality Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 582,
           "title": "Consistent Token‑ID Mapping Across Modalities",
@@ -75946,7 +75971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:30:06.770Z",
+      "verified_at": "2026-11-09T12:52:43.260Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
