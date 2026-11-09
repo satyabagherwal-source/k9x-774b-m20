@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T07:55:25.959Z",
-  "total_cycles_completed": 8513,
-  "total_learnings_persisted": 8513,
-  "total_rules_promoted": 8313,
+  "last_updated": "2026-11-09T08:16:28.070Z",
+  "total_cycles_completed": 8515,
+  "total_learnings_persisted": 8515,
+  "total_rules_promoted": 8319,
   "history": [
-    {
-      "timestamp": "2026-11-08T17:59:03.147Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T17:59:05.542Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T18:11:20.815Z",
       "repository": "medialab/xan",
@@ -1403,6 +1389,20 @@
       "repository": "gardener/gardener",
       "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T08:07:23.882Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T08:16:28.070Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -8557,3 +8557,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-09T07:55:16.113Z |
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `d468bb8e` | Multi-dimensional audit evidence | 2026-11-09T07:55:22.848Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `dab1739d` | Multi-dimensional audit evidence | 2026-11-09T07:55:25.955Z |
+| `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-09T08:07:23.867Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `52915f0d` | Multi-dimensional audit evidence | 2026-11-09T08:16:28.055Z |

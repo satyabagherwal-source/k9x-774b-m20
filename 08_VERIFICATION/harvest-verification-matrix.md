@@ -8548,3 +8548,5 @@
 | `CYCLE-20261109-UR66` | `2026-11-09T07:55:16.110Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`68e66098...`) |
 | `CYCLE-20261109-UWD9` | `2026-11-09T07:55:22.845Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b1df17b3...`) |
 | `CYCLE-20261109-UYRK` | `2026-11-09T07:55:25.952Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f926dad0...`) |
+| `CYCLE-20261109-ACPK` | `2026-11-09T08:07:23.864Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`25508992...`) |
+| `CYCLE-20261109-M0LW` | `2026-11-09T08:16:28.052Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`8e333507...`) |

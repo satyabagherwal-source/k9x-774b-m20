@@ -1175,8 +1175,8 @@
     "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceVersion": "hf-conwayresearch-underdog-saluki-27b-1.0",
     "license": "Open-Source",
-    "contentHash": "cedca00f58d098d165bc70a6051aa9d4c249f9ff078a1202c3453f43040ecfc2",
-    "lastHarvestedAt": "2026-11-05T12:50:51.867Z",
+    "contentHash": "25508992e43797a44aad6fbd338871c7af2b563cb6185ebaaf8f4ff25897b879",
+    "lastHarvestedAt": "2026-11-09T08:07:23.867Z",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0"
   },
   "hf-google-gemma-4-26b-a4b-it": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "e81a7d08",
+    "sourceVersion": "52915f0d",
     "license": "MIT",
-    "contentHash": "238f4e4a066e7eb0276f27cceab3624e76e46898aed1494bad9a795c74646b29",
-    "lastHarvestedAt": "2026-11-06T13:34:51.817Z",
+    "contentHash": "8e333507852436d72901cc9e07fb02d3587a8bbce2d81b10f267a606aeecc4df",
+    "lastHarvestedAt": "2026-11-09T08:16:28.055Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

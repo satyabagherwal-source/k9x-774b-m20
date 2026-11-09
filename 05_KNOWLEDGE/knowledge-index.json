@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T07:55:25.892Z",
+  "last_updated": "2026-11-09T08:16:27.776Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14109,8 +14109,8 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "e81a7d08",
-      "content_hash": "238f4e4a066e7eb0276f27cceab3624e76e46898aed1494bad9a795c74646b29",
+      "source_version": "52915f0d",
+      "content_hash": "8e333507852436d72901cc9e07fb02d3587a8bbce2d81b10f267a606aeecc4df",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
@@ -14118,6 +14118,21 @@
           "number": null,
           "title": "cli): Stop OSC 7501 program status from failing commands when it throws (#53057)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Zero-Blocking Serial Queue Cross-Dispatch Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Arity SQL IN-Clause Parameter Binding Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Thread-Safe Snapshotting Before Serialized Collection Mutation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 3060,
@@ -14155,7 +14170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:34:51.700Z",
+      "verified_at": "2026-11-09T08:16:27.746Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24262,10 +24277,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "cedca00f58d098d165bc70a6051aa9d4c249f9ff078a1202c3453f43040ecfc2",
+      "content_hash": "25508992e43797a44aad6fbd338871c7af2b563cb6185ebaaf8f4ff25897b879",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Heterogeneous Precision Allocation Invariant for Extreme Quantization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dual-Engine Template Separation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "FlashAttention Memory Clamping Invariant for Deep Context",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 503,
           "title": "Decoupled Modality Loading for Memory Optimization",
@@ -24378,7 +24408,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-11-05T12:50:51.756Z",
+      "verified_at": "2026-11-09T08:07:23.752Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

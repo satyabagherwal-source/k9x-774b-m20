@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T07:55:25.962Z",
+  "last_updated": "2026-11-09T08:16:28.074Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1805,14 +1805,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "content_hash": "cedca00f58d098d165bc70a6051aa9d4c249f9ff078a1202c3453f43040ecfc2",
-      "verified_at": "2026-11-05T12:50:51.875Z",
+      "content_hash": "25508992e43797a44aad6fbd338871c7af2b563cb6185ebaaf8f4ff25897b879",
+      "verified_at": "2026-11-09T08:07:23.885Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:50:51.875Z"
+      "last_updated": "2026-11-09T08:07:23.885Z"
     },
     "Qwen/Qwen-Image-2.1-Turbo": {
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -15516,14 +15516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-expo-expo",
-      "content_hash": "238f4e4a066e7eb0276f27cceab3624e76e46898aed1494bad9a795c74646b29",
-      "verified_at": "2026-11-06T13:34:51.835Z",
+      "content_hash": "8e333507852436d72901cc9e07fb02d3587a8bbce2d81b10f267a606aeecc4df",
+      "verified_at": "2026-11-09T08:16:28.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:34:51.835Z"
+      "last_updated": "2026-11-09T08:16:28.073Z"
     },
     "vercel/swr": {
       "repository": "vercel/swr",

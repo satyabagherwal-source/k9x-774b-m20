@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-MC8Z",
-    "timestamp": "2026-11-07T18:57:13.859Z",
-    "repository": "Kong/kubernetes-ingress-controller",
-    "learningId": "learn-github-kong-kubernetes-ingress-controller",
-    "contentHash": "fa4949a8cee5c0ceb5864cd296a17b5688ac07c91a27ea6549db3a49d78d5e49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-MG35",
-    "timestamp": "2026-11-07T18:57:18.833Z",
-    "repository": "skyzh/mini-lsm",
-    "learningId": "learn-github-skyzh-mini-lsm",
-    "contentHash": "7a9fe6d2b099328049642815a1501125601e661ccbd60c787db28dfe7f278812",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-288Z",
     "timestamp": "2026-11-07T19:09:35.171Z",
     "repository": "open-ani/animeko",
@@ -7492,6 +7462,36 @@
     "contentHash": "f926dad0f6f09f1fc3ad33856b4a318e5fb9b1fa041f8b1663f14324ff6ab5b9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-ACPK",
+    "timestamp": "2026-11-09T08:07:23.864Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "25508992e43797a44aad6fbd338871c7af2b563cb6185ebaaf8f4ff25897b879",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-M0LW",
+    "timestamp": "2026-11-09T08:16:28.052Z",
+    "repository": "expo/expo",
+    "learningId": "learn-github-expo-expo",
+    "contentHash": "8e333507852436d72901cc9e07fb02d3587a8bbce2d81b10f267a606aeecc4df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
