@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T05:07:09.018Z",
+  "last_updated": "2026-11-09T05:19:09.235Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1745,14 +1745,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "content_hash": "ae0ec32799d4934f4879cf97bc8201bed4d4a99e4763922efa1bbb4f347cb3a6",
-      "verified_at": "2026-11-05T11:09:32.419Z",
+      "content_hash": "dbed6810991d3fed6003cb2fb9e0b6392abb730e2bb4e4587da6d0a2de62f79b",
+      "verified_at": "2026-11-09T05:19:09.235Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:09:32.419Z"
+      "last_updated": "2026-11-09T05:19:09.235Z"
     },
     "jialinyyzz/humanizer": {
       "repository": "jialinyyzz/humanizer",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "0f2fc6393568cbb2a6b84fb3bcbacf11545f5d16e803c98520d84ba8fda93aca",
-      "verified_at": "2026-11-08T03:43:15.079Z",
+      "content_hash": "5026c055df172b98d0fb5aa1c51d4ef7881e0a03cb8cf5cdb3ccb7ddd70b0137",
+      "verified_at": "2026-11-09T05:13:58.038Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:43:15.079Z"
+      "last_updated": "2026-11-09T05:13:58.038Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",

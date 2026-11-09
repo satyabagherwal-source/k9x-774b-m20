@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T04:10:28.559Z",
+  "last_updated": "2026-11-09T05:19:09.230Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4292,6 +4292,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-wcandillon-react-native-skia"
+    },
+    {
+      "id": "CD-9ZN2",
+      "directive_title": "Quantization-Induced Drift Tolerance Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "mudler/locate-anything.cpp-gguf",
+      "source_commit": "hf-mudler-lo",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf"
     }
   ]
 }

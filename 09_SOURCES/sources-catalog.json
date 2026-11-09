@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "ae0ec32799d4934f4879cf97bc8201bed4d4a99e4763922efa1bbb4f347cb3a6",
-    "lastHarvestedAt": "2026-11-05T11:09:32.410Z",
+    "contentHash": "dbed6810991d3fed6003cb2fb9e0b6392abb730e2bb4e4587da6d0a2de62f79b",
+    "lastHarvestedAt": "2026-11-09T05:19:09.224Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "35c29f4a",
+    "sourceVersion": "c0010d32",
     "license": "Apache-2.0",
-    "contentHash": "0f2fc6393568cbb2a6b84fb3bcbacf11545f5d16e803c98520d84ba8fda93aca",
-    "lastHarvestedAt": "2026-11-08T03:43:15.069Z",
+    "contentHash": "5026c055df172b98d0fb5aa1c51d4ef7881e0a03cb8cf5cdb3ccb7ddd70b0137",
+    "lastHarvestedAt": "2026-11-09T05:13:58.023Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {

@@ -8516,3 +8516,5 @@
 | `CYCLE-20261109-KV0P` | `2026-11-09T04:59:36.841Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`007f6508...`) |
 | `CYCLE-20261109-UFOT` | `2026-11-09T05:07:03.533Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`a8205af3...`) |
 | `CYCLE-20261109-UJWJ` | `2026-11-09T05:07:08.995Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ffad54f6...`) |
+| `CYCLE-20261109-3BIC` | `2026-11-09T05:13:58.020Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7098` | Yes (`5026c055...`) |
+| `CYCLE-20261109-9ZMS` | `2026-11-09T05:19:09.220Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`dbed6810...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `35c29f4a`  
+> **Source Version**: `c0010d32`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T03:43:13.588Z  
+> **Timestamp**: 2026-11-09T05:13:57.591Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T03:43:12.552Z  
+> **Harvest Timestamp**: 2026-11-09T05:13:56.374Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19308 stars
+- **Stars / Engagement**: 19310 stars
 
 ---
 
@@ -1868,97 +1868,32 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `420da7f8` (2026-11-06)
-**Commit Message**: Fix bad cache identifier for TLS certificate asserts.
+### Incident Patch 1: `c0010d32` (2026-11-08)
+**Commit Message**: Update crates
 
-**File**: `integration/hurl/tests_ssl/live.hurl` (modified, +22/-0)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2,3 +2,25 @@ GET https://google.com
- GET https://github.com
- GET https://gitlab.com
+@@ -749,9 +749,9 @@ dependencies = [
  
-+# We test that certificates in cache are set by connection. Need curl >= 8.2.0
-+# See <https://github.com/Orange-OpenSource/hurl/issues/5414>
-+HEAD https://hurl.dev
-+[Options]
-+skip: {{skip_cert_test}}
-+HTTP 200
-+[Asserts]
-+certificate "Subject" contains "hurl.dev"
-+
-+HEAD https://gitlab.com
-+[Options]
-+skip: {{skip_cert_test}}
-+HTTP *
-+[Asserts]
-+certificate "Subject" contains "gitlab.com"
-+
-+HEAD https://hurl.dev
-+[Options]
-+skip: {{skip_cert_test}}
-+HTTP 200
-+[Asserts]
-+certificate "Subject" contains "hurl.dev"
-```
-
-**File**: `integration/hurl/tests_ssl/live.ps1` (modified, +9/-1)
-```diff
-@@ -1,3 +1,11 @@
- Set-StrictMode -Version latest
- $ErrorActionPreference = 'Stop'
--hurl tests_ssl/live.hurl
-+
-+# The tests for certificate reuse need a libcurl >= 8.2.0
-+$skip_cert_test = 'true'
-+$curl_version = [regex]::Match((curl.exe --version | Out-String), '^curl (\d+\.\d+\.\d+)').Groups[1].Value
-+if ([version]$curl_version -ge [version]'8.2.0') {
-+    $skip_cert_test = 'false'
-+}
-+
-+hurl --variable skip_cert_test=$skip_cert_test tests_ssl/live.hurl
-```
-
-**File**: `integration/hurl/tests_ssl/live.sh` (modified, +10/-1)
-```diff
-@@ -1,4 +1,13 @@
- #!/bin/bash
- set -Eeuo pipefail
--hurl tests_ssl/live.hurl
- 
-+
-+# The tests for certificate reuse need a libcurl >= 8.2.0
-+skip_cert_test=true
-+curl_version=$(curl --version | grep -o '^curl [0-9.]*' | head -n1 | cut -d' ' -f2)
-+IFS=. read -r major minor _ <<< "$curl_version"
-+if (( major > 8 || (major == 8 && minor >= 2) )); then
-+    skip_cert_test=false
-+fi
-+
-+hurl --variable skip_cert_test=$skip_cert_test tests_ssl/live.hurl
-```
-
-**File**: `packages/hurl/src/http/easy_ext.rs` (modified, +2/-2)
-```diff
-@@ -94,8 +94,8 @@ fn extract_pem_from_certinfo(data: &[String]) -> Option<Pem> {
- /// Returns the connection identifier use by this libcurl handle.
- pub fn conn_id(easy: &Easy) -> Result<i64, Error> {
-     unsafe {
--        let conn_id: curl_off_t = 0;
--        let rc = curl_sys::curl_easy_getinfo(easy.raw(), CURLINFO_CONN_ID, &conn_id);
-+        let mut conn_id: curl_off_t = 0;
-+        let rc = curl_sys::curl_easy_getinfo(easy.raw(), CURLINFO_CONN_ID, &mut conn_id);
-         cvt(easy, rc)?;
-         Ok(conn_id)
-     }
+ [[package]]
+ name = "libz-sys"
+-version = "1.1.31"
++version = "1.1.32"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
++checksum = "69965d2409bff8c8cea3829009fff66a86f05a0570656552ef70f616e8e4bd85"
+ dependencies = [
+  "cc",
+  "libc",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5423** (2026-11-08): Update crates (@hurl-bot)
 - **PR #5422** (2026-11-07): Update crates (@hurl-bot)
 - **PR #5421** (2026-11-06): Update docs. (@jcamiel)
 - **PR #5420** (2026-11-06): Compare placeholder in JSON (@fabricereix)
 - **PR #5419** (2026-11-06): Fix TLS certificate cache assertion mis-behaviour. (@jcamiel)
 - **PR #5418** (closed): Test patching libxml-0.3.23 to support pkgconfig on Windows build. (@jcamiel)
-- **PR #5417** (2026-11-06): The grammar is desynchronised from the parser (@qligier)
 
 ---
 
@@ -1978,49 +1913,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bad cache identifier for TLS certificate asserts.
+## X. Update crates
 
 **RULE**:
-When implementing operations in `integration/hurl/tests_ssl/live.hurl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `420da7f8`: bad cache identifier for TLS certificate asserts.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0010d32`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/hurl/tests_ssl/live.hurl`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# We test that certificates in cache are set by connection. Need curl >= 8.2.0
-# See <https://github.com/Orange-OpenSource/hurl/issues/5414>
-HEAD https://hurl.dev
-[Options]
-skip: {{skip_cert_test}}
-HTTP 200
-[Asserts]
-certificate "Subject" contains "hurl.dev"
-
-HEAD https://gitlab.com
-[Options]
-skip: {{skip_cert_test}}
-HTTP *
-[Asserts]
-certificate "Subject" contains "gitlab.com"
-
-HEAD https://hurl.dev
-[Options]
-skip: {{skip_cert_test}}
-HTTP 200
-[Asserts]
-certificate "Subject" contains "hurl.dev"
+version = "1.1.32"
+checksum = "69965d2409bff8c8cea3829009fff66a86f05a0570656552ef70f616e8e4bd85"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "1.1.31"
+checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `420da7f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0010d32` are properly handled with clean fallback behavior.

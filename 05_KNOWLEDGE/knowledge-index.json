@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T05:07:08.908Z",
+  "last_updated": "2026-11-09T05:19:09.083Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29390,10 +29390,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "ae0ec32799d4934f4879cf97bc8201bed4d4a99e4763922efa1bbb4f347cb3a6",
+      "content_hash": "dbed6810991d3fed6003cb2fb9e0b6392abb730e2bb4e4587da6d0a2de62f79b",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Precision Parity Invariant for Multi-Modal Detection Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "The \"No-Python\" Inference Boundary Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 677,
           "title": "Selective Precision Preservation in Hybrid Vision-Language Models",
@@ -29502,7 +29512,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-11-05T11:09:32.263Z",
+      "verified_at": "2026-11-09T05:19:09.062Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49679,8 +49689,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "35c29f4a",
-      "content_hash": "0f2fc6393568cbb2a6b84fb3bcbacf11545f5d16e803c98520d84ba8fda93aca",
+      "source_version": "c0010d32",
+      "content_hash": "5026c055df172b98d0fb5aa1c51d4ef7881e0a03cb8cf5cdb3ccb7ddd70b0137",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -49757,7 +49767,7 @@
         {
           "number": 7098,
           "title": "Update crates",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49765,7 +49775,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:43:14.911Z",
+      "verified_at": "2026-11-09T05:13:57.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -185065,13 +185075,13 @@
       "rule_number": 7098,
       "title": "Update crates",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "42758592",
+      "source_version": "c0010d32",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-05T04:00:35.062Z"
+      "verified_at": "2026-11-09T05:13:57.920Z"
     },
     "rule-7099": {
       "learning_id": "rule-7099",
