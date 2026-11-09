@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T01:12:41.065Z",
+  "last_updated": "2026-11-09T02:44:06.717Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4259,6 +4259,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0"
+    },
+    {
+      "id": "CD-QLRX",
+      "directive_title": "mcp): leave devDependency-only packages out of the .mcpb bundle (#5014)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "dathere/qsv",
+      "source_commit": "35fffd03",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-dathere-qsv"
     }
   ]
 }

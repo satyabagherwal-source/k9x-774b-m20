@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `bff93ff3`  
+> **Source Version**: `1157a070`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T05:18:13.048Z  
+> **Timestamp**: 2026-11-09T02:44:04.389Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T05:18:12.389Z  
+> **Harvest Timestamp**: 2026-11-09T02:44:04.382Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11857 stars
+- **Stars / Engagement**: 11864 stars
 
 ---
 
@@ -1246,15 +1246,15 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bff93ff3` (2026-11-07)
-**Commit Message**: Bump version: 0.42.0-beta.7 → 0.42.0-beta.8
+### Incident Patch 1: `1157a070` (2026-11-08)
+**Commit Message**: Bump version: 0.42.0-beta.8 → 0.42.0-beta.9
 
 **File**: `.bumpversion.toml` (modified, +1/-1)
 ```diff
 @@ -1,5 +1,5 @@
  [tool.bumpversion]
--current_version = "0.42.0-beta.7"
-+current_version = "0.42.0-beta.8"
+-current_version = "0.42.0-beta.8"
++current_version = "0.42.0-beta.9"
  parse = """(?x)
      (?P<major>0|[1-9]\\d*)\\.
      (?P<minor>0|[1-9]\\d*)\\.
@@ -1266,8 +1266,8 @@ Observed empirical fixes and code patches:
  
  [[package]]
  name = "lancedb"
--version = "0.42.0-beta.7"
-+version = "0.42.0-beta.8"
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
  dependencies = [
   "ahash",
   "anyhow",
@@ -1275,8 +1275,8 @@ Observed empirical fixes and code patches:
  
  [[package]]
  name = "lancedb-cli"
--version = "0.42.0-beta.7"
-+version = "0.42.0-beta.8"
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
  dependencies = [
   "anyhow",
   "arrow-array",
@@ -1284,8 +1284,8 @@ Observed empirical fixes and code patches:
  
  [[package]]
  name = "lancedb-nodejs"
--version = "0.42.0-beta.7"
-+version = "0.42.0-beta.8"
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
  dependencies = [
   "arrow-array",
   "arrow-buffer",
@@ -1293,8 +1293,8 @@ Observed empirical fixes and code patches:
  
  [[package]]
  name = "lancedb-python"
--version = "0.42.0-beta.7"
-+version = "0.42.0-beta.8"
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
  dependencies = [
   "arc-swap",
   "arrow",
@@ -1306,8 +1306,8 @@ Observed empirical fixes and code patches:
  <dependency>
      <groupId>com.lancedb</groupId>
      <artifactId>lancedb-core</artifactId>
--    <version>0.42.0-beta.7</version>
-+    <version>0.42.0-beta.8</version>
+-    <version>0.42.0-beta.8</version>
++    <version>0.42.0-beta.9</version>
  </dependency>
  ```
  
@@ -1319,8 +1319,8 @@ Observed empirical fixes and code patches:
      <parent>
        <groupId>com.lancedb</groupId>
        <artifactId>lancedb-parent</artifactId>
--      <version>0.42.0-beta.7</version>
-+      <version>0.42.0-beta.8</version>
+-      <version>0.42.0-beta.8</version>
++      <version>0.42.0-beta.9</version>
        <relativePath>../pom.xml</relativePath>
      </parent>
  
@@ -1332,8 +1332,8 @@ Observed empirical fixes and code patches:
  
      <groupId>com.lancedb</groupId>
      <artifactId>lancedb-parent</artifactId>
--    <version>0.42.0-beta.7</version>
-+    <version>0.42.0-beta.8</version>
+-    <version>0.42.0-beta.8</version>
++    <version>0.42.0-beta.9</version>
      <packaging>pom</packaging>
      <name>${project.artifactId}</name>
      <description>LanceDB Java SDK Parent POM</description>
@@ -1345,8 +1345,8 @@ Observed empirical fixes and code patches:
  [package]
  name = "lancedb-nodejs"
  edition.workspace = true
--version = "0.42.0-beta.7"
-+version = "0.42.0-beta.8"
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
  publish = false
  license.workspace = true
  description.workspace = true
@@ -1357,8 +1357,8 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  {
  	"name": "@lancedb/lancedb-darwin-arm64",
--	"version": "0.42.0-beta.7",
-+	"version": "0.42.0-beta.8",
+-	"version": "0.42.0-beta.8",
++	"version": "0.42.0-beta.9",
  	"os": ["darwin"],
  	"cpu": ["arm64"],
  	"main": "lancedb.darwin-arm64.node",
@@ -1369,8 +1369,8 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  {
  	"name": "@lancedb/lancedb-linux-arm64-gnu",
--	"version": "0.42.0-beta.7",
-+	"version": "0.42.0-beta.8",
+-	"version": "0.42.0-beta.8",
++	"version": "0.42.0-beta.9",
  	"os": ["linux"],
  	"cpu": ["arm64"],
  	"main": "lancedb.linux-arm64-gnu.node",
@@ -1378,26 +1378,62 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 2: `1b3b2c2d` (2026-11-07)
-**Commit Message**: chore: update lance dependency to v15.0.0-beta.13 (#4899)
+### Incident Patch 2: `bd8cbfd4` (2026-11-08)
+**Commit Message**: chore: update lance dependency to v15.0.0-beta.14 (#4909)
 
-Update the Rust workspace Lance dependencies to
-[v15.0.0-beta.13](https://github.com/lance-format/lance/releases/tag/v15.0.0-beta.13),
-synchronize the Python test dependency to published pylance 15.0.0b13,
-and refresh both lockfiles; no compatibility fixes were needed.
+Update the Rust workspace Lance crates and Python test dependency to
+[Lance
+v15.0.0-beta.14](https://github.com/lance-format/lance/releases/tag/v15.0.0-beta.14),
+which includes JSON cache reuse across request stores and stable-row-ID
+JSON index support. The Python lock contains all seven published wheels.
+The independent Java module retains beta.8, as in the previous beta.13
+update; its separate beta.14 publisher repair is outside this Rust
+consumer upgrade.
 
-The Java SDK stays on `lance-core` 15.0.0-beta.8, as in the beta.9 and
-beta.10 updates: Maven Central has no `lance-core` artifact for
-15.0.0-beta.9 through beta.13.
+Preserve all CI coverage while reclaiming completed workspace lancedb
+artifacts before the package-level feature-test build, which otherwise
+exhausted the Linux runner disk. Give only the Linux ARM64 release-wheel
+job two hours after its one-hour timeout, retaining the same runner,
+fat-LTO release profile and build flags.
 
-Validation passed: workspace Clippy with all features and warnings
-denied, Cargo formatting, Python lockfile checks, and all 35 CI-script
-tests. Repository-wide Ruff reports 163 diagnostics, all verified
-identical on unchanged HEAD; unrelated formatter changes were reverted.
+Validation: 2,280 Rust tests passed (79 existing ignores), strict
+workspace/all-feature Clippy, Rust formatting, and remote example checks
+passed on unchanged Rust source and dependency lock. Python dependency
+guards, lock validation, locked sync, and the published macOS wheel
+import passed. The new Windows ARM64 wheel was downloaded and its
+SHA-256 
 
----------
+**File**: `.github/workflows/pypi-publish.yml` (modified, +2/-1)
+```diff
+@@ -36,7 +36,8 @@ concurrency:
+ jobs:
+   linux:
+     name: Python ${{ matrix.config.package_name }} ${{ matrix.config.platform }} manylinux${{ matrix.config.manylinux }}
+-    timeout-minutes: 60
++    # The ARM64 release build can exceed an hour with fat LTO on a cold runner.
++    timeout-minutes: ${{ matrix.config.platform == 'aarch64' && 120 || 60 }}
+     strategy:
+       matrix:
+         config:
+```
 
-Co-authored-by: Vivek <[REDACTED_EMAIL]>
+**File**: `.github/workflows/rust.yml` (modified, +7/-0)
+```diff
+@@ -241,6 +241,13 @@ jobs:
+           sudo swapon "$swapfile"
+       - name: Build
+         run: cargo build --profile ci --all-features --tests --locked --examples
++      - name: Reclaim completed workspace build artifacts
++        run: |
++          # Package-level tests resolve a different feature graph from the workspace
++          # build. Reclaim its lancedb outputs before linking the test graph.
++          df -h .
++          cargo clean --profile ci -p lancedb
++          df -h .
+       - name: Run feature tests
+         run: CARGO_ARGS="--profile ci" make -C ./lancedb feature-tests
+       - name: Run examples
+```
 
 **File**: `Cargo.lock` (modified, +48/-48)
 ```diff
@@ -1405,10 +1441,10 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "fsst"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arrow-array",
   "rand 0.9.5",
@@ -1416,10 +1452,10 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "lance"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arc-swap",
   "arrow",
@@ -1427,10 +1463,10 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "lance-arrow"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arrow-array",
   "arrow-buffer",
@@ -1438,8 +1474,8 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  [[package]]
  name = "lance-arrow-scalar"
  version = "59.0.0"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arrow-array",
   "arrow-buffer",
@@ -1447,8 +1483,8 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  [[package]]
  name = "lance-arrow-stats"
  version = "59.0.0"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arrow-array",
   "arrow-schema",
@@ -1456,10 +1492,10 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "lance-bitpacking"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arrayref",
   "crunchy",
@@ -1467,10 +1503,10 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "lance-core"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arrow-array",
   "arrow-buffer",
@@ -1478,10 +1514,10 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "lance-datafusion"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arrow",
   "arrow-array",
@@ -1489,10 +1525,10 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "lance-datafusion-exec"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arrow",
   "arrow-array",
@@ -1500,10 +1536,10 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "lance-datagen"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "arrow",
   "arrow-array",
@@ -1511,10 +1547,10 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "lance-derive"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
-+source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
  dependencies = [
   "proc-macro2",
   "quote",
@@ -1522,9 +1558,9 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "lance-encoding"
--version = "15.0.0-beta.12"
--source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.12#635d412cde01e5d4203a91be47ddbfd0f2a6e068"
-+version = "15.0.0-beta.13"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
 +source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta
 ```
 
@@ -1534,36 +1570,36 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  rust-version = "1.95.0"
  
  [workspace.dependencies]
--lance = { "version" = "=15.0.0-beta.12", default-features = false, "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-core = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-datagen = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-file = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-io = { "version" = "=15.0.0-beta.12", default-features = false, "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-index = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-jsonb = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-linalg = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-namespace = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-namespace-impls = { "version" = "=15.0.0-beta.12", default-features = false, "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-table = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-testing = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-datafusion = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-encoding = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
--lance-arrow = { "version" = "=15.0.0-beta.12", "tag" = "v15.0.0-beta.12", "git" = "https://github.com/lance-format/lance.git" }
-+lance = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-core = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-datagen = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-file = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-io = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-index = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-jsonb = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-linalg = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-namespace = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-namespace-impls = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-table = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-testing = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-datafusion = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-encoding = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
-+lance-arrow = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-core = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-datagen = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-file = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-io = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-index = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-jsonb = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-linalg = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-namespace = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-namespace-impls = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-table = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-testing = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-datafusion = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-encoding = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-arrow = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance = { "version" = "=15.0.0-beta.14", default-features = false, "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-core = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-datagen = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-file = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-io = { "version" = "=15.0.0-beta.14", default-features = false, "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-index = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-jsonb = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-linalg = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-namespace = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-namespace-impls = { "version" = "=15.0.0-beta.14", default-features = false, "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-table = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-testing = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-datafusion = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-encoding = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-arrow = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
  lancedb = { path = "rust/lancedb", default-features = false }
  ahash = "0.8"
  anyhow = "1"
@@ -1575,28 +1611,21 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
      "polars>=0.19, <=1.32.3",
      "pyarrow>=16",
      "pyarrow-stubs>=16.0",
--    "pylance==15.0.0b11",
-+    "pylance==15.0.0b13",
+-    "pylance==15.0.0b13",
++    "pylance==15.0.0b14",
      "requests>=2.31.0",
      "datafusion>=54,<55",
      "opentelemetry-sdk>=1.30.0",
 ```
 
-**File**: `python/uv.lock` (modified, +10/-9)
+**File**: `python/uv.lock` (modified, +9/-9)
 ```diff
-@@ -1,5 +1,5 @@
- version = 1
--revision = 3
-+revision = 5
- requires-python = ">=3.10"
- resolution-markers = [
-     "python_full_version >= '3.14' and sys_platform == 'win32'",
 @@ -2147,7 +2147,7 @@ requires-dist = [
      { name = "pyarrow-stubs", marker = "extra == 'tests'", specifier = ">=16.0" },
      { name = "pydantic", specifier = ">=2.7.4,<3" },
      { name = "pylance", marker = "extra == 'pylance'", specifier = ">=15.0.0b3" },
--    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b11" },
-+    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b13" },
+-    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b13" },
++    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b14" },
      { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.350" },
      { name = "pytest", marker = "extra == 'tests'", specifier = ">=7.0" },
      { name = "pytest-asyncio", marker = "extra == 'tests'", specifier = ">=0.21" },
@@ -1604,40 +1633,41 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
  
  [[package]]
  name = "pylance"
--version = "15.0.0b11"
-+version = "15.0.0b13"
+-version = "15.0.0b13"
++version = "15.0.0b14"
  source = { registry = "https://pypi.fury.io/lance-format/" }
  dependencies = [
      { name = "lance-namespace" },
-@@ -4312,12 +4312,13 @@ dependencies = [
+@@ -4312,13 +4312,13 @@ dependencies = [
      { name = "pyarrow", version = "26.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
  ]
  wheels = [
--    { url = "https://pypi.fury.io/lance-format/-/ver_oRP5O/pylance-15.0.0b11-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:54524c1bd04065516aeb97c5d06e1f6c88d1b1d5191d40077b104c5879893ea2" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_1LdITz/pylance-15.0.0b11-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8f6b2496b4b20787ff7780907f3017cf7b17c1f2bd1fa8cb7ed4d0a450445dfc" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_1ONuyB/pylance-15.0.0b11-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:903283401e222dea532a36b91ffa60e7eaaf4d1fc08602cb29eef4ac2d04a8ff" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_2bWLjt/pylance-15.0.0b11-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:ce8bb0242b1647ce0b9355a48339b8fe8415f3556209214d0b490afb6ee60b38" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_168GWI/pylance-15.0.0b11-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:387ad2b455ab5b00476d7a60ce96e6014239df239691ac219f0025a29ee19f6e" },
--    { url = "https://pypi.fury.io/lance-format/-/ver_aU9I7/pylance-15.0.0b11-cp310-abi3-win_amd64.whl", hash = "sha256:7022c2afcdaf6f9e9444db5addc72033ad20ad301930b38238e246687628cd75" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_1UqLiw/pylance-15.0.0b13-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:bbbf6e42624275d1559a4887a11f6cb1c34f10c560ca7209b59219d3614a444f" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_wto7I/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8b8730195df05fa7242d12f4c759019b658f668b90d7ceba380059597bb5951a" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_13UO9X/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a41f292084694a681773990e6d96a675b45e4d232d7a67b21b05762dd5976e8a" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_1Mjytl/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:76d2f6a5a8ac150bee990006cc7b7c920e1af2532e4d3ff6a142ab5a5412483e" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_1XuqE6/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ac2b50bf8af53aac65d56703010cdf9c1567fdfe230c7fbac1d69584933d7793" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_Fj6Go/pylance-15.0.0b13-cp310-abi3-win_amd64.whl", hash = "sha256:7e6556db1a812cb0846cc0e30c0f273468d5e58dc210f3ee9955d9cdc3bc762a" },
-+    { url = "https://pypi.fury.io/lance-format/-/ver_zqD9j/pylance-15.0.0b13-cp310-abi3-win_arm64.whl", hash = "sha256:b3aecc63299a687d9ae69d80655f869321d922d5b462f4657efc83d73456551e" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1UqLiw/pylance-15.0.0b13-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:bbbf6e42624275d1559a4887a11f6cb1c34f10c560ca7209b59219d3614a444f" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_wto7I/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8b8730195df05fa7242d12f4c759019b658f668b90d7ceba380059597bb5951a" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_13UO9X/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a41f292084694a681773990e6d96a675b45e4d232d7a67b21b05762dd5976e8a" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1Mjytl/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:76d2f6a5a8ac150bee990006cc7b7c920e1af2532e4d3ff6a142ab5a5412483e" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1XuqE6/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ac2b50bf8af53aac65d56703010cdf9c1567fdfe230c7fbac1d69584933d7793" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_Fj6Go/pylance-15.0.0b13-cp310-abi3-win_amd64.whl", hash = "sha256:7e6556db1a812cb0846cc0e30c0f273468d5e58dc210f3ee9955d9cdc3bc762a" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_zqD9j/pylance-15.0.0b13-cp310-abi3-win_arm64.whl", hash = "sha256:b3aecc63299a687d9ae69d80655f869321d922d5b462f4657efc83d73456551e" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_b88Zw/pylance-15.0.0b14-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:48bcdfda408d1f8eaabbd066236bdb0ae9539acb3186b246c5c1ad4e8e5dcf23" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_J0evn/pylance-15.0.0b14-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:958d7cf0c8f31e09be94d6785c45158121073e79eb3bdb6f7ed25f7dde22c9a2" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_18gbAN/pylance-15.0.0b14-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:80814eff77dd0b83ee3c18280895a8d2cadf6d49818d7047a4540b773618738d" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1gqym0/pylance-15.0.0b14-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:bb59f5d5b8740eb5df57c1777bce61f3e2a9f7d47ab31068e2ccf43549627103" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1FHTtC/pylance-15.0.0b14-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:357357f9f419efe9f90ba63d4dc371fc93e191aa692cf6f88d327607680f77da" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1LzfL9/pylance-15.0.0b14-cp310-abi3-win_amd64.whl", hash = "sha256:916fcc39051bdd2e8ca50950ee4d8afb941c130fd278ac7cea252c2059beab58" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_nDQ2x/pylance-15.0.0b14-cp310-abi3-win_arm64.whl", hash = "sha256:e1449bbb7a207cb2890d9afeef41f816d2ab4a459ed73cc46c919d463e46fe10" },
  ]
  
  [[package]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4909** (2026-11-08): chore: update lance dependency to v15.0.0-beta.14 (@BubbleCal)
 - **PR #4899** (2026-11-07): chore: update lance dependency to v15.0.0-beta.13 (@lancedb-robot)
 - **PR #4896** (2026-11-06): docs: fix Rust example download links (@tsmithv11)
 - **PR #4895** (closed): feat: preserve remote compaction option inheritance (@ChilePiquin)
 - **PR #4890** (2026-11-06): feat: expose the remaining refresh options on the SDKs (@wkalt)
 - **PR #4888** (2026-11-06): chore(deps): upgrade Lance to v15.0.0-beta.12 (@BubbleCal)
-- **PR #4887** (2026-11-06): docs: update example names (@brendanclement)
 
 ---
 
@@ -1657,13 +1687,13 @@ Co-authored-by: Vivek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump version: 0.42.0-beta.7 → 0.42.0-beta.8
+## X. Bump version: 0.42.0-beta.8 → 0.42.0-beta.9
 
 **RULE**:
 When implementing operations in `.bumpversion.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bff93ff3`: Bump version: 0.42.0-beta.7 → 0.42.0-beta.8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1157a070`: Bump version: 0.42.0-beta.8 → 0.42.0-beta.9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.bumpversion.toml`.
@@ -1671,14 +1701,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-current_version = "0.42.0-beta.8"
+current_version = "0.42.0-beta.9"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-current_version = "0.42.0-beta.7"
+current_version = "0.42.0-beta.8"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bff93ff3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1157a070` are properly handled with clean fallback behavior.

@@ -8490,3 +8490,6 @@ Every entry in this ledger must capture:
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `56d00c3d` | Multi-dimensional audit evidence | 2026-11-09T02:34:38.171Z |
 | `learn-github-exyte-chat` | `https://github.com/exyte/Chat` | `f382a147` | Multi-dimensional audit evidence | 2026-11-09T02:34:42.260Z |
 | `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-09T02:34:44.079Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-09T02:43:57.061Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `1157a070` | Multi-dimensional audit evidence | 2026-11-09T02:44:05.752Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `35fffd03` | Multi-dimensional audit evidence | 2026-11-09T02:44:06.710Z |

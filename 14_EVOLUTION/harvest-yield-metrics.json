@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T02:34:44.092Z",
-  "total_cycles_completed": 8446,
-  "total_learnings_persisted": 8446,
-  "total_rules_promoted": 8245,
+  "last_updated": "2026-11-09T02:44:06.719Z",
+  "total_cycles_completed": 8449,
+  "total_learnings_persisted": 8449,
+  "total_rules_promoted": 8246,
   "history": [
-    {
-      "timestamp": "2026-11-08T12:26:19.802Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-xingchen-agi-teleocr",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T12:35:09.300Z",
-      "repository": "LLPhant/LLPhant",
-      "learningId": "learn-github-llphant-llphant",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T13:10:35.306Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T13:15:39.621Z",
       "repository": "Qwen/Qwen-Image-2.1",
@@ -1403,6 +1382,27 @@
       "repository": "openai-community/gpt2",
       "learningId": "learn-huggingface-openai-community-gpt2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T02:43:57.068Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T02:44:05.759Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T02:44:06.719Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `b5be13f4`  
+> **Source Version**: `35fffd03`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:38:39.772Z  
+> **Timestamp**: 2026-11-09T02:44:06.343Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:38:39.764Z  
+> **Harvest Timestamp**: 2026-11-09T02:44:06.335Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,243 +2203,183 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b5be13f4` (2026-11-09)
-**Commit Message**: perf(stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (#5013)
+### Incident Patch 1: `35fffd03` (2026-11-09)
+**Commit Message**: fix(mcp): leave devDependency-only packages out of the .mcpb bundle (#5014)
 
-* perf(stats): use qsv-stats ByteKey for weighted mode/cardinality tracking
+* fix(mcp): leave devDependency-only packages out of the .mcpb bundle
 
-With --weight, stats tracks modes, antimodes and cardinality in
-weighted_modes, a HashMap<Vec<u8>, f64> that allocated one heap buffer per
-distinct value. Key it by stats::ByteKey instead, as #5011 did for the
-unweighted Frequencies tracker: values up to 23 bytes are stored inline.
-Lookups probe with ByteKeyRef, so a hit still allocates nothing.
-ByteKey hashes, compares and orders exactly like [u8], so modes and
-antimodes come out in the same order.
+package-mcpb.js zipped all of node_modules after a full `npm ci`, filtering
+only source maps, .d.ts files and test/example directories. So the 28.0.0
+.mcpb shipped typescript, c8, archiver, istanbul and three dev-only
+minimatch copies (Dependabot #123): 119 packages, 5.3 of its 11.4 MB, that
+the server can never load.
 
-Release build, 1M-row NYC 311 file, --weight "Unique Key", both run
-orders, byte-identical output:
-- --cardinality --mode: 12-13% faster, 22% less peak RSS (unindexed);
-  19-20% faster, 10% less (indexed)
-- --everything: 13-14% faster, 20% less (unindexed); 21-23% faster,
-  36% less (indexed)
+The packager now reads package-lock.json and skips every package npm
+marks "dev": true (reachable only through devDependencies), plus
+node_modules/.bin (CLI links; the server is started with `node`). A
+package missing from the lockfile is kept, so a stale lockfile can only
+make the bundle bigger. The .mcpb drops to 5.6 MB.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+verify-bundles.js gains two checks: no dev-only package and no .bin in the
+extracted bundle. Both fail on the 28.0.0 bundle. Its existing
+server-start check passes on the new one. Old vs new: the removed packages
+are exactly the 119 dev-only ones, every production file and all 458
+non-node_modules entries are unchanged, and nothing in dist/ imports a
+removed package.
 
-* docs(changelog): stats --weight ByteKey tracking (#5013)
+Co-Authored-By: Claude Opus 5.5 <[
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(stats): weighted modes with heap-spilled keys merged across chunks
-
-Every weighted fixture used 1-2 character values, s
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.claude/skills/CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -5,6 +5,12 @@ All notable changes to the qsv Agent Skills (MCP Server) project will be documen
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
- ### Changed
- - **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected.
-+- **`stats --weight`: mode, antimode and cardinality tracking is faster and uses less memory** ([#5013](https://github.com/dathere/qsv/pull/5013)). The weighted tracker now stores short values inline too, as #5011 did for unweighted `stats`. On a 1M-row file with `--weight`, `--cardinality --mode` is 12–20% faster, and `--everything` on an indexed file is 21–23% faster with 36% less peak memory. Output is unchanged.
- - **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
- - **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
-   - **`IS DISTINCT FROM` binds tighter than `AND`/`OR`** ([#30367](https://github.com/pola-rs/polars/pull/30367)). `a IS DISTINCT FROM b AND c OR d` is now `((a IS DISTINCT FROM b) AND c) OR d`; before, the `AND`/`OR` became part of the right operand.
++## [Unreleased]
++
++### Fixed
++- **The `.mcpb` no longer ships development-only packages** ([#5014](https://github.com/dathere/qsv/pull/5014)). The packager zipped all of `node_modules`, so the 28.0.0 bundle included typescript, c8, archiver and 116 other packages the server never loads, among them three minimatch copies flagged by GHSA-g3hv-75wg-m249. Packages that `package-lock.json` marks dev-only are now skipped, as is `node_modules/.bin`, and the download shrinks from 11.4 MB to 5.6 MB. `verify-bundles` checks that none of them is bundled.
++- **CI: the macOS tests run on `macos-latest`** ([#5014](https://github.com/dathere/qsv/pull/5014)). GitHub retired the `macos-14` runner image, so the three macOS jobs were rejected before they started ("The configuration 'macos-14-arm64-us-default' is not supported").
++
+ ## [28.0.0] - 2026-11-02
+ Companion release to qsv 28.0.0, "The DCAT-US v3.0 neuro-symbolic FAIRification Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 28.0.0 because the regenerated `qsv-describegpt` skill describes `--forget` as removing the cached answers of the selected phases, which only the new binary does (27.0.1's `--forget` removed nothing). No options were added or removed, and the skill count stays at **57**. Update your qsv binary first.
+ 
 ```
 
-**File**: `src/cmd/stats.rs` (modified, +10/-10)
+**File**: `.claude/skills/scripts/package-mcpb.js` (modified, +46/-3)
 ```diff
-@@ -4370,7 +4370,7 @@ struct WhichStats {
-     /// function rejects the bad combinations.
-     approx_quantiles:     bool,
-     /// When true, use the Apache `DataSketches` `HyperLogLog` engine for the cardinality
--    /// column instead of the exact `Frequencies<ByteKey>` / `HashMap<Vec<u8>, f64>` tracker.
-+    /// column instead of the exact `Frequencies<ByteKey>` / `HashMap<ByteKey, f64>` tracker.
-     /// `--infer-boolean` forces this off in `run()` (HLL's ~1.5% RSE breaks
-     /// `cardinality == 2` checks). Independent of `approx_quantiles`.
-     approx_cardinality:   bool,
-@@ -4623,7 +4623,7 @@ struct Stats {
-     // Counted-runs frequency map: one entry per UNIQUE value (vs the previous
-     // Unsorted<Vec<u8>> which buffered every sample - one alloc+copy per row).
-     modes:          Option<Frequencies<stats::ByteKey>>, // 48 bytes - used for mode/cardinality
--    weighted_modes: Option<HashMap<Vec<u8>, f64>>,       // 48 bytes - weighted mode/antimode
-+    weighted_modes: Option<HashMap<stats::ByteKey, f64>>, // 48 bytes - weighted mode/antimode
+@@ -5,7 +5,7 @@
+  * Creates a ZIP archive containing:
+  * - manifest.json
+  * - server/ (compiled JavaScript from dist/)
+- * - node_modules/ (bundled dependencies)
++ * - node_modules/ (production dependencies only; dev-only packages are skipped)
+  * - qsv/ (51 skill JSON definitions)
+  * - .claude-plugin/ (plugin manifest)
+  * - .mcp.json (MCP server configuration)
+@@ -80,6 +80,7 @@ function validateFiles() {
+     { path: join(rootDir, 'manifest.json'), name: 'manifest.json' },
+     { path: join(rootDir, 'dist'), name: 'dist/' },
+     { path: join(rootDir, 'node_modules'), name: 'node_modules/' },
++    { path: join(rootDir, 'package-lock.json'), name: 'package-lock.json' },
+     { path: join(rootDir, 'qsv'), name: 'qsv/' }
+   ];
  
-     // CACHE LINE 5+: Sorting-based statistics
-     #[allow(clippy::struct_field_names)]
-@@ -5381,14 +5381,14 @@ impl Stats {
-             // Existing-key updates don't grow the map, so check the cap only on the
-             // new-key branch — this preserves the get_mut fast path AND ensures the
-             // tracker never exceeds `cap` entries (peak == cap exactly).
--            if let Some(val) = wm.get_mut(sample) {
-+            if let Some(val) = wm.get_mut(stats::ByteKeyRef::new(sample)) {
-                 *val += weight;
-             } else if cap > 0 && wm.len() as u64 >= cap {
-                 // Adding a new key would push len to cap + 1; drop instead.
-                 self.weighted_modes = None;
-                 self.modes_dropped = true;
-             } else {
--                wm.insert(sample.to_vec(), weight);
-+                wm.insert(stats::ByteKey::from_slice(sample), weight);
-             }
-         } else if let Some(v) = self.modes.as_mut() {
-             // Unweighted modes: Frequencies::len() == unique values seen (true
-@@ -5818,7 +5818,7 @@ impl Stats {
-                         );
-                     } else {
-                         // Collect modes (values with max weight) in deterministic order
--                        let mut modes_keys: Vec<&Vec<u8>> = weighted_modes_map
-+                        let mut modes_keys: Vec<&stats::ByteKey> = weighted_modes_map
-                             .iter()
-                             .filter(|&(_, &weight)| (weight - max_weight).abs() < 1e-10)
-                             .map(|(value, _)| value)
-@@ -5830,7 +5830,7 @@ impl Stats {
-                         }
-                         // Collect antimodes (values with min weight) in deterministic order
-                         // Sort first, then truncate to MAX_ANTIMODES for deterministic output
--                        let mut antimodes_keys: Vec<&Vec<u8>> = weighted_modes_map
-+                        let mut antimodes_keys: Vec<&stats::ByteKey> = weighted_modes_map
-                             .iter()
-                             .filter(|&(_, &weight)| (weight - min_weight).abs() < 1e-10)
-                             .map(|(value, _)| value)
-@@ -5845,7 +5845,7 @@ impl Stats {
+@@ -115,8 +116,48 @@ const EXCLUDED_DIR_SEGMENTS = new Set([
+  */
+ const EXCLUDED_FILE_RE = /\.(?:map|d\.ts|d\.mts|d\.cts)$/i;
  
-                         let modes_count = modes_keys.len();
- 
--                        // Format modes - work with &Vec<u8> references directly,
-+                        // Format modes - work with &ByteKey references directly,
-                         // avoiding heap allocation from .cloned().collect()
-                         let modes_list = if visualize_ws {
-                             modes_keys
-@@ -5873,7 +5873,7 @@ impl Stats {
-                             )
-                         });
- 
--                        // Format antimodes - work with &Vec<u8> references directly,
-+                        // Format antimodes - work with &ByteKey references directly,
-                         // avoiding heap allocation from .cloned().collect()
-                         let antimodes_list = format_antimodes(
-                             &antimodes_keys,
-@@ -6038,8 +6038,8 @@ impl Stats {
-                         let mut keys = wm.keys();
-                         // safety: len() == 2 was just checked
-                         (
--                            String::from_utf8_lossy(keys.next().unwrap()),
--                            String::from_utf8_lossy(keys.next().unwrap()),
-+                            String::from_utf8_lossy(keys.next().unwrap().as_slice()),
-+                            String::from_utf8_lossy(keys.next().unwrap().as_slice()),
-                         )
-                     },
-                     _ => (
-```
-
-**File**: `tests/test_stats.rs` (modified, +91/-0)
-```diff
-@@ -10303,6 +10303,97 @@ fn stats_weighted_all_distinct_values_still_report_the_heaviest_mode() {
-     }
- }
- 
-+#[test]
-+fn stats_weighted_modes_long_keys_merge_across_chunks() {
-+    // The weighted tracker keys values by ByteKey, which stores up to 23 bytes inline and
-+    // spills longer ones to the heap. Mix both kinds (long ones sharing a prefix), spread the
-+    // repeats over every parallel chunk, and check the merged mode, cardinality and the
-+    // sorted, truncated antimode list.
-+    // qsv caps --jobs/QSV_MAX_JOBS at the CPU count, and 1 job is a single chunk with no merge,
-+    // so this needs >= 2 cores (same guard as frequency_parallel_worker_panic_is_an_error).
-+    let cores = std::thread::available_parallelism().map_or(1, std::num::NonZeroUsize::get);
-+    if cores < 2 {
-+        eprintln!(
-+            "skipping stats_weighted_modes_long_keys_merge_across_chunks: needs >= 2 cores to \
-+             exercise the chunk merge (have {cores})"
-+        );
-+        return;
-+    }
-+    let wrk = Workdir::new("stats_weighted_modes_long_keys_merge_across_chunks");
-+    let prefix = "a-value-long-enough-to-spill-to-the-heap-";
-+    let mode_key = format!("{prefix}mode");
-+    let runner_up = format!("{prefix}runner-up");
-+    // 6 + 5 + 4 repeated rows, interleaved so each chunk gets some of every key
-+    let mut repeated = Vec::new();
-+    for i in 0..6 {
-+        repeated.push(mode_key.clone());
-+        if i < 5 {
-+            repeated.push(runner_up.clone());
-+        }
-+        if i < 4 {
-+            repeated.push("short".to_string());
-+        }
-+    }
-+    // 12 singletons (weight 1 each): 6 long, 6 short, so more than the 10 antimodes kept
-+    let mut singletons: Vec<String> = (0..6).map(|i| format!("{prefix}single-{i:02}")).collect();
-+    singletons.extend((0..6).map(|i| format!("s{i}")));
-+
-+    let mut data = vec![svec!["value", "weight"]];
-+    let mut singles = singletons.iter();
-+    for (i, v) in repeated.iter().enumerate() {
-+        data.push(vec![v.clone(), "1".to_string()]);
-+        if i % 2 == 1
-+            && let Some(s) = singles.next()
-+        {
-+            data.push(vec![s.clone(), "1".to_string()]);
-+        }
-+    }
-+    for s in singles {
-+        data.push(vec![s.clone(), "1".to_string()]);
-+    }
-+    assert_eq!(data.len() - 1, 27);
-+    wrk.create_indexed("data.csv", data);
-+
-+    let mut cmd = wrk.command("stats");
-+    cmd.args([
-+        "--weight",
-+        "weight",
-+        "--cardinality",
-+        "--mode",
-+        "--jobs",
-+        "2",
-+    ])
-+    .arg("data.csv")
-+    // pin 2 jobs regardless of the caller's QSV_MAX_JOBS, and use CPU-based chunking
-+    // (2 chunks of 14 and 13 rows) so the chunk merge really runs
-+    .env("QSV_MAX_JOBS", "2")
-+    .env("QSV_STATS_CHUNK_MEMORY_MB", "-1")
-+    .env("QSV_ANTIMODES_LEN", "0");
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    let headers = &got[0];
-+    let row = &got[1];
-+    let col = |name: &str| {
-+        let idx = headers
-+            .iter()
-+            .position(|h| h == name)
-+            .unwrap_or_else(|| panic!("missing column {name}"));
-+        row[idx].as_str()
-+    };
-+
-+    assert_eq!(col("field"), "value");
-+    assert_eq!(col("cardinality"), "15");
-+    assert_eq!(col("mode"), mode_key);
-+    assert_eq!(col("mode_count"), "1");
-+    assert_eq!(col("mode_occurrences"), "6");
-+
-+    let mut sorted = singletons.clone();
-+    sorted.sort_unstable();
-+    let expected_antimodes = format!("*PREVIEW: {}", sorted[..10].join("|"));
-+    assert_eq!(col("antimode"), expected_antimodes);
-+    assert_eq!(col("antimode_count"), "12");
-+    assert_eq!(col("antimode_occurrences"), "1");
+-function isExcludedFromNodeModules(entryName) {
++/**
++ * Packages npm marks `"dev": true` in package-lock.json: reachable ONLY through
++ * devDependencies (typescript, c8, archiver and everything under them), so the
++ * running server can never load them. node_modules holds them because packaging
++ * runs after a full `npm ci`; without this filter they were about half of the
++ * 28.0.0 .mcpb (5.3 of 11.4 MB), shipping e.g. three dev-only minimatch copies.
++ *
++ * A package present in node_modules but absent from the lockfile is kept, so a
++ * stale lockfile can only make the bundle bigger, never break it.
++ */
++function loadDevOnlyPackages() {
++  const lockPackages =
++    JSON.parse(readFileSync(join(rootDir, 'package-lock.json'), 'utf-8')).packages ?? {};
++  return new Set(
++    Object.entries(lockPackages)
++      .filter(([path, info]) => path.startsWith('node_modules/') && info.dev === true)
++      .map(([path]) => path),
++  );
 +}
 +
- #[test]
- fn stats_antimodes_len_zero_disables_truncation_without_panicking() {
-     // QSV_ANTIMODES_LEN=0 is documented as "disable length limiting"; it maps to usize::MAX,
++/**
++ * The lockfile key of the innermost package that owns `path`
++ * (e.g. `node_modules/readdir-glob/node_modules/minimatch` for a file inside it).
++ */
++function owningPackage(path) {
++  const segments = path.split(/[\\/]/);
++  let owner = null;
++  for (let i = 0; i < segments.length; i++) {
++    if (segments[i] !== 'node_modules') continue;
++    const end = i + (segments[i + 1]?.startsWith('@') ? 3 : 2);
++    if (end > segments.length) break;
++    owner = segments.slice(0, end).join('/');
++  }
++  return owner;
++}
++
++function isExcludedFromNodeModules(entryName, devOnlyPackages) {
+   if (EXCLUDED_FILE_RE.test(entryName)) return true;
++  const path = entryName.startsWith('node_modules/') ? entryName : `node_modules/${entryName}`;
++  const owner = owningPackage(path);
++  // .bin only holds CLI links (tsc, c8, ...); the server is started with `node` directly
++  if (owner === 'node_modules/.bin' || devOnlyPackages.has(owner)) return true;
+   return entryName
+     .split(/[\\/]/)
+     .some((segment) => EXCLUDED_DIR_SEGMENTS.has(segment.toLowerCase()));
+@@ -187,8 +228,10 @@ async function createArchive() {
+     // metadata, a FUNCTION is the filter hook (return false to skip). This was
+     // previously `{ filter: fn }`, which took the object branch -- so the callback
+     // never ran and every source map and .d.ts shipped (issue #4379).
++    const devOnlyPackages = loadDevOnlyPackages();
++    console.log(`   Skipping ${devOnlyPackages.size} dev-only packages and node_modules/.bin...`);
+     archive.directory(join(rootDir, 'node_modules'), 'node_modules', (entry) =>
+-      isExcludedFromNodeModules(entry.name) ? false : entry
++      isExcludedFromNodeModules(entry.name, devOnlyPackages) ? false : entry
+     );
+ 
+     // Add skill definitions
+```
+
+**File**: `.claude/skills/scripts/verify-bundles.js` (modified, +11/-0)
+```diff
+@@ -156,6 +156,17 @@ async function main() {
+     check(`bundled skill JSON count matches source (${srcSkills})`, srcSkills === bundledSkills,
+       `bundle has ${bundledSkills}`);
+ 
++    // devDependency-only packages (typescript, c8, archiver, ...) must not ship. The server
++    // start check below is what catches the opposite mistake, a runtime package left out.
++    const lockPackages = readJson(join(rootDir, 'package-lock.json')).packages ?? {};
++    const devOnly = Object.entries(lockPackages)
++      .filter(([path, info]) => path.startsWith('node_modules/') && info.dev === true)
++      .map(([path]) => path);
++    const shippedDev = devOnly.filter((path) => existsSync(join(mcpbDir, path)));
++    check(`no dev-only packages bundled (${devOnly.length} in lockfile)`, shippedDev.length === 0,
++      `bundled: ${shippedDev.slice(0, 8).join(', ')}${shippedDev.length > 8 ? ', ...' : ''}`);
++    check('node_modules/.bin not bundled', !existsSync(join(mcpbDir, 'node_modules', '.bin')));
++
+     // ---- the check that actually matters ----
+     console.log('\nServer starts from the extracted bundle');
+     const started = await startsFromExtractedBundle(mcpbDir);
+```
+
+**File**: `.github/workflows/mcp-server-ci.yml` (modified, +2/-2)
+```diff
+@@ -24,7 +24,7 @@ jobs:
+     strategy:
+       fail-fast: false
+       matrix:
+-        os: [ubuntu-latest, macos-14, windows-latest]
++        os: [ubuntu-latest, macos-latest, windows-latest]
+         node-version: [20, 22, 24]
+ 
+     defaults:
+@@ -58,7 +58,7 @@ jobs:
+           GH_TOKEN: ${{ github.token }}
+ 
+       - name: Install qsv (macOS)
+-        if: matrix.os == 'macos-14'
++        if: matrix.os == 'macos-latest'
+         run: |
+           QSV_VERSION=$(gh release view --repo dathere/qsv --json tagName --jq .tagName)
+           echo "Installing qsv $QSV_VERSION"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5014** (2026-11-09): fix(mcp): leave devDependency-only packages out of the .mcpb bundle (@jqnatividad)
 - **PR #5013** (2026-11-09): perf(stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (@jqnatividad)
 - **PR #5012** (2026-11-09): fix: piped stdin read twice or rejected in 7 commands (@jqnatividad)
 - **PR #5011** (2026-11-08): perf(stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking (@jqnatividad)
 - **PR #5010** (2026-11-08): fix(template): legacy time zone aliases fall back to a bundled tzdb (@jqnatividad)
 - **PR #5009** (2026-11-07): fix(geocode): --batch 0 no longer drops rows from piped stdin (@jqnatividad)
-- **PR #5008** (2026-11-07): fix(cat): rowskey writes nothing for empty input (@jqnatividad)
 
 ---
 
@@ -2459,21 +2399,26 @@ Every weighted fixture used 1-2 character values, s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (#5013)
+## X. mcp): leave devDependency-only packages out of the .mcpb bundle (#5014)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b5be13f4`: stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (#5013). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `35fffd03`: mcp): leave devDependency-only packages out of the .mcpb bundle (#5014). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`stats --weight`: mode, antimode and cardinality tracking is faster and uses less memory** ([#5013](https://github.com/dathere/qsv/pull/5013)). The weighted tracker now stores short values inline too, as #5011 did for unweighted `stats`. On a 1M-row file with `--weight`, `--cardinality --mode` is 12–20% faster, and `--everything` on an indexed file is 21–23% faster with 36% less peak memory. Output is unchanged.
+## [Unreleased]
+
+### Fixed
+- **The `.mcpb` no longer ships development-only packages** ([#5014](https://github.com/dathere/qsv/pull/5014)). The packager zipped all of `node_modules`, so the 28.0.0 bundle included typescript, c8, archiver and 116 other packages the server never loads, among them three minimatch copies flagged by GHSA-g3hv-75wg-m249. Packages that `package-lock.json` marks dev-only are now skipped, as is `node_modules/.bin`, and the download shrinks from 11.4 MB to 5.6 MB. `verify-bundles` checks that none of them is bundled.
+- **CI: the macOS tests run on `macos-latest`** ([#5014](https://github.com/dathere/qsv/pull/5014)). GitHub retired the `macos-14` runner image, so the three macOS jobs were rejected before they started ("The configuration 'macos-14-arm64-us-default' is not supported").
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2483,4 +2428,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b5be13f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `35fffd03` are properly handled with clean fallback behavior.

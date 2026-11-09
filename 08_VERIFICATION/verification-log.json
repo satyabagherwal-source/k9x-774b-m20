@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-X7Q4",
-    "timestamp": "2026-11-07T03:41:53.884Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "5792eac220cfc067a7d0179049a79ce2da824e4a838fb38f6206ec0a77e36b56",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-6GDG",
-    "timestamp": "2026-11-07T03:49:04.996Z",
-    "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
-    "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-    "contentHash": "fa04b8519097a0db139bb6bbee7d00b7d976b9a1abba205c54243c344a92f75c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-FOSN",
-    "timestamp": "2026-11-07T03:56:15.815Z",
-    "repository": "fb55/htmlparser2",
-    "learningId": "learn-github-fb55-htmlparser2",
-    "contentHash": "21f33a24c4ddf6db145ff84c308e42b5aa85b7589425ebfc92b3d3d8860aa269",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-FQXV",
     "timestamp": "2026-11-07T03:56:18.595Z",
     "repository": "kcl-lang/kcl",
@@ -7492,6 +7447,51 @@
     "contentHash": "e1f6b610da00de1f9cd151c70cb8d5a030defb65d2175d132ac19aa4792eb499",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-QEBK",
+    "timestamp": "2026-11-09T02:43:57.056Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "b45ba5693895f9ae65a2d276b81dbe287e7298ccbbc7b0fc2b41bf7f04f03182",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-QL10",
+    "timestamp": "2026-11-09T02:44:05.748Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "4600d4940b5b572ca18b66b9f72c8724612114b02ccd512077797d8ecf2bdf20",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-QLRM",
+    "timestamp": "2026-11-09T02:44:06.706Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "38119bccb02a18f12cc4224780d1b4a9275b9cd2a626e9c662ed41449ee888d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

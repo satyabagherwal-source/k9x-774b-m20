@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T02:34:44.095Z",
+  "last_updated": "2026-11-09T02:44:06.723Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1535,14 +1535,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "eade2f2b785adbfdba0b76b6ded1e8d42f77627bad4bd95692be74a73ce4cbe8",
-      "verified_at": "2026-11-05T09:04:52.888Z",
+      "content_hash": "b45ba5693895f9ae65a2d276b81dbe287e7298ccbbc7b0fc2b41bf7f04f03182",
+      "verified_at": "2026-11-09T02:43:57.072Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T09:04:52.888Z"
+      "last_updated": "2026-11-09T02:43:57.072Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "a51167715690f8d706a917fd87bd8adb9f1dcb12f216b9fe585eb4698059c306",
-      "verified_at": "2026-11-09T01:38:41.556Z",
+      "content_hash": "38119bccb02a18f12cc4224780d1b4a9275b9cd2a626e9c662ed41449ee888d1",
+      "verified_at": "2026-11-09T02:44:06.722Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:38:41.556Z"
+      "last_updated": "2026-11-09T02:44:06.722Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "93cd3ef9bb5e4e978f27c1a3b9160fa77f7d1aa19f22edc8a7073427398a75c9",
-      "verified_at": "2026-11-08T05:18:14.355Z",
+      "content_hash": "4600d4940b5b572ca18b66b9f72c8724612114b02ccd512077797d8ecf2bdf20",
+      "verified_at": "2026-11-09T02:44:05.771Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T05:18:14.355Z"
+      "last_updated": "2026-11-09T02:44:05.771Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

@@ -8481,3 +8481,6 @@
 | `CYCLE-20261109-EF2W` | `2026-11-09T02:34:38.168Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`896e1bd5...`) |
 | `CYCLE-20261109-EI8H` | `2026-11-09T02:34:42.257Z` | `exyte/Chat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`d26fe1de...`) |
 | `CYCLE-20261109-EJN0` | `2026-11-09T02:34:44.076Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 664, Rule null` | Yes (`e1f6b610...`) |
+| `CYCLE-20261109-QEBK` | `2026-11-09T02:43:57.056Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`b45ba569...`) |
+| `CYCLE-20261109-QL10` | `2026-11-09T02:44:05.748Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4600d494...`) |
+| `CYCLE-20261109-QLRM` | `2026-11-09T02:44:06.706Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`38119bcc...`) |

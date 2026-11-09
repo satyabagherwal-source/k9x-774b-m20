@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "eade2f2b785adbfdba0b76b6ded1e8d42f77627bad4bd95692be74a73ce4cbe8",
-    "lastHarvestedAt": "2026-11-05T09:04:52.867Z",
+    "contentHash": "b45ba5693895f9ae65a2d276b81dbe287e7298ccbbc7b0fc2b41bf7f04f03182",
+    "lastHarvestedAt": "2026-11-09T02:43:57.061Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "b5be13f4",
+    "sourceVersion": "35fffd03",
     "license": "NOASSERTION",
-    "contentHash": "a51167715690f8d706a917fd87bd8adb9f1dcb12f216b9fe585eb4698059c306",
-    "lastHarvestedAt": "2026-11-09T01:38:41.547Z",
+    "contentHash": "38119bccb02a18f12cc4224780d1b4a9275b9cd2a626e9c662ed41449ee888d1",
+    "lastHarvestedAt": "2026-11-09T02:44:06.710Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "bff93ff3",
+    "sourceVersion": "1157a070",
     "license": "Apache-2.0",
-    "contentHash": "93cd3ef9bb5e4e978f27c1a3b9160fa77f7d1aa19f22edc8a7073427398a75c9",
-    "lastHarvestedAt": "2026-11-08T05:18:14.348Z",
+    "contentHash": "4600d4940b5b572ca18b66b9f72c8724612114b02ccd512077797d8ecf2bdf20",
+    "lastHarvestedAt": "2026-11-09T02:44:05.752Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
