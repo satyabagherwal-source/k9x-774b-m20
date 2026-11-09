@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-64SR",
-    "timestamp": "2026-11-08T02:40:31.179Z",
-    "repository": "qybaihe/bla",
-    "learningId": "learn-github-qybaihe-bla",
-    "contentHash": "c808c8b98f41ab026a0b19a9551a3b5cd427b836f704153c4e8f2b6531b8857d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-66CE",
     "timestamp": "2026-11-08T02:40:33.182Z",
     "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
@@ -7492,6 +7477,21 @@
     "contentHash": "921fcbbce477064cd686bfe9eec4a5d4ef49335113d0e68072a8d0113ef650df",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-HU1E",
+    "timestamp": "2026-11-09T22:41:01.010Z",
+    "repository": "sensenova/SenseNova-Loop-9B-Preview",
+    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+    "contentHash": "09d23ae29cb895658270545ffe33e29c38d8ded70b19e05bf4410d3874b96763",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -11745,8 +11745,8 @@
     "sourceUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
     "sourceVersion": "hf-sensenova-sensenova-loop-9b-preview",
     "license": "Open-Source",
-    "contentHash": "615371e071a410939897d89860cf6c0d6789287a9fb08e8261e3b60982cbbe38",
-    "lastHarvestedAt": "2026-11-05T19:06:49.605Z",
+    "contentHash": "09d23ae29cb895658270545ffe33e29c38d8ded70b19e05bf4410d3874b96763",
+    "lastHarvestedAt": "2026-11-09T22:41:01.013Z",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview"
   },
   "hf-pyannote-speaker-diarization-3.1": {

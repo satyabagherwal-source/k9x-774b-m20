@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T22:34:28.572Z",
+  "last_updated": "2026-11-09T22:41:00.932Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -175843,7 +175843,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
       "source_version": "hf-sensenova-sensenova-loop-9b-preview",
-      "content_hash": "615371e071a410939897d89860cf6c0d6789287a9fb08e8261e3b60982cbbe38",
+      "content_hash": "09d23ae29cb895658270545ffe33e29c38d8ded70b19e05bf4410d3874b96763",
       "dossier_path": "07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md",
       "promoted_rules": [
@@ -175855,6 +175855,21 @@
         {
           "number": null,
           "title": "Multimodal Tokenizer Consistency Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Consistent Data‑Type Enforcement Across Model Subsystems",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Loop Configuration Validation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Tokenizer and Model Vocabulary Alignment",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -175878,7 +175893,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:06:49.526Z",
+      "verified_at": "2026-11-09T22:41:00.915Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

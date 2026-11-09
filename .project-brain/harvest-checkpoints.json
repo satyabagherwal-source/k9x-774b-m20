@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T22:34:28.777Z",
+  "last_updated": "2026-11-09T22:41:01.031Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17676,14 +17676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-      "content_hash": "615371e071a410939897d89860cf6c0d6789287a9fb08e8261e3b60982cbbe38",
-      "verified_at": "2026-11-05T19:06:49.621Z",
+      "content_hash": "09d23ae29cb895658270545ffe33e29c38d8ded70b19e05bf4410d3874b96763",
+      "verified_at": "2026-11-09T22:41:01.031Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:06:49.621Z"
+      "last_updated": "2026-11-09T22:41:01.031Z"
     },
     "pyannote/speaker-diarization-3.1": {
       "repository": "pyannote/speaker-diarization-3.1",

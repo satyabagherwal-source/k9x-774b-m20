@@ -8687,3 +8687,4 @@ Every entry in this ledger must capture:
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `22e5dbba` | Multi-dimensional audit evidence | 2026-11-09T22:27:16.744Z |
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `290a9d94` | Multi-dimensional audit evidence | 2026-11-09T22:34:14.743Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `04c23427` | Multi-dimensional audit evidence | 2026-11-09T22:34:28.761Z |
+| `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-09T22:41:01.013Z |
