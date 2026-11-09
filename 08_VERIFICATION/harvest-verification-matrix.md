@@ -8647,3 +8647,6 @@
 | `CYCLE-20261109-R5QI` | `2026-11-09T17:12:20.682Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0ce39ae6...`) |
 | `CYCLE-20261109-R5WF` | `2026-11-09T17:12:20.895Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7fb2aca5...`) |
 | `CYCLE-20261109-RJ7J` | `2026-11-09T17:12:38.143Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`67e7ec32...`) |
+| `CYCLE-20261109-KC1Z` | `2026-11-09T17:35:01.895Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ea414e35...`) |
+| `CYCLE-20261109-KFA9` | `2026-11-09T17:35:06.081Z` | `burner22/numbat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md` | Yes (`e896ccdf...`) |
+| `CYCLE-20261109-KH9C` | `2026-11-09T17:35:08.640Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8dbbfe7c...`) |

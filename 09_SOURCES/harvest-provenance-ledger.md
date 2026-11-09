@@ -8656,3 +8656,6 @@ Every entry in this ledger must capture:
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `60b764b8` | Multi-dimensional audit evidence | 2026-11-09T17:12:20.686Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `08479aca` | Multi-dimensional audit evidence | 2026-11-09T17:12:20.898Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7c0dc9dc` | Multi-dimensional audit evidence | 2026-11-09T17:12:38.147Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `a9a8a317` | Multi-dimensional audit evidence | 2026-11-09T17:35:01.899Z |
+| `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-09T17:35:06.085Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `d1531769` | Multi-dimensional audit evidence | 2026-11-09T17:35:08.644Z |

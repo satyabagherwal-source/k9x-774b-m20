@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "b4184642",
+    "sourceVersion": "a9a8a317",
     "license": "Apache-2.0",
-    "contentHash": "c22df3e588693182776d1b8fa085cb9c3527f5d5f86b6fc8d67eeac13cc23d25",
-    "lastHarvestedAt": "2026-11-08T20:02:53.961Z",
+    "contentHash": "ea414e3508093a660d34058e6b5a00aafe616634d8abafe5204f664441b25184",
+    "lastHarvestedAt": "2026-11-09T17:35:01.899Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "ac735a43",
+    "sourceVersion": "d1531769",
     "license": "Apache-2.0",
-    "contentHash": "65d3c9c1d85845f424a2786d488d6ed0e3b50647b924c041f0d6fef59e5f115f",
-    "lastHarvestedAt": "2026-11-08T18:46:05.838Z",
+    "contentHash": "8dbbfe7c719ba0b1e5b4ddaa0274f92667053c5c48a51bd77e073e02861be13d",
+    "lastHarvestedAt": "2026-11-09T17:35:08.644Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -11705,8 +11705,8 @@
     "sourceUrl": "https://huggingface.co/burner22/numbat",
     "sourceVersion": "hf-burner22-numbat",
     "license": "Open-Source",
-    "contentHash": "ead199f767b1ddaa5b6b0cd61f296abf33308176f7377ec62f13c4551987b40f",
-    "lastHarvestedAt": "2026-11-05T17:47:55.812Z",
+    "contentHash": "e896ccdf1914a0c93970b22b2a9cd9cb307cc9febb202e07d84f58b27bda3ae3",
+    "lastHarvestedAt": "2026-11-09T17:35:06.085Z",
     "learningId": "learn-huggingface-burner22-numbat"
   },
   "hf-fusioncow-sulphur-3": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T17:12:38.155Z",
+  "last_updated": "2026-11-09T17:35:08.662Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "c22df3e588693182776d1b8fa085cb9c3527f5d5f86b6fc8d67eeac13cc23d25",
-      "verified_at": "2026-11-08T20:02:53.970Z",
+      "content_hash": "ea414e3508093a660d34058e6b5a00aafe616634d8abafe5204f664441b25184",
+      "verified_at": "2026-11-09T17:35:01.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:02:53.970Z"
+      "last_updated": "2026-11-09T17:35:01.917Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "65d3c9c1d85845f424a2786d488d6ed0e3b50647b924c041f0d6fef59e5f115f",
-      "verified_at": "2026-11-08T18:46:05.857Z",
+      "content_hash": "8dbbfe7c719ba0b1e5b4ddaa0274f92667053c5c48a51bd77e073e02861be13d",
+      "verified_at": "2026-11-09T17:35:08.662Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T18:46:05.857Z"
+      "last_updated": "2026-11-09T17:35:08.662Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -17616,14 +17616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-burner22-numbat",
-      "content_hash": "ead199f767b1ddaa5b6b0cd61f296abf33308176f7377ec62f13c4551987b40f",
-      "verified_at": "2026-11-05T17:47:55.831Z",
+      "content_hash": "e896ccdf1914a0c93970b22b2a9cd9cb307cc9febb202e07d84f58b27bda3ae3",
+      "verified_at": "2026-11-09T17:35:06.094Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T17:47:55.832Z"
+      "last_updated": "2026-11-09T17:35:06.094Z"
     },
     "FusionCow/Sulphur-3": {
       "repository": "FusionCow/Sulphur-3",

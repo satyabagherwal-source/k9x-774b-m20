@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T17:12:38.030Z",
+  "last_updated": "2026-11-09T17:35:08.537Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -57854,8 +57854,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "b4184642",
-      "content_hash": "c22df3e588693182776d1b8fa085cb9c3527f5d5f86b6fc8d67eeac13cc23d25",
+      "source_version": "a9a8a317",
+      "content_hash": "ea414e3508093a660d34058e6b5a00aafe616634d8abafe5204f664441b25184",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -57872,6 +57872,11 @@
         {
           "number": null,
           "title": "GitOps: place cluster-scoped Flux inventory and keep sources in neighborhoods (#",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "desktop): add AppImage build (#2293)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -57965,7 +57970,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T20:02:53.835Z",
+      "verified_at": "2026-11-09T17:35:01.767Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59027,8 +59032,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "ac735a43",
-      "content_hash": "65d3c9c1d85845f424a2786d488d6ed0e3b50647b924c041f0d6fef59e5f115f",
+      "source_version": "d1531769",
+      "content_hash": "8dbbfe7c719ba0b1e5b4ddaa0274f92667053c5c48a51bd77e073e02861be13d",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -59045,6 +59050,11 @@
         {
           "number": null,
           "title": "[BugFix][RB-1154] Keep timestamp values across a DST switch in Iceberg min/max o",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[UT] Accept the non-finite query vector error and run test_vector_index_query_ve",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -59128,7 +59138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T18:46:05.723Z",
+      "verified_at": "2026-11-09T17:35:08.513Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175184,7 +175194,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/burner22/numbat",
       "source_version": "hf-burner22-numbat",
-      "content_hash": "ead199f767b1ddaa5b6b0cd61f296abf33308176f7377ec62f13c4551987b40f",
+      "content_hash": "e896ccdf1914a0c93970b22b2a9cd9cb307cc9febb202e07d84f58b27bda3ae3",
       "dossier_path": "07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md",
       "promoted_rules": [
@@ -175224,7 +175234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:47:55.676Z",
+      "verified_at": "2026-11-09T17:35:05.936Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

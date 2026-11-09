@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-O2FI",
-    "timestamp": "2026-11-08T00:34:29.838Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "fef57faeaba411cb71ce4286cfbd0fbcd7f4760a0de1bb4ed09fb072547ab6ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-XB0O",
-    "timestamp": "2026-11-08T00:41:40.872Z",
-    "repository": "sharkdp/bat",
-    "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "929c1a4acbdd8025b47717b4815c315683b4b4be043b0f5fb6613bb10cc29f0b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-XK80",
-    "timestamp": "2026-11-08T00:41:52.800Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "02acac14a4e4b521ed9884fb2237410b8e522451ed2037d7e36ff2f308f7dd08",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-6Q3B",
     "timestamp": "2026-11-08T00:49:00.311Z",
     "repository": "sharkdp/fd",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "67e7ec326b503e32724a06b389953a9ed51b95f56694efc37b568243bef7129a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-KC1Z",
+    "timestamp": "2026-11-09T17:35:01.895Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "ea414e3508093a660d34058e6b5a00aafe616634d8abafe5204f664441b25184",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-KFA9",
+    "timestamp": "2026-11-09T17:35:06.081Z",
+    "repository": "burner22/numbat",
+    "learningId": "learn-huggingface-burner22-numbat",
+    "contentHash": "e896ccdf1914a0c93970b22b2a9cd9cb307cc9febb202e07d84f58b27bda3ae3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-KH9C",
+    "timestamp": "2026-11-09T17:35:08.640Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "8dbbfe7c719ba0b1e5b4ddaa0274f92667053c5c48a51bd77e073e02861be13d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
