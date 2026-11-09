@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T17:57:07.491Z",
+  "last_updated": "2026-11-09T18:16:21.326Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10167,8 +10167,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "7c0dc9dc",
-      "content_hash": "67e7ec326b503e32724a06b389953a9ed51b95f56694efc37b568243bef7129a",
+      "source_version": "096a19fa",
+      "content_hash": "4bc21bf972095bbc9523e3a154fefe8471cf2b902ccc39ef16a226ea7a18bc24",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10235,6 +10235,11 @@
         {
           "number": null,
           "title": "deps: bump Polars to upstream main a598c51 (#5021)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps: bundled SQLite 3.54.1 via rusqlite 0.41 (RUSTSEC-2026-0459) (#5022)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10588,7 +10593,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:12:38.009Z",
+      "verified_at": "2026-11-09T18:11:37.337Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11000,8 +11005,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "86e98e3f",
-      "content_hash": "9b6a9db2b3cdc04364175cba0377d94beb9c33a5b1cd420c92d07c593a983ca9",
+      "source_version": "acbe0665",
+      "content_hash": "421ec89624cc4c71057f91f562a1f3e3c13386efa4154c6da2d6c2f01e665e17",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -11013,6 +11018,11 @@
         {
           "number": null,
           "title": "separate interpreter literal data from shell execution [skip ci]",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "heredoc): preserve arithmetic context during shell analysis [skip ci]",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11086,7 +11096,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T15:42:24.754Z",
+      "verified_at": "2026-11-09T18:16:21.214Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35678,17 +35688,23 @@
       "slug": "i18next-react-i18next",
       "platform": "github",
       "source_url": "https://github.com/i18next/react-i18next",
-      "source_version": "5ca8c863",
-      "content_hash": "990f328c5a265d522b291e447a38a63d95dda981ac6559f116d92f83c08d1ec5",
+      "source_version": "bd802561",
+      "content_hash": "153d986f0d49404ac745d2e7ec8314061512b77018bde1d296932634b04aa76d",
       "dossier_path": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "types): declare @types/react as an optional peer dependency, require i18next 27.",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:56:03.259Z",
+      "verified_at": "2026-11-09T18:11:21.240Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51082,8 +51098,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "25119216",
-      "content_hash": "9a5bc991fe7d728dcf29de1e6a842d983d7e524b7ebafe1979621dd32b730f89",
+      "source_version": "f7f8b7e5",
+      "content_hash": "ccd13871933ab6ba2dfc8aaaa1f76963834423c15c00f880d24640441dd168d7",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -51168,7 +51184,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:22:11.489Z",
+      "verified_at": "2026-11-09T18:11:17.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66974,8 +66990,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "9ed384be",
-      "content_hash": "d4f3a1e6894b373c3bcc1078662f93abb0225311d850f9291fd88a2e792fb445",
+      "source_version": "6420c698",
+      "content_hash": "748f7dc9d2aff27981a15f57a9b0619a5e6edbd2757c0b266df525db9d476f4a",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -66992,6 +67008,11 @@
         {
           "number": null,
           "title": "[PLAT-23753] Use the right parameter name for Azure disk throughput",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[#36860] DocDB: Fix org.yb.pgsql.TestJWTAuth#invalidJWTAudiencesConfiguration by",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67075,7 +67096,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T19:31:12.626Z",
+      "verified_at": "2026-11-09T18:11:36.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -8665,3 +8665,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-09T17:49:08.096Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `3b23abd0` | Multi-dimensional audit evidence | 2026-11-09T17:57:03.835Z |
 | `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-09T17:57:07.620Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `f7f8b7e5` | Multi-dimensional audit evidence | 2026-11-09T18:11:18.581Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `bd802561` | Multi-dimensional audit evidence | 2026-11-09T18:11:21.804Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `6420c698` | Multi-dimensional audit evidence | 2026-11-09T18:11:37.118Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `096a19fa` | Multi-dimensional audit evidence | 2026-11-09T18:11:38.165Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `acbe0665` | Multi-dimensional audit evidence | 2026-11-09T18:16:21.805Z |

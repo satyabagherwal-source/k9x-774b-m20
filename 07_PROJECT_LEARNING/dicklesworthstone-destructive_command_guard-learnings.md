@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `86e98e3f`  
+> **Source Version**: `acbe0665`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:42:23.361Z  
+> **Timestamp**: 2026-11-09T18:16:13.604Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:42:23.351Z  
+> **Harvest Timestamp**: 2026-11-09T18:11:09.431Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6307 stars
+- **Stars / Engagement**: 6318 stars
 
 ---
 
@@ -2510,924 +2510,565 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7eb68874` (2026-11-07)
-**Commit Message**: fix: separate interpreter literal data from shell execution [skip ci]
+### Incident Patch 1: `46a26cda` (2026-11-08)
+**Commit Message**: fix(heredoc): preserve arithmetic context during shell analysis [skip ci]
 
-Harmless Python comparisons and recorded-command inspection can be denied
-because shell rules read interpreter string literals as executable text.
-Address issue #645 using the existing bounded documentation proof and the
-complete inline source extraction already established for #570.
+The heredoc candidate regex and Unknown dialect's secondary PowerShell
+substitution reading can turn POSIX arithmetic shifts into an unterminated
+heredoc. That incomplete-analysis finding masks the configured policy of an
+unrelated destructive command, as reported in #649.
 
-Prove Python comparisons, built-in data collections, inspection methods,
-and supported read-only file access. Map only proven literal bytes back
-through the existing decoded shell-word offsets, preserving quoting and
-all original input to execution and protected-write checks.
+Exclude only exact shift operator offsets proven by a complete arithmetic
+parse. Recover the vendored grammar's nested-arithmetic ambiguity with a
+bounded, fully validated parse view, retaining original source and executable
+descendants. Mask only proven angle bytes for the secondary Unknown reading.
+Keep genuine heredocs, interpreter scanning, fallback policy and deadlines.
 
-Require the complete original request for the new exemptions. Detached
-children and rewritten policy replays retain the established proof, and
-the worker/cache carry that context. This prevents a standalone data
-proof from hiding an enclosing pipeline, rebound interpreter, environment
-change, or generated-file consumer. Preserve existing heredoc
-documentation behavior, critical rule identities, and uncertainty policy.
+Add arithmetic, quoted-delimiter, nested-execution, malformed-input and
+exhausted-proof unit controls. Recovery is bounded by passes, parse bytes and
+queued nodes; failure retains the original diagnostics.
 
-Extend differential regressions across explain, hook and batch surfaces,
-nested/escaped quoting, quoted heredocs, read-only inspection, execut
+Validation: formatting and focused cargo check/Clippy pass; native scanner
+domain and ordinary runs each pass 4,448,259 cases. Full-codegen attempts and
+the lib-test all-target gates were killed by the constrained environment.
+Patched Rust/CLI runtime tests have n
 
-**File**: `docs/adr-001-heredoc-scanning.md` (modified, +32/-0)
+**File**: `src/evaluator.rs` (modified, +9/-1)
 ```diff
-@@ -281,6 +281,38 @@ Note: `pack_aware_quick_reject()` returns `true` if safe to skip (no keywords),
-   independent of the tier-local fallback switches.
- - Diagnostics should be emitted with enough context for `dcg explain` or logs.
- 
-+### Interpreter source and literal data (#645)
-+
-+An extracted interpreter program is executable source, but its string literals
-+are not automatically shell commands. The final shell-rule view uses the existing
-+bounded documentation proof for both quoted interpreter heredocs and complete,
-+literal inline program words. Python comparisons, built-in data collections,
-+printing, and file reads through a proven read-only `open` can retain their
-+literal data role. For example, comparing `"rm -rf /Users/example/scratch"`
-+with another string, or searching for it in pending-exception JSONL text, does
-+not execute that command.
-+
-+This proof requires the entire program and its outer consumer to be understood.
-+Execution APIs, opaque calls, rebound builtins, dynamic source, unsupported
-+syntax, writable or uncertain file modes, and output handed to a shell retain
-+the conservative analysis. Unquoted heredoc expansion remains executable shell
-+syntax. Proof failure or exhaustion never grants an exemption.
-+
-+The expanded data inspection and inline-literal exemptions require the complete
-+original request. Extracted children and changed policy-replay views can lose
-+an enclosing pipeline, binding, or generated-file consumer, so they retain the
-+established conservative behavior. The existing source ancestry tracks this
-+boundary without an extra recursive evaluation, and completed proof caches
-+include that context. Established heredoc documentation proofs remain available.
-+
-+The original source still reaches the AST, execution-sink, dynamic-source, and
-+protected-write checks. Only proven literal bytes are masked from subsequent
-+shell matching, with source offsets and shell quote boundaries preserved.
-+Dialect-specific filesystem matching must retain the same proof when recovering
-+original syntax; a POSIX proof must not mask PowerShell or Cmd syntax. The
-+complete-word extraction and configured uncertainty policy from #570 are
-+unchanged, as are the critical filesystem rules and their identities.
-+
- ### Testing
- 
- ```
-```
-
-**File**: `src/ast_source_analysis.rs` (modified, +372/-30)
-```diff
-@@ -25,11 +25,22 @@ use std::time::{Duration, Instant};
- enum DocumentationValue {
-     Text,
-     Scalar,
-+    Collection,
-+    ReadOnlyFile,
-     File,
-     NodeFs,
-     JavaScriptRegex,
- }
- 
-+impl DocumentationValue {
-+    /// Built-in values whose comparisons, truth tests and printing cannot
-+    /// dispatch to a user-supplied callable. Collections contain only these
-+    /// same values; file and module capabilities must never escape as data.
-+    const fn is_data(self) -> bool {
-+        matches!(self, Self::Text | Self::Scalar | Self::Collection)
-+    }
-+}
-+
- /// Literal ranges whose shell-looking bytes retain a proven data role (#544).
- ///
- /// This small proof covers straight-line Python/JavaScript text edits. Every
-@@ -42,15 +53,27 @@ enum DocumentationValue {
- /// consumers, and keep the ORIGINAL source in execution/protected-write scans.
- /// Parsing must run inside the caller's bounded optional-proof worker.
- ///
--/// A proved program that opens no file can only compute text and print it to
--/// the caller, so every literal it contains is data and all of them are
--/// returned (#586): a printed string that spells a shell command runs
--/// nothing. A program that opens a file can write a literal where something
--/// later runs it (a crontab, a shell profile, a package manifest), so only its
--/// substitution-shaped literals are returned, as before.
-+/// A proved program that cannot write files can only inspect data and print
-+/// it to the caller, so every literal it contains is data and all of them
-+/// are returned (#586, #645). A file opened with a writable or unknown mode
-+/// can store a literal where something later runs it (a crontab, a shell
-+/// profile, a package manifest), so only substitution-shaped literals are
-+/// returned for such a program, as before.
- pub(crate) fn inert_documentation_literal_ranges(
-     code: &str,
-     language: ScriptLanguage,
-+) -> Vec<std::ops::Range<usize>> {
-+    inert_documentation_literal_ranges_with_data_inspection(code, language, true)
-+}
-+
-+/// Extend the established documentation proof only when the caller retains
-+/// the interpreter's complete containing source. An extracted shell leaf can
-+/// lose a function binding, pipeline or later consumer; it must keep the
-+/// pre-#645 proof instead of acquiring new inspection-data exemptions.
-+pub(crate) fn inert_documentation_literal_ranges_with_data_inspection(
-+    code: &str,
-+    language: ScriptLanguage,
-+    allow_data_inspection: bool,
- ) -> Vec<std::ops::Range<usize>> {
-     let has_substitution_text = code.contains('`') || code.contains("$(");
-     let _phase = crate::perf::phase(crate::perf::ProfilePhase::AstMatch);
-@@ -59,8 +82,9 @@ pub(crate) fn inert_documentation_literal_ranges(
-     };
-     let root = ast.root();
-     let mut proof = DocumentationProof::new(language, 128, 16_384);
-+    proof.allow_data_inspection = allow_data_inspection;
-     if proof.expression(&root, 0).is_some() {
--        if proof.opens_files {
-+        if proof.may_write_files {
-             proof.literals
-         } else {
-             proof.data_literals
-@@ -108,28 +132,34 @@ fn documentation_ast(
- 
- struct DocumentationProof {
-     language: ScriptLanguage,
-+    /// #645's extra pure expressions and read-only file distinction require
-+    /// an explicit containing-source proof. Other users retain the established
-+    /// documentation proof by default, including literal-shell recovery.
-+    allow_data_inspection: bool,
-     values: std::collections::BTreeMap<String, DocumentationValue>,
-     /// How many names the proof may bind before it gives up.
-     max_values: usize,
-     /// Literals containing shell substitution syntax (#544).
-     literals: Vec<std::ops::Range<usize>>,
-     /// Every literal, substitution-shaped or not (#586).
-     data_literals: Vec<std::ops::Range<usize>>,
--    /// Whether the program opens a file (Python `open`, Node `fs`), and so
--    /// can put a literal where something else later executes it.
--    opens_files: bool,
-+    /// Whether a file capability can put a literal where something else
-+    /// later executes it. The established proof treats every open this way;
-+    /// the inspection extension can prove a Python file is read-only.
-+    may_write_files: bool,
-     remaining_steps: usize,
- }
- 
- impl DocumentationProof {
-     const fn new(language: ScriptLanguage, max_values: usize, remaining_steps: usize) -> Self {
-         Self {
-             language,
-+            allow_data_inspection: false,
-             values: std::collections::BTreeMap::new(),
-             max_values,
-             literals: Vec::new(),
-             data_literals: Vec::new(),
--            opens_files: false,
-+            may_write_files: false,
-             remaining_steps,
-         }
-     }
-@@ -228,6 +258,60 @@ impl DocumentationProof {
+@@ -15617,8 +15617,16 @@ fn evaluate_command_substitutions(
+                     ));
                  }
-                 Some(Text)
-             }
-+            "list" | "tuple" | "tuple_expression" | "set" | "dictionary"
-+                if self.allow_d
+             };
++            // #649: the secondary PowerShell `$()` view of a POSIX `$((...))`
++            // loses one pair of parentheses and hence its arithmetic context.
++            // Blank only parser-proven shift operators in this view so their
++            // `<<` cannot become a heredoc during nested evaluation. The POSIX
++            // pass above still sees the shifts, and every nested command's
++            // source remains available to both substitution scanners.
++            let powershell_view =
++                crate::heredoc::mask_arithmetic_shift_operators(substitution_source.as_ref());
+             let powershell_bodies = match collect_powershell_substitution_bodies(
+-                substitution_source.as_ref(),
++                powershell_view.as_ref(),
+             ) {
+                 Ok(bodies) => bodies,
+                 Err(()) => {
 ```
 
-**File**: `src/evaluator.rs` (modified, +203/-29)
+**File**: `src/heredoc.rs` (modified, +593/-9)
 ```diff
-@@ -19165,9 +19165,10 @@ fn redirection_free_pack_views(
- /// Carry the original command's data-body proof into the byte-aligned regex
- /// view before normalization changes its offsets. Sanitization can remove a
- /// prior sed/awk reader's program, so proving the same body from that rewritten
--/// command loses the ordering evidence (#525). Only bytes the source proof
--/// masks are changed here; existing sanitized data and live expansions retain
--/// their current representation. Explicit Windows dialects use their own syntax.
-+/// command loses the ordering evidence (#525). The same applies to literals
-+/// inside a complete inline interpreter program (#645). Only bytes the source
-+/// proof masks are changed here; existing sanitized data and live expansions
-+/// retain their current representation. Explicit Windows dialects use their own syntax.
- fn preserve_source_heredoc_data_mask<'a>(
-     command_for_match: &'a str,
-     source: &str,
-@@ -19176,7 +19177,6 @@ fn preserve_source_heredoc_data_mask<'a>(
-     if !matches!(dialect, ShellDialect::Posix | ShellDialect::Unknown)
-         || command_for_match.len() != source.len()
-         || source.len() > crate::heredoc::MAX_SUBSTITUTION_SOURCE_BYTES
--        || !source.contains("<<")
-     {
-         return Cow::Borrowed(command_for_match);
-     }
-@@ -19210,12 +19210,27 @@ thread_local! {
-     static DOCUMENTATION_MASK_ANALYSES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
- }
- 
-+/// A derived command can lose its enclosing pipeline, bindings, or generated
-+/// file consumer. New interpreter-data proofs therefore require the complete
-+/// original request, including during depth-zero policy replays (#645).
-+fn interpreter_data_has_complete_context(command: &str) -> bool {
-+    SAFE_PATTERN_SOURCE.with(|source| {
-+        source
-+            .borrow()
-+            .as_ref()
-+            .is_none_or(|source| source.parent.is_none() && source.command == command)
+@@ -1590,12 +1590,15 @@ impl SkipReason {
+     /// `UnterminatedHeredoc` deliberately does not. It reports a shape — a
+     /// `<<` with no terminator line — and nothing was dropped on account of
+     /// it; the text is still in the command every pattern is matched against.
+-    /// It is also routinely a *misread* of ordinary data, because the operator
+-    /// appears in arithmetic (`$((1<<3))`), in prose that a rule is documented
+-    /// with (`git commit -m "explain <<EOF"`), and historically in the tail of
+-    /// a here-string. Treating it as an incomplete reading would put all of
+-    /// those on the bounded-fallback path and deny them outright under
+-    /// `fallback_on_parse_error=false`.
++    /// It can also be a *misread* of ordinary data, such as quoted prose.
++    /// Treating every such observation as an early stop would turn otherwise
++    /// complete extractions into partial readings.
++    ///
++    /// This distinction governs mixed successes and skips, not an extraction
++    /// containing only skips: that still yields `Skipped`, whose configured
++    /// fallback/strict handling must protect genuinely malformed source.
++    /// Arithmetic shifts therefore have to be rejected as heredoc candidates
++    /// in `heredoc_operator_captures`, before they create a failure (#649).
+     #[must_use]
+     pub fn stopped_early(&self) -> bool {
+         match self {
+@@ -1687,15 +1690,96 @@ static HEREDOC_EXTRACTOR: LazyLock<Regex> = LazyLock::new(|| {
+ /// operator into its delimiter: `echo '<<'; python3 - <<'EOF'` matched once,
+ /// as `<<'; python3 - <<'EOF…`, and the Python heredoc was never extracted.
+ /// Each search here resumes two bytes into the previous match, so every
+-/// operator is a candidate of its own; the callers' checks reject false ones.
++/// operator is a candidate of its own. Only proven arithmetic shift tokens
++/// are excluded here; the callers' other checks reject remaining false ones.
+ fn heredoc_operator_captures(command: &str) -> impl Iterator<Item = regex::Captures<'_>> {
+     let mut next = 0usize;
++    let mut arithmetic_shifts = None;
+     std::iter::from_fn(move || {
+         let capture = HEREDOC_EXTRACTOR.captures_at(command, next)?;
+         // A match starts with the ASCII `<<`, so two bytes on is a boundary.
+         next = capture.get(0)?.start() + 2;
+         Some(capture)
+     })
++    .filter(move |capture| {
++        let shifts = arithmetic_shifts.get_or_insert_with(|| arithmetic_shift_operators(command));
++        shifts
++            .binary_search(&capture.get(0).expect("complete heredoc candidate").start())
++            .is_err()
 +    })
 +}
 +
- /// Withdraw shell syntax invented from proven Python/JavaScript documentation
--/// literals (#544), and from every literal of a proven program that only
--/// prints (#586). Only the final shell matching view uses this mask. The
--/// complete original body remains input to interpreter, execution, pipeline,
--/// and protected-write checks; an opaque program never receives a mask.
-+/// literals (#544), and from every literal of a proven data-only program
-+/// (#586/#645), whether supplied by a quoted heredoc or a literal inline word.
-+/// Only the final shell matching view uses this mask. The complete original
-+/// source remains input to interpreter, execution, pipeline, and protected-write
-+/// checks; an opaque program never receives a mask.
- fn mask_proven_interpreter_documentation(command: &str) -> Cow<'_, str> {
-+    // Capture provenance on the evaluating thread before entering the worker.
-+    let complete_context = interpreter_data_has_complete_context(command);
-     // Only a Python or Node receiver can earn a mask, and both names are
-     // spelled out in the command (`ScriptLanguage::from_command`). Missing an
-     // unusual spelling here only keeps the unmasked, conservative view.
-@@ -19225,9 +19240,10 @@ fn mask_proven_interpreter_documentation(command: &str) -> Cow<'_, str> {
-             .windows(name.len())
-             .any(|window| window.eq_ignore_ascii_case(name))
-     };
--    if !command.contains("<<")
--        || command.len() > crate::heredoc::MAX_SUBSTITUTION_SOURCE_BYTES
-+    if command.len() > crate::heredoc::MAX_SUBSTITUTION_SOURCE_BYTES
-+        || (!complete_context && !command.contains("<<"))
-         || !(names_interpreter(b"python") || names_interpreter(b"node"))
-+        || check_triggers(command) == TriggerResult::NoTrigger
-     {
-         return Cow::Borrowed(command);
-     }
-@@ -19242,22 +19258,22 @@ fn mask_proven_interpreter_documentation(command: &str) -> Cow<'_, str> {
-         static ACTIVE: std::sync::Arc<std::sync::atomic::AtomicBool> =
-             std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
-         // Completed analyses of recent sources. The mask is a pure function
--        // of the command text, and the per-segment pack passes ask for the
--        // same complete command once per segment: a 300-line documentation
--        // heredoc used to re-extract and re-parse the whole command about
--        // fifty times per hook (#555). Only finished analyses are kept; a
-+        // of the command text and its complete-source status. Per-segment
-+        // pack passes ask for the same complete command once per segment.
-+        // A 300-line documentation heredoc used to re-extract and re-parse
-+        // the whole command about fifty times per hook (#555). Only finished analyses are kept; a
-         // timeout or busy slot is asked again, exactly as before.
-         static COMPLETED: std::cell::RefCell<
--            std::collections::VecDeque<(String, Option<String>)>,
-+            std::collections::VecDeque<(S
-```
-
-**File**: `src/heredoc.rs` (modified, +3/-1)
-```diff
-@@ -2576,7 +2576,9 @@ fn shell_word_around(text: &str, position: usize) -> Option<Range<usize>> {
- /// bytes with backslash escapes. An expansion, substitution, ANSI-C or locale
- /// quote, pattern, brace, tilde, redirection or unterminated quote returns
- /// `None`. `offsets[i]` is the byte of `word` that produced decoded byte `i`.
--fn literal_word_with_offsets(word: &str) -> Option<(String, Vec<usize>)> {
-+/// This supplies coordinates, never a proof of source ownership or safety.
-+/// Callers must establish those independently before using it to mask data.
-+pub(crate) fn literal_word_with_offsets(word: &str) -> Option<(String, Vec<usize>)> {
-     #[derive(Clone, Copy, PartialEq, Eq)]
-     enum Quote {
-         None,
-```
-
-**File**: `tests/cli_e2e.rs` (modified, +54/-0)
-```diff
-@@ -1139,6 +1139,25 @@ mod python_temp_root_tests {
- mod explain_tests {
-     use super::*;
- 
-+    #[test]
-+    fn issue_645_explain_distinguishes_python_comparison_from_shell_execution() {
-+        for (source, expected) in [
-+            (
-+                r#"python3 -c 'print("rm -rf /Users/example/scratch" == "x")'"#,
-+                "allow",
-+            ),
-+            ("rm -rf /Users/example/scratch", "deny"),
-+        ] {
-+            let output = run_dcg(&["explain", "--format", "json", source]);
-+            let stdout = String::from_utf8_lossy(&output.stdout);
-+            let verdict: serde_json::Value = serde_json::from_str(&stdout)
-+                .unwrap_or_else(|error| panic!("{source}: {error}: {stdout}"));
-+            assert!(output.status.success(), "{source}: {output:?}");
-+            assert_eq!(verdict["decision"], expected, "{source}: {verdict}");
-+            assert_eq!(verdict["outcome"], expected, "{source}: {verdict}");
-+        }
++/// Exact `<<`/`<<=` tokens in portable `$((…))` arithmetic, not the enclosing
++/// expansion's whole span. Command substitutions inside arithmetic can still
++/// contain real heredocs; even a `$((` prefix can open a command substitution
++/// containing a subshell. Only a complete parse can prove the distinction.
++///
++/// Bare `((…))` and `$[…]` are intentionally not exempt: Dash can read their
++/// `<<` as a real redirection (see `context::HeredocRules`). Failure to prove
++/// arithmetic leaves the existing extraction and incomplete-analysis paths
++/// intact. This is computed at most once per candidate walk, within the same
++/// input and pipeline bounds used for command-substitution analysis.
++fn arithmetic_shift_operators(command: &str) -> Vec<usize> {
++    if !command.contains("<<")
++        || !command.contains("$((")
++        || command.len() > MAX_SUBSTITUTION_SOURCE_BYTES
++        || longest_pipeline_stages(command) > MAX_PARSED_PIPELINE_STAGES
++    {
++        return Vec::new();
 +    }
-+
-     #[test]
-     fn explain_safe_command_returns_allow_pretty() {
-         let output = run_dcg(&["explain", "echo hello"]);
-@@ -3652,6 +3671,41 @@ mod scan_tests {
- mod test_command_tests {
-     use super::*;
- 
-+    /// POSIX backslashes can keep a separator inside a Python string while
-+    /// PowerShell executes it. A POSIX data proof cannot cross that boundary.
-+    #[test]
-+    fn issue_645_inline_data_mask_preserves_other_dialects_execution() {
-+        for (source, rule) in [
-+            (
-+                r#"python3 -c "print(\"; rm -rf /Users/example/scratch; #\")""#,
-+                "core.filesystem:rm-rf-root-home",
-+            ),
-+            (
-+                r#"python3 -c "print(\"; git reset --hard; #\")""#,
-+                "core.git:reset-hard",
-+            ),
-+            (
-+                r#"python3 -c "print(\"; git reset --hard; # \$(echo marker)\")""#,
-+                "core.git:reset-hard",
-+            ),
-+        ] {
-+            for dialect in ["posix", "ps", "unknown"] {
-+                let output = run_dcg(&["test", "--format", "json", "--dialect", dialect, source]);
-+                let stdout = String::from_utf8_lossy(&output.stdout);
-+                let verdict: serde_json::Value = serde_json::from_str(&stdout)
-+                    .unwrap_or_else(|error| panic!("{dialect}: {source}: {error}: {stdout}"));
-+                let expected = if dialect == "posix" { "allow" } else { "deny" };
-+                assert_eq!(
-+                    verdict["decision"], expected,
-+                    "{dialect}: {source}: {verdict}"
-+                );
-+                if expected == "deny" {
-+                    assert_eq!(verdict["rule_id"], rule, "{dialect}: {source}: {verdict}");
-+                }
-+            }
-+        }
++    let Ok(ast) = try_parse_shell_ast(command) else {
++        return Vec::new();
++    };
++    let root = ast.root();
++    if root.get_inner_node().has_error() {
++        return Vec::new();
 +    }
-+
-     #[test]
-     fn test_safe_command_returns_allowed() {
-         let output = run_dcg(&["test", "echo hello"]);
-```
-
-**File**: `tests/golden_isomorphism.rs` (modified, +11/-0)
-```diff
-@@ -235,6 +235,17 @@ fn golden_rule_id_verification() {
-     println!("All rule_id verifications passed!");
- }
- 
-+/// #645: inspecting a destructive command as interpreter data must not change
-+/// the rule that protects execution of those exact bytes by the outer shell.
-+#[test]
-+fn golden_issue_645_interpreter_data_and_shell_execution_are_distinct() {
-+    assert_allows_command(r#"python3 -c 'print("rm -rf /Users/example/scratch" == "x")'"#);
-+    assert_denies_with_rule(
-+        "rm -rf /Users/example/scratch",
-+        "core.filesystem:rm-rf-root-home",
-+    );
-+}
-+
- /// Verify rm parser parity across flag/quoting/path variants.
- #[test]
- fn golden_rm_variant_parity() {
-```
-
-**File**: `tests/repro_329_heredoc_prose_data_sink.rs` (modified, +8/-10)
-```diff
-@@ -5,10 +5,9 @@
- //!
- //! A heredoc whose target only *stores* its stdin (`cat`, `tee`, …) is data in
- //! every spelling — redirect before or after the operator, quoted or unquoted
--//! delimiter. Executing sinks (`bash <<EOF`, `… | sh`) must keep blocking, and
--//! inline interpreter bodies (`python3 -c "print(\"rm -rf\")"`) deliberately
--//! stay on the conservative raw-shell scan (#136 / #278): a string literal can
--//! reach an exec sink through indirection no static scan can rule out.
-+//! delimiter. Executing sinks (`bash <<EOF`, `… | sh`) must keep blocking.
-+//! Issue #645 additionally permits interpreter programs proved to only consume
-+//! inert data; unknown calls retain the conservative raw-shell scan.
- 
- use std::path::PathBuf;
- use std::process::{Command, Stdio};
-@@ -136,10 +135,9 @@ fn destructive_command_outside_the_heredoc_still_blocks() {
- }
- 
- #[test]
--fn inline_interpreter_string_literal_stays_conservative() {
--    // Repro 2 from the report. Intentionally NOT relaxed: interpreter bodies
--    // are re-scanned as raw shell because a literal can reach an exec sink
--    // through indirection (#136 revert, #278). Pinned so the posture is a
--    // decision, not an accident.
--    assert_denied("python3 -c \"print(\\\"rm -rf\\\")\"");
-+fn inline_interpreter_literal_is_data_only_when_its_consumer_is_proved() {
-+    // #645: printing a literal is harmless, while an opaque consumer can run
-+    // it. Pin both sides of the new, deliberately narrower data proof.
-+    assert_allowed("python3 -c \"print(\\\"rm -rf\\\")\"");
-+    assert_denied("python3 -c \"run(\\\"rm -rf /Users/example/scratch\\\")\"");
- }
-```
-
-**File**: `tests/repro_570_inline_programs.rs` (modified, +194/-5)
-```diff
-@@ -259,15 +259,26 @@ fn denied_by(source: &str, rule: &str) {
- 
- /// One DCG verdict, and a description of the run for assertion messages.
- fn run_dcg(source: &str, hook: bool, strict: bool) -> (serde_json::Value, String) {
-+    run_dcg_with_packs(source, hook, strict, &[])
-+}
-+
-+fn run_dcg_with_packs(
-+    source: &str,
-+    hook: bool,
-+    strict: bool,
-+    packs: &[&str],
-+) -> (serde_json::Value, String) {
-     let temp = tempfile::tempdir().expect("isolated working directory");
-     let home = temp.path().join("home");
-     std::fs::create_dir(&home).expect("isolated home");
-     let config = temp.path().join("config.toml");
-     std::fs::write(
-         &config,
-         format!(
--            "[heredoc]\ntimeout_ms = 5000\nfallback_on_parse_error = {}\n",
--            !strict
-+            "[heredoc]\ntimeout_ms = 5000\nfallback_on_parse_error = {}\n\
-+             [packs]\nenabled = {}\n",
-+            !strict,
-+            serde_json::to_string(packs).expect("pack IDs serialize")
-         ),
-     )
-     .expect("explicit test configuration");
-@@ -870,22 +881,185 @@ fn decoded_node_programs_keep_option_ownership() {
-     }
- }
- 
--/// #645: an interpreter that prints a command can feed an executing shell.
--/// Extracting the producer must not discard its enclosing consumer.
-+/// #645 is a classification regression after extraction: the complete Python
-+/// program is code, but command-like text it only compares or displays is data.
-+/// Exercise the same real-binary surfaces as the extraction regressions above.
-+#[test]
-+fn issue_645_exact_python_comparison_is_data_on_every_surface() {
-+    let source = r#"python3 -c 'print("rm -rf /Users/example/scratch" == "x")'"#;
-+    for (surface, actual, rule) in surface_verdicts(source) {
-+        assert_eq!(actual, "allow", "{surface}: {source}: {rule}");
-+    }
-+    // A fully proved data program is allowed in strict extraction mode too.
-+    decision(source, "allow", true);
-+}
-+
-+#[test]
-+fn issue_645_python_literals_stay_data_across_shell_quoting() {
-+    for body in [
-+        r#"print("rm -rf /Users/example/scratch")"#,
-+        r#"print("rm -rf /Users/example/scratch" == "x")"#,
-+        r#"command = "rm -rf /Users/example/scratch"; print(command == "x")"#,
-+        r#"print("shutdown")"#,
-+        r#"print("git reset --hard; rm -rf /Users/example/scratch; shutdown")"#,
-+        r#"print("example: \\\"rm -rf /Users/example/scratch\\\"")"#,
-+        r#"print('''quoted "rm -rf /Users/example/scratch" and 'shutdown' ''')"#,
-+        r#"print(r"rm -rf /Users/example/scratch\nshutdown")"#,
-+        r#"print(b"rm -rf /Users/example/scratch")"#,
-+        r#"print("use $(rm -rf /Users/example/scratch) with care")"#,
-+    ] {
-+        for style in 0..3 {
-+            let source = format!("python3 -c {}", quote(body, style));
-+            for (surface, actual, rule) in surface_verdicts(&source) {
-+                assert_eq!(actual, "allow", "{surface}: {source}: {rule}");
-+            }
-+        }
-+    }
-+}
-+
-+#[test]
-+fn issue_645_read_only_record_inspection_and_heredoc_literals_allow() {
-+    for body in [
-+        r#"print("rm -rf /Users/example/scratch" in open("pending-exceptions.jsonl").read())"#,
-+        r#"print(open("pending-exceptions.jsonl", "r").read() == "rm -rf /Users/example/scratch")"#,
-+        r#"print("shutdown")"#,
-+        r#"print("rm -rf /Users/example/scratch" == "x")"#,
-+        r#"print("rm -rf $HOME")"#,
-+    ] {
-+        for source in [
-+            format!("python3 -c {}", quote(body, 0)),
-+            format!("python3 - <<'PY'\n{body}\nPY"),
-+        ] {
-+            for (surface, actual, rule) in surface_verdicts(&source) {
-+                assert_eq!(actual, "allow", "{surface}: {source}: {rule}");
-+            }
-+        }
-+    }
-+    for source in [
-+        "cat <<'JSON'\n{\"command\": \"rm -rf /Users/example/scratch\", \"note\": \"shutdown\"}\nJSON",
-+        "python3 - <<'PY'\n# Recorded commands are data.\nrecord = '''rm -rf /Users/example/scratch\nshutdown'''\nprint(record)\nPY",
-+    ] {
-+        for (surface, actual, rule) in surface_verdicts(source) {
-+            assert_eq!(actual, "allow", "{surface}: {source}: {rule}");
-+        }
-+    }
-+}
-+
-+#[test]
-+fn issue_645_shutdown_literal_with_enabled_services_pack_is_data() {
-+    for (source, expected) in [
-+        ("python3 -c 'print(\"shutdown\")'", "allow"),
-+        ("python3 - <<'PY'\nprint('shutdown')\nPY", "allow"),
-+        ("shutdown -h now", "deny"),
-+        (
-+            "python3 -c 'import os; os.system(\"shutdown -h now\")'",
-+            "deny",
-+        ),
-+    ] {
-+        for hook in [false, true] {
-+            let (verdict, context) = run_dcg_with_packs(source, hook, false, &["system.services"]);
-+            assert_eq!(verdict["decision"], expected, "{context}: {verdict}");
-+            if source == "shutdown -h now" {
-+                assert_eq!(
-+                    verdict["rule_id"], "system.services:shutdown",
-+                    "services rule
-```
-
----
-
-### Incident Patch 2: `59a90213` (2026-11-08)
-**Commit Message**: fix(evaluator): check deadlines after quick-reject selection [skip ci]
-
-Quick-reject selection can perform semantic analysis or normalization and
-exhaust the deadline before it chooses an allow. Check the budget after the
-complete indexed and unindexed initial predicates and the normalized
-predicate, including original-payload and external-pack checks. Stop expired
-selection before either quick rejection or further evaluation. Preserve the
-upstream outer completion guard and its denial/allow-once behavior.
-
-Add deterministic live-to-expired selection coverage and live-budget
-indexed/unindexed allow and Windows-denial controls. Correct the #647
-integration fixtures to select the intended Claude hook protocol, use valid
-ordinary-byte PowerShell escapes, and assert oversized CLI admission errors
-separately from hook indeterminate responses. No production byte, word, or
-timeout limit is raised.
-
-Validation on the integrated parent:
-- cargo fmt --check
-- cargo check --locked --all-targets
-- cargo clippy --locked --all-targets -- -D warnings
-- 78 distinct targeted Rust tests, all passed
-- 20 CLI/hook observations at the shipped 1000 ms default, all passed
-
-An initial integration run expo
-
-**File**: `src/evaluator.rs` (modified, +227/-100)
-```diff
-@@ -2088,6 +2088,17 @@ fn evaluate_with_completion_deadline(
-     result
- }
- 
-+/// Selection can itself perform semantic analysis or normalization. Its result
-+/// is usable only if the budget remains after the complete predicate finishes.
-+#[inline]
-+fn budget_checked_quick_reject(
-+    select: impl FnOnce() -> bool,
-+    is_expired: impl FnOnce() -> bool,
-+) -> Option<bool> {
-+    let quick_reject = select();
-+    (!is_expired()).then_some(quick_reject)
-+}
-+
- /// The text keyword gating reads: the command without its inert POSIX
- /// redirections ([`crate::packs::blank_inert_redirections`], #571). Cmd and
- /// PowerShell give `>` and `/dev/null` other meanings (`2>/dev/null` writes a
-@@ -18671,88 +18682,88 @@ fn evaluate_command_in_single_dialect_view(
-     // AC scan (O(n)) replaces the N×memmem per-keyword scan. If the AC says no
-     // keyword appears in the raw command, we can skip the more expensive
-     // normalize+span-classify path in pack_aware_quick_reject entirely.
--    if let Some(index) = keyword_index {
--        // An enabled external pack with no keywords must be evaluated on every
--        // command (`Pack::might_match`), and the AC index cannot represent
--        // "always" — an external pack has no registry entry to set a bit for.
--        // The hook path already disables the index when external packs exist;
--        // this keeps every other entry point honest too (issue #402).
--        if sed_shell_sources.is_empty()
--            && tar_helper_sources.is_empty()
--            && !crate::packs::get_external_packs()
--                .is_some_and(crate::packs::ExternalPackStore::has_keywordless_pack)
--            && !index.has_any_keyword(gating_command.as_ref())
--            && !contains_shell_word_obfuscation(command, shell_dialect)
--            && !force_core_git
--            && !force_core_filesystem
--            && !force_cmd_recovery
--            && !force_cloudflare_workers
--            && !force_snowflake
--            && force_literal_database_packs.is_empty()
--            && !force_windows_filesystem
--            && !force_scp_semantics
--            && !external_pack_needs_identity_selection(
--                gating_command.as_ref(),
--                shell_dialect,
--                ordered_packs,
--            )
--        {
--            if let Some((matched, layer, reason)) = heredoc_allowlist_hit {
--                return EvaluationResult::allowed_by_allowlist(matched, layer, reason);
--            }
--            return EvaluationResult::allowed_by_quick_reject();
--        }
--    } else if sed_shell_sources.is_empty()
--        && tar_helper_sources.is_empty()
--        && !force_core_git
--        && !force_core_filesystem
--        && !force_cmd_recovery
--        && !force_cloudflare_workers
--        && !force_snowflake
--        && force_literal_database_packs.is_empty()
--        && !force_windows_filesystem
--        && !force_scp_semantics
--        && {
--            let _phase = phase(ProfilePhase::Normalization);
--            let dialect_normalized =
--                crate::normalize::normalize_command_in_dialect(command, shell_dialect);
--            let gating = inert_redirection_gating_view(dialect_normalized.as_ref(), shell_dialect);
--            // The span gate in `pack_aware_quick_reject` reads POSIX quoting.
--            // cmd.exe passes single quotes through as argv bytes, so that gate
--            // took `echo 'x & git reset --hard & y'` for one quoted argument
--            // and skipped every pack. PowerShell does not escape with a
--            // backslash, so `Write-Output "a\" ; git push --force ; \"b"`
--            // runs git there while POSIX reads one string. This branch runs
--            // whenever the keyword index is absent, as it is for the hook and
--            // `dcg test` with an external pack loaded, including the unknown
--            // dialect's PowerShell and cmd replays. Gate both without quote
--            // roles, as the keyword index does; Step 5 masks their data in
--            // their own syntax.
--            if matches!(shell_dialect, ShellDialect::Cmd | ShellDialect::PowerShell) {
--                pack_aware_quick_reject_pre_normalized(gating.as_ref(), enabled_keywords)
-+    let Some(quick_reject) = budget_checked_quick_reject(
-+        || {
-+            if let Some(index) = keyword_index {
-+                // An enabled external pack with no keywords must be evaluated on every
-+                // command (`Pack::might_match`), and the AC index cannot represent
-+                // "always" — an external pack has no registry entry to set a bit for.
-+                // The hook path already disables the index when external packs exist;
-+                // this keeps every other entry point honest too (issue #402).
-+                sed_shell_sources.is_empty()
-+                    && tar_helper_sources.is_empty()
-+                    && !crate::packs::get_external_packs()
-+                        .is_some_and(crate::packs::ExternalPackSto
-```
-
-**File**: `tests/repro_313_powershell_read_only_false_positives.rs` (modified, +22/-2)
-```diff
-@@ -609,6 +609,7 @@ fn hook_protocol_keeps_guardrails_active_with_global_options() {
- /// These commands are classifier input on stdin; no PowerShell is executed.
- mod issue_647 {
-     use super::dcg_binary;
-+    use destructive_command_guard::config::DEFAULT_MAX_COMMAND_BYTES;
-     use std::io::Write;
-     use std::path::PathBuf;
-     use std::process::{Command, Output, Stdio};
-@@ -692,6 +693,7 @@ mod issue_647 {
-             let payload = serde_json::json!({
-                 "hook_event_name": "PreToolUse",
-                 "tool_name": "PowerShell",
-+                "tool_use_id": "toolu_dcg_issue_647",
-                 "tool_input": {"command": command},
-                 "cwd": self.dir.path(),
-             });
-@@ -722,6 +724,24 @@ mod issue_647 {
-                 );
-                 let expected_exit = i32::from(surface != "hook" && expected != "allow");
-                 assert_eq!(output.status.code(), Some(expected_exit), "{diagnostics}");
-+                // CLI stdin admission rejects oversized input before producing
-+                // evaluator JSON. The hook surfaces report incomplete analysis
-+                // below; assert each transport's blocking contract separately.
-+                if surface == "CLI"
-+                    && expected == "indeterminate"
-+                    && command.len() > DEFAULT_MAX_COMMAND_BYTES
-+                {
-+                    assert!(rule.is_none(), "{diagnostics}");
-+                    assert!(output.stdout.is_empty(), "{diagnostics}");
-+                    assert_eq!(
-+                        String::from_utf8_lossy(&output.stderr),
-+                        format!(
-+                            "Error: stdin command exceeds general.max_command_bytes ({DEFAULT_MAX_COMMAND_BYTES} bytes)\n"
-+                        ),
-+                        "{diagnostics}"
-+                    );
-+                    continue;
-+                }
-                 if surface == "hook" && expected == "allow" {
-                     assert!(output.stdout.is_empty(), "{diagnostics}");
-                     continue;
-@@ -794,7 +814,7 @@ mod issue_647 {
-         for count in [400, 511] {
-             for last in [
-                 r"Clear-Content C:\important.conf",
--                r"Cl`ear-Con`tent C:\important.conf",
-+                r"Clear`-Content C:\important.conf",
-             ] {
-                 lab.assert_surfaces(
-                     &with_late_statement(count, last),
-@@ -827,7 +847,7 @@ mod issue_647 {
-         // destructive executable that view has already found.
-         for last in [
-             r"Clear-Content C:\important.conf",
--            r"Cl`ear-Con`tent C:\important.conf",
-+            r"Clear`-Content C:\important.conf",
-             "Clear-Content $target",
-             "Clear-Content 'C:\\important.conf",
-         ] {
-```
-
----
-
-### Incident Patch 3: `86e98e3f` (2026-11-08)
-**Commit Message**: fix(windows): detect quoted .NET delete calls and cache member scans [skip ci]
-
-PowerShell permits literal quoted member names. Recognize single- and
-double-quoted Delete names in both semantic analysis and fallback patterns,
-so quoting a destructive .NET method no longer makes it appear safe.
-Keep ordinary quoted examples, comments, and here-strings inert.
-
-Cache the next DirectoryInfo member match, its data-context result, and
-exhausted searches while token starts advance. Preserve the existing
-per-token static/member rule order and all byte, word, statement, and
-timeout limits.
-
-Add late-command CLI/batch/hook regressions, quoted-data controls,
-incomplete-input fallback coverage, 96 uncached-traversal comparisons,
-and deterministic search-count tests for dense prefixes.
-
-Validation: fmt, check --all-targets, clippy --all-targets -D warnings;
-85 distinct targeted Rust tests; 20 functional CLI/hook observations.
-A separate 520-observation development-build comparison retained budget
-and process-timeout failures during shared memory pressure; it does not
-certify latency. No timeout was raised for that comparison.
-
-Refs #647. The original shell-dialect classification report remains 
-
-**File**: `src/packs/windows/filesystem.rs` (modified, +389/-16)
-```diff
-@@ -240,24 +240,26 @@ const POWERSHELL_PROTECTED_EXECUTABLES: &[&str] = &[
- /// accelerator spelling) with a literally-true second argument, anchored to the
- /// start of a word token by the semantic caller. PowerShell type literals are
- /// case-insensitive and tolerate whitespace around `[`, `]`, and `::`.
-+/// Literal single- or double-quoted method names invoke the same member.
- static DOTNET_DIRECTORY_DELETE_RECURSIVE_EXPRESSION: LazyCompiledRegex = LazyCompiledRegex::new(
--    r#"(?i)^\[\s*(?:system\.)?io\.directory\s*\]\s*::\s*delete\s*\((?=[^|&\r\n]*?,\s*(?:\$true|1|"true"|'true')\s*\))"#,
-+    r#"(?i)^\[\s*(?:system\.)?io\.directory\s*\]\s*::\s*(?:delete|'delete'|"delete")\s*\((?=[^|&\r\n]*?,\s*(?:\$true|1|"true"|'true')\s*\))"#,
- );
- 
- /// Any `[System.IO.Directory]::Delete(...)` call, anchored to a word start.
- /// Covers the single-argument form (removes an empty directory) and calls
- /// whose second argument is dynamic — PowerShell coerces any truthy value
- /// (including every non-empty string) to `$true`, so an unresolved flag must
- /// still be reviewed.
--static DOTNET_DIRECTORY_DELETE_EXPRESSION: LazyCompiledRegex =
--    LazyCompiledRegex::new(r"(?i)^\[\s*(?:system\.)?io\.directory\s*\]\s*::\s*delete\s*\(");
-+static DOTNET_DIRECTORY_DELETE_EXPRESSION: LazyCompiledRegex = LazyCompiledRegex::new(
-+    r#"(?i)^\[\s*(?:system\.)?io\.directory\s*\]\s*::\s*(?:delete|'delete'|"delete")\s*\("#,
-+);
- 
- /// `<DirectoryInfo>.Delete($true)` instance-method spelling, for example
- /// `(Get-Item $path).Delete($true)` or a `[System.IO.DirectoryInfo]` variable.
- /// `$true` is required so that unrelated `.delete(...)` member calls in inline
- /// scripts of other languages do not match.
- static DIRECTORYINFO_DELETE_RECURSIVE_MEMBER: LazyCompiledRegex =
--    LazyCompiledRegex::new(r"(?i)\.\s*delete\s*\(\s*\$true\s*\)");
-+    LazyCompiledRegex::new(r#"(?i)\.\s*(?:delete|'delete'|"delete")\s*\(\s*\$true\s*\)"#);
- 
- fn syntax_is_incomplete(raw: &str, dialect: ShellDialect) -> bool {
-     let mut chars = raw.chars().peekable();
-@@ -1221,6 +1223,16 @@ fn mask_powershell_comments_and_here_strings(command: &str) -> Cow<'_, str> {
- fn powershell_dotnet_directory_delete_rule(
-     segment: &str,
-     tokens: &[NormalizeToken],
-+) -> Option<&'static str> {
-+    powershell_dotnet_directory_delete_rule_with_member_search(segment, tokens, |start| {
-+        DIRECTORYINFO_DELETE_RECURSIVE_MEMBER.find_from(segment, start)
-+    })
-+}
-+
-+fn powershell_dotnet_directory_delete_rule_with_member_search(
-+    segment: &str,
-+    tokens: &[NormalizeToken],
-+    mut find_member: impl FnMut(usize) -> Option<(usize, usize)>,
- ) -> Option<&'static str> {
-     // All three expressions require an ASCII dot and a contiguous Delete
-     // spelling. Prove only that this .NET surface cannot match before paying
-@@ -1261,6 +1273,13 @@ fn powershell_dotnet_directory_delete_rule(
-         })
-         .map(|token| token.byte_range.clone())
-         .collect();
-+    // Word starts advance monotonically. The first member match in a suffix
-+    // remains the first match until a later word starts beyond it. Cache its
-+    // data-context verdict as well as its position, and remember a miss so
-+    // dense prefixes do not repeatedly search or classify the same suffix.
-+    // Search lazily below the static checks to retain their per-token priority.
-+    let mut next_member = None;
-+    let mut member_search_exhausted = false;
-     for token in tokens
-         .iter()
-         .filter(|token| token.kind == NormalizeTokenKind::Word)
-@@ -1286,15 +1305,20 @@ fn powershell_dotnet_directory_delete_rule(
-                 return Some("dotnet-directory-delete");
-             }
-         }
--        if let Some((match_start, _)) = DIRECTORYINFO_DELETE_RECURSIVE_MEMBER.find(tail) {
--            let absolute = token.byte_range.start.saturating_add(match_start);
--            if !quoted_word_ranges
--                .iter()
--                .any(|range| range.contains(&absolute))
--                && !inert_ranges.iter().any(|range| range.contains(&absolute))
--            {
--                return Some("directoryinfo-delete-recursive");
--            }
-+        if !member_search_exhausted
-+            && next_member.is_none_or(|(start, _)| start < token.byte_range.start)
++    let mut shifts = Vec::new();
++    let mut pending = vec![(root, false)];
++    while let Some((node, inherited_arithmetic)) = pending.pop() {
++        let arithmetic = match node.kind().as_ref() {
++            "arithmetic_expansion" => command
++                .get(node.range())
++                .is_some_and(|source| source.starts_with("$((") && source.ends_with("))")),
++            "binary_expression"
++            | "unary_expression"
++            | "ternary_expression"
++            | "postfix_expression"
++            | "parenthesized_expression"
++            | "subscript" => inherited_arithmetic,
++            // A substitution, command, quoted word, heredoc body or any
++            // other context is not part of this arithmetic proof.
++            _ => false,
++        };
++        if arithmetic
++            && node.kind().as_ref() == "binary_expression"
++            && let Some(operator) = node.field("operator")
++            && matches!(command.get(operator.range()), Some("<<" | "<<="))
 +        {
-+            next_member = find_member(token.byte_range.start).map(|(start, _)| {
-+                let executable = !quoted_word_ranges
-+                    .iter()
-+                    .any(|range| range.contains(&start))
-+                    && !inert_ranges.iter().any(|range| range.contains(&start));
-+                (start, executable)
-+            });
-+            member_search_exhausted = next_member.is_none();
++            shifts.push(operator.range().start);
 +        }
-+        if next_member.is_some_and(|(_, executable)| executable) {
-+            return Some("directoryinfo-delete-recursive");
-         }
-     }
-     None
-@@ -2511,7 +2535,7 @@ fn create_destructive_patterns() -> Vec<DestructivePattern> {
-         // recursive ca
++        // Carry the context in one walk: checking every shift's
 ```
 
-**File**: `tests/repro_313_powershell_read_only_false_positives.rs` (modified, +53/-0)
+---
+
+### Incident Patch 2: `acbe0665` (2026-11-08)
+**Commit Message**: fix(hook): require proof for oversized heredoc data [skip ci]
+
+Oversized scan windows can detach a heredoc body from a piped, wrapped,
+descriptor-fed, conditional, unknown or rebound receiver. Replace the direct
+interpreter-name backstop with a bounded whole-program proof of inert data.
+Preserve headers, real terminators and all exterior source, and require every
+temporary body elision to match exact nodes in a complete AST. Unknown syntax
+and exhausted bounds retain the existing size-limit indeterminate policy.
+
+Keep scanning after an Ask finding so it cannot hide a later concrete Deny
+or bypass unverified_decision=deny. Preserve Deny > Indeterminate > Ask
+ordering, concrete rule attribution and existing protocol output.
+
+Add six focused unit tests and expand the existing oversized-hook target to
+11 tests / 40 hook cases, including arithmetic and quoted-operator controls,
+malformed input, exported function overrides, policy and protocol parity.
+Document that disabling the heredoc tier also disables inline interpreter
+inspection (#648), without changing that opt-out or argv0-scoped unlink rules.
+
+Validation: cargo fmt --check, git diff --check, and focused cargo check and
+Clippy -D
+
+**File**: `README.md` (modified, +15/-9)
 ```diff
-@@ -832,6 +832,59 @@ mod issue_647 {
-         }
-     }
+@@ -745,7 +745,7 @@ Environment variables override config files (highest priority):
+ - `DCG_BRIDGE_CRASH_DECISION=allow`: let a command through when the OpenCode plugin or the Oh My Pi bridge started dcg but got no verdict from it (dcg crashed or was killed); the default blocks (see [Bounded Failure Policy](#bounded-failure-policy))
+ - `DCG_BYPASS=1`: bypass dcg entirely (escape hatch; use sparingly)
+ - `DCG_CONFIG=/path/to/config.toml`: use explicit config file
+-- `DCG_HEREDOC_ENABLED=true|false`: enable/disable heredoc scanning
++- `DCG_HEREDOC_ENABLED=true|false`: enable/disable the combined heredoc and inline-interpreter scanning tier (see [heredoc configuration](docs/configuration.md#heredoc-and-inline-script-scanning))
+ - `DCG_HEREDOC_TIMEOUT=50`: heredoc extraction timeout (milliseconds)
+ - `DCG_HEREDOC_TIMEOUT_MS=50`: heredoc extraction timeout (milliseconds)
+ - `DCG_HEREDOC_LANGUAGES=python,bash`: filter heredoc languages
+@@ -1007,14 +1007,20 @@ payload is not allowed blind: dcg scans the raw text for a shell tool's
+ `"command"` value and evaluates it. A command that this scan finds denied (or
+ asked about) gets that answer; only a payload with no evaluable shell command,
+ or one whose command the scan allows, falls through to the fail-open allow. The
+-scan is a best effort and can allow what the full evaluation would not: hook
+-input larger than `max_hook_input_bytes` (256 KiB by default) that holds a
+-quoted Python, JavaScript or Ruby heredoc calling `eval` or `exec` on a string
+-dcg cannot read is allowed, although the same command asks when the limit is
+-raised. To deny oversized input instead, set `general.fail_closed = true` (or
+-`DCG_FAIL_CLOSED=1`). Unpaired UTF-16 surrogate escapes (`\ud800`), which
+-JavaScript hosts can emit, are replaced with U+FFFD before parsing rather than
+-failing it.
++scan is a best effort. For an over-length command containing a heredoc, its
++windows cannot preserve the relationship between the body and its consumer.
++DCG therefore retains the size-limit review/block response unless a bounded
++parse proves the body is inert data. Piped interpreters, wrappers, descriptor
++handoffs, unknown receivers, malformed source and exhausted proof bounds do
++not qualify for that exemption. A completed quoted data-file write can retain
++the fail-open behavior. Window results use the normal decision ordering:
++concrete denial, incomplete analysis, then an `ask` finding. To deny every
++oversized raw input, set `general.fail_closed = true` (or `DCG_FAIL_CLOSED=1`).
++The data exception requires a complete parse view of at most 64 KiB after
++quoted bodies are compacted. Larger exterior source, including long quoted
++text or arithmetic, remains unverified when this proof cannot finish.
++Unpaired UTF-16 surrogate escapes (`\ud800`), which JavaScript hosts can emit,
++are replaced with U+FFFD before parsing rather than failing it.
  
-+    #[test]
-+    fn late_quoted_dotnet_delete_members_are_inspected() {
-+        let lab = Lab::new();
-+        // Quotes around a method name retain its executable role. Inspect
-+        // these calls after a safe prefix through every public transport.
-+        for (last, rule) in [
-+            (
-+                r"[IO.Directory]::'Delete'('C:\example', $true)",
-+                "windows.filesystem:dotnet-directory-delete-recursive",
-+            ),
-+            (
-+                r#"[IO.Directory]::"Delete"('C:\example', $true)"#,
-+                "windows.filesystem:dotnet-directory-delete-recursive",
-+            ),
-+            (
-+                r"[IO.Directory]::'Delete'('C:\example')",
-+                "windows.filesystem:dotnet-directory-delete",
-+            ),
-+            (
-+                r#"[IO.Directory]::"Delete"('C:\example')"#,
-+                "windows.filesystem:dotnet-directory-delete",
-+            ),
-+            (
-+                r"([IO.DirectoryInfo]'C:\example').'Delete'($true)",
-+                "windows.filesystem:directoryinfo-delete-recursive",
-+            ),
-+            (
-+                r#"([IO.DirectoryInfo]'C:\example')."Delete"($true)"#,
-+                "windows.filesystem:directoryinfo-delete-recursive",
-+            ),
-+        ] {
-+            lab.assert_surfaces(
-+                &with_late_statement(400, last),
-+                "deny",
-+                Some(rule),
-+                Some(5000),
-+            );
-+        }
-+    }
+ > A leading UTF-8 BOM (`EF BB BF`) is stripped before parsing in all hook
+ > paths, so a BOM-prefixed but otherwise-valid command is correctly evaluated
+```
+
+**File**: `docs/configuration.md` (modified, +17/-3)
+```diff
+@@ -305,9 +305,23 @@ label it `INACTIVE`; default reads operate on effective layers only.
+ Scan hooks are loaded from `.dcg/hooks.toml` when present. See
+ `docs/scan-precommit-guide.md` for hook configuration and pre-commit examples.
+ 
+-## Heredoc Scanning
+-
+-Heredoc scanning can be enabled or configured with:
++## Heredoc and Inline-Script Scanning
 +
-+    #[test]
-+    fn quoted_dotnet_member_examples_remain_inert_data() {
-+        let lab = Lab::new();
-+        // A quoted member name in a call executes, but an ordinary quoted
-+        // argument containing that entire call remains data.
-+        for last in [
-+            r#"Write-Output '[IO.Directory]::"Delete"($path, $true); $dir."Delete"($true)'"#,
-+            r#"Write-Output "[IO.Directory]::'Delete'('C:\example', $true); $dir.'Delete'($true)""#,
-+        ] {
-+            lab.assert_surfaces(&with_late_statement(400, last), "allow", None, Some(5000));
-+        }
-+    }
++The `[heredoc]` section controls the shared embedded-code scanning tier:
++heredoc bodies, here-strings, and inline interpreter programs such as
++`python -c`, `perl -e`, and `node -e`. It is enabled by default.
 +
-     #[test]
-     fn incomplete_analysis_never_certifies_a_safe_prefix() {
-         let lab = Lab::new();
++Setting `enabled = false`, `DCG_HEREDOC_ENABLED=false`, or
++`--no-heredoc-scan` disables this entire tier. Direct-command pack checks still
++run, but they do not replace language-aware inspection of interpreter source.
++For example, `perl -e "unlink '/etc/passwd'"` is detected by
++`heredoc.perl:unlink.catastrophic` with the tier enabled and can be allowed
++when it is disabled. The direct `unlink` rules apply to the executed program,
++not arbitrary text inside another program's arguments
++([#648](https://github.com/Dicklesworthstone/destructive_command_guard/issues/648)).
++Keep the tier enabled to retain inline-interpreter protection.
++
++Configuration:
+ 
+ ```toml
+ [heredoc]
+```
+
+**File**: `src/heredoc.rs` (modified, +656/-31)
+```diff
+@@ -8731,54 +8731,486 @@ pub(crate) fn first_heredoc_target_command(command: &str) -> Option<String> {
+     extract_heredoc_target_command(command, operator)
+ }
+ 
+-/// Whether a shell or interpreter directly receives *any* heredoc in `command`.
++/// Whether an oversized command with heredoc syntax still needs full analysis.
+ ///
+-/// A receiver [`ScriptLanguage::from_command`] knows counts, whether it reads
+-/// its program from standard input (`python3 - <<'EOF'`) or runs a script that
+-/// reads the body as input (`python3 load.py <<'EOF'`), which may run it too;
+-/// here-strings do not (`<<<` is skipped).
++/// Scan windows can detach a body from a pipe, wrapper, descriptor handoff or
++/// later command that runs it. Therefore the exception is a proof of inert
++/// data, rather than a list of interpreter names: only completed, quoted stdin
++/// heredocs in a completely understood program of literal data commands can
++/// answer `false` (bd-oversized-code-heredoc-receivers-azu4).
+ ///
+-/// Every `<<` operator is examined, not just the first, and the caller passes
+-/// the whole command rather than one scan window: an earlier data heredoc
+-/// (`cat <<'A'\n…\nA\npython3 - <<'EOF'\n…`) or padding before the interpreter
+-/// heredoc otherwise left it undetected and the oversized payload failed open
+-/// (bd-oversized-code-heredoc-receivers-azu4). A receiver reached only through
+-/// a pipe (`cat <<'EOF' | python3 -`), a wrapper, or a file-descriptor heredoc
+-/// is still not detected here — those keep the documented fail-open until the
+-/// receiver analysis is generalized.
+-///
+-/// The oversized hook-input path (bd-ym0p) asks this of a command too large
+-/// to evaluate. Its scan windows cut such a body away from the program that
+-/// runs it, so finding nothing in them is not an answer about the code, and
+-/// the command gets the same indeterminate a merely over-length command gets.
+-/// Data receivers (`cat > file <<'EOF'`) and unrecognized programs answer
+-/// `false` and keep the documented fail-open default. The operator count is
+-/// bounded; past the bound the answer is the conservative `true`.
++/// Large bodies are replaced only in a temporary parse view. All header,
++/// terminator and exterior bytes survive, and every replacement must be the
++/// exact body of a real heredoc in the complete parse. A failed proof, unknown
++/// reader, expanding body, executable substitution, name override, escaping
++/// output or exhausted work bound answers `true`. This does not claim that the
++/// command is destructive; it preserves the caller's incomplete-analysis policy.
++/// The bounds apply to raw operators and exterior source too, so long quoted
++/// text or arithmetic is not exempt when its complete proof exceeds them.
+ #[must_use]
+-pub fn any_heredoc_runs_as_code(command: &str) -> bool {
++pub fn oversized_heredoc_requires_analysis(command: &str) -> bool {
+     const MAX_HEREDOC_OPERATORS: usize = 256;
++    if command.len() > MAX_OVERSIZED_HEREDOC_SOURCE_BYTES {
++        return true;
++    }
+     let bytes = command.as_bytes();
+     let mut search = 0usize;
+-    let mut examined = 0usize;
++    let mut operators = Vec::new();
+     while let Some(relative) = memchr::memmem::find(&bytes[search..], b"<<") {
+         let operator = search + relative;
+         search = operator + 2;
+-        // `<<<` is a here-string, not a heredoc; skip the operator whether this
+-        // `<<` is its first two `<` or (via the overlapping scan) its last two.
+         if bytes.get(operator + 2) == Some(&b'<') || (operator > 0 && bytes[operator - 1] == b'<') {
+             continue;
+         }
+-        examined += 1;
+-        if examined > MAX_HEREDOC_OPERATORS {
++        if operators.len() == MAX_HEREDOC_OPERATORS {
+             return true;
+         }
+-        if extract_heredoc_target_command(command, operator)
+-            .is_some_and(|target| ScriptLanguage::from_command(&target) != ScriptLanguage::Unknown)
++        operators.push(operator);
++    }
++    if operators.is_empty() {
++        return false;
++    }
++    // With no elisions, the complete tree can prove that a quoted `<<` or
++    // numeric arithmetic is ordinary argv data. No outer heredoc nodes alone
++    // would be insufficient: `bash -c '... <<EOF ...'` is an executable carrier.
++    if command.len() <= MAX_OVERSIZED_HEREDOC_VIEW_BYTES {
++        return !oversized_heredoc_view_is_inert(command, &[]);
++    }
++    let Some((view, elisions)) = compact_oversized_heredocs(command, &operators) else {
++        return true;
++    };
++    !oversized_heredoc_view_is_inert(&view, &elisions)
++}
++
++const MAX_OVERSIZED_HEREDOC_SOURCE_BYTES: usize = 4 * 1024 * 1024;
++const MAX_OVERSIZED_HEREDOC_VIEW_BYTES: usize = 64 * 1024;
++const MAX_OVERSIZED_HEREDOC_NODES: usize = 16_384;
++
++/// Coordinates in a compact view, including the retained terminator's tab
++/// indentation in `body` when `<<-` makes it part of the grammar's body node.
++#[derive(Debug)]
++struct OversizedHeredocEl
+```
+
+**File**: `src/main.rs` (modified, +27/-23)
+```diff
+@@ -771,14 +771,14 @@ fn try_deny_unparseable_payload(
+     // destructive-then-padding.
+     let max_command_bytes = config.general.max_command_bytes();
+     let mut commands: Vec<String> = Vec::new();
+-    // An over-length command whose heredoc a shell or interpreter runs as
+-    // code (bd-ym0p). The windows below cut its body away from that program,
+-    // so a scan that finds nothing has not judged the code. The normal path
+-    // answers any command over `max_command_bytes` with the size-limit
+-    // indeterminate; without this, the same `python3 - <<'EOF'` body allowed
+-    // once the whole input also passed `max_hook_input_bytes`. A data
+-    // receiver (`cat > file <<'EOF'`) and padding outside any heredoc keep
+-    // the documented fail-open default.
++    // An over-length command whose heredoc has not been proved inert
++    // (bd-ym0p, bd-oversized-code-heredoc-receivers-azu4). The windows below
++    // cut its body away from its consumer: a pipe, wrapper or descriptor can
++    // feed code to an interpreter without spelling its name at the operator.
++    // Finding no window-level match therefore does not establish safety.
++    // Retain the ordinary size-limit indeterminate unless a bounded reading
++    // proves the heredoc is data. Proven quoted file writes and bounded
++    // padding without a `<<` marker retain the documented fail-open default.
+     // Also retain a command whose recovered bytes do not fit in the bounded
+     // scan. Limits restrict work; they do not establish that omitted bytes are
+     // safe. A later window's concrete denial still takes precedence.
+@@ -796,11 +796,11 @@ fn try_deny_unparseable_payload(
+     for command in hook::extract_commands_from_truncated_json(prefix) {
+         if command.len() > max_command_bytes
+             && oversized_unverified_command.is_none()
+-            && destructive_command_guard::heredoc::any_heredoc_runs_as_code(&command)
++            && destructive_command_guard::heredoc::oversized_heredoc_requires_analysis(&command)
+         {
+-            // The whole command is scanned, not just its first window: padding
+-            // or an earlier data heredoc before the interpreter heredoc must
+-            // not hide it (bd-oversized-code-heredoc-receivers-azu4).
++            // The proof sees the whole recovered command. An earlier data
++            // body cannot vouch for a later executable one, and a later
++            // command can run a file that an earlier data body wrote.
+             oversized_unverified_command = Some(command.len());
+         }
+         if !windows_payload {
+@@ -875,9 +875,9 @@ fn try_deny_unparseable_payload(
+     // records its own audit row in `handle_unparseable_hook_input`, and a
+     // refused payload must not provoke history-writer construction (worker
+     // thread + database) unless a denial is actually published.
+-    // Deny if ANY extracted occurrence (or scan window) resolves decisively;
+-    // a benign decoy ahead of the real command must not be able to end the
+-    // scan.
++    // A concrete denial in ANY extracted occurrence (or scan window) wins;
++    // an earlier Ask must not hide it or bypass an unverified-command Deny.
++    // Use the same Deny > Indeterminate > Ask ordering as `outcome_rank`.
+     //
+     // An exhausted deadline leaves windows unscanned, so "nothing found" is not
+     // something this run established — and this loop used to `break` into the
+@@ -905,6 +905,7 @@ fn try_deny_unparseable_payload(
+     // Keep it until the scan ends, so a later window's proven Deny still
+     // outranks it, and then publish it instead of allowing.
+     let mut pending_indeterminate: Option<ResolvedCommandOutcome> = None;
++    let mut pending_ask: Option<ResolvedCommandOutcome> = None;
+     for command in &commands {
+         if deadline.is_exceeded() {
+             let mut history_writer = if config.history.enabled {
+@@ -943,9 +944,7 @@ fn try_deny_unparseable_payload(
+         // size. A window of padding costs the evaluator one keyword scan.
+         let outcome = resolve_hook_command(&eval_context, command, refined_dialect, None);
+         match outcome {
+-            ResolvedCommandOutcome::DenyFamily(resolved)
+-                if matches!(resolved.mode, DecisionMode::Deny | DecisionMode::Ask) =>
+-            {
++            ResolvedCommandOutcome::DenyFamily(resolved) if resolved.mode == DecisionMode::Deny => {
+                 let mut history_writer = if config.history.enabled {
+                     let mut writer = create_history_writer(&config.history);
+                     writer.limit_drop_wait_to(deadline.remaining().unwrap_or_default());
+@@ -963,25 +962,30 @@ fn try_deny_unparseable_payload(
+                 drop_history_writer(history_writer);
+                 return Some(exit_code);
+             }
++            ResolvedCommandOutcome::DenyFamily(resolved) if resolved.mode == DecisionMode::Ask => {
++                pending_ask.get_or_insert(ResolvedCommandOutcome::Deny
+```
+
+**File**: `tests/repro_ym0p_oversized_code_heredoc.rs` (modified, +301/-8)
+```diff
+@@ -18,7 +18,7 @@ use std::io::Write;
+ use std::path::Path;
+ use std::process::{Command, Stdio};
+ 
+-/// About 320 KB of body: 5,000 lines of 64 bytes, as in the bead's probes.
++/// About 270 KB of body: 5,000 padding lines, as in the bead's probes.
+ fn body(call: &str) -> String {
+     use std::fmt::Write as _;
+     let mut text = String::new();
+@@ -42,25 +42,73 @@ fn envelope(command: &str) -> String {
+ }
+ 
+ fn run_hook(input: &str, home: &Path) -> (String, String, i32) {
++    run_hook_with_config(input, home, "", "claude-code")
++}
++
++fn run_hook_with_config(
++    input: &str,
++    home: &Path,
++    config: &str,
++    agent: &str,
++) -> (String, String, i32) {
++    run_hook_with_config_and_env(input, home, config, agent, &[])
++}
++
++fn run_hook_with_config_and_env(
++    input: &str,
++    home: &Path,
++    config: &str,
++    agent: &str,
++    extra_env: &[(&str, &str)],
++) -> (String, String, i32) {
+     let config_path = home.join("dcg-test-config.toml");
+-    fs::write(&config_path, "").expect("empty config");
+-    let mut child = Command::new(env!("CARGO_BIN_EXE_dcg"))
++    fs::write(
++        &config_path,
++        format!("{config}\n[history]\nenabled = false\n"),
++    )
++    .expect("isolated config");
++    let mut command = Command::new(env!("CARGO_BIN_EXE_dcg"));
++    command
++        // Keep parent-process detection from changing the expected protocol.
++        .args(["--agent", agent])
+         .stdin(Stdio::piped())
+         .stdout(Stdio::piped())
+         .stderr(Stdio::piped())
++        .env_clear()
+         .env("HOME", home)
+         .env("USERPROFILE", home)
+-        .env_remove("CLAUDE_CONFIG_DIR")
+         .env("XDG_CONFIG_HOME", home.join("xdg_config"))
++        .env("XDG_DATA_HOME", home.join("xdg_data"))
++        .env("XDG_STATE_HOME", home.join("xdg_state"))
++        .env("XDG_CACHE_HOME", home.join("xdg_cache"))
++        .env("APPDATA", home.join("appdata"))
++        .env("LOCALAPPDATA", home.join("localappdata"))
++        .env("TMPDIR", home)
++        .env("TEMP", home)
++        .env("TMP", home)
+         .env("DCG_CONFIG", &config_path)
++        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++        .env("DCG_ALLOW_ONCE_PATH", home.join("allow-once.jsonl"))
+         .env(
+             "DCG_PENDING_EXCEPTIONS_PATH",
+             home.join("pending_exceptions.jsonl"),
+         )
+-        .env_remove("DCG_FAIL_CLOSED")
+-        .env_remove("DCG_HOOK_TIMEOUT_MS")
+-        .spawn()
+-        .expect("spawn dcg");
++        .env("DCG_SELF_HEAL_HOOK", "0")
++        .env("DCG_NO_UPDATE_CHECK", "1")
++        // These assert semantics and rule ownership, not latency. As in the
++        // heredoc regression suite (bd-e1xl), extraction has its own budget
++        // independent of the AST and whole-hook budgets. Production deadlines
++        // and the dedicated deadline tests remain unchanged.
++        .env("DCG_HOOK_TIMEOUT_MS", "5000")
++        .env("DCG_AST_TIMEOUT_MS", "5000")
++        .env("DCG_HEREDOC_TIMEOUT_MS", "5000")
++        .env("NO_COLOR", "1")
++        .env("TERM", "dumb")
++        .current_dir(home);
++    for (name, value) in extra_env {
++        command.env(name, value);
++    }
++    let mut child = command.spawn().expect("spawn dcg");
+     child
+         .stdin
+         .take()
+@@ -80,6 +128,8 @@ fn oversized_heredoc_run_as_code_is_not_allowed_blind() {
+     const SIZE_LIMIT: &str = "exceeds limit";
+     for (receiver, call, verdict) in [
+         ("python3 -", "exec(x)", SIZE_LIMIT),
++        // A flag-only wrapper was already recognized by the old backstop.
++        ("env -i python3 -", "exec(x)", SIZE_LIMIT),
+         // Every window is evaluated as shell, and the one holding the call
+         // reads `eval(x);`, which the POSIX eval rule denies. A window's deny
+         // outranks the size-limit answer.
+@@ -151,3 +201,246 @@ fn oversized_data_heredoc_keeps_the_fail_open_default() {
+         "the oversized-input warning stays: {stderr:?}"
+     );
+ }
++
++fn assert_size_limit_verdict(
++    label: &str,
++    command: &str,
++    config: &str,
++    codex: bool,
++    expected_decision: &str,
++) {
++    let mut payload = serde_json::json!({
++        "hook_event_name": "PreToolUse",
++        "tool_name": "Bash",
++        "tool_input": { "command": command },
++    });
++    if codex {
++        payload["turn_id"] = serde_json::json!("oversized-heredoc-turn");
++    }
++    let input = payload.to_string();
++    assert!(input.len() > 256 * 1024, "{label}: input must be oversized");
++    let home = tempfile::tempdir().expect("isolated hook home");
++    let agent = if codex { "codex" } else { "claude-code" };
++    let (stdout, stderr, exit_code) = run_hook_with_config(&input, home.path(), config, agent);
++    assert_eq!(exit_code, 0, "{label}: hook must exit 0\n{stderr}");
++    let json: serde_json::Value = serde_json::from_str(&stdout)
++        .unwrap_or_else(|error| panic!("{label}: {error}: stdout={stdout:?}; stderr={stderr:?}"));
++    let specific = json["hookSpecificOutput"].as_object().expect
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #651** (closed): ci(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 in the actions group (@dependabot[bot])
+- **PR #650** (closed): deps(deps): bump flate2 from 1.1.10 to 1.1.11 in the rust-minor-patch group (@dependabot[bot])
 - **PR #637** (closed): fix(powershell): preserve call/dot-source operators across compound statements, scriptblock .Invoke(), and *.exe tool names (@stevemoraco)
 - **PR #632** (2026-11-02): deps(deps): bump fancy-regex from 0.19.2 to 0.20.0 (@dependabot[bot])
 - **PR #631** (2026-11-02): deps(deps): bump rusqlite from 0.40.2 to 0.41.1 (@dependabot[bot])
 - **PR #630** (2026-11-02): deps(deps): bump the rust-minor-patch group with 2 updates (@dependabot[bot])
-- **PR #629** (closed): fix(heredoc): stop quoted_heredoc_bodies_blanked from re-entering itself (#628) (@Khang5687)
-- **PR #596** (2026-10-27): deps(deps): bump smallvec from 1.16.3 to 1.16.4 in the rust-minor-patch group (@dependabot[bot])
 
 ---
 
@@ -3447,47 +3088,36 @@ Refs #647. The original shell-dialect classification report remains
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. separate interpreter literal data from shell execution [skip ci]
+## X. heredoc): preserve arithmetic context during shell analysis [skip ci]
 
 **RULE**:
-When implementing operations in `docs/adr-001-heredoc-scanning.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7eb68874`: separate interpreter literal data from shell execution [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46a26cda`: heredoc): preserve arithmetic context during shell analysis [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/adr-001-heredoc-scanning.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/evaluator.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Interpreter source and literal data (#645)
-
-An extracted interpreter program is executable source, but its string literals
-are not automatically shell commands. The final shell-rule view uses the existing
-bounded documentation proof for both quoted interpreter heredocs and complete,
-literal inline program words. Python comparisons, built-in data collections,
-printing, and file reads through a proven read-only `open` can retain their
-literal data role. For example, comparing `"rm -rf /Users/example/scratch"`
-with another string, or searching for it in pending-exception JSONL text, does
-not execute that command.
-
-This proof requires the entire program and its outer consumer to be understood.
-Execution APIs, opaque calls, rebound builtins, dynamic source, unsupported
-syntax, writable or uncertain file modes, and output handed to a shell retain
-the conservative analysis. Unquoted heredoc expansion remains executable shell
-syntax. Proof failure or exhaustion never grants an exemption.
-
-The expanded data inspection and inline-literal exemptions require the complete
-original request. Extracted children and changed policy-replay views can lose
-an enclosing pipeline, binding, or generat
+            // #649: the secondary PowerShell `$()` view of a POSIX `$((...))`
+            // loses one pair of parentheses and hence its arithmetic context.
+            // Blank only parser-proven shift operators in this view so their
+            // `<<` cannot become a heredoc during nested evaluation. The POSIX
+            // pass above still sees the shifts, and every nested command's
+            // source remains available to both substitution scanners.
+            let powershell_view =
+                crate::heredoc::mask_arithmetic_shift_operators(substitution_source.as_ref());
+                powershell_view.as_ref(),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                substitution_source.as_ref(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7eb68874` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46a26cda` are properly handled with clean fallback behavior.

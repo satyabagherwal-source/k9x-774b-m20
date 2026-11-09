@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "7c0dc9dc",
+    "sourceVersion": "096a19fa",
     "license": "NOASSERTION",
-    "contentHash": "67e7ec326b503e32724a06b389953a9ed51b95f56694efc37b568243bef7129a",
-    "lastHarvestedAt": "2026-11-09T17:12:38.147Z",
+    "contentHash": "4bc21bf972095bbc9523e3a154fefe8471cf2b902ccc39ef16a226ea7a18bc24",
+    "lastHarvestedAt": "2026-11-09T18:11:38.165Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "25119216",
+    "sourceVersion": "f7f8b7e5",
     "license": "AGPL-3.0",
-    "contentHash": "9a5bc991fe7d728dcf29de1e6a842d983d7e524b7ebafe1979621dd32b730f89",
-    "lastHarvestedAt": "2026-11-08T00:22:11.566Z",
+    "contentHash": "ccd13871933ab6ba2dfc8aaaa1f76963834423c15c00f880d24640441dd168d7",
+    "lastHarvestedAt": "2026-11-09T18:11:18.581Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -4103,10 +4103,10 @@
     "repository": "i18next/react-i18next",
     "platform": "github",
     "sourceUrl": "https://github.com/i18next/react-i18next",
-    "sourceVersion": "5ca8c863",
+    "sourceVersion": "bd802561",
     "license": "MIT",
-    "contentHash": "990f328c5a265d522b291e447a38a63d95dda981ac6559f116d92f83c08d1ec5",
-    "lastHarvestedAt": "2026-11-06T22:56:03.418Z",
+    "contentHash": "153d986f0d49404ac745d2e7ec8314061512b77018bde1d296932634b04aa76d",
+    "lastHarvestedAt": "2026-11-09T18:11:21.804Z",
     "learningId": "learn-github-i18next-react-i18next"
   },
   "clastix-kamaji": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "9ed384be",
+    "sourceVersion": "6420c698",
     "license": "NOASSERTION",
-    "contentHash": "d4f3a1e6894b373c3bcc1078662f93abb0225311d850f9291fd88a2e792fb445",
-    "lastHarvestedAt": "2026-11-08T19:31:12.752Z",
+    "contentHash": "748f7dc9d2aff27981a15f57a9b0619a5e6edbd2757c0b266df525db9d476f4a",
+    "lastHarvestedAt": "2026-11-09T18:11:37.118Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "86e98e3f",
+    "sourceVersion": "acbe0665",
     "license": "NOASSERTION",
-    "contentHash": "9b6a9db2b3cdc04364175cba0377d94beb9c33a5b1cd420c92d07c593a983ca9",
-    "lastHarvestedAt": "2026-11-08T15:42:24.876Z",
+    "contentHash": "421ec89624cc4c71057f91f562a1f3e3c13386efa4154c6da2d6c2f01e665e17",
+    "lastHarvestedAt": "2026-11-09T18:16:21.805Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {

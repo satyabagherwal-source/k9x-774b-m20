@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source**: github ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
-> **Source Version**: `5ca8c863`  
+> **Source Version**: `bd802561`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T22:56:03.057Z  
+> **Timestamp**: 2026-11-09T18:11:14.537Z  
 > **Learning ID**: `learn-github-i18next-react-i18next`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T22:55:58.751Z  
+> **Harvest Timestamp**: 2026-11-09T18:11:13.683Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Internationalization for react done right. Using the i18next i18n ecosystem.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10064 stars
+- **Stars / Engagement**: 10062 stars
 
 ---
 
@@ -659,36 +659,44 @@ export const warn = (i18n, code, msg, rest) => {
     console.warn(...args);
   }
 };
-const alreadyWarned = {};
+// deduped per logger, where the warning goes: each i18next instance has its own logger, and a
+// clone shares its parent's, so a second instance (micro-frontends, tests) gets its own warnings
+// and a clone per request does not repeat them; an instance without a logger yet counts itself,
+// no instance at all is deduped per message
+const warnedFor = new WeakMap();
+const warnedWithoutInstance = new Set();
 /** @type {typeof warn} */
 export const warnOnce = (i18n, code, msg, rest) => {
-  if (isString(msg) && alreadyWarned[msg]) return;
-  if (isString(msg)) alreadyWarned[msg] = new Date();
+  if (isString(msg)) {
+    let warned = warnedWithoutInstance;
+    const owner = i18n?.services?.logger || i18n;
+    if (isObject(owner)) {
+      warned = warnedFor.get(owner);
+      if (!warned) warnedFor.set(owner, (warned = new Set()));
+    }
+    if (warned.has(msg)) return;
+    warned.add(msg);
+  }
   warn(i18n, code, msg, rest);
 };
 
-// not needed right now
-//
-// export const deprecated = (i18n, ...args) => {
-//   if (process && process.env && (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')) {
-//     if (isString(args[0])) args[0] = `deprecation warning -> ${args[0]}`;
-//     warnOnce(i18n, ...args);
-//   }
-// }
+export const inDevelopment = () => {
+  try {
+    // statically replaced by bundlers (webpack/vite/metro define it, rollup replaces it
+    // in our UMD builds); evaluated at runtime in Node
+    return process.env.NODE_ENV !== 'production';
+  } catch (e) {
+    // no `process` in this runtime (raw ESM in the browser, some edge runtimes): stay quiet
+    return false;
+  }
+};
 
 const loadedClb = (i18n, cb) => () => {
   // delay ready if not yet initialized i18n instance
   if (i18n.isInitialized) {
     cb();
   } else {
-    const initialized = () => {
-      // due to emitter removing issue in i18next we need to delay remove
-      setTimeout(() => {
-        i18n.off('initialized', initialized);
-      }, 0);
-      cb();
-    };
-    i18n.on('initialized', initialized);
+    i18n.once('initialized', () => cb());
   }
 };
 
@@ -696,7 +704,6 @@ export const loadNamespaces = (i18n, ns, cb) => {
   i18n.loadNamespaces(ns, loadedClb(i18n, cb));
 };
 
-// should work with I18NEXT >= v22.5.0
 export const loadLanguages = (i18n, lng, ns, cb) => {
   if (isString(ns)) ns = [ns];
   if (i18n.options.preload && i18n.options.preload.indexOf(lng) > -1)
@@ -777,6 +784,7 @@ export {
 import type {
   i18n,
   ReactOptions,
+  AppendKeyPrefix,
   ApplyTarget,
   ConstrainTarget,
   GetSource,
@@ -794,10 +802,6 @@ import * as React from 'react';
 
 type _DefaultNamespace = TypeOptions['defaultNS'];
 type _EnableSelector = TypeOptions['enableSelector'];
-type _KeySeparator = TypeOptions['keySeparator'];
-type _AppendKeyPrefix<Key, KPrefix> = KPrefix extends string
-  ? `${KPrefix}${_KeySeparator}${Key & string}`
-  : Key;
 
 type TransChild = React.ReactNode | Record<string, unknown>;
 type $NoInfer<T> = [T][T extends T ? 0 : never];
@@ -824,7 +828,8 @@ export type TransProps<
   tOptions?: TOpt;
   // keep the return type inside this property: as a type parameter of `Trans`, it was also
   // computed for every key of the namespace, which is slow with large resources
-  values?: InterpolationMap<TFunctionReturn<Ns, _AppendKeyPrefix<Key, KPrefix>, TOpt>>;
+  values?: InterpolationMap<TFunctionReturn<Ns, AppendKeyPrefix<Key, KPrefix>, TOpt>>;
+  /** @deprecated ignored: Trans always decodes HTML entities */
   shouldUnescape?: boolean;
   t?: TFunction<Ns, KPrefix>;
 };
@@ -861,6 +866,7 @@ export interface TransSelectorProps<
   parent?: string | React.ComponentType<any> | null; // used in React.createElement if not null
   tOptions?: TOpt;
   values?: Key extends (...args: any[]) => infer R ? InterpolationMap<R> : {};
+  /** @deprecated ignored: Trans always decodes HTML entities */
   shouldUnescape?: boolean;
   t?: TFunction<Ns, KPrefix>;
 }
@@ -900,7 +906,10 @@ export type ErrorCode =
   | 'TRANS_INVALID_VAR'
   | 'TRANS_INVALID_COMPONENTS'
   | 'USE_T_BEFORE_READY'
-  | 'SUSPENDED_WHILE_LOADING';
+  | 'SUSPENDED_WHILE_LOADING'
+  | 'I18N_NOT_INITIALIZED'
+  | 'ICU_TRANS_RENDER_ERROR'
+  | 'GLOBAL_INSTANCE_ON_SERVER';
 
 export type ErrorMeta = {
   code: ErrorCode;
@@ -931,69 +940,42 @@ export type ErrorArgs = readonly [string, ErrorMeta | undefined, ...any[]];
 
 ```
 
-### Core Architecture Module: `eslint.config.mjs`
+### Core Architecture Module: `augment-react.d.ts`
 ```
-import neostandard from 'neostandard';
-import eslintReact from '@eslint-react/eslint-plugin';
-import testingLibrary from 'eslint-plugin-testing-library';
-import jestDom from 'eslint-plugin-jest-dom';
+// Opt-in: lets HTML elements nested in <Trans> take interpolation objects as children,
+// e.g. <Trans><strong>{{ name }}</strong></Trans>, when CustomTypeOptions sets
+// allowObjectInHTMLChildren: true. Import it once, next to that declaration:
+//
+//   import 'react-i18next/augment-react';
+//
+// It widens React's HTMLAttributes['children'], which @types/react does not allow to be redeclared,
+// so it needs skipLibCheck: true with current @types/react.
+import type { TypeOptions } from 'i18next';
+import type * as React from 'react';
 
-export default [
-  {
-    ignores: [
-      'dist/**',
-      'coverage/**',
-      'example/**',
-      'react-i18next.js',
-      'react-i18next.min.js',
-      // ponytail: the .jsx tests were never linted (eslint 8 only picked up .js); lint them in their own change
-      'test/**/*.jsx',
-    ],
-  },
-  ...neostandard({ semi: true, noStyle: true }),
-  {
-    files: ['**/*.js'],
-    ...eslintReact.configs.recommended,
-  },
-  {
-    rules: {
-      curly: 'off',
-      // react >= 16.8 is supported, `use()` needs 19
-      '@eslint-react/no-use-context': 'off',
-      // Trans walks and clones its children by design
-      '@eslint-react/no-clone-element': 'off',
-      '@eslint-react/no-children-map': 'off',
-      '@eslint-react/no-children-to-array': 'off',
-      '@eslint-react/no-array-index-key': 'off',
-    },
-  },
-  {
-    files: ['test/**/*.js'],
-    ...testingLibrary.configs['flat/react'],
-    settings: { 'testing-library/custom-renders': 'off' },
-  },
-  {
-    files: ['test/**/*.js'],
-    ...jestDom.configs['flat/recommended'],
-  },
-  {
-    files: ['test/**/*.js'],
-    rules: {
-      'testing-library/no-node-access': ['error', { allowContainerFirstChild: true }],
-      'testing-library/no-manual-cleanup': 'off',
-    },
-  },
-];
+type ObjectOrNever = TypeOptions['allowObjectInHTMLChildren'] extends true
+  ? Record<string, unknown>
+  : never;
+
+type ReactI18NextChildren = React.ReactNode | ObjectOrNever;
+
+declare module 'react' {
+  interface HTMLAttributes<T> {
+    // Without allowObjectInHTMLChildren this is React's own children type, so it follows @types/react.
+    // The union is inspired by the typings for React.ReactNode. We do this to fix "This JSX tag's 'children' prop
+    // expects a single child of type 'ReactI18NextChildren', but multiple children were provided":
+    // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/5a1e9f91ed0143adede394adb3f540e650455f71/types/react/index.d.ts#L268
+    children?: TypeOptions['allowObjectInHTMLChildren'] extends true
+      ? ReactI18NextChildren | Iterable<ReactI18NextChildren>
+      : DOMAttributes<T>['children'];
+  }
+}
 
 ```
 
-### Core Architecture Module: `example/ReactNativeLocizeProject/.prettierrc.js`
+### Core Architecture Module: `augment-react.js`
 ```
-module.exports = {
-  arrowParens: 'avoid',
-  singleQuote: true,
-  trailingComma: 'all',
-};
+// Types only (see augment-react.d.ts); this file lets bundlers resolve a side-effect import of it.
 
 ```
 
@@ -1024,262 +1006,80 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ca8c863` (2026-11-05)
-**Commit Message**: build
+### Incident Patch 1: `6f76fa2c` (2026-11-08)
+**Commit Message**: fix(types): declare @types/react as an optional peer dependency, require i18next 27.0.1
 
-**File**: `react-i18next.js` (modified, +198/-52)
+**File**: `package-lock.json` (modified, +9/-5)
 ```diff
-@@ -20,6 +20,8 @@
-     if (object == null) return '';
-     return String(object);
-   };
-+  const isSafeLanguageCode = code => isString$1(code) && /^[A-Za-z0-9_@.-]{1,128}$/.test(code) && !code.includes('..') && !['__proto__', 'constructor', 'prototype'].includes(code);
-+  const callbackApiOf = plugin => plugin?.callbackApi ?? plugin?.constructor?.callbackApi;
-   const copy = (a, s, t) => {
-     a.forEach(m => {
-       if (s[m]) t[m] = s[m];
-@@ -182,6 +184,9 @@
+@@ -34,7 +34,7 @@
+         "eslint-plugin-testing-library": "^7.16.2",
+         "happy-dom": "^21.0.4",
+         "husky": "^9.1.7",
+-        "i18next": "^27.0.0",
++        "i18next": "^27.0.1",
+         "lint-staged": "^17.6.0",
+         "mkdirp": "^3.0.1",
+         "neostandard": "^0.14.1",
+@@ -51,11 +51,15 @@
+         "node": ">=22"
+       },
+       "peerDependencies": {
+-        "i18next": ">= 27.0.0",
++        "@types/react": "*",
++        "i18next": ">= 27.0.1",
+         "react": ">= 18.0.0",
+         "typescript": "^5 || ^6 || ^7"
+       },
+       "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
+         "typescript": {
+           "optional": true
          }
-         nextPath += tokens[j];
-         next = current[nextPath];
-+        if ((typeof next === 'function' || nextPath === '__proto__') && !Object.prototype.hasOwnProperty.call(current, nextPath)) {
-+          next = undefined;
-+        }
-         if (next !== undefined) {
-           if (['string', 'number', 'boolean'].includes(typeof next) && j < tokens.length - 1) {
-             continue;
-@@ -219,6 +224,7 @@
-       this.logger = concreteLogger || consoleLogger;
-       this.options = options;
-       this.debug = options.debug;
-+      this.seen = new Set();
-     }
-     log(...args) {
-       return this.forward(args, 'log', '', true);
-@@ -232,6 +238,11 @@
-     deprecate(...args) {
-       return this.forward(args, 'warn', 'WARNING DEPRECATED: ', true);
-     }
-+    once(key, lvl, ...args) {
-+      if (!this.debug || this.seen.has(key) || this.seen.size >= 1000) return null;
-+      this.seen.add(key);
-+      return this[lvl](...args);
-+    }
-     forward(args, lvl, prefix, debugOnly) {
-       if (debugOnly && !this.debug) return null;
-       args = args.map(a => isString$1(a) ? a.replace(/[\r\n\x00-\x1F\x7F]/g, ' ') : a);
-@@ -265,13 +276,15 @@
-       });
-       return this;
-     }
--    off(event, listener) {
--      if (!this.observers[event]) return;
--      if (!listener) {
--        delete this.observers[event];
--        return;
--      }
--      this.observers[event].delete(listener);
-+    off(events, listener) {
-+      (typeof events === 'string' ? events.split(' ') : [events]).forEach(event => {
-+        if (!this.observers[event]) return;
-+        if (!listener) {
-+          delete this.observers[event];
-+          return;
-+        }
-+        this.observers[event].delete(listener);
-+      });
-     }
-     once(event, listener) {
-       const wrapper = (...args) => {
-@@ -309,6 +322,7 @@
-       super();
-       this.data = data || {};
-       this.options = options;
-+      this.logger = baseLogger.create('resourceStore');
-       if (this.options.keySeparator === undefined) {
-         this.options.keySeparator = '.';
+@@ -5428,9 +5432,9 @@
        }
-@@ -327,11 +341,15 @@
-         this.options.ns.splice(index, 1);
-       }
-     }
-+    deprecateDottedLng(method) {
-+      this.logger.once(method, 'deprecate', `${method}: a dotted language ('en.translation.key') that carries the namespace and key is removed in v27; pass language, namespace and key as separate arguments`);
-+    }
-     getResource(lng, ns, key, options = {}) {
-       const keySeparator = options.keySeparator !== undefined ? options.keySeparator : this.options.keySeparator;
-       const ignoreJSONStructure = options.ignoreJSONStructure !== undefined ? options.ignoreJSONStructure : this.options.ignoreJSONStructure;
-       let path;
-       if (lng.includes('.')) {
-+        this.deprecateDottedLng('getResource');
-         path = lng.split('.');
-       } else {
-         path = [lng, ns];
-@@ -346,12 +364,12 @@
-         }
-       }
-       const result = getPath(this.data, path);
--      if (!result && !ns && !key && lng.includes('.')) {
-+      if (result == null && !ns && !key && lng.includes('.')) {
-         lng = path[0];
-         ns = path[1];
-         key = path.slice(2).join('.');
-       }
--      if (result || !ignoreJSONStructure || !isString$1(key)) return result;
-+      if (result != null || !ignoreJSONStructure || !isString$1(key)) return result;
-       return deepFind(this.data?.[lng]?.[ns], key, keySeparator);
-     }
-     addResource(lng, ns, key, value, options = {
-@@ -361,6 +379,7 @@
-       let path = [lng, ns];
-       if (key) path = path.concat(keySeparator ? key.split(keySeparator) : key);
-       if (lng.includes('.')) {
-+        this.deprecateDottedLng('addResource');
-         path = lng.split('.');
-         value = ns;
-         ns = path[1];
-@@ -385,6 +404,7 @@
-     }) {
-       let path = [lng, ns];
-       if (lng.includes('.')) {
-+        this.deprecateDottedLng('addResourceBundle');
-         path = lng.split('.');
-         deep = resources;
-         resources = ns;
-@@ -485,7 +505,7 @@
-   class Translator extends EventEmitter {
-     constructor(services, options = {}) {
-       super();
--      copy(['resourceStore', 'languageUtils', 'pluralResolver', 'interpolator', 'backendConnector', 'i18nFormat', 'utils'], services, this);
-+      copy(['resourceStore', 'languageUtils', 'pluralResolver', 'interpolator', 'backendConnector', 'i18nFormat', 'utils', 'ownPostProcessors'], services, this);
-       this.options = options;
-       if (this.options.keySeparator === undefined) {
-         this.options.keySeparat
+     },
+     "node_modules/i18next": {
+-      "version": "27.0.0",
+-      "resolved": "https://registry.npmjs.org/i18next/-/i18next-27.0.0.tgz",
+-      "integrity": "sha512-lCP39wHw2s0MZLyNXNvVEVhSRx3STHXB7XUbyS5qVabE3b+SSqFM/Ffb6HIygeKjYrMAwRV2qDShBQRba/DvAQ==",
++      "version": "27.0.1",
++      "resolved": "https://registry.npmjs.org/i18next/-/i18next-27.0.1.tgz",
++      "integrity": "sha512-KaE5ozP8UUeVpOJIwMVbbnpRKpyYQuxd9ZbseJoDzezE3nvLnZZQn20pkzyIJwPI2Uet/Qs3WzPTG812f6F/Eg==",
+       "dev": true,
+       "funding": [
+         {
 ```
 
----
-
-### Incident Patch 2: `2d792a47` (2026-11-05)
-**Commit Message**: fix(types): the react init options keep their types with i18next 27
-
-**File**: `index.d.ts` (modified, +82/-0)
+**File**: `package.json` (modified, +6/-2)
 ```diff
-@@ -14,6 +14,7 @@ import type {
-   TOptions,
-   InterpolationMap,
-   TFunctionReturn,
-+  TOptionsBase,
- } from 'i18next';
- import * as React from 'react';
- import {
-@@ -176,6 +177,87 @@ declare module 'i18next' {
-   interface CustomInstanceExtensions {
-     reportNamespaces?: ReportNamespaces;
-   }
-+
-+  // i18next 27 declares `ReactOptions` empty and leaves its shape to react-i18next. These are
-+  // exactly i18next 26's property types: TypeScript accepts the repeated declarations on i18next 26
-+  // and they fill in the empty interface on i18next 27.
-+  interface ReactOptions {
-+    /**
-+     * Set it to fallback to let passed namespaces to translated hoc act as fallbacks
-+     * @default 'default'
-+     */
-+    nsMode?: 'default' | 'fallback';
-+    /**
-+     * Set it to the default parent element created by the Trans component.
-+     * @default 'div'
-+     */
-+    defaultTransParent?: string;
-+    /**
-+     * Set which events trigger a re-render, can be set to false or string of events
-+     * @default 'languageChanged'
-+     */
-+    bindI18n?: string | false;
-+    /**
-+     * Set which events on store trigger a re-render, can be set to false or string of events
-+     * @default ''
-+     */
-+    bindI18nStore?: string | false;
-+    /**
-+     * Set fallback value for Trans components without children
-+     * @default undefined
-+     */
-+    transEmptyNodeValue?: string;
-+    /**
-+     * Set it to false if you do not want to use Suspense
-+     * @default true
-+     */
-+    useSuspense?: boolean;
-+    /**
-+     * Function to generate an i18nKey from the defaultValue (or Trans children)
-+     * when no key is provided.
-+     * By default, the defaultValue (Trans text) itself is used as the key.
-+     * If you want to require keys for all translations, supply a function
-+     * that always throws an error.
-+     * @default undefined
-+     */
-+    hashTransKey?(defaultValue: TOptionsBase['defaultValue']): TOptionsBase['defaultValue'];
-+    /**
-+     * Convert eg. <br/> found in translations to a react component of type br
-+     * @default true
-+     */
-+    transSupportBasicHtmlNodes?: boolean;
-+    /**
-+     * Which nodes not to convert in defaultValue generation in the Trans component.
-+     * @default ['br', 'strong', 'i', 'p']
-+     */
-+    transKeepBasicHtmlNodesFor?: readonly string[];
-+    /**
-+     * Wrap text nodes in a user-specified element.
-+     * @default ''
-+     */
-+    transWrapTextNodes?: string;
-+    /**
-+     * Default props to apply to all Trans components.
-+     * Component-level props will override these defaults.
-+     */
-+    transDefaultProps?: {
-+      tOptions?: TOptions;
-+      values?: object;
-+      shouldUnescape?: boolean;
-+      components?: readonly unknown[] | { readonly [tagName: string]: unknown }; // Use `unknown` (or `any`) to be permissive without importing React.
-+    };
-+    /**
-+     * Optional keyPrefix that will be automatically applied to returned t function in useTranslation for example.
-+     * Accepts a string or a selector function (e.g. `$ => $.deeply.nested`).
-+     * @default undefined
-+     */
-+    keyPrefix?: string | (($: any) => any);
-+    /**
-+     * Unescape function
-+     * by default it unescapes some basic html entities
-+     */
-+    unescape?(str: string): string;
-+  }
- }
- 
- type ObjectOrNever = TypeOptions['allowObjectInHTMLChildren'] extends true
-```
-
-**File**: `test/typescript/misc/ReactOptions.test.ts` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+import { it, expectTypeOf } from 'vitest';
-+import i18next from 'i18next';
-+import type { ReactOptions } from 'i18next';
-+import { getDefaults } from 'react-i18next';
-+
-+// on i18next 27, which declares ReactOptions empty, react-i18next's declaration fills it in
-+it('types the react options from i18next 26 and 27', () => {
-+  expectTypeOf(getDefaults().useSuspense).toEqualTypeOf<boolean | undefined>();
-+  expectTypeOf<ReactOptions>()
-+    .toHaveProperty('bindI18n')
-+    .toEqualTypeOf<string | false | undefined>();
-+  i18next.init({ react: { useSuspense: false, transKeepBasicHtmlNodesFor: ['br'] } });
-+  // @ts-expect-error useSuspense is a boolean
-+  i18next.init({ react: { useSuspense: 'nope' } });
-+});
+@@ -92,11 +92,15 @@
+     "html-parse-stringify": "^4.0.1"
+   },
+   "peerDependencies": {
+-    "i18next": ">= 27.0.0",
++    "@types/react": "*",
++    "i18next": ">= 27.0.1",
+     "react": ">= 18.0.0",
+     "typescript": "^5 || ^6 || ^7"
+   },
+   "peerDependenciesMeta": {
++    "@types/react": {
++      "optional": true
++    },
+     "typescript": {
+       "optional": true
+     }
+@@ -124,7 +128,7 @@
+     "eslint-plugin-testing-library": "^7.16.2",
+     "happy-dom": "^21.0.4",
+     "husky": "^9.1.7",
+-    "i18next": "^27.0.0",
++    "i18next": "^27.0.1",
+     "lint-staged": "^17.6.0",
+     "mkdirp": "^3.0.1",
+     "neostandard": "^0.14.1",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1308,59 +1108,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in react-i18next.js
+## X. types): declare @types/react as an optional peer dependency, require i18next 27.
 
 **RULE**:
-When implementing operations in `react-i18next.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ca8c863`: build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f76fa2c`: types): declare @types/react as an optional peer dependency, require i18next 27.0.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `react-i18next.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  const isSafeLanguageCode = code => isString$1(code) && /^[A-Za-z0-9_@.-]{1,128}$/.test(code) && !code.includes('..') && !['__proto__', 'constructor', 'prototype'].includes(code);
-  const callbackApiOf = plugin => plugin?.callbackApi ?? plugin?.constructor?.callbackApi;
-        if ((typeof next === 'function' || nextPath === '__proto__') && !Object.prototype.hasOwnProperty.call(current, nextPath)) {
-          next = undefined;
-        }
-      this.seen = new Set();
-    once(key, lvl, ...args) {
-      if (!this.debug || this.seen.has(key) || this.seen.size >= 1000) return null;
-      this.seen.add(key);
-      return this[lvl](...args);
-    }
-    off(events, listener) {
-      (typeof events === 'string' ? events.split(' ') : [events]).forEach(event => {
-        if (!this.observers[event]) return;
-        if (!listener) {
-          delete this.observers[event];
-          return;
-        }
-        this.observers[event].delete(listener);
-      });
-      this.logger = baseLogger.create('resourceStore');
-    deprecateDottedLng(method) {
-      this.logger.once(method, 'deprecate', `${method}: a dotted language ('en.translation.key') that carries the namespace and key is removed in v27; pa
+        "i18next": "^27.0.1",
+        "@types/react": "*",
+        "i18next": ">= 27.0.1",
+        "@types/react": {
+          "optional": true
+        },
+      "version": "27.0.1",
+      "resolved": "https://registry.npmjs.org/i18next/-/i18next-27.0.1.tgz",
+      "integrity": "sha512-KaE5ozP8UUeVpOJIwMVbbnpRKpyYQuxd9ZbseJoDzezE3nvLnZZQn20pkzyIJwPI2Uet/Qs3WzPTG812f6F/Eg==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-    off(event, listener) {
-      if (!this.observers[event]) return;
-      if (!listener) {
-        delete this.observers[event];
-        return;
-      }
-      this.observers[event].delete(listener);
-      if (!result && !ns && !key && lng.includes('.')) {
-      if (result || !ignoreJSONStructure || !isString$1(key)) return result;
-      copy(['resourceStore', 'languageUtils', 'pluralResolver', 'interpolator', 'backendConnector', 'i18nFormat', 'utils'], services, this);
+        "i18next": "^27.0.0",
+        "i18next": ">= 27.0.0",
+      "version": "27.0.0",
+      "resolved": "https://registry.npmjs.org/i18next/-/i18next-27.0.0.tgz",
+      "integrity": "sha512-lCP39wHw2s0MZLyNXNvVEVhSRx3STHXB7XUbyS5qVabE3b+SSqFM/Ffb6HIygeKjYrMAwRV2qDShBQRba/DvAQ==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ca8c863` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f76fa2c` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `9ed384be`  
+> **Source Version**: `6420c698`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T19:31:10.935Z  
+> **Timestamp**: 2026-11-09T18:11:25.697Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T19:31:10.927Z  
+> **Harvest Timestamp**: 2026-11-09T18:11:25.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2248,11 +2248,16 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37311** (2026-11-08): **[YSQL] RR/SR DDL bumps the catalog version at a catalog read time picked before the version lock**
-  *Symptoms*: Jira Link: [DB-26059](https://yugabyte.atlassian.net/browse/DB-26059) ### Description  #### Problem  With object locking and concurrent DDL on, two DDLs in the same database can still fail with a serialization error, even though a lock exists to make one wait for the other.  Each DDL bumps the catalog version row in `pg_yb_catalog_version`. Before the bump it takes `ExclusiveLock` on that table, so concurrent bumps run one after the other (`YbIncrementMasterDBCatalogVersionTableEntryImpl` in `src/postgres/src/backend/catalog/yb_catalog/yb_catalog_version.c`). The bump reads and writes the row at the catalog snapshot. Nothing re-picks that snapshot's read time after the lock. So when the read time was picked before the lock, and another DDL committed its own bump between the read time and the lock, the write fails with:  ``` ERROR:  could not serialize access due to concurrent update ```  #### When the read time is stale  The isolation level decides whether the bump gets a fresh read time after the lock:  - YSQL READ COMMITTED: the bump calls a volatile SQL function, `yb_increment_db_catalog_version_with_inval_messages`. fmgr calls `GetTransactionSnapshot()` for it (`fmgr_sql` in `executor/functions.c`). In READ COMMITTED that call invalidates the catalog snapshot (`GetTransactionSnapshot` in `utils/time/snapmgr.c`), so the bump reads at a time after the lock. - REPEATABLE READ and SERIALIZABLE: `GetTransactionSnapshot()` returns the transaction snapshot without invalidating 
+- **Issue #37388** (2026-11-09): **[doc][ybm] Credentials known issue on branch endpoints**
+  *Symptoms*: @netlify /stable/yugabyte-cloud/serverless/manage/#add-a-compute-endpoint
+  **Post-Mortem & Fix Analysis**:
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/37388) <!-- Reviewable:end --> 
+  > AgentK has started reviewing this pull request — findings will be posted here shortly.  Pushes are not reviewed automatically. Comment `/agentk review` to ask for another pass — but please only after substantial changes, not on every small push, and not for a push that just addresses the review comments.
 
-- **Issue #37246** (2026-11-07): **[#37221] DocDB: Fix lock-order inversion in HnswlibTenantTest.ConcurrentInserts**
-  *Symptoms*: ## Summary  TSAN reported a lock-order inversion, the same one CSI saw: `addPointImpl` locked the new point's `link_list_locks_` entry (`lock_el`) and then the tenant entry mutex from `getTenantEntryMutex`, while another insert held the tenant entry mutex while `searchBaseLayer` locked other points' link lists. The fix takes `tenant_lock` before `lock_el`, so every insert locks in one order: global, then tenant, then the new point, then other points.  --- _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._  ## Test plan  ./yb_build.sh tsan --clang21 --cxx-test hnswlib_tenant-test --gtest-filter HnswlibTenantTest.ConcurrentInserts -n 100 --stop-at-failure -- -p 6 Ran the above locally with no failures. Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for reference: - clang21-tsan: 7/7 iterations failed locally; CSI 2/2 Machine: GCP n2-standard-16, AlmaLinux 8.10 (Cerulean Leopard) x86_64, 16 vCPU, 63 GiB RAM, Intel(R) Xeon(R) CPU @ 2.80GHz 
+- **Issue #37371** (2026-11-09): **[ConnMgr] TEST: github-jira-sync component mapping check (please ignore)**
+  *Symptoms*: Jira Link: [DB-26119](https://yugabyte.atlassian.net/browse/DB-26119) Test issue for checking how github-jira-sync maps the `area/connection management` label to the Jira `connection management` component. Please ignore; it will be closed as not planned once the test is done.  _This issue was filed by Claude Code (claude-opus-5-5) on behalf of @arpit-saxena._   [DB-26119]: https://yugabyte.atlassian.net/browse/DB-26119?atlOrigin=eyJpIjoiNWRkNTljNzYxNjVmNDY3MDlhMDU5Y2ZhYzA5YTRkZjUiLCJwIjoiZ2l0aHViLWNvbS1KU1cifQ   Edit 1 (sync test). 
+  **Post-Mortem & Fix Analysis**:
+  > Sync test finished, closing.  _This comment was written by Claude Code (claude-opus-5-5)._
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2269,97 +2274,212 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ed384be` (2026-11-07)
-**Commit Message**: [PLAT-23753] Use the right parameter name for Azure disk throughput
+### Incident Patch 1: `6c10e015` (2026-11-09)
+**Commit Message**: [#36860] DocDB: Fix org.yb.pgsql.TestJWTAuth#invalidJWTAudiencesConfiguration by retrying waitpid on EINTR (#36861)
 
-Summary:
-Data disks created on Azure with `PremiumV2_LRS` or `UltraSSD_LRS` ignored the configured
-throughput and came up at Azure's default (125 MB/s for Premium SSD v2). IOPS was applied
-correctly.
+## Summary
 
-`build_data_disk_params` set the throughput under the key `disk_mbps_read_write`. The SDK's
-`Disk` model calls this attribute `disk_m_bps_read_write` (wire name `diskMBpsReadWrite`). The
-SDK serializer drops dict keys that match no model attribute, and it raises no error, so the
-value never reached ARM. The IOPS key (`disk_iops_read_write`) matched, which is why IOPS was
-applied and throughput was not. `update_disk` only resizes, so nothing corrected the
-throughput later.
+When a tserver starts, it runs `initdb` as a child process and waits for
+it in `Subprocess::DoWait`. If a signal interrupted that wait,
+`waitpid()` returned -1 with `EINTR`, and the code treated this as a
+hard error (`Unable to wait on child: Interrupted system call`). That
+error reached `TabletServerMain` and crashed the tserver with exit code
+134 before the test's JWT checks ran. `Subprocess::DoWait` now calls
+`waitpid()` again on `EINTR`, and every other `waitpid()` failure is
+still an error; the same fatal error appears in both the local and CSI
+failure logs.
 
-The fix renames the key to `disk_m_bps_read_write`.
+Other `EINTR` handling in `subprocess.cc` is fixed too:
+- `Subprocess::Call`: when `read()` was interrupted, the poll loop could
+stop before EOF and drop the rest of the child's output. It now polls
+again, and it no longer logs a warning when `poll()` is interrupted.
+- `Subprocess::Call`: `close()` of the child's stdin returning `EINTR`
+is no longer an error, because on Linux the fd is already released.
+- `LogTailerThread::Run`: an interrupted `fgets()` no longer stops
+tailing the child's output
 
-Test Plan: - Ran an instance upgrade task in ybm to move that also changes the disk type to premium v2 with a throughput of 375MB and it works as expected.
-
-Reviewers: anijhawan, nbhatia, nsingh, amindrov
-
-Reviewed By: amindrov
-
-Subscribers: yugaware, nikhil
-
-Differential Revision: https://phorge.dev.yugabyte.com/D59996
-
-**File**: `managed/devops/opscli/ybops/cloud/azure/utils.py` (modified, +1/-1)
+**File**: `src/yb/util/subprocess.cc` (modified, +21/-6)
 ```diff
-@@ -461,7 +461,7 @@ def build_data_disk_params(self, size, zone, vol_type, region, tags,
-             if disk_iops is not None:
-                 disk_params['disk_iops_read_write'] = disk_iops
-             if disk_throughput is not None:
--                disk_params['disk_mbps_read_write'] = disk_throughput
-+                disk_params['disk_m_bps_read_write'] = disk_throughput
+@@ -179,8 +179,15 @@ void LogTailerThread::Run(const int child_fd) {
+   bool is_fgets_null = false;
+   // NOTE: fgets is a blocking call, which means we might not respond to stopped unless the child
+   // process actually writes to the pipe or stops. This is not expected to happen in practice.
+-  while (!(is_eof = feof(fp)) && !(is_fgets_null = (fgets(buf, sizeof(buf), fp) == nullptr)) &&
+-         !stopped_) {
++  while (!(is_eof = feof(fp)) && !stopped_) {
++    if (fgets(buf, sizeof(buf), fp) == nullptr) {
++      if (ferror(fp) && errno == EINTR) {
++        clearerr(fp);
++        continue;
++      }
++      is_fgets_null = true;
++      break;
++    }
+     size_t l = strlen(buf);
+     if (l > 0) {
+       if (buf[l - 1] == '\n') {
+@@ -545,7 +552,10 @@ Status Subprocess::DoWait(int* ret, int options) {
  
-         if disk_custom and len(disk_custom) > 0:
-             merge(disk_params, disk_custom)
+   CHECK_NE(child_pid, 0);
+ 
+-  int waitpid_ret_val = waitpid(child_pid, ret, options);
++  int waitpid_ret_val;
++  do {
++    waitpid_ret_val = waitpid(child_pid, ret, options);
++  } while (waitpid_ret_val == -1 && errno == EINTR);
+   if (waitpid_ret_val == -1) {
+     return STATUS(RuntimeError, "Unable to wait on child", Errno(errno));
+   }
+@@ -670,8 +680,9 @@ Status Subprocess::Call(string* output, string* error) {
+   }
+ 
+   RETURN_NOT_OK_PREPEND(Start(), "Unable to fork " + argv_[0]);
++  // On Linux the fd is released even if close() fails with EINTR, so it must not be retried.
+   const int err = close(ReleaseChildStdinFd());
+-  if (PREDICT_FALSE(err != 0)) {
++  if (PREDICT_FALSE(err != 0 && errno != EINTR)) {
+     return STATUS(IOError, "Unable to close child process stdin", Errno(errno));
+   }
+ 
+@@ -694,15 +705,19 @@ Status Subprocess::Call(string* output, string* error) {
+     while (!done) {
+       int res = poll(pollfds.data(), static_cast<nfds_t>(pollfds.size()), /* timeout= */ -1);
+       if (res <= 0) {
+-        LOG_IF(WARNING, res < 0) << "Poll failed: " << strerror(errno);
++        LOG_IF(WARNING, res < 0 && errno != EINTR) << "Poll failed: " << strerror(errno);
+         continue;
+       }
+       done = true;
+       for (size_t i = 0; i != pollfds.size(); ++i) {
+         if (pollfds[i].revents & (POLLHUP | POLLIN)) {
+           auto n = read(pollfds[i].fd, buf, arraysize(buf));
+           if (n < 0) {
+-            if (errno == EINTR) continue;
++            if (errno == EINTR) {
++              // Not at EOF yet; poll again instead of dropping the rest of the output.
++              done = false;
++              continue;
++            }
+             return STATUS(IOError, "IO error reading from " + argv_[0], Errno(errno));
+           }
+           done = done && n == 0;
 ```
 
-**File**: `managed/devops/tests/opscli/test_azure_create_vm.py` (modified, +17/-4)
+---
+
+### Incident Patch 2: `1c68f5de` (2026-11-09)
+**Commit Message**: [#37183] YSQL: Fix org.yb.ysqlconnmgr.TestInactiveRouteCleanup#testQueuedClientClosedOnNoLogin (#37184)
+
+## Summary
+
+`waitForDdlToBeVisible` checked for the `NOLOGIN` change through the
+connection manager. Sometimes the connection manager's auth backend had
+not seen the DDL yet, so the probe passed authentication. The new
+backend started for the probe then failed with SQLSTATE `28000`, and
+`frontend.c` called `yb_mark_routes_inactive` for the role. The trigger
+query then got `failed to get remote server connection` instead of the
+expected login error, so the fix makes the probe connect directly to
+postgres on `CONN_MGR_TSERVER_IDX` (`ConnectionEndpoint.POSTGRES`),
+which waits for the same catalog state without touching connection
+manager routes.
+
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
+the failure logs, wrote the change, and verified it locally._
+
+## Test plan
+
+./yb_build.sh tsan --clang21 --java-test
+'org.yb.ysqlconnmgr.TestInactiveRouteCleanup#testQueuedClientClosedOnNoLogin'
+-n 100 --stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the fix, this test reproduced locally (same test command and -p /
+env as above, without --s
+
+**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestInactiveRouteCleanup.java` (modified, +5/-1)
 ```diff
-@@ -20,10 +20,10 @@
- from ybops.common.exceptions import YBOpsRuntimeError
+@@ -82,10 +82,14 @@ private Connection connectConnMgr(String db, String user) throws Exception {
  
+   // A fresh backend on the connection manager's node has to see the DDL, otherwise the backend
+   // spawned by the trigger query could succeed and the route would never be marked inactive.
++  // Probe postgres directly: a failed backend spawned via the connection manager would itself
++  // mark the routes inactive, so the trigger query would fail to attach with a different error.
+   private void waitForDdlToBeVisible(String db, String user, String expectedErr)
+       throws Exception {
+     for (int retry = 1; retry <= NUM_RETRIES; ++retry) {
+-      try (Connection conn = connectConnMgr(db, user)) {
++      try (Connection conn = getConnectionBuilder().withTServer(CONN_MGR_TSERVER_IDX)
++               .withConnectionEndpoint(ConnectionEndpoint.POSTGRES)
++               .withDatabase(db).withUser(user).connect()) {
+         LOG.info("Backend for " + db + "." + user + " still starts, retrying");
+       } catch (SQLException e) {
+         if (e.getMessage().contains(expectedErr))
+```
+
+---
+
+### Incident Patch 3: `6e6abf6b` (2026-11-09)
+**Commit Message**: [#35469] DocDB: Fix AdminCliTest.AddStuckTransactionStatusTablet (#35470)
+
+## Summary
+
+The test killed the master as soon as it logged `Processing pending
+assignments for table: <id>`, but that line is written before
+`sys_catalog_->Upsert` saves the new tablet's `CREATING` state, so the
+master could die before the save. After the restart the tablet was just
+pending again, the tserver was back up, and it was created normally, so
+`list_tablets` showed 2 tablets instead of the expected 1. The test now
+waits for `Create Tablet RPC failed for tablet`, which is logged only
+after the `CREATING` state has been saved. For the global table, the log
+waiter is now also set up before `add_transaction_tablet` runs, so the
+line can't be missed.
+
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
+the failure logs, wrote the change, and verified it locally._
+
+## Test plan
+
+./yb_build.sh tsan --clang21 --cxx-test yb-admin-test --gtest-filter
+AdminCliTest.AddStuckTransactionStatusTablet -n 100 --stop-at-failure --
+-p 6
+Ran the above locally with no failures.
+Before the fix, this test reproduced locally (same test command and -p /
+env as above, without --stop-at-failure) -- wi
+
+**File**: `src/yb/tools/yb-admin-test.cc` (modified, +3/-4)
+```diff
+@@ -3142,9 +3142,9 @@ TEST_F_EX(AdminCliTest, AddStuckTransactionStatusTablet, AddTransactionTabletTes
+   // by some other means.
+   cluster_->tablet_server(0)->Shutdown();
+   {
++    // CreateTablet RPCs are sent only after the CREATING state is persisted.
++    auto log_waiter = cluster_->GetMasterLogWaiter("Create Tablet RPC failed for tablet");
+     ASSERT_OK(CallAdmin("add_transaction_tablet", global_txn_table_id));
+-    auto log_waiter = cluster_->GetMasterLogWaiter(
+-        Format("Processing pending assignments for table: $0", global_txn_table_id));
+     ASSERT_OK(log_waiter.WaitFor(5s));
+   }
+   cluster_->master()->Shutdown(SafeShutdown::kFalse);
+@@ -3181,8 +3181,7 @@ TEST_F_EX(AdminCliTest, AddStuckTransactionStatusTablet, AddTransactionTabletTes
  
--def to_arm(vm_parameters):
--    """Serialize a VM body the way the SDK does, to check what actually reaches ARM."""
-+def to_arm(parameters, model="VirtualMachine"):
-+    """Serialize a request body the way the SDK does, to check what actually reaches ARM."""
-     classes = {k: v for k, v in compute_models.__dict__.items() if isinstance(v, type)}
--    return Serializer(classes).body(vm_parameters, "VirtualMachine")
-+    return Serializer(classes).body(parameters, model)
- 
- 
- def as_vm(data_disks):
-@@ -139,11 +139,24 @@ def test_ultra_disks_carry_iops_and_throughput(self):
- 
-         for disk_params in self.created_disks().values():
-             self.assertEqual(5000, disk_params["disk_iops_read_write"])
--            self.assertEqual(200, disk_params["disk_mbps_read_write"])
-+            self.assertEqual(200, disk_params["disk_m_bps_read_write"])
-             self.assertEqual("UltraSSD_LRS", disk_params["sku"]["name"])
-         self.assertEqual(
-             {"ultraSSDEnabled": True}, self.vm_payloads[0]["additionalCapabilities"])
- 
-+    def test_iops_and_throughput_serialize_to_arm_disk_properties(self):
-+        # The SDK drops dict keys that do not match a Disk attribute without any error, so a
-+        # mistyped throughput key leaves Azure to apply its default (125 MB/s on Premium SSD v2).
-+        for vol_type in ("premiumv2_lrs", "ultrassd_lrs"):
-+            with self.subTest(vol_type=vol_type):
-+                self.compute.disks.begin_create_or_update.reset_mock()
-+                self.create_or_update_vm(vol_type=vol_type, disk_iops=5000, disk_throughput=375)
-+
-+                for disk_params in self.created_disks().values():
-+                    properties = to_arm(disk_params, "Disk")["properties"]
-+                    self.assertEqual(5000, properties["diskIOPSReadWrite"])
-+                    self.assertEqual(375, properties["diskMBpsReadWrite"])
-+
-     def test_custom_disk_params_reach_the_disk_resource(self):
-         # yb.azure.custom_params.disk targets the managed disk resource body.
-         self.create_or_update_vm(disk_custom={"tier": "P30"})
+   cluster_->tablet_server(0)->Shutdown();
+   {
+-    auto log_waiter = cluster_->GetMasterLogWaiter(
+-        Format("Processing pending assignments for table: $0", local_txn_table_id));
++    auto log_waiter = cluster_->GetMasterLogWaiter("Create Tablet RPC failed for tablet");
+     ASSERT_OK(CallAdmin("add_transaction_tablet", local_txn_table_id));
+     ASSERT_OK(log_waiter.WaitFor(5s));
+   }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37246** (closed): [#37221] DocDB: Fix lock-order inversion in HnswlibTenantTest.ConcurrentInserts (@csi-fix)
-- **PR #37243** (2026-11-07): [PLAT-23750] YBA: Build the support bundle Go helpers with Go 1.27.3 (@proff4eg)
-- **PR #37204** (2026-11-07): [#37203] DocDB: Disable load balancing in SealTxnTest.NumBatchesWithRestart (@csi-fix)
-- **PR #37202** (2026-11-07): [#36514] DocDB: Fix RestartTest.WalFooterProperlyInitialized by writing after restart to force a WAL append (@csi-fix)
-- **PR #37201** (2026-11-06): [#37134] YSQL: Fix ConnMgr debug build after format checks (@arpit-saxena)
-- **PR #37197** (closed): [#36572] YSQL: Make new-mode DDLs wait for legacy-mode DMLs during upgrade (@pao214)
+- **PR #37388** (2026-11-09): [doc][ybm] Credentials known issue on branch endpoints (@ddhodge)
+- **PR #37361** (closed): [#36572] YSQL: Refresh a legacy-mode transaction's catalog cache on a new lock (@pao214)
+- **PR #37336** (2026-11-08): [#36572] YSQL: Make legacy-mode transactions take local object locks during promotion (@pao214)
+- **PR #37335** (2026-11-08): [#37328] YSQL: Tell the tserver which transactions take local object locks (@pao214)
+- **PR #37268** (2026-11-09): [BACKPORT 2025.2][#35991,#35048] YSQL: Fix the upsert-mode guard for partitions and cached plans (#37098) (@teyenc)
+- **PR #37267** (2026-11-09): [BACKPORT 2026.1][#35991,#35048] YSQL: Fix the upsert-mode guard for partitions and cached plans (#37098) (@teyenc)
 
 ---
 
@@ -2379,28 +2499,53 @@ Differential Revision: https://phorge.dev.yugabyte.com/D59996
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PLAT-23753] Use the right parameter name for Azure disk throughput
+## X. [#36860] DocDB: Fix org.yb.pgsql.TestJWTAuth#invalidJWTAudiencesConfiguration by
 
 **RULE**:
-When implementing operations in `managed/devops/opscli/ybops/cloud/azure/utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/yb/util/subprocess.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ed384be`: [PLAT-23753] Use the right parameter name for Azure disk throughput. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c10e015`: [#36860] DocDB: Fix org.yb.pgsql.TestJWTAuth#invalidJWTAudiencesConfiguration by retrying waitpid on EINTR (#36861). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/devops/opscli/ybops/cloud/azure/utils.py`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/util/subprocess.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-                disk_params['disk_m_bps_read_write'] = disk_throughput
+  while (!(is_eof = feof(fp)) && !stopped_) {
+    if (fgets(buf, sizeof(buf), fp) == nullptr) {
+      if (ferror(fp) && errno == EINTR) {
+        clearerr(fp);
+        continue;
+      }
+      is_fgets_null = true;
+      break;
+    }
+  int waitpid_ret_val;
+  do {
+    waitpid_ret_val = waitpid(child_pid, ret, options);
+  } while (waitpid_ret_val == -1 && errno == EINTR);
+  // On Linux the fd is released even if close() fails with EINTR, so it must not be retried.
+  if (PREDICT_FALSE(err != 0 && errno != EINTR)) {
+        LOG_IF(WARNING, res < 0 && errno != EINTR) << "Poll failed: " << strerror(errno);
+            if (errno == EINTR) {
+              // Not at EOF yet; poll again instead of dropping the rest of the output.
+              done = false;
+              continue;
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-                disk_params['disk_mbps_read_write'] = disk_throughput
+  while (!(is_eof = feof(fp)) && !(is_fgets_null = (fgets(buf, sizeof(buf), fp) == nullptr)) &&
+         !stopped_) {
+  int waitpid_ret_val = waitpid(child_pid, ret, options);
+  if (PREDICT_FALSE(err != 0)) {
+        LOG_IF(WARNING, res < 0) << "Poll failed: " << strerror(errno);
+            if (errno == EINTR) continue;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ed384be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c10e015` are properly handled with clean fallback behavior.

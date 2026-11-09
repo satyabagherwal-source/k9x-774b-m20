@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `25119216`  
+> **Source Version**: `f7f8b7e5`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:22:10.555Z  
+> **Timestamp**: 2026-11-09T18:11:16.402Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:22:09.013Z  
+> **Harvest Timestamp**: 2026-11-09T18:11:16.359Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1861,365 +1861,730 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25119216` (2026-11-07)
-**Commit Message**: fix(resync): keep internal version when resyncing completed/failed mirrors (#5031)
+### Incident Patch 1: `f7f8b7e5` (2026-11-09)
+**Commit Message**: Add signal handling and schema changes to tricky areas doc, organize helpers a bit (#5033)
 
-Resyncing a completed or failed mirror recreates the flow and re-read
-`PEERDB_FORCE_INTERNAL_VERSION`, silently upgrading the mirror's
-internal version. That can break destination queries the same way it
-would for a running mirror, whose resync already keeps the version. Now
-the stored version is kept.
+Add review guidance for Temporal signal handling and schema changes,
+with examples from existing good handling and PR discussions.
 
-Also updates `docs/tricky-areas.md` to match.
+Move shared code out of postgres.go so that references are not awkward
+(mechanical change).
 
-Fixes DBI-1301
+Closes DBI-1302
+
+**File**: `docs/tricky-areas.md` (modified, +58/-0)
+```diff
+@@ -13,6 +13,8 @@ repeating them.
+ |---|---|
+ | [Mirror config vs workflow state](#mirror-config-vs-workflow-state) | `flow/workflows/`, `flow/activities/flowable.go`, `flow/activities/flowable_core.go`, `protos/flow.proto` |
+ | [Per-mirror behaviour: versions, flags, settings](#per-mirror-behaviour-versions-flags-settings) | `flow/shared/constants.go`, `flow/internal/dynamicconf.go`, `flow/cmd/handler.go`, `flow/cmd/validate_mirror.go`, `flow/connectors/clickhouse/validate.go` |
++| [Temporal signal handling](#temporal-signal-handling) | `flow/workflows/cdc_flow.go`, `flow/workflows/drop_flow.go`, `flow/model/signals.go` |
++| [Schema changes](#schema-changes) | `flow/activities/flowable_core.go`, `flow/model/cdc_stream.go`, `flow/internal/catalog_schema.go`, `flow/connectors/postgres/cdc.go`, `flow/connectors/mysql/cdc.go`, `flow/connectors/clickhouse/` |
+ 
+ ---
+ 
+@@ -51,3 +53,59 @@ A decision taken from the mechanism with the wrong lifetime changes the output o
+ - Carefully thread all transformations the column value goes through, as it can change at different layers.
+   Changes that are bugfixes (replacing nonsensical data with something more reasonable) are okay without a bump.
+ - Version or flags re-detected outside creation, or a flag that stores a decision rather than a capability.
++
++---
++
++## Temporal signal handling
++
++**Why it is tricky.** Pause, resume, terminate and resync requests can arrive while a workflow waits for an
++activity or child workflow. The workflow must continue to handle the requests that it supports in that phase.
++An interrupting request needs the correct state, even if the current operation is only partly complete.
++For this guidance, small catalog interactions such as status updates or logging do not count as long waits.
++
++**What to watch for in a PR.**
++
++- When you add or move a long-running activity or child workflow, check which requests need handling during the wait.
++  For example, snapshot and table-edit operations handle terminate/resync requests while they wait for completion.
++  A direct `.Get()` on new work can delay those requests until the work finishes.
++- Before continuing as new, wait for cancellation to finish. Then process pending signals for the last time.
++  For example, `startCDC` cancels `SyncFlow`, waits for it, then drains pending signals.
++  Draining means processing the signals that are already waiting.
++  Put new long waits before that drain. This order lets the workflow handle requests that arrive during the wait.
++- If an operation changes state that may be used by termination or resync, check that state before the operation completes.
++  For example, table edits prepare the intended mappings before they handle signals.
++  Thus, an interrupting resync includes added tables and excludes removed tables.
++- If you add work between a decision and its action, check whether signals can change that decision.
++  For example, during resync cleanup, a terminate request means the workflow must fully remove the mirror instead of restarting it.
++  `DropFlowWorkflow` checks for this request again and completes the necessary catalog cleanup.
++- When you add state changes through signals, prevent pause/resume requests from overriding termination or resync.
++  For example, `FlowSignalHandler` applies pause only to a running signal state. It applies resume only to a paused signal state.
++
++---
++
++## Schema changes
++
++**Why it is tricky.** PeerDB passes schema changes from the source connector through Pull, Sync, catalog updates,
++and Normalize. These stages overlap and keep different views of schema and progress. Receiving a change,
++applying destination DDL, updating the catalog, and saving a checkpoint are separate steps. Review the complete
++path when changing one of them.
++
++**What to watch for in a PR.**
++
++- When changing how schema changes are detected or passed between stages, follow them through to destination DDL
++  and catalog updates. Check batches with no rows, excluded columns, and repeated changes. For example, MySQL
++  can emit DDL without row changes to carry it through the usual batch path.
++- When reading schema information, check which stage produced it and which records will use it. The latest
++  source schema can be ahead of Pull. Sync can update the catalog while Normalize uses an earlier copy of the
++  schema. Writing that copy back can erase Sync's changes. A refresh must not make an unprocessed change appear
++  complete or overwrite another stage's changes.
++- When moving a schema update or checkpoint, trace what happens if the next step fails. Check what the retry
++  reads, repeats, and skips. For example, one table can finish Normalize and save its progress while another
++  table in the batch fails. Any associated schema update must remain recoverable.
++- When changing catalog schemas, apply the specific change to the current catalog state.
++  `ReadModifyWriteTableSchemasToCatalog` provides this pattern. Pass the columns to add or remov
+```
+
+**File**: `flow/internal/catalog_schema.go` (added, +161/-0)
+```diff
+@@ -0,0 +1,161 @@
++package internal
++
++import (
++	"context"
++	"fmt"
++	"log/slog"
++	"strings"
++
++	"github.com/jackc/pgx/v5"
++	"go.temporal.io/sdk/log"
++	"google.golang.org/protobuf/proto"
++
++	"github.com/PeerDB-io/peerdb/flow/generated/protos"
++	"github.com/PeerDB-io/peerdb/flow/shared"
++)
++
++func LoadTableSchemaFromCatalog(
++	ctx context.Context,
++	pool shared.CatalogPool,
++	flowName string,
++	tableName string,
++) (*protos.TableSchema, error) {
++	var tableSchemaBytes []byte
++	if err := pool.Pool.QueryRow(
++		ctx,
++		"select table_schema from table_schema_mapping where flow_name = $1 and table_name = $2",
++		flowName,
++		tableName,
++	).Scan(&tableSchemaBytes); err != nil {
++		return nil, err
++	}
++	tableSchema := &protos.TableSchema{}
++	return tableSchema, proto.Unmarshal(tableSchemaBytes, tableSchema)
++}
++
++func ReadModifyWriteTableSchemasToCatalog(
++	ctx context.Context,
++	catalogPool shared.CatalogPool,
++	logger log.Logger,
++	flowName string,
++	tableNames []string,
++	modifyFn func(map[string]*protos.TableSchema) (map[string]*protos.TableSchema, error),
++) error {
++	tx, err := catalogPool.Pool.Begin(ctx)
++	if err != nil {
++		return fmt.Errorf("failed to begin transaction: %w", err)
++	}
++	defer shared.RollbackTx(tx, logger)
++
++	// read
++	tableSchemas, err := LoadTableSchemasFromCatalog(ctx, tx, flowName, tableNames)
++	if err != nil {
++		return fmt.Errorf("failed to load table schemas from catalog: %w", err)
++	}
++	if len(tableSchemas) != len(tableNames) {
++		filteredTableNames := make([]string, 0, len(tableSchemas))
++		for name := range tableSchemas {
++			filteredTableNames = append(filteredTableNames, name)
++		}
++		logger.Warn("not all tables are found in catalog",
++			slog.String("expected", strings.Join(tableNames, ", ")),
++			slog.String("actual", strings.Join(filteredTableNames, ", ")))
++	}
++
++	// modify
++	modifiedTableSchemas, err := modifyFn(tableSchemas)
++	if err != nil {
++		return fmt.Errorf("failed to modify table schemas from catalog: %w", err)
++	}
++
++	// write (in batch)
++	batch := &pgx.Batch{}
++	for tableName, tableSchema := range modifiedTableSchemas {
++		tableSchemaBytes, err := proto.Marshal(tableSchema)
++		if err != nil {
++			return fmt.Errorf("unable to marshal table schema for %s: %w", tableName, err)
++		}
++		batch.Queue(
++			"UPDATE table_schema_mapping SET table_schema=$1 WHERE flow_name=$2 AND table_name=$3",
++			tableSchemaBytes, flowName, tableName,
++		)
++		logger.Info("queued schema delta update",
++			slog.String("flowName", flowName),
++			slog.String("tableName", tableName))
++	}
++	results := tx.SendBatch(ctx, batch)
++	defer results.Close() // Ensure resources are freed in case of early return
++
++	for tableName := range modifiedTableSchemas {
++		if _, err := results.Exec(); err != nil {
++			logger.Error("failed to update table schema in catalog",
++				slog.Any("error", err),
++				slog.String("flowName", flowName),
++				slog.String("tableName", tableName))
++			return fmt.Errorf("failed to update table schema in catalog: %w", err)
++		}
++	}
++
++	// Close results before committing
++	if err := results.Close(); err != nil {
++		logger.Error("failed to close batch results",
++			slog.Any("error", err),
++			slog.String("flowName", flowName))
++		return fmt.Errorf("failed to close batch results: %w", err)
++	}
++
++	if err := tx.Commit(ctx); err != nil {
++		return fmt.Errorf("failed to commit transaction: %w", err)
++	}
++	return nil
++}
++
++// support both catalog pool and pgx.Tx
++type CatalogQuerier interface {
++	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
++}
++
++func LoadTableSchemasFromCatalog(
++	ctx context.Context,
++	querier CatalogQuerier,
++	flowName string,
++	tableNames []string,
++) (map[string]*protos.TableSchema, error) {
++	if len(tableNames) == 0 {
++		return make(map[string]*protos.TableSchema), nil
++	}
++
++	rows, err := querier.Query(
++		ctx,
++		"SELECT table_name, table_schema FROM table_schema_mapping WHERE flow_name = $1 AND table_name = ANY($2)",
++		flowName,
++		tableNames,
++	)
++	if err != nil {
++		return nil, fmt.Errorf("failed to query table schemas: %w", err)
++	}
++	defer rows.Close()
++
++	schemas := make(map[string]*protos.TableSchema)
++
++	for rows.Next() {
++		var tableName string
++		var tableSchemaBytes []byte
++
++		if err := rows.Scan(&tableName, &tableSchemaBytes); err != nil {
++			return nil, fmt.Errorf("failed to scan table schema row: %w", err)
++		}
++
++		tableSchema := &protos.TableSchema{}
++		if err := proto.Unmarshal(tableSchemaBytes, tableSchema); err != nil {
++			return nil, fmt.Errorf("failed to unmarshal table schema for %s: %w", tableName, err)
++		}
++
++		schemas[tableName] = tableSchema
++	}
++	if err := rows.Err(); err != nil {
++		return nil, fmt.Errorf("error iterating table schema rows: %w", err)
++	}
++
++	return schemas, nil
++}
+```
+
+**File**: `flow/internal/flow_configuration_helpers.go` (modified, +21/-0)
+```diff
+@@ -4,7 +4,9 @@ import (
+ 	"context"
+ 	"database/sql"
+ 	"fmt"
++	"log/slog"
+ 
++	"go.temporal.io/sdk/log"
+ 	"google.golang.org/protobuf/proto"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+@@ -27,6 +29,25 @@ func FetchConfigFromDB(ctx context.Context, catalogPool shared.CatalogPool, flow
+ 	return &cfgFromDB, nil
+ }
+ 
++func UpdateCDCConfigInCatalog(ctx context.Context, pool shared.CatalogPool,
++	logger log.Logger, cfg *protos.FlowConnectionConfigsCore,
++) error {
++	logger.Info("syncing state to catalog: updating config_proto in flows", slog.String("flowName", cfg.FlowJobName))
++
++	cfgBytes, err := proto.Marshal(cfg)
++	if err != nil {
++		return fmt.Errorf("unable to marshal flow config: %w", err)
++	}
++
++	if _, err := pool.Exec(ctx, "UPDATE flows SET config_proto=$1,updated_at=now() WHERE name=$2", cfgBytes, cfg.FlowJobName); err != nil {
++		logger.Error("failed to update catalog", slog.Any("error", err), slog.String("flowName", cfg.FlowJobName))
++		return fmt.Errorf("failed to update catalog: %w", err)
++	}
++
++	logger.Info("synced state to catalog: updated config_proto in flows", slog.String("flowName", cfg.FlowJobName))
++	return nil
++}
++
+ func ApplySnapshotConfigOverrides(config *protos.FlowConnectionConfigsCore, update *protos.CDCFlowConfigUpdate) {
+ 	if update == nil {
+ 		return
+```
+
+**File**: `flow/internal/postgres.go` (modified, +0/-172)
+```diff
+@@ -1,16 +1,9 @@
+ package internal
+ 
+ import (
+-	"context"
+-	"fmt"
+-	"log/slog"
+ 	"net/url"
+ 	"strings"
+ 
+-	"github.com/jackc/pgx/v5"
+-	"go.temporal.io/sdk/log"
+-	"google.golang.org/protobuf/proto"
+-
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+ 	"github.com/PeerDB-io/peerdb/flow/shared"
+ )
+@@ -91,168 +84,3 @@ func GetPGConnectionString(pgConfig *protos.PostgresConfig, flowName string) str
+ 
+ 	return u.String()
+ }
+-
+-func UpdateCDCConfigInCatalog(ctx context.Context, pool shared.CatalogPool,
+-	logger log.Logger, cfg *protos.FlowConnectionConfigsCore,
+-) error {
+-	logger.Info("syncing state to catalog: updating config_proto in flows", slog.String("flowName", cfg.FlowJobName))
+-
+-	cfgBytes, err := proto.Marshal(cfg)
+-	if err != nil {
+-		return fmt.Errorf("unable to marshal flow config: %w", err)
+-	}
+-
+-	if _, err := pool.Exec(ctx, "UPDATE flows SET config_proto=$1,updated_at=now() WHERE name=$2", cfgBytes, cfg.FlowJobName); err != nil {
+-		logger.Error("failed to update catalog", slog.Any("error", err), slog.String("flowName", cfg.FlowJobName))
+-		return fmt.Errorf("failed to update catalog: %w", err)
+-	}
+-
+-	logger.Info("synced state to catalog: updated config_proto in flows", slog.String("flowName", cfg.FlowJobName))
+-	return nil
+-}
+-
+-func LoadTableSchemaFromCatalog(
+-	ctx context.Context,
+-	pool shared.CatalogPool,
+-	flowName string,
+-	tableName string,
+-) (*protos.TableSchema, error) {
+-	var tableSchemaBytes []byte
+-	if err := pool.Pool.QueryRow(
+-		ctx,
+-		"select table_schema from table_schema_mapping where flow_name = $1 and table_name = $2",
+-		flowName,
+-		tableName,
+-	).Scan(&tableSchemaBytes); err != nil {
+-		return nil, err
+-	}
+-	tableSchema := &protos.TableSchema{}
+-	return tableSchema, proto.Unmarshal(tableSchemaBytes, tableSchema)
+-}
+-
+-func ReadModifyWriteTableSchemasToCatalog(
+-	ctx context.Context,
+-	catalogPool shared.CatalogPool,
+-	logger log.Logger,
+-	flowName string,
+-	tableNames []string,
+-	modifyFn func(map[string]*protos.TableSchema) (map[string]*protos.TableSchema, error),
+-) error {
+-	tx, err := catalogPool.Pool.Begin(ctx)
+-	if err != nil {
+-		return fmt.Errorf("failed to begin transaction: %w", err)
+-	}
+-	defer shared.RollbackTx(tx, logger)
+-
+-	// read
+-	tableSchemas, err := LoadTableSchemasFromCatalog(ctx, tx, flowName, tableNames)
+-	if err != nil {
+-		return fmt.Errorf("failed to load table schemas from catalog: %w", err)
+-	}
+-	if len(tableSchemas) != len(tableNames) {
+-		filteredTableNames := make([]string, 0, len(tableSchemas))
+-		for name := range tableSchemas {
+-			filteredTableNames = append(filteredTableNames, name)
+-		}
+-		logger.Warn("not all tables are found in catalog",
+-			slog.String("expected", strings.Join(tableNames, ", ")),
+-			slog.String("actual", strings.Join(filteredTableNames, ", ")))
+-	}
+-
+-	// modify
+-	modifiedTableSchemas, err := modifyFn(tableSchemas)
+-	if err != nil {
+-		return fmt.Errorf("failed to modify table schemas from catalog: %w", err)
+-	}
+-
+-	// write (in batch)
+-	batch := &pgx.Batch{}
+-	for tableName, tableSchema := range modifiedTableSchemas {
+-		tableSchemaBytes, err := proto.Marshal(tableSchema)
+-		if err != nil {
+-			return fmt.Errorf("unable to marshal table schema for %s: %w", tableName, err)
+-		}
+-		batch.Queue(
+-			"UPDATE table_schema_mapping SET table_schema=$1 WHERE flow_name=$2 AND table_name=$3",
+-			tableSchemaBytes, flowName, tableName,
+-		)
+-		logger.Info("queued schema delta update",
+-			slog.String("flowName", flowName),
+-			slog.String("tableName", tableName))
+-	}
+-	results := tx.SendBatch(ctx, batch)
+-	defer results.Close() // Ensure resources are freed in case of early return
+-
+-	for tableName := range modifiedTableSchemas {
+-		if _, err := results.Exec(); err != nil {
+-			logger.Error("failed to update table schema in catalog",
+-				slog.Any("error", err),
+-				slog.String("flowName", flowName),
+-				slog.String("tableName", tableName))
+-			return fmt.Errorf("failed to update table schema in catalog: %w", err)
+-		}
+-	}
+-
+-	// Close results before committing
+-	if err := results.Close(); err != nil {
+-		logger.Error("failed to close batch results",
+-			slog.Any("error", err),
+-			slog.String("flowName", flowName))
+-		return fmt.Errorf("failed to close batch results: %w", err)
+-	}
+-
+-	if err := tx.Commit(ctx); err != nil {
+-		return fmt.Errorf("failed to commit transaction: %w", err)
+-	}
+-	return nil
+-}
+-
+-// support both catalog pool and pgx.Tx
+-type CatalogQuerier interface {
+-	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+-}
+-
+-func LoadTableSchemasFromCatalog(
+-	ctx context.Context,
+-	querier CatalogQuerier,
+-	flowName string,
+-	tableNames []string,
+-) (map[string]*protos.TableSchema, error) {
+-	if len(tableNames) == 0 {
+-		return make(map[string]*protos.TableSchema), nil
+-	}
+-
+-	rows, err := querier.Query(
+-		ctx,
+-		"SELECT table_name, table_schema FROM table_schema_mapping WHERE flow_name = $1 AND table_name = ANY($2)",
+-		flowName,
+-		tableNames,
+-	)
+-	if err != nil {
+-		return nil, f
+```
+
+---
+
+### Incident Patch 2: `ea3f0748` (2026-11-09)
+**Commit Message**: Classify Google token errors in BigQuery/GCS as retryable (#5017)
+
+`downscope: unable to exchange token, 503: ...` from the BigQuery →
+ClickHouse object sync header provider was classified as `ErrorOther`.
+
+- **Downscope token exchange:** the library returns an untyped string.
+Parse the status into a `googleapi.Error` and wrap as `GCSError`, so the
+existing GCS rules retry 408/429/5xx.
+- **Root token refresh (`*auth.Error`):** classify in the BigQuery and
+GCS branches with code `AUTH_<status>`. 5xx retries (GCS also 408/429);
+BigQuery 401/403 notify as connectivity.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ---------
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `docs/tricky-areas.md` (modified, +6/-7)
+**File**: `flow/alerting/classifier.go` (modified, +25/-5)
 ```diff
-@@ -38,17 +38,16 @@ can read the stale one and still pass every test that never changes a mirror aft
- ## Per-mirror behaviour: versions, flags, settings
- 
- **Why it is tricky.** Three mechanisms pin what a mirror writes, each with a different lifetime. `Version` is set
--from `PEERDB_FORCE_INTERNAL_VERSION` at creation and again only when a completed or failed mirror is resynced by
--recreation. Flags from `GetFlags` record destination capabilities at creation and are never re-detected. A dynamic
--setting resolves from the mirror's env, then the catalog, then the process environment, and a non-immediate value
--is written back into the env map it was resolved with, so one pinned into `cfg.Env` at creation lasts the mirror's
--lifetime while an activity's copy lasts one call. A decision taken from the mechanism with the wrong lifetime
--changes the output of a running mirror.
-+from `PEERDB_FORCE_INTERNAL_VERSION` at creation and kept through resync. Flags from `GetFlags` record destination
-+capabilities at creation and are never re-detected. A dynamic setting resolves from the mirror's env, then the
-+catalog, then the process environment, and a non-immediate value is written back into the env map it was resolved
-+with, so one pinned into `cfg.Env` at creation lasts the mirror's lifetime while an activity's copy lasts one call.
-+A decision taken from the mechanism with the wrong lifetime changes the output of a running mirror.
- 
- **What to watch for in a PR.**
- 
- - A change to what is written for a column type that existing mirrors use, without a new `InternalVersion_*` gate
-   and a test for a mirror at the previous version.
- - Carefully thread all transformations the column value goes through, as it can change at different layers.
-   Changes that are bugfixes (replacing nonsensical data with something more reasonable) are okay without a bump.
--- Flags re-detected outside creation, or a flag that stores a decision rather than a capability.
-+- Version or flags re-detected outside creation, or a flag that stores a decision rather than a capability.
-```
-
-**File**: `flow/cmd/handler.go` (modified, +1/-6)
-```diff
-@@ -720,15 +720,10 @@ func (h *FlowRequestHandler) resyncByRecreatingFlow(
- 
- 	config.Resync = true
- 	config.DoInitialSnapshot = true
--	// validate mirror first because once the mirror is dropped, there's no going back
--	if internalVersion, err := internal.PeerDBForceInternalVersion(ctx, config.Env); err != nil {
--		return NewInternalApiError(err)
--	} else {
--		config.Version = internalVersion
--	}
- 	configCore := pconv.FlowConnectionConfigsToCore(config)
- 	internal.ApplySnapshotConfigOverrides(configCore, cdcConfigUpdate)
- 
-+	// validate mirror first because once the mirror is dropped, there's no going back
- 	if _, err := h.validateCDCMirrorImpl(ctx, configCore, false); err != nil {
- 		return err
- 	}
-```
-
-**File**: `flow/e2e/api_suite.go` (modified, +158/-0)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"slices"
-+	"strconv"
+@@ -13,6 +13,7 @@ import (
  	"strings"
- 	"sync"
- 	"testing"
-@@ -1433,6 +1434,163 @@ func (s APITestSuite) TestResyncCompleted() {
- 	require.Equal(s.t, "test", tagMap[common.PipeNameTag])
- }
+ 	"syscall"
  
-+func (s APITestSuite) TestResyncRunningKeepsInternalVersion() {
-+	if _, ok := s.source.(*PostgresSource); !ok {
-+		s.t.Skip("version handling is source-agnostic, only run for postgres")
-+	}
-+
-+	tableName := "resync_running_version"
-+	cols := "id,val"
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf("CREATE TABLE %s(id int primary key, val text)", AttachSchema(s, tableName))))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf("INSERT INTO %s(id, val) values (1,'first')", AttachSchema(s, tableName))))
-+
-+	const oldVersion = shared.InternalVersion_Latest - 1
-+	connectionGen := FlowConnectionGenerationConfig{
-+		FlowJobName:      "resync_running_version_" + s.suffix,
-+		TableNameMapping: map[string]string{AttachSchema(s, tableName): tableName},
-+		Destination:      s.ch.Peer().Name,
-+	}
-+	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
-+	flowConnConfig.DoInitialSnapshot = true
-+	flowConnConfig.Env = map[string]string{"PEERDB_FORCE_INTERNAL_VERSION": strconv.FormatUint(uint64(oldVersion), 10)}
-+
-+	_, err := s.CreateCDCFlow(s.t.Context(), &protos.CreateCDCFlowRequest{ConnectionConfigs: flowConnConfig})
-+	require.NoError(s.t, err)
-+
-+	tc := NewTemporalClient(s.t)
-+	env, err := GetPeerflow(s.t.Context(), s.catalog, tc, flowConnConfig.FlowJobName)
-+	require.NoError(s.t, err)
-+	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
-+	EnvWaitFor(s.t, env, 3*time.Minute, "wait for mirror to be in cdc", func() bool {
-+		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
-+	})
-+	RequireEqualTables(s.ch, tableName, cols)
-+
-+	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
-+		FlowJobName:        flowConnConfig.FlowJobName,
-+		RequestedFlowState: protos.FlowStatus_STATUS_PAUSED,
-+	})
-+	require.NoError(s.t, err)
-+	EnvWaitFor(s.t, env, time.Minute, "wait for mirror to pause", func() bool {
-+		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_PAUSED
-+	})
-+	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
-+		FlowJobName:        flowConnConfig.FlowJobName,
-+		RequestedFlowState: protos.FlowStatus_STATUS_RUNNING,
-+		FlowConfigUpdate: &protos.FlowConfigUpdate{
-+			Update: &protos.FlowConfigUpdate_CdcFlowConfigUpdate{
-+				CdcFlowConfigUpdate: &protos.CDCFlowConfigUpdate{
-+					RemovedEnv: []string{"PEERDB_FORCE_INTERNAL_VERSION"},
-+				},
-+			},
-+		},
-+	})
-+	require.NoError(s.t, err)
-+	EnvWaitFor(s.t, env, time.Minute, "wait for env override removal", func() bool {
-+		config, err := s.loadConfigFromCatalog(s.t.Context(), flowConnConfig.FlowJobName)
-+		if err != nil {
-+			s.t.Log(err)
-+			return false
++	"cloud.google.com/go/auth"
+ 	"cloud.google.com/go/bigquery"
+ 	chproto "github.com/ClickHouse/ch-go/proto"
+ 	"github.com/ClickHouse/clickhouse-go/v2"
+@@ -1181,6 +1182,16 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 			if _, ok := bigQueryTransientReasons[bqErr.Reason]; ok {
+ 				return ErrorRetryRecoverable, bqErrorInfo
+ 			}
++		} else if authErr, ok := errors.AsType[*auth.Error](err); ok && authErr.Response != nil {
++			// token refresh failure, before the API call
++			statusCode := authErr.Response.StatusCode
++			bqErrorInfo.Code = "AUTH_" + strconv.Itoa(statusCode)
++			switch {
++			case statusCode == 401 || statusCode == 403:
++				return ErrorNotifyConnectivity, bqErrorInfo
++			case statusCode >= 500:
++				return ErrorRetryRecoverable, bqErrorInfo
++			}
+ 		}
+ 		return ErrorOther, bqErrorInfo
+ 	}
+@@ -1190,13 +1201,22 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 			Source: ErrorSourceGCS,
+ 			Code:   "UNKNOWN",
+ 		}
++		// https://docs.cloud.google.com/storage/docs/retry-strategy#retryable
++		gcsStatusErrorClass := func(statusCode int) ErrorClass {
++			if statusCode == 408 || statusCode == 429 || statusCode >= 500 {
++				return ErrorRetryRecoverable
++			}
++			return ErrorOther
 +		}
-+		_, ok := config.Env["PEERDB_FORCE_INTERNAL_VERSION"]
-+		return !ok && env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
-+	})
-+
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf("INSERT INTO %s(id, val) values (2,'resync')", AttachSchema(s, tableName))))
-+	runIDBeforeResync := EnvGetRunID(s.t, env)
-+	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
-+		FlowJobName:        flowConnConfig.FlowJobName,
-+		RequestedFlowState: protos.FlowStatus_STATUS_RESYNC,
-+	})
-+	require.NoError(s.t, err)
-+
-+	EnvWaitFor(s.t, env, 5*time.Minute, "wait for resync ContinueAsNew", func() bool {
-+		return EnvGetRunID(s.t, env) != runIDBeforeResync
-+	})
-+	EnvWaitFor(s.t, env, 5*time.Minute, "wait for resynced mirror to be in cdc", func() bool {
-+		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
-+	})
-+	EnvWaitForEqualTables(env, s.ch, "resync", tableName, cols)
-+
-+	configAfterResync, err := s.loadConfigFromCatalog(s.t.Context(), flowConnConfig.FlowJobName)
-+	require.NoError(s.t, err)
-+	require.True(s.t, configAfterResync.Resync)
-+	require.Equal(s.t, oldVersion, configAfterResync.Version)
-+
-+	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
-+		FlowJobName:        flowConnConfig.FlowJobName,
-+		RequestedFlowState: protos.FlowStatus_STATUS_TERMINATING,
-+	})
-+	require.NoError(s.t, err)
-+	s.waitForFlowDropped(env, flowConnConfig.FlowJobName)
-+}
-+
-+func (s APITestSuite) TestResyncCompletedKeepsInternalVersion() {
-+	if _, ok := s.source.(*PostgresSource); !ok {
-+		s.t.Skip("version handling is source-agnostic, only run for postgres")
-+	}
-+
-+	tableName := "resync_completed_version"
-+	cols := "id,val"
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf("CREATE TABLE %s(id int primary key, val text)", AttachSchema(s, tableName))))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf("INSERT INTO %s(id, val) values (1,'first')", AttachSchema(s, tableName))))
-+
-+	connectionGen := FlowConnectionGenerationConfig{
-+		FlowJobName:      "resync_completed_version_" + s.suffix,
-+		TableNameMapping: map[str
+ 		if apiErr, ok := errors.AsType[*googleapi.Error](err); ok {
+ 			gcsErrorInfo.Code = strconv.Itoa(apiErr.Code)
+-			// https://docs.cloud.google.com/storage/docs/retry-strategy#retryable
+-			if apiErr.Code == 408 || apiErr.Code == 429 || apiErr.Code >= 500 {
+-				return ErrorRetryRecoverable, gcsErrorInfo
+-			}
+-			return ErrorOther, gcsErrorInfo
++			return gcsStatusErrorClass(apiErr.Code), gcsErrorInfo
++		}
++		if authErr, ok := errors.AsType[*auth.Error](err); ok && authErr.Response != nil {
++			// token refresh failure, before the API call
++			statusCode := authErr.Response.StatusCode
++			gcsErrorInfo.Code = "AUTH_" + strconv.Itoa(statusCode)
++			return gcsStatusErrorClass(statusCode), gcsErrorInfo
+ 		}
+ 		// A lost transport connection never reaches the API layer, so it carries no googleapi.Error
+ 		// and is retried by dialing a new connection.
 ```
 
----
-
-### Incident Patch 2: `6d6fef2b` (2026-11-07)
-**Commit Message**: fix(snapshot): add NULL partition when partition key is excluded (#5032)
-
-Fixes DBI-1299.
-
-The initial snapshot decides whether to add a NULL partition from the
-stored table schema. That schema omits excluded columns, so a custom
-partition key that is also excluded was treated as NOT NULL. Rows with a
-NULL key were silently skipped (PostgreSQL and MySQL).
-
-Excluded partition keys are now assumed nullable. If the column is
-actually NOT NULL, the cost is one empty `IS NULL` partition.
-
-Tests:
-- Unit test for the nullability decision.
-- New e2e `TestSnapshotNullExcludedPartitionKey`. Ran locally on
-PostgreSQL and MySQL: fails without the fix (2 of 4 rows), passes with
-it.
-
-**File**: `flow/e2e/api_suite.go` (modified, +40/-0)
+**File**: `flow/alerting/classifier_test.go` (modified, +56/-0)
 ```diff
-@@ -3708,6 +3708,46 @@ func (s APITestSuite) TestSnapshotNullPartitionKey() {
- 	EnvWaitForCount(env, s.ch, "all 4 rows including nulls should be snapshotted", tableName, "*", 4)
- }
- 
-+func (s APITestSuite) TestSnapshotNullExcludedPartitionKey() {
-+	switch s.source.(type) {
-+	case *PostgresSource, *MySqlSource:
-+	default:
-+		s.t.Skip("only testing with PostgreSQL and MySQL")
-+	}
-+
-+	tableName := "null_excluded_partition"
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf("CREATE TABLE %s(id int primary key, val text, updated_at timestamp)", AttachSchema(s, tableName))))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf("INSERT INTO %s(id, val, updated_at) VALUES (1,'a','2024-01-01'), (2,'b',NULL), (3,'c','2024-01-02'), (4,'d',NULL)",
-+			AttachSchema(s, tableName))))
-+
-+	connectionGen := FlowConnectionGenerationConfig{
-+		FlowJobName: "snapshot_null_excl_pk_" + s.suffix,
-+		TableMappings: []*protos.TableMapping{{
-+			SourceTableIdentifier:      AttachSchema(s, tableName),
-+			DestinationTableIdentifier: tableName,
-+			PartitionKey:               "updated_at",
-+			Exclude:                    []string{"updated_at"},
-+		}},
-+		Destination: s.ch.Peer().Name,
-+	}
-+	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
-+	flowConnConfig.DoInitialSnapshot = true
-+	flowConnConfig.InitialSnapshotOnly = true
-+
-+	response, err := s.CreateCDCFlow(s.t.Context(), &protos.CreateCDCFlowRequest{ConnectionConfigs: flowConnConfig})
-+	require.NoError(s.t, err)
-+	require.NotNil(s.t, response)
-+
-+	tc := NewTemporalClient(s.t)
-+	env, err := GetPeerflow(s.t.Context(), s.catalog, tc, flowConnConfig.FlowJobName)
-+	require.NoError(s.t, err)
-+	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
-+	EnvWaitForFinished(s.t, env, 3*time.Minute)
-+	EnvWaitForCount(env, s.ch, "all 4 rows including nulls should be snapshotted", tableName, "id,val", 4)
-+}
-+
- func (s APITestSuite) TestGetMirrorRowCounts() {
- 	_, ok := s.source.(*PostgresSource)
- 	if !ok {
-```
-
-**File**: `flow/workflows/snapshot_flow.go` (modified, +16/-6)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"cmp"
- 	"fmt"
- 	"log/slog"
-+	"slices"
+@@ -14,6 +14,7 @@ import (
+ 	"testing"
  	"time"
  
- 	"go.temporal.io/sdk/log"
-@@ -189,12 +190,7 @@ func (s *SnapshotFlowExecution) cloneTable(
- 		if err := initTableSchema(); err != nil {
- 			return err
- 		}
--		for _, col := range tableSchema.Columns {
--			if col.Name == mapping.PartitionKey && col.Nullable {
--				watermarkColumnNullable = true
--				break
--			}
--		}
-+		watermarkColumnNullable = partitionKeyMayBeNull(tableSchema, mapping)
- 	}
- 
- 	config := &protos.QRepConfig{
-@@ -230,6 +226,20 @@ func (s *SnapshotFlowExecution) cloneTable(
- 	return boundSelector.SpawnChild(childCtx, QRepFlowWorkflow, nil, config, nil)
++	"cloud.google.com/go/auth"
+ 	"cloud.google.com/go/bigquery"
+ 	"cloud.google.com/go/storage"
+ 	chproto "github.com/ClickHouse/ch-go/proto"
+@@ -2012,6 +2013,61 @@ func TestGCSUploadHTTP2ConnectionLostShouldBeRecoverable(t *testing.T) {
+ 	}, errInfo)
  }
  
-+// excluded columns are missing from the stored schema, so their nullability is unknown;
-+// keys that are never part of the schema (like ctid) can't be excluded and can't be NULL, so they fall through to false
-+func partitionKeyMayBeNull(tableSchema *protos.TableSchema, mapping *protos.TableMapping) bool {
-+	if slices.Contains(mapping.Exclude, mapping.PartitionKey) {
-+		return true
-+	}
-+	for _, col := range tableSchema.Columns {
-+		if col.Name == mapping.PartitionKey {
-+			return col.Nullable
-+		}
-+	}
-+	return false
-+}
++func TestGCSAuthErrorClassification(t *testing.T) {
++	t.Parallel()
 +
- func (s *SnapshotFlowExecution) cloneTables(
- 	ctx workflow.Context,
- 	snapshotType snapshotType,
-```
-
-**File**: `flow/workflows/snapshot_flow_test.go` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+package peerflow
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+)
-+
-+func TestPartitionKeyMayBeNull(t *testing.T) {
-+	schema := &protos.TableSchema{
-+		Columns: []*protos.FieldDescription{
-+			{Name: "id", Nullable: false},
-+			{Name: "updated_at", Nullable: true},
-+		},
-+	}
-+
-+	tests := []struct {
-+		name         string
-+		partitionKey string
-+		exclude      []string
-+		expected     bool
++	for _, tc := range []struct {
++		expectedClass ErrorClass
++		code          int
 +	}{
-+		{name: "nullable key", partitionKey: "updated_at", expected: true},
-+		{name: "not null key", partitionKey: "id", expected: false},
-+		{name: "excluded key", partitionKey: "created_at", exclude: []string{"created_at"}, expected: true},
-+		{name: "unrelated exclusion", partitionKey: "id", exclude: []string{"created_at"}, expected: false},
-+		{name: "ctid", partitionKey: "ctid", expected: false},
-+	}
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			mapping := &protos.TableMapping{PartitionKey: tc.partitionKey, Exclude: tc.exclude}
-+			require.Equal(t, tc.expected, partitionKeyMayBeNull(schema, mapping))
++		{code: 502, expectedClass: ErrorRetryRecoverable},
++		{code: 504, expectedClass: ErrorRetryRecoverable},
++		{code: 429, expectedClass: ErrorRetryRecoverable},
++		{code: 401, expectedClass: ErrorOther},
++	} {
++		t.Run(strconv.Itoa(tc.code), func(t *testing.T) {
++			t.Parallel()
++
++			authErr := &auth.Error{Response: &http.Response{StatusCode: tc.code}}
++			err := exceptions.NewGCSError(fmt.Errorf("failed to generate downscoped token: %w",
++				fmt.Errorf("downscope: unable to obtain root token: %w", authErr)))
++			errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("failed to get headers: %w", err))
++			assert.Equal(t, tc.expectedClass, errorClass)
++			assert.Equal(t, ErrorInfo{
++				Source: ErrorSourceGCS,
++				Code:   "AUTH_" + strconv.Itoa(tc.code),
++			}, errInfo)
 +		})
 +	}
++}
++
++func TestBigQueryAuthErrorClassification(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		expectedClass ErrorClass
++		code          int
++	}{
++		{code: 503, expectedClass: ErrorRetryRecoverable},
++		{code: 401, expectedClass: ErrorNotifyConnectivity},
++		{code: 403, expectedClass: ErrorNotifyConnectivity},
++		{code: 400, expectedClass: ErrorOther},
++	} {
++		t.Run(strconv.Itoa(tc.code), func(t *testing.T) {
++			t.Parallel()
++
++			authErr := &auth.Error{Response: &http.Response{StatusCode: tc.code}}
++			err := exceptions.NewBigQueryError(fmt.Errorf("Post \"https://bigquery.googleapis.com\": %w", authErr))
++			errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("export job failed: %w", err))
++			assert.Equal(t, tc.expectedClass, errorClass)
++			assert.Equal(t, ErrorInfo{
++				Source: ErrorSourceBigQuery,
++				Code:   "AUTH_" + strconv.Itoa(tc.code),
++			}, errInfo)
++		})
++	}
++}
++
+ func TestBigQueryUnclassifiedCodeShouldBeOther(t *testing.T) {
+ 	t.Parallel()
+ 
+```
+
+**File**: `flow/connectors/bigquery/gcp.go` (modified, +23/-1)
+```diff
+@@ -5,13 +5,20 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"net/url"
++	"regexp"
++	"strconv"
+ 	"strings"
+ 
+ 	"cloud.google.com/go/auth"
+ 	"cloud.google.com/go/auth/credentials/downscope"
+ 	"google.golang.org/api/googleapi"
++
++	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
+ )
+ 
++// downscope returns token exchange failures as an untyped string.
++var downscopeExchangeErrorRe = regexp.MustCompile(`(?s)^downscope: unable to exchange token, (\d{3}): (.*)$`)
++
+ func (c *BigQueryConnector) storageDownScopedToken(ctx context.Context, bucketName string, prefix string) (*auth.Token, error) {
+ 	accessBoundary := []downscope.AccessBoundaryRule{
+ 		{
+@@ -30,11 +37,26 @@ func (c *BigQueryConnector) storageDownScopedToken(ctx context.Context, bucketNa
+ 
+ 	token, err := tp.Token(ctx)
+ 	if err != nil {
+-		return nil, fmt.Errorf("failed to generate downscoped token: %w", err)
++		return nil, exceptions.NewGCSError(fmt.Errorf("failed to generate downscoped token: %w", wrapDownscopeError(err)))
+ 	}
+ 	return token, nil
+ }
+ 
++// wrapDownscopeError extracts the HTTP status into a googleapi.Error for classification.
++func wrapDownscopeError(err error) error {
++	m := downscopeExchangeErrorRe.FindStringSubmatch(err.Error())
++	if m == nil {
++		return err
++	}
++	code, convErr := strconv.Atoi(m[1])
++	if convErr != nil {
++		return err
++	}
++	apiErr := &googleapi.Error{Code: code, Body: m[2]}
++	apiErr.Wrap(err)
++	return apiErr
++}
++
+ func (c *BigQueryConnector) isApiErrorWithStatusCode(err error, code int) bool {
+ 	if apiErr, ok := errors.AsType[*googleapi.Error](err); ok && apiErr.Code == code {
+ 		return true
+```
+
+**File**: `flow/connectors/bigquery/gcp_test.go` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++package connbigquery
++
++import (
++	"errors"
++	"fmt"
++	"strconv"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/api/googleapi"
++
++	"github.com/PeerDB-io/peerdb/flow/alerting"
++	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
++)
++
++func TestDownscopeTokenExchangeErrorClassification(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		expectedClass alerting.ErrorClass
++		code          int
++	}{
++		{code: 503, expectedClass: alerting.ErrorRetryRecoverable},
++		{code: 429, expectedClass: alerting.ErrorRetryRecoverable},
++		{code: 400, expectedClass: alerting.ErrorOther},
++	} {
++		t.Run(strconv.Itoa(tc.code), func(t *testing.T) {
++			t.Parallel()
++
++			body := fmt.Sprintf("{\n  \"error\": {\n    \"code\": %d\n  }\n}", tc.code)
++			rawErr := fmt.Errorf("downscope: unable to exchange token, %d: %s", tc.code, body)
++
++			wrapped := wrapDownscopeError(rawErr)
++			apiErr, ok := errors.AsType[*googleapi.Error](wrapped)
++			require.True(t, ok)
++			assert.Equal(t, tc.code, apiErr.Code)
++			assert.Equal(t, body, apiErr.Body)
++			require.ErrorIs(t, wrapped, rawErr)
++
++			err := fmt.Errorf("failed to sync records: failed to insert batch: failed to get headers: %w",
++				exceptions.NewGCSError(fmt.Errorf("failed to generate downscoped token: %w", wrapped)))
++			errorClass, errInfo := alerting.GetErrorClass(t.Context(), err)
++			assert.Equal(t, tc.expectedClass, errorClass)
++			assert.Equal(t, alerting.ErrorInfo{
++				Source: alerting.ErrorSourceGCS,
++				Code:   strconv.Itoa(tc.code),
++			}, errInfo)
++		})
++	}
++}
++
++func TestWrapDownscopeErrorLeavesOtherErrorsUntouched(t *testing.T) {
++	t.Parallel()
++
++	rawErr := errors.New("dial tcp: connection refused")
++	assert.Same(t, rawErr, wrapDownscopeError(rawErr))
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5053** (2026-11-09): ci: raise MariaDB max_connections to 1000 (@gheorghepucea)
+- **PR #5051** (closed): skip partitions dropped after snapshot export in CTID partitioning (@dtunikov)
+- **PR #5037** (closed): [WIP, DO NOT MERGE] Fault-injection tests on main (CI shakedown) (@ilidemi)
 - **PR #5034** (2026-11-07): Make normalize start on pending batches after a SyncFlow restart (@ilidemi)
+- **PR #5033** (2026-11-09): Add signal handling and schema changes to tricky areas doc, organize helpers a bit (@ilidemi)
 - **PR #5032** (2026-11-07): fix(snapshot): add NULL partition when partition key is excluded (@ilidemi)
-- **PR #5031** (2026-11-07): fix(resync): keep internal version when resyncing completed/failed mirrors (@ilidemi)
-- **PR #5030** (2026-11-07): classify DocumentDB too many cursors error as notify user (@ilidemi)
-- **PR #5029** (2026-11-07): Update/harden contributing.md for agents as external contributors (@jgao54)
-- **PR #5027** (2026-11-06): Add listCursors to Mongo switchboard (@ilidemi)
 
 ---
 
@@ -2239,13 +2604,13 @@ it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resync): keep internal version when resyncing completed/failed mirrors (#5031)
+## X. Add signal handling and schema changes to tricky areas doc, organize helpers a b
 
 **RULE**:
 When implementing operations in `docs/tricky-areas.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25119216`: resync): keep internal version when resyncing completed/failed mirrors (#5031). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7f8b7e5`: Add signal handling and schema changes to tricky areas doc, organize helpers a bit (#5033). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tricky-areas.md`.
@@ -2253,25 +2618,31 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-from `PEERDB_FORCE_INTERNAL_VERSION` at creation and kept through resync. Flags from `GetFlags` record destination
-capabilities at creation and are never re-detected. A dynamic setting resolves from the mirror's env, then the
-catalog, then the process environment, and a non-immediate value is written back into the env map it was resolved
-with, so one pinned into `cfg.Env` at creation lasts the mirror's lifetime while an activity's copy lasts one call.
-A decision taken from the mechanism with the wrong lifetime changes the output of a running mirror.
-- Version or flags re-detected outside creation, or a flag that stores a decision rather than a capability.
+| [Temporal signal handling](#temporal-signal-handling) | `flow/workflows/cdc_flow.go`, `flow/workflows/drop_flow.go`, `flow/model/signals.go` |
+| [Schema changes](#schema-changes) | `flow/activities/flowable_core.go`, `flow/model/cdc_stream.go`, `flow/internal/catalog_schema.go`, `flow/connectors/postgres/cdc.go`, `flow/connectors/mysql/cdc.go`, `flow/connectors/clickhouse/` |
+
+---
+
+## Temporal signal handling
+
+**Why it is tricky.** Pause, resume, terminate and resync requests can arrive while a workflow waits for an
+activity or child workflow. The workflow must continue to handle the requests that it supports in that phase.
+An interrupting request needs the correct state, even if the current operation is only partly complete.
+For this guidance, small catalog interactions such as status updates or logging do not count as long waits.
+
+**What to watch for in a PR.**
+
+- When you add or move a long-running activity or child workflow, check which requests need handling during the wait.
+  For example, snapshot and table-edit operations handle terminate/resync requests while they wait for completion.
+  A direct `.Get()` on new work can delay those requests until the work finishes.
+- Befo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-from `PEERDB_FORCE_INTERNAL_VERSION` at creation and again only when a completed or failed mirror is resynced by
-recreation. Flags from `GetFlags` record destination capabilities at creation and are never re-detected. A dynamic
-setting resolves from the mirror's env, then the catalog, then the process environment, and a non-immediate value
-is written back into the env map it was resolved with, so one pinned into `cfg.Env` at creation lasts the mirror's
-lifetime while an activity's copy lasts one call. A decision taken from the mechanism with the wrong lifetime
-changes the output of a running mirror.
-- Flags re-detected outside creation, or a flag that stores a decision rather than a capability.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25119216` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7f8b7e5` are properly handled with clean fallback behavior.

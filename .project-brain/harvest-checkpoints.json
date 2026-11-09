@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T17:57:07.630Z",
+  "last_updated": "2026-11-09T18:16:21.849Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "67e7ec326b503e32724a06b389953a9ed51b95f56694efc37b568243bef7129a",
-      "verified_at": "2026-11-09T17:12:38.154Z",
+      "content_hash": "4bc21bf972095bbc9523e3a154fefe8471cf2b902ccc39ef16a226ea7a18bc24",
+      "verified_at": "2026-11-09T18:11:38.280Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T17:12:38.154Z"
+      "last_updated": "2026-11-09T18:11:38.280Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "9a5bc991fe7d728dcf29de1e6a842d983d7e524b7ebafe1979621dd32b730f89",
-      "verified_at": "2026-11-08T00:22:11.573Z",
+      "content_hash": "ccd13871933ab6ba2dfc8aaaa1f76963834423c15c00f880d24640441dd168d7",
+      "verified_at": "2026-11-09T18:11:18.673Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:22:11.573Z"
+      "last_updated": "2026-11-09T18:11:18.673Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -6276,14 +6276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-i18next-react-i18next",
-      "content_hash": "990f328c5a265d522b291e447a38a63d95dda981ac6559f116d92f83c08d1ec5",
-      "verified_at": "2026-11-06T22:56:03.431Z",
+      "content_hash": "153d986f0d49404ac745d2e7ec8314061512b77018bde1d296932634b04aa76d",
+      "verified_at": "2026-11-09T18:11:21.896Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:56:03.431Z"
+      "last_updated": "2026-11-09T18:11:21.896Z"
     },
     "clastix/kamaji": {
       "repository": "clastix/kamaji",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "d4f3a1e6894b373c3bcc1078662f93abb0225311d850f9291fd88a2e792fb445",
-      "verified_at": "2026-11-08T19:31:12.761Z",
+      "content_hash": "748f7dc9d2aff27981a15f57a9b0619a5e6edbd2757c0b266df525db9d476f4a",
+      "verified_at": "2026-11-09T18:11:37.171Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T19:31:12.761Z"
+      "last_updated": "2026-11-09T18:11:37.171Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "9b6a9db2b3cdc04364175cba0377d94beb9c33a5b1cd420c92d07c593a983ca9",
-      "verified_at": "2026-11-08T15:42:24.897Z",
+      "content_hash": "421ec89624cc4c71057f91f562a1f3e3c13386efa4154c6da2d6c2f01e665e17",
+      "verified_at": "2026-11-09T18:16:21.845Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:42:24.897Z"
+      "last_updated": "2026-11-09T18:16:21.845Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",

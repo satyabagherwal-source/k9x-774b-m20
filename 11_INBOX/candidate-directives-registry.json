@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T15:51:58.561Z",
+  "last_updated": "2026-11-09T18:11:18.627Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4347,6 +4347,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
+    },
+    {
+      "id": "CD-UZMQ",
+      "directive_title": "Add signal handling and schema changes to tricky areas doc, organize helpers a b",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "PeerDB-io/peerdb",
+      "source_commit": "f7f8b7e5",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-peerdb-io-peerdb"
     }
   ]
 }
