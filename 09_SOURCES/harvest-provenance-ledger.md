@@ -8685,3 +8685,5 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `bac14d41` | Multi-dimensional audit evidence | 2026-11-09T22:14:58.403Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `08bcdade` | Multi-dimensional audit evidence | 2026-11-09T22:15:04.085Z |
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `22e5dbba` | Multi-dimensional audit evidence | 2026-11-09T22:27:16.744Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `290a9d94` | Multi-dimensional audit evidence | 2026-11-09T22:34:14.743Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `04c23427` | Multi-dimensional audit evidence | 2026-11-09T22:34:28.761Z |

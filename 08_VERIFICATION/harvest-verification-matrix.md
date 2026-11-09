@@ -8676,3 +8676,5 @@
 | `CYCLE-20261109-KCBL` | `2026-11-09T22:14:58.401Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`63e0c12c...`) |
 | `CYCLE-20261109-KGPE` | `2026-11-09T22:15:04.082Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5b3cfbcd...`) |
 | `CYCLE-20261109-0610` | `2026-11-09T22:27:16.741Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`34324c18...`) |
+| `CYCLE-20261109-94K4` | `2026-11-09T22:34:14.740Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`95fc6606...`) |
+| `CYCLE-20261109-9FDH` | `2026-11-09T22:34:28.757Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`921fcbbc...`) |

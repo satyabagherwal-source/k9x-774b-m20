@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T22:27:16.658Z",
+  "last_updated": "2026-11-09T22:34:28.572Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4296,14 +4296,19 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "e527a5aa",
-      "content_hash": "cc8b08467583e2144cdddbf067acbcc9b63877f4056a6a8caaf6ffaea037fda0",
+      "source_version": "290a9d94",
+      "content_hash": "95fc660679c1d6db0fd5805c5cff4ab3660e0a872c26c5a6b00cab8cf28ddb36",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Add jq support behind an opt-in lang-jq feature (#544)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci(release): build macOS on macos-15 (macos-14 runners are retired)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4362,7 +4367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:10:24.561Z",
+      "verified_at": "2026-11-09T22:34:14.627Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66922,8 +66927,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "b97aa44c",
-      "content_hash": "692420c164801127b8aa7113a7aa8ee433cb38549d4fc14eeff0f8c465d808d6",
+      "source_version": "04c23427",
+      "content_hash": "921fcbbce477064cd686bfe9eec4a5d4ef49335113d0e68072a8d0113ef650df",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -66940,6 +66945,11 @@
         {
           "number": null,
           "title": "test_replication_card_migration cleanup ordering",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "DQ worker manager interconnect cleanup after leader demotion",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67023,7 +67033,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T20:31:31.105Z",
+      "verified_at": "2026-11-09T22:34:28.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

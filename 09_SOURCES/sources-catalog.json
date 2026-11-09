@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "b97aa44c",
+    "sourceVersion": "04c23427",
     "license": "Apache-2.0",
-    "contentHash": "692420c164801127b8aa7113a7aa8ee433cb38549d4fc14eeff0f8c465d808d6",
-    "lastHarvestedAt": "2026-11-08T20:31:31.215Z",
+    "contentHash": "921fcbbce477064cd686bfe9eec4a5d4ef49335113d0e68072a8d0113ef650df",
+    "lastHarvestedAt": "2026-11-09T22:34:28.761Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -6343,10 +6343,10 @@
     "repository": "Ataraxy-Labs/sem",
     "platform": "github",
     "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
-    "sourceVersion": "e527a5aa",
+    "sourceVersion": "290a9d94",
     "license": "Apache-2.0",
-    "contentHash": "cc8b08467583e2144cdddbf067acbcc9b63877f4056a6a8caaf6ffaea037fda0",
-    "lastHarvestedAt": "2026-11-07T04:10:24.705Z",
+    "contentHash": "95fc660679c1d6db0fd5805c5cff4ab3660e0a872c26c5a6b00cab8cf28ddb36",
+    "lastHarvestedAt": "2026-11-09T22:34:14.743Z",
     "learningId": "learn-github-ataraxy-labs-sem"
   },
   "komi-store-komi-store": {
