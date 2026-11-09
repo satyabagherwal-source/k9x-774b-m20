@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `e3622da0`  
+> **Source Version**: `2bdf1337`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T14:04:47.285Z  
+> **Timestamp**: 2026-11-09T16:40:33.501Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T14:04:47.278Z  
+> **Harvest Timestamp**: 2026-11-09T16:40:33.488Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1628,106 +1628,72 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3622da0` (2026-11-09)
-**Commit Message**: Draft NUC 97 In and Not In Membership Tests
+### Incident Patch 1: `2bdf1337` (2026-11-09)
+**Commit Message**: Draft NUC 99 SQL-Style Inequality
 
-Category: Syntax enhancement, from one uniform draw over the five
-categories NUC 1 marks eligible (index 0, probability 1/5, no redraw), in
-a continuous /nuc-proposal cycle.
+Category: Language compatibility. Propose contiguous <> as an optional SQL- and Pascal-style alias of !=, preserving accepted syntax and existing inequality semantics. Allocate only the Draft proposal and its two index entries; no runtime or executable corpus changes.
 
-Requested change: add the membership tests `A in B` and `A not in B` as
-shorter spellings of `B.includes(A)` and `!B.includes(A)` for lists, class
-populations and strings, at the level of `<`, `<=`, `>` and `>=`. Any
-other right operand raises a TypeError. Every input accepted at this
-revision keeps its parse and behavior, including template interpolations
-that ignore their trailing tokens.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8fPFgjTqo3xFw89fzH
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -62,6 +62,7 @@ Created: 31-Jul-2026
- | [94](nuc-0094.md) | Opt-In Conditional Words | Accepted |
- | [95](nuc-0095.md) | Item Words | Accepted |
- | [96](nuc-0096.md) | At Variables | Accepted |
-+| [97](nuc-0097.md) | In and Not In Membership Tests | Draft |
+@@ -142,6 +142,7 @@ Created: 31-Jul-2026
+ | [78](nuc-0078.md) | Extends Clauses for Subclasses | Accepted |
+ | [89](nuc-0089.md) | Named Function Declarations | Accepted |
+ | [92](nuc-0092.md) | List Comprehensions | Accepted |
++| [99](nuc-0099.md) | SQL-Style Inequality | Draft |
  
- ### Runtime features
+ ### Documentation
  
-@@ -247,6 +248,7 @@ Created: 31-Jul-2026
- | [94](nuc-0094.md) | Opt-In Conditional Words | Standards Track | Syntax enhancement | Accepted |
- | [95](nuc-0095.md) | Item Words | Standards Track | Syntax enhancement | Accepted |
+@@ -251,6 +252,7 @@ Created: 31-Jul-2026
  | [96](nuc-0096.md) | At Variables | Standards Track | Syntax enhancement | Accepted |
-+| [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
+ | [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
+ | [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Standards Track | Syntax enhancement | Draft |
++| [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0097.md` (added, +83/-0)
+**File**: `docs/nuc-0099.md` (added, +59/-0)
 ```diff
-@@ -0,0 +1,83 @@
-+# NUC 97 -- In and Not In Membership Tests
+@@ -0,0 +1,59 @@
++# NUC 99 -- SQL-Style Inequality
 +
 +```
-+NUC: 97
-+Title: In and Not In Membership Tests
-+Author: Can Mingir <canmingir@gmail.com>
++NUC: 99
++Title: SQL-Style Inequality
++Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Syntax enhancement
++Category: Language compatibility
 +Created: 09-Nov-2026
 +```
 +
 +## Abstract
 +
-+- Adds the membership tests `A in B` and `A not in B`. `x in xs` is
-+  `xs.includes(x)`, three lexer tokens instead of six, and `x not in xs` is
-+  `!xs.includes(x)`, four instead of seven.
-+- The right operand is a list, a class population or a string, the values
-+  whose `includes` tests membership: a list or population holds an item equal
-+  to `A` under the deep equality `includes` uses, and a string holds the text
-+  of `A`.
-+- Any other right operand raises a `TypeError`, where `includes` returns
-+  `undefined` for an object or `null`. A silent `undefined` would make
-+  `"a" not in {a: 1}` read `true`, and no later NUC could change that
-+  accepted result, so key membership on objects stays open.
-+- A membership test stands with `<`, `<=`, `>` and `>=`: it binds tighter
-+  than `==`, `is`, `&&`, `and`, `||`, `or` and `??`, and looser than
-+  arithmetic. It stays live as `includes` does, so `known = "green" in tags`
-+  follows `tags`.
-+- Only inputs that were errors at the accepted revision change. A template
-+  interpolation such as `` `${x in xs}` `` keeps ignoring its trailing tokens
-+  and reading `x`, the class of break that rejected [NUC 91](nuc-0091.md).
++- Add contiguous `<>` as an optional SQL- and Pascal-style spelling of the
++  existing `!=` operator, preserving its equality precedence, associativity,
++  evaluation order, coercions, reactive dependencies and canonical rendering.
++- Preserve every accepted spelling and meaning, including `!=`, `!==`, `<`,
++  `<=`, `>` and `>=`; introduce no SQL null semantics, new runtime operation,
++  keyword, configuration option, dependency or project version.
++- This is a continuous-mode Language compatibility proposal. Token comparison
++  is categorically skipped; immutable accepted sources, behavior, integrity,
++  backward compatibility and all development checks remain mandatory.
 +
 +## Motivation
 +
-+- Membership is the everyday test of a rule: a status among the allowed
-+  ones, a color in a palette, a point in a figure. Accepted Nucleoid spells
-+  it `xs.includes(x)`, which names the collection before the item and costs
-+  six lexer tokens, or seven with `!` for the negation.
-+- `x in xs` and `x not in xs` are Python's spellings, and `in` is also an
-+  operator of JavaScript and SQL, so language models write them in
-+  conditions and rules. At the accepted revision each is a syntax error that
-+  stops the whole program before any statement runs: `x in xs` raises
-+  `SyntaxError("Unexpected keyword 'in'")`, and
-+  `if color in ["red", "blue"]:` raises
-+  `SyntaxError("Expected ':' but found keyword 'in'")`.
-+- The accepted ARC instruction datasets already test membership in their
-+  world-model rules, all through `includes`:
-+  `pair.includes($Obj.color@first)` in `0d3d703e`,
-+  `$Obj.points.includes([canvas_width - 1 - point[0], point[1]])` in
-+  `44f52bb0` and `figure.holes.includes(hole)` in `fafffa47`. Written as
-+  `hole in figure.holes`, a rule reads in the order it is said.
-+- `in` is already a reserved word. Outside template interpolations, which
-+  ignore their trailing tokens, the accepted grammar reads it only after the
-+  loop name of `for`, the bound name of a quantifier and the name of a
-+  comprehension, and as a property after `.`. An infix `in` is therefore
-+  new syntax, not a new meaning for accepted source.
-+- [NUC 64](nuc-0064.md) listed `in` and `not in` among the forms it did not
-+  add, and [NUC 95](nuc-0095.md) notes that accepted Nucleoid has no `in`
-+  operator.
++- SQL and Pascal use `<>` for inequality. A familiar optional spelling lets
++  programs and language models express the existing operation without
++  translating that operator to `!=`.
++- Accepted Nucleoid tokenizes contiguous `<>` as `<` followed by `>`, which
++  cannot supply the right operand of an ordinary comparison. The proposal
++  gives this former error a spelling of an existing operation rather than
++  adding a second equality model.
++- Nucleoid's own `!=` behavior remains the contract: this proposal does not
++  import SQL's three-valued logic or change its treatment of null, undefined,
++  objects, lists or numeric values.
 +
 +## Rationale
 +
@@ -1755,93 +1721,152 @@ Claude-Session: https://claude.ai/code/session_01AJtz8fPFgjTqo3xFw89fzH
 
 ---
 
-### Incident Patch 2: `49bd871f` (2026-11-09)
-**Commit Message**: Avoid duplicate NUC allocations
+### Incident Patch 2: `f9f38b9f` (2026-11-09)
+**Commit Message**: Draft NUC 98 Every Quantifiers, Class References and Predicate Sentences
 
-Pull before allocating a draft, renumber it if its number is taken, and skip concepts already proposed. Explicit requests report the existing NUC instead.
+Category: Syntax enhancement, for a single-proposal /nuc-proposal
+request the user made directly.
 
-**File**: `.claude/CLAUDE.md` (modified, +1/-1)
+Requested change: accept `every` as a spelling of the quantifier word
+`all`, so `every v in xs: c` is `all v in xs: c`, and of the class
+reference `$`, so `every Human` reads `$Human` with exact, case-sensitive
+class names. Read the statement `$Class is WORD` as `$Class.WORD = true`,
+so `$Human is mortal` and `every Human is mortal` state the same rule.
+
+The user accepted three compatibility breaks in advance: the pinned
+`ok = every v in xs: v` syntax error in tests/quantifiers.rs; `every`
+directly followed by a name where an operand can begin, which ran as
+juxtaposed statements; and `$Class is WORD`, which ran as three
+juxtaposed statements.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -17,7 +17,7 @@ not a replacement for the policies it links to.
- | [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
- | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
- | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
--| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, and `NUC <number> <Title>` outcome commit messages |
-+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, and `NUC <number> <Title>` outcome commit messages |
- | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
- | [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+@@ -63,6 +63,7 @@ Created: 31-Jul-2026
+ | [95](nuc-0095.md) | Item Words | Accepted |
+ | [96](nuc-0096.md) | At Variables | Accepted |
+ | [97](nuc-0097.md) | In and Not In Membership Tests | Draft |
++| [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Draft |
+ 
+ ### Runtime features
+ 
+@@ -249,6 +250,7 @@ Created: 31-Jul-2026
+ | [95](nuc-0095.md) | Item Words | Standards Track | Syntax enhancement | Accepted |
+ | [96](nuc-0096.md) | At Variables | Standards Track | Syntax enhancement | Accepted |
+ | [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
++| [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Standards Track | Syntax enhancement | Draft |
+ 
+ ## Copyright
  
 ```
 
-**File**: `.claude/rules/proposals.instructions.md` (modified, +5/-0)
+**File**: `docs/nuc-0098.md` (added, +102/-0)
 ```diff
-@@ -327,6 +327,11 @@ to that evaluation and must not recursively launch another agent.
-   change, plus its Draft rows in both NUC indexes. It commits only those
-   paths as `Draft NUC <number> <Title>` and pushes right after. That commit
-   allocates the proposal and its number.
-+- Right before that commit the caller pulls again. When another NUC already
-+  uses the drafted number, it claims the next number. When a NUC on `main`,
-+  whatever its status, already proposes the same concept, it skips the
-+  proposal, allocates nothing and starts again with a new selection; a
-+  request that names that concept stops and reports the existing NUC.
- - The pushed allocation is the accepted revision the NUC pins: it changes no
-   runtime, executable document, test, dataset or export. The proposer then
-   completes the draft in the candidate worktree, followed by the usual
-```
-
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +14/-3)
-```diff
-@@ -33,18 +33,29 @@ repeats it:
-    details: the Abstract and Motivation of the requested change, followed by
-    the remaining required sections for the proposer to complete. Add its Draft
-    rows to both indexes in `docs/nuc-0000.md`, and change nothing else.
--3. **Allocate.** Commit those two paths alone, with the subject
-+3. **Check before submitting.** Right before the allocation commit, pull
-+   again and compare the draft with every NUC that `main` now records:
-+   - **Same number:** when another NUC already uses the drafted number,
-+     claim the next one, the highest number recorded plus one, and renumber
-+     the draft's file name, title line, header and both index rows.
-+   - **Same concept:** when a NUC of any status already proposes the same
-+     concept, the same feature or change under any title, skip this
-+     proposal. Remove the uncommitted draft and its own index rows, allocate
-+     nothing, and start again at step 1 with a new selection under the
-+     [selection rule](#select-an-unspecified-enhancement). A request that
-+     names that concept stops instead and reports the existing NUC.
-+4. **Allocate.** Commit those two paths alone, with the subject
-    `Draft NUC <number> <Title>` and the category and requested change in the
-    body, and push right away. The pushed commit allocates the proposal and its
-    number, so concurrent sessions number their NUCs after it.
--4. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
-+5. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
-    the allocation, as the accepted revision, record its baseline, and create
-    the candidate worktree from it. Then
-    [select the strategy](#select-and-consume-a-proposal-strategy) and run the
-    fresh proposer, which completes the draft and prototypes the change, the
-    Rust improvement pass and the fresh evaluator, as the rest of this skill
-    describes.
--5. **Commit and push the final version.** Record the outcome in a new commit,
-+6. **Commit and push the final version.** Record the outcome in a new commit,
-    `NUC <number> <Title>`, that holds the final proposal along with its code
-    changes when it is accepted, and push it right after, under the
-    [outcome commit rule](#name-outcome-commits-caller-only).
-```
-
-**File**: `CONTRIBUTING.md` (modified, +5/-2)
-```diff
-@@ -123,8 +123,11 @@ the execution-mode policy requires comparison.
- 
- The caller pulls first, then allocates a new NUC before its details: it
- commits and pushes the Draft document, with its header, category and proposal
--details, and the NUC's index rows as `Draft NUC <number> <Title>`. The outcome
--commit, `NUC <number> <Title>`, later carries the final version with its code
-+details, and the NUC's index rows as `Draft NUC <number> <Title>`. Right before
-+that commit it pulls again, claims the next number when another NUC already
-+uses the drafted one, and skips the proposal and starts again when a NUC on
-+`main` already proposes the same concept. The outcome commit,
-+`NUC <number> <Title>`, later carries the final version with its code
- changes; see the
- [allocation step](.claude/skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only).
- 
+@@ -0,0 +1,102 @@
++# NUC 98 -- Every Quantifiers, Class References and Predicate Sentences
++
++```
++NUC: 98
++Title: Every Quantifiers, Class References and Predicate Sentences
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Syntax enhancement
++Created: 09-Nov-2026
++Requires: 62, 93
++```
++
++## Abstract
++
++- Adds three spellings of universal claims, each read as an accepted form:
++  - `every NAME in COLLECTION: CONDITION` is the quantifier
++    `all NAME in COLLECTION: CONDITION` of [NUC 62](nuc-0062.md).
++  - `every NAME`, where an operand can begin, is the class reference
++    `$NAME`, so `every Human.mortal = true` is `$Human.mortal = true`.
++  - The statement `$Class is WORD`, whose value is one word, sets the
++    property `WORD` to `true` for every instance, as `$Class.WORD = true`
++    does. So `$Human is mortal` and `every Human is mortal` both say that
++    every Human is mortal.
++- The class-level rule of the Socrates example then reads as it is said:
++
++```
++class Human(name: str):
++    this.name = name
++
++every Human is mortal
++
++socrates = Human("Socrates")
++assert(socrates.mortal, true)
++assert(every h in Human: h.mortal, true)
++```
++
++- Class names stay exact and case-sensitive: `every Human` reads `$Human`,
++  and `every human` reads `$human`.
++- Everywhere else `every` keeps every accepted reading, including the list
++  query `xs.every(...)`, a variable, function or property named `every`, and
++  `every` followed by anything but a name. A variable named `every` does not
++  disable the new forms.
++- The user accepted three compatibility breaks in advance, each limited to
++  the inputs it names:
++  - `ok = every v in xs: v` raised `SyntaxError("Unexpected keyword 'in'")`
++    at line 1, column 17, which `tests/quantifiers.rs` pins. That assertion
++    moves to the quantifier reading.
++  - Where an operand can begin, the name `every` directly followed by a name
++    ended one statement or item, and the name began the next. So after
++    `every = 3`, `every Human = 4` ran as `every` and `Human = 4`. Those
++    inputs now read `$NAME`.
++  - `$Class is WORD` ran as the three statements `$Class`, `is` and `WORD`,
++    so `$Human is mortal` raised `ReferenceError("is is not defined")` at
++    its `is`. It now states the predicate.
++- Any other change to an accepted parse, behavior, output or pinned test
++  still fails backward compatibility.
++
++## Motivation
++
++- World models state facts about whole classes. The specification writes
++  its Socrates rule as `$Human.mortal = true` under the comment
++  `# Every human is mortal`: the comment says the rule, and the code spells
++  it with a sigil.
++- `every` is how people and language models state a universal claim, and it
++  already names the list query that quantifiers equal: NUC 62 specifies
++  `all v in xs: v > 0` to equal `xs.every(v => v > 0)` in results, reads and
++  dependencies. Yet `every v in xs: v > 0` is a syntax error, and NUC 62
++  pins it as one.
++- `$` is Nucleoid's own mark for each instance of a class, and no other
++  language reads it that way. A model that writes `every Human.mortal = true`
++  today gets `ReferenceError("every is not defined")`.
++- A predicate over a class can only be written as an assignment of `true`:
++  `$Human.mortal = true` or `$Human.mortal is true`. The `is` assignments of
++  [NUC 93](nuc-0093.md) need a property after a `$Class` root, so
++  `$Human is mortal` runs as three statements and raises
++  `ReferenceError("is is not defined")`.
++- The user requested `every` as a spelling of `all` and of `$`, and
++  `every Human is mortal` as the same statement as `$Human is mortal`.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1870,13 +1895,13 @@ Pull before allocating a draft, renumber it if its number is taken, and skip con
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 97 In and Not In Membership Tests
+## X. Draft NUC 99 SQL-Style Inequality
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3622da0`: Draft NUC 97 In and Not In Membership Tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2bdf1337`: Draft NUC 99 SQL-Style Inequality. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1884,8 +1909,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [97](nuc-0097.md) | In and Not In Membership Tests | Draft |
-| [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
+| [99](nuc-0099.md) | SQL-Style Inequality | Draft |
+| [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1895,4 +1920,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3622da0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2bdf1337` are properly handled with clean fallback behavior.

@@ -8646,3 +8646,8 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `0505091a` | Multi-dimensional audit evidence | 2026-11-09T16:33:36.188Z |
 | `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T16:33:38.070Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `0084887c` | Multi-dimensional audit evidence | 2026-11-09T16:33:39.715Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `310a9e3e` | Multi-dimensional audit evidence | 2026-11-09T16:40:18.861Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `b66eb8c7` | Multi-dimensional audit evidence | 2026-11-09T16:40:24.970Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-09T16:40:29.787Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `93d16081` | Multi-dimensional audit evidence | 2026-11-09T16:40:33.992Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2bdf1337` | Multi-dimensional audit evidence | 2026-11-09T16:40:34.953Z |

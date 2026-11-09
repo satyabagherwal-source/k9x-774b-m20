@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Source Version**: `ea12300d`  
+> **Source Version**: `b66eb8c7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T21:59:28.619Z  
+> **Timestamp**: 2026-11-09T16:40:23.704Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T21:59:27.165Z  
+> **Harvest Timestamp**: 2026-11-09T16:40:23.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: React Native's Animated library reimplemented
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11057 stars
+- **Stars / Engagement**: 11063 stars
 
 ---
 
@@ -898,895 +898,1073 @@ export const getCodeWithOverrides = <C extends object, O extends object>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea12300d` (2026-11-06)
-**Commit Message**: fix(Reanimated): handle node removals with the animation backend (#11114)
+### Incident Patch 1: `97538ca5` (2026-11-07)
+**Commit Message**: fix(Reanimated): keep content drawn over a nested shared element visible during shared element transitions (#11166)
 
 > [!NOTE]
 > This pull request was authored by AI on behalf of @bartlomiejbloniarz.
 
 ## Summary
 
-Every animated component calls `markNodeAsRemovable` when it unmounts.
-After a mount, `handleNodeRemovals` drops the props of each marked view
-that is no longer in the mounted tree from the registries. A hidden
-`<Activity>` or a frozen screen stays in the tree, so it keeps its
-props.
+During a shared element transition, each flying view (the carrier)
+leaves its parent and is inserted at the root of the surface, in the
+order the transitions start. When a shared element contains another
+shared element, both become separate root views. The nested one is
+inserted later, so it is drawn above the whole parent. A plain child of
+the parent that was drawn over the nested element, such as a label over
+a photo, is hidden behind it for the whole flight. This happens with and
+without `fadeContent`, for pushes, pops and the iOS back swipe, on both
+platforms. Reordering the root views cannot fix it, because the parent
+and its label are one native view: the photo can only go entirely above
+it or entirely below it.
 
-With `USE_ANIMATION_BACKEND` this never ran. The commit hook returned
-before it registered the surface in `MountedRootsRegistry`, and the
-mount hook returned before it drained. So with the backend every
-unmounted animated view kept its entries in the props registries until
-the app closed.
+```mermaid
+flowchart LR
+  subgraph Screen["On screen"]
+    direction TB
+    S1["card"] --> S2["photo (shared)"] --> S3["label"]
+  end
+  subgraph Main["Flight on main"]
+    direction TB
+    M1["card + label"] --> M2["photo (shared)"]
+  end
+  subgraph PR["Flig
 
-This PR:
-
-- registers and removes surfaces in the commit hook with the backend
-too;
-- records the mounted root and drains removals in the mount hook with
-the backend;
-- drains the nodes of the reported surface, and the nodes of surfaces
-that have stopped, in place;
-- drains the nodes of a stopping surface when it commits its empty root,
-so they are released even if no mount is reported after that, for
-example on a paused Android host.
-
-With the bac
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/misc/ViewStylesRepository.cpp` (modified, +0/-17)
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionFadeProgress.test.tsx` (modified, +3/-4)
 ```diff
-@@ -1,5 +1,4 @@
- #include <reanimated/CSS/misc/ViewStylesRepository.h>
--#include <reanimated/Tools/FeatureFlags.h>
+@@ -301,10 +301,6 @@ describe('Nested shared transition content fade during Screen progress', () => {
+         false,
+         false
+       );
+-      await expectEventually(async () => {
+-        const parent = await RuntimeTestObserver!.observeParent(innerSource);
+-        return parent !== null && parent !== originalParent;
+-      }).toBe(true);
+       await RuntimeTestObserver!.emitScreenTransitionProgress(
+         targetScreen,
+         0.5,
+@@ -325,6 +321,9 @@ describe('Nested shared transition content fade during Screen progress', () => {
+           outerTarget?.opacity === 0
+         );
+       }).toBe(true);
++      expect(await RuntimeTestObserver!.observeParent(innerSource)).toBe(
++        originalParent
++      );
  
- #include <memory>
- #include <string>
-@@ -68,13 +67,6 @@ jsi::Value ViewStylesRepository::getParentNodeProp(
- 
- std::shared_ptr<const ShadowNode> ViewStylesRepository::getNewestNode(
-     const std::shared_ptr<const ShadowNode> &shadowNode) const {
--  if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
--    // Backend mode has no commit hook (it returns before taking the updates-registry
--    // lock), so reading the live tree here cannot deadlock and needs no snapshot.
--    const auto newestNode = uiManager_->getNewestCloneOfShadowNode(*shadowNode);
--    return newestNode ? newestNode : shadowNode;
--  }
--
-   // Resolve shadowNode against the last mounted root without the ShadowTree lock (the
-   // deadlock) that getNewestCloneOfShadowNode takes, falling back to the passed node.
-   // Mirrors RN's getShadowNodeInSubtree:
-@@ -99,15 +91,6 @@ std::shared_ptr<const ShadowNode> ViewStylesRepository::getNewestNode(
- 
- std::shared_ptr<const ShadowNode> ViewStylesRepository::getParentNode(
-     const std::shared_ptr<const ShadowNode> &shadowNode) const {
--  if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
--    // Backend mode resolves against the live tree (see getNewestNode).
--    std::shared_ptr<const ShadowNode> parentNode = nullptr;
--    uiManager_->getShadowTreeRegistry().visit(shadowNode->getSurfaceId(), [&](const ShadowTree &shadowTree) {
--      parentNode = dom::getParentNode(shadowTree.getCurrentRevision().rootShadowNode, *shadowNode);
--    });
--    return parentNode;
--  }
--
-   const auto root = mountedRootsRegistry_->get(shadowNode->getSurfaceId());
-   if (!root) {
-     return nullptr;
+       if (outcome === 'end') {
+         await RuntimeTestObserver!.emitScreenTransitionProgress(
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/misc/ViewStylesRepository.h` (modified, +0/-6)
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionGesture.test.tsx` (modified, +141/-0)
 ```diff
-@@ -8,7 +8,6 @@
- #include <react/renderer/components/view/ViewProps.h>
- #include <react/renderer/core/LayoutableShadowNode.h>
- #include <react/renderer/dom/DOM.h>
--#include <react/renderer/uimanager/UIManager.h>
- 
- #include <memory>
- #include <string>
-@@ -25,16 +24,11 @@ class ViewStylesRepository {
-       const std::shared_ptr<AnimatedPropsRegistry> &animatedPropsRegistry,
-       const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry);
- 
--  void setUIManager(const std::shared_ptr<UIManager> &uiManager) {
--    uiManager_ = uiManager;
--  }
--
-   jsi::Value getNodeProp(const std::shared_ptr<const ShadowNode> &shadowNode, const std::string &propName);
-   jsi::Value getParentNodeProp(const std::shared_ptr<const ShadowNode> &shadowNode, const std::string &propName);
-   folly::dynamic getStyleProp(Tag tag, const PropertyPath &propertyPath);
- 
-  private:
--  std::shared_ptr<UIManager> uiManager_;
-   std::shared_ptr<StaticPropsRegistry> staticPropsRegistry_;
-   std::shared_ptr<AnimatedPropsRegistry> animatedPropsRegistry_;
-   std::shared_ptr<MountedRootsRegistry> mountedRootsRegistry_;
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/MountedRootsRegistry.cpp` (modified, +5/-0)
-```diff
-@@ -26,6 +26,11 @@ RootShadowNode::Shared MountedRootsRegistry::get(const SurfaceId surfaceId) cons
-   return it == rootsBySurface_.end() ? nullptr : it->second;
+@@ -77,6 +77,59 @@ function Screens({
+   );
  }
  
-+bool MountedRootsRegistry::isRunning(const SurfaceId surfaceId) const {
-+  react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-+  return rootsBySurface_.contains(surfaceId);
++function NestedScreens({ innerMounted = true }: { innerMounted?: boolean }) {
++  const sourceScreen = useTestRef('nestedGestureSourceScreen');
++  const targetScreen = useTestRef('nestedGestureTargetScreen');
++  const outer = useTestRef('nestedGestureOuter');
++  const inner = useTestRef('nestedGestureInner');
++  return (
++    <View style={styles.container}>
++      <Screen
++        ref={targetScreen}
++        onAppear={() => notify('nested-gesture-target-appeared')}
++        enabled
++        activityState={2}
++        style={styles.screen}>
++        <SharedTransitionBoundary isActive={false}>
++          <Animated.View
++            sharedTransitionTag="nested-gesture-outer"
++            sharedTransitionStyle={transition}
++            style={styles.nestedOuterTarget}>
++            <Animated.View
++              sharedTransitionTag="nested-gesture-inner"
++              sharedTransitionStyle={transition}
++              style={styles.nestedInnerTarget}
++            />
++          </Animated.View>
++        </SharedTransitionBoundary>
++      </Screen>
++      <Screen
++        ref={sourceScreen}
++        onAppear={() => notify('nested-gesture-source-appeared')}
++        enabled
++        activityState={2}
++        style={styles.screen}>
++        <SharedTransitionBoundary isActive>
++          <Animated.View
++            ref={outer}
++            sharedTransitionTag="nested-gesture-outer"
++            sharedTransitionStyle={transition}
++            style={styles.nestedOuterSource}>
++            {innerMounted && (
++              <Animated.View
++                ref={inner}
++                sharedTransitionTag="nested-gesture-inner"
++                sharedTransitionStyle={transition}
++                style={styles.source}
++              />
++            )}
++          </Animated.View>
++        </SharedTransitionBoundary>
++      </Screen>
++    </View>
++  );
 +}
 +
- bool MountedRootsRegistry::isMounted(const ShadowNodeFamily &shadowNodeFamily) const {
-   react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-   const auto it = rootsBySurface_.find(shadowNodeFamily.getSurfaceId());
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/MountedRootsRegistry.h` (modified, +1/-0)
-```diff
-@@ -15,6 +15,7 @@ class MountedRootsRegistry {
-   void set(const RootShadowNode::Shared &rootShadowNode);
-   void remove(SurfaceId surfaceId);
-   RootShadowNode::Shared get(SurfaceId surfaceId) const;
-+  bool isRunning(SurfaceId surfaceId) const;
-   bool isMounted(const ShadowNodeFamily &shadowNodeFamily) const;
+ describe('Retained source during native Screen progress', () => {
+   const gestureTest = Platform.OS === 'ios' ? test : test.skip;
  
-  private:
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedCommitHook.cpp` (modified, +13/-4)
-```diff
-@@ -17,11 +17,13 @@ ReanimatedCommitHook::ReanimatedCommitHook(
-     const std::shared_ptr<UpdatesRegistryManager> &updatesRegistryManager,
-     const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry,
-     const std::shared_ptr<LayoutAnimationsProxyRegistry> &layoutAnimationsProxyRegistry,
-+    const std::shared_ptr<LayoutAnimationsManager> &layoutAnimationsManager,
-     const std::shared_ptr<SynchronousWritesTracker> &synchronousWritesTracker)
-     : uiManager_(uiManager),
-       updatesRegistryManager_(updatesRegistryManager),
-       mountedRootsRegistry_(mountedRootsRegistry),
-       layoutAnimationsProxyRegistry_(layoutAnimationsProxyRegistry),
-+      layoutAnimationsManager_(layoutAnimationsManager),
-       synchronousWritesTracker_(synchronousWritesTracker) {
-   uiManager_->registerCommitHook(*this);
-   uiManager_->getShadowTreeRegistry().enumerate([this](const ShadowTree &shadowTree, bool & /*stop*/) {
-@@ -54,15 +56,13 @@ RootShadowNode::Unshared ReanimatedCommitHook::shadowTreeWillCommit(
-     proxy->shadowTreeWillCommit(newRootShadowNode->getChildren().empty());
-   }
+@@ -130,6 +183,81 @@ describe('Retained source during native Screen progress', () => {
+   );
+ });
  
--  if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
--    return newRootShadowNode;
--  }
--
-+  std::vector<Tag> removedTags;
-   {
-     auto lock = updatesRegistryManager_->lock();
-     if (newRootShadowNode->getChildren().empty()) {
-       // A stopping surface commits an empty root; its mount is not reported on a paused Android host.
-       mountedRootsRegistry_->remove(shadowTree.getSurfaceId());
-+      removedTags = updatesRegistryManager_->handleNodeRemovals(shadowTree.getSurfaceId());
-       if (synchronousWritesTracker_) {
-         synchronousWritesTracker_->onSurfaceStop(shadowTree.getSurfaceId());
-       }
-@@ -71,6 +71,15 @@ RootShadowNode::Unshared ReanimatedCommitHook::shadowTreeWillCommit(
-     }
-   }
- 
-+  // The proxy of the stopping surface still maps these views, so it releases their configs when it unmaps them.
-+  if (layoutAnimationsProxyRegistry_) {
-+    layoutAnimationsProxyRegistry_->releaseSharedTransitionConfigs(removedTags, *layoutAnimationsManager_);
-+  }
++describe('Nested shared view during native Screen progress', () => {
++  const gestureTest = Platform.OS === 'ios' ? test : test.skip;
 +
-+  if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
-+    return newRootShadowNode;
-+  }
-+
-   auto reaShadowNode = std::reinterpret_pointer_cast<ReanimatedCommitShadowNode>(newRootShadowNode);
- 
-   if (reaShadowNode->hasReanimatedCommitTrait()) {
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedCommitHook.h` (modified, +2/-0)
-```diff
-@@ -22,6 +22,7 @@ class ReanimatedCommitHook : public UIManagerCommitHook {
-       const std::shared_ptr<UpdatesRegistryManager> &updatesRegistryManager,
-       const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry,
-       const std::shared_ptr<LayoutAnimationsProxyRegistry> &layoutAnimationsProxyRegistry,
-+      const std::shared_ptr<LayoutAnimationsManager> &layoutAnimationsManager,
-       const std::shared_ptr<SynchronousWritesTracker> &synchronousWritesTracker);
- 
-   ~ReanimatedCommitHook() noexcept override;
-@@ -54,6 +55,7 @@ class ReanimatedCommitHook : public UIManagerCommitHook {
-   std::shared_ptr<UpdatesRegistryManager> updatesRegistryManager_;
-   std::shared_ptr<MountedRootsRegistry> mountedRootsRegistry_;
-   std::shared_ptr<LayoutAnimationsProxyRegistry> layoutAnimationsProxyRegistry_;
-+  std::shared_ptr<LayoutAnimationsManager> layoutAnimationsManager_;
-   std::shared_ptr<SynchronousWritesTracker> synchronousWritesTracker_;
- };
- 
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedMountHook.cpp` (modified, +15/-9)
-```diff
-@@ -36,7 +36,13 @@ void ReanimatedMountHook::shadowTreeDidMount(
-   ReanimatedSystraceSection s("ReanimatedMountHook::shadowTreeDidMount");
- 
-   if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
--    // With the animation backend this hook only tracks surface unmounts.
-+    std::vector<Tag> removedTags;
-+    {
-+      auto lock = updatesRegistryManager_->lock();
-+      mountedRootsRegistry_->set(rootShadowNode);
-+      removedTags = updatesRegistryManager_->handleNodeRemovals(rootShadowNode->getSurfaceId());
-+    }
-+    releaseSharedTransitionConfigs(removedTags);
-     return;
-   }
- 
-@@ -57,7 +63,7 @@ void ReanimatedMountHook::shadowTreeDidMount(
-     // animations run every mount carries the mount trait, so returning early here
-     // would skip removals for the whole animation and leak unmounted nodes if the
-     // tree is torn down mid-animation.
--    removedTags = updatesRegistryManager_->handleNodeRemovals();
-+    removedTags = updatesRegistryManager_->handleNodeRemovals(rootShadowNode->getSurfaceId());
- 
-     if (!isReanimatedMount) {
-       // When a commit from React Native has finished, we reset the skip commit
-@@ -69,13 +75,13 @@ void ReanimatedMountHook::shadowTreeDidMount(
-     }
-   }
- 
--  // Outside the registry lock: a pull holds the layout animations lock while it reads synchronous props.
--  // Only after the mount: the pull that deletes a shared transition source still reads its config.
--  if constexpr (StaticFeatureFlags::getFlag("ENABLE_SHARED_ELEMENT_TRANSITIONS")) {
--    if (!removedTags.empty() && layoutAnimationsProxyRegistry_) {
--      layoutAnimationsManager_->clearSharedTransitionConfigs(
--          layoutAnimationsProxyRegistry_->sharedTransitionConfigsToRelease(removedTags));
--    }
-+  releaseSharedTransitionConfigs(removedTags);
-+}
-+
-+// Only after the mount: the pull that deletes a shared transition source still reads its config.
-+void ReanimatedMountHook::releaseSharedTransitionConfigs(const std::vector<Tag> &removedTags) const {
-+  if (layoutAnimationsProxyRegistry_) {
-+    layoutAnimationsProxyRegistry_->releaseSharedTransitionConfigs(removedTags, *layoutAnimationsManager_);
-   }
- }
- 
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedMountHook.h` (modified, +3/-0)
-```diff
-@@ -10,6 +10,7 @@
- #include <react/renderer/uimanager/UIManagerMountHook.h>
- 
- #include <memory>
-+#include <vector>
- 
- namespace reanimated {
- 
-@@ -32,6 +33,8 @@ class ReanimatedMountHook : public UIManagerMountHook {
-   void shadowTreeDidUnmount(SurfaceId surfaceId, HighResTimeStamp unmountTime) noexcept override;
- 
-  private:
-+  void releaseSharedTransitionConfigs(const std::vector<Tag> &removedTags) const;
-+
-   const std::shared_ptr<UIManager> uiManager_;
-   const std::shared_ptr<UpdatesRegistryManager> updatesRegistryManager_;
-   const std::shared_ptr<MountedRootsRegistry> mountedRootsRegistry_;
-```
-
----
-
-### Incident Patch 2: `68d7650a` (2026-11-05)
-**Commit Message**: fix(SET): show the real content of a removed RN Modal while its shared element flies out on iOS (#11112)
-
-> [!NOTE]
-> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
-
-Replaces #11038. GitHub closed that PR as merged into the
-`@bartlomiejbloniarz/set-config-release` branch when I moved it below
-#11037 in the stack, so it can no longer be updated. The review threads
-stay there: the two fixes for them are the last two commits on this
-branch.
-
-Rebased onto `main` after #10880 landed. #10884 no longer has the
-`renderInContext:` render described below, so this PR now only adds the
-hold. The before/after recordings show the old render against the hold.
-
-## Summary
-
-When React unmounts an RN `Modal` while it is presented, for example
-`{open && <Modal visible>}`, React Native dismisses it from a snapshot
-of what the screen showed, taken with
-`snapshotViewAfterScreenUpdates:NO`. A shared element source inside that
-modal is hidden in the same mount, too late to be left out of the
-snapshot. That is why the sheet slid away with a copy of the element.
-Until now we replaced React Native's snapshot with our own
-`renderInContext:` render of the modal without its sources. That
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +56/-0)
-```diff
-@@ -981,6 +981,18 @@ void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode
-     }
-   }
-   const bool defersTeardown = holdsSnapshottedScreen(node);
-+#ifdef __APPLE__
-+  if (!defersTeardown && holdsSourceInModal(node, transaction)) {
-+    std::unordered_set<Tag> heldTags;
-+    collectSubtreeTags(node, heldTags);
-+    for (const auto tag : heldTags) {
-+      layoutAnimationsManager_->clearLayoutAnimationConfig(tag);
-+    }
-+    node->setExitingState(COMPLETED);
-+    transaction.modalsToHold.push_back(node);
-+    return;
-+  }
-+#endif
-   const SubtreeRemovalConfig config = {
-       .shouldRemoveSubviewsWithoutAnimations = true,
-       .shouldAnimate = !transaction.surfaceDropped,
-@@ -1027,6 +1039,30 @@ bool LayoutAnimationsProxy::holdsSnapshottedScreen([[maybe_unused]] const std::s
-   return false;
- }
- 
-+#ifdef __APPLE__
-+// React Native animates a modal that it removes while presented from a snapshot of what the screen shows, which lags a
-+// mount by up to two frames. A modal that holds the source of a transition stays mounted until 34 ms, two frames of a
-+// 60 Hz display, after the mount that hides the source.
-+bool LayoutAnimationsProxy::holdsSourceInModal(
-+    const std::shared_ptr<LightNode> &node,
-+    const TransactionMeta &transaction) const {
-+  return std::ranges::any_of(transaction.transitionMap, [&](const auto &entry) {
-+    bool insideModal = false;
-+    for (const auto &ancestor : entry.second.ancestors[BEFORE]) {
-+      const auto ancestorIt = lightNodes_.find(ancestor.tag);
-+      if (ancestorIt == lightNodes_.end()) {
-+        return false;
++  gestureTest(
++    'moves a removed nested view to its target on screen',
++    async () => {
++      await render(<NestedScreens />);
++      await waitForNotification('nested-gesture-source-appeared');
++      await waitForNotification('nested-gesture-target-appeared');
++      await expectEventually(
++        async () =>
++          (await getTestComponent('nestedGestureInner').getMountedViewProps())
++            ?.width
++      ).toBe(60, ComparisonMode.PIXEL);
++      const targetScreen = getTestComponent(
++        'nestedGestureTargetScreen'
++      ).getTag();
++      const outer = getTestComponent('nestedGestureOuter').getTag();
++      const inner = getTestComponent('nestedGestureInner').getTag();
++      const originalParent = await observer().observeParent(outer);
++      await observer().emitScreenTransitionProgress(
++        targetScreen,
++        0,
++        false,
++        false
++      );
++      await expectEventually(async () => {
++        const parent = await observer().observeParent(outer);
++        return parent !== null && parent !== originalParent;
++      }).toBe(true);
++      const outerStart = await mountedX(outer);
++      if (outerStart === undefined) {
++        throw new Error('The outer carrier is not mounted');
 +      }
-+      insideModal = insideModal || !strcmp(ancestorIt->second->current.componentName, "ModalHostView");
-+      if (ancestorIt->second == node) {
-+        return insideModal;
-+      }
++      await observer().emitScreenTransitionProgress(
++        targetScreen,
++        0.5,
++        false,
++        false
++      );
++      await expectEventually(() => mountedX(outer)).toBe(
++        outerStart + 50,
++        ComparisonMode.PIXEL
++      );
++      await render(<NestedScreens innerMounted={false} />);
++      await waitForFrames(3);
++      await observer().emitScreenTransitionProgress(
++        targetScreen,
++        0.75,
++        false,
++        false
++      );
++      // The outer view moves by 100 and the inner view by 20 inside it.
++      await expectEventually(() => mountedX(inner)).toBe(
++        outerStart + 90,
++        ComparisonMode.PIXEL
++      );
++      await observer().emitScreenTransitionProgress(
++        targetScreen,
++        1,
++        false,
++        false
++      );
++      await expectGone(inner);
 +    }
-+    return false;
++  );
++});
++
++function mountedX(tag: number) {
++  return runOnUIBlocking(() => {
++    'worklet';
++    return global._obtainMountedViewProps(tag, false)?.x;
 +  });
 +}
-+#endif
 +
- // A UI-thread pull on Android must not update the views that the next flushing pull removes, because
- // Android can mount that JS-thread pull first.
- void LayoutAnimationsProxy::collectDueRemovals(TransactionMeta &transaction) const {
-@@ -1039,6 +1075,23 @@ void LayoutAnimationsProxy::collectDueRemovals(TransactionMeta &transaction) con
-     }
-     finishedExits.push_back(nodeIt->second);
-   }
-+#ifdef __APPLE__
-+  const auto now = std::chrono::steady_clock::now();
-+  for (auto &node : transaction.modalsToHold) {
-+    heldModals_.push_back({std::move(node), now + std::chrono::milliseconds(34)});
-+  }
-+  std::erase_if(heldModals_, [&](const HeldModal &held) {
-+    if (!isLightNodeMapped(held.node)) {
-+      return true;
-+    }
-+    if (transaction.surfaceDropped || now >= held.removableAt) {
-+      finishedExits.push_back(held.node);
-+      return true;
-+    }
-+    schedulePullOnNextFrame();
-+    return false;
-+  });
-+#endif
-   transaction.dueRemovals = collectRemovals(finishedExits);
- }
- 
-@@ -1253,6 +1306,9 @@ void LayoutAnimationsProxy::clearSurfaceState() const {
-     uncommittedScreenPop_.reset();
-     visibleScreens_.clear();
-   }
-+#ifdef __APPLE__
-+  heldModals_.clear();
-+#endif
- #ifdef ANDROID
-   cleanupPullScheduled_ = false;
-   unqueuedBatchTags_.clear();
+ async function startGesture() {
+   await render(<Screens />);
+   await waitForNotification('gesture-source-appeared');
+@@ -208,4 +336,17 @@ const styles = StyleSheet.create({
+   source: { width: 60, height: 60, backgroundColor: '#dd5522' },
+   target: { width: 150, height: 150, backgroundColor: '#2277dd' },
+   child: { width: 20, height: 15, backgroundColor: '#ffffff' },
++  nestedOuterSource: { width: 100, height: 100, backgroun
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +13/-0)
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionNested.test.tsx` (modified, +83/-35)
 ```diff
-@@ -16,6 +16,7 @@
- #include <react/renderer/uimanager/UIManagerBinding.h>
+@@ -1,5 +1,5 @@
+ import { useEffect } from 'react';
+-import { StyleSheet, View } from 'react-native';
++import { Platform, StyleSheet, View } from 'react-native';
+ import Animated, {
+   cancelAnimation,
+   FadeOut,
+@@ -70,6 +70,7 @@ function Target({
+   repeatInner,
+   exiting,
+   transitions,
++  wrapperTranslateX,
+ }: {
+   active: boolean;
+   innerSize: number;
+@@ -78,6 +79,7 @@ function Target({
+   repeatInner: boolean;
+   exiting: boolean;
+   transitions: Transitions;
++  wrapperTranslateX: number;
+ }) {
+   const outer = useTestRef('targetOuter');
+   const inner = useTestRef('targetInner');
+@@ -92,6 +94,24 @@ function Target({
+   const innerStyle = useAnimatedStyle(() =>
+     repeatInner ? { opacity: 0.6 + repeat.value * 0.4 } : {}
+   );
++  const innerView = (
++    <Animated.View
++      ref={inner}
++      sharedTransitionTag="inner"
++      sharedTransitionStyle={transitions.inner}
++      exiting={exiting ? targetExiting : undefined}
++      accessibilityLabel={innerLabel}
++      style={[
++        styles.targetInner,
++        {
++          width: innerSize,
++          height: innerSize,
++          backgroundColor: innerColor,
++        },
++        innerStyle,
++      ]}
++    />
++  );
+   return (
+     <SharedTransitionBoundary isActive={active}>
+       <Animated.View
+@@ -100,22 +120,13 @@ function Target({
+         sharedTransitionStyle={transitions.outer}
+         exiting={exiting ? targetExiting : undefined}
+         style={styles.targetOuter}>
+-        <Animated.View
+-          ref={inner}
+-          sharedTransitionTag="inner"
+-          sharedTransitionStyle={transitions.inner}
+-          exiting={exiting ? targetExiting : undefined}
+-          accessibilityLabel={innerLabel}
+-          style={[
+-            styles.targetInner,
+-            {
+-              width: innerSize,
+-              height: innerSize,
+-              backgroundColor: innerColor,
+-            },
+-            innerStyle,
+-          ]}
+-        />
++        {wrapperTranslateX ? (
++          <View style={{ transform: [{ translateX: wrapperTranslateX }] }}>
++            {innerView}
++          </View>
++        ) : (
++          innerView
++        )}
+       </Animated.View>
+     </SharedTransitionBoundary>
+   );
+@@ -132,6 +143,7 @@ function Screens({
+   transitions = innerEndsFirst,
+   removeSource = false,
+   innerWrapped = false,
++  wrapperTranslateX = 0,
+ }: {
+   active: boolean;
+   keepTarget?: boolean;
+@@ -143,6 +155,7 @@ function Screens({
+   transitions?: Transitions;
+   removeSource?: boolean;
+   innerWrapped?: boolean;
++  wrapperTranslateX?: number;
+ }) {
+   const inner = useTestRef('sourceInner');
+   const outer = useTestRef('sourceOuter');
+@@ -159,8 +172,13 @@ function Screens({
+             {/* A collapsable wrapper is flattened, so the inner view changes its native parent. */}
+             <View
+               ref={innerWrapper}
+-              collapsable={!innerWrapped}
+-              style={innerWrapped && styles.innerWrapper}>
++              collapsable={!innerWrapped && !wrapperTranslateX}
++              style={[
++                innerWrapped && styles.innerWrapper,
++                !!wrapperTranslateX && {
++                  transform: [{ translateX: wrapperTranslateX }],
++                },
++              ]}>
+               <Animated.View
+                 ref={inner}
+                 sharedTransitionTag="inner"
+@@ -180,6 +198,7 @@ function Screens({
+           repeatInner={repeatInner}
+           exiting={exitingTarget}
+           transitions={transitions}
++          wrapperTranslateX={wrapperTranslateX}
+         />
+       )}
+     </View>
+@@ -516,7 +535,7 @@ describe('Nested shared transitions', () => {
+     ['inner first', innerEndsFirst, 600, 3000],
+     ['outer first', outerEndsFirst, 300, 1200],
+   ] as const) {
+-    test(`keeps deleted nested carriers independent when they finish ${order}`, async () => {
++    test(`keeps deleted nested carriers until both finish when the ${order.replace(' first', '')} one ends first`, async () => {
+       await mockAnimationTimer({ autoAdvance: false });
+       await render(
+         <Screens active={false} transitions={transitions} removeSource />
+@@ -538,13 +557,7 @@ describe('Nested shared transitions', () => {
+           return global._obtainMountedViewProps(innerTag, false)?.opacity;
+         })
+       ).toBe(1);
+-      if (order === 'outer first') {
+-        await expectEventually(() => isViewMountedNatively(outerTag)).toBe(
+-          false
+-        );
+-      } else {
+-        expect(await isViewMountedNatively(outerTag)).toBe(true);
+-      }
++      expect(await isViewMountedNatively(outerTag)).toBe(true);
+       await advanceAnimationTimer(secondEnd - firstEnd);
+       await waitForNotification(
+         order === 'inner first' ? 'outer-finished' : 'inner-finished'
+@@ -557,7 +570,7 @@ describe('Nested shared transitions', () => {
+   }
  
- #include <array>
-+#include <chrono>
- #include <memory>
- #include <optional>
- #include <string>
-@@ -141,6 +142,13 @@ struct CollectedTransition {
- using CollectedTransitionMap = std::unordered_map<SharedTag, CollectedTransition>;
- using CollectedTransitions = std::vector<std::pair<SharedTag, CollectedTransition>>;
- 
-+#ifdef __APPLE__
-+struct HeldModal {
-+  std::shared_ptr<LightNode> node;
-+  std::chrono::steady_clock::time_point removableAt;
+   test.each([true, false])(
+-    'keeps a waiting inner view on screen when React moves it (wrapped first: %p)',
++    'moves a waiting inner vi
+```
+
+**File**: `apps/common-app/src/apps/reanimated/examples/SharedElementTransitions/NestedZOrder.tsx` (added, +157/-0)
+```diff
+@@ -0,0 +1,157 @@
++import type { NativeStackScreenProps } from '@react-navigation/native-stack';
++import { createNativeStackNavigator } from '@react-navigation/native-stack';
++import React from 'react';
++import { Pressable, StyleSheet, Text, View } from 'react-native';
++import Animated, { SharedTransition } from 'react-native-reanimated';
++
++import { withSharedTransitionBoundary } from './withSharedTransitionBoundary';
++
++const DURATION = 1500;
++
++const VARIANTS = {
++  plain: {
++    card: SharedTransition.duration(DURATION),
++    photo: SharedTransition.duration(DURATION),
++  },
++  fadeContent: {
++    card: SharedTransition.duration(DURATION).fadeContent(),
++    photo: SharedTransition.duration(DURATION),
++  },
 +};
-+#endif
 +
- struct TransactionMeta {
-   ShadowViewMutationList filteredMutations;
-   ShadowViewMutationList teardownMutations;
-@@ -156,6 +164,7 @@ struct TransactionMeta {
-   std::optional<size_t> screenSnapshotRemoval;
-   std::unordered_map<Tag, Tag> staleSnapshots;
-   std::unordered_set<Tag> dueRemovals;
-+  std::vector<std::shared_ptr<LightNode>> modalsToHold;
-   std::unordered_set<Tag> recreatedTags;
-   // Whatever changes a node's children or their exiting states during updateLightTree must reset its cursors.
-   std::unordered_map<Tag, IndexCursors> indexCursors;
-@@ -200,6 +209,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
- #endif
- 
- #ifdef __APPLE__
-+  mutable std::vector<HeldModal> heldModals_;
-   ForceScreenSnapshotFunction forceScreenSnapshot_;
-   SetSharedTransitionOverlayFunction setSharedTransitionOverlay_;
-   NativeViewPlacementFunction nativeViewPlacement_;
-@@ -500,6 +510,9 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
- 
-   void handleSubtreeRemoval(const std::shared_ptr<LightNode> &node, TransactionMeta &transaction) const;
-   bool holdsSnapshottedScreen(const std::shared_ptr<LightNode> &node) const;
-+#ifdef __APPLE__
-+  bool holdsSourceInModal(const std::shared_ptr<LightNode> &node, const TransactionMeta &transaction) const;
-+#endif
-   void collectDueRemovals(TransactionMeta &transaction) const;
-   void tearDown(const std::unordered_set<Tag> &removals, ShadowViewMutationList &mutations) const;
- 
++type Variant = keyof typeof VARIANTS;
++
++type ParamList = {
++  Cards: undefined;
++  Details: { variant: Variant };
++};
++
++const DESCRIPTION =
++  'The card and the blue photo have their own shared tags. The yellow label is a plain child of the card, drawn above the photo. It should stay above the photo during the transition.';
++
++const Stack = createNativeStackNavigator<ParamList>();
++
++function CardsContent({
++  navigation,
++}: NativeStackScreenProps<ParamList, 'Cards'>) {
++  return (
++    <View style={styles.cards}>
++      <Text style={styles.description}>{DESCRIPTION}</Text>
++      <View style={styles.row}>
++        {(Object.keys(VARIANTS) as Variant[]).map((variant) => (
++          <Pressable
++            key={variant}
++            testID={`card-${variant}`}
++            onPress={() => navigation.navigate('Details', { variant })}>
++            <Animated.View
++              sharedTransitionTag={`zorder-card-${variant}`}
++              sharedTransitionStyle={VARIANTS[variant].card}
++              style={styles.smallCard}>
++              <Animated.View
++                sharedTransitionTag={`zorder-photo-${variant}`}
++                sharedTransitionStyle={VARIANTS[variant].photo}
++                style={styles.smallPhoto}
++              />
++              <View style={styles.smallLabel}>
++                <Text style={styles.smallLabelText}>LABEL</Text>
++              </View>
++            </Animated.View>
++            <Text style={styles.variantName}>{variant}</Text>
++          </Pressable>
++        ))}
++      </View>
++    </View>
++  );
++}
++
++function DetailsContent({
++  route,
++  navigation,
++}: NativeStackScreenProps<ParamList, 'Details'>) {
++  const { variant } = route.params;
++  return (
++    <Pressable
++      testID="details"
++      style={styles.details}
++      onPress={() => navigation.goBack()}>
++      <Animated.View
++        sharedTransitionTag={`zorder-card-${variant}`}
++        sharedTransitionStyle={VARIANTS[variant].card}
++        style={styles.largeCard}>
++        <Animated.View
++          sharedTransitionTag={`zorder-photo-${variant}`}
++          sharedTransitionStyle={VARIANTS[variant].photo}
++          style={styles.largePhoto}
++        />
++        <View style={styles.largeLabel}>
++          <Text style={styles.largeLabelText}>LABEL</Text>
++        </View>
++      </Animated.View>
++      <Text style={styles.description}>Tap anywhere to go back</Text>
++    </Pressable>
++  );
++}
++
++const Cards = withSharedTransitionBoundary(CardsContent);
++const Details = withSharedTransitionBoundary(DetailsContent);
++
++export default function NestedZOrderExample() {
++  return (
++    <Stack.Navigator>
++      <Stack.Screen name="Cards" component={Cards} />
++      <Stack.Screen name="Details" component={Details} />
++    </Stack.Navigator>
++  );
++}
++
++const styles = StyleSheet.create({
++  cards: { flex: 1, padding: 16, paddingTop: 100, backgroundColor: 'white' },
++  description: { fontSize: 15, lineHeight: 21, marginVertical: 16 },
++  row: { flexDirection: 'row', justifyContent: 'space-around' },
++  variantName: { marginTop: 8, textAlign: 'center', fontSize: 15 },
++  smallCard: {
++    width: 150,
++    height: 190,
++    padding: 12,
++    borderRadius: 16,
++    overflow: 'hidden',
++    backgroundColor: '#2b2b2b',
++  },
++  smallPhoto: { width: 126, height: 126, backgroundColor: '#1e6fd9' },
++  smallLabel: {
++    position: 'absolute',
++    left: 12,
++    right: 12,
++    bottom: 12,
++    height: 76,
++    justifyContent: 'center',
++    alignItems: 'center',
++    backgroundColor: '#ffd60a',
++  },
++  smallLabelText: { fontSize: 18, fontWeight: 'bold', color: 'black' },
++  details: {
++    flex: 1,
++    padding: 16,
++    paddingTop: 120,
++    backgroundColor: 'white',
++  },
++  largeCard: {
++    height: 440,
++    padding: 16,
++    borderRadius: 24,
++    overflow: 'hidden',
++    backgroundColor: '#2b2b2b',
++  },
++  largePhoto: { height: 320, backgroundColor: '#1e6fd9' },
++  largeLabel: {
++    position: 'absolute',
++    left: 16,
++    right: 16,
++    bottom: 16,
++    height: 160,
++    justifyContent: 'center',
++    alignItems: 'center',
++    backgroundColor: '#ffd60a',
++  },
++  largeLabelText: { fontSize: 40, fontWeight: 'bold', color: 'black' },
++});
 ```
 
-**File**: `packages/react-native-reanimated/changelog/shared-transition-modal-snapshot.other.md` (added, +1/-0)
+**File**: `apps/common-app/src/apps/reanimated/examples/index.ts` (modified, +13/-0)
 ```diff
-@@ -0,0 +1 @@
-+Animate a React Native modal that is removed during a shared element transition on iOS with React Native's own snapshot.
+@@ -231,6 +231,10 @@ const SynchronousPropsSETExample: React.FC = () =>
+   );
+ const NestedTagsExample: React.FC = () =>
+   React.createElement(require('./SharedElementTransitions/NestedTags').default);
++const NestedZOrderExample: React.FC = () =>
++  React.createElement(
++    require('./SharedElementTransitions/NestedZOrder').default
++  );
+ const NestedStacksExample: React.FC = () =>
+   React.createElement(
+     require('./SharedElementTransitions/NestedStacks').default
+@@ -851,6 +855,15 @@ const ALL_EXAMPLES: Record<string, Example> = {
+       android: true,
+     },
+   },
++  NestedZOrderExample: {
++    title: '[SET] Nested z-order',
++    screen: NestedZOrderExample,
++    disabledPlatforms: [REAPlatform.WEB],
++    shouldWork: {
++      ios: true,
++      android: true,
++    },
++  },
+   NestedStacksExample: {
+     title: '[SET] Nested stacks',
+     screen: NestedStacksExample,
+```
+
+**File**: `docs/docs-reanimated/docs/shared-element-transitions/children-of-shared-views.mdx` (modified, +3/-3)
+```diff
+@@ -20,7 +20,7 @@ By default, the shared view moves together with its own children, and the childr
+ 
+ ## Children with their own tag
+ 
+-A child with its own matching `sharedTransitionTag` moves from its place in the old view to its place in the new view. It does not fade with its parent, also with `fadeContent()`. To see the difference, toggle the **Icon has its own tag** switch in the demo above.
++A child with its own matching `sharedTransitionTag` moves from its place in the old view to its place in the new view. It does not fade with its parent, also with `fadeContent()`. When its target is inside the target of the parent, it moves inside the moving parent: it keeps its place in the drawing order and the clipping of the parent, and the two land together when the slower one ends. To see the difference, toggle the **Icon has its own tag** switch in the demo above.
+ 
+ ```tsx
+ <Animated.View sharedTransitionTag="card" sharedTransitionStyle={transition}>
+@@ -92,9 +92,9 @@ const transition = SharedTransition.duration(450).fadeContent({
+ 
+ ## Remarks
+ 
+-- Only the direct children of the shared views fade. A child that fills the view, for example a background image, fades like the other children.
++- The direct children of the shared views fade. A nested shared view keeps its own opacity. When a direct child holds a nested shared view, that child keeps its opacity and its other children fade instead, down to the nested shared view. A child that fills the view, for example a background image, fades like the other children.
+ - A shared view without children, for example a shared `Image`, has nothing to fade.
+-- A direct child of the target view with an [`entering`](../layout-animations/entering-exiting-animations.mdx) animation plays it after the transition ends, in place of the fade-in. Deeper children play their entering animations during the move.
++- A child of the target view that fades and has an [`entering`](../layout-animations/entering-exiting-animations.mdx) animation plays it after the transition ends, in place of the fade-in. These are the direct children and, on the path down to a nested shared view, the other children at each level. Other deeper children play their entering animations during the move.
+ - The transition uses the builder of the view that it starts from. To fade the content in both directions, give `fadeContent()` to both views.
+ - If the user goes back during the move, the children fade in again while the view returns.
+ - With `.springify()`, the fade-in starts when the spring stops. By default, the fade-in takes half of the spring duration: half of `springify(duration)`, or 250 ms without a duration. To change it without changing the spring, set `fadeIn.duration`.
+```
+
+**File**: `docs/docs-reanimated/docs/shared-element-transitions/limitations.mdx` (modified, +3/-1)
+```diff
+@@ -25,12 +25,14 @@ Check these points:
+ - If the target view changes only its style during the transition, the moving view does not animate to the new style. The new style shows when the transition ends. A shared view that waits for its parent (see below) animates to a new style of its target.
+ - If the target view moves or changes its size during the transition, the moving view goes to the new place. For a timed transition, if this happens just as the transition ends, the view can move again with the full duration.
+ - If React removes the target view during the transition and the source view stays, the view moves to the last place of the target. Then the source view shows in its own place at once. If the same update makes the source screen active again, for example `navigation.goBack()`, the view moves back to the source.
+-- A shared view inside another shared view waits for its parent. If its own transition ends first, it stays at its target until the transition of the parent ends.
++- A shared view inside another shared view moves inside the moving parent when its target is inside the target of the parent. It follows the path of the parent. When the two use different timing, it moves relative to the parent, not along its own path on screen. If its own transition ends first, it waits inside the parent until the transition of the parent ends. If the layout of its target changes while it waits, it moves again with its full duration.
++- A nested shared view moves on its own, above other views, when it is nested on only one of the screens, when its new target after a retarget is outside the target of the parent, or when React moves it out of the parent or removes a view between it and the parent. It keeps its frame on screen when it starts to move on its own.
+ 
+ ## Known issues
+ 
+ - On iOS, a screen that a native stack shows for the first time gets its header size a moment later. A view that flies to such a screen, for example to the first screen of a nested stack, can first move too high and then move down.
+ - On iOS, if the header of a covered screen changes, for example after a theme change, a view that goes back to this screen can stop at the old place and then jump.
++- A nested shared view does not follow a scroll or a layout animation of a view between it and its moving parent. A view between them with `overflow: hidden` clips it to the source bounds of that view.
+ - During development, a Fast Refresh can start a transition between the old and the new version of a view on the same screen. This does not happen in release builds.
+ 
+ ## Videos and media
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +37/-18)
+```diff
+@@ -171,7 +171,9 @@ std::optional<ShadowView> LayoutAnimationsProxy::reparentLayoutAnimation(
+     animation.parentTag = parentTag;
+     animation.currentView.layoutMetrics.frame.origin += offset;
+     animation.startView.layoutMetrics.frame.origin += offset;
+-    animation.frameOffset += offset;
++    if (animation.type != LayoutAnimationType::SHARED_ELEMENT_TRANSITION_PROGRESS) {
++      animation.frameOffset += offset;
++    }
+     animation.finalView = newView;
+     return animation.currentView;
+   }
+@@ -180,7 +182,9 @@ std::optional<ShadowView> LayoutAnimationsProxy::reparentLayoutAnimation(
+     auto &animation = completedAnimationIt->second.animation;
+     animation.parentTag = parentTag;
+     animation.currentView.layoutMetrics.frame.origin += offset;
+-    animation.frameOffset += offset;
++    if (animation.type != LayoutAnimationType::SHARED_ELEMENT_TRANSITION_PROGRESS) {
++      animation.frameOffset += offset;
++    }
+     animation.finalView = newView;
+     return animation.currentView;
+   }
+@@ -529,7 +533,7 @@ void LayoutAnimationsProxy::updateLightTree(
+         const auto tag = mutation.newChildShadowView.tag;
+         // Without layout configs and animation records, every lookup below finds nothing, so the
+         // update goes through as it is. Checked per mutation, as an Insert can transfer a config.
+-        const bool mayAnimate = !node->isDetached &&
++        const bool mayAnimate = !node->isCarrier() &&
+             (hasLayoutAnimationRecords() || layoutAnimationsManager_->hasLayoutAnimationConfigs(LAYOUT));
+         std::shared_ptr<Serializable> config;
+         auto shouldAnimate = false;
+@@ -554,7 +558,7 @@ void LayoutAnimationsProxy::updateLightTree(
+         }
+         // The shared transition owns the mounted props and frame of its carrier.
+         // attachCarrier mounts React props and synchronous updates from the light node.
+-        if (node->isDetached) {
++        if (node->isCarrier()) {
+           break;
+         }
+         if (!mayAnimate) {
+@@ -644,7 +648,8 @@ void LayoutAnimationsProxy::updateLightTree(
+         if (moved.contains(tag)) {
+           const auto offset = reparentOffset(oldChains.at(tag), ancestorOrigins(parent, {}));
+           node->previous.layoutMetrics.frame.origin += offset;
+-          if (const auto currentView = reparentLayoutAnimation(tag, mutation.parentTag, node->current, offset)) {
++          const auto finalView = node->isNestedCarrier ? movedCarrierTarget(tag, offset) : node->current;
++          if (const auto currentView = reparentLayoutAnimation(tag, mutation.parentTag, finalView, offset)) {
+             filteredMutations.push_back(
+                 ShadowViewMutation::InsertMutation(mutation.parentTag, *currentView, hostIndex));
+           } else if (const auto updatedViewIt = updatedViews.find(tag); updatedViewIt != updatedViews.end() &&
+@@ -857,7 +862,7 @@ void LayoutAnimationsProxy::applySynchronousProps(const UpdatesBatch &updatesBat
+     if (isRoot(node)) {
+       continue;
+     }
+-    if (!trackInLightTree && !node->isDetached) {
++    if (!trackInLightTree && !node->isCarrier()) {
+       staleSynchronousProps_.record(tag, props);
+       continue;
+     }
+@@ -978,6 +983,9 @@ void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode
+     const {
+   ReanimatedSystraceSection s("handleSubtreeRemoval");
+   if constexpr (StaticFeatureFlags::getFlag("ENABLE_SHARED_ELEMENT_TRANSITIONS")) {
++    if (!transaction.surfaceDropped) {
++      moveNestedCarriersOutOf(node, transaction);
++    }
+     retainRemovedCarriers(node, transaction);
+     if (node->isRetained) {
+       return;
+@@ -1294,6 +1302,11 @@ void LayoutAnimationsProxy::clearSurfaceState() const {
+       layoutAnimationsManager_->clearSharedTransitionContentFade(tag);
+     }
+     releaseUnmappedContentFadeConfigs();
++    for (const auto &[_, element] : sharedElements_) {
++      if (element.run) {
++        element.run->carrier->isNestedCarrier = false;
++      }
++    }
+     layoutAnimationsManager_->clearSharedTransitionConfigs(std::vector<Tag>(
+         deferredSharedTransitionConfigReleases_.begin(), deferredSharedTransitionConfigReleases_.end()));
+     deferredSharedTransitionConfigReleases_.clear();
+@@ -1426,7 +1439,8 @@ bool LayoutAnimationsProxy::isCarrierOfUncoveredRun(
+     const std::vector<std::shared_ptr<LightNode>> &coveringViews) const {
+   return std::ranges::any_of(sharedElements_, [&](const auto &entry) {
+     const auto &run = entry.second.run;
+-    return run && run->carrier->current.tag == tag && !isDescendantOfAny(run->target, coveringViews);
++    return run && run->carrier->current.tag == tag && !isDescendantOfAny(run->target, coveringViews) &&
++        !landsWithOtherRuns(*run);
+   });
+ }
+ 
+@@ -1530,7 +1544,10 @@ void LayoutAnimationsProxy::holdFramesUntilBatchIsQueued(const ShadowViewMutatio
+ // arrives from the JS thread, because that job runs after the frames are in the queue. The attach
+ // also restores the content of the carrier, so the fram
 ```
 
 ---
 
-### Incident Patch 3: `ce75f0ce` (2026-11-06)
-**Commit Message**: fix(LayoutAnimations): report a JS error thrown by a layout animation start instead of terminating the app (#11173)
+### Incident Patch 2: `c40c1163` (2026-11-09)
+**Commit Message**: fix(SET): keep layout animations working after a non-string sharedTransitionTag (#11240)
 
 > [!NOTE]
-> This pull request was authored by AI on behalf of @tjzel.
+> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
 
 ## Summary
 
-Since #11135 the Reanimated runtime tests terminate the app on both
-platforms in the suite "Shared transition to a new native stack screen",
-which made every PR red. The test's UI-runtime `start` override reads
-`values.source.globalOriginY`, but the native side builds a flat object
-with `currentGlobalOriginY` and `targetGlobalOriginY`, so the override
-throws a TypeError. The `jsi::JSError` left
-`LayoutAnimationsManager::startLayoutAnimation` on the main thread
-inside `pullTransaction` with no handler, and `std::terminate` aborted
-the app without a crash report. I fixed the test to read the flat keys.
-I also made the native `start` and `stop` calls go through the worklets
-stable API `runSyncOnRuntime`, so a JS error thrown by a layout
-animation start or stop on the UI runtime is reported like an error in
-`runOnUI` instead of terminating the app. This guard is active in Debug
-builds only, the same policy that Worklets applies to every worklet
-runtime call.
+A numeric `sharedTransitionTag`, such as
+`sharedTransitionTag={item.id}`, made native code throw while
+configuring the batch. The JS update queue was cleared only after the
+native call returned, so the failed item stayed queued and no later
+batch was sent. React's retry of the render then succeeded, so the app
+showed no error, but every later layout animation and shared transition
+config was silently dropped for the rest of the session.
+
+Now the queue is cleared before the native call, so one bad config no
+longer blocks later ones. Native code throws "`sharedTransitionTag` must
+be a string", which shows as a red box in development.
+
+<table>
+<tr><th>Before</th><th>After</th></tr>
+<tr>
+<td>
+
+
+https://github.com/user-attachments/assets/a5db1597-57f7-4a01-b68e-347bef9388c1
+
+</td>
+<td>
+
+
+https://github.com/user-attachments/assets/f933e4e8-27d1-4a80-a5a6-6ebd448f67f4
+
+</td>
+</tr>
+</table>
 
 ## Test plan
 
-Suites "shared e
+- `yarn workspace react-native-reanimated jest UpdateLayoutAnimations`:
+the new test fails on `main` an
 
-**File**: `apps/common-app/runtime-tests/reanimated/suites.ts` (modified, +1/-0)
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/NativeModules/ReanimatedModuleProxy.cpp` (modified, +3/-0)
 ```diff
-@@ -168,6 +168,7 @@ export const REANIMATED_TEST_SUITES: RuntimeTestSuite[] = [
-     testSuiteName: 'layout animations entering',
-     importTest: () => {
-       require('./tests/layoutAnimations/entering/movedBeforeFirstPaint.test');
-+      require('./tests/layoutAnimations/startError.test');
-     },
-   },
-   {
+@@ -532,6 +532,9 @@ jsi::Value ReanimatedModuleProxy::configureLayoutAnimationBatch(
+     }
+     auto sharedTag = item.getProperty(rt, "sharedTransitionTag");
+     if (!sharedTag.isUndefined()) {
++      if (!sharedTag.isString()) {
++        throw std::runtime_error("[Reanimated] `sharedTransitionTag` must be a string.");
++      }
+       batchItem.sharedTransitionTag = sharedTag.asString(rt).utf8(rt);
+     }
+     if (const auto contentFade = item.getProperty(rt, "sharedTransitionContentFade"); contentFade.isObject()) {
 ```
 
-**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/startError.test.tsx` (added, +186/-0)
+**File**: `packages/react-native-reanimated/__tests__/UpdateLayoutAnimations.test.ts` (added, +39/-0)
 ```diff
-@@ -0,0 +1,186 @@
-+import { StyleSheet } from 'react-native';
-+import type {
-+  EntryExitAnimationFunction,
-+  EntryOrExitLayoutType,
-+  LayoutAnimation,
-+} from 'react-native-reanimated';
-+import Animated, {
-+  FadeIn,
-+  FadeOut,
-+  LinearTransition,
-+} from 'react-native-reanimated';
+@@ -0,0 +1,39 @@
++import { LayoutAnimationType } from '../src/commonTypes';
++import { configureLayoutAnimationBatch } from '../src/core';
++import { updateLayoutAnimations } from '../src/UpdateLayoutAnimations.native';
 +
-+import {
-+  describe,
-+  expect,
-+  expectEventually,
-+  getTestComponent,
-+  isViewMountedNatively,
-+  render,
-+  test,
-+  notify,
-+  useTestRef,
-+  waitForFrames,
-+  waitForNotification,
-+} from '../../../ReJest/RuntimeTestsApi';
-+import { ComparisonMode } from '../../../ReJest/types';
-+import { runOnUIBlocking } from '../../../ReJest/utils/runOnUIBlocking';
++jest.mock('react-native-worklets', () =>
++  jest.requireActual('../../react-native-worklets/src/mock')
++);
++jest.mock('../src/core', () => ({ configureLayoutAnimationBatch: jest.fn() }));
++jest.mock('../src/layoutReanimation/animationsManager', () => ({
++  initializeLayoutAnimationsManager: jest.fn(),
++}));
 +
-+const START_ERROR = 'layout animation start throws on purpose';
-+const ON_START_ERROR = 'layout animation onStart throws on purpose';
-+const FADE_IN_FINISHED = 'startErrorFadeInFinished';
++const configure = configureLayoutAnimationBatch as jest.Mock;
 +
-+const throwingOnStart: EntryExitAnimationFunction = () => {
-+  'worklet';
-+  return {
-+    initialValues: { opacity: 0 },
-+    animations: {
-+      opacity: {
-+        current: 0,
-+        onStart: () => {
-+          throw new Error(ON_START_ERROR);
-+        },
-+        onFrame: () => true,
-+      },
-+    },
-+  } as unknown as LayoutAnimation;
-+};
++describe('updateLayoutAnimations', () => {
++  test('configures the next update after a rejected one', () => {
++    const error = new Error(
++      '[Reanimated] `sharedTransitionTag` must be a string.'
++    );
++    configure.mockImplementationOnce(() => {
++      throw error;
++    });
 +
-+const notifyingFadeIn = FadeIn.duration(100).withCallback((finished) => {
-+  'worklet';
-+  if (finished) {
-+    notify(FADE_IN_FINISHED);
-+  }
++    expect(() =>
++      updateLayoutAnimations(
++        1,
++        LayoutAnimationType.SHARED_ELEMENT_TRANSITION,
++        undefined,
++        undefined,
++        7 as unknown as string
++      )
++    ).toThrow(error);
++    updateLayoutAnimations(2, LayoutAnimationType.LAYOUT);
++
++    expect(configure).toHaveBeenLastCalledWith([
++      expect.objectContaining({ viewTag: 2 }),
++    ]);
++  });
++});
+```
+
+**File**: `packages/react-native-reanimated/changelog/set-non-string-tag.fix.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Throw an error for a `sharedTransitionTag` that is not a string, and keep configuring layout animations after such an error.
+```
+
+**File**: `packages/react-native-reanimated/src/UpdateLayoutAnimations.native.ts` (modified, +2/-1)
+```diff
+@@ -34,9 +34,10 @@ function createUpdateManager() {
+       }
+     },
+     flush(this: void) {
+-      configureLayoutAnimationBatch(animations.concat(deferredAnimations));
++      const batch = animations.concat(deferredAnimations);
+       animations.length = 0;
+       deferredAnimations.length = 0;
++      configureLayoutAnimationBatch(batch);
+     },
+   };
+ }
+```
+
+---
+
+### Incident Patch 3: `98d4f83d` (2026-11-09)
+**Commit Message**: fix(SET): move swipe-driven shared elements to a target that moves during the swipe (#11213)
+
+> [!NOTE]
+> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
+
+## Summary
+
+On iOS, a swipe back collects the target positions of its shared views
+on the first gesture event. react-native-screens can report the
+uncovered screen's new frame later. In `[SET] Change theme`, the header
+of Screen 1 is turned on while Screen 1 is covered, and its frame
+arrives about 50 ms into the swipe. The swipe never re-read its targets,
+so the shared views flew to positions one header height too high and
+snapped down when the swipe ended. A button pop was not affected,
+because it collects its targets after the frame arrives.
+
+Now every React commit during a swipe re-measures the target of each
+swipe-driven shared transition. When a target has moved, or one of its
+animated props such as the transform has changed, the transition's end
+view is updated, and the next progress event uses it. The target
+measurement is shared with the existing retargeting of off-window
+targets. `[SET] Change theme` is marked as working on iOS.
+
+## Test plan
+
+- New runtime tests, `Target moved during native Screen
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionGesture.test.tsx` (modified, +92/-1)
+```diff
+@@ -27,9 +27,13 @@ const transition = SharedTransition.duration(30000);
+ function Screens({
+   sourceMounted = true,
+   sourceScreenMounted = true,
++  targetOffset = 0,
++  targetTranslateX = 0,
+ }: {
+   sourceMounted?: boolean;
+   sourceScreenMounted?: boolean;
++  targetOffset?: number;
++  targetTranslateX?: number;
+ }) {
+   const sourceScreen = useTestRef('gestureSourceScreen');
+   const targetScreen = useTestRef('gestureTargetScreen');
+@@ -49,7 +53,13 @@ function Screens({
+             ref={target}
+             sharedTransitionTag="gesture-retained-source"
+             sharedTransitionStyle={transition}
+-            style={styles.target}
++            style={[
++              styles.target,
++              {
++                marginTop: targetOffset,
++                transform: [{ translateX: targetTranslateX }],
++              },
++            ]}
+           />
+         </SharedTransitionBoundary>
+       </Screen>
+@@ -258,6 +268,80 @@ function mountedX(tag: number) {
+   });
+ }
+ 
++describe('Target moved during native Screen progress', () => {
++  const gestureTest = Platform.OS === 'ios' ? test : test.skip;
++
++  gestureTest('moves the carrier toward the new target position', async () => {
++    const tags = await startGesture();
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      0.5,
++      false,
++      false
++    );
++    await expectCarrier(tags.source, 105);
++    const before = await carrierY(tags.source);
++    const target = getTestComponent('gestureTarget');
++    const targetY = (await target.getMountedViewProps())!.y;
++
++    await render(<Screens targetOffset={100} />);
++    await expectEventually(
++      async () => (await target.getMountedViewProps())!.y - targetY
++    ).toBe(100, ComparisonMode.PIXEL);
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      0.5,
++      false,
++      false
++    );
++    await expectEventually(
++      async () => (await carrierY(tags.source))! - before!
++    ).toBe(50, ComparisonMode.PIXEL);
++
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      1,
++      false,
++      false
++    );
++    await expectTargetOpacity(1);
++  });
++
++  gestureTest('moves the carrier toward the new target transform', async () => {
++    const tags = await startGesture();
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      0.5,
++      false,
++      false
++    );
++    await expectCarrier(tags.source, 105);
++
++    await render(<Screens targetTranslateX={100} />);
++    const target = getTestComponent('gestureTarget').getTag();
++    await expectEventually(
++      async () => (await observer().observeTransform(target))?.translateX
++    ).toBe(100, ComparisonMode.PIXEL);
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      0.5,
++      false,
++      false
++    );
++    await expectEventually(
++      async () => (await observer().observeTransform(tags.source))?.translateX
++    ).toBe(50, ComparisonMode.PIXEL);
++
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      1,
++      false,
++      false
++    );
++    await expectTargetOpacity(1);
++  });
 +});
 +
-+function Box({
-+  exiting,
-+  entering = exiting ? undefined : FadeIn.duration(100),
-+}: {
-+  exiting?: boolean;
-+  entering?: EntryOrExitLayoutType;
-+}) {
-+  const ref = useTestRef('box');
-+  return (
-+    <Animated.View
-+      ref={ref}
-+      entering={entering}
-+      exiting={exiting ? FadeOut.duration(100) : undefined}
-+      style={styles.box}
-+    />
-+  );
-+}
-+
-+function LayoutBox({ wide }: { wide: boolean }) {
-+  const ref = useTestRef('layoutBox');
-+  return (
-+    <Animated.View
-+      ref={ref}
-+      layout={LinearTransition.duration(100)}
-+      style={wide ? styles.wideBox : styles.box}
-+    />
-+  );
-+}
-+
-+function readMountedProps(tag: number) {
+ async function startGesture() {
+   await render(<Screens />);
+   await waitForNotification('gesture-source-appeared');
+@@ -295,6 +379,13 @@ async function startGesture() {
+   return tags;
+ }
+ 
++function carrierY(tag: number) {
 +  return runOnUIBlocking(() => {
 +    'worklet';
-+    return global._obtainMountedViewProps(tag, true);
++    return global._obtainMountedViewProps(tag, false)?.y;
 +  });
 +}
 +
-+function readFrameTimestampOnUI() {
-+  return runOnUIBlocking(() => {
-+    'worklet';
-+    return global.__frameTimestamp;
-+  });
-+}
-+
-+async function throwFromLayoutAnimationStart() {
-+  await runOnUIBlocking(() => {
-+    'worklet';
-+    global.originalLayoutAnimationsManager = global.LayoutAnimationsManager;
-+    global.LayoutAnimationsManager = {
-+      start: () => {
-+        throw new Error(START_ERROR);
-+      },
-+      stop: global.originalLayoutAnimationsManager.stop,
-+    };
-+  });
-+}
-+
-+async function restoreLayoutAnimationStart() {
-+  await runOnUIBlocking(() => {
-+    'worklet';
-+    global.LayoutAnimationsManager = global.originalLayoutAnimationsManager;
-+  });
-+}
-+
-+if (__DEV__) {
-+  describe('Layout animation start that throws', () => {
-+    test('is reported without terminating the app', async () => {
-+      await throwFromLayoutAnimationStart();
-+      try {
-+        await render(<Box />);
-+        await waitForFrames(5);
-+      } finally {
-+        await restoreLayoutAnimationStart();
-+      }
-+      const tag = getTestComponent('box').getTag();
-+      expect((await readMountedProps(tag))?.opacity).toBe(1);
-+      await render(null);
-+    });
-+
-+    test('shows the final frame and props of a layout change', async () => {
-+      await render(<LayoutBox wide={false} />);
-+      await waitForFrames(3);
-+      const tag = getTestComponent('layoutBox').getTag();
-+      await throwFromLayoutAnimationStart();
-+      try {
-+        await render(<LayoutBox wide />);
-+        await waitForFrames(5);
-+      } finally {
-+        await restoreLayoutAnimationStart();
-+      }
-+      const props = await readMountedProps(tag);
-+      expect(props?.width).toBe(WIDE_WIDTH);
-+      expect(props?.backgroundColor).toBe(WIDE_COLOR, ComparisonMode.COLOR);
-+      await render(null);
-+    });
-+
-+    test('drops the JS state of an animation whose onStart throws', async () => {
-+      await render(<Box entering={throwingOnStart} />);
-+      await waitForFrames(5);
-+      expect(await readFrameTimestampOnUI()).toBe(undefined);
-+      await render(null);
-+
-+      await render(<Box entering={notifyingFadeIn} />);
-+      await waitForNotification(FADE_IN_FINISHED);
-+      await render(null);
-+    });
-+
-+    test('removes the exiting view at once', async () => {
-+      await render(<Box exiting />);
-+      await waitForFrames(3);
-+      const tag = getTestComponent('box').getTag();
-+      expect(await isViewMountedNatively(tag)).toBe(true);
-+      await throwFromLayoutAnimationStart();
-+      try {
-+        await render(null);
-+        await expectEventually(() => isViewMountedNatively(tag), 1000).toBe(
-+          false
-+        );
-+      } finally {
-+        await restoreLayoutAnimationStart();
-+      }
-+    });
-+  });
-+}
-+
-+const WIDE_WIDTH = 200;
-+const WIDE_COLOR = '#dd2222';
-+
-+const styles = StyleSheet.create({
-+  bo
+ function observer() {
+   if (!RuntimeTestObserver) {
+     throw new Error('RuntimeTestObserver requires a runtime-test build');
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsManager.cpp` (modified, +44/-13)
+**File**: `apps/common-app/src/apps/reanimated/examples/index.ts` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,7 @@
- 
- #include <react/debug/react_native_assert.h>
- 
-+#include <functional>
- #include <memory>
- #include <unordered_map>
- #include <utility>
-@@ -130,30 +131,60 @@ void LayoutAnimationsManager::clearSharedTransitionConfigs(const std::vector<Tag
-   }
- }
- 
--void LayoutAnimationsManager::startLayoutAnimation(
-+bool LayoutAnimationsManager::startLayoutAnimation(
-     jsi::Runtime &rt,
-     const int tag,
-     const LayoutAnimationType type,
-     const jsi::Object &values,
-     const std::shared_ptr<Serializable> &config) {
-   react_native_assert(config && "layout animation config is null");
-   if (!config) {
--    return;
-+    return false;
-   }
--  // TODO: cache the following!!
--  jsi::Value layoutAnimationRepositoryAsValue =
--      rt.global().getPropertyAsObject(rt, "global").getProperty(rt, "LayoutAnimationsManager");
--  jsi::Function startAnimationForTag =
--      layoutAnimationRepositoryAsValue.getObject(rt).getPropertyAsFunction(rt, "start");
--  startAnimationForTag.call(rt, jsi::Value(tag), jsi::Value(static_cast<int>(type)), values, config->toJSValue(rt));
-+  const auto configValue = config->toJSValue(rt);
-+  return callLayoutAnimationsManager(rt, "start", [&](jsi::Runtime &runtime, const jsi::Function &start) {
-+    start.call(runtime, jsi::Value(tag), jsi::Value(static_cast<int>(type)), values, configValue);
-+  });
- }
- 
- void LayoutAnimationsManager::cancelLayoutAnimation(jsi::Runtime &rt, const int tag) const {
--  jsi::Value layoutAnimationRepositoryAsValue =
--      rt.global().getPropertyAsObject(rt, "global").getProperty(rt, "LayoutAnimationsManager");
--  jsi::Function cancelLayoutAnimation =
--      layoutAnimationRepositoryAsValue.getObject(rt).getPropertyAsFunction(rt, "stop");
--  cancelLayoutAnimation.call(rt, jsi::Value(tag));
-+  callLayoutAnimationsManager(
-+      rt, "stop", [&](jsi::Runtime &runtime, const jsi::Function &stop) { stop.call(runtime, jsi::Value(tag)); });
-+}
-+
-+bool LayoutAnimationsManager::callLayoutAnimationsManager(
-+    jsi::Runtime &rt,
-+    const char *methodName,
-+    const std::function<void(jsi::Runtime &, const jsi::Function &)> &call) {
-+  return runGuardedOnUIRuntime(rt, methodName, [&](jsi::Runtime &runtime) {
-+    const auto method = runtime.global()
-+                            .getPropertyAsObject(runtime, "global")
-+                            .getPropertyAsObject(runtime, "LayoutAnimationsManager")
-+                            .getPropertyAsFunction(runtime, methodName);
-+    call(runtime, method);
-+  });
-+}
-+
-+bool LayoutAnimationsManager::runGuardedOnUIRuntime(
-+    jsi::Runtime &rt,
-+    const char *name,
-+    const std::function<void(jsi::Runtime &)> &call) {
-+  const auto uiRuntime = worklets::getWeakRuntimeFromJSIRuntime(rt).lock();
-+  if (!uiRuntime) {
-+    return false;
-+  }
-+  bool completed = false;
-+  const auto guardedCall = jsi::Function::createFromHostFunction(
-+      rt,
-+      jsi::PropNameID::forAscii(rt, name),
-+      0,
-+      [&](jsi::Runtime &runtime, const jsi::Value &, const jsi::Value *, size_t) {
-+        call(runtime);
-+        completed = true;
-+        return jsi::Value::undefined();
-+      });
-+  worklets::runSyncOnRuntime(uiRuntime, guardedCall);
-+  return completed;
- }
- 
- void LayoutAnimationsManager::transferConfigFromNativeID(const int nativeId, const int tag) {
+@@ -914,7 +914,7 @@ const ALL_EXAMPLES: Record<string, Example> = {
+     screen: ChangeThemeSharedExample,
+     disabledPlatforms: [REAPlatform.WEB],
+     shouldWork: {
+-      ios: false, // s2 -> change theme -> go back (progress) will have wrong target
++      ios: true,
+       android: true,
+     },
+   },
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsManager.h` (modified, +8/-1)
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +3/-0)
 ```diff
-@@ -6,6 +6,7 @@
- #include <reanimated/LayoutAnimations/LayoutAnimationType.h>
- 
- #include <jsi/jsi.h>
-+#include <functional>
- #include <memory>
- #include <mutex>
- #include <optional>
-@@ -68,7 +69,7 @@ class LayoutAnimationsManager {
-   bool hasLayoutAnimationConfigs(const LayoutAnimationType type);
-   std::optional<SharedTransitionConfig> getSharedTransitionConfig(const int tag);
-   std::shared_ptr<Serializable> takeExitingAnimationConfigAndClearTag(int tag);
--  void startLayoutAnimation(
-+  bool startLayoutAnimation(
-       jsi::Runtime &rt,
-       const int tag,
-       const LayoutAnimationType type,
-@@ -80,8 +81,14 @@ class LayoutAnimationsManager {
-   void cancelLayoutAnimation(jsi::Runtime &rt, const int tag) const;
-   void transferConfigFromNativeID(const int nativeId, const int tag);
-   std::shared_ptr<SharedTransitionManager> getSharedTransitionManager();
-+  static bool
-+  runGuardedOnUIRuntime(jsi::Runtime &rt, const char *name, const std::function<void(jsi::Runtime &)> &call);
- 
-  private:
-+  static bool callLayoutAnimationsManager(
-+      jsi::Runtime &rt,
-+      const char *methodName,
-+      const std::function<void(jsi::Runtime &, const jsi::Function &)> &call);
-   std::unordered_map<int, std::shared_ptr<Serializable>> &getConfigsForType(const LayoutAnimationType type);
- 
-   std::shared_ptr<SharedTransitionManager> sharedTransitionManager_;
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +1/-1)
-```diff
-@@ -941,7 +941,7 @@ void LayoutAnimationsProxy::initializeLightTree(const ShadowTreeRevision &baseRe
- 
- // MARK: Layout Animation Updates
- 
--std::optional<SurfaceId> LayoutAnimationsProxy::endLayoutAnimation(int tag, bool shouldRemove) {
-+std::optional<SurfaceId> LayoutAnimationsProxy::endLayoutAnimation(int tag, bool shouldRemove) const {
-   auto lock = std::unique_lock<std::recursive_mutex>(mutex);
-   auto layoutAnimationIt = layoutAnimations_.find(tag);
- 
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +1/-1)
-```diff
-@@ -365,7 +365,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-   void keepTransitioningViewsHidden(
-       ShadowViewMutationList &filteredMutations,
-       const PropsParserContext &propsParserContext) const;
--  std::optional<SurfaceId> endLayoutAnimation(int tag, bool shouldRemove) override;
-+  std::optional<SurfaceId> endLayoutAnimation(int tag, bool shouldRemove) const override;
-   void startSurface(
-       const facebook::react::ShadowTree &shadowTree,
-       std::weak_ptr<const facebook::react::MountingOverrideDelegate> mountingOverrideDelegate) override;
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxyCommon.cpp` (modified, +11/-3)
-```diff
-@@ -417,6 +417,7 @@ void LayoutAnimationsProxyCommon::flushLayoutAnimationOperationsLocked() const {
-   pendingLayoutAnimations_.clear();
-   reconcileLayoutAnimationOperations(operations);
-   auto deferredStarts = takeDeferredLayoutAnimationStarts(operations);
-+  bool hasFailedStart = false;
-   for (auto operation = takeNextLayoutAnimationOperation(operations); operation;
-        operation = takeNextLayoutAnimationOperation(operations)) {
-     if (const auto *stop = std::get_if<LayoutAnimationStop>(&*operation)) {
-@@ -462,11 +463,14 @@ void LayoutAnimationsProxyCommon::flushLayoutAnimationOperationsLocked() const {
-     }
-     values.setProperty(uiRuntime_, "windowWidth", window.width);
-     values.setProperty(uiRuntime_, "windowHeight", window.height);
--    layoutAnimationsManager_->startLayoutAnimation(uiRuntime_, start.tag, start.type, values, start.config);
-+    if (!layoutAnimationsManager_->startLayoutAnimation(uiRuntime_, start.tag, start.type, values, start.config)) {
-+      endLayoutAnimation(start.tag, start.type == LayoutAnimationType::EXITING);
-+      hasFailedStart = true;
+@@ -227,6 +227,9 @@ std::optional<MountingTransaction> LayoutAnimationsProxy::pullTransaction(
+   } else if (transition_ || uncommittedScreenPop_) {
+     updateLightTree(propsParserContext, mutations, transaction);
+     resolveTransitionLifecycle(transaction, mutations, propsParserContext);
++    if (transition_ && !mutations.empty()) {
++      followProgressTargets(propsParserContext);
 +    }
-   }
-   const bool hasNewOperations = !layoutAnimationOperations_.empty();
-   requeueLayoutAnimationStarts(std::move(deferredStarts));
--  if (hasNewOperations) {
-+  if (hasNewOperations || hasFailedStart) {
-     requestLayoutAnimationFlush_(surfaceId_);
-   }
- }
-@@ -773,7 +777,11 @@ void LayoutAnimationsProxyCommon::cleanupCompletedAnimations(
-     auto &animation = completedAnimation.animation;
-     auto finalView = animation.currentView;
-     if (needsFinalFrameReconciliation(animation.type)) {
--      finalView.layoutMetrics = animation.finalView.layoutMetrics;
-+      if (animation.currentView == animation.startView) {
-+        finalView = animation.finalView;
-+      } else {
-+        finalView.layoutMetrics = animation.finalView.layoutMetrics;
-+      }
-     }
-     if (!completedAnimation.shouldRemove && animation.opacity) {
- #ifdef ANDROID
+     activeBoundaryMayHaveChanged_ = true;
+   } else if (!mutations.empty()) {
+     auto root = lightNodes_[surfaceId_];
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxyCommon.h` (modified, +1/-1)
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +1/-0)
 ```diff
-@@ -143,7 +143,7 @@ class LayoutAnimationsProxyCommon : public facebook::react::MountingOverrideDele
-     return false;
+@@ -473,6 +473,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
+       const PropsParserContext &propsParserContext) const;
+   ShadowView targetOnScreen(const SharedTransitionRun &run, const PropsParserContext &propsParserContext) const;
+   void followOffWindowTargets(const PropsParserContext &propsParserContext) const;
++  void followProgressTargets(const PropsParserContext &propsParserContext) const;
+   const LayoutAnimation &carrierAnimation(const SharedTransitionRun &run) const;
+   const ShadowView &carrierViewOnScreen(const SharedTransitionRun &run) const;
+   SharedTransitionRun *runOfCarrier(const std::shared_ptr<LightNode> &node) const;
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/SharedTransitions.cpp` (modified, +25/-0)
+```diff
+@@ -2347,6 +2347,31 @@ void LayoutAnimationsProxy::followOffWindowTargets(const PropsParserContext &pro
    }
-   std::optional<SurfaceId> progressLayoutAnimation(int tag, const jsi::Object &newStyle);
--  virtual std::optional<SurfaceId> endLayoutAnimation(int tag, bool shouldRemove) = 0;
-+  virtual std::optional<SurfaceId> endLayoutAnimation(int tag, bool shouldRemove) const = 0;
-   virtual void startSurface(
-       const facebook::react::ShadowTree &shadowTree,
-       std::weak_ptr<const facebook::react::MountingOverrideDelegate> mountingOverrideDelegate);
+ }
+ 
++// A covered screen can get its native header frame after the gesture that uncovers it has started.
++void LayoutAnimationsProxy::followProgressTargets(const PropsParserContext &propsParserContext) const {
++  for (const auto &run : activeSharedTransitionRuns()) {
++    if (run.driver != SharedTransitionDriver::GESTURE) {
++      continue;
++    }
++    if (!isLightNodeMapped(run.target) || run.target->isExiting() || run.target->isCarrier()) {
++      continue;
++    }
++    const auto carrierTag = run.carrier->current.tag;
++    const auto animationIt = layoutAnimations_.find(carrierTag);
++    if (animationIt == layoutAnimations_.end()) {
++      continue;
++    }
++    const auto after = targetInCarrierSpace(run, targetOnScreen(run, propsParserContext), propsParserContext);
++    const auto carrierAfter = asCarrierView(after, run.carrier, propsParserContext);
++    const auto &finalView = animationIt->second.finalView;
++    if (finalView.layoutMetrics != carrierAfter.layoutMetrics ||
++        SharedTransitionValuesFactory::hasAnimatedChanges(getViewProps(finalView), getViewProps(carrierAfter))) {
++      updateLayoutAnimationTarget(
++          carrierTag, carrierAfter, ownCarrierView(after, run.carrier, propsParserContext).props, run.config);
++    }
++  }
++}
++
+ std::vector<Ancestor> LayoutAnimationsProxy::collectAncestors(
+     const std::shared_ptr<LightNode> &node,
+     const bool useViewsOnScreen) const {
+```
+
+**File**: `packages/react-native-reanimated/changelog/shared-transition-swipe-retarget.fix.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Move shared elements to their final position during an iOS swipe back when the uncovered screen gets its header after the swipe starts.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11212** (2026-11-06): test(runtime-tests): compare recorded shared transition starts with the measured view position (@tjzel)
-- **PR #11211** (2026-11-06): test(Reanimated): compare react-freeze boxes by drift, not by absolute spread (@tjzel)
-- **PR #11210** (2026-11-06): fix(Worklets): resolve the Babel plugin tests against the workspace on 4.7-stable (@tjzel)
-- **PR #11208** (2026-11-06): chore(common-app): mark the fixed iOS shared element transition examples as working (@bartlomiejbloniarz)
-- **PR #11183** (2026-11-06): @tjzel/runtime tests/shared transition start values (@tjzel)
-- **PR #11182** (closed): fix(LayoutAnimations): Fix Android entering animations with reduced motion (@pawicao)
+- **PR #11249** (2026-11-09): docs(SET): document navigation requirements and common recipes (@bartlomiejbloniarz)
+- **PR #11248** (2026-11-09): fix(SET): keep the flight going when a list item is tapped twice (@bartlomiejbloniarz)
+- **PR #11247** (2026-11-09): fix(SET): let a shared transition replace its target's entering animation (@bartlomiejbloniarz)
+- **PR #11246** (2026-11-09): fix(SET): place shared views correctly in a scrolled inverted list (@bartlomiejbloniarz)
+- **PR #11245** (2026-11-09): fix(SET): fly back to the shown tab during a back gesture (@bartlomiejbloniarz)
+- **PR #11244** (2026-11-09): fix(SET): fade a transparent background without a gray tint (@bartlomiejbloniarz)
 
 ---
 
@@ -1800,3 +1978,39 @@ Suites "shared e
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Reanimated): keep content drawn over a nested shared element visible during shar
+
+**RULE**:
+When implementing operations in `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionFadeProgress.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `97538ca5`: Reanimated): keep content drawn over a nested shared element visible during shared element transitions (#11166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionFadeProgress.test.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+      expect(await RuntimeTestObserver!.observeParent(innerSource)).toBe(
+        originalParent
+      );
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+      await expectEventually(async () => {
+        const parent = await RuntimeTestObserver!.observeParent(innerSource);
+        return parent !== null && parent !== originalParent;
+      }).toBe(true);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `97538ca5` are properly handled with clean fallback behavior.

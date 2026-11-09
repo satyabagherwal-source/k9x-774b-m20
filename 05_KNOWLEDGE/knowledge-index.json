@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T16:33:39.609Z",
+  "last_updated": "2026-11-09T16:40:34.833Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47750,8 +47750,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "e3622da0",
-      "content_hash": "490500df40a383b2b1e4b8d107f7c109102b3d400a27631105dd980101d46baf",
+      "source_version": "2bdf1337",
+      "content_hash": "51c8dd6e8cc377e6d95063132f5c26f0713e1d301e5a5fb73e6cc36e6b0a11c0",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47898,6 +47898,11 @@
         {
           "number": null,
           "title": "Draft NUC 97 In and Not In Membership Tests",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Draft NUC 99 SQL-Style Inequality",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48191,7 +48196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T14:04:49.030Z",
+      "verified_at": "2026-11-09T16:40:34.814Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58392,11 +58397,16 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "ea12300d",
-      "content_hash": "0325089a52eaf4445a380a04d7cabe542a9eb6dddc0aa6924f1ada265c6aad66",
+      "source_version": "b66eb8c7",
+      "content_hash": "4aa733de7aeebc43b3205d11941c090ade3700913f2d6e1d1cb447679636b305",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Reanimated): keep content drawn over a nested shared element visible during shar",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1885,
           "title": "runtime-tests): return fresh arrays from ReJest recorded updates (#10857)",
@@ -58438,7 +58448,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:59:28.764Z",
+      "verified_at": "2026-11-09T16:40:24.882Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62857,8 +62867,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "8ae1f91f",
-      "content_hash": "24dd2c699ba0cef48aa6dedf42a87ae85a87fcff8ae6eef184ab031dc4589779",
+      "source_version": "93d16081",
+      "content_hash": "a0d2067540c08d269d1ca3d9b241c4a41aab6cd239e769d81d3d67de08e15938",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -62870,6 +62880,11 @@
         {
           "number": null,
           "title": "Reuse page compression buffers across column writers",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "race in testLeafAdmissionRotatesAcrossTasks",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62948,7 +62963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T18:18:57.801Z",
+      "verified_at": "2026-11-09T16:40:33.885Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66303,8 +66318,8 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "ee9b4bb8",
-      "content_hash": "d9862369c9bc38eebbae0fb6547f2f3463cbe4f3918f27289ec8c45a244a170f",
+      "source_version": "310a9e3e",
+      "content_hash": "b3f699fe649fc4b6b3dff592849d93937994da0f8c3c5b8439f3ff58f8802a5c",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [
@@ -66316,6 +66331,11 @@
         {
           "number": null,
           "title": "release-chain recursion in Semphore, SyncFlag and RwLock",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "resolve TOCTOU race condition in mpmc disconnect notification",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -66339,7 +66359,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T14:48:54.382Z",
+      "verified_at": "2026-11-09T16:40:18.770Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77862,10 +77882,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "ba6182b860472c5fcfb1a3506874185ac2c4e7f7536340daef4635b433ea0be6",
+      "content_hash": "03e093a125e99f5a82332d9dc46be1ceb7e4b0687605358632fdc9c838ee747a",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Specialized Model Routing Over Monolithic Multi-Task Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hybrid Neural-Statistical Post-Processing for Low-Confidence Tokens",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Orientation-Aware Preprocessing as a Mandatory First Step",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 3471,
           "title": "Script-Routed Inference Dispatch",
@@ -77912,7 +77947,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:21:50.773Z",
+      "verified_at": "2026-11-09T16:40:29.691Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

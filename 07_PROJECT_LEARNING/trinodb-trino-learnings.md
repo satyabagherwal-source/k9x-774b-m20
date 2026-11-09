@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `8ae1f91f`  
+> **Source Version**: `93d16081`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T18:18:56.446Z  
+> **Timestamp**: 2026-11-09T16:40:32.636Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T18:18:56.439Z  
+> **Harvest Timestamp**: 2026-11-09T16:40:32.529Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13485 stars
+- **Stars / Engagement**: 13490 stars
 
 ---
 
@@ -1862,759 +1862,176 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ae1f91f` (2026-11-06)
-**Commit Message**: Reuse page compression buffers across column writers
+### Incident Patch 1: `93d16081` (2026-11-09)
+**Commit Message**: Fix race in testLeafAdmissionRotatesAcrossTasks
 
-Per-page compression buffers are humongous allocations for large pages.
+The test submits three held intermediate splits and two held leaf
+splits to a scheduler with four slots, without waiting for the
+intermediate splits to start. If the first one's thread is the last
+to ask for a slot, it never runs: releasing it does not block it, the
+blocked split count stays 0, and the wait for it times out. Wait for
+all intermediate splits to start before submitting the leaf splits.
 
-**File**: `lib/trino-parquet/src/main/java/io/trino/parquet/writer/CompressionBuffers.java` (added, +98/-0)
+**File**: `core/trino-main/src/test/java/io/trino/execution/executor/dedicated/TestThreadPerDriverTaskExecutor.java` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,98 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.parquet.writer;
-+
-+import org.apache.parquet.bytes.ByteBufferAllocator;
-+
-+import java.nio.ByteBuffer;
-+import java.util.zip.Deflater;
-+
-+import static io.airlift.slice.SizeOf.instanceSize;
-+import static io.airlift.slice.SizeOf.sizeOf;
-+
-+/**
-+ * Input and output buffers for compressing one page at a time, shared by the column writers of a file.
-+ */
-+final class CompressionBuffers
-+        implements ByteBufferAllocator
-+{
-+    private static final int INSTANCE_SIZE = instanceSize(CompressionBuffers.class);
-+    private static final byte[] EMPTY = new byte[0];
-+
-+    private byte[] input = EMPTY;
-+    private byte[] output = EMPTY;
-+    private Deflater deflater;
-+
-+    /**
-+     * Returns the input buffer, positioned at zero with the given limit. {@link org.apache.parquet.bytes.BytesInput}
-+     * uses this allocator when it has to materialize an input that is not backed by a single buffer.
-+     */
-+    @Override
-+    public ByteBuffer allocate(int size)
-+    {
-+        if (input.length < size) {
-+            input = new byte[size];
-+        }
-+        return ByteBuffer.wrap(input, 0, size);
-+    }
-+
-+    @Override
-+    public void release(ByteBuffer buffer) {}
-+
-+    @Override
-+    public boolean isDirect()
-+    {
-+        return false;
-+    }
-+
-+    /**
-+     * Returns the output buffer, at least {@code minimumSize} long; valid until the next call.
-+     */
-+    public byte[] output(int minimumSize)
-+    {
-+        if (output.length < minimumSize) {
-+            output = new byte[minimumSize];
-+        }
-+        return output;
-+    }
-+
-+    /**
-+     * Returns a reset raw-deflate {@link Deflater} that is kept until {@link #clear()}.
-+     */
-+    public Deflater deflater()
-+    {
-+        if (deflater == null) {
-+            deflater = new Deflater(Deflater.DEFAULT_COMPRESSION, true);
-+        }
-+        else {
-+            deflater.reset();
-+        }
-+        return deflater;
-+    }
-+
-+    public long getRetainedSize()
-+    {
-+        return INSTANCE_SIZE + sizeOf(input) + sizeOf(output);
-+    }
-+
-+    public void clear()
-+    {
-+        input = EMPTY;
-+        output = EMPTY;
-+        if (deflater != null) {
-+            deflater.end();
-+            deflater = null;
-+        }
-+    }
-+}
-```
-
-**File**: `lib/trino-parquet/src/main/java/io/trino/parquet/writer/ParquetCompressor.java` (modified, +43/-13)
-```diff
-@@ -20,19 +20,22 @@
- import io.airlift.slice.Slices;
- import org.apache.parquet.format.CompressionCodec;
- 
--import java.io.ByteArrayOutputStream;
- import java.io.IOException;
- import java.lang.foreign.MemorySegment;
- import java.nio.ByteBuffer;
--import java.nio.channels.Channels;
--import java.util.zip.GZIPOutputStream;
-+import java.util.zip.CRC32;
-+import java.util.zip.Deflater;
- 
- import static io.trino.parquet.writer.ParquetDataOutput.createDataOutput;
-+import static java.lang.Math.toIntExact;
- import static java.util.Objects.requireNonNull;
- 
- interface ParquetCompressor
- {
--    ParquetDataOutput compress(ByteBuffer input)
-+    /**
-+     * Compresses the input into the output buffer of {@code buffers}; the result is valid until the next call with the same buffers.
-+     */
-+    ParquetDataOutput compress(ByteBuffer input, CompressionBuffers buffers)
-             throws IOException;
- 
-     static ParquetCompressor getCompressor(CompressionCodec codec)
-@@ -55,15 +58,44 @@ static ParquetCompressor getCompressor(CompressionCodec codec)
-     class GzipCompressor
-             implements ParquetCompressor
-     {
-+        // the header written by GZIPOutputStream: magic, deflate, no flags, no modification time, default level, unknown OS
-+        private static final byte[] HEADER = {0x1F, (byte) 0x8B, 8, 0, 0, 0, 0, 0, 0, (byte) 0xFF};
-+        private static final int TRAILER_SIZE = 8;
-+
-         @Override
--        public ParquetDataOutput compress(ByteBuffer input)
-+        public ParquetDataOutput compress(ByteBuffer input, CompressionBuffers buffers)
-                 throws IOException
-         {
--            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
--            try (GZIPOutputStream outputStream = new GZIPOutputStream(byteArrayOutputStream)) {
--                Channels.newChannel(outputStream).write(input);
-+            int inputSize = input.remaining();
-+            CRC32 crc = new CRC32();
-+            crc.update(input.duplicate());
-+
-+            // zlib's deflateBound plus slack for the raw stream
-+            byte[] output = buffers.output(toIntExact(HEADER.length + inputSize + (inputSize >> 12) + (inputSize >> 14) + (inputSize >> 25) + 64L + TRAILER_SIZE));
-+            System.arraycopy(HEADER, 0, output, 0, HEADER.length);
-+            int size = HEADER.length;
-+
-+            Deflater deflater = buffers.deflater();
-+            deflater.setInput(input);
-+            deflater.finish();
-+            while (!deflater.finished()) {
-+                int written = deflater.deflate(output, size, output.length - TRAILER_SIZE - size);
-+                if (written == 0) {
-+                    throw new IOException("Insufficient output buffer for GZIP compression");
-+                }
-+                size += written;
-             }
--            return createDataOutput(byteArrayOutputStream);
-+            writeLittleEndianInt(output, size, (int) crc.getValue());
-+            writeLittleEndianInt(output, size + 4, inputSize);
-+            return createDataOutput(Slices.wrappedBuffer(output, 0, size + TRAILER_SIZE));
-+        }
-+
-+        private static void writeLittleEndianInt(byte[] output, int offset, int value)
-+        {
-+            output[offset] = (byte) value;
-+            output[offset + 1] = (byte) (value >> 8);
-+            output[offset + 2] = (byte) (value >> 16);
-+            output[offset + 3] = (byte) (value >> 24);
-         }
-     }
- 
-@@ -78,12 +110,10 @@ class AirLiftCompressor
-         }
- 
-         @Override
--        public ParquetDataOutput compress(ByteBuffer input)
-+        public ParquetDataOutput compress(ByteBuffer input, CompressionBuffers buffers)
-                 throws IOException
-         {
--            int minCompressionBufferSize = compressor.maxCompressedLength(input.remaining());
--            byte[] compressionBuffer = new byte[minCompressionBufferSize];
--            // TODO compressedDataSize > bytes.length?
-+            byte[] compressionBuffer = buffers.output(compressor.maxCompressedLength(input.remaining()));
-             int compressedDataSize = compressor.compress(MemorySegment.ofBuffer(input), MemorySegment.ofArray(compressionBuffer));
-             return createDataOutput(Slices.wrappedBuffer(compressionBuffer, 0, compressedDataSize));
-         }
-```
-
-**File**: `lib/trino-parquet/src/main/java/io/trino/parquet/writer/ParquetWriter.java` (modified, +4/-0)
-```diff
-@@ -106,6 +106,7 @@ public class ParquetWriter
-     private final int chunkMaxBytes;
-     private final Map<List<String>, Type> primitiveTypes;
-     private final CompressionCodec compressionCodec;
-+    private final CompressionBuffers compressionBuffers = new CompressionBuffers();
-     private final Optional<DateTimeZone> parquetTimeZone;
-     private final FileFooter fileFooter;
-     private final ImmutableList.Builder<List<Optional<BloomFilter>>> bloomFilterGroups = ImmutableList.builder();
-@@ -159,6 +160,7 @@ public long getRetainedBytes()
-     {
-         return INSTANCE_SIZE +
-                 outputStream.getRetainedSize() +
-+                compressionBuffers.getRetainedSize() +
-                 columnWriters.stream().mapToLong(ColumnWriter::getRetainedBytes).sum() +
-                 validationBuilder.map(ParquetWriteValidationBuilder::getRetainedSize).orElse(0L);
-     }
-@@ -222,6 +224,7 @@ public void close()
-             columnWriters.forEach(ColumnWriter::close);
-             flush();
-             columnWriters = ImmutableList.of();
-+            compressionBuffers.clear();
-             fileMetaData = fileFooter.createFileMetadata();
-             writeBloomFilters(fileMetaData.getRow_groups(), bloomFilterGroups.build());
-             writeFooter();
-@@ -463,6 +466,7 @@ private void initColumnWriters()
-                 messageType,
-                 primitiveTypes,
-                 compressionCodec,
-+                compressionBuffers,
-                 writerOption,
-                 parquetTimeZone);
-     }
-```
-
-**File**: `lib/trino-parquet/src/main/java/io/trino/parquet/writer/ParquetWriters.java` (modified, +6/-0)
-```diff
-@@ -185,6 +185,7 @@ static List<ColumnWriter> getColumnWriters(
-             MessageType messageType,
-             Map<List<String>, Type> trinoTypes,
-             CompressionCodec compressionCodec,
-+            CompressionBuffers compressionBuffers,
-             ParquetWriterOptions writerOptions,
-             Optional<DateTimeZone> parquetTimeZone)
-     {
-@@ -194,6 +195,7 @@ static List<ColumnWriter> getColumnWriters(
-                 trinoTypes,
-                 valuesWriterFactory,
-                 compressionCodec,
-+                compressionBuffers,
-                 writerOptions,
-                 parquetTimeZone);
-         ParquetTypeVisitor.visit(messageType, writeBuilder);
-@@ -207,6 +209,7 @@ private static class WriteBuilder
-         private final Map<List<String>, Type> trinoTypes;
-         private final TrinoValuesWriterFactory valuesWriterFactory;
-         private final CompressionCodec compressionCodec;
-+        private final CompressionBuffers compressionBuffers;
-         private final int maxPageSize;
-         private final int pageValueCountLimit;
-         private final Set<String> bloomFilterColumns;
-@@ -220,13 +223,15 @@ private static class WriteBuilder
-                 Map<List<String>, Type> trinoTypes,
-                 TrinoValuesWriterFactory valuesWriterFactory,
-                 CompressionCodec compressionCodec,
-+                CompressionBuffers compressionBuffers,
-                 ParquetWriterOptions writerOptions,
-                 Optional<DateTimeZone> parquetTimeZone)
-         {
-             this.type = requireNonNull(messageType, "messageType is null");
-             this.trinoTypes = requireNonNull(trinoTypes, "trinoTypes is null");
-             this.valuesWriterFactory = requireNonNull(valuesWriterFactory, "valuesWriterFactory is null");
-             this.compressionCodec = requireNonNull(compressionCodec, "compressionCodec is null");
-+            this.compressionBuffers = requireNonNull(compressionBuffers, "compressionBuffers is null");
-             this.maxPageSize = writerOptions.getMaxPageSize();
-             this.pageValueCountLimit = writerOptions.getMaxPageValueCount();
-             this.maxBloomFilterSize = writerOptions.getMaxBloomFilterSize();
-@@ -338,6 +343,7 @@ private PrimitiveColumnWriter primitive(PrimitiveType primitive, String[] path,
-                     newDefinitionLevelWriter(columnDescriptor, maxPageSize),
-                     newRepetitionLevelWriter(columnDescriptor, maxPageSize),
-                     compressionCodec,
-+                    compressionBuffers,
-                     maxPageSize,
-                     pageValueCountLimit,
-                     bloomFilter);
-```
-
-**File**: `lib/trino-parquet/src/main/java/io/trino/parquet/writer/PrimitiveColumnWriter.java` (modified, +18/-11)
-```diff
-@@ -15,6 +15,7 @@
- 
- import com.google.common.annotations.VisibleForTesting;
- import com.google.common.collect.ImmutableList;
-+import io.airlift.slice.DynamicSliceOutput;
- import io.trino.parquet.ParquetMetadataConverter;
- import io.trino.parquet.writer.repdef.DefLevelWriterProvider;
- import io.trino.parquet.writer.repdef.DefLevelWriterProvider.DefinitionLevelWriter;
-@@ -26,9 +27,7 @@
- import io.trino.parquet.writer.valuewriter.PrimitiveValueWriter;
- import io.trino.plugin.base.io.ChunkedSliceOutput;
- import jakarta.annotation.Nullable;
--import org.apache.parquet.bytes.ByteBufferReleaser;
- import org.apache.parquet.bytes.BytesInput;
--import org.apache.parquet.bytes.HeapByteBufferAllocator;
- import org.apache.parquet.column.ColumnDescriptor;
- import org.apache.parquet.column.Encoding;
- import org.apache.parquet.column.EncodingStats;
-@@ -112,19 +111,21 @@ public class PrimitiveColumnWriter
- 
-     @Nullable
-     private final ParquetCompressor compressor;
-+    private final CompressionBuffers compressionBuffers;
- 
-     private final int pageSizeThreshold;
-     private final int pageValueCountLimit;
- 
-     // Total size of compressed parquet pages
-     private long pageBufferedBytes;
- 
--    public PrimitiveColumnWriter(
-+    PrimitiveColumnWriter(
-             ColumnDescriptor columnDescriptor,
-             PrimitiveValueWriter primitiveValueWriter,
-             ColumnDescriptorValuesWriter definitionLevelWriter,
-             ColumnDescriptorValuesWriter repetitionLevelWriter,
-             CompressionCodec compressionCodec,
-+            CompressionBuffers compressionBuffers,
-             int pageSizeThreshold,
-             int pageValueCountLimit,
-             Optional<BloomFilter> bloomFilter)
-@@ -136,6 +137,7 @@ public PrimitiveColumnWriter(
-         this.primitiveValueWriter = requireNonNull(primitiveValueWriter, "primitiveValueWriter is null");
-         this.compressionCodec = requireNonNull(compressionCodec, "compressionCodec is null");
-         this.compressor = getCompressor(compressionCodec);
-+        this.compressionBuffers = requireNonNull(compressionBuffers, "compressionBuffers is null");
-         this.pageSizeThreshold = pageSizeThreshold;
-         this.pageValueCountLimit = pageValueCountLimit;
-         this.columnStatistics = createStatistics(columnDescriptor.getPrimitiveType());
-@@ -297,9 +299,18 @@ private DataStreams getDataStreams()
-         if (dictionaryPage != null) {
-             int uncompressedSize = dictionaryPage.getUncompressedSize();
-             BytesInput dictionaryBytes = dictionaryPage.getBytes();
--            ParquetDataOutput pageData = compressor != null
--                    ? compress(dictionaryBytes)
--                    : createDataOutput(dictionaryBytes);
-+            ParquetDataOutput pageData;
-+            if (compressor != null) {
-+                // the dictionary page is written after the pages of the other columns, by which time the shared
-+                // compression buffers have been reused, so the compressed dictionary is copied out
-+                ParquetDataOutput compressedDictionary = compress(dictionaryBytes);
-+                DynamicSliceOutput dictionaryData = new DynamicSliceOutput(compressedDictionary.size());
-+                compressedDictionary.writeData(dictionaryData);
-+                pageData = createDataOutput(dictionaryData.slice());
-+            }
-+            else {
-+                pageData = createDataOutput(dictionaryBytes);
-+            }
-             int compressedSize = pageData.size();
- 
-             ByteArrayOutputStream dictStream = new ByteArrayOutputStream();
-@@ -330,11 +341,7 @@ private DataStreams getDataStreams()
-     private ParquetDataOutput compress(BytesInput bytesInput)
-             throws IOException
-     {
--        // toByteBuffer references the input data without copying when it is backed by a single buffer; the releaser frees
--        // the temporary buffer that is allocated only when the input has to be materialized (e.g. concatenated pages)
--        try (ByteBufferReleaser releaser = new ByteBufferReleaser(HeapByteBufferAllocator.getInstance())) {
--            return compressor.compress(bytesInput.toByteBuffer(releaser));
--        }
-+        return compressor.compress(bytesInput.toByteBuffer(compressionBuffers, _ -> {}), compressionBuffers);
-     }
- 
-     @Override
-```
-
-**File**: `lib/trino-parquet/src/test/java/io/trino/parquet/writer/TestParquetWriter.java` (modified, +137/-0)
-```diff
-@@ -17,6 +17,11 @@
- import com.google.common.collect.ImmutableListMultimap;
- import com.google.common.collect.ImmutableMap;
- import com.google.common.collect.ImmutableSet;
-+import io.airlift.compress.v3.Compressor;
-+import io.airlift.compress.v3.lz4.Lz4Compressor;
-+import io.airlift.compress.v3.lz4.Lz4Decompressor;
-+import io.airlift.compress.v3.snappy.SnappyCompressor;
-+import io.airlift.compress.v3.zstd.ZstdCompressor;
- import io.airlift.slice.Slice;
- import io.airlift.slice.SliceInput;
- import io.airlift.slice.Slices;
-@@ -72,11 +77,13 @@
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.params.ParameterizedTest;
- import org.junit.jupiter.params.provider.Arguments;
-+import org.junit.jupiter.params.provider.EnumSource;
- import org.junit.jupiter.params.provider.MethodSource;
- import org.junit.jupiter.params.provider.ValueSource;
- 
- import java.io.ByteArrayOutputStream;
- import java.io.IOException;
-+import java.io.UncheckedIOException;
- import java.math.BigInteger;
- import java.util.ArrayList;
- import java.util.Arrays;
-@@ -91,6 +98,7 @@
- import java.util.stream.IntStream;
- import java.util.stream.LongStream;
- import java.util.stream.Stream;
-+import java.util.zip.GZIPOutputStream;
- 
- import static com.google.common.base.Preconditions.checkArgument;
- import static com.google.common.collect.ImmutableList.toImmutableList;
-@@ -951,6 +959,135 @@ public void testDeltaLengthByteArrayFallbackIsWritten()
-         assertThat(readBackBuilder.build()).isEqualTo(sliceValues);
-     }
- 
-+    @ParameterizedTest
-+    @EnumSource(value = CompressionCodec.class, names = {"UNCOMPRESSED", "GZIP", "SNAPPY", "ZSTD", "LZ4"})
-+    public void testWidePagesCompressedThroughSharedBuffers(CompressionCodec codec)
-+            throws IOException
-+    {
-+        // pages above 4 MB and a dictionary page in each of three row groups
-+        int rowCount = 100_000;
-+        Random random = new Random(42);
-+        List<Slice> wideValues = new ArrayList<>(rowCount);
-+        List<Slice> narrowValues = new ArrayList<>(rowCount);
-+        for (int i = 0; i < rowCount; i++) {
-+            byte[] value = new byte[300];
-+            random.nextBytes(value);
-+            wideValues.add(Slices.wrappedBuffer(value));
-+            narrowValues.add(Slices.utf8Slice("value-" + (i % 100)));
-+        }
-+        List<String> columnNames = ImmutableList.of("narrow", "wide");
-+        List<Type> types = ImmutableList.of(VARCHAR, VARBINARY);
-+        ParquetWriterOptions writerOptions = ParquetWriterOptions.builder()
-+                .setMaxPageSize(DataSize.of(4, MEGABYTE))
-+                .setBatchSize(10_000)
-+                .setMaxRowGroupRowCount(40_000)
-+                .setUseDeltaLengthByteArrayEncoding(true)
-+                .build();
-+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-+        try (ParquetWriter writer = createParquetWriter(outputStream, writerOptions, types, columnNames, codec)) {
-+            int inputPageSize = 25_000;
-+            for (int offset = 0; offset < rowCount; offset += inputPageSize) {
-+                BlockBuilder wide = VARBINARY.createBlockBuilder(null, inputPageSize);
-+                BlockBuilder narrow = VARCHAR.createBlockBuilder(null, inputPageSize);
-+                for (int i = offset; i < offset + inputPageSize; i++) {
-+                    VARBINARY.writeSlice(wide, wideValues.get(i));
-+                    VARCHAR.writeSlice(narrow, narrowValues.get(i));
-+                }
-+                writer.write(new Page(narrow.build(), wide.build()));
-+            }
-+        }
-+        Slice file = Slices.wrappedBuffer(outputStream.toByteArray());
-+        ParquetDataSource dataSource = new TestingParquetDataSource(file, ParquetReaderOptions.defaultOptions());
-+        ParquetMetadata parquetMetadata = MetadataReader.readFooter(dataSource, Optional.empty());
-+        assertThat(parquetMetadata.getBlocks()).hasSize(3);
-+
-+        int widePagesAbove4MB = 0;
-+        int dictionaryPages = 0;
-+        for (BlockMetadata block : parquetMetadata.getBlocks()) {
-+            for (ColumnChunkMetadata column : block.columns()) {
-+                SliceInput input = file.slice(toIntExact(column.getStartingPos()), toIntExact(column.getTotalSize())).getInput();
-+                while (input.isReadable()) {
-+                    PageHeader header = Util.readPageHeader(input);
-+                    Slice compressed = input.readSlice(header.getCompressed_page_size());
-+                    Slice uncompressed = decompressPage(codec, compressed, header.getUncompressed_page_size());
-+                    assertThat(uncompressed.length()).isEqualTo(header.getUncompressed_page_size());
-+                    assertThat(compressed).isEqualTo(compress(codec, uncompressed));
-+                    if (header.getType() == PageType.DICTIONARY_PAGE) {
-+                        dictionaryPages++;
-+                    }
-+                    else if (column.getPath().toDotString().equals("wide") && header.getUncompress
+@@ -990,6 +990,7 @@ public void testLeafAdmissionRotatesAcrossTasks()
+                     new AdmissionSplit(BlockedReason.OUTPUT, true),
+                     new AdmissionSplit(BlockedReason.OUTPUT, true));
+             executor.enqueueSplits(firstTask, true, busySplits);
++            assertEventually(new Duration(10, SECONDS), () -> assertThat(busySplits).allMatch(AdmissionSplit::isStarted));
+             List<AdmissionSplit> firstTaskSplits = ImmutableList.of(
+                     new AdmissionSplit(BlockedReason.SOURCE, true),
+                     new AdmissionSplit(BlockedReason.SOURCE, true),
 ```
 
 ---
 
-### Incident Patch 2: `a66dd460` (2026-11-06)
-**Commit Message**: Buffer delta-length byte arrays in slabs
+### Incident Patch 2: `eb83618c` (2026-11-09)
+**Commit Message**: Retry Bun download in mvnd-build CI job
 
-A contiguous page-sized buffer is a humongous allocation for wide pages.
+The mvnd-build job does not restore the Bun cache, so every run downloads
+Bun from GitHub releases. frontend-maven-plugin fails the build on any
+non-200 response without retrying, so a transient 504 failed the job.
 
-**File**: `lib/trino-parquet/src/main/java/io/trino/parquet/writer/valuewriter/DeltaLengthByteArrayValuesWriter.java` (modified, +61/-20)
+Install Bun in a separate retried step. The build's install-bun execution
+then finds it already installed and skips the download.
+
+**File**: `.github/workflows/ci.yml` (modified, +5/-0)
 ```diff
-@@ -13,29 +13,39 @@
-  */
- package io.trino.parquet.writer.valuewriter;
- 
--import io.airlift.slice.DynamicSliceOutput;
-+import com.google.common.collect.ImmutableList;
- import io.airlift.slice.Slice;
--import io.airlift.slice.SliceOutput;
- import org.apache.parquet.bytes.ByteBufferAllocator;
- import org.apache.parquet.bytes.BytesInput;
- import org.apache.parquet.column.Encoding;
- import org.apache.parquet.column.values.delta.DeltaBinaryPackingValuesWriter;
- import org.apache.parquet.column.values.delta.DeltaBinaryPackingValuesWriterForInteger;
- 
--import java.io.IOException;
--import java.io.UncheckedIOException;
-+import java.nio.ByteBuffer;
-+import java.util.ArrayList;
-+import java.util.List;
- 
-+import static java.lang.Math.max;
-+import static java.lang.Math.min;
- import static java.lang.String.format;
- 
- /**
-  * Writes lengths of byte arrays with delta encoding, followed by the concatenated byte arrays.
-- * The byte arrays are written into a Slice, avoiding a per-value Binary on the write path.
-+ * The byte arrays are written into slabs of bounded size that are kept across pages, avoiding a per-value Binary
-+ * on the write path and a contiguous buffer the size of the page.
-  */
- public final class DeltaLengthByteArrayValuesWriter
-         extends ValuesWriter
- {
-+    private static final int MAXIMUM_SLAB_SIZE = 1024 * 1024;
-+
-     private final org.apache.parquet.column.values.ValuesWriter lengthWriter;
--    private final SliceOutput sliceOutput;
-+    private final ByteBufferAllocator allocator;
-+    private final int initialSlabSize;
-+    private final List<ByteBuffer> slabs = new ArrayList<>();
-+    private int currentSlab;
-+    private long allocatedSlabBytes;
-+    private long size;
- 
-     public DeltaLengthByteArrayValuesWriter(int initialSize, int pageSize, ByteBufferAllocator allocator)
-     {
-@@ -45,19 +55,26 @@ public DeltaLengthByteArrayValuesWriter(int initialSize, int pageSize, ByteBuffe
-                 initialSize,
-                 pageSize,
-                 allocator);
--        this.sliceOutput = new DynamicSliceOutput(initialSize);
-+        this.allocator = allocator;
-+        this.initialSlabSize = max(1, min(initialSize, MAXIMUM_SLAB_SIZE));
-     }
- 
-     @Override
-     public long getBufferedSize()
-     {
--        return lengthWriter.getBufferedSize() + sliceOutput.size();
-+        return lengthWriter.getBufferedSize() + size;
-     }
- 
-     @Override
-     public BytesInput getBytes()
-     {
--        return BytesInput.concat(lengthWriter.getBytes(), BytesInput.from(sliceOutput.slice().toByteBuffer()));
-+        ImmutableList.Builder<ByteBuffer> values = ImmutableList.builder();
-+        for (ByteBuffer slab : slabs) {
-+            if (slab.position() > 0) {
-+                values.add(slab.duplicate().flip());
-+            }
-+        }
-+        return BytesInput.concat(lengthWriter.getBytes(), BytesInput.from(values.build()));
-     }
- 
-     @Override
-@@ -70,44 +87,68 @@ public Encoding getEncoding()
-     public void reset()
-     {
-         lengthWriter.reset();
--        sliceOutput.reset();
-+        slabs.forEach(ByteBuffer::clear);
-+        currentSlab = 0;
-+        size = 0;
-     }
- 
-     @Override
-     public long getAllocatedSize()
-     {
--        return lengthWriter.getAllocatedSize() + sliceOutput.getRetainedSize();
-+        return lengthWriter.getAllocatedSize() + allocatedSlabBytes;
-     }
- 
-     @Override
-     public void writeBytes(Slice value)
-     {
-         lengthWriter.writeInteger(value.length());
--        sliceOutput.writeBytes(value);
-+        writeValue(value, 0, value.length());
-     }
- 
-     @Override
-     public void writeBytes(Slice base, int offset, int length)
-     {
-         lengthWriter.writeInteger(length);
--        sliceOutput.writeBytes(base, offset, length);
-+        writeValue(base, offset, length);
-+    }
-+
-+    private void writeValue(Slice base, int offset, int length)
-+    {
-+        byte[] bytes = base.byteArray();
-+        int position = base.byteArrayOffset() + offset;
-+        int remaining = length;
-+        while (remaining > 0) {
-+            if (currentSlab == slabs.size()) {
-+                int slabSize = slabs.isEmpty() ? initialSlabSize : min(slabs.getLast().capacity() * 2, MAXIMUM_SLAB_SIZE);
-+                slabs.add(allocator.allocate(slabSize));
-+                allocatedSlabBytes += slabSize;
-+            }
-+            ByteBuffer slab = slabs.get(currentSlab);
-+            int batch = min(remaining, slab.remaining());
-+            slab.put(bytes, position, batch);
-+            position += batch;
-+            remaining -= batch;
-+            if (!slab.hasRemaining()) {
-+                currentSlab++;
-+            }
-+        }
-+        size += length;
-     }
- 
-     @Override
-     public String memUsageString(String prefix)
-     {
--        return lengthWriter.memUsageString(format("%s DeltaLengthByteArrayValuesWriter %d bytes", prefix, sliceOutput.getRetainedSize()));
-+        return lengthWriter.memUsageString(format("%s DeltaLengthByteArr
+@@ -193,6 +193,11 @@ jobs:
+           cleanup-node: false
+       - name: Install Maven Daemon
+         run: .github/bin/retry brew install mvndaemon/mvnd/mvnd
++      - name: Install Bun
++        # This job does not restore the Bun cache, so Bun is downloaded on every run, and
++        # frontend-maven-plugin does not retry failed downloads. The build then finds it installed.
++        run: |
++          .github/bin/retry mvnd ${MAVEN_ARGS} -B -pl :trino-web-ui frontend:install-bun@"install bun"
+       - name: Build with Maven Daemon
+         # Start from an empty local repository, as artifacts already present there bypass repository filtering.
+         # trino-docs is excluded because its build runs Sphinx in Docker, which macOS runners do not provide.
 ```
 
-**File**: `lib/trino-parquet/src/test/java/io/trino/parquet/writer/valuewriter/TestDeltaLengthByteArrayValuesWriter.java` (added, +196/-0)
+---
+
+### Incident Patch 3: `e47c07c2` (2026-10-30)
+**Commit Message**: Fix physical input size for partition-only scans
+
+Iceberg and Delta Lake skip opening data files when a scan only needs
+partition values, so these scans must not count toward physical input
+bytes or the physical scan limit.
+
+**File**: `plugin/trino-delta-lake/src/main/java/io/trino/plugin/deltalake/DeltaLakePageSourceProvider.java` (modified, +9/-1)
 ```diff
-@@ -0,0 +1,196 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.parquet.writer.valuewriter;
-+
-+import com.google.common.collect.ImmutableList;
-+import io.airlift.slice.Slice;
-+import io.airlift.slice.Slices;
-+import org.apache.parquet.bytes.ByteBufferAllocator;
-+import org.apache.parquet.bytes.HeapByteBufferAllocator;
-+import org.apache.parquet.column.values.ValuesWriter;
-+import org.apache.parquet.column.values.delta.DeltaBinaryPackingValuesWriter;
-+import org.apache.parquet.column.values.delta.DeltaBinaryPackingValuesWriterForInteger;
-+import org.junit.jupiter.api.Test;
-+
-+import java.io.ByteArrayOutputStream;
-+import java.io.IOException;
-+import java.nio.ByteBuffer;
-+import java.util.List;
-+import java.util.Random;
-+
-+import static java.lang.Math.max;
-+import static org.apache.parquet.column.Encoding.DELTA_LENGTH_BYTE_ARRAY;
-+import static org.assertj.core.api.Assertions.assertThat;
-+
-+public class TestDeltaLengthByteArrayValuesWriter
-+{
-+    private static final int INITIAL_SIZE = 64;
-+    private static final int PAGE_SIZE = 8 * 1024 * 1024;
-+    private static final int MAXIMUM_SLAB_SIZE = 1024 * 1024;
-+    // the delta-encoded lengths of the test pages are far smaller
-+    private static final int SLAB_ALLOCATION_THRESHOLD = 64 * 1024;
-+
+@@ -460,7 +460,15 @@ protected Page computeNext()
+                         return page;
+                     }
+                 },
+-                0);
++                0)
++        {
++            // Pages are generated without reading the file, so no input bytes are consumed
++            @Override
++            public long getCompletedBytes()
++            {
++                return 0;
++            }
++        };
+     }
+ 
+     private static Block createRowNumberBlock(long baseIndex, int size)
+```
+
+**File**: `plugin/trino-delta-lake/src/test/java/io/trino/plugin/deltalake/TestDeltaLakeConnectorTest.java` (modified, +24/-0)
+```diff
+@@ -698,6 +698,30 @@ private void testTimestampPredicatePushdown(String value)
+                 _ -> {});
+     }
+ 
 +    @Test
-+    public void testBytesAreLengthsFollowedByValues()
-+            throws IOException
++    public void testPartitionOnlyDeletePhysicalInputDataSize()
 +    {
-+        // 6 MB of values spans several slabs, and the last value alone is larger than a slab
-+        List<Slice> values = ImmutableList.<Slice>builder()
-+                .addAll(randomValues(3_000, 2_000))
-+                .addAll(randomValues(1, 3 * 1024 * 1024))
-+                .build();
++        try (TestTable table = newTrinoTable(
++                "test_partition_only_delete_input",
++                "WITH (partitioned_by = ARRAY['part']) AS SELECT x, x % 3 part FROM UNNEST(sequence(1, 100)) t(x)")) {
++            // Deleting by partition columns only generates row ids without reading data files
++            assertQueryStats(
++                    getSession(),
++                    "DELETE FROM " + table.getName() + " WHERE part % 3 = 0",
++                    queryStats -> {
++                        assertThat(queryStats.getPhysicalInputPositions()).isPositive();
++                        assertThat(queryStats.getPhysicalInputDataSize().toBytes()).isZero();
++                    },
++                    result -> assertThat(result.getOnlyValue()).isEqualTo(33L));
 +
-+        RecordingAllocator allocator = new RecordingAllocator();
-+        DeltaLengthByteArrayValuesWriter writer = new DeltaLengthByteArrayValuesWriter(INITIAL_SIZE, PAGE_SIZE, allocator);
-+        for (int i = 0; i < values.size(); i++) {
-+            Slice value = values.get(i);
-+            if (i % 2 == 0) {
-+                writer.writeBytes(value);
-+            }
-+            else {
-+                byte[] padded = new byte[value.length() + 8];
-+                value.getBytes(0, padded, 3, value.length());
-+                writer.writeBytes(Slices.wrappedBuffer(padded), 3, value.length());
-+            }
++            assertQueryStats(
++                    getSession(),
++                    "DELETE FROM " + table.getName() + " WHERE x % 2 = 0",
++                    queryStats -> assertThat(queryStats.getPhysicalInputDataSize().toBytes()).isPositive(),
++                    _ -> {});
 +        }
-+
-+        assertThat(writer.getEncoding()).isEqualTo(DELTA_LENGTH_BYTE_ARRAY);
-+        assertThat(writer.getBytes().toByteArray()).isEqualTo(expectedBytes(values));
-+        assertThat(allocator.largestAllocation).isLessThanOrEqualTo(MAXIMUM_SLAB_SIZE);
 +    }
 +
+     @Test
+     public void testTimestampPartition()
+     {
+```
+
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergPageSourceProvider.java` (modified, +9/-1)
+```diff
+@@ -771,7 +771,15 @@ protected Page computeNext()
+                     }
+                 },
+                 maxPage.getRetainedSizeInBytes(),
+-                memoryContext);
++                memoryContext)
++        {
++            // Pages are generated from partition values without reading the file, so no input bytes are consumed
++            @Override
++            public long getCompletedBytes()
++            {
++                return 0;
++            }
++        };
+     }
+ 
+     private static ReaderPageSourceWithRowPositions createOrcPageSource(
+```
+
+**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/BaseIcebergConnectorTest.java` (modified, +16/-0)
+```diff
+@@ -6037,6 +6037,22 @@ public void testSplitPruningFromDataFileStatistics()
+ 
+     protected abstract boolean supportsRowGroupStatistics(String typeName);
+ 
 +    @Test
-+    public void testSlabsAreReusedAfterLargePage()
-+            throws IOException
++    public void testPartitionOnlyScanPhysicalInputDataSize()
 +    {
-+        RecordingAllocator allocator = new RecordingAllocator();
-+        DeltaLengthByteArrayValuesWriter writer = new DeltaLengthByteArrayValuesWriter(INITIAL_SIZE, PAGE_SIZE, allocator);
-+        randomValues(4_200, 2_000).forEach(writer::writeBytes);
-+        writer.getBytes();
-+        writer.reset();
-+        int slabAllocations = allocator.slabAllocations;
++        try (TestTable table = newTrinoTable(
++                "test_partition_only_scan_input",
++                "WITH (partitioning = ARRAY['part']) AS SELECT x, x % 3 part FROM UNNEST(sequence(1, 10000)) t(x)")) {
++            // Reading only partition columns does not read data files
++            OperatorStats partitionOnlyStats = getOperatorStats(executeWithQueryId("SELECT DISTINCT part FROM " + table.getName()));
++            assertThat(partitionOnlyStats.getPhysicalInputPositions()).isEqualTo(10000);
++            assertThat(partitionOnlyStats.getPhysicalInputDataSize().toBytes()).isZero();
 +
-+        List<Slice> secondPage = randomValues(1_900, 2_000);
-+        secondPage.forEach(writer::writeBytes);
-+        assertThat(writer.getBytes().toByteArray()).isEqualTo(expectedBytes(secondPage));
-+        assertThat(allocator.largestAllocation).isLessThanOrEqualTo(MAXIMUM_SLAB_SIZE);
-+        assertThat(allocator.slabAllocations).isEqualTo(slabAllocations);
-+        writer.close();
++            OperatorStats dataColumnStats = getOperatorStats(executeWithQueryId("SELECT DISTINCT x FROM " + table.getName()));
++            assertThat(dataColumnStats.getPhysicalInputDataSize().toBytes()).isPositive();
++        }
 +    }
 +
-+    @Test
-+    public void testResetStartsNewPage()
-+            throws IOException
-+    {
-+        DeltaLengthByteArrayValuesWriter writer = new DeltaLengthByteArrayValuesWriter(INITIAL_SIZE, PAGE_SIZE, new HeapByteBufferAllocator());
-+        List<Slice> firstPage = randomValues(2_000, 2_000);
-+        firstPage.forEach(writer::writeBytes);
-+        assertThat(writer.getBytes().toByteArray()).isEqualTo(expectedBytes(firstPage));
-+        writer.reset();
-+
-+        assertThat(writer.getBufferedSize()).isEqualTo(0);
-+        List<Slice> secondPage = randomValues(1_900, 2_000);
-+        secondPage.forEach(writer::writeBytes);
-+        assertThat(writer.getBytes().toByteArray()).isEqualTo(expectedBytes(secondPage));
-+        writer.close();
-+    }
-+
-+    @Test
-+    public void testSizeAccounting()
-+    {
-+        DeltaLengthByteArrayValuesWriter writer = new DeltaLengthByteArrayValuesWriter(INITIAL_SIZE, PAGE_SIZE, new HeapByteBufferAllocator());
-+        ValuesWriter lengthWriter = newLengthWriter();
-+   
+     private void verifySplitCount(String query, int expectedSplitCount)
+     {
+         MaterializedResultWithPlan selectAllPartitionsResult = getDistributedQueryRunner().executeWithPlan(getSession(), query);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32021** (2026-11-06): Skip dictionary indirection for long-based SortedRangeSet (@findepi)
-- **PR #32018** (2026-11-07): Use anyMatch and matches for existence checks (@wendigo)
-- **PR #32017** (2026-11-06): Use anyMatch to detect variable width types (@chenjian2664)
-- **PR #32016** (2026-11-06): Coarsen hash aggregation memory usage reporting (@raunaqmorarka)
-- **PR #32010** (2026-11-06): Remove unused PathEvaluationVisitor.getText (@chenjian2664)
-- **PR #32008** (2026-11-06): Return row count from JDBC `execute` procedure (@ebyhr)
+- **PR #32042** (2026-11-09): Retry Bun download in mvnd-build CI job (@findepi)
+- **PR #32039** (2026-11-09): Fix race in testLeafAdmissionRotatesAcrossTasks (@findepi)
+- **PR #32038** (closed): Bump dep.airlift.version from 456 to 457 (@dependabot[bot])
+- **PR #32037** (2026-11-09): Bump the airlift group with 2 updates (@dependabot[bot])
+- **PR #32030** (closed): Allow statistics commits for S3 Tables in Iceberg (@FrancescoCastaldi)
+- **PR #32024** (2026-11-09): Modernize modernizer rules (@findepi)
 
 ---
 
@@ -2634,54 +2051,21 @@ A contiguous page-sized buffer is a humongous allocation for wide pages.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reuse page compression buffers across column writers
+## X. race in testLeafAdmissionRotatesAcrossTasks
 
 **RULE**:
-When implementing operations in `lib/trino-parquet/src/main/java/io/trino/parquet/writer/CompressionBuffers.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-main/src/test/java/io/trino/execution/executor/dedicated/TestThreadPerDriverTaskExecutor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ae1f91f`: Reuse page compression buffers across column writers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93d16081`: race in testLeafAdmissionRotatesAcrossTasks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/trino-parquet/src/main/java/io/trino/parquet/writer/CompressionBuffers.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/execution/executor/dedicated/TestThreadPerDriverTaskExecutor.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package io.trino.parquet.writer;
-
-import org.apache.parquet.bytes.ByteBufferAllocator;
-
-import java.nio.ByteBuffer;
-import java.util.zip.Deflater;
-
-import static io.airlift.slice.SizeOf.instanceSize;
-import static io.airlift.slice.SizeOf.sizeOf;
-
-/**
- * Input and output buffers for compressing one page at a time, shared by the column writers of a file.
- */
-final class CompressionBuffers
-        implements ByteBufferAllocator
-{
-    private static final int INSTANCE_SIZE = instanceSize(CompressionBuffers.class);
-    private static final byte[] EMPTY = new byte[0];
-
-    private byte[] input = EMPTY;
-    private byte[] output = EMPTY;
+            assertEventually(new Duration(10, SECONDS), () -> assertThat(busySplits).allMatch(AdmissionSplit::isStarted));
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2691,4 +2075,4 @@ final class CompressionBuffers
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ae1f91f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93d16081` are properly handled with clean fallback behavior.
