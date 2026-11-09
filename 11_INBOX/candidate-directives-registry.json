@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T19:07:05.236Z",
+  "last_updated": "2026-11-09T00:13:29.536Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4204,6 +4204,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-matthart1983-netwatch"
+    },
+    {
+      "id": "CD-CWN4",
+      "directive_title": "Merge pull request #459 from iziz/metadata-v9-0-43",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "iziz/libPhoneNumber-iOS",
+      "source_commit": "91fcc745",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-iziz-libphonenumber-ios"
     }
   ]
 }

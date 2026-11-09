@@ -8450,3 +8450,5 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `686b129c` | Multi-dimensional audit evidence | 2026-11-08T23:50:50.645Z |
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-09T00:06:01.332Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `08a261a0` | Multi-dimensional audit evidence | 2026-11-09T00:06:14.482Z |
+| `learn-github-iziz-libphonenumber-ios` | `https://github.com/iziz/libPhoneNumber-iOS` | `91fcc745` | Multi-dimensional audit evidence | 2026-11-09T00:13:29.529Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-09T00:13:34.488Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T00:06:14.492Z",
+  "last_updated": "2026-11-09T00:13:34.508Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1280,14 +1280,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
-      "content_hash": "40aa3ba9cd4f17e5dc48884f6c64af700bf2ffbfdad6830816e8b244d9da5192",
-      "verified_at": "2026-11-05T06:28:57.488Z",
+      "content_hash": "9421bf83a05c4410be2bd765016f6fb69ff207f4a4935595b99ba4dc1c11f4af",
+      "verified_at": "2026-11-09T00:13:34.507Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:28:57.488Z"
+      "last_updated": "2026-11-09T00:13:34.507Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -14631,14 +14631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iziz-libphonenumber-ios",
-      "content_hash": "9ce68ff66914374646906bcfa27d2c400fd1bd517f615f28d88a47bc30fffd6f",
-      "verified_at": "2026-10-30T17:20:59.957Z",
+      "content_hash": "0fb9b32b6462e79a8f5d8de498ca7d2611412483aa61641018fb8248514c1e9a",
+      "verified_at": "2026-11-09T00:13:29.542Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T17:20:59.957Z"
+      "last_updated": "2026-11-09T00:13:29.542Z"
     },
     "RDFLib/rdflib": {
       "repository": "RDFLib/rdflib",

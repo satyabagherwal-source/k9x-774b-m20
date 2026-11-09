@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-PQQE",
-    "timestamp": "2026-11-06T22:56:09.110Z",
-    "repository": "alibaba/zvec",
-    "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-Y6A8",
-    "timestamp": "2026-11-06T23:02:42.512Z",
-    "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
-    "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
-    "contentHash": "c451f704f3f24396bf60e0b4ac15649de2aec019e7d708eb08f1113d5083d5a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-YBBA",
     "timestamp": "2026-11-06T23:02:49.030Z",
     "repository": "langchain4j/langchain4j",
@@ -7490,6 +7460,36 @@
     "repository": "rtk-ai/rtk",
     "learningId": "learn-github-rtk-ai-rtk",
     "contentHash": "435172c71cdc8f01d87613c9342ba7fe4c372ab5625fe0f29ca421f44e4580f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-CWMT",
+    "timestamp": "2026-11-09T00:13:29.525Z",
+    "repository": "iziz/libPhoneNumber-iOS",
+    "learningId": "learn-github-iziz-libphonenumber-ios",
+    "contentHash": "0fb9b32b6462e79a8f5d8de498ca7d2611412483aa61641018fb8248514c1e9a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-D0GK",
+    "timestamp": "2026-11-09T00:13:34.484Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "9421bf83a05c4410be2bd765016f6fb69ff207f4a4935595b99ba4dc1c11f4af",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

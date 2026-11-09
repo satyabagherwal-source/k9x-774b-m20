@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T00:06:14.386Z",
+  "last_updated": "2026-11-09T00:13:34.400Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27987,10 +27987,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
       "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "40aa3ba9cd4f17e5dc48884f6c64af700bf2ffbfdad6830816e8b244d9da5192",
+      "content_hash": "9421bf83a05c4410be2bd765016f6fb69ff207f4a4935595b99ba4dc1c11f4af",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Model Artifact Integrity & Hash Verification Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Tokenizer Determinism & Byte-Fallback Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Generation Configuration Immutability & Sampling Safety",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 633,
           "title": "Tokenizer Special Token Consistency",
@@ -28083,7 +28098,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv3fuh18",
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv4blmsc"
       ],
-      "verified_at": "2026-11-05T06:28:57.352Z",
+      "verified_at": "2026-11-09T00:13:34.376Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36172,8 +36187,8 @@
       "slug": "iziz-libphonenumber-ios",
       "platform": "github",
       "source_url": "https://github.com/iziz/libPhoneNumber-iOS",
-      "source_version": "15df36de",
-      "content_hash": "9ce68ff66914374646906bcfa27d2c400fd1bd517f615f28d88a47bc30fffd6f",
+      "source_version": "91fcc745",
+      "content_hash": "0fb9b32b6462e79a8f5d8de498ca7d2611412483aa61641018fb8248514c1e9a",
       "dossier_path": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
       "promoted_rules": [
@@ -36188,7 +36203,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:20:59.827Z",
+      "verified_at": "2026-11-09T00:13:29.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

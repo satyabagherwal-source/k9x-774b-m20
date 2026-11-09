@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T00:06:14.488Z",
-  "total_cycles_completed": 8406,
-  "total_learnings_persisted": 8406,
-  "total_rules_promoted": 8206,
+  "last_updated": "2026-11-09T00:13:34.503Z",
+  "total_cycles_completed": 8408,
+  "total_learnings_persisted": 8408,
+  "total_rules_promoted": 8209,
   "history": [
-    {
-      "timestamp": "2026-11-08T06:42:25.246Z",
-      "repository": "baidu/Unlimited-OCR-2",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T06:49:18.954Z",
-      "repository": "maziyarpanahi/openmed",
-      "learningId": "learn-github-maziyarpanahi-openmed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T06:50:54.434Z",
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-09T00:06:14.488Z",
       "repository": "rtk-ai/rtk",
       "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T00:13:29.538Z",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "learningId": "learn-github-iziz-libphonenumber-ios",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T00:13:34.503Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "40aa3ba9cd4f17e5dc48884f6c64af700bf2ffbfdad6830816e8b244d9da5192",
-    "lastHarvestedAt": "2026-11-05T06:28:57.467Z",
+    "contentHash": "9421bf83a05c4410be2bd765016f6fb69ff207f4a4935595b99ba4dc1c11f4af",
+    "lastHarvestedAt": "2026-11-09T00:13:34.488Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
@@ -9723,10 +9723,10 @@
     "repository": "iziz/libPhoneNumber-iOS",
     "platform": "github",
     "sourceUrl": "https://github.com/iziz/libPhoneNumber-iOS",
-    "sourceVersion": "15df36de",
+    "sourceVersion": "91fcc745",
     "license": "Apache-2.0",
-    "contentHash": "9ce68ff66914374646906bcfa27d2c400fd1bd517f615f28d88a47bc30fffd6f",
-    "lastHarvestedAt": "2026-10-30T17:20:59.950Z",
+    "contentHash": "0fb9b32b6462e79a8f5d8de498ca7d2611412483aa61641018fb8248514c1e9a",
+    "lastHarvestedAt": "2026-11-09T00:13:29.529Z",
     "learningId": "learn-github-iziz-libphonenumber-ios"
   },
   "rdflib-rdflib": {
