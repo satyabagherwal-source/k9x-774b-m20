@@ -8535,3 +8535,5 @@ Every entry in this ledger must capture:
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `8aacc6b0` | Multi-dimensional audit evidence | 2026-11-09T05:40:43.179Z |
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T05:52:36.130Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `6275c121` | Multi-dimensional audit evidence | 2026-11-09T05:52:50.331Z |
+| `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `4d5f787b` | Multi-dimensional audit evidence | 2026-11-09T06:00:14.909Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-09T06:05:21.795Z |

@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "aa28788a819a8b8621d365e986fbca0502014f6ba75fecdf85e93f1cd8ed8306",
-    "lastHarvestedAt": "2026-11-05T11:37:57.894Z",
+    "contentHash": "605c2d537d47920bc57a506e1a9ad7f3cf45f05ff100123e5b7088d92d2b7a86",
+    "lastHarvestedAt": "2026-11-09T06:05:21.795Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -10683,10 +10683,10 @@
     "repository": "makecindy/cindy",
     "platform": "github",
     "sourceUrl": "https://github.com/makecindy/cindy",
-    "sourceVersion": "fc0d9c4c",
+    "sourceVersion": "4d5f787b",
     "license": "Apache-2.0",
-    "contentHash": "21c397d3a844de368427daa883e69ec8e222e47c7ad705379053e4d3b07d9671",
-    "lastHarvestedAt": "2026-11-05T23:09:32.532Z",
+    "contentHash": "dea001b9937ebd71e58a6f7520c7251485f143349194a207b47d7e5c51ac0778",
+    "lastHarvestedAt": "2026-11-09T06:00:14.909Z",
     "learningId": "learn-github-makecindy-cindy"
   },
   "fei2411-ds-bot": {

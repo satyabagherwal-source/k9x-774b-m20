@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T05:52:50.350Z",
+  "last_updated": "2026-11-09T06:05:21.815Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -830,14 +830,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
-      "content_hash": "aa28788a819a8b8621d365e986fbca0502014f6ba75fecdf85e93f1cd8ed8306",
-      "verified_at": "2026-11-05T11:37:57.903Z",
+      "content_hash": "605c2d537d47920bc57a506e1a9ad7f3cf45f05ff100123e5b7088d92d2b7a86",
+      "verified_at": "2026-11-09T06:05:21.815Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:37:57.903Z"
+      "last_updated": "2026-11-09T06:05:21.815Z"
     },
     "unsloth/embeddinggemma-2-GGUF": {
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -16056,14 +16056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-makecindy-cindy",
-      "content_hash": "21c397d3a844de368427daa883e69ec8e222e47c7ad705379053e4d3b07d9671",
-      "verified_at": "2026-11-05T23:09:32.544Z",
+      "content_hash": "dea001b9937ebd71e58a6f7520c7251485f143349194a207b47d7e5c51ac0778",
+      "verified_at": "2026-11-09T06:00:14.918Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T23:09:32.544Z"
+      "last_updated": "2026-11-09T06:00:14.918Z"
     },
     "Fei2411/DS-Bot": {
       "repository": "Fei2411/DS-Bot",

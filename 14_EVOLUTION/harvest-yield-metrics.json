@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T05:52:50.346Z",
-  "total_cycles_completed": 8491,
-  "total_learnings_persisted": 8491,
-  "total_rules_promoted": 8288,
+  "last_updated": "2026-11-09T06:05:21.811Z",
+  "total_cycles_completed": 8493,
+  "total_learnings_persisted": 8493,
+  "total_rules_promoted": 8292,
   "history": [
-    {
-      "timestamp": "2026-11-08T16:33:39.111Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T16:33:43.483Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T16:51:11.662Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -1403,6 +1389,20 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T06:00:14.915Z",
+      "repository": "makecindy/cindy",
+      "learningId": "learn-github-makecindy-cindy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T06:05:21.811Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

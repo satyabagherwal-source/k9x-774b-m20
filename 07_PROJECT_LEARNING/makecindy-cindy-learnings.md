@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source**: github ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
-> **Source Version**: `fc0d9c4c`  
+> **Source Version**: `4d5f787b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:09:32.239Z  
+> **Timestamp**: 2026-11-09T06:00:13.568Z  
 > **Learning ID**: `learn-github-makecindy-cindy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:09:32.231Z  
+> **Harvest Timestamp**: 2026-11-09T06:00:13.152Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开源、开箱即用的 AI Agent。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9343 stars
+- **Stars / Engagement**: 9548 stars
 
 ---
 
@@ -155,6 +155,26 @@ function run(db: Database.Database): void {
     'CREATE UNIQUE INDEX IF NOT EXISTS `uniq_active_team_per_lead` '
       + 'ON `orca_teams` (`lead_session_id`) WHERE "orca_teams"."status" = \'active\'',
   );
+}
+
+module.exports = { run };
+
+```
+
+### Core Architecture Module: `apps/desktop/drizzle/scripts/0148_schedule_webhook_trigger.ts`
+```
+import type Database from 'better-sqlite3';
+
+function addColumn(db: Database.Database, tableName: string, columnName: string): void {
+  const table = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(tableName);
+  if (!table) return;
+  const columns = new Set((db.prepare(`PRAGMA table_info(${tableName})`).all() as Array<{ name: string }>).map((column) => column.name));
+  if (!columns.has(columnName)) db.exec(`ALTER TABLE ${tableName} ADD ${columnName} TEXT`);
+}
+
+function run(db: Database.Database): void {
+  addColumn(db, 'schedules', 'webhook_trigger');
+  addColumn(db, 'schedule_runs', 'trigger_source');
 }
 
 module.exports = { run };
@@ -1103,128 +1123,20 @@ void mountPage({
 
 ```
 
-### Core Architecture Module: `apps/desktop/scripts/provider-ui-lifecycle-e2e.mjs`
-```
-import { assertProviderE2EProfile } from './provider-e2e-profile.mjs';
-// Real Desktop UI, IPC, SQLite and loopback server; fake keys only.
-import assert from 'node:assert/strict';
-import http from 'node:http';
-import fs from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
-import {createRequire} from 'node:module';
-import {chromium} from 'playwright-core';
-const require=createRequire(import.meta.url);
-assert.ok(/CindyGlobal-dev2-provider-auto-detection-[^/]+\/cindy-local-v1\.db$/.test(process.env.E2E_DB??''));
-const db=new (require('better-sqlite3'))(process.env.E2E_DB,{readonly:true});
-const out=await fs.mkdtemp(path.join(os.tmpdir(),'cindy-provider-ui-lifecycle-'));
-const wires=['openai-chat','openai-responses','anthropic-messages','google-generative-ai'];
-const model='e2e-lifecycle-model';
-const records=[],created=[],requests=[],held=[];
-let desired=wires[0],hold=false,reject=false;
-function frames(wire) {
-  const events = wire === 'openai-responses' ? [
-    { type: 'response.created', response: { id: 'reply' } },
-    { type: 'response.output_item.added', output_index: 0, item: { id: 'msg', type: 'message', role: 'assistant', content: [] } },
-    { type: 'response.output_text.delta', output_index: 0, content_index: 0, delta: 'OK' },
-    { type: 'response.completed', response: { id: 'reply', status: 'completed', output: [], usage: { input_tokens: 1, output_tokens: 1 } } },
-  ] : wire === 'anthropic-messages' ? [
-    { type: 'message_start', message: { id: 'reply', model, role: 'assistant', type: 'message', content: [], usage: { input_tokens: 1, output_tokens: 0 } } },
-    { type: 'content_block_start', index: 0, content_block: { type: 'text', text: '' } },
-    { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: 'OK' } },
-    { type: 'content_block_stop', index: 0 },
-    { type: 'message_delta', delta: { stop_reason: 'end_turn' }, usage: { output_tokens: 1 } },
-    { type: 'message_stop' },
-  ] : wire === 'google-generative-ai' ? [{ candidates: [{ content: { parts: [{ text: 'OK' }] }, finishReason: 'STOP' }] }] : [{ id: 'reply', object: 'chat.completion.chunk', choices: [{ index: 0, delta: { role: 'assistant', content: 'OK' } }] },
-    { id: 'reply', choices: [{ index: 0, delta: {}, finish_reason: 'stop' }], usage: { prompt_tokens: 1, completion_tokens: 1 } }];
-  return events;
-}
-const encode = events => events.map(e => `${e.type ? `event: ${e.type}\n` : ''}data: ${JSON.stringify(e)}\n\n`).join('');
-
-const server=http.createServer(async(req,res)=>{
- const parts=[];for await(const p of req)parts.push(p);
- const url=new URL(req.url,'http://fixture');
- const json=(body,status=200)=>{res.writeHead(status,{'content-type':'application/json'});res.end(JSON.stringify(body))};
- if(req.method==='GET')return url.pathname.endsWith('/models')?json({data:[{id:model}]}):json({error:'not found'},404);
- const wire=url.pathname.endsWith('/chat/completions')?wires[0]:url.pathname.endsWith('/responses')?wires[1]:url.pathname.endsWith('/messages')?wires[2]:wires[3];
- const requestModel=JSON.parse(Buffer.concat(parts).toString()||'{}').model??decodeURIComponent(url.pathname.split('/models/')[1]?.split(':')[0]??'');
- if(requestModel!==model)return json({error:'unexpected model'},400);
- const row={path:url.pathname,wire,model:requestModel,engine:req.headers['x-e2e-engine'],closed:false,key:req.headers.authorization??req.headers['x-api-key']??req.headers['x-goog-api-key']};
- requests.push(row);res.on('close',()=>{row.closed=true});
- const respond=()=>{if(res.destroyed)return;if(reject||wire!==desired)return json({error:{code:'unsupported_protocol',message:'protocol not supported'}},400);res.writeHead(200,{'content-type':'text/event-stream'});res.end(encode(frames(wire)))};
- if(hold)held.push(respond);else respond();
-});
-await new Promise(r=>server.listen(0,'127.0.0.1',r));
-const origin=`http://127.0.0.1:${server.address().port}`;
-let browser,page;
-const row=id=>db.prepare('SELECT * FROM custom_providers WHERE id=?').get(id.replace(/^custom:/,''));
-const persist=async()=>fs.writeFile(path.join(out,'results.json'),JSON.stringify({records,created,requests},null,2));
-async function record(name,details={}){records.push({name,pass:true,...details});await persist();if(await page.getByRole('dialog').count())await page.getByRole('dialog').screenshot({path:path.join(out,name+'.png')});console.log('PASS',name)}
-async function closeDialog(){if(await page.getByRole('dialog').count()){await page.getByRole('dialog').getByRole('button',{name:'取消',exact:true}).click();await page.getByRole('dialog').waitFor({state:'hidden'})}}
-async function open(name,base=origin+'/team/v1'){
- await closeDialog();await page.getByRole('button',{name:'添加供应商',exact:true}).click();await page.getByText('自定义端点',{exact:true}).click();
- await page.getByPlaceholder('我的 AI 供应商').fill(name);await page.getByPlaceholder('API 密钥',{exact:true}).fill('fake-lifecycle-key');await page.getByPlaceholder('https://api.myprovider.com/v1').fill(base);
- await page.getByText(model+' 自动识别',{exact:true}).waitFor();
-}
-async function success(){await page.getByText(/^连接成功（/).waitFor()}
-async function test(){await page.getByRole('dialog').getByRole('button',{name:'测试连接',exact:true}).click()}
-async function save(name){await page.getByRole('button',{name:'保存供应商',exact:true}).click();await page.getByRole('dialog').waitFor({state:'hidden'});
- const provider=await page.evaluate(async name=>(await window.electronAPI.maker.listProviders()).providers.find(p=>p.name===name),name);assert.ok(provider);created.push(provider.id);await persist();return provider}
-async function edit(name){await page.getByRole('button').filter({hasText:name}).first().click();await page.getByRole('button',{name:'更多操作',exact:true}).click();await page.getByRole('menuitem',{name:'编辑连接设置',exact:true}).click();await page.getByPlaceholder('我的 AI 供应商').waitFor()}
-try{
- browser=await chromium.connectOverCDP(process.env.E2E_CDP_URL ?? 'http://127.0.0.1:19427');await assertProviderE2EProfile(browser,process.env.E2E_DB);page=browser.contexts()[0].pages().find(p=>p.url().includes('/#/settings'));assert.ok(page);page.setDefaultTimeout(15000);
- for(const action of ['legacy','id'].includes(process.env.E2E_ONLY)?[]:['stop','close','address','key']){
-  await open('E2E lifecycle '+action);desired=wires[0];hold=true;const start=requests.length;await test();
-  while(requests.length===start)await page.waitForTimeout(20);
-  if(action==='stop')await page.getByRole('button',{name:'停止测试',exact:true}).click();
-  if(action==='close')await closeDialog();
-  if(action==='address')await page.getByPlaceholder('https://api.myprovider.com/v1').fill(origin+'/new/v1');
-  if(action==='key')await page.getByPlaceholder('API 密钥',{exact:true}).fill('fake-new-key');
-  await page.waitForTimeout(250);assert.equal(requests[start].closed,true,'old request must be aborted');
-  hold=false;
-  if(action==='close')await open('E2E lifecycle reopen');
-  await test();await success();const before=await page.getByPlaceholder('https://api.myprovider.com/v1').inputValue();
-  for(const release of held.splice(0))release();await page.waitForTimeout(300);
-  assert.equal(await page.getByPlaceholder('https://api.myprovider.com/v1').inputValue(),before);await success();
-  assert.equal(requests.length-start,2);if(action==='key')assert.equal(requests.at(-1).key,'Bearer fake-new-key');if(action==='address')assert.equal(requests.at(-1).path,'/new/v1/chat/completions');await record('cancel-'+action,{requests:requests.slice(start)});
- }
- for(const wire of ['legacy','id'].includes(process.env.E2E_ONLY)?[]:wires){
-  desired=wire;const name='E2E auto '+wires.indexOf(wire)+' '+Date.now();await open(name);const start=requests.length;await test();await success();
-  assert.deepEqual(requests.slice(start).map(r=>r.wire),wires.slice(0,wires.indexOf(wire)+1));
-  const base=await page.getByPlaceholder('https://api.myprovider.com/v1').inputValue();const again=requests.length;await test();await success();assert.equal(requests.length-again,1);assert.equal(requests.at(-1).wire,wire);
-  const p=await save(name);const stored=JSON.parse(row(p.id).runtimes);assert.equal(stored.pi.wireProtocol,wire);assert.equal(stored.pi.baseUrl,base);assert.equal(stored.pi.models[0].route.wireProtocol,wire);
-  await page.reload();await page.getByRole('button',{name:'添加供应商',exact:true}).waitFor();await edit(name);assert.equal(await page.getByPlaceholder('https://api.myprovider.com/v1').inputValue(),base);
-  const last=requests.length;await test();await success();assert.equal(requests.length-last,1);assert.equal(requests.at(-1).wire,wire);await closeDialog();
-  const result=await page.evaluate(id=>window.electronAPI.maker.testProviderConnection({kind:'saved',providerId:id,agent:'pi'}),p.id);assert.equal(result.ok,true,JSON.stringify(result));assert.equal(requests.at(-1).wire,wire);
-  await record('auto-save-reopen-call-'+wire,{base,stored});
- }
- if(!['legacy','id'].includes(process.env.E2E_ONLY)){desired=wires[0];const manual='E2E manual '+Date.now();await open(manual);const count=requests.length;const manualProvider=await save(manual);assert.equal(requests.length,count);assert.equal(JSON.parse(row(manualProvider.id).runtimes).pi.wireProtocol,wires[0]);await record('manual-save-without-probe');}
- if(!process.env.E2E_ONLY||process.env.E2E_ONLY==='id'){
-  desired=wires[0];
-  const prefix=('E2E long '+Date.now()+' ').padEnd(40,'a');
-  for(const ending of ['', ' first', ' second']){
-   const name=prefix+ending;await open(name);const p=await save(name);
-   assert.ok(p.id.length<=40);assert.equal(row(p.id).name,name);
-   await page.reload();await page.getByRole('button',{name:'添加供应商',exact:true}).waitFor();await edit(name);
-   assert.equal(await page.getByPlaceholder('我的 AI 供应商').inputValue(),name);
-   await page.getByRole('button',{name:'保存',exact:true}).click();await page.getByRole('dialog').waitFor({state:'hidden'});
-   assert.equal(row(p.id).name,name,'editing preserves the ID and display
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9021** (2026-11-05): **Linux 同机多个系统账号同时运行 Cindy 时，附件临时目录冲突导致传图失败（EPERM）**
-  *Symptoms*: **提交人**: Br1efx **客户端版本**: 0.1.125  ---  ## 现象  在同一台 Linux 机器上，两个不同的系统账号各自运行一份 Cindy。从另一台设备远程控制其中一个账号的 Cindy 并发送图片附件时失败，报错：  ``` Error invoking remote method 'device-link:invoke': Error: [DEVICE_LINK_MEDIA_TRANSFER_FAILED] EPERM: operation not permitted, chmod '/tmp/cindy-attachments' ```  ## 原因  附件临时根目录是 `app.getPath("temp")/cindy-attachments`，在 Linux 上默认就是 `/tmp/cindy-attachments`，所有系统账号共用同一个路径。  先启动的账号创建了该目录，权限为 `drwx------`（属主为该账号）。另一个账号的 Cindy 之后既无法 chmod，也无法在其中写入，于是附件传输失败。删除该目录也不能根本解决：重新创建后会轮到另一个账号出同样的问题。  ## 复现步骤  1. 在一台 Linux 机器上用系统账号 A 登录并启动 Cindy，触发一次附件传输（使 `/tmp/cindy-attachments` 被 A 创建）。 2. 用系统账号 B 登录同一台机器并启动 Cindy。 3. 从另一台已登录同一 Cindy 账号的设备远程控制账号 B 的 Cindy，在对话中发送一张图片。 4. 出现上述 EPERM 报错，图片发送失败。  ## 期望  不同系统账号运行的 Cindy 互不影响，附件临时目录不会因其他账号先创建而不可用。  ## 临时绕过  给受影响账号的 Cindy 设置独立的 `TMPDIR` 环境变量后再启动（例如指向该账号家目录下的缓存目录），附件临时目录就不再落在共享的 `/tmp` 下。  ## 环境  - 系统：Linux（同一台机器上两个系统账号各运行一份 Cindy） - 场景：通过另一台设备的远程连接（device-link）发送图片附件时出现 --- ## 相关日志  提交客户端本机最近 2 小时的运行日志摘录，不代表已定位故障，也不包含 SSH 远端或手机日志。已按来源和字段白名单过滤并脱敏；不读取对话正文或原始请求响应。 ```text - 2026-11-05T11:17:58.067Z [WARN] [main/device-link] dropped 1 discardable pending frame(s) (best-effort push [REDACTED:path] - 2026-11-05T11:45:27.490Z [INFO] [main/updateService] Poll timer fires - 2026-11-05T11:45:27.491Z [INFO] [main/manifestService] Fetching (release channel): [REDACTED:url]<redacted:url-query-value> - 2026-11-05T11:45:28.517Z [INFO] [main/manifestService] Fetched OK: app.version=0.1.126, hotfix=none - 2026-11-05T11:45:28.517Z [INFO
+- **Issue #9423** (2026-11-09): **bug: 远程任务的手机通知深链指向控制端电脑，点击后提示「这台电脑没有返回该任务的信息」**
+  *Symptoms*: ### 问题描述 / What happened  电脑 A 远程查看电脑 B 上的任务时，B 的任务完成、出错或等待回复，A 会替它给手机发系统推送。但推送深链里写的是 **A 的设备 ID**，任务实际在 B 上。  iOS 点击这条通知后去 A 读取任务，A 本地没有这条任务，返回 `NOT_FOUND`，入口页显示：  > 打开任务 > 这台电脑没有返回该任务的信息 > [重新读取] [返回]  点「重新读取」仍然去问 A，所以永远打不开。  **期望**：通知深链指向任务实际所在的电脑（B），点击后直接打开任务。  ### 环境 / Environment  - Cindy 版本或 commit：代码链路已在 upstream main `5c81ec6d7e` 上核对，仍然存在 - 平台与版本：macOS 桌面端（多台电脑同一账号，A 远程查看 B 的任务）+ iOS 手机端 - 安装方式：桌面端为基于 upstream 自行打包；iOS 为 Cindy Mobile  ### 复现步骤 / Steps to reproduce  1. 电脑 A、电脑 B 和 iOS 手机登录同一账号，手机开启推送；A 的侧栏能看到 B 的任务。 2. 让 A 的 Cindy 窗口失去焦点（`deliverSessionEventNotification` 在 `document.hasFocus()` 时不发通知）。 3. 在 B 上运行一个任务，等它完成、出错或等待回复。 4. 手机收到由 A 代发的通知，点击后提示「这台电脑没有返回该任务的信息」；点「重新读取」仍然失败。  ### 代码链路（upstream main `5c81ec6d7e`）  **1. 控制端 A 会对远程任务发通知事件** - [`CCAgentSidebarUpper.tsx#L1244`](https://github.com/makecindy/cindy/blob/5c81ec6d7ee47d07677ac1ff762915e8421e3d13/apps/desktop/src/renderer/features/cc-agent/CCAgentSidebarUpper.tsx#L1244)：查找通知对象时包含远程任务镜像 `remoteSessionsForNotificationRef`。 - [`CCAgentSidebarUpper.tsx#L1274`](https://github.com/makecindy/cindy/blob/5c81ec6d7ee47d07677ac1ff762915e8421e3d13/apps/desktop/src/renderer/features/cc-agent/CCAgentSidebarUpper.tsx#L1274)：远程任务以 `remoteDevice: !!session.deviceLinkDeviceId` 发出。 - [`sessionEventNotification.ts#L140`](https://github.com/makecindy/cindy/blob/5c81ec6d7ee47d07677ac1ff762915e8421e3d13/apps/desktop/src/renderer/lib/sessionEventNotification.ts#L140)：远程任务完成时同样走到投递。  **2. 交给 main 时开着手机通道，但没带任务所在设备** - [`sessionEv
 
-- **Issue #8954** (2026-11-05): **bug(desktop): 文件浏览器读取失败提示在窄面板下被裁切**
-  *Symptoms*: ## 问题描述  在文件浏览器中，文件读取失败的提示包含较长的文件路径。缩窄面板后，部分错误文字被裁切，无法完整阅读。  移动任务到另一个目录可以触发这个提示：原来打开的文件在新目录中不存在时，会显示 `ENOENT`。本单只记录错误提示的显示问题，不将文件不存在时的报错本身作为缺陷。  ## 环境  - 系统：Windows 11 - Cindy：0.1.126（CN） - 入口：任务中的文件浏览器  ## 复现步骤  1. 准备两个文件夹：「切换对照项目」和「20目录项目」。在「切换对照项目」中放一个「仅对照项目.txt」，「20目录项目」中不放这个文件。目录路径较长时更容易观察到。 2. 新建任务时，选择「切换对照项目」作为文件目录。 3. 打开文件浏览器，点击「仅对照项目.txt」，确认文件内容正常显示。 4. 点击任务旁的三个点，选择「移动任务」。 5. 选择「20目录项目」。文件树正常切换到新目录，预览区显示文件读取失败提示。 6. 缩窄文件浏览器面板，观察错误提示的文字。  ## 实际结果  - 较宽面板下，错误提示能显示较完整。 - 缩窄后，长路径的一部分超出可见区域并被裁切，不能完整阅读。 - 点击新目录中存在的文件，可以恢复正常预览。 - 普通长文本文件预览正常，没有出现同样的裁切问题。  ## 预期结果  错误提示应根据面板宽度合理换行；对于较长路径，也应能通过换行、滚动或详情查看等方式完整阅读，不应直接裁掉文字。  ## 日志与截图  提示内容包含：  ```text 读取文件失败：Error: ENOENT: no such file or directory, realpath ```  后面跟随新目录下不存在的「仅对照项目.txt」的路径。  **图 1：较宽面板。**任务已移动到「20目录项目」，右侧文件树正常显示新目录，原来打开的「仅对照项目.txt」显示读取失败提示；此时错误文字和路径显示较完整。  <img width="1237" height="1301" alt="较宽面板下的文件读取失败提示" src="https://github.com/user-attachments/assets/26f99190-623c-4798-8f22-43aa946576c6" />  **图 2：缩窄面板后。**同一条错误提示中的长路径超出预览区域，部分文字被裁切，无法完整阅读。重点对比两张图中间的错误提示区域。  <img width="680" height="1340" alt="窄面板下长错误提示被裁切" src="https://github.com/user-attachments/assets/b9214707-b4a0-4d1e-8a65-f349bc6f8f11" />  ## 相关记录  在 PR #8793 的文件树恢复测试过程中发现。本单是错误提示的布局问题，尚不能确定与该 PR 的改动有关。  ## 影响  影响错误信息的可读性，不阻断继续浏览其他文件。重新选择有效文件后可以正常使用。
+- **Issue #9364** (2026-11-09): **回合结束派发队首时撞上「伙伴能力正在刷新」，输入队列永久卡住、不再自动派发**
+  *Symptoms*: **提交人**: Max **客户端版本**: 0.1.124  ---  ## 现象  伙伴（teammate）名下的一个任务，上一回合正常结束时，输入队列里已经排着几条其他任务通过跨任务投递（send_to_session）发来的消息。回合结束后队列没有派发，之后约 8 小时一直不动：  - 后续每条跨任务投递都只记 `send_to_session queued while target busy`，不会触发派发； - 该任务挂的定时任务每次叫醒都排到队尾，等满 30 分钟后 `queued heartbeat exceeded max dispatch wait, withdrawing`，90 秒后重排，循环往复； - 任务摘要（get_task_digest）显示 `phase=finished`、`error=null`、`queued_count=5`；get_session_runtime 显示 `completed`、未在运行；list_session_queue 里所有条目 `consuming=false`。从这几个查询看不出任务被卡住。  ## 时序（来自本机主日志）  1. 回合结束（reason: turn-done），输入协调器尝试派发队首； 2. 同一秒内，伙伴运行时在空闲边界刷新（`Bot compact runtime refreshed at idle boundary`，约 18 秒后完成）； 3. 队首派发被拒：`pre-accept send failed; restored queue head`，error 为 `[PRECONDITION_FAILED] 伙伴能力正在刷新，请稍后再发送`； 4. 刷新完成后，没有任何重新派发；队列保持卡住，直到人工处理。  ## 可能的原因（根据日志推断）  - 这个拒绝本身是暂时性的（刷新几秒后就完成），但走的是「派发前失败 → 恢复队首、进入队首恢复态」的路径，没有像「会话仍在运行」那类竞态一样自动重试； - 队首恢复态下，回合结束和新消息入队都不会再派发；跨任务投递和定时任务投递也不会解除这个状态，只有在该任务界面里手动重试才行； - 还有一个风险：如果用户此时在这个任务里直接打字，会丢弃这条失败的队首消息（日志 `explicit user input abandoned queue-head message (never accepted)`）。这条消息往往是别的任务的移交，丢了也不会提示发送方。  ## 同类记录  最近 6 天本机日志里还有 3 次同一条 `pre-accept send failed; restored queue head`（reason 也是 turn-done），错误是 `Session ... is closing`（协同 worker 关闭期间）。其中 2 个 worker 的队列里至今各压着 1 条消息。  ## 期望  1. 「伙伴能力正在刷新」这类暂时性拒绝，按暂时性失败处理：刷新完成后自动重试队首； 2. 至少让任务摘要、队列查询暴露这个阻塞状态（例如 error / 恢复态），并给跨任务调用方一个「重试队首」的入口。现在其他任务和定时任务只能看到「排队中」，不知道需要人工点重试； 3. 手打新消息时，如果要丢弃失败的队首，最好提示一下，或者改成把它保留在队列里。  ## 出问题的任务  - 伙伴名下任务，Claude Code，权限为完全放开 - 队列里的消息来自其他任务的 send_to_session 和定
   **Post-Mortem & Fix Analysis**:
-  > ### 判断  更新：提报者补充图注进一步明确了长路径裁切发生在中间预览区的错误展示节点。文件读取失败提示在窄面板下应保持完整可读；当前现象属于错误占位容器缺少连续字符串断行规则与溢出保护，导致 Windows 反斜杠等长路径溢出父级边界，值得进行轻量样式修复。  进一步检查发现，文件浏览器中普通文本预览依赖 CodeMirror 自带的折行与滚动机制，因此缩窄时表现正常；而读取失败（如移动任务导致原打开文件不存在触发 `ENOENT`）走的是 `FileBodyView` 的独立静态文本分支。该分支缺少强制换行与纵向滚动，叠加父级容器的隐藏溢出，引发了裁切。  ### 行动  **首要行动（前端开发）**： - 修改 `apps/desktop/src/renderer/features/cc-agent/workdir-browse/FileBodyView.tsx` 中 `content.kind === 'error'` 分支的容器样式：   1. 补充 `break-all`（或 `[overflow-wrap:anywhere]`），确保 Windows/POSIX 连续长路径及错误信息在容器边界处自动折行；   2. 容器补充 `overflow-y-auto` 与适度内边距，确保超长错误信息在极窄面板或垂直空间不足时可纵向滚动完整阅读；   3. 增加 `select-text`，确保用户能够完整选中并复制错误提示及路径文本。 - **完成条件**：在 Windows / macOS 客户端任务侧栏文件浏览器中，打开包含深层多级目录的不存在文件触发读取失败，将面板宽度拖至 200px 以下，验证错误信息能根据容器宽度正常换行并完整阅读，纵向超长时可正常滚动，不再出现文字水平裁切。  ### 关键证据  1. **容器样式缺失换行规则**：静态核对主干快照（`b8dae3974df`），`FileBodyView.tsx` 中 `content.kind === 'error'` 的渲染节点为 `<div className="flex h-full w-full items-center justify-center px-8 text-center text-13 text-[var(--cmd-palette-item-meta)]" title
-  > <!-- pr-watch-merged:makecindy/cindy#8999 --> @zjiang208-cpu 关联 PR #8999 已合并，本 Issue 已处理完成并关闭。如发现问题请继续反馈。
+  > ## 判断与分析  伙伴在回合结束触发空闲边界能力刷新时，输入协调器应当安全等待或自动重试排队的队首输入，保障跨任务投递与自动化调度的消息可靠派发。结合当前 main 工作区快照（`4b11aa5de9eed001c501467ea8e0adc8ed8b8a92`）源码与近期 PR 演进核查：  1. **根因时序与状态锁定**：    - 上一回合结束触发 `turn-done` 调度 `AgentInputCoordinator.drain()`；同时会话转入空闲边界，触发伙伴紧凑运行时刷新（`Bot compact runtime refreshed at idle boundary`，进程级重建耗时约十余秒）。    - `drain()` 提取队首并调用 `sendToAgentAccepted`，进入 `prepareBotCapabilityEpochBeforeSend`。因能力刷新正在进行（`inFlight`），接口返回 `deferred` 并抛出 `[PRECONDITION_FAILED] 伙伴能力正在刷新，请稍后再发送`。    - `AgentInputCoordinator.drain()` 捕获该错误后，未将其归入类似 `SESSION_RUNNING` 的暂时性生命周期让位，而是按普通 pre-accept 失败执行 `latest.recovery = { kind: 'queue-head', clientId }` 并还原队首。    - 队首一旦处于 `queue-head` 恢复态，`explainDrainBlockGate` 恒返回 `recovery-pending`，阻断后续一切自动派发；刷新完成后没有向协调器发唤醒通知，后续 `send_to_session` 与定时任务也被判定为目标忙碌，形成死锁。    - 任务摘要（`get_task_digest`）读取的是上一轮正常结算的观测层状态，因而显示 `phase=finished, error=null`，使外部任务无法感知队列已陷入恢复态。  2. **已有修复的覆盖范围**：    - 已合并的 PR #9079（`fix(bots): 后台任务运行时不再拦截伙伴发送`）处理了“仅被后台任务推迟能力刷新”的场景（返回 `'kept-current-run
+  > 我来认领并调查这个队列卡住问题。先复现能力刷新与队首派发撞车的最小时序，区分暂时性拒绝和真正需要人工处理的失败，再补回归测试和修复，完成后提交 PR。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1241,332 +1153,490 @@ try{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9ea6286` (2026-11-05)
-**Commit Message**: fix(computer): retain input failure diagnostics and align recovery advice
+### Incident Patch 1: `a6ad1f40` (2026-11-09)
+**Commit Message**: fix(providers): wrap account controls in narrow weighted layouts
+
+Constrain and wrap the account action group to the available width. Reproduce the overflow with a 320px weighted Codex fixture and verify the existing browser overflow check fails before the fix and passes after it.
 
 Assisted-by: Cindy (https://cindy.app)
-Signed-off-by: Dash <[REDACTED_EMAIL]>
+Signed-off-by: Lizi <[REDACTED_EMAIL]>
 
-**File**: `packages/lizi-mcps/src/computer/README.md` (modified, +14/-0)
+**File**: `apps/desktop/scripts/fixtures/subscription-accounts/fixture.tsx` (modified, +3/-3)
 ```diff
-@@ -71,6 +71,20 @@ is usually redundant.
-   Electron / browser targets. `set_value` was verified on Cindy's own composer:
-   the field updates and its send button enables, without focus.
+@@ -76,7 +76,7 @@ function Section({ codexPool }: { codexPool: boolean }) {
  
-+## Input failure advice
-+
-+For `type_text`, `background_unavailable` and `type_text_incomplete` preserve
-+error codes and structured progress/uncertainty, but replace driver recovery
-+prose with Cindy MCP guidance. The driver may suggest pixel-targeted typing or
-+foreground retries; Cindy's `type_text` schema does not accept `x/y` and a refusal
-+must not trigger an automatic route change. Inspect web-content fields with
-+`get_window_state`; `set_value` with a fresh element token is the supported text
-+route when continuing is appropriate. After incomplete typing, do not resend the
-+text or suffix without inspecting what happened. Observation success is not
-+input completion. This applies to both thrown errors and returned refusals.
-+See [result.ts](result.ts) and the MCP-entry regressions in
-+[computerMcpServer.test.ts](computerMcpServer.test.ts).
-+
- ## CUA 0.37 compatibility
- 
- On 2026-10-22, a read-only native check reproduced `typed_output_mismatch`
+ void mountPage({
+   host: (ctx) => {
+-    const isCodex = ctx.case === 'codex';
++    const isCodex = ctx.case === 'codex' || ctx.case === 'narrow-weight';
+     let view: SubscriptionPoolView = {
+       providerId: isCodex ? 'openai' : 'anthropic',
+       configured: true,
+@@ -146,9 +146,9 @@ void mountPage({
+   render: (ctx) => (
+     <main
+       className="mx-auto w-full max-w-[680px] min-w-0"
+-      style={ctx.case === 'narrow' ? { maxWidth: 320 } : undefined}
++      style={ctx.case === 'narrow' || ctx.case === 'narrow-weight' ? { maxWidth: 320 } : undefined}
+     >
+-      <Section codexPool={ctx.case === 'codex'} />
++      <Section codexPool={ctx.case === 'codex' || ctx.case === 'narrow-weight'} />
+     </main>
+   ),
+ });
 ```
 
-**File**: `packages/lizi-mcps/src/computer/computerMcpServer.test.ts` (modified, +35/-0)
+**File**: `apps/desktop/scripts/fixtures/subscription-accounts/ui-page.mjs` (modified, +2/-1)
 ```diff
-@@ -500,6 +500,41 @@ describe('createComputerMcpServer', () => {
-     await h.cleanup();
+@@ -9,6 +9,7 @@ export default {
+   cases: {
+     default: { about: 'Three Claude accounts: provider card on the default row, a low weekly quota, a paused limited account' },
+     narrow: { about: '320-pixel content width without clipped account controls' },
++    'narrow-weight': { about: '320-pixel content width with task limit, weight, assignment and account menu controls' },
+     codex: { about: 'Codex accounts and weight strategy' },
+     error: { about: 'Unavailable status read and inline retry on focus' },
+   },
+@@ -28,7 +29,7 @@ export default {
+         return `${Math.round(box.left)}-${Math.round(box.right)}`;
+       }),
+     );
+-    assert.equal(bars.length, ui.case === 'codex' ? 6 : 8);
++    assert.equal(bars.length, ui.case === 'codex' || ui.case === 'narrow-weight' ? 6 : 8);
+     assert.deepEqual([...new Set(bars)], [bars[0]]);
+     await page.getByRole('button', { name: await ui.t('providerGroup.member.moreAria', { name: 'alex@example.com' }) }).click();
+     await page.getByRole('menuitem', { name: await ui.t('subscriptionAccounts.openDirectory') }).waitFor();
+```
+
+**File**: `apps/desktop/src/renderer/components/settings/SubscriptionAccountsSection.tsx` (modified, +1/-1)
+```diff
+@@ -329,7 +329,7 @@ export function SubscriptionAccountsSection({
+                           </div>
+                         </div>
+                       </div>
+-                      <div className="ml-auto flex shrink-0 items-center gap-1.5">
++                      <div className="ml-auto flex max-w-full shrink-0 flex-wrap items-center justify-end gap-1.5">
+                         <Select
+                           {...accountSetting.controlProps}
+                           label={t('providerGroup.member.limitAria', { name })}
+```
+
+---
+
+### Incident Patch 2: `68eab812` (2026-11-09)
+**Commit Message**: fix(pi): 采集重试的末次上报修正与模板派发的 provisional 等待
+
+Review round 1(Greptile 1 + Codex 2,P2×3):
+
+- isFinalAttempt 差一:第 3 次失败就打 giving up,但第 4 次采集还会跑
+  ——末次成功留下错误的放弃记录,末次失败反而无日志。改为每次失败的
+  采集都上报,只有不会再有下一次采集时才标 final。
+- 非 loaded manifest 提前发布后,awaitRuntimeCapabilitiesForSlashCommand
+  因 runtimeCapabilityManifest 已定义而早退,重试 pending 期间 /template
+  被当普通文本逃逸。门收窄为 status==='loaded':重试链在跑就等它
+  (per-attempt 发布让等待中的清单升级为 loaded),耗尽时 race 立即返回。
+- 测试断言同步更新(末次失败也进 failures,且标 final)。
+
+Assisted-by: Cindy (https://cindy.app)
+Signed-off-by: Zhang Yunjin <[REDACTED_EMAIL]>
+
+**File**: `packages/maker-core/src/agents/pi/__tests__/runtime-capabilities.test.ts` (modified, +6/-1)
+```diff
+@@ -475,7 +475,12 @@ describe('capturePiRuntimeCapabilitiesWithRetry', () => {
+     expect(manifest.status).toBe('unknown');
+     expect(manifest.error?.code).toBe('timeout');
+     expect(requests).toBe(3);
+-    expect(failures).toEqual([{ attempt: 1, isFinal: false }, { attempt: 2, isFinal: true }]);
++    // 每次(含末次)失败都上报;只有末次(不会再有下一采)标 final。
++    expect(failures).toEqual([
++      { attempt: 1, isFinal: false },
++      { attempt: 2, isFinal: false },
++      { attempt: 3, isFinal: true },
++    ]);
    });
  
-+  // CU-018: driver errors suggested unsupported x/y or a foreground retry.
-+  // Unit: real MCP entry, both returned refusals and thrown adapter errors;
-+  // verify guidance and partial-delivery evidence without dispatching another input.
-+  it.each(['throw', 'return'] as const)('normalizes input failure advice (%s)', async mode => {
-+    for (const code of ['background_unavailable', 'type_text_incomplete']) {
-+      const progress = { completed_chars: 2, remaining_chars: 3 };
-+      const rawMessage = 'Use pixel-targeted type_text (x,y) or delivery_mode:"foreground"; retry only the remaining suffix';
-+      const deps: ComputerMcpDeps = { getStatus: vi.fn(), callTool: vi.fn(async name => {
-+        if (name !== 'type_text') return { windows: [] };
-+        if (mode === 'throw') throw Object.assign(new Error(rawMessage), {
-+          code, outcomeUnknown: true, inputProgress: progress,
-+        });
-+        return { ok: false, code, message: rawMessage, hint: rawMessage,
-+          next_call: { tool: 'type_text', arguments: { x: 1, y: 2 } },
-+          outcome_unknown: true, input_progress: progress };
-+      }) };
-+      const h = await makeHarness(deps);
-+      try {
-+        const result = await h.client.callTool({ name: 'call_tool', arguments: {
-+          name: 'type_text', args: { pid: 123, text: 'hello' },
-+        } });
-+        const payload = textPayload(result) as { data: { message: string } };
-+        expect(payload).toMatchObject({ ok: false, errorCode: code,
-+          data: { outcome_unknown: true, input_progress: progress } });
-+        expect(payload.data.message).toContain('get_window_state');
-+        expect(payload.data.message).toContain(code === 'background_unavailable' ? 'set_value' : 'Do not resend');
-+        expect(JSON.stringify(payload)).not.toContain(rawMessage);
-+        expect(payload.data).not.toHaveProperty('next_call');
-+        const calls = vi.mocked(deps.callTool).mock.calls;
-+        expect(calls.filter(([name]) => name === 'type_text')).toHaveLength(1);
-+        expect(calls.map(([name]) => name)).toEqual(mode === 'throw' ? ['type_text', 'list_windows'] : ['type_text']);
-+      } finally { await h.cleanup(); }
-+    }
+   it('stops retrying once the session is closed or a newer generation superseded the refresh', async () => {
+```
+
+**File**: `packages/maker-core/src/agents/pi/index.ts` (modified, +4/-1)
+```diff
+@@ -6456,7 +6456,10 @@ export class PiAgent extends BaseAgent {
+     };
+     const awaitRuntimeCapabilitiesForSlashCommand = async (text: string): Promise<void> => {
+       const trimmed = text.trimStart();
+-      if (!trimmed.startsWith('/') || trimmed.startsWith('/skill:') || runtimeCapabilityManifest) return;
++      // 只有已确认 loaded 的清单才能放行派发;非 loaded(unknown/failed)清单是
++      // 过渡快照:若重试链仍在跑,等它(重试成功会升级为 loaded);重试已耗尽时
++      // runtimeCapabilityRefreshPromise 为 undefined,race 立即返回,按原样逃逸。
++      if (!trimmed.startsWith('/') || trimmed.startsWith('/skill:') || runtimeCapabilityManifest?.status === 'loaded') return;
+       // get_commands starts asynchronously after Pi's ready boundary. A prompt
+       // template selected on a brand-new task must wait for that exact runtime
+       // catalog instead of being escaped into ordinary model text.
+```
+
+**File**: `packages/maker-core/src/agents/pi/runtime-capabilities.ts` (modified, +8/-4)
+```diff
+@@ -365,7 +365,7 @@ export async function capturePiRuntimeCapabilityManifest(
+  * Skill 永远灰)。所以在非 loaded 结果上带退避重试,覆盖 bridge 的预算上界。
+  * 每个 attempt 的结果都经 onAttemptFailed 即时上报(调用方应即时发布,
+  * 让面板先看到 failed/unknown 而不是长时间 undefined);isFinalAttempt=true
+- * 表示重试已耗尽(此后不会再采),调用方应升级为 warn。
++ * 表示重试已耗尽且不会再有下一次采集,调用方应升级为 warn。
+  */
+ export const PI_RUNTIME_CAPABILITY_RETRY_DELAYS_MS = [4_000, 10_000, 20_000] as const;
+ 
+@@ -391,10 +391,14 @@ export async function capturePiRuntimeCapabilitiesWithRetry(
+     }));
+   let manifest = await capturePiRuntimeCapabilityManifest(requester, identity, generation, stage);
+   let attempt = 0;
+-  while (manifest.status !== 'loaded' && attempt < retryDelaysMs.length) {
++  while (manifest.status !== 'loaded') {
+     attempt += 1;
+-    opts.onAttemptFailed?.(manifest, attempt, attempt === retryDelaysMs.length);
+-    if (opts.isCurrent && !opts.isCurrent()) return manifest;
++    // 每次失败的采集都要上报(含最后一次);isFinalAttempt 只在不会再有
++    // 下一次采集时为 true —— 否则「放弃」日志先于真正的末次尝试出现,
++    // 末次成功留下错误的放弃记录、末次失败反而无日志(Greptile/Codex P2)。
++    const isFinalAttempt = attempt > retryDelaysMs.length;
++    opts.onAttemptFailed?.(manifest, attempt, isFinalAttempt);
++    if (isFinalAttempt || (opts.isCurrent && !opts.isCurrent())) return manifest;
+     await sleep(retryDelaysMs[attempt - 1]!);
+     if (opts.isCurrent && !opts.isCurrent()) return manifest;
+     manifest = await capturePiRuntimeCapabilityManifest(requester, identity, generation, stage);
+```
+
+---
+
+### Incident Patch 3: `2dcf9281` (2026-11-09)
+**Commit Message**: fix(pi): 运行时能力采集带退避重试,治新任务预热后项目 Skill 永灰
+
+bridge MCP 初始化在扩展加载期同步占用 ready 窗口:每 server startup
+预算默认 10s(可配至 30s),而 runtime capability 采集的请求超时只有
+5s(PI_RUNTIME_CAPABILITY_TIMEOUT_MS)。宿主侧任何慢/黑洞 MCP 都让
+首次采集超时 → manifest status='unknown' → merge 门跳过 → 项目
+Skill 永远 discovered(面板置灰)。采集一次性、无重试、完全静默
+(2026-11-09 实报:新任务打字预热后 openspec 命令 5 分钟不亮)。
+
+修复:
+- capturePiRuntimeCapabilitiesWithRetry:非 loaded 结果带退避重试
+  (4s/10s/20s,覆盖 bridge 启动预算上界),会话关闭/更新代接替立即中止;
+- 每个 attempt 的 manifest 都立即发布(失败也发),面板先看到
+  failed/unknown 而不是长时间 undefined,重试成功自动升级 loaded;
+- 采集失败从完全静默改为可观测:重试期 info,耗尽仍失败升 warn;
+- 模板派发的 capabilities 等待加 10s 上限,不随重试链拖长。
+
+回归测试:runtime-capabilities.test.ts 新增 4 用例(超时后重试成功/
+有界放弃/关闭即中止/首次即成功不 sleep);红→绿已验证。
+
+Assisted-by: Cindy (https://cindy.app)
+Signed-off-by: Zhang Yunjin <[REDACTED_EMAIL]>
+
+**File**: `packages/maker-core/src/agents/pi/__tests__/runtime-capabilities.test.ts` (modified, +120/-0)
+```diff
+@@ -1,7 +1,9 @@
+ import { describe, expect, it } from 'vitest';
+ import path from 'node:path';
++import type { PiRpcResponse } from '../rpc-client.js';
+ 
+ import {
++  capturePiRuntimeCapabilitiesWithRetry,
+   capturePiRuntimeCapabilityManifest,
+   identifyManagedPiPackageCommandNames,
+   parsePiRuntimeCommands,
+@@ -392,3 +394,121 @@ describe('Pi runtime capability parsing', () => {
+     expect(manifest).toMatchObject({ status: 'failed', error: { code: 'malformed_response' } });
+   });
+ });
++
++describe('capturePiRuntimeCapabilitiesWithRetry', () => {
++  // 2026-11-09 实报:bridge MCP 初始化在扩展加载期占用 ready 窗口(每 server
++  // startup 预算默认 10s),单次采集的 5s 请求预算必超 —— 一次性采集产出
++  // status='unknown' 后无重试、无日志,新任务预热的项目 Skill 永远灰。
++  const command = {
++    name: 'skill:fixture',
++    description: 'fixture skill',
++    source: 'skill',
++    sourceInfo: { source: 'auto', scope: 'project', baseDir: '/proj', path: '/proj/.pi/skills/fixture' },
++  };
++  const loadedResponse: PiRpcResponse = {
++    type: 'response',
++    id: '1',
++    command: 'get_commands',
++    success: true,
++    data: { commands: [command] },
++  };
++  const timeoutError = new Error('pi rpc timeout after 5000ms: get_commands');
++
++  function deferredRequester(failTimes: number) {
++    const requests: Array<Promise<unknown>> = [];
++    let calls = 0;
++    return {
++      get callCount() { return calls; },
++      request: async () => {
++        calls += 1;
++        const promise = calls <= failTimes
++          ? Promise.reject(timeoutError)
++          : Promise.resolve(loadedResponse);
++        requests.push(promise);
++        return promise;
++      },
++    };
++  }
++
++  const instantSleep = async () => undefined;
++
++  it('retries a timed-out capture until the runtime catalog answers (bridge startup budget > capture budget)', async () => {
++    const requester = deferredRequester(1);
++    const sleeps: number[] = [];
++    const failures: Array<{ status: string; attempt: number; isFinal: boolean }> = [];
++    const manifest = await capturePiRuntimeCapabilitiesWithRetry(
++      requester,
++      { sessionId: 's1' },
++      1,
++      'ready',
++      {
++        retryDelaysMs: [4_000, 10_000, 20_000],
++        sleep: async (delayMs) => { sleeps.push(delayMs); },
++        onAttemptFailed: (failed, attempt, isFinal) => failures.push({ status: failed.status, attempt, isFinal }),
++      },
++    );
++    expect(manifest.status).toBe('loaded');
++    expect(manifest.commands).toHaveLength(1);
++    expect(requester.callCount).toBe(2);
++    expect(sleeps).toEqual([4_000]);
++    expect(failures).toEqual([{ status: 'unknown', attempt: 1, isFinal: false }]);
 +  });
 +
-   it('dispatches zoom with cua-driver 0.5 region bounds', async () => {
-     const deps: ComputerMcpDeps = {
-       getStatus: vi.fn(),
-```
-
-**File**: `packages/lizi-mcps/src/computer/result.ts` (modified, +16/-0)
-```diff
-@@ -78,3 +78,19 @@ export function computerResultOutcome(
-   }
-   return { ok: true };
- }
++  it('gives up after the bounded retries and keeps the last failed manifest', async () => {
++    let requests = 0;
++    const probe = {
++      get callCount() { return requests; },
++      request: async () => { requests += 1; throw timeoutError; },
++    };
++    const failures: Array<{ attempt: number; isFinal: boolean }> = [];
++    const manifest = await capturePiRuntimeCapabilitiesWithRetry(
++      probe as Parameters<typeof capturePiRuntimeCapabilityManifest>[0],
++      { sessionId: 's1' },
++      1,
++      'ready',
++      {
++        retryDelaysMs: [4_000, 10_000],
++        sleep: instantSleep,
++        onAttemptFailed: (_failed, attempt, isFinal) => failures.push({ attempt, isFinal }),
++      },
++    );
++    expect(manifest.status).toBe('unknown');
++    expect(manifest.error?.code).toBe('timeout');
++    expect(requests).toBe(3);
++    expect(failures).toEqual([{ attempt: 1, isFinal: false }, { attempt: 2, isFinal: true }]);
++  });
 +
-+/** Driver recovery prose may advertise parameters/routes the Cindy MCP does not expose. */
-+export function normalizeInputFailureAdvice(name: string, code: string | undefined, data: unknown): unknown {
-+  if (name !== 'type_text' || !data || typeof data !== 'object' || Array.isArray(data)) return data;
-+  let message: string;
-+  if (code === 'background_unavailable') {
-+    message = 'Background text input was refused. Stop and report the refusal; do not switch to foreground or shell-simulated input to bypass it. For Electron/browser/web-content fields, use get_window_state to inspect the target; set_value with a fresh element_token is the supported text route when continuing is appropriate. Cindy type_text does not accept x/y.';
-+  } else if (code === 'type_text_incomplete') {
-+    message = 'Text input did not complete; some characters may already have been delivered. Do not resend the text or its suffix, switch delivery modes, or use shell-simulated input. Stop and report the incomplete input. Use get_window_state to inspect the current field before deciding how to continue; a successful observation does not mean the input completed.';
-+  } else {
-+    return data;
-+  }
-+  // Replace conflicting recovery prose, not the error code, progress or uncertainty.
-+  const { hint: _hint, next_call: _nextCall, summary: _summary, escalation: _escalation, ...evidence } = data as Record<string, unknown>;
-+  return { ...evidence, message };
-+}
++  it('stops retrying once the session is closed or a newer generation superseded the refresh', async () => {
++    const requester = deferredRequester(Number.POSITIVE_INFINITY);
++    let current = true;
++    const manifest = await capturePiRuntimeCapabilitiesWithRetry(
++      requester,
++      { sessionId: 's1' },
++      1,
++      'ready',
++      {
++        sleep: instantSleep,
++        isCurrent: () => current,
++        // 首次失败即关闭会话/被新代接替:重试必须立刻中止。
++        onAttemptFailed: () => { current = false; },
++      },
++    );
++    expect(manifest.status).toBe('unknown');
++    expect(requester.callCount).toBe(1);
++  });
++
++  it('does not sleep when the first capture already reports loaded', async () => {
++    const requester = deferredRequester(0);
++    const sleeps: number[] = [];
++    const manifest = await capturePiRuntimeCapabilitiesWithRetry(
++      requester,
++      { sessionId: 's1' },
++      1,
++      'ready',
++      { retryDelaysMs: [4_000], sleep: async (delayMs) => { sleeps.push(delayMs); } },
++    );
++    expect(manifest.status).toBe('loaded');
++    expect(requester.callCount).toBe(1);
++    expect(sleeps).toEqual([]);
++  });
++});
 ```
 
-**File**: `packages/lizi-mcps/src/computer/server.ts` (modified, +4/-4)
+**File**: `packages/maker-core/src/agents/pi/index.ts` (modified, +61/-31)
 ```diff
-@@ -24,7 +24,7 @@ import {
- } from "./tools.js";
- import { logToolResultErrorCode } from "../tool-error-telemetry.js";
- import { WindowSnapshotTracker } from "./snapshot-tracker.js";
--import { computerResultOutcome, isUnavailableWindowObservation } from "./result.js";
-+import { computerResultOutcome, isUnavailableWindowObservation, normalizeInputFailureAdvice } from "./result.js";
+@@ -211,7 +211,7 @@ import { PI_RPC_OVERSIZED_FRAME_ERROR, PiRpcProcess, type PiRpcEvent } from './r
+ import { createPiStdioTransport, type PiTransport } from './transport.js';
+ import type { PiRemoteFileOps } from '../base-agent.js';
  import {
-   canLocateRunningApp,
-   exactInstalledAppBundle,
-@@ -762,7 +762,7 @@ export function createComputerMcpServer(
-           ...outcome,
-           tool: name,
-           ...(snapshotId ? { snapshot_id: snapshotId } : {}),
--          data: withoutDuplicateElements(name, data),
-+          data: normalizeInputFailureAdvice(name, outcome.ok ? undefined : outcome.errorCode, withoutDuplicateElements(name, data)),
-           ...(recovery ? { recovery } : {}),
-           ...(postcheck ? { postcheck } : {}),
-           ...(observation ? { observation } : {}),
-@@ -945,7 +945,7 @@ export function createComputerMcpServer(
-                 },
-               }
-             : {}),
--          data: {
-+          data: normalizeInputFailureAdvice(name, errorCode, {
-             message: err instanceof Error ? err.message : String(err),
-             ...((err as { inputProgress?: unknown })?.inputProgress
-               ? { input_progress: (err as { inputProgress: unknown }).inputProgress }
-@@ -960,7 +960,7 @@ export function createComputerMcpServer(
-                     ?? "Rediscover the target PID/window, then take fresh get_window_state before acting. Do not reuse old element references or automatically switch to a similar window.",
-                 }
-               : {}),
--          },
-+          }),
+-  capturePiRuntimeCapabilityManifest,
++  capturePiRuntimeCapabilitiesWithRetry,
+   identifyManagedPiPackageCommandNames,
+   preparePinnedPiSkillInvocation,
+   snapshotManagedPiPackageSkills,
+@@ -6383,43 +6383,68 @@ export class PiAgent extends BaseAgent {
+     let runtimeCapabilityRefreshPromise: Promise<void> | undefined;
+     const refreshRuntimeCapabilities = async (stage: 'ready' | 'switch_session' | 'fork'): Promise<void> => {
+       const generation = ++runtimeCapabilityGeneration;
+-      const capturedManifest = await capturePiRuntimeCapabilityManifest(
++      // 每个 attempt 的结果都立即发布(失败也发):面板轮询先看到 failed/unknown
++      // 而不是长时间 undefined,后续重试成功再升级为 loaded(2026-11-09 实报:
++      // bridge 10s 启动预算 vs 采集 5s 请求预算的结构性冲突,一次失败曾永灰)。
++      const publishDecoratedCapabilityManifest = (captured: PiRuntimeCapabilityManifest): void => {
++        const managedPackageRoots = [...nativePackageRoots, ...managedPackageResources.packageRoots];
++        const managedPackageCommandNames = identifyManagedPiPackageCommandNames(
++          captured.commands,
++          managedPackageRoots,
++        );
++        const authorizedSlashCommandNames = identifyManagedPiPackageCommandNames(
++          captured.commands,
++          [
++            ...managedPackageRoots,
++            ...projectResourceCli.skills,
++            ...managedSkillPaths,
++            ...(managedSkillRoot ? [managedSkillRoot] : []),
++            ...projectResourceCli.promptTemplates,
++            ...projectResourceCli.extensions,
++          ],
++        );
++        const manifest = {
++          ...captured,
++          managedPackageCommandNames,
++          authorizedSlashCommandNames,
++          managedPackageSkills: snapshotManagedPiPackageSkills(
++            managedPackageResources.skills,
++            captured.commands,
++            managedPackageCommandNames,
++          ),
++          projectResources: reconcilePiProjectResourceRuntime(projectResourceAssembly, captured),
++        };
++        if (!closed && generation === runtimeCapabilityGeneration) publishRuntimeCapabilities(manifest);
++      };
++      const capturedManifest = await capturePiRuntimeCapabilitiesWithRetry(
+         proc,
+         {
+           ...(opts.sessionId ? { sessionId: opts.sessionId } : {}),
+           ...(sdkSessionId ? { sdkSessionId } : {}),
          },
-         true,
+         generation,
+         stage,
++        {
++          // 会话已关闭或被更新代刷新接替时停止重试,避免僵尸采集覆写新代结果。
++          isCurrent: () => !closed && generation === runtimeCapabilityGeneration,
++          // 采集失败此前完全静默:5s 请求预算 vs bridge 10s 启动预算的结构性冲突
++          // 只能靠日志发现(考古教训)。重试期 info,耗尽仍失败升 warn。
++          onAttemptFailed: (failedManifest, attempt, isFinalAttempt) => {
++            publishDecoratedCapabilityManifest(failedManifest);
++            const logFields = {
++              sessionId: opts.sessionId,
++              stage,
++              attempt,
++              status: failedManifest.status,
++              code: failedManifest.error?.code,
++              message: failedManifest.error?.message,
++            };
++            if (isFinalAttempt) this.deps.logger.warn('pi runtime capability capture failed; giving up', logFields);
++            else this.deps.logger.info('pi runtime capability capture failed; retrying', logFields);
++          },
++        },
        );
+-      const managedPackageRoots = [...nativePackageRoots, ...managedPackageResources.packageRoots];
+-      const managedPackageCommandNames = identifyManagedPiPackageCommandNames(
+-        capturedManifest.commands,
+-        managedPackageRoots,
+-      );
+-      const authorizedSlashCommandNames = identifyManagedPiPackageCommandNames(
+-        capturedManifest.commands,
+-        [
+-          ...managedPackageRoots,
+-          ...projectResourceCli.skills,
+-          ...managedSkillPaths,
+-          ...(managedSkillRoot ? [managedSkillRoot] : []),
+-          ...projectResourceCli.promptTemplates,
+-          ...projectResourceCli.extensions,
+-        ],
+-      );
+-      const manifest = {
+-        ...capturedManifest,
+-        managedPackageCommandNames,
+-        authorizedSlashCommandNames,
+-        managedPackageSkills: snapshotManagedPiPackageSkills(
+-          managedPackageResources.skills,
+-          capturedManifest.commands,
+-          managedPackageCommandNames,
+-        ),
+-        projectResources: reconcilePiProjectResourceRuntime(projectResourceAssembly, capturedManifest),
+-      };
+-      if (!closed && generation === runtimeCapabilityGeneration) publishRuntimeCapabilities(manifest);
++      publishDecoratedCapabilityManifest(capturedManifest);
+     };
+     const scheduleRuntimeCapabilityRefresh = (stage: 'ready' | 'switch_session' | 'fork'): Promise<void> => {
+       const pending = refreshRuntimeCapabilities(stage);
+@@ -643
 ```
 
-**File**: `packages/maker-shared/src/__tests__/toolResultCompaction.test.ts` (modified, +16/-0)
+**File**: `packages/maker-core/src/agents/pi/runtime-capabilities.ts` (modified, +44/-0)
 ```diff
-@@ -83,6 +83,22 @@ describe('tool result diagnostics', () => {
-     },
-   );
- 
-+  // CU-008 weekly audit: real fixed codes were reduced to {ok:false} on archive.
-+  // Unit: exercise extraction and persisted-marker reads, including a second pass.
-+  it.each(['element_outside_target_window', 'type_text_incomplete', 'select_menu_would_raise_window'])(
-+    'retains the audited input failure without retaining its private message: %s', errorCode => {
-+      const diagnostics = extractToolResultDiagnostics({
-+        ok: false, errorCode, data: { message: 'PRIVATE', outcome_unknown: true },
-+      });
-+      expect(diagnostics).toEqual({ ok: false, errorCode, outcomeUnknown: true });
-+      const persisted = JSON.stringify({ type: 'tool_result_compacted', version: 1,
-+        originalBytes: 100, compactedAt: 1, diagnostics });
-+      const first = parseToolResultCompactionMarker(persisted);
-+      expect(first?.diagnostics).toEqual(diagnostics);
-+      expect(parseToolResultCompactionMarker(JSON.stringify(first))?.diagnostics).toEqual(diagnostics);
-+    },
-+  );
-+
-   it('drops private and unrecognized fields when reading a marker', () => {
-     const marker = { type: 'tool_result_compacted', version: 1, originalBytes: 200, compactedAt: 1 };
-     expect(parseToolResultCompactionMarker({ ...marker, diagnostics: {
-```
-
-**File**: `packages/maker-shared/src/toolResultCompaction.ts` (modified, +1/-0)
-```diff
-@@ -45,6 +45,7 @@ export function sanitizeToolResultDiagnostics(value: unknown): ToolResultDiagnos
-       'window_id_not_found', 'window_not_found', 'stale_element_token',
-       'screenshot_context_missing', 'capture_expired', 'typed_output_mismatch',
-       'background_unavailable', 'browser_consent_required',
-+      'element_outside_target_window', 'type_text_incomplete', 'select_menu_would_raise_window',
-       'ACT_INVALID_REQUEST', 'BROWSER_UNAVAILABLE', 'BROWSER_NOT_CONNECTED',
-       'BROWSER_RUNTIME_ACTION_FAILED', 'BROWSER_RUNTIME_INVALID_REQUEST', 'TIMEOUT',
-     ],
-```
-
----
-
-### Incident Patch 2: `399e72f4` (2026-11-05)
-**Commit Message**: fix(mobile): restore the saved PR after a failed first lookup
-
-A first lookup that failed left an empty entry that hydration treated as
-a confirmed "no PR" and skipped. Track whether a lookup actually
-succeeded and only skip hydration for those.
-
-Assisted-by: Cindy (https://cindy.app)
-Signed-off-by: Dash <[REDACTED_EMAIL]>
-
-**File**: `apps/mobile/src/__tests__/homeDisplaySettings.test.ts` (modified, +8/-0)
-```diff
-@@ -451,6 +451,14 @@ describe('home PR cache', () => {
-       await vi.waitFor(() => expect(readHomeSessionPr(raced)).toEqual({ ref, status: merged }));
-       await vi.advanceTimersByTimeAsync(0);
- 
-+      // 首查整体失败(连引用都没取到)后读回:空值不是「确认没有 PR」,读回的结果要补上。
-+      prStoreTesting.reset();
-+      const failed = homeSessionPrCacheKey('5', 'd', 's');
-+      refreshHomeSessionPr(failed, async () => { throw new Error('offline'); }, { now: 4_000, persist: { ...persist, scope: '5' } });
-+      await vi.advanceTimersByTimeAsync(0);
-+      await hydrateHomeSessionPr('5', 'u1');
-+      expect(readHomeSessionPr(failed)).toEqual({ ref, status: merged });
-+
-       // 另一个账号读不到。
-       prStoreTesting.reset();
-       await hydrateHomeSessionPr('2', 'u2');
-```
-
-**File**: `apps/mobile/src/session/homeSessionPrStore.ts` (modified, +6/-2)
-```diff
-@@ -46,6 +46,8 @@ interface Entry {
-   fetchedAt: number;
-   refreshKey: string | undefined;
-   inflight: boolean;
-+  /** 本次运行里有一次查询成功返回(含「没有 PR」)。查询失败留下的空值不算,读回仍可补上。 */
-+  confirmed?: boolean;
-   persist?: HomeSessionPrPersistTarget;
+@@ -357,3 +357,47 @@ export async function capturePiRuntimeCapabilityManifest(
+     return errorManifest(identity, generation, stage, failure, statusForFailureCode(failure.code));
+   }
  }
- 
-@@ -104,6 +106,7 @@ export function refreshHomeSessionPr(
-     refreshKey: options.refreshKey,
-     value: entry?.value ?? null,
-     persist: options.persist ?? entry?.persist,
-+    confirmed: entry?.confirmed,
-   };
-   entries.delete(key);
-   entries.set(key, next);
-@@ -114,6 +117,7 @@ export function refreshHomeSessionPr(
-       // 读回的上次结果可能在本次查询在途时才种入(冷启动已在线),load 拿到的 previous 里没有它:
-       // 状态查询失败的这一轮不能用 null 覆盖已读回的状态。
-       next.value = keepKnownStatus(value, next.value);
-+      next.confirmed = true;
-       if (next.persist) schedulePersist(next.persist.scope, next.persist.userId);
-     })
-     // 失败保留上次结果:网络抖动不该让已显示的 PR 号消失;下一个刷新周期再试。
-@@ -236,8 +240,8 @@ export function hydrateHomeSessionPr(scope: string, userId: string): Promise<voi
-       for (const row of parseStoredRows(raw).reverse()) {
-         const key = homeSessionPrCacheKey(scope, row.deviceId, row.sessionId, row.related);
-         const entry = entries.get(key);
--        // 已有结果(含查到「没有 PR」)以本次运行为准;只补还在等首查的任务。
--        if (entry && (entry.value || !entry.inflight)) continue;
-+        // 已有结果(含查到「没有 PR」)以本次运行为准;首查还在途或失败过的任务才补上读回的结果。
-+        if (entry && (entry.value || entry.confirmed)) continue;
-         const persist = { scope, userId, deviceId: row.deviceId, sessionId: row.sessionId, related: row.related };
-         if (entry) {
-           // 在途的首查还没回来:先显示上次结果,查到后照常覆盖;查询失败则保留它。
-```
-
----
-
-### Incident Patch 3: `9755b8ad` (2026-11-05)
-**Commit Message**: fix(mobile): keep hydrated PR status when the first lookup races it
-
-On a cold start with the device already online, the first refresh can start
-before the saved result is read back. If its status lookup failed, the
-loader returned a null status and overwrote the hydrated one. Carry the
-entry's latest known status for the same PR when committing a result.
-
-Assisted-by: Cindy (https://cindy.app)
-Signed-off-by: Dash <[REDACTED_EMAIL]>
-
-**File**: `apps/mobile/src/__tests__/homeDisplaySettings.test.ts` (modified, +8/-0)
-```diff
-@@ -443,6 +443,14 @@ describe('home PR cache', () => {
-       expect(refreshHomeSessionPr(key, load, { now: 2_000, persist: { ...persist, scope: '1' } })).toBe(0);
-       expect(load).toHaveBeenCalledWith({ ref, status: merged });
- 
-+      // 冷启动已在线:首查在读回之前就开始,状态查询失败也不能把读回的状态覆盖成空。
-+      prStoreTesting.reset();
-+      const raced = homeSessionPrCacheKey('4', 'd', 's');
-+      const hydrating = hydrateHomeSessionPr('4', 'u1');
-+      refreshHomeSessionPr(raced, async () => { await hydrating; return { ref, status: null }; }, { now: 3_000, persist: { ...persist, scope: '4' } });
-+      await vi.waitFor(() => expect(readHomeSessionPr(raced)).toEqual({ ref, status: merged }));
-+      await vi.advanceTimersByTimeAsync(0);
 +
-       // 另一个账号读不到。
-       prStoreTesting.reset();
-       await hydrateHomeSessionPr('2', 'u2');
-```
-
-**File**: `apps/mobile/src/session/homeSessionPrStore.ts` (modified, +17/-1)
-```diff
-@@ -111,7 +111,9 @@ export function refreshHomeSessionPr(
-   void load(next.value)
-     .then((value) => {
-       if (entries.get(key) !== next) return;
--      next.value = value;
-+      // 读回的上次结果可能在本次查询在途时才种入(冷启动已在线),load 拿到的 previous 里没有它:
-+      // 状态查询失败的这一轮不能用 null 覆盖已读回的状态。
-+      next.value = keepKnownStatus(value, next.value);
-       if (next.persist) schedulePersist(next.persist.scope, next.persist.userId);
-     })
-     // 失败保留上次结果:网络抖动不该让已显示的 PR 号消失;下一个刷新周期再试。
-@@ -123,6 +125,20 @@ export function refreshHomeSessionPr(
-   return 0;
- }
- 
-+/** 同一 PR 这一轮没拿到状态时沿用已有状态(含 additional 里的各条);换了 PR 则不沿用。 */
-+function keepKnownStatus(value: HomeSessionPrInfo | null, known: HomeSessionPrInfo | null): HomeSessionPrInfo | null {
-+  if (!value || !known) return value;
-+  const knownRows = [known, ...(known.additional ?? [])];
-+  const fill = (row: HomeSessionPrInfo): HomeSessionPrInfo => {
-+    if (row.status) return row;
-+    const status = knownRows.find((item) => prStatusKey(item.ref) === prStatusKey(row.ref))?.status ?? null;
-+    return status ? { ...row, status } : row;
-+  };
-+  const filled = fill(value);
-+  if (!value.additional) return filled;
-+  return { ...filled, additional: value.additional.map(fill) };
++/**
++ * Bridge MCP 初始化在扩展加载期内同步占用 ready 窗口:每个 server 的 startup
++ * 预算默认 10s(可配至 30s),而单次采集的请求超时只有 5s —— 宿主侧任何
++ * 慢/黑洞 MCP 都会让首次采集超时(2026-11-09 实报:新任务打字预热后项目
++ * Skill 永远灰)。所以在非 loaded 结果上带退避重试,覆盖 bridge 的预算上界。
++ * 每个 attempt 的结果都经 onAttemptFailed 即时上报(调用方应即时发布,
++ * 让面板先看到 failed/unknown 而不是长时间 undefined);isFinalAttempt=true
++ * 表示重试已耗尽(此后不会再采),调用方应升级为 warn。
++ */
++export const PI_RUNTIME_CAPABILITY_RETRY_DELAYS_MS = [4_000, 10_000, 20_000] as const;
++
++export async function capturePiRuntimeCapabilitiesWithRetry(
++  requester: Parameters<typeof capturePiRuntimeCapabilityManifest>[0],
++  identity: { sessionId?: string; sdkSessionId?: string },
++  generation: number,
++  stage: PiRuntimeCapabilityErrorStage,
++  opts: {
++    retryDelaysMs?: readonly number[];
++    sleep?: (delayMs: number) => Promise<void>;
++    /** 会话已关闭或刷新已被更新代接替时中止重试。 */
++    isCurrent?: () => boolean;
++    onAttemptFailed?: (manifest: PiRuntimeCapabilityManifest, attempt: number, isFinalAttempt: boolean) => void;
++  } = {},
++): Promise<PiRuntimeCapabilityManifest> {
++  const retryDelaysMs = opts.retryDelaysMs ?? PI_RUNTIME_CAPABILITY_RETRY_DELAYS_MS;
++  const sleep = opts.sleep
++    ?? ((delayMs: number) => new Promise<void>((resolve) => {
++      // 后台自愈重试不应托住进程退出。
++      const timer = setTimeout(resolve, delayMs);
++      timer.unref?.();
++    }));
++  let manifest = await capturePiRuntimeCapabilityManifest(requester, identity, generation, stage);
++  let attempt = 0;
++  while (manifest.status !== 'loaded' && attempt < retryDelaysMs.length) {
++    attempt += 1;
++    opts.onAttemptFailed?.(manifest, attempt, attempt === retryDelaysMs.length);
++    if (opts.isCurrent && !opts.isCurrent()) return manifest;
++    await sleep(retryDelaysMs[attempt - 1]!);
++    if (opts.isCurrent && !opts.isCurrent()) return manifest;
++    manifest = await capturePiRuntimeCapabilityManifest(requester, identity, generation, stage);
++  }
++  return manifest;
 +}
-+
- export async function loadHomeSessionPr(
-   invoke: Invoke,
-   deviceId: string,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9074** (2026-11-05): feat(mobile): iOS 原生输入框滚到头再拖即可调高 (@dashhuang)
-- **PR #9073** (2026-11-05): fix(computer): 补齐输入失败诊断并统一恢复建议 (@dashhuang)
-- **PR #9071** (2026-11-05): feat(desktop): 记录各进程内存并支持主进程堆采样，排查内存泄漏 (@dashhuang)
-- **PR #9070** (2026-11-05): docs(readme): soften the star history heading (@dashhuang)
-- **PR #9069** (2026-11-05): fix(mobile): 首页任务的 PR 关联和状态在重开 App 后先显示上次结果 (@dashhuang)
-- **PR #9059** (2026-11-05): fix(scheduler): 修复自动化到期继续触发并整理配置界面 (@DavidShenXD)
+- **PR #9442** (2026-11-09): fix(desktop): keep provider-share activation off hidden capture windows (@CS-LX)
+- **PR #9438** (2026-11-09): fix(provider-share): 修复远程用量缓存统计与明细对账 (@yan-xdt)
+- **PR #9432** (2026-11-09): fix(providers): 统一订阅账号行与用量布局 (@MagicLizi)
+- **PR #9430** (2026-11-09): fix(desktop): route remote task pushes to execution device (@97Three)
+- **PR #9428** (2026-11-09): fix(mobile): 修复 Android 小组件字体资源的 AGP 9 兼容性 (@guyong-zapo)
+- **PR #9425** (2026-11-09): fix(desktop): keep Windows backdrop at 0% desktop transparency (@sakiko-toyokawa)
 
 ---
 
@@ -1586,41 +1656,32 @@ Signed-off-by: Dash <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. computer): retain input failure diagnostics and align recovery advice
+## X. providers): wrap account controls in narrow weighted layouts
 
 **RULE**:
-When implementing operations in `packages/lizi-mcps/src/computer/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/scripts/fixtures/subscription-accounts/fixture.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9ea6286`: computer): retain input failure diagnostics and align recovery advice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6ad1f40`: providers): wrap account controls in narrow weighted layouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/lizi-mcps/src/computer/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/scripts/fixtures/subscription-accounts/fixture.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## Input failure advice
-
-For `type_text`, `background_unavailable` and `type_text_incomplete` preserve
-error codes and structured progress/uncertainty, but replace driver recovery
-prose with Cindy MCP guidance. The driver may suggest pixel-targeted typing or
-foreground retries; Cindy's `type_text` schema does not accept `x/y` and a refusal
-must not trigger an automatic route change. Inspect web-content fields with
-`get_window_state`; `set_value` with a fresh element token is the supported text
-route when continuing is appropriate. After incomplete typing, do not resend the
-text or suffix without inspecting what happened. Observation success is not
-input completion. This applies to both thrown errors and returned refusals.
-See [result.ts](result.ts) and the MCP-entry regressions in
-[computerMcpServer.test.ts](computerMcpServer.test.ts).
-
+    const isCodex = ctx.case === 'codex' || ctx.case === 'narrow-weight';
+      style={ctx.case === 'narrow' || ctx.case === 'narrow-weight' ? { maxWidth: 320 } : undefined}
+      <Section codexPool={ctx.case === 'codex' || ctx.case === 'narrow-weight'} />
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    const isCodex = ctx.case === 'codex';
+      style={ctx.case === 'narrow' ? { maxWidth: 320 } : undefined}
+      <Section codexPool={ctx.case === 'codex'} />
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9ea6286` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6ad1f40` are properly handled with clean fallback behavior.
