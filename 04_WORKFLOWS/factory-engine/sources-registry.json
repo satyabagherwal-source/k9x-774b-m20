@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T22:15:06.691Z",
-    "lastVerified": "2026-11-09T22:15:06.691Z",
+    "lastChecked": "2026-11-09T22:27:19.327Z",
+    "lastVerified": "2026-11-09T22:27:19.327Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T21:05:57.786Z",
+    "lastChecked": "2026-11-09T22:27:07.484Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T21:05:57.786Z"
+    "lastVerified": "2026-11-09T22:27:07.484Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -743,9 +743,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-09T13:10:02.103Z",
+    "lastChecked": "2026-11-09T22:27:02.589Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-09T13:10:02.103Z"
+    "lastVerified": "2026-11-09T22:27:02.589Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -3918,14 +3918,14 @@
     "officialUrl": "https://github.com/keybase/client",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T23:40:08.813Z",
-    "lastVerified": "2026-11-06T23:40:08.813Z",
+    "lastChecked": "2026-11-09T22:27:03.115Z",
+    "lastVerified": "2026-11-09T22:27:03.115Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-keybase-client",
-    "contentHash": "da970569aefa9942e8ecb1f51c32d349f05a541467866734d28c7cf64a7147e5",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 0,
+    "contentHash": "34324c1861dce80df7a2352c72627cd17a51484d2d2f35f314c8494d62ee18a7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4121,9 +4121,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-08T21:06:47.941Z",
+    "lastChecked": "2026-11-09T22:26:59.944Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-08T21:06:47.941Z"
+    "lastVerified": "2026-11-09T22:26:59.945Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -6628,9 +6628,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-11-08T16:07:43.071Z",
+    "lastChecked": "2026-11-09T22:26:52.528Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-11-08T16:07:43.071Z"
+    "lastVerified": "2026-11-09T22:26:52.528Z"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",
@@ -6909,9 +6909,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-08T20:21:39.607Z",
+    "lastChecked": "2026-11-09T22:27:05.094Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-08T20:21:39.607Z"
+    "lastVerified": "2026-11-09T22:27:05.094Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -9552,9 +9552,9 @@
   "code-forge-io-seo-tools": {
     "name": "seo-tools",
     "officialUrl": "https://github.com/code-forge-io/seo-tools",
-    "lastChecked": "2026-11-05T18:53:33.004Z",
+    "lastChecked": "2026-11-09T22:26:54.999Z",
     "revisionIdentifier": "e1e672b3",
-    "lastVerified": "2026-11-05T18:53:33.004Z"
+    "lastVerified": "2026-11-09T22:26:54.999Z"
   },
   "twostraws-controlroom": {
     "name": "ControlRoom",

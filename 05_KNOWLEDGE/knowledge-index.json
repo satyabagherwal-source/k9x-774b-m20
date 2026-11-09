@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T22:15:03.991Z",
+  "last_updated": "2026-11-09T22:27:16.658Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38403,8 +38403,8 @@
       "slug": "keybase-client",
       "platform": "github",
       "source_url": "https://github.com/keybase/client",
-      "source_version": "08454975",
-      "content_hash": "da970569aefa9942e8ecb1f51c32d349f05a541467866734d28c7cf64a7147e5",
+      "source_version": "22e5dbba",
+      "content_hash": "34324c1861dce80df7a2352c72627cd17a51484d2d2f35f314c8494d62ee18a7",
       "dossier_path": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "promoted_rules": [
@@ -38422,6 +38422,11 @@
           "number": null,
           "title": "Seek-Reset Stream Contract for Multi-Try Encrypted Uploads",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "e2e: release gate skill; one full report kept across runs; feedback, link error",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1959,
@@ -38454,7 +38459,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:44:54.493Z",
+      "verified_at": "2026-11-09T22:27:16.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

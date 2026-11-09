@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-MVY1",
-    "timestamp": "2026-11-08T02:25:33.241Z",
-    "repository": "Comfy-Org/MOSS-Image",
-    "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "035a0036483d1fdd41b82f1c4593fc65c269699637a7630e5d1f31d9f334d1ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-W92D",
     "timestamp": "2026-11-08T02:32:50.149Z",
     "repository": "Comfy-Org/Z-Image-Turbo",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "5b3cfbcd17c17b4b17d913cff9c0c83b01a8896edc781cde8030fcbed8dffd8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-0610",
+    "timestamp": "2026-11-09T22:27:16.741Z",
+    "repository": "keybase/client",
+    "learningId": "learn-github-keybase-client",
+    "contentHash": "34324c1861dce80df7a2352c72627cd17a51484d2d2f35f314c8494d62ee18a7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

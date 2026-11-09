@@ -8684,3 +8684,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-09T22:14:51.340Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `bac14d41` | Multi-dimensional audit evidence | 2026-11-09T22:14:58.403Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `08bcdade` | Multi-dimensional audit evidence | 2026-11-09T22:15:04.085Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `22e5dbba` | Multi-dimensional audit evidence | 2026-11-09T22:27:16.744Z |
