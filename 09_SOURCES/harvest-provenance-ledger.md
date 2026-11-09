@@ -8527,3 +8527,7 @@ Every entry in this ledger must capture:
 | `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `d5e2183a` | Multi-dimensional audit evidence | 2026-11-09T05:07:08.998Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `c0010d32` | Multi-dimensional audit evidence | 2026-11-09T05:13:58.023Z |
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-09T05:19:09.224Z |
+| `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `2783d6be` | Multi-dimensional audit evidence | 2026-11-09T05:26:05.705Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `70a60076` | Multi-dimensional audit evidence | 2026-11-09T05:26:07.778Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `f73bbd95` | Multi-dimensional audit evidence | 2026-11-09T05:26:11.701Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-09T05:28:50.643Z |

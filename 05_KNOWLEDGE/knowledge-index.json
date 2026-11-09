@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T05:19:09.083Z",
+  "last_updated": "2026-11-09T05:28:50.525Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13331,8 +13331,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "450984ae",
-      "content_hash": "58d129d40903f5cf5ab22c8303b71b10b8df11374a9f253c3129d9fa37e05e30",
+      "source_version": "70a60076",
+      "content_hash": "d20f15749397f2b0aa13e410818f4c49a9093d6c183a34044eb9edbc3e4fae51",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -13360,6 +13360,11 @@
           "number": null,
           "title": "Untrusted Data Plane Log Rate Starvation Guard",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "tracing: add configurable B3 and W3C propagation to opentelemetry tracer (#48711",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2187,
@@ -13432,7 +13437,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T09:35:13.029Z",
+      "verified_at": "2026-11-09T05:26:07.675Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27431,10 +27436,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "f94fb6f14053168518408b820f46001cfada905b2c9fe5c4429fbc87e63a747d",
+      "content_hash": "b46f90753f79f5ea2e7fa14ae296a30295cc24307166dc8092abd39eabcb8899",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hard Token Suppression Invariant for Multimodal Backbones Operating in Unimodal Mode",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Autoregressive Batch Generation Padding-Side Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Logit Soft-Capping Verification Invariant for High-Temperature Rewriting",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 984,
           "title": "Hybrid Attention Layer Allocation for Long-Context Efficiency",
@@ -27543,7 +27563,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-11-05T11:16:51.609Z",
+      "verified_at": "2026-11-09T05:28:50.494Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65377,8 +65397,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "1557de2f",
-      "content_hash": "4e1ec651617a68482bbfd6104d5ac295b15d064afdbb560eabff072ba608bdff",
+      "source_version": "f73bbd95",
+      "content_hash": "889fbf211418e2eee4e3656372ded3e258f31a0baa53aa80df0a347347eb0efb",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -65390,6 +65410,11 @@
         {
           "number": null,
           "title": "site(home): apply the preview critique (grid bug, honest proof rows, hero proof",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #3037 from xerj-org/fix/3036-bulk-put",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65488,7 +65513,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T07:15:35.427Z",
+      "verified_at": "2026-11-09T05:26:11.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -187815,14 +187840,19 @@
       "slug": "a2ui-project-a2ui",
       "platform": "github",
       "source_url": "https://github.com/a2ui-project/a2ui",
-      "source_version": "f7b795e4",
-      "content_hash": "b4c2fc4b9fb77f079f8dad115145b927a7fea35fe5aff1ba5a6ae8f0d9be009e",
+      "source_version": "2783d6be",
+      "content_hash": "acb3ad870b0605881cfa42d5238fcc8ae3404754debb5f92581b05fe9a776338",
       "dossier_path": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docs(site): add Swappable Inference Formats concept guide (#3969)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "dart): agent functions and RendererToAgentMessageProcessor (#3861)",
           "status": "WITHHELD_REJECT"
         }
       ],
@@ -187831,7 +187861,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:47:51.140Z",
+      "verified_at": "2026-11-09T05:26:05.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

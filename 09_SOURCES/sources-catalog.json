@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "f94fb6f14053168518408b820f46001cfada905b2c9fe5c4429fbc87e63a747d",
-    "lastHarvestedAt": "2026-11-05T11:16:51.722Z",
+    "contentHash": "b46f90753f79f5ea2e7fa14ae296a30295cc24307166dc8092abd39eabcb8899",
+    "lastHarvestedAt": "2026-11-09T05:28:50.643Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "1557de2f",
+    "sourceVersion": "f73bbd95",
     "license": "Apache-2.0",
-    "contentHash": "4e1ec651617a68482bbfd6104d5ac295b15d064afdbb560eabff072ba608bdff",
-    "lastHarvestedAt": "2026-11-08T07:15:35.522Z",
+    "contentHash": "889fbf211418e2eee4e3656372ded3e258f31a0baa53aa80df0a347347eb0efb",
+    "lastHarvestedAt": "2026-11-09T05:26:11.701Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "450984ae",
+    "sourceVersion": "70a60076",
     "license": "Apache-2.0",
-    "contentHash": "58d129d40903f5cf5ab22c8303b71b10b8df11374a9f253c3129d9fa37e05e30",
-    "lastHarvestedAt": "2026-11-08T09:35:13.159Z",
+    "contentHash": "d20f15749397f2b0aa13e410818f4c49a9093d6c183a34044eb9edbc3e4fae51",
+    "lastHarvestedAt": "2026-11-09T05:26:07.778Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -12033,10 +12033,10 @@
     "repository": "a2ui-project/a2ui",
     "platform": "github",
     "sourceUrl": "https://github.com/a2ui-project/a2ui",
-    "sourceVersion": "f7b795e4",
+    "sourceVersion": "2783d6be",
     "license": "Apache-2.0",
-    "contentHash": "b4c2fc4b9fb77f079f8dad115145b927a7fea35fe5aff1ba5a6ae8f0d9be009e",
-    "lastHarvestedAt": "2026-11-05T22:47:51.223Z",
+    "contentHash": "acb3ad870b0605881cfa42d5238fcc8ae3404754debb5f92581b05fe9a776338",
+    "lastHarvestedAt": "2026-11-09T05:26:05.705Z",
     "learningId": "learn-github-a2ui-project-a2ui"
   },
   "milind-soni-openmausbot": {
