@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-DSJ8",
-    "timestamp": "2026-11-07T20:42:33.524Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "75c430c11062987affb624b650a1afa99d2258bd5eeec9bc8ca4f24555e335fc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-M366",
-    "timestamp": "2026-11-07T20:49:00.558Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "a26c5e6bd6ce03563fda63670fd04c342d223d8da6b49a68e63fdf70eeeaba42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-M8JX",
-    "timestamp": "2026-11-07T20:49:07.533Z",
-    "repository": "LiquidAI/LFM3-1.7B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-    "contentHash": "9c5582158ff6d28e28e53ce6189b0e43d5073f9621e81cda69c97fc5dd7cc781",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-MALD",
-    "timestamp": "2026-11-07T20:49:10.177Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "8900871c0b0703e76dd9571b969b3652067820ae813ac303ae42a54b03c66df0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-MCKI",
     "timestamp": "2026-11-07T20:49:12.738Z",
     "repository": "apache/shardingsphere",
@@ -7490,6 +7430,66 @@
     "repository": "speridlabs/iris-3b",
     "learningId": "learn-huggingface-speridlabs-iris-3b",
     "contentHash": "393e882de1e9690228c890a84e4328495acd779987e341ab15a439271285609c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-2CWV",
+    "timestamp": "2026-11-09T12:13:07.423Z",
+    "repository": "zulip/zulip",
+    "learningId": "learn-github-zulip-zulip",
+    "contentHash": "b2efe3dcf41daf37e981320624af828ec596da799516d1713d330e3460f15b23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-2HO1",
+    "timestamp": "2026-11-09T12:13:13.585Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "7235e3911b35fce84a78fdceef4e712091bf521fc6daf0f87445722b79da2d86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-6DBA",
+    "timestamp": "2026-11-09T12:16:14.566Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "6c78f38e77fc62c6bd2c099d8eb53f4d8ad6778c18c6aa97c4da482853263fd5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-8026",
+    "timestamp": "2026-11-09T12:17:30.702Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+    "contentHash": "11a6d5b82003e5b1f47619b52d4e86b7c92e57c3adfae86b3aa6941319118862",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

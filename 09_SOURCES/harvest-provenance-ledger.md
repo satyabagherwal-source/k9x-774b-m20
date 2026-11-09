@@ -8588,3 +8588,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-09T11:31:31.437Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `047a8a24` | Multi-dimensional audit evidence | 2026-11-09T11:54:13.195Z |
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-09T11:56:27.783Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `f0f02bcb` | Multi-dimensional audit evidence | 2026-11-09T12:13:07.427Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `cacd3a8d` | Multi-dimensional audit evidence | 2026-11-09T12:13:13.589Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `d353cc58` | Multi-dimensional audit evidence | 2026-11-09T12:16:14.580Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-09T12:17:30.706Z |

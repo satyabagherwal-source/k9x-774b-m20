@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `4b4d45bf`  
+> **Source Version**: `cacd3a8d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T10:59:41.673Z  
+> **Timestamp**: 2026-11-09T12:13:11.738Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T10:59:41.667Z  
+> **Harvest Timestamp**: 2026-11-09T12:13:11.265Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1628,99 +1628,621 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4b4d45bf` (2026-11-09)
-**Commit Message**: NUC 1 NUC Purpose and Guidelines
+### Incident Patch 1: `cacd3a8d` (2026-11-09)
+**Commit Message**: NUC 96 At Variables
 
-Accepted: a user-requested, single-mode revision that names forward and
-backward chaining in the Reasoning enhancement registry row and classifies
-proposals whose primary purpose is either one as Reasoning enhancement.
-Eligibility, the uniform draw, the other categories, the token-gate matrix
-and every NUC's classification are unchanged.
+Accepted under the user-requested basis of the automatic acceptance rule.
+`@name` reads the variable `name` where an operand begins in two places: an
+`is` assignment's value, and the right operand of an `is` / `is not`
+comparison. It reads the name as `(name)` and the `=` spelling do: the
+value when something defines it, and `ReferenceError` when nothing does.
+So after `a is 1`, `b is @a + 2` is 3, and `b is @c + 3` raises
+`ReferenceError: c is not defined`. Everywhere else, a leading `@` keeps
+its accepted error and position. Postfix version selectors are unchanged.
 
-Basis: user-requested proposal rule. The frozen candidate (blob e512a2f5)
-meets every hard criterion, and the independent evaluator's overall decision
-and the core report's decision were Accepted with no issues.
-
-Hard criteria, verified by the independent evaluator:
+Hard criteria:
 - No compile errors: cargo build --all-targets, cargo clippy --all-targets
-  -- -D warnings and cargo fmt --check passed.
-- Every test passes: cargo test --no-fail-fast passed 2,839 tests with 0
-  failures and 25 existing ignored tests; all 2,864 accepted test
-  identities and per-binary counts kept.
-- Backward compatible: only docs/nuc-0001.md differs from 95ca01b3; all
-  1,041 pinned accepted programs replayed and all 1,041 candidate cases
-  passed the core gate.
+  -- -D warnings, cargo fmt --check and rustdoc with -D warnings pass in
+  the independent evaluation and on the integrated tree.
+- Every test passes: cargo test --no-fail-fast gives 2,860 passed, 0
+  failed, 25 ignored. All 2,864 accepted test identities keep their
+  status, 21 tests are added, and no existing test changed.
+- Backward compatible: every accepted input keeps its parse, behavior and
+  outputs. That covers all 32,294 parsing corpus inputs and all 97,938
+  parsing generated inputs of the evaluato
 
-The caller rechecked the integrated tree, including the outcome metadata:
-build, warnin
-
-**File**: `docs/nuc-0001.md` (modified, +48/-1)
+**File**: `README.md` (modified, +22/-0)
 ```diff
-@@ -46,13 +46,14 @@ Created: 31-Jul-2026
- | Syntax enhancement | Grammar, spellings, and source forms. | Yes |
- | Runtime features | Core execution, data modeling, scope, control flow, and transactions. | Yes |
- | Utility enhancement | Standard built-in helpers, including math, collections, and strings. | Yes |
--| Reasoning enhancement | Logic rules, inference, graph queries, and explanations. | Yes |
-+| Reasoning enhancement | Logic rules, inference, forward and backward chaining, graph queries, and explanations. | Yes |
- | Language compatibility | Additive cross-language aliases and equivalent familiar source forms, without a token-count constraint. | Yes |
- | Documentation | Indexes, guidelines, reference documentation, and development processes. | No |
+@@ -159,6 +159,28 @@ such as `[A if c else B]` has word branches. It needs no flag, and `=` keeps
+ the reference reading, so `colors = [RED, GREEN]` needs `RED` and `GREEN` to
+ be defined; see [NUC 95](docs/nuc-0095.md).
  
- - Every existing and future NUC must have exactly one registered `Category` header, including Draft, Accepted, Rejected, Active, and Superseded proposals.
- - Classify the NUC's overall primary purpose, not merely its latest edit; a metadata-only revision does not make a language proposal Documentation.
- - NUC 0 and NUC 1 use Documentation.
-+- A proposal whose primary purpose is forward chaining (data-driven: rules fire as facts change and derive new conclusions) or backward chaining (goal-driven: inference starts from a queried conclusion and works back through the rules and facts that would establish it) is Reasoning enhancement.
- - Language compatibility advances Nucleoid's aspiration to be a superset of programming languages; this is a goal, not a claim that full compatibility with every language already exists.
- - Welcome optional aliases and equivalent familiar source forms, such as the already accepted `this`/`self` and `=>`/`->`, while preserving every accepted form and meaning. The category itself introduces no new aliases or runtime behavior.
- - Language compatibility proposals need not reduce or preserve lexer-token counts and may introduce new token kinds when appropriate; a minimal core syntax remains a separate language goal.
-@@ -307,6 +308,52 @@ Notes:
-   has raw blob `b85c89e893a5324aa41b66e1baa689010280b478`. These artifacts
-   remain outside the repository in the session workspace.
- 
-+## Evaluation: Forward and Backward Chaining
++### At variables
 +
-+- Accepted as a user-requested, single-mode process revision against
-+  `95ca01b324fcb536e002dd79e2c03463eaf28ce1`. It names forward and backward
-+  chaining in the Reasoning enhancement row and classifies proposals whose
-+  primary purpose is either one as Reasoning enhancement.
-+- The independent evaluator's overall decision and the core report's decision
-+  were Accepted, with no issues, policy failures or blockers.
-+- The frozen proposal's plain and raw Git blob was
-+  `e512a2f5022b49bcab198f8f8bf65fe754601f03`, before this outcome metadata.
-+  It was the only changed path, and the caller integrated it byte-for-byte.
-+- NUC 1 retains Type Process, Status Active and Category Documentation.
-+  Runtime applicability is not applicable. Token comparison was skipped as
-+  `single_proposal`, without measured cases or placeholder counts; a skip is
-+  not a passing token gate.
-+- The independent evaluator verified every hard criterion: all-target build,
-+  warning-denied Clippy and formatting passed; the full `cargo test
-+  --no-fail-fast` passed 2,839 tests with zero failures and the 25 existing
-+  ignored tests, keeping all 2,864 accepted test identities and their
-+  per-binary counts; every other path is byte-identical to the accepted
-+  revision.
-+- All 1,041 pinned accepted programs replayed, and all 1,041 candidate cases
-+  passed the core gate.
-+- Eligibility, the uniform draw, the other categories, the token-gate matrix
-+  and both NUC indexes are unchanged. No other document restates the
-+  category's purpose.
-+- The caller, proposer and evaluator reviewed the existing NUCs and moved none.
-+  NUC 5, NUC 11 and NUC 88 already belong to Reasoning enhancement. NUC 2 and
-+  NUC 7 keep Runtime features, whose row names core execution and control
-+  flow, and NUC 55 and NUC 85 keep it as state-version anchors.
-+- The Rust improvement pass was skipped because no handwritten code or Cargo
-+  manifest changed.
-+- The caller rechecked the integrated tree, including this outcome metadata,
-+  before committing: build, warning-denied Clippy, formatting, the full
-+  `cargo test` and the 1,041-case accepted replay passed.
-+- Advisory usefulness is unscored (`missing_rubric`), not zero. Deterministic
-+  evaluator work took 2.657619 seconds, excluding compilation, external
-+  checks, proposal/model time and report writing. Strategy learning was
-+  `not_configured` and unattributed, with no update.
-+- External core report `evaluation-report.json` has raw blob
-+  `1b926eb1b462fdc9a55551055199f385339110f6`; independent outcome
-+  `independent-outcome.json` has raw blob
-+  `cf4907c4cfb537aeaa011b2b2005ec33c2c5cee7`. The immutable 1,041-case
-+  baseline has raw blob `abcfa3c96f5527a68f402658353662f195256df3`. These
-+  artifac
++Inside an `is` value, `@name` reads the variable `name`, never the word:
++
++```
++a is 1
++b is @a + 2
++RED = "red"
++colors is [@RED, GREEN]
++assert([b, colors], [3, ["red", "GREEN"]])
++```
++
++`@a` is read exactly as `(a)` is, so `b is @c + 3` raises
++`ReferenceError("c is not defined")` while nothing defines `c`, and so does
++`b is @c`, where `b is c` would store the word `"c"`. The mark works
++wherever an operand begins in an `is` value, outside function bodies,
++comprehension elements, template interpolations, inner assignments and
++targets, and in the right operand of an `is` comparison, as in
++`if state is @OPEN:`. Everywhere else a leading `@` is still a syntax error,
++`x@first` is still a version, and `b is @first` still reads as `b` followed
++by `is@first`; see [NUC 96](docs/nuc-0096.md).
++
+ ---
+ 
+ # Design Theory 📐
+```
+
+**File**: `docs/README.md` (modified, +38/-1)
+```diff
+@@ -478,6 +478,41 @@ RED = "red"
+ 
+ Full detail: [NUC 95](nuc-0095.md).
+ 
++### At variables
++
++- [NUC 96](nuc-0096.md) adds `@name`, an `@` directly followed by a name,
++  which reads the variable `name` where a bare name could be a word. It
++  needs no option or flag.
++- It may stand wherever an operand begins inside an `is` value and inside
++  the right operand of an `is` or `is not` comparison: `b is @a + 2`,
++  `x is @A if c else B`, `[@A, B]`, `{k: @A}`, `Light(color=@A)` and
++  `if state is @OPEN:`. Function, arrow and lambda bodies, comprehension
++  elements and filters, template interpolations, inner assignment values
++  and assignment targets are not part of those regions.
++- `@name` reads the name exactly as `(name)` does and is never a word: the
++  value when something defines it, and `ReferenceError` when nothing does,
++  where a bare word would read its own text. Postfix operations follow it,
++  as in `@a.b`, `@a[0]`, `@a(1)` and `@a@first`.
++- Everywhere else a leading `@` is still a syntax error, and an `@` after an
++  operand is still a version selector. `b is @first` keeps its accepted
++  reading as `b` and `is@first`; write `b is (@first)` for the variable
++  `first`. A space between `@` and the name keeps the accepted reading too.
++
++```
++a is 1
++b is @a + 2
++RED = "red"
++colors is [@RED, GREEN]
++```
++
++- `b` is `3` and follows `a`, and `colors` is `["red", "GREEN"]`. While
++  nothing defines `c`, `b is @c + 3` raises
++  `ReferenceError("c is not defined")`, as `b = c + 3` does. Regions,
++  errors and rendering are in the authoritative
++  [at variables](../nucleoid.spec.md#at-variables) section.
++
++Full detail: [NUC 96](nuc-0096.md).
++
+ ### Destructuring declarations
+ 
+ - [NUC 67](nuc-0067.md) adds destructuring declarations: object patterns
+@@ -883,7 +918,8 @@ Full detail: [NUC 60](nuc-0060.md).
+   built-in of that name when one exists, and otherwise compares with its own
+   text, `"EXACT"`. Keywords, `$Class` references, paths, calls and
+   parenthesized operands are ordinary operands, so `value is (EXACT)` still
+-  needs `EXACT` to be defined.
++  needs `EXACT` to be defined, and so does `value is @EXACT`, the
++  [at variable](#at-variables) spelling.
+ - A comparison with a word depends on that name even while nothing defines
+   it: defining, changing or deleting the variable re-evaluates every
+   declaration, `if` rule and class-level rule that uses it.
+@@ -3864,6 +3900,7 @@ name is expression                     is assignment: name = expression (NUC 93)
+ name.property is word                  a bare word reads its name, else its text "word" (NUC 93)
+ name is A if c else B                  bare-word branches are words too (NUC 94)
+ name is [A, {k: B}, X(n=C)]            bare-word items, values and labels are words too (NUC 95)
++name is @a + 2                         @name reads the variable a, never the word "a" (NUC 96)
+ name += expression                     compound assignment; also -=, *=, **=, /=, %=
+ {a, b} = expression                    one declaration per field: a = expression.a (NUC 67)
+ {key: name} = expression               renamed field: name = expression.key (NUC 67)
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -61,6 +61,7 @@ Created: 31-Jul-2026
+ | [93](nuc-0093.md) | Opt-In Is Assignments | Accepted |
+ | [94](nuc-0094.md) | Opt-In Conditional Words | Accepted |
+ | [95](nuc-0095.md) | Item Words | Accepted |
++| [96](nuc-0096.md) | At Variables | Accepted |
+ 
+ ### Runtime features
+ 
+@@ -245,6 +246,7 @@ Created: 31-Jul-2026
+ | [93](nuc-0093.md) | Opt-In Is Assignments | Standards Track | Syntax enhancement | Accepted |
+ | [94](nuc-0094.md) | Opt-In Conditional Words | Standards Track | Syntax enhancement | Accepted |
+ | [95](nuc-0095.md) | Item Words | Standards Track | Syntax enhancement | Accepted |
++| [96](nuc-0096.md) | At Variables | Standards Track | Syntax enhancement | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0096.md` (added, +729/-0)
+```diff
+@@ -0,0 +1,729 @@
++# NUC 96 -- At Variables
++
++```
++NUC: 96
++Title: At Variables
++Author: Can Mingir <canmingir@gmail.com>
++Status: Accepted
++Type: Standards Track
++Category: Syntax enhancement
++Created: 09-Nov-2026
++Requires: 53, 86, 93, 94, 95
++```
++
++## Abstract
++
++- `@name`, an `@` directly followed by a name, reads the variable `name`
++  where an operand begins inside the value of an `is` assignment of
++  [NUC 93](nuc-0093.md) or inside the right operand of an `is` or `is not`
++  comparison of [NUC 86](nuc-0086.md). It reads the name exactly as `(name)`
++  and the `=` spelling do: its value when something defines it, and
++  `ReferenceError("<name> is not defined")` when nothing does. It is never a
++  word.
++- So after `a is 1`, `b is @a + 2` makes `b` follow `a` and be `3`, and
++  `b is @c + 3` raises `ReferenceError("c is not defined")` at line 1,
++  column 1 while nothing defines `c`, as `b = c + 3` does.
++- Where a bare name would be a word, `@name` asks for the variable instead:
++  `x is @A`, `x is @A if c else B`, `[@A, B]`, `{k: @A}`, `Light(color=@A)`
++  and `if $Obj.color is @C:`. Where a bare name is already a reference, as in
++  `@a + 2`, the mark is accepted and changes nothing.
++- The regions reach as far as the item positions of [NUC 95](nuc-0095.md),
++  outside function, arrow and lambda bodies, comprehension elements and
++  filters, template interpolations, inner assignment values and assignment
++  targets. Everywhere else a leading `@` keeps its accepted error and
++  position, and an `@` after an operand keeps its meaning as the version
++  selector of [NUC 53](nuc-0053.md).
++- No token, keyword, syntax-tree variant, error message, option or flag is
++  added. `@name` builds the syntax tree of `(name)`, so it renders,
++  evaluates and records dependencies as `(name)` does. The authoritative
++  contract is [At variables](../nucleoid.spec.md#at-variables).
++- Backward compatible: at the accepted revision an `@` where an operand
++  begins is always a syntax error, so only inputs that fail to parse there
++  change. `target is @first`, `@last`, `@previous` and `@` with digits keep
++  their accepted reading as `target` followed by `is@first`.
++- Accepted: the user requested this feature directly, and the frozen
++  candidate meets every hard criterion of the automatic acceptance rule, so
++  the user-requested basis applies. The independent evaluator's overall
++  decision is also Accepted. Token comparison was skipped as
++  `single_proposal`, the rule for a single-proposal request, not a failed
++  check; see [Evaluation](#evaluation).
++
++## Motivation
++
++- The user asked, in their words: "if @ used at beginning of word in is
++  keyword, it should be consider as variable like:"
++
++```
++a is 1
++b is @a + 2
++```
++
++- "however if variable not define it should throw reference error as
++  usual":
++
++```
++b is @c + 3
++```
++
++- Words, the bare names of NUC 86, NUC 93, NUC 94 and NUC 95, read a name's
++  value when something defines it and its own text otherwise. That lets a
++  world model state words without quotes, but a misspelt or missing variable
++  silently becomes text. Grouping parentheses, `(a)`, already ask for a
++  reference, yet they read as grouping, not as a statement that `a` must be
++  a variable.
++- At the accepted revision the user's spelling fails to parse.
++  `b is @a + 2` raises
++  `SyntaxError("Expected a non-negative integer, 'first', 'last', or 'previous' after '@'")`
++  at line 2, column 7 after `a is 1`, because `b is @a` reads as the
++  statement `b` followed by a version of the name `is`; `x is [@A, B]` and
++  `if x is @C:` raise `SyntaxError("Unexpected character '@'")` at the `@`.
++- With at variables, one value can hold both: `colors is [@RED, GREEN]`
++  stores `["red", "GREEN"]` after `RED = "red"`, and raises
++  `ReferenceError("RED is not defined")` while nothing defines `RED`, where
++  `colors is [RED, GREEN]` would store `["RED", "GREEN"]`.
++
++## Rationale
++
++- **Category and mode.** The user requested this concrete feature, so there
++  was no random draw. It extends the word syntax of NUC 86, NUC 93, NUC 94
++  and NUC 95, so its category is Syntax enhancement, theirs. It runs in
++  single-proposal mode, which skips token comparison. Runtime applicability
++  does not apply. No hint was supplied.
++- **The name.** The form is the at sign marking a variable read, so "at
++  variables", as "item words" names a word by its position. Rejected:
++  "variable words", since `@name` is never a word, and "explicit
++  references", which says nothing about the spelling.
++- **The mark.** `@` is the user's choice. After an operand it already means
++  "the version of", and where an operand begins every `@` is a syntax error
++  at the accepted revision, so a prefix `@` can mean something new without
++  changing any program that parses. Only an adjacent name counts: a space,
++  tab, comment or line break after `@` keeps the accepted reading, as in
++  `@ a` and `@/* c */a`, because `b is @ 
+```
+
+**File**: `docs/nucleoid.g4` (modified, +50/-7)
+```diff
+@@ -140,7 +140,8 @@ assertStmt
+     ;
+ 
+ // A premise is tentative: it ends exactly at ':' and cannot be a colon
+-// statement or end in the word 'lambda'. Otherwise 'suppose' stays a name.
++// statement or end in the word 'lambda'; an atVariable named lambda is not
++// that word. Otherwise 'suppose' stays a name.
+ // The 'path IS' head follows the isAssignment contract.
+ supposeStmt
+     : (conditional ASSIGN | path IS)? SUPPOSE premise? suite
+@@ -155,12 +156,13 @@ valueAssignment
+     ;
+ 
+ /*
+- * Is-assignment contract (NUC 93, NUC 94, NUC 95):
++ * Is-assignment contract (NUC 93, NUC 94, NUC 95, NUC 96):
+  * - An isAssignment path may be parenthesized and has at most 128 links. No NEWLINE separates it from
+  *   'is', and the token after 'is' must begin an expression: a name token,
+  *   CLASS_REF, NUMBER, STRING, TEMPLATE, REGEX, LPAREN, LBRACK, LBRACE,
+  *   BANG, MINUS, PLUS, TRUE, FALSE, NULL, THIS, SUPER, NEW, DELETE,
+- *   FUNCTION, NOT or TYPEOF. Otherwise 'is' stays a name that begins the
++ *   FUNCTION, NOT or TYPEOF, or the AT of an atVariable whose name is not
++ *   FIRST, LAST or PREVIOUS. Otherwise 'is' stays a name that begins the
+  *   next statement, and 'why', 'affects', 'stated' or 'derived' before
+  *   'is' keep their reasoning-selection reading.
+  * - The value is ASSIGN's statement-level value and builds the tree of
+@@ -268,7 +270,8 @@ forStmt
+     ;
+ 
+ // The tentative condition must end exactly at ':', cannot be a colon
+-// statement or suppose expression, and cannot end in the word 'lambda'.
++// statement or suppose expression, and cannot end in the word 'lambda';
++// an atVariable named lambda is not that word.
+ whileStmt
+     : WHILE clauseExpression suite      // Stmt::While
+     ;
+@@ -373,7 +376,8 @@ methodDecl
+  *   not enclosed.
+  * - 'is'/'is not' compare only in enclosed positions and in an enabled
+  *   parse pass. A single-name right operand is a word comparison;
+- *   otherwise they mean '=='/'!='.
++ *   otherwise they mean '=='/'!='. The right operand is an atVariable
++ *   region, and an atVariable there is not a single name.
+  * - In an object value, a following name ':' starts the next property.
+  *   'is:', 'stated name:' and 'derived name:' keep that interpretation.
+  * - A Python conditional is tentative and needs 'else' directly after its
+@@ -530,7 +534,8 @@ selector
+ // A plain-name callee treats bare name=value arguments as constructor
+ // labels; grouping or another assignment-shaped target stays positional.
+ primary
+-    : quantified
++    : atVariable
++    | quantified
+     | name arrow arrowBody
+     | lambdaExpression
+     | parameters arrow arrowBody
+@@ -553,6 +558,35 @@ primary
+     | objectDisplay
+     ;
+ 
++/*
++ * At-variable contract (NUC 96):
++ * - AT and the name are adjacent: the name token starts in the column
++ *   after AT on the same line, so no whitespace, comment or NEWLINE
++ *   separates them. A keyword, CLASS_REF, NUMBER, VERSION_INDEX, STRING or
++ *   LPAREN after AT is not a name.
++ * - The rule applies only where an operand begins inside an at-variable
++ *   region: an isAssignment value, wherever its item positions can lie, and
++ *   the right operand of an 'is'/'is not' comparison. Neither region
++ *   reaches into function, lambda and arrow bodies, comprehension elements
++ *   and filters, template interpolations, the value of an inner assignment
++ *   operator or the target of an assignment operator; a comparison inside
++ *   such a part has its own right operand. Elsewhere AT where an operand
++ *   begins is "Unexpected character '@'" at the AT.
++ * - An atVariable builds Expr::Identifier(name), the tree of
++ *   'LPAREN name RPAREN': it spans two tokens, so it is never a word.
++ *   FIRST, LAST and PREVIOUS are names here; after an operand, AT starts a
++ *   version, and 'path IS AT (FIRST | LAST | PREVIOUS | VERSION_INDEX)'
++ *   keeps the reading 'path' followed by the statement 'IS version'.
++ * - An atVariable in an assignment target or a comprehension element is
++ *   rejected with the accepted error: "Unexpected character '@'" at its
++ *   AT, or, for a target that begins an isAssignment value, "Expected a
++ *   non-negative integer, 'first', 'last', or 'previous' after '@'" at its
++ *   name, which the accepted reading 'path' then 'IS version' reports.
++ */
++atVariable
++    : AT name                                             // Expr::Identifier
++    ;
++
+ arrow
+     : ARROW
+     | THIN_ARROW
+@@ -851,7 +885,10 @@ fragment REGEX_CHAR
+  * require 'for' or a template. Keep the first successful complete parse.
+  * A later pass never changes a source accepted by an earlier pass.
+  * Every pass reads isAssignment, and its word positions never change
+- * whether or where a pass succeeds or fails.
++ * whether or where a pass succeeds or fails. Every pass reads atVariable in
++ * isAssignment values, and the passes that read 'is' comparisons also read
++ * it in their right operands; it applies only where the accepted grammar
++ * fails
+```
+
+**File**: `nucleoid.spec.md` (modified, +96/-3)
+```diff
+@@ -2480,7 +2480,9 @@ statement positions; caught values and transaction recovery are unchanged.
+   `@last` means the newest entry, and `@previous` means the entry before it.
+   Decimal digit literals must fit the host's `usize`; signs, decimal points,
+   exponent spellings, expressions and unknown selector words are not selectors.
+-  The three words remain ordinary identifiers everywhere except after `@`.
++  The three words remain ordinary identifiers everywhere except in a selector
++  after an operand; a prefix `@first` of [At variables](#at-variables) reads
++  the variable `first`.
+ - Versioning is automatic. Record the initial stored value at zero and append
+   only on actual `Value::same_value` changes, including reactive propagation,
+   constructors, initial object-property maps and mutable-list write-backs.
+@@ -3209,6 +3211,9 @@ statement positions; caught values and transaction recovery are unchanged.
+   expressions and parenthesized operands are not words and read as they do
+   with `==`: `value is (EXACT)` raises `ReferenceError("EXACT is not defined")`
+   while nothing defines `EXACT`. The left operand is never a word.
++- The right operand may hold the `@name` of [At variables](#at-variables),
++  which reads the variable and is never a word: `value is @EXACT` means
++  `value == EXACT`.
+ - A word records a dependency on the variable of its name even while nothing
+   defines it, so a standing declaration, `if` rule or class-level rule that
+   compares with it re-evaluates when that variable is defined, changed or
+@@ -3303,7 +3308,10 @@ statement positions; caught values and transaction recovery are unchanged.
+   the next statement: `:`, `=`, `:=`, a compound assignment such as `+=`,
+   another operator or punctuation, a keyword such as `if`, `and` or `of`, or
+   the end of the line or input. So `a is: T`, `a is = 5`, `a is += 1` and
+-  `a is` at the end of a line read as before.
++  `a is` at the end of a line read as before. An `@` directly followed by a
++  name other than `first`, `last` and `previous` also begins the value, as
++  [At variables](#at-variables) describes; any other `@`, as in
++  `a is @first`, keeps the accepted reading.
+ - A leading expression that `:=` rejects also keeps the accepted reading:
+   `f() is 5`, `1 is 2`, `a[0] is 1`, `this is 5`, `$Order is 5`,
+   `a + b is 5`, `a = b is c` and `x => x is 5` are juxtaposed statements as
+@@ -3379,7 +3387,8 @@ statement positions; caught values and transaction recovery are unchanged.
+ - A branch of a conditional value can be a word as well, as
+   [Conditional words](#conditional-words) describes, and so can an item of a
+   list, a dictionary value or a named argument, as
+-  [Item words](#item-words) describes.
++  [Item words](#item-words) describes. An `@name` in the value reads the
++  variable `name` instead, as [At variables](#at-variables) describes.
+ 
+ ## Conditional words
+ 
+@@ -3575,6 +3584,90 @@ statement positions; caught values and transaction recovery are unchanged.
+ - `tests/item_words.rs`, `tests/item_words_cli.rs` and the terminal unit
+   suite execute this behavior.
+ 
++## At variables
++
++- [NUC 96](docs/nuc-0096.md) adds `@name`: the character `@` directly
++  followed by a name reads the variable of that name where a bare name could
++  be a word. No option or flag enables it, and no token, keyword or error
++  message is added.
++- `@name` is `@` with a name token immediately after it: nothing, not even a
++  space, tab, comment or line break, stands between them. A name is an
++  identifier token. Keywords such as `true`, `null`, `None`, `this`, `self`,
++  `not`, `if`, `in`, `of` and `typeof`, `$Class` references, numbers,
++  strings, `(` and another `@` are not names, so `@ a`, `@1`, `@"a"`,
++  `@(a)`, `@$Order`, `@this` and `@@a` keep their accepted readings.
++- `@name` may stand wherever an operand begins in two regions:
++  - the value of an `is` assignment of [Is assignments](#is-assignments),
++    through every construct where [item positions](#item-words) can lie: the
++    whole value, conditions and branches, the operands of every operator,
++    receivers, arguments and named-argument values, list items, dictionary
++    values, subscripts and slice bounds, quantifiers, comprehension sources,
++    pipeline stage arguments, spread sources and grouping parentheses;
++  - the right operand of an `is` or `is not` comparison of
++    [Is and is not comparisons](#is-and-is-not-comparisons), wherever that
++    comparison stands, as in `if $Order.state is @OPEN:`.
++- Neither region reaches into a function, arrow or lambda body, the element
++  or filter condition of a list comprehension, a template interpolation, the
++  value of an assignment operator inside the region, or the target of an
++  assignment operator. Outside an `is` value a `name=value` argument is such
++  an assignment, so `if x is Light(color=@C):` keeps the accepted error. A
++  comparison inside one of these parts has its own right operand, and a
++  block body's ow
+```
+
+**File**: `src/continuation.rs` (modified, +76/-17)
+```diff
+@@ -233,37 +233,38 @@ fn indented_alternative_header(line: &str) -> bool {
+ /// commit/EOF still runs the unchanged real parser, including its body
+ /// requirements and resource bounds.
+ fn indented_condition_header(line: &str, keyword: Keyword) -> bool {
+-    let Ok(tokens) = lex_header(line) else {
++    let Ok(header) = lex_header(line) else {
+         return false;
+     };
+-    let mut tokens = tokens.iter().map(|spanned| &spanned.token).peekable();
+-    if tokens.next() != Some(&Token::Keyword(keyword)) {
++    let Some(start) = condition_start(&header, keyword) else {
+         return false;
+-    }
+-    if keyword == Keyword::Else && tokens.peek() == Some(&&Token::Keyword(Keyword::If)) {
+-        tokens.next();
+-    }
++    };
++    let mut tokens = header
++        .iter()
++        .map(|spanned| &spanned.token)
++        .enumerate()
++        .skip(start);
+     let mut nonempty = false;
+     let mut delimiters = Vec::new();
+     let mut conditionals = 0usize;
+-    while let Some(token) = tokens.next() {
++    while let Some((index, token)) = tokens.next() {
+         match token {
+-            Token::At => match tokens.next() {
+-                Some(Token::VersionIndex(_)) => {}
+-                Some(Token::Identifier(name))
+-                    if matches!(name.as_str(), "first" | "last" | "previous") => {}
+-                _ => return false,
+-            },
++            Token::At if reads_at(&header, index) => {
++                tokens.next();
++            }
++            Token::At => return false,
+             Token::Eof => return nonempty && delimiters.is_empty() && conditionals == 0,
+             Token::Newline | Token::Dedent if delimiters.is_empty() => {
+                 return nonempty
+                     && conditionals == 0
+-                    && tokens
+-                        .all(|rest| matches!(rest, Token::Newline | Token::Dedent | Token::Eof));
++                    && tokens.all(|(_, rest)| {
++                        matches!(rest, Token::Newline | Token::Dedent | Token::Eof)
++                    });
+             }
+             Token::Question if delimiters.is_empty() => conditionals += 1,
+             Token::Identifier(_)
+-                if delimiters.is_empty() && starts_quantifier(token, tokens.clone()) =>
++                if delimiters.is_empty()
++                    && starts_quantifier(token, tokens.clone().map(|(_, rest)| rest)) =>
+             {
+                 conditionals += 1;
+             }
+@@ -288,6 +289,64 @@ fn indented_condition_header(line: &str, keyword: Keyword) -> bool {
+     false
+ }
+ 
++fn condition_start(header: &[Spanned], keyword: Keyword) -> Option<usize> {
++    let mut tokens = header.iter().map(|spanned| &spanned.token);
++    if tokens.next() != Some(&Token::Keyword(keyword)) {
++        return None;
++    }
++    let else_if = keyword == Keyword::Else && tokens.next() == Some(&Token::Keyword(Keyword::If));
++    Some(if else_if { 2 } else { 1 })
++}
++
++fn reads_at(tokens: &[Spanned], at: usize) -> bool {
++    match tokens.get(at + 1).map(|spanned| &spanned.token) {
++        Some(Token::VersionIndex(_)) => true,
++        Some(Token::Identifier(name)) => {
++            matches!(name.as_str(), "first" | "last" | "previous") || marks_variable(tokens, at)
++        }
++        _ => false,
++    }
++}
++
++fn marks_variable(tokens: &[Spanned], at: usize) -> bool {
++    let token = |back: usize| {
++        at.checked_sub(back)
++            .and_then(|index| tokens.get(index))
++            .map(|spanned| &spanned.token)
++    };
++    let compares = |back: usize| {
++        matches!(token(back), Some(Token::Identifier(word)) if word == "is")
++            && token(back + 1).is_some_and(ends_operand)
++    };
++    let follows_comparison =
++        compares(1) || (token(1) == Some(&Token::Keyword(Keyword::Not)) && compares(2));
++    let adjacent = matches!(
++        (tokens.get(at), tokens.get(at + 1)),
++        (Some(mark), Some(name)) if name.position.line == mark.position.line
++            && name.position.column == mark.position.column + 1
++    );
++    follows_comparison && adjacent
++}
++
++fn ends_operand(token: &Token) -> bool {
++    matches!(
++        token,
++        Token::Identifier(_)
++            | Token::ClassRef(_)
++            | Token::Number(_)
++            | Token::VersionIndex(_)
++            | Token::Str(_)
++            | Token::Template(_)
++            | Token::Regex(_)
++            | Token::RightParen
++            | Token::RightBracket
++            | Token::RightBrace
++            | Token::Keyword(
++                Keyword::True | Keyword::False | Keyword::Null | Keyword::This | Keyword::Super
++            )
++    )
++}
++
+ fn closes(open: Option<&Token>, close: &Token) -> bool {
+     matches!(
+         (open, close),
+```
+
+**File**: `src/continuation/tests.rs` (modified, +53/-0)
+```diff
+@@ -740,3 +740,56 @@ fn repl_settings_toggle_or_accept_explicit_values() {
+     assert_eq!(setting_value("off", true), Some(false));
+     assert_eq!(setting_value("invalid", false), None);
+ }
++
++#[test]
++fn colon_free_condition_headers_buffer_at_variables_after_is_comparisons() {
++    for condition in [
++        "x is @C",
++        "x is not @C",
++        "a is @b and c is not @d",
++        "$Obj.color is @RED",
++        "x is @C.p",
++        "x is @C@first",
++        "f(x is @C)",
++        "x is@C",
++        "(x) is @C",
++        "x is @first",
++    ] {
++        for prefix in ["if", "else if", "elif if", "else", "elif"] {
++            let line = format!("{prefix} {condition}");
++            let keyword = if prefix == "if" {
++                Keyword::If
++            } else {
++                Keyword::Else
++            };
++            assert!(indented_condition_header(&line, keyword), "{line:?}");
++            assert_eq!(indented_body_header(&line), prefix == "if", "{line:?}");
++        }
++    }
++    for line in [
++        "if x is @ C",
++        "if x is @",
++        "if @a",
++        "if (@a)",
++        "if x + @a",
++        "if is @a",
++        "if x@a",
++        "if x is @C:",
++        "if x == @C",
++        "if not @a",
++    ] {
++        assert!(!indented_condition_header(line, Keyword::If), "{line:?}");
++    }
++    let mut pending = Pending::default();
++    assert_eq!(pending.accept("if x is @C"), None);
++    assert_eq!(pending.indentation, INDENT);
++    assert_eq!(pending.accept("    y = 1"), None);
++    assert_eq!(
++        pending.accept(""),
++        Some("if x is @C\n    y = 1\n".to_string())
++    );
++    assert_eq!(
++        pending.accept("b is @a + 2"),
++        Some("b is @a + 2\n".to_string())
++    );
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1749,42 +2271,49 @@ build, warnin
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 1 NUC Purpose and Guidelines
+## X. NUC 96 At Variables
 
 **RULE**:
-When implementing operations in `docs/nuc-0001.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4b4d45bf`: NUC 1 NUC Purpose and Guidelines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cacd3a8d`: NUC 96 At Variables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0001.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| Reasoning enhancement | Logic rules, inference, forward and backward chaining, graph queries, and explanations. | Yes |
-- A proposal whose primary purpose is forward chaining (data-driven: rules fire as facts change and derive new conclusions) or backward chaining (goal-driven: inference starts from a queried conclusion and works back through the rules and facts that would establish it) is Reasoning enhancement.
-## Evaluation: Forward and Backward Chaining
+### At variables
 
-- Accepted as a user-requested, single-mode process revision against
-  `95ca01b324fcb536e002dd79e2c03463eaf28ce1`. It names forward and backward
-  chaining in the Reasoning enhancement row and classifies proposals whose
-  primary purpose is either one as Reasoning enhancement.
-- The independent evaluator's overall decision and the core report's decision
-  were Accepted, with no issues, policy failures or blockers.
-- The frozen proposal's plain and raw Git blob was
-  `e512a2f5022b49bcab198f8f8bf65fe754601f03`, before this outcome metadata.
-  It was the only changed path, and the caller integrated it byte-for-byte.
-- NUC 1 retains Type Process, Status Active and Category Documentation.
-  Runtime applicability is not applicable. 
+Inside an `is` value, `@name` reads the variable `name`, never the word:
+
+```
+a is 1
+b is @a + 2
+RED = "red"
+colors is [@RED, GREEN]
+assert([b, colors], [3, ["red", "GREEN"]])
+```
+
+`@a` is read exactly as `(a)` is, so `b is @c + 3` raises
+`ReferenceError("c is not defined")` while nothing defines `c`, and so does
+`b is @c`, where `b is c` would store the word `"c"`. The mark works
+wherever an operand begins in an `is` value, outside function bodies,
+comprehension elements, template interpolations, inner assignments and
+targets, and in the right operand of an `is` comparison, as in
+`if state is @OPEN:`. Everywhere else a leading `@` is still a syntax error,
+`x@first` is still a version, and `b is @first` still reads as `b` followed
+by `is@first`; see [NUC 96](docs/nuc-0096.md).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| Reasoning enhancement | Logic rules, inference, graph queries, and explanations. | Yes |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4b4d45bf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cacd3a8d` are properly handled with clean fallback behavior.

@@ -1295,8 +1295,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "d1520966cb96710ff931fce269774c569d369c8bcd1c0733597f019fcd216bdb",
-    "lastHarvestedAt": "2026-11-05T14:06:54.571Z",
+    "contentHash": "11a6d5b82003e5b1f47619b52d4e86b7c92e57c3adfae86b3aa6941319118862",
+    "lastHarvestedAt": "2026-11-09T12:17:30.706Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "4b4d45bf",
+    "sourceVersion": "cacd3a8d",
     "license": "Apache-2.0",
-    "contentHash": "97bddb16a5647a464aacaab17dc75629f70f360ca51b2b2b898e9630d898d356",
-    "lastHarvestedAt": "2026-11-09T10:59:41.996Z",
+    "contentHash": "7235e3911b35fce84a78fdceef4e712091bf521fc6daf0f87445722b79da2d86",
+    "lastHarvestedAt": "2026-11-09T12:13:13.589Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "82b428a7",
+    "sourceVersion": "f0f02bcb",
     "license": "Apache-2.0",
-    "contentHash": "e0c9aa84fb28b839934508647979e48c828fa63063fa7e942e5e15d709dfeb24",
-    "lastHarvestedAt": "2026-11-06T15:05:49.484Z",
+    "contentHash": "b2efe3dcf41daf37e981320624af828ec596da799516d1713d330e3460f15b23",
+    "lastHarvestedAt": "2026-11-09T12:13:07.427Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "a8ab30ea",
+    "sourceVersion": "d353cc58",
     "license": "Apache-2.0",
-    "contentHash": "3fa716c14a5cd1c9a15a3fd748a68e7b3dd03457b5c2c9ae0f56730722bb9f94",
-    "lastHarvestedAt": "2026-11-05T22:31:49.255Z",
+    "contentHash": "6c78f38e77fc62c6bd2c099d8eb53f4d8ad6778c18c6aa97c4da482853263fd5",
+    "lastHarvestedAt": "2026-11-09T12:16:14.580Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {

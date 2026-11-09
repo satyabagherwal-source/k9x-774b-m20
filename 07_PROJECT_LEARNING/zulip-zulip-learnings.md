@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `82b428a7`  
+> **Source Version**: `f0f02bcb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:05:48.099Z  
+> **Timestamp**: 2026-11-09T12:13:06.017Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:05:46.400Z  
+> **Harvest Timestamp**: 2026-11-09T12:13:01.816Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26183 stars
+- **Stars / Engagement**: 26193 stars
 
 ---
 
@@ -1210,17 +1210,11 @@ def check_rabbitmq_queues() -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40501** (2026-10-29): **provisioning fails on wsl with existing uv > 0.13.4**
-  *Symptoms*: I ran ./tools/provision under WSL 2.7.14.0. Using https://github.com/zulip/zulip commit 3e9bc1e from UTC 2026-10-27 08:54  It errored out comparing my uv version 0.13.6 to the apparently hardcoded string 0.13.4 - seems a bit brittle. I had to uninstall my uv (delete it) and manually install 0.13.4 before dev environ provisioning would complete successfully. It's possible I didn't have to manually install 0.13.4, maybe could have just "hash -r" after deleting the newer one.
-  **Post-Mortem & Fix Analysis**:
-  > Hello @zulip/server-development members, this issue was labeled with the "area: provision" label, so you may want to check it out!  <!-- areaLabelAddition --> 
-  > Hello!  I can patch a fix for this?
+- **Issue #40630** (2026-11-09): **settings / [component-name]: Element horizontally overflows viewport on mobile web**
+  *Symptoms*:  ### Summary On mobile web view (screen width < 500px), the [name of button/input] overflows horizontally past the right edge of the viewport.  ### Steps to reproduce: 1. Open Zulip in a mobile browser (or resize browser window to 375px width). 2. Go to [Settings / Modal name]. 3. Notice the layout and alignment of [element name].  ### Expected behavior: The element should wrap properly or have responsive padding/max-width so it fits within the viewport.  ### Screenshots: [Attach screenshot from DevTools]  ### Environment: - Browser: Chrome  - Device: Mobile viewport / Responsive view  *I would like to work on fixing this issue and submit a PR.*
 
-- **Issue #40388** (2026-10-20): **data import bug fixes**
-  *Symptoms*: Minor bugs caught by the new data import test class (#40370).    <details> <summary>Self-review checklist</summary>  <!-- Prior to submitting a PR, follow our step-by-step guide to review your own code: https://zulip.readthedocs.io/en/latest/contributing/code-reviewing.html#how-to-review-code -->  <!-- Once you create the PR, check off all the steps below that you have completed. If any of these steps are not relevant or not completed, leave them unchecked.-->  - [ ] [Self-reviewed](https://zulip.readthedocs.io/en/latest/contributing/code-reviewing.html#how-to-review-code) the changes for clarity and maintainability       (variable names, code reuse, readability, etc.). - [ ] Followed the [AI use policy](https://zulip.readthedocs.io/en/latest/contributing/contributing.html#ai-use-policy-and-guidelines).  Communicate decisions, questions, and potential concerns.  - [ ] Explains differences from previous plans (e.g., issue description). - [ ] Highlights technical choices and bugs encountered. - [ ] Calls out remaining decisions and concerns. - [ ] Automated tests verify logic where appropriate.  Individual commits are ready for review (see [commit discipline](https://zulip.readthedocs.io/en/latest/contributing/commit-discipline.html)).  - [ ] Each commit is a coherent idea. - [ ] Commit message(s) explain reasoning and motivation for changes.  Completed manual review and testing of the following:  - [ ] Visual appearance of the changes. - [ ] Resp
-  **Post-Mortem & Fix Analysis**:
-  > @mateuszmandera -- Would you be up for reviewing this?  @emilysutherlin -- Should we add this to my release board? These are straight forward bug fixes with no UI changes.
-  > @mateuszmandera -- Thanks for the review. I think this is ready for you to take another look.
+- **Issue #40600** (2026-11-09): **Safari on macOS does not scroll to the bottom**
+  *Symptoms*: On our self-hosted Zulip we have noticed that Safari on macOS does not automatically scroll to the bottom of the messages when loading a page. Whenever a new channel is selected, the view stays on top.  In the developer log the messages are  ``` [Info] ScrollTop did nothing when scrolling to 4635.71875, fixing... (app.9ce541840b7470231ad5.js, line 1) [Info] ScrollTop fix did not work when scrolling to 4635.71875!  space_to_scroll was 4512.171875 (app.9ce541840b7470231ad5.js, line 1) [Info] ScrollTop did nothing when scrolling to 17471.328125, fixing... (app.9ce541840b7470231ad5.js, line 1) [Info] ScrollTop fix did not work when scrolling to 17471.328125!  space_to_scroll was 21983.5 (app.9ce541840b7470231ad5.js, line 1) ```  Chrome on macOS does not have these issues. The behaviour started in Zulip 12.2 I think (or a little earlier).  <!-- Check the box for the version of Zulip you are using (see https://zulip.com/help/view-zulip-version).-->  **Zulip Server and web app version:**  - [ ] Zulip Cloud (`*.zulipchat.com`) - [x] Zulip Server 12.x - [ ] Zulip Server 11.x - [ ] Zulip Server 10.x - [ ] Zulip Server 9.x or older - [ ] Other or not sure 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1237,144 +1231,246 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `403e7cb2` (2026-10-09)
-**Commit Message**: webhooks/gogs-gitea: Fix PR comments being reported as issue comments.
+### Incident Patch 1: `619647b7` (2026-11-01)
+**Commit Message**: export: Fix consent of former subscribers covering private channels.
 
-The Gogs integration, which Gitea reuses, treated every
-`issue_comment` event as an issue comment, even though the event is
-also delivered for comments on pull requests.
+An export with member consent included the private channels that a
+consenting user had unsubscribed from or been removed from, since
+either way their Subscription is only marked inactive. In channels
+with shared history, this exported messages that other members, who
+had not consented, sent after the user left or was removed.
 
-Gitea already has a fixture, and the test `test_issue_comment_in_pr`
-pinning this behavior has been updated.
-For Gogs, patch `issue.pull_request` on the existing
-`issue_comment__new.json` payload in the test rather than
-adding a near-duplicate fixture.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: Alex Auvolat <[REDACTED_EMAIL]>
-
-**File**: `zerver/webhooks/gitea/tests.py` (modified, +2/-2)
+**File**: `zerver/lib/export.py` (modified, +1/-1)
 ```diff
-@@ -88,8 +88,8 @@ def test_issue_comment_new(self) -> None:
-         self.check_webhook("issue_comment__new", expected_topic_name, expected_message)
+@@ -1909,7 +1909,7 @@ def get_ids(records: Iterable[Mapping[str, Any]]) -> set[int]:
+         ).values_list("recipient_id", flat=True)
  
-     def test_issue_comment_in_pr(self) -> None:
--        expected_topic_name = "test / issue #1 dummy"
--        expected_message = """kostekIV [commented](https://try.gitea.io/kostekIV/test/pulls/1/files#issuecomment-24399) on [issue #1](https://try.gitea.io/kostekIV/test/issues/1):\n\n``` quote\ntest comment\n```"""
-+        expected_topic_name = "test / PR #1 dummy"
-+        expected_message = """kostekIV [commented](https://try.gitea.io/kostekIV/test/pulls/1/files#issuecomment-24399) on [PR #1](https://try.gitea.io/kostekIV/test/pulls/1):\n\n``` quote\ntest comment\n```"""
-         self.check_webhook("issue_comment__in_pr", expected_topic_name, expected_message)
+         consented_recipient_ids = Subscription.objects.filter(
+-            user_profile_id__in=consented_user_ids
++            user_profile_id__in=consented_user_ids, active=True
+         ).values_list("recipient_id", flat=True)
  
-     def test_issue_comment_edited(self) -> None:
+         recipient_ids_set = (set(public_stream_recipient_ids) | set(consented_recipient_ids)) - set(
 ```
 
-**File**: `zerver/webhooks/gogs/tests.py` (modified, +14/-0)
+**File**: `zerver/tests/test_import_export.py` (modified, +14/-0)
 ```diff
-@@ -1,5 +1,7 @@
- from unittest.mock import MagicMock, patch
+@@ -1027,6 +1027,18 @@ def test_export_realm_with_member_consent(self) -> None:
+         self.subscribe(self.example_user("hamlet"), "Private D")
+         self.send_stream_message(self.example_user("prospero"), "Private D", "Hello again stream D")
  
-+import orjson
-+
- from zerver.lib.test_classes import WebhookTestCase
- from zerver.lib.webhooks.git import COMMITS_LIMIT
- 
-@@ -128,6 +130,18 @@ def test_issue_comment_new(self) -> None:
-         expected_message = """kostekIV [commented](https://try.gogs.io/kostekIV/test/issues/3#issuecomment-3635) on [issue #3](https://try.gogs.io/kostekIV/test/issues/3):\n\n``` quote\nTest comment\n```"""
-         self.check_webhook("issue_comment__new", expected_topic_name, expected_message)
- 
-+    def test_issue_comment_in_pr(self) -> None:
-+        expected_topic_name = "test / PR #3 New test issue"
-+        expected_message = """kostekIV [commented](https://try.gogs.io/kostekIV/test/issues/3#issuecomment-3635) on [PR #3](https://try.gogs.io/kostekIV/test/pulls/3):\n\n``` quote\nTest comment\n```"""
-+        payload = orjson.loads(self.get_body("issue_comment__new"))
-+        payload["issue"]["pull_request"] = {"merged": False, "merged_at": None}
-+        self.check_webhook(
-+            "issue_comment__new",
-+            expected_topic_name,
-+            expected_message,
-+            custom_payload=payload,
++        create_stream_if_needed(
++            realm, "Private E", invite_only=True, history_public_to_subscribers=True
++        )
++        self.subscribe(self.example_user("prospero"), "Private E")
++        self.subscribe(self.example_user("hamlet"), "Private E")
++        # Hamlet loses access to the channel when he unsubscribes, so his consent is
++        # not sufficient to export its messages.
++        self.unsubscribe(self.example_user("hamlet"), "Private E")
++        stream_e_message_id = self.send_stream_message(
++            self.example_user("prospero"), "Private E", "Hello stream E"
 +        )
 +
-     def test_issue_comment_edited(self) -> None:
-         expected_topic_name = "test / issue #3 New test issue"
-         expected_message = """kostekIV edited a [comment](https://try.gogs.io/kostekIV/test/issues/3#issuecomment-3634) on [issue #3](https://try.gogs.io/kostekIV/test/issues/3):\n\n``` quote\nedit comment\n```"""
-```
-
-**File**: `zerver/webhooks/gogs/view.py` (modified, +15/-6)
-```diff
-@@ -24,6 +24,7 @@
-     get_push_commits_event_message,
-     get_release_event_message,
-     is_branch_name_notifiable,
-+    is_pull_request_comment_event,
- )
- from zerver.models import UserProfile
- 
-@@ -34,6 +35,10 @@ def get_issue_url(repo_url: str, issue_nr: int) -> str:
-     return f"{repo_url}/issues/{issue_nr}"
- 
- 
-+def get_pr_url(repo_url: str, pr_nr: int) -> str:
-+    return f"{repo_url}/pulls/{pr_nr}"
-+
-+
- def format_push_event(payload: WildValue) -> str:
-     user_name = payload["sender"]["username"].tame(check_string)
-     compare_url = payload["compare_url"].tame(check_string)
-@@ -133,15 +138,19 @@ def format_issue_comment_event(payload: WildValue, include_title: bool = False)
-         action = f"{action} a [comment]"
-     action += "({}) on".format(comment["html_url"].tame(check_string))
- 
--    return get_issue_event_message(
-+    is_pr_comment = is_pull_request_comment_event(payload)
-+    repo_url = payload["repository"]["html_url"].tame(check_string)
-+    number = issue["number"].tame(check_int)
-+    url = get_pr_url(repo_url, number) if is_pr_comment else get_issue_url(repo_url, number)
-+
-+    return get_pull_request_event_message(
-         user_name=payload["sender"]["login"].tame(check_string),
-         action=action,
--        url=get_issue_url(
--            payload["repository"]["html_url"].tame(check_string), issue["number"].tame(check_int)
--        ),
--        number=issue["number"].tame(check_int),
-+        url=url,
-+        number=number,
-         message=comment["body"].tame(check_string),
-         title=issue["title"].tame(check_string) if include_title else None,
-+        type="PR" if is_pr_comment else "issue",
-     )
- 
- 
-@@ -242,7 +251,7 @@ def gogs_webhook_main(
+         # Create direct message groups
+         self.send_group_direct_message(
+             self.example_user("iago"), [self.example_user("cordelia"), self.example_user("AARON")]
+@@ -1200,6 +1212,7 @@ def test_export_realm_with_member_consent(self) -> None:
+                 "Private B",
+                 "Private C",
+                 "Private D",
++                "Private E",
+             },
          )
-         topic_name = TOPIC_WITH_PR_OR_ISSUE_INFO_TEMPLATE.format(
-             repo=repo,
--            type="issue",
-+            type="PR" if is_pull_request_comment_event(payload) else "issue",
-             id=payload["issue"]["number"].tame(check_int),
-             title=payload["issue"]["title"].tame(check_string),
-         )
+ 
+@@ -1283,6 +1296,7 @@ def test_export_realm_with_member_consent(self) -> None:
+         self.assertNotIn(stream_b_first_message_id, exported_msg_ids)
+ 
+         self.assertNotIn(stream_c_message_id, exported_msg_ids)
++        self.assertNotIn(stream_e_message_id, exported_msg_ids)
+         self.assertNotIn(direct_message_group_c_message_id, exported_msg_ids)
+ 
+         self.assertNotIn(pm_a_msg_id, exported_msg_ids)
 ```
 
 ---
 
-### Incident Patch 2: `9cde567e` (2026-11-03)
-**Commit Message**: docs: Fix stale path to build_emoji tool.
+### Incident Patch 2: `62c39213` (2026-10-25)
+**Commit Message**: export: Fix deleted users being treated as consenting to export.
 
-The tool lives in tools/setup/emoji/, as emoji.md already says.
+Deleted users have `is_mirror_dummy=True`, and every mirror dummy counts
+as consenting to private data export. As a result, an "export with
+member consent" included every direct message conversation a deleted
+user had been part of, including messages from other participants who
+hadn't consented.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `docs/subsystems/dependencies.md` (modified, +1/-1)
+**File**: `zerver/lib/export.py` (modified, +5/-2)
 ```diff
-@@ -216,7 +216,7 @@ maintain them.
+@@ -3090,7 +3090,10 @@ def get_consented_user_ids(realm: Realm) -> set[int]:
+     #       in it. Thus, only public data of the user was exported->imported.
+     #       Therefore, again we can consider the user as consenting and export
+     #       everything - all this data is public by construction.
+-
++    #
++    #    Deleted users also have is_mirror_dummy=True set, but they aren't mirror dummies
++    #    in the usual sense: they don't represent an account that a user can later claim
++    #    by signing up. Neither (a) nor (b) applies, we treat them as not consenting.
+     query = sql.SQL("""
+         WITH consenting_humans AS (
+             SELECT id
+@@ -3109,7 +3112,7 @@ def get_consented_user_ids(realm: Realm) -> set[int]:
+                 AND is_bot
+                 AND realm_id = {realm_id}
+             )
+-            OR (is_mirror_dummy AND realm_id = {realm_id})
++            OR (is_mirror_dummy AND NOT is_deleted AND realm_id = {realm_id})
+     """).format(realm_id=sql.Literal(realm.id))
  
- Zulip uses the [iamcal emoji data package][iamcal] for its emoji data
- and sprite sheets. We download this dependency using `npm`, and then
--have a tool, `tools/setup/build_emoji`, which reformats the emoji data
-+have a tool, `tools/setup/emoji/build_emoji`, which reformats the emoji data
- into the files under `static/generated/emoji`. Those files are in
- turn used by our [Markdown processor](markdown.md) and
- `tools/update-prod-static` to make Zulip's emoji work in the various
+     with connection.cursor() as cursor:
+```
+
+**File**: `zerver/tests/test_import_export.py` (modified, +6/-1)
+```diff
+@@ -41,7 +41,7 @@
+ from zerver.actions.user_settings import do_change_user_delivery_email, do_change_user_setting
+ from zerver.actions.user_status import do_update_user_status
+ from zerver.actions.user_topics import do_set_user_topic_visibility_policy
+-from zerver.actions.users import do_deactivate_user
++from zerver.actions.users import do_deactivate_user, do_delete_user_preserving_messages
+ from zerver.lib import import_realm, upload
+ from zerver.lib.avatar_hash import user_avatar_path
+ from zerver.lib.bot_config import set_bot_config
+@@ -775,6 +775,11 @@ def test_get_consented_user_ids(self) -> None:
+         non_consented_user.save(update_fields=["is_mirror_dummy"])
+         self.assertIn(non_consented_user.id, get_consented_user_ids(realm))
+ 
++        # Deleted users aren't considered consented.
++        deleted_user = self.example_user("othello")
++        do_delete_user_preserving_messages(deleted_user, acting_user=None)
++        self.assertNotIn(deleted_user.id, get_consented_user_ids(realm))
++
+     def test_client_objects_export(self) -> None:
+         """
+         Client objects require some special handling when exporting. They aren't
+```
+
+---
+
+### Incident Patch 3: `292dad42` (2026-10-16)
+**Commit Message**: attachments: Fix guests accessing files via content access groups.
+
+Guests in a channel's can_subscribe_group or
+can_add_subscribers_group could download attachments from that
+channel without being subscribed, since the group-based check in
+validate_attachment_request did not exclude guests. This also let
+guests keep access to files in channels with protected history after
+unsubscribing.
+
+These groups never grant guests content access, matching how message
+access already handles guests.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `zerver/lib/attachments.py` (modified, +5/-0)
+```diff
+@@ -213,6 +213,11 @@ def validate_attachment_request(
+         if channel.id in subscribed_channel_ids and channel.is_history_public_to_subscribers():
+             return True, attachment
+ 
++    if user_profile.is_guest:
++        # All existing groups granting content access have
++        # allow_everyone_group=False, so they never grant guests access.
++        return False, attachment
++
+     user_recursive_group_ids = set(
+         get_recursive_membership_groups(user_profile).values_list("id", flat=True)
+     )
+```
+
+**File**: `zerver/tests/test_subs.py` (modified, +25/-5)
+```diff
+@@ -1273,6 +1273,7 @@ def test_stream_group_permission_changes_updates_updates_attachments(self) -> No
+         owner = self.example_user("desdemona")
+         realm = owner.realm
+         cordelia = self.example_user("cordelia")
++        polonius = self.example_user("polonius")
+         private_stream_public_history = self.make_stream(
+             "private_stream_public_history",
+             realm=realm,
+@@ -1290,18 +1291,23 @@ def test_stream_group_permission_changes_updates_updates_attachments(self) -> No
+         self.assertFalse(attachment.is_realm_public)
+ 
+         # User should be able to see the attachment if they have
+-        # content access to a channel with public history.
++        # content access to a channel with public history, but guests
++        # are never granted content access by these groups.
+         for setting_name in Stream.stream_permission_group_settings_requiring_content_access:
+             self.assertFalse(validate_attachment_request(cordelia, attachment.path_id)[0])
++            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
+             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
+             do_change_stream_group_based_setting(
+                 private_stream_public_history,
+                 setting_name,
+-                UserGroupMembersData(direct_members=[cordelia.id], direct_subgroups=[]),
++                UserGroupMembersData(
++                    direct_members=[cordelia.id, polonius.id], direct_subgroups=[]
++                ),
+                 acting_user=cordelia,
+             )
+             self.assertFalse(check_subscriptions_exists(cordelia, private_stream_public_history))
+             self.assertTrue(validate_attachment_request(cordelia, attachment.path_id)[0])
++            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
+             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
+             attachment.refresh_from_db()
+             self.assertFalse(attachment.is_realm_public)
+@@ -1335,24 +1341,31 @@ def test_stream_group_permission_changes_updates_updates_attachments(self) -> No
+         # sent.
+         for setting_name in Stream.stream_permission_group_settings_requiring_content_access:
+             self.assertFalse(validate_attachment_request(cordelia, attachment.path_id)[0])
++            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
+             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
+             do_change_stream_group_based_setting(
+                 private_stream_protected_history,
+                 setting_name,
+-                UserGroupMembersData(direct_members=[cordelia.id], direct_subgroups=[]),
++                UserGroupMembersData(
++                    direct_members=[cordelia.id, polonius.id], direct_subgroups=[]
++                ),
+                 acting_user=cordelia,
+             )
+             self.assertFalse(check_subscriptions_exists(cordelia, private_stream_protected_history))
+             self.assertFalse(validate_attachment_request(cordelia, attachment.path_id)[0])
++            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
+             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
+ 
+             # They should not have access to the upload if they are
+             # subscribed to the channel but they were not subscribed at
+             # the time of upload.
+             self.subscribe(cordelia, "private_stream_protected_history")
++            self.subscribe(polonius, "private_stream_protected_history")
+             self.assertFalse(validate_attachment_request(cordelia, attachment.path_id)[0])
++            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
+             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
+             self.unsubscribe(cordelia, "private_stream_protected_history")
++            self.unsubscribe(polonius, "private_stream_protected_history")
+             attachment.refresh_from_db()
+ 
+             nobody_group = NamedUserGroup.objects.get(
+@@ -1364,23 +1377,30 @@ def test_stream_group_permission_changes_updates_updates_attachments(self) -> No
+ 
+         # User should be able to see the attachment if they have
+         # content access to a private channel with protected history
+-        # and were subscribed to the channel when the upload was sent.
++        # and were subscribed to the channel when the upload was sent,
++        # unless they are a guest.
+         self.subscribe(cordelia, "private_stream_protected_history")
++        self.subscribe(polonius, "private_stream_protected_history")
+         body = f"Second message ...[zulip2.txt](http://{realm.host}" + url + ")"
+         msg_id = self.send_stream_message(owner, "private_stream_protected_history", body, "test")
+         attachment = Attachment.obje
 ```
 
 #### Recent Merged Pull Requests:
@@ -1383,7 +1479,7 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 - **PR #40605** (closed): Changes in the Introuction to topics page (@arnavpandey0714-glitch)
 - **PR #40602** (closed): Evidencia/video cicd fondo login (@jcelemin7)
 - **PR #40599** (2026-11-05): Updated translations for main from Weblate. (@mateuszmandera)
-- **PR #40589** (closed): streams: Add channel-level wildcard mention permission (@Hirdyansh-bh)
+- **PR #40598** (closed): Settings allow org admins to set default colors for channels (@Eklavya-byte16)
 
 ---
 
@@ -1403,30 +1499,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. webhooks/gogs-gitea: Fix PR comments being reported as issue comments.
+## X. export: Fix consent of former subscribers covering private channels.
 
 **RULE**:
-When implementing operations in `zerver/webhooks/gitea/tests.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zerver/lib/export.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `403e7cb2`: webhooks/gogs-gitea: Fix PR comments being reported as issue comments.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `619647b7`: export: Fix consent of former subscribers covering private channels.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `zerver/webhooks/gitea/tests.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `zerver/lib/export.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        expected_topic_name = "test / PR #1 dummy"
-        expected_message = """kostekIV [commented](https://try.gitea.io/kostekIV/test/pulls/1/files#issuecomment-24399) on [PR #1](https://try.gitea.io/kostekIV/test/pulls/1):\n\n``` quote\ntest comment\n```"""
+            user_profile_id__in=consented_user_ids, active=True
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        expected_topic_name = "test / issue #1 dummy"
-        expected_message = """kostekIV [commented](https://try.gitea.io/kostekIV/test/pulls/1/files#issuecomment-24399) on [issue #1](https://try.gitea.io/kostekIV/test/issues/1):\n\n``` quote\ntest comment\n```"""
+            user_profile_id__in=consented_user_ids
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `403e7cb2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `619647b7` are properly handled with clean fallback behavior.
