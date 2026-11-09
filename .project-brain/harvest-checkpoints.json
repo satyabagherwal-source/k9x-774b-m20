@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T16:04:17.203Z",
+  "last_updated": "2026-11-09T16:11:05.819Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2646,14 +2646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
-      "content_hash": "974bae64a066e07a932720b161f310ab7bfc6ec94b031ee1da4e91e6a8902793",
-      "verified_at": "2026-11-05T16:52:45.615Z",
+      "content_hash": "e196a6a131d99d457cfb05f4ce1984135c14ea563fead73169d762bbd2e2bcbe",
+      "verified_at": "2026-11-09T16:10:53.628Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T16:52:45.615Z"
+      "last_updated": "2026-11-09T16:10:53.628Z"
     },
     "OpenMOSS-Team/MOSS-Image-SFT": {
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
-      "verified_at": "2026-11-06T19:23:54.880Z",
+      "content_hash": "e0db7c78c83baac7a01a00db46388be63a78bdf647d92e757f6e0d9779c38a9a",
+      "verified_at": "2026-11-09T16:11:05.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T19:23:54.880Z"
+      "last_updated": "2026-11-09T16:11:05.818Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -5466,14 +5466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-invertase-react-native-firebase",
-      "content_hash": "a0271bd98120716ca2eab56d8e9008fa56ace4af78478f79862d3e103ad5d5fe",
-      "verified_at": "2026-11-06T21:21:06.574Z",
+      "content_hash": "ff6c2d0cb4fea86f59fede11acdff45c8a4ae770dc6ebd2f83d1ba16d616b121",
+      "verified_at": "2026-11-09T16:11:00.717Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T21:21:06.574Z"
+      "last_updated": "2026-11-09T16:11:00.717Z"
     },
     "PeerDB-io/peerdb": {
       "repository": "PeerDB-io/peerdb",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "006c787c11a916246a2c0f91a771f0a3823b354c4b2f3904810593ae7c47901b",
-      "verified_at": "2026-11-08T13:40:21.429Z",
+      "content_hash": "00c45b712d56faa529ababea4e68b2f3ee7184233840b7c91b0637054beb5938",
+      "verified_at": "2026-11-09T16:10:56.075Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T13:40:21.429Z"
+      "last_updated": "2026-11-09T16:10:56.075Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

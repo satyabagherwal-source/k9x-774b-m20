@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `8f9133b3`  
+> **Source Version**: `fabb1cf8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T19:23:53.688Z  
+> **Timestamp**: 2026-11-09T16:11:04.513Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T19:23:53.412Z  
+> **Harvest Timestamp**: 2026-11-09T16:11:04.508Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,546 +1927,195 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32cfff2e` (2026-11-06)
-**Commit Message**: perf(hpu): improving backend perf for hpu on DMA + fix some fw issues (#4041)
+### Incident Patch 1: `1756a242` (2026-11-09)
+**Commit Message**: chore(hpu): adds in hputil ability to dump the fw trace with command hputil -f $i fw-trace (#4060)
 
-* chore(hpu): improving lwe ct copy from pcs
-* chore(hpu): reword dma queues
-* chore(hpu): c2h output bundle reads using AIO w/ hugepage buffers
-* chore(hpu): fixing unreachable leak with asserts
-* chore(hpu): removing needless borrow
-* fix(hpu): updating hpu binary (bitstream e4877b2, fw 3fe91cd)
-including fw AMC 3.2.3-zama with fix on IOp ack queue
-update QDMA driver expected version (2024.1.0.*-zama to 2024.1.1.*-zama)
-force all Host2Card write on a single queue (qdma_h2c[0]) as using 2
-queues make Host2Card transfers unstable
-* chore(hpu): updating bitstream with 6e22dc4 fw
-update driver version to get stable iop ack queue and match this new fw
+(fw trace is fully activited using hputil -f $i register write debug::int --value 1)
 
----------
-
-Co-authored-by: pgardratzama <[REDACTED_EMAIL]>
-
-**File**: `backends/tfhe-hpu-backend/config_store/v80_archives/psi64.hpu` (modified, +2/-2)
+**File**: `backends/tfhe-hpu-backend/src/utils/fw_trace.rs` (added, +627/-0)
 ```diff
-@@ -1,3 +1,3 @@
- version https://git-lfs.github.com/spec/v1
--oid sha256:ed0e88c512defc14eb49e80548b79ce8cea0a0974ebfd23f10d8758bbc65f52c
--size 87505049
-+oid sha256:ca0c997c68ae0a801239d17b25b5a0d3bd901137f1dc079359d58bb68fc3196d
-+size 86328575
-```
-
-**File**: `backends/tfhe-hpu-backend/src/ffi/mod.rs` (modified, +16/-0)
-```diff
-@@ -290,6 +290,22 @@ impl MemZone {
-         let ofst_bytes = ofst * std::mem::size_of::<T>();
-         self.write_bytes(ofst_bytes, data_bytes);
-     }
+@@ -0,0 +1,627 @@
++//! Ucore firmware DDR debug trace (multi-HPU IOp control / MHDMA events).
++//!
++//! The firmware (`print_ddr_debug`/`print_ddr_event` in `fw/arm/src/apps/in_band/ucore.c`) pushes
++//! records in a circular buffer of `DEBUG_SIZE` (0x20000) u32 located just after a pointer word:
++//!  - `@0x3FF00000` (`DEBUG_PTR`)  total number of words written since boot (un-wrapped)
++//!  - `@0x3FF00004` (`DEBUG_ADDR`) circular buffer
++//!
++//! Each record starts with a header word `tag[31:20] | sub[19:16] | fields[15:0]` followed by a
++//! fixed number of payload words. Keep in sync with the `DDR_TRC_*` table in `ucore.h`:
++//!
++//! | tag   | sub                          | fields[15:0]                | payload                       |
++//! |-------|------------------------------|-----------------------------|-------------------------------|
++//! | 0xBEE | site \| seen<<3              | iid<<8 \| nb_hpu<<4 \| state | -                            |
++//! | 0xB2B | 0: free request              | tail_iid<<8 \| iid          | -                             |
++//! | 0xB2B | 1: free done                 | iid                         | pool_free<<16 \| freed        |
++//! | 0xD57 | site                         | iid                         | owned<<16 \| waiting<<8 \| resolved |
++//! | 0xACC | 0                            | -                           | raw DOp ack                   |
++//! | 0xC0D | 1: notify / 2: read complete | iop_state / src_store state | req_id, req_addr (mhdma_cmd_t) |
++//!
++//! Most of those events are only recorded when the debug interrupt count is odd.
 +
-+    /// Read each zone from its base, all reads in flight at once
-+    pub fn read_batch<T: Sized + bytemuck::Pod>(reqs: &mut [(&MemZone, &mut [T])]) {
-+        #[cfg(feature = "hw-v80")]
-+        {
-+            let mut reqs = reqs
-+                .iter_mut()
-+                .map(|(mz, data)| (&mz.0, bytemuck::cast_slice_mut::<T, u8>(data)))
-+                .collect::<Vec<_>>();
-+            v80::MemZone::read_batch(&mut reqs);
-+        }
-+        #[cfg(not(feature = "hw-v80"))]
-+        for (mz, data) in reqs.iter_mut() {
-+            mz.read(0, data);
++use serde::Serialize;
++use std::collections::BTreeMap;
++use std::fs::File;
++use tfhe_hpu_backend::ffi;
++
++const TAG_IOP_STATE: u32 = 0xBEE;
++const TAG_B2B: u32 = 0xB2B;
++const TAG_DST_CNT: u32 = 0xD57;
++const TAG_ACK: u32 = 0xACC;
++const TAG_MHDMA: u32 = 0xC0D;
++
++const B2B_FREE_REQ: u32 = 0;
++const B2B_FREE_DONE: u32 = 1;
++const MHDMA_NOTIFY: u32 = 1;
++const MHDMA_READ_DONE: u32 = 2;
++
++// mhdma_cmd_t mode
++const CMD_SRC: u32 = 1;
++const CMD_DST: u32 = 2;
++
++/// Longest record in words (header included), bounds the resync search after a wrap
++const MAX_RECORD_WORDS: usize = 3;
++
++const SYNC_OPCODE: u32 = 0b10_1111;
++
++/// Extract a `width`-bit field starting at bit `lsb`.
++fn bits(value: u32, lsb: u32, width: u32) -> u32 {
++    (value >> lsb) & ((1u32 << width) - 1)
++}
++
++fn iop_state_str(state: u8) -> String {
++    match state {
++        0x0 => "done".to_string(),
++        0xF => "unknown".to_string(),
++        n => format!("running ({n} hpu left)"),
++    }
++}
++
++fn operand_state_str(state: u8) -> &'static str {
++    match state {
++        5 => "none",
++        6 => "read_pending",
++        7 => "dma_pending",
++        8 => "resolved",
++        _ => "invalid",
++    }
++}
++
++/// Decoded `mhdma_cmd_t` (c.f. `mhdma_driver.h`)
++#[derive(Debug, Clone, PartialEq, Serialize)]
++pub struct MhdmaCmd {
++    pub iid: u8,
++    pub hid: u8,
++    pub mode: &'static str,
++    /// User flag (mode=user), number of HPU (end of IOp notify: mode=src) or tid (operand
++    /// transfer: mode=dst, or mode=src for a read complete)
++    pub flag: u8,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub tid: Option<u8>,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub bid: Option<u8>,
++    pub opcode: u8,
++    pub src_cid: u16,
++    pub dst_cid: u16,
++}
++
++impl MhdmaCmd {
++    /// `is_read_done` is needed since mode=src means end of IOp in a notify but source operand
++    /// in a read complete
++    fn from_words(req_id: u32, req_addr: u32, is_read_done: bool) -> Self {
++        let pad = bits(req_id, 0, 8) as u8;
++        let flag = bits(req_id, 8, 6) as u8;
++        let mode = bits(req_id, 14, 2);
++        let is_operand = mode == CMD_DST || (is_read_done && mode == CMD_SRC);
++        Self {
++            iid: bits(req_id, 24, 8) as u8,
++            hid: bits(req_id, 16, 4) as u8,
++            mode: match mode {
++                0 => "user",
++                1 => "src",
++                2 => "dst",
++                _ => "invalid",
++            },
++            flag,
++            tid: is_operand.then_some(flag),
++            bid: is_operand.then_some(pad),
++            opcode: bits(req_id, 20, 4) as u8,
++            src_cid: bits(req_addr, 0, 16) as u16,
++            dst_cid: bits(req_addr, 16, 16) as u16,
 +        }
 +    }
- }
- 
- #[cfg(feature = "hw-v80")]
++}
++
++#[derive(Debug, Clone, PartialEq, Serialize)]
++#[serde(tag = "event")]
++pub enum FwTraceEvent {
++    /// Leading words of a record partially overwritten by the circular buffer
++    Truncated,
++    /// IOp state update (`iop_state[iid]`)
++    IopState {
++        site: &'static str,
++        iid: u8,
++        nb_hpu: u8,
++        state: u8,
++        state_str: String,
++        locally_seen: bool,
++    },
++    /// `b2b_pool_free` entry: slots are only freed if the pool tail belongs to `iid`
++    B2bFreeReq {
++        iid: u8,
++        tail_iid: u8,
++        will_free: bool,
++    },
++    /// `b2b_pool_free` result
++
 ```
 
-**File**: `backends/tfhe-hpu-backend/src/ffi/v80/mod.rs` (modified, +42/-65)
+**File**: `backends/tfhe-hpu-backend/src/utils/hputil.rs` (modified, +20/-0)
 ```diff
-@@ -12,7 +12,7 @@ use std::fs::OpenOptions;
- use std::io::{BufRead, Write};
- use std::process::{Command, Stdio};
- use std::str::FromStr;
--use std::sync::{Arc, Mutex};
-+use std::sync::Arc;
+@@ -16,6 +16,7 @@ use clap_num::maybe_hex;
  
- mod ami;
- use ami::AmiDriver;
-@@ -36,7 +36,7 @@ fn update_pcie_perms() {
- 
- pub struct HpuHw {
-     pub(super) ami: AmiDriver,
--    pub(super) qdma: Arc<Mutex<QdmaDriver>>,
-+    pub(super) qdma: Arc<QdmaDriver>,
-     allocator: Option<MemAlloc>,
- }
- 
-@@ -419,53 +419,25 @@ impl HpuHw {
-         }
- 
-         // Create user queues ----------------------------------------------
--        let h2c_path = format!("/dev/qdma{dev}001-MM-1");
--        let c2h_path = format!("/dev/qdma{dev}001-MM-2");
--
--        if !std::path::Path::new(&h2c_path).exists() {
--            Command::new("dma-ctl")
--                .arg(format!("qdma{dev}001"))
--                .arg("q")
--                .arg("add")
--                .arg("idx")
--                .arg("1")
--                .arg("dir")
--                .arg("h2c")
--                .status()
--                .expect("Unable to create Qdma queue1");
--            Command::new("dma-ctl")
--                .arg(format!("qdma{dev}001"))
--                .arg("q")
--                .arg("start")
--                .arg("idx")
--                .arg("1")
--                .arg("dir")
--                .arg("h2c")
--                .status()
--                .expect("Unable to start Qdma queue1");
--        }
--
--        if !std::path::Path::new(&c2h_path).exists() {
--            Command::new("dma-ctl")
--                .arg(format!("qdma{dev}001"))
--                .arg("q")
--                .arg("add")
--                .arg("idx")
--                .arg("2")
--                .arg("dir")
--                .arg("c2h")
--                .status()
--                .expect("Unable to create Qdma queue2");
--            Command::new("dma-ctl")
--                .arg(format!("qdma{dev}001"))
--                .arg("q")
--                .arg("start")
--                .arg("idx")
--                .arg("2")
--                .arg("dir")
--                .arg("c2h")
--                .status()
--                .expect("Unable to start Qdma queue2");
-+        for lane in 0..qdma::QDMA_LANES {
-+            let (h2c_idx, c2h_idx) = qdma::lane_idx(lane);
-+            for (idx, dir) in [(h2c_idx, "h2c"), (c2h_idx, "c2h")] {
-+                if std::path::Path::new(&qdma::queue_path(dev, idx)).exists() {
-+                    continue;
-+                }
-+                for action in ["add", "start"] {
-+                    Command::new("dma-ctl")
-+                        .arg(format!("qdma{dev}001"))
-+                        .arg("q")
-+                        .arg(action)
-+                        .arg("idx")
-+                        .arg(idx.to_string())
-+                        .arg("dir")
-+                        .arg(dir)
-+                        .status()
-+                        .unwrap_or_else(|_| panic!("Unable to {action} Qdma queue{idx} {dir}"));
-+                }
-+            }
-         }
-     }
- 
-@@ -480,17 +452,13 @@ impl HpuHw {
-         let hpu_pdi = HpuV80Pdi::from_bincode(hpu_path)
-             .unwrap_or_else(|err| panic!("Invalid \'.hpu\' {hpu_path:?}: {err}"));
- 
--        // Construct qdma path
--        let h2c_path = format!("/dev/qdma{pcie_id}001-MM-1");
--        let c2h_path = format!("/dev/qdma{pcie_id}001-MM-2");
--
-         // Open current Hw
-         let ami = AmiDriver::new(pcie_id, &hpu_pdi.metadata.amc.his_version, Some(ami_retry))?;
--        let qdma = QdmaDriver::new(&h2c_path, &c2h_path)?;
-+        let qdma = QdmaDriver::new(pcie_id)?;
- 
-         Ok(Self {
-             ami,
--            qdma: Arc::new(Mutex::new(qdma)),
-+            qdma: Arc::new(qdma),
-             allocator: None,
-         })
-     }
-@@ -508,13 +476,11 @@ impl HpuHw {
-     }
- 
-     pub fn read_abs_bytes(&self, addr: u64, bytes: &mut [u8]) {
--        let qdma = self.qdma.lock().unwrap();
--        qdma.read_bytes(addr as usize, bytes)
-+        self.qdma.read_bytes(addr as usize, bytes)
-     }
- 
-     pub fn write_abs_bytes(&mut self, addr: u64, bytes: &[u8]) {
--        let qdma = self.qdma.lock().unwrap();
--        qdma.write_bytes(addr as usize, bytes)
-+        self.qdma.write_bytes(addr as usize, bytes)
-     }
- 
-     /// Handle on-board memory allocation
-@@ -543,15 +509,15 @@ pub struct MemZone {
-     chunks: Vec<MemChunk>,
- 
-     // Ref to Qdma driver
--    qdma: Arc<Mutex<QdmaDriver>>,
-+    qdma: Arc<QdmaDriver>,
- }
- 
- impl MemZone {
-     pub fn new(
-         kind: ffi::MemKind,
-         addr: u64,
-         chunks: Vec<MemChunk>,
--        qdma: Arc<Mutex<QdmaDriver>>,
-+        qdma: Arc<QdmaDriver>,
-     ) -> Self {
-         Self {
-             kind,
-@@ -562,8 +528,7 @@ impl MemZone {
-     }
- 
-     pub fn read_bytes(&self, ofst: usize, bytes: &mut [u8]) {
--        let qdma = self.qdma.lock().unwrap();
--        qdma.read_bytes(ofst + self.addr as usize, bytes)
-+        self.qdma.read_bytes(ofst + self.addr as usize, bytes)
-     }
-
-```
-
-**File**: `backends/tfhe-hpu-backend/src/ffi/v80/qdma.rs` (modified, +187/-23)
-```diff
-@@ -26,35 +26,111 @@ use lazy_static::lazy_static;
- use std::error::Error;
  use std::fs::{File, OpenOptions};
- use std::io::Read;
-+use std::os::fd::AsRawFd;
-+use std::os::unix::fs::FileExt;
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+use std::sync::{Mutex, PoisonError};
  
- const QDMA_VERSION_FILE: &str = "/sys/module/qdma_pf/version";
--const QDMA_VERSION_PATTERN: &str = r"2024\.1\.0\.\d+-zama";
-+const QDMA_VERSION_PATTERN: &str = r"2024\.1\.1\.\d+-zama";
-+pub(crate) const QDMA_LANES: usize = 2;
-+
-+/// Linux AIO (uapi aio_abi.h)
-+const AIO_MAX_REQS: usize = QDMA_LANES; //
-+const IOCB_CMD_PREAD: u16 = 0; // using IOCB_CMD_PREAD
-+
-+#[repr(C)]
-+#[derive(Clone, Copy, Default)]
-+struct IoEvent {
-+    data: u64, /* the data field from the iocb */
-+    obj: u64,  /* what iocb this event came from */
-+    res: i64,  /* result code for this event */
-+    res2: i64, /* secondary result */
-+}
-+
-+/// Queue indexes of a lane: (h2c, c2h). Index 0: PDI load
-+pub(crate) fn lane_idx(lane: usize) -> (usize, usize) {
-+    (1 + 2 * lane, 2 + 2 * lane)
-+}
-+
-+pub(crate) fn queue_path(dev: &str, idx: usize) -> String {
-+    format!("/dev/qdma{dev}001-MM-{idx}")
-+}
++mod fw_trace;
+ mod mhdma;
  
- pub(crate) struct QdmaDriver {
--    qdma_h2c: File,
--    qdma_c2h: File,
-+    qdma_h2c: Vec<File>,
-+    qdma_c2h: Vec<File>,
-+    lane: AtomicUsize,
-+    aio_context: Mutex<libc::c_ulong>,
-+}
-+
-+impl Drop for QdmaDriver {
-+    fn drop(&mut self) {
-+        let aio_context = *self
-+            .aio_context
-+            .get_mut()
-+            .unwrap_or_else(PoisonError::into_inner);
-+        // SAFETY: aio_context comes from io_setup and is destroyed once
-+        unsafe { libc::syscall(libc::SYS_io_destroy, aio_context) };
-+    }
- }
+ #[derive(Clone, Debug, Parser)]
+@@ -77,6 +78,19 @@ pub enum Commands {
+         file: String,
+     },
  
- impl QdmaDriver {
--    pub fn new(h2c_path: &str, c2h_path: &str) -> Result<Self, Box<dyn Error>> {
-+    pub fn new(dev: &str) -> Result<Self, Box<dyn Error>> {
-         Self::check_version()?;
--        // Open HostToCard xfer file
--        let qdma_h2c = OpenOptions::new()
--            .read(false)
--            .write(true)
--            .create(false)
--            .open(h2c_path)
--            .map_err(|err| format!("Opening file {h2c_path} failed: {err:?}"))?;
-+        let mut qdma_h2c = Vec::with_capacity(QDMA_LANES);
-+        let mut qdma_c2h = Vec::with_capacity(QDMA_LANES);
-+        for lane in 0..QDMA_LANES {
-+            let (h2c_idx, c2h_idx) = lane_idx(lane);
-+            let h2c_path = queue_path(dev, h2c_idx);
-+            let c2h_path = queue_path(dev, c2h_idx);
- 
--        // Open CardToHost xfer file
--        let qdma_c2h = OpenOptions::new()
--            .read(true)
--            .write(false)
--            .create(false)
--            .open(c2h_path)
--            .map_err(|err| format!("Opening file {c2h_path} failed: {err:?}"))?;
-+            // Open HostToCard xfer file
-+            qdma_h2c.push(
-+                OpenOptions::new()
-+                    .read(false)
-+                    .write(true)
-+                    .create(false)
-+                    .open(&h2c_path)
-+                    .map_err(|err| format!("Opening file {h2c_path} failed: {err:?}"))?,
-+            );
++    /// Ucore firmware DDR debug trace (multi-HPU IOp control / MHDMA events)
++    #[command(about = "Dump the ucore firmware debug trace as JSON (one entry per event)")]
++    FwTrace {
++        /// Card address of the trace pointer word, the circular buffer follows it
++        #[arg(long, value_parser=maybe_hex::<u64>, default_value = "0x3FF00000")]
++        addr: u64,
++        /// Circular buffer depth in 32b words
++        #[arg(long, value_parser=maybe_hex::<usize>, default_value = "0x20000")]
++        words: usize,
++        /// Output file [default: fw_trace_<fpga_id>.json]
++        file: Option<String>,
++    },
 +
-+            // Open CardToHost xfer file
-+            qdma_c2h.push(
-+                OpenOptions::new()
-+                    .read(true)
-+                    .write(false)
-+                    .create(false)
-+                    .open(&c2h_path)
-+                    .map_err(|err| format!("Opening file {c2h_path} failed: {err:?}"))?,
-+            );
+     /// MHDMA packet-trace (network debug) ring operations
+     #[command(about = "MHDMA packet-trace debug-ring operations (status/arm/dump/wait)")]
+     PktTrace {
+@@ -438,6 +452,12 @@ fn main() {
+ 
+             trace_dump(&mut hpu_hw, &regmap, lut_map, size_b, file)
+         }
++        Commands::FwTrace { addr, words, file } => {
++            let file = file
++                .clone()
++                .unwrap_or_else(|| format!("fw_trace_{fpga_id}.json"));
++            fw_trace::fw_trace_dump(&mut hpu_hw, fpga_id, *addr, *words, &file)
 +        }
-+
-+        let mut aio_context: libc::c_ulong = 0;
-+
-+        // SAFETY: io_setup writes the new context id in aio_context
-+        let ret = unsafe {
-+            libc::syscall(
-+                libc::SYS_io_setup,
-+                AIO_MAX_REQS as libc::c_long,
-+                &mut aio_context,
-+            )
-+        };
-+        if ret != 0 {
-+            return Err(format!("io_setup failed: {}", std::io::Error::last_os_error()).into());
-+        }
-+
-+        Ok(Self {
-+            qdma_h2c,
-+            qdma_c2h,
-+            lane: AtomicUsize::new(0),
-+            aio_context: Mutex::new(aio_context),
-+        })
-+    }
- 
--        Ok(Self { qdma_h2c, qdma_c2h })
-+    /// Next lane, round robin
-+    fn next_lane(&self) -> usize {
-+        self.lane.fetch_add(1, Ordering::Relaxed) % QDMA_LANES
-     }
- 
-     /// Check if current qdma version is compliant
-@@ -95,12 +171,100 @@ impl QdmaDriver {
-     }
- 
-     pub fn write_bytes(&self, addr: usize, bytes: &[u8]) {
--        let ret = nix::sys::uio::pwrite(&self.qdma_h2c, bytes, addr as i64).unwrap();
--        tracing::trace!("QDMA written {ret} bytes to device");
-+        // H2C on lane 0 only: the second H2C queue intermittently stalls (EIO after 10s)
-+        self.qdma_h2c[0].write_all_at(bytes, addr as u64).unwrap();
-+        tracing::trace!("QDMA written {} bytes to device", bytes.len());
-     }
- 
-     pub fn read_bytes(&self, addr: usize, bytes: &mut [u8]) {
--        let ret = nix::sys::uio::pread(&self.qdma_c2h, bytes, addr as i64
-```
-
-**File**: `backends/tfhe-hpu-backend/src/interface/node.rs` (modified, +3/-0)
-```diff
-@@ -337,6 +337,9 @@ impl HpuNode {
-         let (ct_mem, ct_base_addr) =
-             memory::CiphertextMemory::alloc(&mut hpu_hw, &regmap, &ct_props);
- 
-+        // Copy-back buffers, one 2 MiB (x86) huge page per PC
-+        super::variable::init_c2h_bufs(config.board.ct_pc.len(), (2 << 20) / 8);
-+
-         // load trace ptr from config (size does not matter so putting 256)
-         let trace_props = memory::HugeMemoryProperties {
-             mem_cut: vec![config.board.trace_pc],
-```
-
-**File**: `backends/tfhe-hpu-backend/src/interface/variable.rs` (modified, +84/-13)
-```diff
-@@ -15,9 +15,37 @@ use super::*;
- use crate::asm::{IOpId, PhysId, SW_IOP_ID};
- use crate::entities::{HpuLweCiphertextOwned, HpuParameters};
- use memory::ciphertext::SlotId;
-+use rayon::prelude::*;
- use std::sync::{Arc, Mutex, OnceLock};
- use zhc::builder::{CiphertextSpec, Type};
- 
-+/// Copy-back buffers, reused so their pages stay resident for the DMA
-+static C2H_BUFS: Mutex<Vec<&'static mut [u64]>> = Mutex::new(Vec::new());
-+
-+/// Map `len` words on 2 MiB huge pages
-+fn huge_buf(len: usize) -> &'static mut [u64] {
-+    let size_b = (len * std::mem::size_of::<u64>()).div_ceil(1 << 21) << 21;
-+    let flags = libc::MAP_PRIVATE
-+        | libc::MAP_ANONYMOUS
-+        | libc::MAP_HUGETLB
-+        | libc::MAP_HUGE_2MB
-+        | libc::MAP_POPULATE;
-+    let prot = libc::PROT_READ | libc::PROT_WRITE;
-+
-+    // SAFETY: fresh anonymous mapping, never unmapped: valid until the process exits
-+    let p = unsafe { libc::mmap(std::ptr::null_mut(), size_b, prot, flags, -1, 0) };
-+    if p == libc::MAP_FAILED {
-+        tracing::warn!("No hugetlb page (vm.nr_hugepages?): copy-back on 4 KiB pages");
-+        return vec![0u64; len].leak();
-+    }
-+    unsafe { std::slice::from_raw_parts_mut(p as *mut u64, size_b / std::mem::size_of::<u64>()) }
-+}
-+
-+/// Map the copy-back buffers at device open, out of the copy-back time
-+pub(crate) fn init_c2h_bufs(n_pc: usize, len: usize) {
-+    C2H_BUFS.lock().unwrap().resize_with(n_pc, || huge_buf(len));
-+}
-+
- /// Depict the position of the data.
- /// Enable to triggered data transfer only on purpose
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-@@ -141,14 +169,48 @@ impl HpuVar {
-                         .collect::<Vec<_>>();
-                 }
- 
--                for (host_block, hpu_slot) in std::iter::zip(host_mem.iter_mut(), bundle.iter()) {
-+                // One DMA transfer per PC, all slots
-+                let n_slots = bundle.iter().len();
-+                let first = bundle.iter().next().expect("Empty bundle");
-+                let strides = first
-+                    .mz
-+                    .iter()
-+                    .map(|mz| mz.size() / std::mem::size_of::<u64>())
-+                    .collect::<Vec<_>>();
-+
-+                let mut bufs = C2H_BUFS.lock().unwrap();
-+                assert_eq!(
-+                    bufs.len(),
-+                    strides.len(),
-+                    "Copy-back buffers not initialised"
-+                );
-+                let mut reads = std::iter::zip(first.mz.iter(), bufs.iter_mut())
-+                    .zip(&strides)
-+                    .map(|((mz, buf), stride)| {
-+                        // Sized at node open for far more blocks than any enabled integer width
-+                        assert!(
-+                            stride * n_slots <= buf.len(),
-+                            "Copy-back of {n_slots} slots x {stride} words exceeds the {} words buffer",
-+                            buf.len()
-+                        );
-+                        (mz, &mut buf[..stride * n_slots])
-+                    })
-+                    .collect::<Vec<_>>();
-+
-+                crate::ffi::MemZone::read_batch(&mut reads);
-+
-+                #[allow(unused_variables)]
-+                for (s, (host_block, hpu_slot)) in
-+                    std::iter::zip(host_mem.iter_mut(), bundle.iter()).enumerate()
-+                {
-                     let mut host_cut = host_block.as_mut_view().into_container();
- 
-+                    // Copy from bundle buffers
-                     #[allow(unused_variables)]
--                    for (id, (cut, mz)) in
--                        std::iter::zip(host_cut.iter_mut(), hpu_slot.mz.iter()).enumerate()
-+                    for (id, (cut, (buf, stride))) in
-+                        std::iter::zip(host_cut.iter_mut(), bufs.iter().zip(&strides)).enumerate()
-                     {
--                        mz.read(0, cut);
-+                        cut.copy_from_slice(&buf[s * stride..][..cut.len()]);
-                         #[cfg(feature = "io-dump")]
-                         io_dump::dump(
-                             cut,
-@@ -191,15 +253,9 @@ impl HpuVar {
-                 } = self;
-                 let (_hid, bundle) = hpu_mem.as_mut().ok_or(HpuInternalError::UnAllocData)?;
- 
--                for (hpu_slot, host_block) in std::iter::zip(bundle.iter_mut(), host_mem.iter()) {
--                    let host_cut = host_block.as_view().into_container();
--
--                    #[allow(unused_variables)]
--                    for (id, (mz, cut)) in
--                        std::iter::zip(hpu_slot.mz.iter_mut(), host_cut.iter()).enumerate()
--                    {
--                        mz.write(0, cut);
--                        #[cfg(feature = "io-dump")]
-+                #[cfg(feature = "io-dump")]
-+                for (hpu_slot, host_block) in std::iter::zip(bundle.iter(), host_mem.iter()) {
-+                    for (id, cut) in host_block.as_view().into_container().iter().enumerate() {
-                         io_dump::
-```
-
-**File**: `setup_hpu.sh` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ RUST_LOG="info"
- XILINX_VIVADO=${XILINX_VIVADO:-"/opt/amd/Vivado/2024.2"}
- 
- # V80 bitstream refresh require insmod of ami.ko module
--AMI_PATH=${AMI_PATH:-"/opt/v80/ami/53480a0"}
-+AMI_PATH=${AMI_PATH:-"/opt/v80/ami/9b14c2b"}
- 
- # Parse user CLI ##############################################################
- opt_short="hc:l:p:"
-```
-
-**File**: `tfhe/src/core_crypto/hpu/entities/lwe_ciphertext.rs` (modified, +21/-6)
-```diff
-@@ -46,14 +46,29 @@ impl<Scalar: UnsignedInteger> From<HpuLweCiphertextView<'_, Scalar>>
-             CiphertextModulus::try_new_power_of_2(pbs_p.ciphertext_width).unwrap(),
-         );
- 
--        // FPGA outputs natural order, a flat walk over the mask is sufficient.
--        let mut mask = cpu_lwe.get_mut_mask();
--
--        for (i, dst) in mask.as_mut().iter_mut().enumerate() {
--            *dst = modswitch::lsb2msb(params, hpu_lwe[i]);
--        }
-+        // FPGA outputs natural order, we start by simply copying the body (last coef)
-         *cpu_lwe.get_mut_body().data = modswitch::lsb2msb(params, hpu_lwe[lwe_len - 1]);
- 
-+        // For performance, we iterate depending on pem_pc and chunk size.
-+        let pem_pc = params.pc_params.pem_pc;
-+        let chunk_size = params.regf_params.coef_nb / pem_pc;
-+        let shift = Scalar::BITS - params.ntt_params.ct_width as usize;
-+        let pc_data = hpu_lwe.into_container(); // raw pc buffer
-+
-+        // orders data from each PC chunks so that we avoid sorting element per element
-+        cpu_lwe
-+            .get_mut_mask()
-+            .as_mut()
-+            .chunks_mut(chunk_size)
-+            .enumerate()
-+            .for_each(|(k, run)| {
-+                let offset = (k / pem_pc) * chunk_size;
-+                let src = &pc_data[k % pem_pc][offset..offset + run.len()];
-+                for (dst, &coef) in run.iter_mut().zip(src) {
-+                    *dst = coef << shift;
-+                }
-+            });
-+
-         cpu_lwe
-     }
- }
+         Commands::PktTrace { action } => match action {
+             PktTraceAction::Status => mhdma::pkt_trace_status(&mut hpu_hw, &regmap),
+             PktTraceAction::Arm => {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2495,30 +2144,43 @@ Co-authored-by: pgardratzama <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hpu): improving backend perf for hpu on DMA + fix some fw issues (#4041)
+## X. hpu): adds in hputil ability to dump the fw trace with command hputil -f $i fw-t
 
 **RULE**:
-When implementing operations in `backends/tfhe-hpu-backend/config_store/v80_archives/psi64.hpu`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `backends/tfhe-hpu-backend/src/utils/fw_trace.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `32cfff2e`: hpu): improving backend perf for hpu on DMA + fix some fw issues (#4041). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1756a242`: hpu): adds in hputil ability to dump the fw trace with command hputil -f $i fw-trace (#4060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-hpu-backend/config_store/v80_archives/psi64.hpu`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-hpu-backend/src/utils/fw_trace.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-oid sha256:ca0c997c68ae0a801239d17b25b5a0d3bd901137f1dc079359d58bb68fc3196d
-size 86328575
+//! Ucore firmware DDR debug trace (multi-HPU IOp control / MHDMA events).
+//!
+//! The firmware (`print_ddr_debug`/`print_ddr_event` in `fw/arm/src/apps/in_band/ucore.c`) pushes
+//! records in a circular buffer of `DEBUG_SIZE` (0x20000) u32 located just after a pointer word:
+//!  - `@0x3FF00000` (`DEBUG_PTR`)  total number of words written since boot (un-wrapped)
+//!  - `@0x3FF00004` (`DEBUG_ADDR`) circular buffer
+//!
+//! Each record starts with a header word `tag[31:20] | sub[19:16] | fields[15:0]` followed by a
+//! fixed number of payload words. Keep in sync with the `DDR_TRC_*` table in `ucore.h`:
+//!
+//! | tag   | sub                          | fields[15:0]                | payload                       |
+//! |-------|------------------------------|-----------------------------|-------------------------------|
+//! | 0xBEE | site \| seen<<3              | iid<<8 \| nb_hpu<<4 \| state | -                            |
+//! | 0xB2B | 0: free request              | tail_iid<<8 \| iid          | -                             |
+//! | 0xB2B | 1: free done                 | iid                         | pool_free<<16 \| freed        |
+//! | 0xD57 | site                         | iid     
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-oid sha256:ed0e88c512defc14eb49e80548b79ce8cea0a0974ebfd23f10d8758bbc65f52c
-size 87505049
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `32cfff2e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1756a242` are properly handled with clean fallback behavior.

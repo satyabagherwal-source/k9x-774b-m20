@@ -8632,3 +8632,7 @@ Every entry in this ledger must capture:
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `7490cf4b` | Multi-dimensional audit evidence | 2026-11-09T15:51:36.447Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-09T15:51:58.545Z |
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-09T16:04:17.193Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-09T16:10:53.621Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `8d825486` | Multi-dimensional audit evidence | 2026-11-09T16:10:56.061Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `bfddcf25` | Multi-dimensional audit evidence | 2026-11-09T16:11:00.711Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `fabb1cf8` | Multi-dimensional audit evidence | 2026-11-09T16:11:05.812Z |

@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "974bae64a066e07a932720b161f310ab7bfc6ec94b031ee1da4e91e6a8902793",
-    "lastHarvestedAt": "2026-11-05T16:52:45.598Z",
+    "contentHash": "e196a6a131d99d457cfb05f4ce1984135c14ea563fead73169d762bbd2e2bcbe",
+    "lastHarvestedAt": "2026-11-09T16:10:53.621Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "8f9133b3",
+    "sourceVersion": "fabb1cf8",
     "license": "NOASSERTION",
-    "contentHash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
-    "lastHarvestedAt": "2026-11-06T19:23:54.872Z",
+    "contentHash": "e0db7c78c83baac7a01a00db46388be63a78bdf647d92e757f6e0d9779c38a9a",
+    "lastHarvestedAt": "2026-11-09T16:11:05.812Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "2927a473",
+    "sourceVersion": "bfddcf25",
     "license": "NOASSERTION",
-    "contentHash": "a0271bd98120716ca2eab56d8e9008fa56ace4af78478f79862d3e103ad5d5fe",
-    "lastHarvestedAt": "2026-11-06T21:21:06.564Z",
+    "contentHash": "ff6c2d0cb4fea86f59fede11acdff45c8a4ae770dc6ebd2f83d1ba16d616b121",
+    "lastHarvestedAt": "2026-11-09T16:11:00.711Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "367bc0f8",
+    "sourceVersion": "8d825486",
     "license": "Apache-2.0",
-    "contentHash": "006c787c11a916246a2c0f91a771f0a3823b354c4b2f3904810593ae7c47901b",
-    "lastHarvestedAt": "2026-11-08T13:40:21.411Z",
+    "contentHash": "00c45b712d56faa529ababea4e68b2f3ee7184233840b7c91b0637054beb5938",
+    "lastHarvestedAt": "2026-11-09T16:10:56.061Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T16:04:17.084Z",
+  "last_updated": "2026-11-09T16:11:05.711Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36380,11 +36380,16 @@
       "slug": "invertase-react-native-firebase",
       "platform": "github",
       "source_url": "https://github.com/invertase/react-native-firebase",
-      "source_version": "2927a473",
-      "content_hash": "a0271bd98120716ca2eab56d8e9008fa56ace4af78478f79862d3e103ad5d5fe",
+      "source_version": "bfddcf25",
+      "content_hash": "ff6c2d0cb4fea86f59fede11acdff45c8a4ae770dc6ebd2f83d1ba16d616b121",
       "dossier_path": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build: cap lerna prepare concurrency by memory as well as CPUs",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3142,
           "title": "remote-config, web): preserve read-only navigator state",
@@ -36406,7 +36411,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:21:06.417Z",
+      "verified_at": "2026-11-09T16:11:00.621Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48223,8 +48228,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "367bc0f8",
-      "content_hash": "006c787c11a916246a2c0f91a771f0a3823b354c4b2f3904810593ae7c47901b",
+      "source_version": "8d825486",
+      "content_hash": "00c45b712d56faa529ababea4e68b2f3ee7184233840b7c91b0637054beb5938",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -48236,6 +48241,11 @@
         {
           "number": null,
           "title": "cutile-kernels): fix v0.5.0 docs, refresh Grout kernels, share MoE, and add fuse",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "unroll): fold branches to unreachable blocks (#1707)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48324,7 +48334,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T13:40:21.295Z",
+      "verified_at": "2026-11-09T16:10:55.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67113,14 +67123,19 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "8f9133b3",
-      "content_hash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
+      "source_version": "fabb1cf8",
+      "content_hash": "e0db7c78c83baac7a01a00db46388be63a78bdf647d92e757f6e0d9779c38a9a",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "hpu): improving backend perf for hpu on DMA + fix some fw issues (#4041)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "hpu): adds in hputil ability to dump the fw trace with command hputil -f $i fw-t",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67219,7 +67234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T19:23:54.771Z",
+      "verified_at": "2026-11-09T16:11:05.695Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77490,7 +77505,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "974bae64a066e07a932720b161f310ab7bfc6ec94b031ee1da4e91e6a8902793",
+      "content_hash": "e196a6a131d99d457cfb05f4ce1984135c14ea563fead73169d762bbd2e2bcbe",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "promoted_rules": [
@@ -77550,7 +77565,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T16:52:45.480Z",
+      "verified_at": "2026-11-09T16:10:53.533Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

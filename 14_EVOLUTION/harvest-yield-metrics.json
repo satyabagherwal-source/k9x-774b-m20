@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T16:04:17.199Z",
-  "total_cycles_completed": 8588,
-  "total_learnings_persisted": 8588,
-  "total_rules_promoted": 8414,
+  "last_updated": "2026-11-09T16:11:05.816Z",
+  "total_cycles_completed": 8592,
+  "total_learnings_persisted": 8592,
+  "total_rules_promoted": 8417,
   "history": [
-    {
-      "timestamp": "2026-11-08T23:03:34.368Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-openai-gpt-oss-120b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T23:12:31.819Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T23:12:43.000Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T23:12:44.431Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T23:19:54.387Z",
       "repository": "zai-org/GLM-5.2",
@@ -1403,6 +1375,34 @@
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T16:10:53.625Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T16:10:56.066Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T16:11:00.715Z",
+      "repository": "invertase/react-native-firebase",
+      "learningId": "learn-github-invertase-react-native-firebase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T16:11:05.816Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -8623,3 +8623,7 @@
 | `CYCLE-20261109-VBWB` | `2026-11-09T15:51:36.443Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a4174d89...`) |
 | `CYCLE-20261109-VSY5` | `2026-11-09T15:51:58.541Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`5eb17c45...`) |
 | `CYCLE-20261109-BMW5` | `2026-11-09T16:04:17.189Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`ccc72169...`) |
+| `CYCLE-20261109-K4S2` | `2026-11-09T16:10:53.618Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`e196a6a1...`) |
+| `CYCLE-20261109-K6NU` | `2026-11-09T16:10:56.058Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`00c45b71...`) |
+| `CYCLE-20261109-KA90` | `2026-11-09T16:11:00.708Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ff6c2d0c...`) |
+| `CYCLE-20261109-KE6P` | `2026-11-09T16:11:05.809Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e0db7c78...`) |

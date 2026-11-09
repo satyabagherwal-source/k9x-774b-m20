@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-DSTG",
-    "timestamp": "2026-11-07T22:34:32.356Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "8b4832b181759439a54f3273e335afc13466a0151006a530e7dc5cf5b597e387",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-T9L3",
-    "timestamp": "2026-11-07T22:46:33.927Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "31e401f75e83aa60c6ccff824aee64304b7451aac63e5869ebc6cccb12465b30",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-TBN0",
-    "timestamp": "2026-11-07T22:46:36.588Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "c9723899223bca77d2608049cbf660f4a4e4fdac520aa1f4ffe52a17d13588c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-TD05",
-    "timestamp": "2026-11-07T22:46:38.357Z",
-    "repository": "Qwen/Qwen3-Embedding-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-    "contentHash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-1IFN",
     "timestamp": "2026-11-07T22:52:58.643Z",
     "repository": "rtk-ai/rtk",
@@ -7492,6 +7432,66 @@
     "contentHash": "ccc72169ad78a693bfdec6119390b9f875b985942a0acbffd3564965482c48e0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-K4S2",
+    "timestamp": "2026-11-09T16:10:53.618Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-Base",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+    "contentHash": "e196a6a131d99d457cfb05f4ce1984135c14ea563fead73169d762bbd2e2bcbe",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-K6NU",
+    "timestamp": "2026-11-09T16:10:56.058Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "00c45b712d56faa529ababea4e68b2f3ee7184233840b7c91b0637054beb5938",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-KA90",
+    "timestamp": "2026-11-09T16:11:00.708Z",
+    "repository": "invertase/react-native-firebase",
+    "learningId": "learn-github-invertase-react-native-firebase",
+    "contentHash": "ff6c2d0cb4fea86f59fede11acdff45c8a4ae770dc6ebd2f83d1ba16d616b121",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-KE6P",
+    "timestamp": "2026-11-09T16:11:05.809Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "e0db7c78c83baac7a01a00db46388be63a78bdf647d92e757f6e0d9779c38a9a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
