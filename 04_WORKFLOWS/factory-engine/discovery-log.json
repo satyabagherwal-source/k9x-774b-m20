@@ -20761,5 +20761,17 @@
     "qualityScore": 1206,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-09T21:24:52.550Z"
+  },
+  {
+    "name": "tencent/Qwen3.8-27B-DSpine-b16",
+    "fullName": "tencent/Qwen3.8-27B-DSpine-b16",
+    "url": "https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: tencent/Qwen3.8-27B-DSpine-b16 (145 likes, 1464 downloads)",
+    "likes": 145,
+    "downloads": 1464,
+    "qualityScore": 2914,
+    "discoveredAt": "2026-11-09T21:53:13.774Z"
   }
 ]

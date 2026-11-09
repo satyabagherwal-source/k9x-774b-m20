@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-8E8S",
-    "timestamp": "2026-11-08T01:46:17.500Z",
-    "repository": "thaw-app/Thaw",
-    "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-JM34",
-    "timestamp": "2026-11-08T01:55:00.880Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "57ea91bd5268151a652c3a16e277a4d19a2b5c6a4d7bc6bf884d3d8aca4b35b0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-LL1V",
-    "timestamp": "2026-11-08T01:56:32.851Z",
-    "repository": "Agent-Field/agentfield",
-    "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "238c1b485f1da73c830ef7bd19c6121e51004bc9051bbb19680b29401665c662",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-XC6P",
     "timestamp": "2026-11-08T02:05:41.233Z",
     "repository": "meta/docusaurus",
@@ -7492,6 +7447,51 @@
     "contentHash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-XYUK",
+    "timestamp": "2026-11-09T21:57:34.508Z",
+    "repository": "FusionCow/Sulphur-3",
+    "learningId": "learn-huggingface-fusioncow-sulphur-3",
+    "contentHash": "98783c2040d07ee2ab23a6a6666eb8fa4e132e86dbb2dc346648d7ac6a014f9a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-0HAV",
+    "timestamp": "2026-11-09T21:59:31.735Z",
+    "repository": "smallstep/cli",
+    "learningId": "learn-github-smallstep-cli",
+    "contentHash": "3afb8375131063f51e7ad28e152e2df6a80bede05772e254df18099fce9f11c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-0KG3",
+    "timestamp": "2026-11-09T21:59:35.811Z",
+    "repository": "tencent/Qwen3.8-27B-DSpine-b16",
+    "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
+    "contentHash": "c796e23219ff0340379b29b3121cf4a98c4c874fdedfce01cd3b13b2cd4ee1f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

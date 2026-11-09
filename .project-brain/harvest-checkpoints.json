@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T21:31:47.977Z",
+  "last_updated": "2026-11-09T21:59:35.833Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3561,14 +3561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-smallstep-cli",
-      "content_hash": "97decb14dd3b3ac24de22154e20db1757bd8db678830d4252f1e53bc4ddb6979",
-      "verified_at": "2026-11-03T18:47:51.093Z",
+      "content_hash": "3afb8375131063f51e7ad28e152e2df6a80bede05772e254df18099fce9f11c9",
+      "verified_at": "2026-11-09T21:59:31.747Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:47:51.093Z"
+      "last_updated": "2026-11-09T21:59:31.747Z"
     },
     "Ontos-AI/knowhere": {
       "repository": "Ontos-AI/knowhere",
@@ -17631,14 +17631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fusioncow-sulphur-3",
-      "content_hash": "7dc2e2fd591d2fb14697a898809692fc2acb5abfc9a986d133239f4017bd48d7",
-      "verified_at": "2026-11-05T18:38:26.041Z",
+      "content_hash": "98783c2040d07ee2ab23a6a6666eb8fa4e132e86dbb2dc346648d7ac6a014f9a",
+      "verified_at": "2026-11-09T21:57:34.521Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:38:26.041Z"
+      "last_updated": "2026-11-09T21:57:34.521Z"
     },
     "xiaomi-research/Xiaomi-OCR-0": {
       "repository": "xiaomi-research/Xiaomi-OCR-0",
@@ -18449,6 +18449,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-09T21:31:13.332Z"
+    },
+    "tencent/Qwen3.8-27B-DSpine-b16": {
+      "repository": "tencent/Qwen3.8-27B-DSpine-b16",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
+      "content_hash": "c796e23219ff0340379b29b3121cf4a98c4c874fdedfce01cd3b13b2cd4ee1f0",
+      "verified_at": "2026-11-09T21:59:35.832Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-09T21:59:35.832Z"
     }
   },
   "repos": {

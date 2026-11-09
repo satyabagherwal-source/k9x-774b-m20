@@ -4974,3 +4974,7 @@ https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2
 # --- Automatically Discovered by AI Scout Engine [2026-11-09T21:26:39.937Z] ---
 # [MOBILE-CROSS-PLATFORM] sceneview/sceneview (1206 score) - 3D & AR SDK for Jetpack Compose (Filament, ARCore), Compose Multiplatform, Swift
 https://github.com/sceneview/sceneview
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-09T21:55:22.233Z] ---
+# [HUGGINGFACE-AI-MODELS] tencent/Qwen3.8-27B-DSpine-b16 (2914 score) - Verified Hugging Face Model: tencent/Qwen3.8-27B-DSpine-b16 (145 likes, 1464 dow
+https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T21:31:47.973Z",
-  "total_cycles_completed": 8633,
-  "total_learnings_persisted": 8633,
-  "total_rules_promoted": 8460,
+  "last_updated": "2026-11-09T21:59:35.829Z",
+  "total_cycles_completed": 8636,
+  "total_learnings_persisted": 8636,
+  "total_rules_promoted": 8467,
   "history": [
-    {
-      "timestamp": "2026-11-09T02:01:01.550Z",
-      "repository": "ajeetdsouza/zoxide",
-      "learningId": "learn-github-ajeetdsouza-zoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T02:01:10.167Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T02:01:15.166Z",
-      "repository": "SeaQL/sea-orm",
-      "learningId": "learn-github-seaql-sea-orm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T02:08:02.742Z",
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -1403,6 +1382,27 @@
       "repository": "fabio-rovai/open-ontologies",
       "learningId": "learn-github-fabio-rovai-open-ontologies",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:57:34.518Z",
+      "repository": "FusionCow/Sulphur-3",
+      "learningId": "learn-huggingface-fusioncow-sulphur-3",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:59:31.744Z",
+      "repository": "smallstep/cli",
+      "learningId": "learn-github-smallstep-cli",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:59:35.829Z",
+      "repository": "tencent/Qwen3.8-27B-DSpine-b16",
+      "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

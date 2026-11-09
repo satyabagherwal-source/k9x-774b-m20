@@ -2283,10 +2283,10 @@
     "repository": "smallstep/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/smallstep/cli",
-    "sourceVersion": "72da9dc9",
+    "sourceVersion": "eed88c74",
     "license": "Apache-2.0",
-    "contentHash": "97decb14dd3b3ac24de22154e20db1757bd8db678830d4252f1e53bc4ddb6979",
-    "lastHarvestedAt": "2026-11-03T18:47:51.086Z",
+    "contentHash": "3afb8375131063f51e7ad28e152e2df6a80bede05772e254df18099fce9f11c9",
+    "lastHarvestedAt": "2026-11-09T21:59:31.739Z",
     "learningId": "learn-github-smallstep-cli"
   },
   "ontos-ai-knowhere": {
@@ -11715,8 +11715,8 @@
     "sourceUrl": "https://huggingface.co/FusionCow/Sulphur-3",
     "sourceVersion": "hf-fusioncow-sulphur-3",
     "license": "Open-Source",
-    "contentHash": "7dc2e2fd591d2fb14697a898809692fc2acb5abfc9a986d133239f4017bd48d7",
-    "lastHarvestedAt": "2026-11-05T18:38:26.032Z",
+    "contentHash": "98783c2040d07ee2ab23a6a6666eb8fa4e132e86dbb2dc346648d7ac6a014f9a",
+    "lastHarvestedAt": "2026-11-09T21:57:34.512Z",
     "learningId": "learn-huggingface-fusioncow-sulphur-3"
   },
   "hf-xiaomi-research-xiaomi-ocr-0": {
@@ -12258,5 +12258,15 @@
     "contentHash": "f705756cc6b179cb6c9186ecfc808a8cd3b26239833cd466074f2c5db5136c99",
     "lastHarvestedAt": "2026-11-09T21:31:13.323Z",
     "learningId": "learn-github-sceneview-sceneview"
+  },
+  "hf-tencent-qwen3.8-27b-dspine-b16": {
+    "repository": "tencent/Qwen3.8-27B-DSpine-b16",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16",
+    "sourceVersion": "hf-tencent-qwen3.8-27b-dspine-b16",
+    "license": "Open-Source",
+    "contentHash": "c796e23219ff0340379b29b3121cf4a98c4c874fdedfce01cd3b13b2cd4ee1f0",
+    "lastHarvestedAt": "2026-11-09T21:59:35.824Z",
+    "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16"
   }
 }

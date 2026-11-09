@@ -8668,3 +8668,6 @@
 | `CYCLE-20261109-V1AA` | `2026-11-09T21:27:18.082Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`b9a517d9...`) |
 | `CYCLE-20261109-02SC` | `2026-11-09T21:31:13.308Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`f705756c...`) |
 | `CYCLE-20261109-0TIZ` | `2026-11-09T21:31:47.963Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`c774db36...`) |
+| `CYCLE-20261109-XYUK` | `2026-11-09T21:57:34.508Z` | `FusionCow/Sulphur-3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`98783c20...`) |
+| `CYCLE-20261109-0HAV` | `2026-11-09T21:59:31.735Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`3afb8375...`) |
+| `CYCLE-20261109-0KG3` | `2026-11-09T21:59:35.811Z` | `tencent/Qwen3.8-27B-DSpine-b16` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`c796e232...`) |

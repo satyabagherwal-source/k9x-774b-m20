@@ -8677,3 +8677,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T21:27:18.086Z |
 | `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `d4cec834` | Multi-dimensional audit evidence | 2026-11-09T21:31:13.323Z |
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `9d2e25ea` | Multi-dimensional audit evidence | 2026-11-09T21:31:47.967Z |
+| `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-09T21:57:34.512Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `eed88c74` | Multi-dimensional audit evidence | 2026-11-09T21:59:31.739Z |
+| `learn-huggingface-tencent-qwen3-8-27b-dspine-b16` | `https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-09T21:59:35.824Z |

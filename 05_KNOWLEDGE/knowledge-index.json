@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T21:31:47.861Z",
-  "total_verified_learnings": 1244,
+  "last_updated": "2026-11-09T21:59:35.688Z",
+  "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -58206,11 +58206,26 @@
       "slug": "smallstep-cli",
       "platform": "github",
       "source_url": "https://github.com/smallstep/cli",
-      "source_version": "72da9dc9",
-      "content_hash": "97decb14dd3b3ac24de22154e20db1757bd8db678830d4252f1e53bc4ddb6979",
+      "source_version": "eed88c74",
+      "content_hash": "3afb8375131063f51e7ad28e152e2df6a80bede05772e254df18099fce9f11c9",
       "dossier_path": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Invariant Preservation of Serialized Cryptographic Envelopes",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Symmetric Cryptographic Key Abstraction Polymorphism Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Strict RFC Key-Length Hard Boundary Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1710,
           "title": "typo in kty flag",
@@ -58262,7 +58277,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:47:50.995Z",
+      "verified_at": "2026-11-09T21:59:31.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175474,10 +175489,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FusionCow/Sulphur-3",
       "source_version": "hf-fusioncow-sulphur-3",
-      "content_hash": "7dc2e2fd591d2fb14697a898809692fc2acb5abfc9a986d133239f4017bd48d7",
+      "content_hash": "98783c2040d07ee2ab23a6a6666eb8fa4e132e86dbb2dc346648d7ac6a014f9a",
       "dossier_path": "07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Safe Model Manifest and Weight Index Atomic Verification",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Tokenizer Vocabulary Invariant Enforcement Across Merged Checkpoints",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 6416,
           "title": "Repository Metadata Consistency Invariant",
@@ -175489,7 +175514,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:38:25.924Z",
+      "verified_at": "2026-11-09T21:57:34.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189526,6 +189551,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-09T21:31:13.177Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-tencent-qwen3-8-27b-dspine-b16": {
+      "learning_id": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tencent/Qwen3.8-27B-DSpine-b16",
+      "repository": "tencent/Qwen3.8-27B-DSpine-b16",
+      "slug": "hf-tencent-qwen3.8-27b-dspine-b16",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16",
+      "source_version": "hf-tencent-qwen3.8-27b-dspine-b16",
+      "content_hash": "c796e23219ff0340379b29b3121cf4a98c4c874fdedfce01cd3b13b2cd4ee1f0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Speculative Layer-Tapping Feature Extraction Alignment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Sliding Window Boundary Invariant for Block Verification",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-09T21:59:35.667Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
