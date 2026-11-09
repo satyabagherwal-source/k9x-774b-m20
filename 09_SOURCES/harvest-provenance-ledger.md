@@ -8562,3 +8562,7 @@ Every entry in this ledger must capture:
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `002eb155` | Multi-dimensional audit evidence | 2026-11-09T08:39:39.721Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `a50d9dbb` | Multi-dimensional audit evidence | 2026-11-09T08:43:55.001Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-09T08:51:39.821Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `f31a882f` | Multi-dimensional audit evidence | 2026-11-09T09:13:19.418Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `95ca01b3` | Multi-dimensional audit evidence | 2026-11-09T09:14:10.969Z |
+| `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-09T09:16:27.359Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `afb307a5` | Multi-dimensional audit evidence | 2026-11-09T09:16:31.359Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T08:51:39.839Z",
+  "last_updated": "2026-11-09T09:16:31.369Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1820,14 +1820,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "2d3b142bb1216935026d596f1d940340538543e389ef19980e0f01670968c2e7",
-      "verified_at": "2026-11-05T13:05:08.323Z",
+      "content_hash": "aa5b6c46b12c7cfad91aaa1b68dd30a52cb59d0ec4cdfc041ea5ab75e9a57ff3",
+      "verified_at": "2026-11-09T09:16:27.369Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:05:08.323Z"
+      "last_updated": "2026-11-09T09:16:27.369Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "f5c951d5c8b8cdf9ecfa6512dafd1c57a4c865be7e23fd78414776c84d6a3897",
-      "verified_at": "2026-11-06T13:52:01.023Z",
+      "content_hash": "bffc3bcd0c6be4dc8479630d853cb6e5c03e4a8f41ff1170f3dd40fa67115867",
+      "verified_at": "2026-11-09T09:13:19.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:52:01.023Z"
+      "last_updated": "2026-11-09T09:13:19.438Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "cb47d6acb752d44ad0cfbd2847585c6466485b420010eda78b73dc4f83cef338",
-      "verified_at": "2026-11-09T07:43:52.231Z",
+      "content_hash": "c516f17ef37ee4b6cabba8b73bd96c5e1b7bdf40ae19e534f0d1f703e2a0704e",
+      "verified_at": "2026-11-09T09:14:10.990Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T07:43:52.231Z"
+      "last_updated": "2026-11-09T09:14:10.990Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "e8400bf822830e95f9e317772d537251b2a9d905884ee0128e19bf870a8da682",
-      "verified_at": "2026-11-07T22:07:35.875Z",
+      "content_hash": "642b8118ae31fe3e05720bf03c6965c6644f0e2ab95b88b8c107b6cb1655b283",
+      "verified_at": "2026-11-09T09:16:31.368Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:07:35.875Z"
+      "last_updated": "2026-11-09T09:16:31.368Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",

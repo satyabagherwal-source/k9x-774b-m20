@@ -8553,3 +8553,7 @@
 | `CYCLE-20261109-FUF9` | `2026-11-09T08:39:39.717Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`0b8a3436...`) |
 | `CYCLE-20261109-LBED` | `2026-11-09T08:43:54.997Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`15c351be...`) |
 | `CYCLE-20261109-VA21` | `2026-11-09T08:51:39.817Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 458, Rule null` | Yes (`11cc36fb...`) |
+| `CYCLE-20261109-N4TY` | `2026-11-09T09:13:19.414Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`bffc3bcd...`) |
+| `CYCLE-20261109-O8LW` | `2026-11-09T09:14:10.964Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`c516f17e...`) |
+| `CYCLE-20261109-R5UJ` | `2026-11-09T09:16:27.355Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`aa5b6c46...`) |
+| `CYCLE-20261109-R8XN` | `2026-11-09T09:16:31.355Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`642b8118...`) |

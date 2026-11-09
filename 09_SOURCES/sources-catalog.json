@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "2d3b142bb1216935026d596f1d940340538543e389ef19980e0f01670968c2e7",
-    "lastHarvestedAt": "2026-11-05T13:05:08.316Z",
+    "contentHash": "aa5b6c46b12c7cfad91aaa1b68dd30a52cb59d0ec4cdfc041ea5ab75e9a57ff3",
+    "lastHarvestedAt": "2026-11-09T09:16:27.359Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "1ad12fba",
+    "sourceVersion": "f31a882f",
     "license": "MIT",
-    "contentHash": "f5c951d5c8b8cdf9ecfa6512dafd1c57a4c865be7e23fd78414776c84d6a3897",
-    "lastHarvestedAt": "2026-11-06T13:52:01.014Z",
+    "contentHash": "bffc3bcd0c6be4dc8479630d853cb6e5c03e4a8f41ff1170f3dd40fa67115867",
+    "lastHarvestedAt": "2026-11-09T09:13:19.418Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "67fc69df",
+    "sourceVersion": "95ca01b3",
     "license": "Apache-2.0",
-    "contentHash": "cb47d6acb752d44ad0cfbd2847585c6466485b420010eda78b73dc4f83cef338",
-    "lastHarvestedAt": "2026-11-09T07:43:52.223Z",
+    "contentHash": "c516f17ef37ee4b6cabba8b73bd96c5e1b7bdf40ae19e534f0d1f703e2a0704e",
+    "lastHarvestedAt": "2026-11-09T09:14:10.969Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "40d08ee4",
+    "sourceVersion": "afb307a5",
     "license": "MIT",
-    "contentHash": "e8400bf822830e95f9e317772d537251b2a9d905884ee0128e19bf870a8da682",
-    "lastHarvestedAt": "2026-11-07T22:07:35.859Z",
+    "contentHash": "642b8118ae31fe3e05720bf03c6965c6644f0e2ab95b88b8c107b6cb1655b283",
+    "lastHarvestedAt": "2026-11-09T09:16:31.359Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
