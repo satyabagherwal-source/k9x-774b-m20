@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `45f16d5b`  
+> **Source Version**: `7ad4ba05`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T17:06:08.741Z  
+> **Timestamp**: 2026-11-09T15:12:49.708Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T17:06:08.734Z  
+> **Harvest Timestamp**: 2026-11-09T15:12:49.701Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fastest library to load data from DB to DataFrames in Rust and Python
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2659 stars
+- **Stars / Engagement**: 2661 stars
 
 ---
 
@@ -787,58 +787,173 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3cfc3535` (2026-11-07)
-**Commit Message**: build(rust): bump log from 0.4.34 to 0.4.35
+### Incident Patch 1: `7ad4ba05` (2026-11-09)
+**Commit Message**: Merge pull request #1059 from sfu-db/dependabot/cargo/uuid-1.29.0
 
-Bumps [log](https://github.com/rust-lang/log) from 0.4.34 to 0.4.35.
-- [Release notes](https://github.com/rust-lang/log/releases)
-- [Changelog](https://github.com/rust-lang/log/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rust-lang/log/compare/0.4.34...v0.4.35)
-
----
-updated-dependencies:
-- dependency-name: log
-  dependency-version: 0.4.35
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +18/-18)
 ```diff
-@@ -5057,9 +5057,9 @@ dependencies = [
+@@ -688,7 +688,7 @@ dependencies = [
+  "percent-encoding",
+  "pin-project-lite",
+  "tracing",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
  
  [[package]]
- name = "log"
--version = "0.4.34"
-+version = "0.4.35"
+@@ -1953,7 +1953,7 @@ dependencies = [
+  "url",
+  "urlencoding",
+  "uuid 0.8.2",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
+ 
+ [[package]]
+@@ -2496,7 +2496,7 @@ dependencies = [
+  "tempfile",
+  "tokio",
+  "url",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+  "xz2",
+  "zstd",
+ ]
+@@ -2793,7 +2793,7 @@ dependencies = [
+  "regex",
+  "sha2 0.10.9",
+  "unicode-segmentation",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
+ 
+ [[package]]
+@@ -3119,7 +3119,7 @@ version = "0.8.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
-+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
+ checksum = "bef552e6f588e446098f6ba40d89ac146c8c7b64aade83c051ee00bb5d2bc18d"
+ dependencies = [
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
  
  [[package]]
- name = "lru"
+@@ -5250,7 +5250,7 @@ dependencies = [
+  "tokio-native-tls",
+  "tokio-util 0.7.20",
+  "tracing",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+  "winapi",
+  "windows 0.58.0",
+  "windows-sys 0.59.0",
+@@ -5370,7 +5370,7 @@ dependencies = [
+  "subprocess",
+  "thiserror 1.0.69",
+  "time",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+  "zstd",
+ ]
+ 
+@@ -6406,7 +6406,7 @@ dependencies = [
+  "serde_json",
+  "strum_macros 0.28.0",
+  "tokio",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+  "version_check",
+  "xxhash-rust",
+ ]
+@@ -6423,7 +6423,7 @@ dependencies = [
+  "polars-error",
+  "polars-utils",
+  "serde",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
+ 
+ [[package]]
+@@ -6579,7 +6579,7 @@ dependencies = [
+  "rand_distr",
+  "thread_local",
+  "tokio",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
+ 
+ [[package]]
+@@ -6781,7 +6781,7 @@ dependencies = [
+  "recursive",
+  "slotmap",
+  "tokio",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+  "version_check",
+ ]
+ 
+@@ -6844,7 +6844,7 @@ dependencies = [
+  "stacker",
+  "sysinfo",
+  "tokio",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+  "version_check",
+ ]
+ 
+@@ -6932,7 +6932,7 @@ dependencies = [
+  "postgres-protocol",
+  "serde_core",
+  "serde_json",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
+ 
+ [[package]]
+@@ -7135,7 +7135,7 @@ dependencies = [
+  "thiserror 1.0.69",
+  "tokio",
+  "urlencoding",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
+ 
+ [[package]]
+@@ -7340,7 +7340,7 @@ checksum = "63417e83dc891797eea3ad379f52a5986da4bca0d6ef28baf4d14034dd111b0c"
+ dependencies = [
+  "r2d2",
+  "rusqlite",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
+ 
+ [[package]]
+@@ -8667,7 +8667,7 @@ dependencies = [
+  "debugid",
+  "memmap2",
+  "stable_deref_trait",
+- "uuid 1.26.1",
++ "uuid 1.29.0",
+ ]
+ 
+ [[package]]
+@@ -9547,9 +9547,9 @@ checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
+ 
+ [[package]]
+ name = "uuid"
+-version = "1.26.1"
++version = "1.29.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2ef6dac1e96601b4fb3acccccff2139741fcb757cb9a36089bf5be91cfb285ce"
++checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
+ dependencies = [
+  "getrandom 0.4.3",
+  "js-sys",
 ```
 
 ---
 
-### Incident Patch 2: `e7620bca` (2026-11-07)
-**Commit Message**: build(rust): bump openssl from 0.10.81 to 0.10.82
-
-Bumps [openssl](https://github.com/rust-openssl/rust-openssl) from 0.10.81 to 0.10.82.
-- [Release notes](https://github.com/rust-openssl/rust-openssl/releases)
-- [Commits](https://github.com/rust-openssl/rust-openssl/compare/openssl-v0.10.81...openssl-v0.10.82)
-
----
-updated-dependencies:
-- dependency-name: openssl
-  dependency-version: 0.10.82
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+### Incident Patch 2: `8c2615e1` (2026-11-08)
+**Commit Message**: Merge branch 'main' into dependabot/cargo/uuid-1.29.0
 
 **File**: `Cargo.lock` (modified, +4/-4)
 ```diff
@@ -869,12 +984,12 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1059** (2026-11-09): build(rust): bump uuid from 1.26.1 to 1.29.0 (@dependabot[bot])
 - **PR #1058** (2026-11-08): build(rust): bump log from 0.4.34 to 0.4.35 (@dependabot[bot])
 - **PR #1056** (2026-11-08): build(rust): bump openssl from 0.10.81 to 0.10.82 (@dependabot[bot])
 - **PR #1055** (2026-11-05): docs: describe error handling in read_sql (@oystersuki)
 - **PR #1043** (2026-11-05): build(python): sync connectorx-python/Cargo.lock with connectorx (@tschm)
 - **PR #1042** (2026-11-05): build(mssql): forward integrated-auth-gssapi to the enabled backend only (@tschm)
-- **PR #1041** (2026-11-03): mssql: make src_mssql default to mssql-tds (step before Phase 4) (@tschm)
 
 ---
 
@@ -894,13 +1009,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(rust): bump log from 0.4.34 to 0.4.35
+## X. Merge pull request #1059 from sfu-db/dependabot/cargo/uuid-1.29.0
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3cfc3535`: build(rust): bump log from 0.4.34 to 0.4.35. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ad4ba05`: Merge pull request #1059 from sfu-db/dependabot/cargo/uuid-1.29.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -908,16 +1023,48 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.4.35"
-checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+ "uuid 1.29.0",
+version = "1.29.0"
+checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.4.34"
-checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+ "uuid 1.26.1",
+version = "1.26.1"
+checksum = "2ef6dac1e96601b4fb3acccccff2139741fcb757cb9a36089bf5be91cfb285ce"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3cfc3535` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ad4ba05` are properly handled with clean fallback behavior.

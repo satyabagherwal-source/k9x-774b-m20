@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T14:59:52.639Z",
+  "last_updated": "2026-11-09T15:17:35.505Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49681,14 +49681,19 @@
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "8a18313e",
-      "content_hash": "3db6c46da4c6e686d1023a03312ec8cd8f100c23b823ba75479ca7c84f39d945",
+      "source_version": "c5ba2a88",
+      "content_hash": "f04ef26644a5b6d6232e1ce7060243421bcfad65edde51accfd2895b740ca6cd",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Patch/bcknd security fixes (#5129)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Increment utilities chart version to v1.28.5",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49742,7 +49747,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:52:13.838Z",
+      "verified_at": "2026-11-09T15:12:43.816Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55395,11 +55400,16 @@
       "slug": "rustcrypto-hashes",
       "platform": "github",
       "source_url": "https://github.com/RustCrypto/hashes",
-      "source_version": "23d8e40e",
-      "content_hash": "def25cb24481f513f26578543d021720a2b6765f237d6be46fc5691e7f2961c3",
+      "source_version": "c50eeb46",
+      "content_hash": "d73b31e0435e2ecf7b08c679ea5cc1af76fc7d501d52c91199f23dcc091b6b1c",
       "dossier_path": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "sha2: remove unreachable panic and fix compilation error in the SHA-512 AVX2 bac",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1792,
           "title": "jh: add long-input regression tests (#894)",
@@ -55421,7 +55431,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:06:00.412Z",
+      "verified_at": "2026-11-09T15:12:48.947Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55785,14 +55795,19 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "e29dbf75",
-      "content_hash": "16dd977ef6daac435416d3844c1baad93432649d0bf38785ad456ec8b980c049",
+      "source_version": "ec427f83",
+      "content_hash": "8669bf52cac49c93fa0c71d5bb73fed220f9872e2986bd5eb25e38e76e2c0ea7",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "charset assertion and use LLVM coverage in CI (#1839)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Run performance benchmarks for implementation changes (#1842)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55846,7 +55861,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:11:55.499Z",
+      "verified_at": "2026-11-09T15:12:39.432Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56425,14 +56440,19 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "45f16d5b",
-      "content_hash": "c179eb541739170a1b75c70e28ae0c42f1787cdf716a0c547fab404eb5d42e13",
+      "source_version": "7ad4ba05",
+      "content_hash": "c5f104155959d0b1ef8d6003070701385280cb1346bf30a14c4bfc07b261d865",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build(rust): bump log from 0.4.34 to 0.4.35",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #1059 from sfu-db/dependabot/cargo/uuid-1.29.0",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56491,7 +56511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:06:10.519Z",
+      "verified_at": "2026-11-09T15:12:51.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75602,7 +75622,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "f71280bbaad120c9ecab88acb18317ae214e313a1669758fe5d8ca17e771b8cb",
+      "content_hash": "f4fe60d7bc57b9299885925c6a24399293637227a2ffd2ada26edd421c4faf2a",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -75682,7 +75702,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:44:44.224Z",
+      "verified_at": "2026-11-09T15:17:35.472Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

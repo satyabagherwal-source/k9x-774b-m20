@@ -8622,3 +8622,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-09T14:35:41.265Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6f9df7e7` | Multi-dimensional audit evidence | 2026-11-09T14:35:43.224Z |
 | `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-09T14:59:52.797Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `ec427f83` | Multi-dimensional audit evidence | 2026-11-09T15:12:39.558Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `c5ba2a88` | Multi-dimensional audit evidence | 2026-11-09T15:12:43.948Z |
+| `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `c50eeb46` | Multi-dimensional audit evidence | 2026-11-09T15:12:49.080Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `7ad4ba05` | Multi-dimensional audit evidence | 2026-11-09T15:12:51.553Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-09T15:17:35.616Z |

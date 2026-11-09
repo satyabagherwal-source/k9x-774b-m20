@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T14:59:52.808Z",
+  "last_updated": "2026-11-09T15:17:35.626Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2421,14 +2421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "f71280bbaad120c9ecab88acb18317ae214e313a1669758fe5d8ca17e771b8cb",
-      "verified_at": "2026-11-05T15:44:44.340Z",
+      "content_hash": "f4fe60d7bc57b9299885925c6a24399293637227a2ffd2ada26edd421c4faf2a",
+      "verified_at": "2026-11-09T15:17:35.625Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T15:44:44.340Z"
+      "last_updated": "2026-11-09T15:17:35.625Z"
     },
     "black-forest-labs/flux-3-image-klein-comfy": {
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -4701,14 +4701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustcrypto-hashes",
-      "content_hash": "def25cb24481f513f26578543d021720a2b6765f237d6be46fc5691e7f2961c3",
-      "verified_at": "2026-10-28T00:06:00.483Z",
+      "content_hash": "d73b31e0435e2ecf7b08c679ea5cc1af76fc7d501d52c91199f23dcc091b6b1c",
+      "verified_at": "2026-11-09T15:12:49.089Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:06:00.483Z"
+      "last_updated": "2026-11-09T15:12:49.089Z"
     },
     "onlook-dev/onlook": {
       "repository": "onlook-dev/onlook",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "3db6c46da4c6e686d1023a03312ec8cd8f100c23b823ba75479ca7c84f39d945",
-      "verified_at": "2026-11-06T20:52:13.924Z",
+      "content_hash": "f04ef26644a5b6d6232e1ce7060243421bcfad65edde51accfd2895b740ca6cd",
+      "verified_at": "2026-11-09T15:12:43.959Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T20:52:13.924Z"
+      "last_updated": "2026-11-09T15:12:43.959Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "c179eb541739170a1b75c70e28ae0c42f1787cdf716a0c547fab404eb5d42e13",
-      "verified_at": "2026-11-08T17:06:10.650Z",
+      "content_hash": "c5f104155959d0b1ef8d6003070701385280cb1346bf30a14c4bfc07b261d865",
+      "verified_at": "2026-11-09T15:12:51.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:06:10.650Z"
+      "last_updated": "2026-11-09T15:12:51.562Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -8346,14 +8346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-salvo-rs-salvo",
-      "content_hash": "16dd977ef6daac435416d3844c1baad93432649d0bf38785ad456ec8b980c049",
-      "verified_at": "2026-11-06T23:11:55.626Z",
+      "content_hash": "8669bf52cac49c93fa0c71d5bb73fed220f9872e2986bd5eb25e38e76e2c0ea7",
+      "verified_at": "2026-11-09T15:12:39.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T23:11:55.626Z"
+      "last_updated": "2026-11-09T15:12:39.578Z"
     },
     "react/metro": {
       "repository": "react/metro",

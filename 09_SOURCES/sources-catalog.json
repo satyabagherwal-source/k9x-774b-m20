@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "f71280bbaad120c9ecab88acb18317ae214e313a1669758fe5d8ca17e771b8cb",
-    "lastHarvestedAt": "2026-11-05T15:44:44.332Z",
+    "contentHash": "f4fe60d7bc57b9299885925c6a24399293637227a2ffd2ada26edd421c4faf2a",
+    "lastHarvestedAt": "2026-11-09T15:17:35.616Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
@@ -3053,10 +3053,10 @@
     "repository": "RustCrypto/hashes",
     "platform": "github",
     "sourceUrl": "https://github.com/RustCrypto/hashes",
-    "sourceVersion": "23d8e40e",
+    "sourceVersion": "c50eeb46",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "def25cb24481f513f26578543d021720a2b6765f237d6be46fc5691e7f2961c3",
-    "lastHarvestedAt": "2026-10-28T00:06:00.476Z",
+    "contentHash": "d73b31e0435e2ecf7b08c679ea5cc1af76fc7d501d52c91199f23dcc091b6b1c",
+    "lastHarvestedAt": "2026-11-09T15:12:49.080Z",
     "learningId": "learn-github-rustcrypto-hashes"
   },
   "onlook-dev-onlook": {
@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "8a18313e",
+    "sourceVersion": "c5ba2a88",
     "license": "NOASSERTION",
-    "contentHash": "3db6c46da4c6e686d1023a03312ec8cd8f100c23b823ba75479ca7c84f39d945",
-    "lastHarvestedAt": "2026-11-06T20:52:13.911Z",
+    "contentHash": "f04ef26644a5b6d6232e1ce7060243421bcfad65edde51accfd2895b740ca6cd",
+    "lastHarvestedAt": "2026-11-09T15:12:43.948Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "45f16d5b",
+    "sourceVersion": "7ad4ba05",
     "license": "MIT",
-    "contentHash": "c179eb541739170a1b75c70e28ae0c42f1787cdf716a0c547fab404eb5d42e13",
-    "lastHarvestedAt": "2026-11-08T17:06:10.640Z",
+    "contentHash": "c5f104155959d0b1ef8d6003070701385280cb1346bf30a14c4bfc07b261d865",
+    "lastHarvestedAt": "2026-11-09T15:12:51.553Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "e29dbf75",
+    "sourceVersion": "ec427f83",
     "license": "Apache-2.0",
-    "contentHash": "16dd977ef6daac435416d3844c1baad93432649d0bf38785ad456ec8b980c049",
-    "lastHarvestedAt": "2026-11-06T23:11:55.616Z",
+    "contentHash": "8669bf52cac49c93fa0c71d5bb73fed220f9872e2986bd5eb25e38e76e2c0ea7",
+    "lastHarvestedAt": "2026-11-09T15:12:39.558Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {
