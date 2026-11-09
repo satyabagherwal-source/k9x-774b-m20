@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "6f9df7e7",
+    "sourceVersion": "7c0dc9dc",
     "license": "NOASSERTION",
-    "contentHash": "25700b8b1cc2f150b6f03f71b2f1521aa1c8609f02a533f89f7e2b7ddc3aee62",
-    "lastHarvestedAt": "2026-11-09T14:35:43.224Z",
+    "contentHash": "67e7ec326b503e32724a06b389953a9ed51b95f56694efc37b568243bef7129a",
+    "lastHarvestedAt": "2026-11-09T17:12:38.147Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "5752f709",
+    "sourceVersion": "60b764b8",
     "license": "Apache-2.0",
-    "contentHash": "02bcdb6f0765c95eb95bd5deb6ecd8425f2cfa6f61d386cf59aa369c7508fd73",
-    "lastHarvestedAt": "2026-11-06T14:40:41.791Z",
+    "contentHash": "0ce39ae67cd5f940c86ffd2b22c5f7f099f4a747d82130ec6eb83a39094ddeec",
+    "lastHarvestedAt": "2026-11-09T17:12:20.686Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "ff5d19c2",
+    "sourceVersion": "08479aca",
     "license": "AGPL-3.0",
-    "contentHash": "ca24a6b683d2551a643be0f945f190d8683e4d7f20feb867a2ccf6011c4bd4aa",
-    "lastHarvestedAt": "2026-11-07T21:36:37.897Z",
+    "contentHash": "7fb2aca545c8cbd42bb963307f5d211b9e54f7e25586775cb5586a0c967ebbb7",
+    "lastHarvestedAt": "2026-11-09T17:12:20.898Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {

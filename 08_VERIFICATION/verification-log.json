@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-ENQ1",
-    "timestamp": "2026-11-08T00:27:10.873Z",
-    "repository": "ducaale/xh",
-    "learningId": "learn-github-ducaale-xh",
-    "contentHash": "18be4ac7f83f7b18d8b5a91575b9402727f3d04b590516c8ba0489084c938352",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-NW2K",
-    "timestamp": "2026-11-08T00:34:21.596Z",
-    "repository": "msasikanth/twine",
-    "learningId": "learn-github-msasikanth-twine",
-    "contentHash": "8762b44902ab0c261fe4b3fd10e7bfe50e40eb70bfcbd64dabffa8f9ef41ddb7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-O1MH",
-    "timestamp": "2026-11-08T00:34:28.793Z",
-    "repository": "speridlabs/idol",
-    "learningId": "learn-huggingface-speridlabs-idol",
-    "contentHash": "dcfa8042ff4f483b1191fb6dba2249fdd3203a621a1509604c7723a969c9b1d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-O2FI",
     "timestamp": "2026-11-08T00:34:29.838Z",
     "repository": "genkit-ai/genkit",
@@ -7490,6 +7445,51 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "280c16e9480891249d5ed279f6bfac3d40903788afe55b60f771e33095bf0ce6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-R5QI",
+    "timestamp": "2026-11-09T17:12:20.682Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "0ce39ae67cd5f940c86ffd2b22c5f7f099f4a747d82130ec6eb83a39094ddeec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-R5WF",
+    "timestamp": "2026-11-09T17:12:20.895Z",
+    "repository": "citusdata/citus",
+    "learningId": "learn-github-citusdata-citus",
+    "contentHash": "7fb2aca545c8cbd42bb963307f5d211b9e54f7e25586775cb5586a0c967ebbb7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-RJ7J",
+    "timestamp": "2026-11-09T17:12:38.143Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "67e7ec326b503e32724a06b389953a9ed51b95f56694efc37b568243bef7129a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

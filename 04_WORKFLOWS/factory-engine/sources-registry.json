@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T17:00:12.181Z",
-    "lastVerified": "2026-11-09T17:00:12.181Z",
+    "lastChecked": "2026-11-09T17:12:40.737Z",
+    "lastVerified": "2026-11-09T17:12:40.737Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -254,22 +254,21 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:26:02.804Z",
-    "lastVerified": "2026-11-09T16:26:02.804Z",
+    "lastChecked": "2026-11-09T17:12:36.493Z",
+    "lastVerified": "2026-11-09T17:12:36.493Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "25700b8b1cc2f150b6f03f71b2f1521aa1c8609f02a533f89f7e2b7ddc3aee62",
+    "contentHash": "67e7ec326b503e32724a06b389953a9ed51b95f56694efc37b568243bef7129a",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6f9df7e7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2383,8 +2382,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-09T10:28:27.918Z",
-    "lastVerified": "2026-11-09T10:28:27.918Z",
+    "lastChecked": "2026-11-09T17:12:10.856Z",
+    "lastVerified": "2026-11-09T17:12:10.856Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3325,9 +3324,9 @@
   "leecade-react-native-swiper": {
     "name": "react-native-swiper",
     "officialUrl": "https://github.com/leecade/react-native-swiper",
-    "lastChecked": "2026-11-06T22:13:42.872Z",
+    "lastChecked": "2026-11-09T17:12:04.416Z",
     "revisionIdentifier": "98cc9060",
-    "lastVerified": "2026-11-06T22:13:42.872Z"
+    "lastVerified": "2026-11-09T17:12:04.416Z"
   },
   "taubyte-tau": {
     "name": "tau",
@@ -3582,22 +3581,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kumahq-kuma": {
-    "name": "kuma",
+    "name": "kumahq/kuma",
     "officialUrl": "https://github.com/kumahq/kuma",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T19:45:19.218Z",
-    "lastVerified": "2026-11-08T19:45:19.218Z",
+    "lastChecked": "2026-11-09T17:12:18.338Z",
+    "lastVerified": "2026-11-09T17:12:18.338Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "02bcdb6f0765c95eb95bd5deb6ecd8425f2cfa6f61d386cf59aa369c7508fd73",
+    "contentHash": "0ce39ae67cd5f940c86ffd2b22c5f7f099f4a747d82130ec6eb83a39094ddeec",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5752f709"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
@@ -6120,9 +6118,9 @@
   "gotham-rs-gotham": {
     "name": "gotham",
     "officialUrl": "https://github.com/gotham-rs/gotham",
-    "lastChecked": "2026-11-08T15:12:13.480Z",
+    "lastChecked": "2026-11-09T17:11:59.404Z",
     "revisionIdentifier": "53fe844b",
-    "lastVerified": "2026-11-08T15:12:13.480Z"
+    "lastVerified": "2026-11-09T17:11:59.404Z"
   },
   "hf-naiveai-naive-n0.5-flash": {
     "name": "NaiveAI/Naive-N0.5-Flash",
@@ -6395,22 +6393,21 @@
     "revisionIdentifier": "439ea266"
   },
   "citusdata-citus": {
-    "name": "citus",
+    "name": "citusdata/citus",
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-08T18:35:00.116Z",
-    "lastVerified": "2026-11-08T18:35:00.116Z",
+    "lastChecked": "2026-11-09T17:12:18.835Z",
+    "lastVerified": "2026-11-09T17:12:18.835Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
-    "contentHash": "ca24a6b683d2551a643be0f945f190d8683e4d7f20feb867a2ccf6011c4bd4aa",
+    "contentHash": "7fb2aca545c8cbd42bb963307f5d211b9e54f7e25586775cb5586a0c967ebbb7",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ff5d19c2"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "dicklesworthstone-destructive_command_guard": {
     "name": "Dicklesworthstone/destructive_command_guard",
@@ -9505,9 +9502,9 @@
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",
     "officialUrl": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
-    "lastChecked": "2026-11-05T17:36:29.476Z",
+    "lastChecked": "2026-11-09T17:12:02.002Z",
     "revisionIdentifier": "7e5d3c5",
-    "lastVerified": "2026-11-05T17:36:29.476Z"
+    "lastVerified": "2026-11-09T17:12:02.002Z"
   },
   "siteline-swiftui-introspect": {
     "name": "swiftui-introspect",

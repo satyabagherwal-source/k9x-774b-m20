@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `6f9df7e7`  
+> **Source Version**: `7c0dc9dc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T14:35:41.389Z  
+> **Timestamp**: 2026-11-09T17:12:36.499Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T14:35:41.236Z  
+> **Harvest Timestamp**: 2026-11-09T17:12:36.493Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,20 +2203,27 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f9df7e7` (2026-11-09)
-**Commit Message**: docs(viz): document stdin input in the USAGE (#5018)
+### Incident Patch 1: `7c0dc9dc` (2026-11-09)
+**Commit Message**: deps: bump Polars to upstream main a598c51 (#5021)
 
-* docs(viz): document stdin input in the USAGE
+* deps: bump Polars to upstream main a598c51
 
-Add a "viz arguments" section: <input> is a CSV/TSV file, or - for stdin.
-Every chart type accepts stdin except `smart`, which needs a file because
-it builds its panels from the file's cached statistics. With `--geojson
-auto`/`census`, stdin is first copied to a temp file. Adds a piped-input
-example. Regenerated docs/help/viz.md and the qsv-viz MCP skill JSON.
+86 commits past 0b47007, still crate 0.55.1 at py-2.1.0. Toolchain
+(nightly-2026-09-01), the hashbrown patch, zstd 0.14 and the crates/polars
+feature list are unchanged; the one new workspace dependency
+(parquet-key-management) is only used by polars-python.
+
+Mostly performance: a rewritten CSV field splitter/parser (#30597, #30626,
+#30639), spillable streaming joins and group-by memory grants, and Parquet
+scan prefetching. No sqlp result changed in a side-by-side probe of both
+pins (25 queries aimed at the SQL-facing fixes, plus `count` and
+`select *` on all 80 resources/test CSVs and the 1M-row benchmark data,
+byte-identical). pola-rs/polars#30523 (COUNT(*) over UNION ALL ... LIMIT)
+still panics, so its test stays ignored.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): viz USAGE stdin note (#5018)
+* docs(changelog): Polars a598c51 (#5021)
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2224,119 +2231,309 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/qsv/qsv-viz.json` (modified, +5/-1)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -45,7 +45,7 @@
-         "name": "input",
-         "type": "file",
-         "required": true,
--        "description": "Input CSV file."
-+        "description": "The CSV/TSV file to chart, or - to read CSV from stdin. Every chart type accepts stdin except smart, which needs a file because it builds its panels from the file's cached statistics. When the GeoJSON is auto or census, stdin is first copied to a temp file (disk space equal to the input)."
-       }
-     ],
-     "options": [
-@@ -511,6 +511,10 @@
-       "description": "Aggregate (sum) sales by region into a titled bar chart, opened in the browser",
-       "command": "qsv viz bar sales.csv --x region --y amount --agg sum --title \"Sales by region\" --open"
-     },
-+    {
-+      "description": "Chart piped CSV: pass - as the input (every chart type except smart)",
-+      "command": "qsv search -s region West sales.csv | qsv viz histogram --x amount - -o west.html"
-+    },
-     {
-       "description": "Scatter plot with a separate series (trace) per category",
-       "command": "qsv viz scatter data.csv --x age --y income --series gender -o scatter.html"
+@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - The 25 `frequency` benchmarks require every field's counts to add up to the row count, and every selected column to be present.
+   - 13 `sqlp` benchmarks must return the exact expected rows or groups (cross-checked with DuckDB), in CSV, JSON, JSONL, Parquet and Arrow output.
+   - Also fixed: an output check on a benchmark that has a `--conclude` or `--cleanup` hook checked the hook's output instead, because hyperfine writes it to the same file.
+-- **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
++- **deps: Polars bumped to upstream rev [`a598c51`](https://github.com/pola-rs/polars/commit/a598c51f216fca7406330be6e88961eb18c71af3)** (from `py-2.1.0`, 212 commits: `0b47007` in [#4993](https://github.com/dathere/qsv/pull/4993), then `a598c51` in [#5021](https://github.com/dathere/qsv/pull/5021)). The `a598c51` step is mostly performance, including a faster CSV reader ([#30639](https://github.com/pola-rs/polars/pull/30639)) and spillable streaming joins; no `sqlp` result changed in side-by-side tests. Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
+   - **`IS DISTINCT FROM` binds tighter than `AND`/`OR`** ([#30367](https://github.com/pola-rs/polars/pull/30367)). `a IS DISTINCT FROM b AND c OR d` is now `((a IS DISTINCT FROM b) AND c) OR d`; before, the `AND`/`OR` became part of the right operand.
+   - **`POSITION`/`STRPOS` of a NULL string is NULL**, not `0` ([#30493](https://github.com/pola-rs/polars/pull/30493)). String length, position and date-part functions also return Int64.
+   - **Known issue: `COUNT(*)` over a `UNION ALL ... LIMIT` panics again** (`not implemented for dtype UInt128`). The #30150 fix regressed in [#30363](https://github.com/pola-rs/polars/pull/30363); reported as [pola-rs/polars#30523](https://github.com/pola-rs/polars/issues/30523). Workaround: count a column (`COUNT(g)`) instead of `COUNT(*)`, or add an `ORDER BY` inside the limited union. (`COUNT(*)` over a `UNION ALL` without `LIMIT` panicked on py-2.1.0 too.)
 ```
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +28/-28)
 ```diff
-@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -6021,7 +6021,7 @@ dependencies = [
+ [[package]]
+ name = "polars"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "getrandom 0.2.17",
+  "getrandom 0.4.3",
+@@ -6046,7 +6046,7 @@ dependencies = [
+ [[package]]
+ name = "polars-arrow"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "atoi_simd",
+  "avro-schema",
+@@ -6090,7 +6090,7 @@ dependencies = [
+ [[package]]
+ name = "polars-async"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "atomic-waker",
+  "crossbeam-channel",
+@@ -6109,7 +6109,7 @@ dependencies = [
+ [[package]]
+ name = "polars-buffer"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "bytemuck",
+  "either",
+@@ -6121,7 +6121,7 @@ dependencies = [
+ [[package]]
+ name = "polars-compute"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "atoi_simd",
+  "bytemuck",
+@@ -6146,7 +6146,7 @@ dependencies = [
+ [[package]]
+ name = "polars-config"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "polars-error",
+  "serde",
+@@ -6156,7 +6156,7 @@ dependencies = [
+ [[package]]
+ name = "polars-core"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "atoi_simd",
+  "bitflags 2.13.2",
+@@ -6197,7 +6197,7 @@ dependencies = [
+ [[package]]
+ name = "polars-defs"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "chrono",
+  "chrono-tz",
+@@ -6212,7 +6212,7 @@ dependencies = [
+ [[package]]
+ name = "polars-descriptions"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "serde",
+  "strum_macros 0.28.0",
+@@ -6221,7 +6221,7 @@ dependencies = [
+ [[package]]
+ name = "polars-dtype"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "boxcar",
+  "hashbrown 0.17.1",
+@@ -6235,7 +6235,7 @@ dependencies = [
+ [[package]]
+ name = "polars-error"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "avro-schema",
+  "object_store",
+@@ -6249,7 +6249,7 @@ dependencies = [
+ [[package]]
+ name = "polars-expr"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=0b47007ab65f0efd39ddc4d5abd5b2e44097a009#0b47007ab65f0efd39ddc4d5abd5b2e44097a009"
++source = "git+https://github.com/pola-rs/polars?rev=a598c51f216fca7406330be6e88961eb18c71af3#a598c51f216fca7406330be6e88961eb18c71af3"
+ dependencies = [
+  "bitflag
+```
+
+**File**: `Cargo.toml` (modified, +4/-4)
+```diff
+@@ -538,8 +538,8 @@ serial_test = { version = "4.0", features = ["file_locks"] }
+ [patch.crates-io]
+ # polars-readstat-rs depends on these directly; redirect them onto the same git polars
+ # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io.
+-polars-core  = { git = "https://github.com/pola-rs/polars", rev = "0b47007ab65f0efd39ddc4d5abd5b2e44097a009" }
+-polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "0b47007ab65f0efd39ddc4d5abd5b2e44097a009" }
++polars-core  = { git = "https://github.com/pola-rs/polars", rev = "a598c51f216fca7406330be6e88961eb18c71af3" }
++polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "a598c51f216fca7406330be6e88961eb18c71af3" }
+ # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
+ # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
+ # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
+@@ -608,9 +608,9 @@ compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch =
+ #     (e.g. py-1.19.0:52ea381 to indicate that we are Python Polars 1.19.0,
+ #      and the commit hash 52ea381)
+ # ================================
+-# QSV_POLARS_REV=py-2.1.0:0b47007
++# QSV_POLARS_REV=py-2.1.0:a598c51
+ # polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
+-polars = { git = "https://github.com/pola-rs/polars", rev = "0b47007ab65f0efd39ddc4d5abd5b2e44097a009", optional = true }
++polars = { git = "https://github.com/pola-rs/polars", rev = "a598c51f216fca7406330be6e88961eb18c71af3", optional = true }
  
- ### Added
- - **docs: "Statistics at a Glance" in [`docs/STATS_DEFINITIONS.md`](docs/STATS_DEFINITIONS.md)**: qsv compiles 159 statistic columns across `stats` (48), `moarstats` (76 + 14 bivariate), `pragmastat` (18) and `frequency` (3). A new test checks the table against real output, so the counts can't go stale silently ([#4996](https://github.com/dathere/qsv/pull/4996)).
-+- **docs: the `viz` USAGE documents stdin input** ([#5018](https://github.com/dathere/qsv/pull/5018)). Pass `-` as `<input>` to chart piped CSV. Every chart type accepts it except `smart`, which needs a file for its cached statistics. With `--geojson auto` or `census`, stdin is first copied to a temp file. There's also a new piped-input example.
- 
- ### Changed
+ # Apache DataSketches (t-digest, HLL, Frequent Items) — upstream C++ does not
+ # support big-endian targets, so we exclude the crate on big-endian builds.
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -115,7 +115,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](#extended-input-support).  
+ 🗃️: [Limited Extended input support](#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:0b47007](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:0b47007-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:a598c51](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:a598c51-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
+```
+
+**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
+```diff
+@@ -96,7 +96,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](../../README.md#extended-input-support).  
+ 🗃️: [Limited Extended input support](../../README.md#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:0b47007](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:0b47007-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:a598c51](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:a598c51-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
+```
+
+---
+
+### Incident Patch 2: `c6f04cd4` (2026-11-09)
+**Commit Message**: bench: verify sqlp and frequency results (benchmarks.sh 10.1.2) (#5019)
+
+* bench: verify sqlp and frequency results; fix --verify with --conclude/--cleanup
+
+benchmarks.sh 10.1.2. Like #4997 did for joinp, the sqlp and frequency
+benchmarks now check that the command did the work being timed, so an
+empty or partial result that still exits 0 is quarantined instead of
+published as a speedup.
+
+- frequency (25): every field's counts must add up to $QSVBM_ROWCOUNT, and
+  every selected column must be present (verify_frequency). The invariant
+  holds for --limit 0, --other-sorted, -i, --no-trim and the frequent_items
+  sketch, so no version-dependent table sizes are pinned. --weight: 40
+  fields, each totalling 919555193740 (the column's sum plus 1 for each of
+  its 85,327 empty weights, which default to 1.0).
+- sqlp (13): Noise in BROOKLYN = 5374 rows in csv, json, jsonl, parquet and
+  arrow output (read back with qsv); Noise by Borough = the six exact
+  groups in any order; expensive.sql = 118 groups totalling the rowcount.
+  Cross-checked with DuckDB. Avro and the *_vs_duckdb benchmarks aren't
+  checked (no Avro reader in qsv; those time DuckDB).
+
+Also fixes run_benchmark's untimed --ve
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected. On big-endian targets (s390x), values of 128 bytes or more were misread until a compact_bytes fix ([#5015](https://github.com/dathere/qsv/pull/5015)), so this was never released with the bug.
+ - **`stats --weight`: mode, antimode and cardinality tracking is faster and uses less memory** ([#5013](https://github.com/dathere/qsv/pull/5013)). The weighted tracker now stores short values inline too, as #5011 did for unweighted `stats`. On a 1M-row file with `--weight`, `--cardinality --mode` is 12–20% faster, and `--everything` on an indexed file is 21–23% faster with 36% less peak memory. Output is unchanged.
+ - **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
++- **`scripts/benchmarks.sh` 10.1.2: the `sqlp` and `frequency` benchmarks check their results** ([#5019](https://github.com/dathere/qsv/pull/5019)). An empty or partial result that still exits 0 is now quarantined, not published as a speedup.
++  - The 25 `frequency` benchmarks require every field's counts to add up to the row count, and every selected column to be present.
++  - 13 `sqlp` benchmarks must return the exact expected rows or groups (cross-checked with DuckDB), in CSV, JSON, JSONL, Parquet and Arrow output.
++  - Also fixed: an output check on a benchmark that has a `--conclude` or `--cleanup` hook checked the hook's output instead, because hyperfine writes it to the same file.
+ - **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
+   - **`IS DISTINCT FROM` binds tighter than `AND`/`OR`** ([#30367](https://github.com/pola-rs/polars/pull/30367)). `a IS DISTINCT FROM b AND c OR d` is now `((a IS DISTINCT FROM b) AND c) OR d`; before, the `AND`/`OR` became part of the right operand.
+   - **`POSITION`/`STRPOS` of a NULL string is NULL**, not `0` ([#30493](https://github.com/pola-rs/polars/pull/30493)). String length, position and date-part functions also return Int64.
 ```
 
-**File**: `docs/help/viz.md` (modified, +15/-1)
+**File**: `scripts/benchmarks.sh` (modified, +107/-41)
 ```diff
-@@ -5,7 +5,7 @@
- **[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/viz.rs](https://github.com/dathere/qsv/blob/master/src/cmd/viz.rs)** | [🪄](TableOfContents.md#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[📇](TableOfContents.md#legend "uses an index when available.")[🏎️](TableOfContents.md#legend "multithreaded and/or faster when an index (📇) is available.")[👆](TableOfContents.md#legend "has powerful column selector support. See `select` for syntax.")[🤖](TableOfContents.md#legend "command uses Natural Language Processing or Generative AI.")[🌐](TableOfContents.md#legend "has web-aware options.")[🌎](TableOfContents.md#legend "has geospatial capabilities.")
+@@ -44,7 +44,7 @@
+ arg_pat="$1"
  
- <a name="nav"></a>
--[Description](#description) | [Examples](#examples) | [Usage](#usage) | [Viz Options](#viz-options) | [Map Options](#map-options) | [Geo Options](#geo-options) | [Choropleth Options](#choropleth-options) | [Smart Options](#smart-options) | [Common Options](#common-options)
-+[Description](#description) | [Examples](#examples) | [Usage](#usage) | [Arguments](#arguments) | [Viz Options](#viz-options) | [Map Options](#map-options) | [Geo Options](#geo-options) | [Choropleth Options](#choropleth-options) | [Smart Options](#smart-options) | [Common Options](#common-options)
+ # the version of this script
+-bm_version=10.1.1
++bm_version=10.1.2
  
- <a name="description"></a>
- 
-@@ -159,6 +159,12 @@ qsv viz smart data.csv --smarter --bivariate -o dashboard.html
- qsv viz bar sales.csv --x region --y amount --agg sum --title "Sales by region" --open
- ```
- 
-+> Chart piped CSV: pass - as the input (every chart type except smart)
-+
-+```console
-+qsv search -s region West sales.csv | qsv viz histogram --x amount - -o west.html
-+```
-+
- > Scatter plot with a separate series (trace) per category
- 
- ```console
-@@ -384,6 +390,14 @@ qsv viz parcoords   [options] <input>
- qsv viz --help
- ```
- 
-+<a name="arguments"></a>
-+
-+## Arguments [↩](#nav)
-+
-+| Argument&nbsp; | Description |
-+|----------|-------------|
-+| &nbsp;`<input>`&nbsp; | The CSV/TSV file to chart, or - to read CSV from stdin. Every chart type accepts stdin except smart, which needs a file because it builds its panels from the file's cached statistics. When the GeoJSON is auto or census, stdin is first copied to a temp file (disk space equal to the input). |
-+
- <a name="viz-options"></a>
- 
- ## Viz Options [↩](#nav)
-```
-
-**File**: `src/cmd/viz.rs` (modified, +11/-0)
-```diff
-@@ -122,6 +122,9 @@ Examples:
-   # Aggregate (sum) sales by region into a titled bar chart, opened in the browser
-   qsv viz bar sales.csv --x region --y amount --agg sum --title "Sales by region" --open
- 
-+  # Chart piped CSV: pass - as the input (every chart type except smart)
-+  qsv search -s region West sales.csv | qsv viz histogram --x amount - -o west.html
-+
-   # Scatter plot with a separate series (trace) per category
-   qsv viz scatter data.csv --x age --y income --series gender -o scatter.html
- 
-@@ -249,6 +252,14 @@ Usage:
-     qsv viz --help
- 
- 
-+viz arguments:
-+    <input>                The CSV/TSV file to chart, or - to read CSV from
-+                           stdin. Every chart type accepts stdin except smart,
-+                           which needs a file because it builds its panels from
-+                           the file's cached statistics. When the GeoJSON is
-+                           auto or census, stdin is first copied to a temp file
-+                           (disk space equal to the input).
-+
- viz options:
-     -x, --x <col>          Column for the x-axis / category / bin / group.
-     -y, --y <col>          Column for the y-axis / value.
+ # runs of a benchmark whose means are within this percentage of each other tie in the rank
+ # column (see the delta & rank comments near the end)
+@@ -1519,31 +1519,57 @@ run fmt "$qsv_bin" fmt --crlf "$data"
+ run fmt_no_crlf "$qsv_bin" fmt "$data"
+ run fmt_no_final_newline "$qsv_bin" fmt --no-final-newline "$data"
+ run foreach "$qsv_bin" foreach City \"echo {}\" "$data"
+-run frequency "$qsv_bin" frequency "$data"
+-run --index frequency_index "$qsv_bin" frequency "$data"
+-run --index frequency_index_stats_mode_auto env QSV_STATS_MODE=auto bash -c \'"$qsv_bin" frequency "$data"\'
+-run --index frequency_index_stats_mode_force env QSV_STATS_MODE=force bash -c \'"$qsv_bin" frequency "$data"\'
+-run --index frequency_index_stats_mode_none env QSV_STATS_MODE=none bash -c \'"$qsv_bin" frequency "$data"\'
+-run --index frequency_index_frequency_cache "$qsv_bin" frequency --frequency-jsonl "$data"
+-run frequency_no_limit "$qsv_bin" frequency --limit 0 "$data"
+-run --index frequency_no_limit_index "$qsv_bin" frequency --limit 0 "$data"
+-run frequency_other_sorted "$qsv_bin" frequency --other-sorted "$data"
+-run --index frequency_other_sorted_index "$qsv_bin" frequency --other-sorted "$data"
+-run frequency_selregex "$qsv_bin" frequency -s /^R/ "$data"
+-run frequency_j1 "$qsv_bin" frequency -j 1 "$data"
+-run frequency_ignorecase "$qsv_bin" frequency -i "$data"
+-run --index frequency_ignorecase_index "$qsv_bin" frequency -i "$data"
+-run frequency_selregex_ignorecase "$qsv_bin" frequency -s /^R/ -i "$data"
+-run frequency_j1_ignorecase "$qsv_bin" frequency -j 1 -i "$data"
+-run frequency_notrim "$qsv_bin" frequency --no-trim "$data"
+-run --index frequency_notrim_index "$qsv_bin" frequency --no-trim "$data"
+-run frequency_limit20 "$qsv_bin" frequency --limit 20 "$data"
+-run --index frequency_limit20_index "$qsv_bin" frequency --limit 20 "$data"
+-run frequency_sorted "$qsv_bin" frequency data_sorted.csv
+-run --index frequency_sorted_index "$qsv_bin" frequency data_sorted.csv
+-run frequency_sketch "$qsv_bin" frequency --sketch-method frequent_items "$data"
+-run --index frequency_sketch_index "$qsv_bin" frequency --sketch-method frequent_items "$data"
+-run frequency_weighted "$qsv_bin" frequency --weight "'X Coordinate (State Plane)'" "$data"
++# --verify: in a frequency table, each field's counts (its top values, "Other" and the empty
++# value) add up to the rows read, so every field must total $QSVBM_ROWCOUNT, and every selected
++# column must be there. That catches a partial scan or a dropped column, which still exits 0 and
++# would time as a speedup, without pinning ~25 version-dependent table sizes. It holds for
++# --limit 0, --other-sorted, -i, --no-trim and the frequent_items sketch too.
++# verify_frequency FIELDS [TOTAL]: TOTAL defaults to $QSVBM_ROWCOUNT. `select count,field`
++# puts count first, so a field name with a comma (quoted by select) can't shift the columns.
++function verify_frequency {
++  "$QSVBM_QSV" select count,field "$QSVBM_STDOUT" |
++    awk -F, -v fields="$1" -v total="${2:-$QSVBM_ROWCOUNT}" '
++      NR > 1 { sums[substr($0, length($1) + 2)] += $1 }
++      END {
++        n = 0
++        for (f in sums) { n++; if (sums[f] != total) exit 1 }
++        exit (n == fields) ? 0 : 1
++      }'
++}
++export -f verify_frequency
++freq_fields=$("$qsv_benchmarker_bin" headers --just-count "$data")
++freq_r_fields=$("$qsv_benchmarker_bin" headers --just-names "$data" | grep -c '^R')
++verify_freq="verify_frequency $freq_fields"
++verify_freq_r="verify_frequency $freq_r_fields"
++# --weight: the weight column is left out, and every other field totals the column's sum plus 1
++# for each of its 85,327 empty values ("Missing or unparsable weights default to 1.0"):
++# 919555108413 (DuckDB and `qsv stats` sum) + 85327 = 919555193740.
++verify_freq_weighted="verify_frequency $((freq_fields - 1)) 919555193740"
++run --verify "$verify_freq" frequency "$qsv_bin" frequency "$data"
++run --index --verify "$verify_freq" frequency_index "$qsv_bin" frequency "$data"
++run --index --verify "$verify_freq" frequency_index_stats_mode_auto env QSV_STATS_MODE=auto bash -c \'"$qsv_bin" frequency "$data"\'
++run --index --verify "$verify_freq" frequency_index_stats_mode_force env QSV_STATS_MODE=force bash -c \'"$qsv_bin" frequency "$data"\'
++run --index --verify "$verify_freq" frequency_index_stats_mode_none env QSV_STATS_MODE=none bash -c \'"$qsv_bin" frequency "$data"\'
++run --index --verify "$verify_freq" frequency_index_frequency_cache "$qsv_bin" frequency --frequency-jsonl "$data"
++run --verify "$verify_freq" frequency_no_limit "$qsv_bin" frequency --limit 0 "$data"
++run --index --verify "$verify_freq" frequency_no_limit_index "$qsv_bin" frequency --limit 0 "$data"
++run --verify "$verify_freq" frequency_other_sorted "$qsv_bin" frequency --other-sorted "$data"
++run --index --verify "$verify_freq" frequency_other_sorted_index "$qsv_bin" frequency -
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5021** (2026-11-09): deps: bump Polars to upstream main a598c51 (@jqnatividad)
+- **PR #5019** (2026-11-09): bench: verify sqlp and frequency results (benchmarks.sh 10.1.2) (@jqnatividad)
 - **PR #5018** (2026-11-09): docs(viz): document stdin input in the USAGE (@jqnatividad)
 - **PR #5017** (2026-11-09): build(deps): bump anthropics/claude-code-action from 1.0.267 to 1.0.269 (@dependabot[bot])
 - **PR #5016** (2026-11-09): build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (@dependabot[bot])
 - **PR #5015** (2026-11-09): deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (@jqnatividad)
-- **PR #5014** (2026-11-09): fix(mcp): leave devDependency-only packages out of the .mcpb bundle (@jqnatividad)
-- **PR #5013** (2026-11-09): perf(stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (@jqnatividad)
 
 ---
 
@@ -2356,32 +2553,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(viz): document stdin input in the USAGE (#5018)
+## X. deps: bump Polars to upstream main a598c51 (#5021)
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-viz.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f9df7e7`: docs(viz): document stdin input in the USAGE (#5018). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c0dc9dc`: deps: bump Polars to upstream main a598c51 (#5021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-viz.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "description": "The CSV/TSV file to chart, or - to read CSV from stdin. Every chart type accepts stdin except smart, which needs a file because it builds its panels from the file's cached statistics. When the GeoJSON is auto or census, stdin is first copied to a temp file (disk space equal to the input)."
-    {
-      "description": "Chart piped CSV: pass - as the input (every chart type except smart)",
-      "command": "qsv search -s region West sales.csv | qsv viz histogram --x amount - -o west.html"
-    },
+- **deps: Polars bumped to upstream rev [`a598c51`](https://github.com/pola-rs/polars/commit/a598c51f216fca7406330be6e88961eb18c71af3)** (from `py-2.1.0`, 212 commits: `0b47007` in [#4993](https://github.com/dathere/qsv/pull/4993), then `a598c51` in [#5021](https://github.com/dathere/qsv/pull/5021)). The `a598c51` step is mostly performance, including a faster CSV reader ([#30639](https://github.com/pola-rs/polars/pull/30639)) and spillable streaming joins; no `sqlp` result changed in side-by-side tests. Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        "description": "Input CSV file."
+- **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f9df7e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c0dc9dc` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T17:00:09.604Z",
+  "last_updated": "2026-11-09T17:12:38.155Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "25700b8b1cc2f150b6f03f71b2f1521aa1c8609f02a533f89f7e2b7ddc3aee62",
-      "verified_at": "2026-11-09T14:35:43.234Z",
+      "content_hash": "67e7ec326b503e32724a06b389953a9ed51b95f56694efc37b568243bef7129a",
+      "verified_at": "2026-11-09T17:12:38.154Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T14:35:43.234Z"
+      "last_updated": "2026-11-09T17:12:38.154Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "02bcdb6f0765c95eb95bd5deb6ecd8425f2cfa6f61d386cf59aa369c7508fd73",
-      "verified_at": "2026-11-06T14:40:41.803Z",
+      "content_hash": "0ce39ae67cd5f940c86ffd2b22c5f7f099f4a747d82130ec6eb83a39094ddeec",
+      "verified_at": "2026-11-09T17:12:20.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:40:41.803Z"
+      "last_updated": "2026-11-09T17:12:20.697Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -7881,14 +7881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-citusdata-citus",
-      "content_hash": "ca24a6b683d2551a643be0f945f190d8683e4d7f20feb867a2ccf6011c4bd4aa",
-      "verified_at": "2026-11-07T21:36:37.912Z",
+      "content_hash": "7fb2aca545c8cbd42bb963307f5d211b9e54f7e25586775cb5586a0c967ebbb7",
+      "verified_at": "2026-11-09T17:12:20.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T21:36:37.912Z"
+      "last_updated": "2026-11-09T17:12:20.915Z"
     },
     "reshaped-ui/reshaped": {
       "repository": "reshaped-ui/reshaped",

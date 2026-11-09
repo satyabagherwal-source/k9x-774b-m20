@@ -8653,3 +8653,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2bdf1337` | Multi-dimensional audit evidence | 2026-11-09T16:40:34.953Z |
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-09T17:00:00.977Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2c663f0d` | Multi-dimensional audit evidence | 2026-11-09T17:00:09.585Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `60b764b8` | Multi-dimensional audit evidence | 2026-11-09T17:12:20.686Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `08479aca` | Multi-dimensional audit evidence | 2026-11-09T17:12:20.898Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7c0dc9dc` | Multi-dimensional audit evidence | 2026-11-09T17:12:38.147Z |

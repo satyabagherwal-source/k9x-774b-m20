@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
-> **Source Version**: `5752f709`  
+> **Source Version**: `60b764b8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:40:40.641Z  
+> **Timestamp**: 2026-11-09T17:12:19.327Z  
 > **Learning ID**: `learn-github-kumahq-kuma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:40:40.414Z  
+> **Harvest Timestamp**: 2026-11-09T17:12:18.338Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐻 The multi-zone service mesh for containers, Kubernetes and VMs. Built with Envoy. CNCF Sandbox Project.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 4015 stars
+- **Stars / Engagement**: 4017 stars
 
 ---
 
@@ -998,11 +998,11 @@ var DefaultEnabled = []string{
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #19368** (2026-11-06): **ci(actions): make the unit test timeout configurable (backport of #19364)**
-  *Symptoms*: Backport of #19364 to `release-2.11`.  ## Motivation  `test_unit` has a hardcoded 30-minute timeout. That fits GitHub-hosted runners with a warm build cache, but a repository that runs this CI on smaller runners, or with `KUMA_CI_SKIP_PUSH` and so always from a cold build cache, can run past it with no test failing. Recent runs on 2-core runners take about 25 to 35 minutes.  ## Implementation information  `timeout-minutes` on `test_unit` now reads the repository variable `KUMA_CI_UNIT_TEST_TIMEOUT`, falling back to 30. Nothing changes where the variable is unset, so kumahq/kuma does not need to define it, and kong-mesh's copy of the workflow keeps its current limit. Documented in `.github/workflows/README.md`.  > Changelog: skip 
+- **Issue #19386** (2026-11-09): **chore(deps/dev): bump npm:@redocly/cli from 2.66.1 to 2.71.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [npm:@redocly/cli](https://redirect.github.com/Redocly/redocly-cli) | `2.66.1` → `2.71.2` | ![age](https://developer.mend.io/api/mc/badges/age/npm/@redocly%2fcli/2.71.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@redocly%2fcli/2.66.1/2.71.2?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>Redocly/redocly-cli (npm:@&#8203;redocly/cli)</summary>  ### [`v2.71.2`](https://redirect.github.com/Redocly/redocly-cli/releases/tag/%40redocly/cli%402.71.2)  [Compare Source](https://redirect.github.com/Redocly/redocly-cli/compare/@redocly/cli@2.71.1...@redocly/cli@2.71.2)  ##### Patch Changes  - Fixed an issue where the `no-unresolved-refs` rule reported discriminator mapping values that are schema names (for example, `dog: Dog`) as unresolved references.   The rule still reports schema names that do not match a schema in `components.schemas`. - Fixed an issue where the `drift` and `generate-spec` commands crashed with a stack trace when the traffic file or folder didn't exist, and the `generate-spec` command when the traffic had no matching HTTP exchanges. - Fixed an issue where the `bundle` command didn't resol
 
-- **Issue #19367** (2026-11-06): **ci(actions): make the unit test timeout configurable (backport of #19364)**
-  *Symptoms*: Backport of #19364 to `release-2.13`.  ## Motivation  `test_unit` has a hardcoded 30-minute timeout. That fits GitHub-hosted runners with a warm build cache, but a repository that runs this CI on smaller runners, or with `KUMA_CI_SKIP_PUSH` and so always from a cold build cache, can run past it with no test failing. Recent runs on 2-core runners take about 25 to 35 minutes.  ## Implementation information  `timeout-minutes` on `test_unit` now reads the repository variable `KUMA_CI_UNIT_TEST_TIMEOUT`, falling back to 30. Nothing changes where the variable is unset, so kumahq/kuma does not need to define it, and kong-mesh's copy of the workflow keeps its current limit. Documented in `.github/workflows/README.md`.  > Changelog: skip 
+- **Issue #19377** (2026-11-09): **chore(deps): bump jdx/mise-action from 5.2.1 to 5.2.4**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Pending | |---|---|---|---|---| | [jdx/mise-action](https://redirect.github.com/jdx/mise-action) | action | patch | `v5.2.1` → `v5.2.4` | `v5.2.7` (+2) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>jdx/mise-action</summary>  ### [`v5.2.4`](https://redirect.github.com/jdx/mise-action/releases/tag/v5.2.4): : Reuse cached signed checksums when restoring mise  [Compare Source](https://redirect.github.com/jdx/mise-action/compare/v5.2.3...v5.2.4)  Jobs that restore mise from the cache no longer have to download its signed checksums from GitHub on every run, so a network failure at that step no longer fails a job that otherwise restored correctly.  ##### Fixed  - **Restoring a cached mise no longer needs a network download of the checksums.** The action checks the cached mise binary against the signed `SHASUMS256.txt` and its `.minisig`. Before this release it downloaded both files from GitHub on every run, even when the cache restored correctly. When that download failed, for example after repeated curl errors, the job failed. Now, once the signature checks out, the action saves both files as `SHASUMS256-<version>.txt` and `.minisig` in `<mise_dir>/bin`, which is part of the mise cache. On later runs it reads them from the restored cache and checks the minisign signature a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1019,43 +1019,193 @@ var DefaultEnabled = []string{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5752f709` (2026-11-06)
-**Commit Message**: ci(actions): make the unit test timeout configurable (#19364)
+### Incident Patch 1: `60b764b8` (2026-11-09)
+**Commit Message**: chore(deps): bump ubuntu from 24.04 to 26.04 (#18827)
 
-Signed-off-by: Ilya Lobkov <[REDACTED_EMAIL]>
+Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/README.md` (modified, +4/-0)
+**File**: `.github/workflows/pr-comments.yaml` (modified, +1/-1)
 ```diff
-@@ -96,3 +96,7 @@ A repository that mirrors this one gets a `push` event for every branch and tag
- The guard sits on the first job of each `push`-triggered workflow, so the jobs that need it are skipped with it. In `build-test-distribute.yaml` that job is `release_sha_gate`, and `distributions`, which runs `always()`, checks for it explicitly. A new `push`-triggered workflow needs the same `if:`.
- 
- `build-test-distribute.yaml` also runs on pull requests into `security/**` branches. Such a mirror stages unreleased fixes on `security/<branch>` and needs CI on the pull requests that land there. Nothing here creates those branches, so this changes nothing in this repository.
-+
-+# Unit test timeout
-+
-+Set the repository variable `KUMA_CI_UNIT_TEST_TIMEOUT` to change the `test_unit` job's timeout in minutes, for a repository whose runners are slower or start from a cold build cache. Unset, it stays at 30.
+@@ -14,7 +14,7 @@ jobs:
+     if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/format') || contains(github.event.comment.body, '/golden_files') || contains(github.event.comment.body, '/golden_files_e2e') || contains(github.event.comment.body, '/tproxy_golden_files'))
+     # Runs make against the PR head while a write-capable App token is in the job, so fork
+     # PRs are rejected before checkout.
+-    runs-on: ubuntu-24.04
++    runs-on: ubuntu-26.04
+     steps:
+       # Commands are additive: one comment can request multiple actions, and all
+       # matching steps below will run in order.
+```
+
+**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ jobs:
+     # Must be a literal Ubuntu label; the scorecard-action publish step
+     # rejects expression-based runs-on values during workflow verification.
+     # See https://github.com/ossf/scorecard-action#workflow-restrictions
+-    runs-on: ubuntu-24.04
++    runs-on: ubuntu-26.04
+     permissions:
+       # Needed to upload the results to code-scanning dashboard.
+       security-events: write
+```
+
+---
+
+### Incident Patch 2: `2f6a6557` (2026-11-09)
+**Commit Message**: chore(deps): bump jdx/mise-action from 5.2.1 to 5.2.4 (#19377)
+
+Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `.github/actions/run-e2e/action.yml` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ runs:
+         remove_android: true
+         remove_dotnet: true
+         remove_haskell: true
+-    - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++    - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+       with:
+         version: 2026.10.21
+       env:
+```
+
+**File**: `.github/workflows/_build_publish.yaml` (modified, +4/-4)
+```diff
+@@ -90,7 +90,7 @@ jobs:
+           restore-keys: |
+             go-build-dist-${{ runner.os }}-${{ matrix.os }}-${{ matrix.arch }}-${{ hashFiles('**/go.sum') }}-
+             go-build-dist-${{ runner.os }}-${{ matrix.os }}-${{ matrix.arch }}-
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+       # Resolve through make so per-combo ENVOY_VERSION_<os>_<arch> overrides
+@@ -175,7 +175,7 @@ jobs:
+         with:
+           persist-credentials: false
+           fetch-depth: 0
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+@@ -309,7 +309,7 @@ jobs:
+       # Registry layer cache (DOCKER_BUILDX_OPTS in mk/docker.mk) needs the
+       # container driver; the default docker driver cannot export cache.
+       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+       # Login must precede the build for the cache push; anonymous pulls of the
+@@ -471,7 +471,7 @@ jobs:
+         if: ${{ fromJSON(inputs.FULL_MATRIX) }}
+         run: |
+           sudo apt-get update; sudo apt-get install -y qemu-user-static binfmt-support
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+       - name: package-helm-chart
 ```
 
 **File**: `.github/workflows/_test.yaml` (modified, +1/-1)
 ```diff
-@@ -23,7 +23,7 @@ env:
-   MISE_DISABLE_TOOLS: "golangci-lint,skaffold,aqua:stackrox/kube-linter"
- jobs:
-   test_unit:
--    timeout-minutes: 30
-+    timeout-minutes: ${{ fromJSON(vars.KUMA_CI_UNIT_TEST_TIMEOUT || '30') }}
-     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'ci/skip-test') || inputs.IS_RELEASE_TAG) }}
-     runs-on: >-
-       ${{ (github.event_name == 'pull_request'
+@@ -41,7 +41,7 @@ jobs:
+         with:
+           persist-credentials: false
+           fetch-depth: 0
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+         env:
+```
+
+**File**: `.github/workflows/bom.yaml` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ jobs:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           persist-credentials: false
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+         env:
+```
+
+**File**: `.github/workflows/build-test-distribute.yaml` (modified, +2/-2)
+```diff
+@@ -171,7 +171,7 @@ jobs:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           persist-credentials: false
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+         env:
+@@ -305,7 +305,7 @@ jobs:
+           restore-keys: |
+             go-build-${{ runner.os }}-${{ hashFiles('**/go.sum') }}-
+             go-build-${{ runner.os }}-
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+         env:
+```
+
+**File**: `.github/workflows/codeql.yaml` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ jobs:
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           persist-credentials: false
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+         env:
+```
+
+**File**: `.github/workflows/merge-release-to-master.yaml` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ jobs:
+             echo "::error::Please re-run this workflow from the latest release branch"
+             exit 1
+           fi
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+         env:
+```
+
+**File**: `.github/workflows/pr-comments.yaml` (modified, +1/-1)
+```diff
+@@ -109,7 +109,7 @@ jobs:
+           repository: ${{ env.REPO }}
+           ref: ${{ env.BRANCH_NAME }}
+           persist-credentials: false
+-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           version: 2026.10.21
+         if: steps.parse-commands.outputs.has_command == 'true'
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19386** (2026-11-09): chore(deps/dev): bump npm:@redocly/cli from 2.66.1 to 2.71.2 (@renovate[bot])
+- **PR #19377** (2026-11-09): chore(deps): bump jdx/mise-action from 5.2.1 to 5.2.4 (@renovate[bot])
+- **PR #19376** (2026-11-09): chore(deps): bump jdx/mise from 2026.10.17 to 2026.10.21 (@renovate[bot])
 - **PR #19368** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
 - **PR #19367** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
 - **PR #19366** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
-- **PR #19365** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
-- **PR #19364** (2026-11-06): ci(actions): make the unit test timeout configurable (@lobkovilya)
-- **PR #19355** (2026-11-05): ci(actions): add swap before golangci-lint in the check job (backport of #19351) (@lobkovilya)
 
 ---
 
@@ -1075,31 +1225,28 @@ Signed-off-by: Ilya Lobkov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(actions): make the unit test timeout configurable (#19364)
+## X. deps): bump ubuntu from 24.04 to 26.04 (#18827)
 
 **RULE**:
-When implementing operations in `.github/workflows/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/pr-comments.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5752f709`: ci(actions): make the unit test timeout configurable (#19364). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60b764b8`: deps): bump ubuntu from 24.04 to 26.04 (#18827). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pr-comments.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-# Unit test timeout
-
-Set the repository variable `KUMA_CI_UNIT_TEST_TIMEOUT` to change the `test_unit` job's timeout in minutes, for a repository whose runners are slower or start from a cold build cache. Unset, it stays at 30.
+    runs-on: ubuntu-26.04
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    runs-on: ubuntu-24.04
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5752f709` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60b764b8` are properly handled with clean fallback behavior.

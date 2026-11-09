@@ -8644,3 +8644,6 @@
 | `CYCLE-20261109-MB9E` | `2026-11-09T16:40:34.946Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`51c8dd6e...`) |
 | `CYCLE-20261109-BAZ1` | `2026-11-09T17:00:00.973Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`d1d704ec...`) |
 | `CYCLE-20261109-BHM4` | `2026-11-09T17:00:09.580Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`280c16e9...`) |
+| `CYCLE-20261109-R5QI` | `2026-11-09T17:12:20.682Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0ce39ae6...`) |
+| `CYCLE-20261109-R5WF` | `2026-11-09T17:12:20.895Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7fb2aca5...`) |
+| `CYCLE-20261109-RJ7J` | `2026-11-09T17:12:38.143Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`67e7ec32...`) |
