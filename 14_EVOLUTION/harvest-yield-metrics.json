@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T17:49:08.110Z",
-  "total_cycles_completed": 8619,
-  "total_learnings_persisted": 8619,
-  "total_rules_promoted": 8442,
+  "last_updated": "2026-11-09T17:57:07.626Z",
+  "total_cycles_completed": 8621,
+  "total_learnings_persisted": 8621,
+  "total_rules_promoted": 8443,
   "history": [
-    {
-      "timestamp": "2026-11-09T01:12:41.067Z",
-      "repository": "openbmb/MiniCPM-OCR-1.0",
-      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T01:19:17.569Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T01:26:21.941Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1403,6 +1389,20 @@
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
       "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T17:57:03.841Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T17:57:07.626Z",
+      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

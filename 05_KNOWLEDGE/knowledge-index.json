@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T17:49:07.989Z",
+  "last_updated": "2026-11-09T17:57:07.491Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -175193,7 +175193,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
       "source_version": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
-      "content_hash": "0abf036165c6f550fc267bddd2b9683089b4c722b0491fe1f6dfc1575cd39cca",
+      "content_hash": "38f4f10ec0d73b9ac5b09fe13b97bde04c5fecab4468c27b78ad29d1981eb36f",
       "dossier_path": "07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md",
       "promoted_rules": [],
@@ -175202,7 +175202,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:07:50.320Z",
+      "verified_at": "2026-11-09T17:57:07.450Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -186474,8 +186474,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "0007e8b9",
-      "content_hash": "68d4da4254d12c0e1de89fba7308b713d3900ebdb3858a4ee801a123bd141371",
+      "source_version": "3b23abd0",
+      "content_hash": "9ed37abde3a361feb02dc36e3927ae13f69970ef5befa82d77b3094d0728d7d9",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -186500,6 +186500,11 @@
           "status": "WITHHELD_REJECT"
         },
         {
+          "number": null,
+          "title": "Bump org.codehaus.mojo:versions-maven-plugin from 2.23.0 to 2.24.0 (#20190)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
           "number": 7139,
           "title": "Add a README Docker quickstart and improve GitHub metadata (#20164)",
           "status": "PROMOTED_AND_VERIFIED"
@@ -186510,7 +186515,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T19:07:17.877Z",
+      "verified_at": "2026-11-09T17:57:03.692Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -11695,8 +11695,8 @@
     "sourceUrl": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
     "sourceVersion": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
     "license": "Open-Source",
-    "contentHash": "0abf036165c6f550fc267bddd2b9683089b4c722b0491fe1f6dfc1575cd39cca",
-    "lastHarvestedAt": "2026-11-05T18:07:50.425Z",
+    "contentHash": "38f4f10ec0d73b9ac5b09fe13b97bde04c5fecab4468c27b78ad29d1981eb36f",
+    "lastHarvestedAt": "2026-11-09T17:57:07.620Z",
     "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated"
   },
   "hf-burner22-numbat": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "0007e8b9",
+    "sourceVersion": "3b23abd0",
     "license": "Apache-2.0",
-    "contentHash": "68d4da4254d12c0e1de89fba7308b713d3900ebdb3858a4ee801a123bd141371",
-    "lastHarvestedAt": "2026-11-08T19:07:17.990Z",
+    "contentHash": "9ed37abde3a361feb02dc36e3927ae13f69970ef5befa82d77b3094d0728d7d9",
+    "lastHarvestedAt": "2026-11-09T17:57:03.835Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

@@ -8654,3 +8654,5 @@
 | `CYCLE-20261109-VYZT` | `2026-11-09T17:44:04.841Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`94893217...`) |
 | `CYCLE-20261109-W2SZ` | `2026-11-09T17:44:09.779Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0f867f49...`) |
 | `CYCLE-20261109-2GZG` | `2026-11-09T17:49:08.092Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`192dddb8...`) |
+| `CYCLE-20261109-CO2F` | `2026-11-09T17:57:03.831Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9ed37abd...`) |
+| `CYCLE-20261109-CQZK` | `2026-11-09T17:57:07.616Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md` | Yes (`38f4f10e...`) |

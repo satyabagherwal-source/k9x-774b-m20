@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-FT77",
-    "timestamp": "2026-11-08T00:56:04.243Z",
-    "repository": "fastapi/fastapi",
-    "learningId": "learn-github-fastapi-fastapi",
-    "contentHash": "faca089e506cde77bbe8ab4c73ccc15d6d6b7e39615adc17198cede6d037f660",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-FYT2",
-    "timestamp": "2026-11-08T00:56:11.510Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "79b199c25695e27b4d12b115c9980fc30d360ac37ddf80b8adc16d6ead528667",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-FZW1",
     "timestamp": "2026-11-08T00:56:12.913Z",
     "repository": "duckdb/duckdb",
@@ -7492,6 +7462,36 @@
     "contentHash": "192dddb81799e3a03fb164c65c08241a0faa00e35af45e5b23094d405dfc7fab",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-CO2F",
+    "timestamp": "2026-11-09T17:57:03.831Z",
+    "repository": "apache/pinot",
+    "learningId": "learn-github-apache-pinot",
+    "contentHash": "9ed37abde3a361feb02dc36e3927ae13f69970ef5befa82d77b3094d0728d7d9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-CQZK",
+    "timestamp": "2026-11-09T17:57:07.616Z",
+    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+    "contentHash": "38f4f10ec0d73b9ac5b09fe13b97bde04c5fecab4468c27b78ad29d1981eb36f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

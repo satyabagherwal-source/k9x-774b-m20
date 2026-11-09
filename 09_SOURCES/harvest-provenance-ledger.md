@@ -8663,3 +8663,5 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e7506724` | Multi-dimensional audit evidence | 2026-11-09T17:44:04.845Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fd8c0cc9` | Multi-dimensional audit evidence | 2026-11-09T17:44:09.783Z |
 | `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-09T17:49:08.096Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `3b23abd0` | Multi-dimensional audit evidence | 2026-11-09T17:57:03.835Z |
+| `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-09T17:57:07.620Z |
