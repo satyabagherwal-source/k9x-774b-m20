@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "68eb8cc8",
+    "sourceVersion": "fd579905",
     "license": "Apache-2.0",
-    "contentHash": "bcd89c4e28849f274f60b79f1d00ea3818dd8f480c6a126067b4b4da2a0f79ba",
-    "lastHarvestedAt": "2026-11-08T21:24:47.840Z",
+    "contentHash": "92fe3126c4bda76281396026a2b2de25c97d86c5d8955ee1499824c22b34b5f6",
+    "lastHarvestedAt": "2026-11-09T23:52:49.239Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {

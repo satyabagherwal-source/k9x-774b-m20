@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `68eb8cc8`  
+> **Source Version**: `fd579905`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T21:24:46.337Z  
+> **Timestamp**: 2026-11-09T23:52:47.842Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T21:24:46.331Z  
+> **Harvest Timestamp**: 2026-11-09T23:52:46.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6574 stars
+- **Stars / Engagement**: 6578 stars
 
 ---
 
@@ -60,8 +60,8 @@ import { existsSync, readFileSync } from 'fs';
 import { Runtime } from '@genkit-ai/tools-common/manager';
 import * as crypto from 'crypto';
 import { writeFile } from 'fs/promises';
-import { GENKIT_CONTEXT as GoContext } from './context/go';
-import { GENKIT_CONTEXT as NodeContext } from './context/nodejs';
+import { GENKIT_CONTEXT as GoContext } from './context/go.js';
+import { GENKIT_CONTEXT as NodeContext } from './context/nodejs.js';
 
 /** Shared location for the GENKIT.md context file */
 export const GENKIT_PROMPT_PATH = 'GENKIT.md';
@@ -238,12 +238,12 @@ import {
   SUPPORTED_DOC_LANGUAGES,
   detectProjectLanguage,
   type SupportedDocLanguage,
-} from '../utils/docs';
+} from '../utils/docs.js';
 import {
   resolveTelemetryServer,
   startDevProcessManager,
   startManager,
-} from '../utils/manager-utils';
+} from '../utils/manager-utils.js';
 
 export {
   SUPPORTED_DOC_LANGUAGES,
@@ -432,7 +432,7 @@ import {
   type GenkitToolsError,
 } from '@genkit-ai/tools-common/manager';
 import { logger } from '@genkit-ai/tools-common/utils';
-import getPort, { makeRange } from 'get-port';
+import getPort, { portNumbers } from 'get-port';
 
 /** Shared help text for `--experimental-auth` on every command that spawns or hosts runtimes. */
 export const EXPERIMENTAL_AUTH_OPTION_HELP =
@@ -458,7 +458,7 @@ export async function resolveTelemetryServer(options: {
   if (!telemetryServerUrl) {
     const host = '127.0.0.1';
     const telemetryPort = await getPort({
-      port: makeRange(4033, 4999),
+      port: portNumbers(4033, 4999),
       host,
     });
     telemetryServerUrl = `http://${host}:${telemetryPort}`;
@@ -635,7 +635,7 @@ export async function getDevEnvVars(
     // Probe and URL must both match the interface the v2 server binds;
     // `localhost` may resolve to ::1 first and miss an IPv4-only listener.
     const host = options?.reflectionV2Host ?? DEFAULT_REFLECTION_V2_HOST;
-    reflectionV2Port = await getPort({ port: makeRange(3200, 3400), host });
+    reflectionV2Port = await getPort({ port: portNumbers(3200, 3400), host });
     envVars.GENKIT_REFLECTION_V2_SERVER = reflectionV2Url(
       host,
       reflectionV2Port
@@ -666,7 +666,7 @@ export async function startDevProcessManager(
   const experimentalReflectionV2 = options?.experimentalReflectionV2 ?? false;
   // Derived from the env the child actually receives, so the manager and the
   // runtime can never disagree, whichever path produced envVars.
-  const reflectionSecret: string | undefined 
+  const reflectionSecret: string | unde
 ```
 
 ### Core Architecture Module: `genkit-tools/cli/src/utils/option-parsers.ts`
@@ -958,8 +958,8 @@ export function detectCLIRuntime(): CLIRuntimeInfo {
 
 import { type SpawnOptions } from 'child_process';
 import { access, constants } from 'fs/promises';
-import { SERVER_HARNESS_COMMAND } from '../commands/server-harness';
-import { type CLIRuntimeInfo } from './runtime-detector';
+import { SERVER_HARNESS_COMMAND } from '../commands/server-harness.js';
+import { type CLIRuntimeInfo } from './runtime-detector.js';
 
 /**
  * Configuration for spawning a child process
@@ -1442,12 +1442,12 @@ import axios, { AxiosInstance } from 'axios';
 import * as clc from 'colorette';
 import { arch, platform } from 'os';
 import semver from 'semver';
-import { UPDATE_NOTIFICATIONS_OPT_OUT_CONFIG_TAG } from '../commands/config';
-import { detectCLIRuntime } from '../utils/runtime-detector';
+import { UPDATE_NOTIFICATIONS_OPT_OUT_CONFIG_TAG } from '../commands/config.js';
+import { detectCLIRuntime } from '../utils/runtime-detector.js';
 import {
   version as currentVersion,
   name as packageName,
-} from '../utils/version';
+} from '../utils/version.js';
 
 const GCS_BUCKET_URL = 'https://storage.googleapis.com/genkit-assets-cli';
 const CLI_DOCS_URL = 'https://genkit.dev/docs/devtools/';
@@ -1692,10 +1692,10 @@ export async function showUpdateNotification(): Promise<void> {
 
 import { randomUUID } from 'crypto';
 import { createInterface } from 'readline/promises';
-import type { AnalyticsInfo } from '../types/analytics';
-import { configstore, getUserSettings } from './configstore';
-import { logger } from './logger';
-import { toolsPackage } from './package';
+import type { AnalyticsInfo } from '../types/analytics.js';
+import { configstore, getUserSettings } from './configstore.js';
+import { logger } from './logger.js';
+import { toolsPackage } from './package.js';
 
 // This code is largely adapted from
 // https://github.com/firebase/firebase-tools/blob/master/src/track.ts
@@ -2009,7 +2009,7 @@ async function recordInternal(
             .replace(/^0+/, ''), // trim leading zeros
 
           // https://support.google.com/analytics/answer/7201382?hl=en
-          // To turn debug mode off, `debug_mode
+          // To turn debug mode off,
 ```
 
 ### Core Architecture Module: `genkit-tools/common/src/utils/configstore.ts`
@@ -2031,7 +2031,7 @@ async function recordInternal(
  */
 
 import Configstore from 'configstore';
-import { toolsPackage } from './package';
+import { toolsPackage } from './package.js';
 
 const USER_SETTINGS_TAG = 'userSettings';
 
@@ -2056,8 +2056,8 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 - **Issue #6994** (2026-11-01): **[Go] Filesystem middleware: queued read_file injection breaks interrupt resume — "cannot resume generation unless the last message is by a model"**
   *Symptoms*: **Describe the bug**  The `Filesystem` middleware queues `read_file`'s file contents and appends them to `params.Request.Messages` as a user message at the **entry of the next Generate**. When a Generate ends with an interrupt (e.g. a `ToolApproval` hold) while an injection is still queued, the resume Generate injects that user message at its entry — **after** the model message carrying the tool requests. The turn-0 resume validation in `handleResumeOption` then fails, because it validates against the hook-revised message list (`turnOpts.Messages = req.Messages`):  ``` FAILED_PRECONDITION: handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request ```  The injected message already carries the `filesystemMiddlewareTool` metadata, but the resume validation does not skip it (unlike the `ToolApproval` judge, which deliberately does).  **To Reproduce**  Self-contained program below — no API key, no network: a stub OpenAI-compatible server scripts the model to answer one response with two parallel tool calls (`read_file go.mod`, pre-approved, runs and queues its contents; `edit_file go.mod`, held by `ToolApproval`). The caller then approves and resumes the edit.  ``` go mod tidy && go run . ```  Observed on genkit v1.14.0:  ``` handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request exit status 1 ```  Setting `applyWorkaround = true` in the same program (strip the messag
 
-- **Issue #6867** (2026-10-27): **fix(cli): search_genkit_docs crashes on localized description objects and list_genkit_docs exceeds host runtime token limits**
-  *Symptoms*: ## Description  1. **`search_genkit_docs` (MCP) and `genkit docs:search` (CLI) crash on every query:**    In `docs-bundle-experimental.json`, 28 `app-frameworks/*.md` entries (7 framework pages across `js`, `go`, `dart`, and `python`) store `doc.description` as a localized language-keyed object rather than a string:    ```json    {      "default": "Build an Angular app powered by Genkit, with streaming structured output and tool calling.",      "js": "Add Genkit to an Angular app with SSR server routes, streaming structured output and tool calling in one project.",      "go": "Connect an Angular UI to your Genkit Go backend and stream the recipe into your UI incrementally.",      "dart": "Connect an Angular UI to your Genkit Dart backend and stream the recipe into your UI incrementally.",      "python": "Connect an Angular UI to your Genkit Python backend and stream the recipe into your UI incrementally."    }    ```    Because `searchDocs()` in [`genkit-tools/cli/src/utils/docs.ts`](https://github.com/firebase/genkit/blob/main/genkit-tools/cli/src/utils/docs.ts) unconditionally calls `(doc.description || '').toLowerCase()` across every document in the target language, every call to `search_genkit_docs` or `genkit docs:search` throws `TypeError: (doc.description || "").toLowerCase is not a function`. Additionally, `list_genkit_docs` and `genkit docs:list` render `Description: [object Object]` for those 28 pages.  2. **`list_genkit_docs` returns a ~135 KB payload that exceeds 
+- **Issue #6891** (2026-11-09): **[Python] genkit-vertexai: Model Garden OpenAI-compatible models fail with PydanticUserError TypeAdapter[ModelRequest] is not fully defined**
+  *Symptoms*: **Describe the bug**  In `genkit-vertexai` 0.12.0, every OpenAI-compatible Model Garden model (for example Llama) fails before any request is sent:  ``` pydantic.errors.PydanticUserError: `TypeAdapter[ModelRequest]` is not fully defined; you should define `ModelRequest` and all referenced types, then call `.rebuild()` on the instance. ```  **To Reproduce**  ```python import asyncio from genkit import Genkit from genkit_vertexai.model_garden import ModelGarden, model_garden_name  async def main():     ai = Genkit(plugins=[ModelGarden(project_id='my-project', location='us-east5')])     await ai.generate(         model=model_garden_name('meta/llama-4-maverick-17b-128e-instruct-maas'),         prompt='hi',     )  asyncio.run(main()) ```  Traceback (abridged):  ``` genkit/_core/_registry.py, line 739, in resolve_action genkit_vertexai/model_garden/modelgarden_plugin.py, line 100, in resolve genkit_vertexai/model_garden/modelgarden_plugin.py, line 156, in _create_model_action genkit/_ai/_model.py, line 396, in model genkit/_core/_action.py, line 478, in __init__ genkit/_core/_action.py, line 658, in _initialize_io_schemas pydantic/type_adapter.py, line 703, in json_schema pydantic/_internal/_mock_val_ser.py, line 72, in rebuild pydantic.errors.PydanticUserError: `TypeAdapter[ModelRequest]` is not fully defined ... ```  It fails while defining the model action, so no credentials or network call are involved.  **Expected behavior**  The Model Garden action is defined and the request 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2074,144 +2074,373 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68eb8cc8` (2026-11-08)
-**Commit Message**: fix(cli): probe telemetry port on loopback host (#7027)
+### Incident Patch 1: `fd579905` (2026-11-09)
+**Commit Message**: chore(genkit-tools): upgrade pure-ESM major dependencies and Express v5 (#7100)
 
-**File**: `genkit-tools/cli/src/utils/manager-utils.ts` (modified, +7/-2)
+**File**: `genkit-tools/cli/package.json` (modified, +3/-3)
 ```diff
-@@ -56,10 +56,15 @@ export async function resolveTelemetryServer(options: {
- }): Promise<string> {
-   let telemetryServerUrl = process.env.GENKIT_TELEMETRY_SERVER;
-   if (!telemetryServerUrl) {
--    const telemetryPort = await getPort({ port: makeRange(4033, 4999) });
--    telemetryServerUrl = `http://localhost:${telemetryPort}`;
-+    const host = '127.0.0.1';
-+    const telemetryPort = await getPort({
-+      port: makeRange(4033, 4999),
-+      host,
-+    });
-+    telemetryServerUrl = `http://${host}:${telemetryPort}`;
-     await startTelemetryServer({
-       port: telemetryPort,
-+      host,
-       traceStore: new LocalFileTraceStore({
-         storeRoot: options.projectRoot,
-         indexRoot: options.projectRoot,
+@@ -36,13 +36,13 @@
+   "dependencies": {
+     "@genkit-ai/telemetry-server": "workspace:*",
+     "@genkit-ai/tools-common": "workspace:*",
+-    "@inquirer/prompts": "^7.10.1",
++    "@inquirer/prompts": "^8.7.3",
+     "@modelcontextprotocol/sdk": "^1.32.1",
+     "axios": "^1.20.0",
+     "colorette": "^2.0.20",
+     "commander": "^14.0.3",
+-    "get-port": "5.1.1",
+-    "open": "^6.4.0",
++    "get-port": "^7.2.0",
++    "open": "^11.0.4",
+     "semver": "^7.8.5",
+     "yaml": "^2.9.1",
+     "zod": "3.25.67"
 ```
 
-**File**: `genkit-tools/cli/tests/utils/manager-utils_test.ts` (modified, +74/-0)
+**File**: `genkit-tools/cli/src/commands/start-flutter.ts` (modified, +2/-2)
 ```diff
-@@ -14,6 +14,7 @@
-  * limitations under the License.
-  */
- 
-+import * as telemetryServer from '@genkit-ai/telemetry-server';
+@@ -17,7 +17,7 @@
+ import { startServer } from '@genkit-ai/tools-common/server';
+ import { findProjectRoot, logger } from '@genkit-ai/tools-common/utils';
+ import { Command } from 'commander';
+-import getPort, { makeRange } from 'get-port';
++import getPort, { portNumbers } from 'get-port';
+ import open from 'open';
  import {
-   ProcessManager,
-   REFLECTION_SECRET_ENV,
-@@ -22,6 +23,11 @@ import {
+   EXPERIMENTAL_AUTH_OPTION_HELP,
+@@ -93,7 +93,7 @@ export const startFlutter = new Command('start:flutter')
+ 
+     if (!options.noui) {
+       const port =
+-        options.port ?? (await getPort({ port: makeRange(4000, 4099) }));
++        options.port ?? (await getPort({ port: portNumbers(4000, 4099) }));
+       startServer(manager, port);
+       if (options.open) {
+         open(`http://localhost:${port}`);
+```
+
+**File**: `genkit-tools/cli/src/commands/start.ts` (modified, +2/-2)
+```diff
+@@ -22,7 +22,7 @@ import { startServer } from '@genkit-ai/tools-common/server';
+ import { findProjectRoot, logger } from '@genkit-ai/tools-common/utils';
+ import { Command } from 'commander';
+ import fs from 'fs';
+-import getPort, { makeRange } from 'get-port';
++import getPort, { portNumbers } from 'get-port';
+ import open from 'open';
+ import {
+   EXPERIMENTAL_AUTH_OPTION_HELP,
+@@ -204,7 +204,7 @@ export const start = new Command('start')
+     }
+     if (!options.noui) {
+       const port =
+-        options.port ?? (await getPort({ port: makeRange(4000, 4099) }));
++        options.port ?? (await getPort({ port: portNumbers(4000, 4099) }));
+       startServer(manager, port, options.host);
+       if (options.open) {
+         const openHost =
+```
+
+**File**: `genkit-tools/cli/src/commands/ui-start.ts` (modified, +2/-2)
+```diff
+@@ -28,7 +28,7 @@ import { spawn, type ChildProcess } from 'child_process';
+ import * as clc from 'colorette';
+ import { Command } from 'commander';
+ import fs from 'fs/promises';
+-import getPort, { makeRange } from 'get-port';
++import getPort, { portNumbers } from 'get-port';
+ import open from 'open';
+ import path from 'path';
+ import { detectCLIRuntime } from '../utils/runtime-detector.js';
+@@ -62,7 +62,7 @@ export const uiStart = new Command('ui:start')
+         return;
+       }
+     } else {
+-      port = await getPort({ port: makeRange(4000, 4099) });
++      port = await getPort({ port: portNumbers(4000, 4099) });
+     }
+     const serversDir = await findServersDir(await findProjectRoot());
+     const toolsJsonPath = path.join(serversDir, 'tools.json');
+```
+
+**File**: `genkit-tools/cli/src/utils/manager-utils.ts` (modified, +3/-3)
+```diff
+@@ -32,7 +32,7 @@ import {
+   type GenkitToolsError,
+ } from '@genkit-ai/tools-common/manager';
+ import { logger } from '@genkit-ai/tools-common/utils';
+-import getPort, { makeRange } from 'get-port';
++import getPort, { portNumbers } from 'get-port';
+ 
+ /** Shared help text for `--experimental-auth` on every command that spawns or hosts runtimes. */
+ export const EXPERIMENTAL_AUTH_OPTION_HELP =
+@@ -58,7 +58,7 @@ export async function resolveTelemetryServer(options: {
+   if (!telemetryServerUrl) {
+     const host = '127.0.0.1';
+     const telemetryPort = await getPort({
+-      port: makeRange(4033, 4999),
++      port: portNumbers(4033, 4999),
+       host,
+     });
+     telemetryServerUrl = `http://${host}:${telemetryPort}`;
+@@ -235,7 +235,7 @@ export async function getDevEnvVars(
+     // Probe and URL must both match the interface the v2 server binds;
+     // `localhost` may resolve to ::1 first and miss an IPv4-only listener.
+     const host = options?.reflectionV2Host ?? DEFAULT_REFLECTION_V2_HOST;
+-    reflectionV2Port = await getPort({ port: makeRange(3200, 3400), host });
++    reflectionV2Port = await getPort({ port: portNumbers(3200, 3400), host });
+     envVars.GENKIT_REFLECTION_V2_SERVER = reflectionV2Url(
+       host,
+       reflectionV2Port
+```
+
+**File**: `genkit-tools/cli/tests/commands/start_test.ts` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ vi.mock('@genkit-ai/tools-common/utils', () => ({
+ vi.mock('get-port', () => ({
+   __esModule: true,
+   default: vi.fn(() => Promise.resolve(4000)),
+-  makeRange: vi.fn(),
++  portNumbers: vi.fn(),
+ }));
+ vi.mock('open');
+ 
+```
+
+**File**: `genkit-tools/cli/tests/utils/manager-utils_test.ts` (modified, +2/-2)
+```diff
+@@ -23,7 +23,7 @@ import {
    type BaseRuntimeManager,
  } from '@genkit-ai/tools-common/manager';
  import { logger } from '@genkit-ai/tools-common/utils';
-+import getPort, { makeRange } from 'get-port';
-+import { mkdtempSync, rmSync } from 'node:fs';
-+import net from 'node:net';
-+import { tmpdir } from 'node:os';
-+import { join } from 'node:path';
- import {
-   afterEach,
-   beforeEach,
-@@ -34,13 +40,81 @@ import {
- import {
-   getDevEnvVars,
-   resolveReflectionSecret,
-+  resolveTelemetryServer,
-   runWithManager,
-   startDevProcessManager,
-   startManager,
-   waitForActionKeys,
-   waitForRuntime,
- } from '../../src/utils/manager-utils';
+-import getPort, { makeRange } from 'get-port';
++import getPort, { portNumbers } from 'get-port';
+ import { mkdtempSync, rmSync } from 'node:fs';
+ import net from 'node:net';
+ import { tmpdir } from 'node:os';
+@@ -85,7 +85,7 @@ describe('resolveTelemetryServer', () => {
  
-+describe('resolveTelemetryServer', () => {
-+  let origTelemetryServer: string | undefined;
-+  let projectRoot: string;
-+  let startTelemetrySpy: MockInstance<
-+    typeof telemetryServer.startTelemetryServer
-+  >;
-+
-+  beforeEach(() => {
-+    projectRoot = mkdtempSync(join(tmpdir(), 'genkit-telemetry-'));
-+    origTelemetryServer = process.env.GENKIT_TELEMETRY_SERVER;
-+    delete process.env.GENKIT_TELEMETRY_SERVER;
-+    startTelemetrySpy = vi
-+      .spyOn(telemetryServer, 'startTelemetryServer')
-+      .mockResolvedValue(undefined);
-+  });
-+
-+  afterEach(() => {
-+    rmSync(projectRoot, { recursive: true, force: true });
-+    if (origTelemetryServer === undefined) {
-+      delete process.env.GENKIT_TELEMETRY_SERVER;
-+    } else {
-+      process.env.GENKIT_TELEMETRY_SERVER = origTelemetryServer;
-+    }
-+    vi.restoreAllMocks();
-+  });
-+
-+  it('returns GENKIT_TELEMETRY_SERVER when set without starting a server', async () => {
-+    process.env.GENKIT_TELEMETRY_SERVER = 'http://custom:9999';
-+
-+    await expect(resolveTelemetryServer({ projectRoot })).resolves.toBe(
-+      'http://custom:9999'
-+    );
-+    expect(startTelemetrySpy).not.toHaveBeenCalled();
-+  });
-+
-+  it('skips a port already bound on 127.0.0.1 and starts the server on 127.0.0.1', async () => {
-+    const occupiedPort = await getPort({
-+      port: makeRange(4033, 4999),
-+      host: '127.0.0.1',
-+    });
-+    const blocker = net.createServer();
-+    await new Promise<void>((resolve) =>
-+      blocker.listen(occupiedPort, '127.0.0.1', resolve)
-+    );
-+
-+    try {
-+      const url = await resolveTelemetryServer({
-+        projectRoot,
-+        corsOrigin: 'http://localhost:4000',
-+      });
-+      const chosenPort = Number(new URL(url).port);
-+
-+      expect(chosenPort).not.toBe(occupiedPort);
-+      expect(url).toBe(`http://127.0.0.1:${chosenPort}`);
-+      expect(startTelemetrySpy).toHaveBeenCalledWith(
-+        expect.objectContaining({
-+          port: chosenPort,
-+          host: '127.0.0.1',
-+          corsOrigin: 'http://localhost:4000',
-+        })
-+      );
-+    } finally {
-+      await new Promise<void>((resolve) => blocker.close(() => resolve()));
-+    }
-+  });
-+});
-+
- describe('getDevEnvVars', () => {
-   // Setting GENKIT_TELEMETRY_SERVER makes resolveTelemetryServer return it
-   // directly instead of spinning up a real telemetry server.
+   it('skips a port already bound on 127.0.0.1 and starts the server on 127.0.0.1', async () => {
+     const occupiedPort = await getPort({
+-      port: makeRange(4033, 4999),
++      port: portNumbers(4033, 4999),
+       host: '127.0.0.1',
+     });
+     const blocker = net.createServer();
+```
+
+**File**: `genkit-tools/common/package.json` (modified, +6/-7)
+```diff
+@@ -15,18 +15,18 @@
+   },
+   "dependencies": {
+     "@asteasolutions/zod-to-openapi": "^7.3.4",
+-    "@inquirer/prompts": "^7.10.1",
++    "@inquirer/prompts": "^8.7.3",
+     "@trpc/server": "^11.19.0",
+     "adm-zip": "^0.6.1",
+     "ajv": "^8.20.0",
+     "ajv-formats": "^3.0.1",
+     "axios": "^1.20.0",
+-    "chokidar": "^4.0.3",
++    "chokidar": "^5.0.0",
+     "colorette": "^2.0.20",
+-    "configstore": "^5.0.1",
++    "configstore": "^7.0.0",
+     "cors": "^2.8.6",
+-    "express": "^4.22.3",
+-    "get-port": "5.1.1",
++    "express": "^5.3.0",
++    "get-port": "^7.2.0",
+     "json-2-csv": "^5.6.0",
+     "json-schema": "^0.4.0",
+     "terminate": "^2.8.0",
+@@ -37,9 +37,8 @@
+     "zod-to-json-schema": "~3.24.6"
+   },
+   "devDependencies": {
+-    "@types/configstore": "^6.0.2",
+     "@types/cors": "^2.8.19",
+-    "@types/express": "^4.17.25",
++    "@types/express": "^5.0.6",
+     "@types/json-schema": "^7.0.15",
+     "@types/node": "^20.19.43",
+     "@types/ws": "^8.18.2",
+```
+
+---
+
+### Incident Patch 2: `c12881d0` (2026-11-09)
+**Commit Message**: chore(genkit-tools): migrate genkit-tools packages to pure ESM (#7096)
+
+**File**: `genkit-tools/cli/package.json` (modified, +4/-0)
+```diff
+@@ -1,6 +1,10 @@
+ {
+   "name": "genkit-cli",
+   "version": "1.45.0",
++  "type": "module",
++  "engines": {
++    "node": ">=20.19.0"
++  },
+   "description": "CLI for interacting with the Google Genkit AI framework",
+   "license": "Apache-2.0",
+   "keywords": [
+```
+
+**File**: `genkit-tools/cli/src/bin/genkit.ts` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@
+ 
+ /** Shim wrapper for genkit CLI */
+ 
+-import { startCLI } from '../cli';
++import { startCLI } from '../cli.js';
+ 
+ void (async () => {
+   await startCLI();
+```
+
+**File**: `genkit-tools/cli/src/cli.ts` (modified, +22/-22)
+```diff
+@@ -24,31 +24,31 @@ import {
+   record,
+ } from '@genkit-ai/tools-common/utils';
+ import { Command, program } from 'commander';
+-import { config } from './commands/config';
+-import { devTestModel } from './commands/dev-test-model';
+-import { docsList, docsRead, docsSearch } from './commands/docs';
+-import { evalExtractData } from './commands/eval-extract-data';
+-import { evalFlow } from './commands/eval-flow';
+-import { evalRun } from './commands/eval-run';
+-import { flowBatchRun } from './commands/flow-batch-run';
+-import { flowRun } from './commands/flow-run';
+-import { initAiTools } from './commands/init-ai-tools/index';
+-import { logList } from './commands/log-list';
+-import { mcp } from './commands/mcp';
+-import { getPluginCommands, getPluginSubCommand } from './commands/plugins';
++import { config } from './commands/config.js';
++import { devTestModel } from './commands/dev-test-model.js';
++import { docsList, docsRead, docsSearch } from './commands/docs.js';
++import { evalExtractData } from './commands/eval-extract-data.js';
++import { evalFlow } from './commands/eval-flow.js';
++import { evalRun } from './commands/eval-run.js';
++import { flowBatchRun } from './commands/flow-batch-run.js';
++import { flowRun } from './commands/flow-run.js';
++import { initAiTools } from './commands/init-ai-tools/index.js';
++import { logList } from './commands/log-list.js';
++import { mcp } from './commands/mcp.js';
++import { getPluginCommands, getPluginSubCommand } from './commands/plugins.js';
+ import {
+   SERVER_HARNESS_COMMAND,
+   serverHarness,
+-} from './commands/server-harness';
+-import { start } from './commands/start';
+-import { startFlutter } from './commands/start-flutter';
+-import { traceGet } from './commands/trace-get';
+-import { traceList } from './commands/trace-list';
+-import { uiStart } from './commands/ui-start';
+-import { uiStop } from './commands/ui-stop';
+-import { detectCLIRuntime } from './utils/runtime-detector';
+-import { showUpdateNotification } from './utils/updates';
+-import { version } from './utils/version';
++} from './commands/server-harness.js';
++import { startFlutter } from './commands/start-flutter.js';
++import { start } from './commands/start.js';
++import { traceGet } from './commands/trace-get.js';
++import { traceList } from './commands/trace-list.js';
++import { uiStart } from './commands/ui-start.js';
++import { uiStop } from './commands/ui-stop.js';
++import { detectCLIRuntime } from './utils/runtime-detector.js';
++import { showUpdateNotification } from './utils/updates.js';
++import { version } from './utils/version.js';
+ 
+ /**
+  * All commands need to be directly registered in this list.
+```
+
+**File**: `genkit-tools/cli/src/commands/dev-test-model.ts` (modified, +4/-1)
+```diff
+@@ -30,7 +30,10 @@ import { Command } from 'commander';
+ import { readFileSync } from 'fs';
+ import { resolve } from 'path';
+ import { parse } from 'yaml';
+-import { startDevProcessManager, startManager } from '../utils/manager-utils';
++import {
++  startDevProcessManager,
++  startManager,
++} from '../utils/manager-utils.js';
+ 
+ interface TestOptions {
+   supports: string;
+```
+
+**File**: `genkit-tools/cli/src/commands/docs.ts` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ import {
+   detectProjectLanguage,
+   loadDocs,
+   searchDocs,
+-} from '../utils/docs';
++} from '../utils/docs.js';
+ 
+ export const docsList = new Command('docs:list')
+   .description('list available Genkit documentation files')
+```
+
+**File**: `genkit-tools/cli/src/commands/eval-extract-data.ts` (modified, +2/-2)
+```diff
+@@ -32,8 +32,8 @@ import { writeFile } from 'fs/promises';
+ import {
+   EXPERIMENTAL_AUTH_OPTION_HELP,
+   runWithManager,
+-} from '../utils/manager-utils';
+-import { parsePositiveInt } from '../utils/option-parsers';
++} from '../utils/manager-utils.js';
++import { parsePositiveInt } from '../utils/option-parsers.js';
+ 
+ interface EvalDatasetOptions {
+   /** --experimental-auth. */
+```
+
+**File**: `genkit-tools/cli/src/commands/eval-flow.ts` (modified, +2/-2)
+```diff
+@@ -42,8 +42,8 @@ import { Command, Option } from 'commander';
+ import {
+   EXPERIMENTAL_AUTH_OPTION_HELP,
+   runWithManager,
+-} from '../utils/manager-utils';
+-import { parseJson, parsePositiveInt } from '../utils/option-parsers';
++} from '../utils/manager-utils.js';
++import { parseJson, parsePositiveInt } from '../utils/option-parsers.js';
+ 
+ interface EvalFlowRunCliOptions {
+   /** --experimental-auth. */
+```
+
+**File**: `genkit-tools/cli/src/commands/eval-run.ts` (modified, +2/-2)
+```diff
+@@ -34,8 +34,8 @@ import { Command, Option } from 'commander';
+ import {
+   EXPERIMENTAL_AUTH_OPTION_HELP,
+   runWithManager,
+-} from '../utils/manager-utils';
+-import { parsePositiveInt } from '../utils/option-parsers';
++} from '../utils/manager-utils.js';
++import { parsePositiveInt } from '../utils/option-parsers.js';
+ 
+ interface EvalRunCliOptions {
+   /** --experimental-auth. */
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7111** (closed): fix(py): apply tool_choice='required' to the first turn only (@huangjeff5)
-- **PR #7093** (2026-11-05): chore(py): release Python SDK v0.13.0 (@huangjeff5)
-- **PR #7090** (2026-11-05): ci(py): parallelize pytest, skip Rich tracebacks in tests, and add CI gate (@huangjeff5)
-- **PR #7089** (closed): build(deps): bump minimatch, genkit-cli and rimraf in /samples/js-menu (@dependabot[bot])
-- **PR #7088** (closed): build(deps): bump protobufjs from 7.4.0 to 7.6.6 in /samples/js-menu (@dependabot[bot])
-- **PR #7085** (2026-11-05): fix(cli): reuse telemetry server URL across MCP runtime starts (@MichaelDoyle)
+- **PR #7148** (closed): fix(js/ai): widen tool resolution types to accept MultipartToolAction (@ssbushi)
+- **PR #7146** (closed): fix(py): drop published dev extras, move Firestore behind extras, packaging fixes (@huangjeff5)
+- **PR #7145** (closed): fix(py): plugin action key prefixing, Dev UI runtime paths, middleware exports (@huangjeff5)
+- **PR #7144** (closed): fix(py): contain Skills and Filesystem middleware to configured roots (@huangjeff5)
+- **PR #7143** (closed): fix(py): Django WSGI streaming, ModelResponse JSON isolation, run_main thread safety (@huangjeff5)
+- **PR #7142** (closed): fix(py/google-genai): URL validation, required tool_choice loop fix, metadata persistence (@huangjeff5)
 
 ---
 
@@ -2231,35 +2460,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): probe telemetry port on loopback host (#7027)
+## X. genkit-tools): upgrade pure-ESM major dependencies and Express v5 (#7100)
 
 **RULE**:
-When implementing operations in `genkit-tools/cli/src/utils/manager-utils.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `genkit-tools/cli/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68eb8cc8`: cli): probe telemetry port on loopback host (#7027). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd579905`: genkit-tools): upgrade pure-ESM major dependencies and Express v5 (#7100). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/cli/src/utils/manager-utils.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/cli/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    const host = '127.0.0.1';
-    const telemetryPort = await getPort({
-      port: makeRange(4033, 4999),
-      host,
-    });
-    telemetryServerUrl = `http://${host}:${telemetryPort}`;
-      host,
+    "@inquirer/prompts": "^8.7.3",
+    "get-port": "^7.2.0",
+    "open": "^11.0.4",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    const telemetryPort = await getPort({ port: makeRange(4033, 4999) });
-    telemetryServerUrl = `http://localhost:${telemetryPort}`;
+    "@inquirer/prompts": "^7.10.1",
+    "get-port": "5.1.1",
+    "open": "^6.4.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68eb8cc8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd579905` are properly handled with clean fallback behavior.

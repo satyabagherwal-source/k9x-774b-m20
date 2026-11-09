@@ -8701,3 +8701,4 @@ Every entry in this ledger must capture:
 | `learn-github-margelo-react-native-mmkv` | `https://github.com/margelo/react-native-mmkv` | `0ec4c963` | Multi-dimensional audit evidence | 2026-11-09T23:40:39.732Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c31273fc` | Multi-dimensional audit evidence | 2026-11-09T23:40:51.430Z |
 | `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `7ffb8c4f` | Multi-dimensional audit evidence | 2026-11-09T23:45:25.468Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `fd579905` | Multi-dimensional audit evidence | 2026-11-09T23:52:49.239Z |

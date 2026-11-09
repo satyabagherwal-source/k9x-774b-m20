@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T23:45:25.354Z",
+  "last_updated": "2026-11-09T23:52:49.135Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16216,8 +16216,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "68eb8cc8",
-      "content_hash": "bcd89c4e28849f274f60b79f1d00ea3818dd8f480c6a126067b4b4da2a0f79ba",
+      "source_version": "fd579905",
+      "content_hash": "92fe3126c4bda76281396026a2b2de25c97d86c5d8955ee1499824c22b34b5f6",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -16234,6 +16234,11 @@
         {
           "number": null,
           "title": "cli): probe telemetry port on loopback host (#7027)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "genkit-tools): upgrade pure-ESM major dependencies and Express v5 (#7100)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16317,7 +16322,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:24:47.632Z",
+      "verified_at": "2026-11-09T23:52:49.110Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
