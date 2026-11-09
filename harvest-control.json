@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-11-09T14:04:45.942Z",
+  "lastUpdated": "2026-11-09T14:13:05.472Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-09T14:04:25.962Z",
+        "lastActiveAt": "2026-11-09T14:12:48.214Z",
         "lastHarvestedAt": "2026-11-09T04:59:38.064Z",
         "totalHarvested": 1152,
         "lastError": null
@@ -198,7 +198,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-09T14:04:28.412Z",
+        "lastActiveAt": "2026-11-09T14:12:50.818Z",
         "lastHarvestedAt": "2026-11-08T09:54:21.396Z",
         "totalHarvested": 1435,
         "lastError": null
@@ -208,7 +208,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-09T14:04:36.658Z",
+        "lastActiveAt": "2026-11-09T14:12:50.870Z",
         "lastHarvestedAt": "2026-11-09T14:04:36.658Z",
         "totalHarvested": 2046,
         "lastError": null
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-09T14:05:36.091Z",
-        "lastHarvestedAt": "2026-11-09T14:05:36.091Z",
-        "totalHarvested": 6096,
+        "lastActiveAt": "2026-11-09T14:18:07.022Z",
+        "lastHarvestedAt": "2026-11-09T14:18:07.022Z",
+        "totalHarvested": 6097,
         "lastError": null
       },
       {
@@ -228,7 +228,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-09T14:04:33.387Z",
+        "lastActiveAt": "2026-11-09T14:12:55.943Z",
         "lastHarvestedAt": "2026-11-09T13:46:54.450Z",
         "totalHarvested": 1928,
         "lastError": null
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-09T14:04:35.970Z",
+        "lastActiveAt": "2026-11-09T14:12:58.424Z",
         "lastHarvestedAt": "2026-11-09T13:21:54.882Z",
         "totalHarvested": 1919,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-09T14:04:38.402Z",
+        "lastActiveAt": "2026-11-09T14:13:00.943Z",
         "lastHarvestedAt": "2026-11-09T11:16:32.333Z",
         "totalHarvested": 1536,
         "lastError": null
@@ -258,9 +258,9 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-09T14:04:40.907Z",
-        "lastHarvestedAt": "2026-11-09T11:54:15.778Z",
-        "totalHarvested": 2010,
+        "lastActiveAt": "2026-11-09T14:18:13.685Z",
+        "lastHarvestedAt": "2026-11-09T14:18:13.685Z",
+        "totalHarvested": 2011,
         "lastError": null
       },
       {
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-09T14:04:51.778Z",
+        "lastActiveAt": "2026-11-09T14:13:05.900Z",
         "lastHarvestedAt": "2026-11-09T14:04:51.778Z",
         "totalHarvested": 1342,
         "lastError": null
@@ -294,7 +294,7 @@
     "GITHUB_REST_API": {
       "service": "GITHUB_REST_API",
       "status": "HEALTHY",
-      "remaining": 4966,
+      "remaining": 4958,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,
@@ -304,7 +304,7 @@
     "GITHUB_SEARCH_API": {
       "service": "GITHUB_SEARCH_API",
       "status": "HEALTHY",
-      "remaining": 10,
+      "remaining": 9,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,

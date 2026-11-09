@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T14:05:33.442Z",
+  "last_updated": "2026-11-09T14:18:10.908Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16655,8 +16655,8 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "0230eea7",
-      "content_hash": "49642f5b42efb0ce40570c466014bffb476fb7b3ef0ffbf7dc73f139f696c469",
+      "source_version": "fc736e32",
+      "content_hash": "06bea34f8cf571ba9e535dc15ce7c6a48c445080aa4fb00cf8bfeeec5bee56c3",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
@@ -16668,6 +16668,11 @@
         {
           "number": null,
           "title": "Align transaction variable names in the redb I/O error test (#2067)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update storage guides and automate README release links (#2070)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16691,7 +16696,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:33:43.354Z",
+      "verified_at": "2026-11-09T14:18:10.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75092,10 +75097,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "1e2f2db1ea9cadc04591572082f018d31c11cd4795c73d310bfd752de32d4efe",
+      "content_hash": "04834c3a58eb9c16dec094600de38abf4dffd8e3f1ce67adc749198007cf91b4",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Quantization-Aware Distillation (QAD) Invariant for Edge Deployment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "GGUF Metadata Sampling Parameter Embedding",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 935,
           "title": "GGUF Sampling Metadata Enforcement Invariant",
@@ -75167,7 +75182,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:20:39.801Z",
+      "verified_at": "2026-11-09T14:18:04.282Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

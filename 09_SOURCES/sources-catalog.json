@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "1e2f2db1ea9cadc04591572082f018d31c11cd4795c73d310bfd752de32d4efe",
-    "lastHarvestedAt": "2026-11-05T15:20:39.914Z",
+    "contentHash": "04834c3a58eb9c16dec094600de38abf4dffd8e3f1ce67adc749198007cf91b4",
+    "lastHarvestedAt": "2026-11-09T14:18:04.452Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "0230eea7",
+    "sourceVersion": "fc736e32",
     "license": "Apache-2.0",
-    "contentHash": "49642f5b42efb0ce40570c466014bffb476fb7b3ef0ffbf7dc73f139f696c469",
-    "lastHarvestedAt": "2026-11-08T16:33:43.477Z",
+    "contentHash": "06bea34f8cf571ba9e535dc15ce7c6a48c445080aa4fb00cf8bfeeec5bee56c3",
+    "lastHarvestedAt": "2026-11-09T14:18:11.096Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {

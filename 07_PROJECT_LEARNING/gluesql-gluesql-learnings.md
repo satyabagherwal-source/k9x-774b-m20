@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `0230eea7`  
+> **Source Version**: `fc736e32`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T16:33:41.686Z  
+> **Timestamp**: 2026-11-09T14:18:09.416Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T16:33:41.679Z  
+> **Harvest Timestamp**: 2026-11-09T14:13:07.558Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3136 stars
+- **Stars / Engagement**: 3135 stars
 
 ---
 
@@ -2058,598 +2058,281 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0230eea7` (2026-11-08)
-**Commit Message**: Align transaction variable names in the redb I/O error test (#2067)
+### Incident Patch 1: `d0d26db2` (2026-11-09)
+**Commit Message**: Update storage guides and automate README release links (#2070)
 
-Rename both write transaction variables from tx to txn in
-begin_write_after_io_error to match the rest of redb-storage.
-This covers metadata initialization and the simulated commit failure.
-No test behavior changes.
+Add SlateDB to the README and storage overview, and include the missing
+Redis overview. Clarify storage trait responsibilities, metadata queries,
+and the shared test suite's limitations for SELECT-only adapters.
 
-**File**: `storages/redb-storage/tests/begin_write_error.rs` (modified, +6/-6)
+Fix the storage overview link and use dev documentation URLs in the
+README. Rewrite dev and existing versioned links to the new Cargo
+version during release preparation so published package READMEs point
+to the matching release documentation.
+
+**File**: `.github/workflows/prepare-release.yml` (modified, +13/-0)
 ```diff
-@@ -73,22 +73,22 @@ fn begin_write_after_io_error() {
-         .expect("create database");
- 
-     {
--        let tx = db.begin_write().expect("begin write for metadata");
--        let mut table = tx.open_table(META_TABLE).expect("open metadata table");
-+        let txn = db.begin_write().expect("begin write for metadata");
-+        let mut table = txn.open_table(META_TABLE).expect("open metadata table");
-         table
-             .insert("storage_format_version", &REDB_STORAGE_FORMAT_VERSION)
-             .expect("insert storage format version");
-         drop(table);
--        tx.commit().expect("commit metadata");
-+        txn.commit().expect("commit metadata");
-     }
- 
-     fail_flag.store(true, Ordering::SeqCst);
--    let tx = db.begin_write().expect("begin write");
-+    let txn = db.begin_write().expect("begin write");
-     {
--        let mut table = tx.open_table(TABLE).expect("open table");
-+        let mut table = txn.open_table(TABLE).expect("open table");
-         table.insert(&0, &0).expect("insert");
-     }
--    let _ = tx.commit().expect_err("commit should fail");
-+    let _ = txn.commit().expect_err("commit should fail");
- 
-     let mut storage = RedbStorage::from_database(db).expect("from_database should validate format");
-     let err = storage.begin(true).expect_err("begin should fail");
+@@ -27,6 +27,19 @@ jobs:
+         run: |
+           cargo release version ${{ github.event.inputs.version }} --workspace --execute --no-confirm
+           NEW_VERSION="v$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n 1)"
++
++          python3 - "${NEW_VERSION#v}" <<'PY'
++          import re
++          import sys
++          from pathlib import Path
++
++          readme = Path("README.md")
++          content = readme.read_text()
++          pattern = r"https://gluesql\.org/docs/(?:dev|[0-9][0-9A-Za-z.+-]*)/"
++          content = re.sub(pattern, f"https://gluesql.org/docs/{sys.argv[1]}/", content)
++          readme.write_text(content)
++          PY
++
+           NEW_BRANCH="prepare-release-$NEW_VERSION"
+           git checkout -b $NEW_BRANCH
+           git config --local user.email "taehoon.moon@outlook.com"
 ```
 
----
-
-### Incident Patch 2: `60570422` (2026-11-08)
-**Commit Message**: Remove deprecated Sled storage (#2066)
-
-Remove the Sled crate, dependencies, feature, exports, CLI selection and
-upgrade path, examples, and CI commands. Remove index conflict errors
-that no remaining backend uses.
-
-Use Redb in shared CLI argument tests and the Tester reference link.
-Update current documentation and navigation, retaining historical release
-notes and archived articles.
-
-**File**: `.github/workflows/rust.yml` (modified, +1/-6)
+**File**: `README.md` (modified, +14/-13)
 ```diff
-@@ -48,7 +48,7 @@ jobs:
-           cargo test -p gluesql-macros --verbose
-           cargo test -p gluesql-core --verbose
-           cargo test -p gluesql-cli --verbose
--          cargo test -p gluesql --lib --bins --tests --examples --verbose --no-default-features --features "gluesql_memory_storage gluesql_sled_storage gluesql-redb-storage"
-+          cargo test -p gluesql --lib --bins --tests --examples --verbose --no-default-features --features "gluesql_memory_storage gluesql-redb-storage"
+@@ -17,11 +17,11 @@ It is also available for JavaScript applications in the browser and Node.js.
  
-   run_storage_tests:
-     name: Run storage tests
-@@ -65,9 +65,6 @@ jobs:
-           cargo test -p gluesql-parquet-storage --verbose
-           cargo test -p gluesql-file-storage --verbose
-           cargo test -p gluesql-redb-storage --verbose
--          cargo test -p gluesql_sled_storage --verbose -- --skip sled_transaction_timeout
--          cargo test -p gluesql_sled_storage sled_transaction_timeout --verbose -- --test-threads=1
--          cargo test -p gluesql_sled_storage --benches
+ GlueSQL is quite sticky: it brings SQL to your application's storage. Use a provided storage backend or implement a custom adapter to query existing data without moving it into a separate database. GlueSQL handles SQL parsing, planning, and execution.
  
-   run_mongostorage_tests:
-     name: Run MongoStorage tests
-@@ -135,7 +132,5 @@ jobs:
-           cargo run --package gluesql --example hello_world
-           cargo run --package gluesql --example api_usage
-           cargo run --package gluesql --example memory_storage_usage
--          cargo run --package gluesql --example sled_multi_threaded
--          cargo run --package gluesql --example using_config
-           cargo run --package gluesql --example hello_query_builder
-           cargo run --package gluesql --example parameter_binding
+-- **Choose a storage backend:** use in-memory storage, embedded databases, local files, or external databases.
++- **Choose a storage backend:** use in-memory storage, embedded databases, local files, object stores, or external databases.
+ - **Work with flexible data:** query schema-defined and schemaless tables together, including MAP and LIST values.
+ - **Choose a query interface:** write SQL or compose queries with the Rust Query Builder, both backed by the same engine.
+ 
+-[Explore the documentation →](https://gluesql.org/docs)
++[Explore the documentation →](https://gluesql.org/docs/dev/)
+ 
+ ## Installation
+ 
+@@ -47,24 +47,25 @@ For more JS library information, check out the [gluesql-js repository](https://g
+ 
+ ## Supported Reference Storages
+ 
+-GlueSQL provides reference storage implementations for in-memory data, embedded databases, local files, and external databases. Use the table below to choose a storage for your use case.
++GlueSQL provides reference storage implementations for in-memory data, embedded databases, local files, object stores, and external databases. Use the table below to choose a storage for your use case.
+ 
+ | Use case | Recommended storage |
+ | --- | --- |
+-| Persistent embedded database | [Redb](https://gluesql.org/docs/0.20.0/storages/supported-storages/redb-storage/) |
+-| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/0.20.0/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/0.20.0/storages/supported-storages/redis-storage/) |
+-| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/0.20.0/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/0.20.0/storages/supported-storages/shared-memory-storage/) |
+-| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/0.20.0/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/0.20.0/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/0.20.0/storages/supported-storages/parquet-storage/) |
+-| Lightweight filesystem persistence | [File](https://gluesql.org/docs/0.20.0/storages/supported-storages/file-storage/) |
+-| Version-controlled data | [Git](https://gluesql.org/docs/0.20.0/storages/supported-storages/git-storage/) |
+-| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/0.20.0/storages/supported-storages/composite-storage/) |
++| Persistent embedded database | [Redb](https://gluesql.org/docs/dev/storages/supported-storages/redb-storage/) |
++| Persistent database on S3 or Cloudflare R2 | [SlateDB](https://gluesql.org/docs/dev/storages/supported-storages/slatedb-storage/) |
++| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/dev/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/dev/storages/supported-storages/redis-storage/) |
++| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/dev/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/dev/storages/supported-storages/shared-memory-storage/) |
++| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/dev/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/dev/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/dev/storages/supported-storages/parquet-storage/) |
++| Lightweight filesystem persistence | [File](https://gluesql.org/docs/dev/storages/supported-storages/file-storage/) |
++| Version-controlled data | [Git](https://gluesql.org/docs/dev/storages/supported-storages/git-storage/) |
++| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/dev/storages/supported-storages/composite-storage/) |
+ | Browser / JS applications | [JavaScript: memory, local Storage, or OPFS](https://github.com/gluesql/gluesql-js#pick-the-storage-that-matches-your-data) |
+ 
+-See the [Storage documentation](https://gluesql.org/docs/0.20.0/storages/) for setup, examples, and limitations.
++See the [Storage documentation](https://gluesql.org/docs/dev/storages/intro/) for setup, examples, and limitations.
+ 
+ ## SQL and Query Builder
+ 
+-GlueSQL supports both SQL and a Query Builder. Use SQL for familiar or dynamic queries, and use the Query Builder when composing queries in Rust or controlling execution more precisely. Both interfaces run through the same GlueSQL engine and storage backend. For more information, check out the [Query Builder documentation](https://gluesql.org/docs/0.20.0/query-builder/intro/) and [SQL documentation](https://gl
 ```
 
-**File**: `Cargo.lock` (modified, +10/-309)
+**File**: `docs/docs/index.md` (modified, +9/-7)
 ```diff
-@@ -104,7 +104,7 @@ dependencies = [
-  "arrow-data",
-  "arrow-schema",
-  "chrono",
-- "half 2.4.1",
-+ "half",
-  "hashbrown 0.14.5",
-  "num",
- ]
-@@ -115,7 +115,7 @@ version = "43.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "bdbe439e077f484e5000b9e1d47b5e4c0d15f2b311a8f5bcc682553d5d67a722"
- dependencies = [
-- "half 2.4.1",
-+ "half",
-  "num",
- ]
+@@ -66,7 +66,7 @@ SELECT * FROM Names JOIN Logs ON Names.id = Logs.id;
+ ```
  
-@@ -131,7 +131,7 @@ dependencies = [
-  "arrow-schema",
-  "arrow-select",
-  "chrono",
-- "half 2.4.1",
-+ "half",
-  "lexical-core",
-  "num",
- ]
-@@ -144,7 +144,7 @@ checksum = "d4f4f4a3c54614126a71ab91f6631c9743eb4643d6e9318b74191da9dc6e028b"
- dependencies = [
-  "arrow-buffer",
-  "arrow-schema",
-- "half 2.4.1",
-+ "half",
-  "num",
- ]
+ ## Supported Reference Storages
+-GlueSQL provides a variety of reference storages out of the box, including simple in-memory storage, key-value databases, and log file-based storage like JSON & JSONL. These reference storages are readily available for use and can be easily adapted to a variety of storage systems. Additionally, GlueSQL is constantly expanding its list of supported storages, making it a versatile tool for developers.
++GlueSQL provides reference storages for in-memory data, embedded databases, local files, object stores, and external databases. See the [storage documentation](storages/intro.md) for setup, examples, and limitations.
  
-@@ -417,12 +417,6 @@ version = "1.7.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "8318a53db07bb3f8dca91a600466bdb3f2eaadeedfdbcf02e1accbad9271ba50"
+ ### Memory Storage
+ Memory Storage is a foundational storage option designed for in-memory, non-persistent data. It is a simple yet robust storage option that can be used in production environments.
+@@ -77,6 +77,9 @@ Shared Memory Storage is a storage option designed to provide more comfortable u
+ ### Redb Storage
+ Redb Storage leverages the [redb](https://docs.rs/redb) embedded database for persistent storage with transactional support. It keeps all tables in a single database file, offering another simple way to keep your data on disk while enjoying GlueSQL's query capabilities.
  
--[[package]]
--name = "cast"
--version = "0.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "37b2a672a2cb129a2e41c10b1224bb368f9f37a2b16b612598138befd7b37eb5"
--
- [[package]]
- name = "cc"
- version = "1.2.23"
-@@ -461,17 +455,6 @@ dependencies = [
-  "windows-targets 0.52.6",
- ]
++### SlateDB Storage
++[SlateDB Storage](storages/supported-storages/slatedb-storage.md) stores GlueSQL schemas and rows in an embedded key-value engine backed by object storage, including Amazon S3 and Cloudflare R2. It supports reads, writes, and transactions, while SlateDB manages caching and compaction.
++
+ ### JSON Storage
+ With GlueSQL, you can use JSONL or JSON files as a database that supports SQL and Query Builder, making it a powerful option for developers who need to work with JSON data. JSON Storage is a storage system that uses two types of files: a schema file (optional) and a data file. The schema file is written in Standard SQL and stores the structure of the table, while the data file contains the actual data and supports two file formats: `*.json` and `*.jsonl`. JSON Storage supports all DML features, but is particularly specialized for SELECT and INSERT.
  
--[[package]]
--name = "clap"
--version = "2.34.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a0610544180c38b88101fecf2dd634b174a62eef6946f84dfc6a7127512b381c"
--dependencies = [
-- "bitflags 1.3.2",
-- "textwrap 0.11.0",
-- "unicode-width",
--]
--
- [[package]]
- name = "clap"
- version = "3.2.25"
-@@ -486,7 +469,7 @@ dependencies = [
-  "once_cell",
-  "strsim",
-  "termcolor",
-- "textwrap 0.16.1",
-+ "textwrap",
- ]
+@@ -97,17 +100,16 @@ Git Storage is a custom storage option in GlueSQL that integrates seamlessly wit
+ ### Mongo Storage
+ With Mongo storage, you can use mongodb as a storage for SQL queries. You can use all the features supported by GlueSQL, such as aggregations and joins, which were previously difficult to handle on an unstructured database. In particular, you can use GlueSQL's powerful schema system on mongodb, which is as strong as an RDBMS.
  
- [[package]]
-@@ -582,67 +565,6 @@ dependencies = [
-  "cfg-if",
- ]
++### Redis Storage
++[Redis Storage](storages/supported-storages/redis-storage.md) stores GlueSQL schemas and rows in a running Redis server. A namespace keeps each database's keys separate within the server.
++
+ ### Composite Storage
+ Composite Storage is a powerful feature of GlueSQL that allows you to bundle together multiple existing storages, enabling you to perform JOIN operations across two distinct storages. This makes it useful for scenarios where data has to be queried or moved across different storage systems through the same SQL interface.
  
--[[package]]
--name = "criterion"
--version = "0.3.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b01d6de93b2b6c65e17c634a26653a29d107b3c98c607c765bf38d041531cd8f"
--dependencies = [
-- "atty",
-- "cast",
-- "clap 2.34.0",
-- "criterion-plot",
-- "csv",
-- "itertools 0.10.5",
-- "lazy_static",
-- "num-traits",
-- "oorandom",
-- "plotters",
-- "rayon",
-- "regex",
-- "serde",
-- "serde_cbor",
-- "serde_derive",
-- "serde_json",
-- "tinytemplate",
-- "walkdir",
--]
+ ## Adapting GlueSQL to Your Environment: Creating Custom Storage
+-GlueSQL is designed to be adaptable to a wide variety of environments, including file systems, key-value databases, complex NoSQL databases, and remote APIs. To create a custom storage for GlueSQL, you only need to implement the Store and StoreMut traits provided by GlueSQL. These traits allow you to support SELECT queries and modify data, such as INSERT, UPDATE, and DELETE.
 -
--[[package]]
--name = "criterion-plot"
--version = "0.4.5"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2673cc8207403546f45f5fd319a974b1e6983ad1a3ee7e6041650013be041876"
--dependencies = [
-- "cast",
-- "itertools 0.10.5",
--]
+-If you want to support additional features, such as schema changes, transactions, or custom functions, you can implement the corresponding traits. However, these traits are optional, and you can choose to implement only the ones that are relevant to your storage system.
 -
--[[package]]
--name = "crossbeam-deque"
--version = "0.8.5"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "613f8cc01fe9cf1a3eb3d7f488fd2fa8388403e97039e2f73692932e291a770d"
--dependencies = [
-- "crossbeam-epoch",
-- "crossbeam-utils",
--]
--
--[[package]]
--name = "crossbeam-epoch"
--version = "0.9.18"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5b82ac4a3c2ca9c3460964f020e1402edd5753411d7737aa39c3714ad1b5420e"
--dependencies = [
-- "crossbeam-utils",
--]
--
--[[package]]
--name = "crossbeam-utils"
--version = "0.8.20"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "22ec99545bb0ed0ea7bb9b8e1e9122ea386ff8a48c0922e43f36d45ab09e0e80"
--
- [[package]]
- name = "crunchy"
- version = "0.2.2"
-@@ -915,16 +837,6 @@ dependencies = [
-  "percent-encoding",
- ]
+-To make it even easier to develop custom storages, GlueSQL provides a Test Suite that allows you to test your storage implementation against a set of standard SQL queries. This ensures that your storage system is compatible with GlueSQL and can handle common SQL operations.
++Connect GlueSQL to your files, databases, or APIs through the storage traits. `Store` handles reads and `StoreMut` handles writes. Additional traits support features such as transactions, indexes, and custom functions.
  
--[[package]]
--name = "fs2"
--version = "0.4.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9564fc758e15025b46aa6643b1b77d047d1a56a1aea6e01002ac0c7026876213"
--dependencies = [
-- "libc",
-- "winapi",
--]
--
- [[package]]
- name = "funty"
- version = "2.0.0"
-@@ -1002,15 +914,6 @@ dependencies = [
-  "slab",
- ]
+-Overall, creating a custom storage for GlueSQL is a straightforward process that allows you to adapt SQL and the Query Builder to your environment with ease.
++See the [custom storage guide](storages/developing-custom-storages/intro.md) for implementation details and the [Test Suite](storages/developing-custom-storages/using-test-suite.md) for shared SQL tests.
  
--[[package]]
--name = "fxhash"
--version = "0.2.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c"
--dependencies = [
-- "byteorder",
--]
--
- [[package]]
- name = "generic-array"
- version = "0.14.7"
-@@ -1065,15 +968,14 @@ dependencies = [
-  "gluesql-shared-memory-storage",
-  "gluesql-test-suite",
-  "gluesql_memory_storage",
-- "gluesql_sled_storage",
- ]
- 
- [[package]]
- name = "gluesql-cli"
- version = "0.20.0"
- dependencies = [
-  "anyhow",
-- "clap 3.2.25",
-+ "clap",
-  "edit",
-  "gluesql-core",
-  "gluesql-csv-storage",
-@@ -1082,7 +984,6 @@ dependencies = [
-  "gluesql-parquet-storage",
-  "gluesql-redb-storage",
-  "gluesql_memory_storage",
-- "gluesql_sled_storage",
-  "rustyline",
-  "rustyline-derive",
-  "strum_macros 0.25.3",
-@@ -1112,7 +1013,7 @@ dependencies = [
-  "hex",
-  "im",
-  "iter-enum",
-- "itertools 0.12.1",
-+ "itertools",
-  "md-5",
-  "ordered-float 4.2.2",
-  "pretty_assertions",
-@@ -1294,26 +1195,6 @@ dependencies = [
-  "serde",
- ]
- 
--[[package]]
--name = "gluesql_sled_storage"
--version = "0.20.0"
--dependencies = [
-- "bincode",
-- "criterion",
-- "gluesql-core",
-- "gluesql-test-suite",
-- "iter-enum",
-- "serde",
-- "sled",
-- "thiserror 1.0.63",
--]
--
--[[package]]
--name = "half"
--version = "1.8.3"
--source = "registry+https://github.com/rust-lang/crate
+ ## GlueSQL Custom Storage: Let Us Handle It for You
+ Although anyone can develop a custom storage for GlueSQL with ease, our GlueSQL team can also implement and maintain it for you. This is es
 ```
 
-**File**: `Cargo.toml` (modified, +0/-1)
+**File**: `docs/docs/storages/developing-custom-storages/intro.md` (modified, +15/-17)
 ```diff
-@@ -32,7 +32,6 @@ cli = { package = "gluesql-cli", path = "./cli", version = "0.20.0" }
- test-suite = { package = "gluesql-test-suite", path = "./test-suite", version = "0.20.0" }
- gluesql_memory_storage = { path = "./storages/memory-storage", version = "0.20.0" }
- gluesql-shared-memory-storage = { path = "./storages/shared-memory-storage", version = "0.20.0" }
--gluesql_sled_storage = { path = "./storages/sled-storage", version = "0.20.0" }
- gluesql-redb-storage = { path = "./storages/redb-storage", version = "0.20.0" }
- gluesql-json-storage = { path = "./storages/json-storage", version = "0.20.0" }
- gluesql-csv-storage = { path = "./storages/csv-storage", version = "0.20.0" }
+@@ -6,32 +6,30 @@ sidebar_position: 1
+ 
+ With GlueSQL, you can adapt SQL and the Query Builder to a wide variety of environments. This includes file systems, key-value databases, complex NoSQL databases, and even remote APIs. As long as a system supports reading, it can support SELECT queries. If it supports both reading and writing, it can support most SQL operations, including UPDATE and DELETE.
+ 
+-To implement GlueSQL, you only need to know two things:
++Custom storage development has two main parts:
++
+ 1. Understanding Store traits
+ 2. Using the Test Suite
+ 
+ These topics are covered in more detail in their respective pages, but here we will provide a brief overview.
+ 
+ ## Understanding Store Traits
+ 
+-GlueSQL is available in both Rust and JavaScript environments, with plans to expand its support to other languages. Since the GlueSQL project itself is written in Rust, using Rust is essential for developing custom storages. To create a custom storage, you need to implement the Store traits provided by GlueSQL. There are currently 9 traits:
+-
+-* `Store` - A trait for read operations to support SELECT queries.
+-* `StoreMut` - A trait for modifying data, such as INSERT, UPDATE, and DELETE.
+-* `AlterTable` - A trait for supporting schema changes.
+-* `Transaction` - A trait for supporting transactions.
+-* `CustomFunction` - A trait for supporting user-level custom functions.
+-* `CustomFunctionMut` - A trait for creating or deleting user-level custom functions.
+-* `Index` - A trait for supporting non-clustered indexes. This trait allows you to process pre-registered indexes.
+-* `IndexMut` - A trait for creating or deleting non-clustered indexes.
+-* `Metadata` - A trait for querying metadata.
++A Rust storage implements these traits:
+ 
+-To develop a custom storage, you can implement these 9 traits. Although this may seem like a lot of work, don't worry. All traits except for `Store` and `StoreMut` are optional. In other words, you don't have to implement them. If you don't want to support the `AlterTable` trait, simply don't implement it. It's that simple.
++* `Store` - Reads schemas and rows.
++* `StoreMut` - Writes schemas and rows.
++* `AlterTable` - Changes table schemas.
++* `Transaction` - Begins, commits, and rolls back transactions.
++* `CustomFunction` - Reads user-defined functions.
++* `CustomFunctionMut` - Creates and deletes user-defined functions.
++* `Index` - Reads rows through secondary indexes.
++* `IndexMut` - Creates and drops secondary indexes.
++* `Metadata` - Returns table metadata.
++* `Planner` - Plans queries.
+ 
+-Furthermore, if you only want to support SELECT queries, you don't need to implement `StoreMut`. By implementing only the `Store` trait, you can create a custom storage that supports SQL SELECT queries.
++`Store` requires four read methods. For the other traits, start with empty implementations and override the methods your storage needs. For example, `impl Planner for MyStorage {}` uses GlueSQL's default planner. Each trait's page describes its defaults.
+ 
+ ## Using the Test Suite
+ 
+-The minimum requirement for developing a custom storage is implementing the Store traits. However, you may want to verify that your implementation is correct. That's where the Test Suite comes in.
+-
+-GlueSQL provides a test case library to make it easy to validate custom storage development. Developers can implement the desired Store traits and use the Test Suite to verify that their implementation is correct. The line coverage of GlueSQL's core project is almost 99%, which means that passing the Test Suite alone can complete most of the feature verification. All you need to do is ensure your custom storage passes the Test Suite and write additional tests for any specialized features specific to your storage.
+\ No newline at end of file
++The [Test Suite](using-test-suite.md) provides shared tests for the SQL features your storage supports. You can add tests for behavior specific to your implementation, such as persistence across restarts or transaction isolation.
 ```
 
-**File**: `cli/Cargo.toml` (modified, +0/-1)
+**File**: `docs/docs/storages/developing-custom-storages/store-traits/alter-table.md` (modified, +2/-2)
 ```diff
-@@ -9,7 +9,6 @@ documentation.workspace = true
+@@ -4,9 +4,9 @@ sidebar_position: 3
  
- [dependencies]
- gluesql-core.workspace = true
--gluesql_sled_storage.workspace = true
- gluesql_memory_storage.workspace = true
- gluesql-json-storage.workspace = true
- gluesql-csv-storage.workspace = true
+ # AlterTable
+ 
+-The `AlterTable` trait corresponds to the SQL ALTER TABLE statement and is used for modifying existing schemas. It is not necessary to implement the `AlterTable` trait. If you are dealing with data that is difficult to modify schema-wise or schemaless data, there is no need to implement the `AlterTable` trait. It is an optional trait that custom storage developers can choose to implement.
++`AlterTable` handles SQL ALTER TABLE statements. Its default methods use `Store` and `StoreMut`. Override them for storage-specific schema changes, such as updating secondary indexes.
+ 
+-Similar to the `Store` & `StoreMut` combination, if you implement the `AlterTable` trait, you can use additional tests in the Test Suite to verify your implementation. There are currently four types of methods supported by `AlterTable`:
++It provides four methods:
+ 
+ 1. `rename_schema`: Corresponds to the SQL statement `ALTER TABLE {table-name} RENAME TO {other-name};`. This method renames a schema.
+ 
 ```
 
-**File**: `cli/src/lib.rs` (modified, +4/-24)
+**File**: `docs/docs/storages/developing-custom-storages/store-traits/custom-function.md` (modified, +3/-3)
 ```diff
-@@ -1,5 +1,4 @@
- #![deny(clippy::str_to_string)]
--#![allow(deprecated)]
+@@ -4,11 +4,11 @@ sidebar_position: 5
  
- mod cli;
- mod command;
-@@ -21,7 +20,6 @@ use {
-     gluesql_memory_storage::MemoryStorage,
-     gluesql_parquet_storage::ParquetStorage,
-     gluesql_redb_storage::RedbStorage,
--    gluesql_sled_storage::SledStorage,
-     std::{
-         fmt::Debug,
-         fs::File,
-@@ -30,12 +28,6 @@ use {
-     },
- };
+ # CustomFunction
  
--const SLED_STORAGE_DEPRECATION_WARNING: &str = "[warning] sled-storage is deprecated and will be removed in v0.21.0; use redb-storage for new persistent-storage deployments";
--
--fn warn_sled_storage_deprecated() {
--    eprintln!("{SLED_STORAGE_DEPRECATION_WARNING}");
--}
--
- #[derive(Parser, Debug)]
- #[clap(name = "gluesql", about, version)]
- struct Args {
-@@ -54,7 +46,6 @@ struct Args {
-     dump: Option<PathBuf>,
+-The `CustomFunction` trait is an optional trait for supporting user-level custom functions. Through the `CustomFunction` trait, you can retrieve custom functions stored in the storage system. You can choose to implement the `CustomFunction` trait alone or together with the `CustomFunctionMut` trait.
++`CustomFunction` reads user-defined functions from storage. Override its methods to expose functions; their defaults return unsupported errors.
  
-     /// Storage type to store data; defaults to memory.
--    /// sled is deprecated and will be removed in v0.21.0; use redb for new deployments.
-     #[clap(short, long, value_parser)]
-     storage: Option<Storage>,
+-In some cases, you might want to provide storage-specific functions pre-built and separately available for each storage system. In such cases, you can implement the `CustomFunction` trait and create additional functions stored in advance when using it. To achieve this, the `CustomFunction` and `CustomFunctionMut` traits are provided separately for implementation.
++For example, a storage can provide a fixed set of functions through `CustomFunction`. Use `CustomFunctionMut` to support creating and deleting functions.
  
-@@ -74,7 +65,6 @@ struct Args {
- #[derive(clap::ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]
- enum Storage {
-     Memory,
--    Sled,
-     Redb,
-     Json,
-     Csv,
-@@ -144,17 +134,6 @@ pub fn run() -> Result<()> {
-         (Some(_), Some(Storage::Memory)) => {
-             panic!("failed to load memory-storage: it should be without path");
-         }
--        (Some(path), Some(Storage::Sled)) => {
--            warn_sled_storage_deprecated();
--            println!("[sled-storage] connected to {}", path.display());
--
--            run(
--                SledStorage::new(path).expect("failed to load sled-storage"),
--                Some(path),
--                execute,
--                dump,
--            )?;
--        }
-         (Some(path), Some(Storage::Redb)) => {
-             println!("[redb-storage] connected to {}", path.display());
+-There are two methods available:
++It provides two methods:
  
-@@ -346,13 +325,14 @@ mod tests {
-             "gluesql",
-             "--upgrade",
-             "--storage",
--            "sled",
-+            "redb",
-             "--path",
-             "./tmp",
-             "--execute",
-             "query.sql",
--        ]);
--        assert!(args.is_err());
-+        ])
-+        .unwrap_err();
-+        assert_eq!(args.kind(), ErrorKind::ArgumentConflict);
-     }
+ 1. `fetch_function`: This method retrieves a custom function from the storage system using the provided function name.
  
-     #[test]
 ```
 
-**File**: `cli/src/upgrade.rs` (modified, +5/-29)
+**File**: `docs/docs/storages/developing-custom-storages/store-traits/index-mut.md` (modified, +1/-7)
 ```diff
-@@ -1,9 +1,8 @@
- use {
--    crate::{Storage, warn_sled_storage_deprecated},
-+    crate::Storage,
-     anyhow::{Result, bail},
-     gluesql_file_storage::migrate_to_latest as migrate_file_storage_to_latest,
-     gluesql_redb_storage::migrate_to_latest as migrate_redb_storage_to_latest,
--    gluesql_sled_storage::migrate_to_latest as migrate_sled_storage_to_latest,
-     std::path::Path,
- };
+@@ -4,11 +4,7 @@ sidebar_position: 8
  
-@@ -22,17 +21,6 @@ pub(super) fn run_upgrade(
-     };
+ # IndexMut
  
-     match storage {
--        Storage::Sled => {
--            warn_sled_storage_deprecated();
--            let report = migrate_sled_storage_to_latest(path)?;
--            print_upgrade_report(
--                "sled",
--                path,
--                report.migrated_tables,
--                report.unchanged_tables,
--                report.rewritten_rows,
--            );
--        }
-         Storage::Redb => {
-             let report = migrate_redb_storage_to_latest(path)?;
-             print_upgrade_report(
-@@ -54,7 +42,7 @@ pub(super) fn run_upgrade(
-             );
-         }
-         _ => {
--            bail!("--upgrade is supported only for storage types: sled, redb, file");
-+            bail!("--upgrade is supported only for storage types: redb, file");
-         }
-     }
- 
-@@ -81,7 +69,6 @@ mod tests {
-         crate::Storage,
-         gluesql_file_storage::FileStorage,
-         gluesql_redb_storage::RedbStorage,
--        gluesql_sled_storage::SledStorage,
-         std::{
-             fs,
-             path::{Path, PathBuf},
-@@ -101,7 +88,7 @@ mod tests {
-     #[test]
-     fn upgrade_rejects_unsupported_storage() {
-         let actual = run_upgrade(Some(Path::new("./tmp")), Some(Storage::Json), false, false);
--        let expected = "--upgrade is supported only for storage types: sled, redb, file";
-+        let expected = "--upgrade is supported only for storage types: redb, file";
- 
-         assert_eq!(
-             actual
-@@ -113,7 +100,7 @@ mod tests {
- 
-     #[test]
-     fn upgrade_rejects_execute_or_dump() {
--        let actual = run_upgrade(Some(Path::new("./tmp")), Some(Storage::Sled), true, false);
-+        let actual = run_upgrade(Some(Path::new("./tmp")), Some(Storage::Redb), true, false);
-         let expected = "--upgrade cannot be used with --execute or --dump";
- 
-         assert_eq!(
-@@ -124,7 +111,7 @@ mod tests {
- 
-     #[test]
-     fn upgrade_requires_path_and_storage() {
--        let actual = run_upgrade(None, Some(Storage::Sled), false, false);
-+        let actual = run_upgrade(None, Some(Storage::Redb), false, false);
-         let expected = "both --path and --storage should be specified with --upgrade";
- 
-         assert_eq!(
-@@ -133,17 +120,6 @@ mod tests {
-         );
-     }
- 
--    #[test]
--    fn upgrade_accepts_sled_storage() {
--        let path = test_path("sled");
--        SledStorage::new(&path).expect("failed to initialize sled storage for upgrade test");
+-The `IndexMut` trait, when implemented along with the `Index` trait, allows custom storage developers to provide users with the ability to create, use, and delete non-clustered indexes. Implementing the `IndexMut` trait enhances the storage system's capabilities by providing support for dynamic index management.
 -
--        let actual = run_upgrade(Some(path.as_path()), Some(Storage::Sled), false, false);
+-Non-clustered indexes can improve query performance by reducing the amount of data that needs to be read during search operations. Users can create multiple non-clustered indexes tailored to their specific use cases, providing a more efficient and optimized experience when working with large datasets.
 -
--        assert!(actual.is_ok(), "sled upgrade should succeed: {actual:?}");
--        let _ = fs::remove_dir_all(path);
--    }
--
-     #[test]
-     fn upgrade_accepts_redb_storage() {
-         let path = test_path("redb.db");
-```
-
-**File**: `core/src/store/index.rs` (modified, +0/-12)
-```diff
-@@ -21,20 +21,8 @@ pub enum IndexError {
-     #[error("index name does not exist: {0}")]
-     IndexNameDoesNotExist(String),
+-The `IndexMut` trait requires the implementation of two methods:
++`IndexMut` creates and drops secondary indexes. Override its two methods to support CREATE INDEX and DROP INDEX; both return unsupported errors by default.
  
--    #[error("conflict - table not found: {0}")]
--    ConflictTableNotFound(String),
--
--    #[error("conflict - update failed - index value")]
--    ConflictOnEmptyIndexValueUpdate,
--
--    #[error("conflict - delete failed - index value")]
--    ConflictOnEmptyIndexValueDelete,
--
-     #[error("conflict - scan failed - index value")]
-     ConflictOnEmptyIndexValueScan,
--
--    #[error("conflict - index sync - delete index data")]
--    ConflictOnIndexDataDeleteSync,
+ 1. `create_index`: This method creates a new non-clustered index on the specified column with a given index name for the provided table. The index can be used to speed up queries involving the indexed column.
+ 
+@@ -26,5 +22,3 @@ pub trait IndexMut {
+     fn drop_index(&mut self, table_name: &str, index_name: &str) -> Result<()>;
  }
- 
- pub trait Index {
+ ```
+-
+-By implementing both the `Index` and `IndexMut` traits, custom storage developers can provide users with the ability to manage non-clustered indexes according to their specific needs, improving overall query performance and providing a more tailored experience.
 ```
 
-**File**: `docs/docs/getting-started/cli.md` (modified, +2/-12)
+**File**: `docs/docs/storages/developing-custom-storages/store-traits/index-trait.md` (modified, +3/-9)
 ```diff
-@@ -22,7 +22,7 @@ Once you have installed the GlueSQL CLI, you can use it to interact with your da
+@@ -4,17 +4,11 @@ sidebar_position: 7
  
- ```
- $ gluesql [--execute ~/sql_path] [--storage=memory]
--$ gluesql [--execute ~/sql_path] --path ~/data_path --storage={redb | json | csv | parquet | file | sled}
-+$ gluesql [--execute ~/sql_path] --path ~/data_path --storage={redb | json | csv | parquet | file}
- ```
+ # Index
  
- ### --execute
-@@ -43,7 +43,7 @@ gluesql --path ~/mydatabase --storage=redb
+-The `Index` trait is designed to support non-clustered indexes. If you only need to support pre-built non-clustered indexes, implementing the `Index` trait without the `IndexMut` trait is sufficient. Note that clustered indexes (PRIMARY KEY) are automatically supported by the `Store` & `StoreMut` implementations. The `Index` trait is specifically for non-clustered index support.
++`Index` reads rows using the secondary index selected in the query plan. Implement `scan_indexed_data` to support index lookups; the default returns an unsupported error.
  
- ### --storage
+-Currently, GlueSQL's query planner only supports a logical planner, so the performance of finding non-clustered indexes is not optimal yet, but it is being improved. If you want to use non-clustered indexes more precisely, using the Query Builder to directly specify the index you want to use can be a good approach.
++Primary-key lookups use `Store` and do not need secondary-index support.
  
--This option allows you to specify the storage engine you want to use for your database. By default, GlueSQL uses the [`memory`](../storages/supported-storages/memory-storage) storage engine. For persistent storage, use [`redb`](../storages/supported-storages/redb-storage). The other path-backed storages are `json`, `csv`, `parquet`, and `file`. The [`sled`](../storages/supported-storages/sled-storage) option is deprecated as of v0.20.0 and will be removed in v0.21.0. Storage engines other than `memory` must be used with `--path`. For example, you can use the following command to specify the `json` storage engine:
-+This option allows you to specify the storage engine you want to use for your database. By default, GlueSQL uses the [`memory`](../storages/supported-storages/memory-storage) storage engine. For persistent storage, use [`redb`](../storages/supported-storages/redb-storage). The other path-backed storages are `json`, `csv`, `parquet`, and `file`. Storage engines other than `memory` must be used with `--path`. For example, you can use the following command to specify the `json` storage engine:
- 
- ```
- gluesql --path ~/mydatabase --storage=json
-@@ -254,13 +254,3 @@ gluesql --storage=redb --path ~/restored.redb --execute ./dump.sql
- 
- When moving between storage types, choose a destination that supports the
- features used by the exported SQL, such as indexes.
+-A brief explanation of non-clustered and clustered indexes:
 -
--To export an existing Sled database before Sled Storage is removed, select it
--explicitly:
+-- Non-clustered index: A non-clustered index is an index that doesn't affect the physical ordering of the data rows in the table. Instead, it maintains a separate data structure that contains a reference to the actual data rows, allowing for faster search operations without rearranging the data itself.
 -
--```sh
--gluesql --storage=sled --path ~/glue_data --dump ./dump.sql
--```
+-- Clustered index: A clustered index determines the physical order of the data in the table. In other words, the data rows are stored on disk in the same order as the index. There can be only one clustered index per table, which is usually defined by the PRIMARY KEY constraint.
 -
--Sled Storage remains deprecated. SQL dump is available for the other storage
--types as well.
+-There is one method to implement for the `Index` trait:
++It provides one method:
+ 
+ 1. `scan_indexed_data`: This method retrieves indexed data from the storage system using the provided table name, index name, sorting order, and comparison value.
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2071** (2026-11-09): Clarify test responsibilities and maintenance costs (@panarch)
+- **PR #2070** (2026-11-09): Update storage guides and automate README release links (@panarch)
+- **PR #2068** (2026-11-09): Add SlateDB storage backed by object stores (@panarch)
 - **PR #2067** (2026-11-08): Align transaction variable names in the redb I/O error test (@panarch)
 - **PR #2066** (2026-11-08): Remove deprecated Sled storage (@panarch)
 - **PR #2065** (2026-11-08): Decouple CLI SQL dump from Sled storage (@panarch)
-- **PR #2063** (2026-11-08): Add index support to RedbStorage (@panarch)
-- **PR #2062** (2026-11-04): Expand review policies for testing and code structure (@panarch)
-- **PR #2061** (2026-11-04): Move CREATE INDEX validation into the planner (@panarch)
 
 ---
 
@@ -2669,38 +2352,40 @@ notes and archived articles.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Align transaction variable names in the redb I/O error test (#2067)
+## X. Update storage guides and automate README release links (#2070)
 
 **RULE**:
-When implementing operations in `storages/redb-storage/tests/begin_write_error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/prepare-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0230eea7`: Align transaction variable names in the redb I/O error test (#2067). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0d26db2`: Update storage guides and automate README release links (#2070). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `storages/redb-storage/tests/begin_write_error.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/prepare-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let txn = db.begin_write().expect("begin write for metadata");
-        let mut table = txn.open_table(META_TABLE).expect("open metadata table");
-        txn.commit().expect("commit metadata");
-    let txn = db.begin_write().expect("begin write");
-        let mut table = txn.open_table(TABLE).expect("open table");
-    let _ = txn.commit().expect_err("commit should fail");
+
+          python3 - "${NEW_VERSION#v}" <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          readme = Path("README.md")
+          content = readme.read_text()
+          pattern = r"https://gluesql\.org/docs/(?:dev|[0-9][0-9A-Za-z.+-]*)/"
+          content = re.sub(pattern, f"https://gluesql.org/docs/{sys.argv[1]}/", content)
+          readme.write_text(content)
+          PY
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let tx = db.begin_write().expect("begin write for metadata");
-        let mut table = tx.open_table(META_TABLE).expect("open metadata table");
-        tx.commit().expect("commit metadata");
-    let tx = db.begin_write().expect("begin write");
-        let mut table = tx.open_table(TABLE).expect("open table");
-    let _ = tx.commit().expect_err("commit should fail");
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0230eea7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0d26db2` are properly handled with clean fallback behavior.

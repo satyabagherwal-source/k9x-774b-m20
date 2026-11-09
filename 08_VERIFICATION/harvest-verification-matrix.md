@@ -8607,3 +8607,5 @@
 | `CYCLE-20261109-1ODJ` | `2026-11-09T14:04:34.087Z` | `telemt/telemt` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e32a44c6...`) |
 | `CYCLE-20261109-201H` | `2026-11-09T14:04:49.205Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`490500df...`) |
 | `CYCLE-20261109-2Y99` | `2026-11-09T14:05:33.549Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`63c38cb9...`) |
+| `CYCLE-20261109-J1NK` | `2026-11-09T14:18:04.448Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`04834c3a...`) |
+| `CYCLE-20261109-J6RQ` | `2026-11-09T14:18:11.078Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`06bea34f...`) |

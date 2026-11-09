@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T14:05:33.564Z",
+  "last_updated": "2026-11-09T14:18:11.105Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2361,14 +2361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "content_hash": "1e2f2db1ea9cadc04591572082f018d31c11cd4795c73d310bfd752de32d4efe",
-      "verified_at": "2026-11-05T15:20:39.934Z",
+      "content_hash": "04834c3a58eb9c16dec094600de38abf4dffd8e3f1ce67adc749198007cf91b4",
+      "verified_at": "2026-11-09T14:18:04.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T15:20:39.934Z"
+      "last_updated": "2026-11-09T14:18:04.460Z"
     },
     "amplifthq/openmeld": {
       "repository": "amplifthq/openmeld",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "49642f5b42efb0ce40570c466014bffb476fb7b3ef0ffbf7dc73f139f696c469",
-      "verified_at": "2026-11-08T16:33:43.486Z",
+      "content_hash": "06bea34f8cf571ba9e535dc15ce7c6a48c445080aa4fb00cf8bfeeec5bee56c3",
+      "verified_at": "2026-11-09T14:18:11.104Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:33:43.486Z"
+      "last_updated": "2026-11-09T14:18:11.104Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",

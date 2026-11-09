@@ -8616,3 +8616,5 @@ Every entry in this ledger must capture:
 | `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `66708d28` | Multi-dimensional audit evidence | 2026-11-09T14:04:34.099Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e3622da0` | Multi-dimensional audit evidence | 2026-11-09T14:04:49.210Z |
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-09T14:05:33.553Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T14:18:04.452Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `fc736e32` | Multi-dimensional audit evidence | 2026-11-09T14:18:11.096Z |

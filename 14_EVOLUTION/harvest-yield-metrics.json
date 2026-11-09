@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T14:05:33.559Z",
-  "total_cycles_completed": 8572,
-  "total_learnings_persisted": 8572,
-  "total_rules_promoted": 8397,
+  "last_updated": "2026-11-09T14:18:11.101Z",
+  "total_cycles_completed": 8574,
+  "total_learnings_persisted": 8574,
+  "total_rules_promoted": 8400,
   "history": [
-    {
-      "timestamp": "2026-11-08T22:10:46.889Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T22:10:53.658Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T22:12:53.254Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -1403,6 +1389,20 @@
       "repository": "vllm-sr/d3",
       "learningId": "learn-huggingface-vllm-sr-d3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T14:18:04.457Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T14:18:11.101Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
