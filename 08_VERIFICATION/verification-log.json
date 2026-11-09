@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-6Q3B",
-    "timestamp": "2026-11-08T00:49:00.311Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-6W21",
-    "timestamp": "2026-11-08T00:49:08.041Z",
-    "repository": "dosco/graphjin",
-    "learningId": "learn-github-dosco-graphjin",
-    "contentHash": "eb3cda7286b88dcff98a1485333b36d3539e12c7af70244c2f0bc8e40ba27eda",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-707N",
-    "timestamp": "2026-11-08T00:49:13.427Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "eafd4ac53b54fd6e175ed373e64905a8ec604b6599a257edd784b09392ca11ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-FQU6",
-    "timestamp": "2026-11-08T00:56:01.183Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "bb8b367b7adee588b430653de44a0bb48c7dba8ef220d0671e51cbb3ebf92244",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-FT77",
     "timestamp": "2026-11-08T00:56:04.243Z",
     "repository": "fastapi/fastapi",
@@ -7492,6 +7432,66 @@
     "contentHash": "8dbbfe7c719ba0b1e5b4ddaa0274f92667053c5c48a51bd77e073e02861be13d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-VR0N",
+    "timestamp": "2026-11-09T17:43:54.503Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "f2b18b9c0da435050fb621ad72c29ecbd92518e08a887f17e897d95b7c5852bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-VYZT",
+    "timestamp": "2026-11-09T17:44:04.841Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "94893217a6eefb970bdb257c8f850815874f8d8e3d487fe5c890f2bd8d6520e5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-W2SZ",
+    "timestamp": "2026-11-09T17:44:09.779Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "0f867f49d4d42ed18a07c7f82febfb7c7dc6faf6d002545732c2c165058311d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-2GZG",
+    "timestamp": "2026-11-09T17:49:08.092Z",
+    "repository": "Edge0/Audio8-TTS-Realistic-Air",
+    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
+    "contentHash": "192dddb81799e3a03fb164c65c08241a0faa00e35af45e5b23094d405dfc7fab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

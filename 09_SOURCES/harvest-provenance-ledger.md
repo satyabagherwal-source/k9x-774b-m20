@@ -8659,3 +8659,7 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `a9a8a317` | Multi-dimensional audit evidence | 2026-11-09T17:35:01.899Z |
 | `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-09T17:35:06.085Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `d1531769` | Multi-dimensional audit evidence | 2026-11-09T17:35:08.644Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `d7b8f4d3` | Multi-dimensional audit evidence | 2026-11-09T17:43:54.507Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e7506724` | Multi-dimensional audit evidence | 2026-11-09T17:44:04.845Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fd8c0cc9` | Multi-dimensional audit evidence | 2026-11-09T17:44:09.783Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-09T17:49:08.096Z |

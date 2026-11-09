@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "2bdf1337",
+    "sourceVersion": "fd8c0cc9",
     "license": "Apache-2.0",
-    "contentHash": "51c8dd6e8cc377e6d95063132f5c26f0713e1d301e5a5fb73e6cc36e6b0a11c0",
-    "lastHarvestedAt": "2026-11-09T16:40:34.953Z",
+    "contentHash": "0f867f49d4d42ed18a07c7f82febfb7c7dc6faf6d002545732c2c165058311d7",
+    "lastHarvestedAt": "2026-11-09T17:44:09.783Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "e43a07f9",
+    "sourceVersion": "e7506724",
     "license": "NOASSERTION",
-    "contentHash": "6639fe599bb6189d65cd9a98c35ad6f88fffc9cc548f59a1d4a47fa26d4cc72d",
-    "lastHarvestedAt": "2026-11-09T11:16:29.763Z",
+    "contentHash": "94893217a6eefb970bdb257c8f850815874f8d8e3d487fe5c890f2bd8d6520e5",
+    "lastHarvestedAt": "2026-11-09T17:44:04.845Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "22766f08",
+    "sourceVersion": "d7b8f4d3",
     "license": "BSD-3-Clause",
-    "contentHash": "10773ca168140b70ad473eef453b446af1c8c3a121d373ce23e0ebc1cf791179",
-    "lastHarvestedAt": "2026-11-08T15:28:13.462Z",
+    "contentHash": "f2b18b9c0da435050fb621ad72c29ecbd92518e08a887f17e897d95b7c5852bc",
+    "lastHarvestedAt": "2026-11-09T17:43:54.507Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {
@@ -11685,8 +11685,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-air",
     "license": "Open-Source",
-    "contentHash": "5501fbcb63ec6d6fefe0db01bb182cf01fb31dc079a3cf63fefa665853d5f460",
-    "lastHarvestedAt": "2026-11-05T18:00:52.151Z",
+    "contentHash": "192dddb81799e3a03fb164c65c08241a0faa00e35af45e5b23094d405dfc7fab",
+    "lastHarvestedAt": "2026-11-09T17:49:08.096Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air"
   },
   "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `2bdf1337`  
+> **Source Version**: `fd8c0cc9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:40:33.501Z  
+> **Timestamp**: 2026-11-09T17:44:07.803Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:40:33.488Z  
+> **Harvest Timestamp**: 2026-11-09T17:44:07.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1628,72 +1628,74 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2bdf1337` (2026-11-09)
-**Commit Message**: Draft NUC 99 SQL-Style Inequality
+### Incident Patch 1: `fd8c0cc9` (2026-11-09)
+**Commit Message**: Draft NUC 100 Reactive Cotangent
 
-Category: Language compatibility. Propose contiguous <> as an optional SQL- and Pascal-style alias of !=, preserving accepted syntax and existing inequality semantics. Allocate only the Draft proposal and its two index entries; no runtime or executable corpus changes.
+Category: Utility enhancement. Continuous mode. Allocate the bounded Math.cot(value) utility, exactly preserving the accepted 1 / Math.tan(value) numeric composition and existing Math call semantics. Token non-regression remains required.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -142,6 +142,7 @@ Created: 31-Jul-2026
- | [78](nuc-0078.md) | Extends Clauses for Subclasses | Accepted |
- | [89](nuc-0089.md) | Named Function Declarations | Accepted |
- | [92](nuc-0092.md) | List Comprehensions | Accepted |
-+| [99](nuc-0099.md) | SQL-Style Inequality | Draft |
+@@ -119,6 +119,7 @@ Created: 31-Jul-2026
+ | [77](nuc-0077.md) | List and Population Extreme Items | Accepted |
+ | [80](nuc-0080.md) | List and Population Averages | Accepted |
+ | [84](nuc-0084.md) | List and Population Medians | Accepted |
++| [100](nuc-0100.md) | Reactive Cotangent | Draft |
  
- ### Documentation
+ ### Reasoning enhancement
  
-@@ -251,6 +252,7 @@ Created: 31-Jul-2026
- | [96](nuc-0096.md) | At Variables | Standards Track | Syntax enhancement | Accepted |
+@@ -253,6 +254,7 @@ Created: 31-Jul-2026
  | [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
  | [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Standards Track | Syntax enhancement | Draft |
-+| [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Draft |
+ | [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Rejected: full suite fails 14 corpus-count assertions |
++| [100](nuc-0100.md) | Reactive Cotangent | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0099.md` (added, +59/-0)
+**File**: `docs/nuc-0100.md` (added, +61/-0)
 ```diff
-@@ -0,0 +1,59 @@
-+# NUC 99 -- SQL-Style Inequality
+@@ -0,0 +1,61 @@
++# NUC 100 -- Reactive Cotangent
 +
 +```
-+NUC: 99
-+Title: SQL-Style Inequality
++NUC: 100
++Title: Reactive Cotangent
 +Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Language compatibility
++Category: Utility enhancement
 +Created: 09-Nov-2026
 +```
 +
 +## Abstract
 +
-+- Add contiguous `<>` as an optional SQL- and Pascal-style spelling of the
-+  existing `!=` operator, preserving its equality precedence, associativity,
-+  evaluation order, coercions, reactive dependencies and canonical rendering.
-+- Preserve every accepted spelling and meaning, including `!=`, `!==`, `<`,
-+  `<=`, `>` and `>=`; introduce no SQL null semantics, new runtime operation,
-+  keyword, configuration option, dependency or project version.
-+- This is a continuous-mode Language compatibility proposal. Token comparison
-+  is categorically skipped; immutable accepted sources, behavior, integrity,
-+  backward compatibility and all development checks remain mandatory.
++- Add unshadowed static `Math.cot(value)` for the existing numeric operation
++  `1 / Math.tan(value)`, with angles in radians and exactly the same ordered
++  tangent and reciprocal operations, including their rounding.
++- Reuse Math's intrinsic first-argument conversion, supplied-undefined gate,
++  left-to-right argument evaluation, ignored extras, reactive dependencies,
++  shadowing and transaction behavior.
++- Preserve accepted tangent and arithmetic spellings, sibling helpers,
++  ordinary property reads and user-defined methods. Add no syntax, token,
++  public Rust API, dependency, option or project version.
++- This is a continuous Utility enhancement. Every measured case requires
++  a behavior-equivalent accepted-syntax counterpart and must use the same or
++  fewer lexer tokens; all hard criteria remain mandatory.
 +
 +## Motivation
 +
-+- SQL and Pascal use `<>` for inequality. A familiar optional spelling lets
-+  programs and language models express the existing operation without
-+  translating that operator to `!=`.
-+- Accepted Nucleoid tokenizes contiguous `<>` as `<` followed by `>`, which
-+  cannot supply the right operand of an ordinary comparison. The proposal
-+  gives this former error a spelling of an existing operation rather than
-+  adding a second equality model.
-+- Nucleoid's own `!=` behavior remains the contract: this proposal does not
-+  import SQL's three-valued logic or change its treatment of null, undefined,
-+  objects, lists or numeric values.
++- Geometry and trigonometric models use cotangent as the reciprocal of the
++  tangent. A named helper states that operation directly in live expressions
++  and class-level rules instead of repeating a reciprocal around `Math.tan`.
++- The existing tangent and division already define the numeric contract.
++  The helper must preserve that exact composition rather than substitute
++  `Math.cos(value) / Math.sin(value)`, rearrange floating-point operations or
++  claim improved numerical accuracy or performance.
++- The utility is a bounded addition to the existing static Math dispatcher,
++  not a new equality, syntax, scope or numeric model.
 +
 +## Rationale
 +
@@ -1721,152 +1723,135 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 2: `f9f38b9f` (2026-11-09)
-**Commit Message**: Draft NUC 98 Every Quantifiers, Class References and Predicate Sentences
+### Incident Patch 2: `f315c080` (2026-11-09)
+**Commit Message**: NUC 99 SQL-Style Inequality
 
-Category: Syntax enhancement, for a single-proposal /nuc-proposal
-request the user made directly.
+Rejected: the every-test-passes hard criterion failed. The independent full cargo test --no-fail-fast exited 101 with 2860 passed, 14 failed and 25 existing ignored. Thirteen unchanged corpus-count assertions expected 1041 and received 1046; one expected 1030 and received 1035 after five appended executable cases. No failing candidate repair or language integration was made.
 
-Requested change: accept `every` as a spelling of the quantifier word
-`all`, so `every v in xs: c` is `all v in xs: c`, and of the class
-reference `$`, so `every Human` reads `$Human` with exact, case-sensitive
-class names. Read the statement `$Class is WORD` as `$Class.WORD = true`,
-so `$Human is mortal` and `every Human is mortal` state the same rule.
+Build --all-targets, warning-denied Clippy, formatting and backward compatibility passed. The core evaluator accepted all 1041 accepted-source replays and 1046 candidate cases, but cannot override the failed full suite. Token comparison was skipped as language_compatibility in continuous mode; scoring is unscored missing_rubric and learning is not_configured. Commit only rejection documentation and index metadata; rejected runtime, executable sources, datasets and exports remain isolated.
 
-The user accepted three compatibility breaks in advance: the pinned
-`ok = every v in xs: v` syntax error in tests/quantifiers.rs; `every`
-directly followed by a name where an operand can begin, which ran as
-juxtaposed statements; and `$Class is WORD`, which ran as three
-juxtaposed statements.
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -63,6 +63,7 @@ Created: 31-Jul-2026
- | [95](nuc-0095.md) | Item Words | Accepted |
- | [96](nuc-0096.md) | At Variables | Accepted |
- | [97](nuc-0097.md) | In and Not In Membership Tests | Draft |
-+| [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Draft |
+@@ -142,7 +142,7 @@ Created: 31-Jul-2026
+ | [78](nuc-0078.md) | Extends Clauses for Subclasses | Accepted |
+ | [89](nuc-0089.md) | Named Function Declarations | Accepted |
+ | [92](nuc-0092.md) | List Comprehensions | Accepted |
+-| [99](nuc-0099.md) | SQL-Style Inequality | Draft |
++| [99](nuc-0099.md) | SQL-Style Inequality | Rejected: full suite fails 14 corpus-count assertions |
  
- ### Runtime features
+ ### Documentation
  
-@@ -249,6 +250,7 @@ Created: 31-Jul-2026
- | [95](nuc-0095.md) | Item Words | Standards Track | Syntax enhancement | Accepted |
+@@ -252,7 +252,7 @@ Created: 31-Jul-2026
  | [96](nuc-0096.md) | At Variables | Standards Track | Syntax enhancement | Accepted |
  | [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
-+| [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Standards Track | Syntax enhancement | Draft |
+ | [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Standards Track | Syntax enhancement | Draft |
+-| [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Draft |
++| [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Rejected: full suite fails 14 corpus-count assertions |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0098.md` (added, +102/-0)
+**File**: `docs/nuc-0099.md` (modified, +180/-6)
 ```diff
-@@ -0,0 +1,102 @@
-+# NUC 98 -- Every Quantifiers, Class References and Predicate Sentences
+@@ -4,14 +4,18 @@
+ NUC: 99
+ Title: SQL-Style Inequality
+ Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
+-Status: Draft
++Status: Rejected
+ Type: Standards Track
+ Category: Language compatibility
+ Created: 09-Nov-2026
+ ```
+ 
+ ## Abstract
+ 
++- **Rejected:** the full test suite fails 14 unchanged corpus-count assertions
++  after five appended executable-document cases. The every-test-passes hard
++  criterion failed; no candidate language or executable-document changes were
++  integrated.
+ - Add contiguous `<>` as an optional SQL- and Pascal-style spelling of the
+   existing `!=` operator, preserving its equality precedence, associativity,
+   evaluation order, coercions, reactive dependencies and canonical rendering.
+@@ -28,7 +32,8 @@ Created: 09-Nov-2026
+   programs and language models express the existing operation without
+   translating that operator to `!=`.
+ - Accepted Nucleoid tokenizes contiguous `<>` as `<` followed by `>`, which
+-  cannot supply the right operand of an ordinary comparison. The proposal
++  cannot supply the right operand of an ordinary comparison; a previously
++  ignored interpolation suffix still keeps that accepted reading. The proposal
+   gives this former error a spelling of an existing operation rather than
+   adding a second equality model.
+ - Nucleoid's own `!=` behavior remains the contract: this proposal does not
+@@ -37,19 +42,188 @@ Created: 09-Nov-2026
+ 
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- Reuse `Raw::NotEqual`, `Token::NotEqual` and `BinaryOp::NotEqual` rather than
++  introduce another token kind, AST operator, parser level or evaluation path.
++- The purpose is a familiar optional cross-language spelling, not shorter
++  programs or a new equality model. The caller selected Language compatibility
++  with one uniform draw, index 4 of the five eligible NUC 1 categories.
++- Keep maximal-munch lexing: adjacent `<>` is the alias, while `< >` remains
++  separate. Do not add `<>=`, SQL null semantics, a feature flag or a keyword.
++- Do not reparse or tighten template interpolations: their accepted ignored
++  suffixes stay ignored, even when a suffix contains `<>` after a reasoning
++  pipeline. Changing that behavior would not be an additive alias.
++- No hint was supplied. Strategy learning is `not_configured` and unattributed;
++  no selected arm, policy, receipt or trial is invented.
+ 
+ ## Specification
+ 
+-- Pending: the proposer completes this section.
++- Add the literal spelling `<>` to the existing lexer rule for `!=`.
++  It is always available, requires adjacent characters and has the same
++  left-associative equality precedence, below relational operators and above
++  logical conjunction. `a <> b < c` is `a != (b < c)`;
++  `a <> b <> c` is `(a != b) != c`.
++- Evaluate both operands exactly once, left to right, using existing loose
++  inequality. Numeric/string/boolean coercion, nested-list equality, object
++  identity, nonfinite numbers and null/undefined treatment remain unchanged.
++- Preserve declaration settling: a literal `null <> 0` is true, while a
++  declaration that reads a null binding settles as its `!=` spelling does.
++  Preserve reactive reads, `.value` snapshots, class-rule validation,
++  propagation, dependency order and transaction rollback.
++- Use the same binary AST and canonical `!=` rendering in generated source,
++  graph identities and reasoning explanations. No source-spelling state is
++  retained, and no public API changes.
++- Preserve every accepted input, including those that fail at runtime.
++  A `<>` suffix after a completed interpolation pipeline remains unconsumed.
++  Quoted strings, template text outside interpolations, regular-expression
++  bodies and comments retain their contents.
++- `!=`, `!==`, `<`, `<=`, `>` and `>=` keep their meanings.
++  `<>=` tokenizes as `<>` then `=`, and `<=>` still tokenizes as `<=` then `>`.
++  No new combined operator or whitespace-insensitive spelling is added.
++- The authoritative contract is
++  [SQL-style inequality](../nucleoid.spec.md#sql-style-inequality), alongside
++  [is and is not comparisons](../nucleoid.spec.md#is-and-is-not-comparisons)
++  for the accepted equality level and coercions.
++- The appended specification entries `Nucleoid compares values with SQL style
++  inequality`, `Nucleoid keeps SQL style inequality rules live` and
++  `Nucleoid uses SQL style inequality in expressions and literal contexts`
++  cover the alias, accepted spellings, precedence, operand order, literal
++  boundaries, reactive rules, snapshots and canonical explanations.
 +
++```nuc
++assert(1 <> 2, true)
++assert(1 <> "1", false)
++assert([1, [2]] <> [1, [2]], false)
 +```
-+NUC: 98
-+Title: Every Quantifiers, Class References and Predicate Sentences
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Syntax enhancement
-+Created: 09-Nov-2026
-+Requires: 62, 93
-+```
-+
-+## Abstract
-+
-+- Adds three spellings of universal claims, each read as an accepted form:
-+  - `every NAME in COLLECTION: CONDITION` is the quantifier
-+    `all NAME in COLLECTION: CONDITION` of [NUC 62](nuc-0062.md).
-+  - `every NAME`, where an operand can begin, is the class reference
-+    `$NAME`, so `every Human.mortal = true` is `$Human.mortal = true`.
-+  - The statement `$Class is WORD`, whose value is one word, sets the
-+    property `WORD` to `true` for every instance, as `$Class.WORD = true`
-+    does. So `$Human is mortal` and `every Human is mortal` both say that
-+    every Human is mortal.
-+- The class-level rule of the Socrates example then reads as it is said:
-+
-+```
-+class Human(name: str):
-+    this.name = name
-+
-+every Human is mortal
-+
-+socrates = Human("Socrates")
-+assert(socrates.mortal, true)
-+assert(every h in Human: h.mortal, true)
-+```
-+
-+- Class names stay exact and case-sensitive: `every Human` reads `$Human`,
-+  and `every human` reads `$human`.
-+- Everywhere else `every` keeps every accepted reading, including the list
-+  query `xs.every(...)`, a variable, function or property named `every`, and
-+  `every` followed by anything but a name. A variable named `every` does not
-+  disable the new forms.
-+- The user accepted three compatibility breaks in advance, each limited to
-+  the inputs it names:
-+  - `ok = every v in xs: v` raised `SyntaxError("Unexpected keyword 'in'")`
-+    at line 1, column 17, which `tests/quantifiers.rs` pins. That assertion
-+    moves to the quantifier reading.
-+  - Where an operand can begin, the name `every` directly followed by a name
-+    ended one statement or item, and the name began the next. So after
-+    `every = 3`, `every Human = 4` ran as `every` and `Human = 4`. Those
-+    inputs now read `$NAME`.
-+  - `$Class is WORD` ran as the three statements `$Class`, `is` and `WORD`,
-+    so `$Human is mortal` raised `ReferenceError("is is not defined")` at
-+    its `is`. It now states the predicate.
-+- Any other change to an accepted parse, behavior, output or pinned test
-+  still fails backward compatibility.
-+
-+## Motivation
-+
-+- World models state facts about whole classes. The specification writes
-+  its Socrates rule as `$Human.mortal = true` under the comment
-+  `# Every human is mortal`: the comment says the rule, and the code spells
-+  it with a sigil.
-+- `every` is how people and language models state a universal claim, and it
-+  already names the list query that quantifiers equal: NUC 62 specifies
-+  `all v in xs: v > 0` to equal `xs.every(v => v > 0)` in results, reads and
-+  dependencies. Yet `every v in xs: v > 0` is a syntax error, and NUC 62
-+  pins it as one.
-+- `$` is Nucleoid's own mark for each instance of a class, and no other
-+  language reads it that way. A model that writes `every Human.mortal = true`
-+  today gets `ReferenceError("every is not defined")`.
-+- A predicate over a class can only be written as an assignment of `true`:
-+  `$Human.mortal = true` or `$Human.mortal is true`. The `is` assignments of
-+  [NUC 93](nuc-0093.md) need a property after a `$Class` root, so
-+  `$Human is mortal` runs as three statements and raises
-+  `ReferenceError("is is not defined")`.
-+- The user requested `every` as a spelling of `all` and of `$`, and
-+  `every Human is mortal` as the same statement as `$Human is mortal`.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+ 
+ ## Errors
+ 
+-- Pending: the proposer completes this section.
++- No new runtime error kind or message. Operands propagate the existing
++  `!=` errors in the same order and locations, including
++  `ReferenceError("EXACT is not defined")` for `answer = 0 <> EXACT`,
++  and `TypeError("Circular Dependency")` for a ci
 ```
 
 #### Recent Merged Pull Requests:
@@ -1895,13 +1880,13 @@ Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 99 SQL-Style Inequality
+## X. Draft NUC 100 Reactive Cotangent
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2bdf1337`: Draft NUC 99 SQL-Style Inequality. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd8c0cc9`: Draft NUC 100 Reactive Cotangent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1909,8 +1894,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [99](nuc-0099.md) | SQL-Style Inequality | Draft |
-| [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Draft |
+| [100](nuc-0100.md) | Reactive Cotangent | Draft |
+| [100](nuc-0100.md) | Reactive Cotangent | Standards Track | Utility enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1920,4 +1905,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2bdf1337` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd8c0cc9` are properly handled with clean fallback behavior.

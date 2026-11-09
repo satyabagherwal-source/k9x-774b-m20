@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T17:35:08.537Z",
+  "last_updated": "2026-11-09T17:49:07.989Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47765,8 +47765,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "2bdf1337",
-      "content_hash": "51c8dd6e8cc377e6d95063132f5c26f0713e1d301e5a5fb73e6cc36e6b0a11c0",
+      "source_version": "fd8c0cc9",
+      "content_hash": "0f867f49d4d42ed18a07c7f82febfb7c7dc6faf6d002545732c2c165058311d7",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47918,6 +47918,11 @@
         {
           "number": null,
           "title": "Draft NUC 99 SQL-Style Inequality",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Draft NUC 100 Reactive Cotangent",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48211,7 +48216,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:40:34.814Z",
+      "verified_at": "2026-11-09T17:44:09.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55518,8 +55523,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "e43a07f9",
-      "content_hash": "6639fe599bb6189d65cd9a98c35ad6f88fffc9cc548f59a1d4a47fa26d4cc72d",
+      "source_version": "e7506724",
+      "content_hash": "94893217a6eefb970bdb257c8f850815874f8d8e3d487fe5c890f2bd8d6520e5",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -55531,6 +55536,11 @@
         {
           "number": null,
           "title": "Update Rust crate crabgrind to 0.5",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "client: reject TLS1.3-only extensions in TLS1.2 ServerHello",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55639,7 +55649,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T11:16:29.590Z",
+      "verified_at": "2026-11-09T17:44:04.691Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63798,8 +63808,8 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "22766f08",
-      "content_hash": "10773ca168140b70ad473eef453b446af1c8c3a121d373ce23e0ebc1cf791179",
+      "source_version": "d7b8f4d3",
+      "content_hash": "f2b18b9c0da435050fb621ad72c29ecbd92518e08a887f17e897d95b7c5852bc",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
@@ -63811,6 +63821,11 @@
         {
           "number": null,
           "title": "go.mod: pick up p9 v0.5.1, which bounds a server-reported size",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "gzip: chmod the opened output and tidy the mode test",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -63854,7 +63869,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T15:28:13.389Z",
+      "verified_at": "2026-11-09T17:43:54.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175140,16 +175155,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
       "source_version": "hf-edge0-audio8-tts-realistic-air",
-      "content_hash": "5501fbcb63ec6d6fefe0db01bb182cf01fb31dc079a3cf63fefa665853d5f460",
+      "content_hash": "192dddb81799e3a03fb164c65c08241a0faa00e35af45e5b23094d405dfc7fab",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hierarchical Autoregressive Decoupling for Latency Reduction",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Neural Codec Codebook Quantization Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:00:52.009Z",
+      "verified_at": "2026-11-09T17:49:07.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

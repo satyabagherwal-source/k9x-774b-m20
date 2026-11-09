@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T17:35:08.662Z",
+  "last_updated": "2026-11-09T17:49:08.114Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "51c8dd6e8cc377e6d95063132f5c26f0713e1d301e5a5fb73e6cc36e6b0a11c0",
-      "verified_at": "2026-11-09T16:40:34.959Z",
+      "content_hash": "0f867f49d4d42ed18a07c7f82febfb7c7dc6faf6d002545732c2c165058311d7",
+      "verified_at": "2026-11-09T17:44:09.792Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:40:34.959Z"
+      "last_updated": "2026-11-09T17:44:09.792Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "6639fe599bb6189d65cd9a98c35ad6f88fffc9cc548f59a1d4a47fa26d4cc72d",
-      "verified_at": "2026-11-09T11:16:29.773Z",
+      "content_hash": "94893217a6eefb970bdb257c8f850815874f8d8e3d487fe5c890f2bd8d6520e5",
+      "verified_at": "2026-11-09T17:44:04.854Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T11:16:29.773Z"
+      "last_updated": "2026-11-09T17:44:04.854Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -9186,14 +9186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-u-root-u-root",
-      "content_hash": "10773ca168140b70ad473eef453b446af1c8c3a121d373ce23e0ebc1cf791179",
-      "verified_at": "2026-11-08T15:28:13.478Z",
+      "content_hash": "f2b18b9c0da435050fb621ad72c29ecbd92518e08a887f17e897d95b7c5852bc",
+      "verified_at": "2026-11-09T17:43:54.526Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:28:13.478Z"
+      "last_updated": "2026-11-09T17:43:54.526Z"
     },
     "shoutem/ui": {
       "repository": "shoutem/ui",
@@ -17585,15 +17585,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-      "content_hash": "0136818ac131ae7e23171866b99eb45be0fec3d9e60b8288cd7560688f045a25",
-      "verified_at": "2026-11-09T00:31:10.856Z",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+      "content_hash": "192dddb81799e3a03fb164c65c08241a0faa00e35af45e5b23094d405dfc7fab",
+      "verified_at": "2026-11-09T17:49:08.113Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T00:31:10.856Z"
+      "last_updated": "2026-11-09T17:49:08.113Z"
     },
     "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated": {
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",

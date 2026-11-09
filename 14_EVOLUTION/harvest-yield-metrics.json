@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T17:35:08.658Z",
-  "total_cycles_completed": 8615,
-  "total_learnings_persisted": 8615,
-  "total_rules_promoted": 8437,
+  "last_updated": "2026-11-09T17:49:08.110Z",
+  "total_cycles_completed": 8619,
+  "total_learnings_persisted": 8619,
+  "total_rules_promoted": 8442,
   "history": [
-    {
-      "timestamp": "2026-11-09T01:01:36.351Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T01:06:01.988Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-fermionresearch-phonon-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T01:12:34.602Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T01:12:39.640Z",
-      "repository": "mikelikesdesign/SwiftUI-experiments",
-      "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T01:12:41.067Z",
       "repository": "openbmb/MiniCPM-OCR-1.0",
@@ -1403,6 +1375,34 @@
       "repository": "StarRocks/starrocks",
       "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T17:43:54.523Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T17:44:04.851Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T17:44:09.789Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T17:49:08.110Z",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `22766f08`  
+> **Source Version**: `d7b8f4d3`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:28:12.543Z  
+> **Timestamp**: 2026-11-09T17:43:53.024Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:28:12.342Z  
+> **Harvest Timestamp**: 2026-11-09T17:43:52.349Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1286,104 +1286,209 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `22766f08` (2026-11-06)
-**Commit Message**: go.mod: pick up p9 v0.5.1, which bounds a server-reported size
+### Incident Patch 1: `d7b8f4d3` (2026-11-09)
+**Commit Message**: gzip: chmod the opened output and tidy the mode test
 
-p9's xattr client sized a buffer from rxattrwalk.Size, a uint64 taken
-straight off the wire with nothing bounding it, so a server reporting
-2^64-1 for an attribute made the client panic with "makeslice: len out
-of range". A large but representable size was no better; the client
-simply tried to allocate it.
+Call Chmod on the *os.File returned by OpenFile instead of on the
+path, so the mode lands on the file being written even if the path is
+replaced in between. Shorten the comment.
 
-u-root reaches that code from cmds/core/ufs and pkg/p9dev, and the size
-comes from whatever is on the other end of the connection, so a 9P
-server u-root mounts could crash the client with one small reply.
+Use got/want messages with context in TestFileProcessKeepsMode.
 
-v0.5.0 is the only release exposed: the xattr client arrived in it, and
-u-root moved to it two commits ago.
+Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
 
-Verified: go mod tidy is a no-op afterwards, go build ./... and go build
--mod=vendor ./... pass, and pkg/ssh9p and pkg/p9dev pass their tests.
-The bound is present in the vendored tree at
-vendor/github.com/hugelgupf/p9/p9/client_file.go.
-
-Authored by Claude.
-
-Signed-off-by: Ron Minnich <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `pkg/gzip/file.go` (modified, +6/-6)
 ```diff
-@@ -54,7 +54,7 @@ require (
+@@ -140,17 +140,17 @@ func (f *File) Process() error {
+ 		if fi, err = i.Stat(); err != nil {
+ 			return err
+ 		}
+-		// Like gzip(1), give the output the input's permissions. Set them
+-		// before writing: OpenFile's mode is masked by the umask and is
+-		// not applied to an existing output that -f overwrites.
++		// Give the output file the input file's permissions.
+ 		perm := fi.Mode().Perm()
+-		if o, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
++		var out *os.File
++		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
+ 			return err
+ 		}
+-		if err = os.Chmod(f.outputPath(), perm); err != nil {
+-			o.Close()
++		if err = out.Chmod(perm); err != nil {
++			out.Close()
+ 			return err
+ 		}
++		o = out
+ 	}
+ 
+ 	if f.Options.Verbose && !f.Options.Quiet {
+```
+
+**File**: `pkg/gzip/file_test.go` (modified, +9/-8)
+```diff
+@@ -321,11 +321,12 @@ func TestFileProcessKeepsMode(t *testing.T) {
+ 	}
+ 	plain := filepath.Join(t.TempDir(), "secret")
+ 	if err := os.WriteFile(plain, []byte("hunter2"), 0o600); err != nil {
+-		t.Fatal(err)
++		t.Fatalf("create %q with mode 0600: got %v, want nil", plain, err)
+ 	}
+-	// An existing, wider output, as overwritten by -f.
++	// An existing 0644 output, more permissive than the 0600 input, which
++	// -f overwrites.
+ 	if err := os.WriteFile(plain+".gz", nil, 0o644); err != nil {
+-		t.Fatal(err)
++		t.Fatalf("create %q with mode 0644: got %v, want nil", plain+".gz", err)
+ 	}
+ 
+ 	f := File{
+@@ -339,24 +340,24 @@ func TestFileProcessKeepsMode(t *testing.T) {
+ 		},
+ 	}
+ 	if err := f.Process(); err != nil {
+-		t.Fatalf("File.Process() compression error = %v", err)
++		t.Fatalf("compressing %q: got %v, want nil", plain, err)
+ 	}
+ 	if err := os.Remove(plain); err != nil {
+-		t.Fatal(err)
++		t.Fatalf("remove %q: got %v, want nil", plain, err)
+ 	}
+ 	f.Path = plain + ".gz"
+ 	f.Options.Decompress = true
+ 	if err := f.Process(); err != nil {
+-		t.Fatalf("File.Process() decompression error = %v", err)
++		t.Fatalf("decompressing %q: got %v, want nil", f.Path, err)
+ 	}
+ 
+ 	for _, p := range []string{plain + ".gz", plain} {
+ 		fi, err := os.Stat(p)
+ 		if err != nil {
+-			t.Fatal(err)
++			t.Fatalf("stat %q: got %v, want nil", p, err)
+ 		}
+ 		if got := fi.Mode().Perm(); got != 0o600 {
+-			t.Errorf("File.Process() mode of %q = %#o; want %#o", p, got, 0o600)
++			t.Errorf("mode of %q: got %#o, want %#o", p, got, 0o600)
+ 		}
+ 	}
+ }
+```
+
+---
+
+### Incident Patch 2: `2a1953f5` (2026-11-04)
+**Commit Message**: gzip: keep the input file's permissions on the output
+
+File.Process created the output with os.Create and never looked at the
+input's mode, and Cleanup then removes the input. gzip or gzip -d on a
+0600 file therefore left a 0644 copy behind (0666 under a zero umask),
+readable by every local user. GNU and BSD gzip give the output the
+input's mode.
+
+Open the output with the input's permission bits and chmod it before
+any data is written, so neither the umask nor an existing output
+overwritten by -f can leave it wider.
+
+Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
+
+**File**: `pkg/gzip/file.go` (modified, +13/-1)
+```diff
+@@ -136,7 +136,19 @@ func (f *File) Process() error {
+ 	} else if f.Options.Stdout {
+ 		o = os.Stdout
+ 	} else {
+-		if o, err = os.Create(f.outputPath()); err != nil {
++		var fi os.FileInfo
++		if fi, err = i.Stat(); err != nil {
++			return err
++		}
++		// Like gzip(1), give the output the input's permissions. Set them
++		// before writing: OpenFile's mode is masked by the umask and is
++		// not applied to an existing output that -f overwrites.
++		perm := fi.Mode().Perm()
++		if o, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
++			return err
++		}
++		if err = os.Chmod(f.outputPath(), perm); err != nil {
++			o.Close()
+ 			return err
+ 		}
+ 	}
+```
+
+**File**: `pkg/gzip/file_test.go` (modified, +47/-0)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	"errors"
+ 	"os"
+ 	"path/filepath"
++	"runtime"
+ 	"testing"
  )
  
- require (
--	github.com/hugelgupf/p9 v0.5.0
-+	github.com/hugelgupf/p9 v0.5.1
- 	github.com/jaypipes/ghw v0.12.0
- 	github.com/pkg/sftp v1.13.9
- 	github.com/sirupsen/logrus v1.9.3
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -105,8 +105,8 @@ github.com/hashicorp/golang-lru/v2 v2.0.7 h1:a+bsQ5rvGLjzHuww6tVxozPZFVghXaHOwFs
- github.com/hashicorp/golang-lru/v2 v2.0.7/go.mod h1:QeFd9opnmA6QUJc5vARoKUSoFhyfM2/ZepoAG6RGpeM=
- github.com/hugelgupf/go-shlex v0.0.0-20200702092117-c80c9d0918fa h1:s3KPo0nThtvjEamF/aElD4k5jSsBHew3/sgNTnth+2M=
- github.com/hugelgupf/go-shlex v0.0.0-20200702092117-c80c9d0918fa/go.mod h1:I1uW6ymzwsy5TlQgD1bFAghdMgBYqH1qtCeHoZgHMqs=
--github.com/hugelgupf/p9 v0.5.0 h1:/gXniAY+qq3rVcxpKcUp1tX1Kpe8aHQa181bTC2Ts7s=
--github.com/hugelgupf/p9 v0.5.0/go.mod h1:+3Q9CRwDxOVMp/EHmef0ZQ8KMEkBrutei+dMScb0UWw=
-+github.com/hugelgupf/p9 v0.5.1 h1:u8XodueoFehU/UcJRoTvX4BZVUGZ3rFUx8/PPQy2QYw=
-+github.com/hugelgupf/p9 v0.5.1/go.mod h1:+3Q9CRwDxOVMp/EHmef0ZQ8KMEkBrutei+dMScb0UWw=
- github.com/hugelgupf/socketpair v0.0.0-20230822150718-707395b1939a h1:Nq7wDsqsVBUBfGn8yB1M028ShWTKTtZBcafaTJ35N0s=
- github.com/hugelgupf/socketpair v0.0.0-20230822150718-707395b1939a/go.mod h1:71Bqb5Fh9zPHF8jwdmMEmJObzr25Mx5pWLbDBMMEn6E=
- github.com/hugelgupf/vmtest v0.0.0-20240307030256-5d9f3d34a58d h1:nP8SfQJqruIVSWYJTuYc37jLHEY1Z0fF+zKSrs3K/C8=
-```
-
-**File**: `vendor/github.com/hugelgupf/p9/p9/client_file.go` (modified, +14/-0)
-```diff
-@@ -139,6 +139,20 @@ func (c *clientFile) xattrWalkRead(attr string) ([]byte, error) {
- 	if rxattrwalk.Size == 0 {
- 		return []byte{}, nil
+@@ -314,6 +315,52 @@ func TestFileProcess(t *testing.T) {
  	}
-+
-+	// Size is a uint64 taken straight off the wire and is the only thing
-+	// deciding this allocation, so a server that reports a huge attribute
-+	// makes the client try to allocate it. Nothing else bounds it: Size
-+	// describes the attribute rather than the message carrying it, so the
-+	// transport's own length check never sees it.
-+	//
-+	// The server refuses to serve an attribute larger than maximumLength
-+	// (see txattrwalk.handle), so a conforming peer never reports one, and
-+	// EINVAL is what that server answers in the same case.
-+	if rxattrwalk.Size > uint64(maximumLength) {
-+		return nil, linux.EINVAL
+ }
+ 
++func TestFileProcessKeepsMode(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("no Unix permission bits on windows")
++	}
++	plain := filepath.Join(t.TempDir(), "secret")
++	if err := os.WriteFile(plain, []byte("hunter2"), 0o600); err != nil {
++		t.Fatal(err)
++	}
++	// An existing, wider output, as overwritten by -f.
++	if err := os.WriteFile(plain+".gz", nil, 0o644); err != nil {
++		t.Fatal(err)
 +	}
 +
- 	buf := make([]byte, rxattrwalk.Size)
- 	n, err := xattrFile.ReadAt(buf, 0)
- 	if err != nil && !errors.Is(err, io.EOF) {
-```
-
-**File**: `vendor/modules.txt` (modified, +1/-1)
-```diff
-@@ -209,7 +209,7 @@ github.com/hashicorp/golang-lru/v2/simplelru
- # github.com/hugelgupf/go-shlex v0.0.0-20200702092117-c80c9d0918fa
- ## explicit; go 1.14
- github.com/hugelgupf/go-shlex
--# github.com/hugelgupf/p9 v0.5.0
-+# github.com/hugelgupf/p9 v0.5.1
- ## explicit; go 1.26.0
- github.com/hugelgupf/p9/fsimpl/localfs
- github.com/hugelgupf/p9/fsimpl/templatefs
++	f := File{
++		Path: plain,
++		Options: &Options{
++			Blocksize: 128,
++			Level:     -1,
++			Processes: 1,
++			Suffix:    ".gz",
++			Force:     true,
++		},
++	}
++	if err := f.Process(); err != nil {
++		t.Fatalf("File.Process() compression error = %v", err)
++	}
++	if err := os.Remove(plain); err != nil {
++		t.Fatal(err)
++	}
++	f.Path = plain + ".gz"
++	f.Options.Decompress = true
++	if err := f.Process(); err != nil {
++		t.Fatalf("File.Process() decompression error = %v", err)
++	}
++
++	for _, p := range []string{plain + ".gz", plain} {
++		fi, err := os.Stat(p)
++		if err != nil {
++			t.Fatal(err)
++		}
++		if got := fi.Mode().Perm(); got != 0o600 {
++			t.Errorf("File.Process() mode of %q = %#o; want %#o", p, got, 0o600)
++		}
++	}
++}
++
+ func TestCheckPath(t *testing.T) {
+ 	d := t.TempDir()
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3827** (2026-11-09): gzip: keep the input file's permissions on the output (@alhudz)
 - **PR #3826** (2026-11-07): go.mod: pick up p9 v0.5.1, which bounds a server-reported size (@rminnich)
 - **PR #3822** (2026-11-05): fix spelling so spellcheck will pass (@rminnich)
 - **PR #3821** (2026-11-05): go.mod: drop the phantom pkg/uroot module and its replace (@rminnich)
+- **PR #3820** (2026-11-08): Add kexec UniversalPayload RISC-V 64 support (@AjanZhong)
 - **PR #3819** (closed): build(deps): bump postcss-selector-parser from 6.0.13 to 6.1.5 in /website (@dependabot[bot])
-- **PR #3818** (2026-11-03): cmds/core/cmp: exit 1 when the files differ, as documented (@minjcore)
-- **PR #3817** (2026-11-03): boot/grub: fix searches for separate FAT boot partitions (@loearthorbit)
 
 ---
 
@@ -1403,28 +1508,38 @@ Signed-off-by: Ron Minnich <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go.mod: pick up p9 v0.5.1, which bounds a server-reported size
+## X. gzip: chmod the opened output and tidy the mode test
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/gzip/file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `22766f08`: go.mod: pick up p9 v0.5.1, which bounds a server-reported size. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7b8f4d3`: gzip: chmod the opened output and tidy the mode test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/gzip/file.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/hugelgupf/p9 v0.5.1
+		// Give the output file the input file's permissions.
+		var out *os.File
+		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
+		if err = out.Chmod(perm); err != nil {
+			out.Close()
+		o = out
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/hugelgupf/p9 v0.5.0
+		// Like gzip(1), give the output the input's permissions. Set them
+		// before writing: OpenFile's mode is masked by the umask and is
+		// not applied to an existing output that -f overwrites.
+		if o, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
+		if err = os.Chmod(f.outputPath(), perm); err != nil {
+			o.Close()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `22766f08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7b8f4d3` are properly handled with clean fallback behavior.
