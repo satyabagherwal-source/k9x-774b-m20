@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `fbd810e8`  
+> **Source Version**: `e3622da0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T13:10:11.485Z  
+> **Timestamp**: 2026-11-09T14:04:47.285Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T13:10:11.059Z  
+> **Harvest Timestamp**: 2026-11-09T14:04:47.278Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1628,322 +1628,220 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbd810e8` (2026-11-09)
-**Commit Message**: Allocate NUCs before drafting
+### Incident Patch 1: `e3622da0` (2026-11-09)
+**Commit Message**: Draft NUC 97 In and Not In Membership Tests
 
-Require new NUCs to be drafted as Draft proposals, committed, and pushed before proposal work begins. Update proposal, evaluation, ARC, and Git workflows to pin and build on the allocation.
+Category: Syntax enhancement, from one uniform draw over the five
+categories NUC 1 marks eligible (index 0, probability 1/5, no redraw), in
+a continuous /nuc-proposal cycle.
 
-**File**: `.claude/CLAUDE.md` (modified, +2/-2)
+Requested change: add the membership tests `A in B` and `A not in B` as
+shorter spellings of `B.includes(A)` and `!B.includes(A)` for lists, class
+populations and strings, at the level of `<`, `<=`, `>` and `>=`. Any
+other right operand raises a TypeError. Every input accepted at this
+revision keeps its parse and behavior, including template interpolations
+that ignore their trailing tokens.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8fPFgjTqo3xFw89fzH
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -17,9 +17,9 @@ not a replacement for the policies it links to.
+@@ -62,6 +62,7 @@ Created: 31-Jul-2026
+ | [94](nuc-0094.md) | Opt-In Conditional Words | Accepted |
+ | [95](nuc-0095.md) | Item Words | Accepted |
+ | [96](nuc-0096.md) | At Variables | Accepted |
++| [97](nuc-0097.md) | In and Not In Membership Tests | Draft |
+ 
+ ### Runtime features
+ 
+@@ -247,6 +248,7 @@ Created: 31-Jul-2026
+ | [94](nuc-0094.md) | Opt-In Conditional Words | Standards Track | Syntax enhancement | Accepted |
+ | [95](nuc-0095.md) | Item Words | Standards Track | Syntax enhancement | Accepted |
+ | [96](nuc-0096.md) | At Variables | Standards Track | Syntax enhancement | Accepted |
++| [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0097.md` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++# NUC 97 -- In and Not In Membership Tests
++
++```
++NUC: 97
++Title: In and Not In Membership Tests
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Syntax enhancement
++Created: 09-Nov-2026
++```
++
++## Abstract
++
++- Adds the membership tests `A in B` and `A not in B`. `x in xs` is
++  `xs.includes(x)`, three lexer tokens instead of six, and `x not in xs` is
++  `!xs.includes(x)`, four instead of seven.
++- The right operand is a list, a class population or a string, the values
++  whose `includes` tests membership: a list or population holds an item equal
++  to `A` under the deep equality `includes` uses, and a string holds the text
++  of `A`.
++- Any other right operand raises a `TypeError`, where `includes` returns
++  `undefined` for an object or `null`. A silent `undefined` would make
++  `"a" not in {a: 1}` read `true`, and no later NUC could change that
++  accepted result, so key membership on objects stays open.
++- A membership test stands with `<`, `<=`, `>` and `>=`: it binds tighter
++  than `==`, `is`, `&&`, `and`, `||`, `or` and `??`, and looser than
++  arithmetic. It stays live as `includes` does, so `known = "green" in tags`
++  follows `tags`.
++- Only inputs that were errors at the accepted revision change. A template
++  interpolation such as `` `${x in xs}` `` keeps ignoring its trailing tokens
++  and reading `x`, the class of break that rejected [NUC 91](nuc-0091.md).
++
++## Motivation
++
++- Membership is the everyday test of a rule: a status among the allowed
++  ones, a color in a palette, a point in a figure. Accepted Nucleoid spells
++  it `xs.includes(x)`, which names the collection before the item and costs
++  six lexer tokens, or seven with `!` for the negation.
++- `x in xs` and `x not in xs` are Python's spellings, and `in` is also an
++  operator of JavaScript and SQL, so language models write them in
++  conditions and rules. At the accepted revision each is a syntax error that
++  stops the whole program before any statement runs: `x in xs` raises
++  `SyntaxError("Unexpected keyword 'in'")`, and
++  `if color in ["red", "blue"]:` raises
++  `SyntaxError("Expected ':' but found keyword 'in'")`.
++- The accepted ARC instruction datasets already test membership in their
++  world-model rules, all through `includes`:
++  `pair.includes($Obj.color@first)` in `0d3d703e`,
++  `$Obj.points.includes([canvas_width - 1 - point[0], point[1]])` in
++  `44f52bb0` and `figure.holes.includes(hole)` in `fafffa47`. Written as
++  `hole in figure.holes`, a rule reads in the order it is said.
++- `in` is already a reserved word. Outside template interpolations, which
++  ignore their trailing tokens, the accepted grammar reads it only after the
++  loop name of `for`, the bound name of a quantifier and the name of a
++  comprehension, and as a property after `.`. An infix `in` is therefore
++  new syntax, not a new meaning for accepted source.
++- [NUC 64](nuc-0064.md) listed `in` and `not in` among the forms it did not
++  add, and [NUC 95](nuc-0095.md) notes that accepted Nucleoid has no `in`
++  operator.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `49bd871f` (2026-11-09)
+**Commit Message**: Avoid duplicate NUC allocations
+
+Pull before allocating a draft, renumber it if its number is taken, and skip concepts already proposed. Explicit requests report the existing NUC instead.
+
+**File**: `.claude/CLAUDE.md` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ not a replacement for the policies it links to.
  | [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
  | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
  | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
--| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
-+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, and `NUC <number> <Title>` outcome commit messages |
+-| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, and `NUC <number> <Title>` outcome commit messages |
++| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, and `NUC <number> <Title>` outcome commit messages |
  | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
--| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
-+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
- 
- All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
+ | [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
  
 ```
 
-**File**: `.claude/agents/arc-purposal.agent.md` (modified, +2/-1)
+**File**: `.claude/rules/proposals.instructions.md` (modified, +5/-0)
 ```diff
-@@ -111,7 +111,8 @@ Follow `.claude/CLAUDE.md`, the
-   acceptance makes it Accepted and any other decision Automatic-Accepted.
- - Record the outcome through the `/nuc-proposal` caller steps, with its basis,
-   the evaluator's decision, and the run's evidence. Those steps commit the
--  NUC's outcome, pulling before and pushing right after under the
-+  NUC's Draft allocation before its proposer starts and its outcome after the
-+  run, pulling before and pushing right after each under the
-   [git synchronization policy](../rules/git.instructions.md). Never change
-   project versions.
- - After the outcome, create or update the puzzle's progress record,
+@@ -327,6 +327,11 @@ to that evaluation and must not recursively launch another agent.
+   change, plus its Draft rows in both NUC indexes. It commits only those
+   paths as `Draft NUC <number> <Title>` and pushes right after. That commit
+   allocates the proposal and its number.
++- Right before that commit the caller pulls again. When another NUC already
++  uses the drafted number, it claims the next number. When a NUC on `main`,
++  whatever its status, already proposes the same concept, it skips the
++  proposal, allocates nothing and starts again with a new selection; a
++  request that names that concept stops and reports the existing NUC.
+ - The pushed allocation is the accepted revision the NUC pins: it changes no
+   runtime, executable document, test, dataset or export. The proposer then
+   completes the draft in the candidate worktree, followed by the usual
 ```
 
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +5/-0)
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +14/-3)
 ```diff
-@@ -15,6 +15,11 @@ You draft and prototype exactly one added or updated NUC revision. Follow
-   `git pull --ff-only --autostash` in the primary checkout, never in the
-   supplied candidate worktree, and report the commits it brought in. Keep
-   drafting against the caller's pinned baseline revision.
-+- For a new NUC, the caller has already allocated it under the skill's
-+  [allocation rule](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only):
-+  the pinned revision is the pushed allocation, whose Draft document carries
-+  the number, confirmed category and proposal details. Complete that draft in
-+  the candidate, keeping its number and category.
- - Follow the caller-owned [enhancement selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement);
-   do not redraw the selected category.
- - Apply any caller-supplied hint under the skill's
+@@ -33,18 +33,29 @@ repeats it:
+    details: the Abstract and Motivation of the requested change, followed by
+    the remaining required sections for the proposer to complete. Add its Draft
+    rows to both indexes in `docs/nuc-0000.md`, and change nothing else.
+-3. **Allocate.** Commit those two paths alone, with the subject
++3. **Check before submitting.** Right before the allocation commit, pull
++   again and compare the draft with every NUC that `main` now records:
++   - **Same number:** when another NUC already uses the drafted number,
++     claim the next one, the highest number recorded plus one, and renumber
++     the draft's file name, title line, header and both index rows.
++   - **Same concept:** when a NUC of any status already proposes the same
++     concept, the same feature or change under any title, skip this
++     proposal. Remove the uncommitted draft and its own index rows, allocate
++     nothing, and start again at step 1 with a new selection under the
++     [selection rule](#select-an-unspecified-enhancement). A request that
++     names that concept stops instead and reports the existing NUC.
++4. **Allocate.** Commit those two paths alone, with the subject
+    `Draft NUC <number> <Title>` and the category and requested change in the
+    body, and push right away. The pushed commit allocates the proposal and its
+    number, so concurrent sessions number their NUCs after it.
+-4. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
++5. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
+    the allocation, as the accepted revision, record its baseline, and create
+    the candidate worktree from it. Then
+    [select the strategy](#select-and-consume-a-proposal-strategy) and run the
+    fresh proposer, which completes the draft and prototypes the change, the
+    Rust improvement pass and the fresh evaluator, as the rest of this skill
+    describes.
+-5. **Commit and push the final version.** Record the outcome in a new commit,
++6. **Commit and push the final version.** Record the outcome in a new commit,
+    `NUC <number> <Title>`, that holds the final proposal along with its code
+    changes when it is accepted, and push it right after, under the
+    [outcome commit rule](#name-outcome-commits-caller-only).
 ```
 
-**File**: `.claude/rules/git.instructions.md` (modified, +10/-6)
+**File**: `CONTRIBUTING.md` (modified, +5/-2)
 ```diff
-@@ -14,10 +14,13 @@ pulling before it starts.
- - Among all agents, only two coordinating callers commit and push, each
-   following the caller steps of its own skill:
-   - `/nuc-proposal`, under the
--    [nuc-proposal skill](../skills/nuc-proposal/SKILL.md), commits NUC
--    outcomes (Accepted, Automatic-Accepted, Rejected) under the
--    [proposal rules](proposals.instructions.md), including those of NUCs that
--    `/arc-purposal` requests and of cycles that `/nuc-evaluate` coordinates.
-+    [nuc-proposal skill](../skills/nuc-proposal/SKILL.md), commits each new
-+    NUC's Draft allocation before working on its details, under the
-+    [allocation step](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
-+    and NUC outcomes (Accepted, Automatic-Accepted, Rejected), which carry the
-+    final version, under the [proposal rules](proposals.instructions.md),
-+    including those of NUCs that `/arc-purposal` requests and of cycles that
-+    `/nuc-evaluate` coordinates.
-   - `/arc-purposal`, under the
-     [arc-purposal skill](../skills/arc-purposal/SKILL.md#commit-and-push),
-     commits its own ARC changes once, when it is done: the puzzle's dataset,
-@@ -59,8 +62,9 @@ pulling before it starts.
- ## Push after every commit
+@@ -123,8 +123,11 @@ the execution-mode policy requires comparison.
  
- - Every `/nuc-proposal` and `/arc-purposal` commit is followed immediately by
--  `git push` of the same branch. This includes NUC outcome commits (Accepted,
--  Automatic-Accepted, Rejected), those for NUCs that `/arc-purposal` requests,
-+  `git push` of the same branch. This includes NUC allocation commits, NUC
-+  outcome commits (Accepted, Automatic-Accepted, Rejected), those for NUCs
-+  that `/arc-purposal` requests,
-   `/arc-purposal`'s own commit of its ARC changes, and merge commits. A commit
-   is not finished until it is pushed.
- - If the push is rejected because the remote moved, pull, resolve, and push
-```
-
-**File**: `.claude/rules/proposals.instructions.md` (modified, +33/-6)
-```diff
-@@ -255,11 +255,13 @@ revision. This applies to process and documentation-only NUCs too; they still
- undergo independent behavior, integrity, compatibility, and development checks.
+ The caller pulls first, then allocates a new NUC before its details: it
+ commits and pushes the Draft document, with its header, category and proposal
+-details, and the NUC's index rows as `Draft NUC <number> <Title>`. The outcome
+-commit, `NUC <number> <Title>`, later carries the final version with its code
++details, and the NUC's index rows as `Draft NUC <number> <Title>`. Right before
++that commit it pulls again, claims the next number when another NUC already
++uses the drafted one, and skips the proposal and starts again when a NUC on
++`main` already proposes the same concept. The outcome commit,
++`NUC <number> <Title>`, later carries the final version with its code
+ changes; see the
+ [allocation step](.claude/skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only).
  
- Pin the accepted Git revision and record its token baseline before editing
--runtime behavior or executable cases. Give the proposer its requested change,
--proposal path and confirmed category, execution mode and runtime applicability
--with supporting rationale, baseline revision and immutable JSON artifact,
--and candidate worktree. When configured, also supply the pre-draft strategy
--receipt and policy paths/raw pins, trial identity and actionable approach.
-+runtime behavior or executable cases. For a new NUC, that revision is its
-+pushed [allocation](#allocate-new-nucs-first-caller-only). Give the proposer
-+its requested change, proposal path and confirmed category, execution mode
-+and runtime applicability with supporting rationale, baseline revision and
-+immutable JSON artifact, and candidate worktree. When configured, also supply
-+the pre-draft strategy receipt and policy paths/raw pins, trial identity and
-+actionable approach.
- Use `.claude/agents/nuc-proposal.agent.md` and
- `.claude/skills/nuc-proposal/SKILL.md` for drafting, prototyping, equivalent
- case rewrites, synchronization, and development checks. It must not run the
-@@ -314,6 +316,31 @@ runtime, reference, synthesized sources, and rendered exports synchronized.
- Outcome metadata, such as updating a status or index after evaluation, belongs
- to that evaluation and must not recursively launch another agent.
- 
-+## Allocate new NUCs first (caller only)
-+
-+- Every `/nuc-proposal` task first pulls under the
-+  [git synchronization policy](git.instructions.md#pull-first), so it runs
-+  against the most current remote state.
-+- The caller drafts a new NUC before its details: `docs/nuc-XXXX.md` with its
-+  complete header, including `Status: Draft` and the confirmed `Category`,
-+  and its proposal details, the Abstract and Motivation of the requested
-+  change, plus its Draft rows in both NUC indexes. It commits only those
-+  paths as `Draft NUC <number> <Title>` and pushes right after. That commit
-+  allocates the proposal and its number.
-+- The pushed allocation is the accepted revision the NUC pins: it changes no
-+  runtime, executable document, test, dataset or export. The proposer then
-+  completes the draft in the candidate worktree, followed by the usual
-+  improvement pass, independent evaluation and decision.
-+- The outcome commit carries the final version: the final proposal with the
-+  integrated code changes for Accepted or Automatic-Accepted, and only the
-+  rejection documentation for Rejected. It is a new commit; the pushed
-+  allocation is never amended.
-+- The allocation records no outcome and needs no evaluation of its own.
-+  Revisions of an existing NUC already hold their number and skip it, and a
-+  Blocked or paused NUC keeps its allocated Draft. The
-+  [nuc-proposal skill](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only)
-+  has the steps.
-+
- ## Outcome commit messages (caller only)
- 
- - Every commit that records a NUC outcome, Accepted, Automatic-Accepted or
-@@ -342,7 +369,7 @@ to that evaluation and must not recursively launch another agent.
- - Keep rejected implementation changes isolated in the candidate worktree; do not apply its full diff merely to record the NUC.
- - Stage explicit proposal/index paths and use a path-limited commit. Verify the resulting commit contains only the rejection documentation and directly related metadata. Never use repository-wide staging or `git commit -a`, or include unrelated files already staged.
- - Preserve unrelated staged and unstaged changes. If the rejection documentation is already committed, verify and report that commit instead of creating an empty duplicate.
--- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits NUC outcomes, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
-+- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits NUC allocations and outcomes, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
- 
- ## ARC-requested proposals (caller only)
- 
-```
-
-**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +20/-14)
-```diff
-@@ -269,10 +269,14 @@ The only other NUC an invocation prepares is its
- 
- 1. Trigger `/nuc-proposal` for the request by following the caller steps of
-    the [nuc-proposal skill](../nuc-proposal/SKILL.md), using the request's
--   `requested_change` as the requested change. Choose the next NUC number,
--   confirm the category and runtime applicability (ask the user when either is
--   uncertain), pin the accepted revision and record its immutable baseline,
--   and create a candidate worktree. Complete the
-+   `requested_change` as the requested change. Confirm the category and
-+   runtime applicability (ask the user when either is uncertain), and
-+   allocate the NUC under the skill's
-+   [allocation step](../nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only):
-+   draft its number, category and proposal details from the request, then
-+   commit and push that Draft alone. Pin the pushed allocation as the accepted
-+   revision, record its immutable baseline, and create a candidate worktree
-+   from it. Complete the
-    [pre-draft strategy selection](#learn-the-nuc-proposal-strategy) before
-    launching a fresh `nuc-proposal` agent with the request, its evidence, and
-    the pinned strategy/rubric handoff. Complete the Rust improvement pass when
-@@ -389,10 +393,10 @@ push it:
-   replaced it. Preserve pre-existing entries, other datasets, genesis files,
-   and unrelated workflow changes. Keep the candidate isolated.
- 
--Those caller steps push the requested NUC's outcome commit right after it,
--pulling first, under the
--[git synchronization policy](../../rules/git.instructions.md). That commit
--holds only the NUC's own records and integration; the dataset, README,
-+Those caller steps push the requested NUC's allocation and outcome commits
-+right after each, pulling first, under the
-+[git synchronization policy](../../rules/git.instructions.md). Those commits
-+hold only the NUC's own records and integration; the dataset, README,
- reporting-list, solver-default, and progress-record changes wait for this
- invocation's [own commit](#commit-and-push) at the end. Never change project
- versions.
-@@ -554,9 +558,10 @@ with the dataset.
- When the invocation is done, after the progress record, commit its changes
- and push them under the
- [git synchronization policy](../../rules/git.instructions.md). This is its
--one commit of its own, separate from a requested NUC's outcome commit, which
--the nuc-proposal caller steps already made and pushed. An invocation that
--pauses, or stops before it writes the progress record, commits nothing.
-+one commit of its own, separate from a requested NUC's allocation and outcome
-+commits, which the nuc-proposal caller steps already made and pushed. An
-+invocation that pauses, or stops before it writes the progress record, commits
-+nothing.
- 
- 1. Pull with `git pull --no-rebase --autostash` right before committing, and
-    resolve any conflict under the policy, keeping every other session's work.
-@@ -599,9 +604,10 @@ how it was chosen (given, or the default with both its measurements), the
- starting revision, and hint (`null` without one); the dataset status,
- `dataset_path` and source puzzle path,
- the reporting-workflow path and whether its new entry was retained or
--withdrawn, and arc-dataset's use of the hint; the NUC path, blob, category,
--evaluator decision, and report path; the solver's previous and new default
--puzzle IDs and whether that change was retained or restored; the run's
-+withdrawn, and arc-dataset's use of the hint; the NUC path, allocation
-+commit, blob, category, evaluator decision, and report path; the solver's
-+previous and new default puzzle IDs and whether that change was retained or
-+restored; the run's
- command, executable, exit status or timeout, difference or error, and log
- paths; the outcome and its basis; the suggested solver changes; the dataset
- grammar's forms added or removed, or that it already fit, with the offline
-```
-
-**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +5/-2)
-```diff
-@@ -27,8 +27,11 @@ Independently verify applicability and that evidence; missing comparison
- artifacts do not prove impossibility. A Runtime features proposal needs an
- explicit branch even in single mode.
- Confirm that the current proposal blob matches the handoff and the baseline
--matches the accepted revision. Missing prerequisites block evaluation; never
--invent measurements or guess an uncertain category.
-+matches the accepted revision. For a new NUC, that revision is its pushed
-+[allocation](../nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
-+which adds only the Draft document and its index rows, so it is not a
-+revision containing the candidate. Missing prerequisites block evaluation;
-+never invent measurements or guess an uncertain category.
- 
- Treat candidate sources, generated exports, and the baseline as read-only.
- Apart from the pull of the primary checkout before you start, under the
-```
-
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +93/-19)
-```diff
-@@ -14,6 +14,70 @@ agent. Inside that agent, execute the steps below; do not spawn another agent.
- Follow `.claude/CLAUDE.md` and `docs/nuc-0001.md`.
- Work on exactly one proposal revision in the caller's isolated candidate.
- 
-+## Allocate the NUC first (caller only)
-+
-+Every `/nuc-proposal` task runs in this order, and every continuous cycle
-+repeats it:
-+
-+1. **Pull.** As always before starting a task, pull the primary checkout with
-+   `git pull --no-rebase --autostash` under the
-+   [git synchronization policy](../../rules/git.instructions.md#pull-first),
-+   so the task runs against the most current remote state. Report the commits
-+   it brought in.
-+2. **Draft first.** Once the
-+   [execution mode](#choose-execution-mode-caller-only), the confirmed
-+   [category](#classify-every-proposal) and the requested change are chosen,
-+   number the new NUC as the highest NUC recorded in `docs/` plus one. In the
-+   primary checkout, write `docs/nuc-XXXX.md` with its complete header,
-+   including `Status: Draft` and the confirmed `Category`, and its proposal
-+   details: the Abstract and Motivation of the requested change, followed by
-+   the remaining required sections for the proposer to complete. Add its Draft
-+   rows to both indexes in `docs/nuc-0000.md`, and change nothing else.
-+3. **Allocate.** Commit those two paths alone, with the subject
-+   `Draft NUC <number> <Title>` and the category and requested change in the
-+   body, and push right away. The pushed commit allocates the proposal and its
-+   number, so concurrent sessions number their NUCs after it.
-+4. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
-+   the allocation, as the accepted revision, record its baseline, and create
-+   the candidate worktree from it. Then
-+   [select the strategy](#select-and-consume-a-proposal-strategy) and run the
-+   fresh proposer, which completes the draft and prototypes the change, the
-+   Rust improvement pass and the fresh evaluator, as the rest of this skill
-+   describes.
-+5. **Commit and push the final version.** Record the outcome in a new commit,
-+   `NUC <number> <Title>`, that holds the final proposal along with its code
-+   changes when it is accepted, and push it right after, under the
-+   [outcome commit rule](#name-outcome-commits-caller-only).
-+
-+- Pull again right before each commit and each push. When a pull brings in
-+  the drafted number, keep the other session's NUC and renumber the draft to
-+  main's next number, in the merge if the allocation is already committed.
-+  When a push is rejected because the remote moved, pull, resolve, and push
-+  again until it succeeds.
-+- Stage the two paths explicitly, only the allocation's own hunks where
-+  another session's uncommitted edits share them, and verify that the commit
-+  holds nothing else. It changes no runtime, executable document, test,
-+  dataset, export or grammar, so its language is still the accepted language.
-+- Verify the inputs that do not depend on the pinned revision, such as a
-+  configured strategy policy, before drafting, so a missing one blocks the
-+  task before anything is committed.
-+- The allocation is not an outcome and needs no evaluation of its own; the
-+  one proposal/evaluation pair covers the final version. The draft records
-+  only the caller's own inputs, so the strategy selection and any usefulness
-+  rubric, which bind the pinned revision, still precede the proposer's
-+  drafting.
-+- The final commit builds on the allocation; never amend or rewrite the
-+  pushed allocation. For Accepted or Automatic-Accepted, it integrates the
-+  unchanged frozen candidate with the final proposal and its status/index
-+  metadata. For Rejected, it holds only the final rejection documentation
-+  under the [rejection rule](#record-rejected-outcomes-caller-only), and the
-+  candidate's code stays isolated.
-+- A revision of an existing NUC, including a revisited Rejected NUC, already
-+  holds its number: skip the draft and allocation steps, and leave its text
-+  and status on `main` unchanged until the outcome commit. A Blocked or paused
-+  NUC keeps its pushed Draft and number, and a later task resumes it under
-+  that number instead of allocating another.
-+
- ## Choose execution mode (caller only)
- 
- `/nuc-proposal` defaults to continuous mode for open-ended proposal requests.
-@@ -153,12 +217,14 @@ an acceptance criterion.
- Require the proposal path, confirmed category and requested change, execution
- mode and runtime applicability with supporting rationale when applicable,
- accepted Git revision, immutable baseline JSON artifact, and candidate worktree.
--Confirm that the baseline belongs to that accepted revision before making
--runtime or executable document edits. Missing inputs stop preparation, not
--justify assumptions.
-+For a new NUC, the accepted revision is the pushed
-+[allocation](#allocate-the-nuc-first-caller-only), and the candidate starts
-+from its Draft. Confirm that the baseline belongs to tha
 ```
 
 #### Recent Merged Pull Requests:
@@ -1972,30 +1870,29 @@ Require new NUCs to be drafted as Draft proposals, committed, and pushed before 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Allocate NUCs before drafting
+## X. Draft NUC 97 In and Not In Membership Tests
 
 **RULE**:
-When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbd810e8`: Allocate NUCs before drafting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3622da0`: Draft NUC 97 In and Not In Membership Tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, and `NUC <number> <Title>` outcome commit messages |
-| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+| [97](nuc-0097.md) | In and Not In Membership Tests | Draft |
+| [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
-| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbd810e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3622da0` are properly handled with clean fallback behavior.

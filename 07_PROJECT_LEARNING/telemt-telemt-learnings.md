@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/telemt-telemt-learnings.md`  
 > **Source**: github ([https://github.com/telemt/telemt](https://github.com/telemt/telemt))  
-> **Source Version**: `84e5b827`  
+> **Source Version**: `66708d28`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T14:39:14.118Z  
+> **Timestamp**: 2026-11-09T14:04:32.565Z  
 > **Learning ID**: `learn-github-telemt-telemt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/telemt-telemt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/telemt/telemt](https://github.com/telemt/telemt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T14:39:11.526Z  
+> **Harvest Timestamp**: 2026-11-09T14:04:31.988Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MTProxy for Telegram on Rust + Tokio
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5771 stars
+- **Stars / Engagement**: 5786 stars
 
 ---
 
@@ -36,6 +36,295 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: Cargo.toml, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `src/api/config_state.rs`
+```
+//! Bounded inspection of desired source and actual owner publications.
+
+use std::collections::BTreeSet;
+use std::sync::Arc;
+use std::time::Duration;
+
+use http_body_util::Full;
+use hyper::{Response, StatusCode, body::Bytes};
+use serde::Serialize;
+use serde_json::Value as Json;
+
+use super::config_edit::{RuntimeBaseline, RuntimeFence};
+use super::model::{ApiFailure, FieldIssue};
+use super::{ApiShared, config_projection as projection};
+use crate::config::{
+    ProxyConfig,
+    observation::{ConfigProvenance, WatchOutcome},
+};
+use crate::maestro::{reload::ReloadObservation, runtime_build::project_reload_config};
+
+const MAX_RESPONSE_BYTES: usize = 512 * 1024;
+const MAX_STATE_PATHS: usize = 512;
+
+#[derive(Debug, Serialize)]
+struct Comparison {
+    scope: &'static str,
+    status: &'static str,
+    pending_paths: Vec<String>,
+    watcher_pending_paths: Vec<String>,
+    generation_pending_paths: Vec<String>,
+    process_deferred_paths: Vec<String>,
+    deferred_process_fields: Vec<String>,
+    runtime_derived_paths: Vec<String>,
+    truncated: bool,
+}
+
+impl Default for Comparison {
+    fn default() -> Self {
+        Self {
+            scope: "selected_sections",
+            status: "unknown",
+            pending_paths: Vec::new(),
+            watcher_pending_paths: Vec::new(),
+            generation_pending_paths: Vec::new(),
+            process_deferred_paths: Vec::new(),
+            deferred_process_fields: Vec::new(),
+            runtime_derived_paths: Vec::new(),
+            truncated: false,
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub(super) struct ConfigState {
+    scope: &'static str,
+    sections: BTreeSet<String>,
+    runtime: RuntimeBaseline,
+    runtime_sample_current: bool,
+    pub(super) desired_revision: Option<String>,
+    desired_status: &'static str,
+    desired_error: Option<FieldIssue>,
+    desired: Option<projection::Projection>,
+    effective: Option<projection::Projection>,
+    projection_error: Option<FieldIssue>,
+    comparison: Comparison,
+    watcher: Option<WatchOutcome>,
+    watcher_matches_desired: Option<bool>,
+    reload: Option<ReloadObservation>,
+    reload_observation: &'static str,
+    reload_matches_desired: Option<bool>,
+    subsystem_convergence: &'static str,
+}
+
+fn issue(code: &'static str, message: &'static str) -> FieldIssue {
+    FieldIssue {
+        path: "$".into(),
+        code,
+        message: message.into(),
+    }
+}
+
+fn sections(query: Option<&str>) -> Result<BTreeSet<String>, ApiFailure> {
+    let Some(query) = query.filter(|query| !query.is_empty()) else {
+        return Ok(projection::SECTIONS
+            .iter()
+            .map(|section| (*section).to_owned())
+            .collect());
+    };
+    if query.len() > 256 {
+        return Err(ApiFailure::bad_request(
+            "Config state query exceeds 256 bytes",
+        ));
+    }
+    let mut parsed = url::form_urlencoded::parse(query.as_bytes());
+    let Some((key, value)) = parsed.next() else {
+        return Err(ApiFailure::bad_request("Expected sections query"));
+    };
+    if key != "sections" || parsed.next().is_some() {
+        return Err(ApiFailure::bad_request(
+            "Only one sections query parameter is supported",
+        ));
+    }
+    let mut sections = BTreeSet::new();
+    for section in value.split(',') {
+        if !projection::SECTIONS.contains(&section) || !sections.insert(section.to_owned()) {
+            return Err(ApiFailure::bad_request(
+                "Unknown, empty or repeated configuration section",
+            ));
+        }
+    }
+    Ok(sections)
+}
+
+fn json(config: &ProxyConfig) -> Result<Json, ApiFailure> {
+    serde_json::to_value(config)
+        .map_err(|_| ApiFailure::internal("Cannot project configuration snapshot"))
+}
+
+struct Desired {
+    revision: Option<String>,
+    status: &'static str,
+    error: Option<FieldIssue>,
+    projection: Option<projection::Projection>,
+    effective: Option<projection::Projection>,
+    comparison: Comparison,
+}
+
+fn unavailable(revision: Option<String>, status: &'static str, code: &'static str) -> Desired {
+    Desired {
+        revision,
+        status,
+        error: Some(issue(
+            code,
+            "Desired configuration is unavailable; effective publication remains readable",
+        )),
+        projection: None,
+        effective: None,
+        comparison: Comparison::default(),
+    }
+}
+
+fn read_desired(
+    path: &std::path::Path,
+    active: &ProxyConfig,
+    sections: &BTreeSet<String>,
+) -> Result<Desired, ApiFailure> {
+    let graph = match ProxyConfig::read_source_graph(path) {
+        Ok(graph) => graph,
+        Err(_) => return Ok(unavailable(None, "unreadable", "desired_source_unreadable")),
+    };
+    let revision = super::config_store::compute_source_revision(&graph);
+    let mut desired = match ProxyConfig::parse_captured_source(graph) {
+        Ok(parsed) => parsed.config,
+        Err(_) => {
+            return Ok(unavailable(
+                Some(revision),
+                "invalid",
+                "desired_config_invalid",
+            ));
+        }
+    };
+    let mut derived = Vec::new();
+    if matches!(&desired.provenance, ConfigProvenance::Source(source) if source.generated_fake_cert_len)
+    {
+        desired.censorship.fake_cert_len = active.censorship.fake_cert_len;
+        if projection::selected("censorship.fake_cert_len", sections) {
+            derived.push("censorship.fake_cert_len".into());
+        }
+    }
+    let mut active_json = json(active)?;
+    let mut desired_json = json(&desired)?;
+    let effective =
+        projection::project(active, &active_json, Some(&desired_json), sections, false)?;
+    let desired_projection =
+        projection::project(&desired, &desired_json, Some(&active_json), sections, true)?;
+    let hot = crate::config::hot_reload::overlay_hot_fields(active, &desired);
+    let projected = project_reload_config(active, &desired);
+    let mut hot_json = json(&hot)?;
+    let mut projected_json = json(&projected.effective)?;
+    for value in [
+        &mut active_json,
+        &mut desired_json,
+        &mut hot_json,
+        &mut projected_json,
+    ] {
+        projection::retain_sections(value, sections);
+    }
+    let mut comparison = Comparison {
+        pending_paths: projection::changed_paths(&active_json, &desired_json),
+        watcher_pending_paths: projection::changed_paths(&active_json, &hot_json),
+        generation_pending_paths: projection::changed_paths(&hot_json, &projected_json),
+        process_deferred_paths: projection::changed_paths(&projected_json, &desired_json),
+        deferred_process_fields: projected
+            .deferred_process_fields
+            .into_iter()
+            .filter(|path| projection::selected(path, sections))
+            .collect(),
+        runtime_derived_paths: derived,
+        ..Comparison::default()
+    };
+    comparison.status = if comparison.pending_paths.is_empty() {
+        "published_match"
+    } else if comparison.watcher_pending_paths.is_empty()
+        && comparison.generation_pending_paths.is_empty()
+    {
+        "process_deferred"
+    } else {
+        "pending_publication"
+    };
+    for paths in [
+        &mut comparison.pending_paths,
+        &mut comparison.watcher_pending_paths,
+        &mut comparison.generation_pending_paths,
+        &mut comparison.process_deferred_paths,
+    ] {
+        comparison.truncated |= paths.len() > MAX_STATE_PATHS;
+        paths.truncate(MAX_STATE_PATHS);
+    }
+    Ok(Desired {
+        revision: Some(revision),
+        status: "valid",
+        error: None,
+        projection: Some(desired_projection),
+        effective: Some(effective),
+        comparison,
+    })
+}
+
+pub(super) async fn state(
+    shared: &ApiShared,
+    query: Option<&str>,
+) -> Result<ConfigState, ApiFailure> {
+    let sections = sections(query)?;
+    let fence = RuntimeFence::capture(shared, None)?;
+    let mut data = ConfigState {
+        scope: "published_configuration_not_subsystem_acknowledgment",
+        sections: sections.clone(),
+        runtime: fence.baseline(),
+        runtime_sample_current: true,
+        desired_revision: None,
+        desired_status: "busy",
+        desired_error: None,
+        desired: None,
+        effective: None,
+        projection_error: None,
+        comparison: Comparison::default(),
+        watcher: None,
+        watcher_matches_desired: None,
+        reload: None,
+        reload_observation: "unknown",
+        reload_matches_desired: None,
+        subsystem_convergence: "unknown",
+    };
+    if let Ok(permit) = shared.config_state_slots.clone().try_acquire_owned() {
+        let permit = Arc::new(permit);
+        let guard = permit.clone();
+        let active = fence.config.clone();
+        let scope = sections.clone();
+        let deadline = tokio::time::Instant::now() + Duration::from_secs(5);
+        let effective = tokio::task::spawn_blocking(move || {
+            let _guard = guard;
+            projection::project(&active, &json(&active)?, None, &scope, false)
+        });
+        match tokio::time::timeout_at(deadline, effective).await {
+            Ok(Ok(Ok(effective))) => data.effective = Some(effective),
+            _ => {
+                data.projection_error = Some(issue(
+                    "effective_projection_unavailable",
+                    "Runtime identity is available but its projection could not complete",
+                ))
+            }
+        }
+        if data.effective.is_some() {
+            let active = fence.config.clone();
+            let path = shared.config_path.clone();
+            let desired = tokio::task::spawn_blocking(move || {
+                let _guard = permit;
+                read_desired(&path, &active, &sections)
+            });
+            let desired = match tokio::time::timeout_at(deadline, desired).await {
+                Ok(Ok(Ok(desired))) => desired,
+                Ok(_) => unavailable(None, "unavailable", "desired_projection_failed"),
+                Err(_) => unavailable(None, "timeout", "desired_read_timeout"),
+            };
+ 
+```
 
 ### Core Architecture Module: `src/api/http_utils.rs`
 ```
@@ -74,6 +363,7 @@ pub(super) fn error_response(request_id: u64, failure: ApiFailure) -> hyper::Res
         error: ErrorBody {
             code: failure.code,
             message: failure.message,
+            details: failure.details,
         },
         request_id,
     };
@@ -1951,366 +2241,6 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `src/metrics/render/me_lifecycle.rs`
-```
-use super::*;
-use std::fmt::Write;
-
-pub(super) fn render(out: &mut String, stats: &Stats, me_allows_normal: bool) {
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_reconnect_attempts_total ME reconnect attempts"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_reconnect_attempts_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_reconnect_attempts_total {}",
-        if me_allows_normal {
-            stats.get_me_reconnect_attempts()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_reconnect_success_total ME reconnect successes"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_reconnect_success_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_reconnect_success_total {}",
-        if me_allows_normal {
-            stats.get_me_reconnect_success()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_handshake_reject_total ME handshake rejects from upstream"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_handshake_reject_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_handshake_reject_total {}",
-        if me_allows_normal {
-            stats.get_me_handshake_reject_total()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_handshake_error_code_total ME handshake reject errors by code"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_handshake_error_code_total counter");
-    if me_allows_normal {
-        for (error_code, count) in stats.get_me_handshake_error_code_counts() {
-            let _ = writeln!(
-                out,
-                "telemt_me_handshake_error_code_total{{error_code=\"{}\"}} {}",
-                error_code, count
-            );
-        }
-        let _ = writeln!(
-            out,
-            "telemt_me_handshake_error_code_total{{error_code=\"overflow\"}} {}",
-            stats.get_me_handshake_error_code_overflow_total()
-        );
-    }
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_reader_eof_total ME reader EOF terminations"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_reader_eof_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_reader_eof_total {}",
-        if me_allows_normal {
-            stats.get_me_reader_eof_total()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_idle_close_by_peer_total ME idle writers closed by peer"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_idle_close_by_peer_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_idle_close_by_peer_total {}",
-        if me_allows_normal {
-            stats.get_me_idle_close_by_peer_total()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_relay_idle_soft_mark_total Middle-relay sessions marked as soft-idle candidates"
-    );
-    let _ = writeln!(out, "# TYPE telemt_relay_idle_soft_mark_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_relay_idle_soft_mark_total {}",
-        if me_allows_normal {
-            stats.get_relay_idle_soft_mark_total()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_relay_idle_hard_close_total Middle-relay sessions closed by hard-idle policy"
-    );
-    let _ = writeln!(out, "# TYPE telemt_relay_idle_hard_close_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_relay_idle_hard_close_total {}",
-        if me_allows_normal {
-            stats.get_relay_idle_hard_close_total()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_relay_pressure_evict_total Middle-relay sessions evicted under resource pressure"
-    );
-    let _ = writeln!(out, "# TYPE telemt_relay_pressure_evict_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_relay_pressure_evict_total {}",
-        if me_allows_normal {
-            stats.get_relay_pressure_evict_total()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_relay_protocol_desync_close_total Middle-relay sessions closed due to protocol desync"
-    );
-    let _ = writeln!(
-        out,
-        "# TYPE telemt_relay_protocol_desync_close_total counter"
-    );
-    let _ = writeln!(
-        out,
-        "telemt_relay_protocol_desync_close_total {}",
-        if me_allows_normal {
-            stats.get_relay_protocol_desync_close_total()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(out, "# HELP telemt_me_crc_mismatch_total ME CRC mismatches");
-    let _ = writeln!(out, "# TYPE telemt_me_crc_mismatch_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_crc_mismatch_total {}",
-        if me_allows_normal {
-            stats.get_me_crc_mismatch()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_seq_mismatch_total ME sequence mismatches"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_seq_mismatch_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_seq_mismatch_total {}",
-        if me_allows_normal {
-            stats.get_me_seq_mismatch()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_route_drop_no_conn_total ME route drops: no conn"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_route_drop_no_conn_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_route_drop_no_conn_total {}",
-        if me_allows_normal {
-            stats.get_me_route_drop_no_conn()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_route_drop_channel_closed_total ME route drops: channel closed"
-    );
-    let _ = writeln!(
-        out,
-        "# TYPE telemt_me_route_drop_channel_closed_total counter"
-    );
-    let _ = writeln!(
-        out,
-        "telemt_me_route_drop_channel_closed_total {}",
-        if me_allows_normal {
-            stats.get_me_route_drop_channel_closed()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_route_drop_queue_full_total ME route drops: queue full"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_route_drop_queue_full_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_route_drop_queue_full_total {}",
-        if me_allows_normal {
-            stats.get_me_route_drop_queue_full()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_route_drop_queue_full_profile_total ME route drops: queue full by adaptive profile"
-    );
-    let _ = writeln!(
-        out,
-        "# TYPE telemt_me_route_drop_queue_full_profile_total counter"
-    );
-    let _ = writeln!(
-        out,
-        "telemt_me_route_drop_queue_full_profile_total{{profile=\"base\"}} {}",
-        if me_allows_normal {
-            stats.get_me_route_drop_queue_full_base()
-        } else {
-            0
-        }
-    );
-    let _ = writeln!(
-        out,
-        "telemt_me_route_drop_queue_full_profile_total{{profile=\"high\"}} {}",
-        if me_allows_normal {
-            stats.get_me_route_drop_queue_full_high()
-        } else {
-            0
-        }
-    );
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_fair_pressure_state Worker-local fairness pressure state"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_fair_pressure_state gauge");
-    let _ = writeln!(
-        out,
-        "telemt_me_fair_pressure_state {}",
-        if me_allows_normal {
-            stats.get_me_fair_pressure_state_gauge()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_fair_active_flows Fair-scheduler active flow count"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_fair_active_flows gauge");
-    let _ = writeln!(
-        out,
-        "telemt_me_fair_active_flows {}",
-        if me_allows_normal {
-            stats.get_me_fair_active_flows_gauge()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_fair_queued_bytes Fair-scheduler queued bytes"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_fair_queued_bytes gauge");
-    let _ = writeln!(
-        out,
-        "telemt_me_fair_queued_bytes {}",
-        if me_allows_normal {
-            stats.get_me_fair_queued_bytes_gauge()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_fair_flow_state_gauge Fair-scheduler flow health classes"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_fair_flow_state_gauge gauge");
-    let _ = writeln!(
-        out,
-        "telemt_me_fair_flow_state_gauge{{class=\"standing\"}} {}",
-        if me_allows_normal {
-            stats.get_me_fair_standing_flows_gauge()
-        } else {
-            0
-        }
-    );
-    let _ = writeln!(
-        out,
-        "telemt_me_fair_flow_state_gauge{{class=\"backpressured\"}} {}",
-        if me_allows_normal {
-            stats.get_me_fair_backpressured_flows_gauge()
-        } else {
-            0
-        }
-    );
-
-    let _ = writeln!(
-        out,
-        "# HELP telemt_me_fair_events_total Fair-scheduler event counters"
-    );
-    let _ = writeln!(out, "# TYPE telemt_me_fair_events_total counter");
-    let _ = writeln!(
-        out,
-        "telemt_me_fair_events_total{{event=\"scheduler_round\"}} {}",
-        if me_allows_normal {
-            stats.get_me_fair_scheduler_rounds_total()
-        } else {
-            0
-        }
-    );
-    let _ = writeln!(
-        out,
-        "telemt_me_fair_events_total{{event=\"deficit_grant\"}} {}",
-        if me_allows_normal {
-            stats.get_me_fair_deficit_grants_total()
-        } else {
-            0
-        }
-    );
-    le
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2341,82 +2271,538 @@ pub(super) fn render(out: &mut String, stats: &Stats, me_allows_normal: bool) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `56ca6e25` (2026-10-31)
-**Commit Message**: Memraid fixes
+### Incident Patch 1: `982c4e4a` (2026-11-07)
+**Commit Message**: API: expose observability settings and fix cross-generation cache races
 
-**File**: `docs/WEB/PROXY_PING.de.md` (modified, +2/-2)
+**File**: `src/api/config_edit.rs` (modified, +49/-12)
 ```diff
-@@ -36,7 +36,7 @@ sequenceDiagram
-     participant P as Classic/DD/EE proxy
-     participant D as Telegram DC
-     C->>P: DNS / TCP / proxy transport setup
--    Note over C,P: Remote transport ready; measurement timestamp refreshed
-+    Note over C,P: Remote transport ready, measurement timestamp refreshed
-     C->>P: Encrypted TL_ping
-     P->>D: Relay
-     D->>P: TL_pong
-@@ -54,7 +54,7 @@ sequenceDiagram
-     T->>B: WELCOME
-     Note over B: Wait 500 ms before native_checkProxy
-     C->>B: Connect to 127.0.0.1
--    Note over C,B: Local socket ready; measurement timestamp refreshed
-+    Note over C,B: Local socket ready, measurement timestamp refreshed
-     Note over B,T: OPEN may race with the native timestamp update
-     C->>B: MTProxy header and encrypted TL_ping
-     B->>T: OPEN / DATA over selected carrier
+@@ -8,9 +8,9 @@ use toml::Value as Toml;
+ 
+ use super::ApiShared;
+ use super::config_store::{
+-    EDITABLE_NETWORK_FIELDS, EDITABLE_SECTIONS, EDITABLE_SERVER_FIELDS, compute_snapshot_revision,
+-    is_editable_section, load_config_snapshot, render_server_listeners, render_top_level_section,
+-    resolve_single_source_owner, upsert_dns_overrides, upsert_toml_table,
++    EDITABLE_NETWORK_FIELDS, EDITABLE_SECTIONS, EDITABLE_SERVER_API_FIELDS, EDITABLE_SERVER_FIELDS,
++    compute_snapshot_revision, is_editable_section, load_config_snapshot, render_server_listeners,
++    render_top_level_section, resolve_single_source_owner, upsert_dns_overrides, upsert_toml_table,
+ };
+ #[cfg(test)]
+ use super::config_store::{write_atomic, write_atomic_if_unchanged};
+@@ -25,6 +25,8 @@ use serde::Serialize;
+ use std::path::{Path, PathBuf};
+ use std::sync::Arc;
+ 
++#[cfg(test)]
++mod api_observability_tests;
+ mod diagnostics;
+ mod preflight;
+ mod preparation;
+@@ -250,7 +252,23 @@ fn filter_server_for_read(server: &Toml) -> Option<Toml> {
+                     }
+                 }
+             }
+-            out.insert((*field).to_string(), value.clone());
++            if *field == "api" {
++                if let Some(api) = value.as_table() {
++                    out.insert(
++                        "api".to_owned(),
++                        Toml::Table(
++                            api.iter()
++                                .filter(|(key, _)| {
++                                    EDITABLE_SERVER_API_FIELDS.contains(&key.as_str())
++                                })
++                                .map(|(key, value)| (key.clone(), value.clone()))
++                                .collect(),
++                        ),
++                    );
++                }
++            } else {
++                out.insert((*field).to_string(), value.clone());
++            }
+         }
+     }
+     if out.is_empty() {
+@@ -261,20 +279,15 @@ fn filter_server_for_read(server: &Toml) -> Option<Toml> {
+ }
+ 
+ /// Reject any `[server]` patch keys outside [`EDITABLE_SERVER_FIELDS`].
+-fn validate_server_patch(server: &Toml) -> Result<(), ApiFailure> {
+-    let Some(table) = server.as_table() else {
++fn validate_server_patch(server: &Json) -> Result<(), ApiFailure> {
++    let Some(table) = server.as_object() else {
+         return Err(ApiFailure::new(
+             hyper::StatusCode::BAD_REQUEST,
+             "section_not_editable",
+             "server patch must be a JSON object",
+         ));
+     };
+-    if table.is_empty() {
+-        return Err(ApiFailure::bad_request(
+-            "empty server patch: provide at least one editable field \
+-             (currently: listeners)",
+-        ));
+-    }
++    // Validate original keys before null removal, including forbidden siblings.
+     for key in table.keys() {
+         if !EDITABLE_SERVER_FIELDS.contains(&key.as_str()) {
+             return Err(ApiFailure::new(
+@@ -288,6 +301,30 @@ fn validate_server_patch(server: &Toml) -> Result<(), ApiFailure> {
+             ));
+         }
+     }
++    if let Some(api) = table.get("api").filter(|api| !api.is_null()) {
++        let fields = api
++            .as_object()
++            .ok_or_else(|| ApiFailure::bad_request("server.api patch must be a JSON object"))?;
++        for key in fields.keys() {
++            if !EDITABLE_SERVER_API_FIELDS.contains(&key.as_str()) {
++                return Err(ApiFailure::new(
++                    hyper::StatusCode::BAD_REQUEST,
++                    "field_not_editable",
++                    format!("server.api.{key} is not editable via the config API"),
++                ));
++            }
++        }
++    }
++    let has_listeners = table.get("listeners").is_some_and(|value| !value.is_null());
++    let has_api_fields = table
++        .get("api")
++        .and_then(Json::as_object)
++        .is_some_and(|fields| fields.values().any(|value| !value.is_null()));
++    if !has_listeners && !has_api_fields {
++        return Err(ApiFailure::bad_request(
++            "empty server patch: provide listeners or an editable server.api field",
++        ));
++    }
+     Ok(())
+ }
+ 
 ```
 
-**File**: `docs/WEB/PROXY_PING.en.md` (modified, +2/-2)
+**File**: `src/api/config_edit/api_observability_tests.rs` (added, +508/-0)
 ```diff
-@@ -36,7 +36,7 @@ sequenceDiagram
-     participant P as Classic/DD/EE proxy
-     participant D as Telegram DC
-     C->>P: DNS / TCP / proxy transport setup
--    Note over C,P: Remote transport ready; measurement timestamp refreshed
-+    Note over C,P: Remote transport ready, measurement timestamp refreshed
-     C->>P: Encrypted TL_ping
-     P->>D: Relay
-     D->>P: TL_pong
-@@ -54,7 +54,7 @@ sequenceDiagram
-     T->>B: WELCOME
-     Note over B: Wait 500 ms before native_checkProxy
-     C->>B: Connect to 127.0.0.1
--    Note over C,B: Local socket ready; measurement timestamp refreshed
-+    Note over C,B: Local socket ready, measurement timestamp refreshed
-     Note over B,T: OPEN may race with the native timestamp update
-     C->>B: MTProxy header and encrypted TL_ping
-     B->>T: OPEN / DATA over selected carrier
+@@ -0,0 +1,508 @@
++use super::*;
++use crate::api::discovery::http_tests::Fixture;
++use crate::config::hot_reload::spawn_config_watcher;
++use crate::maestro::{generation::test_runtime_generation, reload::ReloadControl};
++use serde_json::json;
++use std::time::Duration;
++use tokio::sync::watch;
++use tokio_util::sync::CancellationToken;
++
++const API: &str = "[server.api] # keep API perimeter\nenabled=true\nlisten='127.0.0.1:9092'\nread_only=false\nauth_header='Bearer discovery-test' # keep secret\nwhitelist=['127.0.0.1/32']\ngray_action='api'\nrequest_body_limit_bytes=4096\nruntime_edge_events_capacity=64\nminimal_runtime_enabled=false\nruntime_edge_enabled=false\n";
++
++fn patch(fields: Json) -> Json {
++    json!({"server": {"api": fields}})
++}
++
++#[tokio::test]
++async fn get_exposes_exactly_five_settings_and_defaults_without_api_secrets() {
++    for source in ["", API] {
++        let (path, _directory) = tests::temp_config(source);
++        let (managed, _) = read_managed_config(&path).await.unwrap();
++        let fields = managed["server"]["api"].as_table().unwrap();
++        let config = ProxyConfig::load(&path).unwrap();
++        let typed = toml::Value::try_from(&config.server.api).unwrap();
++        assert_eq!(fields.len(), 5);
++        for (key, value) in fields {
++            assert!(EDITABLE_SERVER_API_FIELDS.contains(&key.as_str()));
++            assert_eq!(*value, typed[key]);
++        }
++        assert!(!managed.to_string().contains("discovery-test"));
++    }
++}
++
++#[tokio::test]
++async fn every_forbidden_api_sibling_and_alias_is_rejected_even_when_null() {
++    let (path, _directory) = tests::temp_config(API);
++    let original = std::fs::read(&path).unwrap();
++    let api = serde_json::to_value(ProxyConfig::default().server.api).unwrap();
++    for (key, value) in api.as_object().unwrap() {
++        if EDITABLE_SERVER_API_FIELDS.contains(&key.as_str()) {
++            continue;
++        }
++        for value in [value.clone(), Json::Null] {
++            let error = apply_patch_to_path(
++                &path,
++                &patch(json!({key: value, "runtime_edge_enabled": true})),
++                None,
++            )
++            .await
++            .unwrap_err();
++            assert_eq!(error.code, "field_not_editable", "{key}: {error:?}");
++            assert_eq!(std::fs::read(&path).unwrap(), original);
++        }
++    }
++    for body in [
++        patch(json!({"typo": null, "runtime_edge_enabled": true})),
++        json!({"server": {"admin_api": null, "api": {"runtime_edge_enabled": true}}}),
++        json!({"server": {"port": null, "api": {"runtime_edge_enabled": true}}}),
++    ] {
++        assert_eq!(
++            apply_patch_to_path(&path, &body, None)
++                .await
++                .unwrap_err()
++                .code,
++            "field_not_editable"
++        );
++        assert_eq!(std::fs::read(&path).unwrap(), original);
++    }
++}
++
++#[tokio::test]
++async fn observability_bounds_and_types_are_checked_before_persistence() {
++    let (path, _directory) = tests::temp_config(API);
++    for (key, good, bad) in [
++        (
++            "minimal_runtime_cache_ttl_ms",
++            vec![json!(0), json!(60_000)],
++            vec![json!(-1), json!(60_001), json!(1.5), json!(false)],
++        ),
++        (
++            "runtime_edge_cache_ttl_ms",
++            vec![json!(0), json!(60_000)],
++            vec![json!(-1), json!(60_001), json!("0")],
++        ),
++        (
++            "runtime_edge_top_n",
++            vec![json!(1), json!(1000)],
++            vec![json!(0), json!(1001), json!(-1), json!([])],
++        ),
++        (
++            "minimal_runtime_enabled",
++            vec![json!(true), json!(false)],
++            vec![json!(0), json!("true")],
++        ),
++        (
++            "runtime_edge_enabled",
++            vec![json!(true), json!(false)],
++            vec![json!(1), json!({})],
++        ),
++    ] {
++        for value in good {
++            apply_patch_to_path(&path, &patch(json!({key: value})), None)
++                .await
++                .unwrap();
++            assert_eq!(
++                serde_json::to_value(ProxyConfig::load(&path).unwrap().server.api).unwrap()[key],
++                value
++            );
++        }
++        let original = std::fs::read(&path).unwrap();
++        for value in bad {
++            let error = apply_patch_to_path(&path, &patch(json!({key: value})), None)
++                .await
++                .unwrap_err();
++            assert_eq!(
++                error.status,
++                hyper::StatusCode::BAD_REQUEST,
++                "{key}: {error:?}"
++            );
++            assert_eq!(std::fs::read(&path).unwrap(), original);
++        }
++    }
++    let original = std::fs::read(&path).unwrap();
++    for value in [
++        json!(null),
++        json!({}),
++        json!([]),
++        json!(false),
++        json!({"runtime_edge_top_n": null}),
++    ] {
++        assert!(
++            apply_patch_to_path(&path, &patch(value), No
 ```
 
-**File**: `docs/WEB/PROXY_PING.ru.md` (modified, +2/-2)
+**File**: `src/api/config_edit/preparation.rs` (modified, +79/-11)
 ```diff
-@@ -36,7 +36,7 @@ sequenceDiagram
-     participant P as Classic/DD/EE proxy
-     participant D as Telegram DC
-     C->>P: DNS / TCP / proxy transport setup
--    Note over C,P: Remote transport ready; measurement timestamp refreshed
-+    Note over C,P: Remote transport ready, measurement timestamp refreshed
-     C->>P: Encrypted TL_ping
-     P->>D: Relay
-     D->>P: TL_pong
-@@ -54,7 +54,7 @@ sequenceDiagram
-     T->>B: WELCOME
-     Note over B: Wait 500 ms before native_checkProxy
-     C->>B: Connect to 127.0.0.1
--    Note over C,B: Local socket ready; measurement timestamp refreshed
-+    Note over C,B: Local socket ready, measurement timestamp refreshed
-     Note over B,T: OPEN may race with the native timestamp update
-     C->>B: MTProxy header and encrypted TL_ping
-     B->>T: OPEN / DATA over selected carrier
+@@ -1,5 +1,6 @@
+ //! One source-preserving candidate pipeline shared by preview and commit.
+ use super::*;
++use crate::api::config_store::{FieldEdit, prepare_field_edits};
+ use crate::config::{LoadedConfig, ParsedConfigSource};
+ use tokio::sync::OwnedSemaphorePermit;
+ 
+@@ -82,7 +83,7 @@ fn parse_patch(
+             "access.* is managed via the users API, not editable here",
+         ));
+     }
+-    for (key, value) in patch_table {
++    for key in patch_table.keys() {
+         if !is_editable_section(key.as_str()) {
+             return Err(ApiFailure::new(
+                 hyper::StatusCode::BAD_REQUEST,
+@@ -91,7 +92,7 @@ fn parse_patch(
+             ));
+         }
+         if key == "server" {
+-            validate_server_patch(value)?;
++            validate_server_patch(&patch_json["server"])?;
+         } else if key == "network" {
+             validate_network_patch(&patch_json["network"])?;
+         }
+@@ -127,30 +128,59 @@ fn parse_patch(
+         .validate()
+         .map_err(|error| diagnostics::validation_error("constraint_violation", "$", error))?;
+ 
++    let api_edits = api_field_edits(&loaded, &patch_toml)?;
++    let api_source = prepare_field_edits(&loaded, config_path, &api_edits)
++        .map_err(diagnostics::source_conflict)?;
++    let patch_listeners = patch_toml
++        .get("server")
++        .is_some_and(|server| server.get("listeners").is_some());
+     let ownership_targets: Vec<&str> = touched
+         .iter()
+-        .map(|section| {
++        .filter_map(|section| {
+             if section == "server" {
+-                "server.listeners"
++                patch_listeners.then_some("server.listeners")
+             } else if section == "network" {
+-                "network.dns_overrides"
++                Some("network.dns_overrides")
+             } else {
+-                section.as_str()
++                Some(section.as_str())
+             }
+         })
+         .collect();
+-    let owner_path = resolve_single_source_owner(&loaded, config_path, &ownership_targets)
+-        .map_err(diagnostics::source_conflict)?;
++    let section_owner = if ownership_targets.is_empty() {
++        None
++    } else {
++        Some(
++            resolve_single_source_owner(&loaded, config_path, &ownership_targets)
++                .map_err(diagnostics::source_conflict)?,
++        )
++    };
++    if let (Some(owner), Some(api)) = (&section_owner, &api_source) {
++        if *owner != api.owner_path {
++            return Err(ApiFailure::new(
++                hyper::StatusCode::CONFLICT,
++                "config_patch_not_atomic",
++                "Mutation requires one independently writable config source",
++            ));
++        }
++    }
++    let owner_path = section_owner
++        .or_else(|| api_source.as_ref().map(|source| source.owner_path.clone()))
++        .ok_or_else(|| ApiFailure::bad_request("empty patch: no editable fields"))?;
+     let mut owner_contents = loaded
+         .source_contents
+         .get(&owner_path)
+         .cloned()
+         .ok_or_else(|| ApiFailure::internal("config source owner is missing from snapshot"))?;
+     let expected_owner_contents = owner_contents.clone();
++    if let Some(api) = api_source {
++        owner_contents = api.owner_contents;
++    }
+     for section in &touched {
+         if *section == "server" {
+-            let rendered = render_server_listeners(&requested_cfg)?;
+-            owner_contents = upsert_toml_table(&owner_contents, "server.listeners", &rendered);
++            if patch_listeners {
++                let rendered = render_server_listeners(&requested_cfg)?;
++                owner_contents = upsert_toml_table(&owner_contents, "server.listeners", &rendered);
++            }
+         } else if *section == "network" {
+             owner_contents =
+                 upsert_dns_overrides(&owner_contents, &requested_cfg.network.dns_overrides)?;
+@@ -164,7 +194,7 @@ fn parse_patch(
+     overrides.insert(owner_path.clone(), owner_contents.clone());
+     let candidate = ProxyConfig::parse_source_with_overrides(config_path, &overrides)
+         .map_err(|error| diagnostics::validation_error("constraint_violation", "$", error))?;
+-    if touched.iter().any(|section| section == "server")
++    if patch_listeners
+         && serde_json::to_value(&candidate.config.server.listeners).ok()
+             != serde_json::to_value(&requested_cfg.server.listeners).ok()
+     {
+@@ -191,6 +221,44 @@ fn parse_patch(
+     ))
+ }
+ 
++fn api_field_edits(
++    loaded: &ParsedConfigSource,
++    patch: &Toml,
++) -> Result<Vec<FieldEdit>, ApiFailure> {
++    let Some(fields) = patch
++        .get("server")
++        .and_then(|server| server.get("api"))
++        .and_then(Toml::as_table)
++    else {
++        return Ok(Vec::new());
++    };
++    if fields.is_empty() {
++        return Ok(Vec::new());
++    }
++    // PATCH uses canonical paths, while an authored legacy table keeps its name.
++    let mut table_name = "api";
++    for source in loaded.source_contents.values() {
++        let d
+```
+
+**File**: `src/api/config_edit/tests.rs` (modified, +6/-5)
+```diff
+@@ -228,8 +228,7 @@ async fn invalid_web_patch_does_not_modify_the_source() {
+ 
+ #[tokio::test]
+ async fn read_managed_config_returns_only_editable_sections() {
+-    // Server identity and network siblings must not leak. Listeners-only server
+-    // is returned via the nested allowlist (covered in a dedicated test).
++    // Server identity and network siblings must not leak through nested allowlists.
+     let (path, _d) = temp_config(concat!(
+         "[censorship]\ntls_domain = \"a\"\n",
+         "[server]\nport = 443\n[server.api]\nauth_header = \"SECRET\"\n",
+@@ -241,7 +240,8 @@ async fn read_managed_config_returns_only_editable_sections() {
+     assert!(table.contains_key("censorship"));
+     let server = table["server"].as_table().unwrap();
+     assert!(server.contains_key("listeners"));
+-    assert!(!server.contains_key("api"));
++    assert_eq!(server["api"].as_table().unwrap().len(), 5);
++    assert!(server["api"].get("auth_header").is_none());
+     assert!(!server.contains_key("port"));
+     assert_eq!(
+         serde_json::to_value(&table["network"]).unwrap(),
+@@ -251,7 +251,7 @@ async fn read_managed_config_returns_only_editable_sections() {
+ }
+ 
+ #[tokio::test]
+-async fn read_managed_config_returns_server_listeners_only() {
++async fn read_managed_config_returns_server_listeners_and_api_observability() {
+     let (path, _d) = temp_config(concat!(
+         "[censorship]\ntls_domain = \"a\"\n",
+         "[server]\nport = 443\n",
+@@ -266,7 +266,8 @@ async fn read_managed_config_returns_server_listeners_only() {
+         .as_table()
+         .unwrap();
+     assert!(server.contains_key("listeners"));
+-    assert!(!server.contains_key("api"));
++    assert_eq!(server["api"].as_table().unwrap().len(), 5);
++    assert!(server["api"].get("auth_header").is_none());
+     assert!(!server.contains_key("port"));
+     let listeners = server["listeners"].as_array().unwrap();
+     assert_eq!(listeners.len(), 1);
+```
+
+**File**: `src/api/config_store.rs` (modified, +13/-4)
+```diff
+@@ -326,9 +326,9 @@ pub(super) async fn save_config_to_disk(
+ ///                   located or replaced safely, so it is edited via `general`.
+ ///
+ /// `server` is partially editable: only the nested fields listed in
+-/// [`EDITABLE_SERVER_FIELDS`] (currently `listeners`) may appear in GET/PATCH.
+-/// Secrets and bind identity (`api`/`admin_api`, `port`, unix sockets, …) stay
+-/// blocked. `network` is also partial: only [`EDITABLE_NETWORK_FIELDS`] are
++/// [`EDITABLE_SERVER_FIELDS`] may appear in GET/PATCH; `api` is further restricted
++/// to [`EDITABLE_SERVER_API_FIELDS`]. Secrets and bind identity stay blocked.
++/// `network` is also partial: only [`EDITABLE_NETWORK_FIELDS`] are
+ /// exposed, retaining the boundary around per-node identity and routing policy.
+ pub(super) const EDITABLE_SECTIONS: &[&str] = &[
+     "general",
+@@ -343,7 +343,16 @@ pub(super) const EDITABLE_SECTIONS: &[&str] = &[
+ ///
+ /// Arrays (e.g. `listeners`) replace wholesale on PATCH, matching the existing
+ /// merge semantics for non-table values.
+-pub(super) const EDITABLE_SERVER_FIELDS: &[&str] = &["listeners"];
++pub(super) const EDITABLE_SERVER_FIELDS: &[&str] = &["listeners", "api"];
++
++/// Diagnostics settings applied by explicit generation reload, not the watcher.
++pub(super) const EDITABLE_SERVER_API_FIELDS: &[&str] = &[
++    "minimal_runtime_enabled",
++    "minimal_runtime_cache_ttl_ms",
++    "runtime_edge_enabled",
++    "runtime_edge_cache_ttl_ms",
++    "runtime_edge_top_n",
++];
+ 
+ /// Only the generation resolver's overrides may be read/patched under `network`.
+ pub(super) const EDITABLE_NETWORK_FIELDS: &[&str] = &["dns_overrides"];
+```
+
+**File**: `src/api/discovery/http_tests.rs` (modified, +1/-0)
+```diff
+@@ -38,6 +38,7 @@ impl Fixture {
+         }];
+         let runtime = test_runtime_generation(1, config.clone());
+         let shared = ApiShared {
++            runtime_generation: runtime.id,
+             stats: runtime.stats.clone(),
+             ip_tracker: runtime.ip_tracker.clone(),
+             me_pool: runtime.me_pool_runtime.clone(),
+```
+
+**File**: `src/api/discovery/schema.rs` (modified, +13/-7)
+```diff
+@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
+ use serde_json::Value;
+ 
+ use super::super::config_store::{
+-    EDITABLE_NETWORK_FIELDS, EDITABLE_SECTIONS, EDITABLE_SERVER_FIELDS,
++    EDITABLE_NETWORK_FIELDS, EDITABLE_SECTIONS, EDITABLE_SERVER_API_FIELDS, EDITABLE_SERVER_FIELDS,
+ };
+ use super::super::model::ApiFailure;
+ use super::SCHEMA_VERSION;
+@@ -204,13 +204,19 @@ fn field_api(path: &str) -> FieldApi {
+         || path
+             .strip_prefix("network.")
+             .is_some_and(|field| EDITABLE_NETWORK_FIELDS.contains(&field))
++        || path
++            .strip_prefix("server.api.")
++            .is_some_and(|field| EDITABLE_SERVER_API_FIELDS.contains(&field))
+         || (top == "server"
+-            && EDITABLE_SERVER_FIELDS.iter().any(|field| {
+-                let prefix = format!("server.{field}");
+-                path == prefix
+-                    || path.starts_with(&format!("{prefix}["))
+-                    || path.starts_with(&format!("{prefix}."))
+-            }));
++            && EDITABLE_SERVER_FIELDS
++                .iter()
++                .filter(|field| **field != "api")
++                .any(|field| {
++                    let prefix = format!("server.{field}");
++                    path == prefix
++                        || path.starts_with(&format!("{prefix}["))
++                        || path.starts_with(&format!("{prefix}."))
++                }));
+     let policy_field = path.strip_prefix("access.").and_then(|path| {
+         let field = path.split('.').next()?;
+         crate::api::access_policy::FIELDS
+```
+
+**File**: `src/api/discovery/schema/tests.rs` (modified, +7/-5)
+```diff
+@@ -133,11 +133,13 @@ fn api_ownership_aliases_and_null_contracts_match_existing_surfaces() {
+     let schema = config_schema().unwrap();
+     assert!(field(schema, "web.vhosts[].base_path").api.config_write);
+     assert!(field(schema, "server.listeners[].port").api.config_write);
+-    assert!(
+-        !field(schema, "server.api.runtime_edge_enabled")
+-            .api
+-            .config_write
+-    );
++    for entry in &schema.fields {
++        if let Some(key) = entry.spec.path.strip_prefix("server.api.") {
++            let editable = EDITABLE_SERVER_API_FIELDS.contains(&key);
++            assert_eq!(entry.api.config_read, editable, "{key}");
++            assert_eq!(entry.api.config_write, editable, "{key}");
++        }
++    }
+     assert!(field(schema, "network.dns_overrides").api.config_read);
+     assert!(field(schema, "network.dns_overrides").api.config_write);
+     assert_eq!(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #970** (2026-11-08): API Exposure enhanced (@axkurcom)
 - **PR #964** (2026-10-31): Flow/3.5.16 (@axkurcom)
 - **PR #963** (2026-10-30): Webperf/3.5.15 (@axkurcom)
 - **PR #949** (2026-10-05): ME: Autonomous&Lifecycle-bounded Pool Convergence (@axkurcom)
 - **PR #948** (2026-10-04): WEB: Resolve opt-in decoy hostnames during config preparation (@axkurcom)
 - **PR #946** (2026-10-03): Bounded WEB HTTP conveyor with replay-safe streaming downlink added (@axkurcom)
-- **PR #945** (2026-10-03): Bump -> 3.5.12 (@axkurcom)
 
 ---
 
@@ -2436,30 +2822,63 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Memraid fixes
+## X. API: expose observability settings and fix cross-generation cache races
 
 **RULE**:
-When implementing operations in `docs/WEB/PROXY_PING.de.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in telemt/telemt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/api/config_edit.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in telemt/telemt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `56ca6e25`: Memraid fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `982c4e4a`: API: expose observability settings and fix cross-generation cache races. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/WEB/PROXY_PING.de.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/api/config_edit.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    Note over C,P: Remote transport ready, measurement timestamp refreshed
-    Note over C,B: Local socket ready, measurement timestamp refreshed
+    EDITABLE_NETWORK_FIELDS, EDITABLE_SECTIONS, EDITABLE_SERVER_API_FIELDS, EDITABLE_SERVER_FIELDS,
+    compute_snapshot_revision, is_editable_section, load_config_snapshot, render_server_listeners,
+    render_top_level_section, resolve_single_source_owner, upsert_dns_overrides, upsert_toml_table,
+#[cfg(test)]
+mod api_observability_tests;
+            if *field == "api" {
+                if let Some(api) = value.as_table() {
+                    out.insert(
+                        "api".to_owned(),
+                        Toml::Table(
+                            api.iter()
+                                .filter(|(key, _)| {
+                                    EDITABLE_SERVER_API_FIELDS.contains(&key.as_str())
+                                })
+                                .map(|(key, value)| (key.clone(), value.clone()))
+                                .collect(),
+                        ),
+                    );
+                }
+            } else {
+                out.insert((*field).to_string(), value.clone());
+            }
+fn validate_server_patch(server: &Json) -> Result<(), ApiFailure> {
+    let Some(table) = server.as_object() else {
+    // Validate original keys before 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    Note over C,P: Remote transport ready; measurement timestamp refreshed
-    Note over C,B: Local socket ready; measurement timestamp refreshed
+    EDITABLE_NETWORK_FIELDS, EDITABLE_SECTIONS, EDITABLE_SERVER_FIELDS, compute_snapshot_revision,
+    is_editable_section, load_config_snapshot, render_server_listeners, render_top_level_section,
+    resolve_single_source_owner, upsert_dns_overrides, upsert_toml_table,
+            out.insert((*field).to_string(), value.clone());
+fn validate_server_patch(server: &Toml) -> Result<(), ApiFailure> {
+    let Some(table) = server.as_table() else {
+    if table.is_empty() {
+        return Err(ApiFailure::bad_request(
+            "empty server patch: provide at least one editable field \
+             (currently: listeners)",
+        ));
+    }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `56ca6e25` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `982c4e4a` are properly handled with clean fallback behavior.

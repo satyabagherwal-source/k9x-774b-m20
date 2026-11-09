@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T13:46:51.855Z",
-  "total_cycles_completed": 8569,
-  "total_learnings_persisted": 8569,
-  "total_rules_promoted": 8395,
+  "last_updated": "2026-11-09T14:05:33.559Z",
+  "total_cycles_completed": 8572,
+  "total_learnings_persisted": 8572,
+  "total_rules_promoted": 8397,
   "history": [
-    {
-      "timestamp": "2026-11-08T22:00:48.643Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T22:01:01.834Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T22:10:40.323Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T22:10:46.889Z",
       "repository": "Agent-Field/agentfield",
@@ -1403,6 +1382,27 @@
       "repository": "callstack/react-native-paper",
       "learningId": "learn-github-callstack-react-native-paper",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T14:04:34.106Z",
+      "repository": "telemt/telemt",
+      "learningId": "learn-github-telemt-telemt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T14:04:49.216Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T14:05:33.559Z",
+      "repository": "vllm-sr/d3",
+      "learningId": "learn-huggingface-vllm-sr-d3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

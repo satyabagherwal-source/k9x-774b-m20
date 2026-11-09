@@ -1485,8 +1485,8 @@
     "sourceUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceVersion": "hf-vllm-sr-d3",
     "license": "Open-Source",
-    "contentHash": "2e18488a5e26ad0be314aaec4b39af0c0b9c9ac1e656b2b5f914dab9fe63e601",
-    "lastHarvestedAt": "2026-11-05T15:13:02.009Z",
+    "contentHash": "63c38cb9b9b85ca1a37f381e0c684f3398d3e33d9b4ed3122590bf24240f1d6e",
+    "lastHarvestedAt": "2026-11-09T14:05:33.553Z",
     "learningId": "learn-huggingface-vllm-sr-d3"
   },
   "nguyenphutrong-quotio": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "fbd810e8",
+    "sourceVersion": "e3622da0",
     "license": "Apache-2.0",
-    "contentHash": "d53dbabbfba877090dcf4367baecc3158a90c3899ed50de7d1381e810ee2607d",
-    "lastHarvestedAt": "2026-11-09T13:10:13.352Z",
+    "contentHash": "490500df40a383b2b1e4b8d107f7c109102b3d400a27631105dd980101d46baf",
+    "lastHarvestedAt": "2026-11-09T14:04:49.210Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5443,10 +5443,10 @@
     "repository": "telemt/telemt",
     "platform": "github",
     "sourceUrl": "https://github.com/telemt/telemt",
-    "sourceVersion": "84e5b827",
+    "sourceVersion": "66708d28",
     "license": "NOASSERTION",
-    "contentHash": "0ec5290150c22cc6ecc0597025b15366669e3bdb6a919689f3b6ffe349de873e",
-    "lastHarvestedAt": "2026-11-02T14:39:14.869Z",
+    "contentHash": "e32a44c64f750585bdc29326c15caccd594fc3bf26b99ae23a829c816589805b",
+    "lastHarvestedAt": "2026-11-09T14:04:34.099Z",
     "learningId": "learn-github-telemt-telemt"
   },
   "react-native-modal-react-native-modal": {

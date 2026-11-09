@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T13:46:51.859Z",
+  "last_updated": "2026-11-09T14:05:33.564Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2301,14 +2301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-vllm-sr-d3",
-      "content_hash": "2e18488a5e26ad0be314aaec4b39af0c0b9c9ac1e656b2b5f914dab9fe63e601",
-      "verified_at": "2026-11-05T15:13:02.017Z",
+      "content_hash": "63c38cb9b9b85ca1a37f381e0c684f3398d3e33d9b4ed3122590bf24240f1d6e",
+      "verified_at": "2026-11-09T14:05:33.563Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T15:13:02.017Z"
+      "last_updated": "2026-11-09T14:05:33.563Z"
     },
     "nguyenphutrong/quotio": {
       "repository": "nguyenphutrong/quotio",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d53dbabbfba877090dcf4367baecc3158a90c3899ed50de7d1381e810ee2607d",
-      "verified_at": "2026-11-09T13:10:13.362Z",
+      "content_hash": "490500df40a383b2b1e4b8d107f7c109102b3d400a27631105dd980101d46baf",
+      "verified_at": "2026-11-09T14:04:49.220Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T13:10:13.362Z"
+      "last_updated": "2026-11-09T14:04:49.220Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -8286,14 +8286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-telemt-telemt",
-      "content_hash": "0ec5290150c22cc6ecc0597025b15366669e3bdb6a919689f3b6ffe349de873e",
-      "verified_at": "2026-11-02T14:39:14.877Z",
+      "content_hash": "e32a44c64f750585bdc29326c15caccd594fc3bf26b99ae23a829c816589805b",
+      "verified_at": "2026-11-09T14:04:34.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T14:39:14.877Z"
+      "last_updated": "2026-11-09T14:04:34.110Z"
     },
     "react-native-modal/react-native-modal": {
       "repository": "react-native-modal/react-native-modal",

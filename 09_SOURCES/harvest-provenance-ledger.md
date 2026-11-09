@@ -8613,3 +8613,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-09T13:46:44.772Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `e2db494d` | Multi-dimensional audit evidence | 2026-11-09T13:46:46.817Z |
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `c87c351a` | Multi-dimensional audit evidence | 2026-11-09T13:46:51.848Z |
+| `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `66708d28` | Multi-dimensional audit evidence | 2026-11-09T14:04:34.099Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e3622da0` | Multi-dimensional audit evidence | 2026-11-09T14:04:49.210Z |
+| `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-09T14:05:33.553Z |

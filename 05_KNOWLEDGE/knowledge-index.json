@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T13:46:51.741Z",
+  "last_updated": "2026-11-09T14:05:33.442Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47700,8 +47700,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "fbd810e8",
-      "content_hash": "d53dbabbfba877090dcf4367baecc3158a90c3899ed50de7d1381e810ee2607d",
+      "source_version": "e3622da0",
+      "content_hash": "490500df40a383b2b1e4b8d107f7c109102b3d400a27631105dd980101d46baf",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47843,6 +47843,11 @@
         {
           "number": null,
           "title": "Allocate NUCs before drafting",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Draft NUC 97 In and Not In Membership Tests",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48136,7 +48141,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T13:10:13.211Z",
+      "verified_at": "2026-11-09T14:04:49.030Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61113,11 +61118,16 @@
       "slug": "telemt-telemt",
       "platform": "github",
       "source_url": "https://github.com/telemt/telemt",
-      "source_version": "84e5b827",
-      "content_hash": "0ec5290150c22cc6ecc0597025b15366669e3bdb6a919689f3b6ffe349de873e",
+      "source_version": "66708d28",
+      "content_hash": "e32a44c64f750585bdc29326c15caccd594fc3bf26b99ae23a829c816589805b",
       "dossier_path": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "API: expose observability settings and fix cross-generation cache races",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2086,
           "title": "Bridge JS semicolon warnings fixed",
@@ -61134,7 +61144,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:39:14.735Z",
+      "verified_at": "2026-11-09T14:04:33.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76460,7 +76470,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/vllm-sr/d3",
       "source_version": "hf-vllm-sr-d3",
-      "content_hash": "2e18488a5e26ad0be314aaec4b39af0c0b9c9ac1e656b2b5f914dab9fe63e601",
+      "content_hash": "63c38cb9b9b85ca1a37f381e0c684f3398d3e33d9b4ed3122590bf24240f1d6e",
       "dossier_path": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "promoted_rules": [
@@ -76515,7 +76525,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:13:01.898Z",
+      "verified_at": "2026-11-09T14:05:33.406Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
