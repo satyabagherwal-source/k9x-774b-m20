@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T12:29:45.355Z",
+  "last_updated": "2026-11-09T12:42:12.344Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -53765,14 +53765,19 @@
       "slug": "react-navigation-react-navigation",
       "platform": "github",
       "source_url": "https://github.com/react-navigation/react-navigation",
-      "source_version": "8a2721cc",
-      "content_hash": "34e04889e1234b92cad34c74277de93868d7f44720f049930025a19045101184",
+      "source_version": "7367af35",
+      "content_hash": "174bfa9f977af362c1a2da2485137c275778a052c04369299b3805d5b990edb6",
       "dossier_path": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "don't show header background if header is hidden (#13330)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "avoid flexBasis: 0% in screen to address slowdown on safari",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53796,7 +53801,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:20:44.391Z",
+      "verified_at": "2026-11-09T12:42:12.307Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76017,10 +76022,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "742baf9baef34567a5bba86cff65542d610a41d21a4c99c1c2934740504b215b",
+      "content_hash": "4c854bb4c23fedf7423d3e50874e31e1f2fb9536442c84fa8d73bdb806fcb9cf",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "**MoE Router Stability Rule**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "**Quantization‑Safe Weight Loading Rule**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 686,
           "title": "[MoE Router Logits Suppression]",
@@ -76137,6 +76152,11 @@
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
+          "number": 2007,
+          "title": "**Early‑Compression Token Budget Rule**",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 2043,
           "title": "Tokenizer Regex Safety",
           "status": "PROMOTED_AND_VERIFIED"
@@ -76222,7 +76242,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:22:45.955Z",
+      "verified_at": "2026-11-09T12:42:11.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189044,6 +189064,20 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "rule-2007": {
+      "learning_id": "rule-2007",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2007,
+      "title": "**Early‑Compression Token Budget Rule**",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-09T12:42:11.224Z"
     }
   },
   "aliases": {

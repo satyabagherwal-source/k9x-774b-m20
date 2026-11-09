@@ -8595,3 +8595,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T12:29:33.710Z |
 | `learn-github-mtkennerly-ludusavi` | `https://github.com/mtkennerly/ludusavi` | `c4c2ca99` | Multi-dimensional audit evidence | 2026-11-09T12:29:37.327Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `0297b7e9` | Multi-dimensional audit evidence | 2026-11-09T12:29:45.450Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-09T12:42:11.390Z |
+| `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `7367af35` | Multi-dimensional audit evidence | 2026-11-09T12:42:12.478Z |

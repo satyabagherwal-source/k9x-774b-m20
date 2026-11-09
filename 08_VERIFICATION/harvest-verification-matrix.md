@@ -8586,3 +8586,5 @@
 | `CYCLE-20261109-NHXN` | `2026-11-09T12:29:33.707Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`99c6e640...`) |
 | `CYCLE-20261109-NKQ3` | `2026-11-09T12:29:37.323Z` | `mtkennerly/ludusavi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e1520115...`) |
 | `CYCLE-20261109-NQZR` | `2026-11-09T12:29:45.447Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fc454b91...`) |
+| `CYCLE-20261109-3QKA` | `2026-11-09T12:42:11.386Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 2007, Rule null` | Yes (`4c854bb4...`) |
+| `CYCLE-20261109-3REI` | `2026-11-09T12:42:12.474Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`174bfa9f...`) |

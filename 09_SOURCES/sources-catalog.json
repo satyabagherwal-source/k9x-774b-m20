@@ -1365,8 +1365,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b",
     "license": "Open-Source",
-    "contentHash": "742baf9baef34567a5bba86cff65542d610a41d21a4c99c1c2934740504b215b",
-    "lastHarvestedAt": "2026-11-05T14:22:46.070Z",
+    "contentHash": "4c854bb4c23fedf7423d3e50874e31e1f2fb9536442c84fa8d73bdb806fcb9cf",
+    "lastHarvestedAt": "2026-11-09T12:42:11.390Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
@@ -2733,10 +2733,10 @@
     "repository": "react-navigation/react-navigation",
     "platform": "github",
     "sourceUrl": "https://github.com/react-navigation/react-navigation",
-    "sourceVersion": "8a2721cc",
+    "sourceVersion": "7367af35",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "34e04889e1234b92cad34c74277de93868d7f44720f049930025a19045101184",
-    "lastHarvestedAt": "2026-11-06T15:20:44.512Z",
+    "contentHash": "174bfa9f977af362c1a2da2485137c275778a052c04369299b3805d5b990edb6",
+    "lastHarvestedAt": "2026-11-09T12:42:12.478Z",
     "learningId": "learn-github-react-navigation-react-navigation"
   },
   "easegress-io-easegress": {
