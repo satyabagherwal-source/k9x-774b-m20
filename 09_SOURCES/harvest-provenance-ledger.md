@@ -8569,3 +8569,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2` | `https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T09:24:13.903Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `75259fdd` | Multi-dimensional audit evidence | 2026-11-09T09:25:08.062Z |
 | `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-09T09:36:32.747Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `71c0fd6f` | Multi-dimensional audit evidence | 2026-11-09T10:02:56.742Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-09T10:07:45.474Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `95cc6d95` | Multi-dimensional audit evidence | 2026-11-09T10:07:49.528Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `51395ef8` | Multi-dimensional audit evidence | 2026-11-09T10:07:57.073Z |

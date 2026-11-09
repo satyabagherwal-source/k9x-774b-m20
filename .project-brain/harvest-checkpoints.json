@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T09:36:32.761Z",
+  "last_updated": "2026-11-09T10:07:57.083Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1850,14 +1850,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
-      "content_hash": "51f7c8729cc54c72d8b29517aae04715575b7bc91555b83ea4d15a4c6f34c6ea",
-      "verified_at": "2026-11-05T13:20:17.655Z",
+      "content_hash": "e68472edce66cac423e9b21dadc20b1e6db2d39ad61ad5c49d853cf6c329efd5",
+      "verified_at": "2026-11-09T10:07:45.483Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:20:17.655Z"
+      "last_updated": "2026-11-09T10:07:45.483Z"
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
@@ -3636,14 +3636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mattermost-mattermost",
-      "content_hash": "27692df7c49b12b651d7eb9f1e94830196b25bc7e2dbffb662229bcf8aeb78e5",
-      "verified_at": "2026-11-06T14:05:31.091Z",
+      "content_hash": "0078134c12a8632c7ad10088d2126c9bf3f23836d9fd83fc36ca72acc84d87f2",
+      "verified_at": "2026-11-09T10:07:49.545Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:05:31.091Z"
+      "last_updated": "2026-11-09T10:07:49.545Z"
     },
     "chaos-mesh/chaos-mesh": {
       "repository": "chaos-mesh/chaos-mesh",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "95eb4ff69947e5a8565d7ad85896b40f3862f5892950d451dd08d62bff7172d9",
-      "verified_at": "2026-11-07T06:24:33.258Z",
+      "content_hash": "93ac4478492c476e8f54a52c3c4efc0b0435a5840fb7b6fe3327909952863a90",
+      "verified_at": "2026-11-09T10:07:57.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T06:24:33.258Z"
+      "last_updated": "2026-11-09T10:07:57.082Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "c62b2da6121903c735b64f13ab5f71820cec1387ca78465d5cc1a2bc4682c766",
-      "verified_at": "2026-11-08T15:21:47.673Z",
+      "content_hash": "53cf39edf60c6ffd3a1fd7b3302b0474135e7c59025f766f444cdb0c285a9c81",
+      "verified_at": "2026-11-09T10:02:56.752Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:21:47.673Z"
+      "last_updated": "2026-11-09T10:02:56.752Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

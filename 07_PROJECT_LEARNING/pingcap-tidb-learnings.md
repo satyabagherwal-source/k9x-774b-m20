@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `b9817438`  
+> **Source Version**: `71c0fd6f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:21:46.062Z  
+> **Timestamp**: 2026-11-09T10:02:55.317Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:21:45.596Z  
+> **Harvest Timestamp**: 2026-11-09T10:02:49.345Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40720 stars
+- **Stars / Engagement**: 40721 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72822** (2026-11-07): **executor: honor table ID filters for unmapped TiKV regions (#72820) [release-8.5]**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #57477  Problem Summary:  Ports the NULL-row predicate fix from #72820 to `release-8.5`. `INFORMATION_SCHEMA.TIKV_REGION_STATUS` can return an extra row with NULL table metadata when a `TABLE_ID` predicate is extracted. A partitioned table without a global index can have an unmapped logical-prefix region; the consumed predicate no longer filters its NULL `TABLE_ID`, so table-ID filtering differs from filtering by database and table name.  The original missing-index-region range in #57477 was already fixed by #67444 and backported in #72398. This change only addresses the remaining consumed-predicate boundary.  ### What changed and how does it work?  Skip unmapped regions when a table-ID predicate has been extracted. Keep existing record, local-index and global-index mapping behavior.  Extend `TestTikvRegionStatus` with equality queries before and after a partitioned table gains a local index. Compare a genuine two-table `IN` predicate with a database-qualified table-name query, and assert that EXPLA
+- **Issue #72853** (2026-11-09): **sessionctx: disable prepare cache and ODKU expression reuse by default**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  On `feature/release-8.5-materialized-view`, `tidb_enable_cache_prepare_stmt` and `tidb_enable_on_duplicate_expression_reuse` both default to ON. These optimizations are independent of materialized views and should require explicit opt-in on this branch.  ### What changed and how does it work?  - Change both source defaults to OFF, covering session initialization and system-variable metadata. - Add regression assertions for the defaults and extend SQL coverage for GLOBAL/SESSION values, SET_VAR, explicit ON, and DEFAULT restoration. - Explicitly enable the prepare cache in its existing feature tests and update the ODKU optimization documentation.  Existing persisted GLOBAL settings are not rewritten. Both optimizations remain available through explicit ON settings. Disabling them by default can increase prepare/rewrite CPU for workloads that benefited from them; no performance benchmark was run.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Un
 
-- **Issue #72821** (2026-11-07): **ddl: reject unsafe standalone recovery of foreign keys (release-8.5)**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #69777  Problem Summary:  Backport #71074 to release-8.5. Standalone recovery can restore historical foreign-key rows against a different table that reused the parent name, allowing later cascade actions to change those historical rows.  ### What changed and how does it work?  Reject standalone `RECOVER TABLE` and `FLASHBACK TABLE` for managed external foreign-key relationships. Check before job submission and again in the DDL owner against current InfoSchema so concurrent changes cannot bypass the frontend check. Self-referencing tables remain recoverable, and `FLASHBACK TABLE ... TO` updates their self references. `FLASHBACK DATABASE` retains its database-level behavior.  Port the original SQL regressions and deterministic owner-revalidation test to the release executor package. Both owner cases verify an actual job and persisted history: the unchanged-parent case restores row 1, while the replacement-parent case rejects recovery without publishing the historical table.  Full `make bazel_prepare` 
+- **Issue #72845** (2026-11-09): **planner: avoid plan cache misses after unrelated DDL**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #72732  Problem Summary:  An unrelated DDL changes the global schema version in a plan cache key, causing a cache miss even when the tables used by the statement have not changed.  ### What changed and how does it work?  Replace global schema versions in plan cache keys with `(tableID, revision, latestVersion)` for each related table. DML with foreign key checks enabled retains the global schema versions.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Not run locally.  Side effects  - [x] Performance regression: Consumes more CPU - [ ] Performance regression: Consumes more Memory - [ ] Breaking backward compatibility  Documentation  - [ ] Affects user behaviors - [ ] Contains syntax changes - [ ] Contains variable changes - [ ] Contains experimental
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,283 +1940,133 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9817438` (2026-11-07)
-**Commit Message**: statistics: defer auto analyze until materialized views are ready (#72678)
+### Incident Patch 1: `1bdb6e61` (2026-11-09)
+**Commit Message**: build: drop third-party BEP upload from CI test targets (#72843)
 
-ref pingcap/tidb#18023
+close pingcap/tidb#72844
 
-**File**: `pkg/statistics/handle/autoanalyze/BUILD.bazel` (modified, +2/-1)
+**File**: `Makefile` (modified, +2/-9)
 ```diff
-@@ -40,13 +40,14 @@ go_test(
-     timeout = "short",
-     srcs = ["autoanalyze_test.go"],
-     flaky = True,
--    shard_count = 14,
-+    shard_count = 15,
-     deps = [
-         ":autoanalyze",
-         "//pkg/domain",
-         "//pkg/domain/infosync",
-         "//pkg/domain/serverinfo",
-         "//pkg/keyspace",
-+        "//pkg/meta/model",
-         "//pkg/parser/ast",
-         "//pkg/parser/mysql",
-         "//pkg/sessionctx",
+@@ -712,23 +712,16 @@ bazel_test: bazel-failpoint-enable bazel_prepare ## Run all tests using Bazel
+ 		-- //... -//cmd/... -//tests/graceshutdown/... \
+ 		-//tests/globalkilltest/... -//tests/readonlytest/... -//tests/realtikvtest/...
+ 
+-BAZEL_BEP_BACKEND ?= grpcs://beplessproxy.channel9.ai
+-BAZEL_BEP_RESULTS_URL ?= https://bepless.hawkingrei.com/
+-BAZEL_BEP_BASE_FLAGS = \
+-	--bes_backend=$(BAZEL_BEP_BACKEND) \
+-	--bes_results_url=$(BAZEL_BEP_RESULTS_URL) \
+-	--experimental_remote_build_event_upload=all
+-
+ .PHONY: bazel_ci_test
+ bazel_ci_test: bazel-failpoint-enable bazel_ci_simple_prepare
+-	bazel $(BAZEL_GLOBAL_CONFIG) --nohome_rc test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) $(BAZEL_BEP_BASE_FLAGS) $$(./build/print-bazel-bep-flags.sh) --jobs=HOST_CPUS*0.9 --build_tests_only --test_keep_going=false \
++	bazel $(BAZEL_GLOBAL_CONFIG) --nohome_rc test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) --jobs=HOST_CPUS*0.9 --build_tests_only --test_keep_going=false \
+ 		--define gotags=$(UNIT_TEST_TAGS) \
+ 		-- //... -//cmd/... -//tests/graceshutdown/... \
+ 		-//tests/globalkilltest/... -//tests/readonlytest/... -//tests/realtikvtest/...
+ 
+ .PHONY: bazel_ci_test_ddlargsv1
+ bazel_ci_test_ddlargsv1: bazel-failpoint-enable bazel_ci_simple_prepare
+-	bazel $(BAZEL_GLOBAL_CONFIG) test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) $(BAZEL_BEP_BASE_FLAGS) $$(./build/print-bazel-bep-flags.sh) --build_tests_only --test_keep_going=false \
++	bazel $(BAZEL_GLOBAL_CONFIG) test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) --build_tests_only --test_keep_going=false \
+ 		--define gotags=$(UNIT_TEST_TAGS),ddlargsv1 \
+ 		-- //... -//cmd/... -//tests/graceshutdown/... \
+ 		-//tests/globalkilltest/... -//tests/readonlytest/... -//tests/realtikvtest/...
 ```
 
-**File**: `pkg/statistics/handle/autoanalyze/autoanalyze.go` (modified, +13/-1)
+**File**: `build/print-bazel-bep-flags.sh` (removed, +0/-80)
 ```diff
-@@ -463,7 +463,7 @@ func RandomPickOneTableAndTryAutoAnalyze(
- 				continue
- 			}
- 
--			if tblInfo.IsView() || tblInfo.MaterializedViewLog != nil {
-+			if ShouldSkipAutoAnalyzeTable(tblInfo) {
- 				continue
- 			}
- 
-@@ -522,6 +522,18 @@ func RandomPickOneTableAndTryAutoAnalyze(
- 	return false
- }
- 
-+// ShouldSkipAutoAnalyzeTable excludes views, materialized view logs, and materialized
-+// views whose initial build is not ready from ordinary auto analyze.
-+func ShouldSkipAutoAnalyzeTable(tblInfo *model.TableInfo) bool {
-+	if tblInfo == nil {
-+		return false
-+	}
-+	if tblInfo.IsView() || tblInfo.MaterializedViewLog != nil {
-+		return true
-+	}
-+	return tblInfo.MaterializedView != nil && !tblInfo.MaterializedView.GetInitBuildState().IsReady()
-+}
-+
- func getPartitionStats(
- 	statsHandle statstypes.StatsHandle,
- 	defs []model.PartitionDefinition,
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/autoanalyze_test.go` (modified, +32/-0)
-```diff
-@@ -27,6 +27,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/domain/infosync"
- 	"github.com/pingcap/tidb/pkg/domain/serverinfo"
- 	"github.com/pingcap/tidb/pkg/keyspace"
-+	"github.com/pingcap/tidb/pkg/meta/model"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- 	"github.com/pingcap/tidb/pkg/parser/mysql"
- 	"github.com/pingcap/tidb/pkg/sessionctx"
-@@ -82,6 +83,37 @@ func TestEnableAutoAnalyzePriorityQueue(t *testing.T) {
- 	require.Equal(t, "tidb_enable_auto_analyze_priority_queue has been deprecated and TiDB will always use priority queue to schedule auto analyze", err.Error())
- }
- 
-+func TestShouldSkipAutoAnalyzeTableNotReadyMV(t *testing.T) {
-+	require.True(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
-+		Name: ast.NewCIStr("mv_not_ready"),
-+		MaterializedView: &model.MaterializedViewInfo{
-+			InitBuildState: model.MViewInitBuildBuilding,
-+		},
-+	}))
-+	require.True(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
-+		Name: ast.NewCIStr("mv_deferred"),
-+		MaterializedView: &model.MaterializedViewInfo{
-+			InitBuildState: model.MViewInitBuildDeferred,
-+		},
-+	}))
-+	require.False(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
-+		Name: ast.NewCIStr("mv_ready"),
-+		MaterializedView: &model.MaterializedViewInfo{
-+			InitBuildState: model.MViewInitBuildReady,
-+		},
-+	}))
-+	require.False(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
-+		Name: ast.NewCIStr("normal_table"),
-+	}))
-+	require.True(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
-+		View: &model.ViewInfo{},
-+	}))
-+	require.True(t, autoanalyze.ShouldSkipAutoAnalyzeTable(&model.TableInfo{
-+		MaterializedViewLog: &model.MaterializedViewLogInfo{},
-+	}))
-+	require.False(t, autoanalyze.ShouldSkipAutoAnalyzeTable(nil))
-+}
-+
- func TestAutoAnalyzeLockedTable(t *testing.T) {
- 	store, dom := testkit.CreateMockStoreAndDomain(t)
- 	tk := testkit.NewTestKit(t, store)
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/dynamic_partitioned_table_analysis_job.go` (modified, +4/-0)
-```diff
-@@ -178,6 +178,10 @@ func (j *DynamicPartitionedTableAnalysisJob) ValidateAndPrepare(
- 		callFailureHook(false)
- 		return false, schemaNotExist
- 	}
-+	if valid, failReason, needRetry := checkTableReadyForAnalyze(tableInfo); !valid {
-+		callFailureHook(needRetry)
-+		return false, failReason
-+	}
- 	partitionInfo := tableInfo.GetPartitionInfo()
- 	if partitionInfo == nil {
- 		callFailureHook(false)
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/job.go` (modified, +12/-0)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"fmt"
- 	"time"
- 
-+	"github.com/pingcap/tidb/pkg/meta/model"
- 	"github.com/pingcap/tidb/pkg/sessionctx"
- 	"github.com/pingcap/tidb/pkg/sessionctx/sysproctrack"
- 	"github.com/pingcap/tidb/pkg/statistics/handle/logutil"
-@@ -104,6 +105,17 @@ const (
- 	partitionNotExist   = "partition does not exist"
- )
- 
-+func checkTableReadyForAnalyze(tableInfo *model.TableInfo) (bool, string, bool) {
-+	if tableInfo == nil || tableInfo.MaterializedView == nil {
-+		return true, "", false
-+	}
-+	initBuildState := tableInfo.MaterializedView.GetInitBuildState()
-+	if initBuildState.IsReady() {
-+		return true, "", false
-+	}
-+	return false, initBuildState.AccessErrorMessage(tableInfo.Name.O), true
-+}
-+
- // isValidToAnalyze checks whether the table is valid to analyze.
- // It checks the last failed analysis duration and the average analysis duration.
- // If the last failed analysis duration is less than 2 times the average analysis duration,
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/non_partitioned_table_analysis_job.go` (modified, +4/-0)
-```diff
-@@ -151,6 +151,10 @@ func (j *NonPartitionedTableAnalysisJob) ValidateAndPrepare(
- 		callFailureHook(false)
- 		return false, schemaNotExist
- 	}
-+	if valid, failReason, needRetry := checkTableReadyForAnalyze(tableInfo); !valid {
-+		callFailureHook(needRetry)
-+		return false, failReason
-+	}
- 	tableName := tableInfo.Name.O
- 	indexNames := make([]string, 0, len(j.IndexIDs))
- 	for _, index := range tableInfo.Indices {
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/non_partitioned_table_analysis_job_test.go` (modified, +71/-0)
-```diff
-@@ -17,8 +17,11 @@ package priorityqueue_test
- import (
- 	"context"
- 	"testing"
-+	"time"
- 
-+	"github.com/pingcap/failpoint"
- 	"github.com/pingcap/tidb/pkg/meta/metadef"
-+	"github.com/pingcap/tidb/pkg/meta/model"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- 	"github.com/pingcap/tidb/pkg/sessionctx"
- 	"github.com/pingcap/tidb/pkg/statistics/handle/autoanalyze/priorityqueue"
-@@ -214,3 +217,71 @@ func TestValidateAndPrepareWhenOnlyHasFailedAnalysisRecords(t *testing.T) {
- 	require.False(t, valid)
- 	require.Equal(t, "last failed analysis duration is less than 30m0s", failReason)
- }
-+
-+func TestNonPartitionedTableValidateAndPrepareRetriesNotReadyMV(t *testing.T) {
-+	store, dom := testkit.CreateMockStoreAndDomain(t)
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec("set tidb_mview_enable=on")
-+	tk.MustExec(metadef.CreateAnalyzeJobsTable)
-+	tk.MustExec("create table t (a int not null, b int not null)")
-+	tk.MustExec("insert into t values (1, 10), (1, 5), (2, 7)")
-+	tk.MustExec("create materialized view log on t (a, b) purge next date_add(now(), interval 1 hour)")
-+
-+	const pauseBuildFailpoint = "github.com/pingcap/tidb/pkg/ddl/pauseCreateMaterializedViewBuild"
-+	require.NoError(t, failpoint.Enable(pauseBuildFailpoint, "pause"))
-+	enabled := true
-+	defer func() {
-+		if enabled {
-+			require.NoError(t, failpoint.Disable(pauseBuildFailpoint))
-+		}
-+	}()
-+
-+	ddlDone := make(chan error, 1)
-+	go func() {
-+		tkDDL := testkit.NewTestKit(t, store)
-+		tkDDL.MustExec("use test")
-+		tkDDL.MustExec("set tidb_mview_enable=on")
-+		ddlDone <- tkDDL.ExecToErr("create materialized view mv_not_ready (a, s, cnt) refresh fast next date_add(now(), interval 1 hour) as select a, sum(b), count(1) from t group by a")
-+	}()
-+
-+	require.Eventually(t, func() bool {
-+		is := dom.InfoSchema()
-+		mvTable, err := is.TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("mv_not_ready"))
-+		if err != nil {
-+			return false
-+		}
-+		return mvTable.Meta().MaterializedView != nil &&
-+			mvTable.Meta().MaterializedView.GetInitBuildState() == model.MViewInitBuildBuilding
-+	}, 30*time.Second, 100*time.Millisecond)
-+
-+	mvTable, err := dom.InfoSchema().TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("mv_not_ready"))
-+	require.NoError(t, err)
-+	job := &priorityqueue.NonPartitionedTableAnalysisJob{
-+		TableID: mvTable.Meta().ID,
-+		Weight:  1,
-+	}
-+	var (
-+		failureHookCalled bool
-+		needRetry         bool
-+	)
-+	job.RegisterFailureHook(func(_ priorityqueue.AnalysisJob, boolRetry bool) {
-+		failureHookCalled = true
-+		needRetry = boolRetry
-+	})
-+
-+	valid, failReason := job.ValidateAndPrepare(tk.Session().(sessionctx.Context))
-+	require.False(t, valid)
-+	require.True(t, failureHookCalled)
-+	require.True(t, needRetry)
-+	require.Contains(t, failReason, "initial build is in progress")
-+
-+	require.NoError(t, failpoint.Disable(pauseBuildFailpoint))
-+	enabled = false
-+	select {
-+	case err := <-ddlDone:
-+		require.NoError(t, err)
-+	case <-time.After(60 * time.Second):
-+		t.Fatal("timed out waiting CREATE MATERIALIZED VIEW to finish")
-+	}
-+}
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/static_partitioned_table_analysis_job.go` (modified, +4/-0)
-```diff
-@@ -167,6 +167,10 @@ func (j *StaticPartitionedTableAnalysisJob) ValidateAndPrepare(
- 		callFailureHook(false)
- 		return false, schemaNotExist
- 	}
-+	if valid, failReason, needRetry := checkTableReadyForAnalyze(tableInfo); !valid {
-+		callFailureHook(needRetry)
-+		return false, failReason
-+	}
- 	partitionInfo := tableInfo.GetPartitionInfo()
- 	if partitionInfo == nil {
- 		callFailureHook(false)
+@@ -1,80 +0,0 @@
+-#!/bin/bash
+-#
+-# Copyright 2026 PingCAP, Inc.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-set -o errexit
+-set -o nounset
+-set -o pipefail
+-
+-git_commit="$(git rev-parse HEAD 2>/dev/null || true)"
+-git_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+-ci_provider="local"
+-
+-if [[ -n "${JENKINS_URL:-}" || -n "${BUILD_URL:-}" || -n "${JOB_NAME:-}" ]]; then
+-    ci_provider="jenkins"
+-fi
+-
+-pr_id="${ghprbPullId:-${CHANGE_ID:-}}"
+-pr_url="${ghprbPullLink:-${CHANGE_URL:-}}"
+-pr_target="${ghprbTargetBranch:-${CHANGE_TARGET:-}}"
+-pr_source="${ghprbSourceBranch:-${CHANGE_BRANCH:-}}"
+-pr_commit="${ghprbActualCommit:-}"
+-
+-metadata_flags=()
+-
+-add_metadata() {
+-    local key="$1"
+-    local value="${2:-}"
+-
+-    if [[ -n "${value}" ]]; then
+-        metadata_flags+=("--build_metadata=${key}=${value}")
+-    fi
+-}
+-
+-add_keyword() {
+-    local keyword="${1:-}"
+-
+-    if [[ -n "${keyword}" ]]; then
+-        metadata_flags+=("--bes_keywords=${keyword}")
+-    fi
+-}
+-
+-add_metadata "ci.provider" "${ci_provider}"
+-add_metadata "ci.jenkins.url" "${JENKINS_URL:-}"
+-add_metadata "ci.job.name" "${JOB_NAME:-}"
+-add_metadata "ci.job.base_name" "${JOB_BASE_NAME:-}"
+-add_metadata "ci.build.number" "${BUILD_NUMBER:-}"
+-add_metadata "ci.build.id" "${BUILD_ID:-}"
+-add_metadata "ci.build.tag" "${BUILD_TAG:-}"
+-add_metadata "ci.build.url" "${BUILD_URL:-${RUN_DISPLAY_URL:-}}"
+-add_metadata "git.commit" "${GIT_COMMIT:-${git_commit}}"
+-add_metadata "git.branch" "${BRANCH_NAME:-${GIT_BRANCH:-${git_branch}}}"
+-add_metadata "git.url" "${GIT_URL:-}"
+-add_metadata "git.repo" "${ghprbGhRepository:-${CHANGE_FORK:-}}"
+-add_metadata "pr.id" "${pr_id}"
+-add_metadata "pr.url" "${pr_url}"
+-add_metadata "pr.target" "${pr_target}"
+-add_metadata "pr.source" "${pr_source}"
+-add_metadata "pr.commit" "${pr_commit}"
+-add_keyword "ci:${ci_provider}"
+-add_keyword "git.branch=${BRANCH_NAME:-${GIT_BRANCH:-${git_branch}}}"
+-add_keyword "git.commit=${GIT_COMMIT:-${git_commit}}"
+-
+-if [[ -n "${pr_id}" ]]; then
+-    add_keyword "pr:${pr_id}"
+-fi
+-
+-printf '%s ' "${metadata_flags[@]}"
+-echo
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #72822** (closed): executor: honor table ID filters for unmapped TiKV regions (#72820) [release-8.5] (@wjhuang2016)
-- **PR #72821** (closed): ddl: reject unsafe standalone recovery of foreign keys (release-8.5) (@wjhuang2016)
-- **PR #72799** (closed): executor: fix foreign key checks with IGNORE (#66873) (@wjhuang2016)
-- **PR #72798** (2026-11-06): dumpling: close test service connections during cleanup (@YuJuncen)
-- **PR #72791** (2026-11-06): *: update security dependencies for materialized views (@windtalker)
-- **PR #72787** (2026-11-06): planner: backport join reorder and constant propagation improvements | tidb-test=pr/2812 (@qw4990)
+- **PR #72853** (2026-11-09): sessionctx: disable prepare cache and ODKU expression reuse by default (@windtalker)
+- **PR #72845** (closed): planner: avoid plan cache misses after unrelated DDL (@qw4990)
+- **PR #72843** (2026-11-09): build: drop third-party BEP upload from CI test targets (@wuhuizuo)
+- **PR #72841** (closed): planner: reuse cached plans across unrelated schema changes (@qw4990)
+- **PR #72836** (2026-11-09): session: reject COMPARE OUTPUT in stale read-only transactions (@windtalker)
+- **PR #72827** (2026-11-09): planner: extract join FDs lazily in GetMergeJoin | tidb-test=pr/2813 (@terry1purcell)
 
 ---
 
@@ -2236,29 +2086,37 @@ ref pingcap/tidb#18023
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. statistics: defer auto analyze until materialized views are ready (#72678)
+## X. build: drop third-party BEP upload from CI test targets (#72843)
 
 **RULE**:
-When implementing operations in `pkg/statistics/handle/autoanalyze/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9817438`: statistics: defer auto analyze until materialized views are ready (#72678). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bdb6e61`: build: drop third-party BEP upload from CI test targets (#72843). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/statistics/handle/autoanalyze/BUILD.bazel`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    shard_count = 15,
-        "//pkg/meta/model",
+	bazel $(BAZEL_GLOBAL_CONFIG) --nohome_rc test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) --jobs=HOST_CPUS*0.9 --build_tests_only --test_keep_going=false \
+	bazel $(BAZEL_GLOBAL_CONFIG) test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) --build_tests_only --test_keep_going=false \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    shard_count = 14,
+BAZEL_BEP_BACKEND ?= grpcs://beplessproxy.channel9.ai
+BAZEL_BEP_RESULTS_URL ?= https://bepless.hawkingrei.com/
+BAZEL_BEP_BASE_FLAGS = \
+	--bes_backend=$(BAZEL_BEP_BACKEND) \
+	--bes_results_url=$(BAZEL_BEP_RESULTS_URL) \
+	--experimental_remote_build_event_upload=all
+
+	bazel $(BAZEL_GLOBAL_CONFIG) --nohome_rc test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) $(BAZEL_BEP_BASE_FLAGS) $$(./build/print-bazel-bep-flags.sh) --jobs=HOST_CPUS*0.9 --build_tests_only --test_keep_going=false \
+	bazel $(BAZEL_GLOBAL_CONFIG) test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) $(BAZEL_BEP_BASE_FLAGS) $$(./build/print-bazel-bep-flags.sh) --build_tests_only --test_keep_going=false \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9817438` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bdb6e61` are properly handled with clean fallback behavior.

@@ -8560,3 +8560,7 @@
 | `CYCLE-20261109-15U3` | `2026-11-09T09:24:13.899Z` | `autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md` | Yes (`42906348...`) |
 | `CYCLE-20261109-2BMG` | `2026-11-09T09:25:08.056Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`32264f2c...`) |
 | `CYCLE-20261109-GZXJ` | `2026-11-09T09:36:32.743Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`70b4a334...`) |
+| `CYCLE-20261109-EY5F` | `2026-11-09T10:02:56.739Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`53cf39ed...`) |
+| `CYCLE-20261109-L4XQ` | `2026-11-09T10:07:45.470Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`e68472ed...`) |
+| `CYCLE-20261109-L82C` | `2026-11-09T10:07:49.524Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0078134c...`) |
+| `CYCLE-20261109-LDVX` | `2026-11-09T10:07:57.069Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`93ac4478...`) |

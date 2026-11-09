@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "51f7c8729cc54c72d8b29517aae04715575b7bc91555b83ea4d15a4c6f34c6ea",
-    "lastHarvestedAt": "2026-11-05T13:20:17.648Z",
+    "contentHash": "e68472edce66cac423e9b21dadc20b1e6db2d39ad61ad5c49d853cf6c329efd5",
+    "lastHarvestedAt": "2026-11-09T10:07:45.474Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "60cf157a",
+    "sourceVersion": "95cc6d95",
     "license": "NOASSERTION",
-    "contentHash": "27692df7c49b12b651d7eb9f1e94830196b25bc7e2dbffb662229bcf8aeb78e5",
-    "lastHarvestedAt": "2026-11-06T14:05:31.084Z",
+    "contentHash": "0078134c12a8632c7ad10088d2126c9bf3f23836d9fd83fc36ca72acc84d87f2",
+    "lastHarvestedAt": "2026-11-09T10:07:49.528Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "88b98114",
+    "sourceVersion": "51395ef8",
     "license": "Apache-2.0",
-    "contentHash": "95eb4ff69947e5a8565d7ad85896b40f3862f5892950d451dd08d62bff7172d9",
-    "lastHarvestedAt": "2026-11-07T06:24:33.243Z",
+    "contentHash": "93ac4478492c476e8f54a52c3c4efc0b0435a5840fb7b6fe3327909952863a90",
+    "lastHarvestedAt": "2026-11-09T10:07:57.073Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "b9817438",
+    "sourceVersion": "71c0fd6f",
     "license": "Apache-2.0",
-    "contentHash": "c62b2da6121903c735b64f13ab5f71820cec1387ca78465d5cc1a2bc4682c766",
-    "lastHarvestedAt": "2026-11-08T15:21:47.664Z",
+    "contentHash": "53cf39edf60c6ffd3a1fd7b3302b0474135e7c59025f766f444cdb0c285a9c81",
+    "lastHarvestedAt": "2026-11-09T10:02:56.742Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `60cf157a`  
+> **Source Version**: `95cc6d95`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:05:30.143Z  
+> **Timestamp**: 2026-11-09T10:07:47.672Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:05:29.909Z  
+> **Harvest Timestamp**: 2026-11-09T10:02:46.600Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39548 stars
+- **Stars / Engagement**: 39559 stars
 
 ---
 
@@ -1630,165 +1630,596 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a74187d` (2026-11-06)
-**Commit Message**: [MM-70789] Fix nil-pointer panic in PlatformService.Publish when the cluster is unset mid-publish (#39412)
+### Incident Patch 1: `276dc653` (2026-11-07)
+**Commit Message**: [MM-71617] Add per-node memory health diagnostics (#39720)
 
-* [MM-70789] Read the cluster once in PlatformService.Publish
+* [MM-71617] Add per-node memory health diagnostics
 
-Publish checked ps.clusterIFace for nil and then read it again to send.
-A test swapping the cluster to nil between the two reads (e.g. the
-config-change Publish still in flight from setup's UpdateConfig) made
-the send go through a nil interface and crash the test binary.
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Use SplitSeq for memory parsing
+
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Clarify system resource paths
+
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Update mmctl packet health expectations
+
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Resolve process cgroup memory stats
+
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Use a plain bool for cgroup memory support internally
+
+Only the support packet model needs the tri-state; the collector now
+creates the pointer when cgroup resolution succeeds.
+
+* [MM-71617] Resolve OOM and Go memory limit rules when data does not apply
+
+Drop cgroup_memory_stats_supported from the support packet. Inside a
+collected server_memory section, a missing OOM kill count means cgroup v2
+memory stats do not apply to the process, and a missing Go memory limit
+means none is set; both now resolve instead of reporting Unknown.
+
+Offline packet evaluation cannot yet tell a failed section from a healthy
+one; MM-71665 
+
+**File**: `server/channels/app/health_check_snapshot_test.go` (modified, +4/-0)
+```diff
+@@ -310,6 +310,10 @@ func TestHealthSnapshotLiveOfflineParity(t *testing.T) {
+ 				require.NotNil(t, evaluations[i].Result.Value)
+ 				evaluations[i].Result.Value = nil
+ 				evaluations[i].Result.Details = nil
++			case "NODE_HOST_MEMORY_LOW", "NODE_CONTAINER_MEMORY_PRESSURE":
++				// These set a value only when they have the numbers to compare, so none is required.
++				evaluations[i].Result.Value = nil
++				evaluations[i].Result.Details = nil
+ 			}
+ 		}
+ 		return evaluations
+```
+
+**File**: `server/channels/app/platform/container_limits.go` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++package platform
++
++// ContainerLimits holds the effective CPU limit for the current container. The memory
++// limit is read with the other memory diagnostics, see memoryDiagnostics.
++// Zero values indicate no limit is set (fields will be omitted from YAML output).
++type ContainerLimits struct {
++	CPULimit float64
++}
++
++type cgroupV2Info struct {
++	dir                  string
++	memoryStatsSupported bool
++}
++
++type memoryDiagnostics struct {
++	AvailableMemoryMB           *uint64
++	SwapTotalMB                 *uint64
++	SwapUsedMB                  *uint64
++	ProcessRSSMB                *uint64
++	ContainerMemoryLimitMB      uint64 // zero when no limit is set
++	ContainerMemoryUsageMB      *uint64
++	ContainerMemoryWorkingSetMB *uint64
++	ContainerOOMKills           *uint64
++}
+```
+
+**File**: `server/channels/app/platform/container_limits_linux.go` (modified, +240/-32)
+```diff
+@@ -7,52 +7,45 @@ package platform
+ 
+ import (
+ 	"errors"
++	"fmt"
+ 	"os"
++	"path/filepath"
++	"slices"
+ 	"strconv"
+ 	"strings"
+ )
+ 
+-// cgroupPaths holds the file paths used to read cgroup v2 resource limits.
++// resourcePaths holds procfs files used to inspect system resources.
+ // These are package-level variables so they can be overridden in tests.
+-var cgroupPaths = struct {
+-	v2MemoryMax string
+-	v2CPUMax    string
++var resourcePaths = struct {
++	procMeminfo       string
++	procSelfStatus    string
++	procSelfCgroup    string
++	procSelfMountInfo string
+ }{
+-	v2MemoryMax: "/sys/fs/cgroup/memory.max",
+-	v2CPUMax:    "/sys/fs/cgroup/cpu.max",
++	procMeminfo:       "/proc/meminfo",
++	procSelfStatus:    "/proc/self/status",
++	procSelfCgroup:    "/proc/self/cgroup",
++	procSelfMountInfo: "/proc/self/mountinfo",
+ }
+ 
+-// ContainerLimits holds effective CPU and memory limits for the current container.
+-// Zero values indicate no limit is set (fields will be omitted from YAML output).
+-type ContainerLimits struct {
+-	CPULimit      float64
+-	MemoryLimitMB uint64
+-}
++var mountInfoPathReplacer = strings.NewReplacer(
++	`\040`, " ",
++	`\011`, "\t",
++	`\012`, "\n",
++	`\134`, `\`,
++)
+ 
+-// getContainerLimits reads container resource limits from cgroups v2.
++// getContainerLimits reads the container CPU limit from cgroups v2.
+ // Returns zero values when no limits are detected (bare metal, unlimited, or non-v2 system).
+-func getContainerLimits() (ContainerLimits, error) {
++func getContainerLimits(info cgroupV2Info) (ContainerLimits, error) {
+ 	var limits ContainerLimits
+-
+-	// Memory limit: "max" means unlimited, otherwise bytes
+-	memStr, err := readTrimmed(cgroupPaths.v2MemoryMax)
+-	if err != nil {
+-		if errors.Is(err, os.ErrNotExist) {
+-			return limits, nil
+-		}
+-		return limits, err
+-	}
+-	if memStr != "max" {
+-		var memBytes uint64
+-		memBytes, err = strconv.ParseUint(memStr, 10, 64)
+-		if err != nil {
+-			return limits, err
+-		}
+-		limits.MemoryLimitMB = (memBytes + 1024*1024 - 1) / (1024 * 1024)
++	if info.dir == "" {
++		return limits, nil
+ 	}
+ 
+ 	// CPU limit: format is "quota period"; quota is "max" when unlimited
+-	cpuStr, err := readTrimmed(cgroupPaths.v2CPUMax)
++	cpuStr, err := readTrimmed(filepath.Join(info.dir, "cpu.max"))
+ 	if err != nil {
+ 		if errors.Is(err, os.ErrNotExist) {
+ 			return limits, nil
+@@ -80,10 +73,225 @@ func getContainerLimits() (ContainerLimits, error) {
+ 	return limits, nil
+ }
+ 
++func getCgroupV2Info() (cgroupV2Info, error) {
++	cgroup, err := readFile(resourcePaths.procSelfCgroup)
++	if err != nil {
++		return cgroupV2Info{}, err
++	}
++
++	membership, found, err := parseCgroupV2Membership(cgroup)
++	if err != nil {
++		return cgroupV2Info{}, err
++	}
++	if !found {
++		return cgroupV2Info{}, nil
++	}
++
++	mountInfo, err := readFile(resourcePaths.procSelfMountInfo)
++	if err != nil {
++		return cgroupV2Info{}, err
++	}
++	dir, err := resolveCgroupV2Dir(membership, mountInfo)
++	if err != nil {
++		return cgroupV2Info{}, err
++	}
++
++	_, err = os.Stat(filepath.Join(dir, "memory.max"))
++	if err != nil && !errors.Is(err, os.ErrNotExist) {
++		return cgroupV2Info{}, err
++	}
++	return cgroupV2Info{dir: dir, memoryStatsSupported: err == nil}, nil
++}
++
++func parseCgroupV2Membership(contents string) (string, bool, error) {
++	for line := range strings.SplitSeq(contents, "\n") {
++		parts := strings.SplitN(line, ":", 3)
++		if len(parts) != 3 || parts[0] != "0" || parts[1] != "" {
++			continue
++		}
++		if !filepath.IsAbs(parts[2]) {
++			return "", false, fmt.Errorf("invalid cgroup v2 membership path %q", parts[2])
++		}
++		return parts[2], true, nil
++	}
++	return "", false, nil
++}
++
++// cleanCgroupPath cleans a cgroup path as a path relative to the cgroup
++// namespace root. Unlike filepath.Clean on the absolute path, it keeps leading
++// ".." elements, which point above the namespace root.
++func cleanCgroupPath(path string) string {
++	return filepath.Clean(strings.TrimLeft(path, "/"))
++}
++
++func resolveCgroupV2Dir(membership, contents string) (string, error) {
++	var (
++		bestDir     string
++		bestRootLen int
++	)
++	cleanMembership := cleanCgroupPath(membership)
++	for line := range strings.SplitSeq(contents, "\n") {
++		fields := strings.Split(line, " ")
++		separator := slices.Index(fields, "-")
++		if separator < 6 || separator+1 >= len(fields) || fields[separator+1] != "cgroup2" {
++			continue
++		}
++
++		root := mountInfoPathReplacer.Replace(fields[3])
++		mountPoint := filepath.Clean(mountInfoPathReplacer.Replace(fields[4]))
++		if !filepath.IsAbs(root) || !filepath.IsAbs(mountPoint) {
++			continue
++		}
++		root = cleanCgroupPath(root)
++		relative, err := filepath.Rel(root, cleanMembership)
++		if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
++			continue
++		}
++		if len(root) > bestRootLen {
++			bestDir = filepath.Join(mountPoint, relative)
++			bestRootLen = len(root)
++		}
++	}
++	if bestDir == "" {
++		return "", fmt.Errorf("cgroup v2 membership %q has no matching cgroup2 mount", memb
+```
+
+**File**: `server/channels/app/platform/container_limits_linux_test.go` (modified, +283/-32)
+```diff
+@@ -8,6 +8,7 @@ package platform
+ import (
+ 	"os"
+ 	"path/filepath"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+@@ -17,71 +18,321 @@ import (
+ func writeTempCgroupFile(t *testing.T, dir, name, content string) string {
+ 	t.Helper()
+ 	path := filepath.Join(dir, name)
++	require.NoError(t, os.MkdirAll(filepath.Dir(path), 0o755))
+ 	require.NoError(t, os.WriteFile(path, []byte(content), 0o644))
+ 	return path
+ }
+ 
++func setTempCgroupLayout(t *testing.T, dir, membership, mountRoot, mountPoint string) cgroupV2Info {
++	t.Helper()
++	resourcePaths.procSelfCgroup = writeTempCgroupFile(t, dir, "proc-self-cgroup", "0::"+membership+"\n")
++	resourcePaths.procSelfMountInfo = writeTempCgroupFile(t, dir, "proc-self-mountinfo", "31 30 0:28 "+mountRoot+" "+mountPoint+" rw,nosuid,nodev,noexec,relatime - cgroup2 cgroup rw\n")
++	relative, err := filepath.Rel(mountRoot, membership)
++	require.NoError(t, err)
++	writeTempCgroupFile(t, filepath.Join(mountPoint, relative), "memory.max", "max\n")
++
++	info, err := getCgroupV2Info()
++	require.NoError(t, err)
++	require.True(t, info.memoryStatsSupported)
++	return info
++}
++
+ func TestGetContainerLimits(t *testing.T) {
+ 	dir := t.TempDir()
++	info := cgroupV2Info{dir: dir, memoryStatsSupported: true}
+ 
+-	originalPaths := cgroupPaths
+-	t.Cleanup(func() { cgroupPaths = originalPaths })
+-
+-	t.Run("limited CPU and memory", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_limited", "536870912\n")  // 512 MB
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_limited", "200000 100000\n") // 2 CPUs
++	t.Run("limited CPU", func(t *testing.T) {
++		writeTempCgroupFile(t, dir, "cpu.max", "200000 100000\n")
+ 
+-		limits, err := getContainerLimits()
++		limits, err := getContainerLimits(info)
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(512), limits.MemoryLimitMB)
+ 		assert.InDelta(t, 2.0, limits.CPULimit, 0.001)
+ 	})
+ 
+-	t.Run("unlimited CPU and memory", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_unlimited", "max\n")
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_unlimited", "max 100000\n")
++	t.Run("unlimited CPU", func(t *testing.T) {
++		writeTempCgroupFile(t, dir, "cpu.max", "max 100000\n")
+ 
+-		limits, err := getContainerLimits()
++		limits, err := getContainerLimits(info)
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(0), limits.MemoryLimitMB)
+ 		assert.Equal(t, float64(0), limits.CPULimit)
+ 	})
+ 
+ 	t.Run("fractional CPU limit", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_frac", "max\n")
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_frac", "50000 100000\n") // 0.5 CPUs
++		writeTempCgroupFile(t, dir, "cpu.max", "50000 100000\n")
+ 
+-		limits, err := getContainerLimits()
++		limits, err := getContainerLimits(info)
+ 		require.NoError(t, err)
+ 		assert.InDelta(t, 0.5, limits.CPULimit, 0.001)
+ 	})
+ 
+-	t.Run("sub-MB memory rounds up to 1MB", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_tiny", "524288\n") // 0.5 MB
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_tiny", "max 100000\n")
++	t.Run("CPU limit does not depend on memory.max", func(t *testing.T) {
++		cpuOnlyDir := filepath.Join(dir, "cpu-only")
++		writeTempCgroupFile(t, cpuOnlyDir, "cpu.max", "100000 100000\n")
+ 
+-		limits, err := getContainerLimits()
++		limits, err := getContainerLimits(cgroupV2Info{dir: cpuOnlyDir, memoryStatsSupported: true})
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(1), limits.MemoryLimitMB)
++		assert.InDelta(t, 1.0, limits.CPULimit, 0.001)
+ 	})
+ 
+-	t.Run("missing cgroup files returns zero values", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = filepath.Join(dir, "nonexistent_memory")
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_present", "max 100000\n")
+-
+-		limits, err := getContainerLimits()
++	t.Run("missing cpu.max returns zero values", func(t *testing.T) {
++		limits, err := getContainerLimits(cgroupV2Info{dir: filepath.Join(dir, "missing"), memoryStatsSupported: true})
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(0), limits.MemoryLimitMB)
+ 		assert.Equal(t, float64(0), limits.CPULimit)
+ 	})
+ 
+-	t.Run("missing cpu.max returns zero values", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_no_cpu", "max\n")
+-		cgroupPaths.v2CPUMax = filepath.Join(dir, "nonexistent_cpu")
++	t.Run("unsupported cgroup returns zero values", func(t *testing.T) {
++		limits, err := getContainerLimits(cgroupV2Info{})
+ 
+-		limits, err := getContainerLimits()
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(0), limits.MemoryLimitMB)
+ 		assert.Equal(t, float64(0), limits.CPULimit)
+ 	})
+ }
++
++func TestGetCgroupV2Info(t *testing.T) {
++	dir := t.TempDir()
++	originalPaths := resourcePaths
++	t.Cleanup(func() { resourcePaths = originalPaths })
++
++	t.Run("root membership in a private namespace", func(t *testing.T) {
++		mountPoint := filepath.Join(dir, "private")
++		info := 
+```
+
+**File**: `server/channels/app/platform/container_limits_other.go` (modified, +7/-6)
+```diff
+@@ -5,15 +5,16 @@
+ 
+ package platform
+ 
+-// ContainerLimits holds effective CPU and memory limits for the current container.
+-// Zero values indicate no limit is set (fields will be omitted from YAML output).
+-type ContainerLimits struct {
+-	CPULimit      float64
+-	MemoryLimitMB uint64
++func getCgroupV2Info() (cgroupV2Info, error) {
++	return cgroupV2Info{}, nil
+ }
+ 
+ // getContainerLimits returns zero values on non-Linux platforms.
+ // Container limit detection via cgroups is only supported on Linux.
+-func getContainerLimits() (ContainerLimits, error) {
++func getContainerLimits(cgroupV2Info) (ContainerLimits, error) {
+ 	return ContainerLimits{}, nil
+ }
++
++func getMemoryDiagnostics(cgroupV2Info) (memoryDiagnostics, error) {
++	return memoryDiagnostics{}, nil
++}
+```
+
+**File**: `server/channels/app/platform/support_packet.go` (modified, +46/-15)
+```diff
+@@ -10,10 +10,12 @@ import (
+ 	"encoding/json"
+ 	"fmt"
+ 	"io"
++	"math"
+ 	"net/http"
+ 	"net/url"
+ 	"os"
+ 	"runtime"
++	"runtime/debug"
+ 	rpprof "runtime/pprof"
+ 	"strings"
+ 	"time"
+@@ -41,17 +43,25 @@ const (
+ // cumulative-vs-point-in-time semantics visible at a glance.
+ var diagnosticsYAMLComments = yaml.CommentMap{
+ 	// server: — grouped into Machine / Capacity / Process lifecycle / Software
+-	"$.server.os":                        {yaml.HeadComment(" Machine")},
+-	"$.server.cpu_cores":                 {yaml.HeadComment(" Capacity (hardware → effective quota)"), yaml.LineComment(" logical CPUs visible to the OS")},
+-	"$.server.total_memory_mb":           {yaml.LineComment(" host/VM total RAM; may exceed container limit")},
+-	"$.server.container_cpu_limit":       {yaml.LineComment(" cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set")},
+-	"$.server.container_memory_limit_mb": {yaml.LineComment(" cgroup v2 memory quota in MB; Linux only, omitted if no limit set")},
+-	"$.server.process_id":                {yaml.HeadComment(" Process lifecycle")},
+-	"$.server.started_at":                {yaml.LineComment(" when Mattermost process started")},
+-	"$.server.host_started_at":           {yaml.LineComment(" when the host OS booted; omitted if unavailable")},
+-	"$.server.open_file_descriptors":     {yaml.LineComment(" current open FDs for this process")},
+-	"$.server.max_file_descriptors":      {yaml.LineComment(" system limit (ulimit -n)")},
+-	"$.server.version":                   {yaml.HeadComment(" Software")},
++	"$.server.os":                              {yaml.HeadComment(" Machine")},
++	"$.server.cpu_cores":                       {yaml.HeadComment(" Capacity (hardware → effective quota)"), yaml.LineComment(" logical CPUs visible to the OS")},
++	"$.server.total_memory_mb":                 {yaml.LineComment(" host/VM total RAM; may exceed container limit")},
++	"$.server.available_memory_mb":             {yaml.LineComment(" host/VM MemAvailable from /proc/meminfo; Linux only")},
++	"$.server.swap_total_mb":                   {yaml.LineComment(" host/VM total swap; Linux only")},
++	"$.server.swap_used_mb":                    {yaml.LineComment(" host/VM used swap; Linux only")},
++	"$.server.container_cpu_limit":             {yaml.LineComment(" cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set")},
++	"$.server.container_memory_limit_mb":       {yaml.LineComment(" cgroup v2 memory quota in MB; Linux only, omitted if no limit set")},
++	"$.server.container_memory_usage_mb":       {yaml.LineComment(" cgroup v2 memory.current in MB, including page cache; Linux only")},
++	"$.server.container_memory_working_set_mb": {yaml.LineComment(" cgroup v2 memory.current minus inactive file cache in MB; Linux only")},
++	"$.server.container_oom_kills":             {yaml.LineComment(" cgroup v2 OOM kills since the cgroup was created; Linux only")},
++	"$.server.process_id":                      {yaml.HeadComment(" Process lifecycle")},
++	"$.server.started_at":                      {yaml.LineComment(" when Mattermost process started")},
++	"$.server.host_started_at":                 {yaml.LineComment(" when the host OS booted; omitted if unavailable")},
++	"$.server.process_rss_mb":                  {yaml.LineComment(" resident memory of the Mattermost process only; excludes plugin child processes")},
++	"$.server.go_memory_limit_mb":              {yaml.LineComment(" Go runtime memory limit in MB; omitted when no limit is set")},
++	"$.server.open_file_descriptors":           {yaml.LineComment(" current open FDs for this process")},
++	"$.server.max_file_descriptors":            {yaml.LineComment(" system limit (ulimit -n)")},
++	"$.server.version":                         {yaml.HeadComment(" Software")},
+ 
+ 	"$.config.audit_logging_configured": {yaml.LineComment(" this server's audit check of its current config and license; offline health checks use it")},
+ 
+@@ -203,12 +213,33 @@ func (ps *PlatformService) GetSupportPacketDiagnostics(rctx request.CTX) (*model
+ 	} else {
+ 		d.Server.TotalMemoryMB = new(totalMemoryBytes / 1024 / 1024)
+ 	}
+-	containerLimits, err := getContainerLimits()
++	cgroupV2, err := getCgroupV2Info()
++	if err != nil {
++		fail(model.SectionServerMemory, errors.Wrap(err, "error while resolving cgroup v2"))
++	}
++	containerLimits, err := getContainerLimits(cgroupV2)
++	d.Server.ContainerCPULimit = containerLimits.CPULimit
+ 	if err != nil {
+ 		rctx.Logger().Debug("Failed to get container limits for Support Packet", mlog.Err(err))
+-	} else {
+-		d.Server.ContainerCPULimit = containerLimits.CPULimit
+-		d.Server.ContainerMemoryLimitMB = containerLimits.MemoryLimitMB
++	}
++	memory, memoryErr := getMemoryDiagnostics(cgroupV2)
++	if memoryErr != nil {
++		fail(model.SectionServerMemory, errors.Wrap(memoryErr, "error while getting memory diagnostics"))
++	}
++	d.Server.AvailableMemoryMB = memory.AvailableMemoryMB
++	d.Server.SwapTotalMB = memory.SwapTotalMB
++	d.Server.SwapUsedMB = memory.SwapUsedMB
++	d.Server.ProcessRSS
+```
+
+**File**: `server/channels/app/platform/support_packet_test.go` (modified, +8/-0)
+```diff
+@@ -1864,11 +1864,19 @@ func TestSupportPacketMarshalGolden(t *testing.T) {
+ 	diagnostics.Server.InstallationType = "docker"
+ 	diagnostics.Server.CPUCores = 8
+ 	diagnostics.Server.TotalMemoryMB = new(uint64(32768))
++	diagnostics.Server.AvailableMemoryMB = new(uint64(24576))
++	diagnostics.Server.SwapTotalMB = new(uint64(4096))
++	diagnostics.Server.SwapUsedMB = new(uint64(1024))
+ 	diagnostics.Server.ContainerCPULimit = 6.5
+ 	diagnostics.Server.ContainerMemoryLimitMB = 16384
++	diagnostics.Server.ContainerMemoryUsageMB = new(uint64(12288))
++	diagnostics.Server.ContainerMemoryWorkingSetMB = new(uint64(10240))
++	diagnostics.Server.ContainerOOMKills = new(uint64(2))
+ 	diagnostics.Server.ProcessID = 90210
+ 	diagnostics.Server.StartedAt = time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
+ 	diagnostics.Server.HostStartedAt = time.Date(2025, 12, 30, 0, 0, 0, 0, time.UTC)
++	diagnostics.Server.ProcessRSSMB = new(uint64(2048))
++	diagnostics.Server.GoMemoryLimitMB = new(uint64(13107))
+ 	diagnostics.Server.OpenFileDescriptors = new(int64(512))
+ 	diagnostics.Server.MaxFileDescriptors = new(int64(8192))
+ 	diagnostics.Server.Version = "11.0.0"
+```
+
+**File**: `server/channels/app/platform/testdata/support_packet/diagnostics.yaml` (modified, +8/-0)
+```diff
+@@ -18,12 +18,20 @@ server:
+   # Capacity (hardware → effective quota)
+   cpu_cores: 8 # logical CPUs visible to the OS
+   total_memory_mb: 32768 # host/VM total RAM; may exceed container limit
++  available_memory_mb: 24576 # host/VM MemAvailable from /proc/meminfo; Linux only
++  swap_total_mb: 4096 # host/VM total swap; Linux only
++  swap_used_mb: 1024 # host/VM used swap; Linux only
+   container_cpu_limit: 6.5 # cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set
+   container_memory_limit_mb: 16384 # cgroup v2 memory quota in MB; Linux only, omitted if no limit set
++  container_memory_usage_mb: 12288 # cgroup v2 memory.current in MB, including page cache; Linux only
++  container_memory_working_set_mb: 10240 # cgroup v2 memory.current minus inactive file cache in MB; Linux only
++  container_oom_kills: 2 # cgroup v2 OOM kills since the cgroup was created; Linux only
+   # Process lifecycle
+   process_id: 90210
+   started_at: 2026-01-02T03:04:05Z # when Mattermost process started
+   host_started_at: 2025-12-30T00:00:00Z # when the host OS booted; omitted if unavailable
++  process_rss_mb: 2048 # resident memory of the Mattermost process only; excludes plugin child processes
++  go_memory_limit_mb: 13107 # Go runtime memory limit in MB; omitted when no limit is set
+   open_file_descriptors: 512 # current open FDs for this process
+   max_file_descriptors: 8192 # system limit (ulimit -n)
+   # Software
+```
+
+---
+
+### Incident Patch 2: `8af02bfe` (2026-11-06)
+**Commit Message**: Fix flaky TestHydratePropertyValues (#39226)
+
+* Fix flaky TestHydratePropertyValues
+
+The orders_values_by_field_creation_time subtest created two property
+fields in the same millisecond. hydrateChannelPropertyValues sorts by
+CreateAt and breaks ties by FieldID, so the assertion on creation order
+flipped whenever the second ID sorted first. Wait until the next
+millisecond before creating the second field so CreateAt actually differs.
+
+Tests-only change. Verified with `go test -run '^TestHydratePropertyValues$/orders_values_by_field_creation_time$' -race
+-count=100` locally.
 
 Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-* [MM-70789] Clarify TestPublishWhileClusterIsUnset comments
-
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+* Address PR feedback: 0 answered, 1 resolved, 0 declined
 
 ---------
 
 Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
 Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+Co-authored-by: Mattermost Build <[REDACTED_EMAIL]>
 
-**File**: `server/channels/app/platform/cluster.go` (modified, +2/-2)
-```diff
-@@ -193,7 +193,7 @@ func (ps *PlatformService) Publish(message *model.WebSocketEvent) {
- 
- 	ps.PublishSkipClusterSend(message)
- 
--	if ps.clusterIFace != nil {
-+	if cluster := ps.clusterIFace; cluster != nil {
- 		data, err := message.ToJSON()
- 		if err != nil {
- 			mlog.Warn("Failed to encode message to JSON", mlog.Err(err))
-@@ -213,7 +213,7 @@ func (ps *PlatformService) Publish(message *model.WebSocketEvent) {
- 			cm.SendType = model.ClusterSendReliable
- 		}
- 
--		ps.clusterIFace.SendClusterMessage(cm)
-+		cluster.SendClusterMessage(cm)
- 	}
- }
- 
-```
-
-**File**: `server/channels/app/platform/cluster_test.go` (modified, +33/-0)
+**File**: `server/channels/app/post_property_values_test.go` (modified, +6/-0)
 ```diff
 @@ -7,6 +7,7 @@ import (
+ 	"encoding/json"
+ 	"strconv"
  	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
++	"time"
  
  	"github.com/mattermost/mattermost/server/public/model"
- 	"github.com/mattermost/mattermost/server/v8/channels/testlib"
-@@ -60,3 +61,35 @@ func TestIsLeader(t *testing.T) {
- 		assert.True(t, th.Service.IsLeader())
- 	})
- }
-+
-+// swapOnEncode runs while Publish encodes the event, which is after it has checked for a
-+// cluster and before it sends to one.
-+type swapOnEncode func()
-+
-+func (f swapOnEncode) MarshalJSON() ([]byte, error) {
-+	f()
-+	return []byte(`{}`), nil
-+}
-+
-+// Publish must not crash if the cluster is unset after its nil check.
-+func TestPublishWhileClusterIsUnset(t *testing.T) {
-+	mainHelper.Parallel(t)
-+
-+	th := SetupWithStoreMock(t)
-+
-+	// The hubs encode every event on their own goroutines; detached, the only encode
-+	// is the one inside Publish.
-+	hubs := th.Service.hubs
-+	th.Service.hubs = nil
-+	t.Cleanup(func() { th.Service.hubs = hubs })
-+
-+	cluster := &testlib.FakeClusterInterface{}
-+	th.Service.SetCluster(cluster)
-+
-+	event := model.NewWebSocketEvent(model.WebsocketEventConfigChanged, "", "", "", nil, "")
-+	event.Add("config", swapOnEncode(func() { th.Service.SetCluster(nil) }))
-+
-+	require.NotPanics(t, func() { th.Service.Publish(event) })
-+	require.Nil(t, th.Service.Cluster())
-+	require.Len(t, cluster.GetMessages(), 1, "the swap must land between Publish's nil check and its send")
-+}
-```
-
----
-
-### Incident Patch 2: `dd5fe019` (2026-11-05)
-**Commit Message**: fix(e2e): wait for the select attribute menu to take clicks in user_settings.spec.ts (#39735)
-
-The Compass Combobox popup ignores the pointer for two animation frames after
-aria-expanded flips, then scales in. The test measured the first option and hit-tested
-the padding point in that window, so elementFromPoint fell through to the modal.
-A trial click on the first option waits until it is stable and receives pointer events.
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
-
-**File**: `e2e-tests/playwright/specs/functional/channels/custom_profile_attributes/user_settings.spec.ts` (modified, +4/-0)
-```diff
-@@ -301,6 +301,10 @@ test(
-         // # Click the menu padding just above its first option
-         const listboxId = `customProfileAttribute_${fieldId}-listbox`;
-         const firstOption = page.locator(`#${listboxId}`).getByRole('option').first();
-+
-+        // The menu ignores the pointer for a couple of frames after aria-expanded flips, then
-+        // scales in; a trial click waits until the option is stable and receives pointer events.
-+        await firstOption.click({trial: true});
-         const optionBox = await firstOption.boundingBox();
-         expect(optionBox).not.toBeNull();
-         const point = {x: optionBox!.x + optionBox!.width / 2, y: optionBox!.y - 3};
-```
-
----
-
-### Incident Patch 3: `09c19333` (2026-11-05)
-**Commit Message**: fix(e2e): repair custom_group_management.spec.ts on master (#39727)
-
-MM-T5598 waited for the last post to contain "added to the channel".
-/invite @group also replies with an ephemeral "@user is already in the
-channel." for the inviter, and the system post is created from a
-goroutine, so either post can arrive last. When the ephemeral landed last
-the wait timed out. Assert on the post that says "added to the channel"
-instead of on whichever post is last.
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
-
-**File**: `e2e-tests/playwright/specs/functional/channels/custom_groups/custom_group_management.spec.ts` (modified, +4/-3)
-```diff
-@@ -74,9 +74,10 @@ test('MM-T5598 invites a custom group to a channel', {tag: '@channels'}, async (
-     await channelsPage.centerView.postCreate.writeMessage(`/invite @${groupName} `);
-     await channelsPage.centerView.postCreate.sendMessage();
+ 	"github.com/mattermost/mattermost/server/public/shared/request"
+@@ -202,7 +203,12 @@ func TestHydratePropertyValues(t *testing.T) {
+ 		th := setupPropertyValuesTest(t)
+ 		// Names are deliberately reverse-alphabetical relative to creation order.
+ 		first := th.createField(t, string(model.PropertyFieldTargetLevelChannel), th.BasicChannel.Id, "zulu")
++		// CreateAt is millisecond-resolution; same-ms fields fall back to FieldID order.
++		for model.GetMillis() <= first.CreateAt {
++			time.Sleep(time.Millisecond)
++		}
+ 		second := th.createField(t, string(model.PropertyFieldTargetLevelChannel), th.BasicChannel.Id, "alpha")
++		require.Greater(t, second.CreateAt, first.CreateAt)
  
--    // * Verify the group's member was added to the channel
--    await channelsPage.centerView.waitUntilLastPostContains('added to the channel');
--    await channelsPage.centerView.waitUntilLastPostContains(member.username);
-+    // * Verify the group's member was added to the channel. The system message and the ephemeral
-+    // * "already in the channel" reply for the inviter arrive in either order, so don't rely on the last post.
-+    const addedPost = await channelsPage.centerView.getPostByText('added to the channel');
-+    await expect(addedPost.container).toContainText(member.username);
- });
- 
- /**
+ 		post := th.post(t, th.BasicChannel)
+ 		// Values written in the opposite order to prove output order tracks the field, not the value.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39772** (closed): List Boards in the product menu where the product rail isn't shown (@asaadmahmood)
-- **PR #39768** (2026-11-06): Automated cherry pick of #39740 (@mattermost-build)
-- **PR #39767** (2026-11-06): Automated cherry pick of #39740 (@mattermost-build)
-- **PR #39766** (2026-11-06): Automated cherry pick of #39740 (@mattermost-build)
-- **PR #39765** (2026-11-06): Automated cherry pick of #39689 (@cursor[bot])
-- **PR #39764** (2026-11-06): Automated cherry pick of #39689 (@cursor[bot])
+- **PR #39808** (2026-11-09): Revert "MM-70985: update paging defaults and per-post metadata handli… (@amyblais)
+- **PR #39798** (2026-11-07): Fix flaky TestGetDiagnosticsPostsVacuumInProgress (@hanzei)
+- **PR #39797** (2026-11-07): [MM-71431] Test stopping a running health check; let watcher stop during startup jitter (@hanzei)
+- **PR #39795** (closed): docs: AI draft for Add PUSH_PROXY_UNREACHABLE site health rule (@mattermost-docs-ai[bot])
+- **PR #39794** (closed): docs: AI draft for Add filestore disk capacity health rules (@mattermost-docs-ai[bot])
+- **PR #39792** (2026-11-07): Automated cherry pick of #38809 (@mattermost-code)
 
 ---
 
@@ -1808,30 +2239,31 @@ Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MM-70789] Fix nil-pointer panic in PlatformService.Publish when the cluster is 
+## X. [MM-71617] Add per-node memory health diagnostics (#39720)
 
 **RULE**:
-When implementing operations in `server/channels/app/platform/cluster.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/channels/app/health_check_snapshot_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a74187d`: [MM-70789] Fix nil-pointer panic in PlatformService.Publish when the cluster is unset mid-publish (#39412). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `276dc653`: [MM-71617] Add per-node memory health diagnostics (#39720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/channels/app/platform/cluster.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/channels/app/health_check_snapshot_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	if cluster := ps.clusterIFace; cluster != nil {
-		cluster.SendClusterMessage(cm)
+			case "NODE_HOST_MEMORY_LOW", "NODE_CONTAINER_MEMORY_PRESSURE":
+				// These set a value only when they have the numbers to compare, so none is required.
+				evaluations[i].Result.Value = nil
+				evaluations[i].Result.Details = nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-	if ps.clusterIFace != nil {
-		ps.clusterIFace.SendClusterMessage(cm)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a74187d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `276dc653` are properly handled with clean fallback behavior.
