@@ -775,8 +775,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "7c4cd035eb3f3500e1758285e16040a2be37730e7fb8c43315c0735660d39f60",
-    "lastHarvestedAt": "2026-11-05T13:47:43.164Z",
+    "contentHash": "dd22413ad0c459872519478ee9884c547fb8c0e1ea3a0fd31a092665ed43a7eb",
+    "lastHarvestedAt": "2026-11-09T11:31:31.437Z",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
@@ -2493,10 +2493,10 @@
     "repository": "karakeep-app/karakeep",
     "platform": "github",
     "sourceUrl": "https://github.com/karakeep-app/karakeep",
-    "sourceVersion": "6a1e71d6",
+    "sourceVersion": "d1514c25",
     "license": "AGPL-3.0",
-    "contentHash": "4411569ffda35435b282c59de7c03526be4c81f701d6c28bf4220c6dfb8f5d5e",
-    "lastHarvestedAt": "2026-11-06T14:47:46.987Z",
+    "contentHash": "5881e85ebf4758741dfabc51fa3a1a3afcdb523a09f6aa76d8e0ab3d976b5f04",
+    "lastHarvestedAt": "2026-11-09T11:31:10.119Z",
     "learningId": "learn-github-karakeep-app-karakeep"
   },
   "authzed-spicedb": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "59bf235a",
+    "sourceVersion": "c1a97cbd",
     "license": "Apache-2.0",
-    "contentHash": "1288007e7e66cf7dd243c4ce900bc43150b53b18dc1060ec20bbb157ff63f5e5",
-    "lastHarvestedAt": "2026-11-07T19:55:24.210Z",
+    "contentHash": "1756b1d3992fd0063b1b83e0091780d81a9d800c6cff0b10f91828bba2f6b512",
+    "lastHarvestedAt": "2026-11-09T11:31:13.413Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {

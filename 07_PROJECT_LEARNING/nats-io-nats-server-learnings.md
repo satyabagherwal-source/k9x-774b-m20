@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `59bf235a`  
+> **Source Version**: `c1a97cbd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T19:55:22.272Z  
+> **Timestamp**: 2026-11-09T11:31:12.048Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T19:55:21.655Z  
+> **Harvest Timestamp**: 2026-11-09T11:31:07.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21009 stars
+- **Stars / Engagement**: 21017 stars
 
 ---
 
@@ -2726,210 +2726,265 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59bf235a` (2026-11-06)
-**Commit Message**: JetStream: fix quadratic redelivery queue copying under the consumer lock (#8635)
+### Incident Patch 1: `c1a97cbd` (2026-11-09)
+**Commit Message**: Fix ATS worker shutdown synchronization (#8794)
 
 ## Summary
 
-Advance the redelivery slice head instead of shifting every remaining
-entry on each dequeue. The current operation copies O(n) sequence
-numbers while holding the consumer mutex; draining a large retry
-population involves quadratic copying and delays delivery and ACK
-processing.
-
-At 12 million queued entries, an initial dequeue copies approximately 96
-MB of sequence numbers. The change removes that copy without changing
-FIFO order, membership tracking, empty-queue cleanup, ACK semantics, or
-persistence behavior.
-
-Includes deterministic queue-operation tests and a dequeue/requeue
-benchmark. Sustained dequeue/requeue consumes slice capacity and
-occasionally reallocates; the churn benchmark measures that trade-off.
-This does not change consumer-store flushing or ACK scheduling.
-
-## Reproduction
-
-A synthetic JetStream experiment seeds 12 million pending/redelivery
-entries, then uses real connections for pulls, progress ACKs, and
-server-confirmed final ACKs. With a target 20k progress commands/s and
-100 final ACKs/s over approximately 20 seconds:
-
-| Two runs per variant | Baseline | Fix |
-| ---
-
-**File**: `server/consumer.go` (modified, +1/-1)
 ```diff
-@@ -6230,7 +6230,7 @@ func (o *consumer) getNextToRedeliver() uint64 {
- 		o.rdq = nil
- 		o.rdqi.Empty()
- 	} else {
--		o.rdq = append(o.rdq[:0], o.rdq[1:]...)
-+		o.rdq = o.rdq[1:]
- 		o.rdqi.Delete(seq)
- 	}
- 	return seq
+ Unregister
+-  enqueue a shared stop signal
+-  return before the worker exits
++  serialize the lifecycle transition
++  close the current worker's stop channel
++  wait for that worker to exit
 ```
 
-**File**: `server/jetstream_consumer_test.go` (modified, +82/-1)
+`Register` and the last `Unregister` now serialize ATS worker handoff,
+each worker owns its own stop channel, and `Unregister` joins the
+exiting worker through a `sync.WaitGroup`. This prevents a new worker
+from consuming an older worker's shutdown signal and makes `Unregister`
+guarantee that the ATS goroutine has exited.
+
+Resolves #8363
+
+## Evidence
+
+- **Before:** `go test -count=100 -run '^TestRegisterAndUnregister$'
+./server/ats` failed 8 of 100 runs with an extra goroutine.
+- **After:** the same command passes 100 of 100 runs.
+- `go test -race -count=20 ./server/ats` passes.
+- `RACE=-race ./scripts/runTestsOnTravis.sh store_tests` passes in
+788.317 seconds.
+- `go vet ./...` and Linux amd64/386 builds pass.
+- The regression test no longer sleeps after `Unregister`, so it checks
+synchronous cleanup directly.
+
+## Merge Danger
+
+**Door:** Two-way
+
+**Blast Radius:** Storage lifecycle
+
+The mutex is used only when stores regi
+
+**File**: `server/ats/ats.go` (modified, +20/-9)
 ```diff
-@@ -14329,7 +14329,7 @@ func TestJetStreamConsumerResetPendingHoldsDeliveries(t *testing.T) {
+@@ -17,6 +17,7 @@
+ package ats
+ 
+ import (
++	"sync"
+ 	"sync/atomic"
+ 	"time"
+ )
+@@ -29,23 +30,28 @@ var (
+ 	utime atomic.Int64
+ 	// How may registered users do we have, controls lifetime of Go routine.
+ 	refs atomic.Int64
++	// Serializes worker startup and shutdown so a new worker cannot consume a
++	// previous worker's stop signal.
++	lifecycleMu sync.Mutex
+ 	// To signal the shutdown of the Go routine.
+-	done chan struct{}
++	done     chan struct{}
++	workerWG sync.WaitGroup
+ )
+ 
+-func init() {
+-	// Initialize our done chan.
+-	done = make(chan struct{}, 1)
+-}
+-
+ // Register usage. This will happen on filestore creation.
+ func Register() {
++	lifecycleMu.Lock()
++	defer lifecycleMu.Unlock()
++
+ 	if v := refs.Add(1); v == 1 {
+ 		// This is the first to register (could also go up and down),
+ 		// so spin up Go routine and grab initial time.
+ 		utime.Store(time.Now().UnixNano())
++		done = make(chan struct{})
++		workerWG.Add(1)
+ 
+-		go func() {
++		go func(done <-chan struct{}) {
++			defer workerWG.Done()
+ 			ticker := time.NewTicker(TickInterval)
+ 			defer ticker.Stop()
+ 			for {
+@@ -56,14 +62,19 @@ func Register() {
+ 					return
+ 				}
+ 			}
+-		}()
++		}(done)
+ 	}
  }
  
- // https://github.com/nats-io/nats-server/issues/8704
--func TestJetStreamDurableConsumerInactiveThresholdRestartsOnBoot(t *testing.T) {
-+func TestJetStreamConsumerInactiveThresholdRestartsOnBoot(t *testing.T) {
- 	s := RunBasicJetStreamServer(t)
- 	defer s.Shutdown()
+ // Unregister usage. We will shutdown the go routine if no more registered users.
+ func Unregister() {
++	lifecycleMu.Lock()
++	defer lifecycleMu.Unlock()
++
+ 	if v := refs.Add(-1); v == 0 {
+-		done <- struct{}{}
++		close(done)
++		workerWG.Wait()
++		done = nil
+ 	} else if v < 0 {
+ 		refs.Store(0)
+ 		panic("unbalanced unregister for access time state")
+```
+
+**File**: `server/ats/ats_test.go` (modified, +0/-1)
+```diff
+@@ -57,7 +57,6 @@ func TestRegisterAndUnregister(t *testing.T) {
+ 	if r := refs.Load(); r != 0 {
+ 		t.Fatalf("Expected refs to be 0, got %d", r)
+ 	}
+-	time.Sleep(TickInterval)
  
-@@ -14386,3 +14386,84 @@ func TestJetStreamDurableConsumerInactiveThresholdRestartsOnBoot(t *testing.T) {
- 		return nil
- 	})
- }
-+
-+func TestJetStreamConsumerRedeliveryQueueOperations(t *testing.T) {
-+	var o consumer
-+	o.mu.Lock()
-+	defer o.mu.Unlock()
-+	require_Equal(t, o.getNextToRedeliver(), uint64(0))
-+	o.addToRedeliverQueue(10, 20, 30, 40)
-+	require_Equal(t, o.getNextToRedeliver(), uint64(10))
-+	require_False(t, o.onRedeliverQueue(10))
-+	// Exercise removal and append after the head has advanced.
-+	require_True(t, o.removeFromRedeliverQueue(30))
-+	require_False(t, o.removeFromRedeliverQueue(30))
-+	o.addToRedeliverQueue(50, 60)
-+	for _, seq := range []uint64{20, 40, 50, 60} {
-+		require_Equal(t, o.getNextToRedeliver(), seq)
-+		require_False(t, o.onRedeliverQueue(seq))
-+	}
-+	require_True(t, o.rdq == nil)
-+	require_Equal(t, o.rdqi.Size(), 0)
-+	require_False(t, o.hasRedeliveries())
-+	o.addToRedeliverQueue(70)
-+	require_Equal(t, o.getNextToRedeliver(), uint64(70))
-+	require_Equal(t, o.getNextToRedeliver(), uint64(0))
-+	require_True(t, o.rdq == nil)
-+	require_Equal(t, o.rdqi.Size(), 0)
-+}
-+
-+func TestJetStreamConsumerRedeliveryQueueInterleaved(t *testing.T) {
-+	var o consumer
-+	o.mu.Lock()
-+	defer o.mu.Unlock()
-+	rng := rand.New(rand.NewPCG(42, 42))
-+	var expected []uint64
-+	var next uint64
-+	for i := 0; i < 10000; i++ {
-+		switch rng.IntN(3) {
-+		case 0:
-+			next++
-+			o.addToRedeliverQueue(next)
-+			expected = append(expected, next)
-+		case 1:
-+			var want uint64
-+			if len(expected) > 0 {
-+				want, expected = expected[0], expected[1:]
-+			}
-+			require_Equal(t, o.getNextToRedeliver(), want)
-+		case 2:
-+			if len(expected) > 0 {
-+				index := rng.IntN(len(expected))
-+				require_True(t, o.removeFromRedeliverQueue(expected[index]))
-+				expected = slices.Delete(expected, index, index+1)
-+			}
-+		}
-+		require_True(t, slices.Equal(o.rdq, expected))
-+		require_Equal(t, o.rdqi.Size(), len(expected))
-+		for _, seq := range expected {
-+			require_True(t, o.onRedeliverQueue(seq))
-+		}
-+	}
-+}
-+
-+func BenchmarkJetStreamConsumerRedeliveryQueue(b *testing.B) {
-+	for _, size := range []int{1, 64, 4096, 1000000} {
-+		b.Run(strconv.Itoa(size), func(b *testing.B) {
-+			var o consumer
-+			seqs := make([]uint64, size)
-+			for i := range seqs {
-+				seqs[i] = uint64(i) + 1
-+			}
-+			o.addToRedeliverQueue(seqs...)
-+			o.mu.Lock()
-+			defer o.mu.Unlock()
-+			b.ReportAllocs()
-+			b.ResetTimer()
-+			for i := 0; i < b.N; i++ {
-+				seq := o.getNextToRedeliver()
-+				o.addToRedeliverQueue(seq)
-+			}
-+		})
-+	}
-+}
+ 	at = AccessTime()
+ 	time.Sleep(2 * TickInterval)
 ```
 
 ---
 
-### Incident Patch 2: `ae1af06f` (2026-11-02)
-**Commit Message**: [FIXED] Config check -t skips option validation
+### Incident Patch 2: `5c3499b0` (2026-11-09)
+**Commit Message**: [FIXED] Filestore fd leak & account lock order cycle (#8873)
+
+Two fixes found with gohawk (https://gohawk.dev/).
+
+**File**: `locksordering.txt` (modified, +3/-2)
+```diff
+@@ -17,9 +17,10 @@ This lock is independent and can be invoked under any other lock: jsAccount -> j
+ 
+ A lock to protect the account's leafnodes list was also introduced to
+ allow that lock to be held and the acquire a client lock which is not
+-possible with the normal account lock.
++possible with the normal account lock. So the account lock must not be
++held while acquiring it.
+ 
+-accountLeafList -> client
++accountLeafList -> client -> Account
+ 
+ AccountResolver interface has various implementations, but assume: AccountResolver -> Server
+ 
+```
+
+**File**: `server/accounts.go` (modified, +10/-6)
+```diff
+@@ -527,19 +527,23 @@ func (a *Account) updateRemoteServer(m *AccountNumConns) []*client {
+ 		}
+ 	}
+ 	// Now check leafnodes.
+-	mtlce := a.mleafs != jwt.NoLimit && (a.nleafs+a.nrleafs > a.mleafs)
+-	if mtlce {
++	var overLeafs int
++	if a.mleafs != jwt.NoLimit && (a.nleafs+a.nrleafs > a.mleafs) {
++		overLeafs = int(a.nleafs + a.nrleafs - a.mleafs)
++	}
++	// Release before the leaf list lock, since that one is held while taking client locks.
++	a.mu.Unlock()
++
++	if overLeafs > 0 {
+ 		// Take ones from the end.
+ 		a.lmu.RLock()
+ 		leafs := a.lleafs
+-		over := int(a.nleafs + a.nrleafs - a.mleafs)
+-		if over < len(leafs) {
+-			leafs = leafs[len(leafs)-over:]
++		if overLeafs < len(leafs) {
++			leafs = leafs[len(leafs)-overLeafs:]
+ 		}
+ 		clients = append(clients, leafs...)
+ 		a.lmu.RUnlock()
+ 	}
+-	a.mu.Unlock()
+ 
+ 	// If we have exceeded our max clients this will be populated.
+ 	return clients
+```
+
+**File**: `server/filestore.go` (modified, +1/-0)
+```diff
+@@ -5337,6 +5337,7 @@ func (fs *fileStore) newMsgBlockForWrite() (*msgBlock, error) {
+ 	// Check if encryption is enabled.
+ 	if fs.prf != nil {
+ 		if err := fs.genEncryptionKeysForBlock(mb); err != nil {
++			_ = mb.dirtyCloseWithRemove(true)
+ 			return nil, err
+ 		}
+ 	}
+```
+
+---
+
+### Incident Patch 3: `aa9f52ca` (2026-11-09)
+**Commit Message**: [FIXED] Account and leafnode list lock order cycle
 
 Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
-**File**: `server/opts.go` (modified, +9/-3)
+**File**: `locksordering.txt` (modified, +3/-2)
 ```diff
-@@ -6527,9 +6527,6 @@ func ConfigureOptions(fs *flag.FlagSet, args []string, printVersion, printHelp,
- 			}
- 			// If we get here we only have warnings and can still continue
- 			fmt.Fprint(os.Stderr, err)
--		} else if opts.CheckConfig {
--			// Report configuration file syntax test was successful and exit.
--			return opts, nil
- 		}
+@@ -17,9 +17,10 @@ This lock is independent and can be invoked under any other lock: jsAccount -> j
  
- 		// Call this again to override config file options with options from command line.
-@@ -6608,6 +6605,15 @@ func ConfigureOptions(fs *flag.FlagSet, args []string, printVersion, printHelp,
- 		return nil, errors.New("solicited routes require cluster capabilities, e.g. --cluster")
- 	}
+ A lock to protect the account's leafnodes list was also introduced to
+ allow that lock to be held and the acquire a client lock which is not
+-possible with the normal account lock.
++possible with the normal account lock. So the account lock must not be
++held while acquiring it.
  
-+	// Validate the same way server startup does, on a copy to not change the options.
-+	if opts.CheckConfig {
-+		copts := opts.Clone()
-+		setBaselineOptions(copts)
-+		if err = validateOptions(copts); err != nil {
-+			return nil, err
-+		}
-+	}
-+
- 	return opts, nil
- }
+-accountLeafList -> client
++accountLeafList -> client -> Account
+ 
+ AccountResolver interface has various implementations, but assume: AccountResolver -> Server
  
 ```
 
-**File**: `server/opts_test.go` (modified, +7/-0)
+**File**: `server/accounts.go` (modified, +10/-6)
 ```diff
-@@ -1611,6 +1611,13 @@ func TestConfigureOptions(t *testing.T) {
- 	if !reflect.DeepEqual(opts.TLSConfig.CipherSuites, defaultCipherSuites()) {
- 		t.Fatalf("Default ciphers not set, expected %v, got %v", defaultCipherSuites(), opts.TLSConfig.CipherSuites)
+@@ -527,19 +527,23 @@ func (a *Account) updateRemoteServer(m *AccountNumConns) []*client {
+ 		}
  	}
+ 	// Now check leafnodes.
+-	mtlce := a.mleafs != jwt.NoLimit && (a.nleafs+a.nrleafs > a.mleafs)
+-	if mtlce {
++	var overLeafs int
++	if a.mleafs != jwt.NoLimit && (a.nleafs+a.nrleafs > a.mleafs) {
++		overLeafs = int(a.nleafs + a.nrleafs - a.mleafs)
++	}
++	// Release before the leaf list lock, since that one is held while taking client locks.
++	a.mu.Unlock()
 +
-+	// Checking the config validates the options, not just the syntax.
-+	mustNotFail([]string{"-t", "-c", "./configs/test.conf"})
-+	conf := createConfFile(t, []byte("max_payload: 2MB\nmax_pending: 1MB\n"))
-+	expectToFail([]string{"-t", "-c", conf}, "cannot be higher than max_pending")
-+	// Command line flags are applied before validating.
-+	expectToFail([]string{"-t", "-c", "./configs/test.conf", "-n", "a b"}, "server name cannot contain spaces")
- }
++	if overLeafs > 0 {
+ 		// Take ones from the end.
+ 		a.lmu.RLock()
+ 		leafs := a.lleafs
+-		over := int(a.nleafs + a.nrleafs - a.mleafs)
+-		if over < len(leafs) {
+-			leafs = leafs[len(leafs)-over:]
++		if overLeafs < len(leafs) {
++			leafs = leafs[len(leafs)-overLeafs:]
+ 		}
+ 		clients = append(clients, leafs...)
+ 		a.lmu.RUnlock()
+ 	}
+-	a.mu.Unlock()
  
- func TestClusterPermissionsConfig(t *testing.T) {
+ 	// If we have exceeded our max clients this will be populated.
+ 	return clients
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8873** (2026-11-09): [FIXED] Filestore fd leak & account lock order cycle (@MauriceVanVeen)
 - **PR #8865** (2026-11-06): Cherry-picks for v2.14.10-RC.2 (@neilalexander)
+- **PR #8864** (2026-11-09): [IMPROVED] Optimized multi filter scan for sparse message blocks (@sciascid)
 - **PR #8863** (2026-11-06): Cherry-picks for 2.15.3-RC.2 (@neilalexander)
+- **PR #8862** (2026-11-09): Fix consumer reset on `last_per_subject` policy (@neilalexander)
 - **PR #8861** (2026-11-06): Update dependencies (@neilalexander)
-- **PR #8855** (2026-11-05): [IMPROVED] Avoid copying filtered messages in single filter scans (@sciascid)
-- **PR #8854** (2026-11-05): [IMPROVED] Avoid copying filtered messages in first/last matching multi (@sciascid)
-- **PR #8853** (2026-11-05): [FIXED] Gateway: A- in interest-only mode stops delivery for the account (@paulwe)
 
 ---
 
@@ -2949,28 +3004,55 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. JetStream: fix quadratic redelivery queue copying under the consumer lock (#8635
+## X. ATS worker shutdown synchronization (#8794)
 
 **RULE**:
-When implementing operations in `server/consumer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/ats/ats.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59bf235a`: JetStream: fix quadratic redelivery queue copying under the consumer lock (#8635). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c1a97cbd`: ATS worker shutdown synchronization (#8794). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/consumer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/ats/ats.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		o.rdq = o.rdq[1:]
+	"sync"
+	// Serializes worker startup and shutdown so a new worker cannot consume a
+	// previous worker's stop signal.
+	lifecycleMu sync.Mutex
+	done     chan struct{}
+	workerWG sync.WaitGroup
+	lifecycleMu.Lock()
+	defer lifecycleMu.Unlock()
+
+		done = make(chan struct{})
+		workerWG.Add(1)
+		go func(done <-chan struct{}) {
+			defer workerWG.Done()
+		}(done)
+	lifecycleMu.Lock()
+	defer lifecycleMu.Unlock()
+
+		close(done)
+		workerWG.Wait()
+		done = nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		o.rdq = append(o.rdq[:0], o.rdq[1:]...)
+	done chan struct{}
+func init() {
+	// Initialize our done chan.
+	done = make(chan struct{}, 1)
+}
+
+		go func() {
+		}()
+		done <- struct{}{}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59bf235a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c1a97cbd` are properly handled with clean fallback behavior.

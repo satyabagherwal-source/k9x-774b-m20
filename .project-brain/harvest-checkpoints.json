@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T11:16:36.960Z",
+  "last_updated": "2026-11-09T11:31:31.445Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1924,14 +1924,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "content_hash": "7c4cd035eb3f3500e1758285e16040a2be37730e7fb8c43315c0735660d39f60",
-      "verified_at": "2026-11-05T13:47:43.173Z",
+      "content_hash": "dd22413ad0c459872519478ee9884c547fb8c0e1ea3a0fd31a092665ed43a7eb",
+      "verified_at": "2026-11-09T11:31:31.444Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:47:43.173Z"
+      "last_updated": "2026-11-09T11:31:31.444Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",
@@ -3876,14 +3876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karakeep-app-karakeep",
-      "content_hash": "4411569ffda35435b282c59de7c03526be4c81f701d6c28bf4220c6dfb8f5d5e",
-      "verified_at": "2026-11-06T14:47:47.007Z",
+      "content_hash": "5881e85ebf4758741dfabc51fa3a1a3afcdb523a09f6aa76d8e0ab3d976b5f04",
+      "verified_at": "2026-11-09T11:31:10.127Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:47:47.007Z"
+      "last_updated": "2026-11-09T11:31:10.127Z"
     },
     "authzed/spicedb": {
       "repository": "authzed/spicedb",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "1288007e7e66cf7dd243c4ce900bc43150b53b18dc1060ec20bbb157ff63f5e5",
-      "verified_at": "2026-11-07T19:55:24.228Z",
+      "content_hash": "1756b1d3992fd0063b1b83e0091780d81a9d800c6cff0b10f91828bba2f6b512",
+      "verified_at": "2026-11-09T11:31:13.420Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:55:24.228Z"
+      "last_updated": "2026-11-09T11:31:13.420Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",

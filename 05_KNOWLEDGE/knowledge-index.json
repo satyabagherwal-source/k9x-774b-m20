@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T11:16:36.823Z",
+  "last_updated": "2026-11-09T11:31:31.352Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20517,7 +20517,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "7c4cd035eb3f3500e1758285e16040a2be37730e7fb8c43315c0735660d39f60",
+      "content_hash": "dd22413ad0c459872519478ee9884c547fb8c0e1ea3a0fd31a092665ed43a7eb",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -20574,7 +20574,7 @@
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv49gron",
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo"
       ],
-      "verified_at": "2026-11-05T13:47:43.003Z",
+      "verified_at": "2026-11-09T11:31:31.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37871,14 +37871,19 @@
       "slug": "karakeep-app-karakeep",
       "platform": "github",
       "source_url": "https://github.com/karakeep-app/karakeep",
-      "source_version": "6a1e71d6",
-      "content_hash": "4411569ffda35435b282c59de7c03526be4c81f701d6c28bf4220c6dfb8f5d5e",
+      "source_version": "d1514c25",
+      "content_hash": "5881e85ebf4758741dfabc51fa3a1a3afcdb523a09f6aa76d8e0ab3d976b5f04",
       "dossier_path": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docker): bump karakeep-chrome to Google Chrome 157.0.8103.38",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "web): fix bugs found in pre-release QA",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -37912,7 +37917,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:47:46.879Z",
+      "verified_at": "2026-11-09T11:31:10.003Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46206,8 +46211,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "59bf235a",
-      "content_hash": "1288007e7e66cf7dd243c4ce900bc43150b53b18dc1060ec20bbb157ff63f5e5",
+      "source_version": "c1a97cbd",
+      "content_hash": "1756b1d3992fd0063b1b83e0091780d81a9d800c6cff0b10f91828bba2f6b512",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -46219,6 +46224,11 @@
         {
           "number": null,
           "title": "JetStream: fix quadratic redelivery queue copying under the consumer lock (#8635",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ATS worker shutdown synchronization (#8794)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46282,7 +46292,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:55:24.039Z",
+      "verified_at": "2026-11-09T11:31:13.324Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

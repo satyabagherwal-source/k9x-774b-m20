@@ -8583,3 +8583,6 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e43a07f9` | Multi-dimensional audit evidence | 2026-11-09T11:16:29.763Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `91b650ea` | Multi-dimensional audit evidence | 2026-11-09T11:16:31.660Z |
 | `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-09T11:16:36.950Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `d1514c25` | Multi-dimensional audit evidence | 2026-11-09T11:31:10.119Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `c1a97cbd` | Multi-dimensional audit evidence | 2026-11-09T11:31:13.413Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-09T11:31:31.437Z |
