@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-TS63",
-    "timestamp": "2026-11-06T23:27:17.211Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "1fb7a634997e4c7b173b19f88a186a2c7c8ac5af27e0c786f21dd341c02618f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-GG25",
     "timestamp": "2026-11-06T23:44:54.605Z",
     "repository": "keybase/client",
@@ -7492,6 +7477,21 @@
     "contentHash": "00132066f66a5f7190b36f81bbe55c3bf77361f1e02ef00c98ca6cca4070a1fb",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-PIYH",
+    "timestamp": "2026-11-09T01:19:17.561Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "0b8c13a3f7b82f77c55ad07fb04b1c3380dcaaaa0b8c8d40a8d7d8e5599d9a7b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

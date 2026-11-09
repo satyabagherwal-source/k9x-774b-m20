@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T01:12:41.067Z",
-  "total_cycles_completed": 8420,
-  "total_learnings_persisted": 8420,
+  "last_updated": "2026-11-09T01:19:17.569Z",
+  "total_cycles_completed": 8421,
+  "total_learnings_persisted": 8421,
   "total_rules_promoted": 8222,
   "history": [
-    {
-      "timestamp": "2026-11-08T07:30:58.851Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T07:31:01.982Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1396,13 @@
       "repository": "openbmb/MiniCPM-OCR-1.0",
       "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:19:17.569Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
