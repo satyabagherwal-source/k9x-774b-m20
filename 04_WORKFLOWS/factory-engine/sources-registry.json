@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T03:42:56.241Z",
-    "lastVerified": "2026-11-09T03:42:56.241Z",
+    "lastChecked": "2026-11-09T03:50:18.139Z",
+    "lastVerified": "2026-11-09T03:50:18.139Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T03:03:41.119Z",
+    "lastChecked": "2026-11-09T03:50:18.128Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T03:03:41.119Z"
+    "lastVerified": "2026-11-09T03:50:18.128Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2291,12 +2291,12 @@
     "lastVerified": "2026-11-08T16:51:04.114Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T23:29:10.905Z",
-    "lastVerified": "2026-11-08T23:29:10.905Z",
+    "lastChecked": "2026-11-09T03:50:13.179Z",
+    "lastVerified": "2026-11-09T03:50:13.179Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2305,7 +2305,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "62d055f4"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -2392,8 +2393,8 @@
     "officialUrl": "https://github.com/flox/flox",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T02:32:34.899Z",
-    "lastVerified": "2026-11-08T02:32:34.899Z",
+    "lastChecked": "2026-11-09T03:50:03.254Z",
+    "lastVerified": "2026-11-09T03:50:03.254Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flox-flox",
@@ -2630,9 +2631,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-08T05:57:05.370Z",
+    "lastChecked": "2026-11-09T03:50:15.628Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-08T05:57:05.370Z"
+    "lastVerified": "2026-11-09T03:50:15.628Z"
   },
   "zeronsh-zeron": {
     "name": "zeronsh/zeron",
@@ -6894,9 +6895,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-08T06:42:16.775Z",
+    "lastChecked": "2026-11-09T03:50:10.647Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-08T06:42:16.775Z"
+    "lastVerified": "2026-11-09T03:50:10.647Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -6917,12 +6918,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T09:51:11.182Z",
-    "lastVerified": "2026-11-05T09:51:11.182Z",
+    "lastChecked": "2026-11-09T03:50:05.758Z",
+    "lastVerified": "2026-11-09T03:50:05.758Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "b9ee8b3ba53efd7e55f390c3c8155571601bab95a16ecd9e73633c32b75906f6",
+    "contentHash": "0fdbfdc34a5f2292da0b34cb2d3c0e3f15ed82b5b3c174f4fa13a27fd07dd0b8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -12402,8 +12403,8 @@
     "officialUrl": "https://github.com/signerlabs/Klee",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-05T21:40:07.602Z",
-    "lastVerified": "2026-11-05T21:40:07.602Z",
+    "lastChecked": "2026-11-09T03:50:08.230Z",
+    "lastVerified": "2026-11-09T03:50:08.230Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-signerlabs-klee",

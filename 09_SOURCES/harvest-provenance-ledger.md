@@ -8503,3 +8503,4 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `057efa66` | Multi-dimensional audit evidence | 2026-11-09T03:35:32.069Z |
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-11-09T03:42:38.771Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `34441533` | Multi-dimensional audit evidence | 2026-11-09T03:42:53.644Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-09T03:50:06.730Z |
