@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source**: github ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
-> **Source Version**: `c6b8a834`  
+> **Source Version**: `c5d2026b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:53:46.061Z  
+> **Timestamp**: 2026-11-09T01:01:25.022Z  
 > **Learning ID**: `learn-github-wzh4869-appports`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:53:45.867Z  
+> **Harvest Timestamp**: 2026-11-09T01:01:25.014Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📦 A macOS utility to seamlessly migrate applications to external storage and reclaim local disk space.【一款 macOS 工具，无缝迁移应用到外部存储并自动建立链接，释放宝贵的本地空间】
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2197 stars
+- **Stars / Engagement**: 2213 stars
 
 ---
 
@@ -1068,555 +1068,765 @@ enum ApplicationLaunchGate {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e2f3c1d` (2026-10-30)
-**Commit Message**: fix: resolve PR 102 conflicts with shared offline guards
+### Incident Patch 1: `1d86020e` (2026-11-08)
+**Commit Message**: fix: 支持应用库映像卸载并暂停自动挂载
 
-Merge main while retaining uniform read-only mount guards, legacy upgrades and offline size diagnostics. Preserve native size traversal with offline-directory exclusions, and update the render fixture for the existing cleanup-sheet interface.
-
-**File**: `.agents/notes/implemented/architecture/2026-10-01-data-path-copy-safety.md` (modified, +1/-1)
+**File**: `.agents/notes/implemented/bug-fix/2026-11-08-应用库映像主动卸载.md` (added, +43/-0)
 ```diff
-@@ -46,7 +46,7 @@ Status: implemented
- - 显示层不提供执行授权，呈现规则见[容器归属、个人目录链接与大小显示](../feature/2026-10-01-container-ownership-presentation.md)。
- - 专用卷真实所有权的已提交建卷理由见[专用 APFS 卷通过真实所有权保留源元数据](2026-10-01-apfs-owners-volume-creation.md)。
- 
--2026-10-29 的[微信离线媒体入口只读保护](../bug-fix/2026-10-29-微信离线媒体入口只读保护.md)仅对精确 msg/business 成员采用 0500，接管这些入口的离线权限规则；原有身份、空目录和卸载前检查继续适用。
-+当前[统一离线挂载保护](../bug-fix/2026-10-30-readable-offline-mount-guards.md)对所有受管空入口采用 0500，接管离线权限规则；原有身份、空目录和卸载前检查继续适用。
- 
- ## Alternatives considered
- 
+@@ -0,0 +1,43 @@
++# Agent Note: 应用库映像主动卸载与自动恢复暂停
++
++Status: implemented
++
++## Problem
++
++应用库位于 NAS 或 U 盘内的 APFS sparsebundle 时，工具栏弹出入口只查询物理外盘清单，映像没有物理磁盘身份，因此操作被拒绝。单独卸载而不保存暂停状态，又会被后台映像恢复或映像内数据卷重挂立即接回。
++
++## Decision
++
++弹出服务在持有 OperationLock 后读取当前选中的映像记录，按应用库路径边界识别目标。映像由共享 AppLibraryImageService 通过 hdiutil 设备清单和 APFS UUID 核对，使用非强制 detach 卸载映像根设备；不请求 Finder 弹出承载磁盘，也不卸载 SMB 共享。已经没有附件时保留暂停并按完成处理。未确认退出的写命令继续持锁等待。
++
++DiskEjectionPauseStore 在发出 detach 前持久化独立的映像暂停，包含映像文件路径、映像内卷 UUID 和挂载路径。共享 Snapshot.blocks 同时约束容器挂载、迁移与恢复；后台映像恢复、主窗口自动恢复和原生启动入口（包括已就绪的只读快速检查）均检查暂停。失败或文件占用保留暂停，只有明确打开或重新挂载映像成功后才移除该映像暂停；底层磁盘重新连接不解除映像暂停。物理磁盘暂停仍独立生效。
++
++暂停文件含映像状态时采用 schemaVersion 2，读取兼容原 schemaVersion 1；旧程序拒绝版本 2，避免把新状态当作无暂停。无映像暂停时继续写版本 1，物理盘状态保存与重连核对均保留映像状态。这不是迁移账本格式变更。旧后台程序仍需退出并使用新版，不能据此保证任意旧版前台显式映像挂载都遵守新增状态。
++
++映像目标的工具栏按钮显示“卸载映像”，暂停后显示现有暂停状态；恢复使用原“重新挂载映像”入口。两个新文案和该恢复按钮覆盖全部 22 种语言。
++
++## Existing-note audit
++
++- [主动弹出外盘](../feature/2026-10-23-explicit-disk-ejection.md)：部分重叠，物理盘流程保留；映像使用独立设备核对与暂停生命周期。
++- [SMB 上的 APFS 应用库映像](../feature/2026-10-29-SMB上的APFS应用库映像.md)：部分重叠，增加主动卸载入口，创建与迁移边界保留。
++- [应用库映像后台自动挂载](../feature/2026-11-03-应用库映像后台自动挂载.md)：部分重叠，主动卸载暂停优先于自动恢复。
++- [启动迁移应用时静默接回映像](../feature/2026-11-03-启动迁移应用时静默接回映像.md)：部分重叠，显式暂停时不通过启动入口接回。
++- 关键词检索未发现 proposed/rejected 中相同卸载方案；并行复制提案与本次无关，不变更其状态。
++
++## Alternatives considered
++
++- 让 Finder 弹出承载卷能沿用现有入口，但会影响 U 盘其他文件或断开整个 NAS 共享，超出卸载映像的范围。
++- 只在映像记录内增加暂停标志改动较少，但容器重挂和其他恢复入口不会读取它，尤其无法约束部分卸载后的数据卷，因此复用共享暂停快照。
++- 强制 detach 能绕过文件占用，但可能中断仍在写入的应用，保留系统拒绝与重试路径更合适。
++
++## Consequences
++
++NAS 和本地外盘上的受管映像共用卸载流程，承载存储保持连接。卸载失败也暂停自动恢复，用户需先关闭占用映像的应用后再次卸载，或明确重新挂载恢复。挂载位置被替代、卷身份不匹配或暂停记录无法读取时停止操作。仅处理当前选中且已记录 UUID 的应用库映像，不接管任意 Finder 映像；网络失联与系统占用仍可能导致非强制卸载失败。
++
++## Verification
++
++补充隔离回归用例：NAS/USB 路由绕过物理清单、整映像设备卸载与子数据卷暂停、占用失败保留暂停、底层重连接不解除暂停、物理暂停独立保存，以及后台和原生启动恢复拒绝接回。
++
++6 个修改的应用源文件及新增回归测试文件通过 swiftc -frontend -parse 语法检查；字符串目录 JSON 解析、3 个相关键的全部 22 种语言覆盖检查通过；笔记的结构、格式与相对链接门禁通过。
++
++未构建或运行测试，未操作真实 NAS、U 盘和用户映像。语法解析不代表类型检查或完整编译通过；需使用新版实机确认忙碌提示、主动卸载、退出重开后的暂停和明确重新挂载。
 ```
 
-**File**: `.agents/notes/implemented/architecture/2026-10-29-页面目录大小扫描优化.md` (modified, +2/-0)
+**File**: `.agents/notes/implemented/feature/2026-10-23-explicit-disk-ejection.md` (modified, +2/-0)
 ```diff
-@@ -12,6 +12,8 @@ Status: implemented
+@@ -8,6 +8,8 @@ Finder 已能联动弹出分散挂载的 APFS 卷，但 AppPorts 的主程序和
  
- 应用大小计算与路径解析只读参数，不使用 actor 的 Info.plist 缓存，因此改为 nonisolated，界面最多四个任务并发统计。应用路径、Stub 与套件解析及原有隐藏文件统计口径不变。每完成一项就发布，发布前复核扫描请求；过期请求取消剩余子任务，等待已启动统计退出，不更新缓存或结束新请求。
+ ## Decision
  
-+离线挂载点沿用[统一只读保护及容量未知规则](../bug-fix/2026-10-30-readable-offline-mount-guards.md)：上层保留不可用问题并交给原生遍历跳过相应子目录，祖先不将缺失数据当成完整大小，不写入展示缓存。
++映像的主动卸载及持久化自动恢复暂停见[应用库映像主动卸载](../bug-fix/2026-11-08-应用库映像主动卸载.md)，物理磁盘重连不会解除该暂停。
 +
- ## Existing-note audit
+ 本篇显式“取消弹出并恢复挂载”的决定由[仅通过重连接恢复](../simplification/2026-10-24-disk-reconnect-only.md)取代；以下保留该选择的原理由和对应验证，其余主动弹出与暂停规则继续适用。
  
- - [大小缓存仅用于展示](../../implemented/feature/2026-10-21-目录大小缓存仅用于展示.md)部分重叠，沿用所有缓存身份、人工重测和执行独立读取边界。
+ 在外部应用库标题旁加入弹出入口及暂停后的重试、恢复入口。用户于 2026-10-23 确认实施；新增文案现已[补齐全部 22 语言](../testing/2026-10-23-本地化覆盖与英文占位守卫.md)，临时中英文范围与定向英文回退已结束。
 ```
 
-**File**: `.agents/notes/implemented/bug-fix/2026-10-12-wechat-mount-recovery.md` (modified, +3/-1)
-```diff
-@@ -32,11 +32,13 @@ build 48 使用项目原有 Apple Development 身份通过 Release clean build
- 
- ## Related decisions
- 
-+- 当前离线保护模式由[允许路径查找的只读挂载点](2026-10-30-readable-offline-mount-guards.md)接续：新租约使用 500，本文事故发生时的 000 事实保持原样。
-+
- - 自身预留的未开始还原兼容基线见[旧容器重连保持原有所有权语义](../../implemented/bug-fix/2026-10-07-legacy-container-remount.md)。
- - 跨阶段自动恢复及收尾的共同规则见[由持久化事务自动完成 APFS 恢复与清理](../architecture/2026-10-12-apfs-automatic-recovery.md)。
- - 事故暴露的验证遗漏及实测层次见[隔离 APFS 验证与可比较的性能证据](../testing/2026-10-12-apfs-validation-evidence.md)。
- 
--2026-10-29 的[微信离线媒体入口只读保护](2026-10-29-微信离线媒体入口只读保护.md)仅对精确 msg/business 成员采用 0500，接管这些入口的离线权限规则；原有身份、空目录和卸载前检查继续适用。
-+当前[统一离线挂载保护](2026-10-30-readable-offline-mount-guards.md)对所有受管空入口采用 0500，接管离线权限规则；原有身份、空目录和卸载前检查继续适用。
- 
- 后台注册准入与系统设置归属见[后台挂载代理启用与应用归属](2026-10-29-后台挂载代理启用与应用归属.md)；该规则不替代卷解锁、签名或完全磁盘访问检查。
- 
-```
-
-**File**: `.agents/notes/implemented/bug-fix/2026-10-28-manual-unmount-and-link-adoption.md` (modified, +9/-0)
-```diff
-@@ -14,6 +14,10 @@ Issue #81 的日志显示单卷手动卸载后两秒即被代理挂回。已有
- 
- 界面把实际挂载/在线状态与 `autoMountPaused` 分开表示。卸载失败而仍挂载时显示两种事实并提供“恢复自动挂载”；此入口验证现有挂载后清除暂停，不先卸载数据。卷离线时保留离线状态和暂停徽章，不承诺重新插盘后自动接回。拆分微信账号聚合成员暂停状态，列表的两种行展示共用同一事实。
- 
-+旧 `000` 暂停保护目录属于预期不可读；当前 [只读离线保护](2026-10-30-readable-offline-mount-guards.md)将新租约改为 `500`，其容量仍未知。扫描只把通过账本校验且属于当前应用的主动暂停路径传入大小测量；`DataDirReadIssue` 精确核对记录、真实目录、模式为 `000` 或 `500` 且未挂载后，生成或分类预期暂停问题。父目录、普通无权限目录、被换成软链的路径及仍挂载的目录不享有此分类，同路径真实非权限错误仍保留并需要处理。分类只影响错误引导和 readFailure 路径策略，不赋予迁移、认领或清理权限，不改账本格式。
-+
-+预期暂停仍保留在 `readIssues`，因此大小保持不完整、父项保留已读部分、快照缓存继续拒绝保存。页面只将 `requiresAttention` 的问题展示为读取失败及权限检查入口；纯暂停且无已读字节的行显示 `—`，复用已有暂停徽章和挂载/迁回操作。含暂停路径的大小测量绕过该路径及祖先的内存大小缓存，避免旧完整容量遮蔽不可读状态。
-+
- 后台仍静默跳过暂停的事务；手动指定 operationID 重试必须返回“本次未执行”的原因，任务中心显示需要处理，而不是完成。检查先于清理决定变化，包含已切换事务的直接清理路径。
- 
- ## Existing-note audit
-@@ -26,6 +30,9 @@ Issue #81 的日志显示单卷手动卸载后两秒即被代理挂回。已有
- 
- ## Alternatives considered
- 
-+- 在页面直接隐藏所有权限错误：改动最少，但会掩盖同次扫描中的真实读取失败；因此在错误来源处分类，页面只过滤已确认的预期暂停。
-+- 删除暂停产生的读取问题：可直接消除提示，但会使大小结果看似完整并进入缓存；因此保留问题，仅取消错误引导。
-+
- - 仅在当前进程暂停：状态简单，但代理和冷启动无法遵守。
- - 复用整盘弹出暂停：已有跨进程准入，但会挡住同盘其他目录，且重新插盘会解除。
- - 缺记录一律拒绝：保守且易实现，但无法完成用户明确要求的现有软链接管。改为核对当前链接、目标身份和冲突后建立新凭据，不推断历史归属。
-@@ -34,6 +41,8 @@ Issue #81 的日志显示单卷手动卸载后两秒即被代理挂回。已有
- 
- ## Testing
- 
-+暂停保护目录专项回归覆盖真实 POSIX `000` 目录、父项旧大小缓存、混合真实权限错误、大小与汇总不完整、快照不缓存、解除暂停后重新计量。分类边界覆盖暂停但仍挂载、缺少可信暂停记录、父目录错误、非权限错误、权限恢复及替换软链。2026-10-30 的 99 项专项测试全部通过（扫描 62、快照缓存 5、容量汇总 13、本地化 19）。另以独立 XCTest 宿主和自建 APFS 镜像完成真实迁移、主动卸载产生 `000` 保护目录、扫描与父项测量分类、明确重挂、最新数据迁回及删除测试卷；`manualPauseReadDiagnosticsVerified` 为 true，镜像和隔离材料已清理。Release arm64/x86_64 clean build、笔记校验和独立只读复查通过。本轮未跑全量测试，未替换安装版或进行安装版界面验收。证据位于 `build/Validation/paused-mount-diagnostics-20261030/REPORT.md`。
-+
- 隔离目录与假 diskutil 覆盖冷启动后暂停、未开始还原的后台恢复暂停、同盘其他卷不受影响、挂载失败保留暂停、成功解除、保存失败不卸载、卸载失败保留暂停。账本测试覆盖 schema 12 无暂停、schema 13 暂停、错误 UUID/路径和旧 schema 夹带暂停拒绝。规范路径接管后还原、冲突标记拒绝、容器旧链接恢复使用真实临时文件，不操作用户业务数据。
- 
- 相关串行回归通过 150 项 XCTest 与 190 项 Swift Testing，共 340 项，日志 `/tmp/AppPortsIssue81-followup-regression.log`。覆盖 ContainerVolumeMigrator、ContainerMountResume/Safety/Agent、ContainerRemountLoop、DataDirMover、DataTransferStore、DataDirScanner、WriterAdmission、DiskEjection、MigrationTaskCenter、OperationMaintenanceProgress，以及一个模拟浏览器界面测试。没有运行完整测试套件。
-```
-
-**File**: `.agents/notes/implemented/bug-fix/2026-10-29-微信离线媒体入口只读保护.md` (modified, +2/-0)
+**File**: `.agents/notes/implemented/feature/2026-10-29-SMB上的APFS应用库映像.md` (modified, +2/-0)
 ```diff
 @@ -8,6 +8,8 @@ Status: implemented
  
  ## Decision
  
-+本篇的微信专用权限策略由[统一离线挂载保护](2026-10-30-readable-offline-mount-guards.md)取代；下文保留原方案及现场验证依据。PR #102 合并主分支时移除专用策略与参数，所有受管入口沿用统一 0500。
++映像的主动卸载及持久化自动恢复暂停见[应用库映像主动卸载](../bug-fix/2026-11-08-应用库映像主动卸载.md)，物理磁盘重连不会解除该暂停。
 +
- `MountPointLease.Protection` 区分 inaccessible（000）和 readOnly（0500）。只对指定容器 `Library/Containers/<bundleIdentifier>/Data/Documents/xwechat_files/<account>/{msg,business}` 的精确入口采用 0500；账号排除 all_users、config、resource。相对用户主目录的路径与解析软链接后的路径必须相同，允许系统主目录自身解析，但拒绝媒体、账号或中间目录别名。整账号、数据库、其他目录和私有暂存入口继续采用 000。
+ 单卷限制由[按所选映像使用应用库卷](../bug-fix/2026-11-03-按所选映像使用应用库卷.md)部分取代，多卷映像按保存 UUID 或首次选择优先级定位，其他创建和恢复规则继续适用。
  
- 迁移、挂载、卸载、恢复、历史挂载选项回退传递当前记录或事务的 bundleIdentifier，多开容器不依赖默认微信标识。已有拆分记录在功能开关关闭时仍沿用规则，不改变持久化格式或迁移授权。
+ 外部应用库提供创建、打开、重新挂载映像入口。复用系统映像工具和现有命令执行器；创建不覆盖已有路径。创建时探测 `diskutil image create blank --help` 是否支持 UDSB，支持时使用现代创建接口和精确字节容量，否则使用旧系统的 hdiutil。挂载同样探测 DiskImages2，否则使用 hdiutil；现代接口执行失败不自动切换后端。通过 hdiutil 的映像设备关系及 diskutil 的 APFS UUID 核对目标，不按卷名称接受目标。
 ```
 
-**File**: `.agents/notes/implemented/bug-fix/2026-10-30-readable-offline-mount-guards.md` (added, +60/-0)
+**File**: `.agents/notes/implemented/feature/2026-11-03-启动迁移应用时静默接回映像.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,60 @@
-+# Agent Note: 离线挂载点允许路径查找并保持禁止本地写入
+@@ -10,6 +10,8 @@ Status: implemented
+ 
+ 入口辅助程序依赖及安装位置要求由[按操作检查安装位置与普通入口独立启动](../bug-fix/2026-11-04-按操作检查安装位置与普通入口独立启动.md)收窄：只在应用或其数据关联映像时保存 helper；普通入口独立启动，既有入口随数据记录变化刷新元数据。
+ 
++映像的主动卸载及持久化自动恢复暂停见[应用库映像主动卸载](../bug-fix/2026-11-08-应用库映像主动卸载.md)，物理磁盘重连不会解除该暂停。
 +
-+Status: implemented
-+
-+## Problem
-+
-+用户提供的微信 4.1.15 / macOS 27.0.1 崩溃报告显示 weakly_canonical → filesystem_error → 未处理异常 → abort。原保护目录使用 000，卸载后应用访问子路径会被拒绝。本机隔离 C++ 实测确认 000 下不存在的子路径返回 EACCES（13），500 下相同查找不抛异常。报告没有携带实际失败路径和错误码，因此这证明触发机制，与崩溃高度吻合，不构成微信根因完全确诊或数据库损坏证据。用户批准实现“允许读取与路径访问、禁止写入”的方向。
-+
-+500 目录可枚举，断盘但未手动暂停时不能再依赖读取失败判断容量不完整，否则会显示完整的 0 字节，并将祖先的缺失汇总缓存为完整结果。
-+
-+## Decision
-+
-+MountPointLease 在核对目录身份和空内容后，将底层本地目录保护为 500。挂载层上的业务卷权限不变；卸载或断盘后本地入口允许当前用户读取和进入，新建文件与目录仍被拒绝。统一调整共享租约，避免迁移、主动卸载、重挂和恢复准备各自采用不同策略；不改变迁移账本、签名、版本或安装版。
-+
-+租约仍接受旧 000 目录，安全打开并核实为空后转为 500；持有描述符的后续验证精确检查 500，不因为兼容历史值而接受租约创建后的权限变化。恢复准备检查接受两种保护模式，核对同一 inode 与转换后的 500。非空目录、软链、替换目录和新开放写权限继续阻断。
-+
-+容量扫描对可信挂载记录精确匹配、未挂载、真实目录且为保护模式的入口生成预期不可用问题，不以是否手动暂停为条件。沿用 pausedMountDirectories 传递这些入口，手动暂停标记仍独立读取账本。500 可读不等于外盘业务数据为空；目录和祖先容量继续不完整、不写缓存、不引导用户补权限。旧 000 同样支持；普通权限错误、挂载中的错误、父目录错误和替换软链不享有豁免。沿用已有暂停提示，不新增文案。
-+
-+后台重挂检查在暂停和卷在线判断之前升级可信旧 000 空目录，保持暂停及账本不变。历史保留迁移的事务与祖先沿用正常重挂的 ownedIDs；未开始的恢复沿用兼容校验，已开始恢复则由原恢复路径负责，不新增背景修改。非空、重叠或不可访问目录保持阻断。仍挂载的业务卷不为升级主动卸载；它在新版正常卸载后转换，或盘离线后由后台检查转换。
-+
-+## PR #102 integration
-+
-+PR #102 与主分支的五个冲突文件均围绕离线保护：保留共享租约统一 0500、旧 000 升级、恢复准备兼容及历史事务归属，不保留按微信媒体路径选择权限的第二套策略。原[微信专用策略](2026-10-29-微信离线媒体入口只读保护.md)保留其独有的现场验证和备选依据，但权限选择由本篇接管；不增加存储格式或迁移模式。
-+
-+目录大小继续使用 PR 的原生遍历；上层将已核对的离线入口作为跳过集合，并将预期不可用问题合入结果。原生遍历跳过这些目录，祖先仍返回不完整大小且不缓存。权限错误、非目录替换等其他错误继续报告。PR 的映像、界面、任务及校验优化保留，不改变版本、安装版或发布状态。
-+
-+PR 原有截图测试仍给异常处理弹窗传递已删除的空 otherIssues 参数，测试包编译因此失败；删除该无效参数，沿用新接口的默认空集合，不改变测试场景或生产行为。
-+
-+合并版本的 arm64/x86_64 Release clean build 通过；独立命名 XCTest 宿主完成 24 个定向套件，442 项通过、0 失败、3 项显式性能测试按预期跳过（参数展开后的通过运行数为 703）。范围覆盖共享租约、旧 000 升级、挂载/恢复/重入、离线容量与祖先缓存、目录树/大小汇总、新原生遍历、文件散列及映像接口。独立只读审查未发现其他具体冲突回归。
-+
-+私有 APFS 实测 1 项通过，包含 14 组旧记录与中断恢复场景；正常迁移、卸载后 0500 可读且写入 EACCES、暂停大小未知、重挂与最新数据迁回、权限丢失后的保留与重试、旧 noowners 恢复与回滚均通过。专用数据卷已清理；协调器确认只剩原始私有卷后卸载映像，再核对夹具身份、无附加映像及无打开文件后移除临时夹具。结果位于 `build/Validation/v3-real-mount-20261030T072729Z-7fb7c101/summary.json`，专项与构建结果位于 `/tmp/AppPortsPR102Validation/`。
-+
-+本地化审计 19 项中 17 通过、2 项因原 PR 字符串目录的 stale 标记失败；目录与审计源码均未在本次冲突处理中修改，保留该独立问题。笔记树、格式、归档封印及差异空白检查通过。没有本机运行全量测试，没有验证真实微信缺盘登录或 NAS 映像应用迁移，也没有安装、发布或合并到 main。此前实机结果只证明当时主分支，不替代这些验证边界。
-+
-+## Existing-note audit
-+
-+- [微信挂载恢复事故](2026-10-12-wechat-mount-recovery.md)：部分重叠，历史事实保留；本篇改变其历史 000 保护决定，卸载前的本地父目录和业务卷可用性校验继续有效。
-+- [单卷暂停和旧链接恢复](2026-10-28-manual-unmount-and-link-adoption.md)：部分重叠，暂停记录仍独立，补充 500 下容量未知，不以目录可读判断业务数据完整。
-+- [事件驱动重挂](2026-09-23-event-driven-container-remount.md)：部分重叠，不改变调度和重试策略。
-+- proposed/rejected 中仅临时目录迁移策略及并行复制存在关键词重叠，与本次权限选择无关，不归档或改写它们。
-+
-+## Alternatives considered
-+
-+- 保留 000：保护最严格，但已实测路径解析因缺失进入权限返回 EACCES，不能解决当前故障。
-+- 改为 700：应用可继续创建离线文件，但会形成外盘和本地两份数据，因此拒绝。
-+- 只手工 chmod 微信目录：可验证现象，但新迁移和重挂会重新写回旧模式，不能作为实现；采用共享租约中的单一保护策略。
-+
-+## Verification
-+
-+PR #101 反馈修复的扫描器 65 项、容量汇总和目录树 36 项、展示 9 项全部通过，0 失败、0 跳过。新增回归使用真实临时目录，覆盖未手动暂停的断盘和待重挂、500 目录容量未知、祖先汇总不完整及不复用缓存。挂载和卷在线状态通过现有注入边界模拟；本轮未跑全量测试或真实外盘拔插。arm64/x86_64 Release clean build 通过。
-+
-+专项 260 项通过，0 失败、0 跳过，覆盖挂载安全、迁移器、重挂恢复、代理、恢复准备、扫描、缓存、卷状态和弹盘。旧目录升级覆盖无事务/生产迁移保留事务 × 暂停/离线四种组合，以及非空目录拒绝升级并保留内容与模式。最终 arm64/x86_64 Release clean build 通过；生产 MountPointLease 与原生 C++ weakly_canonical 联合实测确认 EACCES → 正常返回。
-+
-+私有 APFS 真实测试 1 项通过，包含 14 组旧记录和中断恢复场景。实测正常迁移、主动卸载暴露 500 空目录、读取成功且文件创建 EACCES、暂停容量未知、重挂、最新数据重连和迁回、旧 noowners/中断继续/撤销/自动回滚及清理。测试卷已删除、镜像已卸载，核对归属和无打开文件后清除本轮夹具。结果和日志见本机 build/Validation/readable-mount-guards-20261030/REPORT.md，完整 xcresult 见 build/Validation/v3-real-mount-20261029T215722Z-543b71ae/。
-+
-+独立只读审查发现的升级路径遗漏、历史事务归属遗漏及合成暂停遮蔽真实错误均已修正，最后复核无新增具体缺陷。未跑全量测试，真实微信缺盘登录未验证，不以隔离测试宣称登录可用。后续经用户授权，将当前源码以原 Apple Development 身份构建并替换本机安装版，strict 签名、现有完全磁盘访问代码要求、后台代理签名和四个原位挂载均核对通过，旧包保留备份；版本和生产迁移账本未改。
-+
-+## Consequences
-+
-+所有通过同一租约创建的 APFS 保护目录使用只读模式，允许应用把离线文件识别为不存在，仍禁止通过该目录生成本地业务数据。此策略消除已确认的路径解析权限触发条件；应用是否能处理后续缺文件或写入拒绝仍须实测。数据继续保存在外部专用卷；本地可读空目录不代表数据被删除或迁回。
+ 原生 portal 在转发启动前运行 AppPorts 的无窗口 `--prepare-image-launch` 入口。成功时直接继续 NSWorkspace 启动，不展示准备界面；失败后才显示既有存储提示。启动、文件和 URL 请求在准备阶段排队，共用一次准备任务；启动共享租约从准备前保持到真实启动完成，避免数据迁移在准备和转发之间开始。
+ 
+ portal 格式升级到 8，保存本机 AppPorts 可执行路径；应用来自当前已记录应用库映像时，在入口保存映像记录。现有已迁移入口沿用完整 staging、签名与原子替换刷新机制升级，不修改外部真实应用。主程序与 SMB 连接子进程都在 SwiftUI 初始化之前分派，无需显示 AppPorts 主窗口。
 ```
 
-**File**: `.agents/notes/implemented/feature/2026-10-20-微信账号拆分迁移.md` (modified, +1/-1)
+**File**: `.agents/notes/implemented/feature/2026-11-03-应用库映像后台自动挂载.md` (modified, +2/-0)
 ```diff
-@@ -20,7 +20,7 @@ Status: implemented
- - 与[微信挂载恢复](../bug-fix/2026-10-12-wechat-mount-recovery.md)部分重叠：成员沿用已有卸载、恢复和清理规则，不由聚合行取代真实记录。
- - [临时目录迁移提案](../../proposed/feature/2026-10-01-temporary-directory-migration-policy.md)讨论 tmp 后代，与媒体成员无关，保留 proposed。
+@@ -10,6 +10,8 @@ Status: implemented
  
--2026-10-29 的[微信离线媒体入口只读保护](../bug-fix/2026-10-29-微信离线媒体入口只读保护.md)仅对精确 msg/business 成员采用 0500，接管这些入口的离线权限规则；原有身份、空目录和卸载前检查继续适用。
-+当前[统一离线挂载保护](../bug-fix/2026-10-30-readable-offline-mount-guards.md)对所有受管空入口采用 0500，接管离线权限规则；原有身份、空目录和卸载前检查继续适用。
+ 前台创建、打开、手动重挂以及自动恢复的运行位置检查见[按操作检查安装位置与普通入口独立启动](../bug-fix/2026-11-04-按操作检查安装位置与普通入口独立启动.md)。后台代理的恢复调度职责保持不变。
  
- 新迁移的来源刷新时机由[应用数据迁移任务内核对来源](../bug-fix/2026-10-29-应用数据迁移任务内核对来源.md)接管，任务内准备完成后才进入复制；已有持久化恢复规则继续适用。
++映像的主动卸载及持久化自动恢复暂停见[应用库映像主动卸载](../bug-fix/2026-11-08-应用库映像主动卸载.md)，物理磁盘重连不会解除该暂停。
++
+ 原生启动入口的按需准备见[启动迁移应用时静默接回映像](2026-11-03-启动迁移应用时静默接回映像.md)，独立于登录代理定时重试，只接回本次应用所需的映像及数据。
  
+ 映像内卷定位沿用[按所选映像使用应用库卷](../bug-fix/2026-11-03-按所选映像使用应用库卷.md)，不再要求只有一个可写 APFS 卷，已有未挂载附件也可直接定位使用。
 ```
 
-**File**: `AppPorts.xcodeproj/project.pbxproj` (modified, +4/-4)
+**File**: `AppPorts/Localizable.xcstrings` (modified, +404/-10)
 ```diff
-@@ -404,7 +404,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 50;
-+				CURRENT_PROJECT_VERSION = 51;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_TEAM = MQ7XG7WM3F;
- 				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
-@@ -421,7 +421,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 12.0;
--				MARKETING_VERSION = 2.0.0;
-+				MARKETING_VERSION = 2.1.0;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.shimoko.AppPorts;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				PROVISIONING_PROFILE_SPECIFIER = "";
-@@ -441,7 +441,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 50;
-+				CURRENT_PROJECT_VERSION = 51;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_TEAM = MQ7XG7WM3F;
- 				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
-@@ -458,7 +458,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 12.0;
--				MARKETING_VERSION = 2.0.0;
-+				MARKETING_VERSION = 2.1.0;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.shimoko.AppPorts;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				PROVISIONING_PROFILE_SPECIFIER = "";
+@@ -223756,19 +223756,413 @@
+         }
+       }
+     },
++    "卸载映像" : {
++      "extractionState": "manual",
++      "localizations": {
++        "ar": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "إلغاء تحميل الصورة"
++          }
++        },
++        "br": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "⠠⠥⠝⠍⠕⠥⠝⠞ ⠠⠊⠍⠁⠛⠑"
++          }
++        },
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Image aushängen"
++          }
++        },
++        "en": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Unmount Image"
++          }
++        },
++        "eo": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Malmunti diskobildon"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Desmontar imagen"
++          }
++        },
++        "fr": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Démonter l’image"
++          }
++        },
++        "hi": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "इमेज अनमाउंट करें"
++          }
++        },
++        "id": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Lepas image"
++          }
++        },
++        "it": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Smonta immagine"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "イメージをアンマウント"
++          }
++        },
++        "ko": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "이미지 마운트 해제"
++          }
++        },
++        "nl": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Schijfkopie ontkoppelen"
++          }
++        },
++        "pl": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Odłącz obraz"
++          }
++        },
++        "pt": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Desmontar imagem"
++          }
++        },
++        "ru": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Отключить образ"
++          }
++        },
++        "th": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "เลิกเมานต์อิมเมจ"
++          }
++        },
++        "tr": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "İmajın bağlantısını kes"
++          }
++        },
++        "vi": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Ngắt kết nối ảnh đĩa"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "卸载映像"
++          }
++        },
++        "zh-Hant": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "卸載映像"
++          }
++        },
++        "zh-martian": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "卸載映像"
++          }
++        }
++      }
++    },
++    "卸载映像并暂停自动挂载，选择“重新挂载映像”可恢复。" : {
++      "extractionState": "manual",
++      "localizations": {
++        "ar": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "يلغي تحميل الصورة ويوقف التحميل التلقائي مؤقتًا. اختر «تحميل الصورة مجددًا» للاستئناف."
++          }
++        },
++        "br": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "⠠⠥⠝⠍⠕⠥⠝⠞ ⠞⠓⠑ ⠊⠍⠁⠛⠑ ⠁⠝⠙ ⠏⠁⠥⠎⠑ ⠁⠥⠞⠕⠍⠁⠞⠊⠉ ⠍⠕⠥⠝⠞⠊⠝⠛⠲ ⠠⠉⠓⠕⠕⠎⠑ ⠦⠠⠍⠕⠥⠝⠞ ⠠⠊⠍⠁⠛⠑ ⠠⠁⠛⠁⠊⠝⠴ ⠞⠕ ⠗⠑⠎⠥⠍⠑⠲"
++          }
++        },
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Hängt das Image aus und pausiert das automatische Einbinden. Wähle „Image erneut einbinden“, um es fortzusetzen."
++          }
++        },
++        "en": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Unmount the image and pause automatic mounting. Choose “Mount Image Again” to resume."
++          }
++        },
++        "eo": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Malmuntu la diskobildon kaj paŭzigu aŭtomatan muntadon. Elektu “Remunti diskobildon” por daŭrigi."
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Desmonta la imagen y pausa el montaje automático. Elige «Volver a montar imagen» para reanudarlo."
++          }
++        },
++        "fr": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Démonte l’image et suspend le montage automatique. Choisissez «Remonter l’image» pour le réactiver."
++     
+```
+
+**File**: `AppPorts/Services/AppLibraryImageRecovery.swift` (modified, +6/-6)
+```diff
+@@ -115,7 +115,7 @@ enum AppLibraryImageRecovery {
+         var record = original
+         let expectedRecord = original
+         do {
+-            guard !ejection.blocks(volumeUUIDs: [record.backingVolumeUUID], paths: [record.imagePath]) else { return }
++            guard !ejection.blocksImage(record) else { return }
+             let shareLocation = findShare ?? { try await service.files.mountedShare(for: $0) }
+             if let address = record.networkShareURL, let remote = URL(string: address),
+                sanitizedShareURL(remote)?.absoluteString == address,
+@@ -135,7 +135,7 @@ enum AppLibraryImageRecovery {
+             let alreadyMounted = record.volumeUUID.map { actualUUID?.caseInsensitiveCompare($0) == .orderedSame } ?? false
+             if alreadyMounted, record.backingVolumeUUID != nil || record.networkShareURL != nil { return }
+             record = try await service.files.resolved(record)
+-            guard !ejection.blocks(volumeUUIDs: [record.backingVolumeUUID], paths: [record.imagePath]) else { return }
++            guard !ejection.blocksImage(record) else { return }
+             if record.imagePath != expectedRecord.imagePath {
+                 // Both USB and SMB may reappear at another /Volumes path.
+                 // An old device attachment must not become a second writer.
+@@ -177,8 +177,8 @@ enum AppLibraryImageRecovery {
+     static func restoreForLaunch(_ original: AppLibraryImageService.Record,
+                                  service: AppLibraryImageService,
+                                  ejection: DiskEjectionPauseStore.Snapshot) async throws -> AppLibraryImageService.Record {
+-        guard !ejection.blocks(volumeUUIDs: [original.backingVolumeUUID], paths: [original.imagePath]) else {
+-            throw DiskEjectionError.paused
++        guard !ejection.blocksImage(original) else {
++            throw ManualMountPauseError.retryPaused
+         }
+         var record = original
+         if let address = record.networkShareURL {
+@@ -193,7 +193,7 @@ enum AppLibraryImageRecovery {
+             record.imagePath = root.appendingPathComponent(relative).path
+         }
+         record = try await service.files.resolved(record)
+-        guard !ejection.blocks(volumeUUIDs: [record.backingVolumeUUID], paths: [record.imagePath]) else { throw DiskEjectionError.paused }
++        guard !ejection.blocksImage(record) else { throw ManualMountPauseError.retryPaused }
+         if record.imagePath != original.imagePath {
+             let inventory = try await AppLibraryImageFileAccess.readCommand(runner: service.runner,
+                 executable: "/usr/bin/hdiutil", arguments: ["info", "-plist"], timeout: 10)
+@@ -218,7 +218,7 @@ enum AppLibraryImageRecovery {
+                                    service: AppLibraryImageService,
+                                    ejection: DiskEjectionPauseStore.Snapshot) async throws -> Bool {
+         guard let uuid = record.volumeUUID,
+-              !ejection.blocks(volumeUUIDs: [record.backingVolumeUUID], paths: [record.imagePath]) else { return false }
++              !ejection.blocksImage(record) else { return false }
+         var current = record
+         if let address = record.networkShareURL {
+             guard let remote = URL(string: address), sanitizedShareURL(remote)?.absoluteString == address,
+```
+
+**File**: `AppPorts/Services/AppLibraryImageService.swift` (modified, +26/-0)
+```diff
+@@ -229,6 +229,32 @@ struct AppLibraryImageService: Sendable {
+         return result
+     }
+ 
++    /// Caller holds OperationLock. Detach only the selected image, never its backing disk/share.
++    func unmount(_ record: Record, pauses: DiskEjectionPauseStore) async throws {
++        guard let expected = record.volumeUUID, UUID(uuidString: expected) != nil else { throw identityFailure() }
++        let image = URL(fileURLWithPath: record.imagePath)
++        guard let devices = try await imageDevices(for: image) else {
++            try pauses.pauseImage(record, volumeUUIDs: [], mountPaths: [])
++            return
++        }
++        _ = try await identifiedVolume(devices, expectedUUID: expected,
++                                      preferredMount: record.libraryPath ?? record.mountPath)
++        let uuids = try await volumeUUIDs(in: record)
++        // Persist before dispatch: denial, busy files and partial unmounts must not trigger remount.
++        try pauses.pauseImage(record, volumeUUIDs: uuids, mountPaths: Set(devices.compactMap(\.mount)))
++        do {
++            try await detachOwnedImage(image, devices: devices)
++        } catch let pending as ShellCommandUnconfirmedTermination {
++            // A timed-out detach may still be writing. Keep the caller's lock
++            // until it exits, just as attachment and creation do.
++            while (try? ProcessCommandRunner.isRunning(pending.process)) != false {
++                await Task.detached { try? await Task.sleep(nanoseconds: 1_000_000_000) }.value
++            }
++            throw pending
++        }
++        guard try await imageDevices(for: image) == nil else { throw identityFailure() }
++    }
++
+     private func detachOwnedImage(_ image: URL, devices: [ImageDevice]) async throws {
+         guard let current = try await imageDevices(for: image) else { return }
+         guard Set(current.map(\.device)) == Set(devices.map(\.device)),
 ```
 
 ---
 
-### Incident Patch 2: `c6b8a834` (2026-11-02)
-**Commit Message**: Merge pull request #103 from Souitou-iop/codex/quarantine-migration-fix
+### Incident Patch 2: `0de95d95` (2026-11-06)
+**Commit Message**: fix(l10n): complete image library and permission guide translations
 
-fix: 兼容 macOS 27 受保护的 quarantine，修复带标记应用迁移失败
-
-**File**: `.agents/notes/implemented/bug-fix/2026-11-01-migration-replica-quarantine.md` (added, +76/-0)
+**File**: `.agents/notes/implemented/feature/2026-10-29-SMB上的APFS应用库映像.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,76 @@
-+# Agent Note: 迁移副本不再回放或校验 quarantine
-+
-+Status: implemented
-+
-+## Problem
-+
-+2.1.0 (51) 在 macOS 27.2 上把带 quarantine 的应用迁往外置盘 100% 失败：
-+复制完成后 verifying 阶段对副本文件报 `NSPOSIXErrorDomain 13`，重试全部命中
-+同一路径。微信 4.2.0（Sparkle 更新，`0082;…;` 系统发起型）和 RedPot.app
-+（Edge 下载，`01c1;…;` 尚未清除）都复现；历史成功副本（QQ、Edge、ChatGPT）
-+的源文件在用户打开后已被系统清除 quarantine。
-+
-+排查确认三层事实：副本复制后由系统自动附加 quarantine（复制路径为
-+pread/pwrite，代码未写入）；所有进程对该副本的 `removexattr` 均被
-+macOS 27 拒绝（EACCES，含创建进程与 hardened 签名进程）；带 bundle 的
-+hardened 进程对该副本的 open、pread、fgetxattr、
-+`SecStaticCodeCheckValidity` 全部正常。因此失败点唯一：
-+`AppTransferTransaction.prepareCandidate` 复制完成后的 quarantine 移除循环
-+调用 `removexattr` 抛出 EACCES，整个迁移被一个无害元数据标记终止。
-+
-+## Decision
-+
-+- `TreeCopySession.systemManagedAttributes` 增加 `com.apple.quarantine`：
-+  清单不记录、比较不参与、`applyMetadata` 不回放，也不主动删除目标上的标记。
-+  这与该文件对 provenance/macl 的既有处理一致，适用于应用、普通数据和容器复制。
-+- `prepareCandidate` 直接使用复制器返回的清单校验副本。清单已不含 quarantine，
-+  因此删除标记的循环没有处理对象，`withoutQuarantine` 转换也无作用，两者均移除。
-+  副本校验、原有签名校验、同步、记账、入口切换与恢复清理流程保持不变。
-+
-+## Alternatives considered
-+
-+- **验证失败走管理员授权重试**：PrivilegedAppTransfer 是动作级 helper，
-+  覆盖不了树扫描内的单文件元数据调用，且重试仍会命中同一个系统拒绝。
-+- **先清源再复制**：删除源的 quarantine 同样被系统拒绝，且会改动
-+  用户正在使用的原始应用，超出迁移工具的边界。
-+- **保留 throw，仅提示用户**：Sparkle 更新过的应用在 macOS 27.2 上
-+  全部不可迁移，问题会随更新扩散到更多应用。
-+
-+## Consequences
-+
-+迁移副本可能携带系统附加的 quarantine 标记，AppPorts 不保证复制源标记，
-+也不主动清除目标标记；是否允许打开仍由 macOS 判断。下列两款应用的实机结果
-+由 PR 作者提供，不能据此断言任意来源、任意标记状态的文件均已获系统批准。
-+旧版清单即使记录过 quarantine，比较时也通过 `portableAttributes` 过滤，
-+不会仅因这个标记而报 extended_attributes 差异。其他要求保留的属性、内容、
-+身份或权限发生差异时，既有校验仍会拒绝继续或保留待清理副本。
-+
-+## Verification
-+
-+### 本地清理验证
-+
-+- macOS 27.0.1、Xcode 27.0：arm64/x86_64 Release `xcodebuild clean build` 通过。
-+- 独立测试宿主执行 `AppMigrationServiceTests` 61 项、`AppTransferTransactionTests` 76 项、
-+  `ContainerVolumeMigratorTests` 93 项、`DataDirMoverTests` 50 项及 quarantine 回归 1 项，
-+  共 281 项通过（含参数化用例共执行 325 次），没有失败或跳过。
-+- `MigrationSigningIntegrationTests` 使用外置 APFS 卷上的独立 UUID 样本目录，3 项通过：
-+  签名应用迁移和元数据保留、拒绝重签沙盒应用、应用及聊天数据库/附件往返；迁移后新增
-+  数据库记录在迁回后仍存在。样本不使用已安装应用或真实聊天数据。
-+- 本次未跑全量测试，未实测真实容器挂载/卸载，也未复现作者 macOS 27.2 的真实应用场景。
-+  原始构建和测试结果位于 `/tmp/AppPorts-PR103-cleanup.QujOj8/`。
-+
-+### PR 作者提供的验证
-+
-+- `AppPortsTests/TreeCopySessionQuarantineTests.swift`：清单注入
-+  quarantine 后 `verifyCopy` 通过，注入普通应用属性仍失败，防止修复
-+  滑向"忽略全部属性差异"。
-+- `FileCopierTests`、`AppTransferTransactionTests`、`DataPathPolicyTests`
-+  共 101 项全部通过。
-+- 本机（QBJ8 Apple Development 签名 + hardened runtime 的 Release 构建）
-+  真实迁移 WeChat.app 1.53 GB：19:14:06 完成入口切换，本地 stub 指向
-+  `/Volumes/SanDisk/Applications/AppPorts.noindex/WeChat.app`，两侧列表
-+  均显示"已链接"，任务中心清空后无遗留。
-+- 同一构建真实迁移 RedPot.app 137 MB：入口切换完成，两侧均显示"已链接"；
-+  旧本地副本因归属复核未通过按既有策略保留在
-+  `/Applications/.appports-entry-ED1CF64D-BD4F-4438-A71E-0E67BD7C0F78`，
-+  不影响应用运行。
+@@ -29,7 +29,7 @@ Status: implemented
+ 
+ ## Consequences
+ 
+-外部应用库的“磁盘映像”菜单提供创建、打开及重新挂载入口。底层仍使用现有应用迁移事务，应用通过 APFS 保存文件元数据；用户需要管理映像容量与挂载生命周期。命令使用参数数组，不拼 shell；已有目标不覆盖；只有来自选定映像的单个可写 APFS 卷且 UUID 符合记录才成为应用库；失败保留文件并显示错误；共享不可用时不创建本地替代目录。新文案提供中英文，其他语言沿用既有回退，翻译审计只对这批明确列出的键放宽到中英文，不填英文占位。
++外部应用库的“磁盘映像”菜单提供创建、打开及重新挂载入口。底层仍使用现有应用迁移事务，应用通过 APFS 保存文件元数据；用户需要管理映像容量与挂载生命周期。命令使用参数数组，不拼 shell；已有目标不覆盖；只有来自选定映像的单个可写 APFS 卷且 UUID 符合记录才成为应用库；失败保留文件并显示错误；共享不可用时不创建本地替代目录。映像文案覆盖全部 22 种语言；翻译补齐后移除临时中英文审计豁免，继续遵循[本地化覆盖规则](../testing/2026-10-23-本地化覆盖与英文占位守卫.md)。
+ 
+ 创建失败可能留下部分映像，需要用户在 Finder 检查或重新命名；不会替用户判断残留文件是否可以删除。
+ 
 ```
 
-**File**: `AppPorts/Services/AppTransferTransaction.swift` (modified, +1/-22)
+**File**: `.agents/notes/implemented/feature/2026-11-04-完全磁盘访问拖拽引导.md` (modified, +2/-2)
 ```diff
-@@ -490,19 +490,8 @@ final class AppTransferTransaction {
-                 try journal.save()
-             }, progressHandler: progress)
-         try checkpoint(.copied, journal)
--        // Preserve the historical application-only quarantine removal. It is
--        // the sole allowed metadata difference and never touches the source.
-         let candidate = journal.record.candidateURL
--        if journal.record.direction == .migrate {
--            for entry in snapshot.entries where entry.extendedAttributes["com.apple.quarantine"] != nil {
--                let url = entry.path.isEmpty ? candidate : candidate.appendingPathComponent(entry.path)
--                if removexattr(url.path, "com.apple.quarantine", XATTR_NOFOLLOW) != 0, errno != ENOATTR {
--                    throw Self.posix(url)
--                }
--            }
--        }
--        let expected = journal.record.direction == .migrate ? withoutQuarantine(snapshot) : snapshot
--        try TreeCopySession.verifyCopy(at: candidate, against: expected, profile: Self.copyProfile)
-+        try TreeCopySession.verifyCopy(at: candidate, against: snapshot, profile: Self.copyProfile)
-         try verifySignatures(journal.record, root: candidate)
-         DataTransferSession.progress?.begin(.synchronizing,
-             detail: "应用文件和签名已检查，正在等待存储设备确认写入完成。".localized)
-@@ -1170,16 +1159,6 @@ final class AppTransferTransaction {
+@@ -12,7 +12,7 @@ Status: implemented
+ 
+ 借用 dogsc 提交 567fd6ed3bf113227dcf3e815f87ce60f0b69497 中 RecorderPermissionView.swift 的图标拖拽、NSPanel 生命周期和窗口定位代码；保留 MIT 版权声明与仓库来源，并将声明打包进应用资源。无需引入 dogsc 的录屏模块或依赖。视图复用 AppDialogTypography，明亮背景白色、暗色中性色，无渐变或装饰图标。
+ 
+-拖入成功只表示系统接收文件，不能设为已授权。继续沿用 LaunchReadinessChecker 的完全磁盘访问探针及返回应用后的刷新。新文案沿用本次用户选择：仅简体中文和英文，其他语言回退并记录。
++拖入成功只表示系统接收文件，不能设为已授权。继续沿用 LaunchReadinessChecker 的完全磁盘访问探针及返回应用后的刷新。新文案覆盖语言目录中的全部 22 种语言，遵循[本地化覆盖规则](../testing/2026-10-23-本地化覆盖与英文占位守卫.md)。
+ 
+ ## Existing-note audit
+ 
+@@ -35,7 +35,7 @@ Status: implemented
+ 
+ 系统设置窗口接近占满屏幕高度、上下空间均不足时，浮窗贴着窗口底边内侧显示，可能遮住窗口底部的部分内容，但不覆盖标题栏及三个窗口控制按钮。修正前，实机出现过浮窗被限制在屏幕顶部、覆盖标题栏的情况。
+ 
+-浮窗新增三个 key：`找不到 AppPorts？`、`把图标拖入“完全磁盘访问权限”列表，再打开开关。`、`将 AppPorts 图标拖入系统设置的应用列表`，仅补 zh-Hans 和 en；其余 20 种语言沿用现有回退，留待补译，不复制英文伪装完成。连同安装位置提示，本次相对 PR 基线共新增六个 key，旧条目内容不变。
++浮窗新增三个 key：`找不到 AppPorts？`、`把图标拖入“完全磁盘访问权限”列表，再打开开关。`、`将 AppPorts 图标拖入系统设置的应用列表`，现已补齐全部 22 种语言，不再依赖其余语言的临时回退。连同安装位置提示，本次相对 PR 基线共新增六个 key，旧条目内容不变。
+ 
+ ## Verification
+ 
+```
+
+**File**: `.agents/notes/implemented/testing/2026-10-23-本地化覆盖与英文占位守卫.md` (modified, +11/-0)
+```diff
+@@ -123,3 +123,14 @@ macOS portal 格式为 7，使已使用格式 6 的入口在外部应用版本
+ 命令、最终日志、结果摘要、目录统计及源码哈希位于 `build/Validation/localization-completion-20261024/REPORT.md`；结果包为 `/tmp/AppPortsLocalizationCompletion-Final.xcresult`。此次构建保留在本地，旧 iOS 入口重链接和实际业务盘操作仍由上面的验收范围约束。
+ 
+ 公开贡献入口中的验证责任与同步要求见[贡献流程入口](../process/2026-10-25-contributor-workflow-entrypoints.md)；本篇原有决定保持适用。
++
++
++### 2026-11-06 PR #104 localization completion
++
++维护者确认补齐 PR 工作树全部语言。39 条仍使用的界面文案补齐其余 20 种语言（780 个槽位），涵盖权限浮窗、安装位置、映像操作、存储状态与待处理项。18 种普通语言以机器翻译生成初稿，随后校对品牌、磁盘空间、挂载/卸载语义和单位；br 与 zh-martian 沿用上面的生成约定。没有把英文占位当完成翻译，也不声称获得母语审校。
++
++仍使用的 22 个 stale 条目改为 manual，保留现有译文；无调用的逗号分隔词条和已删除的“已迁出（估算）”词条移除。审计中的整组映像回退白名单移除，所有可翻译词条统一要求 22 语言。权限引导的可选离屏渲染增加德语、法语、日语和阿拉伯语，检查长文本及 RTL 呈现；不改变产品布局或磁盘行为。
++
++本轮验证结果见本地忽略目录 build/Validation/pr104-localization-20261106/REPORT.md；构建不替代授权或迁移实机验收。
++
++最终本地化审计 19 项及权限引导 6 项测试通过（25 项，无失败或跳过）。六语言明暗共 12 张离屏截图确认文字完整，阿拉伯语显式 RTL 下图标与文字排列正确。Release clean build 包含 arm64/x86_64；最终文案另做增量重编译及资源核对。98 篇笔记的结构、链接、格式和 git diff --check 通过。未运行全量测试，未更换安装版，未提交或推送。
+```
+
+**File**: `AppPortsTests/FullDiskAccessGuideTests.swift` (modified, +4/-2)
+```diff
+@@ -84,13 +84,15 @@ final class FullDiskAccessGuideTests: XCTestCase {
+         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+         let originalLanguage = LanguageManager.shared.language
+         defer { LanguageManager.shared.language = originalLanguage }
+-        for language in ["zh-Hans", "en"] {
++        for language in ["zh-Hans", "en", "de", "fr", "ja", "ar"] {
+             LanguageManager.shared.language = language
+             for dark in [false, true] {
+                 let appearance = try XCTUnwrap(NSAppearance(named: dark ? .darkAqua : .aqua))
+                 let host = NSHostingView(rootView: FullDiskAccessGuideView(applicationURL: Bundle.main.bundleURL,
+                     onDragEnded: { _ in XCTFail("Rendering must not perform a drag") })
+-                    .environment(\.colorScheme, dark ? .dark : .light))
++                    .environment(\.colorScheme, dark ? .dark : .light)
++                    .environment(\.locale, Locale(identifier: language))
++                    .environment(\.layoutDirection, language == "ar" ? .rightToLeft : .leftToRight))
+                 let window = NSWindow(contentRect: NSRect(x: -10_000, y: 0, width: 480, height: FullDiskAccessGuide.panelSize.height),
+                     styleMask: [.borderless], backing: .buffered, defer: false)
+                 window.isReleasedWhenClosed = false
+```
+
+**File**: `AppPortsTests/LocalizationAuditTests.swift` (modified, +1/-42)
+```diff
+@@ -102,46 +102,6 @@ final class LocalizationAuditTests: XCTestCase {
          }
      }
  
--    private func withoutQuarantine(_ snapshot: TreeCopySnapshot) -> TreeCopySnapshot {
--        TreeCopySnapshot(restoredRootOwnership: snapshot.restoredRootOwnership, ownershipCompatibility: snapshot.ownershipCompatibility,
--            entries: snapshot.entries.map { item in
--                .init(path: item.path, kind: item.kind, identity: item.identity, mode: item.mode, uid: item.uid, gid: item.gid,
--                    flags: item.flags, birthTime: item.birthTime, modificationTime: item.modificationTime,
--                    extendedAttributes: item.extendedAttributes.filter { $0.key != "com.apple.quarantine" }, resourceFork: item.resourceFork, acl: item.acl,
--                    size: item.size, digest: item.digest, linkTarget: item.linkTarget, hardlinkGroup: item.hardlinkGroup)
--            }, excludedRootEntries: snapshot.excludedRootEntries)
--    }
+-    // Image-library copy currently ships in Chinese and English; other locales use fallback.
+-    private let imageTranslationFallbackKeys: Set<String> = [
+-        "重试所有待处理项",
+-        "侧边栏宽度",
 -
-     private func handle(_ error: Error, journal: Journal) throws -> AppTransferResult {
-         journal.record.recoverableReason = error.localizedDescription
-         if journal.record.isSwitchComplete || (try? observeActivation(journal.record)) == true {
-```
-
-**File**: `AppPorts/Utils/TreeCopySession.swift` (modified, +5/-1)
-```diff
-@@ -38,8 +38,12 @@ actor TreeCopySession {
-     // downloaded file is opened or renamed, including our deletion rename.
-     // Preserve those OS-managed tags in place; copying or comparing them as
-     // application metadata causes false conflicts and can replay stale grants.
-+    // Quarantine additionally marks a copied bundle as a newly downloaded app,
-+    // which makes macOS 27 gate reads of the staged copy on its app
-+    // assessment; a migration replica is not a download, so never replay it.
-     // POSIX permissions, filesystem ACLs and application xattrs remain verified.
--    nonisolated private static let systemManagedAttributes: Set<String> = ["com.apple.provenance", "com.apple.macl"]
-+    nonisolated private static let systemManagedAttributes: Set<String> =
-+        ["com.apple.provenance", "com.apple.macl", "com.apple.quarantine"]
+-        "外观",
+-        "跟随系统",
+-        "浅色",
+-        "深色",
+-        "已迁出（估算）",
+-
+-        "本机磁盘",
+-        "所在磁盘",
+-        "映像内空间",
+-        "使用率",
+-        "已用",
+-        "空余",
+-        "目标存储",
+-        "更换位置",
+-        "请输入有效的磁盘名称和 1–65536 GiB 的最大容量。",
+-        "请选择已挂载的外部存储或 SMB 共享目录。",
+-        "该位置已有同名文件，请更换名称或打开已有映像。",
+-        "映像记录无效，请重新打开映像。",
+-        "映像挂载位置已被占用，请在 Finder 中检查后重试。",
+-        "无法核对映像对应的磁盘，请在 Finder 中检查后重试。",
+-        "无法访问所选目录或映像，请先在 Finder 中连接共享。",
+-        "无法确认映像中的唯一可写 APFS 磁盘，未更改迁移目标。",
+-        "映像操作未完成，已有文件会保留。",
+-        "打开已有映像…",
+-        "重新挂载映像",
+-        "磁盘映像",
+-        "创建 APFS 映像",
+-        "存放位置",
+-        "磁盘名称",
+-        "最大容量（GiB）",
+-        "映像按实际写入占用空间，可存放在已挂载的 SMB 共享中。同一映像请只在一台 Mac 上写入。",
+-        "以后使用映像中的应用前，请先打开 AppPorts 挂载映像。退出 AppPorts 不会卸载映像。",
+-        "创建并使用",
+-    ]
+-
+     func testStringCatalogContainsTranslationsForAllSupportedLanguages() throws {
+         let supportedLocales = Set(AppLanguageCatalog.selectableLanguages.map(\.code))
+         let catalogURL = try repositoryRootURL()
+@@ -164,8 +124,7 @@ final class LocalizationAuditTests: XCTestCase {
+             }
  
-     // Finder display settings are disposable, not application data. Limit
-     // this exception to ordinary, unshared files; never hide a same-name
+             let localizations = entry["localizations"] as? [String: Any] ?? [:]
+-            let requiredLocales = imageTranslationFallbackKeys.contains(key)
+-                ? supportedLocales.intersection(["en", "zh-Hans"]) : supportedLocales
++            let requiredLocales = supportedLocales
+             for locale in requiredLocales.sorted() {
+                 guard let localization = localizations[locale],
+                       localizationHasTranslatedValue(localization) else {
 ```
 
-**File**: `AppPortsTests/TreeCopySessionQuarantineTests.swift` (added, +51/-0)
+---
+
+### Incident Patch 3: `c9fc119a` (2026-11-05)
+**Commit Message**: fix: 后台代理先接回映像再挂载其中的数据卷
+
+数据卷位于尚未接回的应用库映像中时，代理先在容器卷重挂循环里等满 180 秒，之后才恢复映像，且本轮不再重试。现在第一轮挂载后若仍在等的卷位于选中映像内，立即接回映像并在同一轮重试；其他卷保持容器卷优先的原顺序，每轮最多恢复一次映像。
+
+**File**: `.agents/notes/implemented/feature/2026-11-03-应用库映像后台自动挂载.md` (modified, +4/-1)
 ```diff
-@@ -0,0 +1,51 @@
-+import Darwin
-+import XCTest
-+@testable import AppPorts
+@@ -48,14 +48,15 @@ Status: implemented
+ - 按磁盘名称或旧路径找文件无需保存卷身份，但外盘改名及同名 U 盘会使路径失效或指向另一个存储，因此按 UUID 查找，不能唯一确认时停止。
+ - 用 Task 取消或竞速超时包裹同步文件属性查询无需额外进程，但不能中断阻塞在内核中的 NAS 读取，也无法保证释放原任务持有的操作锁。独立只读进程增加启动成本，但能将读取失败与仍在写入的挂载命令分开处理。
+ - 在接收端跳过日志、截取 JSON 可以兼容混合输出，但会掩盖启动副作用并放宽响应格式；将只读入口提前可以直接保证响应独立，同时避免不必要的写入登记。
++- 把映像恢复整体移到容器卷恢复之前实现最简单，也能让映像内的容器卷第一轮就出现；但慢速或离线 NAS 会推迟物理盘上容器卷的恢复。因此只在仍在等待的容器卷位于选中映像内时提前恢复映像。
+ 
+ ## Consequences
+ 
+ 仅映像也会保留代理，主程序退出后仍可重试。SMB 地址不落盘密码，重新连接后按相对路径定位；未选中的映像不自动挂载。即使 APFS 设备仍显示挂载，也检查其已记录的 SMB 共享是否存在，缺失时恢复共享。前台映像操作与后台共用 OperationLock，残留旧附件不重复附加；写进程未确认退出时继续持锁。创建、打开成功先持久化当前选中路径再注册代理，避免 SwiftUI 延后保存导致代理被误卸载。
+ 
+ 每次文件检查可能额外启动一个只读进程，正常恢复需要多次检查，存在进程启动和注册开销；10 秒是单次读取上限，不是整轮创建或挂载操作的总时限。失联后设备仍残留挂载记录的情况继续保守处理，不通过强制卸载来伪装恢复成功。
+ 
+-容器卷原有恢复优先执行，NAS 操作随后进行，因此容器卷仍在等待恢复时，映像检查可能晚于系统定时触发。退出的代理由 launchd 再次触发，运行期间的定时触发不叠加进程。代价是最多每分钟产生一次后台检查，网络恢复和唤醒后不保证立即就位。没有选中映像的代理定义不增加定时触发。
++容器卷原有恢复优先执行，NAS 操作随后进行，因此容器卷仍在等待恢复时，映像检查可能晚于系统定时触发。例外是仍在等待的容器卷位于当前选中映像的应用库路径内：这类卷在映像附加前不会出现，代理在该轮挂载后立即恢复映像，并在同一轮重试挂载，不再等满 180 秒窗口。每轮最多恢复一次映像，其他容器卷的顺序不变；映像恢复失败时仍按原窗口等待，下一轮再试。退出的代理由 launchd 再次触发，运行期间的定时触发不叠加进程。代价是最多每分钟产生一次后台检查，网络恢复和唤醒后不保证立即就位。没有选中映像的代理定义不增加定时触发。
+ 
+ 系统凭据不可用时需在 Finder 重新连接；旧记录需要存储在线时运行一次新版以补齐身份。本地底层磁盘由 macOS 挂载，代理不负责强行挂载未加载的分区或解锁加密设备。无法取得底层卷 UUID 的本地记录仅能按原路径尝试，不能保证改名后的恢复；仍核对映像内部 APFS UUID。残留设备需要人工检查，不能把自动挂载视为断线期间的数据保护。当前仅支持一个选中的应用库，不自动恢复任意历史映像。
+ 
+@@ -70,3 +71,5 @@ Status: implemented
+ 审查后的回归用例补充旧映像核对失败不保存身份、成功才补齐身份、只读检查超时不按未退出写进程处理、后台重定位后前台刷新及等待锁后按最新选择重新生成代理定时配置。既有映像测试显式注入本地文件检查边界，避免测试宿主启动真实检查进程。
+ 
+ 本次 7 个应用源文件及 3 个相关测试文件通过 Swift 语法解析。隔离依赖桩下的类型检查覆盖映像服务、恢复模块、只读检查模块、前台 controller、代理选择同步及新增回归用例，使用真实 macOS SDK 的 Foundation / NetFS / SwiftUI 接口及 Swift Testing 宏；检查没有生成应用或测试二进制，不代表完整应用编译或测试执行通过。94 篇笔记通过目录、链接及格式门禁。新增测试尚未执行，未构建、安装或访问真实 NAS；登录、休眠唤醒、系统凭据、真实断网恢复和 U 盘插拔仍需实机验收。
 +
-+final class TreeCopySessionQuarantineTests: XCTestCase {
-+    func testVerificationIgnoresQuarantineButKeepsApplicationAttributes() throws {
-+        let base = FileManager.default.temporaryDirectory
-+        try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
-+        let root = base.appendingPathComponent("TreeCopyQuarantine-\(UUID().uuidString)", isDirectory: true)
-+        let source = root.appendingPathComponent("Source", isDirectory: true)
-+        try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
-+        let file = source.appendingPathComponent("payload")
-+        try Data("payload".utf8).write(to: file)
-+        try FileManager.default.setAttributes([.posixPermissions: 0o444], ofItemAtPath: file.path)
-+        defer { try? FileManager.default.removeItem(at: root) }
-+
-+        let snapshot = try TreeCopySession.snapshot(at: source, profile: .appBundle)
-+        // Older manifests replayed the source quarantine into the ledger, so a
-+        // recorded marker must not fail verification against a clean replica.
-+        let quarantinedSnapshot = withInjectedAttribute(snapshot, key: "com.apple.quarantine",
-+                                                        value: Data("0081;test;AppPorts;".utf8))
-+
-+        let replica = root.appendingPathComponent("Replica", isDirectory: true)
-+        try FileManager.default.copyItem(at: source, to: replica)
-+        XCTAssertNoThrow(try TreeCopySession.verifyCopy(at: replica, against: quarantinedSnapshot, profile: .appBundle),
-+                         "a recorded quarantine must not fail verification of a clean replica")
-+
-+        let applicationSnapshot = withInjectedAttribute(snapshot, key: "com.appports.test",
-+                                                        value: Data("keep".utf8))
-+        XCTAssertThrowsError(try TreeCopySession.verifyCopy(at: replica, against: applicationSnapshot, profile: .appBundle),
-+                             "application attributes must still participate in verification")
++恢复顺序补充隔离用例：映像内容器卷第一轮未就位时先恢复映像，再在同一轮重试；映像外的卷、已就位的卷、需人工处理的卷及让路轮次不触发恢复；每轮最多恢复一次，且只针对选中映像；重挂循环在映像接回后直接结束，不等待目录变化。代理源码接线审计用例继续通过。真实登录时映像内数据卷的恢复耗时尚未实机验证。
+```
+
+**File**: `AppPorts/Services/ContainerMountAgentInstaller.swift` (modified, +45/-11)
+```diff
+@@ -315,6 +315,7 @@ enum ContainerMountAgentInstaller {
+ 
+     /// 代理入口：恢复容器卷后恢复选中的应用库映像；容器卷没就位就等 `/Volumes` 的真实变化再试，
+     /// 直到全部就位、或用完等待窗口（`ContainerRemountLoop.Policy.window`）。
++    /// 还在等的容器卷位于选中映像内时，第一轮后立即接回映像并在同一轮重试，不等满窗口。
+     static func runAgentAndExit() -> Never {
+         // 启动行：既是排障锚点，也是「开机时序」自查脚本判定代理何时被 launchd 拉起的依据，
+         // 所以无论这一轮有没有活干都要留下（pid 行里的 `[pid:…]` 已经有进程号了）。
+@@ -333,27 +334,24 @@ enum ContainerMountAgentInstaller {
+             // 后台代理没有界面，不能弹管理员授权框；旧系统上会以 privilegeRequired 失败并留给 AppPorts 启动时处理。
+             let migrator = ContainerVolumeMigrator(disk: DiskUtility(administratorRunner: nil))
+             var attemptIndex = 0
++            var imageRecovered = false
+             let result = await ContainerRemountLoop.run(
+                 attempt: {
+                     defer { attemptIndex += 1 }
+                     // 第一轮可能碰上主应用正在做挂载迁移，值得等满；之后的轮次只象征性等一下，
+                     // 免得代理和主应用互相让路谁都不动。
+                     let timeout = attemptIndex == 0 ? OperationLock.agentWaitTimeout : Self.retryLockTimeout
+-                    return await remountAttempt(migrator: migrator, lockTimeout: timeout)
++                    let image = AppLibraryImageRecovery.selectedRecord()
++                    return await remountRecoveringLibraryImage(
++                        libraryRoot: image.map { $0.libraryPath ?? $0.mountPath },
++                        imageRecovered: &imageRecovered,
++                        remount: { await remountAttempt(migrator: migrator, lockTimeout: timeout) },
++                        recoverImage: { await recoverSelectedLibraryImage() })
+                 },
+                 waitForChange: { await monitor.waitForNextChange(timeout: $0) }
+             )
+             // A slow/offline NAS must not delay the existing container recovery.
+-            let imageLock = OperationLock()
+-            if await imageLock.acquire(timeout: OperationLock.agentWaitTimeout) {
+-                do {
+-                    let ejection = try DiskEjectionPauseStore().snapshot()
+-                    await AppLibraryImageRecovery.recoverSelected(ejection: ejection)
+-                } catch {
+-                    AppLogger.shared.logError("读取弹出暂停状态失败，跳过映像恢复", error: error)
+-                }
+-                imageLock.release()
+-            }
++            if !imageRecovered { await recoverSelectedLibraryImage() }
+             reportAgentResult(result)
+             semaphore.signal()
+         }
+@@ -364,6 +362,42 @@ enum ContainerMountAgentInstaller {
+         exit(0)
+     }
+ 
++    /// Container volumes created inside the selected library image appear only
++    /// after the image is attached. When a pass still waits for such a volume,
++    /// recover the image once and retry within the same cycle instead of waiting
++    /// out the remount window. Other pending volumes keep the original order.
++    static func remountRecoveringLibraryImage(
++        libraryRoot: String?,
++        imageRecovered: inout Bool,
++        remount: () async -> ContainerRemountLoop.Attempt,
++        recoverImage: () async -> Void
++    ) async -> ContainerRemountLoop.Attempt {
++        let attempt = await remount()
++        guard !imageRecovered, let libraryRoot, case .results(let outcomes) = attempt else { return attempt }
++        let waiting = ContainerRemountLoop.pendingRecords(in: outcomes).filter {
++            PortalImageLaunchPreparation.contains($0.record.externalRootPath, in: libraryRoot)
++        }
++        guard !waiting.isEmpty else { return attempt }
++        imageRecovered = true
++        AppLogger.shared.logContext("容器卷位于应用库映像中，先接回映像再重试挂载",
++            details: [("pending", String(waiting.count)), ("library_path", libraryRoot)])
++        await recoverImage()
++        return await remount()
 +    }
 +
-+    private func withInjectedAttribute(_ snapshot: TreeCopySnapshot, key: String, value: Data) -> TreeCopySnapshot {
-+        var entries = snapshot.entries
-+        for index in entries.indices where entries[index].path == "payload" {
-+            var attributes = entries[index].extendedAttributes
-+            attributes[key] = value
-+            entries[index] = TreeCopySnapshot.Entry(path: entries[index].path, kind: entries[index].kind,
-+                identity: entries[index].identity, mode: entries[index].mode, uid: entries[index].uid,
-+                gid: entries[index].gid, flags: entries[index].flags, birthTime: entries[index].birthTime,
-+                modificationTime: entries[index].modificationTime, extendedAttributes: attributes,
-+                resourceFork: entries[index].resourceFork, acl: entries[index].acl, size: entries[index].size,
-+                digest: entries[index].digest, linkTarget: entries[index].linkTarget,
-+                hardlinkGroup: entries[index].hardlinkGroup)
++    /// Hold OperationLock only around recovery of the selected library image.
++    private static func recoverSelectedLibraryImage() async {
++        let imageLock = OperationLock()
++        guard await imageLock.acquire(timeout: OperationLock.agentWaitTimeout) else { return }
++        defer { imageLock.release() }
++        do {
++            let ejection = try DiskEjectionPauseStore().snapshot()
++            await AppLibraryImageRecovery.recoverSelected(ejection: ejection)
++        } catch {
++            AppLogger.shared.logError("读取弹出暂停状态失败，跳过映像恢复", error: error)
 +        }
-+        return TreeCopySnapshot(restoredRootOwnership: snapshot.restoredRootOwnership,
-+            ownershipCompatibility: snapshot.ownershipCompatibility, entries: entries,
-+            excludedRootEntries: snapshot.excludedRootEntries)
++    }
++
+     /// 重试轮次里拿锁的等待时长。
+     private static let retryLockTimeout: TimeInterval = 10
+ 
+```
+
+**File**: `AppPortsTests/ContainerMountAgentTests.swift` (modified, +97/-0)
+```diff
+@@ -369,3 +369,100 @@ struct ContainerMountAgentExecutablePathTests {
+         )
+     }
+ }
++
++private actor AgentOrderingEvents {
++    private(set) var values: [String] = []
++    func add(_ value: String) { values.append(value) }
++}
++
++@Suite("Container mount agent library image ordering")
++struct ContainerMountAgentImageOrderingTests {
++    private static let library = "/Volumes/Apps"
++
++    private static func outcome(_ state: ContainerVolumeMigrator.RemountOutcome.State,
++                                root: String = library) -> ContainerVolumeMigrator.RemountOutcome {
++        ContainerVolumeMigrator.RemountOutcome(
++            record: ContainerMountRecord(appName: "Video", bundleIdentifier: "org.example.video",
++                dataDirType: DataDirType.containers.rawValue, mountPointPath: "/fixture/Containers/\(UUID().uuidString)",
++                volumeUUID: UUID().uuidString, volumeName: "Video Data", externalRootPath: root),
++            state: state)
++    }
++
++    private static func run(first: ContainerRemountLoop.Attempt, retry: ContainerRemountLoop.Attempt = .results([]),
++                            libraryRoot: String? = library, alreadyRecovered: Bool = false)
++        async -> (attempt: ContainerRemountLoop.Attempt, recovered: Bool, events: [String]) {
++        let events = AgentOrderingEvents()
++        var recovered = alreadyRecovered
++        var remounts = 0
++        let attempt = await ContainerMountAgentInstaller.remountRecoveringLibraryImage(
++            libraryRoot: libraryRoot, imageRecovered: &recovered,
++            remount: {
++                remounts += 1
++                await events.add("remount")
++                return remounts == 1 ? first : retry
++            },
++            recoverImage: { await events.add("image") })
++        return (attempt, recovered, await events.values)
++    }
++
++    @Test("A volume inside the selected image recovers the image and retries in the same cycle",
++          arguments: [ContainerVolumeMigrator.RemountOutcome.State.unavailable, .failed("not found")])
++    func imageHostedVolumeRecoversImageFirst(state: ContainerVolumeMigrator.RemountOutcome.State) async {
++        let settled = Self.outcome(.mounted)
++        let result = await Self.run(first: .results([Self.outcome(state)]), retry: .results([settled]))
++        #expect(result.events == ["remount", "image", "remount"])
++        #expect(result.recovered)
++        guard case .results(let outcomes) = result.attempt else {
++            Issue.record("The retried pass must be returned to the loop")
++            return
++        }
++        #expect(outcomes.map(\.state) == [.mounted])
++    }
++
++    @Test("Volumes outside the image, settled volumes and deferred passes keep the original order")
++    func otherOutcomesDoNotRecoverTheImage() async {
++        let cases: [ContainerRemountLoop.Attempt] = [
++            .results([Self.outcome(.unavailable, root: "/Volumes/Physical")]),
++            .results([Self.outcome(.unavailable, root: "/Volumes/Apps-other")]),
++            .results([Self.outcome(.alreadyMounted), Self.outcome(.mounted)]),
++            .results([Self.outcome(.requiresIntervention("conflict"))]),
++            .results([]),
++            .deferred
++        ]
++        for first in cases {
++            let result = await Self.run(first: first)
++            #expect(result.events == ["remount"])
++            #expect(!result.recovered)
++        }
++    }
++
++    @Test("The image is recovered at most once per agent round and only while selected")
++    func recoveryIsBoundedToTheSelectedImage() async {
++        let pending = ContainerRemountLoop.Attempt.results([Self.outcome(.unavailable)])
++        let repeated = await Self.run(first: pending, alreadyRecovered: true)
++        #expect(repeated.events == ["remount"])
++        let unselected = await Self.run(first: pending, libraryRoot: nil)
++        #expect(unselected.events == ["remount"])
++        #expect(!unselected.recovered)
++    }
++
++    @Test("The remount loop settles without waiting once the image exposes the volume")
++    func loopDoesNotWaitOutTheWindow() async {
++        var recovered = false
++        var imageAttached = false
++        let result = await ContainerRemountLoop.run(
++            attempt: {
++                await ContainerMountAgentInstaller.remountRecoveringLibraryImage(
++                    libraryRoot: Self.library, imageRecovered: &recovered,
++                    remount: { .results([Self.outcome(imageAttached ? .mounted : .unavailable)]) },
++                    recoverImage: { imageAttached = true })
++            },
++            waitForChange: { _ in
++                Issue.record("An image-hosted volume must not wait for /Volumes changes")
++                return nil
++            })
++        #expect(result.reason == .settled)
++        #expect(result.cycles == 1)
++        #expect(recovered)
 +    }
 +}
 ```
 
----
-
-### Incident Patch 3: `a2405213` (2026-11-02)
-**Commit Message**: fix: clean up quarantine migration checks and test fixture
-
-**File**: `.agents/notes/implemented/bug-fix/2026-11-01-migration-replica-quarantine.md` (modified, +25/-11)
-```diff
-@@ -21,11 +21,11 @@ hardened 进程对该副本的 open、pread、fgetxattr、
- ## Decision
- 
- - `TreeCopySession.systemManagedAttributes` 增加 `com.apple.quarantine`：
--  清单不记录、比较不参与、`applyMetadata` 不回放。与该文件对
--  provenance/macl 的既有处理及 FileCopier 的 `removeQuarantine` 语义对齐。
--- `prepareCandidate` 的移除循环对 EACCES/EPERM 降级为 WARN 日志并继续，
--  仅其他错误仍然失败。副本保留已获系统批准（0082）的 quarantine 标记
--  不影响启动与签名验证，为此终止迁移得不偿失。
-+  清单不记录、比较不参与、`applyMetadata` 不回放，也不主动删除目标上的标记。
-+  这与该文件对 provenance/macl 的既有处理一致，适用于应用、普通数据和容器复制。
-+- `prepareCandidate` 直接使用复制器返回的清单校验副本。清单已不含 quarantine，
-+  因此删除标记的循环没有处理对象，`withoutQuarantine` 转换也无作用，两者均移除。
-+  副本校验、原有签名校验、同步、记账、入口切换与恢复清理流程保持不变。
- 
- ## Alternatives considered
- 
-@@ -38,15 +38,29 @@ hardened 进程对该副本的 open、pread、fgetxattr、
- 
- ## Consequences
- 
--外置盘上的迁移副本此后可能携带 quarantine 标记，与 QQ/Edge 等
--历史副本的"无标记"状态不同。该标记记录的是源应用已被批准的来源，
--Gatekeeper 对副本按已批准处理；若 macOS 未来对无管理授权进程读取
--此类副本收紧，需要重新评估（当前同证书 hardened 探针实测读取正常）。
--清理路径对旧版清单（记录过 quarantine）与过滤后扫描的比较仍会报
--extended_attributes 差异并保留副本，属安全行为，由既有重试消化。
-+迁移副本可能携带系统附加的 quarantine 标记，AppPorts 不保证复制源标记，
-+也不主动清除目标标记；是否允许打开仍由 macOS 判断。下列两款应用的实机结果
-+由 PR 作者提供，不能据此断言任意来源、任意标记状态的文件均已获系统批准。
-+旧版清单即使记录过 quarantine，比较时也通过 `portableAttributes` 过滤，
-+不会仅因这个标记而报 extended_attributes 差异。其他要求保留的属性、内容、
-+身份或权限发生差异时，既有校验仍会拒绝继续或保留待清理副本。
- 
- ## Verification
- 
-+### 本地清理验证
-+
-+- macOS 27.0.1、Xcode 27.0：arm64/x86_64 Release `xcodebuild clean build` 通过。
-+- 独立测试宿主执行 `AppMigrationServiceTests` 61 项、`AppTransferTransactionTests` 76 项、
-+  `ContainerVolumeMigratorTests` 93 项、`DataDirMoverTests` 50 项及 quarantine 回归 1 项，
-+  共 281 项通过（含参数化用例共执行 325 次），没有失败或跳过。
-+- `MigrationSigningIntegrationTests` 使用外置 APFS 卷上的独立 UUID 样本目录，3 项通过：
-+  签名应用迁移和元数据保留、拒绝重签沙盒应用、应用及聊天数据库/附件往返；迁移后新增
-+  数据库记录在迁回后仍存在。样本不使用已安装应用或真实聊天数据。
-+- 本次未跑全量测试，未实测真实容器挂载/卸载，也未复现作者 macOS 27.2 的真实应用场景。
-+  原始构建和测试结果位于 `/tmp/AppPorts-PR103-cleanup.QujOj8/`。
-+
-+### PR 作者提供的验证
-+
- - `AppPortsTests/TreeCopySessionQuarantineTests.swift`：清单注入
-   quarantine 后 `verifyCopy` 通过，注入普通应用属性仍失败，防止修复
-   滑向"忽略全部属性差异"。
-```
-
-**File**: `AppPorts/Services/AppTransferTransaction.swift` (modified, +1/-28)
-```diff
-@@ -490,25 +490,8 @@ final class AppTransferTransaction {
-                 try journal.save()
-             }, progressHandler: progress)
-         try checkpoint(.copied, journal)
--        // Preserve the historical application-only quarantine removal. It is
--        // the sole allowed metadata difference and never touches the source.
-         let candidate = journal.record.candidateURL
--        if journal.record.direction == .migrate {
--            for entry in snapshot.entries where entry.extendedAttributes["com.apple.quarantine"] != nil {
--                let url = entry.path.isEmpty ? candidate : candidate.appendingPathComponent(entry.path)
--                if removexattr(url.path, "com.apple.quarantine", XATTR_NOFOLLOW) != 0, errno != ENOATTR {
--                    // macOS 27 refuses quarantine removal even to the file's
--                    // creator, so a Sparkle-updated source can leave the marker
--                    // on the replica. The marker records an already-approved
--                    // download; keeping it is safe, failing the migration is not.
--                    guard errno == EACCES || errno == EPERM else { throw Self.posix(url) }
--                    AppLogger.shared.logContext("副本 quarantine 由系统保留",
--                        details: [("relative_path", entry.path), ("errno", String(errno))], level: "WARN")
--                }
--            }
--        }
--        let expected = journal.record.direction == .migrate ? withoutQuarantine(snapshot) : snapshot
--        try TreeCopySession.verifyCopy(at: candidate, against: expected, profile: Self.copyProfile)
-+        try TreeCopySession.verifyCopy(at: candidate, against: snapshot, profile: Self.copyProfile)
-         try verifySignatures(journal.record, root: candidate)
-         DataTransferSession.progress?.begin(.synchronizing,
-             detail: "应用文件和签名已检查，正在等待存储设备确认写入完成。".localized)
-@@ -1176,16 +1159,6 @@ final class AppTransferTransaction {
-         }
-     }
- 
--    private func withoutQuarantine(_ snapshot: TreeCopySnapshot) -> TreeCopySnapshot {
--        TreeCopySnapshot(restoredRootOwnership: snapshot.restoredRootOwnership, ownershipCompatibility: snapshot.ownershipCompatibility,
--            entries: snapshot.entries.map { item in
--                .init(path: item.path, kind: item.kind, identity: item.identity, mode: item.mode, uid: item.uid, gid: item.gid,
--                    flags: item.flags, birthTime: item.birthTime, modificationTime: item.modificationTime,
--                    extendedAttributes: item.extendedAttributes.filter { $0.key != "com.apple.quarantine" }, resourceFork: item.resourceFork, acl: item.acl,
--                    size: item.size, digest: item.digest, linkTarget: item.linkTarget, hardlinkGroup: item.hardlinkGroup)
--            }, excludedRootEntries: snapshot.excludedRootEntries)
--    }
--
-     private func handle(_ error: Error, journal: Journal) throws -> AppTransferResult {
-         journal.record.recoverableReason = error.localizedDescription
-         if journal.record.isSwitchComplete || (try? observeActivation(journal.record)) == true {
-```
-
-**File**: `AppPortsTests/TreeCopySessionQuarantineTests.swift` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ import XCTest
- 
- final class TreeCopySessionQuarantineTests: XCTestCase {
-     func testVerificationIgnoresQuarantineButKeepsApplicationAttributes() throws {
--        let base = URL(fileURLWithPath: "/Volumes/SanDisk/Projects/AppPorts/.tmp-diag")
-+        let base = FileManager.default.temporaryDirectory
-         try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
-         let root = base.appendingPathComponent("TreeCopyQuarantine-\(UUID().uuidString)", isDirectory: true)
-         let source = root.appendingPathComponent("Source", isDirectory: true)
-```
-
 #### Recent Merged Pull Requests:
+- **PR #104** (2026-11-08): feat: 完善应用库映像恢复、启动入口与权限引导 (@trah01)
 - **PR #103** (2026-11-02): fix: 兼容 macOS 27 受保护的 quarantine，修复带标记应用迁移失败 (@Souitou-iop)
 - **PR #102** (2026-10-31): feat: 新增磁盘映像应用库并优化扫描与迁移 (@trah01)
 - **PR #101** (2026-10-29): fix: 离线挂载点改为只读访问并保留写入保护 (@wzh4869)
 - **PR #100** (2026-10-28): fix: 支持旧数据副本授权清理并修正签名锁回归测试 (@wzh4869)
 - **PR #99** (2026-10-28): fix: 保留手动卸载意图，补齐旧软链恢复和操作受阻诊断 (@wzh4869)
-- **PR #98** (2026-10-28): fix(admission): 自动回收已退出进程的登记文件 (@wzh4869)
 
 ---
 
@@ -1636,28 +1846,52 @@ fix: 兼容 macOS 27 受保护的 quarantine，修复带标记应用迁移失败
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resolve PR 102 conflicts with shared offline guards
+## X. 支持应用库映像卸载并暂停自动挂载
 
 **RULE**:
-When implementing operations in `.agents/notes/implemented/architecture/2026-10-01-data-path-copy-safety.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/notes/implemented/bug-fix/2026-11-08-应用库映像主动卸载.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e2f3c1d`: resolve PR 102 conflicts with shared offline guards. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d86020e`: 支持应用库映像卸载并暂停自动挂载. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/notes/implemented/architecture/2026-10-01-data-path-copy-safety.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/notes/implemented/bug-fix/2026-11-08-应用库映像主动卸载.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-当前[统一离线挂载保护](../bug-fix/2026-10-30-readable-offline-mount-guards.md)对所有受管空入口采用 0500，接管离线权限规则；原有身份、空目录和卸载前检查继续适用。
+# Agent Note: 应用库映像主动卸载与自动恢复暂停
+
+Status: implemented
+
+## Problem
+
+应用库位于 NAS 或 U 盘内的 APFS sparsebundle 时，工具栏弹出入口只查询物理外盘清单，映像没有物理磁盘身份，因此操作被拒绝。单独卸载而不保存暂停状态，又会被后台映像恢复或映像内数据卷重挂立即接回。
+
+## Decision
+
+弹出服务在持有 OperationLock 后读取当前选中的映像记录，按应用库路径边界识别目标。映像由共享 AppLibraryImageService 通过 hdiutil 设备清单和 APFS UUID 核对，使用非强制 detach 卸载映像根设备；不请求 Finder 弹出承载磁盘，也不卸载 SMB 共享。已经没有附件时保留暂停并按完成处理。未确认退出的写命令继续持锁等待。
+
+DiskEjectionPauseStore 在发出 detach 前持久化独立的映像暂停，包含映像文件路径、映像内卷 UUID 和挂载路径。共享 Snapshot.blocks 同时约束容器挂载、迁移与恢复；后台映像恢复、主窗口自动恢复和原生启动入口（包括已就绪的只读快速检查）均检查暂停。失败或文件占用保留暂停，只有明确打开或重新挂载映像成功后才移除该映像暂停；底层磁盘重新连接不解除映像暂停。物理磁盘暂停仍独立生效。
+
+暂停文件含映像状态时采用 schemaVersion 2，读取兼容原 schemaVersion 1；旧程序拒绝版本 2，避免把新状态当作无暂停。无映像暂停时继续写版本 1，物理盘状态保存与重连核对均保留映像状态。这不是迁移账本格式变更。旧后台程序仍需退出并使用新版，不能据此保证任意旧版前台显式映像挂载都遵守新增状态。
+
+映像目标的工具栏按钮显示“卸载映像”，暂停后显示现有暂停状态；恢复使用原“重新挂载映像”入口。两个新文案和该恢复按钮覆盖全部 22 种语言。
+
+## Existing-note audit
+
+- [主动弹出外盘](../feature/2026-10-23-explicit-disk-ejection.md)：部分重叠，物理盘流程保留；映像使用独立设备核对与暂停生命周期。
+- [SMB 上的 APFS 应用库映像](../feature/2026-10-29-SMB上的APFS应用库映像.md)：部分重叠，增加主动卸载入口，创建与迁移边界保留。
+- [应用库映像后台自动挂载](../feature/2026-11-03-应用库映像后台自动挂载.md)：部分重叠，主动卸载暂停优先于自动恢复。
+- [启动迁移应用时静默接回映像](../feature/2026-11-03-启动迁移应用时静默接回映像.md)：部分重叠，显式暂停时不通过启动入口接回。
+- 关键词检索未发现 p
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-2026-10-29 的[微信离线媒体入口只读保护](../bug-fix/2026-10-29-微信离线媒体入口只读保护.md)仅对精确 msg/business 成员采用 0500，接管这些入口的离线权限规则；原有身份、空目录和卸载前检查继续适用。
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e2f3c1d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d86020e` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T00:54:13.039Z",
+  "last_updated": "2026-11-09T01:06:01.993Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1370,14 +1370,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
-      "content_hash": "12634f3c8866a3a70297137662f298ed4396ae056f698f330e062ec8ca6e39e3",
-      "verified_at": "2026-11-05T07:06:00.073Z",
+      "content_hash": "da5159e3e1b7cb35df2a5df76df11732f6756f00ba58416c233a524a11afcefa",
+      "verified_at": "2026-11-09T01:06:01.992Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:06:00.073Z"
+      "last_updated": "2026-11-09T01:06:01.992Z"
     },
     "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw": {
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "a59a86dd4ed9c05775128eebf1ce361652e5626b06a163a528de949fbb945b18",
-      "verified_at": "2026-11-08T00:07:03.941Z",
+      "content_hash": "cb9a93b5ae374379fb41890d58db5714bbc105c4bd4be6754cbaad3bd2c36f3d",
+      "verified_at": "2026-11-09T01:01:20.813Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:07:03.941Z"
+      "last_updated": "2026-11-09T01:01:20.813Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "5ebdd9a8a5cc3fcb2c0a715dc17bb31b3e18005baf36d21a4881c1e8619f470d",
-      "verified_at": "2026-11-08T20:03:01.409Z",
+      "content_hash": "13a0d394e2efe9dcc72867bcf11d1c691957222af8809b97de15ad54a2a55dc2",
+      "verified_at": "2026-11-09T01:01:36.354Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:03:01.409Z"
+      "last_updated": "2026-11-09T01:01:36.354Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "b88f5ace8777d5824640af0693b808d0d43aca8865ea056b760db0659777be10",
-      "verified_at": "2026-11-08T04:26:52.341Z",
+      "content_hash": "453472fd444d93b57d93ddb3f209605594ca5da6d221fa60a5d4cb9fb5213a0e",
+      "verified_at": "2026-11-09T01:01:31.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:26:52.341Z"
+      "last_updated": "2026-11-09T01:01:31.106Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -14781,14 +14781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wzh4869-appports",
-      "content_hash": "6dfb915d489dfad597f15939038bbd348fcc4dae6a024f837d22124c4689e984",
-      "verified_at": "2026-11-03T17:53:46.856Z",
+      "content_hash": "b44969adcb488959f349f3817f6f16491c895d93c49818b38870768dbda71747",
+      "verified_at": "2026-11-09T01:01:25.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:53:46.856Z"
+      "last_updated": "2026-11-09T01:01:25.372Z"
     },
     "AndyTheFactory/newspaper4k": {
       "repository": "AndyTheFactory/newspaper4k",

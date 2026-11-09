@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T00:54:12.930Z",
+  "last_updated": "2026-11-09T01:06:01.883Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4462,8 +4462,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "d440ad4b",
-      "content_hash": "a59a86dd4ed9c05775128eebf1ce361652e5626b06a163a528de949fbb945b18",
+      "source_version": "11f7925c",
+      "content_hash": "cb9a93b5ae374379fb41890d58db5714bbc105c4bd4be6754cbaad3bd2c36f3d",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -4486,6 +4486,11 @@
           "number": null,
           "title": "Disambiguation Lookahead Invariant for Polysemous Verb-Noun Rules",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "core): mark \"later\" and \"further\" as adverbs (#4868)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1707,
@@ -4563,7 +4568,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:07:03.799Z",
+      "verified_at": "2026-11-09T01:01:20.679Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10097,8 +10102,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "ad3fc53f",
-      "content_hash": "5ebdd9a8a5cc3fcb2c0a715dc17bb31b3e18005baf36d21a4881c1e8619f470d",
+      "source_version": "b9fd8f07",
+      "content_hash": "13a0d394e2efe9dcc72867bcf11d1c691957222af8809b97de15ad54a2a55dc2",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10140,6 +10145,11 @@
         {
           "number": null,
           "title": "stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking (#5011)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "piped stdin read twice or rejected in 7 commands (#5012)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10493,7 +10503,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T20:03:01.272Z",
+      "verified_at": "2026-11-09T01:01:36.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25864,10 +25874,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
       "source_version": "hf-fermionresearch-phonon-2",
-      "content_hash": "12634f3c8866a3a70297137662f298ed4396ae056f698f330e062ec8ca6e39e3",
+      "content_hash": "da5159e3e1b7cb35df2a5df76df11732f6756f00ba58416c233a524a11afcefa",
       "dossier_path": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Streaming Multi-Stage Artifact Decompression & Zero-Copy Digest Verification",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Transducer Greedy Search Duration Progression & Anti-Stall Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Unified Memory Arena Alignment for On-Device Low-Bit ASR Tensors",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2584,
           "title": "Two-Phase Cryptographic Integrity Boundary for Staged Decompression",
@@ -25926,7 +25951,7 @@
         "learn-huggingface-hf-fermionresearch-phonon-2-mv3xmdbo",
         "learn-huggingface-hf-fermionresearch-phonon-2-mv4ccp0f"
       ],
-      "verified_at": "2026-11-05T07:05:59.929Z",
+      "verified_at": "2026-11-09T01:06:01.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42729,8 +42754,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "e3334600",
-      "content_hash": "b88f5ace8777d5824640af0693b808d0d43aca8865ea056b760db0659777be10",
+      "source_version": "4e28fc8c",
+      "content_hash": "453472fd444d93b57d93ddb3f209605594ca5da6d221fa60a5d4cb9fb5213a0e",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -42742,6 +42767,11 @@
         {
           "number": null,
           "title": "Merge pull request #22984 from ItsAbir005/fix/dashboard-edit-options-responsive",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #23036 from nishant-devv/fix/token-view-empty-prompt-hang",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42830,7 +42860,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:26:52.178Z",
+      "verified_at": "2026-11-09T01:01:30.970Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64977,8 +65007,8 @@
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "c6b8a834",
-      "content_hash": "6dfb915d489dfad597f15939038bbd348fcc4dae6a024f837d22124c4689e984",
+      "source_version": "c5d2026b",
+      "content_hash": "b44969adcb488959f349f3817f6f16491c895d93c49818b38870768dbda71747",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "promoted_rules": [
@@ -65008,7 +65038,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:53:46.735Z",
+      "verified_at": "2026-11-09T01:01:25.200Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

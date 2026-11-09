@@ -8456,3 +8456,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-edge0-audio8-tts-realistic-0-6b` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-09T00:31:10.846Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-09T00:39:07.614Z |
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-09T00:54:13.019Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `11f7925c` | Multi-dimensional audit evidence | 2026-11-09T01:01:20.796Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `c5d2026b` | Multi-dimensional audit evidence | 2026-11-09T01:01:25.359Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `4e28fc8c` | Multi-dimensional audit evidence | 2026-11-09T01:01:31.088Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b9fd8f07` | Multi-dimensional audit evidence | 2026-11-09T01:01:36.345Z |
+| `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-09T01:06:01.982Z |
