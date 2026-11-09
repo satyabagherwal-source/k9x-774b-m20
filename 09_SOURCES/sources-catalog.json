@@ -1235,8 +1235,8 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "9da218ace5f23b7725267bbe809bf02850602a4ec4f22cb2a5251dbaeaf35997",
-    "lastHarvestedAt": "2026-11-05T09:57:47.476Z",
+    "contentHash": "ad59f4ec3e3c40f1119d47cc4dba70f81b00e3d0cf75574abe031765a85e4381",
+    "lastHarvestedAt": "2026-11-09T04:00:51.529Z",
     "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "2fffa346",
+    "sourceVersion": "b078219d",
     "license": "Apache-2.0",
-    "contentHash": "ecbe9cdc50df1fc87635e02e96a18668c68fe0b755703eae3e25623c54b7750c",
-    "lastHarvestedAt": "2026-11-05T14:02:42.594Z",
+    "contentHash": "816afd10e93b0d56e646981162153a8668c6117cd52fad7dc14cae589a30ba25",
+    "lastHarvestedAt": "2026-11-09T04:00:49.470Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -10183,10 +10183,10 @@
     "repository": "sweetpad-dev/sweetpad",
     "platform": "github",
     "sourceUrl": "https://github.com/sweetpad-dev/sweetpad",
-    "sourceVersion": "4ffb3b68",
+    "sourceVersion": "7df9d947",
     "license": "MIT",
-    "contentHash": "cd0d50b3f8dc5c361bc8c08d586fb757fc1024d6b82127b0156a212b479f9a67",
-    "lastHarvestedAt": "2026-11-03T21:17:23.251Z",
+    "contentHash": "b882c39ef2d2ff65352cb895ebc7f92fd03be1f0e6e16616351b6a2dc981b25d",
+    "lastHarvestedAt": "2026-11-09T04:00:43.689Z",
     "learningId": "learn-github-sweetpad-dev-sweetpad"
   },
   "wcandillon-react-native-skia": {

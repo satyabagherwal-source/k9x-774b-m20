@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T03:50:06.619Z",
+  "last_updated": "2026-11-09T04:00:51.432Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26674,10 +26674,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/vit-base-patch16-224",
       "source_version": "hf-google-vit-base-patch16-224",
-      "content_hash": "9da218ace5f23b7725267bbe809bf02850602a4ec4f22cb2a5251dbaeaf35997",
+      "content_hash": "ad59f4ec3e3c40f1119d47cc4dba70f81b00e3d0cf75574abe031765a85e4381",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Spatial-to-Sequence Dimensionality Mapping Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "CLS Token Global Representation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Positional Encoding Absolute vs. Relative Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 967,
           "title": "Strict Input Normalization Invariance for Pre-trained Vision Models",
@@ -26746,7 +26761,7 @@
         "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
         "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
       ],
-      "verified_at": "2026-11-05T09:57:47.405Z",
+      "verified_at": "2026-11-09T04:00:51.408Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35693,11 +35708,16 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "2fffa346",
-      "content_hash": "ecbe9cdc50df1fc87635e02e96a18668c68fe0b755703eae3e25623c54b7750c",
+      "source_version": "b078219d",
+      "content_hash": "816afd10e93b0d56e646981162153a8668c6117cd52fad7dc14cae589a30ba25",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Rewrite the engine in Rust: SQL, storage, WAL and indexes at parity with the C++",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2481,
           "title": "corrupt WAL handling: out-of-bounds reads and over-aggressive purge (#3429)",
@@ -35729,7 +35749,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:02:42.480Z",
+      "verified_at": "2026-11-09T04:00:49.321Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59216,11 +59236,16 @@
       "slug": "sweetpad-dev-sweetpad",
       "platform": "github",
       "source_url": "https://github.com/sweetpad-dev/sweetpad",
-      "source_version": "4ffb3b68",
-      "content_hash": "cd0d50b3f8dc5c361bc8c08d586fb757fc1024d6b82127b0156a212b479f9a67",
+      "source_version": "7df9d947",
+      "content_hash": "b882c39ef2d2ff65352cb895ebc7f92fd03be1f0e6e16616351b6a2dc981b25d",
       "dossier_path": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Close Linux build gaps and package an ARM64 release (#347)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 5876,
           "title": "Resolve scheme targets by ID so a renamed target still builds (#344)",
@@ -59237,7 +59262,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:17:23.189Z",
+      "verified_at": "2026-11-09T04:00:43.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

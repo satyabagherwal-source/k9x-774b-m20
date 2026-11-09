@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-5I30",
-    "timestamp": "2026-11-07T04:44:19.788Z",
-    "repository": "syntax-tree/hast-util-from-html",
-    "learningId": "learn-github-syntax-tree-hast-util-from-html",
-    "contentHash": "2d4753343f730bda917e9162ca14fa4ba1ae8d5648780dab2d420f238d497954",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-5LBE",
-    "timestamp": "2026-11-07T04:44:23.978Z",
-    "repository": "czy0729/Bangumi",
-    "learningId": "learn-github-czy0729-bangumi",
-    "contentHash": "cd7d2da5ee315444e71bae030ec0b3e3d3c79d7f999403ce37f4b0b034b5dc75",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-5NJB",
-    "timestamp": "2026-11-07T04:44:26.855Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "ba3809d7926c71fa1da3fcd169f975c7d45e1953fe785a1b93c6289ec8022a14",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-5QY4",
     "timestamp": "2026-11-07T04:44:31.276Z",
     "repository": "neuron-core/neuron-ai",
@@ -7492,6 +7447,51 @@
     "contentHash": "0fdbfdc34a5f2292da0b34cb2d3c0e3f15ed82b5b3c174f4fa13a27fd07dd0b8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-H4TH",
+    "timestamp": "2026-11-09T04:00:43.685Z",
+    "repository": "sweetpad-dev/sweetpad",
+    "learningId": "learn-github-sweetpad-dev-sweetpad",
+    "contentHash": "b882c39ef2d2ff65352cb895ebc7f92fd03be1f0e6e16616351b6a2dc981b25d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-H9A1",
+    "timestamp": "2026-11-09T04:00:49.465Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "816afd10e93b0d56e646981162153a8668c6117cd52fad7dc14cae589a30ba25",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-HAV9",
+    "timestamp": "2026-11-09T04:00:51.525Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "ad59f4ec3e3c40f1119d47cc4dba70f81b00e3d0cf75574abe031765a85e4381",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

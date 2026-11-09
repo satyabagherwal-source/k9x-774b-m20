@@ -8504,3 +8504,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-11-09T03:42:38.771Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `34441533` | Multi-dimensional audit evidence | 2026-11-09T03:42:53.644Z |
 | `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-09T03:50:06.730Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `7df9d947` | Multi-dimensional audit evidence | 2026-11-09T04:00:43.689Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `b078219d` | Multi-dimensional audit evidence | 2026-11-09T04:00:49.470Z |
+| `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-09T04:00:51.529Z |
