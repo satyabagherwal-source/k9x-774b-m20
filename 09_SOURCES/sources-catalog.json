@@ -1065,8 +1065,8 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "0d1b214ce82e79eff781e49c44d233d001685bc7bb1bc96f179b188e055003ed",
-    "lastHarvestedAt": "2026-11-05T07:27:38.548Z",
+    "contentHash": "ba2c1b442438e2b33d4c24114d30835a734f1f4c05f9282dd556f83af420cd3a",
+    "lastHarvestedAt": "2026-11-09T01:26:21.935Z",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "9b71df9a",
+    "sourceVersion": "e520c28d",
     "license": "MIT",
-    "contentHash": "2ea3285f4ea72e8727d664752e8730581e5b4cea0b42be753af5a16130016f8f",
-    "lastHarvestedAt": "2026-11-08T04:03:01.935Z",
+    "contentHash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
+    "lastHarvestedAt": "2026-11-09T01:26:25.216Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

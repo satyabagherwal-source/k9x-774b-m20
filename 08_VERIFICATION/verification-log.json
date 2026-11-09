@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-GG25",
-    "timestamp": "2026-11-06T23:44:54.605Z",
-    "repository": "keybase/client",
-    "learningId": "learn-github-keybase-client",
-    "contentHash": "da970569aefa9942e8ecb1f51c32d349f05a541467866734d28c7cf64a7147e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-CPE9",
-    "timestamp": "2026-11-07T02:01:58.161Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "c2632cdade8ea7c3e4242f5a3cf9323de8903acd8e2a4d05121b4e921eacba2b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-IWWA",
     "timestamp": "2026-11-07T02:06:47.818Z",
     "repository": "NVIDIA/cuda-rust",
@@ -7492,6 +7462,36 @@
     "contentHash": "0b8c13a3f7b82f77c55ad07fb04b1c3380dcaaaa0b8c8d40a8d7d8e5599d9a7b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-YMEK",
+    "timestamp": "2026-11-09T01:26:21.932Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "ba2c1b442438e2b33d4c24114d30835a734f1f4c05f9282dd556f83af420cd3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-YOXP",
+    "timestamp": "2026-11-09T01:26:25.213Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

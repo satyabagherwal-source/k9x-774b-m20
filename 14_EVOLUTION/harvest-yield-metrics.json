@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T01:19:17.569Z",
-  "total_cycles_completed": 8421,
-  "total_learnings_persisted": 8421,
-  "total_rules_promoted": 8222,
+  "last_updated": "2026-11-09T01:26:25.221Z",
+  "total_cycles_completed": 8423,
+  "total_learnings_persisted": 8423,
+  "total_rules_promoted": 8225,
   "history": [
-    {
-      "timestamp": "2026-11-08T07:31:01.982Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T08:05:11.181Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T08:24:03.320Z",
       "repository": "embassy-rs/embassy",
@@ -1403,6 +1389,20 @@
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:26:21.941Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T01:26:25.221Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

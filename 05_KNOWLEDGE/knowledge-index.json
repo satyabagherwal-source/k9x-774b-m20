@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T01:19:17.491Z",
+  "last_updated": "2026-11-09T01:26:25.135Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30415,10 +30415,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "0d1b214ce82e79eff781e49c44d233d001685bc7bb1bc96f179b188e055003ed",
+      "content_hash": "ba2c1b442438e2b33d4c24114d30835a734f1f4c05f9282dd556f83af420cd3a",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Closed-Loop Temporal Consistency via Boundary Conditioning",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Prompt-Driven Geometric Invariant Enforcement",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1052,
           "title": "Closed-Loop Temporal Consistency Invariant",
@@ -30537,7 +30547,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-11-05T07:27:38.425Z",
+      "verified_at": "2026-11-09T01:26:21.783Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62404,13 +62414,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "e520c28d",
-      "content_hash": "2abfe730cb94e9f9b4bc8aa6ac6ae3671f0318351658312a441e481d38a2d163",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "content_hash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -62583,7 +62593,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:26:29.035Z",
+      "verified_at": "2026-11-09T01:26:25.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

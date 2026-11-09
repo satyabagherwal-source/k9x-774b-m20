@@ -8465,3 +8465,5 @@ Every entry in this ledger must capture:
 | `learn-github-mikelikesdesign-swiftui-experiments` | `https://github.com/mikelikesdesign/SwiftUI-experiments` | `8deaa990` | Multi-dimensional audit evidence | 2026-11-09T01:12:39.636Z |
 | `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-09T01:12:41.055Z |
 | `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-11-09T01:19:17.564Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-11-09T01:26:21.935Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `e520c28d` | Multi-dimensional audit evidence | 2026-11-09T01:26:25.216Z |

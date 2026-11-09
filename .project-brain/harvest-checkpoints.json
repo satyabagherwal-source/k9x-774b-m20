@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T01:19:17.573Z",
+  "last_updated": "2026-11-09T01:26:25.224Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1400,14 +1400,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "0d1b214ce82e79eff781e49c44d233d001685bc7bb1bc96f179b188e055003ed",
-      "verified_at": "2026-11-05T07:27:38.557Z",
+      "content_hash": "ba2c1b442438e2b33d4c24114d30835a734f1f4c05f9282dd556f83af420cd3a",
+      "verified_at": "2026-11-09T01:26:21.944Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:27:38.557Z"
+      "last_updated": "2026-11-09T01:26:21.944Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "2abfe730cb94e9f9b4bc8aa6ac6ae3671f0318351658312a441e481d38a2d163",
-      "verified_at": "2026-11-08T22:26:29.158Z",
+      "content_hash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
+      "verified_at": "2026-11-09T01:26:25.224Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:26:29.158Z"
+      "last_updated": "2026-11-09T01:26:25.224Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
