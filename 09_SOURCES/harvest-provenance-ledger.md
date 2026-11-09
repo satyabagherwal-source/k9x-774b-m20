@@ -8631,3 +8631,4 @@ Every entry in this ledger must capture:
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `705b459b` | Multi-dimensional audit evidence | 2026-11-09T15:29:01.973Z |
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `7490cf4b` | Multi-dimensional audit evidence | 2026-11-09T15:51:36.447Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-09T15:51:58.545Z |
+| `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-09T16:04:17.193Z |

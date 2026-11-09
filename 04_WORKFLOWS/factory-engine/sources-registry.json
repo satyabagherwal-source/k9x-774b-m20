@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T15:52:01.168Z",
-    "lastVerified": "2026-11-09T15:52:01.168Z",
+    "lastChecked": "2026-11-09T16:04:25.838Z",
+    "lastVerified": "2026-11-09T16:04:25.838Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,9 +369,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T14:53:08.260Z",
+    "lastChecked": "2026-11-09T16:04:25.826Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T14:53:08.260Z"
+    "lastVerified": "2026-11-09T16:04:25.826Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1739,9 +1739,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-09T07:43:41.779Z",
+    "lastChecked": "2026-11-09T16:04:20.833Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-09T07:43:41.779Z"
+    "lastVerified": "2026-11-09T16:04:20.833Z"
   },
   "seaql-sea-orm": {
     "name": "SeaQL/sea-orm",
@@ -2823,9 +2823,9 @@
   "boardgameio-boardgame.io": {
     "name": "boardgame.io",
     "officialUrl": "https://github.com/boardgameio/boardgame.io",
-    "lastChecked": "2026-11-06T21:13:41.538Z",
+    "lastChecked": "2026-11-09T16:04:15.946Z",
     "revisionIdentifier": "47adef2b",
-    "lastVerified": "2026-11-06T21:13:41.538Z"
+    "lastVerified": "2026-11-09T16:04:15.946Z"
   },
   "permify-permify": {
     "name": "permify",
@@ -3136,9 +3136,9 @@
   "litmuschaos-litmus": {
     "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
-    "lastChecked": "2026-11-08T18:28:01.286Z",
+    "lastChecked": "2026-11-09T16:04:18.588Z",
     "revisionIdentifier": "97a397fb",
-    "lastVerified": "2026-11-08T18:28:01.286Z"
+    "lastVerified": "2026-11-09T16:04:18.588Z"
   },
   "pinecone-io-examples": {
     "name": "examples",
@@ -5619,9 +5619,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-08T13:06:03.555Z",
+    "lastChecked": "2026-11-09T16:04:10.853Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-08T13:06:03.555Z"
+    "lastVerified": "2026-11-09T16:04:10.853Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -5898,9 +5898,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-08T17:35:44.704Z",
+    "lastChecked": "2026-11-09T16:04:23.759Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-08T17:35:44.704Z"
+    "lastVerified": "2026-11-09T16:04:23.759Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -9330,12 +9330,12 @@
     "officialUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T16:06:00.988Z",
-    "lastVerified": "2026-11-05T16:06:00.988Z",
+    "lastChecked": "2026-11-09T16:04:13.482Z",
+    "lastVerified": "2026-11-09T16:04:13.482Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-    "contentHash": "0383aefa1c9e0480d2e431e20e02cbb13f980e63368545aaf35e45fde0e4f896",
+    "contentHash": "ccc72169ad78a693bfdec6119390b9f875b985942a0acbffd3564965482c48e0",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

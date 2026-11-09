@@ -8622,3 +8622,4 @@
 | `CYCLE-20261109-2AS2` | `2026-11-09T15:29:01.970Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4d48efac...`) |
 | `CYCLE-20261109-VBWB` | `2026-11-09T15:51:36.443Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a4174d89...`) |
 | `CYCLE-20261109-VSY5` | `2026-11-09T15:51:58.541Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`5eb17c45...`) |
+| `CYCLE-20261109-BMW5` | `2026-11-09T16:04:17.189Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`ccc72169...`) |

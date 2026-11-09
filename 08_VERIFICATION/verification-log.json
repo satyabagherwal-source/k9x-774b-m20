@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-8KOD",
-    "timestamp": "2026-11-07T22:30:28.525Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "ba8bf79e148cc0548d99910b6d2e010127169909b6dca6b3ff2cf90ee09809aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-DSTG",
     "timestamp": "2026-11-07T22:34:32.356Z",
     "repository": "tw93/Pake",
@@ -7492,6 +7477,21 @@
     "contentHash": "5eb17c45b35b8d1e458a4e00864c21a941f0c0544953ff748f4d8ce6497880a5",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-BMW5",
+    "timestamp": "2026-11-09T16:04:17.189Z",
+    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "ccc72169ad78a693bfdec6119390b9f875b985942a0acbffd3564965482c48e0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
