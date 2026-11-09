@@ -8546,3 +8546,4 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e2459cc5` | Multi-dimensional audit evidence | 2026-11-09T07:01:05.924Z |
 | `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T07:05:52.164Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `f480836a` | Multi-dimensional audit evidence | 2026-11-09T07:05:58.611Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-09T07:13:17.792Z |

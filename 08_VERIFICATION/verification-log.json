@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-X85A",
-    "timestamp": "2026-11-07T18:09:42.526Z",
-    "repository": "matthart1983/netwatch",
-    "learningId": "learn-github-matthart1983-netwatch",
-    "contentHash": "84d5a6720462e80949bdfa5d58a0743445c4124af1436286a84a7ea4bd4ac9c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-X86Z",
     "timestamp": "2026-11-07T18:09:42.587Z",
     "repository": "shoutem/ui",
@@ -7492,6 +7477,21 @@
     "contentHash": "47bcffb5b37bfd61196143d75afe91331218175e3773491d757e7820e78a2da3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-CS0R",
+    "timestamp": "2026-11-09T07:13:17.787Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "b1e2f8691f034fe24784421378b955d7809772b9106cbdccff07d835e5dccfa3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

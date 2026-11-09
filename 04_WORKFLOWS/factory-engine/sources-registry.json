@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T07:06:01.199Z",
-    "lastVerified": "2026-11-09T07:06:01.199Z",
+    "lastChecked": "2026-11-09T07:13:28.847Z",
+    "lastVerified": "2026-11-09T07:13:28.847Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-09T06:32:27.454Z",
-    "lastVerified": "2026-11-09T06:32:27.454Z",
+    "lastChecked": "2026-11-09T07:13:28.832Z",
+    "lastVerified": "2026-11-09T07:13:28.832Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -207,9 +207,9 @@
   "justjavac-free-programming-books-zh_cn": {
     "name": "free-programming-books-zh_CN",
     "officialUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
-    "lastChecked": "2026-11-05T23:55:25.646Z",
+    "lastChecked": "2026-11-09T07:13:18.903Z",
     "revisionIdentifier": "cc1108ac",
-    "lastVerified": "2026-11-05T23:55:25.646Z"
+    "lastVerified": "2026-11-09T07:13:18.903Z"
   },
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
@@ -522,8 +522,8 @@
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T13:06:11.078Z",
-    "lastVerified": "2026-11-08T13:06:11.078Z",
+    "lastChecked": "2026-11-09T07:13:21.367Z",
+    "lastVerified": "2026-11-09T07:13:21.367Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -1480,9 +1480,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-09T02:08:08.759Z",
+    "lastChecked": "2026-11-09T07:13:23.850Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-09T02:08:08.759Z"
+    "lastVerified": "2026-11-09T07:13:23.850Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -3653,9 +3653,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-08T05:01:56.222Z",
+    "lastChecked": "2026-11-09T07:13:13.836Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-08T05:01:56.222Z"
+    "lastVerified": "2026-11-09T07:13:13.836Z"
   },
   "hf-cloudflare-clef": {
     "name": "Cloudflare/clef",
@@ -3866,9 +3866,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-11-08T10:20:34.750Z",
+    "lastChecked": "2026-11-09T07:13:26.378Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-11-08T10:20:34.750Z"
+    "lastVerified": "2026-11-09T07:13:26.378Z"
   },
   "mfontanini-presenterm": {
     "name": "mfontanini/presenterm",
@@ -8161,13 +8161,13 @@
     "officialUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T12:14:24.132Z",
-    "lastVerified": "2026-11-05T12:14:24.132Z",
+    "lastChecked": "2026-11-09T07:13:16.552Z",
+    "lastVerified": "2026-11-09T07:13:16.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "f9a3a8353e3d339c6c99cef800beea30d9997c96d7fcd9ce9bf17359a4a38f50",
-    "promotedRulesCount": 3,
+    "contentHash": "b1e2f8691f034fe24784421378b955d7809772b9106cbdccff07d835e5dccfa3",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
