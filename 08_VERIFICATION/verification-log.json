@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-W6QD",
-    "timestamp": "2026-11-07T17:40:54.421Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "06f648574cb66ab77842a6bdd02a6240dcf57ef5f044e96756a55f4fa958243e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-5DR6",
-    "timestamp": "2026-11-07T17:48:03.426Z",
-    "repository": "kubernetes-sigs/aws-load-balancer-controller",
-    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "3a3d97abe0803ffd6c1b3c14b9976f4d195fc54203e0a295f68303c565de65b6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-5IJ0",
-    "timestamp": "2026-11-07T17:48:09.612Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "8dc056edd59cfdc32ae42ef86aa111bc5473e609648e45fcee549055b952e7e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-HZ6F",
     "timestamp": "2026-11-07T17:57:51.063Z",
     "repository": "HelixDB/helix-db",
@@ -7492,6 +7447,51 @@
     "contentHash": "149c1f894b674a0f91c99c90274e094fb3f83b908b90ce6cddf36867a4ea31a5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-DKRQ",
+    "timestamp": "2026-11-09T06:45:55.430Z",
+    "repository": "kirillzyusko/react-native-keyboard-controller",
+    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+    "contentHash": "13182f3468c9a9810a879fce3e3f7219267d262c0dbe1ecdf1a00d01af421743",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-DOFA",
+    "timestamp": "2026-11-09T06:46:00.166Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "b8ba7f5ba3ccf71eb3a0e292d79eeabf77f3611134b7063684fb5e83c9f345b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-JRFN",
+    "timestamp": "2026-11-09T06:50:44.003Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "674cd434d5cb8403b6d55c6383386c94fbfca8d29ab3dc2ced9d4cdf76203753",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T06:38:54.238Z",
+  "last_updated": "2026-11-09T06:50:43.893Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15374,8 +15374,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "be138254",
-      "content_hash": "54e817adc56ee62cc4a99e41aba035e6921d3029f0c5c7996130a1a36fb9b603",
+      "source_version": "88f81209",
+      "content_hash": "b8ba7f5ba3ccf71eb3a0e292d79eeabf77f3611134b7063684fb5e83c9f345b7",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15417,6 +15417,11 @@
         {
           "number": null,
           "title": "config): skip a bad gateway entry instead of failing startup (#6149)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "sim): fixed-key hasher for maps whose iteration order decides behaviour (#6139)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15635,7 +15640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:53:24.334Z",
+      "verified_at": "2026-11-09T06:46:00.067Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20713,10 +20718,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
-      "content_hash": "e0d336f0fea089cb947d37e97dd3b80f39241c062f370e5eb3cb805051cb6377",
+      "content_hash": "674cd434d5cb8403b6d55c6383386c94fbfca8d29ab3dc2ced9d4cdf76203753",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Multi-Token Prediction Index Tensor Reuse Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-EOS Disjunction Termination Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Distributed ConnectX-7 MoE Router Memory Boundary Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1455,
           "title": "Dual-Node Asymmetric Interconnect Expert Placement",
@@ -20791,7 +20811,7 @@
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv430elb",
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4g91hj"
       ],
-      "verified_at": "2026-11-05T12:00:05.170Z",
+      "verified_at": "2026-11-09T06:50:43.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153397,14 +153417,19 @@
       "slug": "kirillzyusko-react-native-keyboard-controller",
       "platform": "github",
       "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-      "source_version": "7ec1e4e2",
-      "content_hash": "a58a177a0e64d44660dd13e9eced26f976e38c0653aa708e26e3980d5d21c4fa",
+      "source_version": "1cf8d3e7",
+      "content_hash": "13182f3468c9a9810a879fce3e3f7219267d262c0dbe1ecdf1a00d01af421743",
       "dossier_path": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "release 1.23.0 (#1745)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "preserve KVO subclasses when remounting scroll decorators (#1750)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -153428,7 +153453,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:39:57.826Z",
+      "verified_at": "2026-11-09T06:45:55.333Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

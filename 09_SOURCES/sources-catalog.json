@@ -175,8 +175,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "sourceVersion": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
     "license": "Open-Source",
-    "contentHash": "e0d336f0fea089cb947d37e97dd3b80f39241c062f370e5eb3cb805051cb6377",
-    "lastHarvestedAt": "2026-11-05T12:00:05.276Z",
+    "contentHash": "674cd434d5cb8403b6d55c6383386c94fbfca8d29ab3dc2ced9d4cdf76203753",
+    "lastHarvestedAt": "2026-11-09T06:50:44.007Z",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark"
   },
   "hf-liquidai-d1-3b": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "be138254",
+    "sourceVersion": "88f81209",
     "license": "NOASSERTION",
-    "contentHash": "54e817adc56ee62cc4a99e41aba035e6921d3029f0c5c7996130a1a36fb9b603",
-    "lastHarvestedAt": "2026-11-09T01:53:24.407Z",
+    "contentHash": "b8ba7f5ba3ccf71eb3a0e292d79eeabf77f3611134b7063684fb5e83c9f345b7",
+    "lastHarvestedAt": "2026-11-09T06:46:00.175Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -11343,10 +11343,10 @@
     "repository": "kirillzyusko/react-native-keyboard-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-    "sourceVersion": "7ec1e4e2",
+    "sourceVersion": "1cf8d3e7",
     "license": "MIT",
-    "contentHash": "a58a177a0e64d44660dd13e9eced26f976e38c0653aa708e26e3980d5d21c4fa",
-    "lastHarvestedAt": "2026-11-05T23:39:57.956Z",
+    "contentHash": "13182f3468c9a9810a879fce3e3f7219267d262c0dbe1ecdf1a00d01af421743",
+    "lastHarvestedAt": "2026-11-09T06:45:55.434Z",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller"
   },
   "margelo-react-native-blur": {

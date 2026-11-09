@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T06:39:02.306Z",
-    "lastVerified": "2026-11-09T06:39:02.306Z",
+    "lastChecked": "2026-11-09T06:50:46.605Z",
+    "lastVerified": "2026-11-09T06:50:46.605Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -327,9 +327,9 @@
   "actions-actions-runner-controller": {
     "name": "actions-runner-controller",
     "officialUrl": "https://github.com/actions/actions-runner-controller",
-    "lastChecked": "2026-11-08T11:55:34.977Z",
+    "lastChecked": "2026-11-09T06:45:51.651Z",
     "revisionIdentifier": "89f34c4f",
-    "lastVerified": "2026-11-08T11:55:34.977Z"
+    "lastVerified": "2026-11-09T06:45:51.651Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T05:52:46.933Z",
+    "lastChecked": "2026-11-09T06:45:59.177Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T05:52:46.933Z"
+    "lastVerified": "2026-11-09T06:45:59.177Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1285,14 +1285,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:53:23.231Z",
-    "lastVerified": "2026-11-09T01:53:23.231Z",
+    "lastChecked": "2026-11-09T06:45:58.584Z",
+    "lastVerified": "2026-11-09T06:45:58.584Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "54e817adc56ee62cc4a99e41aba035e6921d3029f0c5c7996130a1a36fb9b603",
+    "contentHash": "b8ba7f5ba3ccf71eb3a0e292d79eeabf77f3611134b7063684fb5e83c9f345b7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3532,9 +3532,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-08T04:42:16.247Z",
+    "lastChecked": "2026-11-09T06:45:44.189Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-08T04:42:16.247Z"
+    "lastVerified": "2026-11-09T06:45:44.189Z"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
     "name": "unsloth/Qwen3.8-27B-GGUF",
@@ -3715,8 +3715,8 @@
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-08T09:27:15.092Z",
-    "lastVerified": "2026-11-08T09:27:15.092Z",
+    "lastChecked": "2026-11-09T06:45:56.689Z",
+    "lastVerified": "2026-11-09T06:45:56.689Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
@@ -8044,13 +8044,13 @@
     "officialUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T12:00:04.182Z",
-    "lastVerified": "2026-11-05T12:00:04.182Z",
+    "lastChecked": "2026-11-09T06:45:46.919Z",
+    "lastVerified": "2026-11-09T06:45:46.919Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-    "contentHash": "e0d336f0fea089cb947d37e97dd3b80f39241c062f370e5eb3cb805051cb6377",
-    "promotedRulesCount": 0,
+    "contentHash": "674cd434d5cb8403b6d55c6383386c94fbfca8d29ab3dc2ced9d4cdf76203753",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -12851,14 +12851,14 @@
     "officialUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T23:39:55.990Z",
-    "lastVerified": "2026-11-05T23:39:55.990Z",
+    "lastChecked": "2026-11-09T06:45:53.742Z",
+    "lastVerified": "2026-11-09T06:45:53.742Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-    "contentHash": "a58a177a0e64d44660dd13e9eced26f976e38c0653aa708e26e3980d5d21c4fa",
+    "contentHash": "13182f3468c9a9810a879fce3e3f7219267d262c0dbe1ecdf1a00d01af421743",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
