@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-XTI6",
-    "timestamp": "2026-11-08T01:10:04.446Z",
-    "repository": "tursodatabase/libsql",
-    "learningId": "learn-github-tursodatabase-libsql",
-    "contentHash": "41a5b01530847b924912dcea8e5dbe70e32a675300f2b69f0bf4b5feac68ff0e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-7VPE",
-    "timestamp": "2026-11-08T01:17:53.858Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "e43a5dc6a9d897b6a3045465e5e906174817805b7132dce49081bb9e3a7301d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-7WJM",
     "timestamp": "2026-11-08T01:17:54.946Z",
     "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -7490,6 +7460,36 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
     "contentHash": "421ec89624cc4c71057f91f562a1f3e3c13386efa4154c6da2d6c2f01e665e17",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-3MN1",
+    "timestamp": "2026-11-09T21:05:59.389Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-3PF9",
+    "timestamp": "2026-11-09T21:06:02.997Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

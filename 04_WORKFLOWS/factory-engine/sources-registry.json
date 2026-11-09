@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T18:16:25.179Z",
-    "lastVerified": "2026-11-09T18:16:25.179Z",
+    "lastChecked": "2026-11-09T21:06:05.600Z",
+    "lastVerified": "2026-11-09T21:06:05.600Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -330,22 +330,21 @@
     "lastVerified": "2026-11-09T06:45:51.651Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "agent-governance-toolkit",
+    "name": "microsoft/agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-09T12:13:02.769Z",
-    "lastVerified": "2026-11-09T12:13:02.769Z",
+    "lastChecked": "2026-11-09T21:05:57.434Z",
+    "lastVerified": "2026-11-09T21:05:57.434Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "5eee18c8bf6442f5b14aec48b56adb0d141f57d0cea133177a56a1406299c40c",
+    "contentHash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fa310ff1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -368,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T17:35:02.914Z",
+    "lastChecked": "2026-11-09T21:05:57.786Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T17:35:02.914Z"
+    "lastVerified": "2026-11-09T21:05:57.786Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3632,9 +3631,9 @@
   "oblador-react-native-animatable": {
     "name": "react-native-animatable",
     "officialUrl": "https://github.com/oblador/react-native-animatable",
-    "lastChecked": "2026-11-06T23:02:35.548Z",
+    "lastChecked": "2026-11-09T21:05:47.756Z",
     "revisionIdentifier": "dfd74137",
-    "lastVerified": "2026-11-06T23:02:35.548Z"
+    "lastVerified": "2026-11-09T21:05:47.756Z"
   },
   "skyhook-io-radar": {
     "name": "skyhook-io/radar",
@@ -3936,8 +3935,8 @@
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T20:38:43.292Z",
-    "lastVerified": "2026-11-08T20:38:43.292Z",
+    "lastChecked": "2026-11-09T21:05:50.437Z",
+    "lastVerified": "2026-11-09T21:05:50.437Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
@@ -6488,9 +6487,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-11-08T15:49:41.885Z",
+    "lastChecked": "2026-11-09T21:05:42.762Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-11-08T15:49:41.886Z"
+    "lastVerified": "2026-11-09T21:05:42.762Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
@@ -6665,22 +6664,21 @@
     "lastVerified": "2026-11-09T03:03:33.611Z"
   },
   "greptimeteam-greptimedb": {
-    "name": "greptimedb",
+    "name": "GreptimeTeam/greptimedb",
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T19:38:49.928Z",
-    "lastVerified": "2026-11-08T19:38:49.928Z",
+    "lastChecked": "2026-11-09T21:06:01.345Z",
+    "lastVerified": "2026-11-09T21:06:01.345Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "e254a726bbeb4c691ac3177c48a56ebba4d2804a9cc7d165496677cafe486a0a",
+    "contentHash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2fefad6a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ataraxy-labs-sem": {
     "name": "sem",
@@ -9530,9 +9528,9 @@
   "istifano-seo-auditor": {
     "name": "seo-auditor",
     "officialUrl": "https://github.com/ISTIFANO/seo-auditor",
-    "lastChecked": "2026-11-05T18:23:08.555Z",
+    "lastChecked": "2026-11-09T21:05:45.275Z",
     "revisionIdentifier": "87ba51e6",
-    "lastVerified": "2026-11-05T18:23:08.555Z"
+    "lastVerified": "2026-11-09T21:05:45.275Z"
   },
   "tableproapp-tablepro": {
     "name": "TableProApp/TablePro",

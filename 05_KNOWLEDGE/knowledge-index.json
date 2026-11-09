@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T18:16:21.326Z",
+  "last_updated": "2026-11-09T21:06:02.930Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17922,14 +17922,19 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "2fefad6a",
-      "content_hash": "e254a726bbeb4c691ac3177c48a56ebba4d2804a9cc7d165496677cafe486a0a",
+      "source_version": "8da533c3",
+      "content_hash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "meta-srv): acquire remote WAL read lock once before upgrade retries (#10205)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "mito2): publish manifest deltas by conditional create under a lease (#10234)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18013,7 +18018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:23:48.671Z",
+      "verified_at": "2026-11-09T21:06:02.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43839,8 +43844,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "fa310ff1",
-      "content_hash": "5eee18c8bf6442f5b14aec48b56adb0d141f57d0cea133177a56a1406299c40c",
+      "source_version": "48f04e5a",
+      "content_hash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -43857,6 +43862,11 @@
         {
           "number": null,
           "title": "agent-hypervisor): return no events for an event query limit of 0 (#4491)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "agent-os): reject max_attempts below 1 and negative backoff in retry (#4492)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43990,7 +44000,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T23:34:20.300Z",
+      "verified_at": "2026-11-09T21:05:59.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

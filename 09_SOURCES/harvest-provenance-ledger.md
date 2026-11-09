@@ -8670,3 +8670,5 @@ Every entry in this ledger must capture:
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `6420c698` | Multi-dimensional audit evidence | 2026-11-09T18:11:37.118Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `096a19fa` | Multi-dimensional audit evidence | 2026-11-09T18:11:38.165Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `acbe0665` | Multi-dimensional audit evidence | 2026-11-09T18:16:21.805Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `48f04e5a` | Multi-dimensional audit evidence | 2026-11-09T21:05:59.391Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `8da533c3` | Multi-dimensional audit evidence | 2026-11-09T21:06:03.002Z |

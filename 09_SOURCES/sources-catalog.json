@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "fa310ff1",
+    "sourceVersion": "48f04e5a",
     "license": "MIT",
-    "contentHash": "5eee18c8bf6442f5b14aec48b56adb0d141f57d0cea133177a56a1406299c40c",
-    "lastHarvestedAt": "2026-11-07T23:34:20.437Z",
+    "contentHash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
+    "lastHarvestedAt": "2026-11-09T21:05:59.391Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "2fefad6a",
+    "sourceVersion": "8da533c3",
     "license": "Apache-2.0",
-    "contentHash": "e254a726bbeb4c691ac3177c48a56ebba4d2804a9cc7d165496677cafe486a0a",
-    "lastHarvestedAt": "2026-11-07T22:23:48.818Z",
+    "contentHash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
+    "lastHarvestedAt": "2026-11-09T21:06:03.002Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {

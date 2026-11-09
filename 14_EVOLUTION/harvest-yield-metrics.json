@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T18:16:21.830Z",
-  "total_cycles_completed": 8626,
-  "total_learnings_persisted": 8626,
-  "total_rules_promoted": 8447,
+  "last_updated": "2026-11-09T21:06:03.008Z",
+  "total_cycles_completed": 8628,
+  "total_learnings_persisted": 8628,
+  "total_rules_promoted": 8449,
   "history": [
-    {
-      "timestamp": "2026-11-09T01:46:32.775Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T01:46:42.197Z",
-      "repository": "pointfreeco/sqlite-data",
-      "learningId": "learn-github-pointfreeco-sqlite-data",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T01:46:48.040Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-09T18:16:21.830Z",
       "repository": "Dicklesworthstone/destructive_command_guard",
       "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:05:59.404Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:06:03.008Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

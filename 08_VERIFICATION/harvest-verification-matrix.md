@@ -8661,3 +8661,5 @@
 | `CYCLE-20261109-VDVR` | `2026-11-09T18:11:37.095Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`748f7dc9...`) |
 | `CYCLE-20261109-VEOU` | `2026-11-09T18:11:38.142Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4bc21bf9...`) |
 | `CYCLE-20261109-1HJV` | `2026-11-09T18:16:21.787Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`421ec896...`) |
+| `CYCLE-20261109-3MN1` | `2026-11-09T21:05:59.389Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`132ab018...`) |
+| `CYCLE-20261109-3PF9` | `2026-11-09T21:06:02.997Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c2bf03f4...`) |

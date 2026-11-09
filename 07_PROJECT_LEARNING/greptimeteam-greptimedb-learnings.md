@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `2fefad6a`  
+> **Source Version**: `8da533c3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T22:23:46.921Z  
+> **Timestamp**: 2026-11-09T21:06:01.806Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T22:23:46.663Z  
+> **Harvest Timestamp**: 2026-11-09T21:06:01.345Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6793 stars
+- **Stars / Engagement**: 6797 stars
 
 ---
 
@@ -53,18 +53,82 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::sync::Weak;
+pub mod tables;
+
+use std::sync::{Arc, Weak};
 
 use common_meta::key::TableMetadataManagerRef;
-use snafu::OptionExt;
+use common_query::logical_plan::is_lossless_substrait_type;
+use datafusion::common::DFSchema;
+use datafusion::common::tree_node::{TreeNode, TreeNodeRecursion};
+use datafusion::logical_expr::ExprSchemable;
+use datafusion::physical_plan::ExecutionPlan;
+use datatypes::schema::SchemaRef;
+use snafu::{OptionExt, ResultExt};
+use store_api::storage::ScanRequest;
 
 use crate::CatalogManager;
-use crate::error::{GetInformationExtensionSnafu, Result, UpgradeWeakCatalogManagerRefSnafu};
-use crate::information_schema::InformationExtensionRef;
+use crate::error::{
+    GetInformationExtensionSnafu, ProjectSchemaSnafu, Result, UpgradeWeakCatalogManagerRefSnafu,
+};
+use crate::information_schema::{
+    DatanodeInspectKind, DatanodeInspectRequest, InformationExtensionRef,
+};
 use crate::kvbackend::KvBackendCatalogManager;
 use crate::system_schema::semantic_graph::EntityGraphProviderRef;
 
-pub mod tables;
+/// Projects an inspection table schema according to the scan request.
+pub(crate) fn projected_schema(schema: &SchemaRef, request: &ScanRequest) -> Result<SchemaRef> {
+    if let Some(p) = request.projection.as_deref() {
+        Ok(Arc::new(schema.try_project(p).context(ProjectSchemaSnafu)?))
+    } else {
+        Ok(schema.clone())
+    }
+}
+
+/// Builds a datanode inspection plan with the requested output schema.
+pub(crate) fn inspect_plan(
+    catalog_manager: &Weak<dyn CatalogManager>,
+    kind: DatanodeInspectKind,
+    schema: &SchemaRef,
+    request: ScanRequest,
+) -> Result<Option<Arc<dyn ExecutionPlan>>> {
+    let projected_schema = projected_schema(schema, &request)?;
+    let info_ext = information_extension(catalog_manager)?;
+    let req = inspect_request(kind, schema, request)?;
+
+    info_ext.inspect_datanode_plan(req, projected_schema)
+}
+
+/// System table predicates are inexact: the frontend keeps a residual filter. Dropping
+/// an unsafe remote filter preserves correctness only if no remote limit truncates it.
+pub(crate) fn inspect_request(
+    kind: DatanodeInspectKind,
+    schema: &SchemaRef,
+    mut scan: ScanRequest,
+) -> Result<DatanodeInspectRequest> {
+    let schema =
+        DFSchema::try_from(schema.arrow_schema().clone()).context(crate::error::DatafusionSnafu)?;
+    let filter_count = scan.filters.len();
+    scan.filters.retain(|filter| {
+        let mut supported = true;
+        let visited = filter.apply(|expr| {
+            if !expr
+                .get_type(&schema)
+                .is_ok_and(|data_type| is_lossless_substrait_type(&data_type))
+            {
+                supported = false;
+                return Ok(TreeNodeRecursion::Stop);
+            }
+            Ok(TreeNodeRecursion::Continue)
+        });
+        visited.is_ok() && supported
+    });
+    if scan.filters.len() != filter_count {
+        scan.limit = None;
+    }
+    Ok(DatanodeInspectRequest { kind, scan })
+}
 
 /// Try to get the entity-graph provider from a `[CatalogManager]` weak reference.
 /// Returns `None` when the manager is not the kv-backed one or the provider has
@@ -1651,11 +1715,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10227** (2026-11-06): **feat(query): read a split-series table through a raw source**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Follow-up to #10150; sibling of #10226 (which removes the deployment flag from the multi-selector decision).  ## What's changed and what's your intention?  A table partitioned on a column that is not a tag splits one series across regions. A bare scan inside one region therefore holds a fragment, and a window evaluated there sees part of the series: a five-minute range that straddles the boundary has fewer than two samples in each region and produces no value at all. The single-selector route declined that shape in process, so the existing planner answered it.  Read it through a raw source instead:  - `prepare_one_scan` reports whether the declared partition splits a series (partition columns that are not all tags), and that occurrence is wrapped in a `RawSeriesSource` like any other source-backed input. - The segmentation boundary keeps that source (`self_contained || any_split_series`), so a prefix runs above the reconciliation rather than over one region's fragment. - A partition on tags keeps every series whole in one region and keeps the bare-scan path, so nothing changes for the common case.  The last in-process-only refusal keyed on the deployment flag disappears with this change; what remains is the shape.  Tests: an integration regression puts the two samples of one series on either side of a time-partition
+- **Issue #10299** (2026-11-09): **fix(time): avoid i32 overflow when converting an out-of-range date**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  None. Same shape as the "large offsets could overflow before validation" part of #10091, noticed while reading the rest of `common-time`.  ## What's changed and what's your intention?  `Date` keeps days since the Unix epoch in an `i32`. Both `to_chrono_date` and the `Display` impl add `UNIX_EPOCH_FROM_CE` before calling `from_num_days_from_ce_opt`, so a value within 719163 of `i32::MAX` overflows the add instead of returning the `None` its signature promises. `Date::from(i32)` range-checks nothing and the MySQL writer calls `to_chrono_date` on every Date32 column. Switch to `checked_add` and let `Display` reuse `to_chrono_date`.  Release builds leave `overflow-checks` off and the wrapped sum lands outside chrono's range, so the panic only shows up where overflow checks are on: dev, test and the `ci` profile.  Validation: - `cargo nextest run -p common-time`: 90 passed, 0 failed (89 before this change). - `cargo clippy -p common-time --all-targets -- -D warnings` and `cargo fmt -p common-time -- --check`: clean. - Full workspace tests were not run.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [x] I have written the necessary rustdoc comments. - [x] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [x] API c
 
-- **Issue #10226** (2026-11-06): **feat(query): match a partitioned multi-selector tree above its sources**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Supersedes #10209 and #10211, which are semantically coupled: the admission change makes a partitioned pair report the duplicate match group natively, and that expectation lives in #10209's test changes. Landing them separately would leave `narthex` red in between.  ## What's changed and what's your intention?  A multi-selector native PromQL tree over a partitioned table had no region-local placement — one node over the bare scans reads neither the other scans nor the fragments another region holds — so it was refused in process and pushed through the frontend hybrid route. The hybrid route copies a matcher into the other operand's scan, which its own documentation says can hide a duplicate that Prometheus reports.  The shape now runs natively on both routes:  - **Every selector occurrence reads its own source.** Wrapping follows the shape (`cross_table || (multi_input && (any_partitioned || required_placement))`). `cross_table` remains one of the terms — what is gone is the deployment flag as an alternative for a multi-input tree, and the in-process refusal for a partitioned multi-selector tree. - **A cut keeps those sources.** A table split into regions now keeps the raw source under the cut in process as well as over the wire (`self_contained || (per_source_inputs && any_partitioned)`), so a window evaluates abov
+- **Issue #10272** (2026-11-09): **fix(promql): bound scatter time filter expression depth**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Fixes #10257.  ## What's changed and what's your intention?  A 30-day PromQL range query with a 2-hour step generates 361 scatter windows. Combining these with a left-nested OR tree exceeds the expression-depth limit of 128, even for a simple query such as `sum(increase(metric[1h]))`.  Merge overlapping or touching windows into one time filter, ending at the last actual evaluation point when the requested end is off-grid. Combine separated windows with a balanced OR tree. Existing broad-scan thresholds, timestamp conversion, offset handling, and the expression-depth guard remain unchanged.  The planner regression reproduced the exact depth-limit error before the fix and passes afterward. It covers `increase` and `sum_over_time` with separated, touching, and overlapping windows. A sparse-data SQL regression checks boundary samples and gaps across 361 evaluation points.  Validation: - Query-crate nextest: 850 passed, 2 skipped. - SQL regression: passed in standalone and distributed modes; generated results reviewed. - Query-crate Clippy with all targets and `-D warnings`: passed. - `cargo fmt --all` and `git diff --check`: passed. - Full workspace tests, workspace Clippy, and unused-dependency checks were not run.  Local macOS ARM64 validation required LLVM's linker and merging `__TEXT,__text_startup` into `__TEXT,__t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,905 +1736,1133 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9acb55a` (2026-11-06)
-**Commit Message**: fix(meta-srv): acquire remote WAL read lock once before upgrade retries (#10205)
+### Incident Patch 1: `50a2c4d3` (2026-11-09)
+**Commit Message**: fix(mito2): publish manifest deltas by conditional create under a lease (#10234)
 
-UpgradeCandidateRegion acquired RemoteWalLock::Read for each topic on every
-retry attempt while keeping the guards from earlier attempts. If a
-WalPruneProcedure queued RemoteWalLock::Write on the same topic during the first
-attempt, the retry's second read acquire waited behind the writer (the lock is a
-fair tokio RwLock), and the writer waited on the first read guard. The region
-migration and the WAL prune then hung until metasrv restarted.
+* fix(mito2): publish manifest deltas by conditional create under a lease
 
-Acquire the read guards once before the retry loop and hold them until the
-function returns.
+A late old leader and the region's new holder can commit the same manifest
+version. For a region whose writes require a lease and whose WAL is the object
+store WAL, the manifest now behaves as follows. Every other region keeps its
+behaviour and issues no extra request.
 
-Fixes #10204
+- Each delta has one fixed name, `{version:020}.json.gz`, written by a
+  conditional create. Without `compress_manifest` the delta is written at gzip
+  level 0, so that all writers share the name.
+- On an existing object, the writer reads it from storage: identical content is
+  a retry of a write that landed, anything else is a retryable
+  `ManifestVersionConflict` that keeps the output files.
+- The version advances only after a successful save.
+- Recovery loads the highest checkpoint found by LIST and uses the checkpoint
+  pointer only for its checksum, because a stale writer's checkpoint task can
+  leave the pointer at an older version.
+- Checkpoint cleanup frees names, so a late create can still succeed on a
+  deleted name. A commit whose save returns after t
 
-**File**: `src/meta-srv/src/procedure/region_migration/upgrade_candidate_region.rs` (modified, +214/-10)
+**File**: `src/common/datasource/src/compression.rs` (modified, +10/-0)
 ```diff
-@@ -309,19 +309,21 @@ impl UpgradeCandidateRegion {
-         let mut retry = 0;
-         let mut upgraded = false;
+@@ -16,6 +16,7 @@ use std::fmt::Display;
+ use std::io;
+ use std::str::FromStr;
  
-+        // If using Kafka WAL, hold a read lock on each topic for all attempts to prevent WAL
-+        // pruning during the upgrade. Acquire once: re-acquiring a held read lock on retry
-+        // queues behind a waiting `WalPruneProcedure` writer, which waits on the first guard.
-         let mut guards = Vec::with_capacity(topics.len());
-+        for topic in &topics {
-+            guards.push(
-+                procedure_ctx
-+                    .provider
-+                    .acquire_lock(&(RemoteWalLock::Read(topic.clone()).into()))
-+                    .await,
-+            );
-+        }
-+
-         loop {
-             let timer = Instant::now();
--            // If using Kafka WAL, acquire a read lock on the topic to prevent WAL pruning during the upgrade.
--            for topic in &topics {
--                guards.push(
--                    procedure_ctx
--                        .provider
--                        .acquire_lock(&(RemoteWalLock::Read(topic.clone()).into()))
--                        .await,
--                );
--            }
--
-             if let Err(err) = self.upgrade_region(ctx).await {
-                 retry += 1;
-                 ctx.update_operations_elapsed(timer);
-@@ -856,3 +858,205 @@ mod tests {
-         assert_matches!(update_metadata, UpdateMetadata::Rollback);
++use async_compression::Level;
+ use async_compression::tokio::bufread::{BzDecoder, GzipDecoder, XzDecoder, ZstdDecoder};
+ use async_compression::tokio::write;
+ use bytes::Bytes;
+@@ -88,6 +89,15 @@ impl CompressionType {
+             Self::Uncompressed => "",
+         }
      }
- }
 +
-+/// Regression tests for a deadlock between the upgrade step's per-retry `RemoteWalLock::Read`
-+/// (now acquired once before the retry loop) and `WalPruneProcedure`'s `RemoteWalLock::Write`
-+/// on the same topic.
-+///
-+/// Mirrors a datanode rolling restart: failover sends the upgrade instruction to a candidate
-+/// datanode that never answers, the mailbox times out (retryable), and the periodic WAL prune
-+/// for the region's topic starts while the upgrade is waiting. Both procedures share one
-+/// `ContextProvider`, as they do inside metasrv's procedure manager.
-+///
-+/// Requires a Kafka broker: `GT_KAFKA_ENDPOINTS=127.0.0.1:9092`.
-+#[cfg(test)]
-+mod wal_prune_deadlock_tests {
-+    use std::assert_matches;
-+    use std::sync::Arc;
-+    use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+    use common_meta::key::table_route::TableRouteValue;
-+    use common_meta::key::test_utils::new_test_table_info;
-+    use common_meta::peer::Peer;
-+    use common_meta::region_registry::LeaderRegionRegistry;
-+    use common_meta::rpc::router::{Region, RegionRoute};
-+    use common_meta::wal_provider::{RegionWalOptions, build_kafka_client};
-+    use common_procedure::Procedure;
-+    use common_wal::config::kafka::common::KafkaConnectionConfig;
-+    use common_wal::maybe_skip_kafka_integration_test;
-+    use common_wal::options::KafkaWalOptions;
-+    use common_wal::test_util::get_kafka_endpoints;
-+    use store_api::storage::RegionId;
-+    use tokio::time::timeout;
-+
-+    use super::*;
-+    use crate::procedure::region_migration::test_util::{TestingEnv, new_procedure_context};
-+    use crate::procedure::region_migration::{
-+        ContextFactory, PersistentContext, RegionMigrationTriggerReason,
-+    };
-+    use crate::procedure::wal_prune::{Context as WalPruneContext, WalPruneProcedure};
-+
-+    struct Scenario {
-+        env: TestingEnv,
-+        ctx: Context,
-+        topic: String,
-+        upgrade_instructions: Arc<AtomicUsize>,
++    /// Encodes `content` as a gzip stream at level 0, which stores it without compression.
++    pub async fn encode_gzip_stored(content: &[u8]) -> io::Result<Vec<u8>> {
++        let mut buffer = Vec::with_capacity(content.len());
++        let mut encoder = write::GzipEncoder::with_quality(&mut buffer, Level::Precise(0));
++        encoder.write_all(content).await?;
++        encoder.shutdown().await?;
++        Ok(buffer)
 +    }
-+
-+    /// One region on a Kafka topic, failing over to a datanode that receives the upgrade
-+    /// instruction but never replies (it is restarting).
-+    async fn setup(name: &str) -> Scenario {
-+        let topic = format!("{name}_{}", uuid::Uuid::new_v4());
-+        let region_id = RegionId::new(1024, 1);
-+        let persistent_ctx = PersistentContext::new(
-+            vec![("greptime".into(), "public".into())],
-+            Peer::empty(1),
-+            Peer::empty(2),
-+            vec![region_id],
-+            // The migration timeout; the first upgrade attempt consumes all of it.
-+            Duration::from_millis(1000),
-+            RegionMigrationTriggerReason::Failover,
-+        );
-+        let to_peer_id = persistent_ctx.to_peer.id;
-+
-+        let mut env = TestingEnv::new();
-+        let ctx = env.context_factory().new_context(persistent_ctx);
-+        let region_routes = vec![RegionRoute {
-+            region: Region::new_test(region_id),
-+            leader_peer: Some(ctx.persistent_ctx.from_peer.clone()),
-+            follower_peers: vec![ctx.persistent_ctx.to_peer.clone()],
-+            ..Default::default()
-+        }];
-+        let wal_options = RegionWalOptions::from([(
-+            region_id.region_number(),
-+            WalOptions::Kafka(KafkaWalOptions::new(topic.clone())),
-+        )]);
-+        ctx.table_metadata_manager
-+            .create_table_metadata(
-+                new_test_table_info(region_id.table_id()),
-+                TableRouteValue::physical(region_routes),
-+                wal_options,
-+            )
-+            .await
-+    
+ }
+ 
+ macro_rules! impl_compression_type {
 ```
 
----
-
-### Incident Patch 2: `bba6818c` (2026-11-06)
-**Commit Message**: fix(ci): honor configured region in metric snapshot benchmark (#10157)
-
-* fix(ci): honor configured region in metric snapshot benchmark
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* docs(ci): clarify AWS runner region configuration
-
-Include the documentation changes from #10158 alongside the region fix.
-
-Signed-off-by: Weny Xu <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-Signed-off-by: Weny Xu <[REDACTED_EMAIL]>
-
-**File**: `.github/scripts/ci-runners.md` (modified, +6/-2)
+**File**: `src/mito2/AGENTS.md` (modified, +3/-0)
 ```diff
-@@ -13,8 +13,12 @@ AWS uses `aws-ec2-runner-provision.py` and `aws-ec2-runner-teardown.py` directly
- Repository variables supply `EC2_RUNNER_REGION`, `EC2_RUNNER_SUBNET_ID`, and
- `EC2_RUNNER_SECURITY_GROUP_ID`; credentials use `AWS_ACCESS_KEY_ID`,
- `AWS_SECRET_ACCESS_KEY`, and `GH_PERSONAL_ACCESS_TOKEN` secrets.
--The current region is Singapore (`ap-southeast-1`). By default the script selects
--the newest available Canonical Ubuntu 24.04 amd64 server AMI in that region
-+The runner region comes from `EC2_RUNNER_REGION` (currently `us-east-1`).
-+The subnet and security group must belong to the selected AWS account and region.
-+For benchmarks using real S3, `AWS_CI_TEST_BUCKET_REGION` must match the runner
-+region; `AWS_CI_TEST_BUCKET` must be accessible with the configured credentials.
-+By default the script selects the newest available Canonical Ubuntu 24.04 amd64
-+server AMI in that region
- (owner `099720109477`) and logs its ID. Set `BENCHMARK_EC2_IMAGE_ID` to pin a
- prepared Ubuntu AMI. Existing build CI's `EC2_RUNNER_LINUX_AMD64_IMAGE_ID` is
- unaffected. Both workflows default `system_disk_gib` to `auto` (also accepting
+@@ -103,6 +103,9 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
+ - Sequence numbers are strictly increasing per region; dedup and snapshot reads
+   depend on this. Do not change assignment lightly.
+ - Manifest version is monotonic — never reset or skip it.
++- In regions whose writes require a lease and whose WAL is the object store WAL,
++  each manifest version has one fixed object name and only one writer can create
++  it (`manifest/storage.rs`).
+ - Lock ordering: take the manifest lock before updating `version_control`; the
+   reverse deadlocks against concurrent flush/compaction.
+ - All region I/O runs on tokio workers; never `block_on` inside a worker.
 ```
 
-**File**: `.github/scripts/metric-snapshot-s3-bench.py` (modified, +4/-3)
+**File**: `src/mito2/src/compaction/compactor.rs` (modified, +1/-0)
 ```diff
-@@ -105,8 +105,9 @@ def __init__(self, local_smoke):
-         self.endpoint = os.environ.get("S3_ENDPOINT", "")
-         if self.endpoint and not local_smoke:
-             raise ValueError("Custom S3 endpoints are restricted to local smoke")
--        if not local_smoke and os.environ["S3_REGION"] != "ap-southeast-1":
--            raise ValueError("Cloud benchmark requires ap-southeast-1")
-+        if not local_smoke and (not os.environ["S3_REGION"].strip()
-+                                or os.environ["S3_REGION"] != os.environ["RUNNER_REGION"]):
-+            raise ValueError("Cloud benchmark requires the same nonempty bucket and runner region")
-         self.containers = set()
-         self.network_created = False
-         self.phases = []
-@@ -324,7 +325,7 @@ def summary(self):
-         lines = ["# Metric packed snapshot benchmark", "", f"Image: `{self.image}`",
-                  f"Source commit: `{self.commit}`", "",
-                  "Local smoke only; timings are not AWS results." if self.local_smoke else
--                 "AWS S3 in ap-southeast-1; source and target use local File storage.", "",
-+                 f"S3 in {os.environ['S3_REGION']}; source and target use local File storage.", "",
-                  "| Round | Phase | Seconds | Result |", "| --- | --- | ---: | --- |"]
-         for phase in self.phases:
-             lines.append(f"| {phase['round']} | {phase['phase']} | {phase['wall_seconds']:.3f} | {phase['outcome']} |")
+@@ -292,6 +292,7 @@ impl CompactionRegionOpener {
+             manifest_manager,
+             RegionRoleState::Leader(RegionLeaderState::Writable),
+             hook,
++            Default::default(),
+         ));
+ 
+         let file_purger = {
 ```
 
-**File**: `.github/scripts/metric-snapshot-s3-ops.py` (modified, +25/-12)
+**File**: `src/mito2/src/compaction/scheduler_test.rs` (modified, +2/-0)
 ```diff
-@@ -21,16 +21,16 @@
- """Budget preflight and strictly scoped S3 operations for the metric snapshot benchmark."""
+@@ -2334,6 +2334,7 @@ async fn test_compaction_bypass_in_staging_mode() {
+                 checkpoint_distance: 10,
+                 remove_file_options: Default::default(),
+                 manifest_cache: None,
++                conditional_publication: false,
+             },
+             FormatType::PrimaryKey,
+             false,
+@@ -2345,6 +2346,7 @@ async fn test_compaction_bypass_in_staging_mode() {
+             manager,
+             RegionRoleState::Leader(RegionLeaderState::Staging),
+             None,
++            Default::default(),
+         ))
+     };
  
- import argparse
--from decimal import Decimal
-+from decimal import Decimal, InvalidOperation
- import json
- import os
- from pathlib import Path
- import re
- import time
- import urllib.request
- 
--REGION = "ap-southeast-1"
--HOURLY_USD = Decimal("0.9408")
-+# Historical budget estimate; dispatch can supply a rate for the configured region.
-+DEFAULT_HOURLY_USD = "0.9408"
- OTHER_RESERVE_USD = Decimal("1.50")
- 
- 
-@@ -40,6 +40,16 @@ def owned_prefix(prefix):
-     return prefix
- 
- 
-+def hourly_estimate(env):
-+    try:
-+        estimate = Decimal(env.get("EC2_HOURLY_USD", DEFAULT_HOURLY_USD))
-+    except InvalidOperation as error:
-+        raise ValueError("EC2_HOURLY_USD must be a positive finite estimate") from error
-+    if not estimate.is_finite() or estimate <= 0:
-+        raise ValueError("EC2_HOURLY_USD must be a positive finite estimate")
-+    return estimate
-+
-+
- def plan(env):
-     image = env["GREPTIMEDB_IMAGE"]
-     if not re.fullmatch(r"greptime/greptimedb(?:-nightly)?@sha256:[0-9a-f]{64}", image):
-@@ -49,30 +59,31 @@ def plan(env):
-     tables, minutes = int(env["LOGICAL_TABLES_PER_GROUP"]), int(env["BENCHMARK_TIMEOUT_MINUTES"])
-     if not 50 <= tables <= 10_000 or not 30 <= minutes <= 240:
-         raise ValueError("logical tables per group must be 50..10000; timeout must be 30..240 minutes")
--    if env["S3_REGION"] != REGION or env["RUNNER_REGION"] != REGION:
--        raise ValueError("bucket and runner must both use ap-southeast-1")
-+    if not env["S3_REGION"].strip() or env["S3_REGION"] != env["RUNNER_REGION"]:
-+        raise ValueError("bucket and runner must use the same nonempty region")
-     if not env["S3_BUCKET"]:
-         raise ValueError("S3 bucket is required")
-     prior = Decimal(env["PRIOR_SPEND_USD"])
-     # Reserve 45m provision, 10m queue allowance and 20m cleanup beyond the job timeout.
--    reservation = HOURLY_USD * Decimal(minutes + 75) / 60 + OTHER_RESERVE_USD
-+    hourly = hourly_estimate(env)
-+    reservation = hourly * Decimal(minutes + 75) / 60 + OTHER_RESERVE_USD
-     if not prior.is_finite() or prior < 0 or prior >= 15 or prior + reservation > 20:
-         raise ValueError("campaign budget exhausted: prior spend must be below $15 and leave the full attempt reserve within $20")
-     return {"image": image, "expected_commit": env["EXPECTED_COMMIT"],
-             "logical_tables_per_group": tables, "smoke_logical_tables": 500,
-             "timeout_minutes": minutes, "prefix": owned_prefix(env["RUN_PREFIX"]),
--            "instance_type": "c6id.4xlarge", "region": REGION,
-+            "instance_type": "c6id.4xlarge", "region": env["S3_REGION"],
-             "prior_estimated_usd": str(prior), "attempt_reserve_usd": str(reservation),
--            "ec2_hourly_usd": str(HOURLY_USD), "other_reserve_usd": str(OTHER_RESERVE_USD),
-+            "ec2_hourly_usd": str(hourly), "other_reserve_usd": str(OTHER_RESERVE_USD),
-             "cost_note": "Estimate, not an AWS billing total or a hard spending cap."}
- 
- 
- def client(region):
-     import boto3
-     from botocore.config import Config
- 
--    if region != REGION:
--        raise ValueError("S3 region must be ap-southeast-1")
-+    if not region.strip():
-+        raise ValueError("S3 region is required")
-     return boto3.client("s3", region_name=region, config=Config(
-         connect_timeout=10, read_timeout=30, retries={"mode": "standard", "max_attempts": 3}))
- 
-@@ -193,8 +204,10 @@ def main():
-         if args.started_at is None:
-             parser.error("cost requires --started-at")
-         seconds = max(0, int(time.time()) - args.started_at)
--        estimate = HOURLY_USD * Decimal(seconds) / 3600
--        result = {"allocation_window_seconds": seconds, "ec2_estimate_usd": str(round(estimate, 4)),
-+        hourly = hourly_estimate(os.environ)
-+        estimate = hourly * Decimal(seconds) / 3600
-+        result = {"allocation_window_seconds": seconds, "ec2_hourly_usd": str(hourly),
-+                  "ec2_estimate_usd": str(round(estimate, 4)),
-                   "campaign_estimate_with_other_reserve_usd": str(round(
-                       Decimal(os.environ["PRIOR_SPEND_USD"]) + estimate + OTHER_RESERVE_USD, 4)),
-                   "note": "Allocation wall-time estimate plus $1.50 reserve for S3, disk and IPv4; not an AWS bill."}
 ```
 
-**File**: `.github/scripts/tests/test_metric_snapshot_s3_bench.py` (modified, +19/-0)
+**File**: `src/mito2/src/engine/object_store_wal_test.rs` (modified, +197/-5)
 ```diff
-@@ -28,6 +28,25 @@
+@@ -17,28 +17,36 @@
+ use std::collections::HashMap;
+ use std::sync::Arc;
+ use std::sync::atomic::Ordering;
++use std::time::{Duration, Instant};
  
+-use api::v1::Rows;
++use api::v1::region::{StrictWindow, compact_request};
++use api::v1::{ColumnSchema, Rows};
++use common_datasource::compression::CompressionType;
+ use common_error::ext::ErrorExt;
+ use common_error::status_code::StatusCode;
+ use common_recordbatch::RecordBatches;
+ use common_wal::config::object_store::{ObjectStoreWalConfig, STANDALONE_GENERATION};
+ use common_wal::options::{ObjectStoreWalOptions, WAL_OPTIONS_KEY, WalOptions};
+ use futures::TryStreamExt;
+ use log_store::ObjectStoreLogStore;
++use object_store::ObjectStore;
++use rstest::rstest;
+ use store_api::logstore::LogStore;
+ use store_api::logstore::provider::Provider;
+-use store_api::region_engine::RegionEngine;
++use store_api::region_engine::{RegionEngine, RegionRole};
+ use store_api::region_request::{
+-    PathType, RegionCleanUpRequest, RegionCloseRequest, RegionDropRequest, RegionOpenRequest,
+-    RegionRequest,
++    PathType, RegionCleanUpRequest, RegionCloseRequest, RegionCompactRequest, RegionDropRequest,
++    RegionFlushRequest, RegionOpenRequest, RegionRequest, RegionTruncateRequest,
+ };
+ use store_api::storage::{RegionId, ScanRequest};
  
- class PhaseTests(unittest.TestCase):
-+    def test_cloud_region_configuration(self):
-+        for bucket, runner, accepted in (("us-east-1", "us-east-1", True),
-+                                          ("ap-southeast-1", "ap-southeast-1", True),
-+                                          ("us-east-1", "ap-southeast-1", False),
-+                                          ("", "", False)):
-+            with self.subTest(bucket=bucket, runner=runner), tempfile.TemporaryDirectory() as directory:
-+                env = dict(GREPTIMEDB_IMAGE="greptime/greptimedb@sha256:" + "a" * 64,
-+                           EXPECTED_COMMIT="b" * 40, RUN_PREFIX="metric-snapshot-bench/123-1/",
-+                           RESULTS=str(Path(directory) / "results"), DATA_ROOT=str(Path(directory) / "data"),
-+                           S3_REGION=bucket, RUNNER_REGION=runner, S3_ENDPOINT="")
-+                with patch.dict(bench.os.environ, env):
-+                    if accepted:
-+                        benchmark = bench.Benchmark(local_smoke=False)
-+                        benchmark.summary()
-+                        self.assertIn(f"S3 in {bucket};", (benchmark.results / "summary.md").read_text())
-+                    else:
-+                        with self.assertRaisesRegex(ValueError, "same nonempty"):
-+                            bench.Benchmark(local_smoke=False)
-+
-     def test_docker_nanosecond_timestamps(self):
-         start = bench.docker_timestamp("2026-10-14T06:06:44.72000818Z")
-         end = bench.docker_timestamp("2026-10-14T06:06:46.123456789Z")
-```
-
-**File**: `.github/scripts/tests/test_metric_snapshot_s3_ops.py` (modified, +40/-0)
-```diff
-@@ -20,6 +20,7 @@
- import json
- from pathlib import Path
- import tempfile
-+import types
- import unittest
- from unittest import mock
+ use crate::config::MitoConfig;
+ use crate::engine::MitoEngine;
++use crate::manifest::storage::{delta_file, gen_path, manifest_dir};
++use crate::sst::location::region_dir_from_table_dir;
+ use crate::test_util::{
+-    CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows, reopen_region, rows_schema,
++    CheckpointTaskBlocker, CreateRequestBuilder, TestEnv, build_rows, flush_region, nop_action,
++    put_rows, reopen_region, rows_schema,
+ };
+ use crate::wal::EntryId;
  
-@@ -82,6 +83,45 @@ def test_budget_includes_provision_cleanup_and_other_cost_reserve(self):
-             with self.subTest(changes=changes), self.assertRaises(ValueError):
-                 ops.plan(self.env(**changes))
- 
-+    def test_regions_follow_configuration_and_reject_mismatch_or_empty(self):
-+        for region in ("us-east-1", "ap-southeast-1"):
-+            with self.subTest(region=region):
-+                self.assertEqual(ops.plan(self.env(S3_REGION=region, RUNNER_REGION=region))["region"], region)
-+        for bucket, runner in (("us-east-1", "ap-southeast-1"), ("", ""), (" ", " ")):
-+            with self.subTest(bucket=bucket, runner=runner), self.assertRaises(ValueError):
-+                ops.plan(self.env(S3_REGION=bucket, RUNNER_REGION=runner))
-+
-+    def test_client_uses_configured_region(self):
-+        boto = types.ModuleType("boto3")
-+        boto.client = mock.Mock()
-+        config = types.ModuleType("botocore.config")
-+        config.Config = mock.Mock()
-+        with mock.patch.dict("sys.modules", {"boto3": boto, "botocore.config": config}):
-+            for region in ("us-east-1", "ap-southeast-1"):
-+                ops.client(region)
-+                self.assertEqual(boto.client.call_args.kwargs["region_name"], region)
-+            with self.assertRaises(ValueError):
-+                ops.client("")
-+
-+    def test_hourly_estimate_controls_reservation_and_cost(self):
-+        env = self.env(EC2_HOURLY_USD="2", BENCHMARK_TIMEOUT_MINUTES="30")
-+        plan = ops.plan(env)
-+        self.assertEqual(plan["ec2_hourly_usd"], "2")
-+        self.assertEqual(plan["attempt_reserve_usd"], "5.00")
-+        with mock.patch.dict(ops.os.environ, env), mock.patch.object(ops.time, "time", return_value=4600), \
-+                mock.patch("sys.argv", ["ops", "cost", "--started-at", "1000"]), \
-+                mock.patch("sys.stdout", new_callable=io.StringIO) as output:
-+            ops.main()
-+        cost = json.loads(output.getvalue())
-+        self.assertEqual(cost["ec2_hourly_usd"], "2")
-+        self.assertEqual(cost["ec2_estimate_usd"], "2.0000")
-+        self.assertEqual(cost["campaign_estimate_with_other_reserve_usd"], "3.5000")
-+        for rate in ("", "invalid", "0", "-1", "NaN", "Infinity", "-Infinity"):
-+            with self.subTest(rate=rate), self.assertRaises(ValueError):
-+                ops.plan(self.env(EC2_HOURLY_USD=rate))
-+        with self.assertRaises(ValueError):
-+            ops.plan(self.env(EC2_HOURLY_USD="4"))
-+
-     def watcher_env(self):
-         return self.env(GITHUB_REPOSITORY="GreptimeTeam/greptimedb", GITHUB_RUN_ID="123",
-                         GITHUB_RUN_ATTEMPT="2", GH_TOKEN="test-token", BENCHMARK_TIMEOUT_MINUTES="30")
-```
-
-**File**: `.github/workflows/metric-snapshot-s3-bench.yml` (modified, +6/-0)
-```diff
-@@ -18,6 +18,11 @@ on:
-         description: 'Setup, 500-table smoke and full run timeout, 30..240 minutes'
-         type: number
-         default: 240
-+      ec2_hourly_usd:
-+        description: 'Positive EC2 hourly USD budget estimate; historical default, not live regional pricing'
-+        required: true
-+        type: string
-+        default: '0.9408'
-       prior_spend_usd:
-         description: 'Cumulative estimated cloud spend for all earlier attempts in this $20 campaign'
-         required: true
-@@ -34,6 +39,7 @@ env:
-   LOGICAL_TABLES_PER_GROUP: ${{ inputs.logical_tables_per_group }}
-   BENCHMARK_TIMEOUT_MINUTES: ${{ inputs.benchmark_timeout_minutes }}
-   PRIOR_SPEND_USD: ${{ inputs.prior_spend_usd }}
-+  EC2_HOURLY_USD: ${{ inputs.ec2_hourly_usd }}
-   RUN_PREFIX: metric-snapshot-bench/${{ github.run_id }}-${{ github.run_attempt }}/
-   S3_BUCKET: ${{ vars.AWS_CI_TEST_BUCKET }}
-   S3_REGION: ${{ vars.AWS_CI_TEST_BUCKET_REGION }}
-```
-
-**File**: `docs/how-to/metric-snapshot-s3-bench.md` (modified, +12/-5)
-```diff
-@@ -1,14 +1,17 @@
- # Metric snapshot benchmark on AWS S3
- 
- The manual `Metric Snapshot S3 Benchmark` workflow tests packed Metric export and
--restore against real S3 in `ap-southeast-1`. It must first exist on the repository's
--default branch for GitHub to register `workflow_dispatch`. It was validated on AWS
-+restore against real S3 in the configured CI bucket region. It must first exist on
-+the repository's default branch for GitHub to register `workflow_dispatch`. It was validated on AWS
- by run [38544464731](https://github.com/GreptimeTeam/greptimedb/actions/runs/38544464731);
- [#9573](https://github.com/GreptimeTeam/greptimedb/pull/9573) records its conditions and results.
- 
- ## Run
- 
- Use the repository's existing EC2 runner configuration and CI S3 credentials.
-+`AWS_CI_TEST_BUCKET_REGION` and `EC2_RUNNER_REGION` must be nonempty and equal;
-+for example, both can be `us-east-1`. The configured subnet, security group and
-+AMI (if explicitly supplied) must also belong to the runner region.
- The workflow passes credentials only through CI; no local AWS credentials are
- needed. Source, target and CLI use the same immutable image. This image's source
- SHA and required CLI capabilities have been checked:
-@@ -20,6 +23,7 @@ gh workflow run metric-snapshot-s3-bench.yml \
-   -f expected_commit=f690bbb2040865c0d22b0b57d51612b60ae27cd0 \
-   -f logical_tables_per_group=10000 \
-   -f benchmark_timeout_minutes=240 \
-+  -f ec2_hourly_usd=0.9408 \
-   -f prior_spend_usd=0
- ```
- 
-@@ -28,9 +32,12 @@ earlier cloud attempts in the campaign, including failed setup and cleanup.
- Do not reset the estimate to zero when retrying. The workflow accepts 50–10,000
- logical tables per group and a 30–240 minute benchmark job timeout.
- 
--The runner is fixed at `c6id.4xlarge` (16 vCPU, 32 GiB RAM). At the recorded
--Singapore Linux on-demand estimate of $0.9408/hour, the default attempt reserves
--$6.4392: four benchmark hours, 45 minutes of provisioning, 10 minutes for queueing,
-+The runner is fixed at `c6id.4xlarge` (16 vCPU, 32 GiB RAM). Set
-+`ec2_hourly_usd` to a positive, finite hourly budget estimate appropriate for the
-+selected region and instance. Its default $0.9408/hour preserves the historical
-+Singapore estimate; it is not a live regional price or a guaranteed upper bound.
-+The same estimate is used for preflight reservation and the final cost summary.
-+At that default rate, the default attempt reserves $6.4392: four benchmark hours, 45 minutes of provisioning, 10 minutes for queueing,
- 20 minutes of cleanup, and $1.50 for S3, disk and IPv4 costs. Preflight rejects prior spend at or above
- $15, or an attempt whose reserve would exceed the cumulative $20 budget.
- These estimates and checks are not an AWS hard spending cap or an AWS bill.
-```
-
----
-
-### Incident Patch 3: `ae422ef4` (2026-11-06)
-**Commit Message**: fix: prioritize region ALTER over queued edits (#10193)
-
-* fix: prioritize region ALTER over queued edits
-
-Signed-off-by: evenyag <[REDACTED_EMAIL]>
-
-* test: use valid edits in ALTER priority regression
-
-Signed-off-by: evenyag <[REDACTED_EMAIL]>
-
-* refactor: make region edit dispatch outcomes explicit
-
-Signed-off-by: evenyag <[REDACTED_EMAIL]>
-
-* fix: reject queued alters and edits when dropping regions
-
-Signed-off-by: evenyag <[REDACTED_EMAIL]>
-
-* test: cover queued ALTER handoff before region edits
-
-Signed-off-by: evenyag <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: evenyag <[REDACTED_EMAIL]>
-
-**File**: `src/mito2/src/engine/edit_region_test.rs` (modified, +336/-0)
-```diff
-@@ -884,3 +884,339 @@ async fn test_edit_region_concurrently_with_format(flat_format: bool) {
-         tasks_count * EDITS_PER_TASK
-     );
+@@ -377,3 +385,187 @@ async fn test_object_store_wal_options_reject_raft_engine_log_store() {
+         .unwrap_err();
+     assert_eq!(StatusCode::InvalidArguments, err.status_code());
  }
 +
++/// Returns a config that starts a checkpoint on every commit.
++fn checkpoint_every_commit_config() -> MitoConfig {
++    MitoConfig {
++        manifest_checkpoint_distance: 1,
++        ..Default::default()
++    }
++}
++
++/// Creates a region whose writes require a lease. Returns the lease deadline, which the frozen
++/// clock of the lease checks has not reached.
++async fn create_leased_region(
++    env: &mut TestEnv,
++    region_id: RegionId,
++) -> (
++    MitoEngine,
++    Arc<ObjectStoreLogStore>,
++    String,
++    Vec<ColumnSchema>,
++    Instant,
++) {
++    let (engine, log_store) = env
++        .create_engine_with_object_store_wal(checkpoint_every_commit_config(), &wal_config())
++        .await;
++    engine.require_write_lease();
++    engine.freeze_lease_clock(Instant::now());
++    let (table_dir, schema) = create_region(&engine, region_id).await;
++    let deadline = Instant::now() + Duration::from_secs(10);
++    engine
++        .set_region_role_with_lease(region_id, RegionRole::Leader, Instant::now(), deadline)
++        .unwrap();
++    (engine, log_store, table_dir, schema, deadline)
++}
++
++async fn count_ssts(store: &ObjectStore, region_dir: &str) -> usize {
++    let entries = store.list(region_dir).await.unwrap();
++    entries
++        .iter()
++        .filter(|e| e.name().ends_with(".parquet"))
++        .count()
++}
++
++#[rstest]
++#[case::flush(RegionRequest::Flush(RegionFlushRequest::default()), 1)]
++#[case::compaction(
++    RegionRequest::Compact(RegionCompactRequest {
++        options: compact_request::Options::StrictWindow(StrictWindow { window_seconds: 3600 }),
++        ..Default::default()
++    }),
++    1
++)]
++#[case::truncate(RegionRequest::Truncate(RegionTruncateRequest::All), 0)]
 +#[tokio::test]
-+async fn test_alter_precedes_edit_backlog() {
-+    use store_api::region_request::{AddColumn, AlterKind, RegionAlterRequest};
-+    use tokio::sync::Notify;
-+    struct Listener {
-+        tx: mpsc::UnboundedSender<usize>,
-+        altering: Notify,
-+        release: Notify,
-+        flushing: Notify,
-+        release_flush: Notify,
++async fn test_stale_commit_on_deleted_delta_name_conflicts(
++    #[case] commit: RegionRequest,
++    #[case] new_ssts: usize,
++) {
++    common_telemetry::init_default_ut_logging();
++    // The creation is version 0 and the flushes below are versions 1 and 2.
++    const VERSION: u64 = 3;
++    let (blocker, layer) = CheckpointTaskBlocker::block_delta_write(VERSION);
++    let mut env = TestEnv::with_prefix("stale-manifest-commit")
++        .await
++        .with_mock_layer(layer);
++    let region_id = RegionId::new(1, 1);
++    let (old_leader, log_store, table_dir, schema, deadline) =
++        create_leased_region(&mut env, region_id).await;
++    let rows = |start| Rows {
++        schema: schema.clone(),
++        rows: build_rows(start, start + 3),
++    };
++    for start in [0, 3] {
++        put_rows(&old_leader, region_id, rows(start)).await;
++        flush_region(&old_leader, region_id, None).await;
 +    }
-+    #[async_trait::async_trait]
-+    impl EventListener for Listener {
-+        fn on_recv_requests(&self, count: usize) {
-+            let _ = self.tx.send(count);
-+        }
-+        async fn on_flush_begin(&self, _: RegionId) {
-+            self.flushing.notify_one();
-+            self.release_flush.notified().await;
-+        }
-+        async fn on_notify_region_change_result_begin(&self, _: RegionId) {
-+            self.altering.notify_one();
-+            self.release.notified().await;
-+        }
-+    }
-+    for (dirty, invalid) in [(false, false), (true, false), (false, true)] {
-+        let mut env = TestEnv::new().await;
-+        let (tx, mut rx) = mpsc::unbounded_channel();
-+        let listener = Arc::new(Listener {
-+            tx,
-+            altering: Notify::new(),
-+            release: Notify::new(),
-+            flushing: Notify::new(),
-+            release_flush: Notify::new(),
-+        });
-+        let engine = env
-+            .create_engine_with(
-+                MitoConfig {
-+                    schedule_compaction_after_edit: false,
-+                    ..Default::default()
-+                },
-+                None,
-+                Some(listener.clone()),
-+                None,
-+            )
-+            .await;
-+        let region_id = RegionId::new(1, 1);
-+        let create = CreateRequestBuilder::new().build();
-+        let schema = rows_schema(&create);
-+        engine
-+            .handle_request(region_id, RegionRequest::Create(create))
-+            .await
-+            .unwrap();
-+        if dirty {
-+            crate::test_util::put_rows(
-+                &engine,
-+                region_id,
-+                Rows {
-+                    schema,
-+                    rows: build_rows(0, 1),
-+                },
-+            )
-+            .await;
-+        }
-+        let region = engine.get_region(region_id).unwrap();
-+        let guard = region.manifest_ctx.manifest_manager.write().await;
-+        let e = engine.clone();
-+        let first = tokio::spawn(async move {
-+            e.edit_region(region_id, test_region_edit(region_id, FileId::random()))
-+                .await
-+        });
-+        wait_until_region_is_in_editing(&region).await;
-+        drain_worker_recv_events(&mut rx);
-+        let file_id = FileId::random();
-+        let e = engine.clone();
-+        let queued = tokio::spawn(async move {
-+            e.edit_region(region_id, test_region_edit(region_id, file_id))
-+                .await
-+        });
-+        wait_worker_recv_event(&mut rx).await;
-+        let e = engine.clone();
-+        let alter = tokio::spawn(async move {
-+            e.handle_request(
-+                region_id,
-+                RegionRequest::Alter(RegionAlterRequest {
-+                    kind: AlterKind::AddColumns {
-+                        columns: vec![AddColumn {
-+                            column_metadata: store_api::metadata::ColumnMetadata {
-+                                column_schema: datatypes::schema::ColumnSchema::new(
-+                                    if invalid { "ts" } else { "new_field" },
-+                                    datatypes::data_type::ConcreteDataType::float64_datatype(),
-+                                    true,
-+                                ),
-+                                semantic_type: api::v1::SemanticType::Field,
-+                                column_id: 100,
-+                            },
-+                            location: None,
-+                        }],
-+                    },
-+                }),
-+            )
-+            .await
-+        });
-+        wait_worker_recv_event(&mut rx).await;
-+        drop(guard);
-+        let late = if dirty {
-+            tokio::time::timeout(Duration::from_secs(10), listener.flushing.notified())
-+                .await
-+                .unwrap();
-+            drain_worker_recv_events(&mut rx);
-+            let e = engine.clone();
-+            let task = tokio::spawn(async move {
-+                e.edit_region(region_id, test_region_edit(region_id, FileId::random()))
-+                    .await
-+            });
-+            wait_worker_recv_event(&mut rx).await;
-+            listener.release_flush.notify_one();
-+            Some(task)
-+        } else {
-+            None
-+        };
-+        if invalid {
-+            assert!(alter.await.unwrap().is_err());
-+            first.await.unwrap().unwrap();
-+            tokio::time::timeout(Duration::from_secs(10), queued)
-+                .await
-+             
++    put_rows(&old_leader, region_id, rows(6)).await;
++
++    let region = old_leader.get_region(region_id).unwrap();
++    let (manifest, checkpoint) = {
++        let mut manager = region.manifest_ctx.manifest_manager.write().await;
++        manager.wait_for_pending_checkpoint().await;
++        (
++            manager.manifest(),
++            manager.checkpointer().last_checkpoint_version
 ```
 
-**File**: `src/mito2/src/flush.rs` (modified, +10/-0)
+**File**: `src/mito2/src/engine/region_hook.rs` (modified, +3/-3)
 ```diff
-@@ -1497,6 +1497,16 @@ impl FlushScheduler {
-         status.pending_bulk_writes.push(request);
+@@ -120,8 +120,8 @@
+ //! immediately after SST files are written but **before** the manifest is committed.
+ //!
+ //! `on_manifest_updated` is funneled through [`ManifestContext::update_locked`],
+-//! the sole caller of the low-level [`RegionManifestManager::update`], which
+-//! packages each successful write into a [`PendingManifestHook`]. The caller
++//! which calls the low-level [`RegionManifestManager::update_with_verification`]
++//! and packages each successful write into a [`PendingManifestHook`]. The caller
+ //! owns the write lock, drops it, and *then* fires the receipt — the hook must
+ //! never run under the lock. [`ManifestContext::update_manifest`] is the common
+ //! case: it acquires the lock, delegates to `update_locked`, and fires the
+@@ -148,7 +148,7 @@
+ //! [`on_region_dropped`]: RegionHook::on_region_dropped
+ //! [`on_region_files_removed`]: RegionHook::on_region_files_removed
+ //! [`on_region_gc`]: RegionHook::on_region_gc
+-//! [`RegionManifestManager::update`]: crate::manifest::manager::RegionManifestManager::update
++//! [`RegionManifestManager::update_with_verification`]: crate::manifest::manager::RegionManifestManager::update_with_verification
+ //! [`ManifestContext::update_locked`]: crate::region::ManifestContext::update_locked
+ //! [`ManifestContext::update_manifest`]: crate::region::ManifestContext::update_manifest
+ 
+```
+
+**File**: `src/mito2/src/error.rs` (modified, +36/-4)
+```diff
+@@ -147,6 +147,25 @@ pub enum Error {
+         location: Location,
+     },
+ 
++    #[snafu(display("Manifest version {version} conflicts in {manifest_dir}: {reason}"))]
++    ManifestVersionConflict {
++        version: ManifestVersion,
++        manifest_dir: String,
++        reason: String,
++        #[snafu(implicit)]
++        location: Location,
++    },
++
++    #[snafu(display(
++        "Manifest checkpoint {version} in {manifest_dir} was removed after it was listed"
++    ))]
++    ManifestCheckpointVanished {
++        version: ManifestVersion,
++        manifest_dir: String,
++        #[snafu(implicit)]
++        location: Location,
++    },
++
+     #[snafu(display("Failed to serialize manifest, region_id: {}", region_id))]
+     SerializeManifest {
+         region_id: RegionId,
+@@ -1561,9 +1580,11 @@ impl ErrorExt for Error {
+             MultiRegionCompactionResource { .. } => StatusCode::RuntimeResourcesExhausted,
+             SstWriteMemoryExceeded { .. } => StatusCode::RuntimeResourcesExhausted,
+             DataTypeMismatch { source, .. } => source.status_code(),
+-            OpenDal { .. } | ManifestDeltaNotFound { .. } | ReadParquet { .. } => {
+-                StatusCode::StorageUnavailable
+-            }
++            OpenDal { .. }
++            | ManifestDeltaNotFound { .. }
++            | ManifestVersionConflict { .. }
++            | ManifestCheckpointVanished { .. }
++            | ReadParquet { .. } => StatusCode::StorageUnavailable,
+             WriteWal { source, .. }
+             | ReadWal { source, .. }
+             | DeleteWal { source, .. }
+@@ -1784,7 +1805,9 @@ impl ErrorExt for Error {
+             | RegionBusy { .. }
+             | ManualCompactionAlreadyRunning { .. }
+             | FlushableRegionState { .. }
+-            | ManifestDeltaNotFound { .. } => RetryHint::Retryable,
++            | ManifestDeltaNotFound { .. }
++            | ManifestVersionConflict { .. }
++            | ManifestCheckpointVanished { .. } => RetryHint::Retryable,
+ 
+             OpenDal { error, .. }
+             | DeleteSsts { error, .. }
+@@ -2002,5 +2025,14 @@ mod tests {
+         // This can be raised while applying an edit after its manifest file was saved.
+         let error = RegionMetadataNotFoundSnafu {}.build();
+         assert!(error.may_have_persisted_manifest_update());
++
++        let error = ManifestVersionConflictSnafu {
++            version: 1u64,
++            manifest_dir: "manifest/",
++            reason: "test",
++        }
++        .build();
++        assert!(error.may_have_persisted_manifest_update());
++        assert!(error.retry_hint().is_retryable());
+     }
+ }
+```
+
+**File**: `src/mito2/src/manifest/manager.rs` (modified, +40/-17)
+```diff
+@@ -55,6 +55,9 @@ pub struct RegionManifestOptions {
+     pub remove_file_options: RemoveFileOptions,
+     /// Optional cache for manifest files.
+     pub manifest_cache: Option<ManifestCache>,
++    /// Whether two writers can race for a version, so that deltas are published by conditional
++    /// create under a fixed name and recovery starts from the highest listed checkpoint.
++    pub(crate) conditional_publication: bool,
+ }
+ 
+ impl RegionManifestOptions {
+@@ -71,8 +74,16 @@ impl RegionManifestOptions {
+                 enable_gc: config.gc.enable,
+             },
+             manifest_cache: None,
++            conditional_publication: false,
+         }
+     }
++
++    /// Sets whether deltas are published by conditional create and recovery starts from the
++    /// highest listed checkpoint.
++    pub(crate) fn with_conditional_publication(mut self, enabled: bool) -> Self {
++        self.conditional_publication = enabled;
++        self
++    }
+ }
+ 
+ /// Options for updating `removed_files` field in [RegionManifest].
+@@ -181,7 +192,8 @@ impl RegionManifestManager {
+             stats.total_manifest_size.clone(),
+             stats.metric().cloned(),
+             options.manifest_cache.clone(),
+-        );
++        )
++        .with_conditional_publication(options.conditional_publication)?;
+         let manifest_version = stats.manifest_version.clone();
+ 
+         info!(
+@@ -269,7 +281,8 @@ impl RegionManifestManager {
+             stats.total_manifest_size.clone(),
+             stats.metric().cloned(),
+             options.manifest_cache.clone(),
+-        );
++        )
++        .with_conditional_publication(options.conditional_publication)?;
+         let manifest_version = stats.manifest_version.clone();
+ 
+         // recover from storage
+@@ -556,32 +569,30 @@ impl RegionManifestManager {
      }
  
-+    /// Whether an ALTER owns a turn while waiting for its memtables to flush.
-+    pub(crate) fn has_pending_alter(&self, region_id: RegionId) -> bool {
-+        self.region_status.get(&region_id).is_some_and(|status| {
-+            status
-+                .pending_ddls
-+                .iter()
-+                .any(|ddl| matches!(ddl.request, DdlRequest::Alter(_)))
+     /// Updates the manifest. Returns the current manifest version number.
++    ///
++    /// The caller has no Leader deadline to show that its commit returned in time, so a normal
++    /// commit under conditional publication is always verified and starts no checkpoint.
+     pub async fn update(
+         &mut self,
+         action_list: RegionMetaActionList,
+         is_staging: bool,
+     ) -> Result<ManifestVersion> {
+-        self.update_inner(action_list, is_staging, !is_staging)
++        self.update_with_verification(action_list, is_staging, !is_staging, || true)
+             .await
+     }
+ 
+-    /// Updates the normal manifest without starting a checkpoint.
++    /// Updates the manifest. Returns the current manifest version number.
+     ///
+-    /// This is only used while a leader is downgrading. The final flush still
+-    /// publishes its manifest edit, but must not start cleanup after the
+-    /// downgrade checkpoint barrier.
+-    pub(crate) async fn update_normal_without_checkpoint(
+-        &mut self,
+-        action_list: RegionMetaActionList,
+-    ) -> Result<ManifestVersion> {
+-        self.update_inner(action_list, false, false).await
+-    }
+-
+-    async fn update_inner(
++    /// `allow_checkpoint` tells whether a normal commit may start a checkpoint. `must_verify` is
++    /// evaluated after the save returns, for a normal commit under conditional publication. If it
++    /// returns true, the commit may have landed on a name that checkpoint cleanup freed, so it
++    /// only applies when LIST finds no checkpoint that covers it, and it starts no checkpoint.
++    pub(crate) async fn update_with_verification(
+         &mut self,
+         action_list: RegionMetaActionList,
+         is_staging: bool,
+-        allow_checkpoint: bool,
++        mut allow_checkpoint: bool,
++        must_verify: impl FnOnce() -> bool,
+     ) -> Result<ManifestVersion> {
+         let _t = MANIFEST_OP_ELAPSED
+             .with_label_values(&["update"])
+@@ -594,10 +605,22 @@ impl RegionManifestManager {
+             }
+         );
+ 
+-        let version = self.increase_version();
++        let conditional = self.store.is_conditional_publication();
++        let version = if conditional {
++            self.last_version() + 1
++        } else {
++            self.increase_version()
++        };
+         self.store
+             .save(version, &action_list.encode()?, is_staging)
+             .await?;
++        if conditional {
++            if !is_staging && must_verify() {
++                self.store.ensure_version_not_checkpointed(version).await?;
++                allow_checkpoint = false;
++            }
++            self.set_version(version);
++        }
+ 
+         // For a staging region, the manifest is initially inherited from the previous manifest(i.e., `self.manifest`).
+         // When the staging manifest becomes available, it will be used to construct the new manifest.
+```
+
+---
+
+### Incident Patch 2: `402e4a97` (2026-11-09)
+**Commit Message**: fix(time): avoid i32 overflow when converting an out-of-range date (#10299)
+
+Signed-off-by: Arpit Jain <[REDACTED_EMAIL]>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `src/common/time/src/date.rs` (modified, +10/-2)
+```diff
+@@ -55,7 +55,7 @@ impl From<NaiveDate> for Date {
+ impl Display for Date {
+     /// [Date] is formatted according to ISO-8601 standard.
+     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+-        if let Some(abs_date) = NaiveDate::from_num_days_from_ce_opt(UNIX_EPOCH_FROM_CE + self.0) {
++        if let Some(abs_date) = self.to_chrono_date() {
+             write!(f, "{}", abs_date.format("%F"))
+         } else {
+             write!(f, "Date({})", self.0)
+@@ -93,7 +93,9 @@ impl Date {
+     }
+ 
+     pub fn to_chrono_date(&self) -> Option<NaiveDate> {
+-        NaiveDate::from_num_days_from_ce_opt(UNIX_EPOCH_FROM_CE + self.0)
++        UNIX_EPOCH_FROM_CE
++            .checked_add(self.0)
++            .and_then(NaiveDate::from_num_days_from_ce_opt)
+     }
+ 
+     /// Format Date for given format and timezone.
+@@ -217,6 +219,12 @@ mod tests {
+         assert_eq!("1970-02-12", Date::new(42).to_string());
+     }
+ 
++    #[test]
++    fn test_to_chrono_date_out_of_range() {
++        assert_eq!(None, Date::new(i32::MAX).to_chrono_date());
++        assert_eq!("Date(2147483647)", Date::new(i32::MAX).to_string());
++    }
++
+     #[test]
+     pub fn test_date_parse() {
+         assert_eq!(
+```
+
+---
+
+### Incident Patch 3: `8da533c3` (2026-11-09)
+**Commit Message**: fix(mito2): keep rows written during staging in the WAL (#10253)
+
+* fix(mito2): keep rows written during staging in the WAL
+
+A flush during staging committed its SSTs to the staging manifest, then
+dropped the memtable and released the WAL. If staging did not end
+successfully those rows were gone. A flush that committed after staging
+had ended lost its rows even though staging succeeded.
+
+Staging regions no longer flush. They are skipped by memory-pressure,
+periodic and region-limit flushes, and their writes are rejected instead
+of queued at twice the region limit or when the node's staging memtables
+reach half of the engine's flush limit. A manual or repartition flush on
+a staging region with data gets a retryable error; the migration
+pre-flush and the WAL prune flush reply success without flushing. Closing
+a staging region leaves staging first, so skip-WAL rows are flushed to
+the normal manifest.
+
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+
+* fix(mito2): keep accounting and closing staging regions during staged edits
+
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+
+* fix(mito2): track staged edits without relying on the partition info
+
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+
+* tes
+
+**File**: `src/mito2/AGENTS.md` (modified, +3/-0)
+```diff
+@@ -126,6 +126,9 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
+ - In flat batches, equal `__primary_key` dictionary keys imply the same series, but
+   not the reverse: `wrap_pk_binary_to_dict` gives every row its own key. Compare key
+   bytes when grouping rows by series.
++- Staging regions never flush: a flush would move rows into the staging manifest and
++  release their WAL, losing them if staging does not end successfully. Every flush
++  trigger in `worker/handle_flush.rs` must skip them, and `handle_close` leaves staging first.
+ 
+ ## Maintenance contract
+ 
+```
+
+**File**: `src/mito2/src/engine/partition_filter_test.rs` (modified, +42/-31)
+```diff
+@@ -20,13 +20,15 @@ use datatypes::arrow::array::AsArray;
+ use datatypes::value::Value;
+ use partition::expr::{Operand, col};
+ use partition::function::IcebergHash;
+-use store_api::region_engine::RegionEngine;
++use store_api::region_engine::{RegionEngine, RemapManifestsRequest};
+ use store_api::region_request::{
+-    EnterStagingRequest, RegionFlushRequest, RegionRequest, StagingPartitionDirective,
++    ApplyStagingManifestRequest, EnterStagingRequest, RegionFlushRequest, RegionRequest,
++    StagingPartitionDirective,
+ };
+ use store_api::storage::{RegionId, ScanRequest};
+ 
+ use crate::config::MitoConfig;
++use crate::engine::MitoEngine;
+ use crate::test_util::{CreateRequestBuilder, TestEnv, build_rows, put_rows, rows_schema};
+ 
+ /// Helper to create a partition expression for testing.
+@@ -39,6 +41,30 @@ fn range_expr_string(col_name: &str, start: f64, end: f64) -> String {
+         .unwrap()
+ }
+ 
++/// Ends staging the way repartition does, importing the region's own files.
++async fn apply_staging(engine: &MitoEngine, region_id: RegionId, partition_expr: String) {
++    let result = engine
++        .remap_manifests(RemapManifestsRequest {
++            region_id,
++            input_regions: vec![region_id],
++            region_mapping: [(region_id, vec![region_id])].into_iter().collect(),
++            new_partition_exprs: [(region_id, partition_expr.clone())].into_iter().collect(),
 +        })
++        .await
++        .unwrap();
++    engine
++        .handle_request(
++            region_id,
++            RegionRequest::ApplyStagingManifest(ApplyStagingManifestRequest {
++                partition_expr,
++                central_region_id: region_id,
++                manifest_path: result.manifest_paths[&region_id].clone(),
++            }),
++        )
++        .await
++        .unwrap();
++}
++
+ #[tokio::test]
+ async fn test_partition_filter_basic() {
+     test_partition_filter_basic_with_format(false).await;
+@@ -51,7 +77,7 @@ async fn test_partition_filter_basic() {
+ /// 1. Creates a region with partition expr `tag_0 >= "0"` (covers all data)
+ /// 2. Writes data (tag_0 = "0"..="9") and flushes - SST has old partition expr
+ /// 3. Enters staging mode with partition expr `tag_0 >= "5"` (narrower)
+-/// 4. Writes more data and flushes in staging mode
++/// 4. Writes more data in staging mode
+ /// 5. Exits staging mode - region now has new partition expr
+ /// 6. Scans all data - old SST data not matching new expr should be filtered
+ async fn test_partition_filter_basic_with_format(flat_format: bool) {
+@@ -118,16 +144,7 @@ async fn test_partition_filter_basic_with_format(flat_format: bool) {
+     };
+     put_rows(&engine, region_id, rows_data).await;
+ 
+-    // Flush in staging mode
+-    engine
+-        .handle_request(
+-            region_id,
+-            RegionRequest::Flush(RegionFlushRequest::default()),
+-        )
+-        .await
+-        .unwrap();
+-
+-    // Scan data in staging mode - should only see initial 5 rows (staging SST not visible)
++    // Scan data in staging mode - rows written in staging stay readable in the memtable
+     let projection = Some(vec![1]);
+     let request = ScanRequest {
+         projection,
+@@ -138,20 +155,16 @@ async fn test_partition_filter_basic_with_format(flat_format: bool) {
+     let batches = RecordBatches::try_collect(stream).await.unwrap();
+     let total_rows: usize = batches.iter().map(|rb| rb.num_rows()).sum();
+     assert_eq!(
+-        total_rows, 5,
+-        "Should see 5 rows before exiting staging mode"
++        total_rows, 11,
++        "Should see 11 rows before exiting staging mode"
+     );
+ 
+     // Exit staging mode
+-    use store_api::region_engine::SettableRegionRoleState;
+-    engine
+-        .set_region_role_state_gracefully(region_id, SettableRegionRoleState::Leader)
+-        .await
+-        .unwrap();
++    apply_staging(&engine, region_id, new_partition_expr).await;
+ 
+     // Scan after exiting staging - the old SST (tag_0 = "0".."4") should have
+     // rows filtered by partition expr (tag_0 >= "5"), which means none of them pass.
+-    // But the staging SST (tag_0 = "5".."10") satisfies the partition expr.
++    // But the memtable rows (tag_0 = "5".."10") satisfy the partition expr.
+     let projection = Some(vec![1]);
+     let request = ScanRequest {
+         projection,
+@@ -163,10 +176,10 @@ async fn test_partition_filter_basic_with_format(flat_format: bool) {
+     let total_rows: usize = batches.iter().map(|rb| rb.num_rows()).sum();
+     // After exit:
+     // - Old SST (rows 0-4): partition expr is "tag_0 >= 5", so these are filtered out
+-    // - Staging SST (rows 5-10): These satisfy partition expr, so they're visible
++    // - Memtable (rows 5-10): These satisfy partition expr, so they're visible
+     assert_eq!(
+         total_rows, 6,
+-        "Should see 6 rows after exiting staging (rows 5-10 from staging SST), flat_format: {}",
++        "Should see 6 rows after exiting staging (rows 5-10 from the memtable), flat_format: {}",
+         flat_format
+     )
+```
+
+**File**: `src/mito2/src/engine/staging_test.rs` (modified, +1014/-91)
+```diff
+@@ -14,16 +14,20 @@
+ 
+ //! Integration tests for staging state functionality.
+ 
++use std::collections::HashMap;
+ use std::sync::Arc;
++use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+ use std::time::Duration;
+ use std::{assert_matches, fs};
+ 
+-use api::v1::{ArrowIpc, Rows};
++use api::v1::{ArrowIpc, ColumnSchema, Rows};
++use async_trait::async_trait;
+ use common_error::ext::{ErrorExt, RetryHint};
+ use common_error::status_code::StatusCode;
+ use common_function::utils::partition_expr_version;
+ use common_grpc::flight;
+ use common_recordbatch::RecordBatches;
++use common_time::util::current_time_millis;
+ use datatypes::arrow::array::{ArrayRef, Float64Array, StringArray, TimestampMillisecondArray};
+ use datatypes::arrow::record_batch::RecordBatch;
+ use datatypes::value::Value;
+@@ -33,28 +37,36 @@ use object_store::layers::mock::{
+     MockLayerBuilder, OpDelete, Result as MockResult, Write, Writer,
+ };
+ use partition::expr::{PartitionExpr, col};
++use store_api::mito_engine_options::WRITE_BUFFER_SIZE_KEY;
+ use store_api::region_engine::{
+-    RegionEngine, RemapManifestsRequest, SetRegionRoleStateResponse, SettableRegionRoleState,
++    RegionEngine, RegionRole, RemapManifestsRequest, SetRegionRoleStateResponse,
++    SettableRegionRoleState,
+ };
+ use store_api::region_request::{
+     ApplyStagingManifestRequest, EnterStagingRequest, RegionAlterRequest, RegionBulkInsertsRequest,
+-    RegionFlushRequest, RegionPutRequest, RegionRequest, RegionTruncateRequest,
+-    StagingPartitionDirective,
++    RegionCloseRequest, RegionFlushReason, RegionFlushRequest, RegionPutRequest, RegionRequest,
++    RegionTruncateRequest, StagingPartitionDirective,
+ };
+-use store_api::storage::{RegionId, ScanRequest};
++use store_api::storage::{FileId, RegionId, ScanRequest};
+ 
+ use crate::config::MitoConfig;
+-use crate::engine::listener::NotifyEnterStagingResultListener;
++use crate::engine::MitoEngine;
++use crate::engine::listener::{EventListener, FlushListener, NotifyEnterStagingResultListener};
+ use crate::error::Error;
++use crate::flush::WriteBufferManager;
+ use crate::manifest::action::{
+     RegionChange, RegionEdit, RegionMetaAction, RegionMetaActionList, RegionPartitionExprChange,
+ };
+-use crate::region::{RegionLeaderState, RegionRoleState, parse_partition_expr};
+-use crate::request::WorkerRequest;
++use crate::region::{MitoRegionRef, RegionLeaderState, RegionRoleState};
++use crate::request::{RegionEditRequest, WorkerRequest};
+ use crate::sst::FormatType;
++use crate::sst::file::FileMeta;
+ use crate::test_util::{
+-    CheckpointTaskBlocker, CreateRequestBuilder, TestEnv, build_rows, put_rows, rows_schema,
++    CheckpointTaskBlocker, CreateRequestBuilder, MockWriteBufferManager, TestEnv, build_rows,
++    flush_region, put_rows, reopen_region, rows_schema,
+ };
++use crate::time_provider::mock::MockTimeProvider;
++use crate::worker::MAX_INITIAL_CHECK_DELAY_SECS;
+ 
+ fn range_expr(col_name: &str, start: i64, end: i64) -> PartitionExpr {
+     col(col_name)
+@@ -436,13 +448,6 @@ async fn test_staging_write_partition_expr_version_with_format(flat_format: bool
+         .await
+         .unwrap();
+     assert_eq!(result.affected_rows, 3);
+-    engine
+-        .handle_request(
+-            region_id,
+-            RegionRequest::Flush(RegionFlushRequest::default()),
+-        )
+-        .await
+-        .unwrap();
+ 
+     let result = engine
+         .remap_manifests(RemapManifestsRequest {
+@@ -551,9 +556,6 @@ async fn test_staging_manifest_directory_with_format(flat_format: bool) {
+     let region_id = RegionId::new(1024, 0);
+     let request = CreateRequestBuilder::new().build();
+ 
+-    // Get column schemas before consuming the request
+-    let column_schemas = rows_schema(&request);
+-
+     // Check manifest files after region creation (before staging mode)
+     // Create region
+     engine
+@@ -637,22 +639,6 @@ async fn test_staging_manifest_directory_with_format(flat_format: bool) {
+         Error::StagingPartitionExprMismatch { .. }
+     );
+ 
+-    // Put some data and flush in staging mode
+-    let rows_data = Rows {
+-        schema: column_schemas.clone(),
+-        rows: build_rows(0, 3),
+-    };
+-    put_rows(&engine, region_id, rows_data).await;
+-
+-    // Force flush to generate manifest files in staging mode
+-    engine
+-        .handle_request(
+-            region_id,
+-            RegionRequest::Flush(RegionFlushRequest::default()),
+-        )
+-        .await
+-        .unwrap();
+-
+     // Check that manifest files are in staging directory
+     let staging_manifest_dir = format!("{}/staging/manifest", region_dir);
+     assert!(
+@@ -708,7 +694,7 @@ async fn test_staging_exit_success_with_manifests_with_format(flat_format: bool)
+         .await
+         .unwrap();
+ 
+-    // Add some data and flush in staging mode to generate staging manifests
++    // This data is flushed when entering staging mode.
+     let rows_data = Rows {
+         schema: column_schemas.clone(),
+         rows: build_rows(0, 3),
+@@ -728,55 +714,55 @@ async fn test_sta
+```
+
+**File**: `src/mito2/src/flush.rs` (modified, +12/-23)
+```diff
+@@ -60,7 +60,7 @@ use crate::read::flat_dedup::{FlatDedupIterator, FlatLastNonNull, FlatLastRow};
+ use crate::read::flat_merge::FlatMergeIterator;
+ use crate::region::options::{IndexOptions, MergeMode, RegionOptions};
+ use crate::region::version::{VersionControlData, VersionControlRef, VersionRef};
+-use crate::region::{ManifestContextRef, RegionLeaderState, RegionRoleState, parse_partition_expr};
++use crate::region::{ManifestContextRef, RegionLeaderState, parse_partition_expr};
+ use crate::request::{
+     BackgroundNotify, DdlRequest, FlushFailed, FlushFinished, OnFailure, OptionOutputTx, OutputTx,
+     SenderBulkRequest, SenderDdlRequest, SenderWriteRequest, WorkerRequest, WorkerRequestWithTime,
+@@ -281,8 +281,6 @@ pub(crate) struct RegionFlushTask {
+     pub(crate) index_options: IndexOptions,
+     /// Semaphore to control flush concurrency.
+     pub(crate) flush_semaphore: Arc<Semaphore>,
+-    /// Whether the region is in staging mode.
+-    pub(crate) is_staging: bool,
+     /// Partition expression of the region.
+     ///
+     /// This is used to generate the file meta.
+@@ -412,7 +410,6 @@ impl RegionFlushTask {
+                     _timer: timer,
+                     edit,
+                     memtables_to_remove,
+-                    is_staging: self.is_staging,
+                 };
+                 WorkerRequest::Background {
+                     region_id: self.region_id,
+@@ -537,10 +534,7 @@ impl RegionFlushTask {
+             flushed_sequence: Some(version_data.committed_sequence),
+             committed_sequence: None,
+         };
+-        info!(
+-            "Applying {edit:?} to region {}, is_staging: {}",
+-            self.region_id, self.is_staging
+-        );
++        info!("Applying {edit:?} to region {}", self.region_id);
+ 
+         let action_list = RegionMetaActionList::with_action(RegionMetaAction::Edit(edit.clone()));
+ 
+@@ -553,17 +547,11 @@ impl RegionFlushTask {
+         let expected_state = if matches!(self.reason, FlushReason::Downgrading) {
+             RegionLeaderState::Downgrading
+         } else {
+-            // Check if region is in staging mode
+-            let current_state = self.manifest_ctx.current_state();
+-            if current_state == RegionRoleState::Leader(RegionLeaderState::Staging) {
+-                RegionLeaderState::Staging
+-            } else {
+-                RegionLeaderState::Writable
+-            }
++            RegionLeaderState::Writable
+         };
+         let manifest_version = match self
+             .manifest_ctx
+-            .update_manifest(expected_state, action_list, self.is_staging)
++            .update_manifest(expected_state, action_list, false)
+             .await
+         {
+             Ok(manifest_version) => {
+@@ -584,9 +572,8 @@ impl RegionFlushTask {
+             }
+         };
+         info!(
+-            "Successfully update manifest version to {manifest_version}, region: {}, is_staging: {}, reason: {}",
++            "Successfully update manifest version to {manifest_version}, region: {}, reason: {}",
+             self.region_id,
+-            self.is_staging,
+             self.reason.as_str()
+         );
+ 
+@@ -1507,6 +1494,13 @@ impl FlushScheduler {
+         })
+     }
+ 
++    /// Returns true if the region has a close-time flush.
++    pub(crate) fn has_close_time_flush(&self, region_id: RegionId) -> bool {
++        self.region_status
++            .get(&region_id)
++            .is_some_and(|status| status.closing)
 +    }
 +
      /// Returns true if the region has pending DDLs or a close-time flush.
      pub(crate) fn has_pending_ddls(&self, region_id: RegionId) -> bool {
          self.region_status
-```
-
-**File**: `src/mito2/src/worker.rs` (modified, +3/-0)
-```diff
-@@ -769,6 +769,7 @@ impl<S: LogStore> WorkerStarter<S> {
-             region_count: REGION_COUNT.with_label_values(&[&id_string]),
-             request_wait_time: REQUEST_WAIT_TIME.with_label_values(&[&id_string]),
-             region_edit_queues: RegionEditQueues::default(),
-+            pending_alters: Default::default(),
-             schema_metadata_manager: self.schema_metadata_manager,
-             file_ref_manager: self.file_ref_manager.clone(),
-             partition_expr_fetcher: self.partition_expr_fetcher,
-@@ -1100,6 +1101,8 @@ struct RegionWorkerLoop<S> {
-     request_wait_time: Histogram,
-     /// Queues for region edit requests.
-     region_edit_queues: RegionEditQueues,
-+    /// ALTER requests waiting for the current edit or ALTER to finish.
-+    pending_alters: handle_alter::PendingAlters,
-     /// Database level metadata manager.
-     schema_metadata_manager: SchemaMetadataManagerRef,
-     /// Datanode level file references manager.
-```
-
-**File**: `src/mito2/src/worker/handle_alter.rs` (modified, +35/-0)
-```diff
-@@ -45,12 +45,47 @@ use crate::request::{DdlRequest, OptionOutputTx, SenderDdlRequest};
- use crate::sst::FormatType;
- use crate::worker::RegionWorkerLoop;
+@@ -1713,7 +1707,6 @@ mod tests {
+             manifest_ctx,
+             index_options: IndexOptions::default(),
+             flush_semaphore: Arc::new(Semaphore::new(2)),
+-            is_staging: false,
+             partition_expr: None,
+             durability_barrier: DurabilityBarrier::noop(),
+         }
+@@ -1864,7 +1857,6 @@ mod tests {
+                 .await,
+             index_options: IndexOptions::default(),
+             flush_semaphore: Arc::new(Semaphore::new(2)),
+-            is_staging: false,
+             partition_expr: None,
+             durability_barrier: DurabilityBarrier::noop(),
+         };
+@@ -1950,7 +1942,6 @@ mod tests {
+                     committed_sequence: None,
+                 },
+                 memtables_to_remove: smallvec![],
+-                is_staging: false,
+             }),
+         };
  
-+pub(crate) type PendingAlters = std::collections::HashMap<
-+    RegionId,
-+    std::collections::VecDeque<(RegionAlterRequest, OptionOutputTx)>,
-+>;
-+
- impl<S: LogStore> RegionWorkerLoop<S> {
-     pub(crate) async fn handle_alter_request(
-         &mut self,
-         region_id: RegionId,
-         request: RegionAlterRequest,
-         sender: OptionOutputTx,
-+    ) {
-+        if self.flush_scheduler.has_pending_alter(region_id)
-+            || self.pending_alters.contains_key(&region_id)
-+            || self.regions.get_region(region_id).is_some_and(|region| {
-+                matches!(
-+                    region.state(),
-+                    crate::region::RegionRoleState::Leader(
-+                        crate::region::RegionLeaderState::Editing
-+                            | crate::region::RegionLeaderState::Altering
-+                    )
-+                )
-+            })
-+        {
-+            let queue = self.pending_alters.entry(region_id).or_default();
-+            if queue.len() >= 128 {
-+                sender.send(crate::error::RegionBusySnafu { region_id }.fail());
-+            } else {
-+                queue.push_back((request, sender));
+@@ -2166,7 +2157,6 @@ mod tests {
+                 manifest_ctx: manifest_ctx.clone(),
+                 index_options: IndexOptions::default(),
+                 flush_semaphore: Arc::new(Semaphore::new(2)),
+-                is_staging: false,
+                 partition_expr: None,
+                 durability_barrier: DurabilityBarrier::noop(),
+             })
+@@ -2473,7 +2463,6 @@ mod tests {
+                 manifest_ctx: manifest_ctx.clone(),
+                 index_options: IndexOptions::default(),
+                 f
+```
+
+**File**: `src/mito2/src/region.rs` (modified, +35/-25)
+```diff
+@@ -96,7 +96,7 @@ impl RegionUsage {
+ pub enum RegionLeaderState {
+     /// The region is opened and is writable.
+     Writable,
+-    /// The region is in staging mode - writable but no checkpoint/compaction.
++    /// The region is in staging mode - writable but no checkpoint/compaction/flush.
+     Staging,
+     /// The region is entering staging mode. - write requests will be stalled.
+     EnteringStaging,
+@@ -407,6 +407,17 @@ impl MitoRegion {
+         self.manifest_ctx.state.load() == RegionRoleState::Leader(RegionLeaderState::Staging)
+     }
+ 
++    /// Returns whether the region is in staging mode, counting a staged edit in progress.
++    pub(crate) fn is_staging_or_staged_edit(&self) -> bool {
++        match self.manifest_ctx.state.load() {
++            RegionRoleState::Leader(RegionLeaderState::Staging) => true,
++            RegionRoleState::Leader(RegionLeaderState::Editing) => {
++                self.manifest_ctx.staging_partition_info().is_some()
 +            }
-+            self.dispatch_pending_region_requests(region_id).await;
-+            return;
++            _ => false,
 +        }
-+        self.execute_alter_request(region_id, request, sender).await;
 +    }
 +
-+    pub(crate) async fn execute_alter_request(
-+        &mut self,
-+        region_id: RegionId,
-+        request: RegionAlterRequest,
-+        sender: OptionOutputTx,
-     ) {
-         let requested_skip_wal = skip_wal_value(&request.kind);
-         let (region, follower_skip_wal) = match self.regions.writable_non_staging_region(region_id)
-```
-
-**File**: `src/mito2/src/worker/handle_drop.rs` (modified, +3/-0)
-```diff
-@@ -223,6 +223,9 @@ where
- 
-     /// Cleans runtime state for a region that is no longer available to serve requests.
-     pub(crate) async fn cleanup_dropped_region_runtime_state(&mut self, region_id: RegionId) {
-+        // A successful flush may hand off DROP before queued ALTERs and edits resume.
-+        // Reject their waiters here because the removed region has no next turn.
-+        self.reject_region_edit_queue_as_not_found(region_id);
-         // Notifies flush scheduler.
-         self.flush_scheduler.on_region_dropped(region_id);
-         // Notifies compaction scheduler.
-```
-
-**File**: `src/mito2/src/worker/handle_flush.rs` (modified, +11/-1)
-```diff
-@@ -74,6 +74,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
- 
-         // Handle stalled requests.
-         self.handle_stalled_requests().await;
-+        self.dispatch_pending_region_requests(region_id).await;
+     /// Returns whether the region is entering staging mode.
+     pub(crate) fn is_enter_staging(&self) -> bool {
+         self.manifest_ctx.state.load()
+@@ -527,6 +538,29 @@ impl MitoRegion {
+         )
      }
  
-     /// Checks whether the engine reaches flush threshold. If so, finds regions in this
-@@ -483,7 +484,15 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-             self.flush_scheduler.on_flush_success(region_id)
-         {
-             // Perform DDLs first because they require empty memtables.
--            self.handle_ddl_requests(&mut ddl_requests).await;
-+            // These ALTERs already own the flush turn; bypass initial admission.
-+            for ddl in ddl_requests.drain(..) {
-+                if let crate::request::DdlRequest::Alter(request) = ddl.request {
-+                    self.execute_alter_request(ddl.region_id, request, ddl.sender)
-+                        .await;
-+                } else {
-+                    self.handle_ddl_requests(&mut vec![ddl]).await;
-+                }
-+            }
-             if self.flush_scheduler.is_flush_requested(region_id) {
-                 // The DDL may schedule another flush, e.g. a close-time flush after writes
-                 // arrived in the mutable memtable during the previous flush. Keep pending
-@@ -518,6 +527,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-         // Schedules compaction.
-         self.schedule_compaction(&region).await;
- 
-+        self.dispatch_pending_region_requests(region_id).await;
-         self.listener.on_flush_success(region_id);
-     }
- 
-```
-
-**File**: `src/mito2/src/worker/handle_manifest.rs` (modified, +89/-25)
-```diff
-@@ -52,7 +52,14 @@ use crate::worker::{RegionWorkerLoop, WorkerListener};
- 
- pub(crate) type RegionEditQueues = HashMap<RegionId, RegionEditQueue>;
- 
--/// A queue for region edit requests received while the region is already `Editing`.
-+/// Outcome of admitting a region edit, independent of subsequent region role changes.
-+pub(crate) enum RegionEditDispatch {
-+    Started,
-+    Queued,
-+    Rejected,
-+}
-+
-+/// A queue for region edits waiting behind an active edit or ALTER.
- ///
- /// Normal writes and bulk inserts that arrive during `Editing` use the stalled-write queue instead.
- /// When an edit completes, those writes are handled before the next queued edit starts, preserving
-@@ -74,17 +81,18 @@ impl RegionEditQueue {
-         }
-     }
- 
--    fn enqueue(&mut self, request: RegionEditRequest) {
-+    fn enqueue(&mut self, request: RegionEditRequest) -> RegionEditDispatch {
-         if self.requests.len() > Self::QUEUE_MAX_LEN {
-             request.waiters.reply_with(|| {
-                 RegionBusySnafu {
-                     region_id: self.region_id,
-                 }
-                 .fail()
-             });
--            return;
-+            return RegionEditDispatch::Rejected;
-         };
-         self.requests.push_back(request);
-+        RegionEditDispatch::Queued
-     }
- 
-     fn dequeue(&mut self) -> Option<RegionEditRequest> {
-@@ -149,8 +157,13 @@ impl RegionEditQueue {
- }
- 
- impl<S: LogStore> RegionWorkerLoop<S> {
--    /// Rejects queued region edit requests as region not found.
-+    /// Rejects queued ALTER and region edit requests as region not found.
-     pub(crate) fn reject_region_edit_queue_as_not_found(&mut self, region_id: RegionId) {
-+        if let Some(queue) = self.pending_alters.remove(&region_id) {
-+            for (_, sender) in queue {
-+                sender.send(RegionNotFoundSnafu { region_id }.fail());
-+            }
++    /// Leaves staging without committing it, abandoning a staged edit in progress.
++    ///
++    /// You should call this method in the worker loop, which is what restores the state of an
++    /// edit, and only when [Self::is_staging_or_staged_edit] holds.
++    pub(crate) fn abort_staging(&self) {
++        let aborted = self
++            .manifest_ctx
++            .state
++            .fetch_update(|state| {
++                matches!(
++                    state,
++                    RegionRoleState::Leader(
++                        RegionLeaderState::Staging | RegionLeaderState::Editing
++                    )
++                )
++                .then_some(RegionRoleState::Leader(RegionLeaderState::Writable))
++            })
++            .is_ok();
++        if aborted {
++            self.manifest_ctx.clear_staging_partition_info();
 +        }
-         if let Some(edit_queue) = self.region_edit_queues.remove(&region_id) {
-             edit_queue.reject_all_as_not_found();
-         }
-@@ -206,6 +219,8 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-         // Handles the stalled requests.
-         self.handle_region_stalled_requests(&change_result.region_id, true)
-             .await;
-+        self.dispatch_pending_region_requests(change_result.region_id)
-+            .await;
++    }
++
+     /// Sets the region role state gracefully. This acquires the manifest write lock.
+     pub(crate) async fn set_role_state_gracefully(
+         &self,
+@@ -1142,30 +1176,6 @@ impl MitoRegion {
+         Ok(Some(pending))
      }
  
-     /// Handles region sync request.
-@@ -285,19 +300,24 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+-    /// Returns the partition expression string for this region.
+-    ///
+-    /// If the region is currently in staging state, this returns the partition expression held in
+-    /// the staging partition field. Otherwise, it returns the partition expression from the primary
+-    /// region metadata (current committed version).
+-    pub fn maybe_staging_partition_expr_str(&self) -> Option<String> {
+-        let is_staging = self.is_staging();
+-        if is_staging {
+-            let staging_partition_info = self.manifest_ctx.staging_partition_info();
+-            if staging_partition_info.is_none() {
+-                warn!(
+-                    "Staging partition expr is none for region {} in staging state",
+-                    self.region_id
+-                );
+-            }
+-            staging_partition_info
+-                .as_ref()
+-                .and_then(|info| info.partition_expr().map(ToString::to_string))
+-        } else {
+-            let version = self.version();
+-            version.metadata.partition_expr.clone()
+-        }
+-    }
+-
+     pub fn expected_partition_expr_version(&self) -> u64 {
+         if self.is_staging() {
+             self.manifest_ctx
+```
+
+**File**: `src/mito2/src/request.rs` (modified, +10/-2)
+```diff
+@@ -1152,8 +1152,6 @@ pub(crate) struct FlushFinished {
+     pub(crate) edit: RegionEdit,
+     /// Memtables to remove.
+     pub(crate) memtables_to_remove: SmallVec<[MemtableId; 2]>,
+-    /// Whether the region is in staging mode.
+-    pub(crate) is_staging: bool,
+ }
+ 
+ impl FlushFinished {
+@@ -1372,6 +1370,9 @@ pub(crate) struct RegionEditRequest {
+     pub(crate) preload_sst_cache: bool,
+     /// The waiters that are waiting for this region edit's result.
+     pub(crate) waiters: Waiters,
++    /// The partition expression of the staging this edit belongs to, if any.
++    /// The edit must not run unless the region is staging for that expression.
++    pub(crate) staging_partition_expr: Option<String>,
+ }
+ 
+ impl RegionEditRequest {
+@@ -1386,8 +1387,15 @@ impl RegionEditRequest {
+             edit,
+             preload_sst_cache,
+             waiters: Waiters::one(waiter),
++            staging_partition_expr: None,
+         }
+     }
++
++    /// Binds the edit to the staging for `partition_expr`.
++    pub(crate) fn for_staging(mut self, partition_expr: String) -> Self {
++        self.staging_partition_expr = Some(partition_expr);
++        self
++    }
+ }
+ 
+ /// Notifies the regin the result of editing region.
+```
+
+**File**: `src/mito2/src/worker.rs` (modified, +9/-0)
+```diff
+@@ -93,6 +93,7 @@ use crate::sst::index::puffin_manager::PuffinManagerFactory;
+ use crate::temp_file_sweeper;
+ use crate::time_provider::{StdTimeProvider, TimeProviderRef};
+ use crate::wal::Wal;
++use crate::worker::handle_flush::StagingRegionsRef;
+ use crate::worker::handle_manifest::RegionEditQueues;
+ 
+ /// Identifier for a worker.
+@@ -258,6 +259,7 @@ impl WorkerGroup {
+         let sweep_limiter = (config.gc.max_concurrent_gc_job > 0)
+             .then(|| Arc::new(Semaphore::new(config.gc.max_concurrent_gc_job)));
+         let node_lease = Arc::new(NodeLease::default());
++        let staging_regions = StagingRegionsRef::default();
+ 
+         let workers = (0..config.num_workers)
+             .map(|id| {
+@@ -290,6 +292,7 @@ impl WorkerGroup {
+                     #[cfg(feature = "hdfs-object-store")]
+                     sweep_limiter: sweep_limiter.clone(),
+                     node_lease: node_lease.clone(),
++                    staging_regions: staging_regions.clone(),
+                 }
+                 .start()
+             })
+@@ -529,6 +532,7 @@ impl WorkerGroup {
+         let sweep_limiter = (config.gc.max_concurrent_gc_job > 0)
+             .then(|| Arc::new(Semaphore::new(config.gc.max_concurrent_gc_job)));
+         let node_lease = Arc::new(NodeLease::default());
++        let staging_regions = StagingRegionsRef::default();
+         let workers = (0..config.num_workers)
+             .map(|id| {
+                 WorkerStarter {
+@@ -560,6 +564,7 @@ impl WorkerGroup {
+                     #[cfg(feature = "hdfs-object-store")]
+                     sweep_limiter: sweep_limiter.clone(),
+                     node_lease: node_lease.clone(),
++                    staging_regions: staging_regions.clone(),
+                 }
+                 .start()
+             })
+@@ -677,6 +682,7 @@ struct WorkerStarter<S> {
+     /// no concurrent GC job.
+     sweep_limiter: Option<Arc<Semaphore>>,
+     node_lease: Arc<NodeLease>,
++    staging_regions: StagingRegionsRef,
+ }
+ 
+ impl<S: LogStore> WorkerStarter<S> {
+@@ -782,6 +788,7 @@ impl<S: LogStore> WorkerStarter<S> {
+             #[cfg(feature = "hdfs-object-store")]
+             sweep_limiter: self.sweep_limiter,
+             node_lease: self.node_lease,
++            staging_regions: self.staging_regions,
+         };
+         let handle = common_runtime::spawn_global(async move {
+             worker_thread.run().await;
+@@ -1122,6 +1129,8 @@ struct RegionWorkerLoop<S> {
+     /// no concurrent GC job.
+     sweep_limiter: Option<Arc<Semaphore>>,
+     node_lease: Arc<NodeLease>,
++    /// Staging regions of this node that have received writes.
++    staging_regions: StagingRegionsRef,
  }
  
  impl<S: LogStore> RegionWorkerLoop<S> {
--    /// Handles region edit request.
--    pub(crate) fn handle_region_edit(&mut self, request: RegionEditRequest) {
-+    /// Admits an edit and reports whether it started, queued, or failed synchronously.
-+    pub(crate) fn handle_region_edit(&mut self, request: RegionEditRequest) -> RegionEditDispatch {
-         let region_id = request.region_id;
-         let Some(region) = self.regions.get_region(region_id) else {
-             request
-                 .waiters
-                 .reply_with(|| RegionNotFoundSnafu { region_id }.fail());
--            return;
-+            return RegionEditDispatch::Rejected;
-         };
- 
--        if !region.is_writable() {
--            if region.state() == RegionRoleState::Leader(RegionLeaderState::Editing) {
--                self.region_edit_queues
-+        if !region.is_writable() || self.flush_scheduler.has_pending_alter(region_id) {
-+            if matches!(
-+                region.state(),
-+                RegionRoleState::Leader(RegionLeaderState::Editing | RegionLeaderState::Altering)
-+            ) || (region.is_writable() && self.flush_scheduler.has_pending_alter(region_id))
-+            {
-+                return self
-+                    .region_edit_queues
-                     .entry(region_id)
-                     .or_insert_with(|| RegionEditQueue::new(region_id))
-                     .enqueue(request);
-@@ -306,7 +326,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-                     .waiters
-                     .reply_with(|| RegionBusySnafu { region_id }.fail());
-             }
--            return;
-+            return RegionEditDispatch::Rejected;
-         }
- 
-         let RegionEditRequest {
-@@ -339,7 +359,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-         if let Err(e) = region.set_editing(expect_state) {
-             let e = Arc::new(e);
-             waiters.reply_with(|| Err(e.clone()).context(EditRegionSnafu { region_id }));
--            return;
-+            return RegionEditDispatch::Rejected;
-         }
-         region.version_control.update_last_sequence(file_sequence);
- 
-@@ -383,6 +403,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-                 );
-             }
-         });
-+        RegionEditDispatch::Started
-     }
- 
-     /// Handles region edit result.
-@@ -450,25 +471,68 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+```
+
+**File**: `src/mito2/src/worker/handle_apply_staging.rs` (modified, +2/-1)
+```diff
+@@ -140,7 +140,8 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+                         region_id, edit,
+                         // we don't need to preload sst cache during repartition, as it may cause extra network overhead.
+                         false, tx,
+-                    ),
++                    )
++                    .for_staging(request.partition_expr),
+                 )))
                  .await;
-         }
  
--        let next_request =
--            if let Some(edit_queue) = self.region_edit_queues.get_mut(&edit_result.region_id) {
--                let request = edit_
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10227** (2026-11-06): feat(query): read a split-series table through a raw source (@discord9)
-- **PR #10226** (2026-11-06): feat(query): match a partitioned multi-selector tree above its sources (@discord9)
-- **PR #10224** (2026-11-06): fix(query): plan a data-free statement and a zero-match discovery natively (@discord9)
-- **PR #10223** (2026-11-06): feat(promql): match an empty on() and grouped cardinalities natively (@discord9)
-- **PR #10219** (2026-11-06): fix(meta-srv): invalidate leader cache on transaction errors (@WenyXu)
-- **PR #10218** (2026-11-07): feat(meta): configure drain parallelism and strategy over HTTP (@WenyXu)
+- **PR #10299** (2026-11-09): fix(time): avoid i32 overflow when converting an out-of-range date (@arpitjain099)
+- **PR #10272** (2026-11-09): fix(promql): bound scatter time filter expression depth (@evenyag)
+- **PR #10270** (2026-11-09): feat: update dashboard to v0.14.5 (@sunchanglong)
+- **PR #10269** (2026-11-09): feat(log-store): add a read-only object store WAL reader (@WenyXu)
+- **PR #10261** (closed): fix(query): keep PromQL scatter time filters within expression depth (@ump45nose)
+- **PR #10260** (closed): docs(query): state the real reason a CTE does not offer the native PromQL route (@discord9)
 
 ---
 
@@ -2590,61 +2882,37 @@ Signed-off-by: evenyag <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta-srv): acquire remote WAL read lock once before upgrade retries (#10205)
+## X. mito2): publish manifest deltas by conditional create under a lease (#10234)
 
 **RULE**:
-When implementing operations in `src/meta-srv/src/procedure/region_migration/upgrade_candidate_region.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/common/datasource/src/compression.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9acb55a`: meta-srv): acquire remote WAL read lock once before upgrade retries (#10205). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50a2c4d3`: mito2): publish manifest deltas by conditional create under a lease (#10234). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta-srv/src/procedure/region_migration/upgrade_candidate_region.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/datasource/src/compression.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // If using Kafka WAL, hold a read lock on each topic for all attempts to prevent WAL
-        // pruning during the upgrade. Acquire once: re-acquiring a held read lock on retry
-        // queues behind a waiting `WalPruneProcedure` writer, which waits on the first guard.
-        for topic in &topics {
-            guards.push(
-                procedure_ctx
-                    .provider
-                    .acquire_lock(&(RemoteWalLock::Read(topic.clone()).into()))
-                    .await,
-            );
-        }
+use async_compression::Level;
 
-
-/// Regression tests for a deadlock between the upgrade step's per-retry `RemoteWalLock::Read`
-/// (now acquired once before the retry loop) and `WalPruneProcedure`'s `RemoteWalLock::Write`
-/// on the same topic.
-///
-/// Mirrors a datanode rolling restart: failover sends the upgrade instruction to a candidate
-/// datanode that never answers, the mailbox times out (retryable), and the periodic WAL prune
-/// for the region's topic starts while the upgrade is waiting. Both procedures share one
-/// `ContextProvider`, as they do inside metasrv's procedure manager.
-///
-/// Requires a Kafka broker: `GT_KAFKA_ENDPOINTS=127.0.0.1:9092`.
-#[cfg(test)]
-mod wal_prune_deadl
+    /// Encodes `content` as a gzip stream at level 0, which stores it without compression.
+    pub async fn encode_gzip_stored(content: &[u8]) -> io::Result<Vec<u8>> {
+        let mut buffer = Vec::with_capacity(content.len());
+        let mut encoder = write::GzipEncoder::with_quality(&mut buffer, Level::Precise(0));
+        encoder.write_all(content).await?;
+        encoder.shutdown().await?;
+        Ok(buffer)
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            // If using Kafka WAL, acquire a read lock on the topic to prevent WAL pruning during the upgrade.
-            for topic in &topics {
-                guards.push(
-                    procedure_ctx
-                        .provider
-                        .acquire_lock(&(RemoteWalLock::Read(topic.clone()).into()))
-                        .await,
-                );
-            }
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9acb55a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50a2c4d3` are properly handled with clean fallback behavior.
