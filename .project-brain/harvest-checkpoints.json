@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T06:05:21.815Z",
+  "last_updated": "2026-11-09T06:32:27.542Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -815,14 +815,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
-      "content_hash": "d6a858078e57780e249484384c2f822302fb5291e8f825ba571c753aed520fd8",
-      "verified_at": "2026-11-05T11:45:25.876Z",
+      "content_hash": "8298b4515580f5b9df2c7cbec3fc38146427b53861907e29c7e6b97398e4d887",
+      "verified_at": "2026-11-09T06:32:27.541Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:45:25.876Z"
+      "last_updated": "2026-11-09T06:32:27.542Z"
     },
     "google/embeddinggemma-2": {
       "repository": "google/embeddinggemma-2",

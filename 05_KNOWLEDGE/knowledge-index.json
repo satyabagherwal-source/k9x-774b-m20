@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T06:05:21.708Z",
+  "last_updated": "2026-11-09T06:32:27.421Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22589,10 +22589,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
       "source_version": "hf-canberkkkkkk-ema-lightning",
-      "content_hash": "d6a858078e57780e249484384c2f822302fb5291e8f825ba571c753aed520fd8",
+      "content_hash": "8298b4515580f5b9df2c7cbec3fc38146427b53861907e29c7e6b97398e4d887",
       "dossier_path": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Batched Inference Scheduler for Concurrent TTS Requests",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Low-Step Flow-Matching Sampling for Real-Time TTS",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Latent Rate Decoupling for Efficient Vocoder Upsampling",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1385,
           "title": "Zero-Allocation Sliding Window Alignment Invariant for Streaming Flow-Matching",
@@ -22667,7 +22682,7 @@
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv485u82",
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g"
       ],
-      "verified_at": "2026-11-05T11:45:25.741Z",
+      "verified_at": "2026-11-09T06:32:27.387Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

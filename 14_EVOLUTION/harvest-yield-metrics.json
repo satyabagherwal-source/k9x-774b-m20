@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T06:05:21.811Z",
-  "total_cycles_completed": 8493,
-  "total_learnings_persisted": 8493,
-  "total_rules_promoted": 8292,
+  "last_updated": "2026-11-09T06:32:27.538Z",
+  "total_cycles_completed": 8494,
+  "total_learnings_persisted": 8494,
+  "total_rules_promoted": 8295,
   "history": [
-    {
-      "timestamp": "2026-11-08T16:51:11.662Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T16:58:38.478Z",
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-09T06:05:21.811Z",
       "repository": "google/embeddinggemma-2",
       "learningId": "learn-huggingface-google-embeddinggemma-2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T06:32:27.538Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

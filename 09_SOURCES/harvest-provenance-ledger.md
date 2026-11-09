@@ -8537,3 +8537,4 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `6275c121` | Multi-dimensional audit evidence | 2026-11-09T05:52:50.331Z |
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `4d5f787b` | Multi-dimensional audit evidence | 2026-11-09T06:00:14.909Z |
 | `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-09T06:05:21.795Z |
+| `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-09T06:32:27.522Z |
