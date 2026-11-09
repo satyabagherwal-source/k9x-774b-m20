@@ -8663,3 +8663,8 @@
 | `CYCLE-20261109-1HJV` | `2026-11-09T18:16:21.787Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`421ec896...`) |
 | `CYCLE-20261109-3MN1` | `2026-11-09T21:05:59.389Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`132ab018...`) |
 | `CYCLE-20261109-3PF9` | `2026-11-09T21:06:02.997Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c2bf03f4...`) |
+| `CYCLE-20261109-UR5I` | `2026-11-09T21:27:04.950Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`824aa60c...`) |
+| `CYCLE-20261109-URS2` | `2026-11-09T21:27:05.762Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5f87bc84...`) |
+| `CYCLE-20261109-V1AA` | `2026-11-09T21:27:18.082Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`b9a517d9...`) |
+| `CYCLE-20261109-02SC` | `2026-11-09T21:31:13.308Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`f705756c...`) |
+| `CYCLE-20261109-0TIZ` | `2026-11-09T21:31:47.963Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`c774db36...`) |

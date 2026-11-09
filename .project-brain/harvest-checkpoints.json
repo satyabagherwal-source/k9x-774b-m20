@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T21:06:03.015Z",
+  "last_updated": "2026-11-09T21:31:47.977Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "0f867f49d4d42ed18a07c7f82febfb7c7dc6faf6d002545732c2c165058311d7",
-      "verified_at": "2026-11-09T17:44:09.792Z",
+      "content_hash": "5f87bc84a465bfcc1842a0afa0a4fd86095aa591a0351d06f653547643d10d61",
+      "verified_at": "2026-11-09T21:27:05.776Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T17:44:09.792Z"
+      "last_updated": "2026-11-09T21:27:05.776Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "7a6c8475f19847ea94908b3fcfc81a3e9182f24c93a9013cd8acfba84f799ebc",
-      "verified_at": "2026-11-08T19:45:31.285Z",
+      "content_hash": "824aa60c496f24ce14acef416efe6e27d43a284fc4ac26a1e511b1c220a455ab",
+      "verified_at": "2026-11-09T21:27:04.975Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T19:45:31.285Z"
+      "last_updated": "2026-11-09T21:27:04.975Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -17211,14 +17211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
-      "content_hash": "0944db45602655979a6afa06b81279583a1e989d0649848ee6fb63b2b850f4bf",
-      "verified_at": "2026-11-05T10:58:08.614Z",
+      "content_hash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
+      "verified_at": "2026-11-09T21:31:47.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T10:58:08.614Z"
+      "last_updated": "2026-11-09T21:31:47.976Z"
     },
     "LiquidAI/LFM3-VL-2B": {
       "repository": "LiquidAI/LFM3-VL-2B",
@@ -17661,14 +17661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-d1-2b",
-      "content_hash": "eaa3c4fdbf895a0ba626e82982d4b5275f2fdfee18c5e8d098c15e4996ac7b1c",
-      "verified_at": "2026-11-05T18:31:38.910Z",
+      "content_hash": "b9a517d9c2578a1c0dc13c5b2bac459cfa0bab4f0099790e168687d2652ca695",
+      "verified_at": "2026-11-09T21:27:18.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:31:38.910Z"
+      "last_updated": "2026-11-09T21:27:18.095Z"
     },
     "sensenova/SenseNova-Loop-9B-Preview": {
       "repository": "sensenova/SenseNova-Loop-9B-Preview",
@@ -18434,6 +18434,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-09T09:24:13.913Z"
+    },
+    "sceneview/sceneview": {
+      "repository": "sceneview/sceneview",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sceneview-sceneview",
+      "content_hash": "f705756cc6b179cb6c9186ecfc808a8cd3b26239833cd466074f2c5db5136c99",
+      "verified_at": "2026-11-09T21:31:13.332Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-09T21:31:13.332Z"
     }
   },
   "repos": {

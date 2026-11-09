@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `6220b0f1`  
+> **Source Version**: `f5af00bb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T19:45:30.406Z  
+> **Timestamp**: 2026-11-09T21:27:03.494Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T19:45:29.644Z  
+> **Harvest Timestamp**: 2026-11-09T21:27:03.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2067,223 +2067,502 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6220b0f1` (2026-11-08)
-**Commit Message**: Reduce serverless test CPU with batched writes and cluster reuse (#58549)
+### Incident Patch 1: `0ef48dff` (2026-11-09)
+**Commit Message**: Fix Hive bridge drain recovery and per-DC followers (#56221)
 
-**File**: `ydb/tests/functional/serverless/conftest.py` (modified, +3/-3)
+Co-authored-by: mregrock <[REDACTED_EMAIL]>
+
+**File**: `ydb/core/mind/hive/bridge_pile_info.h` (modified, +1/-0)
 ```diff
-@@ -89,7 +89,7 @@ def ydb_serverless_db_ctx(ydb_cluster, database, hostel_db, timeout_seconds=100,
-         attributes={
-             "cloud_id": "CLOUD_ID_VAL",
-             "folder_id": "FOLDER_ID_VAL",
--            "database_id": "DATABASE_ID_VAL",
-+            "database_id": database,
-         },
-     )
+@@ -10,6 +10,7 @@ struct TBridgePileInfo {
+     bool Drain = false;
+     TVector<TActorId> DrainInitiators; // Currently always empty
+     THiveDrain* DrainActor = nullptr;
++    bool DrainRetry = false;
  
-@@ -154,7 +154,7 @@ def ydb_serverless_db_with_exclusive_nodes_ctx(ydb_cluster, database, hostel_db,
-         attributes={
-             "cloud_id": "CLOUD_ID_VAL",
-             "folder_id": "FOLDER_ID_VAL",
--            "database_id": "DATABASE_ID_VAL",
-+            "database_id": database,
-         },
-     )
- 
-@@ -181,7 +181,7 @@ def ydb_serverless_db_with_exclusive_nodes_ctx(ydb_cluster, database, hostel_db,
-         )
- 
- 
--@pytest.fixture(scope='module')
-+@pytest.fixture(scope='function')
- def ydb_serverless_db_with_exclusive_nodes(ydb_cluster, ydb_root, ydb_hostel_db, encryption_key):
-     database_name = os.path.join(ydb_root, "serverless_with_exclusive_nodes")
- 
+     TBridgePileInfo(const TBridgeInfo::TPile& wardenPileInfo)
+         : Id(wardenPileInfo.BridgePileId)
 ```
 
-**File**: `ydb/tests/functional/serverless/test_serverless.py` (modified, +156/-112)
+**File**: `ydb/core/mind/hive/drain.cpp` (modified, +87/-31)
 ```diff
-@@ -1,5 +1,7 @@
- # -*- coding: utf-8 -*-
-+import contextlib
- import functools
-+import json
- import logging
- import os
- import re
-@@ -90,20 +92,16 @@ def test_fixtures(ydb_hostel_db, ydb_serverless_db):
-     )
- 
- 
--def test_create_table(ydb_hostel_db, ydb_serverless_db, ydb_endpoint):
-+def test_create_table(ydb_hostel_db, ydb_serverless_db, ydb_client):
-     logger.debug(
-         "test for serverless db %s over hostel db %s", ydb_serverless_db, ydb_hostel_db
-     )
- 
-     database = ydb_serverless_db
- 
--    driver_config = ydb.DriverConfig(
--        ydb_endpoint,
--        database
--    )
-     logger.info(" database is %s", database)
- 
--    driver = ydb.Driver(driver_config)
-+    driver = ydb_client(database)
-     driver.wait(120)
- 
-     driver.scheme_client.make_directory(os.path.join(database, "dirA0"))
-@@ -145,20 +143,16 @@ def drop_table(session, path):
-         pool.retry_operation_sync(drop_table, None, os.path.join(database, "dirA1", "dirB1", "table"))
- 
- 
--def test_turn_on_serverless_storage_billing(ydb_hostel_db, ydb_serverless_db, ydb_endpoint, metering_file_path, ydb_private_client):
-+def test_turn_on_serverless_storage_billing(ydb_hostel_db, ydb_serverless_db, metering_file_path, ydb_private_client, ydb_client, request):
-     logger.debug(
-         "test for serverless db %s over hostel db %s", ydb_serverless_db, ydb_hostel_db
-     )
- 
-     database = ydb_serverless_db
- 
--    driver_config = ydb.DriverConfig(
--        ydb_endpoint,
--        database
--    )
-     logger.info(" database is %s", database)
- 
--    driver = ydb.Driver(driver_config)
-+    driver = ydb_client(database)
-     driver.wait(120)
- 
-     driver.scheme_client.make_directory(os.path.join(database, "dirA0"))
-@@ -192,15 +186,33 @@ def write_some_data(session, path):
- 
-         pool.retry_operation_sync(write_some_data, None, os.path.join(database, "dirA1", "dirB1", "table"))
- 
--        ydb_private_client.add_config_item("FeatureFlags { AllowServerlessStorageBillingForSchemeShard: true }")
--        while True:
-+        metering_start = os.path.getsize(metering_file_path)
-+        response = ydb_private_client.add_config_item("FeatureFlags { AllowServerlessStorageBillingForSchemeShard: true }")
+@@ -18,8 +18,7 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+     ui32 KickInFlight;
+     ui32 Movements;
+     TDrainTarget Target;
+-    const std::unordered_set<TNodeId> Nodes; // nodes of the target at the start of the drain
+-    const std::unordered_set<TNodeId> ReservedNodes; // the ones the drain has added to BalancerNodes
++    const std::unordered_set<TNodeId> Nodes;
+     std::unordered_map<TNodeId, bool> DownBefore;
+     TActorId DomainHivePipeClient;
+     TTabletId DomainHiveId = 0;
+@@ -37,11 +36,8 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+             NTabletPipe::CloseClient(SelfId(), DomainHivePipeClient);
+         }
+         Hive->RemoveSubActor(this);
+-        // the nodes are released as they were reserved, as the target pile may have changed or even gone meanwhile
+-        for (const TNodeId nodeId : ReservedNodes) {
+-            Hive->BalancerNodes.erase(nodeId);
+-        }
+         for (const TNodeId nodeId : Nodes) {
++            Hive->BalancerNodes.erase(nodeId);
+             if (auto node = Hive->FindNode(nodeId); node && node->DrainActor == this) {
+                 node->DrainActor = nullptr;
+             }
+@@ -72,15 +68,21 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+             {"selfId", SelfId()},
+             {"movements", Movements});
+         for (auto [nodeId, downBefore] : DownBefore) {
+-            TNodeInfo* nodeInfo = Hive->FindNode(nodeId);
+-            if (nodeInfo != nullptr) {
+-                if (!downBefore) {
+-                    nodeInfo->SetDown(false, EHiveEventReason::DrainFinished);
+-                }
++            if (TNodeInfo* nodeInfo = Hive->FindNode(nodeId); nodeInfo != nullptr && !downBefore) {
++                nodeInfo->SetDown(false, EHiveEventReason::DrainFinished);
+             }
+         }
+-        Hive->Execute(Hive->CreateSwitchDrainOff(Target, std::move(Settings), status, Movements + DomainMovements));
++        auto* switchDrainOff = Hive->CreateSwitchDrainOff(Target, status, Movements + DomainMovements);
++        // Complete may run synchronously and start another drain.
+         PassAway();
++        Hive->Execute(switchDrainOff);
++    }
 +
-+        def remove_billing_config():
-+            for item_id in response.ConfigureResponse.AddedItemIds:
-+                ydb_private_client.console_request(
-+                    "ConfigureRequest { Actions { RemoveConfigItem { ConfigItemId { "
-+                    f"Id: {item_id} Generation: 1"
-+                    " } } } }"
-+                )
-+
-+        request.addfinalizer(remove_billing_config)
-+
-+        # Billing initializes on a minute boundary and needs two more boundaries to emit a record.
-+        billing_deadline = time.monotonic() + 240
-+        while time.monotonic() < billing_deadline:
-             with open(metering_file_path, 'r') as metering_file:
--                lines = metering_file.readlines()
--                if lines:
--                    logger.info(" metering has data %s", lines[-1])
--                    break
--                logger.info(" wait data in metering file %s", metering_file_path)
--                time.sleep(15)
-+                metering_file.seek(metering_start)
-+                records = [json.loads(line) for line in metering_file if line.endswith('\n')]
-+            bills = [record for record in records if record.get('schema') == 'ydb.serverless.v1' and record.get('resource_id') == database]
-+            if bills:
-+                logger.info(" metering has data for %s: %s", database, bills[-1])
-+                break
-+            logger.info(" wait data in metering file %s for %s", metering_file_path, database)
-+            time.sleep(15)
-+        else:
-+            pytest.fail(f"No fresh storage bill for {database} within 240 seconds")
++    bool IsTargetTablet(const TTabletInfo& tablet) const {
++        if (const auto* pileId = std::get_if<TBridgePileId>(&Target)) {
++            return tablet.Node != nullptr && Nodes.contains(tablet.Node->Id) && !tablet.GetNodeFilter().IsAllowedPile(*pileId);
++        }
++        return Nodes.contains(tablet.NodeId);
+     }
  
-         def drop_table(session, path):
-             session.drop_table(
-@@ -210,20 +222,16 @@ def drop_table(session, path):
-         pool.retry_operation_sync(drop_table, None, os.path.join(database, "dirA1", "dirB1", "table"))
+     bool CanKickNextTablet() const {
+@@ -92,7 +94,7 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+         while (CanKickNextTablet()) {
+             TFullTabletId tabletId = *NextKick;
+             TTabletInfo* tablet = Hive->FindTablet(tabletId);
+-            if (tablet != nullptr && tablet->IsAlive() && Nodes.contains(tablet->NodeId)) {
++            if (tablet != nullptr && tablet->IsAlive() && IsTargetTablet(*tablet)) {
+                 THive::TBestNodeResult result = Hive->FindBestNode(*tablet);
+                 if (std::holds_alternative<TNodeInfo*>(result)) {
+                     TNodeInfo* node = std::get<TNodeInfo*>(result);
+@@ -219,15 +221,13 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+         return NKikimrServices::TActivity::HIVE_BALANCER_ACTOR;
+     }
  
+-    THiveDrain(THive* hive, TDrainTarget target, TDrainSettings settings, std::unordered_set<TNodeId> nodes,
+-            std::unordered_set<TNodeId> reservedNodes)
++    THiveDrain(THive* hive, TDrainTarget target, TDrainSettings settings, std::unordered_set<TNodeId> nodes)
+         : Hive(hive)
+         , NextKick(Tablets.end())
+         , KickInFlight(0)
+         , Movements(0)
+         , Target(target)
+         , Nodes(std::move(nodes))
+-        , ReservedNodes(std::move(reservedNodes))
+         , Settings(std::move(settings))
+     {}
  
--def test_create_table_with_quotas(ydb_hostel_db, ydb_quoted_serverless_db, ydb_endpoint):
-+def test_create_table_with_quotas(ydb_hostel_db, ydb_quoted_serverless_db, ydb_client):
-     logger.debug(
-         "test for serverless db %s over hostel db %s", ydb_quoted_serverless_db, ydb_hostel_db
-     )
+@@ -299,25 +299,81 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+ };
  
-     database = ydb_quoted_serverless_db
- 
--    driver_config = ydb.DriverConfig(
--        ydb_endpoint,
--        database
--    )
-     logger.info(" database is %s", database)
- 
--    driver = ydb.Driver(driver_config)
-+    driver = ydb_client(database)
-     driver.wait(120)
- 
-     driver.scheme_client.make_directory(os.path.join(database, "dirA0"))
-@@ -250,7 +258,7 @@ def create_table(session, path):
-             assert "exceeded a limit" in str(excinfo.value)
- 
- 
--def test_create_table_with_alter_quotas(ydb_hostel_db, ydb_serverless_db, ydb_endpoint, ydb_cluster):
-+def test_create_table_with_alter_quotas(ydb_hostel_db, ydb_serverless_db,
+ THiveDrain* THive::StartHiveDrain(TDrainTarget target, TDrainSettings settings) {
+-    TGetNodes getNodes{this};
+-    std::unordered_set<TNodeId> nodes = std::visit(getNodes, target);
+-    std::unordered_set<TNodeId> reservedNodes;
+-    for (const TNodeId nodeId : nodes) {
+-        if (BalancerNodes.emplace(nodeId).second) {
+-            reservedNodes.insert(nodeId);
+-        }
+-    }
+-    if (!reservedNodes.empty()) {
+-        auto* balancer = new THiveDrain(this, target, std::move(settings), std::move(nodes), std::move(reservedNodes));
+-        SubActors.emplace_back(balancer);
+-        RegisterWithSameMailbox(balancer);
+-        return balancer;
+-    } else {
+-        YDB_LOG_WARN("Cannot start drain: target is already busy",
++    std::unordered_set<TNodeId> nodes = std::visit(TGetNodes{this}, target);
++    std::erase_if(nodes, [this](TNodeId nodeId) { return !BalancerNodes.emplace(no
 ```
 
-**File**: `ydb/tests/functional/serverless/ya.make` (modified, +5/-3)
+**File**: `ydb/core/mind/hive/drain.h` (modified, +1/-2)
 ```diff
-@@ -5,12 +5,14 @@ TEST_SRCS(
-     test_serverless.py
- )
+@@ -19,11 +19,10 @@ struct TGetNodes {
+         return {nodeId};
+     }
  
--SPLIT_FACTOR(50)
--FORK_SUBTESTS()
+-    // Scans all nodes: called only to start a pile drain, so the overhead is negligible
+     std::unordered_set<TNodeId> operator()(TBridgePileId pileId) const {
+         std::unordered_set<TNodeId> nodes;
+         for (const auto& [nodeId, node] : Hive->Nodes) {
+-            if (node.BridgePileId == pileId) {
++            if (node.BridgePileId == pileId && !node.Drain) {
+                 nodes.insert(nodeId);
+             }
+         }
+```
+
+**File**: `ydb/core/mind/hive/follower_group.h` (modified, +6/-4)
+```diff
+@@ -35,21 +35,23 @@ struct TFollowerGroup {
+         FollowerCount = followerGroup.GetFollowerCount();
+         AllowLeaderPromotion = followerGroup.GetAllowLeaderPromotion();
+         AllowClientRead = followerGroup.GetAllowClientRead();
+-        RequireAllDataCenters = followerGroup.GetRequireAllDataCenters();
++        SetRequireAllDataCenters(followerGroup.GetRequireAllDataCenters());
+         {
+             const auto& allowedNodes(followerGroup.GetAllowedNodeIDs());
+             std::copy(allowedNodes.begin(), allowedNodes.end(), std::back_inserter(NodeFilter.AllowedNodes));
+         }
+         NodeFilter.AllowedDataCenters.MutableDataCenter()->CopyFrom(followerGroup.GetAllowedDataCenters());
+-        if (RequireAllDataCenters) {
+-            NodeFilter.MustBePrimaryPile = false;
+-        }
+         LocalNodeOnly = followerGroup.GetLocalNodeOnly();
+         RequireDifferentNodes = followerGroup.GetRequireDifferentNodes();
+         FollowerCountPerDataCenter = followerGroup.GetFollowerCountPerDataCenter();
+         return *this;
+     }
+ 
++    void SetRequireAllDataCenters(bool requireAllDataCenters) {
++        RequireAllDataCenters = requireAllDataCenters;
++        NodeFilter.MustBePrimaryPile = !RequireAllDataCenters;
++    }
++
+     ui32 GetRawFollowerCount() const {
+         return FollowerCount;
+     }
+```
+
+**File**: `ydb/core/mind/hive/hive_events.h` (modified, +3/-0)
+```diff
+@@ -43,6 +43,7 @@ struct TEvPrivate {
+         EvReassignInactiveGroupsComplete,
+         EvMoveDataComplete,
+         EvLogHangingRequests,
++        EvProcessPileDrains,
+         EvEnd
+     };
+ 
+@@ -62,6 +63,8 @@ struct TEvPrivate {
+ 
+     struct TEvPostponeProcessBootQueue : TEventLocal<TEvPostponeProcessBootQueue, EvPostponeProcessBootQueue> {};
+ 
++    struct TEvProcessPileDrains : TEventLocal<TEvProcessPileDrains, EvProcessPileDrains> {};
++
+     struct TEvProcessDisconnectNode : TEventLocal<TEvProcessDisconnectNode, EvProcessDisconnectNode> {
+         ui32 NodeId;
+         TActorId Local;
+```
+
+**File**: `ydb/core/mind/hive/hive_impl.cpp` (modified, +2/-0)
+```diff
+@@ -3808,6 +3808,7 @@ void THive::ProcessEvent(std::unique_ptr<IEventHandle> event) {
+         hFunc(TEvInterconnect::TEvNodesInfo, Handle);
+         hFunc(TEvents::TEvUndelivered, Handle);
+         hFunc(TEvPrivate::TEvProcessBootQueue, Handle);
++        hFunc(TEvPrivate::TEvProcessPileDrains, Handle);
+         hFunc(TEvPrivate::TEvPostponeProcessBootQueue, Handle);
+         hFunc(TEvPrivate::TEvProcessPendingOperations, Handle);
+         hFunc(TEvPrivate::TEvProcessDisconnectNode, Handle);
+@@ -3929,6 +3930,7 @@ STFUNC(THive::StateWork) {
+         fFunc(TEvInterconnect::TEvNodesInfo::EventType, EnqueueIncomingEvent);
+         fFunc(TEvents::TEvUndelivered::EventType, EnqueueIncomingEvent);
+         fFunc(TEvPrivate::TEvProcessBootQueue::EventType, EnqueueIncomingEvent);
++        fFunc(TEvPrivate::TEvProcessPileDrains::EventType, EnqueueIncomingEvent);
+         fFunc(TEvPrivate::TEvPostponeProcessBootQueue::EventType, EnqueueIncomingEvent);
+         fFunc(TEvPrivate::TEvProcessPendingOperations::EventType, EnqueueIncomingEvent);
+         fFunc(TEvPrivate::TEvProcessDisconnectNode::EventType, EnqueueIncomingEvent);
+```
+
+**File**: `ydb/core/mind/hive/hive_impl.h` (modified, +6/-1)
+```diff
+@@ -272,6 +272,9 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     void LogBalancerNotStarted(const TString& balancerType, EBalancerSuppressReason reason);
+     bool StartHiveBalancer(TBalancerSettings&& settings);
+     THiveDrain* StartHiveDrain(TDrainTarget target, TDrainSettings settings);
++    void StartPileDrain(TBridgePileInfo& pile);
++    bool HasTabletsToDrain(TBridgePileId pileId) const;
++    void ProcessPileDrains();
+     void StartHiveFill(TNodeId nodeId, const TActorId& initiator);
+     bool StartHiveStorageBalancer(TStorageBalancerSettings settings);
+     // starts a new reassign for every tablet in the list
+@@ -328,7 +331,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     ITransaction* CreateReleaseTabletsReply(TEvHive::TEvReleaseTabletsReply::TPtr event);
+     ITransaction* CreateConfigureSubdomain(TEvHive::TEvConfigureHive::TPtr event);
+     ITransaction* CreateSwitchDrainOn(TNodeId nodeId, TDrainSettings settings, const TActorId& initiator, ui64 seqNo = 0, ui64 cookie = 0);
+-    ITransaction* CreateSwitchDrainOff(TDrainTarget target, TDrainSettings settings, NKikimrProto::EReplyStatus status, ui32 movements);
++    ITransaction* CreateSwitchDrainOff(TDrainTarget target, NKikimrProto::EReplyStatus status, ui32 movements);
+     ITransaction* CreateTabletOwnersReply(TEvHive::TEvTabletOwnersReply::TPtr event);
+     ITransaction* CreateRequestTabletOwners(TEvHive::TEvRequestTabletOwners::TPtr event);
+     ITransaction* CreateUpdateTabletsObject(TEvHive::TEvUpdateTabletsObject::TPtr event);
+@@ -417,6 +420,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     TBootQueue BootQueue;
+     bool ProcessWaitQueueScheduled = false;
+     bool ProcessBootQueueScheduled = false;
++    bool ProcessPileDrainsScheduled = false;
+     bool ProcessBootQueuePostponed = false;
+     TInstant LastConnect;
+     TInstant ProcessBootQueuePostponedUntil;
+@@ -624,6 +628,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     void Handle(TEvPrivate::TEvCheckTabletNodeAlive::TPtr&);
+     void HandleInit(TEvPrivate::TEvProcessBootQueue::TPtr&);
+     void Handle(TEvPrivate::TEvProcessBootQueue::TPtr&);
++    void Handle(TEvPrivate::TEvProcessPileDrains::TPtr&);
+     void Handle(TEvPrivate::TEvPostponeProcessBootQueue::TPtr&);
+     void Handle(TEvPrivate::TEvProcessDisconnectNode::TPtr&);
+     void HandleInit(TEvPrivate::TEvProcessTabletBalancer::TPtr&);
+```
+
+**File**: `ydb/core/mind/hive/hive_ut.cpp` (modified, +681/-87)
+```diff
+@@ -10440,25 +10440,340 @@ Y_UNIT_TEST_SUITE(THiveTest) {
+         });
+     }
+ 
+-    enum class EBridgeHiveRestart {
+-        None,
+-        BeforePromotion,
+-        BeforeDisconnect,
+-        DisconnectBeforeResync,
+-        DisconnectWithDeadNodes,
+-    };
 -
- IF (SANITIZER_TYPE)
-+    SPLIT_FACTOR(50)
-+    FORK_SUBTESTS()
-     REQUIREMENTS(ram:32 cpu:4)
- ELSE()
-+    # Reuse module-scoped clusters and hostels within each configuration.
-+    SPLIT_FACTOR(8)
-+    FORK_SUBTESTS(MODULO)
-     REQUIREMENTS(cpu:1)
- ENDIF()
+-    // Not runtime.WaitFor: it aborts the whole binary on timeout
+     bool WaitUntil(TTestBasicRuntime& runtime, const std::function<bool()>& condition) {
+         bool done = condition();
+-        for (ui32 i = 0; i < 100 && !done; ++i) {
++        for (ui32 i = 0; i < 300 && !done; ++i) {
+             runtime.SimulateSleep(TDuration::MilliSeconds(100));
+             done = condition();
+         }
+         return done;
+     }
  
+-    void TestBridgeDemotion(EBridgeHiveRestart hiveRestart) {
++    std::optional<bool> ReadPileDrain(TTestActorRuntime& runtime, ui64 hiveTablet, const TActorId& sender, ui32 pile) {
++        auto query = MakeHolder<TEvTablet::TEvLocalMKQL>();
++        query->Record.MutableProgram()->MutableProgram()->SetText(TStringBuilder()
++            << "((let row (SelectRow 'BridgePile '('('Id (Uint32 '" << TBridgePileId::FromPileIndex(pile).GetLocalDb() << "))) '('Drain)))"
++            << "(return (AsList (SetResult 'row row))))");
++        runtime.SendToPipe(hiveTablet, sender, query.Release(), 0, GetPipeConfigWithRetries());
++        TAutoPtr<IEventHandle> handle;
++        auto* response = runtime.GrabEdgeEventRethrow<TEvTablet::TEvLocalMKQLResponse>(handle);
++        UNIT_ASSERT_VALUES_EQUAL_C(response->Record.GetStatus(), NKikimrProto::OK, response->Record.ShortDebugString());
++        const auto& result = response->Record.GetExecutionEngineEvaluatedResponse().GetValue().GetStruct(0);
++        if (!result.HasOptional() || !result.GetOptional().HasOptional()) {
++            return std::nullopt;
++        }
++        const auto& drain = result.GetOptional().GetOptional().GetStruct(0);
++        return drain.HasOptional() && drain.GetOptional().GetBool();
++    }
++
++    bool IsPileDrainPersisted(TTestActorRuntime& runtime, ui64 hiveTablet, const TActorId& sender, ui32 pile) {
++        return ReadPileDrain(runtime, hiveTablet, sender, pile).value_or(false);
++    }
++
++    struct TBridgeDrainTest {
++        TTestBasicRuntime Runtime;
++        TDummyBridge Bridge;
++        const ui64 HiveTablet = MakeDefaultHiveID();
++        const ui64 OwnerTablet = MakeTabletID(false, 1);
++        TActorId Sender;
++
++        explicit TBridgeDrainTest(ui32 nodes = 2)
++            : Runtime(nodes, false)
++            , Bridge(Runtime)
++        {
++            Setup(Runtime, true, 2, [](TAppPrepare& app) {
++                app.HiveConfig.SetDrainInflight(1);
++                app.HiveConfig.SetEnableFastTabletMove(true);
++            });
++            Sender = Runtime.AllocateEdgeActor(0);
++            CreateTestBootstrapper(Runtime, CreateTestTabletInfo(HiveTablet, TTabletTypes::Hive), &CreateDefaultHive);
++            MakeSureTabletIsUp(Runtime, HiveTablet, 0);
++            Bridge.Subscribe(GetHiveActor(Runtime, HiveTablet));
++            Runtime.EnableScheduleForActor(GetHiveActor(Runtime, HiveTablet));
++            UNIT_ASSERT_C(WaitUntil(Runtime, [&] {
++                Runtime.SendToPipe(HiveTablet, Sender, new TEvHive::TEvRequestHiveDomainStats());
++                TAutoPtr<IEventHandle> handle;
++                const auto* response = Runtime.GrabEdgeEventRethrow<TEvHive::TEvResponseHiveDomainStats>(handle);
++                std::unordered_set<ui32> aliveNodes;
++                for (const auto& domain : response->Record.GetDomainStats()) {
++                    aliveNodes.insert(domain.GetNodeIds().begin(), domain.GetNodeIds().end());
++                }
++                return aliveNodes.size() == Runtime.GetNodeCount();
++            }), "Locals did not connect to Hive");
++        }
++
++        ui64 CreateTablet(ui64 index = 0, bool waitForBoot = true) {
++            auto create = MakeHolder<TEvHive::TEvCreateTablet>(OwnerTablet, index, TTabletTypes::Dummy, BINDED_CHANNELS);
++            create->Record.SetBalancerPolicy(NKikimrHive::POLICY_IGNORE);
++            return SendCreateTestTablet(Runtime, HiveTablet, OwnerTablet, std::move(create), 0, waitForBoot);
++        }
++
++        auto TabletInfo(ui64 tabletId) {
++            return GetHiveTabletInfo(Runtime, HiveTablet, tabletId, Sender);
++        }
++
++        void SetDown(ui32 nodeIndex, bool down) {
++            Runtime.SendToPipe(HiveTablet, Sender, new TEvHive::TEvSetDown(Runtime.GetNodeId(nodeIndex), down));
++            TAutoPtr<IEventHandle> handle;
++            const auto* response = Runtime.GrabEdgeEventRethrow<TEvHive::TEvSetDownReply>(handle);
++            UNIT_ASSERT_VALUES_EQUAL(response->Record.GetStatus(), NKikimrProto::OK);
++        }
++
++        bool DrainPending() {
++            return IsPileDrainPersisted(Runtime, HiveTablet, Sender, 0);
++        }
++
++        bool IsRunningInPile(ui64 tabletId, ui32 pile) {
++            const auto info = TabletInfo(tabletId);
++            return info.GetNo
 ```
 
 ---
 
-### Incident Patch 2: `4d09d609` (2026-11-08)
-**Commit Message**: Update muted_ya for relwithdebinfo main
+### Incident Patch 2: `39205ea2` (2026-11-09)
+**Commit Message**: Fix possible blob bugs main (#58454)
 
-**File**: `.github/config/muted_ya.txt` (modified, +2/-0)
+**File**: `ydb/core/persqueue/pqtablet/blob/blob_serialization.cpp` (modified, +44/-9)
 ```diff
-@@ -90,6 +90,7 @@ ydb/tests/fq/streaming test_streaming.py.TestStreamingInYdb.test_raw_format[True
- ydb/tests/fq/streaming test_streaming.py.TestStreamingInYdb.test_read_large_topic_message[external-kikimr0]
- ydb/tests/fq/streaming test_streaming.py.TestStreamingInYdb.test_read_large_topic_message[local-kikimr0]
- ydb/tests/fq/streaming test_streaming.py.TestStreamingInYdb.test_read_topic_csv_with_names[True]
-+ydb/tests/fq/streaming test_streaming.py.TestStreamingInYdb.test_read_topic_shared_reading_structured_parsing[kikimr0-False]
- ydb/tests/fq/streaming test_streaming.py.TestStreamingInYdb.test_streaming_query_issues_after_restart[kikimr0-False]
- ydb/tests/fq/streaming test_streaming.py.TestStreamingInYdb.test_streaming_query_issues_after_restart[kikimr0-True]
- ydb/tests/fq/streaming test_streaming.py.TestStreamingInYdb.test_streaming_query_stop_after_restart[kikimr0-False]
-@@ -120,6 +121,7 @@ ydb/tests/fq/streaming/logbroker test_logbroker.py.TestLogbroker.test_read_write
- ydb/tests/fq/yds test_delete_read_rules_after_abort_by_system.py.TestDeleteReadRulesAfterAbortBySystem.test_delete_read_rules_after_abort_by_system
- ydb/tests/fq/yds test_kill_pq_bill.py.TestKillPqBill.test_do_not_bill_pq[v1-mvp_external_ydb_endpoint0]
- ydb/tests/fq/yds test_row_dispatcher.py.TestPqRowDispatcher.test_3_sessions
-+ydb/tests/fq/yds test_row_dispatcher.py.TestPqRowDispatcher.test_restart_compute_node
- ydb/tests/fq/yds test_row_dispatcher.py.TestPqRowDispatcher.test_start_new_query
- ydb/tests/fq/yds test_row_dispatcher.py.TestPqRowDispatcher.test_stop_start_with_filter
- ydb/tests/fq/yds test_watermarks.py.TestWatermarks.test_idle_watermarks[1-no_shared]
+@@ -37,9 +37,14 @@ ui32 GetBatchClientBlobCount(const NKikimrPQ::TBatchHeader& header) {
+ 
+ NScheme::TDataRef GetChunk(const char*& data, const char *end)
+ {
+-    ui32 size = ReadUnaligned<ui32>(data);
+-    data += sizeof(ui32) + size;
+     AFL_ENSURE(data <= end);
++    AFL_ENSURE(static_cast<size_t>(end - data) >= sizeof(ui32));
++
++    ui32 size = ReadUnaligned<ui32>(data);
++    data += sizeof(ui32);
++    AFL_ENSURE(static_cast<size_t>(end - data) >= size);
++
++    data += size;
+     return NScheme::TDataRef(data - size, size);
+ }
+ 
+@@ -347,13 +352,21 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
+         auto chunk = NScheme::IChunkDecoder::ReadChunk(GetChunk(data, dataEnd), &ui32Codecs);
+         auto iter = chunk->MakeIterator();
+         for (ui32 i = 0; i < totalBlobs; ++i) {
+-            pos.push_back(ReadUnaligned<ui32>(iter->Next().Data()));
++            ui32 blobPos = ReadUnaligned<ui32>(iter->Next().Data());
++            AFL_ENSURE(blobPos < totalBlobs);
++            pos.push_back(blobPos);
+         }
+         sourceIdCount = ReadUnaligned<ui32>(iter->Next().Data());
++        AFL_ENSURE(sourceIdCount > 0 || totalBlobs == 0);
++        AFL_ENSURE(sourceIdCount <= totalBlobs);
+         end.reserve(sourceIdCount);
+         for (ui32 i = 0; i < sourceIdCount; ++i) {
+-            end.push_back(ReadUnaligned<ui32>(iter->Next().Data()));
++            ui32 sourceIdEnd = ReadUnaligned<ui32>(iter->Next().Data());
++            AFL_ENSURE(sourceIdEnd <= totalBlobs);
++            AFL_ENSURE(end.empty() || end.back() < sourceIdEnd);
++            end.push_back(sourceIdEnd);
+         }
++        AFL_ENSURE(end.empty() || end.back() == totalBlobs);
+     }
+ 
+     sourceIds.reserve(sourceIdCount);
+@@ -366,6 +379,7 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
+             sourceIds.emplace_back(ref.Data(), ref.Size());
+         }
+     }
++    AFL_ENSURE(sourceIds.size() == end.size());
+     TVector<ui64> seqNo;
+     seqNo.reserve(totalBlobs);
+ 
+@@ -494,6 +508,7 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
+     blobs->resize(totalBlobs);
+     ui32 currentSID = 0;
+     for (ui32 i = 0; i < totalBlobs; ++i) {
++        AFL_ENSURE(currentSID < end.size());
+         TMaybe<TPartData> pd;
+         if (auto it = partData.find(pos[i]); it != partData.end()) {
+             pd = it->second;
+@@ -524,6 +539,7 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
+             ++currentSID;
+         }
+     }
++    AFL_ENSURE(currentSID == sourceIds.size());
+ }
+ 
+ template<>
+@@ -692,17 +708,26 @@ TClientBlob DeserializeClientBlob(const char *data, ui32 size) {
+     AFL_ENSURE(size > TClientBlob::OVERHEAD);
+     ui32 totalSize = ReadUnaligned<ui32>(data);
+     AFL_ENSURE(size >= totalSize);
++    AFL_ENSURE(totalSize >= sizeof(ui32));
+     const char *end = data + totalSize;
+     data += sizeof(ui32);
+ 
++    auto ensureRemaining = [&] (size_t length) {
++        AFL_ENSURE(data <= end);
++        AFL_ENSURE(length <= static_cast<size_t>(end - data));
++    };
++
++    ensureRemaining(sizeof(ui64));
+     ui64 seqNo = ReadUnaligned<ui64>(data);
+     data += sizeof(ui64);
+ 
++    ensureRemaining(sizeof(ui8));
+     TMessageFlags flags(ReadUnaligned<ui8>(data));
+     ++data;
+ 
+     TMaybe<TPartData> partData;
+     if (flags.F.HasPartData) {
++            ensureRemaining(sizeof(ui16) + sizeof(ui16) + sizeof(ui32));
+             ui16 partNo = ReadUnaligned<ui16>(data);
+             data += sizeof(ui16);
+             ui16 totalParts = ReadUnaligned<ui16>(data);
+@@ -715,43 +740,53 @@ TClientBlob DeserializeClientBlob(const char *data, ui32 size) {
+     TString partitionKey;
+     TString explicitHashKey;
+     if (flags.F.HasKinesisData) {
++            ensureRemaining(sizeof(ui8));
+             ui8 keySize = ReadUnaligned<ui8>(data);
+             data += sizeof(ui8);
+-            partitionKey = TString(data, keySize == 0 ? 256 : keySize);
+-            data += partitionKey.size();
++            const size_t partitionKeySize = keySize == 0 ? 256 : keySize;
++            ensureRemaining(partitionKeySize);
++            partitionKey = TString(data, partitionKeySize);
++            data += partitionKeySize;
++
++            ensureRemaining(sizeof(ui8));
+             keySize = ReadUnaligned<ui8>(data);
+             data += sizeof(ui8);
++            ensureRemaining(keySize);
+             explicitHashKey = TString(data, keySize);
+-            data += explicitHashKey.size();
++            data += keySize;
+     }
+ 
+     ui32 logicalMessageCount = 1;
+     bool isBatch = false;
+     if (flags.F.HasBatchInfo) {
++        ensureRemaining(sizeof(ui32));
+         std::tie(logicalMessageCount, isBatch) = UnpackMessageMetadata(ReadUnaligned<ui32>(data));
+         data += sizeof(ui32);
+     }
+ 
+     TInstant writeTimestamp;
+     if (flags.F.HasWriteTimestamp) {
++            ensureRemaining(sizeof(ui64));
+             writeTimestamp = TInst
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #58605** (2026-11-08): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58602** (2026-11-08): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #58592** (2026-11-08): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #58572** (2026-11-08): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #58571** (2026-11-08): 26-4-1: Fix Console config delivery stalls under subscriber load (@CyberROFL)
-- **PR #58570** (2026-11-08): 26-3-1: Fix Console config delivery stalls under subscriber load (@CyberROFL)
+- **PR #58804** (2026-11-09): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58803** (2026-11-09): Reduce empty audit test chunks from 564 to 4 (@maximyurchuk)
+- **PR #58799** (2026-11-09): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58797** (2026-11-09): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #58790** (2026-11-09): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #58780** (2026-11-09): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
 
 ---
 
@@ -2303,32 +2582,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reduce serverless test CPU with batched writes and cluster reuse (#58549)
+## X. Hive bridge drain recovery and per-DC followers (#56221)
 
 **RULE**:
-When implementing operations in `ydb/tests/functional/serverless/conftest.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/mind/hive/bridge_pile_info.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6220b0f1`: Reduce serverless test CPU with batched writes and cluster reuse (#58549). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ef48dff`: Hive bridge drain recovery and per-DC followers (#56221). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/tests/functional/serverless/conftest.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/mind/hive/bridge_pile_info.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            "database_id": database,
-            "database_id": database,
-@pytest.fixture(scope='function')
+    bool DrainRetry = false;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            "database_id": "DATABASE_ID_VAL",
-            "database_id": "DATABASE_ID_VAL",
-@pytest.fixture(scope='module')
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6220b0f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ef48dff` are properly handled with clean fallback behavior.

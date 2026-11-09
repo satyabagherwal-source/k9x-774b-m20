@@ -8672,3 +8672,8 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `acbe0665` | Multi-dimensional audit evidence | 2026-11-09T18:16:21.805Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `48f04e5a` | Multi-dimensional audit evidence | 2026-11-09T21:05:59.391Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `8da533c3` | Multi-dimensional audit evidence | 2026-11-09T21:06:03.002Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `f5af00bb` | Multi-dimensional audit evidence | 2026-11-09T21:27:04.954Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ca27cf88` | Multi-dimensional audit evidence | 2026-11-09T21:27:05.766Z |
+| `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T21:27:18.086Z |
+| `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `d4cec834` | Multi-dimensional audit evidence | 2026-11-09T21:31:13.323Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `9d2e25ea` | Multi-dimensional audit evidence | 2026-11-09T21:31:47.967Z |

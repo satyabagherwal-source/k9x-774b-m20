@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T21:06:03.008Z",
-  "total_cycles_completed": 8628,
-  "total_learnings_persisted": 8628,
-  "total_rules_promoted": 8449,
+  "last_updated": "2026-11-09T21:31:47.973Z",
+  "total_cycles_completed": 8633,
+  "total_learnings_persisted": 8633,
+  "total_rules_promoted": 8460,
   "history": [
-    {
-      "timestamp": "2026-11-09T01:46:48.040Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T01:46:49.288Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T01:53:11.352Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T01:53:15.871Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T01:53:24.411Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T02:01:01.550Z",
       "repository": "ajeetdsouza/zoxide",
@@ -1403,6 +1368,41 @@
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:27:04.962Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:27:05.773Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:27:18.092Z",
+      "repository": "LiquidAI/d1-2B",
+      "learningId": "learn-huggingface-liquidai-d1-2b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:31:13.329Z",
+      "repository": "sceneview/sceneview",
+      "learningId": "learn-github-sceneview-sceneview",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T21:31:47.973Z",
+      "repository": "fabio-rovai/open-ontologies",
+      "learningId": "learn-github-fabio-rovai-open-ontologies",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

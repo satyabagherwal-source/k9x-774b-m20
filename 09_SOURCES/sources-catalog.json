@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "fd8c0cc9",
+    "sourceVersion": "ca27cf88",
     "license": "Apache-2.0",
-    "contentHash": "0f867f49d4d42ed18a07c7f82febfb7c7dc6faf6d002545732c2c165058311d7",
-    "lastHarvestedAt": "2026-11-09T17:44:09.783Z",
+    "contentHash": "5f87bc84a465bfcc1842a0afa0a4fd86095aa591a0351d06f653547643d10d61",
+    "lastHarvestedAt": "2026-11-09T21:27:05.766Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "6220b0f1",
+    "sourceVersion": "f5af00bb",
     "license": "Apache-2.0",
-    "contentHash": "7a6c8475f19847ea94908b3fcfc81a3e9182f24c93a9013cd8acfba84f799ebc",
-    "lastHarvestedAt": "2026-11-08T19:45:31.271Z",
+    "contentHash": "824aa60c496f24ce14acef416efe6e27d43a284fc4ac26a1e511b1c220a455ab",
+    "lastHarvestedAt": "2026-11-09T21:27:04.954Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "375fbc47",
+    "sourceVersion": "9d2e25ea",
     "license": "MIT",
-    "contentHash": "0944db45602655979a6afa06b81279583a1e989d0649848ee6fb63b2b850f4bf",
-    "lastHarvestedAt": "2026-11-05T10:58:08.597Z",
+    "contentHash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
+    "lastHarvestedAt": "2026-11-09T21:31:47.967Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {
@@ -11735,8 +11735,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-2B",
     "sourceVersion": "hf-liquidai-d1-2b",
     "license": "Open-Source",
-    "contentHash": "eaa3c4fdbf895a0ba626e82982d4b5275f2fdfee18c5e8d098c15e4996ac7b1c",
-    "lastHarvestedAt": "2026-11-05T18:31:38.902Z",
+    "contentHash": "b9a517d9c2578a1c0dc13c5b2bac459cfa0bab4f0099790e168687d2652ca695",
+    "lastHarvestedAt": "2026-11-09T21:27:18.086Z",
     "learningId": "learn-huggingface-liquidai-d1-2b"
   },
   "hf-sensenova-sensenova-loop-9b-preview": {
@@ -12248,5 +12248,15 @@
     "contentHash": "42906348cd1161935f00e13753bc17c06b97f2c358cdd2ce2b651dcb0984cf1e",
     "lastHarvestedAt": "2026-11-09T09:24:13.903Z",
     "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2"
+  },
+  "sceneview-sceneview": {
+    "repository": "sceneview/sceneview",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sceneview/sceneview",
+    "sourceVersion": "d4cec834",
+    "license": "Apache-2.0",
+    "contentHash": "f705756cc6b179cb6c9186ecfc808a8cd3b26239833cd466074f2c5db5136c99",
+    "lastHarvestedAt": "2026-11-09T21:31:13.323Z",
+    "learningId": "learn-github-sceneview-sceneview"
   }
 }

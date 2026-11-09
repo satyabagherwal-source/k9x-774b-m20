@@ -20746,5 +20746,20 @@
     "downloads": 42718,
     "qualityScore": 25700,
     "discoveredAt": "2026-11-09T09:21:42.033Z"
+  },
+  {
+    "name": "sceneview",
+    "fullName": "sceneview/sceneview",
+    "url": "https://github.com/sceneview/sceneview",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "3D & AR SDK for Jetpack Compose (Filament, ARCore), Compose Multiplatform, SwiftUI (RealityKit, ARKit) and the web, with Flutter and React Native bridges. The maintained successor to Google Sceneform. Opens glTF/GLB and USDZ, at real size in AR. Assistant-ready: MCP server, AGENTS.md and llms.txt.",
+    "stars": 1361,
+    "forks": 252,
+    "openIssues": 160,
+    "language": "Kotlin",
+    "qualityScore": 1206,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-09T21:24:52.550Z"
   }
 ]

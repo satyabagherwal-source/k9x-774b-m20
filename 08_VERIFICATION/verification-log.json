@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-7WJM",
-    "timestamp": "2026-11-08T01:17:54.946Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-HNI1",
-    "timestamp": "2026-11-08T01:25:29.785Z",
-    "repository": "nitrojs/nitro",
-    "learningId": "learn-github-nitrojs-nitro",
-    "contentHash": "17668ac0888318dff8f9aa01b62d9fb1c22cbbaafda1011994d9870bb9500cb2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-HPN6",
-    "timestamp": "2026-11-08T01:25:32.562Z",
-    "repository": "argoproj/argo-events",
-    "learningId": "learn-github-argoproj-argo-events",
-    "contentHash": "da7b7aab1fdb82d7574ef13bc3fc2dd17f3d5dbe00457811da8fa1b232227508",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-V7PK",
-    "timestamp": "2026-11-08T01:36:02.504Z",
-    "repository": "meshtastic/Meshtastic-Android",
-    "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "cd43034dd81d484ba6cae3cddead88a2dad9316941d06e66b4fb2415f5642530",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-8AO6",
-    "timestamp": "2026-11-08T01:46:12.870Z",
-    "repository": "Michael-A-Kuykendall/shimmy",
-    "learningId": "learn-github-michael-a-kuykendall-shimmy",
-    "contentHash": "d49be6c2cf6d65cfa666ed31119dbc2fe22e825604f07418f0c6e67a579366e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-8E8S",
     "timestamp": "2026-11-08T01:46:17.500Z",
     "repository": "thaw-app/Thaw",
@@ -7492,6 +7417,81 @@
     "contentHash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-UR5I",
+    "timestamp": "2026-11-09T21:27:04.950Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "824aa60c496f24ce14acef416efe6e27d43a284fc4ac26a1e511b1c220a455ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-URS2",
+    "timestamp": "2026-11-09T21:27:05.762Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "5f87bc84a465bfcc1842a0afa0a4fd86095aa591a0351d06f653547643d10d61",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-V1AA",
+    "timestamp": "2026-11-09T21:27:18.082Z",
+    "repository": "LiquidAI/d1-2B",
+    "learningId": "learn-huggingface-liquidai-d1-2b",
+    "contentHash": "b9a517d9c2578a1c0dc13c5b2bac459cfa0bab4f0099790e168687d2652ca695",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-02SC",
+    "timestamp": "2026-11-09T21:31:13.308Z",
+    "repository": "sceneview/sceneview",
+    "learningId": "learn-github-sceneview-sceneview",
+    "contentHash": "f705756cc6b179cb6c9186ecfc808a8cd3b26239833cd466074f2c5db5136c99",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-0TIZ",
+    "timestamp": "2026-11-09T21:31:47.963Z",
+    "repository": "fabio-rovai/open-ontologies",
+    "learningId": "learn-github-fabio-rovai-open-ontologies",
+    "contentHash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

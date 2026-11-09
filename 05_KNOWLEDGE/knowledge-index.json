@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T21:06:02.930Z",
-  "total_verified_learnings": 1243,
+  "last_updated": "2026-11-09T21:31:47.861Z",
+  "total_verified_learnings": 1244,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -47791,8 +47791,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "fd8c0cc9",
-      "content_hash": "0f867f49d4d42ed18a07c7f82febfb7c7dc6faf6d002545732c2c165058311d7",
+      "source_version": "ca27cf88",
+      "content_hash": "5f87bc84a465bfcc1842a0afa0a4fd86095aa591a0351d06f653547643d10d61",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47949,6 +47949,11 @@
         {
           "number": null,
           "title": "Draft NUC 100 Reactive Cotangent",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "NUC 101 Exact-Depth Reasoning Selections",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48242,7 +48247,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:44:09.622Z",
+      "verified_at": "2026-11-09T21:27:05.609Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66563,8 +66568,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "6220b0f1",
-      "content_hash": "7a6c8475f19847ea94908b3fcfc81a3e9182f24c93a9013cd8acfba84f799ebc",
+      "source_version": "f5af00bb",
+      "content_hash": "824aa60c496f24ce14acef416efe6e27d43a284fc4ac26a1e511b1c220a455ab",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -66581,6 +66586,11 @@
         {
           "number": null,
           "title": "Reduce serverless test CPU with batched writes and cluster reuse (#58549)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Hive bridge drain recovery and per-DC followers (#56221)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -66669,7 +66679,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T19:45:31.201Z",
+      "verified_at": "2026-11-09T21:27:04.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161315,11 +161325,26 @@
       "slug": "fabio-rovai-open-ontologies",
       "platform": "github",
       "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "375fbc47",
-      "content_hash": "0944db45602655979a6afa06b81279583a1e989d0649848ee6fb63b2b850f4bf",
+      "source_version": "9d2e25ea",
+      "content_hash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
       "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Incomplete Domain Proof Invalidation Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Aeneas-Verification Pure Core Isolation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Model Configuration Drift Fingerprinting Rule",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5493,
           "title": "Three-State Verification Invariant on Indistinguishable Value Domains",
@@ -161361,7 +161386,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:58:08.481Z",
+      "verified_at": "2026-11-09T21:31:47.823Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175591,7 +175616,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/d1-2B",
       "source_version": "hf-liquidai-d1-2b",
-      "content_hash": "eaa3c4fdbf895a0ba626e82982d4b5275f2fdfee18c5e8d098c15e4996ac7b1c",
+      "content_hash": "b9a517d9c2578a1c0dc13c5b2bac459cfa0bab4f0099790e168687d2652ca695",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
       "promoted_rules": [
@@ -175608,6 +175633,21 @@
         {
           "number": null,
           "title": "Vision-Text Projector Dimensional Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hybrid Attention/State-Space Layer Interleaving Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multimodal Token Alignment & Projector Bias Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Sliding Window Attention for Long Context Efficiency",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -175631,7 +175671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:31:38.782Z",
+      "verified_at": "2026-11-09T21:27:17.944Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189450,6 +189490,49 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-09T12:42:11.224Z"
+    },
+    "learn-github-sceneview-sceneview": {
+      "learning_id": "learn-github-sceneview-sceneview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sceneview/sceneview",
+      "repository": "sceneview/sceneview",
+      "slug": "sceneview-sceneview",
+      "platform": "github",
+      "source_url": "https://github.com/sceneview/sceneview",
+      "source_version": "d4cec834",
+      "content_hash": "f705756cc6b179cb6c9186ecfc808a8cd3b26239833cd466074f2c5db5136c99",
+      "dossier_path": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hardware-Constrained Instancing Cap Partitioning",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "O(N) Composition Tree Ingestion via Pre-Indexed Ingestion & Bulk Mutability",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Progressive Hardware-Fault Blacklisting via Persistent Ephemeral Rungs",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-09T21:31:13.177Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {
