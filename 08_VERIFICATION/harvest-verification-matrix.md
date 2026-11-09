@@ -8612,3 +8612,4 @@
 | `CYCLE-20261109-5MWJ` | `2026-11-09T14:35:38.419Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e29f2ba6...`) |
 | `CYCLE-20261109-5P3H` | `2026-11-09T14:35:41.261Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 919, Rule null` | Yes (`5ee3bbd7...`) |
 | `CYCLE-20261109-5QLW` | `2026-11-09T14:35:43.220Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`25700b8b...`) |
+| `CYCLE-20261109-0T3S` | `2026-11-09T14:59:52.792Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`2fe79bb0...`) |

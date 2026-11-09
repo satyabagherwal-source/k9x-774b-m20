@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T14:35:43.230Z",
-  "total_cycles_completed": 8577,
-  "total_learnings_persisted": 8577,
-  "total_rules_promoted": 8404,
+  "last_updated": "2026-11-09T14:59:52.803Z",
+  "total_cycles_completed": 8578,
+  "total_learnings_persisted": 8578,
+  "total_rules_promoted": 8406,
   "history": [
-    {
-      "timestamp": "2026-11-08T22:26:15.135Z",
-      "repository": "wquguru/cicada",
-      "learningId": "learn-github-wquguru-cicada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T22:26:15.789Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1403,6 +1396,13 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T14:59:52.803Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

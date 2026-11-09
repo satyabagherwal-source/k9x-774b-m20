@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T14:35:45.830Z",
-    "lastVerified": "2026-11-09T14:35:45.830Z",
+    "lastChecked": "2026-11-09T14:59:55.380Z",
+    "lastVerified": "2026-11-09T14:59:55.380Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,9 +368,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T13:46:55.520Z",
+    "lastChecked": "2026-11-09T14:53:08.260Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T13:46:55.520Z"
+    "lastVerified": "2026-11-09T14:53:08.260Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1386,8 +1386,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T07:00:57.760Z",
-    "lastVerified": "2026-11-09T07:00:57.760Z",
+    "lastChecked": "2026-11-09T14:53:03.233Z",
+    "lastVerified": "2026-11-09T14:53:03.233Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2528,8 +2528,8 @@
     "officialUrl": "https://github.com/wix/react-native-navigation",
     "sourceType": "github",
     "technology": "MDX",
-    "lastChecked": "2026-11-06T20:45:25.505Z",
-    "lastVerified": "2026-11-06T20:45:25.505Z",
+    "lastChecked": "2026-11-09T14:52:58.270Z",
+    "lastVerified": "2026-11-09T14:52:58.270Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wix-react-native-navigation",
@@ -2820,8 +2820,8 @@
     "officialUrl": "https://github.com/Permify/permify",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T17:49:22.637Z",
-    "lastVerified": "2026-11-08T17:49:22.637Z",
+    "lastChecked": "2026-11-09T14:53:00.758Z",
+    "lastVerified": "2026-11-09T14:53:00.758Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-permify-permify",
@@ -5355,9 +5355,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-11-08T11:04:01.094Z",
+    "lastChecked": "2026-11-09T14:52:53.223Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-11-08T11:04:01.094Z"
+    "lastVerified": "2026-11-09T14:52:53.223Z"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "name": "stabilityai/stable-diffusion-3-medium",
@@ -5603,9 +5603,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-08T16:58:46.966Z",
+    "lastChecked": "2026-11-09T14:53:05.721Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-08T16:58:46.966Z"
+    "lastVerified": "2026-11-09T14:53:05.721Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -9214,13 +9214,13 @@
     "officialUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T15:37:20.864Z",
-    "lastVerified": "2026-11-05T15:37:20.864Z",
+    "lastChecked": "2026-11-09T14:52:55.739Z",
+    "lastVerified": "2026-11-09T14:52:55.739Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "f76c81bcac26bc5fa934ddc464eed405fb4a9b4dda2a6ac34155612f90a9c3fb",
-    "promotedRulesCount": 3,
+    "contentHash": "2fe79bb09c2c72b7da7834a1295289ebd3eff8677289aa415d2cd34421008466",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

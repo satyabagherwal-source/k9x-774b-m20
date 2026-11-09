@@ -8621,3 +8621,4 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `92bfc001` | Multi-dimensional audit evidence | 2026-11-09T14:35:38.423Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-09T14:35:41.265Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6f9df7e7` | Multi-dimensional audit evidence | 2026-11-09T14:35:43.224Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-09T14:59:52.797Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T14:35:43.118Z",
+  "last_updated": "2026-11-09T14:59:52.639Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -75381,10 +75381,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
       "source_version": "hf-pyannote-speaker-diarization-community-1",
-      "content_hash": "f76c81bcac26bc5fa934ddc464eed405fb4a9b4dda2a6ac34155612f90a9c3fb",
+      "content_hash": "2fe79bb09c2c72b7da7834a1295289ebd3eff8677289aa415d2cd34421008466",
       "dossier_path": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Audio Chunking Boundary Continuity Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Memory-Bounded Streaming Inference Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 941,
           "title": "Model Artifact Integrity & Serialization Boundary",
@@ -75456,7 +75466,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:37:36.210Z",
+      "verified_at": "2026-11-09T14:59:52.614Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
