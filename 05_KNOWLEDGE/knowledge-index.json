@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T15:17:35.505Z",
+  "last_updated": "2026-11-09T15:29:01.870Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37994,14 +37994,19 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "a55ed393",
-      "content_hash": "c1b4b4419dbdda5e73832973fbef8ab5849739d83abcac91d70a1aaff380b554",
+      "source_version": "705b459b",
+      "content_hash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #8011 from Arbaaz123676/bump-karmadactl-init-defaults",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38080,7 +38085,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:20:25.234Z",
+      "verified_at": "2026-11-09T15:29:01.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75720,7 +75725,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "36a516abb71a2ecf12006538529ea13b8d1a054f388c95fa603424af6689352f",
+      "content_hash": "96cbf5a7d186365e168cb82ce293cfce0f168ea95610dd32daaf079036c89bc4",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "promoted_rules": [
@@ -75815,7 +75820,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:52:02.080Z",
+      "verified_at": "2026-11-09T15:28:54.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

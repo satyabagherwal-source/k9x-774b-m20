@@ -8627,3 +8627,5 @@ Every entry in this ledger must capture:
 | `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `c50eeb46` | Multi-dimensional audit evidence | 2026-11-09T15:12:49.080Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `7ad4ba05` | Multi-dimensional audit evidence | 2026-11-09T15:12:51.553Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-09T15:17:35.616Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-09T15:28:54.512Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `705b459b` | Multi-dimensional audit evidence | 2026-11-09T15:29:01.973Z |

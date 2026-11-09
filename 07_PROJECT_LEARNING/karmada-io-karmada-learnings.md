@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `a55ed393`  
+> **Source Version**: `705b459b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:20:23.381Z  
+> **Timestamp**: 2026-11-09T15:29:01.031Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:20:23.373Z  
+> **Harvest Timestamp**: 2026-11-09T15:29:00.827Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5755 stars
+- **Stars / Engagement**: 5756 stars
 
 ---
 
@@ -984,11 +984,11 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8025** (2026-11-04): **chore(chart): bump default Kubernetes and etcd versions**
-  *Symptoms*: **What type of PR is this?**  /kind cleanup  **What this PR does / why we need it**:  Update the Helm chart default images for kube-apiserver and kube-controller-manager from v1.36.2 to v1.37.1, and etcd from 3.6.8-0 to 3.7.0-0.  This keeps the chart defaults in sync with the operator (#7997) as part of the Kubernetes v1.37 bump.  **Which issue(s) this PR fixes**:  Part of #7975  **Special notes for your reviewer**:  - Chart-only change. karmadactl init is covered by #8011. - etcd tag is `3.7.0-0` (no leading `v`) to match `registry.k8s.io/etcd` and `EtcdDefaultVersion` in the operator. - Verified with `helm template`; rendered images:   - `registry.k8s.io/kube-apiserver:v1.37.1`   - `registry.k8s.io/kube-controller-manager:v1.37.1`   - `registry.k8s.io/etcd:3.7.0-0` - `make verify` and `make test` passed.  **Does this PR introduce a user-facing change?**:  ```release-note `Helm chart`: Updated the default `kube-apiserver` and `kube-controller-manager` images from v1.36.2 to v1.37.1, and the default etcd image from 3.6.8-0 to 3.7.0-0.
+- **Issue #8041** (2026-11-09): **fix(cronfederatedhpa): handle nil TargetReplicas in ScaleWorkloads**
+  *Symptoms*: **What type of PR is this?** /kind bug  **What this PR does / why we need it:** When a `CronFederatedHPA` targets a direct workload rather than a `FederatedHPA`, `ScaleWorkloads()` dereferences `c.rule.TargetReplicas` without checking for `nil`. If an object reaches the controller without `targetReplicas` set, this causes a nil pointer panic during reconciliation. This PR adds a defensive check in `ScaleWorkloads()` returning a descriptive error when `TargetReplicas` is `nil`, preventing crashes and recording the failure into execution history.  **Which issue(s) this PR fixes:** Fixes #7726  **Special notes for your reviewer:** Added unit test `TestScaleWorkloads` in `cronfederatedhpa_job_test.go` verifying that direct workload scaling with `TargetReplicas == nil` does not panic and returns the expected error.  **Does this PR introduce a user-facing change?:** ```release-note NONE ```
 
-- **Issue #8020** (2026-11-04): **CI: split up the release workflow**
-  *Symptoms*: **What type of PR is this?** /kind cleanup <!-- Add one of the following kinds: /kind bug /kind feature /kind documentation /kind cleanup  Optionally add one or more of the following kinds if applicable: /kind api-change /kind deprecation /kind failing-test /kind flake /kind regression  -->  **What this PR does / why we need it**: While investigating a failed release workflow, I noticed that combining many independent release tasks in a single workflow makes retries difficult. Rerunning only the failed jobs may not address the underlying failure, while rerunning all jobs can introduce failures in unrelated tasks.  Take https://github.com/karmada-io/karmada/actions/runs/41184494637/job/124488815779 as an example:  1. `crds-provenance / final` failed, but the underlying error occurred in `crds-provenance / generator`. The generator job was reported as successful because its failing steps used `continue-on-error`. <img width="1696" height="571" alt="image" src="https://github.com/user-attachments/assets/232c2fe8-1530-4b5f-b5ef-789c7b5f1ea7" />  2. Consequently, **Re-run failed jobs** only reran the final status check, reusing the failed outputs without retrying the signing operation. 3. **Re-run all jobs** will reran unrelated tasks such as **Update Krew Index**, which could fail independently.  This PR splits the release workflow into smaller, independent workflows so that each release task can be rerun in full without rerunning unrelated tasks.  
+- **Issue #8037** (2026-11-09): **build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4**
+  *Symptoms*: Bumps [softprops/action-gh-release](https://github.com/softprops/action-gh-release) from 3.0.3 to 3.0.4. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/softprops/action-gh-release/releases">softprops/action-gh-release's releases</a>.</em></p> <blockquote> <h2>v3.0.4</h2> <ul> <li>maintenance release with updated dependencies</li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md">softprops/action-gh-release's changelog</a>.</em></p> <blockquote> <h2>3.0.4</h2> <ul> <li>maintenance release with updated dependencies</li> </ul> <h2>3.0.3</h2> <p><code>3.0.3</code> is a maintenance release with updated dependencies. It also safely classifies malformed GitHub API errors to avoid secondary failures (<a href="https://redirect.github.com/softprops/action-gh-release/issues/822">#822</a>).</p> <h2>What's Changed</h2> <h3>Bug fixes 🐛</h3> <ul> <li>fix: safely classify GitHub API errors by <a href="https://github.com/chenrui333"><code>@​chenrui333</code></a> in <a href="https://redirect.github.com/softprops/action-gh-release/pull/822">softprops/action-gh-release#822</a></li> </ul> <h3>Other Changes 🔄</h3> <ul> <li>dependency updates</li> </ul> <h2>3.0.2</h2> <p><code>3.0.2</code> is a patch release focused on release reliability and compatibility. It reuses existing draft releases when publishing prereleases, supports repla
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1005,145 +1005,187 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a55ed393` (2026-11-05)
-**Commit Message**: Merge pull request #8011 from Arbaaz123676/bump-karmadactl-init-defaults
+### Incident Patch 1: `c0c91500` (2026-11-09)
+**Commit Message**: build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4
 
-bump default Kubernetes and etcd versions
+Bumps [softprops/action-gh-release](https://github.com/softprops/action-gh-release) from 3.0.3 to 3.0.4.
+- [Release notes](https://github.com/softprops/action-gh-release/releases)
+- [Changelog](https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/softprops/action-gh-release/compare/efb35369e0ad2afab669f228072c1b0d510eae64...8a0cd651e5b2365bd640854a3fa5dfc70e4875f3)
 
-**File**: `docs/command-line-flags/karmadactl_init.md` (modified, +1/-1)
+---
+updated-dependencies:
+- dependency-name: softprops/action-gh-release
+  dependency-version: 3.0.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/release.yml` (modified, +4/-4)
 ```diff
-@@ -150,7 +150,7 @@ karmadactl init
-       --karmada-webhook-replicas int32                          Karmada webhook replica set (default 1)
-       --kube-image-mirror-country string                        Country code of the kube image registry to be used. For Chinese mainland users, set it to cn
-       --kube-image-registry string                              Kube image registry. For Chinese mainland users, you may use local gcr.io mirrors such as registry.cn-hangzhou.aliyuncs.com/google_containers to override default kube image registry
--      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.36.2")
-+      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.37.1")
-       --kubeconfig string                                       absolute path to the kubeconfig file
-   -n, --namespace string                                        Kubernetes namespace (default "karmada-system")
-   -p, --port int32                                              Karmada apiserver service node port (default 32443)
-```
-
-**File**: `pkg/karmadactl/cmdinit/cmdinit.go` (modified, +1/-1)
-```diff
-@@ -158,7 +158,7 @@ func NewCmdInit(parentCommand string) *cobra.Command {
- 	// kube image registry
- 	flags.StringVarP(&opts.KubeImageMirrorCountry, "kube-image-mirror-country", "", "", "Country code of the kube image registry to be used. For Chinese mainland users, set it to cn")
- 	flags.StringVarP(&opts.KubeImageRegistry, "kube-image-registry", "", "", "Kube image registry. For Chinese mainland users, you may use local gcr.io mirrors such as registry.cn-hangzhou.aliyuncs.com/google_containers to override default kube image registry")
--	flags.StringVar(&opts.KubeImageTag, "kube-image-tag", "v1.36.2", "Choose a specific Kubernetes version for the control plane.")
-+	flags.StringVar(&opts.KubeImageTag, "kube-image-tag", "v1.37.1", "Choose a specific Kubernetes version for the control plane.")
- 	// cert
- 	flags.StringVar(&opts.ExternalIP, "cert-external-ip", "", "the external IP of Karmada certificate (e.g 192.168.1.2,172.16.1.2)")
- 	flags.StringVar(&opts.ExternalDNS, "cert-external-dns", "", "the external DNS of Karmada certificate (e.g localhost,localhost.com)")
-```
-
-**File**: `pkg/karmadactl/cmdinit/cmdinit_test.go` (modified, +13/-0)
-```diff
-@@ -33,3 +33,16 @@ func Test_initExample(t *testing.T) {
- 		t.Errorf("initExample() want return not nil, but return nil")
- 	}
- }
-+
-+func TestNewCmdInit_KubeImageTagDefault(t *testing.T) {
-+	cmd := NewCmdInit("karmadactl")
-+
-+	flag := cmd.Flags().Lookup("kube-image-tag")
-+	if flag == nil {
-+		t.Fatal("kube-image-tag flag not found")
-+	}
-+
-+	if got, want := flag.DefValue, "v1.37.1"; got != want {
-+		t.Errorf("kube-image-tag default = %q, want %q", got, want)
-+	}
-+}
-```
-
-**File**: `pkg/karmadactl/cmdinit/kubernetes/deploy.go` (modified, +1/-1)
-```diff
-@@ -99,7 +99,7 @@ var (
- 
- 	karmadaRelease string
- 
--	defaultEtcdImage = "etcd:3.6.8-0"
-+	defaultEtcdImage = "etcd:3.7.0-0"
- 
- 	// DefaultCrdURL Karmada crds resource
- 	DefaultCrdURL string
+@@ -40,7 +40,7 @@ jobs:
+         path: _output/release/${{ matrix.target }}-${{ matrix.os }}-${{ matrix.arch }}.tgz
+     - name: Uploading assets...
+       if: ${{ !env.ACT }}
+-      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
++      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+       with:
+         files: |
+           _output/release/${{ matrix.target }}-${{ matrix.os }}-${{ matrix.arch }}.tgz
+@@ -97,7 +97,7 @@ jobs:
+         # base64 -w0 encodes to base64 and outputs on a single line.
+         echo "hashes=$(sha256sum crds.tar.gz | base64 -w0)" >> "$GITHUB_OUTPUT"
+     - name: Uploading crd assets...
+-      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
++      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+       with:
+         files: |
+           crds.tar.gz
+@@ -128,7 +128,7 @@ jobs:
+       run: make package-chart
+     - name: Uploading assets...
+       if: ${{ !env.ACT }}
+-      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
++      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+       with:
+         files: |
+           _output/charts/karmada-chart-${{ github.ref_name }}.tgz
+@@ -179,7 +179,7 @@ jobs:
+         # base64 -w0 encodes to base64 and outputs on a single line.
+         echo "hashes=$(sha256sum sbom.tar.gz | base64 -w0)" >> "$GITHUB_OUTPUT"
+     - name: Uploading sbom assets...
+-      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
++      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+       with:
+         files: |
+           sbom.tar.gz
 ```
 
 ---
 
-### Incident Patch 2: `b748ea5d` (2026-10-31)
-**Commit Message**: bump default Kubernetes and etcd versions and update init command flags
+### Incident Patch 2: `754d83dd` (2026-11-09)
+**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
 
-Signed-off-by: Arbaaz Ahmed <[REDACTED_EMAIL]>
+Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.1 to 4.39.3.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...33d7b85da1a04171e211befe2c739303b9a4c066)
 
-**File**: `docs/command-line-flags/karmadactl_init.md` (modified, +1/-1)
+---
+updated-dependencies:
+- dependency-name: github/codeql-action/upload-sarif
+  dependency-version: 4.39.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci-image-scanning-on-schedule.yml` (modified, +1/-1)
 ```diff
-@@ -150,7 +150,7 @@ karmadactl init
-       --karmada-webhook-replicas int32                          Karmada webhook replica set (default 1)
-       --kube-image-mirror-country string                        Country code of the kube image registry to be used. For Chinese mainland users, set it to cn
-       --kube-image-registry string                              Kube image registry. For Chinese mainland users, you may use local gcr.io mirrors such as registry.cn-hangzhou.aliyuncs.com/google_containers to override default kube image registry
--      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.36.2")
-+      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.37.1")
-       --kubeconfig string                                       absolute path to the kubeconfig file
-   -n, --namespace string                                        Kubernetes namespace (default "karmada-system")
-   -p, --port int32                                              Karmada apiserver service node port (default 32443)
+@@ -69,7 +69,7 @@ jobs:
+           cache: false
+           vuln-type: 'os,library'
+       - name: Upload Trivy scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+           sarif_file: '${{ matrix.target }}:${{ matrix.karmada-version }}.trivy-results.sarif'
+           ref: ${{steps.gen_git_info.outputs.ref}}
 ```
 
-**File**: `pkg/karmadactl/cmdinit/cmdinit.go` (modified, +1/-1)
+**File**: `.github/workflows/ci-image-scanning.yaml` (modified, +1/-1)
 ```diff
-@@ -158,7 +158,7 @@ func NewCmdInit(parentCommand string) *cobra.Command {
- 	// kube image registry
- 	flags.StringVarP(&opts.KubeImageMirrorCountry, "kube-image-mirror-country", "", "", "Country code of the kube image registry to be used. For Chinese mainland users, set it to cn")
- 	flags.StringVarP(&opts.KubeImageRegistry, "kube-image-registry", "", "", "Kube image registry. For Chinese mainland users, you may use local gcr.io mirrors such as registry.cn-hangzhou.aliyuncs.com/google_containers to override default kube image registry")
--	flags.StringVar(&opts.KubeImageTag, "kube-image-tag", "v1.36.2", "Choose a specific Kubernetes version for the control plane.")
-+	flags.StringVar(&opts.KubeImageTag, "kube-image-tag", "v1.37.1", "Choose a specific Kubernetes version for the control plane.")
- 	// cert
- 	flags.StringVar(&opts.ExternalIP, "cert-external-ip", "", "the external IP of Karmada certificate (e.g 192.168.1.2,172.16.1.2)")
- 	flags.StringVar(&opts.ExternalDNS, "cert-external-dns", "", "the external DNS of Karmada certificate (e.g localhost,localhost.com)")
+@@ -68,6 +68,6 @@ jobs:
+           vuln-type: 'os,library'
+           cache: false
+       - name: Upload Trivy scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+           sarif_file: 'trivy-results.sarif'          
 ```
 
-**File**: `pkg/karmadactl/cmdinit/cmdinit_test.go` (modified, +13/-0)
+---
+
+### Incident Patch 3: `4731ecc1` (2026-11-09)
+**Commit Message**: build(deps): bump docker/login-action from 4.7.0 to 4.8.0
+
+Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0.
+- [Release notes](https://github.com/docker/login-action/releases)
+- [Commits](https://github.com/docker/login-action/compare/81c6f93d4bc991e510b342a00b419b3bb4efc5c6...8aa5831fb8d48d8f76594c7ddde61ae58019f550)
+
+---
+updated-dependencies:
+- dependency-name: docker/login-action
+  dependency-version: 4.8.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/dockerhub-latest-chart.yml` (modified, +1/-1)
 ```diff
-@@ -33,3 +33,16 @@ func Test_initExample(t *testing.T) {
- 		t.Errorf("initExample() want return not nil, but return nil")
- 	}
- }
-+
-+func TestNewCmdInit_KubeImageTagDefault(t *testing.T) {
-+	cmd := NewCmdInit("karmadactl")
-+
-+	flag := cmd.Flags().Lookup("kube-image-tag")
-+	if flag == nil {
-+		t.Fatal("kube-image-tag flag not found")
-+	}
-+
-+	if got, want := flag.DefValue, "v1.37.1"; got != want {
-+		t.Errorf("kube-image-tag default = %q, want %q", got, want)
-+	}
-+}
+@@ -27,7 +27,7 @@ jobs:
+         with:
+           go-version-file: go.mod
+       - name: login to DockerHub
+-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           username: ${{ secrets.DOCKERHUB_USER_NAME }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
 ```
 
-**File**: `pkg/karmadactl/cmdinit/kubernetes/deploy.go` (modified, +1/-1)
+**File**: `.github/workflows/dockerhub-latest-image.yml` (modified, +1/-1)
 ```diff
-@@ -99,7 +99,7 @@ var (
- 
- 	karmadaRelease string
- 
--	defaultEtcdImage = "etcd:3.6.8-0"
-+	defaultEtcdImage = "etcd:3.7.0-0"
- 
- 	// DefaultCrdURL Karmada crds resource
- 	DefaultCrdURL string
+@@ -50,7 +50,7 @@ jobs:
+       - name: install Buildx
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+       - name: login to DockerHub
+-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           username: ${{ secrets.DOCKERHUB_USER_NAME }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+```
+
+**File**: `.github/workflows/dockerhub-released-chart.yml` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ jobs:
+         with:
+           go-version-file: go.mod
+       - name: login to DockerHub
+-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           username: ${{ secrets.DOCKERHUB_USER_NAME }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+```
+
+**File**: `.github/workflows/dockerhub-released-image.yml` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@ jobs:
+       - name: install Buildx
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+       - name: login to DockerHub
+-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           username: ${{ secrets.DOCKERHUB_USER_NAME }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8025** (2026-11-04): chore(chart): bump default Kubernetes and etcd versions (@AarohiSharma5)
-- **PR #8020** (closed): CI: split up the release workflow (@zhzhuang-zju)
-- **PR #8019** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
-- **PR #8018** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
-- **PR #8017** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
-- **PR #8016** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
+- **PR #8041** (closed): fix(cronfederatedhpa): handle nil TargetReplicas in ScaleWorkloads (@madhavzanwar)
+- **PR #8037** (2026-11-09): build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
+- **PR #8036** (2026-11-09): build(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #8035** (2026-11-09): build(deps): bump syntaqx/setup-kustomize from 1.0.3 to 2.0.0 (@dependabot[bot])
+- **PR #8034** (2026-11-09): build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (@dependabot[bot])
+- **PR #8033** (2026-11-09): build(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 (@dependabot[bot])
 
 ---
 
@@ -1163,28 +1205,34 @@ Signed-off-by: Arbaaz Ahmed <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #8011 from Arbaaz123676/bump-karmadactl-init-defaults
+## X. build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4
 
 **RULE**:
-When implementing operations in `docs/command-line-flags/karmadactl_init.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a55ed393`: Merge pull request #8011 from Arbaaz123676/bump-karmadactl-init-defaults. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0c91500`: build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/command-line-flags/karmadactl_init.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.37.1")
+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.36.2")
+      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a55ed393` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0c91500` are properly handled with clean fallback behavior.

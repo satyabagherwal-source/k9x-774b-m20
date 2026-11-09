@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T15:17:35.621Z",
-  "total_cycles_completed": 8583,
-  "total_learnings_persisted": 8583,
-  "total_rules_promoted": 8410,
+  "last_updated": "2026-11-09T15:29:01.987Z",
+  "total_cycles_completed": 8585,
+  "total_learnings_persisted": 8585,
+  "total_rules_promoted": 8411,
   "history": [
-    {
-      "timestamp": "2026-11-08T22:52:33.120Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T22:52:41.787Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T22:52:42.617Z",
       "repository": "zarf-dev/zarf",
@@ -1403,6 +1389,20 @@
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
       "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T15:28:54.516Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T15:29:01.987Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1575,8 +1575,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein-comfy",
     "license": "Open-Source",
-    "contentHash": "36a516abb71a2ecf12006538529ea13b8d1a054f388c95fa603424af6689352f",
-    "lastHarvestedAt": "2026-11-05T15:52:02.207Z",
+    "contentHash": "96cbf5a7d186365e168cb82ce293cfce0f168ea95610dd32daaf079036c89bc4",
+    "lastHarvestedAt": "2026-11-09T15:28:54.512Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy"
   },
   "dayuanjiang-next-ai-draw-io": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "a55ed393",
+    "sourceVersion": "705b459b",
     "license": "Apache-2.0",
-    "contentHash": "c1b4b4419dbdda5e73832973fbef8ab5849739d83abcac91d70a1aaff380b554",
-    "lastHarvestedAt": "2026-11-06T13:20:25.362Z",
+    "contentHash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
+    "lastHarvestedAt": "2026-11-09T15:29:01.973Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {

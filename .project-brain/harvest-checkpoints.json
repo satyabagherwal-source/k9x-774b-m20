@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T15:17:35.626Z",
+  "last_updated": "2026-11-09T15:29:01.989Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2436,14 +2436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "36a516abb71a2ecf12006538529ea13b8d1a054f388c95fa603424af6689352f",
-      "verified_at": "2026-11-05T15:52:02.215Z",
+      "content_hash": "96cbf5a7d186365e168cb82ce293cfce0f168ea95610dd32daaf079036c89bc4",
+      "verified_at": "2026-11-09T15:28:54.519Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T15:52:02.215Z"
+      "last_updated": "2026-11-09T15:28:54.519Z"
     },
     "roseyco-management-seo-resources": {
       "status": "VERIFIED_LEARNING",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "c1b4b4419dbdda5e73832973fbef8ab5849739d83abcac91d70a1aaff380b554",
-      "verified_at": "2026-11-06T13:20:25.389Z",
+      "content_hash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
+      "verified_at": "2026-11-09T15:29:01.989Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:20:25.389Z"
+      "last_updated": "2026-11-09T15:29:01.989Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",

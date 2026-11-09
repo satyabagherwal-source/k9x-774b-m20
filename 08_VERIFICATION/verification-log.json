@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-QB1E",
-    "timestamp": "2026-11-07T22:16:16.226Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "67f654e7d2dd427eb73dfa69f2713d410f443a13d50d510380603843ee9b0640",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-ZPSL",
-    "timestamp": "2026-11-07T22:23:35.253Z",
-    "repository": "nguyenphutrong/quotio",
-    "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "03b7a0d1a755a8f170264e9cae511e16bfe5b8aa9d91d08e13389eea77b5870a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-ZX5L",
     "timestamp": "2026-11-07T22:23:44.793Z",
     "repository": "tailscale/tailscale",
@@ -7492,6 +7462,36 @@
     "contentHash": "f4fe60d7bc57b9299885925c6a24399293637227a2ffd2ada26edd421c4faf2a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-250T",
+    "timestamp": "2026-11-09T15:28:54.509Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "96cbf5a7d186365e168cb82ce293cfce0f168ea95610dd32daaf079036c89bc4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-2AS2",
+    "timestamp": "2026-11-09T15:29:01.970Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
