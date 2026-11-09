@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T21:59:35.829Z",
-  "total_cycles_completed": 8636,
-  "total_learnings_persisted": 8636,
-  "total_rules_promoted": 8467,
+  "last_updated": "2026-11-09T22:15:04.090Z",
+  "total_cycles_completed": 8640,
+  "total_learnings_persisted": 8640,
+  "total_rules_promoted": 8473,
   "history": [
-    {
-      "timestamp": "2026-11-09T02:08:02.742Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T02:08:11.700Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T02:14:32.730Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T02:14:46.334Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T02:27:57.711Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1403,6 +1375,34 @@
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",
       "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T22:14:48.800Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T22:14:51.345Z",
+      "repository": "xiaomi-research/Xiaomi-OCR-0",
+      "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T22:14:58.407Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T22:15:04.090Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

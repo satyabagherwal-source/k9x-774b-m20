@@ -8671,3 +8671,7 @@
 | `CYCLE-20261109-XYUK` | `2026-11-09T21:57:34.508Z` | `FusionCow/Sulphur-3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`98783c20...`) |
 | `CYCLE-20261109-0HAV` | `2026-11-09T21:59:31.735Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`3afb8375...`) |
 | `CYCLE-20261109-0KG3` | `2026-11-09T21:59:35.811Z` | `tencent/Qwen3.8-27B-DSpine-b16` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`c796e232...`) |
+| `CYCLE-20261109-K4WP` | `2026-11-09T22:14:48.793Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cce419ab...`) |
+| `CYCLE-20261109-K6V0` | `2026-11-09T22:14:51.324Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`2f70e81c...`) |
+| `CYCLE-20261109-KCBL` | `2026-11-09T22:14:58.401Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`63e0c12c...`) |
+| `CYCLE-20261109-KGPE` | `2026-11-09T22:15:04.082Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5b3cfbcd...`) |

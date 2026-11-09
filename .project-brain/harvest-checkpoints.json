@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T21:59:35.833Z",
+  "last_updated": "2026-11-09T22:15:04.093Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "85d2ca5a0e03a2f49f5fd9fccb466d8c0a4676d084a76ed5abe0d5c129c4f1a7",
-      "verified_at": "2026-11-06T14:25:58.310Z",
+      "content_hash": "63e0c12cbbaba6f2e823cbbcf0ca8d1a5d32c4059dcf6d730ac16cd9473fdb9f",
+      "verified_at": "2026-11-09T22:14:58.410Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:25:58.310Z"
+      "last_updated": "2026-11-09T22:14:58.410Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "4bc21bf972095bbc9523e3a154fefe8471cf2b902ccc39ef16a226ea7a18bc24",
-      "verified_at": "2026-11-09T18:11:38.280Z",
+      "content_hash": "5b3cfbcd17c17b4b17d913cff9c0c83b01a8896edc781cde8030fcbed8dffd8a",
+      "verified_at": "2026-11-09T22:15:04.092Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T18:11:38.280Z"
+      "last_updated": "2026-11-09T22:15:04.092Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "8a773acb4dcffa96d39b5bc1bddc38945a90165845929502f87080c53ae70baf",
-      "verified_at": "2026-11-08T16:01:13.873Z",
+      "content_hash": "cce419abe5983bcb417ea5aab779e1eb34ac9f27aef07318adeff0f74fe92995",
+      "verified_at": "2026-11-09T22:14:48.803Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:01:13.873Z"
+      "last_updated": "2026-11-09T22:14:48.803Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",
@@ -17646,14 +17646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-      "content_hash": "7b03da9076454fe50f37e5a5f271fb6c82681dea8207c866ac7c48e998a94ae0",
-      "verified_at": "2026-11-05T18:45:39.883Z",
+      "content_hash": "2f70e81c46fcda9f0f160776b762950140775452b5baf9736571caf552578577",
+      "verified_at": "2026-11-09T22:14:51.348Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:45:39.883Z"
+      "last_updated": "2026-11-09T22:14:51.348Z"
     },
     "LiquidAI/d1-2B": {
       "repository": "LiquidAI/d1-2B",

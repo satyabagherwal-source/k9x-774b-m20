@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T21:59:35.688Z",
+  "last_updated": "2026-11-09T22:15:03.991Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10167,8 +10167,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "096a19fa",
-      "content_hash": "4bc21bf972095bbc9523e3a154fefe8471cf2b902ccc39ef16a226ea7a18bc24",
+      "source_version": "08bcdade",
+      "content_hash": "5b3cfbcd17c17b4b17d913cff9c0c83b01a8896edc781cde8030fcbed8dffd8a",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10240,6 +10240,11 @@
         {
           "number": null,
           "title": "deps: bundled SQLite 3.54.1 via rusqlite 0.41 (RUSTSEC-2026-0459) (#5022)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "sqlp): convert types Avro can't write before --format avro (fixes #5020) (#5024)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10593,7 +10598,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T18:11:37.337Z",
+      "verified_at": "2026-11-09T22:15:03.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47419,14 +47424,19 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "e9796cca",
-      "content_hash": "85d2ca5a0e03a2f49f5fd9fccb466d8c0a4676d084a76ed5abe0d5c129c4f1a7",
+      "source_version": "bac14d41",
+      "content_hash": "63e0c12cbbaba6f2e823cbbcf0ca8d1a5d32c4059dcf6d730ac16cd9473fdb9f",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docker): create home directory for nono user (#2278)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "sandbox): scope macOS process-exec to the read set (#2282)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47535,7 +47545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:25:58.175Z",
+      "verified_at": "2026-11-09T22:14:58.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67168,14 +67178,19 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "a0fbfe77",
-      "content_hash": "8a773acb4dcffa96d39b5bc1bddc38945a90165845929502f87080c53ae70baf",
+      "source_version": "f97f122a",
+      "content_hash": "cce419abe5983bcb417ea5aab779e1eb34ac9f27aef07318adeff0f74fe92995",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "server): never block tool dispatch on observation persistence; request ledger (#",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67224,7 +67239,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:01:13.719Z",
+      "verified_at": "2026-11-09T22:14:48.709Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175546,7 +175561,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
       "source_version": "hf-xiaomi-research-xiaomi-ocr-0",
-      "content_hash": "7b03da9076454fe50f37e5a5f271fb6c82681dea8207c866ac7c48e998a94ae0",
+      "content_hash": "2f70e81c46fcda9f0f160776b762950140775452b5baf9736571caf552578577",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
       "promoted_rules": [
@@ -175558,6 +175573,21 @@
         {
           "number": null,
           "title": "**Attention Layer Mixing Safety**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Consistent Multimodal Token ID Alignment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Immutable Vision‑Text Concatenation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Strict Positional Encoding Consistency",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -175581,7 +175611,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:45:39.768Z",
+      "verified_at": "2026-11-09T22:14:51.222Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

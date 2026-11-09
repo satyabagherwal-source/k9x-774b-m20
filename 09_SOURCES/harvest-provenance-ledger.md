@@ -8680,3 +8680,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-09T21:57:34.512Z |
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `eed88c74` | Multi-dimensional audit evidence | 2026-11-09T21:59:31.739Z |
 | `learn-huggingface-tencent-qwen3-8-27b-dspine-b16` | `https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-09T21:59:35.824Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `f97f122a` | Multi-dimensional audit evidence | 2026-11-09T22:14:48.796Z |
+| `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-09T22:14:51.340Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `bac14d41` | Multi-dimensional audit evidence | 2026-11-09T22:14:58.403Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `08bcdade` | Multi-dimensional audit evidence | 2026-11-09T22:15:04.085Z |

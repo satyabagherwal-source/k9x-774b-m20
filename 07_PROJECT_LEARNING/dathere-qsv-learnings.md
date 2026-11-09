@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `096a19fa`  
+> **Source Version**: `08bcdade`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T18:11:26.325Z  
+> **Timestamp**: 2026-11-09T22:15:02.676Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T18:11:26.291Z  
+> **Harvest Timestamp**: 2026-11-09T22:15:02.670Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,145 +2203,684 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `096a19fa` (2026-11-09)
-**Commit Message**: deps: bundled SQLite 3.54.1 via rusqlite 0.41 (RUSTSEC-2026-0459) (#5022)
+### Incident Patch 1: `6606b4e3` (2026-11-09)
+**Commit Message**: fix(sqlp): convert types Avro can't write before --format avro (fixes #5020) (#5024)
 
-* deps: rusqlite 0.41 / libsqlite3-sys 0.39 via csvs_convert (RUSTSEC-2026-0459)
+* fix(sqlp): convert types Avro can't write before --format avro
 
-Moves the csvs_convert fork to b79a454, which bumps rusqlite 0.40 -> 0.41.
-That brings libsqlite3-sys 0.38.2 -> 0.39.1, bundling SQLite 3.54.1, which
-fixes CVE-2026-119375 / RUSTSEC-2026-0459: SQLite before 3.54.0 could
-return uninitialized page-cache memory when opening a database whose
-sibling -wal file (crafted, with a different page size) was written by a
-less trusted party. qsv bundles SQLite (rusqlite's `bundled` feature), used
-by `qsv to sqlite`. `cargo audit` is clean again.
+Polars' Avro writer only implements signed 32/64-bit integers, f32/f64,
+decimals, strings, binary, booleans, dates, ms/us timestamps without a time
+zone, and lists/structs of those. Any other result type failed the whole
+write with "not yet implemented: write ... to avro" (#5020): TINYINT,
+SMALLINT, every unsigned integer (which --cache-schema picks for any
+non-negative integer column, so one --cache-schema run broke every later
+Avro export of that file), TIME, intervals/durations, TIMESTAMPTZ and
+TIMESTAMP(9).
 
-Lock-only for qsv; no code changes in qsv or the fork.
+avro_compatible() now converts those columns just before AvroWriter:
+- Int8/16, UInt8/16 -> Int32; UInt32 -> Int64; UInt64 -> Int64 with a
+  strict cast, so a value above i64::MAX is an error naming the column
+- Int128/UInt128 -> String; Float16 -> Float32; Categorical/Enum -> String
+- zoned timestamps -> the same instant as a UTC timestamp; nanosecond
+  timestamps -> microseconds
+- TIME -> "HH:MM:SS[.fraction]" and durations -> ISO 8601 strings (Avro has
+  neither; Polars' plain cast drops TIME's fraction and refuses durati
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* deps: keep windows-sys 0.61 in Cargo.lock
-
-`cargo update -p csvs_convert` also moved nine packages from windows-sys
-0.61.2 back to 0.52.0, partly undoing the a0f8a379c lock update. Rebuild
-the lock from master with only the three intended changes (csvs_convert
-source, rusqlite 0.41.1, libsqlite3-sys 0.39.1); `--locked` accepts it.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): bundled SQLite 3.54.1 (#5022)
-
-Co-Autho
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-1)
 ```diff
-@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -64,7 +64,7 @@
+       {
+         "flag": "--format",
+         "type": "string",
+-        "description": "The output format to use. Valid values are: csv, json, jsonl, parquet, arrow, avro",
++        "description": "The output format to use. Valid values are: csv, json, jsonl, parquet, arrow, avro. Avro has fewer types than Polars, so avro output converts the rest: small and unsigned integers become int or long (a value above 2^63-1 is an error), zoned timestamps become UTC timestamps, nanosecond timestamps become microseconds, and TIME and durations become strings (durations in ISO 8601, e.g. P1DT2H3M4.5S).",
+         "default": "csv"
+       },
+       {
+```
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
+```diff
+@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
  
  ### Fixed
-+- **security: the bundled SQLite is updated to 3.54.1** ([#5022](https://github.com/dathere/qsv/pull/5022), [RUSTSEC-2026-0459](https://rustsec.org/advisories/RUSTSEC-2026-0459), CVE-2026-119375). It's used by `to sqlite`. Older SQLite could return uninitialized memory when opening a database next to a crafted `-wal` file written by someone else. The fix comes from `rusqlite` 0.41 / `libsqlite3-sys` 0.39, through the `csvs_convert` fork.
++- **`sqlp --format avro` writes every result type** ([#5024](https://github.com/dathere/qsv/pull/5024), fixes [#5020](https://github.com/dathere/qsv/issues/5020)). Polars' Avro writer rejected a lot of result types, and any one of them failed the whole write with `not yet implemented: write ... to avro`:
++  - **Rejected types:** `TINYINT`/`SMALLINT`, every unsigned integer, `TIME`, intervals, `TIMESTAMPTZ` and `TIMESTAMP(9)`.
++  - **After `--cache-schema`:** the cached schema makes every non-negative integer column unsigned, so a single `--cache-schema` run broke every later Avro export of that file.
++  - **Now:** small and unsigned integers become int or long (a value above 2⁶³−1 is an error), zoned timestamps become UTC timestamps (the same instant), nanosecond timestamps become microseconds, and `TIME` and durations become strings (`HH:MM:SS[.fraction]` and ISO 8601), including inside lists.
++  - **Still not converted:** struct columns from nested Parquet/Arrow input.
+ - **security: the bundled SQLite is updated to 3.54.1** ([#5022](https://github.com/dathere/qsv/pull/5022), [RUSTSEC-2026-0459](https://rustsec.org/advisories/RUSTSEC-2026-0459), CVE-2026-119375). It's used by `to sqlite`. Older SQLite could return uninitialized memory when opening a database next to a crafted `-wal` file written by someone else. The fix comes from `rusqlite` 0.41 / `libsqlite3-sys` 0.39, through the `csvs_convert` fork.
  - **`sample`: `--cluster`, `--weighted`, `--systematic` and fractional sample sizes work from stdin** ([#5003](https://github.com/dathere/qsv/pull/5003), fixes [#4999](https://github.com/dathere/qsv/issues/4999)). They returned only the header row, because they read the input twice (a row count or a second pass) and stdin can only be read once. For those methods, stdin is now copied to a temporary file first, which needs temp-directory space for the whole input. `--bernoulli`, `--stratified`, `--timeseries`, and integer sizes for the default method, `--varopt` and `--mergeable-reservoir` still stream stdin.
  - **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for input. With an empty or closed stdin (cron, CI, `xargs`), it still fails with "No data on stdin", as in 28.0.0 ([#5007](https://github.com/dathere/qsv/pull/5007)), so a script whose file list comes up empty still gets an error.
- - **`cat rowskey` writes nothing for empty input** ([#5008](https://github.com/dathere/qsv/pull/5008)). It wrote a lone `""` header line for an empty file or an empty `-` stdin, where `rows` and `columns` write nothing. With `--group`, the grouping column's header is still written.
 ```
 
-**File**: `Cargo.lock` (modified, +5/-5)
+**File**: `docs/help/sqlp.md` (modified, +1/-1)
 ```diff
-@@ -2010,7 +2010,7 @@ dependencies = [
- [[package]]
- name = "csvs_convert"
- version = "0.13.2"
--source = "git+https://github.com/jqnatividad/csvs_convert?branch=replace-streaming-stats-redux#64e3064a692d9f486113e98219d0e3ad5aa67e71"
-+source = "git+https://github.com/jqnatividad/csvs_convert?branch=replace-streaming-stats-redux#b79a454214ce4f6bfb3f9f021f5eb4b164d207b2"
- dependencies = [
-  "chrono",
-  "counter",
-@@ -4562,9 +4562,9 @@ dependencies = [
+@@ -350,7 +350,7 @@ qsv sqlp --help
  
- [[package]]
- name = "libsqlite3-sys"
--version = "0.38.2"
-+version = "0.39.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f1d20bef17f513b9b3004532233187769cd072d790971f4e4da0e346eb6401e8"
-+checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
- dependencies = [
-  "cc",
-  "pkg-config",
-@@ -7980,9 +7980,9 @@ dependencies = [
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+-| &nbsp;`‑‑format`&nbsp; | string | The output format to use. Valid values are: csv, json, jsonl, parquet, arrow, avro | `csv` |
++| &nbsp;`‑‑format`&nbsp; | string | The output format to use. Valid values are: csv, json, jsonl, parquet, arrow, avro. Avro has fewer types than Polars, so avro output converts the rest: small and unsigned integers become int or long (a value above 2^63-1 is an error), zoned timestamps become UTC timestamps, nanosecond timestamps become microseconds, and TIME and durations become strings (durations in ISO 8601, e.g. P1DT2H3M4.5S). | `csv` |
  
- [[package]]
- name = "rusqlite"
--version = "0.40.2"
-+version = "0.41.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "23f2a97da3e3873c73cb2a2e71b35c40ff95e0b1eefa8d72d8499a6928c3b5b3"
-+checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
- dependencies = [
-  "bitflags 2.13.2",
-  "fallible-iterator 0.3.0",
+ <a name="polars-csv-input-parsing-options"></a>
+ 
+```
+
+**File**: `src/cmd/sqlp.rs` (modified, +300/-4)
+```diff
+@@ -204,7 +204,13 @@ sqlp arguments:
+ 
+ sqlp options:
+     --format <arg>            The output format to use. Valid values are:
+-                                csv, json, jsonl, parquet, arrow, avro
++                                csv, json, jsonl, parquet, arrow, avro.
++                              Avro has fewer types than Polars, so avro output converts the
++                              rest: small and unsigned integers become int or long (a value
++                              above 2^63-1 is an error), zoned timestamps become UTC
++                              timestamps, nanosecond timestamps become microseconds, and TIME
++                              and durations become strings (durations in ISO 8601, e.g.
++                              P1DT2H3M4.5S).
+                               [default: csv]
+ 
+                               POLARS CSV INPUT PARSING OPTIONS:
+@@ -443,9 +449,11 @@ impl OutputMode {
+                         QsvAvroCompression::Snappy => Some(AvroCompression::Snappy),
+                     };
+ 
+-                    AvroWriter::new(&mut w)
+-                        .with_compression(avro_compression)
+-                        .finish(&mut df)
++                    avro_compatible(df.clone()).and_then(|mut avro_df| {
++                        AvroWriter::new(&mut w)
++                            .with_compression(avro_compression)
++                            .finish(&mut avro_df)
++                    })
+                 },
+                 OutputMode::None => Ok(()),
+             };
+@@ -773,6 +781,76 @@ fn ipc_writer<W: Write>(w: W, args: &Args) -> IpcWriter<W> {
+     IpcWriter::new(w).with_compression(ipc_compression)
+ }
+ 
++/// The dtype Polars' Avro writer can take instead of `dtype`, or `None` if `dtype` already works.
++/// The writer only implements signed 32/64-bit integers, f32/f64, decimals, strings, binary,
++/// booleans, dates, ms/us timestamps without a time zone, and lists/structs of those
++/// (polars-arrow `io/avro/write/schema.rs`). Anything else - a SMALLINT, any unsigned integer
++/// (which `--cache-schema` picks for non-negative integer columns), TIME, an interval - failed
++/// the whole write with "not yet implemented: write ... to avro" (#5020).
++fn avro_dtype(dtype: &DataType) -> Option<DataType> {
++    match dtype {
++        DataType::Int8 | DataType::Int16 | DataType::UInt8 | DataType::UInt16 => {
++            Some(DataType::Int32)
++        },
++        DataType::UInt32 | DataType::UInt64 => Some(DataType::Int64),
++        // Avro's largest integer is a signed 64-bit long, and a decimal holds 38 digits; these
++        // can have 39.
++        DataType::Int128 | DataType::UInt128 => Some(DataType::String),
++        DataType::Float16 => Some(DataType::Float32),
++        // Avro timestamps are UTC instants, so a zoned timestamp keeps its instant, in UTC.
++        DataType::Datetime(unit, tz) => {
++            let avro_unit = if *unit == TimeUnit::Nanoseconds {
++                TimeUnit::Microseconds
++            } else {
++                *unit
++            };
++            (tz.is_some() || avro_unit != *unit).then_some(DataType::Datetime(avro_unit, None))
++        },
++        DataType::Time | DataType::Duration(_) => Some(DataType::String),
++        dt if dt.is_categorical() || dt.is_enum() => Some(DataType::String),
++        DataType::List(inner) => avro_dtype(inner).map(|inner| DataType::List(Box::new(inner))),
++        _ => None,
++    }
++}
++
++/// Convert every column `AvroWriter` would reject (see [`avro_dtype`]) to one it writes. Every
++/// conversion keeps the value, except that nanosecond timestamps drop to microseconds. TIME is
++/// written as `HH:MM:SS[.fraction]` and durations as ISO 8601 (`P1DT2H3M4.5S`), since Avro has
++/// no type for either and Polars' plain cast to string drops TIME's fraction and refuses
++/// durations. A `UInt64` value above `i64::MAX` is an error, not a wrapped number.
++fn avro_compatible(mut df: DataFrame) -> PolarsResult<DataFrame> {
++    for idx in 0..df.width() {
++        let column = &df.columns()[idx];
++        if avro_dtype(column.dtype()).is_none() {
++            continue;
++        }
++        let name = column.name().clone();
++        let converted = avro_series(column.as_materialized_series())
++            .map_err(|e| polars_err!(ComputeError: "can't write column '{name}' to Avro: {e}"))?;
++        df.replace_column(idx, converted.with_name(name).into_column())?;
++    }
++    Ok(df)
++}
++
++/// One column (or a list's inner values) converted for Avro. Lists recurse, so their TIME and
++/// duration elements get the same formatters as top-level columns, instead of a plain cast.
++fn avro_series(series: &Series) -> PolarsResult<Series> {
++    match series.dtype() {
++        DataType::Time => Ok(series.time()?.to_string("%H:%M:%S%.f")?.into_series()),
++        DataType::Duration(_) => Ok(series.duration()?.to_string("iso")?.into_series()),
++        DataType::List(_) => Ok(series
++            .list()?
++            .apply_to_inner(&|
+```
+
+**File**: `tests/test_sqlp.rs` (modified, +81/-0)
+```diff
+@@ -7527,6 +7527,87 @@ fn sqlp_streaming_json_and_avro_still_collect() {
+     assert!(wrk.path("out.avro").metadata().unwrap().len() > 0);
+ }
+ 
++fn assert_is_avro(wrk: &Workdir, file: &str) {
++    let bytes = std::fs::read(wrk.path(file)).unwrap();
++    assert!(bytes.starts_with(b"Obj\x01"), "{file} is not an Avro file");
++}
++
++#[test]
++fn sqlp_avro_after_cache_schema() {
++    // #5020: --cache-schema types non-negative integer columns as UInt8..UInt64, which Polars'
++    // Avro writer doesn't implement, so every later Avro export of the file failed.
++    let wrk = Workdir::new("sqlp_avro_after_cache_schema");
++    wrk.create(
++        "data.csv",
++        vec![
++            svec!["id", "small", "name"],
++            svec!["100000", "1", "a"],
++            svec!["200000", "2", "b"],
++        ],
++    );
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("data.csv")
++        .arg("--cache-schema")
++        .arg("SELECT * FROM data");
++    wrk.assert_success(&mut cmd);
++    assert!(wrk.path("data.csv.pschema.json").exists());
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("data.csv")
++        .args(["--format", "avro", "-o", "out.avro"])
++        .arg("SELECT * FROM data");
++    let shape = wrk.stderr_on_success(&mut cmd);
++    assert_eq!(shape.trim(), "(2, 3)");
++    assert_is_avro(&wrk, "out.avro");
++}
++
++#[test]
++fn sqlp_avro_writes_types_its_writer_lacks() {
++    // #5020: each of these failed the whole write with "not yet implemented: write ... to avro".
++    // Their converted values are checked by the round-trip unit tests in src/cmd/sqlp.rs.
++    let wrk = Workdir::new("sqlp_avro_writes_types_its_writer_lacks");
++    wrk.create(
++        "x.csv",
++        vec![
++            svec!["i", "d", "ts", "t"],
++            svec!["5", "2024-01-02", "2024-01-02 03:04:05", "03:04:05.25"],
++        ],
++    );
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("x.csv")
++        .args(["--format", "avro", "-o", "out.avro"])
++        .arg(
++            "SELECT CAST(i AS TINYINT) AS i8, CAST(i AS SMALLINT) AS i16, CAST(i AS UTINYINT) AS \
++             u8, CAST(i AS USMALLINT) AS u16, CAST(i AS UINT) AS u32, CAST(i AS UBIGINT) AS u64, \
++             CAST(t AS TIME) AS tm, CAST(ts AS TIMESTAMP) - CAST(d AS TIMESTAMP) AS dur, CAST(ts \
++             AS TIMESTAMPTZ) AS tstz, CAST(ts AS TIMESTAMP(9)) AS tsns FROM x",
++        );
++    let shape = wrk.stderr_on_success(&mut cmd);
++    assert_eq!(shape.trim(), "(1, 10)");
++    assert_is_avro(&wrk, "out.avro");
++}
++
++#[test]
++fn sqlp_avro_ubigint_above_i64_max_errors() {
++    // Avro's largest integer is a signed 64-bit long: an out-of-range UBIGINT must fail and
++    // name its column, not wrap around.
++    let wrk = Workdir::new("sqlp_avro_ubigint_above_i64_max_errors");
++    wrk.create("x.csv", vec![svec!["a"], svec!["1"]]);
++
++    // From a literal: the CSV reader would infer an Int64 column and fail on 2^64-1 itself.
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("x.csv")
++        .args(["--format", "avro", "-o", "out.avro"])
++        .arg("SELECT CAST('18446744073709551615' AS UBIGINT) AS big FROM x");
++    let err = wrk.stderr_on_error(&mut cmd);
++    assert!(
++        err.contains("can't write column 'big' to Avro: u64 as i64"),
++        "{err}"
++    );
++}
++
+ #[test]
+ fn sqlp_streaming_empty_result_writes_header() {
+     let wrk = Workdir::new("sqlp_streaming_empty_result_writes_header");
 ```
 
 ---
 
-### Incident Patch 2: `07b97185` (2026-11-09)
-**Commit Message**: test(joinp): don't assert the order of tied matches with --maintain-order left (#5023)
+### Incident Patch 2: `09e53c1e` (2026-11-09)
+**Commit Message**: fix(profile): warn that --validate is ignored with --no-projection
 
-joinp_ignore_case_maintain_order_left asserted the exact order of BOSTON's
-two right-side matches (Logan Airport, then Boston Garden). `--maintain-order
-left` only orders by the left row, and the USAGE says tied matches stay in
-unspecified order. Polars 0b47007 happened to emit them in right order every
-time; a598c51 (#5021) doesn't: 12 of 50 runs swap them, so the test failed
-about a third of the time (0 of 50 on the old pin).
+--validate checks the projection block, so with --no-projection it ran
+nothing (no schema check, no qsv validate pass) and exited 0 silently,
+even with --strict. Flagged by Codacy on #5025; pre-existing.
 
-Now the left order is checked exactly and the rows as a set. Mutation-checked:
-with `--maintain-order right` the left-order assertion fails. 20/20 runs
-pass.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `tests/test_joinp.rs` (modified, +15/-2)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1368,15 +1368,28 @@ fn joinp_ignore_case_maintain_order_left() {
-         .args(["--maintain-order", "left"]);
+@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
  
-     let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
--    let expected = vec![
+ ### Fixed
++- **`profile --validate --no-projection` warns that `--validate` is ignored**. `--validate` checks the projection block, so with `--no-projection` it ran nothing (neither the schema check nor the `qsv validate` pass) and exited 0 without a word, even with `--strict`. To check the file alone, run `qsv validate`.
+ - **`profile`: an `--initial-context` override that cannot be applied is reported, not silently dropped** ([#5025](https://github.com/dathere/qsv/pull/5025), fixes [#4991](https://github.com/dathere/qsv/issues/4991)). Before, the run exited 0, passed `--strict`, and left no trace of the missing value. Each such override now gets a Required `projection_warnings` entry (on stderr with `--no-projection`) naming the key and the reason, and fails `--strict`:
+   - a key that is not a JSON Pointer (doesn't start with `/`);
+   - an array index out of range, e.g. `/projection/dataset/1/...` on a one-Dataset catalog;
+```
+
+**File**: `docs/help/profile.md` (modified, +1/-1)
+```diff
+@@ -176,7 +176,7 @@ qsv profile --help
+ | &nbsp;`‑‑dcat‑legacy‑license`&nbsp; | flag | Also emit `license` on the Dataset, alongside the Distribution-level copy. Both are valid DCAT-US v3 (the Dataset-level property was added upstream), but the migration guide directs publishers to put license on each Distribution, so that is what qsv emits by default. Default: off. |  |
+ | &nbsp;`‑‑no‑dcat‑discovery`&nbsp; | flag | Skip DCAT-markup discovery on URL inputs. Discovery sniffs HTTP Link: rel=describedBy (and, in future, sibling .metadata.json / JSON-LD <script> blocks) to use the publisher's stated metadata as a base layer. |  |
+ | &nbsp;`‑‑dcat‑discovery‑timeout`&nbsp; | integer | Per-request timeout for DCAT-markup discovery probes. Default: 5. |  |
+-| &nbsp;`‑‑validate`&nbsp; | flag | Validate the emitted projection block against the active profile's declared validators. For dcat-us-v3 that's the vendored GSA JSON Schema bundle (see resources/dcat-us-v3/); for dcat-ap-v3 / geoconnex it's pyshacl over the bundled SHACL shapes; for croissant it's mlcroissant. Catches missing mandatory fields, cardinality issues, and shape violations. Violations append to projection_warnings by default. Also runs `qsv validate` over the input (CSV structure + UTF-8), so a passing file is declared UTF-8 encoded and its syntactic validity is recorded as a quality measurement. A file that fails it (or a pass that cannot run) also gets a Required `syntacticValidity` warning. |  |
++| &nbsp;`‑‑validate`&nbsp; | flag | Validate the emitted projection block against the active profile's declared validators. For dcat-us-v3 that's the vendored GSA JSON Schema bundle (see resources/dcat-us-v3/); for dcat-ap-v3 / geoconnex it's pyshacl over the bundled SHACL shapes; for croissant it's mlcroissant. Catches missing mandatory fields, cardinality issues, and shape violations. Violations append to projection_warnings by default. Also runs `qsv validate` over the input (CSV structure + UTF-8), so a passing file is declared UTF-8 encoded and its syntactic validity is recorded as a quality measurement. A file that fails it (or a pass that cannot run) also gets a Required `syntacticValidity` warning. Ignored, with a warning on stderr, when combined with --no-projection. |  |
+ | &nbsp;`‑‑strict`&nbsp; | flag | Fail the command, instead of just warning, when an --initial-context override cannot be applied, and, with --validate, when the input fails `qsv validate`, on Required-severity schema violations or on non-Info external-validator findings. Severity comes from the DCAT-US v3 schema's own requirementLevel annotations, so a missing mandatory property aborts while a recommended-field advisory does not. |  |
+ | &nbsp;`‑‑allow‑external‑validator`&nbsp; | flag | Opt in to spawning the validator binary declared by `validation.external` when the profile was loaded from an arbitrary YAML file. Bundled profiles (dcat-us-v3, dcat-ap-v3, croissant, geoconnex) always run their declared external validators because the profile content is vetted at qsv release time. Without this flag, file-loaded profiles emit a Recommended-severity warning instead of running the binary, so an untrusted YAML can't silently execute arbitrary commands. Default: off. |  |
+ | &nbsp;`‑‑catalog`&nbsp; | flag | Wrap the emitted DCAT-US v3 Dataset inside a Catalog envelope (Catalog{dataset:[...]}). Useful for federation harvesters (data.gov, CKAN ingest) that expect Catalog-shaped top-level metadata. Default: off (Dataset-only, backwards-compatible). |  |
+```
+
+**File**: `src/cmd/profile.rs` (modified, +9/-0)
+```diff
+@@ -234,6 +234,8 @@ profile options:
+                               quality measurement. A file that fails it
+                               (or a pass that cannot run) also gets a
+                               Required `syntacticValidity` warning.
++                              Ignored, with a warning on stderr, when
++                              combined with --no-projection.
+     --strict                  Fail the command, instead of just warning,
+                               when an --initial-context override cannot
+                               be applied, and, with --validate, when the
+@@ -442,6 +444,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         .map(locate::LocateMode::parse)
+         .transpose()?;
+ 
++    if args.flag_validate && args.flag_no_projection {
++        eprintln!(
++            "qsv profile: warning: --validate is ignored with --no-projection: there is no \
++             projection to validate"
++        );
++    }
 +
-+    // "left" only orders by the left row (see --maintain-order in the USAGE): BOSTON matches
-+    // two right rows, which are tied, so their relative order is unspecified, and Polars does
-+    // vary it between runs. Check the left order exactly, and the tied rows as a set.
-+    let left_order: Vec<&str> = got.iter().skip(1).map(|row| row[0].as_str()).collect();
-+    assert_eq!(
-+        left_order,
-+        ["BOSTON", "BOSTON", "new york", "San Francisco", "BUFFALO"]
-+    );
-+
-+    let mut got_rows = got;
-+    let mut expected = vec![
-         svec!["city", "state", "city_right", "place"],
-         svec!["BOSTON", "MA", "Boston", "Logan Airport"],
-         svec!["BOSTON", "MA", "boston", "Boston Garden"],
-         svec!["new york", "NY", "new York", "Madison Square Garden"],
-         svec!["San Francisco", "CA", "san francisco", "Fisherman's Wharf"],
-         svec!["BUFFALO", "NY", "BUFFALO", "Ralph Wilson Stadium"],
-     ];
--    assert_eq!(got, expected);
-+    got_rows[1..].sort();
-+    expected[1..].sort();
-+    assert_eq!(got_rows, expected);
+     let ctx_args = context::ContextArgs {
+         input_path:      &input_path,
+         no_headers:      args.flag_no_headers,
+```
+
+**File**: `tests/test_profile.rs` (modified, +35/-0)
+```diff
+@@ -2991,6 +2991,41 @@ fn validate_pass_success_adds_no_syntax_warning() {
+     );
  }
  
- #[test]
++#[test]
++fn validate_with_no_projection_warns_that_it_is_ignored() {
++    // --validate checks the projection block, so with --no-projection it
++    // runs nothing; say so rather than exit 0 as if the file was checked.
++    let wrk = Workdir::new("profile_validate_no_projection_warns");
++    seed_invalid_utf8_csv(&wrk);
++    let mut cmd = wrk.command("profile");
++    cmd.args([
++        "bad.csv",
++        "--validate",
++        "--strict",
++        "--no-projection",
++        "-o",
++        "out.json",
++    ]);
++    let stderr = wrk.stderr_on_success(&mut cmd);
++    assert!(
++        stderr.contains(
++            "qsv profile: warning: --validate is ignored with --no-projection: there is no \
++             projection to validate"
++        ),
++        "{stderr}"
++    );
++}
++
++#[test]
++fn validate_without_no_projection_does_not_warn_it_is_ignored() {
++    let wrk = Workdir::new("profile_validate_projection_no_ignore_warning");
++    seed_geo_csv(&wrk);
++    let mut cmd = wrk.command("profile");
++    cmd.args(["in.csv", "--validate", "-o", "out.json"]);
++    let stderr = wrk.stderr_on_success(&mut cmd);
++    assert!(!stderr.contains("--validate is ignored"), "{stderr}");
++}
++
+ // =============================================================================
+ // DCAT-US v3 comprehensive coverage (--catalog, force overrides, new fields,
+ // GSA bundle validation).
+```
+
+---
+
+### Incident Patch 3: `28995d43` (2026-11-09)
+**Commit Message**: fix(profile): report --initial-context overrides that can't be applied; `-` appends (fixes #4991) (#5025)
+
+* fix(profile): report --initial-context overrides that can't be applied; `-` appends (fixes #4991)
+
+- set_by_pointer checks the whole path first and returns why it can't
+  write: a non-pointer key, an out-of-range index, a non-numeric token
+  inside an array, or a `-` with no array to append to. A final `-`
+  appends to an existing array (before, it was dropped, or wrote a "-"
+  key under a missing or object parent).
+- Each unapplied override becomes a Required projection_warnings entry
+  (stderr with --no-projection) and fails --strict, with or without
+  --validate.
+- {value, force: true} dataset_info entries are written by the forced
+  pass only, so a forced `-` appends once.
+- --validate --strict now fails on a file that fails the `qsv validate`
+  pass (it was recorded only as syntacticValidity "false"), which also
+  gets a Required syntacticValidity warning.
+- USAGE: pointer semantics, the --strict scope, and the --locate census
+  state-column 90% threshold.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #5025 for the profile override and --s
+
+**File**: `CHANGELOG.md` (modified, +9/-0)
+```diff
+@@ -9,8 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ### Added
+ - **docs: "Statistics at a Glance" in [`docs/STATS_DEFINITIONS.md`](docs/STATS_DEFINITIONS.md)**: qsv compiles 159 statistic columns across `stats` (48), `moarstats` (76 + 14 bivariate), `pragmastat` (18) and `frequency` (3). A new test checks the table against real output, so the counts can't go stale silently ([#4996](https://github.com/dathere/qsv/pull/4996)).
+ - **docs: the `viz` USAGE documents stdin input** ([#5018](https://github.com/dathere/qsv/pull/5018)). Pass `-` as `<input>` to chart piped CSV. Every chart type accepts it except `smart`, which needs a file for its cached statistics. With `--geojson auto` or `census`, stdin is first copied to a temp file. There's also a new piped-input example.
++- **`profile --initial-context`: a final `-` in a `dataset_info` pointer appends to an array** ([#5025](https://github.com/dathere/qsv/pull/5025), [#4991](https://github.com/dathere/qsv/issues/4991)). For example, `/projection/hasQualityMeasurement/-` adds an agency's own quality measurement after the computed ones, so it no longer takes a second run to seed the whole array. `-` appends only to an array that exists; a numeric index still replaces the item in place.
++- **docs: the `profile --locate census` USAGE gives the state-column threshold** ([#5025](https://github.com/dathere/qsv/pull/5025)): a state column lists states only when at least 90% of its values are US states.
+ 
+ ### Changed
++- **`profile --validate --strict` fails on a file that fails `qsv validate`** ([#5025](https://github.com/dathere/qsv/pull/5025)). Before, an input with inconsistent field counts or quoting, or invalid UTF-8, passed `--strict`: it was recorded only as a `syntacticValidity` measurement of `"false"`. It now also gets a Required `syntacticValidity` warning in `projection_warnings`, and `--strict` fails on it. The same happens when the `qsv validate` pass cannot run, since `profile` can then not vouch for the file.
++- **`profile --strict` fails when an `--initial-context` override cannot be applied, with or without `--validate`** ([#5025](https://github.com/dathere/qsv/pull/5025), [#4991](https://github.com/dathere/qsv/issues/4991)). See Fixed.
+ - **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected. On big-endian targets (s390x), values of 128 bytes or more were misread until a compact_bytes fix ([#5015](https://github.com/dathere/qsv/pull/5015)), so this was never released with the bug.
+ - **`stats --weight`: mode, antimode and cardinality tracking is faster and uses less memory** ([#5013](https://github.com/dathere/qsv/pull/5013)). The weighted tracker now stores short values inline too, as #5011 did for unweighted `stats`. On a 1M-row file with `--weight`, `--cardinality --mode` is 12–20% faster, and `--everything` on an indexed file is 21–23% faster with 36% less peak memory. Output is unchanged.
+ - **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
+@@ -26,6 +30,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `
+```
+
+**File**: `docs/help/profile.md` (modified, +4/-4)
+```diff
+@@ -165,19 +165,19 @@ qsv profile --help
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+ | &nbsp;`‑‑spec`&nbsp; | string | CKAN scheming YAML spec file. If omitted, only the inferred `dpp` block (lat/lon/date columns, dataset stats) is emitted; no formulas are evaluated. |  |
+-| &nbsp;`‑‑initial‑context`&nbsp; | string | JSON file providing seed values for the package / resource dicts plus optional JSON-Pointer overrides for the final projection block. Replaces the older --package-meta / --resource-meta flags. Top-level keys: `package`, `resource`, `dataset_info`. Each leaf value may be wrapped as {"value": ..., "force": true} to mark it as overriding any value discovered from URL DCAT markup AND any value qsv inferred. Force is honored across all three subtrees: dataset_info entries override their target path verbatim; package / resource entries route through the active profile's `field_mappings:` table (e.g. `package.title force=true` lands at `/projection/title`, beating inference and discovery). Forced values for slots the profile does not surface are silently dropped (no-op). See tests/resources/profile/dcat-init-context.README.md for a fully-populated example. |  |
++| &nbsp;`‑‑initial‑context`&nbsp; | string | JSON file providing seed values for the package / resource dicts plus optional JSON-Pointer overrides for the final projection block. Replaces the older --package-meta / --resource-meta flags. Top-level keys: `package`, `resource`, `dataset_info`. Each leaf value may be wrapped as {"value": ..., "force": true} to mark it as overriding any value discovered from URL DCAT markup AND any value qsv inferred. Force is honored across all three subtrees: dataset_info entries override their target path verbatim; package / resource entries route through the active profile's `field_mappings:` table (e.g. `package.title force=true` lands at `/projection/title`, beating inference and discovery). Forced values for slots the profile does not surface are silently dropped (no-op). `dataset_info` keys are JSON Pointers into the output (e.g. `/projection/title`): the value replaces what is there, and missing objects are created. Inside an array, use an existing index, or a final `-` to append (e.g. `/projection/hasQualityMeasurement/-` adds a measurement after the computed ones). An override that cannot be applied (not a pointer, an index out of range, `-` with no array to append to) is reported in projection_warnings (or, with --no-projection, on stderr) and fails --strict. See tests/resources/profile/dcat-init-context.README.md for a fully-populated example. |  |
+ | &nbsp;`‑‑no‑projection`&nbsp; | flag | Skip the metadata projection block (dcat/croissant/ geoconnex, depending on the active profile). |  |
+ | &nbsp;`‑‑no‑ckan`&nbsp; | flag | Skip the CKAN-shape block. |  |
+ | &nbsp;`‑‑croissant‑frequency`&nbsp; | flag | Embed per-column value-frequency distributions in the metadata projection. The croissant profile renders them as inline cr:RecordSets (one `<col>-frequency` RecordSet of {value, count, percentage} rows per column), per the spec's "distribution of values is a statistic on the field" guidance. Off by default (keeps the projection compact); the raw counts always remain in the top-level `frequency` block regardless. Other bundled profiles ignore this flag. |  |
+-| &nbsp;`‑‑locate`&nbsp; | string | Name the places the data covers, as DCAT-US v3 `spatial` Locations, by looking up the densest coordinate cells (up to 40, row-weighted) with `qsv geocode`. <mode> is one of: geonames - label the bounding box with the place, admin1 or country that 80% of the sampled rows share (offline Geonames index). census   - add each US state and county holding at least 5% of the sampled rows (the heaviest state always; up to 10 counties), keyed by Census GEOID (US Census Geocoder: online, keyless, cached). State and county columns, when they resolve, supply these instead, with or without coordinates, as they name every row exactly: states as USPS, FIPS or names; counties as names or GEOIDs, matched exactly within each row's state (TIGERweb county names). A name several counties share is noted, not guessed. both     - geonames and census. Also adds the coordinates' centroid. A lookup that cannot run is noted in projection_warnings; the bounding box is kept. Default: off. |  |
++| &nbsp;`‑‑locate`&nbsp; | string | Name the places the data covers, as DCAT-US v3 `spatial` Locations, by looking up the densest coordinate cells (up to 40, row-weighted) with `qsv geocode`. <mode> is one of: geonames - label the bounding box with the place, admin1 or country that 80% of the sampled rows share (offline Geonames index). census   - add each US state and county holding at least 5% of the sampled rows (the heaviest state always; up to 10 counties), keyed by Census GEOI
+```
+
+**File**: `src/cmd/profile.rs` (modified, +296/-57)
+```diff
+@@ -125,6 +125,18 @@ profile options:
+                               `/projection/title`, beating inference and
+                               discovery). Forced values for slots the profile
+                               does not surface are silently dropped (no-op).
++                              `dataset_info` keys are JSON Pointers into the
++                              output (e.g. `/projection/title`): the value
++                              replaces what is there, and missing objects
++                              are created. Inside an array, use an existing
++                              index, or a final `-` to append (e.g.
++                              `/projection/hasQualityMeasurement/-` adds a
++                              measurement after the computed ones). An
++                              override that cannot be applied (not a
++                              pointer, an index out of range, `-` with no
++                              array to append to) is reported in
++                              projection_warnings (or, with --no-projection,
++                              on stderr) and fails --strict.
+                               See tests/resources/profile/dcat-init-context.README.md
+                               for a fully-populated example.
+     --no-projection           Skip the metadata projection block (dcat/croissant/
+@@ -164,6 +176,9 @@ profile options:
+                                            row's state (TIGERweb county
+                                            names). A name several counties
+                                            share is noted, not guessed.
++                                           A state column lists states only
++                                           when at least 90% of its values
++                                           are US states.
+                                 both     - geonames and census.
+                               Also adds the coordinates' centroid. A lookup
+                               that cannot run is noted in projection_warnings;
+@@ -216,11 +231,16 @@ profile options:
+                               input (CSV structure + UTF-8), so a passing
+                               file is declared UTF-8 encoded and its
+                               syntactic validity is recorded as a
+-                              quality measurement.
+-    --strict                  With --validate, fail the command on
+-                              Required-severity schema violations, or on
+-                              non-Info external-validator findings,
+-                              instead of just warning. Severity comes
++                              quality measurement. A file that fails it
++                              (or a pass that cannot run) also gets a
++                              Required `syntacticValidity` warning.
++    --strict                  Fail the command, instead of just warning,
++                              when an --initial-context override cannot
++                              be applied, and, with --validate, when the
++                              input fails `qsv validate`, on
++                              Required-severity schema violations or on
++                              non-Info external-validator findings.
++                              Severity comes
+                               from the DCAT-US v3 schema's own
+                               requirementLevel annotations, so a missing
+                               mandatory property aborts while a
+@@ -282,7 +302,7 @@ Common options:
+                               CSV into memory using CONSERVATIVE heuristics.
+ "#;
+ 
+-use std::path::Path;
++use std::{collections::HashSet, path::Path};
+ 
+ use serde::Deserialize;
+ use serde_json::{Map, Value, json};
+@@ -818,10 +838,20 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     // CKAN block, and formula output. Must run BEFORE schema
+     // validation so an override that supplies a missing mandatory
+     // field doesn't trip --strict. Per plan §4c.
++    let forced_pointers: HashSet<&str> = analysis
++        .forced_values
++        .iter()
++        .map(|(ptr, _)| ptr.as_str())
++        .collect();
++    let mut override_failures = Vec::new();
+     if let Some(overrides) = analysis.dataset_info.as_object()
+         && !overrides.is_empty()
+     {
+-        apply_pointer_overrides(&mut output, overrides);
++        override_failures.extend(apply_pointer_overrides(
++            &mut output,
++            overrides,
++            &forced_pointers,
++        ));
+     }
+ 
+     // §5.4: forced `(projection_pointer, value)` pairs from all three
+@@ -834,7 +864,34 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     // forced field can rescue --strict the same way dataset_info
+     // entries do.
+     if !analysis.forced_values.is_empty() {
+-        apply_force_overrides(&mut output, &analysis.forced_values);
++        override_failures.extend(apply_force_overrides(&mut output, &analysis.forced_values));
+
+```
+
+**File**: `tests/test_profile.rs` (modified, +396/-0)
+```diff
+@@ -2669,6 +2669,328 @@ fn wrapped_dataset_info_override_rescues_strict_validation() {
+     );
+ }
+ 
++fn quality_measurements(out: &serde_json::Value) -> &Vec<serde_json::Value> {
++    out.pointer("/projection/dataset/0/hasQualityMeasurement")
++        .and_then(|v| v.as_array())
++        .expect("hasQualityMeasurement array")
++}
++
++/// `projection_warnings` entries reporting an unapplied override (their
++/// `field` is the override's key).
++fn override_warnings(out: &serde_json::Value) -> Vec<(String, String, String)> {
++    out.get("projection_warnings")
++        .and_then(|v| v.as_array())
++        .map(|ws| {
++            ws.iter()
++                .filter(|w| {
++                    w.get("message")
++                        .and_then(|m| m.as_str())
++                        .is_some_and(|m| m.starts_with("--initial-context override"))
++                })
++                .map(|w| {
++                    let s = |k: &str| w.get(k).and_then(|v| v.as_str()).unwrap_or("").to_string();
++                    (s("field"), s("severity"), s("message"))
++                })
++                .collect()
++        })
++        .unwrap_or_default()
++}
++
++const AGENCY_MEASUREMENT: &str = r#"{
++    "@type": "QualityMeasurement",
++    "isMeasurementOf": {"@type": "Metric", "definition": "Meets the agency's IQG."},
++    "value": "true"
++}"#;
++
++#[test]
++fn dataset_info_dash_appends_to_computed_array() {
++    // #4991: `-` appends to an array profile computed, instead of the
++    // override being dropped without a word.
++    let wrk = Workdir::new("profile_override_dash_append");
++    seed_geo_csv(&wrk);
++    let ctx_path = wrk.path("init.json");
++    std::fs::write(
++        &ctx_path,
++        format!(
++            r#"{{"dataset_info": {{"/projection/dataset/0/hasQualityMeasurement/-": {AGENCY_MEASUREMENT}}}}}"#
++        ),
++    )
++    .unwrap();
++    let mut cmd = wrk.command("profile");
++    cmd.args([
++        "in.csv",
++        "--validate",
++        "--catalog",
++        "--initial-context",
++        ctx_path.to_str().unwrap(),
++        "-o",
++        "out.json",
++    ]);
++    wrk.assert_success(&mut cmd);
++    let out = read_output(&wrk, "out.json");
++    let qm = quality_measurements(&out);
++    // The 5 computed measurements are kept, the agency's comes last.
++    assert_eq!(qm.len(), 6, "{qm:#?}");
++    assert_eq!(
++        qm[5]
++            .pointer("/isMeasurementOf/definition")
++            .and_then(|v| v.as_str()),
++        Some("Meets the agency's IQG.")
++    );
++    assert!(
++        qm[..5]
++            .iter()
++            .all(|m| m.pointer("/isMeasurementOf/definition")
++                != Some(&serde_json::json!("Meets the agency's IQG."))),
++        "computed measurements must stay: {qm:#?}"
++    );
++    assert_eq!(override_warnings(&out), vec![]);
++}
++
++#[test]
++fn forced_dataset_info_dash_appends_once() {
++    // A {value, force: true} entry is applied by the forced pass only;
++    // applying it in the plain dataset_info pass too appended it twice.
++    let wrk = Workdir::new("profile_override_forced_dash_once");
++    seed_geo_csv(&wrk);
++    let ctx_path = wrk.path("init.json");
++    std::fs::write(
++        &ctx_path,
++        format!(
++            r#"{{"dataset_info": {{"/projection/dataset/0/hasQualityMeasurement/-":
++                {{"value": {AGENCY_MEASUREMENT}, "force": true}}}}}}"#
++        ),
++    )
++    .unwrap();
++    let mut cmd = wrk.command("profile");
++    cmd.args([
++        "in.csv",
++        "--validate",
++        "--catalog",
++        "--initial-context",
++        ctx_path.to_str().unwrap(),
++        "-o",
++        "out.json",
++    ]);
++    wrk.assert_success(&mut cmd);
++    let out = read_output(&wrk, "out.json");
++    assert_eq!(quality_measurements(&out).len(), 6);
++}
++
++#[test]
++fn unapplied_dataset_info_overrides_are_reported() {
++    // #4991: each override that cannot be applied gets a
++    // projection_warnings entry naming the key and the reason.
++    let wrk = Workdir::new("profile_override_unapplied_reported");
++    seed_geo_csv(&wrk);
++    let ctx_path = wrk.path("init.json");
++    std::fs::write(
++        &ctx_path,
++        r#"{
++            "dataset_info": {
++                "/projection/dataset/1/title": "second dataset",
++                "/projection/dataset/title": "not an index",
++                "/projection/dataset/0/keywordz/-": "nothing to append to",
++                "title": "not a pointer"
++            }
++        }"#,
++    )
++    .unwrap();
++    let mut cmd = wrk.command("profile");
++    cmd.args([
++        "in.csv",
++        "--catalog",
++        "--initial-context",
++        ctx_path.to_str().unwrap(),
++        "-o",
++        "out.json",
++    ]);
++    wrk.assert_success(&mut cmd);
++    let out = read_output(&wrk, "out.json");
++    let expected = [
++        (
++            "/projection/dataset/0/keywordz/-",
++            "`/projection/dataset/0/keywordz` does not exist, so there is nothing to append to",
++        ),
++        (
++            "/projection
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5027** (2026-11-09): deps: drop the webdriver-downloader fork patch (0.18.0 is on crates.io) (@jqnatividad)
+- **PR #5026** (2026-11-09): deps: bump Luau to 0.745 via mlua upstream rev a0ad453 (@jqnatividad)
+- **PR #5025** (2026-11-09): fix(profile): report --initial-context overrides that can't be applied; `-` appends (fixes #4991) (@jqnatividad)
+- **PR #5024** (2026-11-09): fix(sqlp): convert types Avro can't write before --format avro (fixes #5020) (@jqnatividad)
 - **PR #5023** (2026-11-09): test(joinp): don't assert the order of tied matches with --maintain-order left (@jqnatividad)
 - **PR #5022** (2026-11-09): deps: bundled SQLite 3.54.1 via rusqlite 0.41 (RUSTSEC-2026-0459) (@jqnatividad)
-- **PR #5021** (2026-11-09): deps: bump Polars to upstream main a598c51 (@jqnatividad)
-- **PR #5019** (2026-11-09): bench: verify sqlp and frequency results (benchmarks.sh 10.1.2) (@jqnatividad)
-- **PR #5018** (2026-11-09): docs(viz): document stdin input in the USAGE (@jqnatividad)
-- **PR #5017** (2026-11-09): build(deps): bump anthropics/claude-code-action from 1.0.267 to 1.0.269 (@dependabot[bot])
 
 ---
 
@@ -2361,28 +2900,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bundled SQLite 3.54.1 via rusqlite 0.41 (RUSTSEC-2026-0459) (#5022)
+## X. sqlp): convert types Avro can't write before --format avro (fixes #5020) (#5024)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `096a19fa`: deps: bundled SQLite 3.54.1 via rusqlite 0.41 (RUSTSEC-2026-0459) (#5022). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6606b4e3`: sqlp): convert types Avro can't write before --format avro (fixes #5020) (#5024). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **security: the bundled SQLite is updated to 3.54.1** ([#5022](https://github.com/dathere/qsv/pull/5022), [RUSTSEC-2026-0459](https://rustsec.org/advisories/RUSTSEC-2026-0459), CVE-2026-119375). It's used by `to sqlite`. Older SQLite could return uninitialized memory when opening a database next to a crafted `-wal` file written by someone else. The fix comes from `rusqlite` 0.41 / `libsqlite3-sys` 0.39, through the `csvs_convert` fork.
+        "description": "The output format to use. Valid values are: csv, json, jsonl, parquet, arrow, avro. Avro has fewer types than Polars, so avro output converts the rest: small and unsigned integers become int or long (a value above 2^63-1 is an error), zoned timestamps become UTC timestamps, nanosecond timestamps become microseconds, and TIME and durations become strings (durations in ISO 8601, e.g. P1DT2H3M4.5S).",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        "description": "The output format to use. Valid values are: csv, json, jsonl, parquet, arrow, avro",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `096a19fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6606b4e3` are properly handled with clean fallback behavior.

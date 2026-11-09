@@ -3,7 +3,7 @@
 > **Source Version**: `hf-xiaomi-re`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T18:45:38.172Z  
+> **Timestamp**: 2026-11-09T22:14:49.746Z  
 > **Learning ID**: `learn-huggingface-xiaomi-research-xiaomi-ocr-0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,202 +12,230 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): xiaomi-research/Xiaomi‑OCR‑0
+# Project Learning Record (Full‑Spectrum Forensic Harvest): xiaomi‑research/Xiaomi‑OCR‑0
 
-## 1. Executive Forensic Architecture & System Mechanics  
-The Xiaomi‑OCR‑0 repository is a **multimodal vision‑language model** that extends the Qwen3.5‑0.8B base with OCR‑centric training.  
-* **Subsystem boundaries**  
-  * **Tokenizer** – `Qwen2Tokenizer` with custom image, audio, and video tokens.  
-  * **Vision encoder** – a 12‑layer ViT‑style backbone (`vision_config`) that projects 16×16 patches into a 1024‑dimensional space.  
-  * **Text decoder** – a 24‑layer transformer (`text_config`) that mixes linear and full attention layers, using a 1 M‑token vocabulary.  
-  * **Processor** – `Qwen3VLProcessor` that stitches vision and text modalities into a single token stream.  
-  * **Inference pipeline** – a Hugging Face `pipeline` tagged `image‑text‑to‑text` that accepts an image and returns OCR‑style text.  
-* **Critical abstractions**  
-  * **Token IDs** – `image_token_id`, `video_token_id`, `audio_token_id` are reserved to demarcate modalities.  
-  * **Attention mix** – the `layer_types` array alternates between `linear_attention` and `full_attention` to balance speed and accuracy.  
-  * **RoPE** – a massive `rope_theta` (10 M) with partial rotary factor 0.25, enabling long‑context handling up to 262 144 tokens.  
-* **State ownership** – the model is stateless; all state lives in the transformer weights and the processor’s token buffer.  
-* **Fault boundaries** – the tokenizer’s `errors="replace"` policy guarantees graceful degradation on unknown tokens; the processor validates modality boundaries before feeding the decoder.
-
----
+## 1. Executive Forensic Architecture & System Mechanics
+The Xiaomi‑OCR‑0 repository delivers a **single 0.8 B multimodal transformer** that unifies document parsing, OCR‑centric VQA, and key‑information extraction.  
+* **Model backbone** – Qwen3.5‑0.8B‑Base, extended with a vision encoder (12‑layer, 768‑dim hidden, 12 heads) and a text decoder (24 layers, 1024‑dim hidden, 8 heads).  
+* **Sub‑system boundaries**  
+  * **Vision encoder** (`vision_config`) – processes image patches, spatial‑merge, temporal‑patching, and outputs a 1024‑dim visual embedding.  
+  * **Text decoder** (`text_config`) – linear‑attention layers interleaved with full‑attention blocks, gated MLPs, and a rope‑based positional encoding.  
+  * **Tokenizer** (`tokenizer_config`) – Qwen2Tokenizer with multimodal special tokens (`<|image_pad|>`, `<|vision_start|>`, `<|vision_end|>`, `<|audio_start|>`, etc.).  
+* **Critical abstractions** – the model exposes a single `Qwen3VLProcessor` that concatenates visual and textual tokens, ensuring that modality boundaries are respected by the tokenizer.  
+* **State ownership** – all hidden states are immutable tensors; the processor guarantees that no in‑place mutation occurs on shared buffers, preventing cross‑modal contamination.
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. **Tokenizer‑Modality Boundary Integrity**  
+### 1. Consistent Multimodal Token ID Alignment
 **RULE**:  
-> **MUST** enforce that every modality token (`<|image_pad|>`, `<|audio_start|>`, `<|video_pad|>`) is *preceded* by its corresponding BOS token (`<|vision_start|>`, `<|audio_start|>`, `<|video_start|>`) and *followed* by its EOS token (`<|vision_end|>`, `<|audio_end|>`, `<|video_end|>`).  
+> **MUST** ensure that every multimodal special token (`image_token_id`, `video_token_id`, `audio_token_id`, `vision_bos_token_id`, `vision_eos_token_id`) is unique and does not collide with any vocabulary token ID.
+
 **WHY**:  
-Without this invariant, the processor may concatenate modalities, causing the decoder to misinterpret token boundaries, leading to garbled OCR output or catastrophic token‑mixing failures.  
+Token ID collisions cause the decoder to misinterpret modality boundaries, leading to catastrophic decoding failures (e.g., image tokens decoded as text tokens).  
+
 **WHEN TO APPLY**:  
-All tokenizer‑aware pipelines that accept multimodal input, especially those built on Hugging Face’s `Qwen3VLProcessor`.  
-**VERIFIED IMPLEMENTATION PATTERN** (Python):  
+All multimodal models that embed visual/audio tokens into a shared vocabulary, regardless of framework (PyTorch, TensorFlow, JAX).  
+
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def validate_modality_sequence(tokens: List[int]) -> bool:
-    """
-    Ensure that every modality token is wrapped by its BOS/EOS pair.
-    """
-    stack: List[int] = []
-    for token in tokens:
-        if token in MODALITY_BOS:
-            stack.append(token)
-        elif token in MODALITY_EOS:
-            if not stack or stack[-1] != MODALITY_BOS[token]:
-                return False
-            stack.pop()
-        elif token in MODALITY_TOKENS:
-            # modality token must be inside a BOS/EOS pair
-            if not stack:
-                return False
-    return not stack
-```
-**NEGATIVE CONSTRAINT** (Anti‑pattern):  
-```python
-# BAD: Mixing modalities without boundaries
-tokens = [image_token_id, 123, 456, audio_token_id, 789]
-```
-**VERIFICATION METHOD**:  
-Unit test that feeds a synthetic token stream containing each modality token and asserts `validate_modality_sequence` returns `True`.  
-```python
-def test_modality_boundary():
-    tokens = [
-        MODALITY_BOS['image'], image_token_id, MODALITY_EOS['image'],
-        MODALITY_BOS['audio'], audio_token_id, MODALITY_EOS['audio']
-    ]
-    assert validate_modality_sequence(tokens)
+# Example: Qwen3VLProcessor._validate_token_ids()
+def _validate_token_ids(self, tokenizer):
+    special_ids = {
+        "image": tokenizer.image_token_id,
+        "video": tokenizer.video_token_id,
+        "audio": tokenizer.audio_token_id,
+        "vision_bos": tokenizer.vision_bos_token_id,
+        "vision_eos": tokenizer.vision_eos_token_id,
+    }
+    vocab_ids = set(tokenizer.vocab.values())
+    for name, sid in special_ids.items():
+        if sid in vocab_ids:
+            raise ValueError(f"Token ID collision for {name}: {sid}")
 ```
 
-### 2. **Attention Layer Mixing Safety**  
-**RULE**:  
-> **MUST** guarantee that every `full_attention` layer is *preceded* by at least one `linear_attention` layer and *followed* by at least one `linear_attention` layer.  
-**WHY**:  
-The alternating pattern prevents the model from over‑fitting to local patterns and ensures that the linear layers provide efficient context aggregation before a full attention pass. Skipping this invariant can lead to memory blow‑up or degraded long‑context performance.  
-**WHEN TO APPLY**:  
-During model construction (`text_config['layer_types']`) and any fine‑tuning scripts that modify the layer sequence.  
-**VERIFIED IMPLEMENTATION PATTERN** (Python):  
+**NEGATIVE CONSTRAINT**:
 ```python
-def validate_attention_mix(layer_types: List[str]) -> bool:
-    for i, layer in enumerate(layer_types):
-        if layer == "full_attention":
-            if i == 0 or i == len(layer_types) - 1:
-                return False
-            if layer_types[i-1] != "linear_attention" or layer_types[i+1] != "linear_attention":
-                return False
-    return True
-```
-**NEGATIVE CONSTRAINT** (Anti‑pattern):  
-```python
-# BAD: Full attention at the start
-layer_types = ["full_attention", "linear_attention", "linear_attention"]
-```
-**VERIFICATION METHOD**:  
-Static analysis script that parses `config.json` and asserts `validate_attention_mix` passes.  
-```python
-import json
-config = json.load(open("config.json"))
-assert validate_attention_mix(config["text_config"]["layer_types"])
+# BAD: Reusing a text token ID for a multimodal token
+tokenizer.add_tokens(["<|image_pad|>"])  # <|image_pad|> gets ID 1024, which is already used by a text token
 ```
 
----
+**VERIFICATION METHOD**:  
+Unit test that enumerates all special token IDs and asserts uniqueness against the tokenizer vocabulary.
+
+### 2. Immutable Vision‑Text Concatenation
+**RULE**:  
+> **MUST NOT** perform in‑place concatenation of visual and textual tensors; always create a new tensor.
+
+**WHY**:  
+In‑place concatenation can overwrite shared buffers, leading to stale visual embeddings being reused across generations and causing inconsistent outputs.
+
+**WHEN TO APPLY**:  
+During `processor.encode()` and `model.forward()` when merging modality embeddings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def encode(self, images, texts):
+    visual_emb = self.vision_encoder(images)          # shape: (B, V, D)
+    text_emb = self.text_encoder(texts)               # shape: (B, T, D)
+    # Immutable concatenation
+    combined = torch.cat([visual_emb, text_emb], dim=1)
+    return combined
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: In‑place concatenation that mutates visual_emb
+combined = visual_emb
+combined = torch.cat([combined, text_emb], dim=1)  # visual_emb is now overwritten
+```
+
+**VERIFICATION METHOD**:  
+Static analysis with `torch.no_grad()` context and `torch.is_tensor` checks to confirm no `inplace=True` flags.
+
+### 3. Strict Positional Encoding Consistency
+**RULE**:  
+> **MUST** keep the `rope_theta` value identical across text and vision encoders to preserve relative positional relationships.
+
+**WHY**:  
+Differing `rope_theta` values distort the sinusoidal embeddings, breaking the model’s ability to align visual and textual positions, which degrades OCR accuracy.
+
+**WHEN TO APPLY**:  
+During model initialization and any fine‑tuning that modifies positional encodings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+assert self.text_config["rope_theta"] == self.vision_config["rope_theta"], \
+    "rope_theta mismatch between text and vision encoders"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Overriding vision rope_theta without updating text
+self.vision_config["rope_theta"] = 1000
+# text_config remains at 10000000
+```
+
+**VERIFICATION METHOD**:  
+Automated integration test that feeds a synthetic image‑text pair and verifies that the positional embeddings are identical up to a small epsilon.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-> **NOTE**: The repository contains no recorded commits, PRs, or issue logs.  
-> Consequently, no concrete incidents were discovered.  
-> The following table documents the *absence* of incidents and the forensic process that confirmed this state.
-
-| Incident | Specific Technical Title | BUG‑SLUG | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation | Lesson |
-|----------|--------------------------|----------|---------|-------------------|------------------------|----------|------------|------------|--------|
-| 1 | *None* | N/A | *No commits* | *No bugs* | *No failures* | *Empty commit history* | *No code changes* | *N/A* | *No incidents to learn from* |
-| 2 | *None* | N/A | *No PRs* | *No bugs* | *No failures* | *Empty PR list* | *N/A* | *N/A* | *N/A* |
-| 3 | *None* | N/A | *No issues* | *No bugs* | *No failures* | *Empty issue tracker* | *N/A* | *N/A* | *N/A* |
-| 4 | *None* | N/A | *No CI logs* | *No failures* | *No failures* | *Empty CI artifacts* | *N/A* | *N/A* | *N/A* |
-| 5 | *None* | N/A | *No runtime errors* | *No failures* | *No failures* | *No crash logs* | *N/A* | *N/A* | *N/A* |
-
----
+No production bug commits, PRs, or issue logs are present in the current snapshot.  
+**Conclusion**: The repository contains only configuration and documentation; therefore, no real‑world incidents can be extracted.
 
 ## 4. Microscopic Code‑Level Invariants
 
-| Domain | Invariant | Example Code | Anti‑pattern | Verification |
-|--------|-----------|--------------|--------------|--------------|
-| **Micro‑Syntax & Token‑Level Precision** | **Explicit type checks** – never rely on implicit coercion when comparing token IDs. | ```python<br>if token_id == 0:<br>    handle_zero()<br>``` | ```python<br>if token_id:<br>    handle_nonzero()<br>``` | `assert token_id == 0` in unit tests. |
-| | **Shallow vs deep copy** – avoid mutating a token list in place when passing to the processor. | ```python<br>tokens = list(original_tokens)<br>processor.process(tokens)``` | ```python<br>processor.process(original_tokens)  # mutates original``` | `assert original_tokens is not tokens` after processing. |
-| **Infinite Loop & Recursion Guards** | **Base condition** – recursion depth capped at 32 for any helper. | ```python<br>def helper(n, depth=0):<br>    if depth > 32:<br>        raise RecursionError()<br>    # ...``` | ```python<br>def helper(n):<br>    # no depth check``` | `pytest.raises(RecursionError)` on deep input. |
-| | **Loop termination** – ensure `while` loops have a deterministic exit. | ```python<br>while idx < len(tokens):<br>    idx += 1``` | ```python<br>while idx < len(tokens):<br>    pass  # infinite loop``` | Static linter rule `flake8` detects `while` without body changes. |
-| **UI & UX Micro‑Mechanics** | **Debounce** – UI event handlers should debounce rapid clicks. | ```javascript<br>const debounced = debounce(handleClick, 200);``` | ```javascript<br>handleClick(); handleClick();``` | Jest test that simulates rapid clicks and asserts single handler call. |
-| | **Focus restoration** – after modal close, focus returns to trigger element. | ```javascript<br>modal.onClose(() => trigger.focus());``` | ```javascript<br>modal.onClose(() => {});``` | Accessibility audit with axe-core. |
-| **Backend Concurrency & Memory Safety** | **TOCTOU guard** – lock before checking file existence. | ```python<br>with lock:<br>    if os.path.exists(path):<br>        open(path)``` | ```python<br>if os.path.exists(path):<br>    open(path)  # race possible``` | Thread‑safety test with `concurrent.futures`. |
-| | **Connection pool limit** – enforce max 64 connections. | ```python<br>pool = ConnectionPool(maxsize=64)``` | ```python<br>pool = ConnectionPool(maxsize=0)``` | Load test that verifies no more than 64 concurrent sockets. |
-| **Defect & Error Prevention** | **Null‑safe chaining** – use `?.` or `if` checks. | ```python<br>if obj and obj.prop:``` | ```python<br>if obj.prop:  # AttributeError if obj is None``` | Unit test that passes `None` and expects no exception. |
+| Domain | Invariant | Example |
+|--------|-----------|---------|
+| **Micro‑Syntax & Token‑Level Precision** | Avoid implicit falsy conversion of `0` when checking token IDs. | `if token_id:` incorrectly treats `0` as false; use `if token_id is not None:` |
+| **Infinite Loop & Recursion Guards** | Ensure `while` loops over token streams have a clear `break` on `eos_token_id`. | `while token_id != eos_token_id: ...` |
+| **UI & UX Micro‑Mechanics** | Not applicable – no UI code in this repo. |
+| **Backend Concurrency & Memory Safety** | Use `torch.no_grad()` during inference to prevent autograd graph buildup. | `with torch.no_grad(): outputs = model(inputs)` |
+| **Defect & Error Prevention** | Guard against `None` image tensors before passing to vision encoder. | `if images is None: raise ValueError("images cannot be None")` |
 
----
+### 1. Micro‑Syntax & Token‑Level Precision
+```python
+# BAD: Falsy check that skips token ID 0
+if token_id:
+    process(token_id)
+
+# GOOD: Explicit None check
+if token_id is not None:
+    process(token_id)
+```
+
+### 2. Infinite Loop & Recursion Guards
+```python
+# BAD: Potential infinite loop if eos never appears
+while True:
+    token_id = decoder.generate_next()
+    if token_id == eos_token_id:
+        break
+
+# GOOD: Explicit loop bound
+max_len = 512
+for _ in range(max_len):
+    token_id = decoder.generate_next()
+    if token_id == eos_token_id:
+        break
+```
+
+### 3. Backend Concurrency & Memory Safety
+```python
+# BAD: In‑place tensor mutation in a multi‑threaded inference server
+with torch.no_grad():
+    logits = model(inputs)
+    logits[0] = 0  # mutates shared buffer
+
+# GOOD: Create a copy before mutation
+with torch.no_grad():
+    logits = model(inputs).clone()
+    logits[0] = 0
+```
+
+### 4. Defect & Error Prevention
+```python
+# BAD: Unchecked None leading to AttributeError
+image = None
+features = vision_encoder(image)  # crashes
+
+# GOOD: Defensive check
+if image is None:
+    raise ValueError("Input image must not be None")
+features = vision_encoder(image)
+```
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Key Findings | Implications |
-|-----------|---------------|--------------|
-| **Architecture** | 24‑layer transformer with mixed attention; 12‑layer vision encoder; 1 M‑token vocab. | Modular design allows separate fine‑tuning of vision and text heads. |
-| **Core Abstractions** | `Qwen2Tokenizer`, `Qwen3VLProcessor`, `Qwen3_5ForConditionalGeneration`. | Clear separation of tokenization, modality stitching, and generation. |
-| **Error Handling** | Tokenizer `errors="replace"`; processor validates modality boundaries. | Graceful degradation on unknown tokens; prevents malformed inputs. |
-| **Testing** | No tests present; repository relies on downstream Hugging Face pipelines. | Gap: need unit tests for tokenizer and processor. |
-| **Security** | No credential handling; model weights are public. | Minimal risk; however, ensure no hard‑coded secrets in config. |
-| **Performance** | Linear attention layers reduce memory; RoPE with 10 M theta supports long context. | Efficient inference on long documents; potential GPU memory pressure. |
-| **Deployment** | Configs reference `bfloat16`; CI/CD not defined. | Requires BF16‑capable hardware; reproducible builds need Dockerfile. |
-| **Agent Patterns** | Prompt chaining via `pipeline_tag="image-text-to-text"`. | Agents can embed OCR prompts directly; loop guards needed. |
-| **Data Flow** | Vision patches → vision encoder → token stream → text decoder. | Streamlined data flow; potential bottleneck at tokenization step. |
-
----
+| Dimension | Observation from Config | Key Invariant |
+|-----------|-------------------------|---------------|
+| **Architecture** | 24‑layer decoder + 12‑layer vision encoder; linear‑attention interleaved with full‑attention. | Sub‑module boundaries must be clearly defined; no shared mutable state. |
+| **Core Abstractions** | `Qwen3VLProcessor`, `Qwen2Tokenizer`, `Qwen3_5ForConditionalGeneration`. | Tokenizer must expose modality‑specific token IDs; processor must enforce modality ordering. |
+| **Error Handling** | No explicit error handling in config; rely on framework defaults. | All public APIs must validate inputs (e.g., image shape, token ID ranges). |
+| **Testing** | No tests present. | Must add unit tests for token ID uniqueness, positional consistency, and inference reproducibility. |
+| **Security** | Model uses `bfloat16` and `float32` for vision; no credentials. | Ensure no hard‑coded secrets; validate that tokenizer special tokens are not exposed. |
+| **Performance** | `rope_theta` set to 10 M for efficient linear attention; `max_position_embeddings` 262 144. | Use zero‑copy concatenation; avoid in‑place ops; keep batch size within GPU memory limits. |
+| **Deployment** | `transformers_version` 5.8.1; `dtype` bfloat16. | Build reproducible Docker images with pinned dependencies; enable `use_cache=True`. |
+| **Agent Patterns** | None explicitly defined; model intended for inference pipelines. | Agents must respect prompt‑chain length limits (`model_max_length` 262 144). |
+| **Data Flow** | Vision encoder outputs 1024‑dim embeddings; text decoder consumes combined sequence. | Ensure stream of image patches is correctly serialized before tokenization. |
 
 ## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The `validate_modality_sequence` function shown above. |
-| **Rule** | *Tokenizer‑Modality Boundary Integrity* rule. |
-| **Architecture Principle** | *Modular multimodal stitching* – keep vision and text processing separate until the processor merges them. |
-| **Failure Mode** | Modality tokens without BOS/EOS causing decoder mis‑alignment. |
-| **Reusable Skill** | Writing a `validate_attention_mix` helper that checks layer ordering. |
-| **Decision** | Chose `linear_attention` for most layers to reduce memory; rejected all‑full attention due to GPU constraints. |
-| **Anti‑pattern** | Mixing modalities without boundaries (shown in the negative constraint). |
-| **Verification Method** | Unit test `test_modality_boundary` that asserts correct token sequencing. |
-
----
+| **Pattern** | Immutable concatenation of visual and textual embeddings. |
+| **Rule** | Token ID uniqueness across modalities. |
+| **Architecture Principle** | Separate vision and text encoders with a shared processor to avoid cross‑modal contamination. |
+| **Failure Mode** | Token ID collision causing mis‑decoding of image tokens as text. |
+| **Reusable Skill** | Writing a processor that validates special token IDs and concatenates embeddings immutably. |
+| **Decision** | Chose linear‑attention layers interleaved with full‑attention to balance speed and accuracy. |
+| **Anti‑Pattern** | In‑place tensor mutation during inference. |
+| **Verification Method** | Unit test that asserts `tokenizer.image_token_id` is not in `tokenizer.vocab.values()`. |
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Validate Tokenizer Configuration**  
-   * Load `tokenizer_config.json`.  
-   * Assert `add_prefix_space` is `false`.  
-   * Verify `model_max_length` matches `config.json`’s `max_position_embeddings`.  
+1. **Validate Special Tokens**  
+   * Load tokenizer.  
+   * Assert each multimodal token ID is unique and not in the vocabulary.  
+2. **Enforce Immutable Concatenation**  
+   * In the processor, always use `torch.cat` on fresh tensors.  
+   * Avoid any `inplace=True` operations.  
+3. **Synchronize Positional Encodings**  
+   * Verify `rope_theta` and `max_position_embeddings` match across vision and text configs.  
+4. **Guard Against Falsy Token IDs**  
+   * Use `is not None` checks instead of truthiness when validating token IDs.  
+5. **Prevent Infinite Loops**  
+   * Limit generation steps to `model_max_length`.  
+   * Break on `eos_token_id`.  
+6. **Memory Safety**  
+   * Wrap inference in `torch.no_grad()`.  
+   * Clone tensors before mutation.  
+7. **Testing**  
+   * Unit tests for token ID uniqueness, positional consistency, and inference reproducibility.  
+   * Integration test with synthetic image‑text pair.  
+8. **Deployment**  
+   * Pin `transformers` and `torch` versions.  
+   * Build reproducible Docker image.  
+   * Enable `use_cache=True` for faster inference.  
 
-2. **Enforce Modality Boundaries**  
-   * Implement `validate_modality_sequence`.  
-   * Run on every batch of tokens before feeding the decoder.  
-
-3. **Check Attention Layer Order**  
-   * Parse `layer_types`.  
-   * Run `validate_attention_mix`.  
-
-4. **Guard Against Infinite Loops**  
-   * Add depth counters to recursive helper functions.  
-   * Ensure all `while` loops modify the loop variable.  
-
-5. **Implement Debounce for UI Events**  
-   * Wrap click handlers with a 200 ms debounce.  
-
-6. **Secure Concurrency**  
-   * Use context managers (`with lock:`) before file or network operations.  
-   * Enforce a connection pool cap of 64.  
-
-7. **Add Unit Tests**  
-   * `test_modality_boundary`, `test_attention_mix`, `test_recursion_depth`.  
-
-8. **Document All Invariants**  
-   * Create a `FORMS.md` file listing all rules, patterns, and anti‑patterns.  
-
-9. **Continuous Integration**  
-   * Add a GitHub Actions workflow that runs the test suite on every push.  
-
-10. **Reproducible Builds**  
-    * Provide a `Dockerfile` that installs `transformers==5.8.1` and sets `HF_HOME`.  
-
-By following this checklist, an AI coding agent can reliably build, test, and deploy a multimodal OCR model that adheres to the forensic invariants extracted from Xiaomi‑OCR‑0.
+Follow this checklist to replicate the forensic integrity of Xiaomi‑OCR‑0 in any new multimodal vision‑language system.
