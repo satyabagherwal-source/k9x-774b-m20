@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T00:22:53.536Z",
+  "last_updated": "2026-11-09T00:31:10.735Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -171693,7 +171693,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
       "source_version": "hf-edge0-audio8-tts-realistic-0.6b",
-      "content_hash": "9dd0d0cba17622c46954f5ea9a78f1ade88aa7457b2c6079b7da5eed8411ed1b",
+      "content_hash": "0136818ac131ae7e23171866b99eb45be0fec3d9e60b8288cd7560688f045a25",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
       "promoted_rules": [],
@@ -171702,7 +171702,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:44:02.317Z",
+      "verified_at": "2026-11-09T00:31:10.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T00:22:53.635Z",
-  "total_cycles_completed": 8409,
-  "total_learnings_persisted": 8409,
+  "last_updated": "2026-11-09T00:31:10.852Z",
+  "total_cycles_completed": 8410,
+  "total_learnings_persisted": 8410,
   "total_rules_promoted": 8209,
   "history": [
-    {
-      "timestamp": "2026-11-08T06:59:30.973Z",
-      "repository": "mtkennerly/ludusavi",
-      "learningId": "learn-github-mtkennerly-ludusavi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T06:59:42.056Z",
       "repository": "LiquidAI/LFM3-1.7B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-09T00:22:53.635Z",
       "repository": "deepseek-ai/DeepSeek-V3",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T00:31:10.852Z",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

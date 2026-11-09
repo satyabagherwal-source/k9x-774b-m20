@@ -11665,8 +11665,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-0.6b",
     "license": "Open-Source",
-    "contentHash": "9dd0d0cba17622c46954f5ea9a78f1ade88aa7457b2c6079b7da5eed8411ed1b",
-    "lastHarvestedAt": "2026-11-05T06:44:02.455Z",
+    "contentHash": "0136818ac131ae7e23171866b99eb45be0fec3d9e60b8288cd7560688f045a25",
+    "lastHarvestedAt": "2026-11-09T00:31:10.846Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b"
   },
   "dagoste-squadra": {
