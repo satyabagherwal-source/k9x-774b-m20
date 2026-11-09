@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-06T17:59:06.963Z",
-  "total_records": 18,
+  "last_updated": "2026-11-09T14:46:22.218Z",
+  "total_records": 21,
   "domains": {
     "A": {
       "total": 1,
@@ -48,12 +48,15 @@
       ]
     },
     "H": {
-      "total": 4,
+      "total": 7,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
         "DOM-H-94C4B932",
-        "DOM-H-2007DF83"
+        "DOM-H-2007DF83",
+        "DOM-H-7D0B9F17",
+        "DOM-H-C2A738D4",
+        "DOM-H-1B2AC6F8"
       ]
     },
     "I": {
@@ -750,6 +753,105 @@
       },
       "confidence": 1,
       "created_at": "2026-11-06T16:11:29.594Z"
+    },
+    "DOM-H-7D0B9F17": {
+      "record_id": "DOM-H-7D0B9F17",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)",
+      "content": "Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient objects. Never store user payload instances in strong collections on static or long-lived service instances.\r\n\r\n--- [Trace Token: ab7a5da7]",
+      "content_hash": "48fde7a813fea61419616eab650c0814035436b9d4fa8f89d8dbdea42d1d5d68",
+      "summary": "The memoizer’s `attach()` hook cached the last seen `ctx` and its associated `bucket` directly on the schema instance for single-parse fast- -> Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient obje",
+      "provenance": {
+        "source_uri": "project://colinhacks-zod/colinhacks-zod-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-09T13:19:18.810Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (colinhacks-zod)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "FORENSIC_REPO_COMMIT_EVIDENCE",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `36f17960`, PR #6572, Issue #6557. Tests in `packages/zod/src/v4/classic/tests/cyclic-data.test.ts`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-09T13:20:53.048Z"
+    },
+    "DOM-H-C2A738D4": {
+      "record_id": "DOM-H-C2A738D4",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)",
+      "content": "Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient objects. Never store user payload instances in strong collections on static or long-lived service instances.\r\n\r\n--- [Trace Token: ba0180b1]",
+      "content_hash": "d2eff087a9b83fc6a15528523f6a4eb96b5694a0c595e6952b92072f81ab786a",
+      "summary": "The memoizer’s `attach()` hook cached the last seen `ctx` and its associated `bucket` directly on the schema instance for single-parse fast- -> Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient obje",
+      "provenance": {
+        "source_uri": "project://colinhacks-zod/colinhacks-zod-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-09T13:23:28.956Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (colinhacks-zod)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "FORENSIC_REPO_COMMIT_EVIDENCE",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `36f17960`, PR #6572, Issue #6557. Tests in `packages/zod/src/v4/classic/tests/cyclic-data.test.ts`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-09T13:24:15.391Z"
+    },
+    "DOM-H-1B2AC6F8": {
+      "record_id": "DOM-H-1B2AC6F8",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)",
+      "content": "Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient objects. Never store user payload instances in strong collections on static or long-lived service instances.\r\n\r\n--- [Trace Token: e2400cec]",
+      "content_hash": "c9e2c8d2d8efc8fc331699a835be16e375806721bd255d71961b59993f465d25",
+      "summary": "The memoizer’s `attach()` hook cached the last seen `ctx` and its associated `bucket` directly on the schema instance for single-parse fast- -> Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient obje",
+      "provenance": {
+        "source_uri": "project://colinhacks-zod/colinhacks-zod-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-09T13:26:23.295Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (colinhacks-zod)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "FORENSIC_REPO_COMMIT_EVIDENCE",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `36f17960`, PR #6572, Issue #6557. Tests in `packages/zod/src/v4/classic/tests/cyclic-data.test.ts`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-09T13:27:01.513Z"
     }
   }
 }

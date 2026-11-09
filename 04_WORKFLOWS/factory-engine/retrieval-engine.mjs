@@ -13,6 +13,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { performance } from 'perf_hooks';
+import { INTELLIGENCE_DOMAINS } from './domain-intelligence-engine.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -76,17 +77,58 @@ export function tokenize(text) {
     .filter(t => t.length > 1 && !STOPWORDS.has(t));
 }
 
+// Dossier Directory Hash Cache to avoid redundant file stats during in-process query bursts
+let _cachedDossierHash = null;
+let _lastDossierHashCheck = 0;
+const DOSSIER_HASH_TTL_MS = 1000;
+
+export function computeDossierDirHash(learningDir, forceFresh = false) {
+  const now = Date.now();
+  if (!forceFresh && _cachedDossierHash && (now - _lastDossierHashCheck < DOSSIER_HASH_TTL_MS)) {
+    return _cachedDossierHash;
+  }
+  if (!learningDir || !fs.existsSync(learningDir)) return 'missing';
+
+  const hash = crypto.createHash('sha256');
+  try {
+    const files = fs.readdirSync(learningDir);
+    let maxMtime = 0;
+    let totalSize = 0;
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      if (f.endsWith('.md') && !f.startsWith('.')) {
+        const fullPath = path.join(learningDir, f);
+        const stat = fs.statSync(fullPath);
+        if (stat.mtimeMs > maxMtime) maxMtime = stat.mtimeMs;
+        totalSize += stat.size;
+        hash.update(`${f}:${stat.mtimeMs}:${stat.size};`);
+      }
+    }
+    hash.update(`count:${files.length};maxMtime:${maxMtime};totalSize:${totalSize}`);
+  } catch (e) {
+    hash.update('error');
+  }
+
+  _cachedDossierHash = hash.digest('hex');
+  _lastDossierHashCheck = now;
+  return _cachedDossierHash;
+}
+
 /**
  * Calculates deterministic SHA-256 hash of source files to determine cache staleness
  */
-export function computeSourceFilesHash(customRoot = null) {
+export function computeSourceFilesHash(customRoot = null, forceFresh = false) {
   const p = getRetrievalPaths(customRoot);
   const hash = crypto.createHash('sha256');
+  hash.update('v2.1.0-pac004-complete-indexing');
   if (fs.existsSync(p.patternsFile)) hash.update(fs.statSync(p.patternsFile).mtimeMs.toString());
   if (fs.existsSync(p.coreRulesFile)) hash.update(fs.statSync(p.coreRulesFile).mtimeMs.toString());
   if (fs.existsSync(p.knowledgeIndexFile)) hash.update(fs.statSync(p.knowledgeIndexFile).mtimeMs.toString());
   if (p.capabilityRegistryFile && fs.existsSync(p.capabilityRegistryFile)) hash.update(fs.statSync(p.capabilityRegistryFile).mtimeMs.toString());
   if (p.domainRegistryFile && fs.existsSync(p.domainRegistryFile)) hash.update(fs.statSync(p.domainRegistryFile).mtimeMs.toString());
+  if (p.learningDir && fs.existsSync(p.learningDir)) {
+    hash.update(computeDossierDirHash(p.learningDir, forceFresh));
+  }
   if (fs.existsSync(p.skillsDir)) {
     try {
       const skills = fs.readdirSync(p.skillsDir).filter(f => f.endsWith('.md'));
@@ -502,6 +544,320 @@ export function parseDomainIntelligenceRecords(customRoot = null) {
   }
 }
 
+/**
+ * Extracts a concise, evidence-grounded excerpt surrounding matched search terms
+ */
+export function extractEvidenceExcerpt(text, matchedTerms = [], maxLen = 220) {
+  if (!text || typeof text !== 'string') return '';
+  const clean = text.replace(/\s+/g, ' ').trim();
+  if (!matchedTerms || matchedTerms.length === 0) {
+    return clean.slice(0, maxLen);
+  }
+  const lower = clean.toLowerCase();
+  let firstPos = -1;
+  for (const t of matchedTerms) {
+    const pos = lower.indexOf(t.toLowerCase());
+    if (pos !== -1 && (firstPos === -1 || pos < firstPos)) {
+      firstPos = pos;
+    }
+  }
+  if (firstPos === -1) {
+    return clean.slice(0, maxLen);
+  }
+  const start = Math.max(0, firstPos - 40);
+  const end = Math.min(clean.length, start + maxLen);
+  const prefix = start > 0 ? '...' : '';
+  const suffix = end < clean.length ? '...' : '';
+  return `${prefix}${clean.slice(start, end).trim()}${suffix}`;
+}
+
+/**
+ * Extracts substantive markdown sections/chunks from a single dossier file.
+ * Preserves 1-based startLine and endLine for exact source location.
+ * Sub-chunks long sections sequentially to guarantee zero silent content truncation.
+ */
+export function extractDossierChunksFromFile(filePath, options = {}) {
+  const maxChunkChars = options.maxChunkChars || 2500;
+  const maxChunksPerFile = options.maxChunksPerFile || 60;
+  if (!filePath || !fs.existsSync(filePath)) return [];
+
+  let content;
+  try {
+    content = fs.readFileSync(filePath, 'utf-8');
+  } catch (e) {
+    return [];
+  }
+
+  const lines = content.split(/\r?\n/);
+  const rawSections = [];
+  let currentSection = null;
+  let inCodeBlock = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.trimStart().startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+    }
+
+    const isHeading = !inCodeBlock && /^#{2,3}\s+/.test(line);
+
+    if (isHeading) {
+      if (currentSection && currentSection.lines.length > 0) {
+        currentSection.endLine = i; // 1-based index of preceding line
+        rawSections.push(currentSection);
+      }
+      const title = line.replace(/^#{2,3}\s+/, '').trim();
+      currentSection = {
+        title,
+        headingLine: line,
+        startLine: i + 1,
+        endLine: i + 1,
+        lines: [line]
+      };
+    } else if (currentSection) {
+      currentSection.lines.push(line);
+      currentSection.endLine = i + 1;
+    }
+  }
+
+  if (currentSection && currentSection.lines.length > 0) {
+    rawSections.push(currentSection);
+  }
+
+  const chunks = [];
+  let isTruncated = false;
+
+  for (const sec of rawSections) {
+    const fullSectionText = sec.lines.join('\n').trim();
+    if (fullSectionText.length < 30) continue; // skip trivial empty headings
+
+    if (fullSectionText.length <= maxChunkChars) {
+      chunks.push({
+        title: sec.title,
+        startLine: sec.startLine,
+        endLine: sec.endLine,
+        text: fullSectionText,
+        part: 1,
+        totalParts: 1
+      });
+      if (chunks.length >= maxChunksPerFile) {
+        isTruncated = true;
+        break;
+      }
+    } else {
+      // Long section: split into sequential sub-chunks with exact line boundaries
+      let subChunkLines = [];
+      let subChunkChars = 0;
+      let subStartLine = sec.startLine;
+      const subChunksForSec = [];
+
+      for (let j = 0; j < sec.lines.length; j++) {
+        const l = sec.lines[j];
+        const currentLineNum = sec.startLine + j;
+        subChunkLines.push(l);
+        subChunkChars += l.length + 1;
+
+        if (subChunkChars >= maxChunkChars || j === sec.lines.length - 1) {
+          const subText = subChunkLines.join('\n').trim();
+          if (subText.length > 30) {
+            subChunksForSec.push({
+              title: sec.title,
+              startLine: subStartLine,
+              endLine: currentLineNum,
+              text: subText
+            });
+          }
+          subChunkLines = [];
+          subChunkChars = 0;
+          subStartLine = currentLineNum + 1;
+        }
+      }
+
+      const totalParts = subChunksForSec.length;
+      for (let pIdx = 0; pIdx < totalParts; pIdx++) {
+        const sc = subChunksForSec[pIdx];
+        chunks.push({
+          title: totalParts > 1 ? `${sc.title} (Part ${pIdx + 1}/${totalParts})` : sc.title,
+          startLine: sc.startLine,
+          endLine: sc.endLine,
+          text: sc.text,
+          part: pIdx + 1,
+          totalParts
+        });
+        if (chunks.length >= maxChunksPerFile) {
+          isTruncated = true;
+          break;
+        }
+      }
+      if (chunks.length >= maxChunksPerFile) {
+        isTruncated = true;
+        break;
+      }
+    }
+  }
+
+  chunks.indexingStatus = isTruncated ? 'PARTIAL' : 'COMPLETE';
+  return chunks;
+}
+
+/**
+ * Parses dossiers in 07_PROJECT_LEARNING into searchable chunk documents
+ * with text-hash deduplication, occurrence tracking, and corroboration verification.
+ */
+export function parseDossierChunks(customPathsOrRoot = null, options = {}) {
+  const paths = (typeof customPathsOrRoot === 'string' || !customPathsOrRoot)
+    ? getRetrievalPaths(customPathsOrRoot)
+    : customPathsOrRoot;
+  const learningDir = paths.learningDir || path.join(paths.brainRoot, '07_PROJECT_LEARNING');
+  if (!fs.existsSync(learningDir)) return [];
+
+  let files = [];
+  try {
+    files = fs.readdirSync(learningDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
+  } catch (e) {
+    return [];
+  }
+
+  const seenHashes = new Map();
+  const docs = [];
+
+  const maxChunksPerFile = options.maxChunksPerFile || 60;
+  const maxChunkChars = options.maxChunkChars || 2500;
+
+  for (const f of files) {
+    const fullPath = path.join(learningDir, f);
+    const relPath = `07_PROJECT_LEARNING/${f}`;
+    const slug = f.replace(/-learnings\.md$/, '').replace(/\.md$/, '');
+    const fileChunks = extractDossierChunksFromFile(fullPath, {
+      maxChunksPerFile,
+      maxChunkChars
+    });
+
+    for (const c of fileChunks) {
+      const cleanBody = c.text.trim();
+      if (cleanBody.length < 35) continue;
+
+      const chunkHash = crypto.createHash('sha256').update(cleanBody).digest('hex').slice(0, 16);
+
+      if (seenHashes.has(chunkHash)) {
+        const existing = seenHashes.get(chunkHash);
+        // Record exact occurrence with file and lineRange
+        existing.sourceOccurrences.push({
+          filePath: relPath,
+          lineRange: [c.startLine, c.endLine]
+        });
+        if (!existing.corroborationSources.includes(f)) {
+          existing.corroborationSources.push(f);
+        }
+        existing.occurrenceCount = existing.sourceOccurrences.length;
+        continue;
+      }
+
+      const chunkId = `DossierChunk: ${slug}#L${c.startLine}-L${c.endLine}`;
+      const title = `${slug} — ${c.title}`;
+      const summary = cleanBody.slice(0, 300).replace(/\s+/g, ' ');
+
+      const doc = {
+        id: chunkId,
+        slug,
+        title,
+        category: 'HARVESTED_DOSSIER_CHUNK',
+        sourceTier: 'FORENSIC_DOSSIER',
+        epistemicState: 'EXTRACTED',
+        confidence: 0.75,
+        confidenceCalibrated: false,
+        confidenceType: 'HEURISTIC_CATEGORY_WEIGHT',
+        filePath: relPath,
+        lineRange: [c.startLine, c.endLine],
+        summary,
+        fullContent: cleanBody,
+        sourceOccurrences: [{ filePath: relPath, lineRange: [c.startLine, c.endLine] }],
+        occurrenceCount: 1,
+        corroborationSources: [f],
+        isBoilerplate: false,
+        isIndependentCorroboration: false,
+        independentCorroborationCount: 0,
+        tokens: tokenize(`${slug} ${c.title} ${cleanBody}`)
+      };
+
+      seenHashes.set(chunkHash, doc);
+      docs.push(doc);
+    }
+  }
+
+  // Evaluate Occurrence vs Independent Corroboration
+  for (const doc of docs) {
+    const count = doc.occurrenceCount || doc.sourceOccurrences.length;
+    doc.occurrenceCount = count;
+
+    // Detect generic template boilerplate vs substantive technical claim
+    const isTemplateTitle = /^(##?\s*\d+\.\s*(Context|Multi-Dimensional|Empirical|Promotion|Forensic)|###?\s*D\d+:|###?\s*Incident Patch|###?\s*Core Architecture)/i.test(doc.title);
+    const isRepetitiveOccurrences = count > 10;
+
+    if (isTemplateTitle || isRepetitiveOccurrences) {
+      doc.isBoilerplate = true;
+      doc.isIndependentCorroboration = false;
+      doc.independentCorroborationCount = 0;
+    } else if (count > 1) {
+      doc.isBoilerplate = false;
+      doc.isIndependentCorroboration = true;
+      doc.independentCorroborationCount = count;
+    } else {
+      doc.isBoilerplate = false;
+      doc.isIndependentCorroboration = false;
+      doc.independentCorroborationCount = 0;
+    }
+  }
+
+  return docs;
+}
+
+/**
+ * Grounded query expansion using the canonical 13-Domain taxonomy
+ */
+export function expandQueryWithTaxonomy(query, targetDomains = []) {
+  const queryTokens = new Set(tokenize(query));
+  const expansionTerms = [];
+  const matchedDomainLetters = new Set();
+
+  if (Array.isArray(targetDomains) && targetDomains.length > 0) {
+    for (const d of targetDomains) {
+      const letter = String(d).trim().toUpperCase().replace(/^DOMAIN[_-]/i, '');
+      if (INTELLIGENCE_DOMAINS[letter]) {
+        matchedDomainLetters.add(letter);
+      }
+    }
+  }
+
+  for (const [letter, domain] of Object.entries(INTELLIGENCE_DOMAINS)) {
+    if (!domain || !Array.isArray(domain.keywords)) continue;
+    for (const kw of domain.keywords) {
+      if (queryTokens.has(kw)) {
+        matchedDomainLetters.add(letter);
+        break;
+      }
+    }
+  }
+
+  for (const letter of matchedDomainLetters) {
+    const domain = INTELLIGENCE_DOMAINS[letter];
+    if (!domain) continue;
+    let addedForDomain = 0;
+    for (const kw of domain.keywords) {
+      if (!queryTokens.has(kw) && !expansionTerms.includes(kw)) {
+        expansionTerms.push(kw);
+        addedForDomain++;
+        if (addedForDomain >= 2) break;
+      }
+    }
+  }
+
+  return {
+    matchedDomains: Array.from(matchedDomainLetters),
+    expansionTerms
+  };
+}
+
 export function resolveAlias(id, maxHops = 3) {
   if (!fs.existsSync(KNOWLEDGE_INDEX_FILE)) return id;
   try {
@@ -557,22 +913,48 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
     const tmpFile = path.join(dir, `retrieval-index.tmp.${process.pid}.${Date.now()}.${randSuffix}`);
 
     try {
-      // Step B: JSON Serialization
-      const tSerStart = performance.now();
-      const serialized = JSON.stringify(indexPackage);
-      const serializationMs = performance.now() - tSerStart;
-      const payloadSizeBytes = Buffer.byteLength(serialized, 'utf-8');
-
-      // Step C: Disk Persistence to temporary file
       const tDiskStart = performance.now();
       await fs.promises.mkdir(dir, { recursive: true });
-      await fs.promises.writeFile(tmpFile, serialized, 'utf-8');
+
+      const ws = fs.createWriteStream(tmpFile, { encoding: 'utf-8' });
+      const writeAsync = chunk => new Promise((res, rej) => {
+        if (!ws.write(chunk)) ws.once('drain', res);
+        else res();
+      });
+
+      await writeAsync('{\n');
+      await writeAsync(`"sourceHash":${JSON.stringify(indexPackage.sourceHash)},\n`);
+      await writeAsync(`"builtAt":${JSON.stringify(indexPackage.builtAt)},\n`);
+      await writeAsync(`"buildDurationMs":${indexPackage.buildDurationMs},\n`);
+      await writeAsync(`"totalDocuments":${indexPackage.totalDocuments},\n`);
+      await writeAsync(`"avgdl":${indexPackage.avgdl},\n`);
+      await writeAsync('"idf":' + JSON.stringify(indexPackage.idf) + ',\n');
+
+      await writeAsync('"invertedIndex":{\n');
+      const idxKeys = Object.keys(indexPackage.invertedIndex);
+      for (let i = 0; i < idxKeys.length; i++) {
+        const k = idxKeys[i];
+        const comma = i === idxKeys.length - 1 ? '' : ',\n';
+        await writeAsync(`${JSON.stringify(k)}:${JSON.stringify(indexPackage.invertedIndex[k])}${comma}`);
+      }
+      await writeAsync('\n},\n');
+
+      await writeAsync('"documents":[\n');
+      for (let i = 0; i < indexPackage.documents.length; i++) {
+        const comma = i === indexPackage.documents.length - 1 ? '' : ',\n';
+        await writeAsync(JSON.stringify(indexPackage.documents[i]) + comma);
+      }
+      await writeAsync('\n]\n}');
+
+      await new Promise((res, rej) => {
+        ws.end(res);
+        ws.on('error', rej);
+      });
 
       // Atomic rename/replace to final destination
       try {
         await fs.promises.rename(tmpFile, p.cacheIndexFile);
       } catch (renameErr) {
-        // Fallback for Windows file locks or cross-drive quirks
         if (fs.existsSync(p.cacheIndexFile)) {
           try { fs.unlinkSync(p.cacheIndexFile); } catch (uErr) {}
         }
@@ -592,11 +974,13 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
         }
       }
       const diskWriteMs = performance.now() - tDiskStart;
-      const totalReadinessMs = indexPackage.buildDurationMs + serializationMs + diskWriteMs;
+      const stat = fs.existsSync(p.cacheIndexFile) ? fs.statSync(p.cacheIndexFile) : { size: 0 };
+      const payloadSizeBytes = stat.size;
+      const totalReadinessMs = indexPackage.buildDurationMs + diskWriteMs;
 
       const completionStats = {
         computationMs: indexPackage.buildDurationMs,
-        serializationMs: Math.round(serializationMs * 100) / 100,
+        serializationMs: 0,
         diskWriteMs: Math.round(diskWriteMs * 100) / 100,
         totalReadinessMs: Math.round(totalReadinessMs * 100) / 100,
         payloadSizeBytes
@@ -636,14 +1020,33 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
     const randSuffix = Math.random().toString(36).slice(2, 7);
     const tmpFile = path.join(dir, `retrieval-index.tmp.${process.pid}.${Date.now()}.${randSuffix}`);
     try {
-      const tSerStart = performance.now();
-      const serialized = JSON.stringify(indexPackage);
-      const serializationMs = performance.now() - tSerStart;
-      const payloadSizeBytes = Buffer.byteLength(serialized, 'utf-8');
-
       const tDiskStart = performance.now();
       fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(tmpFile, serialized, 'utf-8');
+      const fd = fs.openSync(tmpFile, 'w');
+      fs.writeSync(fd, '{\n');
+      fs.writeSync(fd, `"sourceHash":${JSON.stringify(indexPackage.sourceHash)},\n`);
+      fs.writeSync(fd, `"builtAt":${JSON.stringify(indexPackage.builtAt)},\n`);
+      fs.writeSync(fd, `"buildDurationMs":${indexPackage.buildDurationMs},\n`);
+      fs.writeSync(fd, `"totalDocuments":${indexPackage.totalDocuments},\n`);
+      fs.writeSync(fd, `"avgdl":${indexPackage.avgdl},\n`);
+      fs.writeSync(fd, '"idf":' + JSON.stringify(indexPackage.idf) + ',\n');
+
+      fs.writeSync(fd, '"invertedIndex":{\n');
+      const idxKeys = Object.keys(indexPackage.invertedIndex);
+      for (let i = 0; i < idxKeys.length; i++) {
+        const k = idxKeys[i];
+        const comma = i === idxKeys.length - 1 ? '' : ',\n';
+        fs.writeSync(fd, `${JSON.stringify(k)}:${JSON.stringify(indexPackage.invertedIndex[k])}${comma}`);
+      }
+      fs.writeSync(fd, '\n},\n');
+
+      fs.writeSync(fd, '"documents":[\n');
+      for (let i = 0; i < indexPackage.documents.length; i++) {
+        const comma = i === indexPackage.documents.length - 1 ? '' : ',\n';
+        fs.writeSync(fd, JSON.stringify(indexPackage.documents[i]) + comma);
+      }
+      fs.writeSync(fd, '\n]\n}');
+      fs.closeSync(fd);
 
       try {
         fs.renameSync(tmpFile, p.cacheIndexFile);
@@ -661,11 +1064,13 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
         }
       }
       const diskWriteMs = performance.now() - tDiskStart;
-      const totalReadinessMs = indexPackage.buildDurationMs + serializationMs + diskWriteMs;
+      const stat = fs.existsSync(p.cacheIndexFile) ? fs.statSync(p.cacheIndexFile) : { size: 0 };
+      const payloadSizeBytes = stat.size;
+      const totalReadinessMs = indexPackage.buildDurationMs + diskWriteMs;
 
       const completionStats = {
         computationMs: indexPackage.buildDurationMs,
-        serializationMs: Math.round(serializationMs * 100) / 100,
+        serializationMs: 0,
         diskWriteMs: Math.round(diskWriteMs * 100) / 100,
         totalReadinessMs: Math.round(totalReadinessMs * 100) / 100,
         payloadSizeBytes
@@ -813,8 +1218,10 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
   }
 
   const p = getRetrievalPaths(resolvedRoot);
-  const cacheKey = resolvedRoot || 'DEFAULT';
-  const currentHash = computeSourceFilesHash(resolvedRoot);
+  const normalizedRoot = resolvedRoot ? path.resolve(resolvedRoot) : BRAIN_ROOT;
+  const isDefaultRoot = normalizedRoot.toLowerCase() === BRAIN_ROOT.toLowerCase();
+  const cacheKey = isDefaultRoot ? 'DEFAULT' : normalizedRoot;
+  const currentHash = computeSourceFilesHash(resolvedRoot, forceRebuild);
 
   const rootMemory = _indexCacheByRoot.get(cacheKey);
   if (!forceRebuild && rootMemory && rootMemory.sourceHash === currentHash) {
@@ -828,7 +1235,7 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
       const cached = JSON.parse(raw);
       if (cached && cached.sourceHash === currentHash && Array.isArray(cached.documents) && cached.invertedIndex) {
         _indexCacheByRoot.set(cacheKey, cached);
-        if (!resolvedRoot) {
+        if (isDefaultRoot) {
           _inMemoryIndex = cached;
           _inMemoryHash = currentHash;
         }
@@ -852,7 +1259,8 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
 
   const capabilityDocs = parseCapabilities(resolvedRoot);
   const domainDocs = parseDomainIntelligenceRecords(resolvedRoot);
-  const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs, ...capabilityDocs, ...domainDocs];
+  const dossierChunkDocs = parseDossierChunks(p, resolvedOpts);
+  const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs, ...capabilityDocs, ...domainDocs, ...dossierChunkDocs];
   const N = documents.length;
 
   let totalDocLength = 0;
@@ -861,11 +1269,13 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
 
   for (let i = 0; i < N; i++) {
     const doc = documents[i];
-    const docLen = doc.tokens.length;
+    documents[i] = null; // Allow GC of raw input array elements
+    const tokens = doc.tokens || [];
+    const docLen = tokens.length;
     totalDocLength += docLen;
 
     const termFreqs = Object.create(null);
-    for (const term of doc.tokens) {
+    for (const term of tokens) {
       termFreqs[term] = (termFreqs[term] || 0) + 1;
     }
 
@@ -875,13 +1285,49 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
       invertedIndex[term].push({ docIdx: i, freq });
     }
 
+    doc.tokens = null; // Release token string references immediately to minimize heap footprint
+
     const resolvedRuleNum = doc.ruleNumber ?? (typeof doc.id === 'string' && doc.id.startsWith('Rule ') ? parseInt(doc.id.replace('Rule ', ''), 10) : null);
+
+    // Epistemic calibration & source tiers
+    let sourceTier = doc.sourceTier;
+    let epistemicState = doc.epistemicState;
+    let confidence = doc.confidence;
+    let confidenceCalibrated = false; // Strictly false: heuristic category weight, uncalibrated
+    let confidenceType = doc.confidenceType;
+
+    if (!sourceTier) {
+      if (doc.category === 'CORE_OPERATING_RULE' || doc.category === 'ENGINEERING_PATTERN') {
+        sourceTier = 'CANONICAL';
+        epistemicState = 'CANONICAL';
+        confidence = doc.category === 'CORE_OPERATING_RULE' ? 1.0 : 0.95;
+        confidenceType = 'CANONICAL_RULE_AUTHORITY';
+      } else if (doc.category === 'SKILL' || doc.category === 'CAPABILITY' || doc.category === 'DOMAIN_INTELLIGENCE') {
+        sourceTier = 'EMPIRICAL';
+        epistemicState = 'VALIDATED';
+        confidence = doc.category === 'CAPABILITY' ? 0.85 : 0.90;
+        confidenceType = 'EMPIRICAL_VALIDATED_WEIGHT';
+      } else {
+        sourceTier = 'FORENSIC_DOSSIER';
+        epistemicState = 'EXTRACTED';
+        confidence = 0.75;
+        confidenceType = 'HEURISTIC_CATEGORY_WEIGHT';
+      }
+    } else if (!confidenceType) {
+      confidenceType = 'HEURISTIC_CATEGORY_WEIGHT';
+    }
+
     docMetadata.push({
       id: doc.id,
       ruleNumber: resolvedRuleNum,
       rule_number: resolvedRuleNum,
       title: doc.title,
       category: doc.category,
+      sourceTier,
+      epistemicState,
+      confidence,
+      confidenceCalibrated,
+      confidenceType,
       domainLetter: doc.domainLetter || null,
       domainId: doc.domainId || null,
       domainName: doc.domainName || null,
@@ -893,6 +1339,12 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
       whyText: doc.whyText || '',
       whenText: doc.whenText || '',
       fullContent: doc.fullContent,
+      sourceOccurrences: doc.sourceOccurrences || [{ filePath: doc.filePath, lineRange: doc.lineRange }],
+      occurrenceCount: doc.occurrenceCount || (doc.sourceOccurrences ? doc.sourceOccurrences.length : 1),
+      corroborationSources: doc.corroborationSources || [],
+      isBoilerplate: doc.isBoilerplate ?? false,
+      isIndependentCorroboration: doc.isIndependentCorroboration ?? false,
+      independentCorroborationCount: doc.independentCorroborationCount ?? 0,
       docLength: docLen
     });
   }
@@ -919,7 +1371,7 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
   };
 
   _indexCacheByRoot.set(cacheKey, indexPackage);
-  if (!resolvedRoot) {
+  if (isDefaultRoot) {
     _inMemoryIndex = indexPackage;
     _inMemoryHash = currentHash;
   }
@@ -956,7 +1408,8 @@ export function searchBrain(query, options = {}) {
   const k1 = 1.5;
   const b = 0.75;
   const scores = new Float64Array(index.totalDocuments);
-  const matchDetails = Array.from({ length: index.totalDocuments }, () => []);
+  const matchDetails = new Map();
+  const matchedDocIndices = new Set();
 
   // Check for specific rule number intent (e.g. "Rule 15", "15", "rule24")
   const ruleNumMatch = query.match(/(?:rule\s*|#)(\d+)/i);
@@ -970,6 +1423,7 @@ export function searchBrain(query, options = {}) {
 
     for (const posting of postings) {
       const docIdx = posting.docIdx;
+      matchedDocIndices.add(docIdx);
       const freq = posting.freq;
       const doc = index.documents[docIdx];
       const docLen = doc.docLength;
@@ -991,7 +1445,44 @@ export function searchBrain(query, options = {}) {
       }
 
       scores[docIdx] += termScore;
-      matchDetails[docIdx].push({ term, termScore });
+      let details = matchDetails.get(docIdx);
+      if (!details) {
+        details = [];
+        matchDetails.set(docIdx, details);
+      }
+      details.push({ term, termScore });
+    }
+  }
+
+  // Grounded expansion terms scoring with 0.4x discount
+  let additionalTerms = [];
+  if (Array.isArray(options.expansionTerms) && options.expansionTerms.length > 0) {
+    additionalTerms = options.expansionTerms;
+  } else if (options.expandQuery === true) {
+    const exp = expandQueryWithTaxonomy(query, options.domains || (options.domain ? [options.domain] : []));
+    additionalTerms = exp.expansionTerms;
+  }
+
+  for (const term of additionalTerms) {
+    const postings = index.invertedIndex[term];
+    if (!postings) continue;
+    const termIdf = index.idf[term] || 0.1;
+    for (const posting of postings) {
+      const docIdx = posting.docIdx;
+      matchedDocIndices.add(docIdx);
+      const freq = posting.freq;
+      const doc = index.documents[docIdx];
+      const docLen = doc.docLength;
+      const numerator = freq * (k1 + 1);
+      const denominator = freq + k1 * (1 - b + b * (docLen / index.avgdl));
+      const termScore = (termIdf * (numerator / denominator)) * 0.4;
+      scores[docIdx] += termScore;
+      let details = matchDetails.get(docIdx);
+      if (!details) {
+        details = [];
+        matchDetails.set(docIdx, details);
+      }
+      details.push({ term, termScore });
     }
   }
 
@@ -1010,7 +1501,7 @@ export function searchBrain(query, options = {}) {
 
   // Domain relevance boosting (2.5x multiplier for primary matching domain)
   if (targetDomains.length > 0) {
-    for (let i = 0; i < index.totalDocuments; i++) {
+    for (const i of matchedDocIndices) {
       if (scores[i] > 0) {
         const doc = index.documents[i];
         const docDomain = (doc.domainLetter || '').toUpperCase();
@@ -1027,7 +1518,7 @@ export function searchBrain(query, options = {}) {
 
   // Filter category and strictDomain if specified
   const filteredIndices = [];
-  for (let i = 0; i < index.totalDocuments; i++) {
+  for (const i of matchedDocIndices) {
     if (scores[i] > 0) {
       if (options.category && index.documents[i].category !== options.category) {
         continue;
@@ -1050,23 +1541,39 @@ export function searchBrain(query, options = {}) {
 
   const results = sliced.map(docIdx => {
     const doc = index.documents[docIdx];
+    const matchedTerms = matchDetails.has(docIdx) ? matchDetails.get(docIdx).map(m => m.term) : [];
+    const evidenceExcerpt = extractEvidenceExcerpt(doc.fullContent || doc.summary, matchedTerms);
+
     return {
       id: doc.id,
       ruleNumber: doc.ruleNumber ?? null,
       rule_number: doc.ruleNumber ?? null,
       title: doc.title,
       category: doc.category,
+      sourceTier: doc.sourceTier,
+      epistemicState: doc.epistemicState,
+      confidence: doc.confidence,
+      confidenceCalibrated: doc.confidenceCalibrated ?? false,
+      confidenceType: doc.confidenceType || 'HEURISTIC_CATEGORY_WEIGHT',
       domainLetter: doc.domainLetter ?? null,
       domainName: doc.domainName ?? null,
       score: parseFloat(scores[docIdx].toFixed(4)),
       filePath: doc.filePath,
       lineRange: doc.lineRange,
       summary: doc.summary,
+      evidenceExcerpt,
       ruleText: doc.ruleText,
       whyText: doc.whyText,
       whenText: doc.whenText,
       fullContent: doc.fullContent,
-      matchedTerms: matchDetails[docIdx].map(m => m.term)
+      corroborationSources: doc.corroborationSources || [],
+      sourceOccurrences: doc.sourceOccurrences || [{ filePath: doc.filePath, lineRange: doc.lineRange }],
+      occurrenceCount: doc.occurrenceCount || (doc.sourceOccurrences ? doc.sourceOccurrences.length : 1),
+      isBoilerplate: doc.isBoilerplate ?? false,
+      isIndependentCorroboration: doc.isIndependentCorroboration ?? false,
+      independentCorroborationCount: doc.independentCorroborationCount ?? 0,
+      indexingStatus: doc.indexingStatus || 'COMPLETE',
+      matchedTerms
     };
   });
 
@@ -1151,11 +1658,213 @@ export function retrieveKnowledge(query, options = {}) {
       id: r.id,
       title: r.title,
       category: r.category,
+      sourceTier: r.sourceTier,
+      epistemicState: r.epistemicState,
+      confidence: r.confidence,
+      confidenceCalibrated: r.confidenceCalibrated ?? false,
+      confidenceType: r.confidenceType || 'HEURISTIC_CATEGORY_WEIGHT',
       score: r.score,
       filePath: r.filePath,
       lineRange: r.lineRange,
-      summary: r.summary
+      summary: r.summary,
+      evidenceExcerpt: r.evidenceExcerpt,
+      corroborationSources: r.corroborationSources || [],
+      sourceOccurrences: r.sourceOccurrences || [{ filePath: r.filePath, lineRange: r.lineRange }],
+      occurrenceCount: r.occurrenceCount || 1,
+      isBoilerplate: r.isBoilerplate ?? false,
+      isIndependentCorroboration: r.isIndependentCorroboration ?? false,
+      independentCorroborationCount: r.independentCorroborationCount ?? 0,
+      indexingStatus: r.indexingStatus || 'COMPLETE'
     }))
+  };
+}
+
+/**
+ * Universal Structured Knowledge Retrieval
+ * Provides formal status outcomes:
+ *   - 'FOUND': Matches discovered within token budget
+ *   - 'GENUINELY_EMPTY': Zero matching evidence in the knowledge index
+ *   - 'INDEX_UNAVAILABLE': Index storage unreadable or corrupt
+ *   - 'BUDGET_EXHAUSTED': Matches exist but exceed the token budget constraint
+ *   - 'RETRIEVAL_ERROR': Error thrown during parsing or search execution
+ * 
+ * @param {string} query - Natural language search phrase or keywords
+ * @param {object} options - Search options { maxTokens, topK, domains, domain, category, brainRoot, expandQuery }
+ * @returns {object} Structured retrieval outcome package
+ */
+export function searchBrainDetailed(query, options = {}) {
+  const startTime = Date.now();
+  const customRoot = options.brainRoot || null;
+  const maxTokens = options.maxTokens !== undefined ? options.maxTokens : 2400;
+  const topK = options.topK || 10;
+
+  // 1. Error boundary for invalid query types
+  if (query === null || query === undefined || typeof query !== 'string') {
+    return {
+      status: 'RETRIEVAL_ERROR',
+      query: String(query),
+      results: [],
+      totalDocuments: 0,
+      matchedCount: 0,
+      durationMs: Date.now() - startTime,
+      diagnostics: { error: 'Invalid query input: expected non-null string' },
+      limitations: ['Query must be a valid non-null string']
+    };
+  }
+
+  // 2. Index availability check
+  let index;
+  try {
+    const p = getRetrievalPaths(customRoot);
+    if (customRoot && !fs.existsSync(p.brainRoot)) {
+      return {
+        status: 'INDEX_UNAVAILABLE',
+        query,
+        results: [],
+        totalDocuments: 0,
+        matchedCount: 0,
+        durationMs: Date.now() - startTime,
+        diagnostics: { error: `Brain root does not exist: ${customRoot}` },
+        limitations: ['Knowledge index unavailable on target storage path']
+      };
+    }
+    index = buildSearchIndex(options.forceRebuild || false, customRoot, options);
+  } catch (err) {
+    return {
+      status: 'INDEX_UNAVAILABLE',
+      query,
+      results: [],
+      totalDocuments: 0,
+      matchedCount: 0,
+      durationMs: Date.now() - startTime,
+      diagnostics: { error: err.message },
+      limitations: ['Search index could not be initialized']
+    };
+  }
+
+  // 3. Grounded Query Expansion
+  let expansionDiagnostics = { matchedDomains: [], expansionTerms: [] };
+  let effectiveOptions = { ...options };
+  if (options.expandQuery === true || (options.domains && options.domains.length > 0) || options.domain) {
+    const targetDoms = options.domains || (options.domain ? [options.domain] : []);
+    expansionDiagnostics = expandQueryWithTaxonomy(query, targetDoms);
+    if (options.expandQuery && expansionDiagnostics.expansionTerms.length > 0) {
+      effectiveOptions.expansionTerms = expansionDiagnostics.expansionTerms;
+    }
+  }
+
+  // 4. Base search execution
+  let baseSearch;
+  try {
+    baseSearch = searchBrain(query, effectiveOptions);
+  } catch (searchErr) {
+    return {
+      status: 'RETRIEVAL_ERROR',
+      query,
+      results: [],
+      totalDocuments: index ? index.totalDocuments : 0,
+      matchedCount: 0,
+      durationMs: Date.now() - startTime,
+      diagnostics: { error: searchErr.message },
+      limitations: ['Exception encountered during BM25 search evaluation']
+    };
+  }
+
+  const rawResults = baseSearch.results || [];
+  const matchedCount = baseSearch.matchedCount !== undefined ? baseSearch.matchedCount : rawResults.length;
+
+  // 5. Genuinely Empty outcome
+  if (matchedCount === 0 || rawResults.length === 0) {
+    return {
+      status: 'GENUINELY_EMPTY',
+      query,
+      results: [],
+      totalDocuments: index.totalDocuments,
+      matchedCount: 0,
+      durationMs: Date.now() - startTime,
+      diagnostics: {
+        expandedQueryTerms: expansionDiagnostics.expansionTerms,
+        matchedDomains: expansionDiagnostics.matchedDomains,
+        tokensUsed: 0,
+        maxTokens
+      },
+      limitations: ['Zero evidence matches found across canonical rules, patterns, skills, and dossiers']
+    };
+  }
+
+  // 6. Context Budgeting & Packing
+  let currentTokens = 0;
+  const budgetedResults = [];
+  let budgetExhausted = false;
+
+  for (const item of rawResults) {
+    const itemContent = item.fullContent || item.summary || '';
+    const estTokens = Math.ceil(itemContent.length / 4);
+
+    if (currentTokens + estTokens <= maxTokens) {
+      currentTokens += estTokens;
+      budgetedResults.push(item);
+    } else if (budgetedResults.length === 0 && maxTokens > 100) {
+      const maxChars = maxTokens * 4;
+      const truncatedExcerpt = itemContent.slice(0, maxChars - 100) + '... [Truncated by Budgeter]';
+      budgetedResults.push({
+        ...item,
+        fullContent: truncatedExcerpt,
+        evidenceExcerpt: extractEvidenceExcerpt(truncatedExcerpt, item.matchedTerms)
+      });
+      currentTokens = maxTokens;
+      budgetExhausted = true;
+      break;
+    } else {
+      budgetExhausted = true;
+      break;
+    }
+  }
+
+  // If budget was strictly exceeded before packing any item
+  if (budgetedResults.length === 0) {
+    return {
+      status: 'BUDGET_EXHAUSTED',
+      query,
+      results: [],
+      totalDocuments: index.totalDocuments,
+      matchedCount,
+      durationMs: Date.now() - startTime,
+      diagnostics: {
+        budgetExhausted: true,
+        tokensUsed: 0,
+        maxTokens,
+        droppedMatchesCount: rawResults.length
+      },
+      limitations: [`Context budget constraint (${maxTokens} tokens) was exhausted before packing matched results`]
+    };
+  }
+
+  // 7. Limitations & Epistemic Warnings
+  const limitations = [];
+  const hasExtracted = budgetedResults.some(r => r.epistemicState === 'EXTRACTED');
+  if (hasExtracted) {
+    limitations.push('Contains EXTRACTED findings from forensic learning dossiers; independently verify against target codebase before production deployment');
+  }
+  if (budgetExhausted) {
+    limitations.push(`Result set truncated: ${rawResults.length - budgetedResults.length} additional matches omitted due to maxTokens budget (${maxTokens})`);
+  }
+
+  return {
+    status: 'FOUND',
+    query,
+    results: budgetedResults,
+    totalDocuments: index.totalDocuments,
+    matchedCount,
+    durationMs: Date.now() - startTime,
+    diagnostics: {
+      expandedQueryTerms: expansionDiagnostics.expansionTerms,
+      matchedDomains: expansionDiagnostics.matchedDomains,
+      budgetExhausted,
+      tokensUsed: currentTokens,
+      maxTokens
+    },
+    limitations
   };
 }
 

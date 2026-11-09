@@ -1,0 +1,28 @@
+{
+"sourceHash":"4e846c251d8cb37b972127ec3e60fd6f44093617b548e7458548be977f639f31",
+"builtAt":"2026-11-09T14:36:25.065Z",
+"buildDurationMs":10,
+"totalDocuments":2,
+"avgdl":14.5,
+"idf":{"crash":0.6931471805599453,"safety":0.6931471805599453,"protocol":0.6931471805599453,"architecture":0.6931471805599453,"intelligence":0.1823215567939546,"write":0.6931471805599453,"transactions":0.6931471805599453,"must":0.6931471805599453,"decouple":0.6931471805599453,"validation":0.6931471805599453,"state":0.6931471805599453,"modification":0.6931471805599453,"domain":0.1823215567939546,"undefined":0.6931471805599453},
+"invertedIndex":{
+"crash":[{"docIdx":0,"freq":1}],
+"safety":[{"docIdx":0,"freq":1}],
+"protocol":[{"docIdx":0,"freq":1}],
+"architecture":[{"docIdx":0,"freq":2}],
+"intelligence":[{"docIdx":0,"freq":2},{"docIdx":1,"freq":1}],
+"write":[{"docIdx":0,"freq":2}],
+"transactions":[{"docIdx":0,"freq":2}],
+"must":[{"docIdx":0,"freq":2}],
+"decouple":[{"docIdx":0,"freq":2}],
+"validation":[{"docIdx":0,"freq":2}],
+"state":[{"docIdx":0,"freq":2}],
+"modification":[{"docIdx":0,"freq":2}],
+"domain":[{"docIdx":0,"freq":1},{"docIdx":1,"freq":1}],
+"undefined":[{"docIdx":1,"freq":5}]
+},
+"documents":[
+{"id":"DOM-G-D96FF732","ruleNumber":null,"rule_number":null,"title":"Crash Safety Protocol","category":"DOMAIN_INTELLIGENCE","sourceTier":"EMPIRICAL","epistemicState":"VALIDATED","confidence":0.9,"confidenceCalibrated":false,"confidenceType":"EMPIRICAL_VALIDATED_WEIGHT","domainLetter":"G","domainId":"architecture","domainName":"Architecture Intelligence","secondaryDomains":[],"filePath":"05_KNOWLEDGE/domain-intelligence/domain-registry.json","lineRange":[1,100],"summary":"Write transactions must decouple validation from state modification.","ruleText":"","whyText":"","whenText":"","fullContent":"## DOM-G-D96FF732 [Domain G: Architecture Intelligence] — Crash Safety Protocol\n\nWrite transactions must decouple validation from state modification.\n\n- Provenance: internal://AI-Builder-Brain\n- Evidence: EMPIRICAL_CODE_PATTERN (VERIFIED)","sourceOccurrences":[{"filePath":"05_KNOWLEDGE/domain-intelligence/domain-registry.json","lineRange":[1,100]}],"occurrenceCount":1,"corroborationSources":[],"isBoilerplate":false,"isIndependentCorroboration":false,"independentCorroborationCount":0,"docLength":22},
+{"id":"DOM-G-PREEXISTING","ruleNumber":null,"rule_number":null,"category":"DOMAIN_INTELLIGENCE","sourceTier":"EMPIRICAL","epistemicState":"VALIDATED","confidence":0.9,"confidenceCalibrated":false,"confidenceType":"EMPIRICAL_VALIDATED_WEIGHT","domainLetter":"G","domainId":null,"domainName":null,"secondaryDomains":[],"filePath":"05_KNOWLEDGE/domain-intelligence/domain-registry.json","lineRange":[1,100],"ruleText":"","whyText":"","whenText":"","fullContent":"## DOM-G-PREEXISTING [Domain G: undefined] — undefined\n\nundefined\n\n- Provenance: internal\n- Evidence: EMPIRICAL (VERIFIED)","sourceOccurrences":[{"filePath":"05_KNOWLEDGE/domain-intelligence/domain-registry.json","lineRange":[1,100]}],"occurrenceCount":1,"corroborationSources":[],"isBoilerplate":false,"isIndependentCorroboration":false,"independentCorroborationCount":0,"docLength":7}
+]
+}
