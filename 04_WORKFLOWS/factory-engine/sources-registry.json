@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T22:48:37.980Z",
-    "lastVerified": "2026-11-09T22:48:37.980Z",
+    "lastChecked": "2026-11-09T22:55:35.550Z",
+    "lastVerified": "2026-11-09T22:55:35.550Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T22:27:07.484Z",
+    "lastChecked": "2026-11-09T22:55:35.539Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T22:27:07.484Z"
+    "lastVerified": "2026-11-09T22:55:35.539Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1110,9 +1110,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-09T14:04:38.395Z",
+    "lastChecked": "2026-11-09T22:55:30.630Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-09T14:04:38.395Z"
+    "lastVerified": "2026-11-09T22:55:30.630Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -4172,9 +4172,9 @@
   "founded-labs-react-native-reusables": {
     "name": "react-native-reusables",
     "officialUrl": "https://github.com/founded-labs/react-native-reusables",
-    "lastChecked": "2026-11-07T02:31:54.429Z",
+    "lastChecked": "2026-11-09T22:55:25.580Z",
     "revisionIdentifier": "385834c2",
-    "lastVerified": "2026-11-07T02:31:54.429Z"
+    "lastVerified": "2026-11-09T22:55:25.580Z"
   },
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
@@ -4359,8 +4359,8 @@
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T21:46:54.371Z",
-    "lastVerified": "2026-11-08T21:46:54.371Z",
+    "lastChecked": "2026-11-09T22:55:28.100Z",
+    "lastVerified": "2026-11-09T22:55:28.100Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -6860,11 +6860,21 @@
     "revisionIdentifier": "9092df94"
   },
   "graphprotocol-graph-node": {
-    "name": "graph-node",
+    "name": "graphprotocol/graph-node",
     "officialUrl": "https://github.com/graphprotocol/graph-node",
-    "lastChecked": "2026-11-08T16:50:56.640Z",
-    "revisionIdentifier": "cc31bc78",
-    "lastVerified": "2026-11-08T16:50:56.640Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-09T22:55:24.916Z",
+    "lastVerified": "2026-11-09T22:55:24.916Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-graphprotocol-graph-node",
+    "contentHash": "d1eb4826ef58785d11a6851393d41b2474564a4db76d782ce4a1002a20605df4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-argmaxinc-whisperkit-coreml": {
     "name": "argmaxinc/whisperkit-coreml",
@@ -7186,9 +7196,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-08T20:53:03.114Z",
+    "lastChecked": "2026-11-09T22:55:33.087Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-08T20:53:03.114Z"
+    "lastVerified": "2026-11-09T22:55:33.087Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -9605,9 +9615,9 @@
   "davo20019-seo-analysis": {
     "name": "seo-analysis",
     "officialUrl": "https://github.com/davo20019/seo-analysis",
-    "lastChecked": "2026-11-05T19:22:10.679Z",
+    "lastChecked": "2026-11-09T22:55:23.075Z",
     "revisionIdentifier": "902c09fd",
-    "lastVerified": "2026-11-05T19:22:10.679Z"
+    "lastVerified": "2026-11-09T22:55:23.075Z"
   },
   "amosgyamfi-open-swiftui-animations": {
     "name": "open-swiftui-animations",

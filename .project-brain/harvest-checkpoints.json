@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T22:48:35.417Z",
+  "last_updated": "2026-11-09T22:55:27.054Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9756,14 +9756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-graphprotocol-graph-node",
-      "content_hash": "bed6bcec9238e0f823df0f6145d0b2b8f9c595f8f7050c2882bb02ad7787cbdd",
-      "verified_at": "2026-10-21T05:40:25.303Z",
+      "content_hash": "d1eb4826ef58785d11a6851393d41b2474564a4db76d782ce4a1002a20605df4",
+      "verified_at": "2026-11-09T22:55:27.053Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T05:40:25.303Z"
+      "last_updated": "2026-11-09T22:55:27.053Z"
     },
     "hungps/flutter_pokedex": {
       "repository": "hungps/flutter_pokedex",

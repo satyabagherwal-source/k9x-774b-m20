@@ -8689,3 +8689,4 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `04c23427` | Multi-dimensional audit evidence | 2026-11-09T22:34:28.761Z |
 | `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-09T22:41:01.013Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `dc504b1d` | Multi-dimensional audit evidence | 2026-11-09T22:48:35.410Z |
+| `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `3b2f05d4` | Multi-dimensional audit evidence | 2026-11-09T22:55:27.045Z |

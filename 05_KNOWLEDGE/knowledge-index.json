@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T22:48:35.347Z",
+  "last_updated": "2026-11-09T22:55:26.957Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17745,11 +17745,16 @@
       "slug": "graphprotocol-graph-node",
       "platform": "github",
       "source_url": "https://github.com/graphprotocol/graph-node",
-      "source_version": "cc31bc78",
-      "content_hash": "bed6bcec9238e0f823df0f6145d0b2b8f9c595f8f7050c2882bb02ad7787cbdd",
+      "source_version": "3b2f05d4",
+      "content_hash": "d1eb4826ef58785d11a6851393d41b2474564a4db76d782ce4a1002a20605df4",
       "dossier_path": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "core: Hash each WASM module once instead of once per data source (#6732)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2211,
           "title": "store: split dump batches by byte size to avoid 2GB Arrow column overflow (#6646",
@@ -17776,7 +17781,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:40:25.242Z",
+      "verified_at": "2026-11-09T22:55:26.936Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

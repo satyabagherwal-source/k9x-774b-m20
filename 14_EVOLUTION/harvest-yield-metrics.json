@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T22:48:35.415Z",
-  "total_cycles_completed": 8645,
-  "total_learnings_persisted": 8645,
-  "total_rules_promoted": 8480,
+  "last_updated": "2026-11-09T22:55:27.051Z",
+  "total_cycles_completed": 8646,
+  "total_learnings_persisted": 8646,
+  "total_rules_promoted": 8481,
   "history": [
-    {
-      "timestamp": "2026-11-09T02:34:44.092Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T02:43:57.068Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-09T22:48:35.415Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T22:55:27.051Z",
+      "repository": "graphprotocol/graph-node",
+      "learningId": "learn-github-graphprotocol-graph-node",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
