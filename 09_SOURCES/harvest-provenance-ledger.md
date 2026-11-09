@@ -8513,3 +8513,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-09T04:12:34.195Z |
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-09T04:20:07.119Z |
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `533e89d6` | Multi-dimensional audit evidence | 2026-11-09T04:20:08.709Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-09T04:27:27.889Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `0cd7f96f` | Multi-dimensional audit evidence | 2026-11-09T04:27:35.327Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `645d62eb` | Multi-dimensional audit evidence | 2026-11-09T04:27:42.177Z |

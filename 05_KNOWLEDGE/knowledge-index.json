@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T04:20:08.605Z",
+  "last_updated": "2026-11-09T04:27:42.080Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32331,7 +32331,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "8fd07dfa6a6b6e6b1fc774fe08e7b41b32345655ced0d29ab8c33ad83e367388",
+      "content_hash": "33a00d2fe0717ab6d6ab32150e26b96dbadeba62bd2c402bff3718003f73e6e2",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -32407,7 +32407,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-11-05T10:26:24.256Z",
+      "verified_at": "2026-11-09T04:27:27.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48631,14 +48631,19 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "50d59c21",
-      "content_hash": "da2d92fd031f6e95201059dea81e167ffc53c811df84542ccc6ecef7c7f879ba",
+      "source_version": "645d62eb",
+      "content_hash": "4f5c4cb05f635f97d0d8846ed82797ad23ea1fa0466dabacd80f76a56a340f50",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #502 from Ontos-AI/fix/wuchengke/short-scanned-pdf-page-image",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci: ignore false-positive Gitleaks hits from staging OpenSearch fixtures",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48702,7 +48707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:01:31.176Z",
+      "verified_at": "2026-11-09T04:27:42.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57915,14 +57920,19 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "e3e4f4eb",
-      "content_hash": "7eb8cb7a63b374326f86b11cfe42c27ca01ef81c36436152a9074b2444c3a080",
+      "source_version": "0cd7f96f",
+      "content_hash": "ae1f0b3852a2f55619f5dadf433ebec3a0da8872ea0f065f591b4476abe9e657",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Android, Tabs): notify every SafeAreaView registered on TabsContainer about inte",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "iOS, FormSheet): clean up and ignore stale content wrappers (#5153)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -57956,7 +57966,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:08:31.700Z",
+      "verified_at": "2026-11-09T04:27:35.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

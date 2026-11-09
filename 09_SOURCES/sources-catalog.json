@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "8fd07dfa6a6b6e6b1fc774fe08e7b41b32345655ced0d29ab8c33ad83e367388",
-    "lastHarvestedAt": "2026-11-05T10:26:24.382Z",
+    "contentHash": "33a00d2fe0717ab6d6ab32150e26b96dbadeba62bd2c402bff3718003f73e6e2",
+    "lastHarvestedAt": "2026-11-09T04:27:27.889Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {
@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "50d59c21",
+    "sourceVersion": "645d62eb",
     "license": "Apache-2.0",
-    "contentHash": "da2d92fd031f6e95201059dea81e167ffc53c811df84542ccc6ecef7c7f879ba",
-    "lastHarvestedAt": "2026-11-07T03:01:31.286Z",
+    "contentHash": "4f5c4cb05f635f97d0d8846ed82797ad23ea1fa0466dabacd80f76a56a340f50",
+    "lastHarvestedAt": "2026-11-09T04:27:42.177Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "e3e4f4eb",
+    "sourceVersion": "0cd7f96f",
     "license": "MIT",
-    "contentHash": "7eb8cb7a63b374326f86b11cfe42c27ca01ef81c36436152a9074b2444c3a080",
-    "lastHarvestedAt": "2026-11-05T22:08:31.796Z",
+    "contentHash": "ae1f0b3852a2f55619f5dadf433ebec3a0da8872ea0f065f591b4476abe9e657",
+    "lastHarvestedAt": "2026-11-09T04:27:35.327Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {

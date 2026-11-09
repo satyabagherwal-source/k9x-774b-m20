@@ -8504,3 +8504,6 @@
 | `CYCLE-20261109-WD1I` | `2026-11-09T04:12:34.182Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`ebf192f4...`) |
 | `CYCLE-20261109-62IZ` | `2026-11-09T04:20:07.115Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`837bc09c...`) |
 | `CYCLE-20261109-63R5` | `2026-11-09T04:20:08.705Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9fc22120...`) |
+| `CYCLE-20261109-FIML` | `2026-11-09T04:27:27.885Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`33a00d2f...`) |
+| `CYCLE-20261109-FOD7` | `2026-11-09T04:27:35.323Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ae1f0b38...`) |
+| `CYCLE-20261109-FTNH` | `2026-11-09T04:27:42.173Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4f5c4cb0...`) |

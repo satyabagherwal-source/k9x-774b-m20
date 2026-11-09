@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-Q226",
-    "timestamp": "2026-11-07T05:28:18.414Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "1e750f966a18a6427a7cf7b21357f6b9a44e78924e588f4e2b582505d5fd47ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-Q615",
-    "timestamp": "2026-11-07T05:28:23.561Z",
-    "repository": "SeekStorm/SeekStorm",
-    "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "372f6503c3013c156a4ae429fcfb92681982d47de25587f916002dc409628ce3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-19P9",
-    "timestamp": "2026-11-07T05:37:01.533Z",
-    "repository": "nodejs/undici",
-    "learningId": "learn-github-nodejs-undici",
-    "contentHash": "8013e05035a4564ef8ab57c7636cb9e5b9fdce96af82f2c2dd1e93517e4454ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-1CWA",
     "timestamp": "2026-11-07T05:37:05.674Z",
     "repository": "opentofu/opentofu",
@@ -7490,6 +7445,51 @@
     "repository": "zeronsh/zeron",
     "learningId": "learn-github-zeronsh-zeron",
     "contentHash": "9fc22120a8c140cf239fdb9193a730dba6e0af276c6b411e287f11b2e0fe3ae0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-FIML",
+    "timestamp": "2026-11-09T04:27:27.885Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "33a00d2fe0717ab6d6ab32150e26b96dbadeba62bd2c402bff3718003f73e6e2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-FOD7",
+    "timestamp": "2026-11-09T04:27:35.323Z",
+    "repository": "software-mansion/react-native-screens",
+    "learningId": "learn-github-software-mansion-react-native-screens",
+    "contentHash": "ae1f0b3852a2f55619f5dadf433ebec3a0da8872ea0f065f591b4476abe9e657",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-FTNH",
+    "timestamp": "2026-11-09T04:27:42.173Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "4f5c4cb05f635f97d0d8846ed82797ad23ea1fa0466dabacd80f76a56a340f50",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
