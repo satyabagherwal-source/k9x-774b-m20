@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-A6F3",
-    "timestamp": "2026-11-06T23:12:02.559Z",
-    "repository": "Pika-Labs/Pika-H3-Flex",
-    "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
-    "contentHash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-A6TG",
     "timestamp": "2026-11-06T23:12:03.076Z",
     "repository": "encoredev/encore",
@@ -7492,6 +7477,21 @@
     "contentHash": "878a998e182c757690f2db1937c4d8f913581082e59fd39ce82e82f78c56436e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-TA1J",
+    "timestamp": "2026-11-09T00:54:13.015Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "eb4f7a7ee38106bf5550151823059a6faf0e4a001181ae103ab4d6198d0a5048",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -8446,3 +8446,4 @@
 | `CYCLE-20261109-OZWA` | `2026-11-09T00:22:53.626Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`a23fc3c7...`) |
 | `CYCLE-20261109-ZNJU` | `2026-11-09T00:31:10.842Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | Yes (`0136818a...`) |
 | `CYCLE-20261109-9VFF` | `2026-11-09T00:39:07.611Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`878a998e...`) |
+| `CYCLE-20261109-TA1J` | `2026-11-09T00:54:13.015Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 2574, Rule null` | Yes (`eb4f7a7e...`) |
