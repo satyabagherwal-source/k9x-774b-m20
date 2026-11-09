@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T13:26:55.150Z",
+  "last_updated": "2026-11-09T13:34:34.341Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10142,8 +10142,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "35fffd03",
-      "content_hash": "38119bccb02a18f12cc4224780d1b4a9275b9cd2a626e9c662ed41449ee888d1",
+      "source_version": "a0f8a379",
+      "content_hash": "20c0fd89c42f52ff990641073d0e4d266ac75015f46710511fb32407b252343b",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10195,6 +10195,11 @@
         {
           "number": null,
           "title": "stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (#5013)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (#5015)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10548,7 +10553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:44:06.565Z",
+      "verified_at": "2026-11-09T13:34:34.309Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59355,14 +59360,19 @@
       "slug": "streetwriters-notesnook",
       "platform": "github",
       "source_url": "https://github.com/streetwriters/notesnook",
-      "source_version": "27b7f518",
-      "content_hash": "26d4f35a6996d890d29165d00f5cf6177339e570c4f161b5bee4aa60f33ec60b",
+      "source_version": "af701e99",
+      "content_hash": "4aa21afa16b360c6f1278ae73ef54367472c6e1d635dc680b0c72fb03dca7e3a",
       "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "core: add partial indexes on unsynced rows (#10528)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #10639 from streetwriters/fix/10585-quick-note-plain-text",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -59401,7 +59411,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T19:09:43.087Z",
+      "verified_at": "2026-11-09T13:34:22.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76513,10 +76523,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fishaudio/drama-3",
       "source_version": "hf-fishaudio-drama-3",
-      "content_hash": "42de5eed2eeabda02d729072a2551d0deba7f6274b54cd3ff89d119a7316c823",
+      "content_hash": "453c4cdf88bb5941535f84bf7d0b3514eeaf2b13480acebdccf9c5d13c655626",
       "dossier_path": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "MoE Precision Heterogeneity Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Speaker Tag Binding Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Codebook-MTP Causal Decoding Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1588,
           "title": "Dual-Cadence Multi-Codebook MTP Decoupling Invariant",
@@ -76553,7 +76578,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:58:43.294Z",
+      "verified_at": "2026-11-09T13:34:27.506Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

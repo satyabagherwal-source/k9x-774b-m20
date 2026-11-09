@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T13:26:55.265Z",
-  "total_cycles_completed": 8563,
-  "total_learnings_persisted": 8563,
-  "total_rules_promoted": 8388,
+  "last_updated": "2026-11-09T13:34:34.509Z",
+  "total_cycles_completed": 8566,
+  "total_learnings_persisted": 8566,
+  "total_rules_promoted": 8393,
   "history": [
-    {
-      "timestamp": "2026-11-08T21:33:33.599Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T21:33:35.895Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T21:46:50.762Z",
-      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T21:46:52.301Z",
       "repository": "zed-industries/zed",
@@ -1403,6 +1382,27 @@
       "repository": "LiquidAI/LFM2.5-24B-A2B",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T13:34:22.921Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T13:34:27.677Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T13:34:34.509Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

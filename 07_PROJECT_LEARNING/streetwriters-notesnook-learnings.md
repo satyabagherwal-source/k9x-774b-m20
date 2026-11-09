@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source**: github ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
-> **Source Version**: `27b7f518`  
+> **Source Version**: `af701e99`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T19:09:41.802Z  
+> **Timestamp**: 2026-11-09T13:34:21.383Z  
 > **Learning ID**: `learn-github-streetwriters-notesnook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T19:09:40.716Z  
+> **Harvest Timestamp**: 2026-11-09T13:34:21.219Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully open source & end-to-end encrypted note taking alternative to Evernote.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14894 stars
+- **Stars / Engagement**: 14903 stars
 
 ---
 
@@ -754,11 +754,11 @@ function setDockMenuOnMacOs() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10629** (2026-11-03): **web: don't render custom context menu behind native macOS context menu**
-  *Symptoms*:  ## Description <!-- Add a detailed summary of what this feature/bugfix does -->  ## Type of Change - [ ] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [ ] Web - [ ] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
+- **Issue #10653** (2026-11-09): **Report issues as the signed-in user, or with an email when logged out**
+  *Symptoms*: ## Description The issues service now identifies who filed a report from their access token, instead of the user id sent in the request body. Logged-out users can still report issues, but need to give a contact email so our support team can reply; their reports go to support rather than GitHub.  - **core:** `Debug.report()` sends `Authorization: Bearer <access token>` when signed in, and takes `email` for logged-out reports. It no longer sends `userId`. - **web:** the report dialog sends the token when signed in, and shows a required **Email** field when signed out. - **mobile:** same as web. When the server answers with an error (session expired, email not confirmed, too many reports today), the error is now shown and the form is kept. Before, the sheet switched to an empty success screen.  Older app versions can't file reports once the updated issues service is deployed; they're shown "Please update Notesnook to the latest version…".  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why The change is a request header and a form field; the behavior that matters is the issues service's response, which our tests don't cover. Checked with typecheck on c
 
-- **Issue #10628** (2026-11-03): **web: redesign reminder list & dialog fixes**
-  *Symptoms*: * NN-1356 * NN-1355 * NN-1354 * NN-1329  ## Description <!-- Add a detailed summary of what this feature/bugfix does -->  ## Type of Change - [ ] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [ ] Web - [ ] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
+- **Issue #10650** (2026-11-09): **web: reset arrowDown flag when tag suggestion menu closes**
+  *Symptoms*: Fixes #10646  ## Description In the note editor's tag input (Autosuggest), navigating suggestions using ArrowUp or ArrowDown sets arrowDown.current = true so that pressing Enter routes to the dropdown menu. However, arrowDown.current was never cleared when a suggestion was picked (via reset()) or when the suggestion menu closed. As a result, subsequent attempts to create new tags by typing in the input and pressing Enter were silently ignored because !arrowDown.current evaluated to false.  This PR:  Clears arrowDown.current = false inside reset(). Adds a useEffect on isOpen to clear arrowDown.current whenever the suggestion menu closes.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [x] Web - [ ] Mobile - [x] Desktop  ## Sign-off - [x] QA passed - [x] UI/UX passed 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -775,115 +775,49 @@ function setDockMenuOnMacOs() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27b7f518` (2026-11-04)
-**Commit Message**: core: add partial indexes on unsynced rows (#10528)
+### Incident Patch 1: `4bd16217` (2026-11-09)
+**Commit Message**: Merge pull request #10639 from streetwriters/fix/10585-quick-note-plain-text
 
-Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+mobile: fix quick note text erased when selecting plain text
 
-**File**: `packages/core/__tests__/sql-migrations.test.ts` (modified, +42/-0)
+**File**: `apps/mobile/app/share/share.tsx` (modified, +1/-0)
 ```diff
-@@ -33,6 +33,7 @@ import {
-   initializeDatabase,
-   SqliteBooleanPlugin
- } from "../src/database/index.js";
-+import { SYNC_COLLECTIONS_MAP } from "../src/api/sync/types.js";
- import { describe, expect, test } from "vitest";
+@@ -407,6 +407,7 @@ const ShareView = () => {
+   };
  
- function createSchemaTestDatabase() {
-@@ -130,4 +131,45 @@ describe("Schema migration recovery", () => {
-       await db.destroy();
-     }
-   });
-+
-+  test("unsynced queries use the partial synced index", async () => {
-+    const db = createSchemaTestDatabase();
-+
-+    try {
-+      await initializeDatabase(db, new NNMigrationProvider(), "notesnook-test");
-+
-+      for (const table of ["notes", "content", "relations", "attachments"]) {
-+        const plan = await sql<{ detail: string }>`
-+          EXPLAIN QUERY PLAN
-+          SELECT count(id) FROM ${sql.table(table)}
-+          WHERE (synced IS NULL OR synced == 0)
-+        `.execute(db);
-+        expect(plan.rows.map((r) => r.detail).join("\n")).toContain(
-+          `${table}_unsynced`
-+        );
-+      }
-+    } finally {
-+      await db.destroy();
-+    }
-+  });
-+
-+  test("every synced table has a partial unsynced index", async () => {
-+    const db = createSchemaTestDatabase();
-+
-+    try {
-+      await initializeDatabase(db, new NNMigrationProvider(), "notesnook-test");
-+
-+      const { rows } = await sql<{ name: string }>`
-+        SELECT lower(name) AS name FROM sqlite_master WHERE type = 'index'
-+      `.execute(db);
-+      const indexes = new Set(rows.map((r) => r.name));
-+
-+      // a new synced table needs its own `<table>_unsynced` index
-+      // (see the a-2026-10-16 migration).
-+      for (const table of Object.values(SYNC_COLLECTIONS_MAP))
-+        expect(indexes, table).toContain(`${table.toLowerCase()}_unsynced`);
-+    } finally {
-+      await db.destroy();
-+    }
-+  });
- });
+   const changeMode = async (value: number) => {
++    if (value === mode) return;
+     setMode(value);
+ 
+     setLoading(true);
 ```
 
-**File**: `packages/core/src/database/migrations.ts` (modified, +28/-0)
+---
+
+### Incident Patch 2: `fe00b7e6` (2026-11-04)
+**Commit Message**: mobile: fix quick note text erased when selecting plain text
+
+Signed-off-by: Kashaf Ansari <[REDACTED_EMAIL]>
+
+**File**: `apps/mobile/app/share/share.tsx` (modified, +1/-0)
 ```diff
-@@ -496,6 +496,34 @@ export class NNMigrationProvider implements MigrationProvider {
-             .addColumn("errorContext", "text")
-             .execute();
-         }
-+      },
-+      "a-2026-10-16": {
-+        async up(db) {
-+          const UNSYNCED_INDEX_TABLES = [
-+            "settings",
-+            "attachments",
-+            "content",
-+            "notebooks",
-+            "shortcuts",
-+            "reminders",
-+            "relations",
-+            "tags",
-+            "colors",
-+            "notes",
-+            "vaults",
-+            "inboxitemshistory"
-+          ] as const;
-+
-+          for (const table of UNSYNCED_INDEX_TABLES) {
-+            await db.schema
-+              .createIndex(`${table}_unsynced`)
-+              .ifNotExists()
-+              .on(table)
-+              .column("id")
-+              .where(sql<boolean>`synced IS NULL OR synced == 0`)
-+              .execute();
-+          }
-+        }
-       }
-     };
-   }
+@@ -407,6 +407,7 @@ const ShareView = () => {
+   };
+ 
+   const changeMode = async (value: number) => {
++    if (value === mode) return;
+     setMode(value);
+ 
+     setLoading(true);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10653** (2026-11-09): Report issues as the signed-in user, or with an email when logged out (@thecodrr)
+- **PR #10650** (2026-11-09): web: reset arrowDown flag when tag suggestion menu closes (@mohdsultan18)
+- **PR #10639** (2026-11-09): mobile: fix quick note text erased when selecting plain text (@kashaf-ansari-dev)
 - **PR #10629** (2026-11-03): web: don't render custom context menu behind native macOS context menu (@01zulfi)
 - **PR #10628** (2026-11-03): web: redesign reminder list & dialog fixes (@01zulfi)
 - **PR #10627** (2026-11-03): core: skip attachments with undecryptable keys when restoring backups (@thecodrr)
-- **PR #10618** (2026-11-02): web: bump version to 3.4.12 (@01zulfi)
-- **PR #10612** (2026-11-03): web: fix full backup running out of memory with many attachments (@thecodrr)
-- **PR #10608** (2026-10-31): web: fix empty message not shown in move notebook dialog (NN-1342) (@01zulfi)
 
 ---
 
@@ -903,55 +837,21 @@ Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core: add partial indexes on unsynced rows (#10528)
+## X. Merge pull request #10639 from streetwriters/fix/10585-quick-note-plain-text
 
 **RULE**:
-When implementing operations in `packages/core/__tests__/sql-migrations.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/mobile/app/share/share.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27b7f518`: core: add partial indexes on unsynced rows (#10528). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4bd16217`: Merge pull request #10639 from streetwriters/fix/10585-quick-note-plain-text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/__tests__/sql-migrations.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/share/share.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { SYNC_COLLECTIONS_MAP } from "../src/api/sync/types.js";
-
-  test("unsynced queries use the partial synced index", async () => {
-    const db = createSchemaTestDatabase();
-
-    try {
-      await initializeDatabase(db, new NNMigrationProvider(), "notesnook-test");
-
-      for (const table of ["notes", "content", "relations", "attachments"]) {
-        const plan = await sql<{ detail: string }>`
-          EXPLAIN QUERY PLAN
-          SELECT count(id) FROM ${sql.table(table)}
-          WHERE (synced IS NULL OR synced == 0)
-        `.execute(db);
-        expect(plan.rows.map((r) => r.detail).join("\n")).toContain(
-          `${table}_unsynced`
-        );
-      }
-    } finally {
-      await db.destroy();
-    }
-  });
-
-  test("every synced table has a partial unsynced index", async () => {
-    const db = createSchemaTestDatabase();
-
-    try {
-      await initializeDatabase(db, new NNMigrationProvider(), "notesnook-test");
-
-      const { rows } = await sql<{ name: string }>`
-        SELECT lower(name) AS name FROM sqlite_master WHERE type = 'index'
-      `.execute(db);
-      const indexes = new Set(rows.map((r) => r.name));
-
-      // a new synced table needs its own `<table>_unsynced`
+    if (value === mode) return;
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -961,4 +861,4 @@ import { SYNC_COLLECTIONS_MAP } from "../src/api/sync/types.js";
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27b7f518` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4bd16217` are properly handled with clean fallback behavior.

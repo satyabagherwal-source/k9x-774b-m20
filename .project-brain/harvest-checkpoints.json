@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T13:26:55.268Z",
+  "last_updated": "2026-11-09T13:34:34.513Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2257,14 +2257,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fishaudio-drama-3",
-      "content_hash": "42de5eed2eeabda02d729072a2551d0deba7f6274b54cd3ff89d119a7316c823",
-      "verified_at": "2026-11-05T14:58:43.460Z",
+      "content_hash": "453c4cdf88bb5941535f84bf7d0b3514eeaf2b13480acebdccf9c5d13c655626",
+      "verified_at": "2026-11-09T13:34:27.681Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:58:43.460Z"
+      "last_updated": "2026-11-09T13:34:27.681Z"
     },
     "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8": {
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "38119bccb02a18f12cc4224780d1b4a9275b9cd2a626e9c662ed41449ee888d1",
-      "verified_at": "2026-11-09T02:44:06.722Z",
+      "content_hash": "20c0fd89c42f52ff990641073d0e4d266ac75015f46710511fb32407b252343b",
+      "verified_at": "2026-11-09T13:34:34.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:44:06.722Z"
+      "last_updated": "2026-11-09T13:34:34.512Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4386,14 +4386,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-streetwriters-notesnook",
-      "content_hash": "26d4f35a6996d890d29165d00f5cf6177339e570c4f161b5bee4aa60f33ec60b",
-      "verified_at": "2026-11-06T19:09:43.219Z",
+      "content_hash": "4aa21afa16b360c6f1278ae73ef54367472c6e1d635dc680b0c72fb03dca7e3a",
+      "verified_at": "2026-11-09T13:34:22.925Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T19:09:43.219Z"
+      "last_updated": "2026-11-09T13:34:22.925Z"
     },
     "kgateway-dev/kgateway": {
       "repository": "kgateway-dev/kgateway",

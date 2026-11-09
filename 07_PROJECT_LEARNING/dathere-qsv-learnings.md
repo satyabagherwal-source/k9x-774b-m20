@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `35fffd03`  
+> **Source Version**: `a0f8a379`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T02:44:06.343Z  
+> **Timestamp**: 2026-11-09T13:34:32.496Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T02:44:06.335Z  
+> **Harvest Timestamp**: 2026-11-09T13:34:31.957Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,183 +2203,171 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `35fffd03` (2026-11-09)
-**Commit Message**: fix(mcp): leave devDependency-only packages out of the .mcpb bundle (#5014)
+### Incident Patch 1: `07b65145` (2026-11-09)
+**Commit Message**: deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (#5015)
 
-* fix(mcp): leave devDependency-only packages out of the .mcpb bundle
+* deps: compact_bytes fork with the big-endian heap/inline fix
 
-package-mcpb.js zipped all of node_modules after a full `npm ci`, filtering
-only source maps, .d.ts files and test/example directories. So the 28.0.0
-.mcpb shipped typescript, c8, archiver, istanbul and three dev-only
-minimatch copies (Dependabot #123): 119 packages, 5.3 of its 11.4 MB, that
-the server can never load.
+qsv-stats 0.57's ByteKey is backed by compact_bytes, whose inline/heap
+discriminant is the struct's last byte. In the heap repr that byte is the
+last byte of `cap`, which on big-endian targets is the LEAST significant
+one, so a capacity like 128 (0x80) was misread as inline and as_slice()
+read past the allocation (undefined behavior under Miri on s390x). The
+s390x workflow (run 42515421658, master ad3fc53fe) failed 11 stats and
+moarstats tests with heap pointer bytes printed as mode/antimode values.
 
-The packager now reads package-lock.json and skips every package npm
-marks "dev": true (reachable only through devDependencies), plus
-node_modules/.bin (CLI links; the server is started with `node`). A
-package missing from the lockfile is kept, so a stale lockfile can only
-make the bundle bigger. The .mcpb drops to 5.6 MB.
+The fork's main (f21a6ac, jqnatividad/compact_bytes#2) now stores that
+field in little-endian order on every platform. That's a no-op on
+little-endian targets (identical release asm on aarch64 and x86_64), and
+its Miri CI job now also runs on s390x.
 
-verify-bundles.js gains two checks: no dev-only package and no .bin in the
-extracted bundle. Both fail on the 28.0.0 bundle. Its existing
-server-start check passes on the new one. Old vs new: the removed packages
-are exactly the 119 dev-only ones, every production file and all 458
-non-node_modules entries are unchanged, and nothing in dist/ imports a
-removed package.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[
+* docs(changelog): note the big-endian compact_bytes fix on the #5011 entry (#5015)
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +6/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* deps: bump qsv-stats to 0.57.1 (big-endian ByteKey fallback)
+
+qsv-stats 0.57.1 makes compact_bytes a little-en
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,12 @@ All notable changes to the qsv Agent Skills (MCP Server) project will be documen
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **docs: "Statistics at a Glance" in [`docs/STATS_DEFINITIONS.md`](docs/STATS_DEFINITIONS.md)**: qsv compiles 159 statistic columns across `stats` (48), `moarstats` (76 + 14 bivariate), `pragmastat` (18) and `frequency` (3). A new test checks the table against real output, so the counts can't go stale silently ([#4996](https://github.com/dathere/qsv/pull/4996)).
  
-+## [Unreleased]
-+
-+### Fixed
-+- **The `.mcpb` no longer ships development-only packages** ([#5014](https://github.com/dathere/qsv/pull/5014)). The packager zipped all of `node_modules`, so the 28.0.0 bundle included typescript, c8, archiver and 116 other packages the server never loads, among them three minimatch copies flagged by GHSA-g3hv-75wg-m249. Packages that `package-lock.json` marks dev-only are now skipped, as is `node_modules/.bin`, and the download shrinks from 11.4 MB to 5.6 MB. `verify-bundles` checks that none of them is bundled.
-+- **CI: the macOS tests run on `macos-latest`** ([#5014](https://github.com/dathere/qsv/pull/5014)). GitHub retired the `macos-14` runner image, so the three macOS jobs were rejected before they started ("The configuration 'macos-14-arm64-us-default' is not supported").
-+
- ## [28.0.0] - 2026-11-02
- Companion release to qsv 28.0.0, "The DCAT-US v3.0 neuro-symbolic FAIRification Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 28.0.0 because the regenerated `qsv-describegpt` skill describes `--forget` as removing the cached answers of the selected phases, which only the new binary does (27.0.1's `--forget` removed nothing). No options were added or removed, and the skill count stays at **57**. Update your qsv binary first.
- 
+ ### Changed
+-- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected.
++- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected. On big-endian targets (s390x), values of 128 bytes or more were misread until a compact_bytes fix ([#5015](https://github.com/dathere/qsv/pull/5015)), so this was never released with the bug.
+ - **`stats --weight`: mode, antimode and cardinality tracking is faster and uses less memory** ([#5013](https://github.com/dathere/qsv/pull/5013)). The weighted tracker now stores short values inline too, as #5011 did for unweighted `stats`. On a 1M-row file with `--weight`, `--cardinality --mode` is 12–20% faster, and `--everything` on an indexed file is 21–23% faster with 36% less peak memory. Output is unchanged.
+ - **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
+ - **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
 ```
 
-**File**: `.claude/skills/scripts/package-mcpb.js` (modified, +46/-3)
+**File**: `Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -5,7 +5,7 @@
-  * Creates a ZIP archive containing:
-  * - manifest.json
-  * - server/ (compiled JavaScript from dist/)
-- * - node_modules/ (bundled dependencies)
-+ * - node_modules/ (production dependencies only; dev-only packages are skipped)
-  * - qsv/ (51 skill JSON definitions)
-  * - .claude-plugin/ (plugin manifest)
-  * - .mcp.json (MCP server configuration)
-@@ -80,6 +80,7 @@ function validateFiles() {
-     { path: join(rootDir, 'manifest.json'), name: 'manifest.json' },
-     { path: join(rootDir, 'dist'), name: 'dist/' },
-     { path: join(rootDir, 'node_modules'), name: 'node_modules/' },
-+    { path: join(rootDir, 'package-lock.json'), name: 'package-lock.json' },
-     { path: join(rootDir, 'qsv'), name: 'qsv/' }
-   ];
+@@ -1483,7 +1483,7 @@ dependencies = [
+ [[package]]
+ name = "compact_bytes"
+ version = "0.2.1"
+-source = "git+https://github.com/jqnatividad/compact_bytes?branch=main#651006e934c5d4700c6b0b75aa94fcc26b7f79cc"
++source = "git+https://github.com/jqnatividad/compact_bytes?branch=main#f21a6acee403159c5c0f58ef405a8dde53c3dadd"
+ dependencies = [
+  "serde",
+ ]
+@@ -7156,9 +7156,9 @@ dependencies = [
  
-@@ -115,8 +116,48 @@ const EXCLUDED_DIR_SEGMENTS = new Set([
-  */
- const EXCLUDED_FILE_RE = /\.(?:map|d\.ts|d\.mts|d\.cts)$/i;
- 
--function isExcludedFromNodeModules(entryName) {
-+/**
-+ * Packages npm marks `"dev": true` in package-lock.json: reachable ONLY through
-+ * devDependencies (typescript, c8, archiver and everything under them), so the
-+ * running server can never load them. node_modules holds them because packaging
-+ * runs after a full `npm ci`; without this filter they were about half of the
-+ * 28.0.0 .mcpb (5.3 of 11.4 MB), shipping e.g. three dev-only minimatch copies.
-+ *
-+ * A package present in node_modules but absent from the lockfile is kept, so a
-+ * stale lockfile can only make the bundle bigger, never break it.
-+ */
-+function loadDevOnlyPackages() {
-+  const lockPackages =
-+    JSON.parse(readFileSync(join(rootDir, 'package-lock.json'), 'utf-8')).packages ?? {};
-+  return new Set(
-+    Object.entries(lockPackages)
-+      .filter(([path, info]) => path.startsWith('node_modules/') && info.dev === true)
-+      .map(([path]) => path),
-+  );
-+}
-+
-+/**
-+ * The lockfile key of the innermost package that owns `path`
-+ * (e.g. `node_modules/readdir-glob/node_modules/minimatch` for a file inside it).
-+ */
-+function owningPackage(path) {
-+  const segments = path.split(/[\\/]/);
-+  let owner = null;
-+  for (let i = 0; i < segments.length; i++) {
-+    if (segments[i] !== 'node_modules') continue;
-+    const end = i + (segments[i + 1]?.startsWith('@') ? 3 : 2);
-+    if (end > segments.length) break;
-+    owner = segments.slice(0, end).join('/');
-+  }
-+  return owner;
-+}
-+
-+function isExcludedFromNodeModules(entryName, devOnlyPackages) {
-   if (EXCLUDED_FILE_RE.test(entryName)) return true;
-+  const path = entryName.startsWith('node_modules/') ? entryName : `node_modules/${entryName}`;
-+  const owner = owningPackage(path);
-+  // .bin only holds CLI links (tsc, c8, ...); the server is started with `node` directly
-+  if (owner === 'node_modules/.bin' || devOnlyPackages.has(owner)) return true;
-   return entryName
-     .split(/[\\/]/)
-     .some((segment) => EXCLUDED_DIR_SEGMENTS.has(segment.toLowerCase()));
-@@ -187,8 +228,10 @@ async function createArchive() {
-     // metadata, a FUNCTION is the filter hook (return false to skip). This was
-     // previously `{ filter: fn }`, which took the object branch -- so the callback
-     // never ran and every source map and .d.ts shipped (issue #4379).
-+    const devOnlyPackages = loadDevOnlyPackages();
-+    console.log(`   Skipping ${devOnlyPackages.size} dev-only packages and node_modules/.bin...`);
-     archive.directory(join(rootDir, 'node_modules'), 'node_modules', (entry) =>
--      isExcludedFromNodeModules(entry.name) ? false : entry
-+      isExcludedFromNodeModules(entry.name, devOnlyPackages) ? false : entry
-     );
- 
-     // Add skill definitions
+ [[package]]
+ name = "qsv-stats"
+-version = "0.57.0"
++version = "0.57.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "acb010e011dd606752a228b203748e26fb3b6bf78a7495e8c048606a084c206f"
++checksum = "725b4c79f26b87f7e521d8ebe8a600c666c08453478ff93beb6fecbb4e836a11"
+ dependencies = [
+  "compact_bytes",
+  "hashbrown 0.17.1",
 ```
 
-**File**: `.claude/skills/scripts/verify-bundles.js` (modified, +11/-0)
+---
+
+### Incident Patch 2: `a24553d2` (2026-11-09)
+**Commit Message**: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#5016)
+
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.2 to 4.39.3.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.39.2...v4.39.3)
+
+---
+updated-dependencies:
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/devskim.yml` (modified, +1/-1)
 ```diff
-@@ -156,6 +156,17 @@ async function main() {
-     check(`bundled skill JSON count matches source (${srcSkills})`, srcSkills === bundledSkills,
-       `bundle has ${bundledSkills}`);
+@@ -51,6 +51,6 @@ jobs:
+           ignore-globs: "**/.git/**,**/.claude/**,**/tests/resources/**,**/docs/describegpt/*.md,**/docs/describegpt/*.json,**/docs/describegpt/*.toon,**/src/cmd/assets/datatables.min.js,**/src/cmd/assets/datatables.min.css"
  
-+    // devDependency-only packages (typescript, c8, archiver, ...) must not ship. The server
-+    // start check below is what catches the opposite mistake, a runtime package left out.
-+    const lockPackages = readJson(join(rootDir, 'package-lock.json')).packages ?? {};
-+    const devOnly = Object.entries(lockPackages)
-+      .filter(([path, info]) => path.startsWith('node_modules/') && info.dev === true)
-+      .map(([path]) => path);
-+    const shippedDev = devOnly.filter((path) => existsSync(join(mcpbDir, path)));
-+    check(`no dev-only packages bundled (${devOnly.length} in lockfile)`, shippedDev.length === 0,
-+      `bundled: ${shippedDev.slice(0, 8).join(', ')}${shippedDev.length > 8 ? ', ...' : ''}`);
-+    check('node_modules/.bin not bundled', !existsSync(join(mcpbDir, 'node_modules', '.bin')));
-+
-     // ---- the check that actually matters ----
-     console.log('\nServer starts from the extracted bundle');
-     const started = await startsFromExtractedBundle(mcpbDir);
+       - name: Upload DevSkim scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@v4.39.2
++        uses: github/codeql-action/upload-sarif@v4.39.3
+         with:
+           sarif_file: devskim-results.sarif
 ```
 
-**File**: `.github/workflows/mcp-server-ci.yml` (modified, +2/-2)
+**File**: `.github/workflows/rust-clippy.yml` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@ jobs:
-     strategy:
-       fail-fast: false
-       matrix:
--        os: [ubuntu-latest, macos-14, windows-latest]
-+        os: [ubuntu-latest, macos-latest, windows-latest]
-         node-version: [20, 22, 24]
+@@ -46,7 +46,7 @@ jobs:
+         continue-on-error: true
  
-     defaults:
-@@ -58,7 +58,7 @@ jobs:
-           GH_TOKEN: ${{ github.token }}
+       - name: Upload analysis results to GitHub
+-        uses: github/codeql-action/upload-sarif@v4.39.2
++        uses: github/codeql-action/upload-sarif@v4.39.3
+         with:
+           sarif_file: rust-clippy-results.sarif
+           wait-for-processing: true
+```
+
+---
+
+### Incident Patch 3: `dcccc323` (2026-11-09)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.267 to 1.0.269 (#5017)
+
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.267 to 1.0.269.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/4845bacbb38b3c4b15d948f035349786f678e068...61a9c274fa7110a66dfafc1bbbced03833eb25fe)
+
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.269
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
  
-       - name: Install qsv (macOS)
--        if: matrix.os == 'macos-14'
-+        if: matrix.os == 'macos-latest'
-         run: |
-           QSV_VERSION=$(gh release view --repo dathere/qsv --json tagName --jq .tagName)
-           echo "Installing qsv $QSV_VERSION"
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@4845bacbb38b3c4b15d948f035349786f678e068 # v1.0.267
++        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+```
+
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@4845bacbb38b3c4b15d948f035349786f678e068 # v1.0.267
++        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5017** (2026-11-09): build(deps): bump anthropics/claude-code-action from 1.0.267 to 1.0.269 (@dependabot[bot])
+- **PR #5016** (2026-11-09): build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (@dependabot[bot])
+- **PR #5015** (2026-11-09): deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (@jqnatividad)
 - **PR #5014** (2026-11-09): fix(mcp): leave devDependency-only packages out of the .mcpb bundle (@jqnatividad)
 - **PR #5013** (2026-11-09): perf(stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (@jqnatividad)
 - **PR #5012** (2026-11-09): fix: piped stdin read twice or rejected in 7 commands (@jqnatividad)
-- **PR #5011** (2026-11-08): perf(stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking (@jqnatividad)
-- **PR #5010** (2026-11-08): fix(template): legacy time zone aliases fall back to a bundled tzdb (@jqnatividad)
-- **PR #5009** (2026-11-07): fix(geocode): --batch 0 no longer drops rows from piped stdin (@jqnatividad)
 
 ---
 
@@ -2399,33 +2387,28 @@ Co-Authored-By: Claude Opus 5.5 <[
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): leave devDependency-only packages out of the .mcpb bundle (#5014)
+## X. deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (#5015)
 
 **RULE**:
-When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `35fffd03`: mcp): leave devDependency-only packages out of the .mcpb bundle (#5014). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07b65145`: deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (#5015). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [Unreleased]
-
-### Fixed
-- **The `.mcpb` no longer ships development-only packages** ([#5014](https://github.com/dathere/qsv/pull/5014)). The packager zipped all of `node_modules`, so the 28.0.0 bundle included typescript, c8, archiver and 116 other packages the server never loads, among them three minimatch copies flagged by GHSA-g3hv-75wg-m249. Packages that `package-lock.json` marks dev-only are now skipped, as is `node_modules/.bin`, and the download shrinks from 11.4 MB to 5.6 MB. `verify-bundles` checks that none of them is bundled.
-- **CI: the macOS tests run on `macos-latest`** ([#5014](https://github.com/dathere/qsv/pull/5014)). GitHub retired the `macos-14` runner image, so the three macOS jobs were rejected before they started ("The configuration 'macos-14-arm64-us-default' is not supported").
-
+- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected. On big-endian targets (s390x), values of 128 bytes or more were misread until a compact_bytes fix ([#5015](https://github.com/dathere/qsv/pull/5015)), so this was never released with the bug.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `35fffd03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07b65145` are properly handled with clean fallback behavior.

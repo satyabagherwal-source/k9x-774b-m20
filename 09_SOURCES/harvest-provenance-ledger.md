@@ -8607,3 +8607,6 @@ Every entry in this ledger must capture:
 | `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `ae659a0c` | Multi-dimensional audit evidence | 2026-11-09T13:21:44.891Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `1eefe2ef` | Multi-dimensional audit evidence | 2026-11-09T13:21:52.292Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T13:26:55.260Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `af701e99` | Multi-dimensional audit evidence | 2026-11-09T13:34:22.904Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-09T13:34:27.671Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a0f8a379` | Multi-dimensional audit evidence | 2026-11-09T13:34:34.503Z |
