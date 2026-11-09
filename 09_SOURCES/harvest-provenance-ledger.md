@@ -8592,3 +8592,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `cacd3a8d` | Multi-dimensional audit evidence | 2026-11-09T12:13:13.589Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `d353cc58` | Multi-dimensional audit evidence | 2026-11-09T12:16:14.580Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-09T12:17:30.706Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T12:29:33.710Z |
+| `learn-github-mtkennerly-ludusavi` | `https://github.com/mtkennerly/ludusavi` | `c4c2ca99` | Multi-dimensional audit evidence | 2026-11-09T12:29:37.327Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `0297b7e9` | Multi-dimensional audit evidence | 2026-11-09T12:29:45.450Z |

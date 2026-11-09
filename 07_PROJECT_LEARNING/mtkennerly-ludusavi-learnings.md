@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md`  
 > **Source**: github ([https://github.com/mtkennerly/ludusavi](https://github.com/mtkennerly/ludusavi))  
-> **Source Version**: `9365477d`  
+> **Source Version**: `c4c2ca99`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T06:59:29.774Z  
+> **Timestamp**: 2026-11-09T12:29:36.111Z  
 > **Learning ID**: `learn-github-mtkennerly-ludusavi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mtkennerly/ludusavi](https://github.com/mtkennerly/ludusavi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T06:59:29.649Z  
+> **Harvest Timestamp**: 2026-11-09T12:29:36.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Backup tool for PC game saves
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6537 stars
+- **Stars / Engagement**: 6540 stars
 
 ---
 
@@ -2208,11 +2208,11 @@ impl App {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #665** (2026-11-09): **Saves not detected for Metal Gear Rising: Revengeance**
+  *Symptoms*: ### Ludusavi version  v0.31.0  ### Operating system  Linux  ### Installation method  Cargo  ### Description  I have the game installed through Steam, both the Steam native package and the Steam Flatpak (I am moving between the two).  The game is here on the PC Gaming Wiki: https://www.pcgamingwiki.com/wiki/Metal_Gear_Rising:_Revengeance  The Flatpak save data can be found here: ```text ${HOME}/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/compatdata/235460/pfx/drive_c/users/steamuser/Documents/MGR/SaveData/ ```  Similarly, the native save data can be found here: ```text ${HOME}/.local/share/Steam/steamapps/compatdata/235460/pfx/drive_c/users/steamuser/Documents/MGR/SaveData/ ```  This seems consistent with what is documented on the PC Gaming Wiki, so I'm not sure what the issue is. Maybe it has to do with the fixed drive, as noted on the wiki here?: https://www.pcgamingwiki.com/wiki/Metal_Gear_Rising:_Revengeance#Save_game_data_location  ### Logs  _No response_
+
 - **Issue #663** (2026-11-07): **chore(deps): Update dependencies to address various RUSTSEC advisories**
   *Symptoms*: This PR updates dependencies to deal with multiple RUSTSEC advisories. Each `chore(deps)` commit describes how the changes in the commit were produced and which advisories are resolved by the commit, if any.  A few additional code changes are included, to address breaking changes in the `zip` dependency and new `clippy` lints in Rust 1.99.1.  It might also be a good idea to switch off the `macos-14` runner for GitHub Actions. That runner has been retired, and the job will just unconditionally be skipped now. See: https://github.blog/changelog/2026-10-01-github-actions-macos-14-runner-image-retirement/
-
-- **Issue #655** (2026-10-18): **Allow clearing the duplicates filter from the status row**
-  *Symptoms*: With "Show disabled games" turned off, disabling every game in the duplicates view leaves an empty list with no way to exit the filter. The per-game badges disappear with the rows, and the status-row badge disappears when the conflicts become resolved.  Keep the status-row DUPLICATES badge visible and clickable while the filter is selected, using the existing filter-clear message and active badge styling. This applies to both backup and restore. Outside the filter, the badge keeps its existing informational behavior.  Validation: - A software-rendered Iced test checks the badge text and sends real mouse press/release events with both backup and restore scan kinds, with unresolved, resolved, and absent duplicates, and with the filter active and inactive. - A state-flow regression follows selecting the filter, disabling both conflicting games, clearing the filter, and showing the unrelated game again without changing "Show disabled games". - Fault injection checks that tests fail if the exit badge is hidden after resolution, its click action is removed, or the application ignores the clear-filter message.  Local checks passed: - `cargo test --locked --config 'profile.dev.package."*".opt-level=0'`: 255 library tests and 30 binary tests passed. The documented Windows registry fixture was temporarily imported and removed after the run. - `cargo fmt --all -- --check` - `git diff --check` - `cargo clippy --locked --workspace --config 'profile.dev.package."*".opt-level=0
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2229,139 +2229,130 @@ impl App {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc0cb3f3` (2026-11-07)
-**Commit Message**: fix(layout): Address breaking changes in `zip`
+### Incident Patch 1: `c4c2ca99` (2026-11-09)
+**Commit Message**: #665: Map C: to Wine drive_c
 
-This *should* address the breaking changes in `zip`.
-
-See:
-- https://github.com/zip-rs/zip2/commit/7d61377503f82c618916b6372ea7632601626d5a
-- https://github.com/zip-rs/zip2/pull/24/changes
-
-For the changes that broke here (and the inspiration for how to resolve
-the breakage).
-
-Signed-off-by: hashcatHitman <[REDACTED_EMAIL]>
-
-**File**: `src/scan/layout.rs` (modified, +3/-3)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -1283,14 +1283,14 @@ impl GameLayout {
-             }
-         };
-         let mut zip = zip::ZipWriter::new(archive_file);
--        let options = zip::write::FileOptions::default()
-+        let options = zip::write::FileOptions::<()>::default()
-             .compression_method(match format.zip.compression {
-                 ZipCompression::None => zip::CompressionMethod::Stored,
-                 ZipCompression::Deflate => zip::CompressionMethod::Deflated,
-                 ZipCompression::Bzip2 => zip::CompressionMethod::Bzip2,
-                 ZipCompression::Zstd => zip::CompressionMethod::Zstd,
-             })
--            .compression_level(format.level())
-+            .compression_level(format.level().map(Into::into))
-             .large_file(true);
+@@ -36,6 +36,8 @@
+   * CLI: `--full-limit 0` would result in no backups being created or retained.
+     0 is now rejected before the command runs.
+     ([Contributed by rleeon](https://github.com/mtkennerly/ludusavi/pull/647))
++  * On Linux, when a game's path includes a literal `C:` drive,
++    it will be mapped to the `drive_c` folder of a Wine prefix being scanned.
+ * Changed:
+   * Loading the primary manifest is faster after the first load.
+     ([Contributed by beallio](https://github.com/mtkennerly/ludusavi/pull/661))
+```
+
+**File**: `src/scan.rs` (modified, +12/-1)
+```diff
+@@ -149,6 +149,8 @@ pub fn parse_paths(
+ ) -> HashSet<(StrictPath, bool)> {
+     use crate::resource::manifest::placeholder as p;
  
-         'item: for (scan_key, file) in &scan.found_files {
-@@ -1942,7 +1942,7 @@ impl GameLayout {
-             return Err(Box::new(e));
-         }
++    const DRIVE_C: &str = "C:";
++
+     let mut paths = HashSet::new();
  
--        let mtime = source_file.last_modified();
-+        let mtime = source_file.last_modified().unwrap_or_else(zip::DateTime::default);
-         if let Err(e) = target.set_mtime_zip(mtime) {
-             log::error!(
-                 "[{}] unable to set modification time: {:?} -> {:?} to {:#?} | {e:?}",
+     macro_rules! add_path {
+@@ -295,6 +297,7 @@ pub fn parse_paths(
+                 for id in ids.steam(steam_shortcut.map(|x| x.id)) {
+                     let prefix = format!("{}/steamapps/compatdata/{}/pfx/drive_c", root_globbable, id);
+                     let path2 = path
++                        .replace(DRIVE_C, &prefix)
+                         .replace(p::ROOT, &root_globbable)
+                         .replace(p::GAME, &install_dir)
+                         .replace(p::BASE, &full_install_dir)
+@@ -332,7 +335,8 @@ pub fn parse_paths(
+                     if data.when.iter().any(|x| x.store == Some(Store::Uplay)) {
+                         let ubisoft = format!("{prefix}/Program Files (x86)/Ubisoft/Ubisoft Game Launcher");
+                         add_path!(
+-                            path.replace(p::ROOT, &ubisoft)
++                            path.replace(DRIVE_C, &prefix)
++                                .replace(p::ROOT, &ubisoft)
+                                 .replace(p::GAME, &install_dir)
+                                 .replace(p::BASE, &format!("{}/{}", ubisoft, install_dir))
+                                 .replace(p::STORE_USER_ID, "*")
+@@ -375,6 +379,13 @@ pub fn parse_paths(
+                 .replace(p::WIN_DIR, &format!("{prefix}/windows"))
+                 .replace(p::XDG_DATA, check_nonwindows_path(data_dir))
+                 .replace(p::XDG_CONFIG, check_nonwindows_path(config_dir));
++
++            let path2 = if Os::HOST == Os::Linux {
++                path2.replace(DRIVE_C, &prefix)
++            } else {
++                path2
++            };
++
+             add_path_insensitive!(
+                 path2
+                     .replace(p::WIN_DOCUMENTS, &format!("{prefix}/users/*/Documents"))
 ```
 
 ---
 
-### Incident Patch 2: `261325e0` (2026-11-07)
-**Commit Message**: chore(deps): Revert `windows-sys` downgrade
+### Incident Patch 2: `f1c07e91` (2026-11-09)
+**Commit Message**: Update default branch used to download primary manifest
 
-The changes in this commit were made manually, to avoid a downgrade
-caused in a previous commit by `cargo update`.
-
-Signed-off-by: hashcatHitman <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +5/-5)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -1232,7 +1232,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
+@@ -39,6 +39,11 @@
+ * Changed:
+   * Loading the primary manifest is faster after the first load.
+     ([Contributed by beallio](https://github.com/mtkennerly/ludusavi/pull/661))
++  * By default, the primary manifest is now downloaded from
++    `https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/refs/heads/data/data/manifest.yaml`
++    instead of
++    `https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/master/data/manifest.yaml`.
++    This is in an effort to reduce the growth rate of the `ludusavi-manifest` repository's history size.
  
- [[package]]
-@@ -3956,7 +3956,7 @@ dependencies = [
-  "once_cell",
-  "socket2",
-  "tracing",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
+ ## v0.31.0 (2026-04-04)
  
- [[package]]
-@@ -4439,7 +4439,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys 0.11.0",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -4496,7 +4496,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5187,7 +5187,7 @@ dependencies = [
-  "getrandom 0.3.4",
-  "once_cell",
-  "rustix 1.1.2",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
 ```
 
----
-
-### Incident Patch 3: `e811e4bc` (2026-11-06)
-**Commit Message**: chore(deps): Revert `windows-targets` downgrade
-
-The changes in this commit were made manually, to avoid a downgrade
-caused in a previous commit by `cargo update`.
-
-Signed-off-by: hashcatHitman <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +1/-1)
+**File**: `docs/help/configuration-file.md` (modified, +1/-1)
 ```diff
-@@ -2562,7 +2562,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "4979f22fdb869068da03c9f7528f8297c6fd2606bc3a4affe42e6a823fdb8da4"
- dependencies = [
-  "cfg-if",
-- "windows-targets 0.48.5",
-+ "windows-targets 0.52.6",
- ]
+@@ -12,7 +12,7 @@ using the CLI exclusively, then you'll need to edit `config.yaml` yourself.
+ ## Example
+ ```yaml
+ manifest:
+-  url: "https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/master/data/manifest.yaml"
++  url: "https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/refs/heads/data/data/manifest.yaml"
+ roots:
+   - path: "D:/Steam"
+     store: steam
+```
+
+**File**: `src/resource/config.rs` (modified, +2/-2)
+```diff
+@@ -19,7 +19,7 @@ use crate::{
+ };
  
- [[package]]
+ pub const MANIFEST_URL: &str =
+-    "https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/master/data/manifest.yaml";
++    "https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/refs/heads/data/data/manifest.yaml";
+ 
+ fn default_backup_dir() -> StrictPath {
+     StrictPath::new(format!("{}/ludusavi-backup", CommonPath::Home.get().unwrap())).rendered()
+@@ -147,7 +147,7 @@ impl Default for Release {
+ #[serde(default, rename_all = "camelCase")]
+ pub struct ManifestConfig {
+     /// Where to download the primary manifest.
+-    /// Default: https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/master/data/manifest.yaml
++    /// Default: https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/refs/heads/data/data/manifest.yaml
+     #[serde(skip_serializing_if = "Option::is_none")]
+     pub url: Option<String>,
+     pub enable: bool,
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #663** (2026-11-07): chore(deps): Update dependencies to address various RUSTSEC advisories (@hashcatHitman)
+- **PR #662** (closed): Detect the Telltale Batman Shadows Edition bundle in Legendary scans (@CloudCorpRecords)
 - **PR #661** (2026-11-07): Load the primary manifest faster by reusing a saved copy (@beallio)
 - **PR #658** (2026-11-07): Fix misleading Simplified Chinese duplicate badges (@hzura)
 - **PR #655** (2026-10-18): Allow clearing the duplicates filter from the status row (@Zhong-fan)
 - **PR #647** (2026-09-06): Prevent --full-limit 0 from discarding all backups (@rleeon)
-- **PR #645** (2026-08-27): Expose manifest file tags in the API output (@ChrisJr404)
 
 ---
 
@@ -2381,32 +2372,29 @@ Signed-off-by: hashcatHitman <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. layout): Address breaking changes in `zip`
+## X. #665: Map C: to Wine drive_c
 
 **RULE**:
-When implementing operations in `src/scan/layout.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mtkennerly/ludusavi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mtkennerly/ludusavi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cc0cb3f3`: layout): Address breaking changes in `zip`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4c2ca99`: #665: Map C: to Wine drive_c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/scan/layout.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let options = zip::write::FileOptions::<()>::default()
-            .compression_level(format.level().map(Into::into))
-        let mtime = source_file.last_modified().unwrap_or_else(zip::DateTime::default);
+  * On Linux, when a game's path includes a literal `C:` drive,
+    it will be mapped to the `drive_c` folder of a Wine prefix being scanned.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let options = zip::write::FileOptions::default()
-            .compression_level(format.level())
-        let mtime = source_file.last_modified();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc0cb3f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4c2ca99` are properly handled with clean fallback behavior.

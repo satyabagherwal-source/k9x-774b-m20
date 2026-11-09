@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T12:17:30.719Z",
-  "total_cycles_completed": 8548,
-  "total_learnings_persisted": 8548,
-  "total_rules_promoted": 8367,
+  "last_updated": "2026-11-09T12:29:45.455Z",
+  "total_cycles_completed": 8551,
+  "total_learnings_persisted": 8551,
+  "total_rules_promoted": 8369,
   "history": [
-    {
-      "timestamp": "2026-11-08T20:45:46.467Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T20:52:55.324Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T20:53:01.607Z",
-      "repository": "Louis-CFM/coucou",
-      "learningId": "learn-github-louis-cfm-coucou",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T20:59:49.731Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1403,6 +1382,27 @@
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
       "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T12:29:33.715Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T12:29:37.332Z",
+      "repository": "mtkennerly/ludusavi",
+      "learningId": "learn-github-mtkennerly-ludusavi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T12:29:45.455Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -8583,3 +8583,6 @@
 | `CYCLE-20261109-2HO1` | `2026-11-09T12:13:13.585Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7235e391...`) |
 | `CYCLE-20261109-6DBA` | `2026-11-09T12:16:14.566Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`6c78f38e...`) |
 | `CYCLE-20261109-8026` | `2026-11-09T12:17:30.702Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`11a6d5b8...`) |
+| `CYCLE-20261109-NHXN` | `2026-11-09T12:29:33.707Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`99c6e640...`) |
+| `CYCLE-20261109-NKQ3` | `2026-11-09T12:29:37.323Z` | `mtkennerly/ludusavi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e1520115...`) |
+| `CYCLE-20261109-NQZR` | `2026-11-09T12:29:45.447Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fc454b91...`) |

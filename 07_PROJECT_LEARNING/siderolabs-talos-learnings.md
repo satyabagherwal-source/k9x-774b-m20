@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `6bcc0fd3`  
+> **Source Version**: `0297b7e9`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T16:14:25.997Z  
+> **Timestamp**: 2026-11-09T12:29:43.826Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T16:14:25.030Z  
+> **Harvest Timestamp**: 2026-11-09T12:29:43.820Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11482 stars
+- **Stars / Engagement**: 11490 stars
 
 ---
 
@@ -1920,15 +1920,15 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14874** (2026-11-07): **fix(security): let the CRI containerd run the installer of an upgrade**
-  *Symptoms*: In enforcing mode, the default `talosctl upgrade` of a node fails with `write /proc/self/attr/keycreate: permission denied`, and only `--namespace inmem` works.  By default, `talosctl upgrade` pulls and runs the installer in the system namespace of the CRI containerd, next to the images of etcd and the kubelet, but only the system containerd may start `installer_t`. This change lets the CRI containerd start the installer from the image it pulled and manage it as the system containerd does.  <details> <summary>Verification</summary>  On a real arm64 cluster (Turing RK1) in enforcing mode, the default `talosctl upgrade` of a worker failed with the error above before this change. With it, a worker and a control plane node were upgraded several times by the default path, from enforcing mode, without a denial.  </details> 
+- **Issue #14884** (2026-11-09): **fix: mask the SideroLink join token**
+  *Symptoms*: Previously, as the join token was part of the kernel cmdline, this mattered less. Now, with embedded machine config as the source of the join token (or regular machine config), stop logging join token to the console. 
   **Post-Mortem & Fix Analysis**:
-  > I'm not sure it's a good idea, and open for discussion here. A workaround is to use system containerd for upgrades (available via the flags).
-  > makes sense, the CRI should not be able to start installer_t at all I dropped the same rules from #14876 and I'm closing this one
+  > /m
 
-- **Issue #14867** (2026-11-06): **feat: add KubePrism /readyz check**
-  *Symptoms*: Starting with Talos 1.14+ Talos enables kube-apiserver unauthenticated health check endpoints.  Previously, only TCP check was performed which can only detect network connectivity and pod being up. The `/readyz` check can catch many more cases - whether etcd is healthy for example.  Fixes #14650 
+- **Issue #14883** (2026-11-09): **fix: drop architecture constraints from affinity rules**
+  *Symptoms*: Relax affinity rules by droping architecture constraints in CoreDNS and KubeProxy.  Fix https://github.com/siderolabs/talos/issues/14841  Signed-off-by: Mateusz Urbanek <mateusz.urbanek@siderolabs.com> 
   **Post-Mortem & Fix Analysis**:
+  > /m
   > /m
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1946,1012 +1946,395 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d491d73b` (2026-11-05)
-**Commit Message**: fix: disable tablewriter package cache
+### Incident Patch 1: `0297b7e9` (2026-11-06)
+**Commit Message**: fix(security): let machined kexec into the new kernel
 
-We get it via ipmi library import, and it's totally of no use for Talos.
+With the memfd_class policy capability, a memfd carries the domain of
+the process that creates it. machined loads the kernel and the
+initramfs it kexecs from its own memfds, which are init_t, while the
+policy only lets it kexec tmpfs_t images: in enforcing mode the kexec
+is denied, and every reboot and upgrade falls back to a full reboot.
 
-This drops the cache by doing a direct call, a proper way is to fix the
-OOM library.
+Allow machined to kexec the images it holds in its own memfds.
 
+Signed-off-by: Raphaël DUCOM <[REDACTED_EMAIL]>
 Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/kexec/kexec.go` (modified, +2/-0)
 ```diff
-@@ -117,6 +117,7 @@ require (
- 	github.com/moby/moby/client v0.6.2
- 	github.com/navidys/tvxwidgets v0.14.0
- 	github.com/nberlee/go-netstat v0.1.2
-+	github.com/olekukonko/tablewriter v1.1.5
- 	github.com/opencontainers/go-digest v1.0.0
- 	github.com/opencontainers/image-spec v1.1.1
- 	github.com/opencontainers/runtime-spec v1.3.0
-@@ -412,7 +413,6 @@ require (
- 	github.com/olekukonko/cat v0.0.0-20250911104152-50322a0618f6 // indirect
- 	github.com/olekukonko/errors v1.3.0 // indirect
- 	github.com/olekukonko/ll v0.1.8 // indirect
--	github.com/olekukonko/tablewriter v1.1.5 // indirect
- 	github.com/opentracing/opentracing-go v1.2.0 // indirect
- 	github.com/orcaman/concurrent-map/v2 v2.0.1 // indirect
- 	github.com/pandatix/go-abnf v0.5.5 // indirect
+@@ -67,6 +67,8 @@ func loadSkipReason(err error) string {
+ 		return "kexec support is disabled in the kernel"
+ 	case errors.Is(err, unix.EPERM):
+ 		return "kexec support is disabled via sysctl"
++	case errors.Is(err, unix.EACCES):
++		return "kexec is denied by the security policy"
+ 	case errors.Is(err, unix.EBUSY):
+ 		return "kexec is busy"
+ 	case errors.Is(err, unix.EADDRNOTAVAIL):
 ```
 
-**File**: `internal/pkg/ipmi/tablewriter.go` (added, +15/-0)
+**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/kexec/kexec_internal_test.go` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,15 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package ipmi
-+
-+import "github.com/olekukonko/tablewriter/pkg/twwidth"
-+
-+func init() {
-+	// go-ipmi depends on tablewriter (to format the output for the CLI), which preallocates
-+	// a global string width cache (~1 MiB of live heap) on init.
+@@ -24,6 +24,7 @@ func TestLoadSkipReason(t *testing.T) {
+ 	}{
+ 		{name: "not in the kernel", err: unix.ENOSYS, skipped: true},
+ 		{name: "disabled via sysctl", err: unix.EPERM, skipped: true},
++		{name: "denied by the security policy", err: unix.EACCES, skipped: true},
+ 		{name: "busy", err: unix.EBUSY, skipped: true},
+ 		{name: "no memory region for the kernel", err: unix.EADDRNOTAVAIL, skipped: true},
+ 		{name: "wrapped", err: fmt.Errorf("kexec_file_load: %w", unix.EADDRNOTAVAIL), skipped: true},
+```
+
+**File**: `internal/integration/provision/upgrade.go` (modified, +17/-2)
+```diff
+@@ -41,6 +41,10 @@ type upgradeSpec struct {
+ 	TargetVersion         string
+ 	TargetK8sVersion      string
+ 	TargetCmdlineContains string
++	// TargetKexecUsed asserts that the upgraded node was booted via kexec (sd-boot only).
 +	//
-+	// Talos never renders tables via go-ipmi, so disable the cache to release the memory.
-+	twwidth.SetCacheCapacity(0)
-+}
++	// A failed kexec falls back to a firmware reboot, so the upgrade succeeds either way.
++	TargetKexecUsed bool
+ 
+ 	SkipKubeletUpgrade bool
+ 
+@@ -180,6 +184,8 @@ func upgradeCurrentToCurrent(useGRUB, useKexec, useEncryption bool) func() upgra
+ 			WorkerNodes:       0,
+ 
+ 			TargetCmdlineContains: "talos.extra_cmdline=extra-super-cmdline",
++			// GRUB always passes the boot partition kernel argument, so kexec can't be told apart from a firmware boot
++			TargetKexecUsed: useKexec && !useGRUB,
+ 
+ 			UpgradeRebootPowercyle: !useKexec,
+ 
+@@ -212,14 +218,16 @@ func upgradeCurrentToCurrentEnforcing() upgradeSpec {
+ 
+ 		VersionContract: config.TalosVersionCurrent.DisableEtcd().DisableKubernetes(),
+ 
+-		TargetInstallerImage: installerImage,
++		// a different target image, so that an upgrade reverted on a failed reboot sequence is detected
++		TargetInstallerImage: installerImage + "-extra-cmdline",
+ 		TargetVersion:        DefaultSettings.CurrentVersion,
+ 		TargetK8sVersion:     currentK8sVersion,
+ 
+ 		ControlplaneNodes: 1,
+ 		WorkerNodes:       0,
+ 
+-		TargetCmdlineContains: "enforcing=1",
++		TargetCmdlineContains: "talos.extra_cmdline=extra-super-cmdline",
++		TargetKexecUsed:       true,
+ 
+ 		WithApplyConfig:              true,
+ 		WithEnforcing:                true,
+@@ -408,6 +416,13 @@ func (suite *UpgradeSuite) TestRolling() {
+ 		}
+ 	}
+ 
++	if suite.spec.TargetKexecUsed {
++		// sd-boot reports the boot partition via an EFI variable, the kernel argument is only set on kexec
++		for _, node := range suite.Cluster.Info().Nodes {
++			suite.assertCmdlineContains(client, node.IPs[0].String(), constants.KernelParamBootPartitionUUID+"=")
++		}
++	}
++
+ 	// run e2e tests on the upgraded cluster
+ 	if !suite.spec.VersionContract.KubernetesDisabled() {
+ 		suite.runE2E(suite.spec.TargetK8sVersion)
 ```
 
-**File**: `internal/pkg/ipmi/tablewriter_test.go` (added, +22/-0)
+**File**: `internal/pkg/selinux/policy/selinux/services/machined.cil` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,22 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package ipmi_test
-+
-+import (
-+	"testing"
-+
-+	"github.com/olekukonko/tablewriter/pkg/twwidth"
-+	"github.com/stretchr/testify/assert"
-+
-+	_ "github.com/siderolabs/talos/internal/pkg/ipmi"
-+)
-+
-+func TestTablewriterCacheDisabled(t *testing.T) {
-+	t.Parallel()
-+
-+	_, capacity, _ := twwidth.GetCacheStats()
-+
-+	assert.Zero(t, capacity)
-+}
+@@ -81,7 +81,9 @@
+ 
+ ; reboot & kexec
+ (allow init_t self (capability (sys_boot)))
+-(allow init_t tmpfs_t (system (kexec_image_load kexec_initramfs_load)))
++; machined copies the kernel and the initramfs it kexecs into memfds, which carry its domain
++; with the memfd_class policy capability (kexec_load(2) is disabled in the kernel, only kexec_file_load(2) is checked)
++(allow init_t self (system (kexec_image_load kexec_initramfs_load)))
+ 
+ ; labeling FS
+ (allow init_t any_f (fs_classes (relabelfrom relabelto)))
 ```
 
 ---
 
-### Incident Patch 2: `279002b8` (2026-11-04)
-**Commit Message**: fix: optimize allocation in the OOM controller
+### Incident Patch 2: `cb348139` (2026-11-09)
+**Commit Message**: fix: mask the SideroLink join token
 
-OOM controller scans cgroups every 500ms, so it's important that scan is
-efficient. That rewrite doesn't look nice, but OOMController attributed
-to most of the allocations of running Talos in steady state.
+Previously, as the join token was part of the kernel cmdline, this
+mattered less. Now, with embedded machine config as the source of the
+join token (or regular machine config), stop logging join token to the
+console.
 
 Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/controllers/runtime/internal/oom/oom.go` (modified, +0/-171)
+**File**: `internal/app/machined/pkg/controllers/siderolink/manager.go` (modified, +2/-1)
 ```diff
-@@ -11,7 +11,6 @@ import (
- 	"math"
- 	"os"
- 	"path/filepath"
--	"time"
+@@ -30,6 +30,7 @@ import (
+ 	"google.golang.org/grpc/credentials/insecure"
  
- 	"cel.dev/cel-go/common/types"
- 	"go.uber.org/zap"
-@@ -40,54 +39,6 @@ var qosClasses = []runtime.QoSCgroupClass{
- 	runtime.QoSCgroupClassSystem,
- }
+ 	networkutils "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/network/utils"
++	"github.com/siderolabs/talos/internal/pkg/endpoint"
+ 	"github.com/siderolabs/talos/pkg/httpdefaults"
+ 	"github.com/siderolabs/talos/pkg/machinery/client/dialer"
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
+@@ -324,7 +325,7 @@ func (ctrl *ManagerController) Run(ctx context.Context, r controller.Runtime, lo
  
--// guaranteedCgroups lists the cgroup paths (relative to root) of Guaranteed QoS pods.
--//
--// The kubelet places Guaranteed pods directly under the kubepods cgroup, next to the
--// besteffort/burstable class cgroups (which are excluded here), rather than in a
--// dedicated "guaranteed" sub-cgroup.
--func guaranteedCgroups(root string) []string {
--	entries, err := os.ReadDir(filepath.Join(root, constants.CgroupKubepods))
--	if err != nil {
--		return nil
--	}
--
--	var paths []string
--
--	for _, entry := range entries {
--		if !entry.IsDir() {
--			continue
--		}
--
--		if entry.Name() == cgroupBesteffort || entry.Name() == cgroupBurstable {
--			continue
--		}
--
--		paths = append(paths, filepath.Join(constants.CgroupKubepods, entry.Name()))
--	}
--
--	return paths
--}
--
--// qosMap returns the per-class map stored under key in evalContext, creating it
--// (pre-seeded with all QoS classes set to zero) if it doesn't exist yet.
--//
--// Pre-seeding keeps every QoS class present in the eval context even when no cgroup
--// of that class currently exists (e.g. no Guaranteed pods scheduled).
--func qosMap(evalContext map[string]any, key string) map[int]float64 {
--	if v, ok := evalContext[key]; ok {
--		return v.(map[int]float64)
--	}
--
--	m := make(map[int]float64, len(qosClasses))
--	for _, class := range qosClasses {
--		m[int(class)] = 0
--	}
--
--	evalContext[key] = m
--
--	return m
--}
--
- // RankedCgroup contains information about a cgroup used for OOM handling.
- type RankedCgroup struct {
- 	Class         runtime.QoSCgroupClass
-@@ -132,128 +83,6 @@ func EvaluateTrigger(triggerExpr cel.Expression, evalContext map[string]any) (bo
- 	return trigger, nil
- }
- 
--// PopulatePsiToCtx populates the context with PSI data from a cgroup.
--//
--//nolint:gocyclo
--func PopulatePsiToCtx(cgroup string, evalContext map[string]any, oldValues map[string]float64, sampleInterval time.Duration) error {
--	if sampleInterval <= 0 {
--		return fmt.Errorf("sample interval must be greater than zero")
--	}
--
--	type subtree struct {
--		path string
--		qos  runtime.QoSCgroupClass
--	}
--
--	subtrees := []subtree{
--		{"", -1},
--		{constants.CgroupInit, runtime.QoSCgroupClassSystem},
--		{constants.CgroupSystem, runtime.QoSCgroupClassSystem},
--		{constants.CgroupPodRuntimeRoot, runtime.QoSCgroupClassPodruntime},
--		{constants.CgroupKubepods + "/" + cgroupBesteffort, runtime.QoSCgroupClassBesteffort},
--		{constants.CgroupKubepods + "/" + cgroupBurstable, runtime.QoSCgroupClassBurstable},
--	}
--
--	// Guaranteed pods live directly under the kubepods cgroup (there is no dedicated
--	// "guaranteed" QoS cgroup), so aggregate the class metrics by summing over each
--	// Guaranteed pod cgroup.
--	for _, path := range guaranteedCgroups(cgroup) {
--		subtrees = append(subtrees, subtree{path, runtime.QoSCgroupClassGuaranteed})
--	}
--
--	for _, subtree := range subtrees {
--		node, err := cgroups.GetCgroupProperty(filepath.Join(cgroup, subtree.path), "memory.pressure")
--
--		for _, psiType := range []string{"some", "full"} {
--			for _, span := range []string{"avg10", "avg60", "avg300", "total"} {
--				value := 0.
--
--				// Default non-existent cgroups to all-zero, e.g. during system boot
--				if err == nil {
--					value, err = extractPsiEntry(node, psiType, span)
--					if err != nil {
--						return err
--					}
--				}
--
--				// calculate delta
--				psiPath := subtree.path + "/" + "memory_" + psiType + "_" + span
--
--				diff := 0.
--				if oldValue, ok := oldValues[psiPath]; ok {
--					diff = (value - oldValue) / sampleInterval.Seconds()
--				}
--
--				oldValues[psiPath] = value
--
--				if subtree.qos == -1 {
--					evalContext["d_memory_"+psiType+"_"+span] = diff
--					evalContext["memory_"+psiType+"_"+span] = value
--				} else {
--					qosMap(evalContext, "qos_memory_"+psiType+"_"+span)[int(subtree.qos)] += value
--					qosMap(evalContext, "d_qos_memory_"+psiType+"_"+span)[int(subtree.qos)] += diff
--				}
--			}
--		}
--
--		node = &cgroups.Node{}
--		// Best effort, if any is not present it will return NaN
--		cgroups.ReadCgroupfsProperty(node, filepath.Join(cgroup, subtree.path), "memory.current") //nolint:errcheck
--		cgroups.ReadCgroupfsProperty(node, filepath.Join(cgroup, subtree.path), "memory.max")     //nolint:errcheck
--		cgroups.ReadCgroupfsProperty(node, filepath.Join(cgroup, subtree.path), "memory.peak")    //nolint:errcheck
--
--		if subtree.qos == -1 {
--			continue
--		}
--
--		for _, parameter := range []struct {
--			name  string
--			value float64
--		}{
--			{"current", node.MemoryCurrent.Float64()},
--			{"max", node.MemoryMax.Float64()},
--			{"peak", node.MemoryPeak.Float64()},
--		} {
--			value := parameter.value
--			// These values cannot be expressed in JSON
--			if math.IsNaN(value) || math.IsInf(value, 0) {
--				value = 0.0
--			}
--
--			qosMap(evalContext, "qos_memory_"+parameter.nam
+ 		logger.Info(
+ 			"siderolink connection configured",
+-			zap.String("endpoint", ctrl.pd.apiEndpont),
++			zap.String("endpoint", endpoint.Redact(ctrl.pd.apiEndpont)),
+ 			zap.String("node_uuid", ctrl.pd.nodeUUID),
+ 			zap.String("node_address", nodeAddress.String()),
+ 		)
 ```
 
-**File**: `internal/app/machined/pkg/controllers/runtime/internal/oom/oom_test.go` (modified, +42/-16)
+**File**: `internal/pkg/endpoint/endpoint.go` (modified, +38/-0)
 ```diff
-@@ -5,6 +5,9 @@
- package oom_test
+@@ -6,12 +6,21 @@
+ package endpoint
  
  import (
-+	"maps"
-+	"os"
-+	"path/filepath"
- 	"testing"
- 	"time"
- 
-@@ -808,20 +811,51 @@ func TestPopulatePsiToCtx(t *testing.T) {
- 		t.Run(test.name, func(t *testing.T) {
- 			t.Parallel()
- 
--			ctx := map[string]any{}
-+			sampler := oom.NewSampler(test.dir)
- 
--			err := oom.PopulatePsiToCtx(test.dir, ctx, make(map[string]float64), 500*time.Millisecond)
-+			err := sampler.Sample(500 * time.Millisecond)
- 
- 			if test.expectErr == "" {
- 				require.NoError(t, err)
--				assert.Equal(t, test.expect, ctx)
-+				assert.Equal(t, test.expect, sampler.EvalContext())
- 			} else {
- 				assert.ErrorContains(t, err, test.expectErr)
- 			}
- 		})
- 	}
- }
- 
-+// sampleAfterZeroInitPSI samples the cgroups from the fixture dir, after a previous sample in which the init cgroup PSI was zero.
-+//
-+// The fixture is copied, so that the init cgroup PSI can be zeroed for the previous sample.
-+func sampleAfterZeroInitPSI(t *testing.T, dir string) (*oom.Sampler, error) {
-+	t.Helper()
-+
-+	root := t.TempDir()
-+
-+	if _, err := os.Stat(dir); err == nil {
-+		require.NoError(t, os.CopyFS(root, os.DirFS(dir)))
-+	}
-+
-+	sampler := oom.NewSampler(root)
-+	t.Cleanup(sampler.Close)
-+
-+	initPressure := filepath.Join(root, constants.CgroupInit, "memory.pressure")
-+
-+	if contents, err := os.ReadFile(initPressure); err == nil {
-+		require.NoError(t, os.WriteFile(initPressure, []byte(
-+			"some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
-+		), 0o644))
-+
-+		// the error (for the broken fixtures) is reported by the next sample
-+		sampler.Sample(500 * time.Millisecond) //nolint:errcheck
-+
-+		require.NoError(t, os.WriteFile(initPressure, contents, 0o644))
-+	}
-+
-+	return sampler, sampler.Sample(500 * time.Millisecond)
-+}
-+
- func TestEvaluateTrigger(t *testing.T) {
- 	t.Parallel()
- 
-@@ -909,23 +943,15 @@ func TestEvaluateTrigger(t *testing.T) {
- 		t.Run(test.name, func(t *testing.T) {
- 			t.Parallel()
- 
--			err := oom.PopulatePsiToCtx(test.dir, test.ctx, map[string]float64{
--				"memory_full_avg10":  0,
--				"memory_full_avg300": 0,
--				"memory_full_avg60":  0,
--				"memory_full_total":  0,
--				"memory_some_avg10":  0,
--				"memory_some_avg300": 0,
--				"memory_some_avg60":  0,
--				"memory_some_total":  0,
--
--				"init/memory_full_total": 0,
--			}, 500*time.Millisecond)
-+			sampler, err := sampleAfterZeroInitPSI(t, test.dir)
- 
- 			if test.expectErr == "" {
- 				require.NoError(t, err)
- 
--				trigger, err := oom.EvaluateTrigger(test.triggerExpr, test.ctx)
-+				evalContext := sampler.EvalContext()
-+				maps.Copy(evalContext, test.ctx)
-+
-+				trigger, err := oom.EvaluateTrigger(test.triggerExpr, evalContext)
- 
- 				assert.Equal(t, test.expect, trigger)
- 
-```
-
-**File**: `internal/app/machined/pkg/controllers/runtime/internal/oom/sampler.go` (added, +635/-0)
-```diff
-@@ -0,0 +1,635 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package oom
-+
-+import (
-+	"bytes"
-+	"encoding/binary"
 +	"errors"
 +	"fmt"
-+	"math"
-+	"path/filepath"
-+	"slices"
+ 	"net/url"
+ 	"regexp"
 +	"strings"
-+	"time"
-+	"unsafe"
+ )
+ 
+ var urlSchemeMatcher = regexp.MustCompile(`[a-zA-z]+://`)
+ 
++// redactedValue is the replacement for sensitive values in the redacted endpoint.
++const redactedValue = "redacted"
 +
-+	"golang.org/x/sys/unix"
++// sensitiveParams is the list of query parameters which carry secrets.
++var sensitiveParams = []string{"jointoken"}
 +
-+	"github.com/siderolabs/talos/internal/pkg/cgroups"
-+	"github.com/siderolabs/talos/pkg/machinery/constants"
-+	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
-+)
+ // Endpoint defines all params parsed from the API endpoint.
+ type Endpoint struct {
+ 	Host     string
+@@ -27,6 +36,11 @@ func Parse(sideroLinkParam string) (Endpoint, error) {
+ 
+ 	u, err := url.Parse(sideroLinkParam)
+ 	if err != nil {
++		// url.Error includes the full URL, which might contain the join token, so strip it
++		if urlErr, ok := errors.AsType[*url.Error](err); ok {
++			return Endpoint{}, fmt.Errorf("failed to parse endpoint %q: %w", Redact(sideroLinkParam), urlErr.Err)
++		}
 +
-+const (
-+	numPSITypes     = 2 // some, full
-+	numPSISpans     = 4 // avg10, avg60, avg300, total
-+	numMemoryParams = 3 // current, max, peak
-+	numQoSClasses   = int(runtime.QoSCgroupClassSystem) + 1
+ 		return Endpoint{}, err
+ 	}
+ 
+@@ -47,3 +61,27 @@ func Parse(sideroLinkParam string) (Endpoint, error) {
+ func (e *Endpoint) GetParam(name string) string {
+ 	return e.params.Get(name)
+ }
 +
-+	// rootClass marks the root cgroup, which feeds the non-QoS metrics.
-+	rootClass = runtime.QoSCgroupClass(-1)
++// Redact returns the endpoint with sensitive query parameters (join token) redacted.
++//
++// The result is suitable for logging.
++func Redact(sideroLinkParam string) string {
++	base, rawQuery, found := strings.Cut(sideroLinkParam, "?")
++	if !found {
++		return sideroLinkParam
++	}
 +
-+	initialReadBufferSize   = 512
-+	initialDirentBufferSize = 8192
-+)
++	query, err := url.ParseQuery(rawQuery)
++	if err != nil {
++		// failed to parse the query, so redact it completely
++		return base + "?" + redactedValue
++	}
 +
-+var (
-+	psiTypeNames     = [numPSITypes]string{"some", "full"}
-+	psiSpanNames     = [numPSISpans]string{"avg10", "avg60", "avg300", "total"}
-+	memoryParamNames = [numMemoryParams]string{"current", "max", "peak"}
-+	memoryFiles      = [numMemoryParams]string{"memory.current", "memory.max", "memory.peak"}
-+
-+	// evaluation context keys, precomputed to avoid allocating them on each sample.
-+	psiKeys, dPSIKeys, qosPSIKeys, dQoSPSIKeys [numPSITypes][numPSISpans]string
-+	qosMemoryKeys, dQoSMemoryKeys              [numMemoryParams]string
-+)
-+
-+func init() {
-+	for t, psiType := range psiTypeNames {
-+		for s, span := range psiSpanNames {
-+			name := "memory_" + psiType + "_" + span
-+
-+			psiKeys[t][s] = name
-+			dPSIKeys[t][s] = "d_" + name
-+			qosPSIKeys[t][s] = "qos_" + name
-+			dQoSPSIKeys[t][s] = "d_qos_" + name
++	for _, param := range sensitiveParams {
++		if query.Has(param) {
++			query.Set(param, redactedValue)
 +		}
 +	}
 +
-+	for p, param := range memoryParamNames {
-+		qosMemoryKeys[p] = "qos_memory_" + param
-+		dQoSMemoryKeys[p] = "d_qos_memory_" + param
-+	}
++	return base + "?" + query.Encode()
 +}
-+
-+type psiValues [numPSITypes][numPSISpans]float64
-+
-+type qosValues [numQoSClasses]float64
-+
-+// cgroupState is the state of a single sampled cgroup.
-+type cgroupState struct {
-+	// path is the cgroup path relative to the root.
-+	path string
-+
-+	// name is the cgroup directory name, set only for Guaranteed pod cgroups.
-+	name string
-+
-+	pressureFile cgroupFile
-+	memoryFiles  [numMemoryParams]cgroupFile
-+
-+	prevPSI    psiValues
-+	prevMemory [numMemoryParams]float64
-+
-+	// generation is the generation of the last refresh which listed the Guaranteed pod cgroup.
-+	generation uint64
-+
-+	class runtime.QoSCgroupClass
-+
-+	hasPrevPSI, hasPrevMemory bool
-+}
-+
-+func newCgroupState(root, path, name string, class runtime.QoSCgroupClass) *cgroupState {
-+	dir := filepath.Join(root, path)
-+
-+	cg := &cgroupState{
-+		path:         path,
-+		name:         name,
-+		class:        class,
-+		pressureFile: newCgroupFile(filepath.Join(dir, "memory.pressure")),
-+	}
-+
-+	for p, file := range memoryFiles {
-+		cg.memoryFiles[p] = newCgroupFile(filepath.Join(dir, file))
-+	}
-+
-+	return cg
-+}
-+
-+// close closes all files of the cgroup.
-+func (cg *cgroupState) close() {
-+	cg.pressureFile.close()
-+
-+	for p := range cg.memoryFiles {
-+		cg.memoryFiles[p].close()
-+	}
-+}
-+
-+// cgroupFile is a cgroupfs file which is kept open across samples.
-+//
-+// Opening a file requires a path walk, which is the most expensive part of reading a cgroupfs file,
-+// so the file is opened once and re-read with pread at offset zero: cgroupfs (kernfs) regenerates
-+// the file contents on each read from offset zero.
-+//
-+// Once the cgroup is removed, reads from an open file fail with ENODEV, so the file is re-opened by the path
-+// (in case the cgroup was re-created with the same path).
-+type cgroupFile struct {
-+	// NUL-terminated path.
-+	path []byte
-+
-+	// fd is -1 if the file is not open.
-+	fd int
-+}
-+
-+func newCgroupFile(path string) cgroupFile {
-+	return cgroupFile{
-+		path: cString(path),
-+		fd:   -1,
-+	}
-+}
-+
-+func (f *cgroupFile) open() bool {
-+	fd, err := openPath(f.path, unix.O_RDONLY)
-+	if err != nil {
-+		return false
-+	}
-+
-+	f.fd = fd
-+
-+	return true
-+}
-+
-+func (f *cgroupFile) close() {
-+	if f.fd < 0 {
-+		return
-+	}
-+
-+	unix.Close(f.fd) //nolint:errcheck
-+
-+	f.fd = -1
-+}
-+
-+// Sampler samples memory pressure (PSI) and memory usage of the cgroups used in the OOM trigger expression.
-+//
-+// The sampled cgroups are:
-+//   - the root cgroup (memory_* and d_memory_* variables);
-+//   - QoS class cgroups and each Guaranteed pod cgroup (qos_memory_* and d_qos_memory_* variables).
-+//
-+// Sampler runs every OOM sample interval (500ms by default), so it reuses all buffers and paths
-+// across samples: it doesn't allocate unless the set of Guaranteed pods changes.
-+//
-+// Sampler is not safe for concurrent use.
-+type Sampler struct {
-+	root string
-+
-+	readBuf   []byte
-+	direntBuf []byte
-+
-+	kubepodsPath []byte
-+
-+	fixed      []*cgroupState
-+	guaranteed []*cgroupState
-+	scratch    []*cgroupState
-+
-+	generation uint64
-+
-+	evalContext map[string]any
-+
-+	// results of th
 ```
 
-**File**: `internal/app/machined/pkg/controllers/runtime/internal/oom/sampler_test.go` (added, +466/-0)
+**File**: `internal/pkg/endpoint/endpoint_test.go` (modified, +58/-0)
 ```diff
-@@ -0,0 +1,466 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package oom_test
-+
-+import (
-+	"fmt"
-+	"os"
-+	"path/filepath"
-+	"strconv"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
+@@ -8,6 +8,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/siderolabs/talos/internal/pkg/endpoint"
+ )
+@@ -79,3 +80,60 @@ func TestParseEndpoint(t *testing.T) {
+ 		assert.Equal(t, "", endpoint.GetParam("jointoken"))
+ 	})
+ }
 +
-+	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/runtime/internal/oom"
-+	"github.com/siderolabs/talos/pkg/machinery/constants"
-+	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
-+)
-+
-+const sampleInterval = 500 * time.Millisecond
-+
-+func writeFile(t testing.TB, path, contents string) {
-+	t.Helper()
-+
-+	require.NoError(t, os.MkdirAll(filepath.Dir(path), 0o755))
-+	require.NoError(t, os.WriteFile(path, []byte(contents), 0o644))
-+}
-+
-+func writePSI(t testing.TB, dir string, avg10, total float64) {
-+	t.Helper()
-+
-+	writeFile(t, filepath.Join(dir, "memory.pressure"), fmt.Sprintf(
-+		"some avg10=%.2f avg60=0.00 avg300=0.00 total=%d\nfull avg10=%.2f avg60=0.00 avg300=0.00 total=%d\n",
-+		avg10, int64(total), avg10, int64(total),
-+	))
-+}
-+
-+func writeMemory(t testing.TB, dir string, current int64, maxValue string) {
-+	t.Helper()
-+
-+	writeFile(t, filepath.Join(dir, "memory.current"), fmt.Sprintf("%d\n", current))
-+	writeFile(t, filepath.Join(dir, "memory.max"), maxValue+"\n")
-+	writeFile(t, filepath.Join(dir, "memory.peak"), fmt.Sprintf("%d\n", current))
-+}
-+
-+// writeCgroupTree populates a fake cgroupfs with all the cgroups sampled by the OOM controller.
-+func writeCgroupTree(t testing.TB, root string, guaranteedPods ...string) {
-+	t.Helper()
-+
-+	writePSI(t, root, 1, 1000)
-+
-+	for _, dir := range append(
-+		[]string{"init", "system", "podruntime", "kubepods/besteffort", "kubepods/burstable"},
-+		guaranteedPods...,
-+	) {
-+		writePSI(t, filepath.Join(root, dir), 1, 1000)
-+		writeMemory(t, filepath.Join(root, dir), 1024, "max")
-+	}
-+
-+	// cgroupfs control files of the kubepods cgroup itself should be ignored
-+	writeMemory(t, filepath.Join(root, "kubepods"), 1024, "max")
-+}
-+
-+func TestSamplerAllocs(t *testing.T) {
-+	root := t.TempDir()
-+
-+	writeCgroupTree(t, root, "kubepods/pod-a", "kubepods/pod-b", "kubepods/pod-c")
-+
-+	sampler := oom.NewSampler(root)
-+	t.Cleanup(sampler.Close)
-+
-+	// warm up: create the state of the Guaranteed pods and the eval context maps
-+	require.NoError(t, sampler.Sample(sampleInterval))
-+	sampler.EvalContext()
-+
-+	allocs := testing.AllocsPerRun(100, func() {
-+		if err := sampler.Sample(sampleInterval); err != nil {
-+			t.Fatal(err)
-+		}
-+	})
-+
-+	assert.Zero(t, allocs, "Sample should not allocate in the steady state")
-+
-+	allocs = testing.AllocsPerRun(100, func() {
-+		sampler.EvalContext()
-+	})
-+
-+	// only boxing of non-zero float64 scalars (memory_*, d_memory_*) into map[string]any allocates
-+	assert.LessOrEqual(t, allocs, 16.0, "EvalContext should only allocate for scalar values")
-+}
-+
-+func TestSamplerRates(t *testing.T) {
++func TestParseEndpointErrorRedacted(t *testing.T) {
 +	t.Parallel()
 +
-+	root := t.TempDir()
++	_, err := endpoint.Parse("https://10.5.0.2:3445/\x7f?jointoken=secret")
++	require.Error(t, err)
 +
-+	writeCgroupTree(t, root, "kubepods/pod-a")
-+
-+	sampler := oom.NewSampler(root)
-+
-+	require.NoError(t, sampler.Sample(sampleInterval))
-+
-+	evalContext := sampler.EvalContext()
-+
-+	// no previous sample, so no rate of change
-+	assert.Equal(t, 1000.0, evalContext["memory_full_total"])
-+	assert.Equal(t, 0.0, evalContext["d_memory_full_total"])
-+	assert.Equal(t, 2000.0, evalContext["qos_memory_full_total"].(map[int]float64)[int(runtime.QoSCgroupClassSystem)])
-+	assert.Equal(t, 0.0, evalContext["d_qos_memory_full_total"].(map[int]float64)[int(runtime.QoSCgroupClassSystem)])
-+	assert.Equal(t, 1024.0, evalContext["qos_memory_current"].(map[int]float64)[int(runtime.QoSCgroupClassGuaranteed)])
-+	assert.Equal(t, 0.0, evalContext["qos_memory_max"].(map[int]float64)[int(runtime.QoSCgroupClassGuaranteed)], "max is reported as zero")
-+
-+	writePSI(t, root, 2, 1500)
-+	writePSI(t, filepath.Join(root, "system"), 3, 2000)
-+	writeMemory(t, filepath.Join(root, "kubepods/pod-a"), 2048, "4096")
-+
-+	// new Guaranteed pod: its first sample shouldn't affect the rate of change
-+	writePSI(t, filepath.Join(root, "kubepods/pod-b"), 10, 100000)
-+	writeMemory(t, filepath.Join(root, "kubepods/pod-b"), 1<<20, "max")
-+
-+	require.NoError(t, sampler.Sample(sampleInterval))
-+
-+	evalContext = sampler.EvalContext()
-+
-+	assert.Equal(t, 1500.0, evalContext["memory_full_total"])
-+	assert.Equal(t, 1000.0, evalContext["d_memory_full_total"]) // (1500 - 1000) / 0.5s
-+	assert.Equal(t, 2.0, evalContext["d_memory_full_avg10"])    // (2 - 1) / 0.5s
-+	assert.Equal(t, 3000.0, evalContext["qos_memory_full_total"].(map[int]float64)[int(runtime.QoSCgroupClassSystem)])
-+	assert.Equal(t, 2000.0, evalContext["d_qos_memory_full_total"].(map[int]float64)[int(runtime.QoSCgroupClassSystem)])
-+
-+	assert.Equal(t, 101000.0, evalContext["qos_memory_full_total"].(map[int]float64)[int(runtime.QoSCgroupClassGuaranteed)])
-+	assert.Equal(t, 0.0, evalContext["d_q
-```
-
-**File**: `internal/app/machined/pkg/controllers/runtime/oom.go` (modified, +9/-9)
-```diff
-@@ -44,7 +44,6 @@ type OOMController struct {
- 	V1Alpha1Mode    runtime.Mode
- 	actionLog       []actionLogItem
- 	idSeq           int
--	oldValues       map[string]float64
- }
- 
- // Name implements controller.Controller interface.
-@@ -83,7 +82,6 @@ func (ctrl *OOMController) Run(ctx context.Context, r controller.Runtime, logger
- 	}
- 
- 	triggerExpr, scoringExpr, sampleInterval, strictClassOrdering := ctrl.getConfig(nil)
--	ctrl.oldValues = make(map[string]float64)
- 
- 	ticker := time.NewTicker(sampleInterval)
- 	tickerC := ticker.C
-@@ -92,6 +90,9 @@ func (ctrl *OOMController) Run(ctx context.Context, r controller.Runtime, logger
- 		ctrl.CgroupRoot = constants.CgroupMountPath
- 	}
- 
-+	sampler := oom.NewSampler(ctrl.CgroupRoot)
-+	defer sampler.Close()
-+
- 	for {
- 		select {
- 		case <-ctx.Done():
-@@ -113,17 +114,16 @@ func (ctrl *OOMController) Run(ctx context.Context, r controller.Runtime, logger
- 		case <-tickerC:
- 		}
- 
--		evalContext := map[string]any{
--			"time_since_trigger": time.Since(ctrl.ActionTriggered),
--		}
--
--		err := oom.PopulatePsiToCtx(ctrl.CgroupRoot, evalContext, ctrl.oldValues, sampleInterval)
--		if err != nil {
--			logger.Error("cannot populate PSI context", zap.Error(err))
-+		if err := sampler.Sample(sampleInterval); err != nil {
-+			logger.Error("cannot sample memory PSI", zap.Error(err))
- 
- 			continue
- 		}
- 
-+		// evalContext is owned by the sampler, and it is reused across iterations
-+		evalContext := sampler.EvalContext()
-+		evalContext["time_since_trigger"] = time.Since(ctrl.ActionTriggered)
-+
- 		trigger, err := oom.EvaluateTrigger(triggerExpr, evalContext)
- 		if err != nil {
- 			logger.Error("cannot evaluate OOM trigger expression", zap.Error(err))
-```
-
-**File**: `internal/pkg/cgroups/value.go` (modified, +64/-0)
-```diff
-@@ -113,6 +113,70 @@ type NestedKeyed map[string]FlatMap
- 
- // ParseValue parses the cgroup value from the string.
- func ParseValue(s string) (Value, error) {
-+	return parseValue(s)
++	assert.NotContains(t, err.Error(), "secret")
++	assert.Contains(t, err.Error(), "jointoken=redacted")
 +}
 +
-+// ParseValueBytes parses the cgroup value from the byte slice.
-+//
-+// It is equivalent to ParseValue(string(b)), but it doesn't allocate for well-formed values.
-+func ParseValueBytes(b []byte) (Value, error) {
-+	return parseValue(b)
-+}
-+
-+// maxFastPathDigits is the number of decimal digits which always fit into int64.
-+const maxFastPathDigits = 18
-+
-+//nolint:gocyclo
-+func parseValue[T string | []byte](s T) (Value, error) {
-+	if string(s) == "max" {
-+		return Value{IsMax: true, IsSet: true}, nil
-+	}
-+
-+	// fast path: [-]digits[.digits], which covers all values exposed by cgroupfs
-+	var (
-+		val          int64
-+		frac, digits int
-+		seenDot      bool
-+	)
-+
-+	neg := len(s) > 0 && s[0] == '-'
-+
-+	i := 0
-+	if neg {
-+		i++
-+	}
-+
-+	for ; i < len(s); i++ {
-+		c := s[i]
-+
-+		switch {
-+		case c >= '0' && c <= '9':
-+			val = val*10 + int64(c-'0')
-+			digits++
-+
-+			if seenDot {
-+				frac++
-+			}
-+		case c == '.' && !seenDot:
-+			seenDot = true
-+		default:
-+			return parseValueSlow(string(s))
-+		}
-+	}
-+
-+	if digits == 0 || digits > maxFastPathDigits {
-+		return parseValueSlow(string(s))
-+	}
-+
-+	if neg {
-+		val = -val
-+	}
-+
-+	return Value{Val: val, Frac: frac, IsSet: true}, nil
-+}
-+
-+// parseValueSlow handles the values not covered by the fast path of parseValue, including all the errors.
-+func parseValueSlow(s string) (Value, error) {
- 	if s == "max" {
- 		return Value{IsMax: true, IsSet: true}, nil
- 	}
-```
-
-**File**: `internal/pkg/cgroups/value_test.go` (modified, +66/-0)
-```diff
-@@ -54,10 +54,76 @@ func TestParseValue(t *testing.T) {
- 			assert.Equal(t, test.expectedFloat64, v.Float64())
- 
- 			assert.Equal(t, test.in, v.String())
-+
-+			v, err = cgroups.ParseValueBytes([]byte(test.in))
-+			require.NoError(t, err)
-+
-+			assert.Equal(t, test.expected, v)
- 		})
- 	}
- }
- 
-+func TestParseValueEdgeCases(t *testing.T) {
++func TestRedact(t *testing.T) {
 +	t.Parallel()
 +
 +	for _, test := range []struct {
-+		in string
-+
-+		expected  cgroups.Value
-+		expectErr bool
++		name     string
++		input    string
++		expected string
 +	}{
-+		{in: "-5", expected: cgroups.Value{Val: -5, IsSet: true}},
-+		{in: "+5", expected: cgroups.Value{Val: 5, IsSet: true}},
-+		{in: "-0.25", expected: cgroups.Value{Val: -25, Frac: 2, IsSet: true}},
-+		{in: "1.", expected: cgroups.Value{Val: 1, IsSet: true}},
-+		{in: ".5", expected: cgroups.Value{Val: 5, Frac: 1, IsSet: true}},
-+		{in: "9223372036854775807", expected: cgroups.Value{Val: math.MaxInt64, IsSet: true}},
-+		{in: "-9223372036854775808", expected: cgroups.Value{Val: math.MinInt64, IsSet: true}},
-+		{in: "9223372036854775808", expectErr: true},
-+		{in: "", expectErr: true},
-+		{in: "-", expectErr: true},
-+		{in: ".", expectErr: true},
-+		{in: "1.2.3", expectErr: true},
-+		{in: "abc", expectErr: true},
-+		{in: "12 ", expectErr: true},
++		{
++			name:     "no query",
++			input:    "https://10.5.0.2:3445",
++			expected: "https://10.5.0.2:3445",
++		},
++		{
++			name:     "no scheme",
++			input:    "10.5.0.2:3445?jointoken=secret",
++			expected: "10.5.0.2:3445?jointoken=redacted",
++		},
++		{
++			name:     "omni",
++			input:    "https://instance.siderolink.omni.example.com?jointoken=secret",
++			expected: "https://instance.siderolink.omni.example.com?jointoken=redacted",
++		},
++		{
++			name:     "multiple values",
++			input:    "https://10.5.0.2:3445?jointoken=secret&jointoken=secret2&grpc_tunnel=true",
++			expected: "https://10.5.0.2:3445?grpc_tunnel=true&jointoken=redacted",
++		},
++		{
++			name:     "no token",
++			input:    "grpc://10.5.0.2:3445?grpc_tunnel=true",
++			expected: "grpc://10.5.0.2:3445?grpc_tunnel=true",
++		},
++		{
++			name:     "invalid query",
++			input:    "https://10.5.0.2:3445?jointoken=secret%zz",
++			expected: "https://10.5.0.2:3445?redacted",
++		},
 +	} {
-+		t.Run(test.in, func(t *testing.T) {
++		t.Run(test.name, func(t *testing.T) {
 +			t.Parallel()
 +
-+			v, err := cgroups.ParseValue(test.in)
-+			vb, errb := cgroups.ParseValueBytes([]byte(test.in))
-+
-+			if test.expectErr {
-+				require.Error(t, err)
-+				require.Error(t, errb)
-+				assert.Equal(t, err.Error(), errb.Error())
-+
-+				return
-+			}
-+
-+			require.NoError(t, err)
-+			require.NoError(t, errb)
-+
-+			assert.Equal(t, test.expected, v)
-+			assert.Equal(t, test.expected, vb)
++			assert.Equal(t, test.expected, endpoint.Redact(test.input))
 +		})
 +	}
 +}
-+
-+func TestParseValueBytesAllocs(t *testing.T) {
-+	for _, in := range []string{"42", "max", "17.06", "-0.25", "12172340"} {
-+		b := []byte(in)
-+
-+		allocs := testing.AllocsPerRun(100, func() {
-+			if _, err := cgroups.ParseValueBytes(b); err != nil {
-+				t.Fatal(err)
-+			}
-+		})
-+
-+		assert.Zero(t, allocs, "input %q", in)
-+	}
-+}
-+
- func TestParseNewlineSeparatedValues(t *testing.T) { //nolint:dupl
- 	t.Parallel()
- 
 ```
 
 ---
 
-### Incident Patch 3: `bf081056` (2026-11-04)
-**Commit Message**: fix: optimize platform config store controller
+### Incident Patch 3: `81917ee9` (2026-11-04)
+**Commit Message**: fix: add missing generation flags to machineconfig gen
 
-Stop waking up on unrelated volume events.
+Register the generation flags in NewConfigCmd and add the gen parent's --force flag to the alias.
 
-Don't go into .Equal path unless something changed - .Equal uses YAML
-marshal, so it's expensive in memory allocs.
+Signed-off-by: immanuwell <[REDACTED_EMAIL]>
 
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/automaton/blockautomaton/volume_mount.go` (modified, +8/-1)
+**File**: `cmd/talosctl/cmd/mgmt/gen/config.go` (modified, +9/-5)
 ```diff
-@@ -57,6 +57,13 @@ func WithDetached(detached bool) VolumeMounterOption {
+@@ -80,7 +80,7 @@ var genConfigCmdFlags struct {
+ 
+ // NewConfigCmd builds the config generation subcommand with the given name.
+ func NewConfigCmd(name string) *cobra.Command {
+-	return &cobra.Command{
++	cmd := &cobra.Command{
+ 		Use:   fmt.Sprintf("%s <cluster name> <cluster endpoint>", name),
+ 		Short: "Generates a set of configuration files for Talos cluster",
+ 		Long: `The cluster endpoint is the URL for the Kubernetes API. If you decide to use
+@@ -102,6 +102,10 @@ setup, usually involving a load balancer, use the IP and port of the load balanc
+ 			}
+ 		},
  	}
++
++	addConfigFlags(cmd)
++
++	return cmd
  }
  
-+// MountID returns the ID of the VolumeMountRequest/VolumeMountStatus used by the volume mounter.
-+//
-+// Controllers might use it to filter their inputs to the volume mount status of their own request.
-+func MountID(requester, volumeID string) string {
-+	return requester + "-" + volumeID
+ func fixControlPlaneEndpoint(u *url.URL) *url.URL {
+@@ -433,9 +437,7 @@ func validateClusterEndpoint(endpoint string) error {
+ 	return nil
+ }
+ 
+-func init() {
+-	genConfigCmd := NewConfigCmd("config")
+-
++func addConfigFlags(genConfigCmd *cobra.Command) {
+ 	genConfigCmd.Flags().StringVar(&genConfigCmdFlags.installDisk, "install-disk", "/dev/sda", "the disk to install to")
+ 	genConfigCmd.Flags().StringVar(&genConfigCmdFlags.installImage, "install-image", helpers.DefaultImage(images.InstallerImageRepository("metal")), "the image used to perform an installation")
+ 	genConfigCmd.Flags().StringSliceVar(&genConfigCmdFlags.additionalSANs, "additional-sans", []string{}, "additional Subject-Alt-Names for the APIServer certificate")
+@@ -461,6 +463,8 @@ func init() {
+ 
+ 	genConfigCmd.Flags().BoolVar(&genConfigCmdFlags.skipK8sEtcd, "skip-k8s-etcd", false, "skip generating etcd & Kubernetes configuration (experimental)")
+ 	genConfigCmd.Flags().MarkHidden("skip-k8s-etcd") //nolint:errcheck
 +}
-+
- // NewVolumeMounter creates a new volume mounter controller state machine.
- //
- // It ensures that the volume is mounted, and calls the callback function when the volume is mounted,
-@@ -70,7 +77,7 @@ func NewVolumeMounter(requester, volumeID string, callback VolumeMountCallbackFu
- 	return automaton.NewControllerAutomaton(
- 		createVolumeMountRequest,
- 		volumeMountContext{
--			mountID:   requester + "-" + volumeID,
-+			mountID:   MountID(requester, volumeID),
- 			volumeID:  volumeID,
- 			requester: requester,
- 			callback:  callback,
+ 
+-	Cmd.AddCommand(genConfigCmd)
++func init() {
++	Cmd.AddCommand(NewConfigCmd("config"))
+ }
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/platform_config_store.go` (modified, +19/-3)
+**File**: `cmd/talosctl/cmd/mgmt/machineconfig/gen.go` (modified, +3/-1)
 ```diff
-@@ -8,8 +8,10 @@ import (
- 	"bytes"
- 	"context"
- 	"fmt"
-+	"time"
+@@ -8,5 +8,7 @@ import "github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/gen"
  
- 	"github.com/cosi-project/runtime/pkg/controller"
-+	"github.com/cosi-project/runtime/pkg/resource"
- 	"github.com/cosi-project/runtime/pkg/safe"
- 	"github.com/cosi-project/runtime/pkg/state"
- 	"github.com/siderolabs/gen/optional"
-@@ -29,6 +31,10 @@ import (
- type PlatformConfigStoreController struct {
- 	stateMachine                    blockautomaton.VolumeMounterAutomaton
- 	configToStore, lastStoredConfig *network.PlatformConfig
-+
-+	// lastSeenVersion and lastSeenCreated identify the active config which was compared last time.
-+	lastSeenVersion resource.Version
-+	lastSeenCreated time.Time
+ func init() {
+ 	// alias for `talosctl gen config`
+-	Cmd.AddCommand(gen.NewConfigCmd("gen"))
++	cmd := gen.NewConfigCmd("gen")
++	cmd.Flags().AddFlagSet(gen.Cmd.PersistentFlags())
++	Cmd.AddCommand(cmd)
  }
+```
+
+**File**: `website/content/v1.15/reference/cli.md` (modified, +20/-1)
+```diff
+@@ -2994,7 +2994,26 @@ talosctl machineconfig gen <cluster name> <cluster endpoint> [flags]
+ ### Options
  
- // Name implements controller.Controller interface.
-@@ -38,6 +44,8 @@ func (ctrl *PlatformConfigStoreController) Name() string {
+ ```
+-  -h, --help[=true|false]   help for gen
++      --additional-sans strings                  additional Subject-Alt-Names for the APIServer certificate
++      --config-patch stringArray                 patch generated machineconfigs (applied to all node types), use @file to read a patch from file
++      --config-patch-control-plane stringArray   patch generated machineconfigs (applied to 'init' and 'controlplane' types)
++      --config-patch-worker stringArray          patch generated machineconfigs (applied to 'worker' type)
++      --dns-domain string                        the dns domain to use for cluster (default "cluster.local")
++  -f, --force[=true|false]                       will overwrite existing files
++  -h, --help[=true|false]                        help for gen
++      --install-disk string                      the disk to install to (default "/dev/sda")
++      --install-image string                     the image used to perform an installation (default "factory.talos.dev/metal-installer/376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba:latest")
++      --kubernetes-version string                desired kubernetes version to run (default "1.38.0-beta.0")
++  -o, --output string                            destination to output generated files. when multiple output types are specified, it must be a directory. for a single output type, it must either be a file path, or "-" for stdout
++  -t, --output-types strings                     types of outputs to be generated. valid types are: ["controlplane" "worker" "talosconfig"] (default [controlplane,worker,talosconfig])
++      --registry-mirror strings                  list of registry mirrors to use in format: <registry host>=<mirror URL>
++      --talos-version string                     the desired Talos version to generate config for (backwards compatibility, e.g. v0.8)
++      --version string                           the desired machine config version to generate (default "v1alpha1")
++      --with-cluster-discovery[=true|false]      enable cluster discovery feature (default true)
++      --with-docs[=true|false]                   renders all machine configs adding the documentation for each field (default true)
++      --with-examples[=true|false]               renders all machine configs with the commented examples (default true)
++      --with-kubespan[=true|false]               enable KubeSpan feature
++      --with-secrets string                      use a secrets file generated using 'gen secrets'
+ ```
  
- // Inputs implements controller.Controller interface.
- func (ctrl *PlatformConfigStoreController) Inputs() []controller.Input {
-+	mountID := blockautomaton.MountID(ctrl.Name(), constants.StatePartitionLabel)
-+
- 	return []controller.Input{
- 		{
- 			Namespace: network.NamespaceName,
-@@ -48,11 +56,13 @@ func (ctrl *PlatformConfigStoreController) Inputs() []controller.Input {
- 		{
- 			Namespace: block.NamespaceName,
- 			Type:      block.VolumeMountStatusType,
-+			ID:        optional.Some(mountID),
- 			Kind:      controller.InputStrong,
- 		},
- 		{
- 			Namespace: block.NamespaceName,
- 			Type:      block.VolumeMountRequestType,
-+			ID:        optional.Some(mountID),
- 			Kind:      controller.InputDestroyReady,
- 		},
- 	}
-@@ -89,9 +99,15 @@ func (ctrl *PlatformConfigStoreController) Run(ctx context.Context, r controller
- 			return fmt.Errorf("error getting active network config: %w", err)
- 		}
- 
--		// if we haven't stored any config yet, or the active config has changed
--		if ctrl.lastStoredConfig == nil || !activeConfig.TypedSpec().Equal(ctrl.lastStoredConfig.TypedSpec()) {
--			ctrl.configToStore = activeConfig
-+		// compare the configs only if the active config has changed since the last time (comparison marshals both configs)
-+		if !activeConfig.Metadata().Version().Equal(ctrl.lastSeenVersion) || !activeConfig.Metadata().Created().Equal(ctrl.lastSeenCreated) {
-+			ctrl.lastSeenVersion = activeConfig.Metadata().Version()
-+			ctrl.lastSeenCreated = activeConfig.Metadata().Created()
-+
-+			// if we haven't stored any config yet, or the active config has changed
-+			if ctrl.lastStoredConfig == nil || !activeConfig.TypedSpec().Equal(ctrl.lastStoredConfig.TypedSpec()) {
-+				ctrl.configToStore = activeConfig
-+			}
- 		}
- 
- 		if ctrl.stateMachine == nil && ctrl.configToStore != nil {
+ ### SEE ALSO
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14884** (2026-11-09): fix: mask the SideroLink join token (@smira)
+- **PR #14883** (2026-11-09): fix: drop architecture constraints from affinity rules (@shanduur)
 - **PR #14874** (closed): fix(security): let the CRI containerd run the installer of an upgrade (@rducom)
+- **PR #14873** (2026-11-09): fix(security): let machined kexec into the new kernel (@rducom)
 - **PR #14867** (2026-11-06): feat: add KubePrism /readyz check (@smira)
 - **PR #14866** (2026-11-06): chore: drop image pull/list legacy from talosctl (@smira)
-- **PR #14865** (2026-11-06): test: cut down 110 seconds in hypervisor tests (@majabojarska)
-- **PR #14864** (2026-11-06): feat: update Kubernetes to 1.38.0-beta.0 (@smira)
-- **PR #14863** (2026-11-06): feat: update pkgs & tools (@smira)
 
 ---
 
@@ -2971,28 +2354,29 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. disable tablewriter package cache
+## X. security): let machined kexec into the new kernel
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/runtime/v1alpha1/bootloader/kexec/kexec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d491d73b`: disable tablewriter package cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0297b7e9`: security): let machined kexec into the new kernel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/runtime/v1alpha1/bootloader/kexec/kexec.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/olekukonko/tablewriter v1.1.5
+	case errors.Is(err, unix.EACCES):
+		return "kexec is denied by the security policy"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/olekukonko/tablewriter v1.1.5 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d491d73b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0297b7e9` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T12:17:30.599Z",
+  "last_updated": "2026-11-09T12:29:45.355Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45747,14 +45747,19 @@
       "slug": "mtkennerly-ludusavi",
       "platform": "github",
       "source_url": "https://github.com/mtkennerly/ludusavi",
-      "source_version": "9365477d",
-      "content_hash": "40571b44662b0a90599490c008dc35f09822c2df93b5f379fba46ff019999365",
+      "source_version": "c4c2ca99",
+      "content_hash": "e1520115dcffa366a7669d69d0fa17e538cd180201dd0f626ce489923602ae2c",
       "dossier_path": "07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "layout): Address breaking changes in `zip`",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "#665: Map C: to Wine drive_c",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45768,7 +45773,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:59:30.869Z",
+      "verified_at": "2026-11-09T12:29:37.217Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56971,8 +56976,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "6bcc0fd3",
-      "content_hash": "26d0375000aa43ef8a4bcd2fa2907e1c24b879e16fc479a2fc4c979e002c958f",
+      "source_version": "0297b7e9",
+      "content_hash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -56989,6 +56994,11 @@
         {
           "number": null,
           "title": "disable tablewriter package cache",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "security): let machined kexec into the new kernel",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -57067,7 +57077,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:14:26.780Z",
+      "verified_at": "2026-11-09T12:29:45.333Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75949,7 +75959,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B",
       "source_version": "hf-autotrust-jev-35b",
-      "content_hash": "5179d46e7ffc46cd26f434c64e7482737439a537fcd5fd556736a4a809f37121",
+      "content_hash": "99c6e6405fd3fd8377bc71980b003a32f50339db946d9fdb3f9dbc38c4f78117",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "promoted_rules": [
@@ -75989,7 +75999,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:13:44.014Z",
+      "verified_at": "2026-11-09T12:29:33.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

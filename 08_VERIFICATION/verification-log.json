@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-MCKI",
-    "timestamp": "2026-11-07T20:49:12.738Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "0a1e3e78ef532e60bffeb1457cbbef1b9e0c3df5bc64001f7a15c2d2abddf96e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-V2WT",
-    "timestamp": "2026-11-07T20:56:00.125Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "36da3ffcac62ba8ec06d45a3731e19d51a5e63993236c4f990b88c1379b10ac1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-V6KT",
-    "timestamp": "2026-11-07T20:56:04.877Z",
-    "repository": "onejs/one",
-    "learningId": "learn-github-onejs-one",
-    "contentHash": "5fd47904f980eabbce54e786738b9c55199b20e43219188b37dd9e941d61e89a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-V7SX",
     "timestamp": "2026-11-07T20:56:06.465Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7492,6 +7447,51 @@
     "contentHash": "11a6d5b82003e5b1f47619b52d4e86b7c92e57c3adfae86b3aa6941319118862",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-NHXN",
+    "timestamp": "2026-11-09T12:29:33.707Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "99c6e6405fd3fd8377bc71980b003a32f50339db946d9fdb3f9dbc38c4f78117",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-NKQ3",
+    "timestamp": "2026-11-09T12:29:37.323Z",
+    "repository": "mtkennerly/ludusavi",
+    "learningId": "learn-github-mtkennerly-ludusavi",
+    "contentHash": "e1520115dcffa366a7669d69d0fa17e538cd180201dd0f626ce489923602ae2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-NQZR",
+    "timestamp": "2026-11-09T12:29:45.447Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

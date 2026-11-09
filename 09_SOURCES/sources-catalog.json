@@ -1355,8 +1355,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceVersion": "hf-autotrust-jev-35b",
     "license": "Open-Source",
-    "contentHash": "5179d46e7ffc46cd26f434c64e7482737439a537fcd5fd556736a4a809f37121",
-    "lastHarvestedAt": "2026-11-05T14:13:44.081Z",
+    "contentHash": "99c6e6405fd3fd8377bc71980b003a32f50339db946d9fdb3f9dbc38c4f78117",
+    "lastHarvestedAt": "2026-11-09T12:29:33.710Z",
     "learningId": "learn-huggingface-autotrust-jev-35b"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
@@ -4943,10 +4943,10 @@
     "repository": "mtkennerly/ludusavi",
     "platform": "github",
     "sourceUrl": "https://github.com/mtkennerly/ludusavi",
-    "sourceVersion": "9365477d",
+    "sourceVersion": "c4c2ca99",
     "license": "MIT",
-    "contentHash": "40571b44662b0a90599490c008dc35f09822c2df93b5f379fba46ff019999365",
-    "lastHarvestedAt": "2026-11-08T06:59:30.967Z",
+    "contentHash": "e1520115dcffa366a7669d69d0fa17e538cd180201dd0f626ce489923602ae2c",
+    "lastHarvestedAt": "2026-11-09T12:29:37.327Z",
     "learningId": "learn-github-mtkennerly-ludusavi"
   },
   "nativewind-nativewind": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "6bcc0fd3",
+    "sourceVersion": "0297b7e9",
     "license": "MPL-2.0",
-    "contentHash": "26d0375000aa43ef8a4bcd2fa2907e1c24b879e16fc479a2fc4c979e002c958f",
-    "lastHarvestedAt": "2026-11-08T16:14:26.850Z",
+    "contentHash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
+    "lastHarvestedAt": "2026-11-09T12:29:45.450Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

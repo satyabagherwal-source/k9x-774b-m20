@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T12:17:30.724Z",
+  "last_updated": "2026-11-09T12:29:45.459Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2111,14 +2111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b",
-      "content_hash": "5179d46e7ffc46cd26f434c64e7482737439a537fcd5fd556736a4a809f37121",
-      "verified_at": "2026-11-05T14:13:44.093Z",
+      "content_hash": "99c6e6405fd3fd8377bc71980b003a32f50339db946d9fdb3f9dbc38c4f78117",
+      "verified_at": "2026-11-09T12:29:33.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:13:44.093Z"
+      "last_updated": "2026-11-09T12:29:33.719Z"
     },
     "openbmb/MiniCPM-V-4.7-35B-A3B": {
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7536,14 +7536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mtkennerly-ludusavi",
-      "content_hash": "40571b44662b0a90599490c008dc35f09822c2df93b5f379fba46ff019999365",
-      "verified_at": "2026-11-08T06:59:30.976Z",
+      "content_hash": "e1520115dcffa366a7669d69d0fa17e538cd180201dd0f626ce489923602ae2c",
+      "verified_at": "2026-11-09T12:29:37.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T06:59:30.976Z"
+      "last_updated": "2026-11-09T12:29:37.336Z"
     },
     "nativewind/nativewind": {
       "repository": "nativewind/nativewind",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "26d0375000aa43ef8a4bcd2fa2907e1c24b879e16fc479a2fc4c979e002c958f",
-      "verified_at": "2026-11-08T16:14:26.862Z",
+      "content_hash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
+      "verified_at": "2026-11-09T12:29:45.458Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:14:26.862Z"
+      "last_updated": "2026-11-09T12:29:45.458Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
