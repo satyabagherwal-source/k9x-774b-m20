@@ -8551,3 +8551,6 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `c37639d3` | Multi-dimensional audit evidence | 2026-11-09T07:21:03.797Z |
 | `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-09T07:24:59.795Z |
 | `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T07:32:08.473Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-09T07:43:35.269Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `f651d47d` | Multi-dimensional audit evidence | 2026-11-09T07:43:42.837Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `67fc69df` | Multi-dimensional audit evidence | 2026-11-09T07:43:52.223Z |

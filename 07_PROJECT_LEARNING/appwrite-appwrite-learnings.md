@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `bfbdbbf1`  
+> **Source Version**: `f651d47d`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:20:20.180Z  
+> **Timestamp**: 2026-11-09T07:43:41.676Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:20:20.172Z  
+> **Harvest Timestamp**: 2026-11-09T07:43:41.670Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57874 stars
+- **Stars / Engagement**: 57898 stars
 
 ---
 
@@ -1905,11 +1905,11 @@ export function DomainsEmptyState({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14230** (2026-10-08): **🐛 Bug Report: Inviting a dotted Gmail address to an organization fails with 409 user_email_already_exists**
-  *Symptoms*: ### 👟 Reproduction steps  1. On Appwrite Cloud, have a console account that signed in with Google using a dotted Gmail address, e.g. `first.last@gmail.com`. The console denies aliased emails, so the account is stored as `firstlast@gmail.com` while its Google sign-in keeps `first.last@gmail.com`. 2. From another account, open an organization's **Settings → Members** and invite `first.last@gmail.com`.  ### 👍 Expected behavior  The invite goes to the existing account. Gmail ignores dots, so `first.last@gmail.com` and `firstlast@gmail.com` are the same inbox.  ### 👎 Actual Behavior  `POST /v1/teams/:teamId/memberships` returns:  ```json {   "message": "A user with the same email already exists in the current project.",   "code": 409,   "type": "user_email_already_exists" } ```  The invite looks up the exact typed address, finds no account, then matches the Google sign-in that holds the dotted address and rejects the invite. A dotted Gmail address with no matching sign-in fails with `400 user_email_not_canonical` instead, so a dotted Gmail address can't be used to invite anyone to an organization.  The same happens on self-hosted projects that enable the deny-aliased-email policy.  Workaround: invite the dotless address.  Fix: https://github.com/appwrite/appwrite/pull/14172  ### 🎲 Appwrite version  Appwrite Cloud (also self-hosted 2.3.0 with the deny-aliased-email policy on)  ### 💻 Operating system  Something else (not OS-specific)  ### 🧱 Your Environment  Cloud console, org
+- **Issue #15382** (2026-11-09): **🐛 Bug Report: Turning off Public when creating a function from a template still lets anyone execute it**
+  *Symptoms*: ## Summary  When you create a function from a template in the Console, turning off the **Public** switch ("Allow anyone to execute this function (execute role: any)") has no effect. The function is still created with `execute: ['any']`, so anyone who finds its domain can run it.  ## Details  - `apps/console/src/components/pages/projects/$projectId/functions/create/TemplateConfigView.tsx`, around line 300, builds the execute permissions as `isPublic ? ['any'] : template.permissions?.length ? template.permissions : []`. - Every function template in `app/config/templates/function.php` sets `'permissions' => ['any']`, so the "off" branch also resolves to `['any']`. - The manual, repository and URL flows (`ManualCreateView.tsx`, `RepositoryConfigView.tsx` and `DeployFromUrlView.tsx`) send `[]` when the switch is off, so only the template flow is affected. - The code is the same at HEAD and in 2.7.1.  ## Suggested fix  Send exactly what the switch shows: `['any']` when it's on and `[]` when it's off. If a template should start private, set the switch's initial state from the template's permissions instead.  ## Notes  This comes from reading the Console code. I didn't reproduce it in a running Console. It turned up while writing the appwrite.io integrations catalog pages in #15374, which tell readers to change execute access after creating these template functions.  cc @adityaoberai 
 
-- **Issue #13719** (2026-10-29): **packages/lock: negative timeout should wait forever, adapters treat it as no-wait**
-  *Symptoms*: `Utopia\Lock\Lock::acquire()` documents its contract as: 0.0 means do not wait, a negative value means wait forever.  `File::acquire()` returns `$this->tryAcquire()` for every `$timeout <= 0.0`, so a negative timeout is a single non-blocking attempt. Under contention a caller following the documented contract gets an immediate `false`, or a `Contention` exception from `withLock()`, instead of waiting. The Redis `Distributed` adapter and the non-coroutine `Mutex` and `Semaphore` paths have the same shape.  Either the adapters honour negative as unbounded, or the interface doc drops the negative case; pick one and cover it with a unit test on the file lock (contention from a second process or a pre-held handle, negative timeout, assert it blocks until release).  Found by review on #13718 while absorbing the package; left out of that PR because absorption does not change library behaviour. The library now lives at `packages/lock`, so the fix lands here and releases with `bin/monorepo release lock`.
+- **Issue #15372** (2026-11-09): **🐛 Bug Report: Pinecone, LangChain RAG and Replicate function templates ask for variables their code doesn't read**
+  *Symptoms*: ## Summary  Three Console function templates ask for environment variables that the template code doesn't read. Functions created from them fail on every execution until the user adds the expected variable by hand.  ## Details  | Template | `app/config/templates/function.php` asks for | Template code at `1.2.0` requires | | --- | --- | --- | | `sync-with-pinecone` | `PINECONE_INDEX_NAME` | `PINECONE_INDEX_ID` (`throwIfMissing` in `node/sync-with-pinecone/src/main.js`) | | `rag-with-langchain` | `PINECONE_INDEX_NAME` | `PINECONE_INDEX_ID` (`node/rag-with-langchain/src/main.js`) | | `generate-with-replicate` | `REPLICATE_API_KEY` | `REPLICATE_API_TOKEN` (`node/generate-with-replicate/src/main.js`; it's also the Replicate SDK's variable) |  - The Pinecone variable was renamed in the config in 8a4954d4e8 (2025-03-08), but the templates weren't updated. - `generate-with-replicate` is also listed twice in `app/config/templates/function.php`.  ## Suggested fix  Rename the config variables to match the code, or update the templates and bump `providerVersion`. Then drop the duplicate Replicate entry.  ## Notes  This turned up while adding function templates to the appwrite.io integrations catalog. The Pinecone, LangChain and Replicate pages are held back until this is fixed.  cc @adityaoberai 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1926,206 +1926,137 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0bcd059e` (2026-11-06)
-**Commit Message**: Merge pull request #15361 from appwrite/fix-console-pro-usage-curtain
+### Incident Patch 1: `7944683b` (2026-11-07)
+**Commit Message**: fix(storage): keep the key configuration hint in encryption errors
 
-fix(console): stop locking paid projects over included usage
+A missing or rotated _APP_OPENSSL_KEY_V* raised a StorageException, which the HTTP error handler turns into a bare 500. Raise GENERAL_SERVER_ERROR with the configuration hint, as main does.
 
-**File**: `apps/console/src/lib/billing/billing-limits.ts` (modified, +19/-0)
+**File**: `src/Appwrite/Storage/Encryption.php` (modified, +10/-6)
 ```diff
-@@ -98,6 +98,25 @@ export function isProjectLockedByPlanUsage(
-   )
- }
+@@ -3,6 +3,7 @@
+ namespace Appwrite\Storage;
  
-+/**
-+ * True when a project's own `billingLimits` lock it. Cloud writes these for
-+ * plans that meter usage per project (Pro, Scale), where overage is billed and
-+ * only bandwidth suspends the API. Free plans lock through the organization's
-+ * `billingLimits`, checked with {@link isProjectLockedByPlanUsage}.
-+ */
-+export function isProjectLockedByProjectUsage(
-+  resource:
-+    | {
-+        billingLimits?: BillingLimitsMap | null
-+      }
-+    | null
-+    | undefined,
-+): boolean {
-+  return getReachedPlanUsageLimitKeys(resource?.billingLimits).includes(
-+    'bandwidth',
-+  )
-+}
+ use Appwrite\Auth\EncryptionKey;
++use Appwrite\Extend\Exception;
+ use Appwrite\OpenSSL\OpenSSL;
+ use Utopia\Compression\Compression;
+ use Utopia\Database\Document;
+@@ -31,7 +32,7 @@ public static function create(): array
+     {
+         $master = EncryptionKey::current();
+         if ($master === '') {
+-            throw new StorageException('Encryption key is not configured. Please configure _APP_OPENSSL_KEY_V' . EncryptionKey::version() . ' in .env file.');
++            throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Encryption key is not configured. Please configure _APP_OPENSSL_KEY_V' . EncryptionKey::version() . ' in .env file.');
+         }
+ 
+         return [
+@@ -47,11 +48,14 @@ public static function cipher(array $envelope): Cipher
+     {
+         $wrapped = \base64_decode($envelope['key'], true);
+         $master = EncryptionKey::get($envelope['version']);
+-        if ($wrapped === false || $master === '') {
+-            throw new StorageException('Unable to unwrap the file key with _APP_OPENSSL_KEY_V' . $envelope['version']);
++        if ($wrapped !== false && $master !== '') {
++            try {
++                return Cipher::unwrap($wrapped, $master);
++            } catch (StorageException) {
++            }
+         }
+ 
+-        return Cipher::unwrap($wrapped, $master);
++        throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Unable to unwrap the file key. Please check _APP_OPENSSL_KEY_V' . $envelope['version'] . ' in .env file.');
+     }
+ 
+     /**
+@@ -84,7 +88,7 @@ public function decrypt(string $data): string
+         );
+ 
+         if ($decrypted === false) {
+-            throw new StorageException('Failed to decrypt file ' . $this->file->getId());
++            throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Failed to decrypt file ' . $this->file->getId());
+         }
+ 
+         return $decrypted;
+@@ -110,7 +114,7 @@ public function copy(Device $from, Device $to, string $target, string $contentTy
+ 
+     private function open(): Cipher
+     {
+-        return self::cipher($this->file->getAttribute('metadata', [])['encryption'] ?? throw new StorageException('File ' . $this->file->getId() . ' has no key'));
++        return self::cipher($this->file->getAttribute('metadata', [])['encryption'] ?? throw new Exception(Exception::GENERAL_SERVER_ERROR, 'File ' . $this->file->getId() . ' has no encryption key'));
+     }
+ 
+     private function path(): string
+```
+
+---
+
+### Incident Patch 2: `1f62f76e` (2026-11-07)
+**Commit Message**: fix(storage): fail the antivirus scan when the decrypted copy is incomplete
+
+A failed or short write of the temporary plaintext would have been scanned as an empty or truncated file and reported clean. It now fails the scan, which removes the upload as any other failed scan does.
+
+**File**: `src/Appwrite/Platform/Modules/Storage/Http/Buckets/Files/Create.php` (modified, +10/-5)
+```diff
+@@ -456,16 +456,21 @@ public function action(
+ 
+                     // ClamAV reads a path, so an encrypted file is scanned from a decrypted temporary copy.
+                     $temporary = $cipher === null ? null : \tempnam(\sys_get_temp_dir(), 'scan');
+-                    if ($temporary !== null) {
+-                        \file_put_contents($temporary, $cipher->decrypt((string) $deviceForFiles->read($path), 0, true));
+-                    }
+ 
+                     try {
+-                        $scan = $antivirus->scanInStream($temporary ?? $path);
++                        // A missing or short copy would scan clean, so it fails the scan instead.
++                        if ($cipher !== null) {
++                            $plaintext = $cipher->decrypt((string) $deviceForFiles->read($path), 0, true);
++                            if (!\is_string($temporary) || \file_put_contents($temporary, $plaintext) !== \strlen($plaintext)) {
++                                throw new \RuntimeException('Unable to write the decrypted copy for scanning');
++                            }
++                        }
 +
- /**
-  * English recovery sentence after "reached its plan limit for {resource}".
-  */
-```
-
-**File**: `apps/console/src/lib/react-query/hooks/organizations.ts` (modified, +1/-0)
-```diff
-@@ -105,6 +105,7 @@ export function isBudgetLimitReached(
- export {
-   isPlanUsageLimitReached,
-   isProjectLockedByPlanUsage,
-+  isProjectLockedByProjectUsage,
- } from '@/lib/billing/billing-limits'
- 
- /**
-```
-
-**File**: `apps/console/src/routes/_public/projects.$projectId.tsx` (modified, +15/-10)
-```diff
-@@ -38,6 +38,7 @@ import {
-   isBudgetLimitReached,
-   isPlanUsageLimitReached,
-   isProjectLockedByPlanUsage,
-+  isProjectLockedByProjectUsage,
-   resolveProjectTeamIdFromConsole,
-   useOrganizationById,
- } from '@/lib/react-query/hooks'
-@@ -356,7 +357,7 @@ export const Route = createFileRoute('/_public/projects/$projectId')({
-       // leave the project open so customers can delete resources.
-       const planUsageLimitReached =
-         !budgetLimitReached &&
--        (isProjectLockedByPlanUsage(projectData) ||
-+        (isProjectLockedByProjectUsage(projectData) ||
-           isProjectLockedByPlanUsage(organization))
- 
-       if (budgetLimitReached || planUsageLimitReached) {
-@@ -638,7 +639,7 @@ function ProjectLayout() {
-       (routeContext.planUsageLimitReached === true ||
-         loaderData?.planUsageLimitReached === true ||
-         isProjectLockedByPlanUsage(billingOrganization) ||
--        isProjectLockedByPlanUsage(project)),
-+        isProjectLockedByProjectUsage(project)),
-   )
- 
-   const projectBlocked = Boolean(
-@@ -648,17 +649,21 @@ function ProjectLayout() {
-         loaderData?.projectBlocked === true ||
-         hasActiveProjectBlock(projectData, projectId)),
-   )
--  const planUsageBillingLimits =
--    billingOrganization?.billingLimits &&
--    isPlanUsageLimitReached(billingOrganization)
--      ? billingOrganization.billingLimits
--      : project?.billingLimits
-+  // The curtain names whichever limit locked the project: the organization's,
-+  // or the project's own bandwidth on plans that bill other overage.
-+  const planUsageCurtainLimits = isProjectLockedByPlanUsage(
-+    billingOrganization,
-+  )
-+    ? billingOrganization?.billingLimits
-+    : project?.billingLimits
-+  // A project's own limits come from plans that bill overage, so only the
-+  // organization's limits mean API access is suspended.
-+  const planUsageBillingLimits = billingOrganization?.billingLimits
-   const showPlanUsageLimitBanner =
-     !budgetLimitReached &&
-     !planUsageLimitReached &&
-     features.billing &&
--    (isPlanUsageLimitReached(billingOrganization) ||
--      isPlanUsageLimitReached(project))
-+    isPlanUsageLimitReached(billingOrganization)
- 
-   const skipInvoiceBanners =
-     budgetLimitReached || planUsageLimitReached || projectBlocked
-@@ -883,7 +888,7 @@ function ProjectLayout() {
-       ) : planUsageLimitReached ? (
-         <PlanUsageLimitProjectCurtain
-           teamId={budgetCurtainTeamId}
--          billingLimits={planUsageBillingLimits}
-+          billingLimits={planUsageCurtainLimits}
-         />
-       ) : projectBlocked && projectForPaused?.teamId ? (
-         <BlockedProjectCurtain teamId={projectForPaused.teamId} />
++                        $scan = $antivirus->scanInStream(\is_string($temporary) ? $temporary : $path);
+                     } catch (\RuntimeException $e) {
+                         $scan = ScanResult::failed($e->getMessage());
+                     } finally {
+-                        if ($temporary !== null) {
++                        if (\is_string($temporary)) {
+                             \unlink($temporary);
+                         }
+                     }
 ```
 
 ---
 
-### Incident Patch 2: `c28fbef5` (2026-11-06)
-**Commit Message**: fix(console): keep the project's limits for the plan limit curtain
+### Incident Patch 3: `f651d47d` (2026-11-09)
+**Commit Message**: Merge pull request #15413 from appwrite/fix-template-public-switch
 
-The curtain names the limit that locked the project, which on paid plans
-is the project's own bandwidth, while the banner keeps the organization's.
+fix(console): respect the Public switch when creating a function from a template
 
-**File**: `apps/console/src/routes/_public/projects.$projectId.tsx` (modified, +10/-3)
+**File**: `apps/console/src/components/pages/projects/$projectId/functions/create/TemplateConfigView.tsx` (modified, +1/-5)
 ```diff
-@@ -649,8 +649,15 @@ function ProjectLayout() {
-         loaderData?.projectBlocked === true ||
-         hasActiveProjectBlock(projectData, projectId)),
-   )
--  // Only the organization's limits suspend anything: a project's own limits
--  // come from plans that bill overage (see isProjectLockedByProjectUsage).
-+  // The curtain names whichever limit locked the project: the organization's,
-+  // or the project's own bandwidth on plans that bill other overage.
-+  const planUsageCurtainLimits = isProjectLockedByPlanUsage(
-+    billingOrganization,
-+  )
-+    ? billingOrganization?.billingLimits
-+    : project?.billingLimits
-+  // A project's own limits come from plans that bill overage, so only the
-+  // organization's limits mean API access is suspended.
-   const planUsageBillingLimits = billingOrganization?.billingLimits
-   const showPlanUsageLimitBanner =
-     !budgetLimitReached &&
-@@ -881,7 +888,7 @@ function ProjectLayout() {
-       ) : planUsageLimitReached ? (
-         <PlanUsageLimitProjectCurtain
-           teamId={budgetCurtainTeamId}
--          billingLimits={planUsageBillingLimits}
-+          billingLimits={planUsageCurtainLimits}
-         />
-       ) : projectBlocked && projectForPaused?.teamId ? (
-         <BlockedProjectCurtain teamId={projectForPaused.teamId} />
-```
-
----
-
-### Incident Patch 3: `50d81db9` (2026-11-06)
-**Commit Message**: fix(console): stop locking paid projects over included usage
-
-A Pro project over its included database reads showed the plan limit
-curtain while its API kept working. Lock on the project's own limits
-only for bandwidth; free plans still lock through the organization.
-
-**File**: `apps/console/src/routes/_public/projects.$projectId.tsx` (modified, +3/-2)
-```diff
-@@ -38,6 +38,7 @@ import {
-   isBudgetLimitReached,
-   isPlanUsageLimitReached,
-   isProjectLockedByPlanUsage,
-+  isProjectLockedByProjectUsage,
-   resolveProjectTeamIdFromConsole,
-   useOrganizationById,
- } from '@/lib/react-query/hooks'
-@@ -356,7 +357,7 @@ export const Route = createFileRoute('/_public/projects/$projectId')({
-       // leave the project open so customers can delete resources.
-       const planUsageLimitReached =
-         !budgetLimitReached &&
--        (isProjectLockedByPlanUsage(projectData) ||
-+        (isProjectLockedByProjectUsage(projectData) ||
-           isProjectLockedByPlanUsage(organization))
- 
-       if (budgetLimitReached || planUsageLimitReached) {
-@@ -638,7 +639,7 @@ function ProjectLayout() {
-       (routeContext.planUsageLimitReached === true ||
-         loaderData?.planUsageLimitReached === true ||
-         isProjectLockedByPlanUsage(billingOrganization) ||
--        isProjectLockedByPlanUsage(project)),
-+        isProjectLockedByProjectUsage(project)),
-   )
- 
-   const projectBlocked = Boolean(
+@@ -297,11 +297,7 @@ export function TemplateConfigView({
+         functionId: finalFunctionId,
+         name: functionName.trim(),
+         runtime: runtime as Runtime,
+-        execute: isPublic
+-          ? ['any']
+-          : template.permissions?.length
+-            ? template.permissions
+-            : [],
++        execute: isPublic ? ['any'] : [],
+         events: template.events?.length ? template.events : undefined,
+         schedule: template.cron || undefined,
+         timeout: template.timeout ?? undefined,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15365** (2026-11-06): Fix adding an appwrite.network subdomain to a site (@HarshMN2345)
-- **PR #15364** (2026-11-06): test(proxy): reach robots and humans with a real Host header (@ChiragAgg5k)
-- **PR #15362** (2026-11-06): fix(router): return 404 for robots and humans on API domains (@ChiragAgg5k)
-- **PR #15361** (2026-11-06): fix(console): stop locking paid projects over included usage (@HarshMN2345)
-- **PR #15360** (2026-11-06): feat(console): add a JSON changelog feed (@ChiragAgg5k)
-- **PR #15359** (2026-11-06): feat(console): page, search and toggle review repositories in place (@TorstenDittmann)
+- **PR #15415** (2026-11-09): fix(oauth): use Etsy's v3 authorize URL (@HarshMN2345)
+- **PR #15414** (2026-11-09): fix(templates): match function template variables to their code (@HarshMN2345)
+- **PR #15413** (2026-11-09): fix(console): respect the Public switch when creating a function from a template (@HarshMN2345)
+- **PR #15410** (2026-11-09): fix(console): keep full-screen curtains clickable over an open dialog (@HarshMN2345)
+- **PR #15408** (2026-11-08): fix(deletes): delete a deployment's own runtime instead of looking it up as a function (@ChiragAgg5k)
+- **PR #15400** (2026-11-07): refactor(storage): drop the segmented encryption rollout flag (@ChiragAgg5k)
 
 ---
 
@@ -2145,46 +2076,42 @@ only for bandwidth; free plans still lock through the organization.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #15361 from appwrite/fix-console-pro-usage-curtain
+## X. storage): keep the key configuration hint in encryption errors
 
 **RULE**:
-When implementing operations in `apps/console/src/lib/billing/billing-limits.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Appwrite/Storage/Encryption.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0bcd059e`: Merge pull request #15361 from appwrite/fix-console-pro-usage-curtain. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7944683b`: storage): keep the key configuration hint in encryption errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/lib/billing/billing-limits.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Appwrite/Storage/Encryption.php`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-/**
- * True when a project's own `billingLimits` lock it. Cloud writes these for
- * plans that meter usage per project (Pro, Scale), where overage is billed and
- * only bandwidth suspends the API. Free plans lock through the organization's
- * `billingLimits`, checked with {@link isProjectLockedByPlanUsage}.
- */
-export function isProjectLockedByProjectUsage(
-  resource:
-    | {
-        billingLimits?: BillingLimitsMap | null
-      }
-    | null
-    | undefined,
-): boolean {
-  return getReachedPlanUsageLimitKeys(resource?.billingLimits).includes(
-    'bandwidth',
-  )
-}
-
+use Appwrite\Extend\Exception;
+            throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Encryption key is not configured. Please configure _APP_OPENSSL_KEY_V' . EncryptionKey::version() . ' in .env file.');
+        if ($wrapped !== false && $master !== '') {
+            try {
+                return Cipher::unwrap($wrapped, $master);
+            } catch (StorageException) {
+            }
+        throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Unable to unwrap the file key. Please check _APP_OPENSSL_KEY_V' . $envelope['version'] . ' in .env file.');
+            throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Failed to decrypt file ' . $this->file->getId());
+        return self::cipher($this->file->getAttribute('metadata', [])['encryption'] ?? throw new Exception(Exception::GENERAL_SERVER_ERROR, 'File ' . $this->file->getId() . ' has no encryption key'));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            throw new StorageException('Encryption key is not configured. Please configure _APP_OPENSSL_KEY_V' . EncryptionKey::version() . ' in .env file.');
+        if ($wrapped === false || $master === '') {
+            throw new StorageException('Unable to unwrap the file key with _APP_OPENSSL_KEY_V' . $envelope['version']);
+        return Cipher::unwrap($wrapped, $master);
+            throw new StorageException('Failed to decrypt file ' . $this->file->getId());
+        return self::cipher($this->file->getAttribute('metadata', [])['encryption'] ?? throw new StorageException('File ' . $this->file->getId() . ' has no key'));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0bcd059e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7944683b` are properly handled with clean fallback behavior.

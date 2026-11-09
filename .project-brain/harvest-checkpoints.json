@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T07:32:08.491Z",
+  "last_updated": "2026-11-09T07:43:52.232Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -275,14 +275,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "37b0b0024128bcabf15cc004354b16b26ab41bdaac4b120adf51d86066ed7a03",
-      "verified_at": "2026-11-05T12:36:28.955Z",
+      "content_hash": "2f4fe74f933fffd70c3c29df4f55847ec88dbf8249e004f62bf0201b817b98ae",
+      "verified_at": "2026-11-09T07:43:35.277Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:36:28.955Z"
+      "last_updated": "2026-11-09T07:43:35.277Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "4f2667fa5bc898086fc07bf80f793fea94da30d6ac402a4ab8e72d671e5476fa",
-      "verified_at": "2026-11-09T03:21:49.877Z",
+      "content_hash": "cb47d6acb752d44ad0cfbd2847585c6466485b420010eda78b73dc4f83cef338",
+      "verified_at": "2026-11-09T07:43:52.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T03:21:49.877Z"
+      "last_updated": "2026-11-09T07:43:52.231Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -15501,14 +15501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-appwrite-appwrite",
-      "content_hash": "fb041a3bcc072b984d3cc27b95cb48530925171d1c8ad69dfa1f0bcf0878ba47",
-      "verified_at": "2026-11-06T13:20:22.105Z",
+      "content_hash": "c675403625cae250e705d372cd1b2d168adbbfdab567cf385d7d000fd64653f7",
+      "verified_at": "2026-11-09T07:43:42.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:20:22.105Z"
+      "last_updated": "2026-11-09T07:43:42.855Z"
     },
     "expo/expo": {
       "repository": "expo/expo",

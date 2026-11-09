@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T07:32:08.370Z",
+  "last_updated": "2026-11-09T07:43:52.102Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3023,14 +3023,19 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "bfbdbbf1",
-      "content_hash": "fb041a3bcc072b984d3cc27b95cb48530925171d1c8ad69dfa1f0bcf0878ba47",
+      "source_version": "f651d47d",
+      "content_hash": "c675403625cae250e705d372cd1b2d168adbbfdab567cf385d7d000fd64653f7",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #15361 from appwrite/fix-console-pro-usage-curtain",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "storage): keep the key configuration hint in encryption errors",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3069,7 +3074,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:20:21.973Z",
+      "verified_at": "2026-11-09T07:43:42.740Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31757,7 +31762,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "37b0b0024128bcabf15cc004354b16b26ab41bdaac4b120adf51d86066ed7a03",
+      "content_hash": "2f4fe74f933fffd70c3c29df4f55847ec88dbf8249e004f62bf0201b817b98ae",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -31827,7 +31832,7 @@
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur"
       ],
-      "verified_at": "2026-11-05T12:36:28.829Z",
+      "verified_at": "2026-11-09T07:43:35.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47485,8 +47490,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "4b105861",
-      "content_hash": "4f2667fa5bc898086fc07bf80f793fea94da30d6ac402a4ab8e72d671e5476fa",
+      "source_version": "67fc69df",
+      "content_hash": "cb47d6acb752d44ad0cfbd2847585c6466485b420010eda78b73dc4f83cef338",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47598,6 +47603,11 @@
         {
           "number": null,
           "title": "Add EBNF for ARC dataset syntax",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "NUC 95 Item Words",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47891,7 +47901,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T03:21:49.712Z",
+      "verified_at": "2026-11-09T07:43:52.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

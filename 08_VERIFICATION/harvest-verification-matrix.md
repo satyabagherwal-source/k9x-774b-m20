@@ -8542,3 +8542,6 @@
 | `CYCLE-20261109-MRLD` | `2026-11-09T07:21:03.793Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c703dddf...`) |
 | `CYCLE-20261109-RTOV` | `2026-11-09T07:24:59.791Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`1bf5d705...`) |
 | `CYCLE-20261109-10GL` | `2026-11-09T07:32:08.469Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`b8add8ab...`) |
+| `CYCLE-20261109-FQE9` | `2026-11-09T07:43:35.265Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`2f4fe74f...`) |
+| `CYCLE-20261109-FW8I` | `2026-11-09T07:43:42.834Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c6754036...`) |
+| `CYCLE-20261109-G3GW` | `2026-11-09T07:43:52.208Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cb47d6ac...`) |

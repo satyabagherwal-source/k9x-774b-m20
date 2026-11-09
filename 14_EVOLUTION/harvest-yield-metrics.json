@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T07:32:08.487Z",
-  "total_cycles_completed": 8507,
-  "total_learnings_persisted": 8507,
-  "total_rules_promoted": 8309,
+  "last_updated": "2026-11-09T07:43:52.228Z",
+  "total_cycles_completed": 8510,
+  "total_learnings_persisted": 8510,
+  "total_rules_promoted": 8311,
   "history": [
-    {
-      "timestamp": "2026-11-08T17:35:46.512Z",
-      "repository": "prithivMLmods/Gender-Classifier-Mini",
-      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T17:42:43.944Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T17:42:50.429Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T17:49:24.847Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -1403,6 +1382,27 @@
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T07:43:35.274Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T07:43:42.852Z",
+      "repository": "appwrite/appwrite",
+      "learningId": "learn-github-appwrite-appwrite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T07:43:52.228Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

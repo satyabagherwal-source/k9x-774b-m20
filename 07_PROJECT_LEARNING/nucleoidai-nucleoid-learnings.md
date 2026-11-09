@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `4b105861`  
+> **Source Version**: `67fc69df`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T03:21:49.532Z  
+> **Timestamp**: 2026-11-09T07:43:50.642Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T03:21:49.202Z  
+> **Harvest Timestamp**: 2026-11-09T07:43:50.636Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -251,6 +251,7 @@ fn source(statement: &Stmt) -> String {
 
 ### Core Architecture Module: `src/lang/ast/parser/statement.rs`
 ```
+use super::is_assignment::Items;
 use super::{ArgumentContext, MAX_NESTING, Parser, Program, SupposePremise};
 use crate::error::Result;
 use crate::lang::ast::lexer::{Keyword, Token};
@@ -367,6 +368,7 @@ impl Parser {
     }
 
     pub(super) fn statement(&mut self, statements: &mut Vec<Stmt>) -> Result<()> {
+        debug_assert_eq!(self.items, Items::Plain);
         self.depth += 1;
 
         if self.depth > MAX_NESTING {
@@ -563,12 +565,7 @@ impl Parser {
             in_class: self.in_class,
             ..Parser::new(std::mem::take(&mut self.tokens))
         };
-        let parsed = parse(&mut probe);
-        self.tokens = probe.tokens;
-        parsed
-    }
-
-    pub(super)
+        let parsed = parse(
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1631,593 +1628,577 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4b105861` (2026-11-09)
-**Commit Message**: Write ARC dataset colors as numbers again
+### Incident Patch 1: `67fc69df` (2026-11-09)
+**Commit Message**: NUC 95 Item Words
 
-Revert the frequency-ranked letter colors of 7e36c025. Every instruction
-dataset in arc/src/dataset writes each color as its original number again
-in its grids, instance masks, world-model code and snapshots, and color
-parameters are int again. Later changes stay: the is assignments, bare
-words, the 74dd1130 mirror axis, and the 6fa7a44f and dae9d2b5 datasets.
+Accepted under the user-requested basis of the automatic acceptance rule.
+Inside an `is` value, some items that are exactly one identifier are now
+words: list items, dictionary values, and the name=value arguments of
+bare-name calls, `new Name(...)` and `super(...)`. They are always on, as
+`is` assignments and conditional words have been since d9452132 and
+f463d94f.
 
-The letter rule leaves the ARC instructions, the arc-dataset profile and
-skill, which match their pre-letter text again, and the arc-purposal agent
-and skill, whose quote-free examples now use a direction word. The README
-drops its letter sections, Matrix.silhouette again accepts only colors 0
-to 9, and arc/nucleoid.ebnf drops STRING from primary, which no dataset
-expression uses any more. Each progress record gains a Number colors entry.
+The user accepted the compatibility break of always-on item words:
+- (a) An undefined bare item reads as its text where it raised
+  ReferenceError.
+- (b) A defined item word keeps its result, but its rendering, block keys,
+  `why` and `affects` take the word form.
+- (c, d) An undefined item reads as its text where it gave undefined:
+  after a deletion, or on a later read of a name the same statement already
+  read as a word.
 
-Offline checks: every letter maps one to one onto the source grids; all
-449 programs replay and reproduce all 564 snapshots on the runtime at
-1a41ca7; grids, masks and snapshots equal the pre-letter versions except
-for 74dd1130's later mirror axis; all 564 orientation crops give the same
-silhouette; all 376 programs derive from the grammar and eac
+Hard criteria:
+- No compile errors: cargo build --all-targets, cargo clippy --all-targets
+  -- -D warnings and cargo fmt --check pass in the independent evaluation
+  and on the integrated tree.
+- Every test passes: cargo test --no-fail-fast gives 2,839 passed, 0
+  failed, 25 ignored. All 2,838 accepted test identities are present. The
+  only edits to existing tests are the 7 lis
 
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +14/-52)
+**File**: `README.md` (modified, +24/-0)
 ```diff
-@@ -55,57 +55,24 @@ rules, as additional dataset entries:
+@@ -135,6 +135,30 @@ operands are not words, so `a is (A if c else B)` needs `A` and `B` to be
+ defined. It no longer needs the removed `--conditional-words` flag; see
+ [NUC 94](docs/nuc-0094.md).
  
-     node -e "console.log(JSON.stringify(require('.\\arc\\data\\training\\<id>.json').test))"
- 
--Use both as the dataset grids, with their colors written as letters under
--[Write colors as letters](#write-colors-as-letters). A test pair never changes
--the inferred rules. Do not inspect other training or evaluation puzzles for
--collision checks.
-+Use both as the exact dataset grids. A test pair never changes the inferred
-+rules. Do not inspect other training or evaluation puzzles for collision checks.
- 
- ## Preserve the original examples
- 
- Include every `train` pair exactly once and in its original order, then every
- `test` pair exactly once and in its original order. Test pairs sit at the same
- level as the training pairs: entries of the same `dataset` array, with the
- same keys and annotation and no separate section, flag, or marker.
--`input_matrix` and `output_matrix` must follow that pair's input and output
--exactly, cell for cell and shape for shape, including all zero borders, with
--each color written as its letter. Never resample canvases, shapes, object
--counts, positions, or orientations, never change a color except into its
--letter, and do not add synthetic varieties or numbered variants.
-+`input_matrix` and `output_matrix` must equal that pair's input and output,
-+cell for cell and shape for shape, including all zero borders. Never resample
-+canvases, shapes, colors, object counts, positions, or orientations; do not add
-+synthetic varieties or numbered variants.
- 
- Write any annotation or manual verification helper outside the repository.
- It may segment objects and derive their masks and properties, but it must not
--replace or modify the original pair grids beyond writing their colors as
--letters. Use one rule set and one output-canvas mode for the whole dataset,
--inferred only from the training pairs.
--
--## Write colors as letters
--
--Follow the exact pattern of each pair in `arc/data/training/<id>.json`, but
--write no color as its number. `0` stays `0`. Every other color becomes a
--letter of `ABCDEFGHI`, ranked by how often it occurs across every
--`input_matrix` and `output_matrix` of the dataset, training and test pairs
--together: the most used color is `A`, the next `B`, and so on. A tie goes to
--the color read first, reading the pairs in dataset order, each input before
--its output, and each matrix row by row. This is how `Matrix.silhouette` in
--`arc/src/lib/Matrix.ts` ranks one matrix, applied to the whole dataset at once
--so that a color keeps one letter in every pair. The letters are no fixed map
--from numbers: color 1 is not always `A`, because each dataset ranks its own
--colors. Count only the pair grids, not the instance masks.
--
--Use the same letters everywhere the dataset holds a color:
--
--- Both instance masks, which keep `0` outside the object.
--- The world model: a color property is a string, such as `color: str`; an
--  implementation passes letters, such as `color='B'` or `parts=['A', 'C']`;
--  and a rule names colors by letter, such as `if $Obj.color@first is 'C':` or
--  `$Obj.fill_color = 'D'`.
--- The snapshots, which the runtime writes with the same letters, such as
--  `"color":"B"`.
--
--Coordinates, sizes, orientations, counts, and tags stay numbers. Infer the
--rules from the training pairs as usual: the letters rename the colors without
--changing which cells share one, so the rules are the ones the original colors
--show.
-+replace or modify the original pair grids. Use one rule set and one
-+output-canvas mode for the whole dataset, inferred only from the training pairs.
- 
- ## Follow the existing datasets
- 
-@@ -153,7 +120,7 @@ formatting exactly:
-   `this.tag = 'lNNNN'`, or a `tag: str` parameter, `this.tag = tag`, whose
-   value each implementation passes, as in `dataset.27a28665.json`. Add only
-   the descriptive properties the transformation needs, such as categorical
--  colors, which hold letters.
-+  colors.
- - `width` and `height` are the column and row counts of the object's own
-   shape, the nonzero bounding box of its input mask. They do not change when
-   only the orientation changes: a turn or mirror is the orientation's job.
-@@ -286,13 +253,9 @@ Verify with a throwaway script outside the repository; do not add tests:
-   filename order. When using external staging, verify the
-   staged document and leave the canonical loader check to the caller after
-   integration.
--- Pair count and order match `train` followed by `test`; mapping the letters
--  back to their colors makes every `input_matrix` and `output_matrix` equal
--  its original grid, including dimensions, colors, positions, and zero
--  padding. There are no synthesized examples.
--- Ranking the dataset's letters again by their counts gives `A`, `B`, `C`, and
--  so on in order, and no color is written as its number in the grids, masks,
--  declarations, implementations, or snapshots.
-+- Pair count and order match `train` followed by `test`; every `input_ma
-```
-
-**File**: `.claude/agents/arc-purposal.agent.md` (modified, +0/-6)
-```diff
-@@ -52,12 +52,6 @@ Follow `.claude/CLAUDE.md`, the
-   the declarative statements at that level. Never start from pixels; go down
-   to pixel-level objects only when the big picture cannot express what the
-   training pairs show, and never steer a worker finer than that.
--- Have every dataset write its colors as letters, under the same step, and
--  pass that requirement to every `arc-dataset` run: the grids follow the
--  puzzle's pairs in `arc/data/training/` exactly, but `0` stays `0` and every
--  other color is a letter of `ABCDEFGHI` ranked by how often it occurs across
--  the dataset's input and output matrices, `A` for the most used, never its
--  number. The masks and the world model use the same letters.
- - Whenever a quote is used in `arc/src/dataset/`, trigger `/nuc-proposal` to
-   propose a version without it, under the skill's
-   [quote step](../skills/arc-purposal/SKILL.md#propose-quote-free-spellings).
-```
-
-**File**: `.claude/rules/arc.instructions.md` (modified, +1/-6)
-```diff
-@@ -100,12 +100,7 @@ carries through `/nuc-proposal`, rather than settling for an imperative or
- special-cased workaround.
- 
- Infer segmentation, background, object roles, and transformations from training
--pairs. Treat colors `0` through `9` as categorical values. Instruction datasets
--write them as letters: `0` stays `0`, and every other color is a letter of
--`ABCDEFGHI` ranked by its count across the dataset's input and output matrices,
--`A` for the most used, under the
--[arc-dataset profile](../agents/arc-dataset.agent.md#write-colors-as-letters).
--Preserve positions
-+pairs. Treat colors `0` through `9` as categorical values. Preserve positions
- and the current full-size, zero-padded instance matrices at existing boundaries.
- If a representation changes, supply explicit conversion and verify it through
- manual/offline checks instead of silently switching to cropped objects. Define
-```
-
-**File**: `.claude/skills/arc-dataset/SKILL.md` (modified, +3/-8)
-```diff
-@@ -21,14 +21,9 @@ Annotate every original `train` pair from
- original `test` pair from the same file, in its original order. Test pairs are
- additional entries at the same level as the training pairs: the same `dataset`
- array and entry structure, with no separate section or marker. Copy the input
--and output grids' exact pattern, positions, zero padding, and canvas
--dimensions, but write each color as a letter: `0` stays `0`, and the other
--colors take the letters `ABCDEFGHI` by how often they occur across all of the
--dataset's input and output matrices, `A` for the most used, never as their
--numbers. The masks and the world model use the same letters, as the profile's
--[letter rule](../../agents/arc-dataset.agent.md#write-colors-as-letters)
--defines. Do not synthesize, resample, recolor beyond those letters, or
--duplicate examples into numbered variants.
-+and output grids exactly, including their colors, positions, zero padding, and
-+canvas dimensions. Do not synthesize, resample, recolor, or duplicate examples
-+into numbered variants.
- 
- Infer one transformation, Nucleoid declaration set, and output-canvas mode
- from the training pairs, then apply them unchanged to every pair, train and
-```
-
-**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +5/-22)
-```diff
-@@ -139,34 +139,17 @@ handoff, send back one that starts from pixels without showing why the big
- picture falls short, and never steer a worker toward a finer model than the
- training pairs need.
- 
--Write every color as a letter, and pass this requirement to every
--`/arc-dataset` run too. The dataset follows the exact pattern of the puzzle's
--pairs in `arc/data/training/`, cell for cell and shape for shape, but never
--writes a color as its number. `0` stays `0`, and every other color becomes a
--letter of `ABCDEFGHI`, ranked by how often it occurs across all of the
--dataset's input and output matrices, training and test pairs together: the
--most used color is `A`, the next `B`, and so on, as `Matrix.silhouette` in
--`arc/src/lib/Matrix.ts` ranks a matrix, with a tie going to the color read
--first. The letters are the dataset's own ranking, not a fixed map from
--numbers to letters, so a color keeps one letter in every pair of its dataset.
--The same letters replace the colors in the instance masks and the world model:
--color properties hold letters, such as `color='B'`, and rules name colors by
--letter, such as `if $Obj.color is C:`. The arc-dataset profile's
--[letter rule](../../agents/arc-dataset.agent.md#write-colors-as-letters)
--defines the ranking in full. Check a `written` handoff against it before the
--run, and send back one that writes a color as its number or ranks its letters
--another way.
--
- Write no quote that accepted Nucleoid can do without, and pass this
- requirement to every `/arc-dataset` run too. A quote is a single- or
- double-quoted string literal that the runtime lexer reads in a code field,
- `declarations` or an instance's `implementation`; the JSON file's own quotes
- and `#` comments are not quotes. The dataset writes a literal as a bare word
- wherever the run's runtime, run as `arc/src/lib/nucleoid.ts` runs it, reads
--that word as the same value, as NUC 86, NUC 93 and NUC 94 read `C` in
--`if $Obj.color is C:`, `$Obj.fill_color is C` and
--`$Obj.fill_color is C if $Obj.symmetric else 0`. The arc-dataset profile's
--older examples that quote such letters do not override this. Have the
-+that word as the same value, as NUC 86, NUC 93 and NUC 94 read `right` in
-+`if $Obj.repeat_direction is right:`, `$Obj.repeat_direction is right` and
-+`$Obj.repeat_direction is right if $Obj.wide else down`. The arc-dataset
-+profile's older examples that quote such words, such as
-+`this.tag = 'lNNNN'`, do not override this. Have the
- handoff list every quote it keeps, with the actual result of its bare
- spelling. Check that list before the run, and send back a handoff that keeps
- a quote a bare word would replace. The quotes that remain go to the
-```
-
-**File**: `arc/README.md` (modified, +48/-134)
-```diff
-@@ -291,10 +291,7 @@ also crop their examples' instance matrices to the nonzero bounding box with
- `Matrix.crop`, or to an empty list for an all-zero mask. The orientation calls
- of `analyzer.value` and `visualizer.value` then write each nonzero color of
- those crops as a letter by its count, `A` for the most frequent, through
--`Matrix.silhouette`, in their examples and their own prompts alike. An
--example's crop already holds its dataset's letters, which `Matrix.silhouette`
--ranks again by their counts in the crop, so each example reads as the crop of
--its source colors would. None of
-+`Matrix.silhouette`, in their examples and their own prompts alike. None of
- these calls receives `input_x`, `output_x`, `input_y`, `output_y`,
- `input_orientation`, or `output_orientation`. The dataset files keep every
- property and their full-canvas matrices.
-@@ -304,34 +301,13 @@ all its original `train` pairs from `data\training\<puzzle_id>.json` in source
- order, followed by all its original `test` pairs in source order. Test pairs
- are additional entries at the same level as the training pairs, in the same
- `dataset` array with the same structure and no marker. Input and output grids
--preserve every original cell, position, zero border, and canvas dimension,
--with each color written as its letter, as described below. `/arc-dataset`
--infers one rule set from the training pairs and annotates every pair with it,
--rather than synthesizing varieties or creating numbered copies. `document()`
--includes a puzzle's own dataset in that puzzle's runs, so a run of a puzzle
--that has a dataset receives its expected test output in the few-shot context.
--That is intended: the datasets are being prepared as few-shot examples, and
--these runs are not yet held-out tests.
--
--Every dataset writes its colors as letters rather than numbers. `0` stays `0`,
--and every other color becomes a letter of `ABCDEFGHI`, ranked by how often it
--occurs across all of the dataset's `input_matrix` and `output_matrix` grids,
--training and test pairs together: the most frequent color is `A`, the next
--`B`, and so on, with a tie going to the color read first, pair by pair, each
--input before its output, row by row. This is `Matrix.silhouette`'s ranking
--applied to a whole dataset at once, so a color keeps one letter in every pair
--of its dataset, while each dataset ranks its own colors: 2 is `A` in
--`dataset.017c7c7b.json`, `B` in `dataset.0d3d703e.json`, and `D` in
--`dataset.27a28665.json`. The same letters replace the colors in both instance
--masks, in the world model's color parameters, which are `str`, such as
--`color: str`, and its rules, such as `if $Obj.color@first is C:`, in the
--implementations' arguments, such as `color='B'` or `parts=['A', 'C']`, and in
--the snapshots, such as `"color":"B"`. Coordinates, sizes, orientations,
--counts, and tags stay numbers. Mapping a dataset's letters back to its colors
--reproduces its source grids cell for cell. The paragraphs below name colors by
--their numbers in the source puzzles, quote the datasets' code with its
--letters, and end with each dataset's letters. The solver still sends the
--running puzzle's own grids as numbers, as `data\training` holds them.
-+preserve every original cell, color, position, zero border, and canvas
-+dimension. `/arc-dataset` infers one rule set from the training pairs and
-+annotates every pair with it, rather than synthesizing varieties or creating
-+numbered copies. `document()` includes a puzzle's own dataset in that puzzle's
-+runs, so a run of a puzzle that has a dataset receives its expected test
-+output in the few-shot context. That is intended: the datasets are being
-+prepared as few-shot examples, and these runs are not yet held-out tests.
- 
- The genesis datasets are `dataset.core.json`, `dataset.extension.json`,
- `dataset.curve.json`, and `dataset.line.json`. They are the shared examples of
-@@ -376,10 +352,6 @@ V points up. The genesis rules match categorical colors and orientations with
- `is`, the spelling of `==` that [NUC 86](../docs/nuc-0086.md) adds, as in the
- line header `if $Obj.orientation is 270:`, and the line rules assign bare
- words with `is`, as in `$Obj.extension_direction is right`.
--The genesis datasets write these colors as letters too, ranked by count: in
--`dataset.core.json` 9 is `A` and 4 is `B`, in `dataset.extension.json` 4 is
--`A` and 7 is `B`, in `dataset.curve.json` 4 is `A`, 8 is `B`, 9 is `C`, and 2
--is `D`, and in `dataset.line.json` 6 is `A` and 8 is `B`.
- 
- Instance `implementation` snippets use named constructor arguments whose names
- match the parameters in their class declarations. The canvas size is not one
-@@ -398,17 +370,16 @@ and implementations construct
- `target is value` builds exactly the syntax tree of `target = value`. When a
- whole value, or the whole right operand of an `is` comparison, is one bare
- word, it reads the name of that spelling if one exists and otherwise its own
--text, so tags, letters, and directions drop their quot
-```
-
-**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +32/-4)
-```diff
-@@ -6,7 +6,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/017c7c7b.json`](../data/training/017c7c7b.json) |
--| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged |
-+| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
- | Output canvas | `EXACT` |
- | Nucleoid enhancements | None requested for any version, so no proposal strategy was selected; versions 2 and 3 use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md) |
- | Solver changes | None; one suggested change awaits review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
-@@ -288,6 +288,32 @@ them with and without the flag. No NUC was requested, so no proposal strategy
- was selected and strategy learning did not apply. No solver run has used this
- version.
- 
-+### Number colors
++### Item words
 +
-+On 8-Nov-2026, at the user's request, the letter colors were reverted, and the
-+dataset writes every color as its number again, as the puzzle's pairs hold it,
-+turning `A` back into 2 and `B` into 1. The pair grids, both instance masks,
-+the implementations' `color` arguments, and the snapshots hold numbers, and
-+`color` is an `int` parameter again. The changed declarations now read:
++A list item, a dictionary value or a named argument inside an `is` value can
++be a bare word too:
 +
-+```nuc
-+class Obj(x: int, y: int, width: int, height: int, orientation: int, color: int, period: int):
-+
-+$Obj.color is 2
++```
++colors is [RED, GREEN]
++pair is {left: RED, right: BLUE}
++assert([colors, pair], [["RED", "GREEN"], {"left": "RED", "right": "BLUE"}])
++RED = "red"
++assert([colors[0], pair.left], ["red", "red"])
 +```
 +
-+The `is` assignments and bare words of the previous section are unchanged.
-+Offline, with the accepted runtime at `1a41ca7` (last runtime change
-+`f463d94`), all 4 input and 4 output snapshots of the 4 pairs replay, each
-+equal to its letter snapshot with every letter read as its number. The pair
-+grids equal the puzzle's pairs cell for cell, and the grids, masks, and
-+snapshots are again those of the version before the letters.
-+`Matrix.silhouette` again takes only the colors 0 to 9, and the orientation
-+calls' few-shot crops read exactly as they did with letters, because the
-+counts that rank them are unchanged. No NUC was requested, so no proposal
-+strategy was selected and strategy learning did not apply. No solver run has
-+measured this version, so its difference is unknown, not zero.
++`colors is [RED, GREEN]`, `glow is {small: DIM, large: BRIGHT}[size]` and
++`first is Light(color=RED, parts=[GREEN, GREEN])` read each item, dictionary
++value and named argument that is one bare word as a word value is read,
++wherever the list, dictionary or call stands in the value, outside function
++bodies, comprehension elements, template interpolations and inner
++assignments. Keys keep their text, `{A}` still reads the variable `A`, a
++parenthesized item such as `[(A)]` is a reference, and a conditional item
++such as `[A if c else B]` has word branches. It needs no flag, and `=` keeps
++the reference reading, so `colors = [RED, GREEN]` needs `RED` and `GREEN` to
++be defined; see [NUC 95](docs/nuc-0095.md).
 +
- ## Runs
+ ---
  
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-@@ -379,9 +405,11 @@ zero.
- - **Orientation version unmeasured.** No solver run has measured the
-   6-Nov-2026 orientation version, so whether consistent orientation labels
-   change this puzzle's result is unknown.
--- **Letter version unmeasured.** No solver run has measured the 8-Nov-2026
--  letter version. The solver still sends this puzzle's own grids as numbers,
--  while every few-shot dataset now writes its colors as letters.
-+- **Letter version withdrawn.** No solver run measured the 8-Nov-2026 letter
-+  version before the user reverted it the same day. The dataset writes its
-+  colors as numbers again, as the solver sends this puzzle's own grids, and
-+  no solver run has measured that version either, so its difference is
-+  unknown.
- - **The `is` assignment version is unmeasured.** No solver run has used the
-   8-Nov-2026 version with `is` assignments and bare words, so its effect on
-   this puzzle's result is unknown. Every run's few-shot context now shows bare
+ # Design Theory 📐
 ```
 
-**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +47/-4)
+**File**: `docs/README.md` (modified, +47/-2)
 ```diff
-@@ -6,7 +6,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/0ca9ddb6.json`](../data/training/0ca9ddb6.json) |
--| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged |
-+| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
- | Output canvas | `EXACT` |
- | Nucleoid enhancements | [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), both Accepted; the conditions also use the accepted `is` of [NUC 86](../../docs/nuc-0086.md), which this puzzle did not request |
- | Solver changes | None specific to this puzzle; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
-@@ -351,6 +351,47 @@ them with and without the flag. No NUC was requested, so no proposal strategy
- was selected and strategy learning did not apply. No solver run has used this
- version.
+@@ -409,8 +409,10 @@ Full detail: [NUC 93](nuc-0093.md).
+   are words. A branch is a word when it is exactly one identifier token;
+   `1`, `"text"`, `true`, `(A)` and `A.x` are not.
+ - Conditions are never words, and neither is anything inside parentheses,
+-  calls, lists, objects or other operators: `a is (A if c else B)` needs `A`
+-  and `B` to be defined, as `a = (A if c else B)` does.
++  positional call arguments or other operators: `a is (A if c else B)` reads
++  `A` or `B` as `a = (A if c else B)` does. List items, dictionary values and
++  named arguments are [item words](#item-words) positions, so a conditional
++  there has word branches, as in `a is [A if c else B]`.
+ - A word branch reads the local, variable, class, function or built-in of
+   its name when one exists, and otherwise its own text, as a word value
+   does; only the selected branch is read. Class-level rules do not require
+@@ -434,6 +436,48 @@ ready = true
  
-+### Number colors
+ Full detail: [NUC 94](nuc-0094.md).
+ 
++### Item words
 +
-+On 8-Nov-2026, at the user's request, the letter colors were reverted, and the
-+dataset writes every color as its number again, as the puzzle's pairs hold it,
-+turning `A` back into 4, `B` into 7, `C` into 2, `D` into 1, `E` into 8, and
-+`F` into 6. The pair grids, both instance masks, the implementations'
-+`vertex_color` arguments, and the snapshots hold numbers, and `vertex_color`
-+is an `int` parameter again. The changed declarations now read:
++- [NUC 95](nuc-0095.md) extends `is` assignments: an item of a list, the
++  value of a dictionary entry and the value of a named argument inside an
++  `is` value can be a bare word. It needs no option or flag, so every `is`
++  assignment reads its item words.
++- The list, dictionary or call may stand anywhere in the value: nested in
++  another one, as the receiver of `.find(...)` or of a subscript, in a
++  condition or a branch, or inside parentheses. So
++  `[[RED, GREEN], [BLUE, AMBER]]`, `{small: DIM, large: BRIGHT}[size]`,
++  `[RED, GREEN, BLUE][x]` and `Light(color=RED, parts=[GREEN, GREEN])` hold
++  words. Function, arrow and lambda bodies, comprehension elements and
++  filters, template interpolations, the value of an inner assignment and
++  assignment targets hold none.
++- An item is a word when it is exactly one identifier token; `1`, `"text"`,
++  `true`, `(A)` and `A.x` are not. Keys keep their text, the shorthand `{A}`
++  still reads the variable `A`, and positional arguments stay ordinary. A
++  `name=value` argument of a method call is an assignment, not a named
++  argument.
++- An item word reads the local, variable, class, function or built-in of
++  its name when one exists, and otherwise its own text, as a word value does;
++  only the items that are evaluated are read. Class-level rules do not
++  require item words to be defined, and a named instance reads its
++  constructor values once, when it is built.
++- A conditional item such as `[A if c else B]` has word branches. A
++  statement with item words renders as `a is [A,(B)]` in graph keys and in
++  `why` and `affects`. `=` keeps the reference reading, so `a = [A]` still
++  needs `A` to be defined.
 +
-+```nuc
-+class Obj(x: int, y: int, width: int, height: int, orientation: int, vertex_color: int):
-+
-+if $Obj.vertex_color is 1:
-+    $Obj.tag is l1707
-+    $Obj.marker_color is 7
-+    $Obj.x is $Obj.x@first - 1
-+    $Obj.y is $Obj.y@first - 1
-+    $Obj.width is $Obj.width@first + 2
-+    $Obj.height is $Obj.height@first + 2
-+
-+if $Obj.vertex_color is 2:
-+    $Obj.tag is l2404
-+    $Obj.marker_color is 4
-+    $Obj.x is $Obj.x@first - 1
-+    $Obj.y is $Obj.y@first - 1
-+    $Obj.width is $Obj.width@first + 2
-+    $Obj.height is $Obj.height@first + 2
++```
++colors is [RED, GREEN]
++pair is {left: RED, right: BLUE}
++RED = "red"
 +```
 +
-+The `is` assignments and bare words of the previous section are unchanged.
-+Offline, with the accepted runtime at `1a41ca7` (last runtime change
-+`f463d94`), all 15 input and 15 output snapshots of the 4 pairs replay, each
-+equal to its letter snapshot with every letter read as its number. The pair
-+grids equal the puzzle's pairs cell for cell, and the grids, masks, and
-+snapshots are again those of the version before the letters.
-+`Matrix.silhouette` again takes only the colors 0 to 9, and the orientation
-+calls' few-shot crops read exactly as they did with letters, because the
-+counts that rank them are unchanged. No NUC was requested, so no proposal
-+strategy was selected and strategy learning did not apply. No solver run has
-+measured this version, so its difference is unknown, not zero.
++- `colors` is `["RED", "GREEN"]` and `pair.left` is `"RED"` until `RED` is
++  defined, and `"red"` after it. Item positions, rendering, the accepted
++  compatibility break and edge cases are in the authoritative
++  [item words](../nucleoid.spec.md#item-words) section.
 +
- ## Runs
- 
- | Date | Run | Commit | Exit status | Difference | Seconds |
-@@ -403,9 +444,11 @@ zero.
- - **Orientation version unmeasured.** No solver run has measured the
-   6-Nov-2026 orientation version, so whether consistent orientation labels
-   change this puzzle's result is unknown.
--- **Letter version unmeasured.** No solver run has measured the 8-Nov-2026
--  letter version. The solver still sends this puzzle's own grids as numbers,
--  while every few-shot dataset now writes its colors as letters.
-+- **Letter version withdrawn.** No solver run measured the 8-Nov-2026 letter
-+  version before the user reverted it the same day. The dataset writes its
-+  colors as numbers again, as the solver sends this puzzle's own grids, and
-+  no solver run has measured that version either, so its difference is
-+  unknown.
- - **The `is` assignment version is unmeasured.** No solver run has used the
-   8-Nov-2026 version with `is` assignments and bare words, so its effect on
-   this puzzle's result is unknown. Every run's few-shot context now shows bare
-```
-
----
-
-### Incident Patch 2: `1a41ca7f` (2026-11-09)
-**Commit Message**: Replace ARC language examples with grammar
-
-Send the EBNF grammar and an object class initializer to the LLM instead of the removed example file. Document the accepted bare-word compatibility break.
-
-**File**: `CONTRIBUTING.md` (modified, +2/-1)
-```diff
-@@ -132,7 +132,8 @@ or an evaluator rejection; the NUC records those policy results. Only a failed
- hard criterion rejects a proposal. A NUC that `/arc-purposal` requests for its
- dataset is Accepted on an exact solver match, while the quote-free NUC it
- prepares after the run, for quotes its datasets cannot drop, is decided on its
--evaluation; see the
-+evaluation, with its always-on bare words' one break (an undefined bare word
-+that raised `ReferenceError` reads as its text) accepted in advance; see the
- [ARC-requested proposal rule](.claude/rules/proposals.instructions.md#arc-requested-proposals-caller-only).
- A NUC the user requests directly is Accepted when it meets the hard criteria;
- see the
-```
-
-**File**: `arc/nucleoid.md` (removed, +0/-116)
-```diff
-@@ -1,116 +0,0 @@
--# Every human is mortal. Socrates is a human.
--class Human:
--    pass
--
--$Human.mortal = true
--
--socrates = Human()
--socrates.mortal
--
--# Area follows changes to a rectangle's dimensions.
--class Rectangle(this.width, this.height)
--
--$Rectangle.area = $Rectangle.width * $Rectangle.height
--
--rectangle = Rectangle(3, 4)
--rectangle.width = 5
--rectangle.area
--
--# Find the names of students with passing scores.
--class Student(this.name, this.score)
--
--alice = Student("Alice", 80)
--bob = Student("Bob", 50)
--
--passing = Student.filter(student => student.score >= 60)
--passing.map(student => student.name)
--
--# Derive department payroll from related employees.
--class Department(this.name)
--class Employee(this.department, this.salary)
--
--$Department.payroll = Employee.filter(e => e.department == $Department).sum(e => e.salary)
--
--engineering = Department("Engineering")
--alice = Employee(engineering, 100)
--bob = Employee(engineering, 120)
--
--alice.salary = 150
--engineering.payroll
--
--# Subtype rules retain precedence when a parent rule changes.
--class Employee(this.salary)
--class Manager extends Employee
--
--$Employee.bonus = $Employee.salary * 0.1
--$Manager.bonus = $Manager.salary * 0.2
--
--worker = Employee(100)
--manager = Manager(100)
--
--# Every task must have at least one suitably skilled worker.
--class Task(this.skill)
--class Worker(this.skill)
--
--review = Task("review")
--build = Task("build")
--reviewer = Worker("review")
--
--canCover = all t in Task: any w in Worker: w.skill == t.skill
--
--builder = Worker("build")
--canCover
--
--# Explain how a particular input contributes to a result.
--price = 10
--quantity = 3
--shipping = 5
--subtotal = price * quantity
--total = subtotal + shipping
--
--trace = total |> why |> path(price)
--
--price = 12
--trace.map(step => [step.node, step.holds])
--
--# Explore a hypothetical change without changing the real model.
--price = 10
--quantity = 3
--total = price * quantity
--
--forecast = suppose quantity = 4: total
--changed = suppose quantity = 4:
--(model |> diff).map(step => step.node)
--
--# := captures once; object references still point to live objects.
--class Item(this.price)
--item = Item(10)
--
--livePrice = item.price
--capturedPrice := item.price
--capturedItem := item
--
--item.price = 20
--
--# Read stored history through read-only version selectors.
--balance = 100
--balance = 120
--balance = 90
--
--# Declare a relationship before its input properties exist.
--class Order
--$Order.total = $Order.price * $Order.quantity
--
--order = Order()
--before := order.total
--
--order.price = 10
--order.quantity = 3
--
--# An empty population satisfies all, but not any.
--class Check(this.passed)
--
--allPassed = all check in Check: check.passed
--hasFailure = any check in Check: not check.passed
--empty := [allPassed, hasFailure]
--
-```
-
-**File**: `arc/src/lib/llm.ts` (modified, +10/-1)
-```diff
-@@ -26,7 +26,16 @@ export async function generate({
-   if (grammar) {
-     messages.unshift({
-       role: "system",
--      content: readFileSync(join(__dirname, "..", "..", "nucleoid.md"), "utf8"),
-+      content:
-+        "init_class:\nclass Obj(x: int, y: int, width: int, height: int, orientation: int):\n   this.x is x\n   this.y is y\n   this.width is width\n   this.height is height\n   this.orientation is orientation\n\n",
-+    });
++Full detail: [NUC 95](nuc-0095.md).
 +
-+    messages.unshift({
-+      role: "system",
-+      content: `
-+        EBNF:
-+        ${readFileSync(join(__dirname, "..", "..", "nucleoid.ebnf"), "utf8")}
-+      `,
-     });
-   }
+ ### Destructuring declarations
  
+ - [NUC 67](nuc-0067.md) adds destructuring declarations: object patterns
+@@ -3819,6 +3863,7 @@ name.property := expression            value assignment to a property (NUC 66)
+ name is expression                     is assignment: name = expression (NUC 93)
+ name.property is word                  a bare word reads its name, else its text "word" (NUC 93)
+ name is A if c else B                  bare-word branches are words too (NUC 94)
++name is [A, {k: B}, X(n=C)]            bare-word items, values and labels are words too (NUC 95)
+ name += expression                     compound assignment; also -=, *=, **=, /=, %=
+ {a, b} = expression                    one declaration per field: a = expression.a (NUC 67)
+ {key: name} = expression               renamed field: name = expression.key (NUC 67)
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -60,6 +60,7 @@ Created: 31-Jul-2026
+ | [91](nuc-0091.md) | Increment and Decrement Statements | Rejected: not backward compatible, as an accepted template interpolation ending in a pipeline stage followed by `++` or `--` ignored those signs and now raises `SyntaxError("Unexpected '++'")` |
+ | [93](nuc-0093.md) | Opt-In Is Assignments | Accepted |
+ | [94](nuc-0094.md) | Opt-In Conditional Words | Accepted |
++| [95](nuc-0095.md) | Item Words | Accepted |
+ 
+ ### Runtime features
+ 
+@@ -243,6 +244,7 @@ Created: 31-Jul-2026
+ | [92](nuc-0092.md) | List Comprehensions | Standards Track | Language compatibility | Accepted |
+ | [93](nuc-0093.md) | Opt-In Is Assignments | Standards Track | Syntax enhancement | Accepted |
+ | [94](nuc-0094.md) | Opt-In Conditional Words | Standards Track | Syntax enhancement | Accepted |
++| [95](nuc-0095.md) | Item Words | Standards Track | Syntax enhancement | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0095.md` (added, +865/-0)
+```diff
+@@ -0,0 +1,865 @@
++# NUC 95 -- Item Words
++
++```
++NUC: 95
++Title: Item Words
++Author: Can Mingir <canmingir@gmail.com>
++Status: Accepted
++Type: Standards Track
++Category: Syntax enhancement
++Created: 08-Nov-2026
++Requires: 17, 47, 86, 93, 94
++```
++
++## Abstract
++
++- Inside the value of an `is` assignment of [NUC 93](nuc-0093.md), three
++  kinds of item are item positions: an item of a list, the value of a
++  dictionary entry and the value of a `name=value` argument of a call whose
++  callee is a bare name, `new Name(...)` or `super(...)`. So
++  `colors is [RED, GREEN]`, `glow is {small: DIM, large: BRIGHT}[size]` and
++  `first is Light(color=RED, parts=[GREEN, GREEN])` hold words.
++- An item position holding exactly one identifier token is a word, read by
++  NUC 93's word rule through the same `UnaryOp::Word` marker: the name's
++  value when something defines it, and otherwise its own text, recording a
++  dependency on the variable of that name.
++- Item positions exist wherever such a list, dictionary or call stands in
++  the value, at any depth, including conditions, branches, operands,
++  subscripts, receivers, comprehension sources and grouping parentheses.
++  They do not exist inside function and lambda bodies, comprehension
++  elements and filters, template interpolations, inner assignment values
++  and assignment targets.
++- Item positions are word positions of [NUC 94](nuc-0094.md), so a
++  conditional standing in one has word branches, and the lists,
++  dictionaries and calls in a word branch have item positions.
++- It is always on, with no option or flag, as `is` assignments and
++  conditional words are since `d9452132` and `f463d94f`. No token, keyword,
++  syntax-tree variant or error message is added. `=` assignments,
++  dictionary keys, the shorthand `{A}`, parenthesized items and positional
++  arguments keep their readings. The authoritative contract is
++  [Item words](../nucleoid.spec.md#item-words).
++- Not backward compatible in one respect, which the user accepted on
++  8 Nov 2026: inside an `is` value, a bare one-identifier item whose name is
++  not defined used to raise `ReferenceError`, and now reads as its own text.
++  See [Backward Compatibility](#backward-compatibility).
++- Accepted: the user requested this feature directly and chose always-on
++  item words, accepting their compatibility break. After the independent
++  evaluation, the user also accepted the one further effect it found, where
++  an undefined item that the same statement already read as a word gave
++  `undefined` rather than raising `ReferenceError`. With that break
++  accepted, the frozen candidate meets every hard criterion of the automatic
++  acceptance rule, so the user-requested basis applies. The independent
++  evaluator's overall decision was Rejected, solely because of that effect
++  under the break as first stated. Token comparison was skipped as
++  `single_proposal`, the rule for a single-proposal request, not a failed
++  check; see [Evaluation](#evaluation).
++
++## Motivation
++
++- The user writes ARC instruction datasets in Nucleoid and wants them free
++  of quotes. NUC 93 removed the quotes of a value that is one word, and
++  NUC 94 those of a conditional's branches. Lists, tables and constructed
++  objects of words still need them:
++
++```
++$Light.partner is [['RED', 'GREEN'], ['BLUE', 'AMBER']].find(pair => pair.includes($Light.color@first)).find(other => other is not $Light.color@first)
++$Light.glow is {small: 'DIM', large: 'BRIGHT'}[$Light.size@first]
++$Light.shade is ['RED', 'GREEN', 'BLUE'][$Light.x@first]
++first is Light(color='RED', size='small', x=2, parts=['GREEN', 'GREEN'])
++```
++
++- The user wants them written as words, as a value of one word already is:
++
++```
++$Light.partner is [[RED, GREEN], [BLUE, AMBER]].find(pair => pair.includes($Light.color@first)).find(other => other is not $Light.color@first)
++$Light.glow is {small: DIM, large: BRIGHT}[$Light.size@first]
++$Light.shade is [RED, GREEN, BLUE][$Light.x@first]
++first is Light(color=RED, size=small, x=2, parts=[GREEN, GREEN])
++```
++
++- At the accepted revision the second spelling fails, because NUC 93 makes
++  a value a word only when the whole value is one identifier token and
++  NUC 94 adds only conditional branches:
++  - `z is [A, B]` raises `ReferenceError("A is not defined")` at line 1,
++    column 1, and `m is {s7: C}` raises `ReferenceError("C is not defined")`.
++  - After `class Light(color, size, x, parts):` with a constructor that
++    assigns each parameter, declaring the `partner` rule raises
++    `ReferenceError("RED is not defined")`, because class-rule validation
++    requires every name in it, and `first is Light(color=RED)` raises the
++    same error when it runs.
++- With item words, a model states lists, tables and constructed objects of
++  words and decides later whether each word is its text or a variable that
++  remaps it:
++
++```
++colors is [RED, GREEN]
++pair is {left: RED, right: BLUE}
++RED = "red"
++```
++
++- `colors` is `["
+```
+
+**File**: `docs/nucleoid.g4` (modified, +27/-10)
+```diff
+@@ -155,7 +155,7 @@ valueAssignment
+     ;
+ 
+ /*
+- * Is-assignment contract (NUC 93, NUC 94):
++ * Is-assignment contract (NUC 93, NUC 94, NUC 95):
+  * - An isAssignment path may be parenthesized and has at most 128 links. No NEWLINE separates it from
+  *   'is', and the token after 'is' must begin an expression: a name token,
+  *   CLASS_REF, NUMBER, STRING, TEMPLATE, REGEX, LPAREN, LBRACK, LBRACE,
+@@ -166,14 +166,28 @@ valueAssignment
+  * - The value is ASSIGN's statement-level value and builds the tree of
+  *   'path = expression' apart from its word markers. A following ':=' or a
+  *   'suppose' value is handled as after ASSIGN.
+- * - Word positions of the value: the whole value, and both branches of a
+- *   conditional standing in a word position, in either spelling. A word position holding
+- *   exactly one name token is a word, UnaryOp::Word, which reads that name
+- *   when something defines it and otherwise its own text.
+- * - Conditions, grouping parentheses, operands of other operators, call
+- *   arguments, list and object members, function, lambda and arrow bodies,
+- *   template interpolations, the value of an inner assignment and the target
+- *   of an assignment operator are not word positions.
++ * - Word positions of the value: the whole value, its item positions, and
++ *   both branches of a conditional standing in a word position, in either
++ *   spelling. A word position holding exactly one name token is a word,
++ *   UnaryOp::Word, which reads that name when something defines it and
++ *   otherwise its own text.
++ * - Item positions: each expression of a listDisplay without a
++ *   comprehension, the expression of each 'objectKey COLON expression'
++ *   entry, and the expression after ASSIGN of each 'name ASSIGN expression'
++ *   argument of a call whose callee is a plain name, of a 'NEW primary' call
++ *   and of 'SUPER call'. They lie anywhere in the value, through every
++ *   construct, including conditions, branches, grouping parentheses,
++ *   subscripts, slice bounds, stage arguments, quantifiers and comprehension
++ *   sources, except inside function, lambda and arrow bodies, comprehension
++ *   elements and filters, template interpolations, the value of an inner
++ *   assignment operator and the target of an assignment operator.
++ * - Conditions, grouping parentheses, operands of other operators,
++ *   positional call arguments, the 'name ASSIGN expression' arguments of
++ *   other calls, objectKey, shorthand 'name' entries, spread sources,
++ *   function, lambda and arrow bodies, template interpolations, the value of
++ *   an inner assignment and the target of an assignment operator are not
++ *   word positions themselves; an item position inside a condition, group,
++ *   operand, positional argument or spread source stays an item position.
+  */
+ isAssignment
+     : path IS expression                // Stmt::Assign, as path = expression
+@@ -865,6 +879,7 @@ fragment REGEX_CHAR
+  * p is v                   -> p = v.
+  * p is w                   -> p = UnaryOp::Word(w) for a single name w.
+  * p is A if c else B       -> p = c ? Word(A) : Word(B).
++ * p is [A, {k: B}, X(n=C)] -> p = [Word(A), {k: Word(B)}, X(n=Word(C))].
+  * new X(...)               -> X(...).
+  * for xs:                  -> iteration with the item name "it".
+  * catch without a name     -> the binding "error".
+@@ -885,5 +900,7 @@ fragment REGEX_CHAR
+  * parser\postfix.rs and parser\primary.rs.
+  * Comprehensions/templates: parser\comprehension.rs and parser\template.rs.
+  * Is assignments and their words: parser\is_assignment.rs, with the
+- * conditional word positions in parser\expression.rs.
++ * conditional word positions in parser\expression.rs and the item
++ * positions in parser\primary.rs, parser\postfix.rs and
++ * parser\comprehension.rs.
+  */
+```
+
+**File**: `nucleoid.spec.md` (modified, +134/-11)
+```diff
+@@ -3326,7 +3326,8 @@ statement positions; caught values and transaction recovery are unchanged.
+   enclosed `is` and `is not` comparisons of
+   [Is and is not comparisons](#is-and-is-not-comparisons).
+ - Unless its value is a word or holds the word branches of
+-  [Conditional words](#conditional-words), `target is value` builds exactly
++  [Conditional words](#conditional-words) or the item words of
++  [Item words](#item-words), `target is value` builds exactly
+   the syntax tree of `target = value`. The value is parsed as the value of `=` is at
+   statement level, in the same context and at the same nesting depth, and
+   ends where that value ends. So
+@@ -3358,8 +3359,8 @@ statement positions; caught values and transaction recovery are unchanged.
+ - A word assignment renders as `target is word`: in graph keys such as
+   `block(total is good)`, in `--graph` output and in the `rule` that `why` and
+   `affects` report, as `a is good` and `$Order.state is OPEN`. Every other
+-  `is` assignment without word branches renders as its `=` spelling, such
+-  as `a = 5`.
++  `is` assignment without word branches or item words renders as its `=`
++  spelling, such as `a = 5`.
+ - No error type or message is added. A malformed value raises what its `=`
+   spelling raises at the same place in the source, which is one column
+   further right when that place follows `is` on its line:
+@@ -3376,7 +3377,9 @@ statement positions; caught values and transaction recovery are unchanged.
+ - `tests/is_assignments.rs`, `tests/is_assignments_cli.rs` and the terminal
+   unit suite execute this behavior.
+ - A branch of a conditional value can be a word as well, as
+-  [Conditional words](#conditional-words) describes.
++  [Conditional words](#conditional-words) describes, and so can an item of a
++  list, a dictionary value or a named argument, as
++  [Item words](#item-words) describes.
+ 
+ ## Conditional words
+ 
+@@ -3390,12 +3393,14 @@ statement positions; caught values and transaction recovery are unchanged.
+   File runs, the plain and redirected REPL, the terminal workspace, `--json`
+   and `--graph` read it.
+ - The word positions of an `is` assignment's value are the value itself,
+-  which is a word position under NUC 93, and both branches of a conditional
++  which is a word position under NUC 93, the item positions of
++  [Item words](#item-words), and both branches of a conditional
+   expression that stands in a word position, in either spelling,
+   `consequent if condition else alternate` or
+   `condition ? consequent : alternate`. So `A`, `B` and `C` are in word
+   positions in `a is A if c1 else B if c2 else C`,
+-  `a is c1 ? A : c2 ? B : C` and `a is c1 ? c2 ? A : B : C`.
++  `a is c1 ? A : c2 ? B : C` and `a is c1 ? c2 ? A : B : C`, and `A` and `B`
++  are in word positions in `a is [A if c else B]`.
+ - A branch in a word position is a word when it is exactly one identifier
+   token, as a value is under NUC 93: `a is A if c else 1` makes `A` a word
+   and keeps `1` a number. Keywords such as `true`, `null`, `this` and `self`,
+@@ -3407,10 +3412,10 @@ statement positions; caught values and transaction recovery are unchanged.
+   comparisons of [Is and is not comparisons](#is-and-is-not-comparisons) in
+   them, keep their reading. So does a parenthesized conditional:
+   `a is (A if c else B)` reads `A` and `B` as `a = (A if c else B)` does. So
+-  do the operands of other operators, call arguments, list items, object
+-  values, function, arrow and lambda bodies and template interpolations
+-  inside the value, and the value of an assignment inside the value, as in
+-  `a is b = A if c else B`. A conditional that an assignment operator
++  do the operands of other operators, positional call arguments, the
++  `name=value` arguments that are not item positions, function, arrow and
++  lambda bodies and template interpolations inside the value, and the value
++  of an assignment inside the value, as in `a is b = A if c else B`. A conditional that an assignment operator
+   follows is that assignment's target, not a result, so
+   `a is X if c else Y = 5` keeps its tree and raises
+   `SyntaxError("Cannot assign to (c?X:Y)")` at its statement.
+@@ -3437,7 +3442,11 @@ statement positions; caught values and transaction recovery are unchanged.
+   value, a conditional that holds a word renders without its grouping
+   parentheses, as in `a is c?A:B`, and a name in a word position that is not
+   a word renders in parentheses, as in `c?A:(B)`, so the rendering reads back
+-  as the same statement. Every other `is` assignment renders as before, so
++  as the same statement. A value that also holds item words renders its item
++  positions as [Item words](#item-words) describes. A value whose only words
++  are word branches renders its item positions as before, so
++  `a is [(A)] if c else B` renders as `a is c?[A]:B`, which reads back with
++  the item word `A`. Every other `is` assignment renders as before, so
+   `a is 1 if c else 2` renders as `a=(c?1:2)`.
+ - At sta
+```
+
+**File**: `src/expression.rs` (modified, +4/-4)
+```diff
+@@ -279,7 +279,7 @@ fn class_property<'e>(expression: &'e Expr, class: &str) -> Option<&'e str> {
+ }
+ 
+ /// Visits immediate expression children without entering a function's scope.
+-fn visit_children(expression: &Expr, visit: &mut impl FnMut(&Expr)) {
++pub(crate) fn visit_children<'a>(expression: &'a Expr, visit: &mut impl FnMut(&'a Expr)) {
+     match expression {
+         Expr::Member { object, .. } => visit(object),
+         Expr::Version { reference, .. } => visit(reference),
+@@ -341,15 +341,15 @@ fn visit_children(expression: &Expr, visit: &mut impl FnMut(&Expr)) {
+     }
+ }
+ 
+-fn visit_template(parts: &[TemplatePart], visit: &mut impl FnMut(&Expr)) {
++fn visit_template<'a>(parts: &'a [TemplatePart], visit: &mut impl FnMut(&'a Expr)) {
+     for part in parts {
+         if let TemplatePart::Expression(embedded) = part {
+             visit(embedded);
+         }
+     }
+ }
+ 
+-fn visit_operands(expression: &Expr, visit: &mut impl FnMut(&Expr)) {
++fn visit_operands<'a>(expression: &'a Expr, visit: &mut impl FnMut(&'a Expr)) {
+     match expression {
+         Expr::Unary { operand, .. } | Expr::Delete(operand) | Expr::Of { operand, .. } => {
+             visit(operand);
+@@ -410,7 +410,7 @@ fn visit_operands(expression: &Expr, visit: &mut impl FnMut(&Expr)) {
+     }
+ }
+ 
+-fn visit_all(expressions: &[Expr], visit: &mut impl FnMut(&Expr)) {
++fn visit_all<'a>(expressions: &'a [Expr], visit: &mut impl FnMut(&'a Expr)) {
+     for expression in expressions {
+         visit(expression);
+     }
+```
+
+**File**: `src/lang/ast/generator.rs` (modified, +60/-182)
+```diff
+@@ -3,24 +3,28 @@
+ //! Statement keys in the dependency graph are derived from this, so two
+ //! spellings of the same condition collapse onto one node.
+ 
++mod shown;
+ mod statement;
++mod words;
+ 
+ use std::fmt;
+ 
+ use crate::lang::ast::{
+     BinaryOp, EnumMember, Expr, Function, FunctionBody, LogicalOp, ObjectEntry, Parameter,
+-    ParameterDefault, Quantifier, TemplatePart, UnaryOp, VersionSelector,
++    ParameterDefault, TemplatePart, UnaryOp, VersionSelector,
+ };
++use shown::{Grouped, Shown};
+ pub use statement::{generate, generate_all};
+ use statement::{indent, source_all};
++pub(crate) use words::WordValue;
+ 
+ fn has_binding_metadata(parameters: &[Parameter]) -> bool {
+     parameters
+         .iter()
+         .any(|parameter| parameter.default.is_some() || parameter.rest)
+ }
+ 
+-fn signature(parameters: &[Parameter]) -> String {
++fn signature(parameters: &[Parameter]) -> impl fmt::Display {
+     join(parameters)
+ }
+ 
+@@ -37,68 +41,7 @@ impl fmt::Display for VersionSelector {
+ 
+ impl fmt::Display for Expr {
+     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+-        match self {
+-            Expr::Null => f.write_str("null"),
+-            Expr::Bool(bool) => write!(f, "{bool}"),
+-            Expr::Number(number) => f.write_str(&crate::value::format_number(*number)),
+-            Expr::String(string) => write!(f, "\"{string}\""),
+-            Expr::Template(parts) => write_template(f, parts),
+-            Expr::Regex(pattern) => write!(f, "/{pattern}/"),
+-            Expr::Identifier(name) => f.write_str(name),
+-            Expr::ClassRef(name) => write!(f, "${name}"),
+-            Expr::ObjectRef(id) => f.write_str(id),
+-            Expr::This => f.write_str("this"),
+-            Expr::Super(arguments) => write!(f, "super({})", join(arguments)),
+-            Expr::Member { object, property } => write!(f, "{}.{property}", Grouped(object)),
+-            Expr::Version {
+-                reference,
+-                selector,
+-            } => write!(f, "{}@{selector}", Grouped(reference)),
+-            Expr::Index { object, index } => write!(f, "{}[{index}]", Grouped(object)),
+-            Expr::Slice { object, start, end } => {
+-                write_slice(f, object, start.as_deref(), end.as_deref())
+-            }
+-            Expr::Call { callee, arguments } => {
+-                write!(f, "{}({})", Grouped(callee), join(arguments))
+-            }
+-            Expr::Unary { operator, operand } => write_unary(f, *operator, operand),
+-            Expr::Binary {
+-                operator,
+-                left,
+-                right,
+-            } => write_binary(f, *operator, left, right),
+-            Expr::Logical {
+-                operator,
+-                left,
+-                right,
+-            } => write_logical(f, *operator, left, right),
+-            // Both spellings render as one grouped symbol form. The grouping
+-            // keeps a conditional operand distinct from its enclosing operator
+-            // in graph keys, as `(c?a:b)+1` and `(c?a:b+1)` are different.
+-            Expr::Conditional {
+-                condition,
+-                consequent,
+-                alternate,
+-            } => write!(f, "({condition}?{consequent}:{alternate})"),
+-            Expr::List(items) => write!(f, "[{}]", join(items)),
+-            Expr::ObjectLiteral(entries) => write_object_literal(f, entries),
+-            Expr::SpreadObject(entries) => write_spread_object(f, entries),
+-            Expr::Function(function) => write_function(f, function),
+-            Expr::Assign { target, value } => write!(f, "{target}={value}"),
+-            Expr::Delete(operand) => write!(f, "delete {operand}"),
+-            Expr::Reason { stage, source } => write!(f, "{source}|>{}", stage.as_str()),
+-            Expr::Depth { source, limit } => write!(f, "{source}|>depth({limit})"),
+-            Expr::Path { source, target } => write!(f, "{source}|>path({target})"),
+-            Expr::Model => f.write_str("model"),
+-            Expr::Quantified {
+-                quantifier,
+-                binder,
+-                collection,
+-                condition,
+-            } => write_quantified(f, *quantifier, binder, collection, condition),
+-            Expr::Of { noun, operand } => write_of(f, noun.as_str(), operand),
+-            Expr::Enum(members) => write!(f, "enum{{{}}}", join(members)),
+-        }
++        fmt::Display::fmt(&Shown::plain(self), f)
+     }
+ }
+ 
+@@ -118,71 +61,11 @@ pub(crate) fn enum_source(name: &str, members: &[EnumMember]) -> String {
+     }
+ }
+ 
+-pub(crate) struct WordValue<'a>(&'a Expr);
+-
+-impl<'a> WordValue<'a> {
+-    pub(crate) fn of(value: &'a Expr) -> Option<Self> {
+-        holds_words(value).then_some(WordValue(value))
+-    }
+-}
+-
+-impl fmt::Display for WordValue<'_> {
+-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+-        match self.0 {
+-            Expr::Conditional {
+-                condition,
+-                consequent,
+-                alternate,
+-  
 ```
 
 #### Recent Merged Pull Requests:
@@ -2246,57 +2227,51 @@ Send the EBNF grammar and an object class initializer to the LLM instead of the 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Write ARC dataset colors as numbers again
+## X. NUC 95 Item Words
 
 **RULE**:
-When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4b105861`: Write ARC dataset colors as numbers again. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `67fc69df`: NUC 95 Item Words. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Use both as the exact dataset grids. A test pair never changes the inferred
-rules. Do not inspect other training or evaluation puzzles for collision checks.
-`input_matrix` and `output_matrix` must equal that pair's input and output,
-cell for cell and shape for shape, including all zero borders. Never resample
-canvases, shapes, colors, object counts, positions, or orientations; do not add
-synthetic varieties or numbered variants.
-replace or modify the original pair grids. Use one rule set and one
-output-canvas mode for the whole dataset, inferred only from the training pairs.
-  colors.
-- Pair count and order match `train` followed by `test`; every `input_ma
+### Item words
+
+A list item, a dictionary value or a named argument inside an `is` value can
+be a bare word too:
+
+```
+colors is [RED, GREEN]
+pair is {left: RED, right: BLUE}
+assert([colors, pair], [["RED", "GREEN"], {"left": "RED", "right": "BLUE"}])
+RED = "red"
+assert([colors[0], pair.left], ["red", "red"])
+```
+
+`colors is [RED, GREEN]`, `glow is {small: DIM, large: BRIGHT}[size]` and
+`first is Light(color=RED, parts=[GREEN, GREEN])` read each item, dictionary
+value and named argument that is one bare word as a word value is read,
+wherever the list, dictionary or call stands in the value, outside function
+bodies, comprehension elements, template interpolations and inner
+assignments. Keys keep their text, `{A}` still reads the variable `A`, a
+parenthesized item such as `[(A)]` is a reference, and a conditional item
+such as `[A if c else B]` has word branches. It needs no flag, and `=` keeps
+the reference reading, so `colors = [RED, GREEN]` needs `RED` and `GREEN` to
+be defined; see [NUC 95](docs/nuc-0095.md).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Use both as the dataset grids, with their colors written as letters under
-[Write colors as letters](#write-colors-as-letters). A test pair never changes
-the inferred rules. Do not inspect other training or evaluation puzzles for
-collision checks.
-`input_matrix` and `output_matrix` must follow that pair's input and output
-exactly, cell for cell and shape for shape, including all zero borders, with
-each color written as its letter. Never resample canvases, shapes, object
-counts, positions, or orientations, never change a color except into its
-letter, and do not add synthetic varieties or numbered variants.
-replace or modify the original pair grids beyond writing their colors as
-letters. Use one rule set and one output-canvas mode for the whole dataset,
-inferred only from the training pairs.
-
-## Write colors as letters
-
-Follow the exact pattern of each pair in `arc/data/training/<id>.json`, but
-write no color as its number. `0` stays `0`. Every other color becomes a
-letter of `ABCDEFGHI`, ranked by how often it occurs across every
-`input_matrix` and `output_matrix` of the dataset, training and test pairs
-together: the most used color is `A`, the next `B`, and so on. A tie goes to
-the 
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4b105861` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `67fc69df` are properly handled with clean fallback behavior.
