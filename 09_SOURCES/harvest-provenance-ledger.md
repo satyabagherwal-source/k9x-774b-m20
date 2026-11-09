@@ -8477,3 +8477,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-09T01:53:11.348Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `a2fda9d5` | Multi-dimensional audit evidence | 2026-11-09T01:53:15.859Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `be138254` | Multi-dimensional audit evidence | 2026-11-09T01:53:24.407Z |
+| `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `1bb06205` | Multi-dimensional audit evidence | 2026-11-09T02:01:01.542Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-09T02:01:10.160Z |
+| `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `85de02c9` | Multi-dimensional audit evidence | 2026-11-09T02:01:15.159Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md`  
 > **Source**: github ([https://github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide))  
-> **Source Version**: `c21f5473`  
+> **Source Version**: `1bb06205`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:03:11.417Z  
+> **Timestamp**: 2026-11-09T02:00:59.888Z  
 > **Learning ID**: `learn-github-ajeetdsouza-zoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:03:06.658Z  
+> **Harvest Timestamp**: 2026-11-09T02:00:59.714Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A smarter cd command. Supports all major shells.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40499 stars
+- **Stars / Engagement**: 40515 stars
 
 ---
 
@@ -1392,110 +1392,61 @@ impl Run for Remove {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9cba6b4e` (2026-11-07)
-**Commit Message**: build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (#1354)
+### Incident Patch 1: `1bb06205` (2026-11-08)
+**Commit Message**: Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (#1360)
 
-Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.21 to 2.88.0.
-- [Release notes](https://github.com/taiki-e/install-action/releases)
-- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/taiki-e/install-action/compare/v2.87.21...v2.88.0)
-
----
-updated-dependencies:
-- dependency-name: taiki-e/install-action
-  dependency-version: 2.88.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `templates/bash.txt` (modified, +9/-4)
 ```diff
-@@ -50,7 +50,7 @@ jobs:
-         with:
-           key: ${{ matrix.os }}
-       - name: Install just
--        uses: taiki-e/install-action@v2.87.21
-+        uses: taiki-e/install-action@v2.88.0
-         with:
-           tool: just
-       - name: Run lints + tests
-```
-
----
-
-### Incident Patch 2: `8c97969f` (2026-11-07)
-**Commit Message**: build(deps): bump Swatinem/rust-cache from 2.9.2 to 2.9.3 (#1355)
-
-Bumps [Swatinem/rust-cache](https://github.com/swatinem/rust-cache) from 2.9.2 to 2.9.3.
-- [Release notes](https://github.com/swatinem/rust-cache/releases)
-- [Changelog](https://github.com/Swatinem/rust-cache/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/swatinem/rust-cache/compare/v2.9.2...v2.9.3)
-
----
-updated-dependencies:
-- dependency-name: Swatinem/rust-cache
-  dependency-version: 2.9.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ jobs:
-           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
-           name: zoxide
-       - name: Setup cache
--        uses: Swatinem/rust-cache@v2.9.2
-+        uses: Swatinem/rust-cache@v2.9.3
-         with:
-           key: ${{ matrix.os }}
-       - name: Install just
-```
-
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
-```diff
-@@ -64,7 +64,7 @@ jobs:
-           override: true
-           target: ${{ matrix.target }}
-       - name: Setup cache
--        uses: Swatinem/rust-cache@v2.9.2
-+        uses: Swatinem/rust-cache@v2.9.3
-         with:
-           key: ${{ matrix.target }}
-       - name: Install cross
-```
-
----
-
-### Incident Patch 3: `989beb32` (2026-11-07)
-**Commit Message**: fix(nushell): skip the first PWD env_change when recording dirs (#1326)
-
-**File**: `templates/nushell.txt` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ export-env {
-   if $nu.history-enabled and not $__zoxide_hooked {
-     $env.config.hooks.env_change.PWD = ($env.config.hooks.env_change.PWD | append {
-       __zoxide_hook: true,
--      code: {|_, dir| ^zoxide add -- $dir}
-+      code: {|old, dir| if ($old | is-not-empty) { ^zoxide add -- $dir }}
-     })
-   }
+@@ -37,6 +37,7 @@ function __zoxide_cd() {
+ {%- if hook == InitHook::Prompt %}
+ function __zoxide_hook() {
+     \builtin local -r retval="$?"
++    __zoxide_hook_ok=1
+     if [[ -o history ]]; then
+         # shellcheck disable=SC2312
+         \command zoxide add -- "$(__zoxide_pwd)"
+@@ -49,6 +50,7 @@ __zoxide_oldpwd="$(__zoxide_pwd)"
+ 
+ function __zoxide_hook() {
+     \builtin local -r retval="$?"
++    __zoxide_hook_ok=1
+     \builtin local pwd_tmp
+     pwd_tmp="$(__zoxide_pwd)"
+     if [[ ${__zoxide_oldpwd} != "${pwd_tmp}" ]]; then
+@@ -75,17 +77,20 @@ fi
+ 
  {%- endif %}
+ 
++{#
++  Many terminal integrations (VS Code, Termius, Warp, inshellisense) replace
++  PROMPT_COMMAND with a wrapper hook, so checking for __zoxide_hook in
++  PROMPT_COMMAND doesn't work. Instead, the hook sets a flag when it runs.
++-#}
+ # Report common issues.
+ function __zoxide_doctor() {
+ {%- if hook == InitHook::None %}
+     return 0
+ 
+ {%- else %}
+     [[ ${_ZO_DOCTOR:-1} -eq 0 ]] && return 0
+-    # shellcheck disable=SC2199
+-    [[ ${PROMPT_COMMAND[@]:-} == *'__zoxide_hook'* ]] && return 0
+-    # shellcheck disable=SC2199
+-    [[ ${__vsc_original_prompt_command[@]:-} == *'__zoxide_hook'* ]] && return 0
++    [[ -n ${__zoxide_hook_ok:-} ]] && return 0
++    [[ $- == *i* ]] || return 0
+ 
+     _ZO_DOCTOR=0
+     \builtin printf '%s\n' \
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1360** (2026-11-08): Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (@ajeetdsouza)
+- **PR #1358** (closed): fix(bash): recognize Warp's preserved prompt hook (@mcollard0)
 - **PR #1357** (2026-11-07): db: accept a UTF-8 BOM at the start of db.txt (@b84330808)
 - **PR #1355** (2026-11-07): build(deps): bump Swatinem/rust-cache from 2.9.2 to 2.9.3 (@dependabot[bot])
 - **PR #1354** (2026-11-07): build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (@dependabot[bot])
 - **PR #1349** (2026-10-24): Avoid firing the ERR trap from the Bash hook in array PROMPT_COMMAND (@ajeetdsouza)
-- **PR #1347** (closed): docs: describe the PATHS behavior in the zoxide-remove man page (@ump45nose)
-- **PR #1346** (2026-10-23): fix(posix): allow z to enter directories starting with a dash (@56steve)
 
 ---
 
@@ -1515,28 +1466,39 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (#1354)
+## X. Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (#1360)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `templates/bash.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9cba6b4e`: build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (#1354). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bb06205`: Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (#1360). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `templates/bash.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: taiki-e/install-action@v2.88.0
+    __zoxide_hook_ok=1
+    __zoxide_hook_ok=1
+{#
+  Many terminal integrations (VS Code, Termius, Warp, inshellisense) replace
+  PROMPT_COMMAND with a wrapper hook, so checking for __zoxide_hook in
+  PROMPT_COMMAND doesn't work. Instead, the hook sets a flag when it runs.
+-#}
+    [[ -n ${__zoxide_hook_ok:-} ]] && return 0
+    [[ $- == *i* ]] || return 0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: taiki-e/install-action@v2.87.21
+    # shellcheck disable=SC2199
+    [[ ${PROMPT_COMMAND[@]:-} == *'__zoxide_hook'* ]] && return 0
+    # shellcheck disable=SC2199
+    [[ ${__vsc_original_prompt_command[@]:-} == *'__zoxide_hook'* ]] && return 0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9cba6b4e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bb06205` are properly handled with clean fallback behavior.

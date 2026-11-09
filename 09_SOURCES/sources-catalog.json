@@ -1105,8 +1105,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "a77b1df839dc53f8154aaa280082141743941bf3eac20c8047646703f378d5e2",
-    "lastHarvestedAt": "2026-11-05T08:03:43.129Z",
+    "contentHash": "9e0170ef78910af4491e03bd2e9ad41b535f38b7316eef7beefb818dbab75126",
+    "lastHarvestedAt": "2026-11-09T02:01:10.160Z",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2"
   },
   "hf-baai-bge-reranker-v2-m3": {
@@ -2663,10 +2663,10 @@
     "repository": "ajeetdsouza/zoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/ajeetdsouza/zoxide",
-    "sourceVersion": "c21f5473",
+    "sourceVersion": "1bb06205",
     "license": "MIT",
-    "contentHash": "e177815030e916992524bbee977f0bed468161718af76bf2d4c923fbb8702f06",
-    "lastHarvestedAt": "2026-11-08T01:03:12.849Z",
+    "contentHash": "169daebcc6d860be289b993cd43ee5b393fca81100f636d278464febe3ffcdd5",
+    "lastHarvestedAt": "2026-11-09T02:01:01.542Z",
     "learningId": "learn-github-ajeetdsouza-zoxide"
   },
   "react-native-elements-react-native-elements": {
@@ -7243,10 +7243,10 @@
     "repository": "SeaQL/sea-orm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeaQL/sea-orm",
-    "sourceVersion": "c5dffaa1",
+    "sourceVersion": "85de02c9",
     "license": "Apache-2.0",
-    "contentHash": "8ec576a7f0c3e0d1cd8654b8f8958bfeed28505a1327c909140c30ca667b18e3",
-    "lastHarvestedAt": "2026-10-30T15:22:10.555Z",
+    "contentHash": "01cd1a55e1ebf1ce21f4fb4d9fa0fc97d6ea52c778fde226170dcc8f6923afac",
+    "lastHarvestedAt": "2026-11-09T02:01:15.159Z",
     "learningId": "learn-github-seaql-sea-orm"
   },
   "mobilenativefoundation-store": {

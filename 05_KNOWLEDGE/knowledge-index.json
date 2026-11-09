@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T01:53:24.349Z",
+  "last_updated": "2026-11-09T02:01:15.045Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1339,14 +1339,19 @@
       "slug": "ajeetdsouza-zoxide",
       "platform": "github",
       "source_url": "https://github.com/ajeetdsouza/zoxide",
-      "source_version": "c21f5473",
-      "content_hash": "e177815030e916992524bbee977f0bed468161718af76bf2d4c923fbb8702f06",
+      "source_version": "1bb06205",
+      "content_hash": "169daebcc6d860be289b993cd43ee5b393fca81100f636d278464febe3ffcdd5",
       "dossier_path": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (#1354)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (#1360)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -1365,7 +1370,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:03:12.669Z",
+      "verified_at": "2026-11-09T02:01:01.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32035,7 +32040,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "a77b1df839dc53f8154aaa280082141743941bf3eac20c8047646703f378d5e2",
+      "content_hash": "9e0170ef78910af4491e03bd2e9ad41b535f38b7316eef7beefb818dbab75126",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -32073,6 +32078,16 @@
           "number": 6265,
           "title": "L2 Normalization for Cosine Similarity Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Attention-Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": null,
+          "title": "L2 Normalization for Cosine Similarity Retrieval",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32092,7 +32107,7 @@
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14"
       ],
-      "verified_at": "2026-11-05T08:03:42.980Z",
+      "verified_at": "2026-11-09T02:01:10.013Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55561,11 +55576,16 @@
       "slug": "seaql-sea-orm",
       "platform": "github",
       "source_url": "https://github.com/SeaQL/sea-orm",
-      "source_version": "c5dffaa1",
-      "content_hash": "8ec576a7f0c3e0d1cd8654b8f8958bfeed28505a1327c909140c30ca667b18e3",
+      "source_version": "85de02c9",
+      "content_hash": "01cd1a55e1ebf1ce21f4fb4d9fa0fc97d6ea52c778fde226170dcc8f6923afac",
       "dossier_path": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Regenerate sea-orm-sync (from_json test fixtures)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2388,
           "title": "Dialect-Complete DDL Syntax Parameterization",
@@ -55602,7 +55622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:22:10.442Z",
+      "verified_at": "2026-11-09T02:01:15.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
