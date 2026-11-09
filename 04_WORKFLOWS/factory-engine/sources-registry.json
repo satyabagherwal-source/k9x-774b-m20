@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T15:29:04.554Z",
-    "lastVerified": "2026-11-09T15:29:04.554Z",
+    "lastChecked": "2026-11-09T15:52:01.168Z",
+    "lastVerified": "2026-11-09T15:52:01.168Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -254,12 +254,12 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T14:35:41.236Z",
-    "lastVerified": "2026-11-09T14:35:41.236Z",
+    "lastChecked": "2026-11-09T15:51:35.770Z",
+    "lastVerified": "2026-11-09T15:51:35.770Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -268,7 +268,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6f9df7e7"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1644,9 +1645,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-09T07:31:59.066Z",
+    "lastChecked": "2026-11-09T15:51:31.012Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-09T07:31:59.066Z"
+    "lastVerified": "2026-11-09T15:51:31.012Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2755,9 +2756,9 @@
   "welldone-software-why-did-you-render": {
     "name": "why-did-you-render",
     "officialUrl": "https://github.com/welldone-software/why-did-you-render",
-    "lastChecked": "2026-11-06T21:06:39.139Z",
+    "lastChecked": "2026-11-09T15:51:25.669Z",
     "revisionIdentifier": "3ec3512d",
-    "lastVerified": "2026-11-06T21:06:39.139Z"
+    "lastVerified": "2026-11-09T15:51:25.669Z"
   },
   "goodrain-rainbond": {
     "name": "rainbond",
@@ -3067,22 +3068,21 @@
     "lastVerified": "2026-11-06T21:44:58.109Z"
   },
   "kgateway-dev-kgateway": {
-    "name": "kgateway",
+    "name": "kgateway-dev/kgateway",
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T18:18:47.007Z",
-    "lastVerified": "2026-11-08T18:18:47.007Z",
+    "lastChecked": "2026-11-09T15:51:34.474Z",
+    "lastVerified": "2026-11-09T15:51:34.474Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "009c2c9831de0b90522d701b0a87e85438f351ea8c70f587d0640df0f69ba402",
+    "contentHash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "119488a5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-attu": {
     "name": "attu",
@@ -5563,9 +5563,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-08T12:21:31.418Z",
+    "lastChecked": "2026-11-09T15:51:20.741Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-08T12:21:31.418Z"
+    "lastVerified": "2026-11-09T15:51:20.741Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -5833,8 +5833,8 @@
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T17:29:09.396Z",
-    "lastVerified": "2026-11-08T17:29:09.396Z",
+    "lastChecked": "2026-11-09T15:51:33.430Z",
+    "lastVerified": "2026-11-09T15:51:33.430Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
@@ -9306,13 +9306,13 @@
     "officialUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T15:59:18.177Z",
-    "lastVerified": "2026-11-05T15:59:18.177Z",
+    "lastChecked": "2026-11-09T15:51:23.341Z",
+    "lastVerified": "2026-11-09T15:51:23.341Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
-    "promotedRulesCount": 0,
+    "contentHash": "5eb17c45b35b8d1e458a4e00864c21a941f0c0544953ff748f4d8ce6497880a5",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

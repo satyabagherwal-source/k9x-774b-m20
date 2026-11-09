@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T15:29:01.989Z",
+  "last_updated": "2026-11-09T15:51:58.568Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2616,14 +2616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "content_hash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
-      "verified_at": "2026-11-05T15:59:19.326Z",
+      "content_hash": "5eb17c45b35b8d1e458a4e00864c21a941f0c0544953ff748f4d8ce6497880a5",
+      "verified_at": "2026-11-09T15:51:58.567Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T15:59:19.326Z"
+      "last_updated": "2026-11-09T15:51:58.567Z"
     },
     "nvidia/Qwen3.8-Flash-Next-FP4-Local": {
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "009c2c9831de0b90522d701b0a87e85438f351ea8c70f587d0640df0f69ba402",
-      "verified_at": "2026-11-06T13:27:20.245Z",
+      "content_hash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
+      "verified_at": "2026-11-09T15:51:36.468Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:27:20.245Z"
+      "last_updated": "2026-11-09T15:51:36.468Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",

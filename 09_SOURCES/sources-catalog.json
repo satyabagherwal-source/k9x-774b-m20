@@ -1655,8 +1655,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
     "license": "Open-Source",
-    "contentHash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
-    "lastHarvestedAt": "2026-11-05T15:59:19.316Z",
+    "contentHash": "5eb17c45b35b8d1e458a4e00864c21a941f0c0544953ff748f4d8ce6497880a5",
+    "lastHarvestedAt": "2026-11-09T15:51:58.545Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "119488a5",
+    "sourceVersion": "7490cf4b",
     "license": "Apache-2.0",
-    "contentHash": "009c2c9831de0b90522d701b0a87e85438f351ea8c70f587d0640df0f69ba402",
-    "lastHarvestedAt": "2026-11-06T13:27:20.228Z",
+    "contentHash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
+    "lastHarvestedAt": "2026-11-09T15:51:36.447Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {

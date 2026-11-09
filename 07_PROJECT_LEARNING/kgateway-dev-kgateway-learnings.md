@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `119488a5`  
+> **Source Version**: `7490cf4b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:27:18.898Z  
+> **Timestamp**: 2026-11-09T15:51:35.026Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:27:18.448Z  
+> **Harvest Timestamp**: 2026-11-09T15:51:34.474Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1120,11 +1120,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14994** (2026-11-06): **[2.5] ci: cache the Rust module build in GHCR (#14982)**
-  *Symptoms*: # Description  Backport of #14982 to v2.5.x (cherry-picked cleanly, identical diff).  **Motivation:** the e2e image build spends ~190s of its ~216s building `librust_module.so` from scratch, and every e2e shard waits on it. The envoyinit BuildKit cache that was meant to cover this never held Rust layers, and it was only saved under PR refs that nothing else could read.  **What changed:** - goreleaser's Rust module steps read and write a GHCR registry cache, `envoy-modules-cache:<arch>-<key>`. The key is a checksum of the files that define the module's dependency stage. - The Makefile's module build reads that cache when `GITHUB_REPOSITORY_OWNER` is set, which it is in every Actions run. - The unused envoyinit local BuildKit cache is removed.  v2.5.x's Rust dependency files are identical to main's, so its key matches main's (`4050640097`). Release-line PRs read the cache main already writes, and a v2.5.x release writes to that same tag.  # Change Type  /kind cleanup  # Changelog  ```release-note NONE ```  # Additional Notes  - Checked locally: `make lint-actions` and `goreleaser check` pass. With `GITHUB_REPOSITORY_OWNER=kgateway-dev`, the module build reads `envoy-modules-cache:amd64-4050640097`. 
+- **Issue #15002** (2026-11-09): **test: fix five flakes that only passed in CI on rerun**
+  *Symptoms*: # Description  Fixes the five tests that still needed gotestsum's `--rerun-fails` to pass in CI between Oct 16 and Nov 8. In that window they failed on the first run and passed on a rerun in both PR CI and the merge queue. One commit per flake:  - **`TestParkedNackIsRetried`** (unit, `pkg/kgateway/setup`): the test shortened the NACK retry to 100ms, so the second NACK backed off only 200ms. On a loaded runner the retry timer answered the parked watch before the test saw it, or before the v2 correction went out. The test now raises the retry delay to a minute before the second NACK. Under the same CPU load: 43/320 failures before, 1/320 after (an unrelated receive timeout). - **`TestDereferenceWindowClosingDuringASlowInstallIsNotExtendedByALaterOne`** (unit, `pkg/kgateway/proxy_syncer`): a 1ns prune armed during the slow install could reach the fake cache's `SetSnapshot` before the test reset the delay, and sleep another grace. The fake now delays a single install (`Swap(0)`), and the manual resets are gone. Test-only change. - **`TestControllerSuite/TestGatewayClass/default GatewayClass…`** (envtest, `pkg/kgateway/controller`): the subtest asserted that a user's description edit to the default GatewayClass sticks. On every generation change the reconciler re-applies its desired spec via SSA, so it restores the description (the ParametersRef subtest already asserts this). The test passed only when its first Get beat the reconcile. It now asserts what the reconciler actually do
 
-- **Issue #14993** (2026-11-06): **e2e: scrape controller metrics through the API server pod proxy**
-  *Symptoms*: # Description The metrics, xds_warming and routereplacement suites each deployed a kgateway-metrics Service so their curl pod could reach the controller's /metrics endpoint. loadtesting already read it through the pod proxy, with its own copy of the pod lookup.  Add common.ScrapeControllerMetrics. It reads /metrics on port 9092 from the first ready controller pod through the API server's pod proxy, the client-go form of `kubectl get --raw .../pods/<pod>:9092/proxy/metrics`. Each request is capped at 10s and callers retry. It needs no Service and works from hosts that cannot reach cluster IPs.  Move all four suites onto it and delete the kgateway-metrics Services, along with routereplacement's install-namespace transform, which existed only for that Service. With their last curl-pod request gone, metrics, routereplacement and xds_warming no longer deploy the curl pod. loadtesting now selects controller pods by app.kubernetes.io/name=kgateway, as the other suites' Services did, rather than also matching the release instance label.  <!-- Thanks for opening a PR! Please delete any sections that don’t apply. -->   <!-- A concise explanation of the change. You may include: - **Motivation:** why this change is needed - **What changed:** key implementation details - **Related issues:** e.g., `Fixes #123` -->  # Change Type /kind flake  <!-- Select one or more of the following by including the corresponding slash-command.  If you pick more than one, the release note is filed under whi
+- **Issue #14996** (2026-11-08): **fix: scope redirect status code annotation to the named rule**
+  *Symptoms*: # Description  Fixes #14995  A rule-scoped value of `kgateway.dev/http-redirect-status-code`, such as `rule1=301`, was also applied to unnamed rules. A space before the equals sign also stopped the value from matching its rule.  - Do not apply a rule-scoped value when the rule has no name. - Trim whitespace around the rule name. - Make `TestParseRedirectStatusCodeAnnotation` always assert the returned code. Previously, cases expecting nil could not fail. - Add test cases for multiple scoped values on an unnamed rule, and for a space before the equals sign.  # Change Type  /kind fix  # Changelog  ```release-note Fixed the kgateway.dev/http-redirect-status-code annotation applying rule-scoped values to unnamed rules, and failing to match a rule when its name was followed by a space. ```  # Additional Notes  Routes that unintentionally relied on a rule-scoped value applying to an unnamed rule will now use the rule's `statusCode` from the `RequestRedirect` filter, or the default of 302.  Tested with `go test ./pkg/krtcollections/...` and `go test ./pkg/kgateway/translator/gateway/`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1141,857 +1141,339 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6929a698` (2026-11-05)
-**Commit Message**: fix: Roll the proxy deployment when the bootstrap config is changed (#14985)
-
-Signed-off-by: David Jumani <[REDACTED_EMAIL]>
-Co-authored-by: Omar Hammami <[REDACTED_EMAIL]>
-
-**File**: `pkg/kgateway/deployer/checksum_test.go` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+package deployer
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+	appsv1 "k8s.io/api/apps/v1"
-+
-+	pkgdeployer "github.com/kgateway-dev/kgateway/v2/pkg/deployer"
-+	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/helm"
-+	"github.com/kgateway-dev/kgateway/v2/pkg/schemes"
-+)
-+
-+// Envoy reads its bootstrap ConfigMap only at startup, so the proxy pod template
-+// must carry a checksum of the ConfigMap that changes whenever the bootstrap changes.
-+func TestEnvoyDeploymentConfigChecksum(t *testing.T) {
-+	chart, err := loadChart(helm.EnvoyHelmChart)
-+	require.NoError(t, err)
-+	d := pkgdeployer.NewDeployer("test-controller", schemes.GatewayScheme(), nil, chart, nil, nil)
-+
-+	checksum := func(vals map[string]any) string {
-+		t.Helper()
-+		objs, err := d.RenderChartToObjects("default", "gw", vals)
-+		require.NoError(t, err)
-+		for _, obj := range objs {
-+			if dep, ok := obj.(*appsv1.Deployment); ok {
-+				sum := dep.Spec.Template.Annotations["kgateway.dev/checksum-config"]
-+				require.NotEmpty(t, sum, "pod template should have a kgateway.dev/checksum-config annotation")
-+				return sum
-+			}
-+		}
-+		require.FailNow(t, "no Deployment rendered")
-+		return ""
-+	}
-+	withLogFormat := func(text string) map[string]any {
-+		return map[string]any{"gateway": map[string]any{
-+			"name":             "gw",
-+			"fullnameOverride": "gw",
-+			"gatewayName":      "gw",
-+			"image":            map[string]any{"registry": "cr.kgateway.dev", "repository": "envoy-wrapper", "tag": "test"},
-+			"logFormat":        map[string]any{"text": text},
-+		}}
-+	}
-+
-+	base := checksum(withLogFormat("[%Y-%m-%d %T.%e][%l] %v"))
-+	require.Equal(t, base, checksum(withLogFormat("[%Y-%m-%d %T.%e][%l] %v")),
-+		"checksum should be stable for identical input")
-+	require.NotEqual(t, base, checksum(withLogFormat("%v")),
-+		"checksum should change when the bootstrap changes")
-+
-+	// Envoy reloads the xDS CA live, so rotating it must not roll the pods.
-+	withCA := func(caCert string) map[string]any {
-+		vals := withLogFormat("%v")
-+		vals["gateway"].(map[string]any)["xds"] = map[string]any{
-+			"tls": map[string]any{"enabled": true, "caCert": caCert},
-+		}
-+		return vals
-+	}
-+	require.Equal(t, checksum(withCA("old-ca")), checksum(withCA("new-ca")),
-+		"checksum should not change when only the xDS CA changes")
-+}
-```
-
-**File**: `pkg/kgateway/helm/envoy/templates/deployment.yaml` (modified, +5/-0)
-```diff
-@@ -28,10 +28,15 @@ spec:
-       {{- if $statsConfig.enabled }}
-         {{- $promAnnotations = dict "prometheus.io/path" "/metrics" "prometheus.io/port" "9091" "prometheus.io/scrape" "true" }}
-       {{- end}}
-+      {{- /* Roll the pods when the Envoy bootstrap changes; Envoy only reads it at startup.
-+      Hash only envoy.yaml: Envoy reloads ca.crt live, so a CA rotation must not roll every proxy. */}}
-+      {{- $configMap := include (print $.Template.BasePath "/configmap.yaml") . | fromYaml }}
-+      {{- $checksumAnnotations := dict "kgateway.dev/checksum-config" (get $configMap.data "envoy.yaml" | sha256sum) }}
-       {{- toYaml (merge
-           (deepCopy ($gateway.gatewayAnnotations | default dict))
-           ($gateway.extraPodAnnotations | default dict)
-           $promAnnotations
-+          $checksumAnnotations
-           (include "kgateway.gateway.gatewayNameAnnotation" . | fromYaml)
-        ) | nindent 8 }}
-       labels:
-```
-
-**File**: `test/deployer/deployer_helm.go` (modified, +8/-2)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"fmt"
- 	"os"
- 	"path/filepath"
-+	"regexp"
- 	"strings"
- 	"sync"
- 	"testing"
-@@ -411,9 +412,14 @@ func validateObjectsAgainstAPIServer(
- 	assert.NoError(t, errors.Join(errs...), "rendered objects must pass API server validation")
- }
- 
--// sanitizeOutput removes things that change often but are not relevant to the tests
-+// configChecksumRegex matches the pod template's bootstrap checksum annotation line.
-+var configChecksumRegex = regexp.MustCompile(`(?m)^[ \t]*kgateway\.dev/checksum-config: [0-9a-f]{64}\n`)
-+
-+// sanitizeOutput removes things that change often but are not relevant to the tests.
-+// The bootstrap checksum changes with any bootstrap edit, so the golden files leave it
-+// out; pkg/kgateway/deployer/checksum_test.go covers the checksum itself.
- func sanitizeOutput(got []byte) []byte {
--	return got
-+	return configChecksumRegex.ReplaceAll(got, nil)
- }
- 
- // objectsToYAML converts a slice of client.Object to YAML bytes, separated by "---"
-```
-
-**File**: `test/e2e/features/deployer/suite.go` (modified, +77/-0)
-```diff
-@@ -74,6 +74,9 @@ var (
- 		"TestGatewayParametersUpdateTriggersReconciliation": {
- 			Manifests: []string{gatewayWithParameters},
- 		},
-+		"TestBootstrapChangeRollsProxyPods": {
-+			Manifests: []string{gatewayWithParameters},
-+		},
- 		"TestHPAPDBLifecycle": {
- 			Manifests: []string{gatewayWithHPAPDB},
- 		},
-@@ -395,6 +398,80 @@ func (s *testingSuite) TestGatewayParametersUpdateTriggersReconciliation() {
- 	}).WithTimeout(60 * time.Second).WithPolling(1 * time.Second).Should(gomega.Succeed())
- }
- 
-+// TestBootstrapChangeRollsProxyPods verifies that a GatewayParameters change that only
-+// affects the Envoy bootstrap ConfigMap rolls the proxy pods. Envoy reads the bootstrap
-+// only at startup, so the pod template carries a checksum of the ConfigMap.
-+func (s *testingSuite) TestBootstrapChangeRollsProxyPods() {
-+	s.TestInstallation.AssertionsT(s.T()).EventuallyReadyReplicas(s.Ctx, proxyObjectMeta, gomega.Equal(1))
-+
-+	getDeployment := func(g gomega.Gomega) *appsv1.Deployment {
-+		dep := &appsv1.Deployment{}
-+		err := s.TestInstallation.ClusterContext.Client.Get(s.Ctx, client.ObjectKey{
-+			Namespace: proxyObjectMeta.Namespace,
-+			Name:      proxyObjectMeta.Name,
-+		}, dep)
-+		g.Expect(err).NotTo(gomega.HaveOccurred())
-+		return dep
-+	}
-+	listProxyPodUIDs := func(g gomega.Gomega, selector map[string]string) map[types.UID]bool {
-+		pods := &corev1.PodList{}
-+		err := s.TestInstallation.ClusterContext.Client.List(s.Ctx, pods,
-+			client.InNamespace(proxyObjectMeta.Namespace), client.MatchingLabels(selector))
-+		g.Expect(err).NotTo(gomega.HaveOccurred())
-+		uids := map[types.UID]bool{}
-+		for _, p := range pods.Items {
-+			if p.DeletionTimestamp == nil {
-+				uids[p.UID] = true
-+			}
-+		}
-+		return uids
-+	}
-+
-+	dep := getDeployment(s.TestInstallation.AssertionsT(s.T()).Gomega)
-+	oldChecksum := dep.Spec.Template.Annotations["kgateway.dev/checksum-config"]
-+	s.Require().NotEmpty(oldChecksum, "pod template should have a kgateway.dev/checksum-config annotation")
-+	selector := dep.Spec.Selector.MatchLabels
-+	oldPods := listProxyPodUIDs(s.TestInstallation.AssertionsT(s.T()).Gomega, selector)
-+	s.Require().NotEmpty(oldPods, "proxy should have running pods before the change")
-+
-+	// logFormat is rendered only into the bootstrap ConfigMap, not the pod template.
-+	const logFormat = "[bootstrap-checksum-e2e] %v"
-+	s.patchGatewayParameters(gwParamsDefaultObjectMeta, func(parameters *kgateway.GatewayParameters) {
-+		if parameters.Spec.Kube.EnvoyContainer == nil {
-+			parameters.Spec.Kube.EnvoyContainer = &kgateway.EnvoyContainer{}
-+		}
-+		if parameters.Spec.Kube.EnvoyContainer.Bootstrap == nil {
-+			parameters.Spec.Kube.EnvoyContainer.Bootstrap = &kgateway.EnvoyBootstrap{}
-+		}
-+		parameters.Spec.Kube.EnvoyContainer.Bootstrap.LogFormat = &kgateway.LogFormat{Text: new(logFormat)}
-+	})
-+
-+	s.TestInstallation.AssertionsT(s.T()).Gomega.Eventually(func(g gomega.Gomega) {
-+		cm := &corev1.ConfigMap{}
-+		err := s.TestInstallation.ClusterContext.Client.Get(s.Ctx, client.ObjectKey{
-+			Namespace: proxyObjectMeta.Namespace,
-+			Name:      proxyObjectMeta.Name,
-+		}, cm)
-+		g.Expect(err).NotTo(gomega.HaveOccurred())
-+		g.Expect(cm.Data["envoy.yaml"]).To(gomega.ContainSubstring(logFormat), "bootstrap should have the new log format")
-+
-+		g.Expect(getDeployment(g).Spec.Template.Annotations).To(
-+			gomega.HaveKeyWithValue("kgateway.dev/checksum-config", gomega.Not(gomega.Equal(oldChecksum))),
-+			"checksum should change when the bootstrap changes",
-+		)
-+	}).WithTimeout(60 * time.Second).WithPolling(1 * time.Second).Should(gomega.Succeed())
-+
-+	// The rollout replaces every old pod with a new one.
-+	s.TestInstallation.AssertionsT(s.T()).Gomega.Eventually(func(g gomega.Gomega) {
-+		pods := listProxyPodUIDs(g, selector)
-+		g.Expect(pods).NotTo(gomega.BeEmpty())
-+		for uid := range pods {
-+			g.Expect(oldPods).NotTo(gomega.HaveKey(uid), "old proxy pods should be replaced")
-+		}
-+	}).WithTimeout(2 * time.Minute).WithPolling(2 * time.Second).Should(gomega.Succeed())
-+	s.TestInstallation.AssertionsT(s.T()).EventuallyReadyReplicas(s.Ctx, proxyObjectMeta, gomega.Equal(1))
-+}
-+
- // TestHPAPDBLifecycle tests the full lifecycle of HPA, PDB, and VPA resources:
- // 1. Creates a Gateway with HPA, PDB, and VPA configured
- // 2. Verifies the proxy deployment is healthy and all three resources exist
-```
-
----
-
-### Incident Patch 2: `1989318b` (2026-11-05)
-**Commit Message**: fix: bound CRD integer fields so oversized values fail admission (#14988)
-
-Signed-off-by: David Jumani <[REDACTED_EMAIL]>
-
-**File**: `api/tests/testdata/backend.yaml` (modified, +25/-0)
-```diff
-@@ -90,3 +90,28 @@ spec:
-         keyValue:
-           key: app
-           value: payments
-+---
-+# Backend: static host port must be between 1 and 65535
-+_err: 'port must be between 1 and 65535'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: Backend
-+metadata:
-+  name: backend-static-port-too-large
-+spec:
-+  type: Static
-+  static:
-+    hosts:
-+    - host: example.com
-+      port: 70000
-+---
-+# Backend: ec2 port 0 is allowed and means the default of 80
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: Backend
-+metadata:
-+  name: backend-ec2-port-zero
-+spec:
-+  type: AWS
-+  aws:
-+    accountId: "000000000000"
-+    ec2:
-+      port: 0
-```
-
-**File**: `api/tests/testdata/backendconfigpolicy.yaml` (modified, +172/-2)
-```diff
-@@ -124,8 +124,8 @@ spec:
-         aggression: ""
-         minWeightPercent: 10
- ---
--# BackendConfigPolicy: refreshRate must be at least 1ms
--_err: 'spec.dns.refreshRate: Invalid value: "0s": refreshRate must be at least 1ms'
-+# BackendConfigPolicy: refreshRate must be greater than 1ms
-+_err: 'spec.dns.refreshRate: Invalid value: "0s": refreshRate must be greater than 1ms'
- apiVersion: gateway.kgateway.dev/v1alpha1
- kind: BackendConfigPolicy
- metadata:
-@@ -345,3 +345,173 @@ spec:
-     healthyThreshold: 1
-     http:
-       path: /healthz
-+---
-+# BackendConfigPolicy: refreshRate of exactly 1ms is rejected, Envoy requires gt 1ms
-+_err: 'refreshRate must be greater than 1ms'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-dns-refresh-1ms
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  dns:
-+    refreshRate: 1ms
-+---
-+# BackendConfigPolicy: connectTimeout must be at least 1ms
-+_err: 'spec.connectTimeout: Invalid value: "0s": must be at least 1ms'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-connect-timeout-zero
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  connectTimeout: 0s
-+---
-+# BackendConfigPolicy: healthCheck timeout and interval must be at least 1ms
-+_err: 'spec.healthCheck.timeout: Invalid value: "0s": must be at least 1ms'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-hc-timeout-zero
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  healthCheck:
-+    timeout: 0s
-+    interval: 1s
-+    unhealthyThreshold: 1
-+    healthyThreshold: 1
-+    http:
-+      path: /healthz
-+---
-+# BackendConfigPolicy: healthCheck interval must be at least 1ms
-+_err: 'spec.healthCheck.interval: Invalid value: "0s": must be at least 1ms'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-hc-interval-zero
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  healthCheck:
-+    timeout: 1s
-+    interval: 0s
-+    unhealthyThreshold: 1
-+    healthyThreshold: 1
-+    http:
-+      path: /healthz
-+---
-+# BackendConfigPolicy: maxHeadersCount must be at least 1
-+_err: 'spec.commonHttpProtocolOptions.maxHeadersCount in body should be greater than or equal to 1'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-max-headers-zero
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  commonHttpProtocolOptions:
-+    maxHeadersCount: 0
-+---
-+# BackendConfigPolicy: leastRequest choiceCount must be at least 2
-+_err: 'spec.loadBalancer.leastRequest.choiceCount in body should be greater than or equal to 2'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-choice-count-one
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  loadBalancer:
-+    leastRequest:
-+      choiceCount: 1
-+---
-+# BackendConfigPolicy: ringHash minimumRingSize must be at least 1
-+_err: 'spec.loadBalancer.ringHash.minimumRingSize in body should be greater than or equal to 1'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-min-ring-zero
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  loadBalancer:
-+    ringHash:
-+      minimumRingSize: 0
-+---
-+# BackendConfigPolicy: ringHash maximumRingSize must be at most 8388608
-+_err: 'spec.loadBalancer.ringHash.maximumRingSize in body should be less than or equal to 8388608'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-max-ring-too-large
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  loadBalancer:
-+    ringHash:
-+      maximumRingSize: 8388609
-+---
-+# BackendConfigPolicy: ringHash minimumRingSize must not exceed maximumRingSize
-+_err: 'minimumRingSize (default 1024) must be less than or equal to maximumRingSize'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-ring-min-above-max
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  loadBalancer:
-+    ringHash:
-+      minimumRingSize: 2048
-+      maximumRingSize: 1024
-+---
-+# BackendConfigPolicy: ringHash maximumRingSize below the default minimum of 1024
-+_err: 'minimumRingSize (default 1024) must be less than or equal to maximumRingSize'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: BackendConfigPolicy
-+metadata:
-+  name: backend-config-ring-max-below-default-min
-+spec:
-+  targetRefs:
-+  - group: ""
-+    kind: Service
-+    name: test-service
-+  loadBalancer:
-+    ringHash:
-+      maximumRingSize: 512
-+---
-+# BackendConfigPolicy: ringHash maximumRingSize equal to minimumRingSize is valid
-+apiVersion: ga
-```
-
-**File**: `api/tests/testdata/gatewayextension.yaml` (modified, +28/-0)
-```diff
-@@ -198,3 +198,31 @@ spec:
-             YGATajDpzrHf+WXgOgvwyxaHJSN/fE+eFuRT3ooDaAuytsfYotsn4z/ajdEPSwXY
-             CwIDAQAB
-             -----END PUBLIC KEY-----
-+---
-+# GatewayExtension: extAuth statusOnError must be a status code Envoy defines
-+_err: 'spec.extAuth.statusOnError: Unsupported value: 418'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: GatewayExtension
-+metadata:
-+  name: gwext-extauth-status-on-error-undefined
-+spec:
-+  extAuth:
-+    grpcService:
-+      backendRef:
-+        name: ext-authz
-+        port: 80
-+    statusOnError: 418
-+---
-+# GatewayExtension: extProc messageTimeout must be at most 1h
-+_err: 'timeout must be at most 1h.'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: GatewayExtension
-+metadata:
-+  name: gwext-extproc-message-timeout-too-large
-+spec:
-+  extProc:
-+    grpcService:
-+      backendRef:
-+        name: ext-proc
-+        port: 80
-+    messageTimeout: 2h
-```
-
-**File**: `api/tests/testdata/listenerpolicy.yaml` (modified, +44/-0)
-```diff
-@@ -86,3 +86,47 @@ spec:
-       grpcStats:
-         methodAllowlist:
-         - /pkg.Service/Method
-+---
-+# ListenerPolicy: local reply mapper statusCode must be at least 200
-+_err: 'mappers[0].statusCode in body should be greater than or equal to 200'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: ListenerPolicy
-+metadata:
-+  name: listener-policy-local-reply-status-too-small
-+spec:
-+  targetRefs:
-+  - group: gateway.networking.k8s.io
-+    kind: Gateway
-+    name: test-gateway
-+  default:
-+    httpSettings:
-+      localReplies:
-+        mappers:
-+        - filter:
-+            statusCodeFilter:
-+              op: EQ
-+              value: 404
-+          statusCode: 150
-+---
-+# ListenerPolicy: gRPC retry backoff baseInterval must be at least 1ms
-+_err: 'retryBackOff.baseInterval: Invalid value: "0s": must be at least 1ms'
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: ListenerPolicy
-+metadata:
-+  name: listener-policy-grpc-backoff-zero
-+spec:
-+  targetRefs:
-+  - group: gateway.networking.k8s.io
-+    kind: Gateway
-+    name: test-gateway
-+  default:
-+    httpSettings:
-+      accessLog:
-+      - grpcService:
-+          logName: test
-+          backendRef:
-+            name: log-service
-+            port: 50051
-+          retryPolicy:
-+            retryBackOff:
-+              baseInterval: 0s
-```
-
-**File**: `api/v1alpha1/kgateway/backend_config_policy_types.go` (modified, +21/-10)
-```diff
-@@ -55,11 +55,12 @@ type BackendConfigPolicySpec struct {
- 	// +kubebuilder:validation:XValidation:rule="self.all(r, (r.group == '' && r.kind == 'Service') || (r.group == 'gateway.kgateway.dev' && r.kind == 'Backend') || (r.group == 'networking.istio.io' && r.kind == 'Hostname'))",message="TargetSelectors must reference either a Kubernetes Service, a Backend, or an Istio Hostname"
- 	TargetSelectors []shared.LocalPolicyTargetSelector `json:"targetSelectors,omitempty"`
- 
--	// The timeout for new network connections to hosts in the cluster.
-+	// The timeout for new network connections to hosts in the cluster. Must be at least 1ms.
- 	// +optional
- 	// +kubebuilder:validation:Type=string
- 	// +kubebuilder:validation:MaxLength=32
- 	// +kubebuilder:validation:XValidation:rule="matches(self, '^([0-9]{1,5}(h|m|s|ms)){1,4}$')",message="invalid duration value"
-+	// +kubebuilder:validation:XValidation:rule="duration(self) >= duration('1ms')",message="must be at least 1ms"
- 	ConnectTimeout *metav1.Duration `json:"connectTimeout,omitempty"`
- 
- 	// DNS contains DNS configuration. Note that this only applies to backends that resolve to Envoy DNS clusters, i.e.,
-@@ -337,15 +338,15 @@ type CircuitBreakers struct {
- type DNS struct {
- 	// RefreshRate controls how frequently Envoy polls DNS for this backend's hostnames.
- 	//
--	// Minimum value is 1ms. If unset, Envoy's default of 5s is used.
-+	// Must be greater than 1ms. If unset, Envoy's default of 5s is used.
- 	// When Envoy respects DNS TTLs, lower TTL values effectively override this setting,
- 	// so RefreshRate acts as the maximum polling interval.
- 	// Recommended value for large-scale deployments is 60s or higher.
- 	// +optional
- 	// +kubebuilder:validation:Type=string
- 	// +kubebuilder:validation:MaxLength=32
- 	// +kubebuilder:validation:XValidation:rule="matches(self, '^([0-9]{1,5}(h|m|s|ms)){1,4}$')",message="invalid duration value"
--	// +kubebuilder:validation:XValidation:rule="duration(self) >= duration('1ms')",message="refreshRate must be at least 1ms"
-+	// +kubebuilder:validation:XValidation:rule="duration(self) > duration('1ms')",message="refreshRate must be greater than 1ms"
- 	RefreshRate *metav1.Duration `json:"refreshRate,omitempty"`
- 
- 	// Jitter adds a random delay of up to this duration before each DNS refresh,
-@@ -460,11 +461,11 @@ type CommonHttpProtocolOptions struct {
- 	MaxConnectionDuration *metav1.Duration `json:"maxConnectionDuration,omitempty"`
- 
- 	// Specifies the maximum number of response headers that the upstream connection will accept
--	// from the backend. If not specified, the default of 100 is used.
-+	// from the backend. Must be at least 1. If not specified, the default of 100 is used.
- 	// To configure the maximum number of headers accepted in downstream requests, use
- 	// ListenerPolicy.spec.default.httpSettings.maxHeadersCount.
- 	// +optional
--	// +kubebuilder:validation:Minimum=0
-+	// +kubebuilder:validation:Minimum=1
- 	MaxHeadersCount *int32 `json:"maxHeadersCount,omitempty"`
- 
- 	// Total duration to keep alive an HTTP request/response stream. If the time limit is reached the stream will be
-@@ -748,9 +749,10 @@ type LoadBalancer struct {
- // LoadBalancerLeastRequestConfig configures the least request load balancer type.
- type LoadBalancerLeastRequestConfig struct {
- 	// How many choices to take into account.
--	// Defaults to 2.
-+	// Defaults to 2. Must be at least 2.
- 	// +optional
- 	// +kubebuilder:default=2
-+	// +kubebuilder:validation:Minimum=2
- 	ChoiceCount int32 `json:"choiceCount,omitempty"`
- 
- 	// SlowStart configures the slow start configuration for the load balancer.
-@@ -766,15 +768,19 @@ type LoadBalancerRoundRobinConfig struct {
- }
- 
- // LoadBalancerRingHashConfig configures the ring hash load balancer type.
-+// +kubebuilder:validation:XValidation:rule="(has(self.minimumRingSize) ? self.minimumRingSize : 1024) <= (has(self.maximumRingSize) ? self.maximumRingSize : 8388608)",message="minimumRingSize (default 1024) must be less than or equal to maximumRingSize (default 8388608)"
- type LoadBalancerRingHashConfig struct {
--	// MinimumRingSize is the minimum size of the ring.
-+	// MinimumRingSize is the minimum size of the ring. Must be between 1 and 8388608.
- 	// +optional
--	// +kubebuilder:validation:Minimum=0
-+	// +kubebuilder:validation:Minimum=1
-+	// +kubebuilder:validation:Maximum=8388608
- 	MinimumRingSize *int64 `json:"minimumRingSize,omitempty"`
- 
--	// MaximumRingSize is the maximum size of the ring.
-+	// MaximumRingSize is the maximum size of the ring. Must be at most 8388608, and at least
-+	// minimumRingSize (default 1024).
- 	// +optional
- 	// +kubebuilder:validation:Minimum=0
-+	// +kubebuilder:validation:Maximum=8388608
- 	MaximumRingSize *int64 `json:"maximumRingSize,omitempty"`
- 
- 	// UseHostnameForHashing specifies whether to use the hostname instead of the resolved IP address for hashing.
-@@ -906,6 +912,8 @@ type ZoneAwareForce struct {
- 	// Defaults to 1.
- 	// +optional
- 	// +kubebuilder:validation:Minimum=1
-+	/
-```
-
-**File**: `api/v1alpha1/kgateway/backend_types.go` (modified, +4/-2)
-```diff
-@@ -283,9 +283,10 @@ const (
- // AwsEc2 configures dynamic discovery of EC2 instances.
- type AwsEc2 struct {
- 	// Port is the port to use for discovered instances.
--	// Defaults to 80.
-+	// Defaults to 80. A value of 0 also uses 80.
- 	// +optional
- 	// +kubebuilder:default=80
-+	// +kubebuilder:validation:XValidation:rule="self >= 0 && self <= 65535",message="port must be between 0 and 65535"
- 	Port gwv1.PortNumber `json:"port,omitempty"`
- 
- 	// AddressType selects whether to route to the instance private or public IP.
-@@ -386,8 +387,9 @@ type Host struct {
- 	// +kubebuilder:validation:MinLength=1
- 	// +required
- 	Host string `json:"host"`
--	// Port is the port to use for the backend.
-+	// Port is the port to use for the backend. Must be between 1 and 65535.
- 	// +required
-+	// +kubebuilder:validation:XValidation:rule="self >= 1 && self <= 65535",message="port must be between 1 and 65535"
- 	Port gwv1.PortNumber `json:"port"`
- }
- 
-```
-
-**File**: `api/v1alpha1/kgateway/ext_auth_types.go` (modified, +4/-3)
-```diff
-@@ -99,12 +99,13 @@ type ExtAuthProvider struct {
- 	WithRequestBody *ExtAuthBufferSettings `json:"withRequestBody,omitempty"`
- 
- 	// StatusOnError sets the HTTP status response code that is returned to the client when the
--	// auth server returns an error or cannot be reached. Must be in the range of 100-511 inclusive.
-+	// auth server returns an error or cannot be reached. Must be one of the status codes
-+	// that Envoy defines (envoy.type.v3.StatusCode): 100, 200-208, 226, 300-305, 307, 308,
-+	// 400-417, 421-424, 426, 428, 429, 431, 500-508, 510 or 511.
- 	// The default matches the deny response code of 403 Forbidden.
- 	// +optional
- 	// +kubebuilder:default=403
--	// +kubebuilder:validation:Minimum=100
--	// +kubebuilder:validation:Maximum=511
-+	// +kubebuilder:validation:Enum=100;200;201;202;203;204;205;206;207;208;226;300;301;302;303;304;305;307;308;400;401;402;403;404;405;406;407;408;409;410;411;412;413;414;415;416;417;421;422;423;424;426;428;429;431;500;501;502;503;504;505;506;507;508;510;511
- 	StatusOnError int32 `json:"statusOnError,omitempty"`
- 
- 	// StatPrefix is an optional prefix to include when emitting stats from the extauthz filter,
-```
-
-**File**: `api/v1alpha1/kgateway/ext_proc_types.go` (modified, +4/-1)
-```diff
-@@ -37,20 +37,23 @@ type ExtProcProvider struct {
- 	AllowedProcessingModeOverrides []*ProcessingMode `json:"allowedProcessingModeOverrides,omitempty"`
- 
- 	// MessageTimeout is the timeout for each message sent to the external processing server.
-+	// Must be between 1ms and 1h.
- 	// +optional
- 	// +kubebuilder:validation:Type=string
- 	// +kubebuilder:validation:MaxLength=32
- 	// +kubebuilder:validation:XValidation:rule="matches(self, '^([0-9]{1,5}(h|m|s|ms)){1,4}$')",message="invalid timeout value"
- 	// +kubebuilder:validation:XValidation:rule="duration(self) >= duration('1ms')",message="timeout must be at least 1ms."
-+	// +kubebuilder:validation:XValidation:rule="duration(self) <= duration('1h')",message="timeout must be at most 1h."
- 	MessageTimeout *metav1.Duration `json:"messageTimeout,omitempty"`
- 
- 	// MaxMessageTimeout specifies the upper bound of override_message_timeout that may be sent from the external processing server.
--	// The default value 0, which effectively disables the override_message_timeout API.
-+	// Must be between 1ms and 1h. If unset, the override_message_timeout API is disabled.
- 	// +optional
- 	// +kubebuilder:validation:Type=string
- 	// +kubebuilder:validation:MaxLength=32
- 	// +kubebuilder:validation:XValidation:rule="matches(self, '^([0-9]{1,5}(h|m|s|ms)){1,4}$')",message="invalid timeout value"
- 	// +kubebuilder:validation:XValidation:rule="duration(self) >= duration('1ms')",message="timeout must be at least 1ms."
-+	// +kubebuilder:validation:XValidation:rule="duration(self) <= duration('1h')",message="timeout must be at most 1h."
- 	MaxMessageTimeout *metav1.Duration `json:"maxMessageTimeout,omitempty"`
- 
- 	// StatPrefix is an optional prefix to include when emitting stats from the extproc filter,
-```
-
----
-
-### Incident Patch 3: `2960df70` (2026-11-05)
-**Commit Message**: ci: cache the Rust module build in GHCR (#14982)
+### Incident Patch 1: `7490cf4b` (2026-11-09)
+**Commit Message**: test: fix five flakes that only passed in CI on rerun (#15002)
 
 Signed-off-by: omar <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/e2e.yaml` (modified, +0/-18)
+**File**: `pkg/kgateway/controller/controller_test.go` (modified, +12/-6)
 ```diff
-@@ -28,29 +28,11 @@ jobs:
-         uses: ./.github/actions/prep-go-runner
-       - name: Setup Buildx
-         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
--      - name: Restore envoyinit BuildKit cache
--        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
--        with:
--          path: /tmp/.buildx-cache-envoyinit
--          key: ${{ runner.os }}-buildx-envoyinit-v1-${{ hashFiles('internal/envoy_modules/Cargo.lock', 'internal/envoy_modules/**/Cargo.toml', 'cmd/envoyinit/Dockerfile.tmpl', 'cmd/envoyinit/generate-dockerfile.sh') }}
--          restore-keys: |
--            ${{ runner.os }}-buildx-envoyinit-v1-
-       - name: Build shared e2e images
--        env:
--          ENVOYINIT_LOCAL_CACHE_FROM: /tmp/.buildx-cache-envoyinit
--          ENVOYINIT_LOCAL_CACHE_TO: /tmp/.buildx-cache-envoyinit-new
-         run: |
--          mkdir -p /tmp/.buildx-cache-envoyinit
-           # Build the images in parallel. --output-sync keeps each target's log
-           # together, so a target's output only appears once it finishes.
-           make -j --output-sync=target save-e2e-shared-images
--      - name: Rotate envoyinit BuildKit cache
--        if: always()
--        run: |
--          if [ -d /tmp/.buildx-cache-envoyinit-new ]; then
--            rm -rf /tmp/.buildx-cache-envoyinit
--            mv /tmp/.buildx-cache-envoyinit-new /tmp/.buildx-cache-envoyinit
--          fi
-       - name: Upload shared e2e images
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-```
-
-**File**: `.github/workflows/flake-validation.yaml` (modified, +0/-18)
-```diff
-@@ -41,29 +41,11 @@ jobs:
-         uses: ./.github/actions/prep-go-runner
-       - name: Setup Buildx
-         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
--      - name: Restore envoyinit BuildKit cache
--        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
--        with:
--          path: /tmp/.buildx-cache-envoyinit
--          key: ${{ runner.os }}-buildx-envoyinit-v1-${{ hashFiles('internal/envoy_modules/Cargo.lock', 'internal/envoy_modules/**/Cargo.toml', 'cmd/envoyinit/Dockerfile.tmpl', 'cmd/envoyinit/generate-dockerfile.sh') }}
--          restore-keys: |
--            ${{ runner.os }}-buildx-envoyinit-v1-
-       - name: Build shared e2e images
--        env:
--          ENVOYINIT_LOCAL_CACHE_FROM: /tmp/.buildx-cache-envoyinit
--          ENVOYINIT_LOCAL_CACHE_TO: /tmp/.buildx-cache-envoyinit-new
-         run: |
--          mkdir -p /tmp/.buildx-cache-envoyinit
-           # Build the images in parallel. --output-sync keeps each target's log
-           # together, so a target's output only appears once it finishes.
-           make -j --output-sync=target save-e2e-shared-images
--      - name: Rotate envoyinit BuildKit cache
--        if: always()
--        run: |
--          if [ -d /tmp/.buildx-cache-envoyinit-new ]; then
--            rm -rf /tmp/.buildx-cache-envoyinit
--            mv /tmp/.buildx-cache-envoyinit-new /tmp/.buildx-cache-envoyinit
--          fi
-       - name: Upload shared e2e images
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-```
-
-**File**: `.goreleaser.yaml` (modified, +6/-2)
-```diff
-@@ -6,8 +6,12 @@ before:
-     # Build the Rust dynamic module for amd64 and arm64 before any Docker images are built.
-     # cargo zigbuild cross-compiles without needing QEMU; the container runs on the host
-     # platform and targets the specified RUST_BUILD_ARCH.
--    - docker buildx build --output=type=local,dest=_output/rust/amd64 --target=export --build-arg=RUST_BUILD_ARCH=x86_64 -f internal/envoy_modules/Dockerfile internal/envoy_modules/
--    - docker buildx build --output=type=local,dest=_output/rust/arm64 --target=export --build-arg=RUST_BUILD_ARCH=aarch64 -f internal/envoy_modules/Dockerfile internal/envoy_modules/
-+    # The registry cache lets the e2e image builds skip the Rust build when its sources
-+    # are unchanged. `make release` sets ENVOY_MODULES_CACHE_KEY (see the Makefile).
-+    # Writing the cache needs registry auth, so ignore-error keeps unauthenticated
-+    # pull_request runs working.
-+    - docker buildx build --output=type=local,dest=_output/rust/amd64 --target=export --build-arg=RUST_BUILD_ARCH=x86_64 --cache-from=type=registry,ref={{ .Env.IMAGE_REGISTRY }}/envoy-modules-cache:amd64-{{ .Env.ENVOY_MODULES_CACHE_KEY }} --cache-to=type=registry,ref={{ .Env.IMAGE_REGISTRY }}/envoy-modules-cache:amd64-{{ .Env.ENVOY_MODULES_CACHE_KEY }},mode=max,ignore-error=true {{ if isEnvSet "DOCKER_NO_CACHE" }}--no-cache{{ end }} -f internal/envoy_modules/Dockerfile internal/envoy_modules/
-+    - docker buildx build --output=type=local,dest=_output/rust/arm64 --target=export --build-arg=RUST_BUILD_ARCH=aarch64 --cache-from=type=registry,ref={{ .Env.IMAGE_REGISTRY }}/envoy-modules-cache:arm64-{{ .Env.ENVOY_MODULES_CACHE_KEY }} --cache-to=type=registry,ref={{ .Env.IMAGE_REGISTRY }}/envoy-modules-cache:arm64-{{ .Env.ENVOY_MODULES_CACHE_KEY }},mode=max,ignore-error=true {{ if isEnvSet "DOCKER_NO_CACHE" }}--no-cache{{ end }} -f internal/envoy_modules/Dockerfile internal/envoy_modules/
- builds:
-   - id: controller
-     main: ./cmd/kgateway
-```
-
-**File**: `Makefile` (modified, +16/-13)
-```diff
-@@ -861,17 +861,21 @@ export ENVOYINIT_IMAGE_REPO ?= envoy-wrapper
- ENVOYINIT_CACHE_REF ?=
- ENVOYINIT_CACHE_FROM := $(if $(ENVOYINIT_CACHE_REF),--cache-from type=registry$(comma)ref=$(ENVOYINIT_CACHE_REF):$(GOARCH),)
+@@ -528,7 +528,7 @@ func (s *ControllerSuite) TestGatewayClass() {
+ 		}
+ 	})
  
--# Optional local BuildKit cache paths, typically wired to actions/cache in CI
--# so PR runs can read AND write layer cache without needing registry push auth.
--# Requires the docker-container buildx driver (docker/setup-buildx-action).
--# mode=max exports intermediate stages, which is what lets rust_build_deps and
--# rust_builder stay cached across runs even when the registry cache has gaps.
--ENVOYINIT_LOCAL_CACHE_FROM ?=
--ENVOYINIT_LOCAL_CACHE_TO ?=
--ENVOYINIT_LOCAL_CACHE_FROM_ARG := $(if $(ENVOYINIT_LOCAL_CACHE_FROM),--cache-from type=local$(comma)src=$(ENVOYINIT_LOCAL_CACHE_FROM),)
--ENVOYINIT_LOCAL_CACHE_TO_ARG := $(if $(ENVOYINIT_LOCAL_CACHE_TO),--cache-to type=local$(comma)dest=$(ENVOYINIT_LOCAL_CACHE_TO)$(comma)mode=max,)
+-	s.Run("default GatewayClass should not be overwritten when it is updated", func() {
++	s.Run("default GatewayClass managed fields should be restored and user fields kept when it is updated", func() {
+ 		t := s.T()
+ 		r := require.New(t)
+ 		gwc := &gwv1.GatewayClass{}
+@@ -539,19 +539,25 @@ func (s *ControllerSuite) TestGatewayClass() {
+ 			assert.NoError(c, err)
+ 		}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for GatewayClass %s to be created", gatewayClassName)
+ 
+-		// Update it
++		// Update a field the controller manages (description) and one it does not (a user annotation)
+ 		original := gwc.DeepCopy()
+-		updatedDesc := "updated description"
+-		gwc.Spec.Description = new(updatedDesc)
++		userAnnotation := "example.com/user-annotation"
++		if gwc.Annotations == nil {
++			gwc.Annotations = map[string]string{}
++		}
++		gwc.Annotations[userAnnotation] = "kept"
++		gwc.Spec.Description = new("updated description")
+ 		err := s.client.Patch(ctx, gwc, client.MergeFrom(original))
+ 		r.NoError(err)
+ 
+-		// Verify it is not overwritten
++		// The generation bump makes the controller re-apply its desired spec via SSA, which restores
++		// the description. Waiting for that proves the re-apply ran, so the user annotation must have survived it.
+ 		r.EventuallyWithTf(func(c *assert.CollectT) {
+ 			err := s.client.Get(ctx, types.NamespacedName{Name: gatewayClassName}, gwc)
+ 			assert.NoError(c, err)
+ 			assert.NotNil(c, gwc.Spec.Description)
+-			assert.Equal(c, updatedDesc, *gwc.Spec.Description)
++			assert.Equal(c, "default GatewayClass", *gwc.Spec.Description)
++			assert.Equal(c, "kept", gwc.Annotations[userAnnotation])
+ 		}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for GatewayClass %s", gatewayClassName)
+ 	})
+ 
+```
+
+**File**: `pkg/kgateway/proxy_syncer/flip_release_timing_test.go` (modified, +7/-10)
+```diff
+@@ -15,8 +15,11 @@ import (
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+-// slowInstallCache delays SetSnapshot while delay is set, standing in for an
+-// install blocked on a stream. It counts installs and keeps the slow ones.
++// slowInstallCache delays the next SetSnapshot by delay, standing in for an
++// install blocked on a stream. It counts installs and keeps the slow ones. The
++// delay applies once: a re-publish the slow install arms (such as an immediate
++// prune) can install before the test goroutine runs again, and must not be
++// slowed too.
+ type slowInstallCache struct {
+ 	envoycache.SnapshotCache
+ 	delay    atomic.Int64
+@@ -28,7 +31,7 @@ type slowInstallCache struct {
+ 
+ func (c *slowInstallCache) SetSnapshot(ctx context.Context, node string, snapshot envoycache.ResourceSnapshot) error {
+ 	c.installs.Add(1)
+-	if delay := time.Duration(c.delay.Load()); delay > 0 {
++	if delay := time.Duration(c.delay.Swap(0)); delay > 0 {
+ 		c.mu.Lock()
+ 		c.slow = append(c.slow, snapshot)
+ 		c.mu.Unlock()
+@@ -38,7 +41,7 @@ func (c *slowInstallCache) SetSnapshot(ctx context.Context, node string, snapsho
+ }
+ 
+ // firstSlowInstallClusters returns the clusters of the first snapshot installed
+-// while delay was set.
++// with a delay.
+ func (c *slowInstallCache) firstSlowInstallClusters(t *testing.T) map[string]envoycachetypes.ResourceWithTTL {
+ 	t.Helper()
+ 	c.mu.Lock()
+@@ -59,7 +62,6 @@ func TestFlipRelease_BudgetStartsAfterTheHeldSnapshotIsInstalled(t *testing.T) {
+ 
+ 	cache.delay.Store(int64(2 * budget))
+ 	pt.syncXds(context.Background(), flipWrap)
+-	cache.delay.Store(0)
+ 
+ 	require.Never(t, func() bool {
+ 		return snapshotReferencesCluster(servedSnapshot(t, pt), "cluster-new")
+@@ -126,7 +128,6 @@ func TestDereferenceGraceStartsAfterASlowInstall(t *testing.T) {
+ 	pt.syncXds(ctx, routedBuild(t, "v1", "old", "old"))
+ 	cache.delay.Store(int64(2 * grace))
+ 	pt.syncXds(ctx, routedBuild(t, "v2", "new", "new")) // stops naming old, installed slowly
+-	cache.delay.Store(0)
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "new", "new"))
+ 	assert.Contains(t, publishedClusterNames(t, pt), "old", "old keeps its grace after the slow installation")
+ 	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "old") }, 2*time.Second, 5*time.Millisecond,
+@@ -152,7 +153,6 @@ func TestDereferenceGraceStartsAfterASlowFlipReleaseInstall(t *testing.T) {
+ 	cache.delay.Store(int64(2 * grace))
+ 	require.Eventually(t, func() bool { return publishedListenerVersionOf(t, pt) == "v2" }, 3*time.Second, 5*time.Millisecond,
+ 		"the budget releases the flip")
+-	cache.delay.Store(0)
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "new", "new"))
+ 	assert.Contains(t, publishedClusterNames(t, pt), "old", "old keeps its grace after the slow installation")
+ 	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "old") }, 2*time.Second, 5*time.Millisecond,
+@@ -175,7 +175,6 @@ func TestDereferencePruneQueuedDuringASlowInstallKeepsTheNewerBuild(t *testing.T
+ 	time.Sleep(grace / 2)
+ 	cache.delay.Store(int64(grace))
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "new", "new")) // still keeps old, and installs past its deadline
+-	cache.delay.Store(0)
+ 	require.Contains(t, cache.firstSlowInstallClusters(t), "old", "v3 must begin inside old's window, or its prune runs before v3")
+ 
+ 	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "old") }, 2*time.Second, 5*time.Millisecond,
+@@ -199,7 +198,6 @@ func TestDereferenceWindowClosingDuringASlowInstallIsNotExtendedByALaterOne(t *t
+ 	time.Sleep(grace / 2)
+ 	cache.delay.Store(int64(grace))
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "c", "c")) // b's window opens; a's closes during the installation
+-	cache.delay.Store(0)
+ 	require.Contains(t, cache.firstSlowInstallClusters(t), "a", "v3 must begin inside a's window, or a's prune runs before v3")
+ 
+ 	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "a") }, grace/2, 5*time.Millisecond,
+@@ -228,7 +226,6 @@ func TestDereferenceWindowClosingDuringASlowHeldInstallIsPrunedOnce(t *testing.T
+ 	time.Sleep(grace / 2)
+ 	cache.delay.Store(int64(grace))
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "n", "c", "n")) // held for n; a's window closes during the installation
+-	cache.delay.Store(0)
+ 	require.Contains(t, cache.firstSlowInstallClusters(t), "a", "v3 must begin inside a's window, or a's prune runs before v3")
+ 	installed := cache.installs.Load()
+ 
+```
+
+**File**: `pkg/kgateway/setup/cache_watch_policy_test.go` (modified, +2/-0)
+```diff
+@@ -377,6 +377,8 @@ func TestParkedNackIsRetried(t *testing.T) {
+ 			require.NotEqual(t, first.GetNonce(), again.GetNonce(), "the retry is a new response")
+ 
+ 			// Rejected again: parked again, and a correction still goes out at once.
++			// A long delay keeps the retry from answering the parked watch first.
++			shortenNackRetry(t, time.Minute, time.Minute)
+ 			h.nack(again, "")
+ 			h.waitForOpenWatches(1)
+ 			h.setSnapshot(nackSnapshot("2"))
+```
+
+**File**: `test/e2e/features/faultinjection/suite.go` (modified, +24/-14)
+```diff
+@@ -4,10 +4,12 @@ package faultinjection
+ 
+ import (
+ 	"context"
++	"fmt"
+ 	"net/http"
+ 	"time"
+ 
+ 	"github.com/stretchr/testify/suite"
++	"istio.io/istio/pkg/test/util/retry"
+ 
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e"
+@@ -60,21 +62,29 @@ func (s *testingSuite) TestFaultInjectionAbortDoesNotAffectOtherRoutes() {
+ // TestFaultInjectionDelayOnRoute verifies that a TrafficPolicy with delay configured
+ // still returns a successful response (delay is applied but request is not aborted).
+ // It also verifies the response takes at least the configured delay duration.
++//
++// The route can serve 200s before the delay policy reaches Envoy, so the latency is
++// checked per attempt inside the retry loop rather than once across all attempts.
+ func (s *testingSuite) TestFaultInjectionDelayOnRoute() {
+-	start := time.Now()
 -
- ENVOY_MODULES_DIR := internal/envoy_modules/
-+
-+# Registry cache for the Rust module build, written by goreleaser on main and release
-+# runs. Defaults to the repository owner's cache in GitHub Actions; unset elsewhere.
-+ENVOY_MODULES_CACHE_REF ?= $(if $(GITHUB_REPOSITORY_OWNER),ghcr.io/$(GITHUB_REPOSITORY_OWNER)/envoy-modules-cache)
-+# The tag is <arch>-<checksum of the files that define the dependency stage>, so
-+# release lines with the same Rust dependencies share a cache and lines whose
-+# dependencies differ don't overwrite each other's.
-+ENVOY_MODULES_CACHE_KEY_FILES = $(ENVOY_MODULE_DOCKERFILE) \
-+	$(addprefix $(ENVOY_MODULE_DIR)/,rust-toolchain.toml Cargo.toml Cargo.lock) \
-+	$(sort $(filter-out %/target/%,$(wildcard $(ENVOY_MODULE_DIR)/*/Cargo.toml $(ENVOY_MODULE_DIR)/*/*/Cargo.toml)))
-+ENVOY_MODULES_CACHE_KEY ?= $(shell cat $(ENVOY_MODULES_CACHE_KEY_FILES) | cksum | cut -d' ' -f1)
-+# goreleaser builds both arches on an amd64 host, and the Dockerfile pins its build
-+# stages to the target platform, so builds on arm64 hosts never match this cache.
-+ENVOY_MODULES_CACHE_FROM := $(if $(ENVOY_MODULES_CACHE_REF),--cache-from type=registry$(comma)ref=$(ENVOY_MODULES_CACHE_REF):$(GOARCH)-$(ENVOY_MODULES_CACHE_KEY),)
- # find all the files under the envoy modules directory but exclude the target, vendor and pkg directory
- ENVOY_MODULES_SRC_FILES := $(shell find $(ENVOY_MODULES_DIR) \( -type d -name target -o -type d -name pkg -o -type d -name vendor \) -prune -o -type f -print)
+-	common.BaseGateway.Send(
+-		s.T(),
+-		&testmatchers.HttpResponse{
+-			StatusCode: http.StatusOK,
+-		},
+-		curl.WithPort(80),
+-		curl.WithPath("/fault/status/200"),
+-		curl.WithHostHeader("example.com"),
+-	)
+-
+-	elapsed := time.Since(start)
+-	s.GreaterOrEqual(elapsed, 100*time.Millisecond, "expected response to take at least 100ms due to fault delay injection")
++	match := &testmatchers.HttpResponse{
++		StatusCode: http.StatusOK,
++	}
++	retry.UntilSuccessOrFail(s.T(), func() error {
++		start := time.Now()
++		if err := common.BaseGateway.SendOnce(
++			s.Ctx,
++			match,
++			curl.WithPort(80),
++			curl.WithPath("/fault/status/200"),
++			curl.WithHostHeader("example.com"),
++		); err != nil {
++			return err
++		}
++		if elapsed := time.Since(start); elapsed < 100*time.Millisecond {
++			return fmt.Errorf("expected response to take at least 100ms due to fault delay injection, took %v", elapsed)
++		}
++		return nil
++	})
+ }
  
-@@ -891,6 +895,7 @@ $(ENVOY_MODULE_OUTPUT_DIR)/librust_module.so: $(ENVOY_MODULES_SRC_FILES) $(ENVOY
- 		--output type=local,dest=$(ENVOY_MODULE_OUTPUT_DIR) \
- 		--target export \
- 		--build-arg RUST_BUILD_ARCH=$(RUST_BUILD_ARCH) \
-+		$(ENVOY_MODULES_CACHE_FROM) \
- 		-f $(ENVOY_MODULE_DOCKERFILE) \
- 		$(ENVOY_MODULES_DIR)
+ // TestFaultInjectionAbortOnGateway verifies that a TrafficPolicy with abort attached
+```
+
+**File**: `test/e2e/features/session_persistence/suite.go` (modified, +18/-11)
+```diff
+@@ -225,35 +225,42 @@ func (s *testingSuite) assertSessionPersistenceWithCookie(gatewayName, persisten
+ 		curl.WithRetryConnectionRefused(true),
+ 	}
  
-@@ -909,8 +914,6 @@ $(ENVOYINIT_OUTPUT_DIR)/.docker-stamp-$(VERSION)-$(GOARCH): $(ENVOYINIT_OUTPUT_D
- 		--build-arg ENVOY_IMAGE=$(ENVOY_IMAGE) \
- 		--build-arg BASE_IMAGE=$(DISTROLESS_BASE_IMAGE) \
- 		$(ENVOYINIT_CACHE_FROM) \
--		$(ENVOYINIT_LOCAL_CACHE_FROM_ARG) \
--		$(ENVOYINIT_LOCAL_CACHE_TO_ARG) \
- 		-t $(IMAGE_REGISTRY)/$(ENVOYINIT_IMAGE_REPO):$(VERSION)
- 	@touch $@
+-	firstResp, err := s.TestInstallation.ClusterContext.Cli.CurlFromPod(s.Ctx, testdefaults.CurlPodExecOpt, firstCurlOpts...)
+-	s.Require().NoError(err, "first request should succeed")
+-
+-	firstPodName := s.extractPodNameFromResponse(firstResp.StdOut)
+-	s.Require().NotEmpty(firstPodName, "should be able to extract pod name from first response")
++	// The gateway can take a moment to serve traffic after its pod turns ready, so poll the first request
++	// until it reaches a backend and carries the session cookie or header.
++	var firstPodName, sessionValue string
++	s.TestInstallation.AssertionsT(s.T()).Gomega.Eventually(func(g gomega.Gomega) {
++		firstResp, err := s.TestInstallation.ClusterContext.Cli.CurlFromPod(s.Ctx, testdefaults.CurlPodExecOpt, firstCurlOpts...)
++		g.Expect(err).NotTo(gomega.HaveOccurred(), "first request should succeed")
++		firstPodName = s.extractPodNameFromResponse(firstResp.StdOut)
++		g.Expect(firstPodName).NotTo(gomega.BeEmpty(), "should be able to extract pod name from first response")
++		if persistenceType == "cookie" {
++			sessionValue = extractCookie(firstResp.StdOut, cookieName)
++			g.Expect(sessionValue).NotTo(gomega.BeEmpty(), "should have received a session cookie")
++		} else {
++			sessionValue = s.extractSessionHeaderFromResponse(firstResp.StdOut)
++			g.Expect(sessionValue).NotTo(gomega.BeEmpty(), "should have received a session header")
++		}
++	}).WithTimeout(60 * time.Second).WithPolling(2 * time.Second).Should(gomega.Succeed())
  
-@@ -1057,7 +1060,7 @@ GORELEASER_CURRENT_TAG ?= $(VERSION)
+ 	var subsequentCurlOpts []curl.Option
+ 	if persistenceType == "cookie" {
+-		cookie := extractCookie(firstResp.StdOut, cookieName)
+-		s.Require().NotEmpty(cookie, "should have received a session cookie")
+ 		subsequentCurlOpts = []curl.Option{
+ 			curl.WithHost(kubeutils.ServiceFQDN(gatewayService)),
+ 			curl.WithHostHeader("echo.local"),
+ 			curl.WithPort(8080),
+ 			curl.Silent(),
+-			curl.WithHeader("Cookie", cookie),
++			curl.WithHeader("Cookie", sessionValue),
+ 			curl.WithConnectionTimeout(10),
+ 			curl.WithRetries(5, 0, 10),
+ 			curl.WithRetryConnectionRefused(true),
+ 		}
+ 	} else {
+-		headerValue := s.extractSessionHeaderFromResponse(firstResp.StdOut)
+-		s.Require().NotEmpty(headerValue, "should have received a session header")
+ 		subsequentCurlOpts = []curl.Option{
+ 			curl.WithHost(kubeutils.ServiceFQDN(gatewayService)),
+ 			curl.WithHostHeader("echo.local"),
+ 			curl.WithPort(8080),
+ 			curl.Silent(),
+-			curl.WithHeader("session-a", headerValue),
++			curl.WithHeader("session-a", sessionValue),
+ 			curl.WithConnectionTimeout(10),
+ 			curl.WithRetries(3, 0, 10),
+ 			curl.WithRetryConnectionRefused(true),
+```
+
+---
+
+### Incident Patch 2: `fbeac220` (2026-11-08)
+**Commit Message**: fix: scope redirect status code annotation to the named rule (#14996)
+
+Signed-off-by: Daksha1611 <[REDACTED_EMAIL]>
+
+**File**: `pkg/krtcollections/builtin.go` (modified, +3/-3)
+```diff
+@@ -608,12 +608,12 @@ func parseRedirectStatusCode(
  
- .PHONY: release
- release: ## Create a release using goreleaser
--	GORELEASER_CURRENT_TAG=$(GORELEASER_CURRENT_TAG) go tool -modfile=tools/go.mod goreleaser release $(GORELEASER_ARGS) --timeout $(GORELEASER_TIMEOUT)
-+	GORELEASER_CURRENT_TAG=$(GORELEASER_CURRENT_TAG) ENVOY_MODULES_CACHE_KEY=$(ENVOY_MODULES_CACHE_KEY) go tool -modfile=tools/go.mod goreleaser release $(GORELEASER_ARGS) --timeout $(GORELEASER_TIMEOUT)
- .PHONY: release-notes
- release-notes: ## Generate release notes (PREVIOUS_TAG required, CURRENT_TAG optional)
- 	./hack/generate-release-notes.sh -p "$${PREVIOUS_TAG:-}" -c "$${CURRENT_TAG:-HEAD}"
+ 	var forRule string
+ 	if len(ruleVals) == 2 {
+-		forRule = ruleVals[0]
++		forRule = strings.TrimSpace(ruleVals[0])
+ 		val = strings.TrimSpace(ruleVals[1])
+ 	}
+ 
+-	if ruleName != nil && forRule != "" && forRule != string(*ruleName) {
+-		// The annotation does not apply to this rule specified by ruleName
++	// A rule-scoped value only applies to the rule it names, so it can never match an unnamed rule.
++	if forRule != "" && (ruleName == nil || forRule != string(*ruleName)) {
+ 		return nil, nil
+ 	}
+ 
+```
+
+**File**: `pkg/krtcollections/builtin_test.go` (modified, +13/-3)
+```diff
+@@ -272,6 +272,18 @@ func TestParseRedirectStatusCodeAnnotation(t *testing.T) {
+ 			rule:     nil,
+ 			wantCode: nil,
+ 		},
++		{
++			name:     "nil rule with multiple rule-specific values",
++			value:    "rule1=308,rule2=307",
++			rule:     nil,
++			wantCode: nil,
++		},
++		{
++			name:     "space before equals in rule-specific format",
++			value:    "rule1 =301",
++			rule:     sectionName("rule1"),
++			wantCode: new(301),
++		},
+ 	}
+ 
+ 	for _, tc := range tests {
+@@ -287,9 +299,7 @@ func TestParseRedirectStatusCodeAnnotation(t *testing.T) {
+ 			}
+ 
+ 			// Check code
+-			if tc.wantCode != nil {
+-				a.Equal(tc.wantCode, code)
+-			}
++			a.Equal(tc.wantCode, code)
+ 		})
+ 	}
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15002** (2026-11-09): test: fix five flakes that only passed in CI on rerun (@puertomontt)
+- **PR #14996** (2026-11-08): fix: scope redirect status code annotation to the named rule (@Daksha1611)
 - **PR #14994** (2026-11-06): [2.5] ci: cache the Rust module build in GHCR (#14982) (@puertomontt)
 - **PR #14993** (2026-11-06): e2e: scrape controller metrics through the API server pod proxy (@chandler-solo)
+- **PR #14992** (2026-11-06): [2.5] fix: bound CRD integer fields so oversized values fail admission (@davidjumani)
 - **PR #14991** (2026-11-06): [2.5] fix: Roll the proxy deployment when the bootstrap config is changed (@davidjumani)
-- **PR #14989** (2026-11-05): [2.5] envoy bootstrap: deliver the xDS CA over file-based SDS so rotation needs no restart (#14986) (@puertomontt)
-- **PR #14988** (2026-11-05): fix: bound CRD integer fields so oversized values fail admission (@davidjumani)
-- **PR #14986** (2026-11-05): envoy bootstrap: deliver the xDS CA over file-based SDS so rotation needs no restart (@puertomontt)
 
 ---
 
@@ -2011,62 +1493,44 @@ Signed-off-by: omar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Roll the proxy deployment when the bootstrap config is changed (#14985)
+## X. test: fix five flakes that only passed in CI on rerun (#15002)
 
 **RULE**:
-When implementing operations in `pkg/kgateway/deployer/checksum_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/kgateway/controller/controller_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6929a698`: Roll the proxy deployment when the bootstrap config is changed (#14985). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7490cf4b`: test: fix five flakes that only passed in CI on rerun (#15002). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/kgateway/deployer/checksum_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/kgateway/controller/controller_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package deployer
-
-import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-	appsv1 "k8s.io/api/apps/v1"
-
-	pkgdeployer "github.com/kgateway-dev/kgateway/v2/pkg/deployer"
-	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/helm"
-	"github.com/kgateway-dev/kgateway/v2/pkg/schemes"
-)
-
-// Envoy reads its bootstrap ConfigMap only at startup, so the proxy pod template
-// must carry a checksum of the ConfigMap that changes whenever the bootstrap changes.
-func TestEnvoyDeploymentConfigChecksum(t *testing.T) {
-	chart, err := loadChart(helm.EnvoyHelmChart)
-	require.NoError(t, err)
-	d := pkgdeployer.NewDeployer("test-controller", schemes.GatewayScheme(), nil, chart, nil, nil)
-
-	checksum := func(vals map[string]any) string {
-		t.Helper()
-		objs, err := d.RenderChartToObjects("default", "gw", vals)
-		require.NoError(t, err)
-		for _, obj := range objs {
-			if dep, ok := obj.(*appsv1.Deployment); ok {
-				sum := dep.Spec.Template.Annotations["kgateway.dev/checksum-config"]
-				require.NotEmpty(t, sum, "pod template should have a kgateway.dev/checksum-config annotation")
-				return sum
-			}
+	s.Run("default GatewayClass managed fields should be restored and user fields kept when it is updated", func() {
+		// Update a field the controller manages (description) and one it does not (a user annotation)
+		userAnnotation := "example.com/user-annotation"
+		if gwc.Annotations == nil {
+			gwc.Annotations = map[string]string{}
 		}
-		require.FailNow(t, "no Deployment rendered")
-		return ""
-	}
-	withLogFormat := func(text string) map[st
+		gwc.Annotations[userAnnotation] = "kept"
+		gwc.Spec.Description = new("updated description")
+		// The generation bump makes the controller re-apply its desired spec via SSA, which restores
+		// the description. Waiting for that proves the re-apply ran, so the user annotation must have survived it.
+			assert.Equal(c, "default GatewayClass", *gwc.Spec.Description)
+			assert.Equal(c, "kept", gwc.Annotations[userAnnotation])
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	s.Run("default GatewayClass should not be overwritten when it is updated", func() {
+		// Update it
+		updatedDesc := "updated description"
+		gwc.Spec.Description = new(updatedDesc)
+		// Verify it is not overwritten
+			assert.Equal(c, updatedDesc, *gwc.Spec.Description)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6929a698` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7490cf4b` are properly handled with clean fallback behavior.

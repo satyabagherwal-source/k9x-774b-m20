@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T15:29:01.987Z",
-  "total_cycles_completed": 8585,
-  "total_learnings_persisted": 8585,
-  "total_rules_promoted": 8411,
+  "last_updated": "2026-11-09T15:51:58.563Z",
+  "total_cycles_completed": 8587,
+  "total_learnings_persisted": 8587,
+  "total_rules_promoted": 8414,
   "history": [
-    {
-      "timestamp": "2026-11-08T22:52:42.617Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T22:59:29.913Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T22:59:40.786Z",
       "repository": "cilium/cilium",
@@ -1403,6 +1389,20 @@
       "repository": "karmada-io/karmada",
       "learningId": "learn-github-karmada-io-karmada",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T15:51:36.464Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T15:51:58.563Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

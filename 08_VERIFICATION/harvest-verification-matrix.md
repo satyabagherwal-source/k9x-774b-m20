@@ -8620,3 +8620,5 @@
 | `CYCLE-20261109-NL6J` | `2026-11-09T15:17:35.611Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | Yes (`f4fe60d7...`) |
 | `CYCLE-20261109-250T` | `2026-11-09T15:28:54.509Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`96cbf5a7...`) |
 | `CYCLE-20261109-2AS2` | `2026-11-09T15:29:01.970Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4d48efac...`) |
+| `CYCLE-20261109-VBWB` | `2026-11-09T15:51:36.443Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a4174d89...`) |
+| `CYCLE-20261109-VSY5` | `2026-11-09T15:51:58.541Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`5eb17c45...`) |

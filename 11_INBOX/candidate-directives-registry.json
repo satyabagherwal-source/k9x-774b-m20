@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T14:35:41.281Z",
+  "last_updated": "2026-11-09T15:51:58.561Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4336,6 +4336,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein"
+    },
+    {
+      "id": "CD-VSYP",
+      "directive_title": "Quantization Metadata Integrity Check",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
     }
   ]
 }

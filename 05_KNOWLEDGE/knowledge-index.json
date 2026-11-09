@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T15:29:01.870Z",
+  "last_updated": "2026-11-09T15:51:58.433Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38468,14 +38468,19 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "119488a5",
-      "content_hash": "009c2c9831de0b90522d701b0a87e85438f351ea8c70f587d0640df0f69ba402",
+      "source_version": "7490cf4b",
+      "content_hash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Roll the proxy deployment when the bootstrap config is changed (#14985)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test: fix five flakes that only passed in CI on rerun (#15002)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38549,7 +38554,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:27:20.149Z",
+      "verified_at": "2026-11-09T15:51:36.318Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77374,10 +77379,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
+      "content_hash": "5eb17c45b35b8d1e458a4e00864c21a941f0c0544953ff748f4d8ce6497880a5",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Template-Weight Decoupling Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MoE On-Device Memory Fragmentation Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1288,
           "title": "MoE On-Device Memory Bandwidth Decoupling",
@@ -77414,7 +77429,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:59:19.186Z",
+      "verified_at": "2026-11-09T15:51:58.408Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
