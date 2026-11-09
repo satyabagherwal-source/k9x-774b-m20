@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T22:41:05.808Z",
-    "lastVerified": "2026-11-09T22:41:05.808Z",
+    "lastChecked": "2026-11-09T22:48:37.980Z",
+    "lastVerified": "2026-11-09T22:48:37.980Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,14 +258,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T22:15:02.670Z",
-    "lastVerified": "2026-11-09T22:15:02.670Z",
+    "lastChecked": "2026-11-09T22:48:33.015Z",
+    "lastVerified": "2026-11-09T22:48:33.015Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5b3cfbcd17c17b4b17d913cff9c0c83b01a8896edc781cde8030fcbed8dffd8a",
+    "contentHash": "b1a35d23ea0b1270603fe21cf38e956e73ce5debd1348b40f87083e44c4d0d1f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1006,8 +1006,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T13:46:50.504Z",
-    "lastVerified": "2026-11-09T13:46:50.504Z",
+    "lastChecked": "2026-11-09T22:48:23.057Z",
+    "lastVerified": "2026-11-09T22:48:23.057Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -4103,12 +4103,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "builderio-builder": {
-    "name": "BuilderIO/builder",
+    "name": "builder",
     "officialUrl": "https://github.com/BuilderIO/builder",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T02:22:00.135Z",
-    "lastVerified": "2026-11-07T02:22:00.135Z",
+    "lastChecked": "2026-11-09T22:48:18.284Z",
+    "lastVerified": "2026-11-09T22:48:18.284Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-builderio-builder",
@@ -4117,7 +4117,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1d9c6140"
   },
   "go-dev-frame-sponge": {
     "name": "sponge",
@@ -4302,8 +4303,8 @@
     "officialUrl": "https://github.com/argoproj/argo-events",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T21:33:25.861Z",
-    "lastVerified": "2026-11-08T21:33:25.861Z",
+    "lastChecked": "2026-11-09T22:48:20.700Z",
+    "lastVerified": "2026-11-09T22:48:20.700Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-events",
@@ -6805,9 +6806,9 @@
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
     "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
-    "lastChecked": "2026-11-08T16:33:26.264Z",
+    "lastChecked": "2026-11-09T22:48:12.981Z",
     "revisionIdentifier": "1e910a8c",
-    "lastVerified": "2026-11-08T16:33:26.264Z"
+    "lastVerified": "2026-11-09T22:48:12.981Z"
   },
   "hf-intfloat-multilingual-e5-small": {
     "name": "intfloat/multilingual-e5-small",
@@ -7131,8 +7132,8 @@
     "officialUrl": "https://github.com/StarTrail-org/LEANN",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-08T20:45:41.628Z",
-    "lastVerified": "2026-11-08T20:45:41.628Z",
+    "lastChecked": "2026-11-09T22:48:25.544Z",
+    "lastVerified": "2026-11-09T22:48:25.544Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-startrail-org-leann",
@@ -9590,9 +9591,9 @@
   "maatify-seo": {
     "name": "seo",
     "officialUrl": "https://github.com/Maatify/seo",
-    "lastChecked": "2026-11-05T19:14:50.243Z",
+    "lastChecked": "2026-11-09T22:48:15.539Z",
     "revisionIdentifier": "47d17d7d",
-    "lastVerified": "2026-11-05T19:14:50.243Z"
+    "lastVerified": "2026-11-09T22:48:15.539Z"
   },
   "alin23-lunar": {
     "name": "Lunar",

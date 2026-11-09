@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T22:41:00.932Z",
+  "last_updated": "2026-11-09T22:48:35.347Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10172,8 +10172,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "08bcdade",
-      "content_hash": "5b3cfbcd17c17b4b17d913cff9c0c83b01a8896edc781cde8030fcbed8dffd8a",
+      "source_version": "dc504b1d",
+      "content_hash": "b1a35d23ea0b1270603fe21cf38e956e73ce5debd1348b40f87083e44c4d0d1f",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10250,6 +10250,11 @@
         {
           "number": null,
           "title": "sqlp): convert types Avro can't write before --format avro (fixes #5020) (#5024)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test(validate): date/time formats reject non-digits (jsonschema 0.61)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10603,7 +10608,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T22:15:03.974Z",
+      "verified_at": "2026-11-09T22:48:35.332Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

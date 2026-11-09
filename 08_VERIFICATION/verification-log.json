@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-66CE",
-    "timestamp": "2026-11-08T02:40:33.182Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-    "contentHash": "c984ece87c9ac652ce2342308f052d9c7aabd7cd1073de547575841a72ba7dd9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-6IQE",
     "timestamp": "2026-11-08T02:40:49.238Z",
     "repository": "milvus-io/milvus",
@@ -7492,6 +7477,21 @@
     "contentHash": "09d23ae29cb895658270545ffe33e29c38d8ded70b19e05bf4410d3874b96763",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-RKNK",
+    "timestamp": "2026-11-09T22:48:35.408Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "b1a35d23ea0b1270603fe21cf38e956e73ce5debd1348b40f87083e44c4d0d1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
