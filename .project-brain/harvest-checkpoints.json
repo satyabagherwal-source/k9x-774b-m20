@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T11:04:02.299Z",
+  "last_updated": "2026-11-09T11:16:36.960Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1909,14 +1909,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam3",
-      "content_hash": "8eb09a744d98b17aac2e1c2e78f9992d6cff39964b3bd2335d87dba7fa44ec69",
-      "verified_at": "2026-11-05T13:40:25.668Z",
+      "content_hash": "5699c6eb6c4c806e1b8b8ff8d69b6f6cf60f9f62dffd52498cbfdf7bdaffa68a",
+      "verified_at": "2026-11-09T11:16:36.959Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:40:25.668Z"
+      "last_updated": "2026-11-09T11:16:36.959Z"
     },
     "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF": {
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "bf930d4b4758720baf0f36646074106f215d97f47b80390d76d60aad98e94f49",
-      "verified_at": "2026-11-06T13:27:23.536Z",
+      "content_hash": "6639fe599bb6189d65cd9a98c35ad6f88fffc9cc548f59a1d4a47fa26d4cc72d",
+      "verified_at": "2026-11-09T11:16:29.773Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:27:23.536Z"
+      "last_updated": "2026-11-09T11:16:29.773Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "ddf3dfce93caee5bf27eb2c154e28ea2bc31d530c3380564305b861633e84e29",
-      "verified_at": "2026-11-08T14:49:07.890Z",
+      "content_hash": "a9d41b1189d94a6da791be55f59ed92fd28640b24ef0341100c5072a131c2071",
+      "verified_at": "2026-11-09T11:16:31.669Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T14:49:07.890Z"
+      "last_updated": "2026-11-09T11:16:31.669Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -7236,14 +7236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pimalaya-himalaya",
-      "content_hash": "dac8b4cf237fe8dcefa1d7082ab8cb8691416318976786b275640f7f0a72eaba",
-      "verified_at": "2026-11-06T20:52:09.367Z",
+      "content_hash": "8acab0b29b8568a29f837e151b64fef067e5f6c2041af2cbfcb918628a781d2a",
+      "verified_at": "2026-11-09T11:16:19.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T20:52:09.367Z"
+      "last_updated": "2026-11-09T11:16:19.164Z"
     },
     "wcandillon/react-native-skia": {
       "repository": "wcandillon/react-native-skia",

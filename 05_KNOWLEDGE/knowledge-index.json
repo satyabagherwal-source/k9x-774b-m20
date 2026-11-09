@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T11:04:02.179Z",
+  "last_updated": "2026-11-09T11:16:36.823Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25835,7 +25835,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "8eb09a744d98b17aac2e1c2e78f9992d6cff39964b3bd2335d87dba7fa44ec69",
+      "content_hash": "5699c6eb6c4c806e1b8b8ff8d69b6f6cf60f9f62dffd52498cbfdf7bdaffa68a",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -25892,7 +25892,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-11-05T13:40:25.558Z",
+      "verified_at": "2026-11-09T11:16:36.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42109,8 +42109,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "b61e0159",
-      "content_hash": "ddf3dfce93caee5bf27eb2c154e28ea2bc31d530c3380564305b861633e84e29",
+      "source_version": "91b650ea",
+      "content_hash": "a9d41b1189d94a6da791be55f59ed92fd28640b24ef0341100c5072a131c2071",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -42127,6 +42127,11 @@
         {
           "number": null,
           "title": "deps): update dependency jsdom to v30 (#40568)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update dependency jsdom to v31 (#40576)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42215,7 +42220,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T14:49:07.739Z",
+      "verified_at": "2026-11-09T11:16:31.505Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51116,14 +51121,19 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "7bfaaa09",
-      "content_hash": "dac8b4cf237fe8dcefa1d7082ab8cb8691416318976786b275640f7f0a72eaba",
+      "source_version": "42134fd2",
+      "content_hash": "8acab0b29b8568a29f837e151b64fef067e5f6c2041af2cbfcb918628a781d2a",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "envelope): one rule for hasAttachment across the MIME backends (#803)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build: pin pimalaya-cli f976e40",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -51152,7 +51162,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:52:09.286Z",
+      "verified_at": "2026-11-09T11:16:18.964Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55313,14 +55323,19 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "0d7f9b32",
-      "content_hash": "bf930d4b4758720baf0f36646074106f215d97f47b80390d76d60aad98e94f49",
+      "source_version": "e43a07f9",
+      "content_hash": "6639fe599bb6189d65cd9a98c35ad6f88fffc9cc548f59a1d4a47fa26d4cc72d",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Move QUIC-specific checks into `Tls13Extensions`",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update Rust crate crabgrind to 0.5",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55429,7 +55444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:27:23.445Z",
+      "verified_at": "2026-11-09T11:16:29.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

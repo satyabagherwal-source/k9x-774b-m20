@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `0d7f9b32`  
+> **Source Version**: `e43a07f9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:27:22.319Z  
+> **Timestamp**: 2026-11-09T11:16:27.814Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:27:22.129Z  
+> **Harvest Timestamp**: 2026-11-09T11:16:27.807Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7737 stars
+- **Stars / Engagement**: 7738 stars
 
 ---
 
@@ -2251,17 +2251,16 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3417** (2026-11-06): **Refactor ALPN selection**
-  *Symptoms*: 
+- **Issue #3420** (2026-11-09): **replace links to tools.ietf.org and datatracker.ietf.org with rfc-editor.org/info**
+  *Symptoms*: 1. datatracker is an active server, and now suffers from LLMbots. 2. tools.ietf.org was deprecated: https://www.ietf.org/blog/finalizing-ietf-tools-transition/ 3. the www.rfc-editor.org/info/rfcXXXX link includes document status, and can include applied errata  (Sorry if this seems like busy work: a pet peeve of mine as I start reading code/documentation) I am also https://datatracker.ietf.org/person/Michael%20Richardson  
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server | 1346693 | 1340191 | ✅ [-6502](https://bench.rustls.dev/comparisons/12890d87bb0c118fdd9ddd36b010f1c4d0df9e19:7ff31d9fb5612eeef8059c08ee48f4b1fd78276b/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server) (-0.48%) | 0.20% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_client | 3562939 | 3550541 | ✅ [-12398](https://bench.rustls.dev/comparisons/12890d87bb0c118fdd9ddd36b010f1c4d0df9e19:7ff31d9fb5612eeef8059c08ee48f4b1fd78276b/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_client) (-0.35%) | 0.32% | | handshake_session_id_1.2_no_crypto_server | 694314 | 692844 | ✅ [-1470](https://bench.rustls.
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3417?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.68%. Comparing base ([`12890d8`](https://app.codecov.io/gh/rustls/rustls/commit/12890d87bb0c118fdd9ddd36b010f1c4d0df9e19?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`7ff31d9`](https://app.codecov.io/gh/rustls/rustls/commit/7ff31d9fb5612eeef8059c08ee48f4b1fd78276b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3417   +/-   ## ======================================= 
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3420?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.69%. Comparing base ([`12890d8`](https://app.codecov.io/gh/rustls/rustls/commit/12890d87bb0c118fdd9ddd36b010f1c4d0df9e19?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`68f61b3`](https://app.codecov.io/gh/rustls/rustls/commit/68f61b34e95bb110571081bbe23486a8b608f12b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 8 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #34
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_session_id_1.2_no_crypto_server | 692844 | 694314 | ⚠️ [1470](https://bench.rustls.dev/comparisons/0d7f9b323ec71c2f359c8e490a13a57e7b1a0f53:68f61b34e95bb110571081bbe23486a8b608f12b/cachegrind-diff/handshake_session_id_1.2_no_crypto_server) (0.21%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10946552 | 10922052 | [-24500](https://bench.rustls.dev/comparisons/0d7f9b323ec71c2f359c8e490a13a57e7b1a0f53:68f61b34e95bb110571081bbe23486a8b608f12b/cachegrind-diff/handshake_no_resume_a
 
-- **Issue #3416** (2026-11-05): **GHSA-c8m5-c952-6cm4 has no CVE identifier — intentional?**
-  *Symptoms*: GHSA-c8m5-c952-6cm4 (`Session` Debug formatting exposes TLS master secrets and resumption PSKs) has no CVE identifier, while several other rustls advisories do. Flagging it since distros and CVE-keyed trackers can't reference it as-is. 
+- **Issue #3419** (2026-11-09): **Update Rust crate crabgrind to 0.5**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [crabgrind](https://redirect.github.com/2dav/crabgrind) | workspace.dependencies | minor | `0.4` → `0.5` |  ---  ### Release Notes  <details> <summary>2dav/crabgrind (crabgrind)</summary>  ### [`v0.5.0`](https://redirect.github.com/2dav/crabgrind/blob/HEAD/CHANGELOG.md#050---2026-11-06)  ##### Added  - Convenient, typed wrappers for `memcheck` requests for primitive scalar types - `VALGRIND_RUNNING_VERSION` request introduced in Valgrind 3.28  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/rustls/rustls). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMjAuMCIsInVwZGF0ZWRJblZlciI6IjQ0LjIyMC4wIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6WyJkZXBlbmRlbmNpZXMiXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  > I have requested CVEs for all the recent advisories.  Suggest you get better tooling and/or pay for support.
-  > We generally don't request CVEs through github at disclosure time as it delays disclosure by 3-6 weeks while Github's massively oversubscribed CNA allocates one. And I don't really want to run our own CNA.  Generally RUSTSEC and GHSA seems to be sufficient for most of our users. If you want a CVE please allocate one from your own CNA and ensure the relevant RUSTSEC and GHSA are updated (which doesn't need our approval or help.)
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3419?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.69%. Comparing base ([`6f33cc3`](https://app.codecov.io/gh/rustls/rustls/commit/6f33cc3c133602c778914b80fd05812f49a3cb04?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`dab6fe2`](https://app.codecov.io/gh/rustls/rustls/commit/dab6fe27047e26e2939841d036954080139567de?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3419   +/-   ## ======================================= 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2278,206 +2277,181 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3133129` (2026-11-05)
-**Commit Message**: Move QUIC-specific checks into `Tls13Extensions`
+### Incident Patch 1: `e43a07f9` (2026-11-09)
+**Commit Message**: Update Rust crate crabgrind to 0.5
 
-**File**: `rustls/src/server/hs.rs` (modified, +35/-24)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -137,7 +137,7 @@ impl Tls12Extensions {
+@@ -498,9 +498,9 @@ dependencies = [
  
-         let mut extensions = Box::new(ServerExtensions {
-             server_name_ack: common.server_name_ack,
--            selected_protocol: common.selected_protocol,
-+            selected_protocol: common.selected_protocol.into(),
-             transport_parameters: common.transport_parameters,
-             ..ServerExtensions::default()
-         });
-@@ -211,9 +211,27 @@ impl Tls13Extensions {
-         let (alpn_protocol, common) =
-             ep.process_common(extra_exts, output, ocsp_response, resumedata)?;
- 
-+        if let Some(quic) = output.quic() {
-+            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
-+            // (...) if an application protocol is not negotiated."
-+            if !matches!(
-+                common.selected_protocol,
-+                AlpnDecision::Selected(_) | AlpnDecision::Disabled
-+            ) {
-+                return Err(Error::NoApplicationProtocol);
-+            }
-+
-+            match hello.transport_parameters.as_ref() {
-+                Some(params) => quic.transport_parameters(params.to_owned().into_vec()),
-+                None => {
-+                    return Err(PeerMisbehaved::MissingQuicTransportParameters.into());
-+                }
-+            }
-+        }
-+
-         let mut extensions = Box::new(EncryptedExtensions {
-             server_name_ack: common.server_name_ack,
--            selected_protocol: common.selected_protocol,
-+            selected_protocol: common.selected_protocol.into(),
-             transport_parameters: common.transport_parameters,
-             ..EncryptedExtensions::default()
-         });
-@@ -305,29 +323,11 @@ impl<'a> ExtensionProcessing<'a> {
-             (None, _) => AlpnDecision::NoClientOffer,
-         };
- 
--        // Enact ALPN selection by telling peer and high-level API.
-+        // Enact ALPN selection by telling high-level API.
-         if let AlpnDecision::Selected(protocol) = &chosen_protocol {
--            extensions.selected_protocol = Some(protocol.clone());
-             output.output(OutputEvent::ApplicationProtocol(protocol.as_ref().clone()));
-         }
--
--        if let Some(quic) = output.quic() {
--            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
--            // (...) if an application protocol is not negotiated."
--            if !matches!(
--                chosen_protocol,
--                AlpnDecision::Selected(_) | AlpnDecision::Disabled
--            ) {
--                return Err(Error::NoApplicationProtocol);
--            }
--
--            match hello.transport_parameters.as_ref() {
--                Some(params) => quic.transport_parameters(params.to_owned().into_vec()),
--                None => {
--                    return Err(PeerMisbehaved::MissingQuicTransportParameters.into());
--                }
--            }
--        }
-+        extensions.selected_protocol = chosen_protocol;
- 
-         let for_resume = resumedata.is_some();
-         // SNI
-@@ -345,7 +345,7 @@ impl<'a> ExtensionProcessing<'a> {
-             ocsp_response.take();
-         }
- 
--        let alpn_protocol = match chosen_protocol {
-+        let alpn_protocol = match &extensions.selected_protocol {
-             AlpnDecision::Selected(protocol) => Some(protocol.as_ref().clone()),
-             _ => None,
-         };
-@@ -361,17 +361,28 @@ impl<'a> ExtensionProcessing<'a> {
- #[derive(Default)]
- struct CommonExtensions {
-     server_name_ack: Option<()>,
--    selected_protocol: Option<SingleProtocolName>,
-+    selected_protocol: AlpnDecision,
-     transport_parameters: Option<Payload<'static>>,
- }
- 
-+#[derive(Default)]
- enum AlpnDecision {
-+    #[default]
-     Disabled,
-     Selected(SingleProtocolName),
-     NoServerOffer,
-     NoClientOffer,
- }
- 
-+impl From<AlpnDecision> for Option<SingleProtocolName> {
-+    fn from(value: AlpnDecision) -> Self {
-+        match value {
-+            AlpnDecision::Selected(protocol) => Some(protocol),
-+            _ => None,
-+        }
-+    }
-+}
-+
- fn select_cert_type(
-     client: Option<&[CertificateType]>,
-     server: &[CertificateType],
+ [[package]]
+ name = "crabgrind"
+-version = "0.4.0"
++version = "0.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e3f4bc9b199b6cfdf87ef7960ac7be99306a1ad4d6c442b1c3701cddb22ea47d"
++checksum = "0e4dbe352d7240a1ef7b2f5d7d283cefa9405835974f7aabc59838b9d1a6acc6"
+ dependencies = [
+  "bindgen",
+  "cc",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -60,7 +60,7 @@ brotli = { version = "9", default-features = false, features = ["std"] }
+ brotli-decompressor = "6.0.0"
+ byteorder = "1.4.3"
+ clap = { version = "4.3.21", features = ["derive", "env"] }
+-crabgrind = "0.4"
++crabgrind = "0.5"
+ criterion = "0.8"
+ graviola = "0.4"
+ hex = "0.4"
 ```
 
 ---
 
-### Incident Patch 2: `00093e3c` (2026-11-05)
-**Commit Message**: Clarify QUIC ALPN check
+### Incident Patch 2: `6f33cc3c` (2026-11-07)
+**Commit Message**: feat: use www.rfc-editor.org/info as authoritative source rather than datatracker
 
-Use actual text from RFC9001 to explain logic.
-
-**File**: `rustls/src/server/hs.rs` (modified, +19/-21)
+**File**: `SECURITY.md` (modified, +1/-1)
 ```diff
-@@ -286,22 +286,23 @@ impl<'a> ExtensionProcessing<'a> {
+@@ -132,7 +132,7 @@ Mitigations:
+   cryptography implementations).
+ - We have [studied and explained](https://rustls.dev/docs/rustls/manual/_01_impl_vulnerabilities/index.html#a-review-of-tls-implementation-vulnerabilities)
+   issues encountered in other TLS implementations and discuss further mitigations there.
+-- We implement the TLS 1.3 downgrade sentinel (a [standard and required protocol feature](https://datatracker.ietf.org/doc/html/rfc9846#section-4.2.3-8)
++- We implement the TLS 1.3 downgrade sentinel (a [standard and required protocol feature](https://www.rfc-editor.org/info/rfc9846#section-4.2.3-8)
+   which limits downgrade from TLS 1.3).
  
-         // ALPN
-         let our_protocols = &config.alpn_protocols;
--        let chosen_protocol = if let Some(their_protocols) = &hello.protocols {
--            if let Some(selected_protocol) = our_protocols.iter().find(|ours| {
--                their_protocols
-+        let chosen_protocol = match (&hello.protocols, our_protocols.as_slice()) {
-+            (Some(their_protocols), [_, ..]) => {
-+                let selected_protocol = our_protocols
-                     .iter()
--                    .any(|theirs| theirs.as_ref() == ours.as_ref())
--            }) {
-+                    .find(|ours| {
-+                        their_protocols
-+                            .iter()
-+                            .any(|theirs| theirs.as_ref() == ours.as_ref())
-+                    })
-+                    .ok_or(Error::NoApplicationProtocol)?;
-                 debug!("Chosen ALPN protocol {selected_protocol:?}");
- 
-                 AlpnDecision::Selected(SingleProtocolName::new(selected_protocol.to_owned()))
--            } else if !our_protocols.is_empty() {
--                return Err(Error::NoApplicationProtocol);
--            } else {
--                AlpnDecision::NoServerOffer
-             }
--        } else {
--            AlpnDecision::NoClientOffer
-+            (None, []) => AlpnDecision::Disabled,
-+            (_, []) => AlpnDecision::NoServerOffer,
-+            (None, _) => AlpnDecision::NoClientOffer,
-         };
- 
-         // Enact ALPN selection by telling peer and high-level API.
-@@ -311,16 +312,12 @@ impl<'a> ExtensionProcessing<'a> {
-         }
- 
-         if let Some(quic) = output.quic() {
--            // QUIC has strict ALPN, unlike TLS's more backwards-compatible behavior. RFC 9001
--            // says: "The server MUST treat the inability to select a compatible application
--            // protocol as a connection error of type 0x0178". We judge that ALPN was desired
--            // (rather than some out-of-band protocol negotiation mechanism) if and only if any ALPN
--            // protocols were configured locally or offered by the client. This helps prevent
--            // successful establishment of connections between peers that can't understand
--            // each other.
--            if !matches!(chosen_protocol, AlpnDecision::Selected(_))
--                && (!our_protocols.is_empty() || hello.protocols.is_some())
--            {
-+            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
-+            // (...) if an application protocol is not negotiated."
-+            if !matches!(
-+                chosen_protocol,
-+                AlpnDecision::Selected(_) | AlpnDecision::Disabled
-+            ) {
-                 return Err(Error::NoApplicationProtocol);
-             }
- 
-@@ -369,6 +366,7 @@ struct CommonExtensions {
+ ### Boundary: cryptography provider
+```
+
+**File**: `examples/src/bin/ech-client.rs` (modified, +1/-1)
+```diff
+@@ -247,7 +247,7 @@ async fn lookup_ech_configs(
+     port: u16,
+ ) -> Result<Vec<EchConfigListBytes<'static>>, NetError> {
+     // For non-standard ports, lookup the ECHConfig using port-prefix naming
+-    // See: https://datatracker.ietf.org/doc/html/rfc9460#section-9.1
++    // See: https://www.rfc-editor.org/info/rfc9460#section-9.1
+     let qname_to_lookup = match port {
+         443 => domain.to_owned(),
+         port => format!("_{port}._https.{domain}"),
+```
+
+**File**: `rustls-aws-lc-rs/src/kx.rs` (modified, +1/-1)
+```diff
+@@ -273,7 +273,7 @@ pub static SECP384R1: &dyn SupportedKxGroup = &KxGroup {
+ fn uncompressed_point(point: &[u8]) -> bool {
+     // See `UncompressedPointRepresentation`, which is a retelling of
+     // SEC1 section 2.3.3 "Elliptic-Curve-Point-to-Octet-String Conversion"
+-    // <https://datatracker.ietf.org/doc/html/rfc9846#section-4.3.8.2>
++    // <https://www.rfc-editor.org/info/rfc9846#section-4.3.8.2>
+     matches!(point.first(), Some(0x04))
  }
  
- enum AlpnDecision {
-+    Disabled,
-     Selected(SingleProtocolName),
-     NoServerOffer,
-     NoClientOffer,
+```
+
+**File**: `rustls-aws-lc-rs/src/quic.rs` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ impl HeaderProtectionKey {
+         masked: bool,
+     ) -> Result<(), Error> {
+         // This implements "Header Protection Application" almost verbatim.
+-        // <https://datatracker.ietf.org/doc/html/rfc9001#section-5.4.1>
++        // <https://www.rfc-editor.org/info/rfc9001#section-5.4.1>
+ 
+         let mask = self
+             .0
+```
+
+**File**: `rustls-aws-lc-rs/src/tls13.rs` (modified, +6/-6)
+```diff
+@@ -47,9 +47,9 @@ pub static TLS13_CHACHA20_POLY1305_SHA256: &Tls13CipherSuite = &Tls13CipherSuite
+     quic: Some(&super::quic::KeyBuilder {
+         packet_alg: &aead::CHACHA20_POLY1305,
+         header_alg: &aead::quic::CHACHA20,
+-        // ref: <https://datatracker.ietf.org/doc/html/rfc9001#section-6.6>
++        // ref: <https://www.rfc-editor.org/info/rfc9001#section-6.6>
+         confidentiality_limit: u64::MAX,
+-        // ref: <https://datatracker.ietf.org/doc/html/rfc9001#section-6.6>
++        // ref: <https://www.rfc-editor.org/info/rfc9001#section-6.6>
+         integrity_limit: 1 << 36,
+     }),
+ };
+@@ -67,9 +67,9 @@ pub static TLS13_AES_256_GCM_SHA384: &Tls13CipherSuite = &Tls13CipherSuite {
+     quic: Some(&super::quic::KeyBuilder {
+         packet_alg: &aead::AES_256_GCM,
+         header_alg: &aead::quic::AES_256,
+-        // ref: <https://datatracker.ietf.org/doc/html/rfc9001#section-b.1.1>
++        // ref: <https://www.rfc-editor.org/info/rfc9001#section-b.1.1>
+         confidentiality_limit: 1 << 23,
+-        // ref: <https://datatracker.ietf.org/doc/html/rfc9001#section-b.1.2>
++        // ref: <https://www.rfc-editor.org/info/rfc9001#section-b.1.2>
+         integrity_limit: 1 << 52,
+     }),
+ };
+@@ -87,9 +87,9 @@ pub static TLS13_AES_128_GCM_SHA256: &Tls13CipherSuite = &Tls13CipherSuite {
+     quic: Some(&super::quic::KeyBuilder {
+         packet_alg: &aead::AES_128_GCM,
+         header_alg: &aead::quic::AES_128,
+-        // ref: <https://datatracker.ietf.org/doc/html/rfc9001#section-b.1.1>
++        // ref: <https://www.rfc-editor.org/info/rfc9001#section-b.1.1>
+         confidentiality_limit: 1 << 23,
+-        // ref: <https://datatracker.ietf.org/doc/html/rfc9001#section-b.1.2>
++        // ref: <https://www.rfc-editor.org/info/rfc9001#section-b.1.2>
+         integrity_limit: 1 << 52,
+     }),
+ };
+```
+
+**File**: `rustls-aws-lc-rs/src/verify.rs` (modified, +1/-1)
+```diff
+@@ -147,7 +147,7 @@ impl SignatureVerificationAlgorithm for AwsLcRsVerificationAlgorithm {
+             //  by 0x04 and the compressed form is indicated by either 0x02 or
+             //  0x03 (see 2.3.3 in [SEC1]).  The public key MUST be rejected if
+             //  any other value is included in the first octet."
+-            // -- <https://datatracker.ietf.org/doc/html/rfc5480#section-2.2>
++            // -- <https://www.rfc-editor.org/info/rfc5480#section-2.2>
+             match public_key.first() {
+                 Some(0x04) | Some(0x02) | Some(0x03) => {}
+                 _ => return Err(InvalidSignature),
+```
+
+**File**: `rustls-ring/src/kx.rs` (modified, +1/-1)
+```diff
+@@ -116,7 +116,7 @@ pub static SECP384R1: &dyn SupportedKxGroup = &KxGroup {
+ fn uncompressed_point(point: &[u8]) -> bool {
+     // See `UncompressedPointRepresentation`, which is a retelling of
+     // SEC1 section 2.3.3 "Elliptic-Curve-Point-to-Octet-String Conversion"
+-    // <https://datatracker.ietf.org/doc/html/rfc9846#section-4.3.8.2>
++    // <https://www.rfc-editor.org/info/rfc9846#section-4.3.8.2>
+     matches!(point.first(), Some(0x04))
+ }
+ 
+```
+
+**File**: `rustls-ring/src/quic.rs` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ impl HeaderProtectionKey {
+         masked: bool,
+     ) -> Result<(), Error> {
+         // This implements "Header Protection Application" almost verbatim.
+-        // <https://datatracker.ietf.org/doc/html/rfc9001#section-5.4.1>
++        // <https://www.rfc-editor.org/info/rfc9001#section-5.4.1>
+ 
+         let mask = self
+             .0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3420** (2026-11-09): replace links to tools.ietf.org and datatracker.ietf.org with rfc-editor.org/info (@mcr)
+- **PR #3419** (2026-11-09): Update Rust crate crabgrind to 0.5 (@renovate-bot)
 - **PR #3417** (2026-11-06): Refactor ALPN selection (@ctz)
 - **PR #3414** (2026-11-06): client: reject hello retry request naming a group already offered (@Mounika2456)
 - **PR #3411** (2026-11-03): 0.24 documentation pass (@ctz)
 - **PR #3410** (2026-11-02): Make tests more concise (@ctz)
-- **PR #3408** (2026-11-02): Bring back support for no_std (@djc)
-- **PR #3407** (closed): Pass the negotiated TLS version to signing keys (@loadingalias)
 
 ---
 
@@ -2497,78 +2471,30 @@ Use actual text from RFC9001 to explain logic.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Move QUIC-specific checks into `Tls13Extensions`
+## X. Update Rust crate crabgrind to 0.5
 
 **RULE**:
-When implementing operations in `rustls/src/server/hs.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3133129`: Move QUIC-specific checks into `Tls13Extensions`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e43a07f9`: Update Rust crate crabgrind to 0.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/server/hs.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            selected_protocol: common.selected_protocol.into(),
-        if let Some(quic) = output.quic() {
-            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
-            // (...) if an application protocol is not negotiated."
-            if !matches!(
-                common.selected_protocol,
-                AlpnDecision::Selected(_) | AlpnDecision::Disabled
-            ) {
-                return Err(Error::NoApplicationProtocol);
-            }
-
-            match hello.transport_parameters.as_ref() {
-                Some(params) => quic.transport_parameters(params.to_owned().into_vec()),
-                None => {
-                    return Err(PeerMisbehaved::MissingQuicTransportParameters.into());
-                }
-            }
-        }
-
-            selected_protocol: common.selected_protocol.into(),
-        // Enact ALPN selection by telling high-level API.
-        extensions.selected_protocol = chosen_protocol;
-        let alpn_protocol = match &extensions.selected_protocol {
-    selected_protocol: AlpnDecision,
-#[derive(Default)]
-    #[default]
-impl From<AlpnDecision> for Option<SingleProtocolName> {
-    fn from(value: AlpnDecision) -> Se
+version = "0.5.0"
+checksum = "0e4dbe352d7240a1ef7b2f5d7d283cefa9405835974f7aabc59838b9d1a6acc6"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            selected_protocol: common.selected_protocol,
-            selected_protocol: common.selected_protocol,
-        // Enact ALPN selection by telling peer and high-level API.
-            extensions.selected_protocol = Some(protocol.clone());
-
-        if let Some(quic) = output.quic() {
-            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
-            // (...) if an application protocol is not negotiated."
-            if !matches!(
-                chosen_protocol,
-                AlpnDecision::Selected(_) | AlpnDecision::Disabled
-            ) {
-                return Err(Error::NoApplicationProtocol);
-            }
-
-            match hello.transport_parameters.as_ref() {
-                Some(params) => quic.transport_parameters(params.to_owned().into_vec()),
-                None => {
-                    return Err(PeerMisbehaved::MissingQuicTransportParameters.into());
-                }
-            }
-        }
-        let alpn_protocol = match chosen_protocol {
-    selected_protocol: Option<SingleProtocolName>,
+version = "0.4.0"
+checksum = "e3f4bc9b199b6cfdf87ef7960ac7be99306a1ad4d6c442b1c3701cddb22ea47d"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3133129` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e43a07f9` are properly handled with clean fallback behavior.

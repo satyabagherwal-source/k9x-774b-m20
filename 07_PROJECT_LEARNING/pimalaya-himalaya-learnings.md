@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
-> **Source Version**: `7bfaaa09`  
+> **Source Version**: `42134fd2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T20:52:08.359Z  
+> **Timestamp**: 2026-11-09T11:16:17.648Z  
 > **Learning ID**: `learn-github-pimalaya-himalaya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T20:52:06.672Z  
+> **Harvest Timestamp**: 2026-11-09T11:16:16.876Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7599 stars
+- **Stars / Engagement**: 7613 stars
 
 ---
 
@@ -1536,11 +1536,13 @@ impl Account {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #804** (2026-11-06): **mcp: serve several accounts from one server**
-  *Symptoms*: I want to drive several mailboxes from one agent. cairn/changes/mcp-server settled on one account per server, with several accounts being several entries in the client's configuration. I tried that and the cost is on the agent's side:  - Three accounts give the model three copies of envelope_list, message_read and so on, told apart only by the prefix the client adds. The model picks among near-identical tools and every list takes context on each turn. - A task across accounts ("find the invoice wherever it landed") cannot name the account in a single call. There is no shared word for it. Each server is one more process to keep in step with a configuration that already names every account.  Proposed scope, kept opt-in so an agent only reaches accounts the operator wrote down:  - A repeatable flag naming the accounts to serve (--serve work --serve home, name open). Without it the server behaves as today. No flag serves every account. - When more than one account is served, every tool gains an account property whose enum is the served names, default the first. With one account the schema does not change. - One Session per account, built lazily and kept as the REPL keeps it, so a failure on one account drops no other account's client. All named accounts resolve at start. - The tool list is the union of what the served accounts' transports serve. A call naming an account that cannot serve the tool answers capability-missing, as a server-decided capability does today. - --allow-wri
+- **Issue #810** (2026-11-08): **Support searching in multiple mailboxes at once**
+  *Symptoms*: At the moment `himalaya envelope search` only supports one mailbox with `--mailbox <NAME>` or default to `inbox.` It would be great to be able to search all mailboxes or be able to provide multiple `--mailbox <NAME>` arguments. Ideally support `--mailbox <REGEX>`.
+  **Post-Mortem & Fix Analysis**:
+  > @mschneiderwng this won't be supported: IMAP searches only the selected mailbox by design (RFC 9051 §6.4.4), so a search across mailboxes doesn't fit the protocol. The way to get it is to sync with [neverest](https://github.com/pimalaya/neverest) into a local store, which merges every mailbox (and account) into one view; `himalaya pimdir search` (next release) then searches it all at once.
 
-- **Issue #803** (2026-11-05): **fix(envelope): one rule for hasAttachment across the MIME backends**
-  *Symptoms*: Closes #802.  IMAP, Maildir, m2dir and mbox now answer `hasAttachment` by one rule, on `envelope list` and `envelope search`.  ## One thing to decide  Your comment on #802 gave the rule as "a non-text, non-multipart part without an `inline` disposition counts, as `attachment list` does", and said pimdir's mark would follow it. The next day 925b8a1 pinned a finer pimdir rule. I followed that one, so all these backends give the same answer as pimdir. The mark therefore differs from `attachment list` on these rows:  | Message | `hasAttachment` here | pimdir | `attachment list` | |---|---|---|---| | Image with a `Content-ID`, no disposition | false | false | 1 | | Signature in `multipart/signed`, with or without `attachment` | false | false | 1 | | Parts of `multipart/encrypted` | false | false | 2 | | `text/plain` with an unknown disposition | true | true | 0 |  My own mail supports the finer rule. Over 65,000 local messages, your sentence read literally marks 558 new messages; the finer rule marks 169 of those. It also unmarks 168 that the old IMAP rule marked. These counts come from a small Python script that applies each rule to the headers, not from Himalaya itself.  If you prefer the sentence as written, the change is small: `marks_attachment` and four test rows.  ## Result  Each backend gave the same answer on 19 messages, read through the built binary, with IMAP against Dovecot 2.4.5. The first five are the rows of #802:  | Message | Before, IMAP | Before, local | Now | |
+- **Issue #808** (2026-11-08): **feat(mcp): read an attachment's content without touching disk (#805)**
+  *Symptoms*: Closes #805.  `himalaya mcp` now lists `attachment_download` as a reading tool, so an agent can read an attachment without a file being written.  ## Result  A call on a 10 KiB binary PDF part, piped as JSON-RPC into the built binary over a temporary Maildir account:  ```json {   "structuredContent": { "id": "3", "mime": "application/pdf", "filename": "résumé.pdf", "size": 10240 },   "content": [     { "type": "text", "text": "{\"filename\":\"résumé.pdf\",\"id\":\"3\",\"mime\":\"application/pdf\",\"size\":10240}" },     { "type": "resource", "resource": { "uri": "himalaya://my%20work/My%20Box/m2/3", "mimeType": "application/pdf", "blob": "AAECAwQF…" } }   ] } ```  The bytes travel once, in the embedded resource. `data` appears nowhere, and the temporary directory is byte-for-byte unchanged afterwards.  ## As accepted  - **A fixed `--stdout`.** The tool table can now append fixed arguments to a tool's argv, before the `--` that opens the positionals. An argument a fixed value sets is no property, so a call cannot unset it. `attachment_download` is `attachment download` run with `--stdout`: no MCP-only verb, no new leaf. `stdout` and `dir` are not properties, and `attachment-id` takes exactly one id. - **The cap is the server's.** `himalaya mcp --max-attachment-size <BYTES>` defaults to 10 MiB and is no tool property. A larger part is refused after decoding and before base64 encoding, with the new code `attachment-too-large` and `isError: true`. Outside the server nothing is bou
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1557,255 +1559,38 @@ impl Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf217e85` (2026-11-05)
-**Commit Message**: fix(envelope): one rule for hasAttachment across the MIME backends (#803)
+### Incident Patch 1: `42134fd2` (2026-11-08)
+**Commit Message**: build: pin pimalaya-cli f976e40
 
-The same message read differently per backend (#802). IMAP counted only
-a disposition of attachment, so a lone PDF part looked like no
-attachment, while Maildir, m2dir and mbox used attachment_count(), which
-counts inline parts.
-
-All four now follow the rule of the pimdir mark (io-pimdir 925b8a1). Any
-disposition but inline counts. With none, a part counts unless text,
-multipart or named by a Content-ID. An RFC 1847 protocol part never
-counts. m2dir envelope search now fills the mark as well, and the mbox
-cache gets a version, since it would otherwise keep the old answer for
-every message it has seen.
-
-Rebased onto the mime-rs reader (a53eab3): the local walk runs over the
-mime-rs tree in envelope::from_raw, shared by Maildir, m2dir and mbox,
-and the local attachment search clause reads the same mark.
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -108,6 +108,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Fixed `flag add|set|remove` with `answered` or `draft` on Gmail and Microsoft Graph reporting every message flagged while changing nothing: neither has a field for them, so the command fails with `capability-missing`.
- - Fixed Gmail date clauses being off by a day: Gmail reads a bare date as midnight in PST, so `after 2026-09-08` kept that day's mail and `date 2026-09-08` spanned two days. Each bound is now sent as Unix seconds of the UTC day.
- - Fixed a JMAP search whose date clause sits under `not` or `or` checking the date as if it stood alone: `not after 2026-01-01` listed nothing, and `date 2026-01-01 or subject x` only that day's mail. Such a clause now reads the server's received date; a date clause joined to the rest by `and` alone keeps its exact sent-date check.
-+- Fixed `hasAttachment` reading differently per backend ([#802]).
-+
-+  IMAP missed a PDF or an attached message without a `Content-Disposition`, and Maildir, m2dir and mbox counted parts marked `inline`. All four, and the local `attachment` search clause, now follow the rule of the pimdir mark: any disposition but `inline` counts; with none, a part counts unless text, multipart or named by a `Content-ID`; the signature of a signed message and the parts of an encrypted one never count. `attachment list` still lists those. An mbox cache written by an older version is rebuilt once.
- - Fixed `-c/--config` being split on `:`, which cut every absolute Windows path at its drive letter: `-c C:\Users\me\config.toml` reached the loader as `C` and `\Users\me\config.toml`, neither of which exists, so the configuration was never read. The delimiter now follows `$PATH` on the platform, `;` on Windows and `:` elsewhere, and the help text says so; `HIMALAYA_CONFIG` and repeated `-c` flags take absolute paths whole. On Windows a colon-joined list is no longer split, so pass several paths with `;` or repeat `-c`.
- - Fixed `account check` refusing an account declaring only a pimdir block as configuring no backend: the store is opened, its mailboxes listed, and a producer probed without writing anything, so a store whose staging lock a collector holds fails the check at once with `store-busy`.
- - Fixed `account check` exiting 0 when a backend failed: it now fails with one error naming each failed backend and why.
-@@ -1528,6 +1531,7 @@ Few major concepts changed:
- [#781]: https://github.com/pimalaya/himalaya/issues/781
- [#786]: https://github.com/pimalaya/himalaya/issues/786
- [#790]: https://github.com/pimalaya/himalaya/issues/790
-+[#802]: https://github.com/pimalaya/himalaya/issues/802
- 
- [core#1]: https://github.com/pimalaya/core/issues/1
- [core#10]: https://github.com/pimalaya/core/issues/10
+@@ -2002,6 +2002,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+ [[package]]
+ name = "pimalaya-cli"
+ version = "0.3.1"
++source = "git+https://github.com/pimalaya/cli?rev=f976e40cb609194e21cd8df8a089f86a1cd510fd#f976e40cb609194e21cd8df8a089f86a1cd510fd"
+ dependencies = [
+  "anyhow",
+  "base64-codec",
 ```
 
-**File**: `cairn/changes/has-attachment-one-rule/delta.md` (added, +25/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,25 @@
-+---
-+cairn: delta
-+change: has-attachment-one-rule
-+---
-+
-+# Delta
-+
-+## ADDED Requirements
-+
-+### Requirement: Backends reading the MIME structure mark attachments by the pimdir rule
-+IMAP, Maildir, m2dir and mbox SHALL answer `hasAttachment` by the rule of the pimdir mark (STORAGE Annex A.1) over the leaf parts of a message. A part SHALL mark the message when its `Content-Disposition` is any but `inline`. A part stating none SHALL mark it unless it is text, multipart or named by a `Content-ID`. An RFC 1847 protocol part SHALL never mark it: any child of a `multipart/encrypted`, any child but the first of a `multipart/signed`. A `Content-Type` that is no pair of RFC 2045 tokens SHALL read as `text/plain`. A `message/rfc822` part is a leaf, the parts of the attached message being its own. The `attachment` search clause SHALL read the same mark on the backends that search locally. JMAP and Graph SHALL relay what the server says; Gmail SHALL leave it `null`.
-+
-+`attachment list` SHALL stay wider than this mark: it also lists signatures and images named by a `Content-ID`, and some text parts.
-+
-+#### Scenario: A PDF without a disposition
-+- WHEN a message holds a single `application/pdf` part with no `Content-Disposition`
-+- THEN `envelope list --has-attachment` reports `hasAttachment: true` on IMAP, Maildir, m2dir and mbox
-+
-+#### Scenario: An inline PDF
-+- WHEN a `multipart/mixed` message holds a text part and an `application/pdf` part with `Content-Disposition: inline`
-+- THEN `envelope list --has-attachment` reports `hasAttachment: false` on IMAP, Maildir, m2dir and mbox
-+
-+#### Scenario: A signed message
-+- WHEN a `multipart/signed` message holds a text part and its signature, marked `attachment` or not
-+- THEN `envelope list --has-attachment` reports `hasAttachment: false` on IMAP, Maildir, m2dir and mbox
-```
-
-**File**: `cairn/changes/has-attachment-one-rule/proposal.md` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+---
-+cairn: change
-+id: has-attachment-one-rule
-+status: landed
-+created: 2026-11-02
-+---
-+
-+# One rule for hasAttachment across the backends that read MIME
-+
-+## Why
-+
-+The same message reads differently per backend (himalaya#802). IMAP counts only a `Content-Disposition: attachment`, so an order sent as one PDF part lists as having no attachment while `attachment list` shows the PDF. Maildir, m2dir and mbox used mail-parser's `attachment_count()`, which includes `inline` parts; since the move to mime-rs they read RFC 8621 `hasAttachment`, which counts signatures, encrypted parts and images named by a `Content-ID`, and misses a bare image. pimdir has since gained its own rule (io-pimdir 925b8a1).
-+
-+## What
-+
-+- One predicate, the rule of the pimdir mark: any disposition but `inline` counts; with none, a part counts unless text, multipart or named by a `Content-ID`; an RFC 1847 protocol part never counts.
-+- IMAP applies it to `BODYSTRUCTURE`; Maildir, m2dir and mbox to the mime-rs tree through their shared envelope reader, on `envelope list` and `envelope search`, and the local `attachment` search clause reads the same mark.
-+- The mbox envelope cache gets a version, since it would otherwise keep the old answer for every message it has seen.
-+
-+## Out of scope
-+
-+`attachment list` stays as it is, and wider than the mark: it also lists signatures, images named by a `Content-ID`, and text parts that name a file. JMAP, Graph and pimdir answer for themselves, and Gmail metadata cannot tell.
-```
-
-**File**: `cairn/changes/has-attachment-one-rule/tasks.md` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+---
-+cairn: tasks
-+change: has-attachment-one-rule
-+---
-+
-+# Tasks
-+
-+- [x] Add `part::marks_attachment` and `part::has_attachment`
-+- [x] Apply the rule to `BODYSTRUCTURE` on IMAP
-+- [x] Apply the rule in `envelope::from_raw`, shared by Maildir, m2dir and mbox, and in the local `attachment` search clause
-+- [x] Version the mbox cache so an older one is rebuilt
-+- [x] Fill the mark on m2dir `envelope search`
-+- [x] One test per row of the #802 table on IMAP and through `envelope::from_raw`, with the rows the rule adds
-+- [x] Fold the delta into the spec, write the log entry, add the changelog line
-```
-
-**File**: `cairn/log/2026-11-05-has-attachment-one-rule.md` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+---
-+cairn: log
-+change: has-attachment-one-rule
-+landed: 2026-11-05
-+---
-+
-+# One rule for hasAttachment across the backends that read MIME
-+
-+`part::marks_attachment` holds the rule of the pimdir mark (STORAGE Annex A.1): any disposition but `inline` counts; with none, a part counts unless text, multipart or named by a `Content-ID`; an RFC 1847 protocol part never counts. IMAP reads these from `BODYSTRUCTURE`. Maildir, m2dir and mbox read them off the mime-rs tree through `part::has_attachment`, called by `envelope::from_raw`, replacing RFC 8621 `hasAttachment`; the local `attachment` search clause falls back to the same function. m2dir `envelope search` now fills the mark, as the other two did.
-+
-+The rule went beyond the sentence in #802, a non-text part without `inline`, because that sentence named the pimdir mark as following the same rule and io-pimdir 925b8a1 then refined it. So the mark and `attachment list` differ on signatures, on images named by a `Content-ID` and on some text parts.
-+
-+The mbox cache gained a `version`: it keeps envelopes by content id, so without one every message already seen would keep its old answer. A cache without the current version is rebuilt once.
-+
-+The contribution was written against mail-parser and rebased by the maintainer onto the mime-rs reader (a53eab3): the predicate is unchanged, the local walk now runs over the mime-rs tree, and the shared rows run once through `envelope::from_raw` instead of once per backend. Seven of the sixteen rows fail against the RFC 8621 rule. The IMAP tests decode `BODYSTRUCTURE` answers captured from Dovecot 2.4.5, except the ones without extension data and the single-part multipart, which it does not send.
-+
-+Left as they are, each rare: a duplicate `Content-Type`, which Dovecot reads by its first; a quoted `Content-Disposition`, which Dovecot answers as an empty type; a disposition on a nested multipart, which pimdir reads and this leaf walk does not; a `Content-Type` holding one `/` but no RFC 2045 tokens, which pimdir reads as given and himalaya as `text/plain`.
-+
-+Capabilities moved: **backends** (Backends reading the MIME structure mark attachments by the pimdir rule: added).
-```
-
-**File**: `cairn/spec/backends.md` (modified, +17/-0)
-```diff
-@@ -23,6 +23,23 @@ An IMAP flag write SHALL refuse, under `capability-missing` and before the `STOR
- ### Requirement: Shared outputs carry no backend details
- The output of a shared command SHALL NOT carry a field that only one backend fills. A backend detail worth showing SHALL be logged by that backend's adapter or shown by its own namespace.
- 
-+### Requirement: Backends reading the MIME structure mark attachments by the pimdir rule
-+IMAP, Maildir, m2dir and mbox SHALL answer `hasAttachment` by the rule of the pimdir mark (STORAGE Annex A.1) over the leaf parts of a message. A part SHALL mark the message when its `Content-Disposition` is any but `inline`. A part stating none SHALL mark it unless it is text, multipart or named by a `Content-ID`. An RFC 1847 protocol part SHALL never mark it: any child of a `multipart/encrypted`, any child but the first of a `multipart/signed`. A `Content-Type` that is no pair of RFC 2045 tokens SHALL read as `text/plain`. A `message/rfc822` part is a leaf, the parts of the attached message being its own. The `attachment` search clause SHALL read the same mark on the backends that search locally. JMAP and Graph SHALL relay what the server says; Gmail SHALL leave it `null`.
-+
-+`attachment list` SHALL stay wider than this mark: it also lists signatures and images named by a `Content-ID`, and some text parts.
-+
-+#### Scenario: A PDF without a disposition
-+- WHEN a message holds a single `application/pdf` part with no `Content-Disposition`
-+- THEN `envelope list --has-attachment` reports `hasAttachment: true` on IMAP, Maildir, m2dir and mbox
-+
-+#### Scenario: An inline PDF
-+- WHEN a `multipart/mixed` message holds a text part and an `application/pdf` part with `Content-Disposition: inline`
-+- THEN `envelope list --has-attachment` reports `hasAttachment: false` on IMAP, Maildir, m2dir and mbox
-+
-+#### Scenario: A signed message
-+- WHEN a `multipart/signed` message holds a text part and its signature, marked `attachment` or not
-+- THEN `envelope list --has-attachment` reports `hasAttachment: false` on IMAP, Maildir, m2dir and mbox
-+
- ### Requirement: The envelope carries its threading pointers
- The shared `Envelope` SHALL carry `message_id` and `in_reply_to`, the RFC 5322 §3.6.4 identity of a message and of the message(s) it replies to, so a client can pair a reply with its parent from a listing rather than by reading bodies.
- 
-```
-
-**File**: `src/email/envelope.rs` (modified, +8/-4)
-```diff
-@@ -111,8 +111,9 @@ pub fn normalize_message_id(raw: &str) -> Option<String> {
- /// flags left empty for the backend to fill.
- ///
- /// `with_attachment` also splits the body, to say whether it holds an
--/// attachment (RFC 8621 §4.1.4); left `None` otherwise. The subject is
--/// read as the read view reads it, raw 8-bit bytes included.
-+/// attachment ([`crate::shared::message::part::has_attachment`]); left
-+/// `None` otherwise. The subject is read as the read view reads it, raw
-+/// 8-bit bytes included.
- #[cfg(any(feature = "maildir", feature = "m2dir", feature = "mbox"))]
- pub fn from_raw(raw: &[u8], with_attachment: bool) -> Envelope {
-     use chrono::TimeZone;
-@@ -121,7 +122,10 @@ pub fn from_raw(raw: &[u8], with_attachment: bool) -> Envelope {
-         tree::cst::MimeCst,
-     };
- 
--    use crate::{email::address, shared::message::header};
-+    use crate::{
-+        email::address,
-+        shared::message::{header, part},
-+    };
- 
-     let message = match with_attachment {
-         true => MimeCst::parse(raw),
-@@ -159,7 +163,7 @@ pub fn from_raw(raw: &[u8], with_attachment: bool) -> Envelope {
-         to: addresses(root.header::<TO>()),
-         date,
-         size: raw.len() as u64,
--        has_attachment: with_attachment.then(|| root.body_lists().has_attachment()),
-+        has_attachment: with_attachment.then(|| part::has_attachment(&message)),
-     }
- }
- 
-```
-
-**File**: `src/email/search/eval.rs` (modified, +10/-7)
-```diff
-@@ -18,13 +18,16 @@ use mime::{
-     tree::{cst::MimeCst, parse::MimeParseOptions},
- };
- 
--use crate::email::{
--    address::{self, Address},
--    envelope::Envelope,
--    search::{
--        filter::query::SearchEmailsFilterQuery,
--        sort::query::{SearchEmailsSorter, SearchEmailsSorterKind, SearchEmailsSorterOrder},
-+use crate::{
-+    email::{
-+        address::{self, Address},
-+        envelope::Envelope,
-+        search::{
-+            filter::query::SearchEmailsFilterQuery,
-+            sort::query::{SearchEmailsSorter, SearchEmailsSorterKind, SearchEmailsSorterOrder},
-+        },
-     },
-+    shared::message::part,
- };
- 
- /// The copy recipients of a message, which an [`Envelope`] does not carry.
-@@ -145,7 +148,7 @@ fn has_attachment(envelope: &Envelope, raw: &[u8]) -> bool {
-         return has_attachment;
-     }
- 
--    !raw.is_empty() && MimeCst::parse(raw).root.body_lists().has_attachment()
-+    !raw.is_empty() && part::has_attachment(&MimeCst::parse(raw))
- }
- 
- fn body_contains(raw: &[u8], pattern: &str) -> bool {
+@@ -94,4 +94,4 @@ io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec6
+ io-jmap = { git = "https://github.com/pimalaya/io-jmap", rev = "919eab465ab620b323f9191ab8de2f640bc4a1d2" }
+ io-msgraph = { git = "https://github.com/pimalaya/io-msgraph", rev = "2ae26370aefa671c16316dbad98107634436bce6" }
+ io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "5c18a026b9c85b470984192452c2aa66e060a3fe" }
+-pimalaya-cli = { path = "../cli" }
++pimalaya-cli = { git = "https://github.com/pimalaya/cli", rev = "f976e40cb609194e21cd8df8a089f86a1cd510fd" }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #808** (2026-11-08): feat(mcp): read an attachment's content without touching disk (#805) (@maybenotconnor)
+- **PR #807** (2026-11-08): feat(mcp): attach files given inline to the composers (@maybenotconnor)
 - **PR #803** (2026-11-05): fix(envelope): one rule for hasAttachment across the MIME backends (@snrmwg)
 - **PR #800** (2026-11-01): fix(cli): delimit config paths with $PATH's own separator (@Omair-Asdaq)
 - **PR #796** (2026-10-29): docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (@xiaolinstar)
 - **PR #794** (2026-10-15): fix: fail when no given message id exists (@jontxux)
-- **PR #793** (2026-10-16): feat(pimdir): stage any flag through pimdir flag (@bobberb)
-- **PR #792** (2026-10-14): docs(readme): add himalaya-fzf to interfaces (@kezhenxu94)
 
 ---
 
@@ -1825,24 +1610,21 @@ and the local attachment search clause reads the same mark.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. envelope): one rule for hasAttachment across the MIME backends (#803)
+## X. build: pin pimalaya-cli f976e40
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bf217e85`: envelope): one rule for hasAttachment across the MIME backends (#803). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42134fd2`: build: pin pimalaya-cli f976e40. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed `hasAttachment` reading differently per backend ([#802]).
-
-  IMAP missed a PDF or an attached message without a `Content-Disposition`, and Maildir, m2dir and mbox counted parts marked `inline`. All four, and the local `attachment` search clause, now follow the rule of the pimdir mark: any disposition but `inline` counts; with none, a part counts unless text, multipart or named by a `Content-ID`; the signature of a signed message and the parts of an encrypted one never count. `attachment list` still lists those. An mbox cache written by an older version is rebuilt once.
-[#802]: https://github.com/pimalaya/himalaya/issues/802
+source = "git+https://github.com/pimalaya/cli?rev=f976e40cb609194e21cd8df8a089f86a1cd510fd#f976e40cb609194e21cd8df8a089f86a1cd510fd"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1852,4 +1634,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bf217e85` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42134fd2` are properly handled with clean fallback behavior.

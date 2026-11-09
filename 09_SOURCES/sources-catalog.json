@@ -625,8 +625,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "8eb09a744d98b17aac2e1c2e78f9992d6cff39964b3bd2335d87dba7fa44ec69",
-    "lastHarvestedAt": "2026-11-05T13:40:25.662Z",
+    "contentHash": "5699c6eb6c4c806e1b8b8ff8d69b6f6cf60f9f62dffd52498cbfdf7bdaffa68a",
+    "lastHarvestedAt": "2026-11-09T11:16:36.950Z",
     "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "0d7f9b32",
+    "sourceVersion": "e43a07f9",
     "license": "NOASSERTION",
-    "contentHash": "bf930d4b4758720baf0f36646074106f215d97f47b80390d76d60aad98e94f49",
-    "lastHarvestedAt": "2026-11-06T13:27:23.523Z",
+    "contentHash": "6639fe599bb6189d65cd9a98c35ad6f88fffc9cc548f59a1d4a47fa26d4cc72d",
+    "lastHarvestedAt": "2026-11-09T11:16:29.763Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "b61e0159",
+    "sourceVersion": "91b650ea",
     "license": "NOASSERTION",
-    "contentHash": "ddf3dfce93caee5bf27eb2c154e28ea2bc31d530c3380564305b861633e84e29",
-    "lastHarvestedAt": "2026-11-08T14:49:07.883Z",
+    "contentHash": "a9d41b1189d94a6da791be55f59ed92fd28640b24ef0341100c5072a131c2071",
+    "lastHarvestedAt": "2026-11-09T11:16:31.660Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "7bfaaa09",
+    "sourceVersion": "42134fd2",
     "license": "Apache-2.0",
-    "contentHash": "dac8b4cf237fe8dcefa1d7082ab8cb8691416318976786b275640f7f0a72eaba",
-    "lastHarvestedAt": "2026-11-06T20:52:09.360Z",
+    "contentHash": "8acab0b29b8568a29f837e151b64fef067e5f6c2041af2cbfcb918628a781d2a",
+    "lastHarvestedAt": "2026-11-09T11:16:19.146Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {

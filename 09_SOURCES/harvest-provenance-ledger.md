@@ -8579,3 +8579,7 @@ Every entry in this ledger must capture:
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `bc458019` | Multi-dimensional audit evidence | 2026-11-09T10:59:35.994Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4b4d45bf` | Multi-dimensional audit evidence | 2026-11-09T10:59:41.996Z |
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-11-09T11:04:02.291Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `42134fd2` | Multi-dimensional audit evidence | 2026-11-09T11:16:19.146Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e43a07f9` | Multi-dimensional audit evidence | 2026-11-09T11:16:29.763Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `91b650ea` | Multi-dimensional audit evidence | 2026-11-09T11:16:31.660Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-09T11:16:36.950Z |
