@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T14:18:10.908Z",
+  "last_updated": "2026-11-09T14:35:43.118Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10147,8 +10147,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "a0f8a379",
-      "content_hash": "20c0fd89c42f52ff990641073d0e4d266ac75015f46710511fb32407b252343b",
+      "source_version": "6f9df7e7",
+      "content_hash": "25700b8b1cc2f150b6f03f71b2f1521aa1c8609f02a533f89f7e2b7ddc3aee62",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10205,6 +10205,11 @@
         {
           "number": null,
           "title": "deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (#5015)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs(viz): document stdin input in the USAGE (#5018)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10558,7 +10563,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T13:34:34.309Z",
+      "verified_at": "2026-11-09T14:35:43.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15444,8 +15449,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "88f81209",
-      "content_hash": "b8ba7f5ba3ccf71eb3a0e292d79eeabf77f3611134b7063684fb5e83c9f345b7",
+      "source_version": "92bfc001",
+      "content_hash": "e29f2ba6c161266b5e8228270a17407a74d87cafbf9e1a3180c09491854dec16",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15492,6 +15497,11 @@
         {
           "number": null,
           "title": "sim): fixed-key hasher for maps whose iteration order decides behaviour (#6139)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build: make the Windows target pass clippy over all targets, and lint it in CI (",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15710,7 +15720,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T06:46:00.067Z",
+      "verified_at": "2026-11-09T14:35:38.296Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75233,10 +75243,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "e60566fb9b372609dbaccc82400930b399e5671f95a1838896a6fe13615952e5",
+      "content_hash": "5ee3bbd729adb535d339445f4b41278f1e808c1828723f45964826f0108e2a58",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Deterministic Inference Seeding Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 919,
           "title": "Latent Space Dimensionality Consistency Invariant",
@@ -75348,7 +75363,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:30:04.918Z",
+      "verified_at": "2026-11-09T14:35:41.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -91025,15 +91040,15 @@
       "learning_id": "rule-919",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 919,
-      "title": "Latent Space Dimensionality Consistency",
-      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
-      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "title": "Latent Space Dimensionality Consistency Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T13:36:48.553Z"
+      "verified_at": "2026-11-09T14:35:41.132Z"
     },
     "rule-920": {
       "learning_id": "rule-920",

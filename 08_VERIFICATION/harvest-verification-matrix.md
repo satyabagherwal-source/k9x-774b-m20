@@ -8609,3 +8609,6 @@
 | `CYCLE-20261109-2Y99` | `2026-11-09T14:05:33.549Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`63c38cb9...`) |
 | `CYCLE-20261109-J1NK` | `2026-11-09T14:18:04.448Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`04834c3a...`) |
 | `CYCLE-20261109-J6RQ` | `2026-11-09T14:18:11.078Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`06bea34f...`) |
+| `CYCLE-20261109-5MWJ` | `2026-11-09T14:35:38.419Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e29f2ba6...`) |
+| `CYCLE-20261109-5P3H` | `2026-11-09T14:35:41.261Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 919, Rule null` | Yes (`5ee3bbd7...`) |
+| `CYCLE-20261109-5QLW` | `2026-11-09T14:35:43.220Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`25700b8b...`) |

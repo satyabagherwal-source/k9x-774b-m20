@@ -1545,8 +1545,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein",
     "license": "Open-Source",
-    "contentHash": "e60566fb9b372609dbaccc82400930b399e5671f95a1838896a6fe13615952e5",
-    "lastHarvestedAt": "2026-11-05T15:30:05.047Z",
+    "contentHash": "5ee3bbd729adb535d339445f4b41278f1e808c1828723f45964826f0108e2a58",
+    "lastHarvestedAt": "2026-11-09T14:35:41.265Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein"
   },
   "hf-pyannote-speaker-diarization-community-1": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "a0f8a379",
+    "sourceVersion": "6f9df7e7",
     "license": "NOASSERTION",
-    "contentHash": "20c0fd89c42f52ff990641073d0e4d266ac75015f46710511fb32407b252343b",
-    "lastHarvestedAt": "2026-11-09T13:34:34.503Z",
+    "contentHash": "25700b8b1cc2f150b6f03f71b2f1521aa1c8609f02a533f89f7e2b7ddc3aee62",
+    "lastHarvestedAt": "2026-11-09T14:35:43.224Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "88f81209",
+    "sourceVersion": "92bfc001",
     "license": "NOASSERTION",
-    "contentHash": "b8ba7f5ba3ccf71eb3a0e292d79eeabf77f3611134b7063684fb5e83c9f345b7",
-    "lastHarvestedAt": "2026-11-09T06:46:00.175Z",
+    "contentHash": "e29f2ba6c161266b5e8228270a17407a74d87cafbf9e1a3180c09491854dec16",
+    "lastHarvestedAt": "2026-11-09T14:35:38.423Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

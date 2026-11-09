@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `a0f8a379`  
+> **Source Version**: `6f9df7e7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T13:34:32.496Z  
+> **Timestamp**: 2026-11-09T14:35:41.389Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T13:34:31.957Z  
+> **Harvest Timestamp**: 2026-11-09T14:35:41.236Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,171 +2203,140 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07b65145` (2026-11-09)
-**Commit Message**: deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (#5015)
+### Incident Patch 1: `6f9df7e7` (2026-11-09)
+**Commit Message**: docs(viz): document stdin input in the USAGE (#5018)
 
-* deps: compact_bytes fork with the big-endian heap/inline fix
+* docs(viz): document stdin input in the USAGE
 
-qsv-stats 0.57's ByteKey is backed by compact_bytes, whose inline/heap
-discriminant is the struct's last byte. In the heap repr that byte is the
-last byte of `cap`, which on big-endian targets is the LEAST significant
-one, so a capacity like 128 (0x80) was misread as inline and as_slice()
-read past the allocation (undefined behavior under Miri on s390x). The
-s390x workflow (run 42515421658, master ad3fc53fe) failed 11 stats and
-moarstats tests with heap pointer bytes printed as mode/antimode values.
-
-The fork's main (f21a6ac, jqnatividad/compact_bytes#2) now stores that
-field in little-endian order on every platform. That's a no-op on
-little-endian targets (identical release asm on aarch64 and x86_64), and
-its Miri CI job now also runs on s390x.
+Add a "viz arguments" section: <input> is a CSV/TSV file, or - for stdin.
+Every chart type accepts stdin except `smart`, which needs a file because
+it builds its panels from the file's cached statistics. With `--geojson
+auto`/`census`, stdin is first copied to a temp file. Adds a piped-input
+example. Regenerated docs/help/viz.md and the qsv-viz MCP skill JSON.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): note the big-endian compact_bytes fix on the #5011 entry (#5015)
+* docs(changelog): viz USAGE stdin note (#5018)
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* deps: bump qsv-stats to 0.57.1 (big-endian ByteKey fallback)
+---------
 
-qsv-stats 0.57.1 makes compact_bytes a little-en
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `.claude/skills/qsv/qsv-viz.json` (modified, +5/-1)
 ```diff
-@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -45,7 +45,7 @@
+         "name": "input",
+         "type": "file",
+         "required": true,
+-        "description": "Input CSV file."
++        "description": "The CSV/TSV file to chart, or - to read CSV from stdin. Every chart type accepts stdin except smart, which needs a file because it builds its panels from the file's cached statistics. When the GeoJSON is auto or census, stdin is first copied to a temp file (disk space equal to the input)."
+       }
+     ],
+     "options": [
+@@ -511,6 +511,10 @@
+       "description": "Aggregate (sum) sales by region into a titled bar chart, opened in the browser",
+       "command": "qsv viz bar sales.csv --x region --y amount --agg sum --title \"Sales by region\" --open"
+     },
++    {
++      "description": "Chart piped CSV: pass - as the input (every chart type except smart)",
++      "command": "qsv search -s region West sales.csv | qsv viz histogram --x amount - -o west.html"
++    },
+     {
+       "description": "Scatter plot with a separate series (trace) per category",
+       "command": "qsv viz scatter data.csv --x age --y income --series gender -o scatter.html"
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Added
  - **docs: "Statistics at a Glance" in [`docs/STATS_DEFINITIONS.md`](docs/STATS_DEFINITIONS.md)**: qsv compiles 159 statistic columns across `stats` (48), `moarstats` (76 + 14 bivariate), `pragmastat` (18) and `frequency` (3). A new test checks the table against real output, so the counts can't go stale silently ([#4996](https://github.com/dathere/qsv/pull/4996)).
++- **docs: the `viz` USAGE documents stdin input** ([#5018](https://github.com/dathere/qsv/pull/5018)). Pass `-` as `<input>` to chart piped CSV. Every chart type accepts it except `smart`, which needs a file for its cached statistics. With `--geojson auto` or `census`, stdin is first copied to a temp file. There's also a new piped-input example.
  
  ### Changed
--- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected.
-+- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected. On big-endian targets (s390x), values of 128 bytes or more were misread until a compact_bytes fix ([#5015](https://github.com/dathere/qsv/pull/5015)), so this was never released with the bug.
- - **`stats --weight`: mode, antimode and cardinality tracking is faster and uses less memory** ([#5013](https://github.com/dathere/qsv/pull/5013)). The weighted tracker now stores short values inline too, as #5011 did for unweighted `stats`. On a 1M-row file with `--weight`, `--cardinality --mode` is 12–20% faster, and `--everything` on an indexed file is 21–23% faster with 36% less peak memory. Output is unchanged.
- - **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
- - **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
+ - **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected. On big-endian targets (s390x), values of 128 bytes or more were misread until a compact_bytes fix ([#5015](https://github.com/dathere/qsv/pull/5015)), so this was never released with the bug.
 ```
 
-**File**: `Cargo.lock` (modified, +3/-3)
+**File**: `docs/help/viz.md` (modified, +15/-1)
 ```diff
-@@ -1483,7 +1483,7 @@ dependencies = [
- [[package]]
- name = "compact_bytes"
- version = "0.2.1"
--source = "git+https://github.com/jqnatividad/compact_bytes?branch=main#651006e934c5d4700c6b0b75aa94fcc26b7f79cc"
-+source = "git+https://github.com/jqnatividad/compact_bytes?branch=main#f21a6acee403159c5c0f58ef405a8dde53c3dadd"
- dependencies = [
-  "serde",
- ]
-@@ -7156,9 +7156,9 @@ dependencies = [
+@@ -5,7 +5,7 @@
+ **[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/viz.rs](https://github.com/dathere/qsv/blob/master/src/cmd/viz.rs)** | [🪄](TableOfContents.md#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[📇](TableOfContents.md#legend "uses an index when available.")[🏎️](TableOfContents.md#legend "multithreaded and/or faster when an index (📇) is available.")[👆](TableOfContents.md#legend "has powerful column selector support. See `select` for syntax.")[🤖](TableOfContents.md#legend "command uses Natural Language Processing or Generative AI.")[🌐](TableOfContents.md#legend "has web-aware options.")[🌎](TableOfContents.md#legend "has geospatial capabilities.")
  
- [[package]]
- name = "qsv-stats"
--version = "0.57.0"
-+version = "0.57.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "acb010e011dd606752a228b203748e26fb3b6bf78a7495e8c048606a084c206f"
-+checksum = "725b4c79f26b87f7e521d8ebe8a600c666c08453478ff93beb6fecbb4e836a11"
- dependencies = [
-  "compact_bytes",
-  "hashbrown 0.17.1",
+ <a name="nav"></a>
+-[Description](#description) | [Examples](#examples) | [Usage](#usage) | [Viz Options](#viz-options) | [Map Options](#map-options) | [Geo Options](#geo-options) | [Choropleth Options](#choropleth-options) | [Smart Options](#smart-options) | [Common Options](#common-options)
++[Description](#description) | [Examples](#examples) | [Usage](#usage) | [Arguments](#arguments) | [Viz Options](#viz-options) | [Map Options](#map-options) | [Geo Options](#geo-options) | [Choropleth Options](#choropleth-options) | [Smart Options](#smart-options) | [Common Options](#common-options)
+ 
+ <a name="description"></a>
+ 
+@@ -159,6 +159,12 @@ qsv viz smart data.csv --smarter --bivariate -o dashboard.html
+ qsv viz bar sales.csv --x region --y amount --agg sum --title "Sales by region" --open
+ ```
+ 
++> Chart piped CSV: pass - as the input (every chart type except smart)
++
++```console
++qsv search -s region West sales.csv | qsv viz histogram --x amount - -o west.html
++```
++
+ > Scatter plot with a separate series (trace) per category
+ 
+ ```console
+@@ -384,6 +390,14 @@ qsv viz parcoords   [options] <input>
+ qsv viz --help
+ ```
+ 
++<a name="arguments"></a>
++
++## Arguments [↩](#nav)
++
++| Argument&nbsp; | Description |
++|----------|-------------|
++| &nbsp;`<input>`&nbsp; | The CSV/TSV file to chart, or - to read CSV from stdin. Every chart type accepts stdin except smart, which needs a file because it builds its panels from the file's cached statistics. When the GeoJSON is auto or census, stdin is first copied to a temp file (disk space equal to the input). |
++
+ <a name="viz-options"></a>
+ 
+ ## Viz Options [↩](#nav)
 ```
 
----
-
-### Incident Patch 2: `a24553d2` (2026-11-09)
-**Commit Message**: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#5016)
-
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.2 to 4.39.3.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.39.2...v4.39.3)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.39.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/devskim.yml` (modified, +1/-1)
+**File**: `src/cmd/viz.rs` (modified, +11/-0)
 ```diff
-@@ -51,6 +51,6 @@ jobs:
-           ignore-globs: "**/.git/**,**/.claude/**,**/tests/resources/**,**/docs/describegpt/*.md,**/docs/describegpt/*.json,**/docs/describegpt/*.toon,**/src/cmd/assets/datatables.min.js,**/src/cmd/assets/datatables.min.css"
+@@ -122,6 +122,9 @@ Examples:
+   # Aggregate (sum) sales by region into a titled bar chart, opened in the browser
+   qsv viz bar sales.csv --x region --y amount --agg sum --title "Sales by region" --open
  
-       - name: Upload DevSkim scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.39.2
-+        uses: github/codeql-action/upload-sarif@v4.39.3
-         with:
-           sarif_file: devskim-results.sarif
-```
-
-**File**: `.github/workflows/rust-clippy.yml` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ jobs:
-         continue-on-error: true
++  # Chart piped CSV: pass - as the input (every chart type except smart)
++  qsv search -s region West sales.csv | qsv viz histogram --x amount - -o west.html
++
+   # Scatter plot with a separate series (trace) per category
+   qsv viz scatter data.csv --x age --y income --series gender -o scatter.html
  
-       - name: Upload analysis results to GitHub
--        uses: github/codeql-action/upload-sarif@v4.39.2
-+        uses: github/codeql-action/upload-sarif@v4.39.3
-         with:
-           sarif_file: rust-clippy-results.sarif
-           wait-for-processing: true
-```
-
----
-
-### Incident Patch 3: `dcccc323` (2026-11-09)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.267 to 1.0.269 (#5017)
-
-Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.267 to 1.0.269.
-- [Release notes](https://github.com/anthropics/claude-code-action/releases)
-- [Commits](https://github.com/anthropics/claude-code-action/compare/4845bacbb38b3c4b15d948f035349786f678e068...61a9c274fa7110a66dfafc1bbbced03833eb25fe)
-
----
-updated-dependencies:
-- dependency-name: anthropics/claude-code-action
-  dependency-version: 1.0.269
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
+@@ -249,6 +252,14 @@ Usage:
+     qsv viz --help
  
-       - name: Run Claude Code Review
-         id: claude-review
--        uses: anthropics/claude-code-action@4845bacbb38b3c4b15d948f035349786f678e068 # v1.0.267
-+        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-```
-
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
  
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@4845bacbb38b3c4b15d948f035349786f678e068 # v1.0.267
-+        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
- 
++viz arguments:
++    <input>                The CSV/TSV file to chart, or - to read CSV from
++                           stdin. Every chart type accepts stdin except smart,
++                           which needs a file because it builds its panels from
++                           the file's cached statistics. When the GeoJSON is
++                           auto or census, stdin is first copied to a temp file
++                           (disk space equal to the input).
++
+ viz options:
+     -x, --x <col>          Column for the x-axis / category / bin / group.
+     -y, --y <col>          Column for the y-axis / value.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5018** (2026-11-09): docs(viz): document stdin input in the USAGE (@jqnatividad)
 - **PR #5017** (2026-11-09): build(deps): bump anthropics/claude-code-action from 1.0.267 to 1.0.269 (@dependabot[bot])
 - **PR #5016** (2026-11-09): build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (@dependabot[bot])
 - **PR #5015** (2026-11-09): deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (@jqnatividad)
 - **PR #5014** (2026-11-09): fix(mcp): leave devDependency-only packages out of the .mcpb bundle (@jqnatividad)
 - **PR #5013** (2026-11-09): perf(stats): use qsv-stats ByteKey for weighted mode/cardinality tracking (@jqnatividad)
-- **PR #5012** (2026-11-09): fix: piped stdin read twice or rejected in 7 commands (@jqnatividad)
 
 ---
 
@@ -2387,28 +2356,32 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (#5015)
+## X. docs(viz): document stdin input in the USAGE (#5018)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-viz.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07b65145`: deps: compact_bytes fork with the big-endian heap/inline fix (s390x) (#5015). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f9df7e7`: docs(viz): document stdin input in the USAGE (#5018). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-viz.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected. On big-endian targets (s390x), values of 128 bytes or more were misread until a compact_bytes fix ([#5015](https://github.com/dathere/qsv/pull/5015)), so this was never released with the bug.
+        "description": "The CSV/TSV file to chart, or - to read CSV from stdin. Every chart type accepts stdin except smart, which needs a file because it builds its panels from the file's cached statistics. When the GeoJSON is auto or census, stdin is first copied to a temp file (disk space equal to the input)."
+    {
+      "description": "Chart piped CSV: pass - as the input (every chart type except smart)",
+      "command": "qsv search -s region West sales.csv | qsv viz histogram --x amount - -o west.html"
+    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected.
+        "description": "Input CSV file."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07b65145` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f9df7e7` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T14:18:11.101Z",
-  "total_cycles_completed": 8574,
-  "total_learnings_persisted": 8574,
-  "total_rules_promoted": 8400,
+  "last_updated": "2026-11-09T14:35:43.230Z",
+  "total_cycles_completed": 8577,
+  "total_learnings_persisted": 8577,
+  "total_rules_promoted": 8404,
   "history": [
-    {
-      "timestamp": "2026-11-08T22:12:53.254Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T22:19:47.632Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T22:19:49.084Z",
-      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
-      "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T22:26:15.135Z",
       "repository": "wquguru/cicada",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-09T14:18:11.101Z",
       "repository": "gluesql/gluesql",
       "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T14:35:38.440Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T14:35:41.283Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T14:35:43.230Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

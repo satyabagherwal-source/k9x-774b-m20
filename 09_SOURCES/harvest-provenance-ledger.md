@@ -8618,3 +8618,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-09T14:05:33.553Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T14:18:04.452Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `fc736e32` | Multi-dimensional audit evidence | 2026-11-09T14:18:11.096Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `92bfc001` | Multi-dimensional audit evidence | 2026-11-09T14:35:38.423Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-09T14:35:41.265Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6f9df7e7` | Multi-dimensional audit evidence | 2026-11-09T14:35:43.224Z |

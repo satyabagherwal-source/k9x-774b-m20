@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T14:18:11.105Z",
+  "last_updated": "2026-11-09T14:35:43.235Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2391,14 +2391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "content_hash": "e60566fb9b372609dbaccc82400930b399e5671f95a1838896a6fe13615952e5",
-      "verified_at": "2026-11-05T15:30:05.056Z",
+      "content_hash": "5ee3bbd729adb535d339445f4b41278f1e808c1828723f45964826f0108e2a58",
+      "verified_at": "2026-11-09T14:35:41.287Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T15:30:05.056Z"
+      "last_updated": "2026-11-09T14:35:41.287Z"
     },
     "pyannote/speaker-diarization-community-1": {
       "repository": "pyannote/speaker-diarization-community-1",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "20c0fd89c42f52ff990641073d0e4d266ac75015f46710511fb32407b252343b",
-      "verified_at": "2026-11-09T13:34:34.512Z",
+      "content_hash": "25700b8b1cc2f150b6f03f71b2f1521aa1c8609f02a533f89f7e2b7ddc3aee62",
+      "verified_at": "2026-11-09T14:35:43.234Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T13:34:34.512Z"
+      "last_updated": "2026-11-09T14:35:43.234Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "b8ba7f5ba3ccf71eb3a0e292d79eeabf77f3611134b7063684fb5e83c9f345b7",
-      "verified_at": "2026-11-09T06:46:00.183Z",
+      "content_hash": "e29f2ba6c161266b5e8228270a17407a74d87cafbf9e1a3180c09491854dec16",
+      "verified_at": "2026-11-09T14:35:38.443Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T06:46:00.183Z"
+      "last_updated": "2026-11-09T14:35:38.443Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",

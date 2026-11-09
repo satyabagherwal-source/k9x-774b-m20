@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T10:59:42.002Z",
+  "last_updated": "2026-11-09T14:35:41.281Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4325,6 +4325,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-5P41",
+      "directive_title": "Hugging Face Model Artifact Completeness Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "black-forest-labs/flux-3-image-klein",
+      "source_commit": "hf-black-for",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein"
     }
   ]
 }
