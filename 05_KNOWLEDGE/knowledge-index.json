@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T03:35:31.965Z",
+  "last_updated": "2026-11-09T03:42:53.551Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20352,7 +20352,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "14b47f9d5787682e0185599b32d534a9b75b5ade127aed392ee652e8e8044ad1",
+      "content_hash": "956cf1c4746fdcc7117d763feae4fa1ab25da174b31e0346ede4fa2f803116d2",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
@@ -20424,7 +20424,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-11-05T09:44:34.252Z",
+      "verified_at": "2026-11-09T03:42:38.639Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50267,14 +50267,19 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "8f6e050c",
-      "content_hash": "43006cc78b6fb9ae3847ac68e7d240d12349bc19ed56d3c05556170054c262c7",
+      "source_version": "34441533",
+      "content_hash": "125d9ac6048790c3e3114a2b07859c9707c92258425560857da738393d7d12c1",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Fix conflict between #7108 and #7298. (#7309)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "polish RankJoin eligibility, planner warnings, and parameterized score projectio",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50353,7 +50358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:48:16.613Z",
+      "verified_at": "2026-11-09T03:42:53.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

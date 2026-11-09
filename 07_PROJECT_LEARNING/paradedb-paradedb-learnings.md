@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `8f6e050c`  
+> **Source Version**: `34441533`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T05:48:14.950Z  
+> **Timestamp**: 2026-11-09T03:42:52.261Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T05:48:14.767Z  
+> **Harvest Timestamp**: 2026-11-09T03:42:52.252Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9495 stars
+- **Stars / Engagement**: 9497 stars
 
 ---
 
@@ -2280,11 +2280,11 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7313** (2026-11-08): **JoinScan segfaults when a projected expression contains a scalar subquery**
+  *Symptoms*: ### What happens?  ParadeDB Join Scan crashes the server (segmentation fault) when an expression in the SELECT list contains a scalar subquery, such as `a.q + (SELECT 1)`. Postgres then restarts all connections. A prepared statement parameter in the same place, with a generic plan, fails with ERROR: no value found for parameter 1.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE a (id int PRIMARY KEY, q int); CREATE TABLE b (id int PRIMARY KEY, a_id int);  INSERT INTO a VALUES (1, 5); INSERT INTO b VALUES (1, 1);  CREATE INDEX a_idx ON a USING paradedb (id, q); CREATE INDEX b_idx ON b USING paradedb (id, a_id);  SELECT a.id, a.q + (SELECT 1) FROM a JOIN b ON b.a_id = a.id WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; ```  The server crashes with "terminated by signal 11: Segmentation fault". Expected 1 | 6. With SET paradedb.enable_join_custom_scan = off; it returns 1 | 6.  The parameter case:  ```sql SET plan_cache_mode = force_generic_plan; PREPARE s(int) AS   SELECT a.id, a.q + $1 FROM a JOIN b ON b.a_id = a.id   WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; EXECUTE s(1); ```  Returns ERROR: no value found for parameter 1. Expected 1 | 6.  ### OS:  macOS  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  e80cf37  ### Are you using ParadeDB Docker, Helm, or the extension(s) standalone?  ParadeDB pg_search Extension  ### Full Name:  Niladri Adhikary  ### Affiliation:  N/A  ### Did you include all relevant da
+
 - **Issue #7214** (2026-11-05): **Aggregate Scan returns NULL for an oid grouping key of 0**
   *Symptoms*: The Tantivy backend of Aggregate Scan returns SQL NULL for `0::oid`, even when the grouping column is `NOT NULL`. PostgreSQL returns 0.  ## Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search CASCADE; BEGIN; SET LOCAL max_parallel_workers_per_gather = 0; SET LOCAL enable_indexscan = off; SET LOCAL paradedb.enable_aggregate_custom_scan = on;  CREATE TABLE oid_groups (id bigint PRIMARY KEY, k oid NOT NULL); INSERT INTO oid_groups VALUES (1, 0), (2, 1); CREATE INDEX oid_groups_idx ON oid_groups USING paradedb (id, k); ANALYZE oid_groups;  EXPLAIN (COSTS OFF) SELECT k, count(*) FROM oid_groups WHERE id @@@ pdb.all() GROUP BY k ORDER BY k; -- Custom Scan (ParadeDB Aggregate Scan), Tantivy terms on k.  SELECT k, count(*) FROM oid_groups WHERE id @@@ pdb.all() GROUP BY k ORDER BY k; -- Actual: NULL | 1 --            1 | 1  SET LOCAL paradedb.enable_aggregate_custom_scan = off; SET LOCAL paradedb.enable_custom_scan = off; SELECT k, count(*) FROM oid_groups GROUP BY k ORDER BY k; -- Expected: 0 | 1 --           1 | 1 ROLLBACK; ```  `TantivyValue::try_into_datum` calls `Oid::from(u32::try_from(self)?).into_datum()` in [types.rs:90](https://github.com/paradedb/paradedb/blob/d0213faa89c9b51998155cec6418e6b3e04aee60/pg_search/src/postgres/types.rs#L90). pgrx returns `None` for OID zero (`Oid::INVALID`), so a valid SQL value becomes NULL. Zero should remain a non-NULL Datum.  Reproduced PG18.1  
-
-- **Issue #7167** (2026-11-03): **Negated boolean heap filter includes NULL rows in a ParadeDB Base Scan**
-  *Symptoms*: ### What happens?  For `body @@@ 'hello' AND NOT flag`, a ParadeDB Base Scan returns a row where `flag IS NULL`. PostgreSQL's three-valued logic excludes that row because `NOT NULL` is still NULL. Disabling the custom scan returns the correct row set.  ### To reproduce  ```sql CREATE EXTENSION IF NOT EXISTS vector; CREATE EXTENSION IF NOT EXISTS pg_search; CREATE TABLE not_null_repro(id integer PRIMARY KEY, body text, flag boolean); INSERT INTO not_null_repro VALUES   (1, 'hello true', true),   (2, 'hello false', false),   (3, 'hello null', NULL),   (4, 'other', false); CREATE INDEX not_null_repro_idx ON not_null_repro USING paradedb (id, body); ANALYZE not_null_repro;  SET paradedb.enable_custom_scan = off; SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- {2}  SET paradedb.enable_custom_scan = on; SET paradedb.enable_filter_pushdown = on; EXPLAIN (COSTS OFF) SELECT id FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- Custom Scan (ParadeDB Base Scan)  SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- {2,3}; expected {2}  SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND flag IS NOT TRUE; -- {2,3} (control: this expression should include the NULL row)  DROP TABLE not_null_repro; ```  `EXPLAIN` places the `flag` heap filter under a Tantivy `must_not` query. A NULL `flag` does not match the inner filter, so `must_not` retains it, although the SQL `NOT` p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2301,49 +2301,529 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f6e050c` (2026-11-07)
-**Commit Message**: chore: Fix conflict between #7108 and #7298. (#7309)
+### Incident Patch 1: `f3390563` (2026-11-08)
+**Commit Message**: fix: polish RankJoin eligibility, planner warnings, and parameterized score projections (#7305)
 
-Fix conflict between #7108 and #7298.
+## What
 
-**File**: `pg_search/src/scan/execution_plan.rs` (modified, +10/-6)
+1. Fix a backend crash (`SIGSEGV`) when a `JoinScan` `SELECT` list
+combines `pdb.score()` with a scalar subquery (`InitPlan`) or
+prepared-statement parameter (`$1`).
+2. Emit a planner warning (`WARNING: RankJoinExec not used: ...`) during
+`EXPLAIN` when `paradedb.planner_warnings` is enabled and a
+score-ordered top-K join falls back to `HashJoinExec`.
+3. Keep `RankJoinExec` enabled when one side of a two-sided score join
+has 6 or more `OR` search predicates (for example, searching across many
+text columns on one table), or when a cross-table `OR` contains repeated
+predicates on the same table.
+
+## Why
+
+- Users normalizing or offsetting `pdb.score()` in `SELECT` with a
+scalar subquery or `$1` parameter hit a backend crash during planning or
+execution.
+- When a top-K join ordered by `pdb.score()` was ineligible for
+`RankJoinExec`, it silently fell back to `HashJoinExec` even with
+`paradedb.planner_warnings` turned on, making it hard to diagnose why a
+query was slow.
+- `RankJoinExec` checks that neither side of a two-sided score join
+dominates the combined score by more than 5:1 (
+
+**File**: `docs/project/changelog/unreleased/7305.bugfix.mdx` (added, +5/-0)
 ```diff
-@@ -806,16 +806,20 @@ impl PgSearchScanPlan {
-                 .state
-                 .lock()
-                 .unwrap_or_else(|poisoned| poisoned.into_inner());
--            let schema = match &*state {
-+            let is_pushdown = match &*state {
-                 ExecutionState::Shared { scan_state, .. }
-                 | ExecutionState::RangePartitioned { scan_state, .. } => {
--                    Some(scan_state.0.reader.schema())
-+                    crate::postgres::customscan::mpp::run_on_main_thread(|token| {
-+                        let schema = scan_state.get(token).reader.schema();
-+                        base_query
-+                            .is_pushdown_filter(&|field| schema.is_term_filter_field(field.root()))
-+                    })
-+                }
-+                ExecutionState::Uninitialized | ExecutionState::Consumed => {
-+                    base_query.is_pushdown_filter(&|_| false)
-                 }
--                ExecutionState::Uninitialized | ExecutionState::Consumed => None,
-             };
--            if !base_query.is_pushdown_filter(&|field| {
--                schema.is_some_and(|s| s.is_term_filter_field(field.root()))
--            }) {
-+            if !is_pushdown {
-                 return None;
-             }
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
++
++Fixed a crash when a `JoinScan` `SELECT` list combines `pdb.score()` with a scalar subquery or query parameter, kept `RankJoinExec` for joins with many `OR` or constant-score predicates on one side, and added `EXPLAIN` warnings when `RankJoinExec` is not used.
+```
+
+**File**: `docs/reference/configuration.mdx` (modified, +17/-17)
+```diff
+@@ -28,23 +28,23 @@ ALTER ROLE app_user SET paradedb.vector_cluster_max_probe = 0.05;
+ 
+ These settings control whether ParadeDB proposes custom plans for eligible queries.
+ 
+-| Setting                                             | Default       | Context | Description                                                                                                                 |
+-| --------------------------------------------------- | ------------- | ------- | --------------------------------------------------------------------------------------------------------------------------- |
+-| `paradedb.enable_custom_scan`                       | `on`          | user    | Enables ParadeDB's base custom scan, which replaces table scans with ParadeDB index scans.                                  |
+-| `paradedb.enable_aggregate_custom_scan`             | `on`          | user    | Enables the aggregate custom scan for eligible `pdb.agg` and `GROUP BY` queries.                                            |
+-| `paradedb.enable_join_custom_scan`                  | `on`          | user    | Enables the join custom scan, which pushes eligible joins into the ParadeDB executor.                                       |
+-| `paradedb.enable_rank_join`                         | `on`          | user    | Enables `RankJoinExec` and lazy probe-side top-K execution for eligible joins with `ORDER BY ... LIMIT`.                    |
+-| `paradedb.rank_join_min_rows`                       | `10000`       | user    | Minimum estimated matching rows on join inputs before replacing a one-pass `HashJoinExec` with `RankJoinExec` or lazy sort. |
+-| `paradedb.rank_join_unscored_selectivity_threshold` | `0.08`        | user    | Minimum unscored input selectivity for single-sided `RankJoinExec` before preferring `HashJoinExec` with `InList` pushdown. |
+-| `paradedb.enable_custom_scan_without_operator`      | `off`         | user    | Allows custom scans without a ParadeDB search operator when the whole `WHERE` clause can push down.                         |
+-| `paradedb.enable_filter_pushdown`                   | `on`          | user    | Allows non-indexed predicates to use heap filtering after the ParadeDB scan.                                                |
+-| `paradedb.enable_range_partitioned_join`            | `on`          | user    | Enables range co-partitioned joins and asymmetric range alignment for MPP joins on indexes configured with `partition_by`.  |
+-| `paradedb.enable_segment_pruning`                   | `on`          | user    | Prunes non-matching index segments using per-segment min/max field statistics during planning and scan execution.           |
+-| `paradedb.enable_heuristic_selectivity`             | `on`          | user    | Uses cheap planner selectivity estimates for expensive fuzzy, regex, and range query shapes.                                |
+-| `paradedb.per_tuple_cost`                           | `100000000.0` | user    | Planner cost multiplier that discourages using ParadeDB operators outside a supported index plan.                           |
+-| `paradedb.explain_recursive_estimates`              | `off`         | user    | Shows recursive document-count estimates in `EXPLAIN VERBOSE`; intended for debugging.                                      |
+-| `paradedb.planner_warnings`                         | `warning`     | user    | Controls warnings when an optimized scan cannot be used. Accepts `off`, `warning`, or `error`.                              |
+-| `paradedb.spill_to_disk`                            | `off`         | user    | Allows eligible join and aggregate queries to spill to disk when they exceed `work_mem`.                                    |
++| Setting                                             | Default       | Context | Description                                                                                                                                                                            |
++| --------------------------------------------------- | ------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| `paradedb.enable_custom_scan`                       | `on`          | user    | Enables ParadeDB's base custom scan, which replaces table scans with ParadeDB index scans.                                                                                             |
++| `paradedb.enable_aggregate_custom_scan`             | `on`          | user    | Enables the aggregate custom scan for eligible `pdb.agg` and `GROUP BY` queries.                                                                                                       |
++| `paradedb.enable_join_custom_scan`                  | `on`          | user    | Enables the join custom scan, which pushes eligible joins into the ParadeDB executor.                                
+```
+
+**File**: `pg_search/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +15/-0)
+```diff
+@@ -38,6 +38,7 @@ use crate::postgres::customscan::datafusion::translator::{
+ };
+ use crate::postgres::customscan::expr_eval::InputVarInfo;
+ use crate::postgres::customscan::pg_expr_udf::{InputDecode, PgExprUdf};
++use crate::postgres::node::NodeExt;
+ 
+ const PVC_RECURSE_ALL: i32 = (pg_sys::PVC_RECURSE_AGGREGATES
+     | pg_sys::PVC_RECURSE_WINDOWFUNCS
+@@ -386,6 +387,8 @@ impl<'a> PredicateTranslator<'a> {
+     /// columns, and delegates to `ExecEvalExpr`.
+     ///
+     /// Returns `None` when the expression can't be wrapped:
++    ///   - the expression contains a parameter (`T_Param`), subplan (`T_SubPlan`),
++    ///     or score function (`pdb.score`),
+     ///   - result type is outside the supported set,
+     ///   - some input Var can't be resolved against `self.sources` / mapper,
+     ///   - `nodeToString` returns null.
+@@ -394,6 +397,18 @@ impl<'a> PredicateTranslator<'a> {
+     /// [`PredicateTranslator::translate`] — any subtree that fails native
+     /// translation is wrapped here.
+     pub(crate) unsafe fn try_wrap_as_udf(&self, node: *mut pg_sys::Node) -> Option<Expr> {
++        if node.contains_param()
++            || node.contains_type(pg_sys::NodeTag::T_SubPlan)
++            || node.contains_functions(&crate::postgres::customscan::score_funcoids())
++        {
++            pgrx::debug1!(
++                "PredicateTranslator: declining UDF wrap for expression containing Param, SubPlan, or score function [{}] | {}",
++                node_tag_debug(node),
++                self.deparse_for_debug(node)
++            );
++            return None;
++        }
++
+         let result_type_oid = pg_sys::exprType(node);
+         if PgExprUdf::get_result_type_to_arrow(result_type_oid).is_none() {
+             pgrx::debug1!(
+```
+
+**File**: `pg_search/src/postgres/customscan/datafusion/translator.rs` (modified, +61/-2)
+```diff
+@@ -30,6 +30,9 @@ use crate::postgres::customscan::joinscan::build::{
+     RelationAlias, ScoreColumn, UnnestNode, VectorScoreColumn,
+ };
+ use crate::postgres::customscan::joinscan::privdat::OutputColumnInfo;
++use crate::postgres::customscan::joinscan::window_func::{
++    WINDOW_SENTINEL_VARNO, WindowAggIndex, WindowAggList, rewrite_window_funcs_to_sentinels,
++};
+ use crate::postgres::customscan::pg_expr_udf::InputDecode;
+ use crate::scan::ScanMode;
+ use crate::schema::SearchFieldType;
+@@ -240,17 +243,50 @@ impl<'a> PredicateTranslator<'a> {
+         sources: &'a [&'a JoinSource],
+         node: *mut pg_sys::Node,
+         plan: Option<&'a RelNode>,
++    ) -> bool {
++        Self::can_translate_inner(root, sources, node, plan, None)
++    }
++
++    /// Like [`Self::can_translate`], but also resolves embedded `WindowFunc`
++    /// subtrees against `window_aggs` (rewriting them to sentinel `Var`s with
++    /// placeholder `resno = 0` to match the execution path in
++    /// `translate_child_projection_expr`).
++    pub fn can_translate_with_windows(
++        root: Option<*mut pg_sys::PlannerInfo>,
++        sources: &'a [&'a JoinSource],
++        node: *mut pg_sys::Node,
++        plan: Option<&'a RelNode>,
++        window_aggs: &'a WindowAggList,
++    ) -> bool {
++        Self::can_translate_inner(root, sources, node, plan, Some(window_aggs))
++    }
++
++    fn can_translate_inner(
++        root: Option<*mut pg_sys::PlannerInfo>,
++        sources: &'a [&'a JoinSource],
++        node: *mut pg_sys::Node,
++        plan: Option<&'a RelNode>,
++        window_aggs: Option<&'a WindowAggList>,
+     ) -> bool {
+         struct ValidationMapper<'a> {
+             sources: &'a [&'a JoinSource],
+             plan: Option<&'a RelNode>,
++            window_aggs: Option<&'a WindowAggList>,
          }
+ 
+         impl<'a> ColumnMapper for ValidationMapper<'a> {
+             /// Just confirm the source exists — field registration hasn't
+             /// happened yet at this planning stage. Column validity is
+             /// covered by all_vars_are_fast_fields_recursive which runs first.
+-            fn map_var(&self, varno: pg_sys::Index, _varattno: pg_sys::AttrNumber) -> Option<Expr> {
++            fn map_var(&self, varno: pg_sys::Index, varattno: pg_sys::AttrNumber) -> Option<Expr> {
++                if varno == WINDOW_SENTINEL_VARNO {
++                    let index = WindowAggIndex::from_sentinel_attno(varattno)?;
++                    let window_agg = self.window_aggs?.get(index)?;
++                    if window_agg.requires_udf_decode() {
++                        return None;
++                    }
++                    return Some(col("placeholder"));
++                }
+                 if let Some(_source) = self.sources.iter().find(|s| s.contains_rti(varno)) {
+                     return Some(col("placeholder"));
+                 }
+@@ -265,9 +301,32 @@ impl<'a> PredicateTranslator<'a> {
+                 }
+                 None
+             }
++
++            fn udf_input(
++                &self,
++                varno: pg_sys::Index,
++                varattno: pg_sys::AttrNumber,
++            ) -> Option<(Expr, InputDecode)> {
++                if varno == WINDOW_SENTINEL_VARNO {
++                    let index = WindowAggIndex::from_sentinel_attno(varattno)?;
++                    let window_agg = self.window_aggs?.get(index)?;
++                    return Some((col("placeholder"), window_agg.udf_input_decode()));
++                }
++                None
++            }
+         }
+ 
+-        let mapper = ValidationMapper { sources, plan };
++        let node = match window_aggs {
++            Some(aggs) if !aggs.is_empty() => unsafe {
++                rewrite_window_funcs_to_sentinels(node, 0, aggs)
++            },
++            _ => node,
++        };
++        let mapper = ValidationMapper {
++            sources,
++            plan,
++            window_aggs,
++        };
+         let mut translator = Self::new(sources).with_mapper(Box::new(mapper));
+         if let Some(r) = root {
+             translator = translator.with_planner_info(r);
+```
+
+**File**: `pg_search/src/postgres/customscan/joinscan/build.rs` (modified, +14/-6)
+```diff
+@@ -2226,17 +2226,25 @@ pub fn assign_tagged_queries<'a>(
+     for source in sources {
+         let alias =
+             RelationAlias::new(source.scan_info.alias.as_deref()).execution(source.plan_position);
+-        let local_queries: Vec<crate::scan::TaggedQuery> = predicates
+-            .iter()
+-            .enumerate()
+-            .filter(|(_, (plan_pos, _))| *plan_pos == source.plan_position)
++        // Deduplicate by `p.query` per source: tag columns resolve by query equality,
++        // so a duplicate is never referenced and scores twice.
++        let mut unique_queries: Vec<(usize, &SearchQueryInput)> = Vec::new();
++        for (global_idx, (plan_pos, p)) in predicates.iter().enumerate() {
++            if *plan_pos == source.plan_position
++                && !unique_queries.iter().any(|(_, q)| *q == &p.query)
++            {
++                unique_queries.push((global_idx, &p.query));
++            }
++        }
++        let local_queries: Vec<crate::scan::TaggedQuery> = unique_queries
++            .into_iter()
+             .enumerate()
+             .map(
+-                |(local_idx, (global_idx, (_, p)))| crate::scan::TaggedQuery {
++                |(local_idx, (global_idx, query))| crate::scan::TaggedQuery {
+                     tag_name: format!("__{alias}_tag_{local_idx}"),
+                     tag_idx: crate::scan::TagIndex(local_idx),
+                     predicate_idx: crate::scan::GlobalPredicateIndex(global_idx),
+-                    query: Box::new(p.query.clone()),
++                    query: Box::new(query.clone()),
+                 },
+             )
+             .collect();
+```
+
+**File**: `pg_search/src/postgres/customscan/joinscan/mod.rs` (modified, +72/-4)
+```diff
+@@ -1270,6 +1270,8 @@ impl CustomScan for JoinScan {
+                 pg_sys::copyObjectImpl(tlist_ptr.cast()).cast(),
+             );
+             // replace pg_projected slots with NULL placeholders, and add their inputs to the tlist.
++            let mut pg_projected_exprs =
++                Vec::with_capacity(private_data.join_clause.pg_projected_resnos.len());
+             for resno in &private_data.join_clause.pg_projected_resnos {
+                 let te = custom_scan_tlist
+                     .get_ptr(((*resno) - 1) as usize)
+@@ -1283,7 +1285,10 @@ impl CustomScan for JoinScan {
+                     pg_sys::exprCollation(expr),
+                 )
+                 .cast();
+-                crate::postgres::utils::add_vars_to_tlist(expr, &mut custom_scan_tlist);
++                pg_projected_exprs.push(expr);
++            }
++            for expr in pg_projected_exprs {
++                add_vars_and_scores_to_tlist(expr, &mut custom_scan_tlist);
+             }
+ 
+             let path_private_full = PgList::<pg_sys::Node>::from_pg((*best_path).custom_private);
+@@ -2093,6 +2098,46 @@ impl CustomScan for JoinScan {
+     }
+ }
+ 
++/// Ensure all non-score `Var` nodes and `pdb.score(...)` subexpressions referenced by
++/// `expr` are present in `tlist` so PostgreSQL's `set_customscan_references` can rewrite
++/// them to `INDEX_VAR` references into the scan slot.
++unsafe fn add_vars_and_scores_to_tlist(
++    expr: *mut pg_sys::Node,
++    tlist: &mut PgList<pg_sys::TargetEntry>,
++) {
++    if expr.is_null() {
++        return;
++    }
++
++    expr.walk(|node| {
++        if matches!(
++            (*node).type_,
++            pg_sys::NodeTag::T_PlaceHolderVar | pg_sys::NodeTag::T_FuncExpr
++        ) {
++            let stripped = crate::postgres::utils::strip_wrappers(node);
++            if get_score_func_rti(stripped.cast()).is_some() {
++                let already_present = tlist
++                    .iter_ptr()
++                    .any(|te| pg_sys::equal((*te).expr.cast(), node.cast()));
++                if !already_present {
++                    let resno = tlist.len() as pg_sys::AttrNumber + 1;
++                    let new_score = pg_sys::copyObjectImpl(node.cast()).cast::<pg_sys::Expr>();
++                    let te = pg_sys::makeTargetEntry(new_score, resno, std::ptr::null_mut(), true);
++                    tlist.push(te);
++                }
++                return crate::postgres::node::WalkControl::SkipChildren;
++            }
++        }
++
++        if let Some(var_ptr) = nodecast!(Var, T_Var, node) {
++            crate::postgres::utils::push_var_to_tlist_if_absent(var_ptr, tlist);
++            return crate::postgres::node::WalkControl::SkipChildren;
++        }
++
++        crate::postgres::node::WalkControl::Continue
++    });
++}
++
+ /// Walk a target list and classify each entry into the corresponding
+ /// [`privdat::OutputColumnInfo`]: a `Var` resolves to a plan position via the
+ /// join clause, a `paradedb.score()` call becomes a `Score` sentinel, and any
+@@ -2288,19 +2333,42 @@ unsafe fn build_output_projection(
+         }
+     }
+ 
++    // `add_vars_to_tlist` / `add_vars_and_scores_to_tlist` may have appended extra `Var` and
++    // `pdb.score()` entries after `scan_target_entries` for `custom_exprs` or `pg_projected_resnos`.
++    // Only extend `output_projection` through the last appended `Score` (so its `col_{idx + 1}`
++    // alias lines up with `output_columns[idx]`): projecting trailing `Var`s would add extra
++    // `NULL AS col_N` columns to DataFusion's `ProjectionExec` and `DISTINCT` `GROUP BY` keys.
++    let num_projected_columns = private_data
++        .output_columns
++        .iter()
++        .rposition(|c| matches!(c, privdat::OutputColumnInfo::Score { .. }))
++        .map_or(scan_target_entries.len(), |last_score_idx| {
++            (last_score_idx + 1).max(scan_target_entries.len())
++        });
++
+     private_data.join_clause.output_projection = Some(
+         private_data
+             .output_columns
+             .iter()
+-            .zip(&resolved_entries)
+-            .zip(&scan_target_entries)
+-            .map(|((info, resolved), te)| {
++            .take(num_projected_columns)
++            .enumerate()
++            .map(|(idx, info)| {
+                 // If this column belongs to a relation pruned from output (e.g. the RHS
+                 // of an Anti Join), do not construct projection expressions referencing
+                 // the pruned source, as it does not exist in the physical scan plan.
+                 if matches!(info, privdat::OutputColumnInfo::Pruned) {
+                     return info.into();
+                 }
++                if idx >= scan_target_entries.len() {
++                    return match info {
++                        privdat::OutputColumnInfo::Score { rti, .. } => {
++                            build::ChildProjection::Score { rti: *rti }
++                        }
++                        _ => (&privdat::OutputColumnInfo::Pruned).into(),
++                  
+```
+
+**File**: `pg_search/src/postgres/customscan/joinscan/planning.rs` (modified, +74/-17)
+```diff
+@@ -30,7 +30,7 @@ use super::build::{
+ };
+ use super::predicate::{all_vars_are_fast_fields_recursive, resolve_join_conditions};
+ use super::privdat::{OutputColumnInfo, PrivateData};
+-use super::window_func::{WindowAgg, WindowAggDef, WindowAggId, extract_window_agg};
++use super::window_func::{WindowAggDef, WindowAggId, WindowAggList, extract_window_agg};
+ use crate::postgres::customscan::datafusion::translator::PredicateTranslator;
+ use crate::postgres::customscan::node::CustomScanNodeExt;
+ use crate::postgres::node::NodeExt;
+@@ -867,26 +867,31 @@ unsafe fn collect_join_sources_join_rel(
+     None
+ }
+ 
++/// Check whether `expr` can be evaluated by PostgreSQL's projection step above the `JoinScan`
++/// (`ResolvedExpr::PgProjected`).
++///
++/// Rejects set-returning expressions, subplans, embedded window functions, system/whole-row
++/// `Var`s, and `Var`s or `pdb.score()` calls referencing relations absent from
++/// `plan.output_rtis()`. Supported `Var`s and `pdb.score()` subexpressions are appended to
++/// `custom_scan_tlist` by `add_vars_and_scores_to_tlist` during `plan_custom_path`.
+ pub unsafe fn can_pg_project(expr: *mut pg_sys::Node, plan: &RelNode) -> Result<(), String> {
+     if pg_sys::expression_returns_set(expr) {
+         pgrx::debug1!("JoinScan declined Postgres projection: expression returns a set");
+         return Err("returns a set".to_string());
+     }
+ 
++    if expr.contains_type(pg_sys::NodeTag::T_SubPlan) {
++        pgrx::debug1!("JoinScan declined Postgres projection: expression contains a SubPlan");
++        return Err("contains a subplan".to_string());
++    }
++
+     let mut deps = ExprDeps {
+         vars: Vec::new(),
+         score_rtis: Vec::new(),
+         window_funcs: Vec::new(),
+     };
+     expr_deps_walker(expr, std::ptr::addr_of_mut!(deps).cast());
+ 
+-    if !deps.score_rtis.is_empty() {
+-        pgrx::debug1!(
+-            "JoinScan declined Postgres projection: expression depends on a score function"
+-        );
+-        return Err("depends on a score function".to_string());
+-    }
+-
+     if !deps.window_funcs.is_empty() {
+         pgrx::debug1!(
+             "JoinScan declined Postgres projection: expression depends on a window function"
+@@ -901,6 +906,19 @@ pub unsafe fn can_pg_project(expr: *mut pg_sys::Node, plan: &RelNode) -> Result<
+         .collect::<Vec<_>>()
+         .join(", ");
+ 
++    let output_rtis = plan.output_rtis();
++    for score_rti in deps.score_rtis {
++        if !output_rtis.contains(&score_rti) {
++            pgrx::debug1!(
++                "JoinScan declined Postgres projection: expression depends on score for relation \
++                 (rti={}) not found in any source (tables: {})",
++                score_rti,
++                tables_str
++            );
++            return Err("score function references a relation outside the join".to_string());
++        }
++    }
++
+     let mut seen = std::collections::HashSet::new();
+     for var_ptr in deps.vars {
+         let varno = (*var_ptr).varno as pg_sys::Index;
+@@ -921,7 +939,7 @@ pub unsafe fn can_pg_project(expr: *mut pg_sys::Node, plan: &RelNode) -> Result<
+             continue;
+         }
+ 
+-        if !plan.output_rtis().contains(&varno) {
++        if !output_rtis.contains(&varno) {
+             pgrx::debug1!(
+                 "JoinScan declined Postgres projection: expression depends on a relation \
+                  (rti={}) not found in any source (tables: {})",
+@@ -2417,13 +2435,13 @@ pub(crate) enum ResolvedExpr {
+         input_vars: Vec<InputVarInfo>,
+         result_type: pg_sys::Oid,
+         /// Window functions embedded in the expression, in walker visit order
+-        /// (each one's id ordinal is its position in this Vec). They are
++        /// (each one's id ordinal is its position in this list). They are
+         /// computed by the scan's window step and fed to expression
+         /// evaluation as opaque inputs; their argument Vars deliberately do
+         /// NOT appear in `input_vars`. The extracted specs carry a
+         /// placeholder resno of 0 in their `WindowAggId` — the caller that
+         /// records them stamps the owning target entry's resno.
+-        window_deps: Vec<WindowAgg>,
++        window_deps: WindowAggList,
+     },
+     PgProjected,
+     /// A window function, or expression over one, that will return a constant value on all rows
+@@ -2575,11 +2593,13 @@ unsafe extern "C-unwind" fn expr_deps_walker(
+ /// Check if an expression in the target list can be evaluated and projected by JoinScan.
+ ///
+ /// Plain Vars, score functions, and indexed expressions are mapped to their respective
+-/// ResolvedExpr variants. A general expression (or constant) declines on an aggregate. It
+-/// runs inside the scan when every Var it reads is a fast field (score function arguments
+-/// excluded) and its result type is Arrow-convertible; otherwise, volatile functions
+-/// included, Postgres computes it over the scan's rows when `enable_pg_project_fallback`
+-/// is set.
++/// ResolvedE
+```
+
+**File**: `pg_search/src/postgres/customscan/joinscan/scan_state.rs` (modified, +9/-23)
+```diff
+@@ -112,24 +112,17 @@ fn resolve_var_to_df_col(
+     attno: pg_sys::AttrNumber,
+ ) -> Option<Expr> {
+     // A window-aggregate sentinel Var (from rewrite_window_funcs_to_sentinels)
+-    // resolves to the window step's output column — except for
+-    // numeric-storage aggregates, whose column values are encoded (scaled
+-    // i64, decimal bytes, avg blobs). Native DataFusion math over those
+-    // would be wrong, so refuse here: per-node translation then falls back
+-    // to the PgExprUdf path, whose window inputs decode via
+-    // `JoinClauseMapper::udf_input`.
++    // resolves to the window step's output column — except when the column
++    // holds storage-encoded values (numeric-storage SQL aggregates or `pdb.agg`
++    // JSON text; see `WindowAgg::requires_udf_decode`). Native DataFusion
++    // operations over those would be wrong, so refuse here: per-node
++    // translation then falls back to the PgExprUdf path, whose window inputs
++    // decode via `JoinClauseMapper::udf_input`.
+     if rti == WINDOW_SENTINEL_VARNO {
+         let index = WindowAggIndex::from_sentinel_attno(attno)?;
+         let window_agg = join_clause.window_aggs.get(index)?;
+-        match &window_agg.agg_def {
+-            WindowAggDef::Sql(sql) => {
+-                if sql.arg_field_type().is_some_and(|ft| ft.is_numeric()) {
+-                    return None;
+-                }
+-            }
+-            // The column holds the document as text, which only the
+-            // PgExprUdf path turns back into the jsonb the expression reads.
+-            WindowAggDef::PdbAgg(_) => return None,
++        if window_agg.requires_udf_decode() {
++            return None;
+         }
+         let canonical = join_clause.window_aggs.canonical_index(index);
+         return Some(col(canonical.as_col_name()));
+@@ -227,14 +220,7 @@ impl<'a> ColumnMapper for JoinClauseMapper<'a> {
+             let index = WindowAggIndex::from_sentinel_attno(varattno)?;
+             let window_agg = self.join_clause.window_aggs.get(index)?;
+             let canonical = self.join_clause.window_aggs.canonical_index(index);
+-            let decode = match &window_agg.agg_def {
+-                WindowAggDef::Sql(sql) => InputDecode::StorageEncoded {
+-                    is_avg: matches!(sql.agg_type(), SupportedWindowAggType::Avg),
+-                    field_type: sql.arg_field_type().cloned(),
+-                },
+-                WindowAggDef::PdbAgg(_) => InputDecode::JsonDocument,
+-            };
+-            return Some((col(canonical.as_col_name()), decode));
++            return Some((col(canonical.as_col_name()), window_agg.udf_input_decode()));
+         }
+         let field_type = numeric_fast_field_type(self.join_clause, varno, varattno)?;
+         let expr = resolve_var_to_df_col(self.join_clause, varno, varattno)?;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7323** (2026-11-08): fix: polish RankJoin eligibility, planner warnings, and parameterized score projections (@paradedb-github-bot[bot])
+- **PR #7310** (2026-11-08): chore: Preserve benchmark cluster GUCs across heap snapshot restores. (@stuhood)
 - **PR #7309** (2026-11-07): chore: Fix conflict between #7108 and #7298. (@stuhood)
+- **PR #7305** (2026-11-08): fix: polish RankJoin eligibility, planner warnings, and parameterized score projections (@stuhood)
 - **PR #7303** (2026-11-07): perf: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (@paradedb-github-bot[bot])
 - **PR #7298** (2026-11-06): perf: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (@mithuncy)
-- **PR #7291** (closed): ci: benchmark MS MARCO adaptive probing with quantized router rerank 2 (@rebasedming)
-- **PR #7287** (2026-11-06): perf(vector): quantize the IVF router by default (@RuchirRaj)
-- **PR #7280** (closed): feat: Default vector router rerank factor to 4 (@rebasedming)
 
 ---
 
@@ -2363,42 +2843,32 @@ Fix conflict between #7108 and #7298.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fix conflict between #7108 and #7298. (#7309)
+## X. polish RankJoin eligibility, planner warnings, and parameterized score projectio
 
 **RULE**:
-When implementing operations in `pg_search/src/scan/execution_plan.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/changelog/unreleased/7305.bugfix.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f6e050c`: Fix conflict between #7108 and #7298. (#7309). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f3390563`: polish RankJoin eligibility, planner warnings, and parameterized score projections (#7305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pg_search/src/scan/execution_plan.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7305.bugfix.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let is_pushdown = match &*state {
-                    crate::postgres::customscan::mpp::run_on_main_thread(|token| {
-                        let schema = scan_state.get(token).reader.schema();
-                        base_query
-                            .is_pushdown_filter(&|field| schema.is_term_filter_field(field.root()))
-                    })
-                }
-                ExecutionState::Uninitialized | ExecutionState::Consumed => {
-                    base_query.is_pushdown_filter(&|_| false)
-            if !is_pushdown {
+---
+header: stability
+---
+
+Fixed a crash when a `JoinScan` `SELECT` list combines `pdb.score()` with a scalar subquery or query parameter, kept `RankJoinExec` for joins with many `OR` or constant-score predicates on one side, and added `EXPLAIN` warnings when `RankJoinExec` is not used.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            let schema = match &*state {
-                    Some(scan_state.0.reader.schema())
-                ExecutionState::Uninitialized | ExecutionState::Consumed => None,
-            if !base_query.is_pushdown_filter(&|field| {
-                schema.is_some_and(|s| s.is_term_filter_field(field.root()))
-            }) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f6e050c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f3390563` are properly handled with clean fallback behavior.

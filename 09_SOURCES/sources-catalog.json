@@ -1215,8 +1215,8 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "14b47f9d5787682e0185599b32d534a9b75b5ade127aed392ee652e8e8044ad1",
-    "lastHarvestedAt": "2026-11-05T09:44:34.378Z",
+    "contentHash": "956cf1c4746fdcc7117d763feae4fa1ab25da174b31e0346ede4fa2f803116d2",
+    "lastHarvestedAt": "2026-11-09T03:42:38.771Z",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml"
   },
   "hf-qwen-qwen3-8b": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "8f6e050c",
+    "sourceVersion": "34441533",
     "license": "AGPL-3.0",
-    "contentHash": "43006cc78b6fb9ae3847ac68e7d240d12349bc19ed56d3c05556170054c262c7",
-    "lastHarvestedAt": "2026-11-08T05:48:16.739Z",
+    "contentHash": "125d9ac6048790c3e3114a2b07859c9707c92258425560857da738393d7d12c1",
+    "lastHarvestedAt": "2026-11-09T03:42:53.644Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {

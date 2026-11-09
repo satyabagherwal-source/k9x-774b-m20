@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-MPDF",
-    "timestamp": "2026-11-07T04:29:42.771Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "bd7c773f3f5c07ef56c8f509d9a78c2eb2359cde7c33e353e4089acff520499c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-W59O",
-    "timestamp": "2026-11-07T04:37:03.276Z",
-    "repository": "ZSeven-W/openpencil",
-    "learningId": "learn-github-zseven-w-openpencil",
-    "contentHash": "1988674fdfd049579bf54afb9247ce0a83b4c7b63bd76addb16a4cf33ec52fd7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-W6LP",
     "timestamp": "2026-11-07T04:37:05.005Z",
     "repository": "juicedata/juicefs",
@@ -7490,6 +7460,36 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "bd735ff0b84eed8c4acc68eacc6fdd3ece40692734a4d834cb639da10086a369",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-TVOV",
+    "timestamp": "2026-11-09T03:42:38.767Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "956cf1c4746fdcc7117d763feae4fa1ab25da174b31e0346ede4fa2f803116d2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-U760",
+    "timestamp": "2026-11-09T03:42:53.640Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "125d9ac6048790c3e3114a2b07859c9707c92258425560857da738393d7d12c1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

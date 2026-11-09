@@ -8501,3 +8501,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-11-09T03:35:18.010Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `479c0a15` | Multi-dimensional audit evidence | 2026-11-09T03:35:19.191Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `057efa66` | Multi-dimensional audit evidence | 2026-11-09T03:35:32.069Z |
+| `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-11-09T03:42:38.771Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `34441533` | Multi-dimensional audit evidence | 2026-11-09T03:42:53.644Z |

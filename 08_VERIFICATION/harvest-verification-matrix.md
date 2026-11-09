@@ -8492,3 +8492,5 @@
 | `CYCLE-20261109-KFLI` | `2026-11-09T03:35:18.006Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`d7aa6200...`) |
 | `CYCLE-20261109-KGIB` | `2026-11-09T03:35:19.187Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4012181a...`) |
 | `CYCLE-20261109-KQG1` | `2026-11-09T03:35:32.065Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bd735ff0...`) |
+| `CYCLE-20261109-TVOV` | `2026-11-09T03:42:38.767Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`956cf1c4...`) |
+| `CYCLE-20261109-U760` | `2026-11-09T03:42:53.640Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`125d9ac6...`) |

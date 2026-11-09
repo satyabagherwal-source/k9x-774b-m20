@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T03:35:32.074Z",
-  "total_cycles_completed": 8457,
-  "total_learnings_persisted": 8457,
-  "total_rules_promoted": 8256,
+  "last_updated": "2026-11-09T03:42:53.650Z",
+  "total_cycles_completed": 8459,
+  "total_learnings_persisted": 8459,
+  "total_rules_promoted": 8257,
   "history": [
-    {
-      "timestamp": "2026-11-08T14:12:19.238Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-lightricks-ltx-2-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T14:12:22.909Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T14:19:39.851Z",
       "repository": "gardener/gardener",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-09T03:35:32.074Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T03:42:38.777Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T03:42:53.650Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
