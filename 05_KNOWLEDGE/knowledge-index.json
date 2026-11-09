@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T16:40:34.833Z",
+  "last_updated": "2026-11-09T17:00:09.479Z",
   "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -60557,8 +60557,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "62d055f4",
-      "content_hash": "7698fbbec9ba397f471221c85570190fda19ef0f1a464f6465d6df5b6e42ee34",
+      "source_version": "2c663f0d",
+      "content_hash": "280c16e9480891249d5ed279f6bfac3d40903788afe55b60f771e33095bf0ce6",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -60590,6 +60590,11 @@
         {
           "number": null,
           "title": "tsnet: fix ts_omit_acme build",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "wgengine/magicsock: retry UDP reads on EADDRNOTAVAIL",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -60788,7 +60793,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T23:29:11.785Z",
+      "verified_at": "2026-11-09T17:00:09.453Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78031,7 +78036,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "f7db2f9702ffe000ed66af63400b2b31ac15648959c5b7bb64b913c93f918956",
+      "content_hash": "d1d704ec75774467cf0d0e46085efb5a1b707adce97d481f1bc1372ca0857fd7",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "promoted_rules": [],
@@ -78040,7 +78045,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:28:54.777Z",
+      "verified_at": "2026-11-09T17:00:00.825Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

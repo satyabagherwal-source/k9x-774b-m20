@@ -3,7 +3,7 @@
 > **Source Version**: `hf-tencent-h`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:28:54.628Z  
+> **Timestamp**: 2026-11-09T17:00:00.622Z  
 > **Learning ID**: `learn-huggingface-tencent-hy-memory-30b-a3b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/tencent/Hy-Memory-30B-A3B](https://huggingface.co/tencent/Hy-Memory-30B-A3B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:28:53.736Z  
+> **Harvest Timestamp**: 2026-11-09T16:59:38.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6620 downloads | 323 likes
+- **Stars / Engagement**: 7074 downloads | 325 likes
 
 ---
 

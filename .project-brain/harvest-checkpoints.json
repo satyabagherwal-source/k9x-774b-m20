@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T16:40:34.960Z",
+  "last_updated": "2026-11-09T17:00:09.604Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2751,14 +2751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "content_hash": "f7db2f9702ffe000ed66af63400b2b31ac15648959c5b7bb64b913c93f918956",
-      "verified_at": "2026-11-05T17:28:54.892Z",
+      "content_hash": "d1d704ec75774467cf0d0e46085efb5a1b707adce97d481f1bc1372ca0857fd7",
+      "verified_at": "2026-11-09T17:00:00.987Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T17:28:54.892Z"
+      "last_updated": "2026-11-09T17:00:00.987Z"
     },
     "Addy0-com/free-open-technical-SEO-crawler": {
       "repository": "Addy0-com/free-open-technical-SEO-crawler",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "7698fbbec9ba397f471221c85570190fda19ef0f1a464f6465d6df5b6e42ee34",
-      "verified_at": "2026-11-08T23:29:11.908Z",
+      "content_hash": "280c16e9480891249d5ed279f6bfac3d40903788afe55b60f771e33095bf0ce6",
+      "verified_at": "2026-11-09T17:00:09.604Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:29:11.908Z"
+      "last_updated": "2026-11-09T17:00:09.604Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",

@@ -8651,3 +8651,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-09T16:40:29.787Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `93d16081` | Multi-dimensional audit evidence | 2026-11-09T16:40:33.992Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2bdf1337` | Multi-dimensional audit evidence | 2026-11-09T16:40:34.953Z |
+| `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-09T17:00:00.977Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2c663f0d` | Multi-dimensional audit evidence | 2026-11-09T17:00:09.585Z |

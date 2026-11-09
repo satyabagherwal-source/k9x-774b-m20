@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T16:40:34.957Z",
-  "total_cycles_completed": 8607,
-  "total_learnings_persisted": 8607,
-  "total_rules_promoted": 8431,
+  "last_updated": "2026-11-09T17:00:09.591Z",
+  "total_cycles_completed": 8609,
+  "total_learnings_persisted": 8609,
+  "total_rules_promoted": 8432,
   "history": [
-    {
-      "timestamp": "2026-11-09T00:13:34.503Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T00:22:53.635Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T00:31:10.852Z",
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-09T16:40:34.957Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T17:00:00.983Z",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T17:00:09.591Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

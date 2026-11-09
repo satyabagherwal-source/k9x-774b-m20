@@ -1745,8 +1745,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceVersion": "hf-tencent-hy-memory-30b-a3b",
     "license": "Open-Source",
-    "contentHash": "f7db2f9702ffe000ed66af63400b2b31ac15648959c5b7bb64b913c93f918956",
-    "lastHarvestedAt": "2026-11-05T17:28:54.884Z",
+    "contentHash": "d1d704ec75774467cf0d0e46085efb5a1b707adce97d481f1bc1372ca0857fd7",
+    "lastHarvestedAt": "2026-11-09T17:00:00.977Z",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
   },
   "addy0-com-free-open-technical-seo-crawler": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "62d055f4",
+    "sourceVersion": "2c663f0d",
     "license": "BSD-3-Clause",
-    "contentHash": "7698fbbec9ba397f471221c85570190fda19ef0f1a464f6465d6df5b6e42ee34",
-    "lastHarvestedAt": "2026-11-08T23:29:11.893Z",
+    "contentHash": "280c16e9480891249d5ed279f6bfac3d40903788afe55b60f771e33095bf0ce6",
+    "lastHarvestedAt": "2026-11-09T17:00:09.585Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {

@@ -8642,3 +8642,5 @@
 | `CYCLE-20261109-M79R` | `2026-11-09T16:40:29.775Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`03e093a1...`) |
 | `CYCLE-20261109-MAIT` | `2026-11-09T16:40:33.989Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a0d20675...`) |
 | `CYCLE-20261109-MB9E` | `2026-11-09T16:40:34.946Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`51c8dd6e...`) |
+| `CYCLE-20261109-BAZ1` | `2026-11-09T17:00:00.973Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`d1d704ec...`) |
+| `CYCLE-20261109-BHM4` | `2026-11-09T17:00:09.580Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`280c16e9...`) |

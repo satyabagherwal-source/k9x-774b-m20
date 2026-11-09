@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-ZURH",
-    "timestamp": "2026-11-08T00:15:40.157Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "dae872a7608507b4472226a7f5f6901d6c85892b523ea2549f96e4cd45e1a13d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-88RW",
-    "timestamp": "2026-11-08T00:22:11.564Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "9a5bc991fe7d728dcf29de1e6a842d983d7e524b7ebafe1979621dd32b730f89",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-ENQ1",
     "timestamp": "2026-11-08T00:27:10.873Z",
     "repository": "ducaale/xh",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "51c8dd6e8cc377e6d95063132f5c26f0713e1d301e5a5fb73e6cc36e6b0a11c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-BAZ1",
+    "timestamp": "2026-11-09T17:00:00.973Z",
+    "repository": "tencent/Hy-Memory-30B-A3B",
+    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+    "contentHash": "d1d704ec75774467cf0d0e46085efb5a1b707adce97d481f1bc1372ca0857fd7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-BHM4",
+    "timestamp": "2026-11-09T17:00:09.580Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "280c16e9480891249d5ed279f6bfac3d40903788afe55b60f771e33095bf0ce6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
