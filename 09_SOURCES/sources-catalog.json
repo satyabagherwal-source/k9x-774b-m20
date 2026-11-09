@@ -105,8 +105,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "a636c09e24ca33a822e5378ce81148c8d9bf53d851c7eda551dbcbd781aa135f",
-    "lastHarvestedAt": "2026-11-05T11:30:44.697Z",
+    "contentHash": "69a82247355d2bb680cf3aa1b86c5f11c4b2e9e9a3fb76eb970a08b1eeb1e2fd",
+    "lastHarvestedAt": "2026-11-09T05:52:36.130Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide"
   },
   "hf-convaiinnovations-laya": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "0c4e2ab1",
+    "sourceVersion": "6275c121",
     "license": "NOASSERTION",
-    "contentHash": "4ea818f0d266e14d6634334413798b24968fef16d50c492db61d03cff78c69bb",
-    "lastHarvestedAt": "2026-11-07T04:10:36.998Z",
+    "contentHash": "cf5359375af0c347b6bd49f7d8f01ba7f78145c8ea04c2cd57846cb033ca5c41",
+    "lastHarvestedAt": "2026-11-09T05:52:50.331Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {

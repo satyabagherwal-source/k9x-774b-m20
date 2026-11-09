@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-QE3C",
-    "timestamp": "2026-11-07T06:24:33.240Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "95eb4ff69947e5a8565d7ad85896b40f3862f5892950d451dd08d62bff7172d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-WM8A",
-    "timestamp": "2026-11-07T06:29:23.722Z",
-    "repository": "aio-libs/aiohttp",
-    "learningId": "learn-github-aio-libs-aiohttp",
-    "contentHash": "47d0aa1997f034bee0afff4b4655aa128b60507a9ecd18795d154e496aff9fbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-EWDE",
     "timestamp": "2026-11-07T17:27:27.842Z",
     "repository": "aquasecurity/trivy-operator",
@@ -7490,6 +7460,36 @@
     "repository": "gauthierpiarrette/highball",
     "learningId": "learn-github-gauthierpiarrette-highball",
     "contentHash": "98e8be75d7aa7fd8c964e4c7b54f65b38329121371d5074da49807f98ee2a08f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-H066",
+    "timestamp": "2026-11-09T05:52:36.126Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "69a82247355d2bb680cf3aa1b86c5f11c4b2e9e9a3fb76eb970a08b1eeb1e2fd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-HB4O",
+    "timestamp": "2026-11-09T05:52:50.328Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "cf5359375af0c347b6bd49f7d8f01ba7f78145c8ea04c2cd57846cb033ca5c41",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

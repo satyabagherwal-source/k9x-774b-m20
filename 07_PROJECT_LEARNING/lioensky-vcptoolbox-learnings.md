@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `0c4e2ab1`  
+> **Source Version**: `6275c121`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:10:35.233Z  
+> **Timestamp**: 2026-11-09T05:52:49.097Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:10:35.226Z  
+> **Harvest Timestamp**: 2026-11-09T05:52:49.091Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2432 stars
+- **Stars / Engagement**: 2435 stars
 
 ---
 
@@ -1785,11 +1785,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #577** (2026-11-06): **fix(LightMemo): 语义组词注册进 jieba 词典，词典外的词也能触发语义组**
-  *Symptoms*: LightMemo 先用 jieba 切查询再查语义组，词典里没有的词会被切碎，组对不上，例如 `semantic_groups.json.example` 里的“塔罗会”“源堡”“道恩”“Node.js”。现在加载语义组时把这类词补进 jieba 词典，加了测试。  顺便问一下, LightMemo 的关键词分现在只用来挑候选，不进最终排名（注释写的是“过渡性”），是要打算怎么改
+- **Issue #580** (2026-11-09): **fix(rag): prevent GetSubstitution injection in text replacements and avoid RAG block breakout**
+  *Symptoms*: ### 动机与背景 (Motivation) 在复杂日记与代码审计场景中，当检索召回的文本中包含 LaTeX 数学公式（如 `$$`）、Markdown 行内代码或 Shell/特殊符号（如 `$`` 或 `$&`）时，JavaScript 原生 `String.prototype.replace(pattern, string)` 的第二个参数会触发 ECMA-262 规范中的 `GetSubstitution` 宏模式解析： 1. `$``（美元符紧跟反引号）会导致匹配点左侧的全部前置系统提示词被自激复制注入，造成上下文指数级膨胀并重复出现； 2. `$$` 块级数学公式会被错误坍缩为单美元符 `$`； 3. 日记正文若讨论或包含 `<!-- VCP_RAG_BLOCK_END -->`，会导致下游非贪婪正则提前闭合，破坏上下文折叠与 RAG 刷新逻辑。  ### 架构方案与双保险加固 (Changes) 1. **函数式闭包替换 (Fn-Replacer)**：全面将 `RAGDiaryPlugin.js`、`DirectDiaryTextProcessor.js`、`TDBPlaceholderProcessor.js` 及 `modules/messageProcessor.js`（包括 Agent 展开、SarPrompt、环境变量文件与异步回执等）中的动态内容替换升级为 `replace(pat, () => replacement)`，使数据载荷 100% 作为字面量处理，彻底杜绝模式展开。 2. **单遍映射替换 (Single-Pass Mapping)**：升级 `AIMemoHandler._buildPrompt` 为统一槽位正则映射，消除多步串行替换带来的跨槽位二次污染风险。 3. **记忆包络防逃逸 (Envelope Escape Protection)**：在 `RAGResultFormatter.js` 的 `buildRagBlock` 中对日记内部可能包含的 `<!-- VCP_RAG_BLOCK_START/END -->` 闭合标签进行反斜杠转义（`--\>`），确保与外层结构严格隔离。 4. **嵌套占位符清洗补全**：在直接日记与冷库清洗器中增补对 `[[VCP元思考...]]`、`[[VCPTimeLine...]]` 等标记的防御。  ### 验证与回归测试 (Verification) - 经过 `node -c` 完整 AST 语法与括号对齐校验； - 通过既有 `tests/placeholderDeduplication.test.js` 与 `tests/ragDiaryCopyOnWrite.test.js` 原生单测套件； - 新增覆盖 `$`` 膨胀、`$$` 守恒及内嵌包络隔离的极端用例测试，100% PASS。
 
-- **Issue #576** (2026-11-05): **fix(vcpLoop): 收敛思考块剥离边界并隔离代码域与工具载荷自指误伤**
-  *Symptoms*: ### PR 标题 fix(vcpLoop): 收敛思考块剥离边界并隔离代码域与工具载荷自指误伤  ### 动机与背景 原先 `ToolCallParser.stripReasoningBlocks` 采用全文盲扫正则 `/<\s*(\/?)\s*(think(?:ing)?)\b[^>]*>/gi` 剥离思考块，并在 `depth > 0` 时一刀切丢弃未闭合开始标签之后的全部内容。这在实际使用中存在以下边界误伤与漏拦隐患： 1. **跨行贪婪拼合误伤**：`[^>]*>` 允许跨越换行符，当正文中出现残缺的 `<think`（无右尖括号）且后文存在 `>`（如数学不等号或 `<<<[TOOL_REQUEST]>>>` 起始标记）时，会被跨行拼合为伪造的开始标签，导致后续所有工具调用被静默吞噬； 2. **缺乏代码域与工具载荷保护**：当模型在 Markdown 代码围栏（` ``` ` / `~~~`）、行内反引号（`` `...` ``）、工具请求参数（`「始」...「末」` / `「始ESCAPE」...「末ESCAPE」`）或工具结果块内讨论/演示单侧 `<think>` 时，会触发 `depth > 0` 截断，导致当前工具块被腰斩或文末合法工具全部丢失； 3. **正文行内自指提及误伤**：当正文句子中间裸写单侧 `<think>`（如“当包含`<think>`时…”）且无配对闭合标签时，会误将后续全文当作未闭合思考流丢弃； 4. **无头思考泄漏（Headless Leak）漏拦**：当上游网关丢失开头的 `<think>`，模型直接输出思考草稿（含演练的伪工具）并以独立行 `</think>` 闭合时，原先因 `depth === 0` 无法剥离闭合标签前的思考草稿。  ### 架构与解决方案 在保持 `ToolCallParser.stripReasoningBlocks(content)` 与 `ToolCallParser.parse(content)` 对外签名完全不变的前提下，引入四重正交防线： 1. **单行无尖括号词法定界**：将标签匹配收束为单行且禁止吞入 `<` 与 `\r\n`，扩展支持 `think` / `thinking` / `thought` / `antThinking`，根除 `<think` 跨行拼合与 `<think_custom>` 前缀误判； 2. **权威字面量保护域（`_collectReasoningLiteralRanges`）**：在 `depth === 0` 时优先识别并跳过嵌套感知的工具结果域、Markdown 围栏代码块（含 0–3 空格缩进）与同段落行内反引号（含颜文字反引号豁免）；一旦进入真实思考块（`depth > 0`），内部伪代码块仍由外层思考深度统辖并 100% 剥离； 3. **顶层工具请求原子互锁与 VCP 元思考链剥离**：在代码域外且处于 `depth === 0` 已合法开启的完整 `TOOL_REQUEST` 块内部参数免于思考标签扫描；同步剥离顶层独占行的 `[--- VCP元思考链 ---]` 明文块； 4. **句中自指预检与无头思考回溯**：    - 对于行首/块首开启的未闭合思考标签，严格保留丢弃尾部的安全熔断；对于嵌在句子中间（同行左侧存在非空白字符）且后续非保护域无配对闭合标签的孤立开标签，判定为正文自指字面量原地放行；    - 当在首个思考块闭合前遇到位于行首或行尾的孤立闭合标签时，识别为无头思考泄漏并回溯清空其前缀草稿。  
+- **Issue #579** (2026-11-08): **Fix/chromebridge monitoring default**
+  *Symptoms*: ## 背景  agent在重启VCP或者重新加载浏览器插件的时候会默认开启浏览器监控，而user模式虽然不会默认开启，但是很多功能无法使用，所以增加一个agent模式默认关闭监控的开关。    `user` 模式默认是受限权限，无法执行 `execute_script`、截图、CDP 网络查询和响应读取，因此不能稳定支持 爬取数据 的完整流程。  `agent` 模式具备这些高权限能力，但原逻辑在扩展重启或 VCP 重启时会强制开启页面监控。用户在 Popup 中关闭监控后，重启仍会被重新打开。  ## 三种模式  - `user`：连接用户日常 Chrome，权限受限，适合普通页面读取和基础交互。默认无法完成截图、批量 POST 和 CDP 数据采集。 - `agent`：连接远程或独立代理浏览器，具备 爬取数据 所需的高权限能力，但此前会在重启时自动开启监控。 - `managed`：由 VCP 启动独立浏览器和独立 Profile，具备高权限，适合 爬取数据的完整自动化流程，并与用户日常浏览器隔离。  ## 修改内容  - 新增根级配置：    `VCP_CHROME_MONITORING_ENABLED`  - 配置只在根级 `config.env` 中定义，避免根配置和插件配置产生两个同名变量。 - `managed` 通过 managed runtime 配置传递监控状态。 - `agent` 通过 WebSocket 握手同步服务端监控配置。 - 当配置为 `false` 时，managed/agent 重启后不会自动开启页面监控。 - `user` 模式继续由 Popup 和浏览器本地 storage 管理监控状态。 - 页面信息强制请求不会再意外修改监控开关。  ## 配置示例  ```env VCP_CHROME_MONITORING_ENABLED=false
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1806,199 +1806,413 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c4e2ab1` (2026-11-06)
-**Commit Message**: Merge pull request #577 from CI-IISATO/fix/lightmemo-group-jieba-words
+### Incident Patch 1: `6275c121` (2026-11-09)
+**Commit Message**: Merge pull request #580 from infinite-vector/fix/rag-placeholder-getsubstitution-safety
 
-fix(LightMemo): 语义组词注册进 jieba 词典，词典外的词也能触发语义组
+fix(rag): prevent GetSubstitution injection in text replacements and avoid RAG block breakout
 
-**File**: `Plugin/LightMemo/LightMemo.js` (modified, +20/-0)
+**File**: `Plugin/RAGDiaryPlugin/AIMemoHandler.js` (modified, +13/-10)
 ```diff
-@@ -1086,6 +1086,25 @@ class LightMemoPlugin {
-         return Array.from(expandedTokens);
-     }
+@@ -734,18 +734,21 @@ class AIMemoHandler {
+     _buildPrompt(knowledgeBase, userContent, aiContent, promptTemplate) {
+         const now = dayjs().tz(DEFAULT_TIMEZONE);
  
-+    /**
-+     * _tokenize looks group words up by jieba tokens, so a group word missing from jieba's
-+     * dictionary (coined names, slang such as "塔罗会" or "源堡") is split and never matches.
-+     * Register such words with jieba so they stay whole tokens.
-+     */
-+    _registerGroupWords(words) {
-+        if (!this.jiebaInstance) return;
-+        const lines = [];
-+        for (const word of words) {
-+            if (typeof word !== 'string') continue;
-+            for (const form of new Set([word.trim(), word.trim().toLowerCase()])) {
-+                if (form && !/\s/.test(form) && this.jiebaInstance.cut(form, false).length > 1) {
-+                    lines.push(`${form} 1000 n`);
-+                }
-+            }
-+        }
-+        if (lines.length > 0) this.jiebaInstance.loadDict(Buffer.from(lines.join('\n'), 'utf-8'));
-+    }
-+
-     async loadSemanticGroups() {
-         const semanticGroupsPath = path.join(this.projectBasePath, 'Plugin', 'RAGDiaryPlugin', 'semantic_groups.json');
-         try {
-@@ -1100,6 +1119,7 @@ class LightMemoPlugin {
-                         for (const word of lowercasedWords) {
-                             this.wordToGroupMap.set(word, lowercasedWords);
-                         }
-+                        this._registerGroupWords(group.words);
-                     }
-                 }
-             }
+-        let prompt = promptTemplate || this.promptTemplate;
+-
+-        // 替换占位符
+-        prompt = prompt.replace(/\{\{knowledge_base\}\}/g, knowledgeBase);
+-        prompt = prompt.replace(/\{\{current_user_prompt\}\}/g, userContent || '');
+-        prompt = prompt.replace(/\{\{last_assistant_response\}\}/g, aiContent || '[无AI回复]');
+-        prompt = prompt.replace(/\{\{Date\}\}/g, now.format('YYYY-MM-DD'));
+-        prompt = prompt.replace(/\{\{Time\}\}/g, now.format('HH:mm:ss'));
++        const prompt = String(promptTemplate || this.promptTemplate || '');
++        const slotMap = {
++            knowledge_base: knowledgeBase || '',
++            current_user_prompt: userContent || '',
++            last_assistant_response: aiContent || '[无AI回复]',
++            Date: now.format('YYYY-MM-DD'),
++            Time: now.format('HH:mm:ss')
++        };
+ 
+-        return prompt;
++        // 单遍扫描映射替换：防止前序替换内容（如 knowledge_base）中包含后序占位符字面量引发跨槽位二次污染，同时免疫 $ 特殊替换模式
++        return prompt.replace(
++            /\{\{(knowledge_base|current_user_prompt|last_assistant_response|Date|Time)\}\}/g,
++            (_, key) => String(slotMap[key] ?? '')
++        );
+     }
+-
+     /**
+      * 调用AI模型
+      */
 ```
 
-**File**: `tests/lightMemoSemanticGroups.test.js` (added, +45/-0)
+**File**: `Plugin/RAGDiaryPlugin/DirectDiaryTextProcessor.js` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,45 @@
-+'use strict';
-+
-+const test = require('node:test');
-+const assert = require('node:assert/strict');
-+const fs = require('fs');
-+const os = require('os');
-+const path = require('path');
-+const plugin = require('../Plugin/LightMemo/LightMemo');
-+
-+async function loadGroups(groups) {
-+    const base = fs.mkdtempSync(path.join(os.tmpdir(), 'lightmemo-groups-'));
-+    const file = path.join(base, 'Plugin', 'RAGDiaryPlugin', 'semantic_groups.json');
-+    fs.mkdirSync(path.dirname(file), { recursive: true });
-+    fs.writeFileSync(file, JSON.stringify({ groups }), 'utf-8');
-+    const previous = plugin.projectBasePath;
-+    try {
-+        plugin.projectBasePath = base;
-+        await plugin.loadSemanticGroups();
-+    } finally {
-+        plugin.projectBasePath = previous;
-+        fs.rmSync(base, { recursive: true, force: true });
-+    }
-+}
-+
-+test('semantic group words outside the jieba dictionary still activate their group', async () => {
-+    // From semantic_groups.json.example: jieba's default dictionary splits these words.
-+    await loadGroups({ '克莱恩·莫雷蒂': { words: ['愚者', '塔罗会', '源堡', '道恩'], weight: 1.2 } });
-+    const tokens = plugin._tokenize('塔罗会今晚在源堡聚会吗');
-+    assert.ok(tokens.includes('塔罗会'));
-+    assert.ok(tokens.includes('源堡'));
-+    assert.deepEqual(plugin._expandQueryTokens(tokens).sort(), ['愚者', '道恩'].sort());
-+});
-+
-+test('mixed-case group words keep matching after lowercasing', async () => {
-+    await loadGroups({ '编程学习': { words: ['JavaScript', 'Node.js'], weight: 1.0 } });
-+    const tokens = plugin._tokenize('我用Node.js写了个脚本');
-+    assert.ok(tokens.includes('node.js'));
-+    assert.deepEqual(plugin._expandQueryTokens(tokens), ['javascript']);
-+});
-+
-+test('registering group words leaves unrelated sentences segmented as before', async () => {
-+    const before = plugin._tokenize('资源堡垒很坚固');
-+    await loadGroups({ '克莱恩·莫雷蒂': { words: ['源堡'], weight: 1.0 } });
-+    assert.deepEqual(plugin._tokenize('资源堡垒很坚固'), before);
-+});
+@@ -970,9 +970,9 @@ class DirectDiaryTextProcessor {
+             .replace(/《《[^》]*日记本[^》]*》》/g, '[循环占位符已移除]')
+             .replace(/\{\{[^}]*日记本[^}]*\}\}/g, '[循环占位符已移除]')
+             .replace(/\[\[[^\]]*知识库[^\]]*\]\]/g, '[循环占位符已移除]')
+-            .replace(/《《[^》]*知识库[^》]*》》/g, '[循环占位符已移除]');
++            .replace(/《《[^》]*知识库[^》]*》》/g, '[循环占位符已移除]')
++            .replace(/\[\[(?:VCP元思考|VCPTimeLine|OneRingMemo)[^\]]*\]\]/g, '[循环占位符已移除]');
+     }
+-
+     async processContent(content, options = {}) {
+         let processedContent = String(content || '');
+         const declarations = [...processedContent.matchAll(/\{\{([^}]*?)日记本([^}]*?)\}\}/g)];
+@@ -1069,7 +1069,8 @@ class DirectDiaryTextProcessor {
+         }));
+ 
+         for (const result of results) {
+-            processedContent = processedContent.replace(result.placeholder, result.content ?? '');
++            const replText = result.content ?? '';
++            processedContent = processedContent.replace(result.placeholder, () => replText);
+         }
+ 
+         return processedContent;
+```
+
+**File**: `Plugin/RAGDiaryPlugin/RAGDiaryPlugin.js` (modified, +1/-1)
+```diff
+@@ -2541,7 +2541,7 @@ class RAGDiaryPlugin {
+                 : String(result.content);
+ 
+             const beforeLength = processedContent.length;
+-            processedContent = processedContent.replace(placeholder, replacementContent);
++            processedContent = processedContent.replace(placeholder, () => replacementContent);
+             const afterLength = processedContent.length;
+ 
+             if (beforeLength === afterLength && placeholder.length > 0) {
+```
+
+**File**: `Plugin/RAGDiaryPlugin/RAGResultFormatter.js` (modified, +5/-1)
+```diff
+@@ -19,7 +19,11 @@ function formatMemoryEntry(result, { prefix = '* ', text = null } = {}) {
+ 
+ function buildRagBlock(innerContent, metadata) {
+     const metadataString = JSON.stringify(metadata).replace(/-->/g, '--\\>');
+-    return `<!-- VCP_RAG_BLOCK_START ${metadataString} -->${innerContent}<!-- VCP_RAG_BLOCK_END -->`;
++    const safeInnerContent = String(innerContent ?? '').replace(
++        /<!--\s*(VCP_RAG_BLOCK_(?:START|END))\b([\s\S]*?)-->/gi,
++        '<!-- $1$2--\\>'
++    );
++    return `<!-- VCP_RAG_BLOCK_START ${metadataString} -->${safeInnerContent}<!-- VCP_RAG_BLOCK_END -->`;
+ }
+ 
+ function formatStandardResults(searchResults, displayName, metadata) {
+```
+
+**File**: `Plugin/RAGDiaryPlugin/TDBPlaceholderProcessor.js` (modified, +2/-2)
+```diff
+@@ -427,9 +427,9 @@ class TDBPlaceholderProcessor {
+             .replace(/《《[^》]*日记本[^》]*》》/g, '[循环占位符已移除]')
+             .replace(/\{\{[^}]*日记本[^}]*\}\}/g, '[循环占位符已移除]')
+             .replace(/\[\[[^\]]*知识库[^\]]*\]\]/g, '[循环占位符已移除]')
+-            .replace(/《《[^》]*知识库[^》]*》》/g, '[循环占位符已移除]');
++            .replace(/《《[^》]*知识库[^》]*》》/g, '[循环占位符已移除]')
++            .replace(/\[\[(?:VCP元思考|VCPTimeLine|OneRingMemo)[^\]]*\]\]/g, '[循环占位符已移除]');
+     }
+-
+     // ────────────────────────────────────────────────────────────
+     // 格式化输出（不使用 VCP_RAG_BLOCK_START，避免被记忆刷新劫持）
+     // ────────────────────────────────────────────────────────────
+```
+
+**File**: `modules/messageProcessor.js` (modified, +25/-22)
+```diff
+@@ -285,7 +285,7 @@ async function resolveAllVariables(text, model, role, context, processingStack =
+                 if (processingStack.has(alias)) {
+                     console.error(`[AgentManager] Circular dependency detected! Stack: [${[...processingStack].join(' -> ')} -> ${alias}]`);
+                     const errorMessage = `[Error: Circular agent reference detected for '${alias}']`;
+-                    processedText = processedText.replaceAll(`{{${alias}}}`, errorMessage).replaceAll(`{{agent:${alias}}}`, errorMessage);
++                    processedText = processedText.replaceAll(`{{${alias}}}`, () => errorMessage).replaceAll(`{{agent:${alias}}}`, () => errorMessage);
+                     continue;
+                 }
+ 
+@@ -295,10 +295,9 @@ async function resolveAllVariables(text, model, role, context, processingStack =
+                 const resolvedAgentContent = await resolveAllVariables(agentContent, model, role, context, processingStack);
+                 processingStack.delete(alias);
+ 
+-                // 替换两种可能的Agent占位符格式
+-                processedText = processedText.replaceAll(`{{${alias}}}`, resolvedAgentContent);
+-                processedText = processedText.replaceAll(`{{agent:${alias}}}`, resolvedAgentContent);
+-
++                // 替换两种可能的Agent占位符格式（使用函数替换防止 $` / $$ 展开）
++                processedText = processedText.replaceAll(`{{${alias}}}`, () => resolvedAgentContent);
++                processedText = processedText.replaceAll(`{{agent:${alias}}}`, () => resolvedAgentContent);
+                 // 标记此 Agent 已被展开，后续消息中的任何 Agent 占位符都将被忽略
+                 context.expandedAgentName = alias;
+             }
+@@ -323,8 +322,8 @@ async function resolveAllVariables(text, model, role, context, processingStack =
+                 if (processingStack.has(stackKey)) {
+                     const errorMessage = `[Error: Circular toolbox reference detected for '${alias}']`;
+                     processedText = processedText
+-                        .replaceAll(`{{${alias}}}`, errorMessage)
+-                        .replaceAll(`{{toolbox:${alias}}}`, errorMessage);
++                        .replaceAll(`{{${alias}}}`, () => errorMessage)
++                        .replaceAll(`{{toolbox:${alias}}}`, () => errorMessage);
+                     continue;
+                 }
+ 
+@@ -726,9 +725,8 @@ function applySingleDetectorRule(text, rule) {
+         }
+     }
+ 
+-    return text.replaceAll(rule.detector, rule.output);
++    return text.replaceAll(rule.detector, () => rule.output);
+ }
+-
+ function applyDetectorRules(text, role, context = {}) {
+     const { detectors = [], superDetectors = [] } = context;
+     if (text == null) return '';
+@@ -905,11 +903,10 @@ async function replaceOtherVariables(text, model, role, context) {
+                 }
+             }
+ 
+-            // 对当前文本中所有匹配的占位符进行替换
++            // 对当前文本中所有匹配的占位符进行替换（使用函数替换防止 $` / $$ 展开）
+             const placeholderRegExp = new RegExp(placeholder.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+-            processedText = processedText.replace(placeholderRegExp, replacementText);
++            processedText = processedText.replace(placeholderRegExp, () => replacementText);
+         }
+-
+         // === {{SarPromptAll}} 批量模型匹配注入 ===
+         if (processedText.includes('{{SarPromptAll}}')) {
+             const allPrompts = sarPromptManager.getAllPrompts();
+@@ -936,7 +933,7 @@ async function replaceOtherVariables(text, model, role, context) {
+             }
+ 
+             const sarAllText = matchedContents.join('\n');
+-            processedText = processedText.replace(/\{\{SarPromptAll\}\}/g, sarAllText);
++            processedText = processedText.replace(/\{\{SarPromptAll\}\}/g, () => sarAllText);
+         }
+     }
+ 
+@@ -950,13 +947,14 @@ async function replaceOtherVariables(text, model, role, context) {
+                         const fileContent = await tvsManager.getContent(value);
+                         // 检查内容是否表示错误
+                         if (fileContent.startsWith('[变量文件') || fileContent.startsWith('[处理变量文件')) {
+-                            processedText = processedText.replaceAll(placeholder, fileContent);
++                            processedText = processedText.replaceAll(placeholder, () => fileContent);
+                         } else {
+                             const resolvedContent = await replaceOtherVariables(fileContent, model, role, context);
+-                            processedText = processedText.replaceAll(placeholder, resolvedContent);
++                            processedText = processedText.replaceAll(placeholder, () => resolvedContent);
+                         }
+                     } else {
+-                        processedText = processedText.replaceAll(placeholder, value || `[未配置 ${envKey}]`);
++                        const fallbackVal = value || `[未配置 ${envKey}]`;
++                        processedText = processedText.replaceAll(placehold
 ```
 
 ---
 
-### Incident Patch 2: `9edfb472` (2026-11-06)
-**Commit Message**: fix(LightMemo): 语义组词注册进 jieba 词典，词典外的词也能触发语义组
+### Incident Patch 2: `3cc6e679` (2026-11-09)
+**Commit Message**: fix(rag): prevent GetSubstitution injection and RAG block escape in text replacements
 
-**File**: `Plugin/LightMemo/LightMemo.js` (modified, +20/-0)
+**File**: `Plugin/RAGDiaryPlugin/AIMemoHandler.js` (modified, +13/-10)
 ```diff
-@@ -1086,6 +1086,25 @@ class LightMemoPlugin {
-         return Array.from(expandedTokens);
-     }
+@@ -734,18 +734,21 @@ class AIMemoHandler {
+     _buildPrompt(knowledgeBase, userContent, aiContent, promptTemplate) {
+         const now = dayjs().tz(DEFAULT_TIMEZONE);
  
-+    /**
-+     * _tokenize looks group words up by jieba tokens, so a group word missing from jieba's
-+     * dictionary (coined names, slang such as "塔罗会" or "源堡") is split and never matches.
-+     * Register such words with jieba so they stay whole tokens.
-+     */
-+    _registerGroupWords(words) {
-+        if (!this.jiebaInstance) return;
-+        const lines = [];
-+        for (const word of words) {
-+            if (typeof word !== 'string') continue;
-+            for (const form of new Set([word.trim(), word.trim().toLowerCase()])) {
-+                if (form && !/\s/.test(form) && this.jiebaInstance.cut(form, false).length > 1) {
-+                    lines.push(`${form} 1000 n`);
-+                }
-+            }
-+        }
-+        if (lines.length > 0) this.jiebaInstance.loadDict(Buffer.from(lines.join('\n'), 'utf-8'));
-+    }
-+
-     async loadSemanticGroups() {
-         const semanticGroupsPath = path.join(this.projectBasePath, 'Plugin', 'RAGDiaryPlugin', 'semantic_groups.json');
-         try {
-@@ -1100,6 +1119,7 @@ class LightMemoPlugin {
-                         for (const word of lowercasedWords) {
-                             this.wordToGroupMap.set(word, lowercasedWords);
-                         }
-+                        this._registerGroupWords(group.words);
-                     }
-                 }
-             }
+-        let prompt = promptTemplate || this.promptTemplate;
+-
+-        // 替换占位符
+-        prompt = prompt.replace(/\{\{knowledge_base\}\}/g, knowledgeBase);
+-        prompt = prompt.replace(/\{\{current_user_prompt\}\}/g, userContent || '');
+-        prompt = prompt.replace(/\{\{last_assistant_response\}\}/g, aiContent || '[无AI回复]');
+-        prompt = prompt.replace(/\{\{Date\}\}/g, now.format('YYYY-MM-DD'));
+-        prompt = prompt.replace(/\{\{Time\}\}/g, now.format('HH:mm:ss'));
++        const prompt = String(promptTemplate || this.promptTemplate || '');
++        const slotMap = {
++            knowledge_base: knowledgeBase || '',
++            current_user_prompt: userContent || '',
++            last_assistant_response: aiContent || '[无AI回复]',
++            Date: now.format('YYYY-MM-DD'),
++            Time: now.format('HH:mm:ss')
++        };
+ 
+-        return prompt;
++        // 单遍扫描映射替换：防止前序替换内容（如 knowledge_base）中包含后序占位符字面量引发跨槽位二次污染，同时免疫 $ 特殊替换模式
++        return prompt.replace(
++            /\{\{(knowledge_base|current_user_prompt|last_assistant_response|Date|Time)\}\}/g,
++            (_, key) => String(slotMap[key] ?? '')
++        );
+     }
+-
+     /**
+      * 调用AI模型
+      */
 ```
 
-**File**: `tests/lightMemoSemanticGroups.test.js` (added, +45/-0)
+**File**: `Plugin/RAGDiaryPlugin/DirectDiaryTextProcessor.js` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,45 @@
-+'use strict';
-+
-+const test = require('node:test');
-+const assert = require('node:assert/strict');
-+const fs = require('fs');
-+const os = require('os');
-+const path = require('path');
-+const plugin = require('../Plugin/LightMemo/LightMemo');
-+
-+async function loadGroups(groups) {
-+    const base = fs.mkdtempSync(path.join(os.tmpdir(), 'lightmemo-groups-'));
-+    const file = path.join(base, 'Plugin', 'RAGDiaryPlugin', 'semantic_groups.json');
-+    fs.mkdirSync(path.dirname(file), { recursive: true });
-+    fs.writeFileSync(file, JSON.stringify({ groups }), 'utf-8');
-+    const previous = plugin.projectBasePath;
-+    try {
-+        plugin.projectBasePath = base;
-+        await plugin.loadSemanticGroups();
-+    } finally {
-+        plugin.projectBasePath = previous;
-+        fs.rmSync(base, { recursive: true, force: true });
-+    }
-+}
-+
-+test('semantic group words outside the jieba dictionary still activate their group', async () => {
-+    // From semantic_groups.json.example: jieba's default dictionary splits these words.
-+    await loadGroups({ '克莱恩·莫雷蒂': { words: ['愚者', '塔罗会', '源堡', '道恩'], weight: 1.2 } });
-+    const tokens = plugin._tokenize('塔罗会今晚在源堡聚会吗');
-+    assert.ok(tokens.includes('塔罗会'));
-+    assert.ok(tokens.includes('源堡'));
-+    assert.deepEqual(plugin._expandQueryTokens(tokens).sort(), ['愚者', '道恩'].sort());
-+});
-+
-+test('mixed-case group words keep matching after lowercasing', async () => {
-+    await loadGroups({ '编程学习': { words: ['JavaScript', 'Node.js'], weight: 1.0 } });
-+    const tokens = plugin._tokenize('我用Node.js写了个脚本');
-+    assert.ok(tokens.includes('node.js'));
-+    assert.deepEqual(plugin._expandQueryTokens(tokens), ['javascript']);
-+});
-+
-+test('registering group words leaves unrelated sentences segmented as before', async () => {
-+    const before = plugin._tokenize('资源堡垒很坚固');
-+    await loadGroups({ '克莱恩·莫雷蒂': { words: ['源堡'], weight: 1.0 } });
-+    assert.deepEqual(plugin._tokenize('资源堡垒很坚固'), before);
-+});
+@@ -970,9 +970,9 @@ class DirectDiaryTextProcessor {
+             .replace(/《《[^》]*日记本[^》]*》》/g, '[循环占位符已移除]')
+             .replace(/\{\{[^}]*日记本[^}]*\}\}/g, '[循环占位符已移除]')
+             .replace(/\[\[[^\]]*知识库[^\]]*\]\]/g, '[循环占位符已移除]')
+-            .replace(/《《[^》]*知识库[^》]*》》/g, '[循环占位符已移除]');
++            .replace(/《《[^》]*知识库[^》]*》》/g, '[循环占位符已移除]')
++            .replace(/\[\[(?:VCP元思考|VCPTimeLine|OneRingMemo)[^\]]*\]\]/g, '[循环占位符已移除]');
+     }
+-
+     async processContent(content, options = {}) {
+         let processedContent = String(content || '');
+         const declarations = [...processedContent.matchAll(/\{\{([^}]*?)日记本([^}]*?)\}\}/g)];
+@@ -1069,7 +1069,8 @@ class DirectDiaryTextProcessor {
+         }));
+ 
+         for (const result of results) {
+-            processedContent = processedContent.replace(result.placeholder, result.content ?? '');
++            const replText = result.content ?? '';
++            processedContent = processedContent.replace(result.placeholder, () => replText);
+         }
+ 
+         return processedContent;
+```
+
+**File**: `Plugin/RAGDiaryPlugin/RAGDiaryPlugin.js` (modified, +1/-1)
+```diff
+@@ -2541,7 +2541,7 @@ class RAGDiaryPlugin {
+                 : String(result.content);
+ 
+             const beforeLength = processedContent.length;
+-            processedContent = processedContent.replace(placeholder, replacementContent);
++            processedContent = processedContent.replace(placeholder, () => replacementContent);
+             const afterLength = processedContent.length;
+ 
+             if (beforeLength === afterLength && placeholder.length > 0) {
+```
+
+**File**: `Plugin/RAGDiaryPlugin/RAGResultFormatter.js` (modified, +5/-1)
+```diff
+@@ -19,7 +19,11 @@ function formatMemoryEntry(result, { prefix = '* ', text = null } = {}) {
+ 
+ function buildRagBlock(innerContent, metadata) {
+     const metadataString = JSON.stringify(metadata).replace(/-->/g, '--\\>');
+-    return `<!-- VCP_RAG_BLOCK_START ${metadataString} -->${innerContent}<!-- VCP_RAG_BLOCK_END -->`;
++    const safeInnerContent = String(innerContent ?? '').replace(
++        /<!--\s*(VCP_RAG_BLOCK_(?:START|END))\b([\s\S]*?)-->/gi,
++        '<!-- $1$2--\\>'
++    );
++    return `<!-- VCP_RAG_BLOCK_START ${metadataString} -->${safeInnerContent}<!-- VCP_RAG_BLOCK_END -->`;
+ }
+ 
+ function formatStandardResults(searchResults, displayName, metadata) {
+```
+
+**File**: `Plugin/RAGDiaryPlugin/TDBPlaceholderProcessor.js` (modified, +2/-2)
+```diff
+@@ -427,9 +427,9 @@ class TDBPlaceholderProcessor {
+             .replace(/《《[^》]*日记本[^》]*》》/g, '[循环占位符已移除]')
+             .replace(/\{\{[^}]*日记本[^}]*\}\}/g, '[循环占位符已移除]')
+             .replace(/\[\[[^\]]*知识库[^\]]*\]\]/g, '[循环占位符已移除]')
+-            .replace(/《《[^》]*知识库[^》]*》》/g, '[循环占位符已移除]');
++            .replace(/《《[^》]*知识库[^》]*》》/g, '[循环占位符已移除]')
++            .replace(/\[\[(?:VCP元思考|VCPTimeLine|OneRingMemo)[^\]]*\]\]/g, '[循环占位符已移除]');
+     }
+-
+     // ────────────────────────────────────────────────────────────
+     // 格式化输出（不使用 VCP_RAG_BLOCK_START，避免被记忆刷新劫持）
+     // ────────────────────────────────────────────────────────────
+```
+
+**File**: `modules/messageProcessor.js` (modified, +25/-22)
+```diff
+@@ -285,7 +285,7 @@ async function resolveAllVariables(text, model, role, context, processingStack =
+                 if (processingStack.has(alias)) {
+                     console.error(`[AgentManager] Circular dependency detected! Stack: [${[...processingStack].join(' -> ')} -> ${alias}]`);
+                     const errorMessage = `[Error: Circular agent reference detected for '${alias}']`;
+-                    processedText = processedText.replaceAll(`{{${alias}}}`, errorMessage).replaceAll(`{{agent:${alias}}}`, errorMessage);
++                    processedText = processedText.replaceAll(`{{${alias}}}`, () => errorMessage).replaceAll(`{{agent:${alias}}}`, () => errorMessage);
+                     continue;
+                 }
+ 
+@@ -295,10 +295,9 @@ async function resolveAllVariables(text, model, role, context, processingStack =
+                 const resolvedAgentContent = await resolveAllVariables(agentContent, model, role, context, processingStack);
+                 processingStack.delete(alias);
+ 
+-                // 替换两种可能的Agent占位符格式
+-                processedText = processedText.replaceAll(`{{${alias}}}`, resolvedAgentContent);
+-                processedText = processedText.replaceAll(`{{agent:${alias}}}`, resolvedAgentContent);
+-
++                // 替换两种可能的Agent占位符格式（使用函数替换防止 $` / $$ 展开）
++                processedText = processedText.replaceAll(`{{${alias}}}`, () => resolvedAgentContent);
++                processedText = processedText.replaceAll(`{{agent:${alias}}}`, () => resolvedAgentContent);
+                 // 标记此 Agent 已被展开，后续消息中的任何 Agent 占位符都将被忽略
+                 context.expandedAgentName = alias;
+             }
+@@ -323,8 +322,8 @@ async function resolveAllVariables(text, model, role, context, processingStack =
+                 if (processingStack.has(stackKey)) {
+                     const errorMessage = `[Error: Circular toolbox reference detected for '${alias}']`;
+                     processedText = processedText
+-                        .replaceAll(`{{${alias}}}`, errorMessage)
+-                        .replaceAll(`{{toolbox:${alias}}}`, errorMessage);
++                        .replaceAll(`{{${alias}}}`, () => errorMessage)
++                        .replaceAll(`{{toolbox:${alias}}}`, () => errorMessage);
+                     continue;
+                 }
+ 
+@@ -726,9 +725,8 @@ function applySingleDetectorRule(text, rule) {
+         }
+     }
+ 
+-    return text.replaceAll(rule.detector, rule.output);
++    return text.replaceAll(rule.detector, () => rule.output);
+ }
+-
+ function applyDetectorRules(text, role, context = {}) {
+     const { detectors = [], superDetectors = [] } = context;
+     if (text == null) return '';
+@@ -905,11 +903,10 @@ async function replaceOtherVariables(text, model, role, context) {
+                 }
+             }
+ 
+-            // 对当前文本中所有匹配的占位符进行替换
++            // 对当前文本中所有匹配的占位符进行替换（使用函数替换防止 $` / $$ 展开）
+             const placeholderRegExp = new RegExp(placeholder.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+-            processedText = processedText.replace(placeholderRegExp, replacementText);
++            processedText = processedText.replace(placeholderRegExp, () => replacementText);
+         }
+-
+         // === {{SarPromptAll}} 批量模型匹配注入 ===
+         if (processedText.includes('{{SarPromptAll}}')) {
+             const allPrompts = sarPromptManager.getAllPrompts();
+@@ -936,7 +933,7 @@ async function replaceOtherVariables(text, model, role, context) {
+             }
+ 
+             const sarAllText = matchedContents.join('\n');
+-            processedText = processedText.replace(/\{\{SarPromptAll\}\}/g, sarAllText);
++            processedText = processedText.replace(/\{\{SarPromptAll\}\}/g, () => sarAllText);
+         }
+     }
+ 
+@@ -950,13 +947,14 @@ async function replaceOtherVariables(text, model, role, context) {
+                         const fileContent = await tvsManager.getContent(value);
+                         // 检查内容是否表示错误
+                         if (fileContent.startsWith('[变量文件') || fileContent.startsWith('[处理变量文件')) {
+-                            processedText = processedText.replaceAll(placeholder, fileContent);
++                            processedText = processedText.replaceAll(placeholder, () => fileContent);
+                         } else {
+                             const resolvedContent = await replaceOtherVariables(fileContent, model, role, context);
+-                            processedText = processedText.replaceAll(placeholder, resolvedContent);
++                            processedText = processedText.replaceAll(placeholder, () => resolvedContent);
+                         }
+                     } else {
+-                        processedText = processedText.replaceAll(placeholder, value || `[未配置 ${envKey}]`);
++                        const fallbackVal = value || `[未配置 ${envKey}]`;
++                        processedText = processedText.replaceAll(placehold
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #580** (2026-11-09): fix(rag): prevent GetSubstitution injection in text replacements and avoid RAG block breakout (@infinite-vector)
+- **PR #579** (closed): Fix/chromebridge monitoring default (@joker74581)
+- **PR #578** (closed): fix: persist VCPChrome monitoring default across restarts (@joker74581)
 - **PR #577** (2026-11-06): fix(LightMemo): 语义组词注册进 jieba 词典，词典外的词也能触发语义组 (@CI-IISATO)
 - **PR #576** (2026-11-05): fix(vcpLoop): 收敛思考块剥离边界并隔离代码域与工具载荷自指误伤 (@infinite-vector)
 - **PR #573** (closed): fix(security): 修复 TVS 变量编辑接口路径遍历漏洞 (@934842025)
-- **PR #571** (2026-11-02): fix(rivermemo): separate wormhole RRF ranking from baseline scores (@Cimo-Yu)
-- **PR #568** (2026-11-01): docs(desktop): 同步 VCP桌面知识至 DesktopRemote 1.5.0 并新增索引 (@infinite-vector)
-- **PR #567** (2026-11-01): feat(tdb): 升级 TriviumDB 至 0.9.0 并接入原生只读内存与存储诊断接口 (@infinite-vector)
 
 ---
 
@@ -2018,47 +2232,49 @@ fix(LightMemo): 语义组词注册进 jieba 词典，词典外的词也能触发
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #577 from CI-IISATO/fix/lightmemo-group-jieba-words
+## X. Merge pull request #580 from infinite-vector/fix/rag-placeholder-getsubstitution
 
 **RULE**:
-When implementing operations in `Plugin/LightMemo/LightMemo.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin/RAGDiaryPlugin/AIMemoHandler.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c4e2ab1`: Merge pull request #577 from CI-IISATO/fix/lightmemo-group-jieba-words. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6275c121`: Merge pull request #580 from infinite-vector/fix/rag-placeholder-getsubstitution-safety. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/LightMemo/LightMemo.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/RAGDiaryPlugin/AIMemoHandler.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    /**
-     * _tokenize looks group words up by jieba tokens, so a group word missing from jieba's
-     * dictionary (coined names, slang such as "塔罗会" or "源堡") is split and never matches.
-     * Register such words with jieba so they stay whole tokens.
-     */
-    _registerGroupWords(words) {
-        if (!this.jiebaInstance) return;
-        const lines = [];
-        for (const word of words) {
-            if (typeof word !== 'string') continue;
-            for (const form of new Set([word.trim(), word.trim().toLowerCase()])) {
-                if (form && !/\s/.test(form) && this.jiebaInstance.cut(form, false).length > 1) {
-                    lines.push(`${form} 1000 n`);
-                }
-            }
-        }
-        if (lines.length > 0) this.jiebaInstance.loadDict(Buffer.from(lines.join('\n'), 'utf-8'));
-    }
-
-                        this._registerGroupWords(group.words);
+        const prompt = String(promptTemplate || this.promptTemplate || '');
+        const slotMap = {
+            knowledge_base: knowledgeBase || '',
+            current_user_prompt: userContent || '',
+            last_assistant_response: aiContent || '[无AI回复]',
+            Date: now.format('YYYY-MM-DD'),
+            Time: now.format('HH:mm:ss')
+        };
+        // 单遍扫描映射替换：防止前序替换内容（如 knowledge_base）中包含后序占位符字面量引发跨槽位二次污染，同时免疫 $ 特殊替换模式
+        return prompt.replace(
+            /\{\{(knowledge_base|current_user_prompt|last_assistant_response|Date|Time)\}\}/g,
+            (_, key) => String(slotMap[key] ?? '')
+        );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        let prompt = promptTemplate || this.promptTemplate;
+
+        // 替换占位符
+        prompt = prompt.replace(/\{\{knowledge_base\}\}/g, knowledgeBase);
+        prompt = prompt.replace(/\{\{current_user_prompt\}\}/g, userContent || '');
+        prompt = prompt.replace(/\{\{last_assistant_response\}\}/g, aiContent || '[无AI回复]');
+        prompt = prompt.replace(/\{\{Date\}\}/g, now.format('YYYY-MM-DD'));
+        prompt = prompt.replace(/\{\{Time\}\}/g, now.format('HH:mm:ss'));
+        return prompt;
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c4e2ab1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6275c121` are properly handled with clean fallback behavior.

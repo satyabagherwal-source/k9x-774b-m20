@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T05:40:43.103Z",
+  "last_updated": "2026-11-09T05:52:50.238Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20532,7 +20532,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "a636c09e24ca33a822e5378ce81148c8d9bf53d851c7eda551dbcbd781aa135f",
+      "content_hash": "69a82247355d2bb680cf3aa1b86c5f11c4b2e9e9a3fb76eb970a08b1eeb1e2fd",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [
@@ -20609,7 +20609,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v"
       ],
-      "verified_at": "2026-11-05T11:30:44.566Z",
+      "verified_at": "2026-11-09T05:52:35.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40753,14 +40753,19 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "0c4e2ab1",
-      "content_hash": "4ea818f0d266e14d6634334413798b24968fef16d50c492db61d03cff78c69bb",
+      "source_version": "6275c121",
+      "content_hash": "cf5359375af0c347b6bd49f7d8f01ba7f78145c8ea04c2cd57846cb033ca5c41",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #577 from CI-IISATO/fix/lightmemo-group-jieba-words",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #580 from infinite-vector/fix/rag-placeholder-getsubstitution",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40799,7 +40804,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:10:36.883Z",
+      "verified_at": "2026-11-09T05:52:50.217Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

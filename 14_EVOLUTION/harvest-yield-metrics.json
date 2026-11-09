@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T05:40:43.194Z",
-  "total_cycles_completed": 8489,
-  "total_learnings_persisted": 8489,
-  "total_rules_promoted": 8287,
+  "last_updated": "2026-11-09T05:52:50.346Z",
+  "total_cycles_completed": 8491,
+  "total_learnings_persisted": 8491,
+  "total_rules_promoted": 8288,
   "history": [
-    {
-      "timestamp": "2026-11-08T16:26:25.296Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T16:33:30.003Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T16:33:39.111Z",
       "repository": "higress-group/higress",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-09T05:40:43.194Z",
       "repository": "gauthierpiarrette/highball",
       "learningId": "learn-github-gauthierpiarrette-highball",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T05:52:36.135Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T05:52:50.346Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

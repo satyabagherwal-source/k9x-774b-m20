@@ -8524,3 +8524,5 @@
 | `CYCLE-20261109-MG9C` | `2026-11-09T05:28:50.640Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`b46f9075...`) |
 | `CYCLE-20261109-1L1R` | `2026-11-09T05:40:36.687Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`af35dc33...`) |
 | `CYCLE-20261109-1Q20` | `2026-11-09T05:40:43.176Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`98e8be75...`) |
+| `CYCLE-20261109-H066` | `2026-11-09T05:52:36.126Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`69a82247...`) |
+| `CYCLE-20261109-HB4O` | `2026-11-09T05:52:50.328Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cf535937...`) |
