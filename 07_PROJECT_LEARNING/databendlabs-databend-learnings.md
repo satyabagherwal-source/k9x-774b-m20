@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `d8be20b2`  
+> **Source Version**: `057efa66`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T05:40:53.174Z  
+> **Timestamp**: 2026-11-09T03:35:30.224Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T05:40:52.988Z  
+> **Harvest Timestamp**: 2026-11-09T03:35:30.216Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21013** (2026-11-06): **feat(query): expose node-local cache statistics on admin API**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Add `GET /v1/caches` on the internal admin port, following the node-local Processlist pattern. Reuse `CacheManager::rows()` without SQL, sessions, or cross-node requests; warehouse discovery and aggregation remain the caller's responsibility. - Return cache statistics with node identity, pool classification, enabled state, nullable capacity and its unit, item counts, charged/resident bytes, and cumulative access/hit/miss counters. Include disabled caches and pool summaries; pool and per-cache rows overlap and must not be summed together. - Add three real-router integration tests covering legacy refresh/counters and session neutrality, disabled caches, and shared pools with nullable capacity. Targeted validation log on `db0-aws`: 3 passed, 0 failed, using `cargo test --locked -p databend-query --no-default-features --test it servers::admin::v1::caches --jobs 3` with `RUST_TEST_THREADS=1`. Formatting and whitespace checks are clean; full/default-feature CI is not yet validated. - Example: `curl http://127.0.0.1:8080/v1/caches` (use the configured admin address). No storage, configuration, or existing endpoint changes. Keep this PR draft with `hold-ci` during review; resume full CI after review converges.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an i
+- **Issue #21021** (2026-11-08): **feat(query): segment zone map for fuse tables, built by recluster**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  A table with many segments pays one segment read per segment before any block is pruned. This adds a snapshot-level **segment zone map** for fuse tables: a parquet file with one row per covered segment (`path`, `block_count`, `fresh`) and the `min`/`max`/`null_count` of every leaf column that carries statistics, copied from the segment summaries. `do_read_partitions` reads only the columns the filter references and drops segments before any segment info is read.  Pruning is negative-only, so results are identical with or without the zone map; a stale, missing or unreadable zone map falls back to regular segment pruning with a warning. A column is only used when its stored type still matches the query schema, and a NULL `null_count` marks a segment whose statistics for that column are unknown.  - `TableSnapshot.segment_zone_map: Option<SegmentZoneMapMeta>` (`#[serde(default)]`, only `location` + `footer_offset`). `try_new` carries it from the previous snapshot; truncate, INSERT OVERWRITE, `segment_format` conversion and decimal widening clear it. Older readers skip the field; a snapshot written by an older version has no pointer, and the next recluster rebuilds it. - `storages/fuse/src/segment_zone_map/{format,build,prune}.rs`: file layout and reader (row groups of 16k segments with chunk statistics; one range read for the footer, then one per run of adjacent columns p
 
-- **Issue #21011** (2026-11-07): **fix(query): fix data loss in UNION ALL**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes #21001  `UNION ALL` loses data when a branch reads stage files. For example, `SELECT 'a', id FROM @s/pa/ UNION ALL SELECT 'b', id FROM @s/pb/` returns only the rows of `pb`, all labeled `a`. A branch can also disappear, or the query can fail with `Cannot downcast from PartInfo to ParquetPart`. `INSERT ... SELECT` and `CREATE TABLE ... AS SELECT` write the wrong rows. Issue #21001 lists the affected queries.  **Cause.** A scan puts its partitions in the partition queue of the `QueryContext`. File sources read the queue only when the pipeline runs. `UnionAll` built both branches with the same context, so the second branch replaced the partitions of the first.  **Fix.** `UnionAll` builds each branch with its own sub context from `QueryContext::create_from`, as the hash join does for its build side. A sub context shares the query state with its parent and has its own partition queue.  **Tests.** `20_0025_stackoverflow` reads 50 stage parquet files of 2 rows each through `UNION ALL`. Its expected result was the wrong value `2`. It is now `100`. This PR deletes `20_0025_stackoverflow_cluster.result`, because both modes now return 100.  ## Tests  - [ ] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) 
+- **Issue #21015** (2026-11-08): **fix(fuse): infer string statistics truncation by character count**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes #20197.  Fuse trims string statistics by Unicode characters, but inferred possible truncation from UTF-8 byte length. Count characters for both bounds instead, honoring per-column `STATS_TRUNCATE_LEN`.  ```sql CREATE TABLE t (s STRING); INSERT INTO t VALUES ('你好世界你好世'), ('👍👍👍👍👍'); EXPLAIN SELECT MIN(s), MAX(s) FROM t; ```  The strings contain 7 and 5 characters but occupy 21 and 20 UTF-8 bytes. Neither is truncated by the default 16-character threshold.  <details> <summary>Before: scan and aggregate the table</summary>  ```text AggregateFinal ├── output columns: [MIN(s) (#1), MAX(s) (#2)] ├── group by: [] ├── aggregate functions: [min(s), max(s)] ├── estimated rows: 1.00 └── AggregatePartial     ├── group by: []     ├── aggregate functions: [min(s), max(s)]     ├── estimated rows: 1.00     └── TableScan         ├── table: default.default.t         ├── scan id: 0         ├── output columns: [s (#0)]         ├── read rows: 2         ├── read size: < 1 KiB         ├── partitions total: 1         ├── partitions scanned: 1         ├── pruning stats: [segments: <read cost: 1 ms, decompress cost: 1 ms, range pruning: 1 to 1 cost: 1 ms>, blocks: <range pruning: 1 to 1 cost: 1 ms>]         ├── push downs: [filters: [], limit: NONE]         └── estimated rows: 2.00 ```  </details>  **After: answer directly from statistics, without scanning table data**  ```text EvalS
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,90 +1217,1240 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99c49dac` (2026-11-07)
-**Commit Message**: fix(query): fix data loss in UNION ALL (#21011)
+### Incident Patch 1: `19308cd3` (2026-11-08)
+**Commit Message**: feat(query): segment zone map for fuse tables, built by recluster (#21021)
 
-* fix(query): build each UNION ALL branch with its own context
+* feat(query): segment zone map for fuse tables, built by recluster
 
-A scan stores its partitions in the partition queue of the QueryContext,
-and file sources (stage, ORC, Paimon, Iceberg, ...) only take them when
-the pipeline runs. UnionAll built both branches with the same context,
-so the later branch replaced the partitions of an earlier file branch.
-Rows were dropped and mislabeled, a whole branch disappeared, or the
-query failed with "Cannot downcast from PartInfo to ParquetPart".
+A snapshot-level parquet file with the per-segment path, block count and
+min/max/null_count of every column that has statistics. Queries read the
+columns their filter references and drop segments before reading any
+segment info; pruning is negative-only, so results never change, and a
+stale, missing or unreadable zone map only falls back to segment pruning.
 
-Build each branch with a sub context, as the hash join already does for
-its build side.
+The snapshot carries a pointer (location + footer offset) that every new
+snapshot inherits; truncate, INSERT OVERWRITE, segment format conversion
+and decimal widening clear it. OPTIMIZE TABLE ... RECLUSTER refreshes the
+zone map after committed rounds when enough full segments are missing,
+admitting uncovered segments at a ratio that follows how many rows of the
+previous build survived. vacuum2 collects files no retained snapshot
+points to.
 
-Fixes #21001
+Settings: enable_segment_zone_map, enable_segment_zone_map_pruning,
+segment_zone_map_full_segment_threshold; table option
+enable_segment_zone_map. EXPLAIN shows `zone map pruning: N to M`;
+fuse_snapshot gains segment_zone_map_location.
 
-* test(query): rely on 20_0025_stackoverflow for the UNION ALL fix
+* feat(quer
 
-**File**: `src/query/service/src/physical_plans/physical_union_all.rs` (modified, +15/-2)
+**File**: `src/query/catalog/src/plan/pruning_statistics.rs` (modified, +18/-0)
 ```diff
-@@ -43,6 +43,7 @@ use crate::physical_plans::physical_plan::PhysicalPlanCast;
- use crate::physical_plans::physical_plan::PhysicalPlanMeta;
- use crate::pipelines::PipelineBuilder;
- use crate::pipelines::processors::transforms::TransformRecursiveCteSource;
-+use crate::sessions::QueryContext;
+@@ -20,6 +20,13 @@ pub struct PruningStatistics {
+     /// Segment block metas decompress cost in microseconds.
+     pub segments_decompress_cost: u64,
  
- #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
- pub struct UnionAll {
-@@ -120,11 +121,11 @@ impl IPhysicalPlan for UnionAll {
-             return self.build_recursive_cte_source(builder);
-         }
- 
--        self.left.build_pipeline(builder)?;
-+        build_branch_with_sub_ctx(&self.left, builder)?;
-         self.project_input(self.left.output_schema()?, &self.left_outputs, builder)?;
-         let left_sinks = builder.main_pipeline.take_sinks();
- 
--        self.right.build_pipeline(builder)?;
-+        build_branch_with_sub_ctx(&self.right, builder)?;
-         self.project_input(self.right.output_schema()?, &self.right_outputs, builder)?;
-         let right_sinks = builder.main_pipeline.take_sinks();
- 
-@@ -145,6 +146,18 @@ impl IPhysicalPlan for UnionAll {
-     }
++    /// Segment zone map pruning stats: segments excluded by the snapshot-level
++    /// segment zone map before any segment info was read.
++    pub segments_zone_map_pruning_before: usize,
++    pub segments_zone_map_pruning_after: usize,
++    /// Segment zone map pruning cost in microseconds.
++    pub segments_zone_map_pruning_cost: u64,
++
+     /// Segment range pruning stats.
+     pub segments_range_pruning_before: usize,
+     pub segments_range_pruning_after: usize,
+@@ -69,6 +76,17 @@ impl PruningStatistics {
+     pub fn merge(&mut self, other: &Self) {
+         self.segments_read_cost += other.segments_read_cost;
+         self.segments_decompress_cost += other.segments_decompress_cost;
++        // Segment zone map pruning runs once per scan before the segments are
++        // distributed, and every node reports the same numbers: keep one copy.
++        self.segments_zone_map_pruning_before = self
++            .segments_zone_map_pruning_before
++            .max(other.segments_zone_map_pruning_before);
++        self.segments_zone_map_pruning_after = self
++            .segments_zone_map_pruning_after
++            .max(other.segments_zone_map_pruning_after);
++        self.segments_zone_map_pruning_cost = self
++            .segments_zone_map_pruning_cost
++            .max(other.segments_zone_map_pruning_cost);
+         self.segments_range_pruning_before += other.segments_range_pruning_before;
+         self.segments_range_pruning_after += other.segments_range_pruning_after;
+         self.segments_range_pruning_cost += other.segments_range_pruning_cost;
+```
+
+**File**: `src/query/ee/src/storages/fuse/operations/vacuum_table_v2.rs` (modified, +44/-0)
+```diff
+@@ -104,6 +104,8 @@ struct GcRootSnapshotCtx {
+     gc_root_timestamp: DateTime<Utc>,
+     gc_root_meta_ts: DateTime<Utc>,
+     protected_segments: HashSet<Location>,
++    /// Segment zone map files referenced by the gc root or by tagged snapshots.
++    protected_segment_zone_maps: HashSet<String>,
+     snapshots_to_gc: Vec<String>,
  }
  
-+/// Builds a UNION ALL branch with its own `QueryContext`, as the hash join does
-+/// for its build side. A scan stores its partitions in the context's partition
-+/// queue and some sources only take them when the pipeline runs, so a branch
-+/// built later on the same context would replace the partitions of an earlier one.
-+fn build_branch_with_sub_ctx(branch: &PhysicalPlan, builder: &mut PipelineBuilder) -> Result<()> {
-+    let mut branch_ctx = QueryContext::create_from(&builder.ctx);
-+    std::mem::swap(&mut builder.ctx, &mut branch_ctx);
-+    let result = branch.build_pipeline(builder);
-+    std::mem::swap(&mut builder.ctx, &mut branch_ctx);
-+    result
+@@ -133,6 +135,7 @@ pub async fn do_vacuum2(
+         gc_root_timestamp,
+         gc_root_meta_ts,
+         protected_segments,
++        protected_segment_zone_maps,
+         snapshots_to_gc,
+     }) = vacuum_base_snapshot_phase(fuse_table, &ctx, respect_flash_back).await?
+     else {
+@@ -191,6 +194,29 @@ pub async fn do_vacuum2(
+         slice_summary(&stats_to_gc)
+     ));
+ 
++    // Segment zone map files are named like segments (UUID v7 under a vacuum2
++    // prefix) and referenced only by snapshots, so the same selection applies:
++    // everything before the gc root that no protected snapshot points to.
++    let start = std::time::Instant::now();
++    let prefix = fuse_table
++        .meta_location_generator()
++        .segment_zone_map_location_prefix();
++    let mut segment_zone_maps_to_gc = Vec::new();
++    for entry in fuse_table
++        .list_files_until_timestamp(prefix, gc_root_timestamp, false, Some(gc_root_meta_ts))
++        .await?
++    {
++        if !protected_segment_zone_maps.contains(entry.path()) {
++            segment_zone_maps_to_gc.push(entry.path().to_owned());
++        }
++    }
++    ctx.set_status_info(&format!(
++        "Listed segment zone maps before gc_root for table {}, elapsed: {:?}, segment_zone_maps_to_gc: {:?}",
++        table_info.desc,
++        start.elapsed(),
++        slice_summary(&segment_zone_maps_to_gc)
++    ));
++
+     let start = std::time::Instant::now();
+     let segments_io =
+         SegmentsIO::create(ctx.clone(), fuse_table.get_operator(), fuse_table.schema());
+@@ -397,6 +423,12 @@ pub async fn do_vacuum2(
+         file_remover.remove_file_in_batch(&segments_to_gc).await?;
+     }
+ 
++    if !segment_zone_maps_to_gc.is_empty() {
++        file_remover
++            .remove_file_in_batch(&segment_zone_maps_to_gc)
++            .await?;
++    }
++
+     // Evict snapshot caches from the local node.
+     //
+     // Note:
+@@ -426,6 +458,7 @@ pub async fn do_vacuum2(
+         + block_gc_stats.removed_files
+         + stats_to_gc.len()
+         + segments_to_gc.len()
++        + segment_zone_maps_to_gc.len()
+         + snapshots_to_gc.len();
+     ctx.set_status_info(&format!(
+         "Removed files for table {}, elapsed: {:?}, files removed: {}",
+@@ -890,6 +923,15 @@ async fn vacuum_base_snapshot_phase(
+         return Ok(None);
+     };
+     protected_segments.extend(selection.gc_root.segments.iter().cloned());
++    // Snapshots after the gc root only point at its zone map or at ones built
++    // later, so protecting it covers every live reference.
++    let mut protected_segment_zone_maps = HashSet::new();
++    protected_segment_zone_maps.extend(
++        selection
++            .gc_root
++            .segment_zone_map_path()
++            .map(str::to_string),
++    );
+     let mut updates = std::mem::take(&mut mark.lvt_updates);
+     // Validate the owner's original fence too: FLASHBACK can change its head while descendants
+     // are being marked. Existing clone bindings always use this one LVT publication protocol.
+@@ -936,6 +978,7 @@ async fn vacuum_base_snapshot_phase(
+             &selection.gc_root_path,
+             &mut selection.snapshots_to_gc,
+             &mut protected_segments,
++            &mut protected_segment_zone_maps,
+             ctx.cache_policy(),
+         )
+         .await?;
+@@ -949,6 +992,7 @@ async fn vacuum_base_snapshot_phase(
+         gc_root_timestamp: selection.gc_root_lvt.time,
+         gc_root_meta_ts: selection.gc_root_meta_ts,
+         protected_segments,
++        protected_segment_zone_maps,
+         snapshots_to_gc: selection.snapshots_to_gc,
+     }))
+ }
+```
+
+**File**: `src/query/ee/tests/it/storages/fuse/operations/vacuum2.rs` (modified, +114/-0)
+```diff
+@@ -492,6 +492,120 @@ async fn test_vacuum_table_preserves_tagged_snapshot() -> anyhow::Result<()> {
+     Ok(())
+ }
+ 
++/// Segment zone map files are swept like segments: the gc root's and tagged
++/// snapshots' files stay, older ones go, and nothing stays once no snapshot
++/// points at a zone map. Each recluster round builds one zone map.
++#[tokio::test(flavor = "multi_thread")]
++async fn test_vacuum_table_keeps_referenced_segment_zone_map() -> anyhow::Result<()> {
++    let fixture = TestFixture::setup_with_custom(EESetup::new()).await?;
++    RealTableRefHandler::init()?;
++    let settings = fixture.default_session().get_settings();
++    settings.set_data_retention_time_in_days(0)?;
++    for (name, value) in [
++        ("enable_compact_after_write", "0"),
++        // With one block per segment every segment is full, and threshold 0
++        // refreshes the zone map after every recluster round.
++        ("segment_zone_map_full_segment_threshold", "0"),
++        ("enable_experimental_table_ref", "1"),
++    ] {
++        settings.set_setting(name.to_string(), value.to_string())?;
++    }
++
++    // Two overlapping inserts give each recluster round one block to merge.
++    let database = "vacuum_zm_db";
++    let table = "t";
++    for statement in [
++        format!("create database {database}"),
++        format!("create table {database}.{table} (c int) cluster by (c) block_per_segment = 1"),
++        format!("insert into {database}.{table} values (1), (3)"),
++        format!("insert into {database}.{table} values (2), (4)"),
++        format!("optimize table {database}.{table} recluster"),
++        format!("insert into {database}.{table} values (11), (13)"),
++        format!("insert into {database}.{table} values (12), (14)"),
++        format!("optimize table {database}.{table} recluster"),
++        format!("alter table {database}.{table} create tag eight_rows"),
++        format!("insert into {database}.{table} values (21), (23)"),
++        format!("insert into {database}.{table} values (22), (24)"),
++        format!("optimize table {database}.{table} recluster"),
++    ] {
++        fixture.execute_command(&statement).await?;
++    }
++
++    let ctx = fixture.new_query_ctx().await?;
++    let storage_root = fixture.storage_root();
++    let segment_zone_map_files = |files: Vec<std::path::PathBuf>| {
++        files
++            .into_iter()
++            .filter(|path| path.to_string_lossy().contains("/_zm/"))
++            .collect::<Vec<_>>()
++    };
++    let current_zone_map = || async {
++        let stream = fixture
++            .execute_query(&format!(
++                "select segment_zone_map_location from fuse_snapshot('{database}', '{table}') \
++                 order by timestamp desc limit 1"
++            ))
++            .await?;
++        let blocks: Vec<DataBlock> = stream.try_collect().await?;
++        let location = blocks[0].get_by_offset(0).index(0).unwrap().to_owned();
++        Ok::<_, ErrorCode>(location.as_string().cloned())
++    };
++
++    // One zone map per recluster round.
++    let files = table_storage_files(&ctx, storage_root, database, table).await?;
++    assert_eq!(segment_zone_map_files(files).len(), 3);
++    let head_zone_map = current_zone_map()
++        .await?
++        .expect("head points at a zone map");
++
++    fixture
++        .execute_command(&format!("vacuum table {database}.{table}"))
++        .await?;
++    // The head's and the tagged snapshot's zone maps survive.
++    let files =
++        segment_zone_map_files(table_storage_files(&ctx, storage_root, database, table).await?);
++    assert_eq!(files.len(), 2);
++    assert!(
++        files
++            .iter()
++            .any(|path| path.to_string_lossy().ends_with(&head_zone_map))
++    );
++    assert_eq!(
++        current_zone_map().await?.as_deref(),
++        Some(head_zone_map.as_str())
++    );
++
++    // The surviving zone maps still prune correctly.
++    let stream = fixture
++        .execute_query(&format!(
++            "select c from {database}.{table} where c >= 12 order by c"
++        ))
++        .await?;
++    let blocks: Vec<DataBlock> = stream.try_collect().await?;
++    assert_eq!(blocks.iter().map(DataBlock::num_rows).sum::<usize>(), 7);
++    let stream = fixture
++        .execute_query(&format!(
++            "select c from {database}.{table} at (tag => \"eight_rows\") where c >= 12"
++        ))
++        .await?;
++    let blocks: Vec<DataBlock> = stream.try_collect().await?;
++    assert_eq!(blocks.iter().map(DataBlock::num_rows).sum::<usize>(), 3);
++
++    // Without the tag and after a truncate, no snapshot points at a zone map.
++    for statement in [
++        format!("alter table {database}.{table} drop tag eight_rows"),
++        format!("truncate table {database}.{table}"),
++        format!("vacuum table {database}.{table}"),
++    ] {
++        fixture.execute_command(&statement).await?;
++    }
++    assert_eq!(current_zone_map().await?, None);
++    let files = table_storage_files(&ctx, storage_root, database, table).awai
+```
+
+**File**: `src/query/service/src/interpreters/common/table_option_validation.rs` (modified, +4/-0)
+```diff
+@@ -39,6 +39,7 @@ use databend_common_storages_fuse::FUSE_OPT_KEY_DATA_RETENTION_PERIOD_IN_HOURS;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_VACUUM;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_PARQUET_DICTIONARY;
++use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_VIRTUAL_COLUMN;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_FILE_SIZE;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_RECLUSTER_DEPTH;
+@@ -106,6 +107,7 @@ pub static CREATE_FUSE_OPTIONS: LazyLock<HashSet<&'static str>> = LazyLock::new(
+     r.insert(FUSE_OPT_KEY_DATA_RETENTION_NUM_SNAPSHOTS_TO_KEEP);
+     r.insert(FUSE_OPT_KEY_ENABLE_AUTO_VACUUM);
+     r.insert(FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE);
++    r.insert(FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP);
+     r.insert(FUSE_OPT_KEY_ENABLE_VIRTUAL_COLUMN);
+     r.insert(FUSE_OPT_KEY_VIRTUAL_COLUMN_MAX_DIRECT_COLUMNS);
+     r.insert(FUSE_OPT_KEY_VIRTUAL_COLUMN_MAX_PATH_STATISTICS);
+@@ -160,6 +162,7 @@ pub static CREATE_MATERIALIZED_VIEW_OPTIONS: LazyLock<HashSet<&'static str>> =
+         r.insert(FUSE_OPT_KEY_DATA_RETENTION_NUM_SNAPSHOTS_TO_KEEP);
+         r.insert(FUSE_OPT_KEY_ENABLE_AUTO_VACUUM);
+         r.insert(FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE);
++        r.insert(FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP);
+         r.insert(FUSE_OPT_KEY_ENABLE_VIRTUAL_COLUMN);
+         r.insert(FUSE_OPT_KEY_AUTO_COMPACTION_IMPERFECT_BLOCKS_THRESHOLD);
+         r.insert(OPT_KEY_BLOOM_INDEX_COLUMNS);
+@@ -233,6 +236,7 @@ pub static UNSET_TABLE_OPTIONS_WHITE_LIST: LazyLock<HashSet<&'static str>> = Laz
+     r.insert(FUSE_OPT_KEY_ENABLE_VIRTUAL_COLUMN);
+     r.insert(FUSE_OPT_KEY_VIRTUAL_COLUMN_MAX_DIRECT_COLUMNS);
+     r.insert(FUSE_OPT_KEY_VIRTUAL_COLUMN_MAX_PATH_STATISTICS);
++    r.insert(FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP);
+     r.insert(OPT_KEY_ENABLE_COPY_DEDUP_FULL_PATH);
+     r.insert(FUSE_OPT_KEY_DATA_PAGE_ROWS);
+     r.insert(FUSE_OPT_KEY_DATA_PAGE_BYTES);
+```
+
+**File**: `src/query/service/src/interpreters/interpreter_table_create.rs` (modified, +2/-0)
+```diff
+@@ -56,6 +56,7 @@ use databend_common_storages_fuse::FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_AUTO_COMPACTION_IMPERFECT_BLOCKS_THRESHOLD;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_VACUUM;
++use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP;
+ use databend_common_storages_fuse::FuseSegmentFormat;
+ use databend_common_storages_fuse::FuseStorageFormat;
+ use databend_common_storages_fuse::FuseTable;
+@@ -1099,6 +1100,7 @@ impl CreateTableInterpreter {
+         is_valid_option_of_type::<u32>(&table_meta.options, FUSE_OPT_KEY_ENABLE_AUTO_VACUUM)?;
+         // check enable auto analyze.
+         is_valid_option_of_type::<u32>(&table_meta.options, FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE)?;
++        is_valid_option_of_type::<u32>(&table_meta.options, FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP)?;
+         is_valid_option_of_type::<u32>(&table_meta.options, FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER)?;
+         is_valid_option_of_type::<u64>(
+             &table_meta.options,
+```
+
+**File**: `src/query/service/src/interpreters/interpreter_table_modify_column.rs` (modified, +2/-0)
+```diff
+@@ -1251,6 +1251,8 @@ async fn rewrite_decimal_stats_and_commit(
+     )?;
+     new_snapshot.schema = new_schema.as_ref().clone();
+     new_snapshot.segments = new_segment_locations;
++    // Every segment was rewritten, so no row of the segment zone map is live.
++    new_snapshot.segment_zone_map = None;
+     for rewrite in column_rewrites {
+         new_snapshot
+             .summary
+```
+
+**File**: `src/query/service/src/interpreters/interpreter_table_recluster.rs` (modified, +56/-0)
+```diff
+@@ -45,6 +45,7 @@ use databend_common_storages_fuse::FuseTable;
+ use databend_common_storages_fuse::operations::ReclusterFinalCarry;
+ use databend_common_storages_fuse::operations::ReclusterMode;
+ use databend_common_storages_fuse::operations::is_auto_vacuum_enabled;
++use databend_common_storages_fuse::segment_zone_map::RefreshOutcome;
+ use databend_enterprise_vacuum_handler::get_vacuum_handler;
+ use databend_storages_common_table_meta::meta::TableSnapshot;
+ use log::error;
+@@ -78,6 +79,9 @@ use crate::sessions::TableContextTableManagement;
+ use crate::sessions::TableContextTelemetry;
+ 
+ const MAX_SEGMENT_CLAIM_RETRIES: usize = 3;
++/// Committed FINAL rounds between two segment zone map refreshes; the rounds
++/// after the last refresh are covered once the statement ends.
++const ZONE_MAP_REFRESH_ROUNDS: usize = 10;
+ 
+ #[derive(Debug, PartialEq, Eq)]
+ enum ReclusterRoundOutcome {
+@@ -145,6 +149,7 @@ impl Interpreter for ReclusterTableInterpreter {
+             let timeout = Duration::from_secs(recluster_timeout_secs);
+             let is_final = self.plan.is_final;
+             let mut committed_rounds = 0;
++            let mut zone_map_rounds = 0;
+             let (result, stop_reason) = loop {
+                 if let Err(err) = ctx.check_aborting() {
+                     error!(
+@@ -166,6 +171,12 @@ impl Interpreter for ReclusterTableInterpreter {
+                             break (Ok(()), reason);
+                         }
+                         committed_rounds += 1;
++                        // A FINAL recluster may run for a long time, so the segment
++                        // zone map is refreshed along the way, not only at the end.
++                        if committed_rounds % ZONE_MAP_REFRESH_ROUNDS == 0 {
++                            self.refresh_segment_zone_map().await;
++                            zone_map_rounds = committed_rounds;
++                        }
+                     }
+                     Err(e) => {
+                         if is_final
+@@ -236,6 +247,9 @@ impl Interpreter for ReclusterTableInterpreter {
+                 "Recluster finished"
+             );
+ 
++            if committed_rounds > zone_map_rounds {
++                self.refresh_segment_zone_map().await;
++            }
+             if committed_rounds > 0 {
+                 self.vacuum_table_history().await;
+             }
+@@ -247,6 +261,48 @@ impl Interpreter for ReclusterTableInterpreter {
+ }
+ 
+ impl ReclusterTableInterpreter {
++    /// Refresh the segment zone map on the snapshot the last round committed,
++    /// subject to its start decision. Recluster is the only writer that builds
++    /// it; every other commit carries the pointer along. Failures never fail
++    /// the recluster.
++    async fn refresh_segment_zone_map(&self) {
++        let result = async {
++            let settings = self.ctx.get_settings();
++            if !settings.get_enable_segment_zone_map()? {
++                return Ok(RefreshOutcome::Skipped);
++            }
++            // The round's on-finished hook evicted the table from the cache, so this
++            // is the snapshot the round committed.
++            self.ctx.clear_table_meta_timestamps_cache();
++            let table = self
++                .ctx
++                .get_table(&self.plan.catalog, &self.plan.database, &self.plan.table)
++                .await?;
++            let fuse_table = FuseTable::try_from_table(table.as_ref())?;
++            let threshold = settings.get_segment_zone_map_full_segment_threshold()?;
++            let ctx = self.ctx.clone();
++            fuse_table.refresh_segment_zone_map(ctx, threshold).await
++        }
++        .await;
++        match result {
++            Ok(RefreshOutcome::Skipped) => {}
++            Ok(outcome) => {
++                info!("recluster: segment zone map refresh finished: {outcome:?}");
++                // The refresh committed a snapshot; the next round must not plan on
++                // the cached table and pay a version-mismatch retry at commit.
++                let evicted = self.ctx.evict_table_from_cache(
++                    &self.plan.catalog,
++                    &self.plan.database,
++                    &self.plan.table,
++                );
++                if let Err(e) = evicted {
++                    warn!("recluster: failed to evict table from cache: {e}");
++                }
++            }
++            Err(e) => warn!("recluster: segment zone map refresh failed: {e}"),
++        }
++    }
++
+     async fn vacuum_table_history(&self) {
+         if LicenseManagerSwitch::instance()
+             .check_enterprise_enabled(self.ctx.get_license_key(), Vacuum)
+```
+
+**File**: `src/query/service/src/interpreters/interpreter_table_set_options.rs` (modified, +8/-1)
+```diff
+@@ -34,6 +34,7 @@ use databend_common_storages_fuse::FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_AUTO_COMPACTION_IMPERFECT_BLOCKS_THRESHOLD;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_ANALYZE;
+ use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_AUTO_VACUUM;
++use databend_common_storages_fuse::FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP;
+ use databend_common_storages_fuse::FuseSegmentFormat;
+ use databend_common_storages_fuse::FuseTable;
+ use databend_common_storages_fuse::io::SegmentsIO;
+@@ -197,6 +198,10 @@ impl Interpreter for SetOptionsInterpreter {
+                 &self.plan.set_options,
+                 FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER,
+             )?;
++            is_valid_option_of_type::<u32>(
++                &self.plan.set_options,
++                FUSE_OPT_KEY_ENABLE_SEGMENT_ZONE_MAP,
++            )?;
+             is_valid_option_of_type::<u64>(
+                 &self.plan.set_options,
+                 FUSE_OPT_KEY_AUTO_COMPACTION_IMPERFECT_BLOCKS_THRESHOLD,
+@@ -416,7 +421,7 @@ async fn set_segment_format(
+             }
+         }
+     }
+-    let new_snapshot = TableSnapshot::try_new(
++    let mut new_snapshot = TableSnapshot::try_new(
+         Some(fuse_table.get_table_info().ident.seq),
+         Some(table_snapshot.clone()),
+         table.schema().as_ref().clone(),
+@@ -426,6 +431,8 @@ async fn set_segment_format(
+         table_snapshot.table_statistics_location(),
+         table_meta_timestamps,
+     )?;
++    // Every segment was rewritten, so no row of the segment zone map is live.
++    new_snapshot.segment_zone_map = None;
+     let location = fuse_table
+         .meta_location_generator()
+         .gen_snapshot_location(&new_snapshot.snapshot_id, TableSnapshot::VERSION)?;
+```
+
+---
+
+### Incident Patch 2: `057efa66` (2026-11-08)
+**Commit Message**: fix(query): do not make HTTP sessions sticky for materialized CTE temp tables (#21007)
+
+* fix(query): do not make HTTP sessions sticky for materialized CTE temp tables
+
+`WITH x AS MATERIALIZED (...)` and recursive CTEs materialize into
+session temporary tables that only live for the duration of the query.
+`HttpQuery::get_response_session` counted them like user temp tables,
+so any page response produced while the CTE was still being built
+carried `need_sticky: true` / `internal.has_temp_table: true`. A client
+that stopped reading before the final page (database/sql QueryRow,
+early rows.Close) kept that state and pinned every later request to
+the node; after the node was replaced the connection failed forever
+with "Sticky session state lost".
+
+- Track query-scoped temp tables in `TempTblMgr` (marked by name before
+  the CTE table is created, cleared on drop) and report
+  `has_temp_table` from `has_session_scoped_tables()`, which ignores
+  them in both visible and staged (atomic CTAS) sets.
+- Register materialized / recursive CTE tables before creating them so
+  there is no window where they look session-scoped; the cleanup loop
+  skips registrations whose CREATE failed.
+- When a req
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -6089,6 +6089,7 @@ dependencies = [
+  "opendal 0.55.0",
+  "parking_lot 0.12.3",
+  "serde",
++ "tokio",
+  "uuid",
+ ]
+ 
+```
+
+**File**: `src/common/exception/src/exception_code.rs` (modified, +6/-1)
+```diff
+@@ -732,10 +732,15 @@ build_exceptions! {
+ build_exceptions! {
+     /// Session Idle too long, only used for worksheet for now
+     SessionTimeout(5110),
+-    /// Server side state lost, mainly because server restarted
++    /// Server side state lost, because the server restarted or the request was
++    /// routed to a node other than the one holding the state
+     SessionLost(5111),
+     /// Unexpected session state, maybe bug of client or server
+     InvalidSessionState(5112),
++    /// The node the session is pinned to (X-DATABEND-STICKY-NODE) is no longer
++    /// in the cluster, so its session state (temp tables, transaction) is gone
++    /// for sure. Clients should drop the sticky state and reconnect.
++    SessionNodeLost(5113),
+ }
+ 
+ #[cfg(test)]
+```
+
+**File**: `src/query/service/src/interpreters/common/table_option_validation.rs` (modified, +3/-0)
+```diff
+@@ -72,6 +72,7 @@ use databend_storages_common_table_meta::table::OPT_KEY_ENABLE_COPY_DEDUP_FULL_P
+ use databend_storages_common_table_meta::table::OPT_KEY_ENABLE_SCHEMA_EVOLUTION;
+ use databend_storages_common_table_meta::table::OPT_KEY_ENGINE;
+ use databend_storages_common_table_meta::table::OPT_KEY_LOCATION;
++use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_CTE;
+ use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_DATABASE_NAME;
+ use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_ID;
+ use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_NAME;
+@@ -133,6 +134,7 @@ pub static CREATE_FUSE_OPTIONS: LazyLock<HashSet<&'static str>> = LazyLock::new(
+ 
+     r.insert("transient");
+     r.insert(OPT_KEY_TEMP_PREFIX);
++    r.insert(OPT_KEY_MATERIALIZED_CTE);
+     r.insert(OPT_KEY_SEGMENT_FORMAT);
+     r.insert(OPT_KEY_ENABLE_COPY_DEDUP_FULL_PATH);
+     r.insert(OPT_KEY_ENABLE_SCHEMA_EVOLUTION);
+@@ -214,6 +216,7 @@ pub static CREATE_MEMORY_OPTIONS: LazyLock<HashSet<&'static str>> = LazyLock::ne
+     r.insert(OPT_KEY_DATABASE_ID);
+     r.insert(OPT_KEY_TEMP_PREFIX);
+     r.insert(OPT_KEY_RECURSIVE_CTE);
++    r.insert(OPT_KEY_MATERIALIZED_CTE);
+     r
+ });
+ 
+```
+
+**File**: `src/query/service/src/servers/http/middleware/session.rs` (modified, +78/-8)
+```diff
+@@ -35,6 +35,7 @@ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+ use databend_common_meta_app::principal::user_token::TokenType;
+ use databend_common_meta_app::tenant::Tenant;
++use databend_common_metrics::http::metrics_incr_http_response_errors_count;
+ use databend_enterprise_resources_management::ResourcesManagement;
+ use databend_meta_client::types::NodeInfo;
+ use fastrace::func_name;
+@@ -63,6 +64,7 @@ use poem::Response;
+ use poem::error::ResponseError;
+ use poem::error::Result as PoemResult;
+ use poem::web::Json;
++use serde::Deserialize;
+ use uuid::Uuid;
+ 
+ use crate::auth::AuthMgr;
+@@ -77,6 +79,7 @@ use crate::servers::http::middleware::session_header::ClientSession;
+ use crate::servers::http::middleware::session_header::ClientSessionType;
+ use crate::servers::http::v1::HttpQueryContext;
+ use crate::servers::http::v1::HttpSessionConf;
++use crate::servers::http::v1::QueryResponse;
+ use crate::servers::http::v1::SessionClaim;
+ use crate::servers::login_history::LoginEventType;
+ use crate::servers::login_history::LoginHandler;
+@@ -545,6 +548,77 @@ pub async fn forward_request_with_body<T: Into<reqwest::Body>>(
+     Ok(poem_resp)
+ }
+ 
++/// The node this request is pinned to is no longer in the cluster, so the
++/// session state it held (temporary tables, transaction) is gone for sure.
++/// Reject the request. For `POST /v1/query`, which carries the client's
++/// session state, hand back a corrected copy so the client stops pinning.
++/// Page and final requests carry no session state; their next
++/// `POST /v1/query` will.
++async fn sticky_node_lost_response(
++    mut req: Request,
++    sticky_node_id: &str,
++    endpoint_kind: EndpointKind,
++) -> Response {
++    let session = match endpoint_kind {
++        EndpointKind::StartQuery => request_body_session_conf(&mut req).await,
++        _ => None,
++    };
++    let msg = format!(
++        "Sticky session state lost: node '{sticky_node_id}' not found in cluster, request={}",
++        get_request_info(req)
++    );
++    warn!("{}", msg);
++    let err = ErrorCode::SessionNodeLost(msg);
++    metrics_incr_http_response_errors_count(err.name(), err.code());
++    // Built here instead of returned as Err: the outer `json_response`
++    // wrapper flattens poem errors to the HTTP status, hiding the error code.
++    match endpoint_kind {
++        // Same body shape as the endpoint would have returned.
++        EndpointKind::StartQuery | EndpointKind::PollQuery => {
++            let session = session.map(|s| s.after_failed_start(true));
++            (
++                StatusCode::BAD_REQUEST,
++                Json(QueryResponse::failed_to_start(session, err)),
++            )
++                .into_response()
++        }
++        _ => HttpErrorCode::bad_request(err).as_response(),
++    }
 +}
 +
- impl UnionAll {
-     fn project_input(
-         &self,
++/// Upper bound on a `POST /v1/query` body read before authentication, only to
++/// recover the session state for a `SessionNodeLost` response. Larger bodies
++/// are not read; the response then carries no session.
++const STICKY_LOST_MAX_BODY_BYTES: usize = 1024 * 1024;
++
++/// Best effort: the session state in the body of a `POST /v1/query`.
++async fn request_body_session_conf(req: &mut Request) -> Option<HttpSessionConf> {
++    if req.method() != Method::POST {
++        return None;
++    }
++    // This runs before authentication: never buffer an unbounded body here.
++    if req
++        .headers()
++        .get(http::header::CONTENT_LENGTH)
++        .and_then(|v| v.to_str().ok()?.parse::<usize>().ok())
++        .is_some_and(|len| len > STICKY_LOST_MAX_BODY_BYTES)
++    {
++        return None;
++    }
++    #[derive(Deserialize)]
++    struct SessionOnly {
++        session: Option<HttpSessionConf>,
++    }
++    let body = req
++        .take_body()
++        .into_bytes_limit(STICKY_LOST_MAX_BODY_BYTES)
++        .await
++        .ok()?;
++    serde_json::from_slice::<SessionOnly>(&body)
++        .ok()
++        .and_then(|r| r.session)
++}
++
+ fn get_request_info(req: Request) -> String {
+     format!(
+         "method={} uri={} headers={:?}",
+@@ -587,14 +661,10 @@ impl<E: Endpoint> Endpoint for HTTPSessionEndpoint<E> {
+                         );
+                         forward_request(req, node).await
+                     } else {
+-                        let msg = format!(
+-                            "Sticky session state lost: node '{sticky_node_id}' not found in cluster, request={}",
+-                            get_request_info(req)
+-                        );
+-                        warn!("{}", msg);
+-                        Err(Error::from(HttpErrorCode::bad_request(
+-                            ErrorCode::BadArguments(msg),
+-                        )))
++                        Ok(
++                            sticky_node_lost_response(req, &sticky_node_id, self.endpoint_kind)
++                                .await,
++                        )
+                     };
+                 }
+             } else if let Some(warehouse) = headers.get(HEADER
 ```
 
-**File**: `tests/suites/0_stateless/20+_others/20_0025_stackoverflow.result` (modified, +1/-1)
+**File**: `src/query/service/src/servers/http/v1/query/http_query.rs` (modified, +75/-39)
 ```diff
-@@ -1 +1 @@
--2
-+100
+@@ -105,43 +105,18 @@ pub struct HttpQueryRequest {
+ impl HttpQueryRequest {
+     pub(crate) fn fail_to_start_sql(&self, err: ErrorCode) -> impl IntoResponse {
+         metrics_incr_http_response_errors_count(err.name(), err.code());
+-        let session = self.session.as_ref().map(|s| {
+-            let txn_state = if matches!(s.txn_state, Some(TxnState::Active)) {
+-                Some(TxnState::Fail)
+-            } else {
+-                s.txn_state.clone()
+-            };
+-            let need_sticky = match &s.internal {
+-                Some(internal) => internal.has_temp_table,
+-                None => false,
+-            };
+-            HttpSessionConf {
+-                txn_state,
+-                need_sticky,
+-                need_keep_alive: need_sticky,
+-                ..s.clone()
+-            }
+-        });
+-        Json(QueryResponse {
+-            id: "".to_string(),
+-            stats: QueryStats::default(),
+-            state: ExecuteStateKind::Failed,
+-            affect: None,
+-            data: Arc::new(BlocksSerializer::empty()),
+-            schema: vec![],
+-            session_id: None,
+-            warnings: vec![],
+-            node_id: "".to_string(),
+-            session,
+-            next_uri: None,
+-            stats_uri: None,
+-            final_uri: None,
+-            kill_uri: None,
+-            error: Some(QueryError::from_error_code(err)),
+-            has_result_set: None,
+-            result_timeout_secs: None,
+-            settings: None,
+-        })
++        // `SessionTimeout` here means the server checked for the temporary
++        // tables this session claims to own and found none: they expired on
++        // this node. Tell the client, otherwise it keeps replaying the stale
++        // state and every statement on the connection fails. `SessionLost` is
++        // deliberately not handled: it also covers misroutes, where the tables
++        // still exist on the original node.
++        let temp_tables_gone = err.code() == ErrorCode::SESSION_TIMEOUT;
++        let session = self
++            .session
++            .as_ref()
++            .map(|s| s.after_failed_start(temp_tables_gone));
++        Json(QueryResponse::failed_to_start(session, err))
+     }
+ 
+     pub fn set_settings(&mut self, settings: BTreeMap<String, String>) {
+@@ -364,6 +339,67 @@ pub struct HttpSessionConf {
+     pub internal: Option<HttpSessionStateInternal>,
+ }
+ 
++impl HttpSessionConf {
++    /// The state a client should carry on with after a statement was rejected
++    /// before it started. Client-side state (database, role, settings,
++    /// variables) is kept; an active transaction is marked failed. With
++    /// `temp_tables_gone` the server has established that the temporary tables
++    /// this session claims no longer exist, so the session also stops being
++    /// sticky.
++    pub(crate) fn after_failed_start(&self, temp_tables_gone: bool) -> Self {
++        let txn_state = if matches!(self.txn_state, Some(TxnState::Active)) {
++            Some(TxnState::Fail)
++        } else {
++            self.txn_state.clone()
++        };
++        let internal = self.internal.clone().map(|mut internal| {
++            if temp_tables_gone {
++                internal.has_temp_table = false;
++            }
++            internal
++        });
++        let need_sticky = match &internal {
++            Some(internal) => internal.has_temp_table,
++            None => false,
++        };
++        HttpSessionConf {
++            txn_state,
++            need_sticky,
++            need_keep_alive: need_sticky,
++            internal,
++            ..self.clone()
++        }
++    }
++}
++
++impl QueryResponse {
++    /// Response for a statement rejected before a query existed, so there is
++    /// no id, node or uri. `session` is the state the client should carry on
++    /// with, see [`HttpSessionConf::after_failed_start`].
++    pub(crate) fn failed_to_start(session: Option<HttpSessionConf>, err: ErrorCode) -> Self {
++        QueryResponse {
++            id: "".to_string(),
++            stats: QueryStats::default(),
++            state: ExecuteStateKind::Failed,
++            affect: None,
++            data: Arc::new(BlocksSerializer::empty()),
++            schema: vec![],
++            session_id: None,
++            warnings: vec![],
++            node_id: "".to_string(),
++            session,
++            next_uri: None,
++            stats_uri: None,
++            final_uri: None,
++            kill_uri: None,
++            error: Some(QueryError::from_error_code(err)),
++            has_result_set: None,
++            result_timeout_secs: None,
++            settings: None,
++        }
++    }
++}
++
+ impl Debug for HttpSessionStateInternal {
+     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+         f.debug_struct("HttpSessionStateInternal")
+@@ -491,7 +527,7 @@ impl HttpSessionConf {
+                     session.restore_query_ids_results(id.to_owned(), key);
+                 }
+             }
+-            let has_te
 ```
 
-**File**: `tests/suites/0_stateless/20+_others/20_0025_stackoverflow_cluster.result` (removed, +0/-1)
+**File**: `src/query/sql/src/planner/binder/bind_query/bind.rs` (modified, +8/-1)
 ```diff
-@@ -1 +0,0 @@
--100
+@@ -12,6 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use std::collections::BTreeMap;
+ use std::collections::HashMap;
+ use std::sync::Arc;
+ 
+@@ -39,6 +40,7 @@ use databend_common_catalog::catalog::CATALOG_DEFAULT;
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+ use databend_common_expression::types::convert_to_type_name;
++use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_CTE;
+ 
+ use crate::CteResolution;
+ use crate::NameResolutionContext;
+@@ -346,7 +348,12 @@ impl Binder {
+             uri_location: None,
+             cluster_by: None,
+             ttl: None,
+-            table_options: Default::default(),
++            // Marks the table as query scratch space, so it does not count as
++            // session state (see `TempTblMgr::has_session_scoped_tables`).
++            table_options: BTreeMap::from([(
++                OPT_KEY_MATERIALIZED_CTE.to_string(),
++                "1".to_string(),
++            )]),
+             partition_by: None,
+             table_properties: Default::default(),
+             as_query: Some(as_query),
+```
+
+**File**: `src/query/storages/common/session/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -21,5 +21,8 @@ parking_lot = { workspace = true }
+ serde = { workspace = true }
+ uuid = { workspace = true }
+ 
++[dev-dependencies]
++tokio = { workspace = true }
++
+ [lints]
+ workspace = true
+```
+
+**File**: `src/query/storages/common/session/src/temp_table.rs` (modified, +109/-0)
+```diff
+@@ -50,6 +50,7 @@ use databend_storages_common_blocks::memory::IN_MEMORY_DATA;
+ use databend_storages_common_blocks::memory::InMemoryDataKey;
+ use databend_storages_common_table_meta::meta::parse_storage_prefix;
+ use databend_storages_common_table_meta::table::OPT_KEY_DATABASE_ID;
++use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_CTE;
+ use databend_storages_common_table_meta::table_id_ranges::TEMP_TBL_ID_BEGIN;
+ use databend_storages_common_table_meta::table_id_ranges::is_temp_table_id;
+ use log::info;
+@@ -106,6 +107,18 @@ impl TempTblMgr {
+         self.id_to_table.is_empty() && self.staged_tables.is_empty()
+     }
+ 
++    /// Whether the session holds temporary state that outlives the current
++    /// query and therefore requires follow-up requests to reach this node:
++    /// user-created temporary tables or unpublished atomic CTAS tables.
++    /// Materialized CTE scratch tables (`OPT_KEY_MATERIALIZED_CTE`) are dropped
++    /// when their query finishes and are excluded.
++    pub fn has_session_scoped_tables(&self) -> bool {
++        self.id_to_table
++            .values()
++            .chain(self.staged_tables.values())
++            .any(|table| !table.meta.options.contains_key(OPT_KEY_MATERIALIZED_CTE))
++    }
++
+     pub fn create_table(
+         &mut self,
+         req: CreateTableReq,
+@@ -630,6 +643,16 @@ mod tests {
+         engine: &str,
+         create_option: CreateOption,
+         as_dropped: bool,
++    ) -> CreateTableReq {
++        create_table_req_with_options(table_name, engine, create_option, as_dropped, &[])
++    }
++
++    fn create_table_req_with_options(
++        table_name: &str,
++        engine: &str,
++        create_option: CreateOption,
++        as_dropped: bool,
++        options: &[(&str, &str)],
+     ) -> CreateTableReq {
+         let mut table_meta = TableMeta {
+             engine: engine.to_string(),
+@@ -638,6 +661,9 @@ mod tests {
+         table_meta
+             .options
+             .insert(OPT_KEY_DATABASE_ID.to_string(), "1".to_string());
++        for (k, v) in options {
++            table_meta.options.insert(k.to_string(), v.to_string());
++        }
+ 
+         CreateTableReq {
+             create_option,
+@@ -850,4 +876,87 @@ mod tests {
+             Some(&created.table_id)
+         );
+     }
++
++    fn drop_memory_table_req(table_name: &str, table_id: u64) -> DropTableByIdReq {
++        DropTableByIdReq {
++            if_exists: true,
++            tenant: Tenant::new_literal("tenant"),
++            tb_id: table_id,
++            table_name: table_name.to_string(),
++            db_id: 1,
++            db_name: "db".to_string(),
++            engine: "MEMORY".to_string(),
++            temp_prefix: "session".to_string(),
++        }
++    }
++
++    fn create_memory_table(
++        mgr: &TempTblMgrRef,
++        table_name: &str,
++        as_dropped: bool,
++        options: &[(&str, &str)],
++    ) -> u64 {
++        let reply = mgr
++            .lock()
++            .create_table(
++                create_table_req_with_options(
++                    table_name,
++                    "MEMORY",
++                    CreateOption::Create,
++                    as_dropped,
++                    options,
++                ),
++                "session".to_string(),
++            )
++            .unwrap();
++        IN_MEMORY_DATA.write().insert(
++            InMemoryDataKey {
++                temp_prefix: Some("session".to_string()),
++                table_id: reply.table_id,
++            },
++            Default::default(),
++        );
++        reply.table_id
++    }
++
++    #[tokio::test]
++    async fn test_materialized_cte_tables_do_not_count_as_session_scoped() {
++        let cte_opt = [(OPT_KEY_MATERIALIZED_CTE, "1")];
++        let mgr = TempTblMgr::init();
++        assert!(!mgr.lock().has_session_scoped_tables());
++
++        // A materialized CTE scratch table alone is not session state.
++        let cte_id = create_memory_table(&mgr, "cte$query", false, &cte_opt);
++        assert!(!mgr.lock().is_empty());
++        assert!(!mgr.lock().has_session_scoped_tables());
++
++        // A user temporary table alongside it makes the session sticky.
++        let user_id = create_memory_table(&mgr, "t", false, &[]);
++        assert!(mgr.lock().has_session_scoped_tables());
++
++        drop_table_by_id(mgr.clone(), drop_memory_table_req("cte$query", cte_id))
++            .await
++            .unwrap()
++            .unwrap();
++        assert!(mgr.lock().has_session_scoped_tables());
++
++        drop_table_by_id(mgr.clone(), drop_memory_table_req("t", user_id))
++            .await
++            .unwrap()
++            .unwrap();
++        assert!(!mgr.lock().has_session_scoped_tables());
++        assert!(mgr.lock().is_empty());
++
++        // Atomic CTAS stages the table by id while the pipeline runs; a
++        // staged CTE table must not count either, a staged user table must.
++        let staged_cte = create_memory_table(&mgr, "cte_ctas$query", true, &cte_opt);
++        assert!(!mgr.lock().is_empt
+```
+
+---
+
+### Incident Patch 3: `91ad15b9` (2026-11-08)
+**Commit Message**: fix(fuse): infer string statistics truncation by character count (#21015)
+
+* fix(fuse): infer string statistics truncation by character count
+
+* ci(fuse): cover mixed adaptive string statistics lengths
+
+* docs(fuse): clarify string statistics truncation assumption
+
+* fix(fuse): keep attached string statistics conservative
+
+* ci(fuse): cover attached string statistics with EE logic test
+
+**File**: `src/query/storages/fuse/src/fuse_table.rs` (modified, +17/-2)
+```diff
+@@ -1483,19 +1483,34 @@ impl Table for FuseTable {
+         }
+ 
+         let col_stats_truncate_lens = &self.table_info.meta.field_stats_truncate_len;
++        // ATTACH does not preserve the source column's STATS_TRUNCATE_LEN option.
++        // Its string bounds may have been truncated at any number of characters.
++        let unknown_string_truncation = self.table_type == FuseTableType::Attached;
+         let r = reduced
+             .into_iter()
+             .map(|(k, v)| {
+                 let truncate_len = col_stats_truncate_lens
+                     .get(&k)
+                     .map(|&n| n as usize)
+                     .unwrap_or(STATS_STRING_PREFIX_LEN);
++                // STATS_TRUNCATE_LEN N truncates string min/max statistics when the
++                // original value contains more than N Unicode characters, not bytes.
++                // Assumes this column setting is unchanged since writing these stats.
++                // When the column has no STATS_TRUNCATE_LEN option, each block chooses
++                // its own N >= STATS_STRING_PREFIX_LEN (the fallback used above).
++                // A stored min/max shorter than truncate_len cannot have been truncated.
++                // Otherwise, metadata cannot distinguish an unchanged original value
++                // from a result of truncation, so mark it as possibly truncated.
+                 let min_may_be_truncated = match &v.min {
+-                    Scalar::String(s) => s.len() >= truncate_len,
++                    Scalar::String(s) => {
++                        unknown_string_truncation || s.chars().count() >= truncate_len
++                    }
+                     _ => false,
+                 };
+                 let max_may_be_truncated = match &v.max {
+-                    Scalar::String(s) => s.len() >= truncate_len,
++                    Scalar::String(s) => {
++                        unknown_string_truncation || s.chars().count() >= truncate_len
++                    }
+                     _ => false,
+                 };
+                 (k, ColumnRange {
+```
+
+**File**: `tests/sqllogictests/suites/base/05_ddl/05_0065_ddl_stats_truncate_len.test` (modified, +74/-0)
+```diff
+@@ -239,3 +239,77 @@ explicit abcdefghijklmnop abcdefghijklmno􏿿
+ 
+ statement ok
+ DROP TABLE t_adaptive_stats_truncate;
++
++## UTF-8 byte length must not make exact short bounds look truncated.
++## Both columns have byte lengths >= their limits, but fewer Unicode characters.
++statement ok
++CREATE TABLE t_unicode_stats (
++    a STRING,
++    b STRING STATS_TRUNCATE_LEN 4
++) row_per_block=100;
++
++statement ok
++INSERT INTO t_unicode_stats VALUES
++    ('你好世界你好世', '你好世'),
++    ('👍👍👍👍👍', '👍👍');
++
++## All four aggregates must be answered from exact statistics, without a TableScan.
++query T
++EXPLAIN SELECT MIN(a), MAX(a), MIN(b), MAX(b) FROM t_unicode_stats;
++----
++EvalScalar
++├── output columns: [MIN(a) (#2), MAX(a) (#3), MIN(b) (#4), MAX(b) (#5)]
++├── expressions: ['你好世界你好世', '👍👍👍👍👍', '你好世', '👍👍']
++├── estimated rows: 1.00
++└── DummyTableScan
++
++statement ok
++TRUNCATE TABLE t_unicode_stats;
++
++## Genuinely truncated multibyte bounds must still scan and return full strings.
++## The different leading characters prevent adaptive extension of the default limit.
++statement ok
++INSERT INTO t_unicode_stats VALUES
++    (repeat('好', 17), repeat('好', 5)),
++    (repeat('👍', 17), repeat('👍', 5));
++
++query IIII
++SELECT char_length(MIN(a)), char_length(MAX(a)), char_length(MIN(b)), char_length(MAX(b))
++FROM t_unicode_stats;
++----
++17 17 5 5
++
++statement ok
++DROP TABLE t_unicode_stats;
++
++## Different blocks can use different adaptive prefix lengths without a DDL change.
++statement ok
++CREATE TABLE t_mixed_stats_prefix(a STRING) row_per_block=100;
++
++## No common prefix: both bounds are truncated to 16 characters.
++statement ok
++INSERT INTO t_mixed_stats_prefix VALUES (repeat('a', 17)), (repeat('b', 17));
++
++## A common 20-character prefix extends this block's bounds to 21 characters.
++statement ok
++INSERT INTO t_mixed_stats_prefix VALUES
++    (repeat('m', 20) || 'a-tail'), (repeat('m', 20) || 'z-tail');
++
++query II
++SELECT char_length(statistics:min::string), char_length(statistics:max::string)
++FROM fuse_block_statistics('default', 't_mixed_stats_prefix') ORDER BY 1;
++----
++16 16
++21 21
++
++## The global min comes from the first block and max from the second.
++## Neither truncated bound may be used as an exact aggregate result.
++query II
++SELECT (MIN(a) = repeat('a', 17))::INT,
++       (MAX(a) = (repeat('m', 20) || 'z-tail'))::INT
++FROM t_mixed_stats_prefix;
++----
++1 1
++
++statement ok
++DROP TABLE t_mixed_stats_prefix;
+```
+
+**File**: `tests/sqllogictests/suites/ee/05_ee_ddl/05_0024_attach_string_statistics.test` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++## ATTACH must not treat truncated string bounds as original values when the
++## source column's STATS_TRUNCATE_LEN option is absent from attached metadata.
++statement ok
++DROP TABLE IF EXISTS attach_stats_target;
++
++statement ok
++DROP TABLE IF EXISTS attach_stats_source;
++
++statement ok
++CREATE TABLE attach_stats_source(id INT, s STRING STATS_TRUNCATE_LEN 4)
++'fs:///tmp/attach_string_statistics/' row_per_block=100;
++
++statement ok
++INSERT INTO attach_stats_source VALUES (1, repeat('👍', 17));
++
++## The stored min/max contain four characters, not the original 17.
++query II
++SELECT char_length(statistics:min::string), char_length(statistics:max::string)
++FROM fuse_block_statistics('default', 'attach_stats_source')
++WHERE column_name = 's';
++----
++4 4
++
++## Derive the table's generated storage prefix instead of assuming table IDs.
++statement ok
++SET VARIABLE attach_stats_sql = (
++    SELECT 'ATTACH TABLE attach_stats_target ''fs:///tmp/attach_string_statistics/'
++           || split_part(snapshot_location, '/_ss/', 1) || ''''
++    FROM fuse_snapshot('default', 'attach_stats_source')
++);
++
++statement ok
++EXECUTE IMMEDIATE $attach_stats_sql;
++
++## Aggregates on the attached table must return the complete string, not a
++## prefix or the synthetic upper bound used for pruning.
++query BB
++SELECT MIN(s) = repeat('👍', 17), MAX(s) = repeat('👍', 17)
++FROM attach_stats_target;
++----
++1 1
++
++## Numeric statistics must remain eligible for aggregate rewriting.
++query T
++EXPLAIN SELECT MIN(id), MAX(id) FROM attach_stats_target;
++----
++EvalScalar
++├── output columns: [MIN(id) (#2), MAX(id) (#3)]
++├── expressions: [1, 1]
++├── estimated rows: 1.00
++└── DummyTableScan
++
++statement ok
++DROP TABLE attach_stats_target;
++
++statement ok
++DROP TABLE attach_stats_source;
++
++statement ok
++UNSET VARIABLE attach_stats_sql;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21021** (2026-11-08): feat(query): segment zone map for fuse tables, built by recluster (@zhang2014)
+- **PR #21015** (2026-11-08): fix(fuse): infer string statistics truncation by character count (@dantengsky)
 - **PR #21013** (2026-11-06): feat(query): expose node-local cache statistics on admin API (@bohutang)
 - **PR #21011** (2026-11-07): fix(query): fix data loss in UNION ALL (@SkyFan2002)
 - **PR #21009** (2026-11-06): chore(ci): cancel closed PR runs and limit PR auto retries (@TCeason)
-- **PR #21006** (2026-11-05): ci(cloud): run docker job on 16c on-demand runner (@zhang2014)
-- **PR #21000** (closed): fix(storage): re-sort recluster MergeBlocks tasks by default (@zhang2014)
-- **PR #20980** (2026-11-06): feat(query): sort hash write lanes by the linear cluster key (@youngsofun)
+- **PR #21007** (2026-11-08): fix(query): do not make HTTP sessions sticky for materialized CTE temp tables (@youngsofun)
 
 ---
 
@@ -1320,43 +2470,45 @@ Fixes #21001
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): fix data loss in UNION ALL (#21011)
+## X. query): segment zone map for fuse tables, built by recluster (#21021)
 
 **RULE**:
-When implementing operations in `src/query/service/src/physical_plans/physical_union_all.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/catalog/src/plan/pruning_statistics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99c49dac`: query): fix data loss in UNION ALL (#21011). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `19308cd3`: query): segment zone map for fuse tables, built by recluster (#21021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/physical_plans/physical_union_all.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/catalog/src/plan/pruning_statistics.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::sessions::QueryContext;
-        build_branch_with_sub_ctx(&self.left, builder)?;
-        build_branch_with_sub_ctx(&self.right, builder)?;
-/// Builds a UNION ALL branch with its own `QueryContext`, as the hash join does
-/// for its build side. A scan stores its partitions in the context's partition
-/// queue and some sources only take them when the pipeline runs, so a branch
-/// built later on the same context would replace the partitions of an earlier one.
-fn build_branch_with_sub_ctx(branch: &PhysicalPlan, builder: &mut PipelineBuilder) -> Result<()> {
-    let mut branch_ctx = QueryContext::create_from(&builder.ctx);
-    std::mem::swap(&mut builder.ctx, &mut branch_ctx);
-    let result = branch.build_pipeline(builder);
-    std::mem::swap(&mut builder.ctx, &mut branch_ctx);
-    result
-}
+    /// Segment zone map pruning stats: segments excluded by the snapshot-level
+    /// segment zone map before any segment info was read.
+    pub segments_zone_map_pruning_before: usize,
+    pub segments_zone_map_pruning_after: usize,
+    /// Segment zone map pruning cost in microseconds.
+    pub segments_zone_map_pruning_cost: u64,
 
+        // Segment zone map pruning runs once per scan before the segments are
+        // distributed, and every node reports the same numbers: keep one copy.
+        self.segments_zone_map_pruning_before = self
+            .segments_zone_map_pruning_before
+            .max(other.segments_zone_map_pruning_before);
+        self.segments_zone_map_pruning_after = self
+            .segments_zone_map_pruning_after
+            .max(other.segments_zone_map_pruning_after);
+        self.segments_zone_map_pruning_cost = self
+            .segments_zone_map_pruning_cost
+            .max(other.segments_zone_map_pruning_cost);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        self.left.build_pipeline(builder)?;
-        self.right.build_pipeline(builder)?;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99c49dac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `19308cd3` are properly handled with clean fallback behavior.

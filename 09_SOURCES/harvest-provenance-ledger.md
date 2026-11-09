@@ -8498,3 +8498,6 @@ Every entry in this ledger must capture:
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `c262c237` | Multi-dimensional audit evidence | 2026-11-09T03:05:59.327Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4b105861` | Multi-dimensional audit evidence | 2026-11-09T03:21:49.862Z |
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-09T03:21:52.649Z |
+| `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-11-09T03:35:18.010Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `479c0a15` | Multi-dimensional audit evidence | 2026-11-09T03:35:19.191Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `057efa66` | Multi-dimensional audit evidence | 2026-11-09T03:35:32.069Z |

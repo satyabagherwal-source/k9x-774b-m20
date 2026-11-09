@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T03:21:52.561Z",
+  "last_updated": "2026-11-09T03:35:31.965Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9854,8 +9854,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "d8be20b2",
-      "content_hash": "de94b8a14e44d52a1ac2a64ac0296444088a0845ea5f0867726e89f294aeb92f",
+      "source_version": "057efa66",
+      "content_hash": "bd735ff0b84eed8c4acc68eacc6fdd3ece40692734a4d834cb639da10086a369",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -9867,6 +9867,11 @@
         {
           "number": null,
           "title": "query): fix data loss in UNION ALL (#21011)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "query): segment zone map for fuse tables, built by recluster (#21021)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9935,7 +9940,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:40:54.939Z",
+      "verified_at": "2026-11-09T03:35:31.941Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14379,8 +14384,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "0544c112",
-      "content_hash": "ae8391f5f5a7cb980c98f9e93b8881a2bcd7430de882eb264c9d9beacb246566",
+      "source_version": "479c0a15",
+      "content_hash": "4012181ab373527484ac65f57b27e81e00a3527d9bc035d945e85df6faa3b719",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -14392,6 +14397,11 @@
         {
           "number": null,
           "title": "test(cloud): run the Linux credential store of cloud login in CI (#4316)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "extract): bound nested type-argument candidates before parsing (#4365)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14470,7 +14480,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:15:34.237Z",
+      "verified_at": "2026-11-09T03:35:19.072Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27004,7 +27014,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
       "source_version": "hf-intfloat-multilingual-e5-small",
-      "content_hash": "8cf3e1810cea445c0319918ce941390501a6bf5be4bcf2b0968f7c9fe0f30060",
+      "content_hash": "d7aa62006b1a76aa9a2b0ea4617319a1ba5407fa8d663cb1eb5c91bb7d87827f",
       "dossier_path": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "promoted_rules": [
@@ -27070,7 +27080,7 @@
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0"
       ],
-      "verified_at": "2026-11-05T09:36:22.301Z",
+      "verified_at": "2026-11-09T03:35:17.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

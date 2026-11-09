@@ -1205,8 +1205,8 @@
     "sourceUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceVersion": "hf-intfloat-multilingual-e5-small",
     "license": "Open-Source",
-    "contentHash": "8cf3e1810cea445c0319918ce941390501a6bf5be4bcf2b0968f7c9fe0f30060",
-    "lastHarvestedAt": "2026-11-05T09:36:22.444Z",
+    "contentHash": "d7aa62006b1a76aa9a2b0ea4617319a1ba5407fa8d663cb1eb5c91bb7d87827f",
+    "lastHarvestedAt": "2026-11-09T03:35:18.010Z",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small"
   },
   "hf-argmaxinc-whisperkit-coreml": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "0544c112",
+    "sourceVersion": "479c0a15",
     "license": "MIT",
-    "contentHash": "ae8391f5f5a7cb980c98f9e93b8881a2bcd7430de882eb264c9d9beacb246566",
-    "lastHarvestedAt": "2026-11-08T02:15:34.332Z",
+    "contentHash": "4012181ab373527484ac65f57b27e81e00a3527d9bc035d945e85df6faa3b719",
+    "lastHarvestedAt": "2026-11-09T03:35:19.191Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "d8be20b2",
+    "sourceVersion": "057efa66",
     "license": "Apache-2.0",
-    "contentHash": "de94b8a14e44d52a1ac2a64ac0296444088a0845ea5f0867726e89f294aeb92f",
-    "lastHarvestedAt": "2026-11-08T05:40:55.074Z",
+    "contentHash": "bd735ff0b84eed8c4acc68eacc6fdd3ece40692734a4d834cb639da10086a369",
+    "lastHarvestedAt": "2026-11-09T03:35:32.069Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
