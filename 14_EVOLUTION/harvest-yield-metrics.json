@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T00:31:10.852Z",
-  "total_cycles_completed": 8410,
-  "total_learnings_persisted": 8410,
+  "last_updated": "2026-11-09T00:39:07.618Z",
+  "total_cycles_completed": 8411,
+  "total_learnings_persisted": 8411,
   "total_rules_promoted": 8209,
   "history": [
-    {
-      "timestamp": "2026-11-08T06:59:42.056Z",
-      "repository": "LiquidAI/LFM3-1.7B",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T06:59:42.181Z",
       "repository": "pingcap/autoflow",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-09T00:31:10.852Z",
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
       "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T00:39:07.618Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

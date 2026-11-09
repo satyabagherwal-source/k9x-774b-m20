@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-A124",
-    "timestamp": "2026-11-06T23:11:55.612Z",
-    "repository": "salvo-rs/salvo",
-    "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "16dd977ef6daac435416d3844c1baad93432649d0bf38785ad456ec8b980c049",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-A6F3",
     "timestamp": "2026-11-06T23:12:02.559Z",
     "repository": "Pika-Labs/Pika-H3-Flex",
@@ -7490,6 +7475,21 @@
     "repository": "Edge0/Audio8-TTS-Realistic-Air",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
     "contentHash": "0136818ac131ae7e23171866b99eb45be0fec3d9e60b8288cd7560688f045a25",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-9VFF",
+    "timestamp": "2026-11-09T00:39:07.611Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "878a998e182c757690f2db1937c4d8f913581082e59fd39ce82e82f78c56436e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

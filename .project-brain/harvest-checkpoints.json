@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T00:31:10.857Z",
+  "last_updated": "2026-11-09T00:39:07.622Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1325,14 +1325,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr",
-      "content_hash": "0468a447e87d4b58b77cb21fef723f7bc656712fb68564fe9877675ed84b98b9",
-      "verified_at": "2026-11-05T06:50:55.906Z",
+      "content_hash": "878a998e182c757690f2db1937c4d8f913581082e59fd39ce82e82f78c56436e",
+      "verified_at": "2026-11-09T00:39:07.621Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:50:55.906Z"
+      "last_updated": "2026-11-09T00:39:07.621Z"
     },
     "Aleph-Alpha/Kolibri-1": {
       "repository": "Aleph-Alpha/Kolibri-1",
