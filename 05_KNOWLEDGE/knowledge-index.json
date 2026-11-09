@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T02:14:46.233Z",
+  "last_updated": "2026-11-09T02:28:14.765Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25729,7 +25729,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "b8d7e48c30f04e29bb9e0e4c4f881e35ac496cb47ef718fc585e47d762306c80",
+      "content_hash": "9e61138d517df0610f078ad58cd72f35ffd62f21a96e0d6095a548cb8ce8feb6",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "promoted_rules": [
@@ -25790,7 +25790,7 @@
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies",
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d"
       ],
-      "verified_at": "2026-11-05T08:41:00.693Z",
+      "verified_at": "2026-11-09T02:27:57.574Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38009,11 +38009,16 @@
       "slug": "keyboardkit-keyboardkit",
       "platform": "github",
       "source_url": "https://github.com/KeyboardKit/KeyboardKit",
-      "source_version": "9a930787",
-      "content_hash": "5e69240cbc7a5d05d4582abd0fca98cd3662a6f39af068b7165d2b54fe863774",
+      "source_version": "623e673f",
+      "content_hash": "dc88c6477a5d26a0db9198ad6b887e77d978acbd930e486929a9a9264091df4d",
       "dossier_path": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update README to include Text Input section",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3735,
           "title": "Patch 11.1 with a debug diacritic color fix",
@@ -38040,7 +38045,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:37:41.556Z",
+      "verified_at": "2026-11-09T02:28:05.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47234,8 +47239,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "84fa81e9",
-      "content_hash": "3db3eb5a099cc5b332cacebaf342535f55bcf2a50291c8c2e8a89ab50260c02e",
+      "source_version": "82b87745",
+      "content_hash": "9408e76a3d4380588780e25500ed263286ae58bade2b28c9b9bd95ca617897b1",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -47342,6 +47347,11 @@
         {
           "number": null,
           "title": "NUC 94 Opt-In Conditional Words",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Add EBNF for ARC dataset syntax",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47635,7 +47645,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T23:29:17.362Z",
+      "verified_at": "2026-11-09T02:28:14.740Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

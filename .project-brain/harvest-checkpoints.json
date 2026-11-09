@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T02:14:46.337Z",
+  "last_updated": "2026-11-09T02:28:14.874Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1505,14 +1505,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
-      "content_hash": "b8d7e48c30f04e29bb9e0e4c4f881e35ac496cb47ef718fc585e47d762306c80",
-      "verified_at": "2026-11-05T08:41:00.802Z",
+      "content_hash": "9e61138d517df0610f078ad58cd72f35ffd62f21a96e0d6095a548cb8ce8feb6",
+      "verified_at": "2026-11-09T02:27:57.714Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:41:00.802Z"
+      "last_updated": "2026-11-09T02:27:57.714Z"
     },
     "openai-community/gpt2": {
       "repository": "openai-community/gpt2",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "3db3eb5a099cc5b332cacebaf342535f55bcf2a50291c8c2e8a89ab50260c02e",
-      "verified_at": "2026-11-08T23:29:17.493Z",
+      "content_hash": "9408e76a3d4380588780e25500ed263286ae58bade2b28c9b9bd95ca617897b1",
+      "verified_at": "2026-11-09T02:28:14.873Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:29:17.493Z"
+      "last_updated": "2026-11-09T02:28:14.873Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -15051,14 +15051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keyboardkit-keyboardkit",
-      "content_hash": "5e69240cbc7a5d05d4582abd0fca98cd3662a6f39af068b7165d2b54fe863774",
-      "verified_at": "2026-11-03T19:37:41.653Z",
+      "content_hash": "dc88c6477a5d26a0db9198ad6b887e77d978acbd930e486929a9a9264091df4d",
+      "verified_at": "2026-11-09T02:28:05.239Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:37:41.653Z"
+      "last_updated": "2026-11-09T02:28:05.239Z"
     },
     "evanw/esbuild": {
       "repository": "evanw/esbuild",

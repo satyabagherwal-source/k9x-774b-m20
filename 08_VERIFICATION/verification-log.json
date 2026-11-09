@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-XVQ6",
-    "timestamp": "2026-11-07T03:14:25.374Z",
-    "repository": "giancarloerra/SocratiCode",
-    "learningId": "learn-github-giancarloerra-socraticode",
-    "contentHash": "737920fdf3de58d0ef0be304a75dc5d75e32a86e02e111a9b1351b59e8f3c0cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-78AR",
-    "timestamp": "2026-11-07T03:21:41.571Z",
-    "repository": "u-root/u-root",
-    "learningId": "learn-github-u-root-u-root",
-    "contentHash": "7e072bf85054a9071a21071e093eccbb923b49ebe336e840766f42a50e39d89c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-7BD2",
-    "timestamp": "2026-11-07T03:21:45.542Z",
-    "repository": "Checkmarx/kics",
-    "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-7CIU",
     "timestamp": "2026-11-07T03:21:47.046Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7445,51 @@
     "repository": "alibaba/zvec",
     "learningId": "learn-github-alibaba-zvec",
     "contentHash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-5U2T",
+    "timestamp": "2026-11-09T02:27:57.701Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "9e61138d517df0610f078ad58cd72f35ffd62f21a96e0d6095a548cb8ce8feb6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-5ZVK",
+    "timestamp": "2026-11-09T02:28:05.216Z",
+    "repository": "KeyboardKit/KeyboardKit",
+    "learningId": "learn-github-keyboardkit-keyboardkit",
+    "contentHash": "dc88c6477a5d26a0db9198ad6b887e77d978acbd930e486929a9a9264091df4d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-67BH",
+    "timestamp": "2026-11-09T02:28:14.861Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "9408e76a3d4380588780e25500ed263286ae58bade2b28c9b9bd95ca617897b1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

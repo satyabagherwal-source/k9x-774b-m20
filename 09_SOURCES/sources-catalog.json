@@ -1135,8 +1135,8 @@
     "sourceUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceVersion": "hf-facebookai-xlm-roberta-base",
     "license": "Open-Source",
-    "contentHash": "b8d7e48c30f04e29bb9e0e4c4f881e35ac496cb47ef718fc585e47d762306c80",
-    "lastHarvestedAt": "2026-11-05T08:41:00.795Z",
+    "contentHash": "9e61138d517df0610f078ad58cd72f35ffd62f21a96e0d6095a548cb8ce8feb6",
+    "lastHarvestedAt": "2026-11-09T02:27:57.705Z",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base"
   },
   "hf-openai-community-gpt2": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "84fa81e9",
+    "sourceVersion": "82b87745",
     "license": "Apache-2.0",
-    "contentHash": "3db3eb5a099cc5b332cacebaf342535f55bcf2a50291c8c2e8a89ab50260c02e",
-    "lastHarvestedAt": "2026-11-08T23:29:17.486Z",
+    "contentHash": "9408e76a3d4380588780e25500ed263286ae58bade2b28c9b9bd95ca617897b1",
+    "lastHarvestedAt": "2026-11-09T02:28:14.865Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -10003,10 +10003,10 @@
     "repository": "KeyboardKit/KeyboardKit",
     "platform": "github",
     "sourceUrl": "https://github.com/KeyboardKit/KeyboardKit",
-    "sourceVersion": "9a930787",
+    "sourceVersion": "623e673f",
     "license": "NOASSERTION",
-    "contentHash": "5e69240cbc7a5d05d4582abd0fca98cd3662a6f39af068b7165d2b54fe863774",
-    "lastHarvestedAt": "2026-11-03T19:37:41.645Z",
+    "contentHash": "dc88c6477a5d26a0db9198ad6b887e77d978acbd930e486929a9a9264091df4d",
+    "lastHarvestedAt": "2026-11-09T02:28:05.220Z",
     "learningId": "learn-github-keyboardkit-keyboardkit"
   },
   "evanw-esbuild": {
