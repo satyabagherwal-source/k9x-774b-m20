@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-7CIU",
-    "timestamp": "2026-11-07T03:21:47.046Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "657618cc70e9596e6241ddb8fe3ff97440859172aea14f965472b866479e06bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-HGB1",
-    "timestamp": "2026-11-07T03:29:38.509Z",
-    "repository": "lxml/lxml",
-    "learningId": "learn-github-lxml-lxml",
-    "contentHash": "d0057fe1ea15178d1755436f0c6ab0d673d595b473cfb3761093f8d199557059",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-X1YF",
-    "timestamp": "2026-11-07T03:41:46.407Z",
-    "repository": "Dicklesworthstone/destructive_command_guard",
-    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "4cd799929091fd9aae8c8ba0e9e0912fc8b18806fbfb0faf1875e6172188eec6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-X7Q4",
     "timestamp": "2026-11-07T03:41:53.884Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7447,51 @@
     "contentHash": "9408e76a3d4380588780e25500ed263286ae58bade2b28c9b9bd95ca617897b1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-EF2W",
+    "timestamp": "2026-11-09T02:34:38.168Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "896e1bd5aed43e548a2afe76de3e5025aa2094d950660a71a7b58b4c566e7bb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-EI8H",
+    "timestamp": "2026-11-09T02:34:42.257Z",
+    "repository": "exyte/Chat",
+    "learningId": "learn-github-exyte-chat",
+    "contentHash": "d26fe1de0cd1a6e4eb44347a09a97551050cae66dbd03797396fd0f8b8f545bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-EJN0",
+    "timestamp": "2026-11-09T02:34:44.076Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "e1f6b610da00de1f9cd151c70cb8d5a030defb65d2175d132ac19aa4792eb499",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `5d98077a`  
+> **Source Version**: `56d00c3d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:16:01.185Z  
+> **Timestamp**: 2026-11-09T02:34:37.161Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:16:00.000Z  
+> **Harvest Timestamp**: 2026-11-09T02:34:36.925Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10502 stars
+- **Stars / Engagement**: 10499 stars
 
 ---
 
@@ -1262,616 +1262,492 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d98077a` (2026-11-05)
-**Commit Message**: proofs: Lean 4 proofs of the Rust engine, and a skill for working with them (#3172)
+### Incident Patch 1: `8312750b` (2026-11-08)
+**Commit Message**: fix: bound SET/REMOVE property chains and nested FOREACH in the parser (#2900)
 
-* proofs: Lean 4 proofs of the Rust engine, and a skill for working with them
+* fix: bound SET/REMOVE property chains and nested FOREACH in the parser
 
-Adds proofs/: 35 standalone Lake projects (Lean 4.34, core only) that model
-the engine function by function and prove properties of those models, plus
-proofs/lean_ci.sh (build all; reject sorry/admit/native_decide/unjustified
-axioms), proofs/coverage.sh (per-function coverage from COVERAGE.tsv) and
-proofs/FINDINGS.md (the bug ledger: repro, Rust vs C, theorem, fixing PR).
+`SET n.a.a.a... = 1`, `REMOVE n.a.a.a...` and nested `FOREACH` were built
+outside the depth guards added in #2533, so a few kilobytes of either
+overflowed the stack and took the server down. The property chain is now
+charged against MAX_TREE_DEPTH step by step, and a nested FOREACH goes
+through `nested()` like `CALL {}`.
 
-All 2449 non-FFI, non-test functions in graph/src and src are PROVEN against
-models of origin/main a9377c636; FFI boundaries are explicit hypotheses or
-justified axioms.
-
-Adds .claude/skills/proofs/ describing how to build and check the proofs,
-re-target them after main moves, prove new functions, confirm bugs, and
-review a PR against them.
-
-Closes #3171
+Closes #2895
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-* skill(proofs): run flow tests with RLTest -p <port>, not --randomize-ports
+* fix: charge a SET/REMOVE target's own height even without a property chain (#2900)
 
-Env() connects to the port given by -p (default 6379), so randomized runs
-still hit 6379.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+---------
 
-* p
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/proofs/REFERENCE.md` (added, +88/-0)
+**File**: `graph/src/parser/cypher.rs` (modified, +71/-25)
 ```diff
-@@ -0,0 +1,88 @@
-+# Proof conventions
+@@ -3338,18 +3338,8 @@ impl<'a> Parser<'a> {
+         set_items: &mut Vec<SetItem<Arc<String>, Arc<String>>>,
+     ) -> Result<(), String> {
+         loop {
+-            let (mut expr, recurse) = self.parse_primary_expr(false)?;
+-            if recurse {
+-                self.reject_unparenthesized_target(&expr)?;
+-                expr = self.parse_expr(false)?;
+-                match_token!(self.lexer, RParen);
+-                self.expect_property_after_paren()?;
+-            }
+-            if self.lexer.current()? == Token::Dot {
+-                while self.lexer.current()? == Token::Dot {
+-                    self.lexer.next();
+-                    expr = self.parse_property_lookup(expr)?;
+-                }
++            let (expr, has_properties) = self.parse_update_target()?;
++            if has_properties {
+                 match_token!(self.lexer, Equal);
+                 let value = Arc::new(self.parse_expr(false)?);
+                 set_items.push(SetItem::Attribute {
+@@ -3389,6 +3379,37 @@ impl<'a> Parser<'a> {
+         }
+     }
+ 
++    /// Parses what a `SET` or `REMOVE` item updates: an expression followed
++    /// by an optional `.prop.prop...` chain, reporting whether a chain was
++    /// present.
++    ///
++    /// Each lookup wraps the tree before it, so the chain is charged against
++    /// [`Self::MAX_TREE_DEPTH`] step by step, as the postfix chain in
++    /// [`Self::parse_expr_inner`] is: otherwise `n.a.a.a...` builds a tree
++    /// the binder overflows its stack walking, quadratically slowly.
++    fn parse_update_target(&mut self) -> Result<(DynTree<ExprIR<Arc<String>>>, bool), String> {
++        let ((mut expr, recurse), child_height) =
++            self.with_child_height(|s| s.parse_primary_expr(false))?;
++        let mut height = child_height + Self::PRIMARY_LEVELS;
++        if recurse {
++            self.reject_unparenthesized_target(&expr)?;
++            expr = self.parse_expr(false)?;
++            height = self.expr_height;
++            match_token!(self.lexer, RParen);
++            self.expect_property_after_paren()?;
++        }
++        // The target itself may already be too tall, with no lookup to charge.
++        self.check_depth(height)?;
++        let has_properties = self.lexer.current()? == Token::Dot;
++        while self.lexer.current()? == Token::Dot {
++            self.lexer.next();
++            expr = self.parse_property_lookup(expr)?;
++            height += 1;
++            self.check_depth(height)?;
++        }
++        Ok((expr, has_properties))
++    }
 +
-+## Project layout
-+
-+```
-+proofs/<area>/
-+  lakefile.toml        # name, defaultTargets, [[lean_lib]] (copy an existing one)
-+  lean-toolchain       # leanprover/lean4:v4.35.0
-+  .gitignore           # .lake/
-+  <Root>.lean          # imports the modules; header doc-comment = the report
-+  <Root>/*.lean        # modules, < ~400 lines each, build after each
-+  COVERAGE.tsv
-+  repro.py             # optional: live repros needing RediSearch / a server
-+```
-+
-+No Mathlib: use core Lean 4 plus `omega`, `simp`, `decide`, `induction`, and the
-+`List`/`Array` lemmas in core. When you need another project's definitions, import
-+them instead of copying: add a Lake path dependency to `lakefile.toml`
-+
-+```toml
-+[[require]]
-+name = "falkor-value-order"      # the dependency's own `name`
-+path = "../value_order"
-+```
-+
-+then `lake update` (commit the generated `lake-manifest.json`) and `import
-+FalkorValueOrder.Model`. Shared foundations live in `proofs/core` (`FalkorCore`: the
-+engine Value `V F`, the float model `F`, `i64` helpers, `cmpI`/comparator laws); reuse
-+them with `open FalkorCore` (and `open FalkorCore.Laws` for the comparator laws `Lw`, `lexA`, `thn`) rather than defining another copy (pilot: value_order,
-+value_math, expr_semantics, functions_str_list use it). `export Ns (a b c)` inside your namespace keeps local short
-+names. All projects pin the same toolchain; `lean_ci.sh` builds dependencies first
-+(inside their own `.lake`) and scans only each project's own files.
-+
-+## Faithful models
-+
-+- Follow the Rust line by line: same branch structure, same names, and a `file:line` cite for each modelled fn.
-+- Model machine integers faithfully where overflow matters: `BitVec 64` or `Int` with Rust's semantics (debug panic vs release wrap, `checked_*`, `wrapping_*`, `as` casts).
-+- f64 stays abstract: use a float structure or class with only the laws you need. Never add an `axiom` for it.
-+- Where hashing or equality is involved, the float model must represent `-0.0` and NaN sign/payload (and vector/point components, not just a type tag): `to_bits` tells them apart while `==`/`partial_cmp` do not (see value_order `F`).
-+- A premise about another Rust fn's behaviour must be discharged (copy that fn's model and prove the premise) or the row is CONDITIONAL with the hypothesis named in the reason.
-+- FFI (GraphBLAS, LAGraph, RediSearch, the Redis module API, QuickJS, libc): state the C API spec you rely on as a hypothesis structure (preferred), or as an `axiom` with a `-- AXIOM-OK: <C doc>` comment. Those fns are AXIOMATISED.
-+
-+## COVERAGE.tsv
-+
-+`file<TAB>function<TAB>line<TAB>bucket<TAB>lean_name_or_reason`, where `file` is the
-+repo-relative path (`graph/src/...` or `src/...`). There is one row per Rust fn in the
-+files the project targets; `#` lines are comments.
-+
-+| bucket | meaning |
-+| --- | --- |
-+| PROVEN | a theorem (no sorry) about a faithful model of that fn; for glue or accessors, a small theorem stating exactly what it returns is enough |
-+| CONDITIONAL | a theorem about a faithful model, but resting on an undischarged hypothesis about *other Rust code* (a contract proven elsewhere, an invariant maintained elsewhere, or one known false); the reason names it. Covered, not proven |
-+| AXIOMATISED | true FFI only |
-+| MODELLED | modelled, but checked only by `#eval`/`decide`, or no theorem about it |
-+| NOT COVERED | with a reason; test-only code uses a reason starting `TEST-ONLY:` |
-+
-+`coverage.sh` keeps each fn's best bucket across projects (PROVEN > CONDITIONAL >
-+AXIOMATISED > MODELLED > NOT COVERED), reports CONDITIONAL as its own column (it counts in
-+cov% but not in prov% or the non-FFI PROVEN numerator), and excludes test code (`#[cfg(test)]`, `*_bench.rs`,
-+`tests.rs`, `test_aux.rs`) from the denominator. The target is 100% of non-FFI,
-+non-test fns PROVEN, with 0 unlisted.
-+
-+## Bugs
-+
-+- Confirmed means a repro against the real Rust shows it. Compare with C where the semantics are C's (C module: the `falkordb/falkordb-server:edge-c` image, or a local `master` build under `bin/`).
-+- In FINDINGS.md, give each bug an id, `file:line`, the repro, the Rust vs C output, the Lean theorem name, and a suggested fix.
-+- When main fixes a bug: rename the counterexample to `pre<PR>_…`, add the correctness theorem, and note `fixed by #PR (sha)` in FINDINGS.md.
-+
-+## Live repros
-+
-+Query repros: start a server by hand on a free port (a concrete number, e.g. 7431).
-+
-+```bash
-+MOD=/tmp/fdb_$(date +%s).dylib                    # fresh path each rebuild (macOS kills redis if a loaded dylib is overwritten)
-+cp "$PWD/target/release/libfalkordb.dylib" "$MOD"
-+redis-server --port 7431 --loadmodule "$MOD" --daemonize yes --save ''
-+# wait for PING (RediSearch init takes a few seconds), run queries, then: redis-cli -p 7431 shutdown nosave
-+```
-+
-+Flow tests: use RLTest alone (it spawns its own server on the port; do not also start one by hand on that port).
-+
-+```bash
-+RLT
+     /// A `SET`/`REMOVE` target that opens a nested expression may only open
+     /// it with `(`: an open list literal would otherwise be dropped and its
+     /// first element read as the target, so `SET [n).x = 5` set `n.x`.
+@@ -3434,18 +3455,8 @@ impl<'a> Parser<'a> {
+         remove_items: &mut Vec<QueryExpr<Arc<String>>>,
+     ) -> Result<(), String> {
+         loop {
+-            let (mut expr, recurse) = self.parse_primary_expr(false)?;
+-            if recurse {
+-                self.reject_unparenthesized_target(&expr)?;
+-                expr = self.parse_expr(false)?;
+-                match_token!(self.lexer, RParen);
+-                self.expect_property_after_paren()?;
+-            }
+-            if self.lexer.current()? == Token::Dot {
+-                while self.lexer.current()? == Token::Dot {
+-                    self.lexer.next();
+-                    expr = self.parse_property_lookup(expr)?;
+-                }
++            let (mut expr, has_properties) = self.parse_update_target()?;
++            if has_properties {
+                 remove_items.push(Arc::new(expr));
+             } else if self.lexer.current()? == Token::Colon {
+                 expr = tree!(
+@@ -3524,7 +3535,9 @@ impl<'a> Parser<'a> {
+                     ..
+                 } => {
+                     self.lexer.next();
+-                    body.push(self.parse_foreach_clause()?);
++                    // A nested FOREACH recurses like `CALL {}` does, so it is
++                    // bounded the same way.
++                    body.push(self.nested(Self::parse_foreach_clause)?);
+                 }
+                 _ => break,
+             }
+@@ -3701,6 +3714,23 @@ mod tests {
+                 "map projection",
+                 format!("MATCH (a) RETURN {}a{{.k}}{}", "[".repeat(n), "]".repeat(n)),
+             ),
++            // Clauses that build expressions or recurse outside parse_expr.
++            (
++                "set property chain",
++                format!("MATCH (n) SET n{} = 1", ".a".repeat(n)),
++            ),
++            (
++                "remove property chain",
++                format!("MATCH (n) REMOVE n{}", ".a".repeat(n)),
++            ),
++            (
++                "foreach",
++                format!(
++                    "{}CREATE (){}",
++                    "FOREACH (x IN [1] | ".repeat(n),
++                    ")".repeat(n)
++                ),
++            ),
+         ];
+         // The same nesting an ex
 ```
 
-**File**: `.claude/skills/proofs/SKILL.md` (added, +76/-0)
+**File**: `tests/test_e2e.py` (modified, +14/-0)
 ```diff
-@@ -0,0 +1,76 @@
-+---
-+name: proofs
-+description: Work with FalkorDB's Lean 4 proofs of the Rust engine in proofs/ — build and check them, keep them in sync with main, prove new or changed functions, confirm bugs the models find, and review a PR against the proofs. Use when asked to update/run/extend the proofs, check Lean coverage, re-target proofs after main moves, verify a function or PR formally, or when a change touches code listed in proofs/*/COVERAGE.tsv.
-+allowed-tools: Bash, Read, Edit, Write
-+---
+@@ -1863,6 +1863,20 @@ def test_deep_expression_nesting_is_rejected():
+     assert query("RETURN 1").result_set == [[1]]
+ 
+ 
++def test_deep_clause_nesting_is_rejected():
++    # SET/REMOVE property chains and nested FOREACH were built outside the
++    # expression parser's depth guard, so a few kilobytes of either overflowed
++    # the stack and took the server down. They must come back as errors.
++    n = 5000
++    for q in [
++        f"MATCH (n) SET n{'.a' * n} = 1",
++        f"MATCH (n) REMOVE n{'.a' * n}",
++        f"{'FOREACH (x IN [1] | ' * n}CREATE (){')' * n}",
++    ]:
++        query_exception(q, "Query nesting exceeds")
++        assert query("RETURN 1").result_set == [[1]]
 +
-+# Proofs (Lean 4)
 +
-+`proofs/` holds one standalone Lake project per engine area (`value_order`,
-+`binder`, `pending_commit`, `index_layer`, …). Each models the Rust code it
-+covers line by line and proves properties about that model. Lean 4 only, no
-+Mathlib. The toolchain comes from each project's `lean-toolchain`
-+(all pin `leanprover/lean4:v4.35.0`).
-+
-+- `proofs/<area>/<Root>.lean` — the header is the report: Lean↔Rust `file:line` table, theorems, bugs, gaps.
-+- `proofs/<area>/COVERAGE.tsv` — one row per Rust fn: bucket PROVEN / CONDITIONAL / AXIOMATISED / MODELLED / NOT COVERED.
-+- `proofs/FINDINGS.md` — the bug ledger. Each bug is confirmed by a repro unless its entry is marked Lean-only, Unconfirmed or a model note; later notes record which commits fixed it.
-+- `proofs/lean_ci.sh`, `proofs/coverage.sh` — the two gates. `.github/workflows/lean-proofs.yml` (check name `Lean proofs`) reports on every pull request, so it can be a required check: the job itself skips, with a summary line, a PR that touches none of `proofs/**`, `graph/src/**`, `src/**` or the workflow file, and otherwise (and on pushes to `main`) runs both (a separate check, not in `ci-gate`).
-+
-+## Quick start
-+
-+```bash
-+# install elan once: https://github.com/leanprover/elan/releases (CI's pinned, checksum-verified install is in .github/workflows/lean-proofs.yml)
-+bash proofs/lean_ci.sh                     # build all projects; fails on sorry/admit/native_decide/unjustified axiom
-+bash proofs/lean_ci.sh binder value_order  # just some projects
-+bash proofs/coverage.sh                    # per-file + total coverage; --unmatched lists stale rows
-+```
-+
-+Proofs cite `origin/main`. If your checkout is on another branch, read the Rust from
-+a clean worktree: `git worktree add --detach ../fdb-main origin/main` then
-+`COVERAGE_RUST_ROOT=../fdb-main bash proofs/coverage.sh`.
-+
-+## Workflows
-+
-+**Re-target after main moves** (keep the proofs true for the current code):
-+1. `git diff <old-sha> origin/main --stat -- graph/src src`. The old sha is in FINDINGS.md "Current state".
-+2. Find the projects to update: `grep -l "<file>" proofs/*/COVERAGE.tsv` for each changed file.
-+3. For each changed fn: update the Lean model to the new code, re-prove, fix `file:line` cites. Add rows for new fns and delete rows for removed ones.
-+4. If the commit fixed a bug, turn its counterexample theorem into a correctness theorem. Keep the old one as a labelled historical note: `pre<PR>_…`, fixed by `#PR (sha)`.
-+5. Run `lean_ci.sh` (all green) and `COVERAGE_RUST_ROOT=../fdb-main bash proofs/coverage.sh` (the worktree override above, when this checkout is not main; 0 unlisted; PROVEN + CONDITIONAL = 100% non-FFI, and no new CONDITIONAL), then update FINDINGS.md "Current state".
-+
-+**Prove a new or changed function**: model it in the owning project, or start a new
-+project by copying the shape of an existing one. Then add the COVERAGE row and prove.
-+Conventions are in [REFERENCE.md](REFERENCE.md).
-+
-+**When a theorem is false** (the model has a bug): get a concrete counterexample
-+(`#eval` or `decide`), then reproduce it against the real Rust before calling it a bug:
-+a Rust test, or a live query compared with the C module. Record it in FINDINGS.md with
-+`file:line`, the repro, and the Rust vs C output. Keep the counterexample as a theorem.
-+
-+**Review a PR with the proofs**: in a new `proofs/pr<N>_review/` project, import the
-+definitions you need from the owning projects (Lake path dependency, see REFERENCE.md);
-+copy only what the PR changes. Model the PR's merged code for the
-+changed functions, and prove or refute each claim the PR makes. Confirm any refutation
-+live. Also check that the existing theorems still hold for the new code. A PR that
-+changes `Eq`/`Hash`/`Ord`/`sort_cmp`/`compare_value` (or anything a `HashMap` key or a
-+sort uses) **must** get a `pr<N>_review` project proving Eq ⇒ equal Hash and the order
-+laws on the PR's code (value_order `Main.lean` holds what pr2917_review proved). Until
-+it merges, its COVERAGE rows stay commented out. **Once the PR merges, delete the review
-+project**: fold each theorem into the owning project (drop it if an equivalent already
-+exists there, otherwise move it, re-stated on the owner's definitions), merge its COVERAGE
-+rows into the owner's rows, and update names cited in FINDINGS.md (see the retired
-+pr2845_review → binder/columnar/optimizer_rewrites `CallBoundary.lean`).
-+
-+**Hypotheses about Rust code**:
+ def test_index():
+     res = query(
+         "UNWIND range(1, 100000) AS x CREATE (n:Node {vi: x, vs: tostring(x)})",
 ```
 
-**File**: `.gitattributes` (added, +2/-0)
+---
+
+### Incident Patch 2: `3643a301` (2026-11-08)
+**Commit Message**: fix: accept a list or map subscript as a WHERE predicate (#3270)
+
+* fix: accept a list or map subscript as a WHERE predicate
+
+`expr_may_return_boolean` listed `GetElement` with the node kinds that can
+never be boolean, so `WHERE n.flags[0]` failed with "Expected boolean
+predicate". A subscript returns whatever the element is; leave it to the
+runtime type check, as for properties and variables, and as C does.
+
+Closes #3261
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix: reject a non-boolean list-comprehension predicate instead of skipping it
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `graph/src/planner/binder.rs` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,2 @@
-+# keep Lean proofs out of the GitHub language stats
-+proofs/** linguist-detectable=false
+@@ -2343,19 +2343,19 @@ impl Binder {
+             // that used to reach the runtime.
+             ExprIR::Case { .. } => true,
+ 
+-            // Non-boolean: literals, unary arithmetic, subscript, list comprehension
++            // Non-boolean: literals, unary arithmetic, slice, list comprehension
+             ExprIR::List
+             | ExprIR::Map
+             | ExprIR::MapProjection
+             | ExprIR::Negate
+             | ExprIR::Length
+-            | ExprIR::GetElement
+             | ExprIR::GetElements
+             | ExprIR::ListComprehension(_)
+             | ExprIR::PatternComprehension(_)
+             | ExprIR::NestedPlan(_) => false,
+ 
+-            // Boolean literals, comparisons, predicates, and runtime-typed nodes
++            // Boolean literals, comparisons, predicates, and runtime-typed
++            // nodes (a subscript returns whatever the element is)
+             ExprIR::Eq
+             | ExprIR::Neq
+             | ExprIR::Lt
+@@ -2376,6 +2376,7 @@ impl Binder {
+             | ExprIR::Variable(_)
+             | ExprIR::Parameter(_)
+             | ExprIR::Property(_)
++            | ExprIR::GetElement
+             | ExprIR::ShortestPath(_)
+             | ExprIR::Pattern(_) => true,
+ 
 ```
 
-**File**: `.github/workflows/lean-proofs.yml` (added, +138/-0)
+**File**: `graph/src/runtime/eval.rs` (modified, +7/-1)
 ```diff
-@@ -0,0 +1,138 @@
-+name: Lean proofs
-+
-+# The Lean 4 proofs in proofs/ are models of the Rust engine. Two gates keep them
-+# true: `proofs/lean_ci.sh` builds every project and rejects sorry, admit,
-+# native_decide and unjustified axioms; `proofs/coverage.sh --unmatched` checks
-+# every Rust fn is listed in a COVERAGE.tsv and every row still points at a fn.
-+#
-+# Built to be a REQUIRED check, which drives two deliberate choices:
-+#
-+#   1. No `paths:` filter on the triggers. A required status check that never
-+#      reports leaves a PR blocked forever (see the top of pr-linked-issue.yml),
-+#      so the job runs on every PR to a covered branch and the job name
-+#      ("Lean proofs") stays stable.
-+#   2. The job decides relevance itself. Lean builds read only proofs/, but the
-+#      coverage gate reads graph/src and src (a Rust change that adds, removes or
-+#      renames a fn can break it), so a PR that touches none of proofs/**,
-+#      graph/src/**, src/** or this file reports success at once, with a summary
-+#      line saying it was skipped. Every other PR, and every push to main, runs
-+#      both gates in full.
-+#
-+# It is not part of ci-gate; whether to require it is a branch-protection setting.
-+on:
-+  pull_request:
-+    branches:
-+      - main
-+      - "[0-9]*.[0-9]*"
-+  push:
-+    branches:
-+      - main
-+
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.ref }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
-+permissions:
-+  contents: read
-+
-+env:
-+  # elan is installed from a pinned release asset, never from the moving
-+  # elan-init.sh on master. v4.2.4 was published 2026-08-25. The sha256 is the
-+  # asset's own digest (also what GitHub shows for the release); bumping elan means
-+  # bumping both lines together. The Lean toolchain itself is the one each project
-+  # pins in its lean-toolchain file.
-+  ELAN_VERSION: v4.2.4
-+  ELAN_SHA256: 42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63
-+
-+jobs:
-+  proofs:
-+    name: Lean proofs
-+    runs-on: ubuntu-latest
-+    # A cold build (no cache) took 19 minutes on ubuntu-latest, a warm one is a few; 45 leaves room for slower runners.
-+    timeout-minutes: 45
-+    steps:
-+      - name: Checkout repository
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: false
-+          # A PR is checked out as its merge commit; two levels give its first
-+          # parent (the base tip), which the scope step diffs against.
-+          fetch-depth: 2
-+
-+      # A PR that touches nothing the proofs read reports success here, without
-+      # installing or building anything. A push always runs the gates, and so does
-+      # anything this step cannot decide (no merge parent).
-+      - name: Decide whether the proofs are in scope
-+        id: scope
-+        env:
-+          EVENT_NAME: ${{ github.event_name }}
-+        run: |
-+          set -euo pipefail
-+          run=true
-+          # --no-renames: a file moved out of src/ must list its old path too, or the gates would be skipped.
-+          if [[ "$EVENT_NAME" == pull_request ]] && git rev-parse --verify --quiet 'HEAD^2' >/dev/null; then
-+            changed=$(git diff --name-only --no-renames 'HEAD^1' HEAD)
-+            if grep -qE '^(proofs/|graph/src/|src/|\.github/workflows/lean-proofs\.yml$)' <<<"$changed"; then
-+              echo "This PR touches proofs/**, graph/src/**, src/** or the workflow: running both gates." >> "$GITHUB_STEP_SUMMARY"
-+            else
-+              run=false
-+              echo "Skipped: this PR touches none of proofs/**, graph/src/**, src/** or .github/workflows/lean-proofs.yml, so the proofs and the coverage gate are unaffected." >> "$GITHUB_STEP_SUMMARY"
-+            fi
-+          fi
-+          echo "run=${run}" >> "$GITHUB_OUTPUT"
-+
-+      # The Lean build is incremental on its own trace files, so a restored
-+      # proofs/*/.lake makes an unchanged project a no-op. The exact key hits when
-+      # no .lean file changed; otherwise the newest cache for the same toolchains is
-+      # restored and only the changed modules (and their dependents) are rebuilt.
-+      - name: Cache elan and the Lake build directories
-+        if: steps.scope.outputs.run == 'true'
-+        id: cache
-+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
-+        with:
-+          path: |
-+            ~/.elan
-+            proofs/*/.lake
-+          key: lean-${{ runner.os }}-elan-${{ env.ELAN_VERSION }}-${{ hashFiles('proofs/*/lean-toolchain') }}-${{ hashFiles('proofs/**/*.lean', 'proofs/*/lakefile.toml', 'proofs/*/lake-manifest.json') }}
-+          restore-keys: |
-+            lean-${{ runner.os }}-elan-${{ env.ELAN_VERSION }}-${{ hashFiles('proofs/*/lean-toolchain') }}-
-+
-+      - name: Install elan
-+        if: steps.scope.outputs.run == 'true'
-+        env:
-+          RUNNER_TEMP_DIR: ${{ runner.temp }}
-+        run: |
-+          set -euo pipefail
-+          asse
+@@ -1075,7 +1075,13 @@ impl<'a> ExprEval<'a> {
+                             row.insert(var, value);
+                             match self.eval_node(&node.child(1), Some(&row), agg_group_key)? {
+                                 Value::Bool(true) => {}
+-                                _ => continue,
++                                Value::Bool(false) | Value::Null => continue,
++                                value => {
++                                    return Err(format!(
++                                        "Type mismatch: expected Boolean but was {}",
++                                        value.name()
++                                    ));
++                                }
+                             }
+                             acc.push(self.eval_node(&node.child(2), Some(&row), agg_group_key)?);
+                         }
 ```
 
-**File**: `proofs/algo_udf/.gitignore` (added, +1/-0)
+**File**: `tests/flow/test_filters.py` (modified, +33/-0)
 ```diff
-@@ -0,0 +1 @@
-+.lake/
+@@ -262,3 +262,36 @@ def test09_case_value_form_null_subject(self):
+             "MATCH (n:K) RETURN head([CASE n.missing WHEN null THEN 'matched' ELSE 'else' END]) AS v")
+         self.env.assertEqual(columnar.result_set, per_row.result_set)
+         self.env.assertEqual(columnar.result_set, [['else']] * 5)
++
++    def test10_subscript_as_predicate(self):
++        # a subscript returns whatever the element is, so it is accepted as a
++        # predicate and its type is checked at runtime, as in C
++        # https://github.com/FalkorDB/FalkorDB/issues/3261
++        g = self.db.select_graph("subscript_predicate")
++        g.query("CREATE (:N {flags: [true, false]}), (:N {flags: [false]}), (:N)")
++
++        for query, expected in [
++            ("MATCH (n:N) WHERE n.flags[0] RETURN count(n)", [[1]]),
++            ("MATCH (n:N) WHERE NOT n.flags[0] RETURN count(n)", [[1]]),
++            ("WITH [true] AS l WHERE true AND l[0] RETURN 1", [[1]]),
++            ("WITH {a: true} AS m WHERE m['a'] RETURN 1", [[1]]),
++            ("WITH [null] AS l WHERE l[0] RETURN count(*)", [[0]]),
++        ]:
++            self.env.assertEqual(g.query(query).result_set, expected, depth=1)
++
++        for query, error in [
++            # a non-boolean element is a runtime type error
++            ("WITH [1] AS l WHERE l[0] RETURN 1",
++             "Type mismatch: expected Boolean but was Integer"),
++            # a comprehension's predicate is checked the same way, not skipped
++            ("WITH [[1]] AS lists RETURN [l IN lists WHERE l[0] | l]",
++             "Type mismatch: expected Boolean but was Integer"),
++            # a slice is always a list, never a predicate
++            ("WITH [true] AS l WHERE l[0..1] RETURN 1",
++             "Expected boolean predicate"),
++        ]:
++            try:
++                g.query(query)
++                self.env.assertTrue(False, depth=1)
++            except redis.ResponseError as e:
++                self.env.assertContains(error, str(e), depth=1)
 ```
 
-**File**: `proofs/algo_udf/AlgoUdf.lean` (added, +290/-0)
+**File**: `tests/flow/test_reduce.py` (modified, +3/-2)
 ```diff
-@@ -0,0 +1,290 @@
-+/-
-+# algo.* procedures and the JS UDF layer: models, proofs, and the bugs they found
-+
-+Scope: `graph/src/runtime/functions/algo_procedures.rs` (BFS, WCC, CDLP, pageRank,
-+betweenness, HarmonicCentrality, MSF, maxFlow, SPpaths/SSpaths) and
-+`graph/src/udf/` (all files). Rust source of truth: origin/main ee21013d6 (re-targeted from 1c0e6c8de: #3045, #3032, #3580 — see "Fixed on main (re-target 1c0e6c8de → ee21013d6)"; before that from e860645bb: #3058, #3586, #3066, #3464 — see "Fixed on main (re-target e860645bb → 1c0e6c8de)"); earlier: 3fec7d7c9, re-checked at 5e475e6c9 (#3436 only: `rt.g.borrow()` -> `rt.graph()` in every `algo_procedures.rs` / `procedures.rs` registration, and `call_udf_bridge` takes `rt.graph_arc()` (the same `Arc` clone `rt.g.clone()` was) for `set_current_graph`; no function moved, nothing modelled changed); `js_globals.rs`
-+re-targeted to 8743953a8 (#3079), `type_convert.rs` to cab3cf192 (#3074, #3336 — see "Fixed on main").
-+Per-function buckets: `COVERAGE.tsv` (every function PROVEN except three
-+GraphBLAS FFI wrappers, AXIOMATISED). Repros: wave 1-4 in
-+`graph/tests/lean_algo_udf.rs`; wave 5 in the standalone package
-+a standalone Rust test (not committed) (built against origin/main with
-+`cargo test --test w5 -- --test-threads=1` on an origin/main checkout).
-+Every `bug_*` test asserts C's answer and fails today.
-+
-+## Modules
-+
-+| here | there |
-+| --- | --- |
-+| `AlgoUdf.Config`     | `opt_string`, `validate_config_map`, `extract_node_labels`/`extract_rel_types`, `parse_config`, samplingSize / maxIterations / maxLen / pathCount parsing |
-+| `AlgoUdf.Compact`    | `build_compact_adj_*` id ↔ index maps, WCC/CDLP/pageRank/Harmonic result assembly, deleted-id skipping, betweenness sampling |
-+| `AlgoUdf.Paths`      | `far_endpoint`, `cmp_found_path`, `record_found_path`, cost accumulation, `build_path_batch`, Dijkstra dispatch guard |
-+| `AlgoUdf.MsfFlow`    | `msf_keep_min_score` monoid laws, MSF component keys, maxFlow flow/edge alignment and super-node freshness |
-+| `AlgoUdf.Marshal`/`MarshalThm` | `value_to_js` / `js_to_value` over an abstract f64 and QuickJS value/heap model (cyclic values included) |
-+| `AlgoUdf.Nesting`/`MarshalCap` | #3336: the depth cap `MAX_UDF_VALUE_NESTING`, `value_to_js_at` / `js_to_value_at` with an explicit stack |
-+| `AlgoUdf.Repo`       | `UdfRepo::load`/`delete` + the case-sensitive function registry (#3066) |
-+| `AlgoUdf.Neighbors`  | `collect_edges`, `js_get_neighbors` filters |
-+| `AlgoUdf.Graph`      | shared graph view for the path searches (`Edge`, weighted `Walk`, hop `HWalk`/`NWalk`, `node_successors`) |
-+| `AlgoUdf.DijkstraModel`/`DijkstraInv`/`Dijkstra` | `dijkstra_single_path`, `DijkstraItem::{cmp,partial_cmp}` |
-+| `AlgoUdf.BfsModel`/`BfsBound` | `bfs_find_bound` |
-+| `AlgoUdf.Dfs`/`DfsSound`/`DfsComplete`/`DfsExplore`/`DfsResult` | `enumerate_paths`, `record_found_path` (with the bound) |
-+| `AlgoUdf.PathDispatch`/`PathSeed` | `parse_sp_config`, `parse_ss_config`, `to_numeric_value`, `algo_sp_paths`, `algo_ss_paths`, `run_path_algo` |
-+| `AlgoUdf.AlgoGlue`   | `new_msg`, `msg_to_string`, `msf_score` + its GraphBLAS callbacks, `node_value`, `collect_node_ids`, `active_node_set`, LAGraph graph create/delete ownership, `cmp_found_path`, `parse_config` |
-+| `AlgoUdf.AlgoBfsReg` | `algo_bfs` result assembly, `register` and every `register_*` |
-+| `AlgoUdf.UdfTraverse`| `js_traverse_impl` (`graph.traverse`) |
-+| `AlgoUdf.UdfClasses` | `CURRENT_GRAPH` slot, `create_js_node/edge/path`, `getNodeById`, `iterateNodes/Edges`, the native entry points |
-+| `AlgoUdf.UdfNodeView` | #3454 (fixed by #3464): which view (`Runtime` vs committed `Graph`) `create_js_node` reads labels/attributes from; `set_node_labels`, `set_node_attrs` |
-+| `AlgoUdf.UdfContext` | `caught_error_message`, timeouts, `validate_script`, `ensure_context_current`, `rebuild_context`, `call_udf_bridge` |
-+| `AlgoUdf.UdfGlobals` | the JS `falkor.register` bodies, `collect_*`, `js_value_to_log_string` |
-+| `AlgoUdf.UdfRepoOps` | `UdfRepo::{new,default,version,bump_version,flush,list,get_all_libraries,serialize,deserialize}`, `init_udf_repo`, `get_udf_repo` |
-+
-+## Assumptions (AXIOMATISED as hypotheses/definitions, no Lean `axiom`)
-+* LAGraph: WCC/CDLP output is a dense vector of representative indices `< n`
-+  (`Compact.LagWcc`); `LAGraph_msf` component vector is dense
-+  (`MsfFlow.msf_dense_no_fallback` hypothesis); PageRank rejects n = 0.
-+* `Graph::get_node_relationships` yields out-edges then in-edges (self-loop in both).
-+* QuickJS: `obj.set("__proto__", v)` never creates an own key; `obj.keys()`
-+  lists array-index keys first; `obj.get("constructor")` falls back to the
-+  prototype's constructor; `JS_IsDate` / `JS_IsRegExp`
-+  test the internal class (`Marshal.JsKind`); `Object.prototype.toString` gives "[object Object]";
-+  `new Date(ms)` is NaN beyond ±8.64e15 ms.
-+* f64 is abstracted (`Marshal.F64`, `MsfFlow.Score`): only `==`, `<`, `floor`,
-+  `abs < 
+@@ -158,7 +158,8 @@ def test_nested_reduction(self):
+         self.env.assertEqual(self.graph.query(q).result_set, [[1]])
+ 
+         # the shadowed form is still a non-boolean expression in a WHERE
+-        # clause, so it must be rejected rather than evaluated
++        # clause, so it must be rejected; the subscript is type-checked at
++        # runtime, as in C (https://github.com/FalkorDB/FalkorDB/issues/3261)
+         self.graph.query("CREATE (:Node)")
+         q = """MATCH (n)
+                WHERE [x IN [0] | reduce(s=0, x IN [0] | s + reduce(s=0, x IN [0] | s + 1))][0]
+@@ -167,7 +168,7 @@ def test_nested_reduction(self):
+             self.graph.query(q)
+             self.env.assertTrue(False)
+         except ResponseError as e:
+-            self.env.assertContains("Expected boolean predicate", str(e))
++            self.env.assertContains("Type mismatch: expected Boolean but was Integer", str(e))
+ 
+         # the server survived and the outer scope is uncorrupted
+         self.env.assertEqual(self.graph.query("RETURN 1").result_set, [[1]])
 ```
 
-**File**: `proofs/algo_udf/AlgoUdf/AlgoBfsReg.lean` (added, +212/-0)
+---
+
+### Incident Patch 3: `56d00c3d` (2026-11-08)
+**Commit Message**: fix: parse a chained unary minus such as `RETURN - -5` (#2309) (#3525)
+
+* fix: parse a chained unary minus such as `RETURN - -5` (#2309)
+
+The unary level of the expression parser read one optional `+` and then one
+optional `-`, so any further sign was "Invalid input Dash". It now reads the
+whole run of signs and, as the NOT level does, folds it by parity to one or two
+Negates, so the operand is still type-checked (`- -'a'` is a type mismatch, as
+in C) and `--9223372036854775808` stays i64::MIN.
+
+Parameter values keep C's rule of one sign at most: `CYPHER x=--1` is still
+refused, now by evaluate_param.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix: refuse a run of signs in a CYPHER parameter value, as before
+
+parse_expr folds a run of signs to its parity, so the evaluate_param guard
+for a negated negation missed --- and --9223372036854775808. Check the sign
+run in the parameter parser instead, before it is folded.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix: apply the legacy sign restriction to every level of a CYPHER parameter
+
+Moves the check from the parameter root into the unary-sign parse, behind a
+flag set while a parameter is parsed as an expressio
+
+**File**: `graph/src/parser/cypher.rs` (modified, +81/-14)
 ```diff
-@@ -0,0 +1,212 @@
-+import AlgoUdf.Repo
-+import AlgoUdf.Config
-+/-! # `algo.BFS` result assembly and the procedure registration table
-+
-+| here | there (`algo_procedures.rs`) |
-+| --- | --- |
-+| `algoBfs`         | `algo_bfs` :1108-1247; LAGraph's BFS output is the input `Lag` (AXIOMATISED: `LAGr_BreadthFirstSearch_Extended` level/parent vectors, extracted in ascending index order) |
-+| `relOf p c`       | `g.get_src_dest_relationships(parent, child, &rel_types).next()` :1207 |
-+| `Entry`, `addProc`| `Functions::add_procedure` (functions/mod.rs:943-965: panics on a duplicate lowercase name) |
-+| `registerX`       | `register_pagerank` :731 … `register_maxflow` :2918, via `cypher_fn!` (functions/mod.rs:328-352) |
-+| `register`        | `register` :716 |
-+-/
-+namespace AlgoUdf.AlgoBfsReg
-+open AlgoUdf AlgoUdf.Config
-+
-+/-! ## algo.BFS -/
-+
-+/-- LAGraph BFS output: `(index, parent)` and `(index, level)` entries. -/
-+structure Lag where
-+  parent : List (Nat × Nat)
-+  level : List (Nat × Nat)
-+
-+inductive BfsOut | empty | rows (nodes : List Nat) (edges : List Nat)
-+  deriving DecidableEq, Repr
-+
-+/-- The `want_edges` branch :1182-1211. -/
-+def edgesBranch (src : Nat) (hasDel : Bool) (del : Nat → Bool) (relOf : Nat → Nat → Option Nat) :
-+    List (Nat × Nat) → List Nat × List Nat
-+  | [] => ([], [])
-+  | (c, p) :: t =>
-+    let (ns, es) := edgesBranch src hasDel del relOf t
-+    if c = src then (ns, es)
-+    else if hasDel && (del c || del p) then (ns, es)
-+    else (c :: ns, (match relOf p c with | some e => [e] | none => []) ++ es)
-+
-+/-- The level branch :1212-1227. -/
-+def levelBranch (src : Nat) (hasDel : Bool) (del : Nat → Bool) : List (Nat × Nat) → List Nat
-+  | [] => []
-+  | (c, _) :: t =>
-+    if c = src then levelBranch src hasDel del t
-+    else if hasDel && del c then levelBranch src hasDel del t
-+    else c :: levelBranch src hasDel del t
-+
-+def algoBfs (args : List Val) (nodeCount : Nat) (del : Nat → Bool) (hasDel : Bool) (wantEdges : Bool)
-+    (lag : Lag) (relOf : Nat → Nat → Option Nat) : Except String BfsOut :=
-+  match args with
-+  | a0 :: a1 :: a2 :: _ =>
-+    match a0 with
-+    | .null => .ok .empty
-+    | .node src =>
-+      match a1 with
-+      | .int _ =>
-+        match optString a2 with
-+        | .error e => .error e
-+        | .ok _ =>
-+          if nodeCount = 0 then .ok .empty
-+          else if del src then .error "Source node not found in graph"
-+          else
-+            let (ns, es) := if wantEdges then edgesBranch src hasDel del relOf lag.parent
-+                            else (levelBranch src hasDel del lag.level, [])
-+            if ns = [] then .ok .empty else .ok (.rows ns es)
-+      | _ => .error "maxDepth must be an integer"
-+    | _ => .error "Source must be a node or null"
-+  | _ => .error "arity"
-+
-+/-- The parent→child relationship exists for every reported child (LAGraph
-+contract: a parent is adjacent to its child in the typed adjacency matrix). -/
-+def ParentsAdjacent (src : Nat) (relOf : Nat → Nat → Option Nat) (parent : List (Nat × Nat)) : Prop :=
-+  ∀ c p, (c, p) ∈ parent → c ≠ src → relOf p c ≠ none
-+
-+/-- **Aligned columns**: under the LAGraph contract each reported node comes
-+with exactly one edge, the parent→node relationship. -/
-+theorem edgesBranch_aligned (src : Nat) (hasDel : Bool) (del : Nat → Bool) (relOf : Nat → Nat → Option Nat) :
-+    ∀ parent, ParentsAdjacent src relOf parent →
-+      (edgesBranch src hasDel del relOf parent).2.length = (edgesBranch src hasDel del relOf parent).1.length := by
-+  intro parent
-+  induction parent with
-+  | nil => intro _; rfl
-+  | cons cp t ih =>
-+    obtain ⟨c, p⟩ := cp
-+    intro hadj
-+    have ih' := ih (fun c' p' h hc => hadj c' p' (List.mem_cons_of_mem _ h) hc)
-+    simp only [edgesBranch]
-+    split
-+    · exact ih'
-+    · split
-+      · exact ih'
-+      · rename_i hc _
-+        have := hadj c p (by simp) hc
-+        cases hr : relOf p c with
-+        | none => exact absurd hr this
-+        | some e => simp [ih']
-+
-+/-- **The `nodes` column does not depend on the yields bitmask** when LAGraph's
-+parent and level vectors share their pattern and no reached node's parent is
-+deleted (deleted nodes have no edges). -/
-+theorem branches_agree (src : Nat) (hasDel : Bool) (del : Nat → Bool) (relOf : Nat → Nat → Option Nat) :
-+    ∀ (parent level : List (Nat × Nat)), parent.map (·.1) = level.map (·.1) →
-+      (∀ c p, (c, p) ∈ parent → c ≠ src → del p = false) →
-+      (edgesBranch src hasDel del relOf parent).1 = levelBranch src hasDel del level := by
-+  intro parent
-+  induction parent with
-+  | nil => intro level h _; cases level; rfl; simp at h
-+  | cons cp t ih =>
-+    intro level h hp
-+    obtain ⟨c, p⟩ := cp
-+    cases level with
-+    | nil => simp at h
-+    | cons cl lt =>
-+      obtain ⟨c', l⟩ := cl
-+      simp only [List.map_cons, List.cons.injEq] at h
-+      obtain ⟨rfl, ht⟩ := h
-+      have ih' := ih lt ht (fun c'' p'' hm hc => hp c'' p'' (List.mem_cons_of_mem _ hm) hc)
-+      simp only [edgesBranch, leve
+@@ -220,6 +220,10 @@ pub struct Parser<'a> {
+     /// with everything else that decides whether the attempt can succeed.
+     /// See [`Parser::parse_list_literal_or_comprehension`].
+     not_pattern_comprehension: HashSet<PatternComprehensionAttempt>,
++    /// Set while a `CYPHER` parameter value is parsed as an expression: a sign run
++    /// is then limited to what the grammar took before runs parsed (`+`, `-` or
++    /// `+-`), at every nesting level, since the parser folds a run to its parity.
++    legacy_signs: bool,
+ }
+ 
+ /// Where and in what context [`Parser::parse_list_literal_or_comprehension`]
+@@ -283,6 +287,7 @@ impl<'a> Parser<'a> {
+             max_child_height: 0,
+             forbidden_pattern_comprehension: None,
+             not_pattern_comprehension: HashSet::new(),
++            legacy_signs: false,
+         }
+     }
+ 
+@@ -437,7 +442,12 @@ impl<'a> Parser<'a> {
+             return Ok(value);
+         }
+         self.restore_state(state);
+-        evaluate_param(&self.parse_expr(false)?.root())
++        // `parse_expr` folds a run of signs to its parity, so `---1` would come out
++        // accepted: a parameter keeps the sign grammar it had before runs parsed.
++        self.legacy_signs = true;
++        let expr = self.parse_expr(false);
++        self.legacy_signs = false;
++        evaluate_param(&expr?.root())
+     }
+ 
+     /// Reads a literal: `null`, a boolean, a number, a string, a list, a map,
+@@ -2226,21 +2236,43 @@ impl<'a> Parser<'a> {
+                     }
+                     stack.push((current + 1, None, 0));
+                 } else if current == 9 {
+-                    // unary add or subtract
+-                    optional_match_token!(self.lexer, Plus);
+-                    let is_negate = optional_match_token!(self.lexer, Dash);
+-
+-                    // Handle integer overflow with negation
+-                    if is_negate && let Err(err) = self.lexer.current() {
+-                        return Err(err.replace("Integer overflow '", "Integer overflow '-"));
++                    // unary add or subtract, any run of them: `- -5` is 5
++                    let mut negate_count = 0;
++                    let mut plus_count = 0;
++                    loop {
++                        match self.lexer.current() {
++                            Ok(token @ (Token::Plus | Token::Dash))
++                                if self.legacy_signs
++                                    && (negate_count > 0
++                                        || plus_count > 0 && matches!(token, Token::Plus)) =>
++                            {
++                                return Err(self
++                                    .lexer
++                                    .format_error(&format!("Invalid input {token:?}")));
++                            }
++                            Ok(Token::Plus) => plus_count += 1,
++                            Ok(Token::Dash) => negate_count += 1,
++                            // Handle integer overflow with negation
++                            Err(err) if negate_count > 0 => {
++                                return Err(
++                                    err.replace("Integer overflow '", "Integer overflow '-")
++                                );
++                            }
++                            _ => break,
++                        }
++                        self.lexer.next();
+                     }
+ 
+-                    let (res, height) = if is_negate {
+-                        (Some(tree!(ExprIR::Negate)), 1)
++                    // Negate type-checks its operand, so `- -x` is not `x`.
++                    // A longer run still folds, keeping its parity, as NOT's
++                    // does: to one Negate, or to two the operand is placed under.
++                    if negate_count == 0 {
++                        stack.push((current, None, 0));
+                     } else {
+-                        (None, 0)
+-                    };
+-                    stack.push((current, res, height));
++                        for _ in 0..(2 - negate_count % 2) {
++                            stack.push((current, Some(tree!(ExprIR::Negate)), 1));
++                        }
++                    }
+                     stack.push((current + 1, None, 0));
+                 } else {
+                     // primary expression
+@@ -4024,6 +4056,27 @@ mod tests {
+         }
+     }
+ 
++    // Regression (#2309): a run of signs parsed only its first `+` and `-`, so
++    // `- -5` was "Invalid input Dash". It folds to one or two Negates by parity.
++    #[test]
++    fn chained_unary_signs_parse() {
++        with_functions();
++        for query in [
++            "RETURN - -5",
++            "RETURN --5",
++            "RETURN - - -5",
++            "RETURN -+5",
++            "RETURN +-+-5",
++            "RETURN --9223372036854775808",
++        ] {
++            assert!(Parser::new(query).parse().is_ok(), "{query}");
++        }
++        let err = Parser::new("RETURN - -99999999999999999999")
++ 
 ```
 
-**File**: `proofs/algo_udf/AlgoUdf/AlgoGlue.lean` (added, +223/-0)
+**File**: `tests/test_overflow_crashes.py` (modified, +15/-0)
 ```diff
-@@ -0,0 +1,223 @@
-+import AlgoUdf.MsfFlow
-+import AlgoUdf.Config
-+import AlgoUdf.Dfs
-+/-! # Remaining helpers of `algo_procedures.rs`
+@@ -80,6 +80,21 @@ def test_unary_minus_normal_values_still_work():
+     assert res.result_set == [[-5, 7, -1.25, None]]
+ 
+ 
++def test_chained_unary_minus():
++    # Regression (#2309): a sign applied to an already-signed operand was
++    # rejected with "Invalid input Dash". C folds any run of signs.
++    res = common.g.query(
++        "RETURN - -5, --5, - - -5, -+5, +-5, ++5, - -1.5, - -NULL")
++    assert res.result_set == [[5, 5, -5, -5, -5, 5, 1.5, None]]
++    res = common.g.query("RETURN --9223372036854775808, - - 9223372036854775807")
++    assert res.result_set == [[-9223372036854775808, 9223372036854775807]]
++    res = common.g.query("UNWIND [0, 1, 2] AS x WITH x WHERE x > - -1 RETURN x")
++    assert res.result_set == [[2]]
++    # Two negations still type-check the operand, as one does.
++    with pytest.raises(ResponseError, match="Type mismatch"):
++        common.g.query("RETURN - -'a'")
 +
-+| here | there |
-+| --- | --- |
-+| `newMsg`, `msgToString`  | `new_msg` :101, `msg_to_string` :105 (`CStr::from_ptr`: bytes up to the first NUL) |
-+| `Ctx`, `msfScore`        | `MsfWeightCtx`, `msf_score` :144 (attribute lookup as an `Option Attr`) |
-+| `indexOp`, `valueOp`     | `msf_scored_edge_index_op` :176, `msf_scored_edge_value_op` :200 (null guard = no write) |
-+| `scoreOf`                | `msf_score_of` :266 |
-+| `nodeValue`              | `node_value` :474 |
-+| `collectNodeIds`         | `collect_node_ids` :498 (label scans AXIOMATISED as `scan`; FxHashSet + `sort_unstable`) |
-+| `activeNodes`            | `active_node_set` :522 / `Graph::get_nodes(∅, 0)` (graph.rs:2565) |
-+| `Own`, `lifecycle`       | `create_lagraph_graph` :372, `delete_lagraph_graph` :397, `_borrowed` :404, `_maybe_borrowed` :417 under the LAGraph ownership contract |
-+| `cmpKey`                 | `cmp_found_path` :2155 (= `Dfs.fpLt`) |
-+-/
-+namespace AlgoUdf.AlgoGlue
-+open AlgoUdf
 +
-+/-! ## LAGraph message buffer -/
-+
-+def newMsg : List Nat := List.replicate 256 0
-+
-+/-- `CStr::from_ptr(..).to_string_lossy()`: the bytes before the first NUL. -/
-+def msgToString (m : List Nat) : List Nat := m.takeWhile (· ≠ 0)
-+
-+theorem msgToString_new : msgToString newMsg = [] := by decide
-+
-+theorem msgToString_prefix (m : List Nat) : ∃ rest, m = msgToString m ++ rest ∧
-+    (rest = [] ∨ rest.head? = some 0) := by
-+  refine ⟨m.dropWhile (· ≠ 0), (List.takeWhile_append_dropWhile).symm, ?_⟩
-+  induction m with
-+  | nil => simp
-+  | cons x t ih =>
-+    by_cases hx : x = 0
-+    · right; simp [List.dropWhile_cons, hx]
-+    · simp only [List.dropWhile_cons, ne_eq, hx, not_false_eq_true, decide_true, if_true]; exact ih
-+
-+/-! ## MSF scoring callbacks -/
-+
-+inductive Attr | float (f : Int) | int (k : Int) | other deriving DecidableEq, Repr
-+
-+structure Ctx where
-+  attr : Nat → Option Attr
-+  maximize : Bool
-+  unit : Bool
-+
-+/-- `msf_score`: `1.0` when unweighted, the numeric weight (negated when
-+maximizing), `±inf` (here `MsfFlow.inf`) when missing / non-numeric. Finite
-+f64 weights are modelled by their integer image. -/
-+def msfScore (ctx : Ctx) (e : Nat) : MsfFlow.Score :=
-+  if ctx.unit then .num 1 else
-+  let miss : Int := if ctx.maximize then -MsfFlow.inf else MsfFlow.inf
-+  let raw : Int := match ctx.attr e with
-+    | some (.float f) => f
-+    | some (.int k) => k
-+    | _ => miss
-+  .num (if ctx.maximize then -raw else raw)
-+
-+/-- A missing weight scores `+inf` in both modes (negation flips the `-inf`
-+miss of the maximizing mode), so it never beats a finite edge. -/
-+theorem msfScore_missing (ctx : Ctx) (e : Nat) (hu : ctx.unit = false)
-+    (h : ctx.attr e = none ∨ ctx.attr e = some .other) : msfScore ctx e = .num MsfFlow.inf := by
-+  unfold msfScore
-+  rcases h with h | h <;> cases hm : ctx.maximize <;> simp [hu, h]
-+
-+theorem msfScore_unit (ctx : Ctx) (e : Nat) (hu : ctx.unit = true) : msfScore ctx e = .num 1 := by
-+  simp [msfScore, hu]
-+
-+theorem msfScore_max (ctx : Ctx) (e : Nat) (k : Int) (hu : ctx.unit = false) (hm : ctx.maximize = true)
-+    (h : ctx.attr e = some (.int k) ∨ ctx.attr e = some (.float k)) : msfScore ctx e = .num (-k) := by
-+  unfold msfScore; rcases h with h | h <;> simp [hu, hm, h]
-+
-+/-- A finite (|k| < inf) edge beats a missing-weight edge under `keepMin`. -/
-+theorem missing_never_selected (k : Int) (e e' : Nat) (hk : k < MsfFlow.inf) :
-+    MsfFlow.keepMin ⟨.num MsfFlow.inf, e'⟩ ⟨.num k, e⟩ = ⟨.num k, e⟩ := by
-+  simp [MsfFlow.keepMin, MsfFlow.Score.lt, hk]
-+
-+/-- `msf_scored_edge_index_op`: `none` = a null pointer (no write). -/
-+def indexOp (ctx : Option Ctx) (zNull : Bool) (j : Nat) : Option MsfFlow.SE :=
-+  if zNull then none else ctx.map fun c => ⟨msfScore c j, j⟩
-+
-+def valueOp (ctx : Option Ctx) (zNull : Bool) (x : Option Nat) : Option MsfFlow.SE :=
-+  if zNull then none else
-+  match x, ctx with
-+  | some e, some c => some ⟨msfScore c e, e⟩
-+  | _, _ => none
-+
-+theorem indexOp_spec (c : Ctx) (j : Nat) : indexOp (some c) false j = some ⟨msfScore c j, j⟩ := rfl
-+theorem valueOp_spec (c : Ctx) (e : Nat) : valueOp (some c) false (some e) = some ⟨msfScore c e, e⟩ := rfl
-+theorem ops_null_guard (c : Option Ctx) (j : Nat) (x : Option Nat) :
-+    indexOp c true j = none ∧ valueOp c true x = none ∧ indexOp none false j = none ∧
-+    valueOp c false none = none := by
-+  refine ⟨rfl, rfl, rfl, ?_⟩; cases c <;> rfl
-+
-+/-- `msf_score_of`. -/
-+def scoreOf (x : Option MsfFlow.SE) : Option MsfFlow.Score := x.map (·.score)
-+theorem scoreOf_spec (s : MsfFlow.SE) : scoreOf (some s) = some s.score := rfl
-+
-+/-- `node_value`. -/
-+def nodeValue (id : Nat) : Val := .node id
-+theorem nodeValue_spec (id : Nat) : nodeValue id = .node id := rfl
-+
-+/-! ## Node collection -/
-+
-+/-- `Graph::get_nodes(&∅, 0)` (`Graph::get_nodes`, graph.rs:2565). -/
-+def activeNodes (nodeCount maxId : Nat) (dele
+ def test_range_normal_values_still_work():
+     res = common.g.query("RETURN range(1, 5)")
+     assert res.result_set == [[[1, 2, 3, 4, 5]]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3689** (2026-11-08): chore(deps): bump the cargo-deps group with 2 updates (@dependabot[bot])
+- **PR #3688** (2026-11-08): chore(deps): bump the github-actions group with 3 updates (@dependabot[bot])
+- **PR #3685** (2026-11-06): fix(writer-gate): engage the gate lazily to recover mixed read/write throughput (@swilly22)
 - **PR #3682** (2026-11-05): [6.0] Batch backport (74 commits) (@github-actions[bot])
 - **PR #3673** (closed): feat(index): an edge batch resumes anywhere, and reads exactly its size (@DvirDukhan)
-- **PR #3666** (2026-11-04): ci: install Trivy 0.76.1 from its GitHub release (get.trivy.dev is down) (@AviAvni)
-- **PR #3665** (2026-11-04): ci: remove the unused gh-aw agentic workflow setup (@AviAvni)
-- **PR #3657** (2026-11-02): refactor(mvcc): writers fork and commit; drop the write slot (@DvirDukhan)
-- **PR #3655** (closed): Truncated shortestPath relationship filters can hang the parser (@gkorland)
+- **PR #3670** (closed): chore(deps): bump the github-actions-master group with 4 updates (@dependabot[bot])
 
 ---
 
@@ -1891,56 +1767,74 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. proofs: Lean 4 proofs of the Rust engine, and a skill for working with them (#31
+## X. bound SET/REMOVE property chains and nested FOREACH in the parser (#2900)
 
 **RULE**:
-When implementing operations in `.claude/skills/proofs/REFERENCE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `graph/src/parser/cypher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d98077a`: proofs: Lean 4 proofs of the Rust engine, and a skill for working with them (#3172). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8312750b`: bound SET/REMOVE property chains and nested FOREACH in the parser (#2900). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/proofs/REFERENCE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/parser/cypher.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Proof conventions
-
-## Project layout
-
-```
-proofs/<area>/
-  lakefile.toml        # name, defaultTargets, [[lean_lib]] (copy an existing one)
-  lean-toolchain       # leanprover/lean4:v4.35.0
-  .gitignore           # .lake/
-  <Root>.lean          # imports the modules; header doc-comment = the report
-  <Root>/*.lean        # modules, < ~400 lines each, build after each
-  COVERAGE.tsv
-  repro.py             # optional: live repros needing RediSearch / a server
-```
-
-No Mathlib: use core Lean 4 plus `omega`, `simp`, `decide`, `induction`, and the
-`List`/`Array` lemmas in core. When you need another project's definitions, import
-them instead of copying: add a Lake path dependency to `lakefile.toml`
-
-```toml
-[[require]]
-name = "falkor-value-order"      # the dependency's own `name`
-path = "../value_order"
-```
-
-then `lake update` (commit the generated `lake-manifest.json`) and `import
-FalkorValueOrder.Model`. Shared foundations live in `proofs/core` (`FalkorCore`: the
-engine Value `V F`, the float model `F`, `i64` helpers, `cmpI`/comparator laws); reuse
-them with `open FalkorCore` (and `open FalkorCore.Laws` for the comparator laws `Lw`, `lexA`, `thn`) rather than defining another copy (
+            let (expr, has_properties) = self.parse_update_target()?;
+            if has_properties {
+    /// Parses what a `SET` or `REMOVE` item updates: an expression followed
+    /// by an optional `.prop.prop...` chain, reporting whether a chain was
+    /// present.
+    ///
+    /// Each lookup wraps the tree before it, so the chain is charged against
+    /// [`Self::MAX_TREE_DEPTH`] step by step, as the postfix chain in
+    /// [`Self::parse_expr_inner`] is: otherwise `n.a.a.a...` builds a tree
+    /// the binder overflows its stack walking, quadratically slowly.
+    fn parse_update_target(&mut self) -> Result<(DynTree<ExprIR<Arc<String>>>, bool), String> {
+        let ((mut expr, recurse), child_height) =
+            self.with_child_height(|s| s.parse_primary_expr(false))?;
+        let mut height = child_height + Self::PRIMARY_LEVELS;
+        if recurse {
+            self.reject_unparenthesized_target(&expr)?;
+            expr = self.parse_expr(false)?;
+            height = self.expr_height;
+            match_token!(self.lexer, RParen);
+            self.expect_property_after_paren()?;
+        }
+        // The target itself may already be too tall, with no lookup to charge.
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            let (mut expr, recurse) = self.parse_primary_expr(false)?;
+            if recurse {
+                self.reject_unparenthesized_target(&expr)?;
+                expr = self.parse_expr(false)?;
+                match_token!(self.lexer, RParen);
+                self.expect_property_after_paren()?;
+            }
+            if self.lexer.current()? == Token::Dot {
+                while self.lexer.current()? == Token::Dot {
+                    self.lexer.next();
+                    expr = self.parse_property_lookup(expr)?;
+                }
+            let (mut expr, recurse) = self.parse_primary_expr(false)?;
+            if recurse {
+                self.reject_unparenthesized_target(&expr)?;
+                expr = self.parse_expr(false)?;
+                match_token!(self.lexer, RParen);
+                self.expect_property_after_paren()?;
+            }
+            if self.lexer.current()? == Token::Dot {
+                while self.lexer.current()? == Token::Dot {
+                    self.lexer.next();
+                    expr = self.parse_property_lookup(expr)?;
+                }
+                    body.push(self.parse_foreach_clause()?);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d98077a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8312750b` are properly handled with clean fallback behavior.

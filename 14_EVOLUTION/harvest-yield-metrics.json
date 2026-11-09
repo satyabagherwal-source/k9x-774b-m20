@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T02:28:14.870Z",
-  "total_cycles_completed": 8443,
-  "total_learnings_persisted": 8443,
-  "total_rules_promoted": 8240,
+  "last_updated": "2026-11-09T02:34:44.092Z",
+  "total_cycles_completed": 8446,
+  "total_learnings_persisted": 8446,
+  "total_rules_promoted": 8245,
   "history": [
-    {
-      "timestamp": "2026-11-08T11:13:50.449Z",
-      "repository": "moonshotai/Kimi-K3",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T11:42:10.120Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T11:59:52.781Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T12:26:19.802Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T02:34:38.190Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T02:34:42.272Z",
+      "repository": "exyte/Chat",
+      "learningId": "learn-github-exyte-chat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T02:34:44.092Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

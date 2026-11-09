@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T02:28:14.874Z",
+  "last_updated": "2026-11-09T02:34:44.095Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1520,14 +1520,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-community-gpt2",
-      "content_hash": "f5de16815234741eedaf35c4d2d65a17e6fc051fbacbc8f51eb81fbbc8c518bc",
-      "verified_at": "2026-11-05T08:52:11.380Z",
+      "content_hash": "e1f6b610da00de1f9cd151c70cb8d5a030defb65d2175d132ac19aa4792eb499",
+      "verified_at": "2026-11-09T02:34:44.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:52:11.380Z"
+      "last_updated": "2026-11-09T02:34:44.095Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "79c774d0102bbdfe5ebe8dcd71403968df723e49254059658edb7cb57e1cc75b",
-      "verified_at": "2026-11-05T22:16:01.521Z",
+      "content_hash": "896e1bd5aed43e548a2afe76de3e5025aa2094d950660a71a7b58b4c566e7bb0",
+      "verified_at": "2026-11-09T02:34:38.193Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:16:01.521Z"
+      "last_updated": "2026-11-09T02:34:38.193Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -15096,14 +15096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-exyte-chat",
-      "content_hash": "58e086348081da44ac690e6f72211524b5bfbb6458f3f7b532638e701ea4b109",
-      "verified_at": "2026-10-20T02:34:19.034Z",
+      "content_hash": "d26fe1de0cd1a6e4eb44347a09a97551050cae66dbd03797396fd0f8b8f545bf",
+      "verified_at": "2026-11-09T02:34:42.275Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:34:19.034Z"
+      "last_updated": "2026-11-09T02:34:42.275Z"
     },
     "parcel-bundler/parcel": {
       "repository": "parcel-bundler/parcel",

@@ -8487,3 +8487,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-09T02:27:57.705Z |
 | `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `623e673f` | Multi-dimensional audit evidence | 2026-11-09T02:28:05.220Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `82b87745` | Multi-dimensional audit evidence | 2026-11-09T02:28:14.865Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `56d00c3d` | Multi-dimensional audit evidence | 2026-11-09T02:34:38.171Z |
+| `learn-github-exyte-chat` | `https://github.com/exyte/Chat` | `f382a147` | Multi-dimensional audit evidence | 2026-11-09T02:34:42.260Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-09T02:34:44.079Z |

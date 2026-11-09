@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T02:28:17.469Z",
-    "lastVerified": "2026-11-09T02:28:17.469Z",
+    "lastChecked": "2026-11-09T02:34:47.183Z",
+    "lastVerified": "2026-11-09T02:34:47.183Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-09T02:01:09.540Z",
-    "lastVerified": "2026-11-09T02:01:09.540Z",
+    "lastChecked": "2026-11-09T02:34:47.174Z",
+    "lastVerified": "2026-11-09T02:34:47.174Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1729,9 +1729,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-08T22:26:19.752Z",
+    "lastChecked": "2026-11-09T02:34:42.192Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-08T22:26:19.752Z"
+    "lastVerified": "2026-11-09T02:34:42.192Z"
   },
   "seaql-sea-orm": {
     "name": "SeaQL/sea-orm",
@@ -1835,22 +1835,21 @@
     "lastVerified": "2026-11-09T02:08:11.262Z"
   },
   "falkordb-falkordb": {
-    "name": "FalkorDB",
+    "name": "FalkorDB/FalkorDB",
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T01:33:47.319Z",
-    "lastVerified": "2026-11-08T01:33:47.319Z",
+    "lastChecked": "2026-11-09T02:34:36.925Z",
+    "lastVerified": "2026-11-09T02:34:36.925Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "79c774d0102bbdfe5ebe8dcd71403968df723e49254059658edb7cb57e1cc75b",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "896e1bd5aed43e548a2afe76de3e5025aa2094d950660a71a7b58b4c566e7bb0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5d98077a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
     "name": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -2124,9 +2123,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-08T05:11:32.551Z",
+    "lastChecked": "2026-11-09T02:34:44.721Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-11-08T05:11:32.551Z"
+    "lastVerified": "2026-11-09T02:34:44.721Z"
   },
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
@@ -6519,9 +6518,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-08T05:57:00.295Z",
+    "lastChecked": "2026-11-09T02:34:39.735Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-08T05:57:00.295Z"
+    "lastVerified": "2026-11-09T02:34:39.735Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -6563,13 +6562,13 @@
     "officialUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T08:50:04.189Z",
-    "lastVerified": "2026-11-05T08:50:04.189Z",
+    "lastChecked": "2026-11-09T02:34:34.809Z",
+    "lastVerified": "2026-11-09T02:34:34.809Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-community-gpt2",
-    "contentHash": "f5de16815234741eedaf35c4d2d65a17e6fc051fbacbc8f51eb81fbbc8c518bc",
-    "promotedRulesCount": 0,
+    "contentHash": "e1f6b610da00de1f9cd151c70cb8d5a030defb65d2175d132ac19aa4792eb499",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -12243,11 +12242,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "exyte-chat": {
-    "name": "Chat",
+    "name": "exyte/Chat",
     "officialUrl": "https://github.com/exyte/Chat",
-    "lastChecked": "2026-11-05T19:45:19.013Z",
-    "revisionIdentifier": "49bf1f37",
-    "lastVerified": "2026-11-05T19:45:19.013Z"
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-09T02:34:41.882Z",
+    "lastVerified": "2026-11-09T02:34:41.882Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-exyte-chat",
+    "contentHash": "d26fe1de0cd1a6e4eb44347a09a97551050cae66dbd03797396fd0f8b8f545bf",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vitest-dev-vitest": {
     "name": "vitest-dev/vitest",
