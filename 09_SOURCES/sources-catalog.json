@@ -35,8 +35,8 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "f1c8b8f483f55f49ca180a24ffc1c1d8d1c837544561d7911d5bac02810fe8c6",
-    "lastHarvestedAt": "2026-11-05T10:36:37.459Z",
+    "contentHash": "ac1ad1886d831e1e142985b091ada74d81509e1fa3b9fc38c014bbb970dce85a",
+    "lastHarvestedAt": "2026-11-09T04:42:19.268Z",
     "learningId": "learn-huggingface-bingsu-adetailer"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
@@ -8483,10 +8483,10 @@
     "repository": "tauri-apps/tauri",
     "platform": "github",
     "sourceUrl": "https://github.com/tauri-apps/tauri",
-    "sourceVersion": "2e23492a",
+    "sourceVersion": "9a66eab8",
     "license": "Apache-2.0",
-    "contentHash": "b9ee1de5ede4a8f6905e8efc8b99c00d65e5adbdaa7ed3d84ead87164f5c8289",
-    "lastHarvestedAt": "2026-11-05T22:16:06.338Z",
+    "contentHash": "4a024d5c6d434d2d791cb85b27b967dfe40123098fd7f897b151d0ef5c21a2a5",
+    "lastHarvestedAt": "2026-11-09T04:42:17.713Z",
     "learningId": "learn-github-tauri-apps-tauri"
   },
   "oliviertassinari-react-swipeable-views": {

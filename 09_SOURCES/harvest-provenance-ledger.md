@@ -8516,3 +8516,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-09T04:27:27.889Z |
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `0cd7f96f` | Multi-dimensional audit evidence | 2026-11-09T04:27:35.327Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `645d62eb` | Multi-dimensional audit evidence | 2026-11-09T04:27:42.177Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `9a66eab8` | Multi-dimensional audit evidence | 2026-11-09T04:42:17.713Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-11-09T04:42:19.268Z |

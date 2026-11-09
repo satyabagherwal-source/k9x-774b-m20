@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T04:27:42.080Z",
+  "last_updated": "2026-11-09T04:42:19.172Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21884,10 +21884,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "f1c8b8f483f55f49ca180a24ffc1c1d8d1c837544561d7911d5bac02810fe8c6",
+      "content_hash": "ac1ad1886d831e1e142985b091ada74d81509e1fa3b9fc38c014bbb970dce85a",
       "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Model Artifact Class Index Integrity",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Segmentation Mask Resolution Alignment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 370,
           "title": "Model Artifact Versioning & Schema Compatibility Invariant",
@@ -21980,7 +21990,7 @@
         "learn-huggingface-hf-bingsu-adetailer-mv40r96p",
         "learn-huggingface-hf-bingsu-adetailer-mv4eqnev"
       ],
-      "verified_at": "2026-11-05T10:36:37.352Z",
+      "verified_at": "2026-11-09T04:42:19.148Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60535,14 +60545,19 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "2e23492a",
-      "content_hash": "b9ee1de5ede4a8f6905e8efc8b99c00d65e5adbdaa7ed3d84ead87164f5c8289",
+      "source_version": "9a66eab8",
+      "content_hash": "4a024d5c6d434d2d791cb85b27b967dfe40123098fd7f897b151d0ef5c21a2a5",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): update dependency eslint-plugin-security to v4.2.1 (#16466)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "bundler): close the main binary before running the Windows sign command (#16478)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -60576,7 +60591,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:16:06.208Z",
+      "verified_at": "2026-11-09T04:42:17.589Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

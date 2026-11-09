@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source**: github ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
-> **Source Version**: `2e23492a`  
+> **Source Version**: `9a66eab8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:16:04.928Z  
+> **Timestamp**: 2026-11-09T04:42:16.290Z  
 > **Learning ID**: `learn-github-tauri-apps-tauri`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:16:04.920Z  
+> **Harvest Timestamp**: 2026-11-09T04:42:16.150Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 112533 stars
+- **Stars / Engagement**: 112626 stars
 
 ---
 
@@ -2262,11 +2262,13 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16466** (2026-11-05): **chore(deps): update dependency eslint-plugin-security to v4.2.1**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [eslint-plugin-security](https://redirect.github.com/eslint-community/eslint-plugin-security) | [`4.2.0` → `4.2.1`](https://renovatebot.com/diffs/npm/eslint-plugin-security/4.2.0/4.2.1) | ![age](https://developer.mend.io/api/mc/badges/age/npm/eslint-plugin-security/4.2.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/eslint-plugin-security/4.2.0/4.2.1?slim=true) |  ---  ### Release Notes  <details> <summary>eslint-community/eslint-plugin-security (eslint-plugin-security)</summary>  ### [`v4.2.1`](https://redirect.github.com/eslint-community/eslint-plugin-security/blob/HEAD/CHANGELOG.md#421-2026-10-18)  [Compare Source](https://redirect.github.com/eslint-community/eslint-plugin-security/compare/eslint-plugin-security-v4.2.0...eslint-plugin-security-v4.2.1)  ##### Bug Fixes  - check `RegExp()` called without `new` in the regexp rules ([#&#8203;232](https://redirect.github.com/eslint-community/eslint-plugin-security/issues/232)) ([affbfc0](https://redirect.github.com/eslint-community/eslint-plugin-security/commit/affbfc0d7b83434434551f128335d04400e554bb))  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled 
+- **Issue #16478** (2026-11-09): **fix(bundler): close the main binary before running the Windows sign command**
+  *Symptoms*: Closes #16477  `bundle_project` opens the main binary to make its unsigned backup copy, but the handle was never dropped, so it stayed open through the whole bundling loop, including every `try_sign` call. On Windows a `signCommand` that writes a signed copy and renames it over the exe then fails with `Access is denied. (os error 5)`, since the file can't be replaced while another handle has it open. The handle is only needed for the copy, so this drops it right after.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through 17948a5529573bf55bb717a1d7ab7e95e391acf7 There are 8 changes which include @tauri-apps/api with patch, tauri-bundler with patch, tauri-cli with patch, @tauri-apps/cli with patch, tauri-runtime with patch, tauri with patch, tauri-runtime-wry with patch, tauri-utils with patch  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.4 | 2.12.5 |  tauri-utils | 2.10.2 | 2.10.3 |  tauri-bundler | 2.10.4 | 2.10.5 |  tauri-runtime | 2.12.2 | 2.12.3 |  tauri-runtime-wry | 2.12.3 | 2.12.4 |  tauri-codegen | 2.7.4 | 2.7.5 |  tauri-macros | 2.7.4 | 2.7.5 |  tauri-plugin | 2.7.2 | 2.7.3 |  tauri-build | 2.7.4 | 2.7.5 |  tauri | 2.12.5 | 2.12.6 |  @tauri-apps/cli | 2.12.4 | 2.12.5 |  tauri-cli | 2.12.4 | 2.12.5 |  </details>  [Add another chang
 
-- **Issue #16465** (2026-11-05): **[bug] RPM bundling fails for a prerelease version: invalid version "0.0.0-1": contains invalid character**
-  *Symptoms*: ### Describe the bug  Since `tauri-bundler` 2.10.3 (the move to `rpm` 0.30, #15639), bundling an RPM fails for any app version that has a semver prerelease, for example `0.0.0-1729` or `1.2.0-rc.1`:  ``` Bundling Stigmer-0.0.0-1729-1.x86_64.rpm (.../target/release/bundle/rpm/Stigmer-0.0.0-1729-1.x86_64.rpm) failed to bundle project: invalid version "0.0.0-1729": contains invalid character (allowed: alphanumeric, '.', '_', '+', '%', '{', '}', '~', '^') ```  `crates/tauri-bundler/src/bundle/linux/rpm.rs` passes `settings.version_string()` straight to `rpm::PackageBuilder::new`. RPM versions cannot contain `-`, which RPM reserves as the version–release separator. With `tauri-bundler` 2.10.1 (rpm 0.16) the same versions bundled without error.  ### Reproduction  1. In `tauri.conf.json`, set `"version": "0.0.0-1"`, with `bundle.targets` `"all"` (or including `rpm`). 2. Run `tauri build` on Linux.  The `.deb` and the AppImage bundle; the RPM fails with the error above.  ### Expected behavior  A prerelease version bundles. RPM's own convention for a prerelease is `~` (`1.2.0~rc.1` sorts before `1.2.0`), so mapping the semver `-` to `~` for the RPM `Version` tag would keep the ordering right. Alternatively, a `bundle > linux > rpm` option to set the RPM version separately would work.  ### Platform and versions  - `@tauri-apps/cli` 2.12.4 (`tauri-bundler` 2.10.4) - GitHub Actions `ubuntu-22.04`, through `tauri-apps/tauri-action` - Last good: `@tauri-apps/cli` 2.10.1  ### Workaround  We
+- **Issue #16477** (2026-11-09): **[bug] Windows: bundler keeps the main binary open while signCommand runs**
+  *Symptoms*: ### Describe the bug  On Windows, `tauri build` opens the main binary and keeps that handle open for the whole bundling loop, including while the configured `signCommand` runs. A sign command that replaces the exe (write a signed copy next to it, then rename it over the original) fails with `Access is denied. (os error 5)`. A tool that rewrites the file in place, like signtool, works.  In `crates/tauri-bundler/src/bundle.rs` (tauri-cli 2.12.4, and still the same on `dev`):  ```rust let mut main_binary_original = std::fs::File::open(&main_binary_path)     .fs_context("can't open main binary", &main_binary_path)?; std::io::copy(&mut main_binary_original, &mut main_binary_copy)?; ```  `main_binary_original` is only used for that one copy, but it is never dropped, so it lives until `bundle_project` returns. The `windows::sign::try_sign(&main_binary_path, settings)?` call that runs the sign command is inside the loop below, so the handle is still open there.  Windows does not let `MoveFileExW` with `MOVEFILE_REPLACE_EXISTING` replace a file that another handle has open, even though that handle allows others to write to it.  I found this through a user of a third-party signing CLI (https://github.com/Le-Syl21/ssign) whose release job failed on `windows-latest` right after the certificate had signed the file:  ``` atomically replacing ...\wirecat-desktop.exe: Access is denied. (os error 5) ```  I read the code to check that the handle is really Tauri's. I did not reproduce it on a W
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2283,369 +2285,40 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2e23492a` (2026-11-05)
-**Commit Message**: chore(deps): update dependency eslint-plugin-security to v4.2.1 (#16466)
+### Incident Patch 1: `9a66eab8` (2026-11-09)
+**Commit Message**: fix(bundler): close the main binary before running the Windows sign command (#16478)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `packages/api/package.json` (modified, +1/-1)
+**File**: `.changes/bundler-close-main-binary-before-sign.md` (added, +7/-0)
 ```diff
-@@ -52,7 +52,7 @@
-     "@types/node": "^24.11.0",
-     "eslint": "^10.0.2",
-     "eslint-config-prettier": "10.1.8",
--    "eslint-plugin-security": "4.2.0",
-+    "eslint-plugin-security": "4.2.1",
-     "globals": "^17.4.0",
-     "rollup": "4.64.10",
-     "tslib": "^2.8.1",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +5/-5)
-```diff
-@@ -246,8 +246,8 @@ importers:
-         specifier: 10.1.8
-         version: 10.1.8(eslint@10.0.2(jiti@2.6.1)(supports-color@10.2.2))
-       eslint-plugin-security:
--        specifier: 4.2.0
--        version: 4.2.0
-+        specifier: 4.2.1
-+        version: 4.2.1
-       globals:
-         specifier: ^17.4.0
-         version: 17.4.0
-@@ -3145,8 +3145,8 @@ packages:
-     peerDependencies:
-       eslint: '>=7.0.0'
- 
--  eslint-plugin-security@4.2.0:
--    resolution: {integrity: sha512-LL5jbxRzlNv0vkSyBtbO7qAPofqd3xlseAFTDevyDTMmScjBrLv2/VkQ7ZFQxBaFYsa3dhpE7NcV+JkwJ9l6RQ==}
-+  eslint-plugin-security@4.2.1:
-+    resolution: {integrity: sha512-iF95SSqdSUVTvB7srNXoNeTQIqwfALTn9nmoqJyixSIKqEydlW01Cqb7xNveqE4Zd6YWBoQICQ4FH9NkR1byDg==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
- 
-   eslint-scope@9.1.1:
-@@ -7725,7 +7725,7 @@ snapshots:
-     dependencies:
-       eslint: 10.0.2(jiti@2.6.1)(supports-color@10.2.2)
- 
--  eslint-plugin-security@4.2.0:
-+  eslint-plugin-security@4.2.1:
-     dependencies:
-       safe-regex: 2.1.1
- 
-```
-
----
-
-### Incident Patch 2: `eebf7c23` (2026-11-04)
-**Commit Message**: fix(core): don't hold the webviews lock while emitting to webviews (#16438)
-
-* fix(core): don't hold the webviews lock while emitting to webviews
-
-* fix(core): don't hold the js listeners lock while emitting to webviews
-
-* docs(core): explain why holding the locks while evaluating deadlocks
-
-**File**: `.changes/emit-webviews-lock-deadlock.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,7 @@
 +---
-+"tauri": patch:bug
++"tauri-bundler": "patch:bug"
++"tauri-cli": "patch:bug"
++"@tauri-apps/cli": "patch:bug"
 +---
 +
-+Fix a deadlock when emitting an event from a non-main thread with the `tracing` feature enabled while the main thread emits an event or looks up a webview, for example in a document title change handler.
++Fix a Windows `signCommand` that replaces the main binary (for example by writing a signed copy and renaming it over the original) failing with `Access is denied. (os error 5)`. The bundler no longer keeps the main binary open after copying it.
 ```
 
-**File**: `crates/tauri/src/event/listener.rs` (modified, +20/-13)
+**File**: `crates/tauri-bundler/src/bundle.rs` (modified, +1/-0)
 ```diff
-@@ -308,7 +308,7 @@ impl Listeners {
+@@ -143,6 +143,7 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<Bundle>> {
+   let mut main_binary_original = std::fs::File::open(&main_binary_path)
+     .fs_context("can't open main binary", &main_binary_path)?;
+   std::io::copy(&mut main_binary_original, &mut main_binary_copy)?;
++  drop(main_binary_original);
  
-   pub(crate) fn emit_js_filter<'a, R, I, F>(
-     &self,
--    mut webviews: I,
-+    webviews: I,
-     emit_args: &EmitArgs,
-     filter: Option<F>,
-   ) -> crate::Result<()>
-@@ -318,19 +318,26 @@ impl Listeners {
-     F: Fn(&EventTarget) -> bool,
-   {
-     let event = &emit_args.event;
--    let js_listeners = self.inner.js_event_listeners.lock().unwrap();
--    webviews.try_for_each(|webview| {
--      if let Some(handlers) = js_listeners.get(webview.label()).and_then(|s| s.get(event)) {
--        let ids = handlers
--          .iter()
--          .filter(|handler| match_any_or_filter(&handler.target, &filter))
--          .map(|handler| handler.id)
--          .collect::<Vec<_>>();
--        webview.emit_js(emit_args, &ids)?;
--      }
-+    // `eval` can block until the main thread runs the script, so holding the listeners lock
-+    // while waiting deadlocks any main thread code that takes it (e.g. `emit`)
-+    let targets = {
-+      let js_listeners = self.inner.js_event_listeners.lock().unwrap();
-+      webviews
-+        .filter_map(|webview| {
-+          let handlers = js_listeners.get(webview.label())?.get(event)?;
-+          let ids = handlers
-+            .iter()
-+            .filter(|handler| match_any_or_filter(&handler.target, &filter))
-+            .map(|handler| handler.id)
-+            .collect::<Vec<_>>();
-+          Some((webview, ids))
-+        })
-+        .collect::<Vec<_>>()
-+    };
- 
--      Ok(())
--    })
-+    targets
-+      .into_iter()
-+      .try_for_each(|(webview, ids)| webview.emit_js(emit_args, &ids))
-   }
- 
-   pub(crate) fn emit_js<'a, R, I>(&self, webviews: I, emit_args: &EmitArgs) -> crate::Result<()>
-```
-
-**File**: `crates/tauri/src/manager/mod.rs` (modified, +18/-6)
-```diff
-@@ -534,8 +534,16 @@ impl<R: Runtime> AppManager<R> {
-     };
- 
-     let listeners = self.listeners();
-+    // `eval` can block until the main thread runs the script, so holding the webviews lock
-+    // while waiting deadlocks any main thread code that takes it (e.g. `get_webview`)
-+    let webviews = self
-+      .webview
-+      .webviews_lock()
-+      .values()
-+      .cloned()
-+      .collect::<Vec<_>>();
- 
--    listeners.emit_js(self.webview.webviews_lock().values(), &emit_args)?;
-+    listeners.emit_js(webviews.iter(), &emit_args)?;
-     listeners.emit(emit_args)?;
- 
-     Ok(())
-@@ -563,12 +571,16 @@ impl<R: Runtime> AppManager<R> {
-     };
- 
-     let listeners = self.listeners();
-+    // `eval` can block until the main thread runs the script, so holding the webviews lock
-+    // while waiting deadlocks any main thread code that takes it (e.g. `get_webview`)
-+    let webviews = self
-+      .webview
-+      .webviews_lock()
-+      .values()
-+      .cloned()
-+      .collect::<Vec<_>>();
- 
--    listeners.emit_js_filter(
--      self.webview.webviews_lock().values(),
--      &emit_args,
--      Some(&filter),
--    )?;
-+    listeners.emit_js_filter(webviews.iter(), &emit_args, Some(&filter))?;
- 
-     listeners.emit_filter(emit_args, Some(filter))?;
- 
-```
-
----
-
-### Incident Patch 3: `8d5f74c1` (2026-11-05)
-**Commit Message**: fix(windows): let accessibility hit tests pass through resize helper (fix #12901) (#16439)
-
-* fix(windows): pass through resize helper accessibility hit tests (fix #12901)
-
-* Update .changes/windows-resize-accessibility-hit-test.md
-
-* ci: test tauri-runtime-wry across the platform matrix
-
-**File**: `.changes/windows-resize-accessibility-hit-test.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+---
-+'tauri': 'patch:bug'
-+'tauri-runtime-wry': 'patch:bug'
-+---
-+
-+On Windows, let accessibility hit tests pass through the resize helper outside the top border of frameless windows with shadows, so screen readers can reach the window content.
-```
-
-**File**: `.github/workflows/test-core.yml` (modified, +3/-0)
-```diff
-@@ -132,6 +132,9 @@ jobs:
-       - name: test tauri
-         run: ${{ matrix.platform.cargo }} ${{ matrix.features.key == 'no-default' && 'check' || matrix.platform.command }} --target ${{ matrix.platform.target }} ${{ matrix.features.args }} --manifest-path crates/tauri/Cargo.toml
- 
-+      - name: test tauri-runtime-wry
-+        run: ${{ matrix.platform.cargo }} ${{ matrix.platform.command }} --target ${{ matrix.platform.target }} ${{ matrix.features.args }} ${{ matrix.platform.command == 'build' && '--lib --bins --tests' || '' }} --manifest-path crates/tauri-runtime-wry/Cargo.toml
-+
-       - name: test tauri examples
-         if: ${{ matrix.features.key != 'no-default' && matrix.platform.command == 'test' }}
-         run: |
-```
-
-**File**: `crates/tauri-runtime-wry/src/undecorated_resizing.rs` (modified, +124/-8)
-```diff
-@@ -292,13 +292,6 @@ mod windows {
-             return DefWindowProcW(child, msg, wparam, lparam);
-           }
- 
--          // if the window has undecorated shadows,
--          // it should always be the top border,
--          // ensured by the cutout drag window
--          if data.has_undecorated_shadows {
--            return LRESULT(HTTOP as _);
--          }
--
-           let mut rect = RECT::default();
-           if GetWindowRect(child, &mut rect).is_err() {
-             return DefWindowProcW(child, msg, wparam, lparam);
-@@ -307,9 +300,22 @@ mod windows {
-           let (cx, cy) = (GET_X_LPARAM(lparam) as i32, GET_Y_LPARAM(lparam) as i32);
- 
-           let dpi = util::hwnd_dpi(child);
--          let border_x = util::get_system_metrics_for_dpi(SM_CXFRAME, dpi);
-           let border_y = util::get_system_metrics_for_dpi(SM_CYFRAME, dpi);
- 
-+          if data.has_undecorated_shadows {
-+            // Accessibility hit tests can query points outside the window region.
-+            // Only the top strip participates in resizing when shadows are enabled.
-+            let in_top_border =
-+              cx >= rect.left && cx < rect.right && cy >= rect.top && cy < rect.top + border_y;
-+            return LRESULT(if in_top_border {
-+              HTTOP as _
-+            } else {
-+              HTTRANSPARENT as _
-+            });
-+          }
-+
-+          let border_x = util::get_system_metrics_for_dpi(SM_CXFRAME, dpi);
-+
-           let res = hit_test(
-             rect.left,
-             rect.top,
-@@ -503,6 +509,116 @@ mod windows {
-   fn GET_Y_LPARAM(lparam: LPARAM) -> i16 {
-     (((lparam.0 as usize) & 0xFFFF_0000) >> 16) as u16 as i16
-   }
-+
-+  #[cfg(test)]
-+  mod tests {
-+    use super::*;
-+
-+    struct ResizeWindow(HWND);
-+
-+    impl ResizeWindow {
-+      fn new(x: i32, y: i32, shadows: bool) -> (Self, HWND) {
-+        let parent = unsafe {
-+          CreateWindowExW(
-+            WINDOW_EX_STYLE::default(),
-+            w!("STATIC"),
-+            w!("Tauri resize hit-test regression"),
-+            WS_OVERLAPPEDWINDOW,
-+            x,
-+            y,
-+            320,
-+            240,
-+            None,
-+            None,
-+            None,
-+            None,
-+          )
-+          .unwrap()
-+        };
-+        let window = Self(parent);
-+        attach_resize_handler(parent.0 as isize, shadows);
-+        let child = unsafe { FindWindowExW(Some(parent), None, CLASS_NAME, WINDOW_NAME) }.unwrap();
-+        (window, child)
-+      }
-+    }
-+
-+    impl Drop for ResizeWindow {
-+      fn drop(&mut self) {
-+        unsafe { DestroyWindow(self.0).unwrap() };
-+      }
-+    }
-+
-+    fn hit_test_at(child: HWND, x: i32, y: i32) -> isize {
-+      let point = (x as u16 as usize) | ((y as u16 as usize) << 16);
-+      unsafe { SendMessageW(child, WM_NCHITTEST, None, Some(LPARAM(point as isize))) }.0
-+    }
-+
-+    #[test]
-+    fn shadow_resize_hit_test_respects_the_window_region() {
-+      for (x, y) in [(100, 100), (-400, -300)] {
-+        let (_window, child) = ResizeWindow::new(x, y, true);
-+        let mut rect = RECT::default();
-+        unsafe { GetWindowRect(child, &mut rect).unwrap() };
-+        let region = unsafe { Owned::new(CreateRectRgn(0, 0, 0, 0)) };
-+        assert_ne!(unsafe { GetWindowRgn(child, *region) }, GDI_REGION_TYPE(0));
-+        let width = rect.right - rect.left;
-+        let height = rect.bottom - rect.top;
-+        let border = unsafe { util::get_system_metrics_for_dpi(SM_CYFRAME, util::hwnd_dpi(child)) };
-+        for (dx, dy) in [
-+          (width / 2, height / 2),
-+          (0, 0),
-+          (width - 1, 0),
-+          (width / 2, border - 1),
-+          (width / 2, border),
-+          (0, height - 1),
-+          (-1, 0),
-+          (width, 0),
-+          (width / 2, -1),
-+        ] {
-+          let in_region = unsafe { PtInRegion(*region, dx, dy) }.as_bool();
-+          assert_eq!(
-+            hit_test_at(child, rect.left + dx, rect.top + dy),
-+            if in_region {
-+              HTTOP as isize
-+            } else {
-+              HTTRANSPARENT as isize
-+            },
-+            "point ({dx}, {dy}) at window origin ({}, {})",
-+            rect.left,
-+            rect.top,
-+          );
-+        }
-+      }
-+    }
-+
-+    #[test]
-+    fn shadowless_resize_hit_test_keeps_edges_and_client_area() {
-+      let (_window, child) = ResizeWindow::new(-400, -300, false);
-+      let mut rect = RECT::default();
-+      unsafe { GetWindowRect(child, &mut rect).unwrap() };
-+      assert_eq!(hit_test_at(child, rect.left, rect.top), HTTOPLEFT as isize);
-+      assert_eq!(
-+        hit_test_at(child, rect.right - 1, rect.top),
-+        HTTOPRIGHT as isize
-+      );
-+      assert_eq!(
-+        hit_test_at(child, rect.left, rect.bottom - 1),
-+        HTBOTTOMLEFT as isize
-+      );
-+      assert_eq!(
-+        hit_test_at(child, rect.right - 1, rect.bottom - 1),
-+        HTBOTTOMRIGHT as isize
-+      );
-+      assert_eq!(
-+        hit_test_at(
-+          child,
-+          (rect.left + rect.right) / 2,
+   let mut bundles = Vec::<Bundle>::new();
+   for package_type in &package_types {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16478** (2026-11-09): fix(bundler): close the main binary before running the Windows sign command (@lazerg)
 - **PR #16466** (2026-11-05): chore(deps): update dependency eslint-plugin-security to v4.2.1 (@renovate[bot])
 - **PR #16464** (2026-11-05): fix(core): apply dataStoreIdentifier from the window config (fix #16461) (@lazerg)
 - **PR #16463** (2026-11-05): build(deps): bump follow-redirects from 1.16.1 to 1.16.2 (@dependabot[bot])
 - **PR #16462** (2026-11-05): fix(core): don't bring the app to the front on macOS restart (fix #16458) (@lazerg)
 - **PR #16456** (2026-11-05): refactor: take `Vec<Webview<R>>` in `emit_js` (@Legend-Master)
-- **PR #16453** (2026-11-05): fix(utils): keep the drive prefix of absolute resource paths on Windows (@b84330808)
 
 ---
 
@@ -2665,28 +2338,34 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency eslint-plugin-security to v4.2.1 (#16466)
+## X. bundler): close the main binary before running the Windows sign command (#16478)
 
 **RULE**:
-When implementing operations in `packages/api/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/bundler-close-main-binary-before-sign.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2e23492a`: deps): update dependency eslint-plugin-security to v4.2.1 (#16466). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a66eab8`: bundler): close the main binary before running the Windows sign command (#16478). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/api/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/bundler-close-main-binary-before-sign.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "eslint-plugin-security": "4.2.1",
+---
+"tauri-bundler": "patch:bug"
+"tauri-cli": "patch:bug"
+"@tauri-apps/cli": "patch:bug"
+---
+
+Fix a Windows `signCommand` that replaces the main binary (for example by writing a signed copy and renaming it over the original) failing with `Access is denied. (os error 5)`. The bundler no longer keeps the main binary open after copying it.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    "eslint-plugin-security": "4.2.0",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2e23492a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a66eab8` are properly handled with clean fallback behavior.
