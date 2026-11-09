@@ -8636,3 +8636,6 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `8d825486` | Multi-dimensional audit evidence | 2026-11-09T16:10:56.061Z |
 | `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `bfddcf25` | Multi-dimensional audit evidence | 2026-11-09T16:11:00.711Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `fabb1cf8` | Multi-dimensional audit evidence | 2026-11-09T16:11:05.812Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `ec498292` | Multi-dimensional audit evidence | 2026-11-09T16:18:30.458Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-09T16:18:32.647Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `95a0477a` | Multi-dimensional audit evidence | 2026-11-09T16:18:36.348Z |

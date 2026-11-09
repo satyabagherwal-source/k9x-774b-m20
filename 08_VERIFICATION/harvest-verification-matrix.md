@@ -8627,3 +8627,6 @@
 | `CYCLE-20261109-K6NU` | `2026-11-09T16:10:56.058Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`00c45b71...`) |
 | `CYCLE-20261109-KA90` | `2026-11-09T16:11:00.708Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ff6c2d0c...`) |
 | `CYCLE-20261109-KE6P` | `2026-11-09T16:11:05.809Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e0db7c78...`) |
+| `CYCLE-20261109-TX9Y` | `2026-11-09T16:18:30.454Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`85bb04ae...`) |
+| `CYCLE-20261109-TYYQ` | `2026-11-09T16:18:32.642Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`b6039007...`) |
+| `CYCLE-20261109-U1TJ` | `2026-11-09T16:18:36.343Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`47d6ca5e...`) |

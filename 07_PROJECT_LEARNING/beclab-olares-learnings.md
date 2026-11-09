@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `4d83d35e`  
+> **Source Version**: `ec498292`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T22:46:32.734Z  
+> **Timestamp**: 2026-11-09T16:18:29.045Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T22:46:32.229Z  
+> **Harvest Timestamp**: 2026-11-09T16:18:28.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5351 stars
+- **Stars / Engagement**: 5355 stars
 
 ---
 
@@ -1137,331 +1137,337 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a50c5730` (2026-11-06)
-**Commit Message**: fix(l4-bfl-proxy): create files node services when a user becomes Created (#4414)
+### Incident Patch 1: `ec498292` (2026-11-09)
+**Commit Message**: docs: add Cognee knowledge and internal MCP workflows (#4327)
 
-New members had no files-<node> services until the next files pod change, so cross-node External and Cache returned 500. Reconcile when a user is Created and when a user is deleted.
+* docs: add cognee bilingual use case
 
-**File**: `framework/l4-bfl-proxy/internal/provider/fileserver_reconciler.go` (modified, +32/-1)
+* docs: document cognee assistant integration
+
+* docs: complete Cognee API key and official MCP setup
+
+* docs: simplify Cognee internal MCP connections
+
+* docs: distinguish Lares disconnect messages from MCP HTTP status
+
+* docs: apply Cognee review suggestions
+
+* docs: address remaining Cognee review feedback
+
+* adjust structure, refine description
+
+---------
+
+Co-authored-by: Power-One-2025 <[REDACTED_EMAIL]>
+
+**File**: `docs/.vitepress/data/useCases.ts` (modified, +1/-0)
 ```diff
-@@ -73,10 +73,38 @@ func (r *FileserverReconciler) SetupWithManager(ctx context.Context) error {
- 		return fmt.Errorf("add fileserver pod event handler: %w", err)
- 	}
- 
--	klog.Info("fileserver-reconciler: event handler registered")
-+	userInformer, err := r.cache.GetInformer(ctx, &iamv1alpha2.User{})
-+	if err != nil {
-+		return fmt.Errorf("get user informer: %w", err)
-+	}
-+	if _, err = userInformer.AddEventHandler(toolscache.ResourceEventHandlerFuncs{
-+		AddFunc: func(obj interface{}) {
-+			if isCreatedUser(obj) {
-+				r.notifyChanged()
-+			}
-+		},
-+		UpdateFunc: func(_, newObj interface{}) {
-+			if isCreatedUser(newObj) {
-+				r.notifyChanged()
-+			}
-+		},
-+		DeleteFunc: func(_ interface{}) { r.notifyChanged() },
-+	}); err != nil {
-+		return fmt.Errorf("add user event handler: %w", err)
-+	}
-+
-+	klog.Info("fileserver-reconciler: event handlers registered")
- 	return nil
- }
- 
-+func isCreatedUser(obj interface{}) bool {
-+	user, ok := obj.(*iamv1alpha2.User)
-+	if !ok {
-+		return false
-+	}
-+	return user.Status.State == "Created"
-+}
-+
- func (r *FileserverReconciler) Start(ctx context.Context) error {
- 	r.synced.Store(true)
- 	klog.Info("fileserver-reconciler: cache synced, running initial reconcile")
-@@ -166,6 +194,9 @@ func (r *FileserverReconciler) reconcile(ctx context.Context) error {
- 	}
- 
- 	for _, user := range userList.Items {
-+		if user.Status.State != "Created" {
-+			continue
-+		}
- 		serviceNamespace := fmt.Sprintf("user-system-%s", user.Name)
- 		var serviceList []string
- 
+@@ -60,6 +60,7 @@ export const useCases: UseCase[] = [
+   { title: "Open WebUI", link: "/use-cases/openwebui", category: "AI workbench", description: "Full-featured web chat for local LLMs", descriptionZh: "面向本地 LLM 的全功能 Web 聊天界面" },
+   { title: "LobeHub (LobeChat)", link: "/use-cases/lobechat", category: "AI workbench", description: "Build local custom AI assistants", descriptionZh: "构建本地自定义 AI 助手" },
+   { title: "AnythingLLM", link: "/use-cases/anythingllm", category: "AI workbench", description: "Local knowledge base with RAG over your documents", descriptionZh: "基于文档 RAG 的本地知识库" },
++  { title: "Cognee", link: "/use-cases/cognee", category: "AI workbench", description: "Build and explore connected knowledge from documents", descriptionZh: "从文档构建并浏览相互关联的知识" },
+   { title: "Local Deep Research", link: "/use-cases/local-deep-research", category: "AI workbench", description: "Research questions with cited sources through AI Router", descriptionZh: "通过 AI Router 生成带来源引用的研究报告" },
+   { title: "Open Notebook", link: "/use-cases/open-notebook", category: "AI workbench", description: "Research notebook with AI insights and podcasts", descriptionZh: "支持 AI 洞察和播客的研究笔记本" },
+   { title: "TrustGraph", link: "/use-cases/trustgraph", category: "AI workbench", description: "Ask questions about documents and explore their connections", descriptionZh: "围绕文档提问，探索内容之间的联系" },
 ```
 
----
-
-### Incident Patch 2: `86c5ac72` (2026-11-06)
-**Commit Message**: fix: unescape mount paths and umount smb/nfs shares on uninstall (#4419)
-
-- daemon: decode octal escapes (e.g. \040) in /proc/mounts paths and devices so mounts with spaces match /etc/mounttab records and are not remounted repeatedly
-- cli: umount smb/nfs shares recorded in /etc/mounttab and remove the file on uninstall for both k3s and k8s clusters
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `cli/pkg/k3s/templates/uninstall_script.go` (modified, +0/-1)
+**File**: `docs/.vitepress/usecase.en.ts` (modified, +4/-0)
 ```diff
-@@ -66,7 +66,6 @@ rm -rf /var/lib/rancher/k3s
- rm -rf /var/lib/kubelet
- rm -f /usr/local/bin/k3s
- rm -f /usr/local/bin/k3s-killall.sh
--rm -f /etc/mounttab
- 
- if type yum >/dev/null 2>&1; then
-     yum remove -y k3s-selinux
+@@ -241,6 +241,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
+                   text: "AnythingLLM",
+                   link: "/use-cases/anythingllm",
+                 },
++                {
++                  text: "Cognee",
++                  link: "/use-cases/cognee",
++                },
+                 {
+                   text: "Local Deep Research",
+                   link: "/use-cases/local-deep-research",
 ```
 
-**File**: `cli/pkg/phase/cluster/delete_cluster.go` (modified, +2/-0)
+**File**: `docs/.vitepress/usecase.zh.ts` (modified, +4/-0)
 ```diff
-@@ -92,6 +92,8 @@ func (p *phaseBuilder) phaseInstall() *phaseBuilder {
- 			)
- 		}
- 
-+		p.modules = append(p.modules, &storage.UmountNetworkDrivesModule{})
-+
- 		switch p.runtime.Cluster.Kubernetes.Type {
- 		case common.K3s:
- 			p.modules = append(p.modules, &k3s.DeleteClusterModule{})
+@@ -241,6 +241,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
+                   text: "AnythingLLM",
+                   link: "/zh/use-cases/anythingllm",
+                 },
++                {
++                  text: "Cognee",
++                  link: "/zh/use-cases/cognee",
++                },
+                 {
+                   text: "Local Deep Research",
+                   link: "/zh/use-cases/local-deep-research",
 ```
 
-**File**: `cli/pkg/storage/constants.go` (modified, +3/-0)
+**File**: `docs/use-cases/cognee.md` (added, +181/-0)
 ```diff
-@@ -16,6 +16,9 @@ var (
- 	OlaresSharedLibDir   = path.Join(OlaresRootDir, "share")
- 	OlaresUserDataDir    = path.Join(OlaresRootDir, "userdata")
- 
-+	// MountRecordsFile is maintained by olaresd and records the smb/nfs shares it mounted.
-+	MountRecordsFile = path.Join(Root, "etc", "mounttab")
+@@ -0,0 +1,181 @@
++---
++connectionVersion: "1.12.7"
++connectionLatestPath: /use-cases/cognee
++outline: [2, 3]
++description: Build and explore document knowledge with Cognee on Olares
++head:
++  - - meta
++    - name: keywords
++      content: "Olares, Cognee, self-hosted, knowledge graph, documents, search"
++app_version: "0.0.17"
++doc_version: "1.0"
++doc_updated: "2026-11-06"
++---
 +
- 	RedisRootDir             = path.Join(OlaresRootDir, "data", "redis")
- 	RedisConfigDir           = path.Join(RedisRootDir, "etc")
- 	RedisDataDir             = path.Join(RedisRootDir, "data")
++# Turn documents into memory your AI can recall
++
++Cognee turns documents into connected knowledge that you and your AI agents can recall. Add documents to a dataset, ask questions and check the supporting sources, or let your AI agents recall the same knowledge through MCP. On Olares, your documents and the knowledge built from them stay on your own device. Answer generation uses the default chat model configured in Olares Router.
++
++## Learning objectives
++
++- Create a dataset and add project documents to it.
++- Ask questions in Cognee and check the supporting sources and knowledge graph.
++- Connect Lares or Hermes Agent to Cognee through MCP, then ask questions in a new conversation.
++
++## Prerequisites
++
++- Olares 1.12.7 or later.
++- Olares Router with a callable model assigned to `default-chat`.
++
++## Install Cognee
++
++1. Open Market and search for "Cognee".
++2. Click **Get**, then **Install**. When prompted, set an initial password with at least 12 characters.
++3. When the installation finishes, open Cognee from Launchpad.
++4. Sign in with the built-in initial account `default_user@example.com` and the password you set during installation.
++
++## Create a project dataset
++
++Create a dataset and add your project documents to it. One dataset can hold one or many documents, and a search covers every document in it, so keep related documents together. You can paste text or upload a file. This guide uses the two sample documents below.
++
++1. Open **Datasets** and click **Create dataset**. If you already have a dataset, click **New dataset**.
++2. Name the dataset `project_rehearsal`. Use letters, numbers, and underscores in the name.
++3. Select the new dataset.
++4. Choose **Paste text** and add each document below as a separate item. Wait until the first item shows **Ready** before adding the second.
++
++   ::: details Meeting notes
++
++   ```text
++   Project Harbor: Migration Rehearsal Meeting Notes
++
++   This document contains fictional test data. All people, dates, and project details are invented for a documentation walkthrough.
++
++   Project: Harbor document migration
++   Meeting date: November 4, 2026
++   Rehearsal date: November 12, 2026, at 10:00 AM, Asia/Shanghai
++
++   Maya Chen coordinates the migration rehearsal. She schedules the rehearsal and collects the validation results.
++
++   Before handoff, the team must complete the rehearsal, confirm that the source and destination file counts match, verify the SHA-256 checksums, and attach the validation report to the handoff record.
++
++   Omar Lee is the project owner. Handoff requires his approval after he reviews the validation report.
++
++   The migration runbook identifies the escalation contact for checksum mismatches.
++   ```
++
++   :::
++
++   ::: details Migration validation runbook
++
++   ```text
++   Project Harbor: Migration Validation Runbook
++
++   This document contains fictional test data. All people and project details are invented for a documentation walkthrough.
++
++   Scope: Validation for the Harbor document migration rehearsal.
++
++   File validation compares the source and destination file counts and SHA-256 checksums. The validation report records the results and any unresolved differences.
++
++   Noah Zhou is the data integrity lead and the escalation contact when migration checksums do not match. The report sent to Noah must identify the affected files and include the expected and actual checksums.
++
++   A checksum mismatch blocks handoff until it has been investigated, resolved, and checked again. Any remaining mismatch must be recorded as unresolved in the validation report.
++
++   Maya Chen coordinates the rehearsal. Omar Lee, the project owner, approves handoff after reviewing the completed validation report.
++   ```
++
++   :::
++
++   :::info First processing job
++   The first document may take longer to process because Cognee needs to download its embedding model. This small model runs on CPU inside Cognee. Later processing jobs reuse the saved model cache. Wait for the current import to finish before submitting the same document again.
++   :::
++
++## Query a project dataset
++
++Ask a question about your dataset, then check the answer, evidence, and graph against the original documents.
++
++1. Open **Search**, select `project_rehearsal` in the dataset selector above the question input, and then ask:
++
++   ```text
++   Who coordinates the rehearsal, what must be complete before handoff, and who should we contact if migration checksums do not match? Distinguish the meeting notes from the runbook in your sources.
++   ```
++
++2. Verify the answer and compare the support
 ```
 
-**File**: `cli/pkg/storage/module.go` (modified, +19/-0)
+**File**: `docs/zh/use-cases/cognee.md` (added, +185/-0)
 ```diff
-@@ -234,6 +234,25 @@ func (m *DeleteUserDataModule) Init() {
- 	}
- }
- 
-+type UmountNetworkDrivesModule struct {
-+	common.KubeModule
-+}
+@@ -0,0 +1,185 @@
++---
++connectionVersion: "1.12.7"
++connectionLatestPath: /zh/use-cases/cognee
++outline: [2, 3]
++description: 在 Olares 上使用 Cognee 构建和浏览文档知识
++head:
++  - - meta
++    - name: keywords
++      content: "Olares, Cognee, 自托管, 知识图谱, 文档, 搜索"
++app_version: "0.0.17"
++doc_version: "1.0"
++doc_updated: "2026-11-06"
++---
 +
-+func (m *UmountNetworkDrivesModule) Init() {
-+	m.Name = "UmountNetworkDrives"
++:::warning
++本文档由 AI 自动翻译，仅供参考。涉及关键操作或信息时，请以[英文原文](../../use-cases/cognee.md)为准。
++:::
 +
-+	umountNetworkDrives := &task.RemoteTask{
-+		Name:     "UmountNetworkDrives",
-+		Hosts:    m.Runtime.GetHostsByRole(common.K8s),
-+		Action:   new(UmountNetworkDrives),
-+		Parallel: false,
-+	}
++# 把文档变成 AI 助手的知识库
 +
-+	m.Tasks = []task.Interface{
-+		umountNetworkDrives,
-+	}
-+}
++Cognee 将文档转化为相互关联、可供你和 AI 代理回忆的知识。把文档加入数据集，提问并对照支持性来源，或者通过 MCP 让你的 AI 代理回忆同样的知识。在 Olares 上，你的文档和从中构建的知识都保留在自己的设备上。答案生成使用 Olares Router 中配置的默认对话模型。
 +
- type DeleteTerminusDataModule struct {
- 	common.KubeModule
- }
-```
-
-**File**: `cli/pkg/storage/tasks.go` (modified, +46/-0)
-```diff
-@@ -1,6 +1,7 @@
- package storage
- 
- import (
-+	"encoding/json"
- 	"fmt"
- 	"io/fs"
- 	"os"
-@@ -434,6 +435,51 @@ func (t *DeleteTerminusData) Execute(runtime connector.Runtime) error {
- 	return nil
- }
- 
-+type UmountNetworkDrives struct {
-+	common.KubeAction
-+}
++## 学习目标
 +
-+func (t *UmountNetworkDrives) Execute(runtime connector.Runtime) error {
-+	data, err := os.ReadFile(MountRecordsFile)
-+	if err != nil {
-+		if os.IsNotExist(err) {
-+			return nil
-+		}
-+		return errors.Wrapf(err, "read %s failed", MountRecordsFile)
-+	}
++- 创建数据集并添加项目文档。
++- 在 Cognee 中提问，并对照支持性来源和知识图谱检查答案。
++- 通过 MCP 连接 Lares 或 Hermes Agent，然后在新对话中提问。
 +
-+	var records []struct {
-+		Type       string `json:"type"`
-+		MountPoint string `json:"mountPoint"`
-+	}
-+	if len(strings.TrimSpace(string(data))) > 0 {
-+		if err := json.Unmarshal(data, &records); err != nil {
-+			logger.Errorf("parse %s failed: %v", MountRecordsFile, err)
-+		}
-+	}
++## 前提条件
 +
-+	// remove the records first, so olaresd will not remount them while uninstalling
-+	if err := os.Remove(MountRecordsFile); err != nil && !os.IsNotExist(err) {
-+		logger.Errorf("remove %s failed: %v", MountRecordsFile, err)
-+	}
++- Olares 1.12.7 或更高版本。
++- Olares Router 中为 `default-chat` 分配了状态为 **callable** 的模型。
 +
-+	for _, r := range records {
-+		if (r.Type != "smb" && r.Type != "nfs") || r.MountPoint == "" {
-+			continue
-+		}
++## 安装 Cognee
 +
-+		logger.Infof("umount %s %s", r.Type, r.MountPoint)
-+		if out, err := exec.Command("umount", r.MountPoint).CombinedOutput(); err != nil {
-+			logger.Warnf("umount %s failed: %v, %s, retry with lazy umount", r.MountPoint, err, strings.TrimSpace(string(out)))
-+			if out, err := exec.Command("umount", "-l", r.MountPoint).CombinedOutput(); err != nil {
-+				logger.Errorf("lazy umount %s failed: %v, %s", r.MountPoint, err, strings.TrimSpace(string(out)))
-+			}
-+		}
-+	}
++1. 打开 Market，搜索 "Cognee"。
++2. 点击 **Get**，然后点击 **Install**。提示时设置至少 12 个字符的初始密码。
++3. 安装完成后，从 Launchpad 打开 Cognee。
++4. 使用内置初始账号 `default_user@example.com` 和安装时设置的密码登录。
 +
-+	return nil
-+}
++## 创建项目数据集
 +
- type CreateSharedLibDir struct {
- 	common.KubeAction
- }
-```
-
-**File**: `daemon/pkg/utils/disk.go` (modified, +1/-2)
-```diff
-@@ -48,8 +48,7 @@ func deviceForPath(path string) (string, error) {
- 		}
- 		device := fields[0]
- 		mount := fields[1]
--		// Handle escaped spaces (simple processing)
--		mount = strings.ReplaceAll(mount, "\\040", " ")
-+		mount = unescapeMountField(mount)
- 		// Choose the longest matching mount prefix (to prevent nested mounts)
- 		if strings.HasPrefix(path, mount) {
- 			if len(mount) > len(bestMount) {
-```
-
-**File**: `daemon/pkg/utils/drivers_linux.go` (modified, +20/-9)
-```diff
-@@ -157,9 +157,23 @@ func MonitorUsbDevice(ctx context.Context, cb func(action, serial string) error)
- 	return nil
- }
- 
-+// listMounts returns the mount points with /proc/mounts escapes (e.g. \040) decoded,
-+// so that paths and devices can be compared with the original values.
-+func listMounts() ([]mountutils.MountPoint, error) {
-+	list, err := mountutils.New("").List()
-+	if err != nil {
-+		return nil, err
-+	}
++创建一个数据集，把项目文档添加进去。一个数据集可以存放一篇或多篇文档，搜索会覆盖其中的每一篇，所以把相关文档放在同一个数据集中。你可以粘贴文本，也可以上传文件。本指南使用下面的两份示例文档。
 +
-+	for i := range list {
-+		list[i].Path = unescapeMountField(list[i].Path)
-+		list[i].Device = unescapeMountField(list[i].Device)
-+	}
-+	return list, nil
-+}
++1. 打开 **Datasets**，点击 **Create dataset**。如果已有数据集，点击 **New dataset**。
++2. 将数据集命名为 `project_rehearsal`。名称使用字母、数字和下划线。
++3. 选中新建的数据集。
++4. 选择 **Paste text**，把下面每份文档作为独立条目添加。等第一个条目显示 **Ready** 后再添加第二份。
 +
- func getMountedPath(devs []storageDevice) ([]string, error) {
--	mounter := mountutils.New("")
--	list, err := mounter.List()
-+	list, err := listMounts()
- 	if err != nil {
- 		klog.Error("list mount path error, ", err)
- 		return nil, err
-@@ -214,7 +228,7 @@ func FilterBySerial(serial string) func(dev storageDevice) bool {
- 
- func MountUsbDevice(ctx context.Context, mountBaseDir string, dev []storageDevice) (mountedPath []string, err error) {
- 	mounter := mountutils.New("")
--	mountedList, err := mounter.List()
-+	mountedList, err := listMounts()
- 	if err != nil {
- 		klog.Error("list mount path error, ", err)
- 		return nil, err
-@@ -424,8 +438,7 @@ var (
- )
- 
- func UmountOrRecordBrokenMounts(ctx context.Context, baseDir string) error {
--	mounter := mountutils.New("")
--	list, err := mounter.List()
-+	list, err := listMounts()
- 	if err != nil {
- 		klog.Error("list mount path error, ", err)
- 		return err
-@@ -613,8 +626,7 @@ func isReadOnly(mp *mountutils.MountPoint) bool {
- }
- 
- func MountedSambaPath(ctx context.Context) ([]mountedPath, error) {
--	mounter := mountutils.New("")
--	list, err := mounter.List()
-+	list, err := listMounts()
- 	if err != nil {
- 		klog.Error("list mount path error, ", err)
- 		return nil, err
-@@ -642,8 +654,7 @@ func MountedPath(ctx context.Context) ([]mountedPath, error) {
- 		return nil, err
- 	}
- 
--	mounter := mountutils.New("")
--	list, err := mounter.List()
-+	list, err := listMounts()
- 	if err != nil {
- 		klog.Error("list mount path error, ", err)
- 		return nil, err
-```
-
-**File**: `daemon/pkg/utils/mount_escape.go` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+package utils
++   ::: details 会议纪要
 +
-+import "strings"
++   ```text
++   Project Harbor: Migration Rehearsal Meeting Notes
 +
-+// unescapeMountField decodes the octal escapes (e.g. \040 for space) that the
-+// kernel uses for whitespace and backslashes in /proc/mounts fields.
-+func unescapeMountField(s string) string {
-+	if !strings.Contains(s, `\`) {
-+		return s
-+	}
++   This document contains fictional test data. All people, dates, and project details are invented for a documentation walkthrough.
 +
-+	var b strings.Builder
-+	b.Grow(len(s))
-+	for i := 0; i < len(s); i++ {
-+		if s[i] == '\\' && i+3 < len(s) && s[i+1] >= '0' && s[i+1] <= '3' && isOctal(s[i+2]) && isOctal(s[i+3]) {
-+			v := (s[i+1]-'0')<<6 | (s[i+2]-'0')<<3 | (s[i+3] - '0')
-+			b.WriteByte(v)
-+			i += 3
-+			continue
-+		}
-+		b.WriteByte(s[i])
-+	}
-+	return b.String()
-+}
++   Project: Harbor document migration
++   Meeting date: November 4, 2026
++   Rehearsal date: November 12, 2026, at 10:00 AM, Asia/Shanghai
 +
-+func isOctal(c byte) bool {
-+	return c >= '0' && c <= '7'
-+}
++   Maya Chen coordinates the migration rehearsal. She schedules the rehearsal and collects the validation results.
++
++   Before handoff, the team must complete the rehearsal, confirm that the source and destination file counts match, verify the SHA-256 checksums, and attach the validation report to the handoff record.
++
++   Omar Lee is the project owner. Handoff requires his approval after he reviews the validation report.
++
++   The migration runbook identifies the escalation contact for checksum mismatches.
++   ```
++
++   :::
++
++   ::: details 迁移校验运行手册
++
++   ```text
++   Project Harbor: Migration Validation Runbook
++
++   This document contains fictional test data. All people and project details are invented for a documentation walkthrough.
++
++   Scope: Validation for the Harbor document migration rehearsal.
++
++   File validation compares the source and destination file counts and SHA-256 checksums. The validation report records the results and any unresolved differences.
++
++   Noah Zhou is the data integrity lead and the escalation contact when migration checksums do not match. The report sent to Noah must identify the affected files and include the expected and actual checksums.
++
++   A checksum mismatch blocks handoff until it has been investigated, resolved, and checked again. Any remaining mismatch must be recorded as unresolved in the validation report.
++
++   Maya Chen coordinates the rehearsal. Omar Lee, the project owner, approves handoff after reviewing the completed validation report.
++   ```
++
++   :::
++
++   :::info 首次处理任务
++   第一篇文档的处理时间可能更长，因为 Cognee 需要下载它的嵌入模型。这个小型模型在 Cognee 内部使用 CPU 运行。后续处理任务会复用已保存的模型缓存。等当前导入完成后再重新提交同一文档。
++   :::
++
++## 查询项目数据集
++
++对数据集提问，然后对照原始文档检查答案、Evidence 和图谱。
++
++1. 打开 **Search**，在问题输入框上方的数据集选择器中选择 `project_rehearsal`，然后提问：
++
++   ```text
++   Who coordinates the rehearsal, what must be complete before handoff, and who should we contact if migration checksums do not match? Distinguish the meeting notes from the runbook in your sources.
++   ```
++
++2. 核对答案，并把 **Evidence** 中的支持性文本与两份原始文档对照。如果节选被截断，不要把它当作完整的来源核对。
++
++   在这个例子中，答案会指出 Maya Chen 是协调人，说明交接前必须完成的校验和审批，并给出校验和不匹配时的联系人 Noah Zhou。
++
++   :::tip 对话模型连接
++   如果答案生成失败，请确认 **Default models** 页面已分配默认对话模型，且状态为 **callable**。参见 [Olares Router](olares-router.md)。
++   :::
++
++3. 打开 **Graph**，在左上角的 **DATASET** 选择器中选择 `project_rehearsal`。图谱布局和生成的关系可能因模型而异。
++
++## 在 Lares 或 Hermes Agent 中查询
++
++把 Lares 或 Hermes Agent 连接到 Cognee 的 MCP 服务器，这样你就可以在对话中搜索数据集，不用再粘贴文档。
++
++### 获取 Cognee 的 MCP 地址
++
++从 Olares Settings 复制 MCP endpoint URL，然后在末尾加上 `/mcp`。
++
++1. 打开 Olares **Settings**，进入 **Applications** > **Cognee** > **Cognee MCP**，复制它的 endpoint URL。例如 `https://ba2717462.laresprime.olares.com`。
++2. 在复制的 URL 末尾加上 `/mcp`。这就是下面助手连接要用的 MCP URL。
++
++:::info 默认无需密钥访问
++默认情况下，客户端不需要 API key。MCP 服务器使用内置初始账号 `default_user@example.com`，因此助手可以访问你通过这个账号添加的知识。已连接的助手共享该账号的权限。官方工具除了检索知识，也可以添加和删除知识。批准工具请求前请先检查。
++:::
++
++### 连接 Lares
++
++在 Lares 中把 Cognee 注册为 MCP 服务器，然后提出一个会使用 `recall` 工具的问题。
++
++1. 打开 Lares，打开它的设置，选择 **MCP**，然后点击 **Add server**。填写：
++
++   | 字段 | 值 |
++   | --- | --- |
++   | **Server name** | `cognee` |
++   | **Transport** | **Streamable HTTP** |
++   | **MCP URL** | 上面获取的 MCP URL，包含 `/mcp` |
++   | **Headers** | 保持默认的空 JSON 对象 `{}`。 |
++
++2. 点击 **Save**。Lares 会连接并加载官方工具，包括 `recall` 和 `remember`。
++3. 新建对话，发送下面的提示词。提示授权时批准 `recall` 工具。
++
++
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4427** (2026-11-09): fix(auth, lldap): bump image versions for authelia and lldap (@eball)
+- **PR #4426** (2026-11-09): chore(system-apps): update frontend image (@qq815776412)
+- **PR #4424** (closed): docs: update device logout instructions (@Meow33)
 - **PR #4419** (2026-11-06): fix: unescape mount paths and umount smb/nfs shares on uninstall (@eball)
 - **PR #4418** (2026-11-07): docs: add YuE2 Studio music creation and Lares MCP tutorial (@harveyff)
 - **PR #4417** (2026-11-06): Revert "docs: remove terminal entry from ctrl hub " (@Power-One-2025)
-- **PR #4416** (2026-11-06): Revert "docs: update Files access and sharing guides for 1.12.8" (@Power-One-2025)
-- **PR #4415** (2026-11-06): docs: remove terminal entry from ctrl hub  (@Power-One-2025)
-- **PR #4414** (2026-11-06): fix(l4-bfl-proxy): create files node services when a user becomes Created (@hysyeah)
 
 ---
 
@@ -1481,59 +1487,28 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. l4-bfl-proxy): create files node services when a user becomes Created (#4414)
+## X. docs: add Cognee knowledge and internal MCP workflows (#4327)
 
 **RULE**:
-When implementing operations in `framework/l4-bfl-proxy/internal/provider/fileserver_reconciler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/.vitepress/data/useCases.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a50c5730`: l4-bfl-proxy): create files node services when a user becomes Created (#4414). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec498292`: docs: add Cognee knowledge and internal MCP workflows (#4327). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/l4-bfl-proxy/internal/provider/fileserver_reconciler.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/data/useCases.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	userInformer, err := r.cache.GetInformer(ctx, &iamv1alpha2.User{})
-	if err != nil {
-		return fmt.Errorf("get user informer: %w", err)
-	}
-	if _, err = userInformer.AddEventHandler(toolscache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
-			if isCreatedUser(obj) {
-				r.notifyChanged()
-			}
-		},
-		UpdateFunc: func(_, newObj interface{}) {
-			if isCreatedUser(newObj) {
-				r.notifyChanged()
-			}
-		},
-		DeleteFunc: func(_ interface{}) { r.notifyChanged() },
-	}); err != nil {
-		return fmt.Errorf("add user event handler: %w", err)
-	}
-
-	klog.Info("fileserver-reconciler: event handlers registered")
-func isCreatedUser(obj interface{}) bool {
-	user, ok := obj.(*iamv1alpha2.User)
-	if !ok {
-		return false
-	}
-	return user.Status.State == "Created"
-}
-
-		if user.Status.State != "Created" {
-			continue
-		}
+  { title: "Cognee", link: "/use-cases/cognee", category: "AI workbench", description: "Build and explore connected knowledge from documents", descriptionZh: "从文档构建并浏览相互关联的知识" },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	klog.Info("fileserver-reconciler: event handler registered")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a50c5730` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec498292` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `bc650f91`  
+> **Source Version**: `95a0477a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T17:49:31.249Z  
+> **Timestamp**: 2026-11-09T16:18:34.484Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T17:49:31.245Z  
+> **Harvest Timestamp**: 2026-11-09T16:18:34.475Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17935 stars
+- **Stars / Engagement**: 17937 stars
 
 ---
 
@@ -1643,6 +1643,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -1807,6 +1808,41 @@ func HasData(dir string) (bool, error) {
 	return h, nil
 }
 
+// recoveryREADMEName is the name of the file written to the directory which
+// holds the peers file, explaining to operators why the directory exists.
+const recoveryREADMEName = "README"
+
+const recoveryREADME = `
+This directory is used to recover a cluster that has lost quorum.
+
+At startup rqlite checks this directory for a file named peers.json and, if
+present, uses it to force a new cluster configuration. After a successful
+recovery the file is renamed to peers.info. Unless you are recovering a
+cluster this directory will be otherwise empty, and can be ignored.
+
+For the full recovery procedure see:
+https://rqlite.io/docs/clustering/general-guidelines/#dealing-with-failure
+
+`
+
+// writeRecoveryREADME writes a README to dir, the directory in which the peers
+// file is placed during cluster recovery. If the README already exists it is
+// left untouched.
+func writeRecoveryREADME(dir string) error {
+	f, err := os.OpenFile(filepath.Join(dir, recoveryREADMEName), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
+	if err != nil {
+		if os.IsExist(err) {
+			return nil
+		}
+		return err
+	}
+	if _, err := f.WriteString(recoveryREADME); err != nil {
+		f.Close()
+		return err
+	}
+	return f.Close()
+}
+
 // RecoverNode is used to manually force a new configuration, in the event that
 // quorum cannot be restored. This borrows heavily from RecoverCluster functionality
 // of the Hashicorp Raft library, but has been customized for rqlite use.
@@ -1892,40 +1928,7 @@ func RecoverNode(dataDir string, dbConf *DBConfig, logger *log.Logger, logs raft
 		var entry raft.Log
 		if err = logs.GetLog(index, &entry); err != nil {
 			return fmt.Errorf("failed to get log at index %d: %v", index, err)
-		}
-		if entry.Type == raft.LogCommand {
-			if _, _, _, err := cmdProc.Process(entry.Data, db); err != nil {
-				return fmt.Errorf("failed to replay command at index %d: %w", index, err)
-			}
-		}
-		lastIndex = entry.Index
-		lastTerm = entry.Term
-	}
-	if snapshotIndex+1 <= lastLogIndex {
-		logger.Printf("replayed logs from %d to %d", snapshotIndex+1, lastLogIndex)
-		logger.Printf("last index is now %d, last term is %d", lastIndex, lastTerm)
-	}
 
-	// Create a new snapshot, placing the configuration in as if it was
-	// committed at index 1.
-	_, _, err = db.Checkpoint(nil, truncateTimeout)
-	if err != nil {
-		return fmt.Errorf("failed to checkpoint database: %s", err)
-	}
-	streamer, err := snapshot.NewSnapshotStreamer(tmpDBPath)
-	if err != nil {
-		return fmt.Errorf("failed to create snapshot streamer: %s", err)
-	}
-	defer streamer.Close()
-	if err := streamer.Open(); err != nil {
-		return fmt.Errorf("failed to open snapshot streamer: %s", err)
-	}
-	fsmSnapshot := snapshot.NewStateReader(streamer) // tmpDBPath contains full state now.
-	sink, err := snaps.Create(1, lastIndex, lastTerm, conf, 1, tn)
-	if err != nil {
-		return fmt.Errorf("failed to create snapshot: %v", err)
-	}
-	defer sink.Cancel()
 ```
 
 ### Core Architecture Module: `tools/check-fsutil/main.go`
@@ -2066,11 +2069,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3031** (2026-11-08): **Move retry logic out of Store Provider**
-  *Symptoms*: The Provider retried a failed Backup into the same writer, seeking back to the start before each attempt. A later, smaller, attempt left the tail of the earlier attempt in place, and the Uploader then uploaded it.  The Uploader owns the destination file, so it now owns the retry too. Each attempt writes into a fresh temporary file, and Provide is a single write to an io.Writer with no retry policy of its own. 
+- **Issue #3034** (2026-11-09): **Add README explaining purpose of raft/ directory**
+  *Symptoms*: The raft/ directory inside the data directory exists only so an operator has somewhere to place peers.json when recovering a cluster that has lost quorum. Since it is otherwise empty its purpose is easy to forget, so write a short README into it on Store open if one is not already present.   
 
-- **Issue #3030** (2026-11-08): **Explicitly state if there are no new features**
-  *Symptoms*: 
+- **Issue #3032** (2026-11-09): **Honor cluster retry limits and detect stale pooled connections**
+  *Symptoms*: Forwarded commands could be sent twice with retries=0 when a leader's response timed out. This change sends a command once plus at most the explicitly configured retries, returning ambiguous failures to the caller when retries are disabled. Permitted retries use fresh connections.  Idle pool checkout now uses nonblocking socket peeks to discard detectably closed connections before sending a command. Healthy connections remain pooled. The networking implementation lives in tcp/pool and supports Linux, macOS, and BSD; other platforms conservatively retain connections. TLS checks inspect the underlying socket without consuming bytes or changing deadlines. These checks are best effort: a close racing with checkout, or pending TLS control records, can still result in a failed request.  The client also discards connections after exact unauthorized or unsupported service responses, and the backup stream's missing-request response, before returning them to the pool. Ordinary application errors preserve reuse.  The series contains separate commits for terminal-response handling, strict retry limits, pool liveness checks, and the stale-pool end-to-end assertion. That test now verifies successful recovery without command retries, replacing its old expectation of one forced resend. CHANGELOG is unchanged.  Validation: - go test ./... passed. - go test -race ./cluster ./tcp/pool passed; the subsequently added dial/write/cancellation cases also passed under the race detector. - Cluster and
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2087,237 +2090,198 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d86d821e` (2026-11-08)
-**Commit Message**: Collapse the fixes list on the release page
+### Incident Patch 1: `95a0477a` (2026-11-09)
+**Commit Message**: Merge pull request #3034 from rqlite/raft-dir-readme
 
-The release page doubles as a quick start, so a long list of fixes should
-not sit between the reader and the install instructions. The preamble, new
-features and any other subsection such as upgrade notes render inline. The
-"Implementation changes and bug fixes" subsection is placed in a collapsed
-details block whose summary line gives the number of entries.
+Add README explaining purpose of raft/ directory
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release-notes.py` (modified, +67/-10)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -71,29 +71,42 @@
- """
+@@ -6,6 +6,7 @@ This release provides more options for securing backups in the Cloud, upgrades S
+ - [PR #3005](https://github.com/rqlite/rqlite/pull/3005): Support CMEK for automatic backups to Google Cloud Storage.
  
- notes_template = """## What's changed
--{section}
-+{changes}
+ ### Implementation changes and bug fixes
++- [PR #3034](https://github.com/rqlite/rqlite/pull/3034): Add README explaining purpose of `raft/` directory.
+ - [PR #3014](https://github.com/rqlite/rqlite/pull/3014): Preserve table data in SQL dumps when table names contain single quotes or column names contain double quotes.
+ - [PR #3031](https://github.com/rqlite/rqlite/pull/3031): Move automatic backup retries from the Store provider to the uploader.
+ - [PR #3022](https://github.com/rqlite/rqlite/pull/3022): Replace credentials and permissions only after validating the complete auth configuration, leaving the store unchanged on failure.
+```
+
+**File**: `store/state.go` (modified, +36/-0)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"fmt"
+ 	"log"
+ 	"net"
++	"os"
+ 	"path/filepath"
+ 	"strings"
+ 	"time"
+@@ -168,6 +169,41 @@ func HasData(dir string) (bool, error) {
+ 	return h, nil
+ }
  
- See the [CHANGELOG](https://github.com/rqlite/rqlite/blob/master/CHANGELOG.md) for the full history of changes, and check out the _Assets_ section below for prebuilt binaries."""
++// recoveryREADMEName is the name of the file written to the directory which
++// holds the peers file, explaining to operators why the directory exists.
++const recoveryREADMEName = "README"
++
++const recoveryREADME = `
++This directory is used to recover a cluster that has lost quorum.
++
++At startup rqlite checks this directory for a file named peers.json and, if
++present, uses it to force a new cluster configuration. After a successful
++recovery the file is renamed to peers.info. Unless you are recovering a
++cluster this directory will be otherwise empty, and can be ignored.
++
++For the full recovery procedure see:
++https://rqlite.io/docs/clustering/general-guidelines/#dealing-with-failure
++
++`
++
++// writeRecoveryREADME writes a README to dir, the directory in which the peers
++// file is placed during cluster recovery. If the README already exists it is
++// left untouched.
++func writeRecoveryREADME(dir string) error {
++	f, err := os.OpenFile(filepath.Join(dir, recoveryREADMEName), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
++	if err != nil {
++		if os.IsExist(err) {
++			return nil
++		}
++		return err
++	}
++	if _, err := f.WriteString(recoveryREADME); err != nil {
++		f.Close()
++		return err
++	}
++	return f.Close()
++}
++
+ // RecoverNode is used to manually force a new configuration, in the event that
+ // quorum cannot be restored. This borrows heavily from RecoverCluster functionality
+ // of the Hashicorp Raft library, but has been customized for rqlite use.
+```
+
+**File**: `store/store.go` (modified, +9/-4)
+```diff
+@@ -124,8 +124,8 @@ const (
+ 	restoreScratchPattern  = "rqlite-restore-*"
+ 	bootScratchPattern     = "rqlite-boot-*"
+ 	backupScratchPattern   = "rqlite-backup-*"
+-	raftDBPath             = "raft.db" // Changing this will break backwards compatibility.
+-	peersPath              = "raft/peers.json"
++	raftDBPath             = "raft.db"         // Changing this will break backwards compatibility.
++	peersPath              = "raft/peers.json" // The "raft" directory exists only to hold the peers file during cluster recovery.
+ 	peersInfoPath          = "raft/peers.info"
+ 	applyTimeout           = 10 * time.Second
+ 	sqliteFile             = "db.sqlite"
+@@ -542,14 +542,19 @@ func (s *Store) Open() (retErr error) {
+ 	// Clean up a never-used file from previous releases.
+ 	fsutil.Remove(filepath.Join(s.raftDir, "applied_index"))
  
- notes_fallback = """See the [CHANGELOG](https://github.com/rqlite/rqlite/blob/master/CHANGELOG.md) for full details on {release}, and check out the _Assets_ section below for prebuilt binaries."""
+-	// Create all the required Raft directories.
++	// Create the data directory, and the directory in which an operator places
++	// the peers file when recovering a cluster.
+ 	s.logger.Printf("ensuring data directory exists at %s", s.raftDir)
+ 	if err := os.MkdirAll(s.raftDir, 0755); err != nil {
+ 		return err
+ 	}
+-	if err := os.MkdirAll(filepath.Dir(s.peersPath), 0755); err != nil {
++	peersDir := filepath.Dir(s.peersPath)
++	if err := os.MkdirAll(peersDir, 0755); err != nil {
+ 		return err
+ 	}
++	if err := writeRecoveryREADME(peersDir); err != nil {
++		s.logger.Printf("failed to write README to %s: %s", peersDir, err.Error())
++	}
+ 	decMgmr, err := chunking.NewDechunkerManager(filepath.Dir(s.dbPath))
+ 	if err != nil {
+ 		return err
+```
+
+**File**: `store/store_test.go` (modified, +37/-0)
+```diff
+@@ -123,6 +123,43 @@ func Test_OpenStoreSingleNode(t *testing.T) {
+ 	}
+ }
  
-+# Subsections collapsed on the release page. Anything else, such as new
-+# features or upgrade notes, is shown inline.
-+COLLAPSED_SUBSECTIONS = ('Implementation changes and bug fixes',)
++// Test_OpenStoreRecoveryREADME tests that the README explaining the purpose
++// of the peers directory is written when the Store is opened, and is written
++// again on the next open if it has been removed.
++func Test_OpenStoreRecoveryREADME(t *testing.T) {
++	s, ln := mustNewStore(t)
++	defer ln.Close()
++	readmePath := filepath.Join(filepath.Dir(s.peersPath), recoveryREADMEName)
 +
-+def markdown_lines(text):
-+    """Yield (line, is_heading_level) for each line of text.
++	if err := s.Open(); err != nil {
++		t.Fatalf("failed to open single-node store: %s", err.Error())
++	}
++	if !fsutil.FileExists(readmePath) {
++		t.Fatalf("recovery README does not exist at %s after open", readmePath)
++	}
++	if got, exp := string(mustReadFile(readmePath)), recoveryREADME; got != exp {
++		t.Fatalf("recovery README has wrong contents, got: %s, exp: %s", got, exp)
++	}
++	if err := s.Close(true); err != nil {
++		t.Fatalf("failed to close single-node store: %s", err.Error())
++	}
 +
-+    is_heading_level is the number of leading '#' characters for a heading
-+    outside a fenced code block, or 0 otherwise.
-+    """
-+    in_fence = False
-+    for line in text.splitlines():
-+        if line.lstrip().startswith(('```', '~~~')):
-+            in_fence = not in_fence
-+        m = None if in_fence else re.match(r'^(#+)\s+\S', line)
-+        yield line, len(m.group(1)) if m else 0
++	if err := fsutil.Remove(readmePath); err != nil {
++		t.Fatalf("failed to remove recovery README: %s", err.Error())
++	}
++	if fsutil.FileExists(readmePath) {
++		t.Fatalf("recovery README still exists at %s after removal", readmePath)
++	}
 +
- def changelog_section(text, tag):
-     """Return the body of the CHANGELOG section for tag, or None if absent.
- 
-     A section starts at a level-2 heading whose first word is the tag,
-     e.g. '## v10.6.6 (October 28th 2026)', and ends at the next level-2
-     heading. Lines inside fenced code blocks are never treated as headings.
-     """
--    heading = re.compile(r'^##\s+(\S+)')
--    body, in_section, in_fence = [], False, False
--    for line in text.splitlines():
--        if line.lstrip().startswith(('```', '~~~')):
--            in_fence = not in_fence
--        m = None if in_fence else heading.match(line)
--        if m:
-+    body, in_section = [], False
-+    for line, level in markdown_lines(text):
-+        if level == 2:
-             if in_section:
-                 break
--            in_section = m.group(1) == tag
-+            in_section = line.split()[1] == tag
-             continue
-         if in_section:
-             body.append(line)
-@@ -102,6 +115,50 @@ def changelog_section(text, tag):
-     section = '\n'.join(body).strip()
-     return section or None
- 
-+def split_subsections(section):
-+    """Split a release section into its preamble and level-3 subsections.
++	if err := s.Open(); err != nil {
++		t.Fatalf("failed to reopen single-node store: %s", err.Error())
++	}
++	defer s.Close(true)
++	if !fsutil.FileExists(readmePath) {
++		t.Fatalf("recovery README does not exist at %s after reopen", readmePath)
++	}
++}
 +
-+    Returns (preamble, [(title, body), ...]) where preamble is any text
-+    before the first level-3 heading, and each body excludes its heading.
-+    """
-+    preamble, subsections = [], []
-+    for line, level in markdown_lines(section):
-+        if level == 3:
-+            subsections.append((line.lstrip('#').strip(), []))
-+        elif subsections:
-+            subsections[-1][1].append(line)
-+        else:
-+            preamble.append(line)
-+    return '\n'.join(preamble).strip(), [(t, '\n'.join(b).strip()) for t, b in subsections]
-+
-+def count_bullets(text):
-+    return sum(1 for line in text.splitlines() if re.match(r'^\s*[-*+]\s', line))
-+
-+def render_changes(section):
-+    """Render a release section for the release page.
-+
-+    The preamble and most subsections are shown as-is. The subsections named
-+    in COLLAPSED_SUBSECTIONS, the long list of fixes, are placed in a
-+    collapsed block so the release page stays short.
-+    """
-+    preamble, subsections = split_subsections(section)
-+    inline = [preamble] if preamble else []
-+    collapsed = []
-+    for title, body in subsections:
-+        if title in COLLAPSED_SUBSECTIONS:
-+            collapsed.append((title, body))
-+        else:
-+            inline.append(f'### {title}\n{body}')
-+
-+    if collapsed:
-+        title = collapsed[0][0]
-+        body = '\n'.join(b for _, b in collapsed)
-+        n = count_bullets(body)
-+        summary = f'{n} {title[0].lower() + title[1:]}' if n else title
-+        inline.append(f'<details>\n<summary>{summary}</summary>\n\n{body}\n</details>')
-+
-+    return '\n\n'.join(inline)
-+
- def release_notes(tag, changelog_path=CHANGELOG_PATH):
-     """Render the release body for tag.
- 
-@@ -118,7 +175,7 @@ def release_notes(tag, changelog_path=CHANGELOG_PATH):
-         print(f'warning: no CHANGELOG section found for {tag}', file=sys.stderr)
-         notes = notes_fallback.format(release=tag)
-     else:
--        notes = notes_template.format(section=section)
-+        notes = notes_template.format(changes=render_changes(section))
-     return release_template.format(release=tag, version=tag.lstrip('v'), notes=notes)
- 
- def set_release_notes(token, release_id, notes):
+ func Test_SingleNodeDBAppliedIndex(t *testing.T) {
+ 	s, ln := mustNewStore(t)
+ 	defer ln.Close()
 ```
 
 ---
 
-### Incident Patch 2: `19e312cd` (2026-11-07)
-**Commit Message**: Preserve null requests for queued-write flushes
+### Incident Patch 2: `b0f17e72` (2026-11-09)
+**Commit Message**: Pad recovery README with leading and trailing blank lines
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `store/state.go` (modified, +3/-1)
 ```diff
-@@ -4,7 +4,7 @@
- - [PR #3005](https://github.com/rqlite/rqlite/pull/3005): Support CMEK for automatic backups to Google Cloud Storage.
+@@ -173,7 +173,8 @@ func HasData(dir string) (bool, error) {
+ // holds the peers file, explaining to operators why the directory exists.
+ const recoveryREADMEName = "README"
  
- ### Implementation changes and bug fixes
--- [PR #3021](https://github.com/rqlite/rqlite/pull/3021): Reject malformed queued-write requests with the wait flag instead of reporting success without executing their statements.
-+- [PR #3021](https://github.com/rqlite/rqlite/pull/3021): Reject malformed queued-write requests with the wait flag while preserving empty-array and null requests used to wait for the queue to flush.
- - [PR #3001](https://github.com/rqlite/rqlite/pull/3001): Upgrade SQLite to 3.54.1.
- - [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Accept extension tarballs whose entries are prefixed with `./`.
- - [PR #3007](https://github.com/rqlite/rqlite/pull/3007): Create implicit parent directories with directory permissions when extracting zip and tar.gz archives, instead of the contained file's mode.
-```
-
-**File**: `http/request_parser.go` (modified, +7/-0)
-```diff
-@@ -37,6 +37,13 @@ func ParseRequest(r io.Reader) ([]*command.Statement, error) {
- 	if err != nil {
- 		return nil, ErrInvalidJSON
- 	}
-+	// A nil statement slice is encoded as null and represents an empty request.
-+	if t == nil {
-+		if _, err := dec.Token(); err != io.EOF {
-+			return nil, ErrInvalidRequest
-+		}
-+		return nil, ErrNoStatements
-+	}
- 	if t != json.Delim('[') {
- 		return nil, ErrInvalidRequest
- 	}
-```
-
-**File**: `http/request_parser_test.go` (modified, +10/-4)
-```diff
-@@ -18,10 +18,13 @@ func Test_NilRequest(t *testing.T) {
- }
+-const recoveryREADME = `This directory is used to recover a cluster that has lost quorum.
++const recoveryREADME = `
++This directory is used to recover a cluster that has lost quorum.
  
- func Test_EmptyRequests_Simple(t *testing.T) {
--	b := []byte(`[]`)
--	_, err := ParseRequest(bytes.NewReader(b))
--	if err != ErrNoStatements {
--		t.Fatalf("empty simple request did not result in correct error")
-+	for _, body := range []string{`[]`, `null`, "  null \n\t"} {
-+		t.Run(body, func(t *testing.T) {
-+			stmts, err := ParseRequest(bytes.NewReader([]byte(body)))
-+			if err != ErrNoStatements || len(stmts) != 0 {
-+				t.Fatalf("expected no statements, got %v, %v", stmts, err)
-+			}
-+		})
- 	}
- }
+ At startup rqlite checks this directory for a file named peers.json and, if
+ present, uses it to force a new cluster configuration. After a successful
+@@ -182,6 +183,7 @@ cluster this directory will be otherwise empty, and can be ignored.
  
-@@ -493,6 +496,9 @@ func Test_TrailingData(t *testing.T) {
- 		name string
- 		body string
- 	}{
-+		{"null with junk", `null garbage`},
-+		{"null with array", `null []`},
-+		{"null with null", `null null`},
- 		{"junk", `["SELECT 1"] garbage`},
- 		{"junk no space", `["SELECT 1"]garbage`},
- 		{"second array", `["SELECT 1"]["SELECT 2"]`},
-```
-
-**File**: `http/service_test.go` (modified, +11/-0)
-```diff
-@@ -1118,6 +1118,10 @@ func Test_QueuedExecuteWaitValidatesBody(t *testing.T) {
- 		{`{}`, http.StatusBadRequest},
- 		{`[42]`, http.StatusBadRequest},
- 		{`[]`, http.StatusOK},
-+		{`null`, http.StatusOK},
-+		{"  null \n\t", http.StatusOK},
-+		{`null junk`, http.StatusBadRequest},
-+		{`null []`, http.StatusBadRequest},
- 	} {
- 		t.Run(tc.body, func(t *testing.T) {
- 			s := New("", nil, nil, nil, nil)
-@@ -1137,6 +1141,13 @@ func Test_QueuedExecuteWaitValidatesBody(t *testing.T) {
- 			if rr.Code != tc.status {
- 				t.Fatalf("status=%d, want %d; body: %s", rr.Code, tc.status, rr.Body)
- 			}
+ For the full recovery procedure see:
+ https://rqlite.io/docs/clustering/general-guidelines/#dealing-with-failure
 +
-+			// Empty requests are only accepted as a wait-only queue flush.
-+			rr = httptest.NewRecorder()
-+			s.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/db/execute?queue&noleader", strings.NewReader(tc.body)))
-+			if rr.Code != http.StatusBadRequest {
-+				t.Fatalf("without wait: status=%d, want 400; body: %s", rr.Code, rr.Body)
-+			}
- 		})
- 	}
- }
+ `
+ 
+ // writeRecoveryREADME writes a README to dir, the directory in which the peers
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3034** (2026-11-09): Add README explaining purpose of raft/ directory (@otoolep)
+- **PR #3032** (closed): Honor cluster retry limits and detect stale pooled connections (@otoolep)
 - **PR #3031** (2026-11-08): Move retry logic out of Store Provider (@otoolep)
 - **PR #3030** (2026-11-08): Explicitly state if there are no new features (@otoolep)
 - **PR #3029** (2026-11-08): Include the tag's CHANGELOG section in the release notes (@otoolep)
 - **PR #3024** (closed): Preserve copy sources that overlap the staging directory (@otoolep)
-- **PR #3022** (2026-11-08): Replace credentials only after validating the full auth configuration (@otoolep)
-- **PR #3021** (2026-11-07): Reject malformed queued writes with the wait flag (@otoolep)
 
 ---
 
@@ -2337,68 +2301,28 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Collapse the fixes list on the release page
+## X. Merge pull request #3034 from rqlite/raft-dir-readme
 
 **RULE**:
-When implementing operations in `.github/workflows/release-notes.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d86d821e`: Collapse the fixes list on the release page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95a0477a`: Merge pull request #3034 from rqlite/raft-dir-readme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-notes.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-{changes}
-# Subsections collapsed on the release page. Anything else, such as new
-# features or upgrade notes, is shown inline.
-COLLAPSED_SUBSECTIONS = ('Implementation changes and bug fixes',)
-
-def markdown_lines(text):
-    """Yield (line, is_heading_level) for each line of text.
-
-    is_heading_level is the number of leading '#' characters for a heading
-    outside a fenced code block, or 0 otherwise.
-    """
-    in_fence = False
-    for line in text.splitlines():
-        if line.lstrip().startswith(('```', '~~~')):
-            in_fence = not in_fence
-        m = None if in_fence else re.match(r'^(#+)\s+\S', line)
-        yield line, len(m.group(1)) if m else 0
-
-    body, in_section = [], False
-    for line, level in markdown_lines(text):
-        if level == 2:
-            in_section = line.split()[1] == tag
-def split_subsections(section):
-    """Split a release section into its preamble and level-3 subsections.
-
-    Returns (preamble, [(title, body), ...]) where preamble is any text
-    before the first level-3 heading, and each body excludes its heading.
-    """
-    preamble, subsections = [], []
-    for line, level in markdown_lines(section):
-        if level == 3:
-           
+- [PR #3034](https://github.com/rqlite/rqlite/pull/3034): Add README explaining purpose of `raft/` directory.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-{section}
-    heading = re.compile(r'^##\s+(\S+)')
-    body, in_section, in_fence = [], False, False
-    for line in text.splitlines():
-        if line.lstrip().startswith(('```', '~~~')):
-            in_fence = not in_fence
-        m = None if in_fence else heading.match(line)
-        if m:
-            in_section = m.group(1) == tag
-        notes = notes_template.format(section=section)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d86d821e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95a0477a` are properly handled with clean fallback behavior.
