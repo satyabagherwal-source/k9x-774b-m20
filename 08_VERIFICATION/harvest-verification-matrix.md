@@ -8509,3 +8509,6 @@
 | `CYCLE-20261109-FTNH` | `2026-11-09T04:27:42.173Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4f5c4cb0...`) |
 | `CYCLE-20261109-YL7X` | `2026-11-09T04:42:17.709Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4a024d5c...`) |
 | `CYCLE-20261109-YMF4` | `2026-11-09T04:42:19.264Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`ac1ad188...`) |
+| `CYCLE-20261109-7UGJ` | `2026-11-09T04:49:29.587Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`9becab61...`) |
+| `CYCLE-20261109-7W3E` | `2026-11-09T04:49:31.706Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dd639d46...`) |
+| `CYCLE-20261109-81DG` | `2026-11-09T04:49:38.548Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`864a5937...`) |

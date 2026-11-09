@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `a0e31e4d`  
+> **Source Version**: `47e426e5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T03:28:14.782Z  
+> **Timestamp**: 2026-11-09T04:49:30.242Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T03:28:14.527Z  
+> **Harvest Timestamp**: 2026-11-09T04:49:30.233Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21599 stars
+- **Stars / Engagement**: 21629 stars
 
 ---
 
@@ -2289,550 +2289,245 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59310194` (2026-11-06)
-**Commit Message**: fix(ci): remove new usage panic and runtime command lint blockers
+### Incident Patch 1: `f979a0ad` (2026-11-08)
+**Commit Message**: ratatui-jcode: Buffer::diff skips unchanged narrow rows wholesale
 
-**File**: `crates/jcode-tui/src/tui/ui_messages/usage.rs` (modified, +5/-2)
+**File**: `vendor/ratatui-jcode/ratatui-core/src/buffer/buffer.rs` (modified, +21/-1)
 ```diff
-@@ -107,6 +107,10 @@ fn parse_card_percent(text: &str) -> Option<f32> {
-     }
- }
- 
-+#[cfg(test)]
-+#[path = "usage_activity_pair_tests.rs"]
-+mod activity_pair_tests;
-+
- #[cfg(test)]
- mod card_parse_error_tests {
-     use super::*;
-@@ -353,7 +357,7 @@ impl<'a> ProviderCard<'a> {
-         let activity_pair = activity("Today").zip(activity("Lifetime"));
-         let mut activity_rendered = false;
-         for row in &self.rows {
--            if activity_pair.is_some()
-+            if let Some((today, lifetime)) = activity_pair
-                 && matches!(
-                     row,
-                     CardRow::Detail {
-@@ -363,7 +367,6 @@ impl<'a> ProviderCard<'a> {
-                 )
-             {
-                 if !activity_rendered {
--                    let (today, lifetime) = activity_pair.unwrap();
-                     lines.extend(activity_summary_lines(today, lifetime, inner));
-                     activity_rendered = true;
-                 }
-```
-
-**File**: `crates/jcode-tui/src/tui/ui_messages/usage_activity_pair_tests.rs` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+use super::*;
-+
-+#[test]
-+fn incomplete_activity_pairs_keep_original_details_and_tracking() {
-+    for period in ["Today", "Lifetime"] {
-+        let content =
-+            format!("*ok\tReady\n: {period}\tNo recorded usage\n: Tracking\tcustom caveat");
-+        let card = ProviderCard::parse(&content).expect("valid card");
-+        let lines = card.body_lines(58, false);
-+        let text = lines
-+            .iter()
-+            .map(ToString::to_string)
-+            .collect::<Vec<_>>()
-+            .join("\n");
-+        assert!(text.contains(period), "{text}");
-+        assert!(text.contains("No recorded usage"), "{text}");
-+        assert!(text.contains("Tracking"), "{text}");
-+        assert!(text.contains("custom caveat"), "{text}");
-+        assert!(!text.contains("Jcode usage"), "{text}");
-+        for width in [1, 12, 24, 64] {
-+            assert!(
-+                card.render("OpenAI", width)
+@@ -509,7 +509,26 @@ impl Buffer {
+         let mut to_skip: usize = 0;
+         // ratatui-jcode: measure each symbol once per cell (upstream measured
+         // the current symbol up to three times) and use the ASCII fast path.
+-        for (i, (current, previous)) in next_buffer.iter().zip(previous_buffer.iter()).enumerate() {
++        // ratatui-jcode: whole-row fast path. When no wide-grapheme state
++        // carries into a row and every cell is unchanged and at most one byte
++        // wide (so width <= 1 and the state stays zero), the row produces no
++        // updates and can be skipped without the per-cell width logic.
++        let row_width = usize::from(self.area.width).max(1);
++        let len = next_buffer.len().min(previous_buffer.len());
++        let mut i = 0;
++        while i < len {
++            if i % row_width == 0 && invalidated == 0 && to_skip == 0 {
++                let end = (i + row_width).min(len);
++                let unchanged = next_buffer[i..end]
 +                    .iter()
-+                    .all(|line| line.width() <= width)
-+            );
-+        }
++                    .zip(&previous_buffer[i..end])
++                    .all(|(c, p)| c.symbol_len_le1() && c == p);
++                if unchanged {
++                    i = end;
++                    continue;
++                }
++            }
++            let (current, previous) = (&next_buffer[i], &previous_buffer[i]);
+             let current_width = crate::fast::symbol_width(current.symbol());
+             if !current.skip && (invalidated > 0 || current != previous) && to_skip == 0 {
+                 let (x, y) = self.pos_of(i);
+@@ -545,6 +564,7 @@ impl Buffer {
+             };
+             let affected_width = cmp::max(current_width, previous_width);
+             invalidated = cmp::max(affected_width, invalidated).saturating_sub(1);
++            i += 1;
+         }
+         updates
+     }
+```
+
+**File**: `vendor/ratatui-jcode/ratatui-core/src/buffer/cell.rs` (modified, +7/-0)
+```diff
+@@ -189,6 +189,13 @@ impl Cell {
+         self
+     }
+ 
++    /// ratatui-jcode: true when the symbol is empty or a single byte, which
++    /// guarantees display width <= 1 without a width lookup.
++    #[inline]
++    pub(crate) fn symbol_len_le1(&self) -> bool {
++        self.symbol.as_ref().is_none_or(|s| s.len() <= 1)
 +    }
-+}
 +
-+#[test]
-+fn complete_activity_pair_renders_summary_once_in_any_row_order() {
-+    for rows in [
-+        ": Today\tNo recorded usage\n: Lifetime\t100 in · 20 out · cost unknown\n: Tracking\told caveat",
-+        ": Tracking\told caveat\n: Lifetime\t100 in · 20 out · cost unknown\n: Today\tNo recorded usage",
-+    ] {
-+        let content = format!("*ok\tReady\n{rows}");
-+        let card = ProviderCard::parse(&content).expect("valid card");
-+        let text = card
-+            .body_lines(58, false)
-+            .iter()
-+            .map(ToString::to_string)
-+            .collect::<Vec<_>>()
-+            .join("\n");
-+        assert_eq!(text.matches("Jcode usage").count(), 1, "{text}");
-+        assert!(text.contains("Today"), "{text}");
-+        assert!(text.contains("Lifetime"), "{text}");
-+        assert!(!text.contains("old caveat"), "{text}");
-+    }
-+}
-```
-
-**File**: `src/cli/args/cloud_runtime.rs` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ mod tests {
-             parsed.command,
-             Some(Command::Cloud(CloudCommand::Runtime {
-                 action: CloudRuntimeCommand::Push { artifact }
--            })) if artifact == PathBuf::from("portable.tar.gz")
-+            })) if artifact == std::path::Path::new("portable.tar.gz")
-         ));
-     }
- 
-```
-
-**File**: `src/cli/cloud_runtime.rs` (modified, +26/-4)
-```diff
-@@ -25,10 +25,14 @@ fn remote_command(verb: &str, value: Option<&str>) -> Result<String> {
-         ("pin", Some(version)) if valid_release_tag(version) => {}
-         _ => bail!("invalid managed runtime operation"),
-     }
--    let suffix = value.map(|value| format!(" {value}")).unwrap_or_default();
--    Ok(format!(
--        "test -x {HELPER} || {{ echo 'Managed runtime updater is not installed on this host. Ask the cloud operator to migrate it.' >&2; exit 1; }}; sudo -n {HELPER} {verb}{suffix}"
--    ))
-+    let mut command = format!(
-+        "test -x {HELPER} || {{ echo 'Managed runtime updater is not installed on this host. Ask the cloud operator to migrate it.' >&2; exit 1; }}; sudo -n {HELPER} {verb}"
-+    );
-+    if let Some(value) = value {
-+        command.push(' ');
-+        command.push_str(value);
-+    }
-+    Ok(command)
- }
- 
- fn valid_release_tag(value: &str) -> bool {
-@@ -140,6 +144,24 @@ mod tests {
-         assert!(remote_command("push", Some(&"A".repeat(64))).is_err());
-         assert!(remote_command("status; reboot", None).is_err());
-         assert!(remote_command("status", Some("anything")).is_err());
-+        for verb in ["status", "check", "use-stable"] {
-+            assert!(
-+                remote_command(verb, None)
-+                    .unwrap()
-+                    .ends_with(&format!(" {verb}"))
-+            );
-+        }
-+        assert!(
-+            remote_command("pin", Some("v987.654.321"))
-+                .unwrap()
-+                .ends_with(" pin v987.654.321")
-+        );
-+        let digest = "a".repeat(64);
-+        assert!(
-+            remote_command("push", Some(&digest))
-+                .unwrap()
-+                .ends_with(&format!(" push {digest}"))
-+        );
-     }
- 
-     #[test]
+     /// Resets the cell to the empty state.
+     pub fn reset(&mut self) {
+         *self = Self::EMPTY;
 ```
 
 ---
 
-### Incident Patch 2: `4863c287` (2026-11-06)
-**Commit Message**: fix(windows): harden credential paths without walking descendants (refs #2061)
+### Incident Patch 2: `7c697549` (2026-11-08)
+**Commit Message**: tui: skip width measurement for left-aligned pane snapshot lines, ASCII width fast path
 
-Adapt the target-only protected DACL change and regression fixtures contributed in issue #2061. Preserve private inheritance for new children and explicitly harden secret files, without changing unrelated existing descendants. Add focused native Windows CI coverage.
-
-Co-authored-by: Andrian <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/windows-secret-acl.yml` (added, +53/-0)
+**File**: `crates/jcode-tui/src/tui/ui.rs` (modified, +6/-1)
 ```diff
-@@ -0,0 +1,53 @@
-+name: Windows secret ACL regressions
-+
-+on:
-+  workflow_dispatch:
-+  push:
-+    branches: [master, main]
-+    paths:
-+      - crates/jcode-core/**
-+      - crates/jcode-storage/**
-+      - crates/jcode-base/src/auth/**
-+      - .github/workflows/windows-secret-acl.yml
-+  pull_request:
-+    paths:
-+      - crates/jcode-core/**
-+      - crates/jcode-storage/**
-+      - crates/jcode-base/src/auth/**
-+      - .github/workflows/windows-secret-acl.yml
-+
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: windows-secret-acl-${{ github.ref }}
-+  cancel-in-progress: true
-+
-+env:
-+  CARGO_BUILD_RUSTC_WRAPPER: ""
-+  CARGO_TERM_COLOR: always
-+  CARGO_BUILD_JOBS: "2"
-+
-+jobs:
-+  acl:
-+    name: Native Windows credential permissions
-+    runs-on: windows-latest
-+    timeout-minutes: 30
-+    steps:
-+      - uses: actions/checkout@v4
-+        with:
-+          submodules: recursive
-+      - uses: dtolnay/rust-toolchain@stable
-+      - uses: Swatinem/rust-cache@v2
-+        with:
-+          key: windows-secret-acl
-+      - name: Verify target-only ACLs and private new and legacy secrets
-+        shell: pwsh
-+        run: |
-+          cargo test --locked -p jcode-core --lib
-+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-+      - name: Verify refreshing one account preserves the other
-+        shell: pwsh
-+        run: |
-+          cargo test --locked -p jcode-base --no-default-features --lib save_claude_tokens_updates_fox_without_touching_otter -- --nocapture
-+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+@@ -2310,9 +2310,14 @@ pub(crate) fn line_left_margins_for_area(lines: &[Line<'static>], area_width: u1
+     lines
+         .iter()
+         .map(|line| {
++            let alignment = line.alignment.unwrap_or(Alignment::Left);
++            if alignment == Alignment::Left {
++                // Left-aligned lines never have a margin, so skip measuring them.
++                return 0;
++            }
+             let used = line.width().min(area_width as usize) as u16;
+             let total_margin = area_width.saturating_sub(used);
+-            match line.alignment.unwrap_or(Alignment::Left) {
++            match alignment {
+                 Alignment::Left => 0,
+                 Alignment::Center => total_margin / 2,
+                 Alignment::Right => total_margin,
 ```
 
-**File**: `crates/jcode-base/src/auth/oauth_tests/basic.rs` (modified, +54/-0)
+**File**: `crates/jcode-tui/src/tui/ui/display_width.rs` (modified, +3/-0)
 ```diff
-@@ -167,6 +167,60 @@ fn save_claude_tokens_preserves_existing_account_metadata() -> Result<()> {
-     Ok(())
+@@ -1,4 +1,7 @@
+ pub(super) fn line_display_width(text: &str) -> usize {
++    if text.bytes().all(|b| (0x20..0x7f).contains(&b)) {
++        return text.len();
++    }
+     unicode_width::UnicodeWidthStr::width(text)
  }
  
-+#[test]
-+fn save_claude_tokens_updates_fox_without_touching_otter() -> Result<()> {
-+    let _lock = crate::storage::lock_test_env();
-+    let temp = tempfile::TempDir::new().map_err(|e| anyhow!(e))?;
-+    let _home = EnvVarGuard::set("JCODE_HOME", temp.path());
-+    for (label, email) in [
-+        ("claude-otter", "otter@example.invalid"),
-+        ("claude-fox", "fox@example.invalid"),
-+    ] {
-+        let assigned =
-+            crate::auth::claude::upsert_account(crate::auth::claude::AnthropicAccount {
-+                label: label.to_string(),
-+                access: format!("synthetic-old-access-{label}"),
-+                refresh: format!("synthetic-old-refresh-{label}"),
-+                expires: 1,
-+                email: Some(email.to_string()),
-+                subscription_type: Some("pro".to_string()),
-+                scopes: vec!["user:inference".to_string()],
-+            })?;
-+        assert_eq!(assigned, label);
-+    }
-+    let mut initial = crate::auth::claude::load_auth_file()?;
-+    initial.active_anthropic_account = Some("claude-fox".to_string());
-+    crate::auth::claude::save_auth_file(&initial)?;
-+    let otter_before = serde_json::to_value(&initial.anthropic_accounts[0])?;
-+    let refreshed = OAuthTokens {
-+        access_token: "synthetic-new-fox-access".to_string(),
-+        refresh_token: "synthetic-new-fox-refresh".to_string(),
-+        expires_at: 2,
-+        id_token: None,
-+        scopes: Vec::new(),
-+    };
-+    save_claude_tokens_for_account(&refreshed, "claude-fox")?;
-+    let saved = crate::auth::claude::load_auth_file()?;
-+    assert_eq!(saved.anthropic_accounts.len(), 2);
-+    assert_eq!(
-+        saved.active_anthropic_account.as_deref(),
-+        Some("claude-fox")
-+    );
-+    assert_eq!(
-+        serde_json::to_value(&saved.anthropic_accounts[0])?,
-+        otter_before
-+    );
-+    let fox = &saved.anthropic_accounts[1];
-+    assert_eq!(fox.label, "claude-fox");
-+    assert_eq!(fox.access, refreshed.access_token);
-+    assert_eq!(fox.refresh, refreshed.refresh_token);
-+    assert_eq!(fox.expires, refreshed.expires_at);
-+    assert_eq!(fox.email.as_deref(), Some("fox@example.invalid"));
-+    assert_eq!(fox.subscription_type.as_deref(), Some("pro"));
-+    assert_eq!(fox.scopes, vec!["user:inference".to_string()]);
-+    Ok(())
-+}
-+
- #[test]
- fn claude_oauth_constants() {
-     assert!(!claude::CLIENT_ID.is_empty());
 ```
 
-**File**: `crates/jcode-core/src/fs.rs` (modified, +50/-25)
+---
+
+### Incident Patch 3: `e950aeed` (2026-11-08)
+**Commit Message**: tui: stream justrust status from one long-lived --watch process instead of spawning a query every second
+
+**File**: `crates/jcode-tui/src/tui/justrust_status.rs` (modified, +165/-121)
 ```diff
-@@ -1,5 +1,9 @@
+@@ -4,13 +4,12 @@
+ 
+ use serde::Deserialize;
  use std::path::Path;
++use std::sync::Arc;
+ use std::time::{Duration, Instant};
+-use tokio::io::AsyncReadExt;
+-use tokio::sync::oneshot;
++use tokio::io::AsyncReadExt as _;
  
-+#[cfg(all(test, windows))]
-+#[path = "fs_windows_tests.rs"]
-+mod windows_tests;
-+
- /// Set file permissions to owner-only read/write (0o600).
- /// On Windows, replaces the DACL with a protected full-control ACE for the
- /// current process user so inherited or explicit access for other principals
-@@ -18,7 +22,9 @@ pub fn set_permissions_owner_only(path: &Path) -> std::io::Result<()> {
+-const POLL_INTERVAL: Duration = Duration::from_secs(1);
+ const RETRY_INTERVAL: Duration = Duration::from_secs(10);
+-const QUERY_TIMEOUT: Duration = Duration::from_secs(2);
++const FIRST_LINE_TIMEOUT: Duration = Duration::from_secs(5);
+ const MAX_RESPONSE: usize = 512 * 1024;
+ const COMPLETION_RETENTION: Duration = Duration::from_secs(10 * 60);
+ 
+@@ -236,64 +235,80 @@ impl Snapshot {
+     }
  }
  
- /// Set directory permissions to owner-only read/write/execute (0o700).
--/// Windows child objects inherit the same current-user-only access rule.
-+/// New Windows child objects inherit the same current-user-only access rule.
-+/// Existing descendants are not modified. Secret files must be hardened
-+/// individually, including legacy files discovered during read-time repair.
- pub fn set_directory_permissions_owner_only(path: &Path) -> std::io::Result<()> {
-     #[cfg(unix)]
-     {
-@@ -43,12 +49,13 @@ fn set_windows_acl_owner_only(
-     use std::ptr::{null, null_mut};
-     use windows_sys::Win32::Foundation::{CloseHandle, GENERIC_ALL, LocalFree};
-     use windows_sys::Win32::Security::Authorization::{
--        EXPLICIT_ACCESS_W, SE_FILE_OBJECT, SET_ACCESS, SetEntriesInAclW, SetNamedSecurityInfoW,
--        TRUSTEE_IS_SID, TRUSTEE_IS_USER, TRUSTEE_W,
-+        EXPLICIT_ACCESS_W, SET_ACCESS, SetEntriesInAclW, TRUSTEE_IS_SID, TRUSTEE_IS_USER, TRUSTEE_W,
-     };
-     use windows_sys::Win32::Security::{
--        DACL_SECURITY_INFORMATION, GetTokenInformation, PROTECTED_DACL_SECURITY_INFORMATION,
--        TOKEN_QUERY, TOKEN_USER, TokenUser,
-+        DACL_SECURITY_INFORMATION, GetTokenInformation, InitializeSecurityDescriptor,
-+        PROTECTED_DACL_SECURITY_INFORMATION, SE_DACL_PROTECTED, SECURITY_DESCRIPTOR,
-+        SetFileSecurityW, SetSecurityDescriptorControl, SetSecurityDescriptorDacl, TOKEN_QUERY,
-+        TOKEN_USER, TokenUser,
-     };
-     use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
+-async fn query(program: &std::ffi::OsStr) -> Option<Snapshot> {
+-    query_with_timeout(program, QUERY_TIMEOUT).await
++/// One long-lived `justrust status --json --watch` per client. justrust
++/// prints a line only when the status changes and sleeps on inotify while no
++/// build runs, so an idle client costs nothing (a one-shot query per second
++/// used to spawn a process every second in every window).
++fn spawn_stream(
++    program: std::ffi::OsString,
++) -> tokio::sync::watch::Receiver<Option<Option<Arc<Snapshot>>>> {
++    let (sender, receiver) = tokio::sync::watch::channel(None);
++    if let Ok(runtime) = tokio::runtime::Handle::try_current() {
++        runtime.spawn(async move {
++            if let Err(error) = stream(&program, &sender).await {
++                crate::logging::debug(&format!("Build status stream ended: {error:#}"));
++            }
++            // Some(None) tells the poller the stream is gone.
++            let _ = sender.send(Some(None));
++        });
++    }
++    receiver
+ }
  
-@@ -103,29 +110,47 @@ fn set_windows_acl_owner_only(
-             return Err(std::io::Error::from_raw_os_error(acl_status as i32));
-         }
- 
--        let mut wide_path = path
--            .as_os_str()
--            .encode_wide()
--            .chain(Some(0))
--            .collect::<Vec<_>>();
--        let security_status = unsafe {
--            SetNamedSecurityInfoW(
--                wide_path.as_mut_ptr(),
--                SE_FILE_OBJECT,
--                DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION,
--                null_mut(),
--                null_mut(),
--                acl,
--                null(),
--            )
--        };
-+        // SetNamedSecurityInfoW propagates inheritable ACEs to existing children,
-+        // turning an auth.json write into a permission walk of the entire home.
-+        // SetFileSecurityW changes only this object. Keep inheritable access for
-+        // future children, and protect the DACL against permissive ancestors.
-+        let apply_result = (|| -> std::io::Result<()> {
-+            let mut descriptor: SECURITY_DESCRIPTOR = unsafe { std::mem::zeroed() };
-+            let descriptor_ptr = (&mut descriptor as *mut SECURITY_DESCRIPTOR).cast::<c_void>();
-+            // SECURITY_DESCRIPTOR_REVISION is 1 in the Windows descriptor ABI.
-+            if unsafe { InitializeSecurityDescriptor(descriptor_ptr, 1) } == 0 {
-+                return Err(std::io::Error::last_os_error());
-+            }
-+            if unsafe { SetSecurityDescriptorDacl(descriptor_ptr, 1, acl, 0) } == 0 {
-+                return Err(std::io::Error::last_os_error());
-+            }
-+            if unsafe {
-+                SetSecurityDescriptorControl(descriptor_ptr, SE_DACL_PROTECTED, SE_DACL_PROTECTED)
-+            } == 0
-+            {
-+                return Err(std::io::Error::last_os_error());
-+            }
-+            let wide_path = path
-+                .as_os_str()
-+                .encode_wide()
-+                .chain(Some(0))
-+                .collect::<Vec<_>>();
-+            if unsafe {
-+                SetFileSecurityW(
-+                    wide_path.as_ptr(),
-+                    DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION,
-+                    descriptor_ptr,
-+                )
-+            } == 0
-+            {
-+                return Err(std::io::Error::last_os_error());
-+            }
-+            Ok(())
-+        })();
-         unsafe {
-             LocalFree(acl.cast::<c_void>());
-         }
--        if security_status != 0 {
--            return Err(std::io::Error::from_raw_os_error(security_status as i32));
+-async fn query_with_timeout(program: &std::ffi::OsStr, timeout: Duration) -> Option<Snapshot> {
++async fn stream(
++    program: &std::ffi::OsStr,
++    sender: &tokio::sync::watch::Sender<Option<Option<Arc<Snapshot>>>>,
++) -> anyhow::Result<()> {
+     use anyhow::Context;
+-    let result = tokio::time::timeout(timeout, async {
+-        let mut child = tokio::process::Command::new(program)
+-            .args(["status", "--json"])
+-            .stdin(std::process::Stdio::null())
+-            .stdout(std::process::Stdio::piped())
+-            .stderr(std::process::Stdio::null())
+-            .kill_on_drop(true)
+-            .spawn()
+-            .context("start justrust status query")?;
+-        let mut bytes = Vec::new();
+-        child
+-            .stdout
+-            .take()
+-            .context("justrust status stdout was not piped")?
+-            .take((MAX_RESPONSE + 1) as u64)
+-            .read_to_end(&mut bytes)
+-            .await
+-            .context("read justrust status response")?;
+-        if bytes.len() > MAX_RESPONSE {
+-            child
+-                .kill()
+-                .await
+-                .context("terminate oversized justrust status response")?;
+-            anyhow::bail!("justrust status response exceeds {MAX_RESPONSE} bytes");
 -        }
--        Ok(())
-+        apply_result
-     })();
- 
-     unsafe {
-```
-
-**File**: `crates/jcode-core/src/fs_windows_tests.rs` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+use super::*;
-+
-+// Assert actual NTFS ACL semantics, not the spelling/count of inherited ACEs.
-+fn powershell(root: &Path, script: &str) {
-+    let output = std::process::Command::new("powershell.exe")
-+        .args(["-NoProfile", "-NonInteractive", "-Command", &format!(r#"
-+$ErrorActionPreference='Stop'
-+function Assert-PrivateAcl($Acl, [string]$ExpectedSid, [string]$Context) {{
-+    $raw=[Security.AccessControl.RawSecurityDescriptor]::new($Acl.GetSecurityDescriptorBinaryForm(),0)
-+    if($null -eq $raw.DiscretionaryAcl -or $raw.DiscretionaryAcl.Count -eq 0) {{throw "$Context has null or empty DACL"}}
-+    $rules=@($Acl.GetAccessRules($true,$true,[Security.Principal.SecurityIdentifier]))
-+    if($rules.Count -eq 0) {{throw "$Context has no access rules"}}
-+    [int64]$effective=0
-+    foreach($rule in $rules) {{
-+        if($rule.IdentityReference.Value -ne $ExpectedSid) {{throw "$Context grants another SID"}}
-+        if($rule.AccessControlType -ne [Security.AccessControl.AccessControlType]::Allow) {{throw "$Context has non-Allow ACE"}}
-+        if(($rule.PropagationFlags -band [Security.AccessControl.PropagationFlags]::InheritOnly) -eq 0) {{
-+            $effective=$effective -bor [int64]$rule.FileSystemRights
-+        }}
-+    }}
-+    [int64]$full=[Security.AccessControl.FileSystemRights]::FullControl
-+    if(($effective -band $full) -ne $full -and ($effective -band 0x10000000) -eq 0) {{throw "$Context lacks effective FullControl"}}
-+}}
-+{script}
-+"#)])
-+        .env("JCODE_ACL_TEST_ROOT", root)
+-        let status = child
+-            .wait()
+-            .await
+-            .context("wait for justrust status query")?;
+-        anyhow::ensure!(status.success(), "justrust status exited with {status}");
+-        serde_json::from_slice(&bytes).context("decode justrust status response")
+-    })
+-    .await;
+-    match result {
+-        Ok(Ok(snapshot)) => Some(snapshot),
+-        Ok(Err(error)) => {
+-            crate::logging::debug(&format!("Build status unavailable: {error:#}"));
+-            None
+-        }
+-        Err(error) => {
+-            crate::logging::debug(&format!("Build status query timed out: {error}"));
+-            None
++    use tokio::io::AsyncBufReadExt;
++    let mut child = tokio::process::Command::new(program)
++        .args(["status", "--json", "--watch", "1"])
 +        .stdin(std::process::Stdio::null())
-+        .output()
-+        .expect("run Windows ACL assertions");
-+    assert!(
-+        output.status.success(),
-+        "ACL assertion failed: {}{}",
-+        String::from_utf8_lossy(&output.stdout),
-+        String::from_utf8_lossy(&output.stderr),
-+    );
-+}
-+
-+#[test]
-+fn directory_hardening_is_target_only_and_new_secrets_stay_private() {
-+    let root = std::env::temp_dir().join(format!(
-+        "jcode-acl-target-only-{}-{}",
-+        std::process::id(),
-+        rand::random::<u64>(),
-+    ));
-+    std::fs::create_dir_all(&root).unwrap();
-+    powershell(
-+        &root,
-+        r#"
-+$r=$env:JCODE_ACL_TEST_ROOT
-+$sid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-+$a=Get-Acl -LiteralPath $r
-+$a.SetSecurityDescriptorSddlForm("D:P(A;OICI;FA;;;$sid)(A;OICI;FR;;;WD)")
-+Set-Acl -LiteralPath $r -AclObject $a
-+[IO.File]::WriteAllText((Join-Path $r 'existing.txt'),'not a secret')
-+if(-not (Get-Acl (Join-Path $r 'existing.txt')).Sddl.Contains(';;;WD)')) {throw 'fixture did not inherit Everyone read'}
-+"#,
-+    );
-+    set_directory_permissions_owner_only(&root).unwrap();
-+    powershell(
-+        &root,
-+        r#"
-+$r=$env:JCODE_ACL_TEST_ROOT
-+$sid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-+$a=Get-Acl -LiteralPath $r
-+if(-not $a.AreAccessRulesProtected) {throw 'directory DACL not protected'}
-+Assert-PrivateAcl $a $sid 'directory'
-+if(-not (Get-Acl (Join-Path $r 'existing.txt')).Sddl.Contains(';;;WD)')) {throw 'hardening changed unrelated existing child access'}
-+[IO.File]::WriteAllText((Join-Path $r 'future.txt'),'new secret fixture')
-+Assert-PrivateAcl (Get-Acl (Join-Path $r 'future.txt')) $sid 'future child'
-+"#,
-+    );
-+    // Legacy secret repair stays explicit, rather than rewriting unrelated files.
-+    set_permissions_owner_only(&root.join("existing.txt")).unwrap();
-+    powershell(
-+        &root,
-+        r#"
-+$r=$env:JCODE_ACL_TEST_ROOT
-+$sid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-+$a=Get-Acl (Join-Path $r 'existing.txt')
-+if(-not $a.AreAccessRulesProtected) {throw 'secret file DACL not protected'}
-+Assert-PrivateAcl $a $sid 'secret file'
-+"#,
-+    );
-+    assert!(set_permissions_owner_only(&root.join("missing.txt")).is_err());
-+    std::fs::remove_dir_all(root).unwrap();
-+}
-```
-
----
-
-### Incident Patch 3: `885742bc` (2026-11-06)
-**Commit Message**: docs(cloud): correct deployment regression and allowance diagnosis
-
-**File**: `docs/CLOUD_AUTO_UPDATES.md` (modified, +22/-3)
-```diff
-@@ -1,7 +1,8 @@
- # Managed cloud automatic updates
- 
--Status: control-plane updater deployed November 6, 2026. Existing-host migration
--and development-package upload are blocked by the account runtime allowance.
-+Status: control-plane updater deployed November 6, 2026, but that deployment
-+overwrite of earlier live repairs requires additive recovery. Existing-host
-+migration and development upload have not occurred.
- 
- ## Deployment evidence
- 
-@@ -22,13 +23,31 @@ under persistent development policy without restarting it.
- 
- At 12:08 UTC on November 6, 2026, authenticated cloud status reported the
- owner host stopped with 60.1 hours used against a 50-hour monthly allowance.
--SSH authorization rejected further access because that allowance was exhausted.
-+SSH authorization rejected further access with an allowance-exhausted error.
-+This diagnosis is provisional: the deployment also overwrote the existing
-+plan-proportional allowance repair, so entitlement and access must be checked
-+again after recovery before asking the account owner to change allowance.
- Consequently the existing host has NOT been migrated, the prepared development
- package has NOT been uploaded or activated, and its updater timer has NOT been
- verified live. No allowance override or alternate administrative access was used.
- The new bootstrap applies to newly provisioned hosts. Other existing accounts
- have not been migrated or awakened as part of this deployment.
- 
-+### Deployment regression and guard
-+
-+The source checkout lacked existing script-API hosted-build, mobile-sync, scoped
-+key, and plan-proportional cloud entitlement repairs. Deploying it replaced those
-+live repairs. Initial health and updater-route checks were insufficient to catch
-+the regression. Further deployments from this session are paused, while a
-+separate coordinated recovery restores the lost features without removing the
-+managed updater or live settings. Recovery has not yet been verified here.
-+
-+Backend commit `21bb577` installs a fail-closed bundled-code inventory check in
-+both `npm run deploy` and the direct Wrangler build hook. Nine guard tests and
-+431 full backend tests pass. The actual divergent source now fails a real
-+Wrangler dry-run before upload. This is a minimum-feature inventory, not complete
-+behavioral equivalence or automatic reconciliation with future live changes.
-+
- ## Implemented client workflow
- 
- The CLI now provides these managed-host operations. They use authenticated SSH,
++        .stdout(std::process::Stdio::piped())
++        .stderr(std::process::Stdio::null())
++        .kill_on_drop(true)
++        .spawn()
++        .context("start justrust status stream")?;
++    let stdout = child.stdout.take().context("stdout was not piped")?;
++    let mut reader = tokio::io::BufReader::new(stdout);
++    let mut line = Vec::new();
++    let mut first = true;
++    loop {
++        line.clear();
++        let limit = if first {
++            FIRST_LINE_TIMEOUT
++        } else {
++            Duration::from_secs(365 * 24 * 3600)
++        };
++        let mut limited = (&mut reader).take((MAX_RESPONSE + 1) as u64);
++        let next = limited.read_until(b'\n', &mut line);
++        let read = tokio::select! {
++            read = tokio::time::timeout(limit, next) => {
++                read.context("first status line timed out")?
++            }
++            () = sender.closed() => return Ok(()),
++        };
++        first = false;
++        let n = read.context("read justrust status stream")?;
++        anyhow::ensure!(n > 0, "justrust status stream closed");
++        anyhow::ensure!(
++            line.ends_with(b"\n") || n <= MAX_RESPONSE,
++            "justrust status line exceeds {MAX_RESPONSE} byte
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2098** (closed): fix(webfetch): Report truncation length in bytes (@tayoonabule)
+- **PR #2080** (closed): fix: preserve runtime context when opening swarm agents (@fardjad)
+- **PR #2078** (closed): fix(tui): emit OSC 52 before native clipboard in SSH sessions (@osmanaksu)
 - **PR #2072** (2026-11-06): fix(browser): keep requested browser across scoped handoff inputs (@ptlnextdoor)
-- **PR #2060** (closed): fix: format commands_cloud_tests.rs and regenerate stale budget JSONs (@alecuba16)
-- **PR #2033** (closed): fix(skills): make .jcode/skills win over .agents and .claude within each scope (@fbdo)
-- **PR #2026** (closed): fix: keep pool rotation for OAuth-bound config defaults on fresh sessions (@alecuba16)
-- **PR #2025** (closed): Add interactive /config settings wizard to the TUI (@remedialchaos)
-- **PR #2011** (closed): fix(patch): apply unified hunks to CRLF files (@jaeminbird)
+- **PR #2065** (closed): fix(build): sweep stale launcher backups on Windows publish (@gdamprint-cmyk)
+- **PR #2063** (closed): feat(tui): copy session ID from picker (@Aafimalek)
 
 ---
 
@@ -2852,33 +2547,48 @@ Co-authored-by: Andrian <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): remove new usage panic and runtime command lint blockers
+## X. ratatui-jcode: Buffer::diff skips unchanged narrow rows wholesale
 
 **RULE**:
-When implementing operations in `crates/jcode-tui/src/tui/ui_messages/usage.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `vendor/ratatui-jcode/ratatui-core/src/buffer/buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59310194`: ci): remove new usage panic and runtime command lint blockers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f979a0ad`: ratatui-jcode: Buffer::diff skips unchanged narrow rows wholesale. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/ui_messages/usage.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `vendor/ratatui-jcode/ratatui-core/src/buffer/buffer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[cfg(test)]
-#[path = "usage_activity_pair_tests.rs"]
-mod activity_pair_tests;
-
-            if let Some((today, lifetime)) = activity_pair
+        // ratatui-jcode: whole-row fast path. When no wide-grapheme state
+        // carries into a row and every cell is unchanged and at most one byte
+        // wide (so width <= 1 and the state stays zero), the row produces no
+        // updates and can be skipped without the per-cell width logic.
+        let row_width = usize::from(self.area.width).max(1);
+        let len = next_buffer.len().min(previous_buffer.len());
+        let mut i = 0;
+        while i < len {
+            if i % row_width == 0 && invalidated == 0 && to_skip == 0 {
+                let end = (i + row_width).min(len);
+                let unchanged = next_buffer[i..end]
+                    .iter()
+                    .zip(&previous_buffer[i..end])
+                    .all(|(c, p)| c.symbol_len_le1() && c == p);
+                if unchanged {
+                    i = end;
+                    continue;
+                }
+            }
+            let (current, previous) = (&next_buffer[i], &previous_buffer[i]);
+            i += 1;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            if activity_pair.is_some()
-                    let (today, lifetime) = activity_pair.unwrap();
+        for (i, (current, previous)) in next_buffer.iter().zip(previous_buffer.iter()).enumerate() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59310194` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f979a0ad` are properly handled with clean fallback behavior.

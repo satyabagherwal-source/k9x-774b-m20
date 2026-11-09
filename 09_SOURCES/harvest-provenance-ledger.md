@@ -8518,3 +8518,6 @@ Every entry in this ledger must capture:
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `645d62eb` | Multi-dimensional audit evidence | 2026-11-09T04:27:42.177Z |
 | `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `9a66eab8` | Multi-dimensional audit evidence | 2026-11-09T04:42:17.713Z |
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-11-09T04:42:19.268Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-11-09T04:49:29.591Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `47e426e5` | Multi-dimensional audit evidence | 2026-11-09T04:49:31.710Z |
+| `learn-github-electron-electron` | `https://github.com/electron/electron` | `ef2710fa` | Multi-dimensional audit evidence | 2026-11-09T04:49:38.560Z |

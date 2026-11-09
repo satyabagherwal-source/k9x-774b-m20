@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T04:42:19.172Z",
+  "last_updated": "2026-11-09T04:49:38.458Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -122,8 +122,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "a0e31e4d",
-      "content_hash": "c537c65d0489e2414f0be8b5ec11d4cc24a5340af4b8382ad059a7512629851e",
+      "source_version": "47e426e5",
+      "content_hash": "dd639d46a09d2363ca1e77802267d72791f24ba998c8419890a208c02135e798",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -135,6 +135,11 @@
         {
           "number": null,
           "title": "ci): remove new usage panic and runtime command lint blockers",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ratatui-jcode: Buffer::diff skips unchanged narrow rows wholesale",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -243,7 +248,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:28:15.809Z",
+      "verified_at": "2026-11-09T04:49:31.593Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12767,14 +12772,19 @@
       "slug": "electron-electron",
       "platform": "github",
       "source_url": "https://github.com/electron/electron",
-      "source_version": "9ec6bc44",
-      "content_hash": "22dad3dc65b3bb606143878a772a598a8f67ad0efcba695cb903980be0c26797",
+      "source_version": "ef2710fa",
+      "content_hash": "864a5937010296f22c9ca1d34349ed0a46c8583f211ac4112b9108aa0679c33f",
       "dossier_path": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "extensions): crash when using chrome.system.storage (#55612)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "run local notification callbacks on the main thread on macOS (#55629)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12818,7 +12828,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:25:11.113Z",
+      "verified_at": "2026-11-09T04:49:38.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27776,7 +27786,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "4774c6f83e0cae5bff5a27a6e1b4d718bde7624ac14e2b8c68173ca33affa09d",
+      "content_hash": "9becab61803834d99bc4ebc5cad9aa569b5fef7d69da05154345dba0f5361eea",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -27889,7 +27899,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-11-05T10:43:37.879Z",
+      "verified_at": "2026-11-09T04:49:29.459Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

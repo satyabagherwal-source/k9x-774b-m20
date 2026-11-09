@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T04:42:19.285Z",
-  "total_cycles_completed": 8474,
-  "total_learnings_persisted": 8474,
-  "total_rules_promoted": 8273,
+  "last_updated": "2026-11-09T04:49:38.566Z",
+  "total_cycles_completed": 8477,
+  "total_learnings_persisted": 8477,
+  "total_rules_promoted": 8275,
   "history": [
-    {
-      "timestamp": "2026-11-08T15:28:22.655Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T15:35:13.480Z",
-      "repository": "HemmingwayAI/Hemmingway-1",
-      "learningId": "learn-huggingface-altworld-hemmingway-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T15:35:13.661Z",
-      "repository": "SimonSchubert/Kai",
-      "learningId": "learn-github-simonschubert-kai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T15:42:23.514Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "Bingsu/adetailer",
       "learningId": "learn-huggingface-bingsu-adetailer",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T04:49:29.597Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T04:49:31.716Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T04:49:38.566Z",
+      "repository": "electron/electron",
+      "learningId": "learn-github-electron-electron",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

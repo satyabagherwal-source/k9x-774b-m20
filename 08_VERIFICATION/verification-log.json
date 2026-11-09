@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-AMEA",
-    "timestamp": "2026-11-07T05:44:17.890Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "e11e4980bf69978b2c8830d6309ecf02e569ac4c0042ebd228c6da99acda6c7e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-ANM2",
-    "timestamp": "2026-11-07T05:44:19.466Z",
-    "repository": "axios/axios",
-    "learningId": "learn-github-axios-axios",
-    "contentHash": "6ff7dec79de4a9b3cabf4f046d106a522e818e96bb4e7ee779e1924fe4bf4c4c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-AT2L",
-    "timestamp": "2026-11-07T05:44:26.541Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "563ff4e981048715921b4f015ec68fd77999d53f043ef14ec72e6ecfd1202957",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-ATAR",
     "timestamp": "2026-11-07T05:44:26.835Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7447,51 @@
     "contentHash": "ac1ad1886d831e1e142985b091ada74d81509e1fa3b9fc38c014bbb970dce85a",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-7UGJ",
+    "timestamp": "2026-11-09T04:49:29.587Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "9becab61803834d99bc4ebc5cad9aa569b5fef7d69da05154345dba0f5361eea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-7W3E",
+    "timestamp": "2026-11-09T04:49:31.706Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "dd639d46a09d2363ca1e77802267d72791f24ba998c8419890a208c02135e798",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-81DG",
+    "timestamp": "2026-11-09T04:49:38.548Z",
+    "repository": "electron/electron",
+    "learningId": "learn-github-electron-electron",
+    "contentHash": "864a5937010296f22c9ca1d34349ed0a46c8583f211ac4112b9108aa0679c33f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -45,8 +45,8 @@
     "sourceUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
     "sourceVersion": "hf-lilylilith-qi_2.1_anyangle",
     "license": "Open-Source",
-    "contentHash": "4774c6f83e0cae5bff5a27a6e1b4d718bde7624ac14e2b8c68173ca33affa09d",
-    "lastHarvestedAt": "2026-11-05T10:43:38.011Z",
+    "contentHash": "9becab61803834d99bc4ebc5cad9aa569b5fef7d69da05154345dba0f5361eea",
+    "lastHarvestedAt": "2026-11-09T04:49:29.591Z",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle"
   },
   "hf-baai-bge-large-en-v1.5": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "a0e31e4d",
+    "sourceVersion": "47e426e5",
     "license": "MIT",
-    "contentHash": "c537c65d0489e2414f0be8b5ec11d4cc24a5340af4b8382ad059a7512629851e",
-    "lastHarvestedAt": "2026-11-08T03:28:15.905Z",
+    "contentHash": "dd639d46a09d2363ca1e77802267d72791f24ba998c8419890a208c02135e798",
+    "lastHarvestedAt": "2026-11-09T04:49:31.710Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "9ec6bc44",
+    "sourceVersion": "ef2710fa",
     "license": "MIT",
-    "contentHash": "22dad3dc65b3bb606143878a772a598a8f67ad0efcba695cb903980be0c26797",
-    "lastHarvestedAt": "2026-11-05T22:25:11.230Z",
+    "contentHash": "864a5937010296f22c9ca1d34349ed0a46c8583f211ac4112b9108aa0679c33f",
+    "lastHarvestedAt": "2026-11-09T04:49:38.560Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {
