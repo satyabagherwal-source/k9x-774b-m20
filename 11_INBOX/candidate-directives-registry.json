@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T03:21:49.869Z",
+  "last_updated": "2026-11-09T04:10:28.559Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4281,6 +4281,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-TO3Z",
+      "directive_title": "🧵): refactoring frame pacing (#4398)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "wcandillon/react-native-skia",
+      "source_commit": "7541db92",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-wcandillon-react-native-skia"
     }
   ]
 }

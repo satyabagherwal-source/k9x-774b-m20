@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T04:00:51.432Z",
+  "last_updated": "2026-11-09T04:12:34.100Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20903,10 +20903,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "bdbf6ac3b6c00da66aa0d77633e78e01670533d277a8d58a6b228809778e9283",
+      "content_hash": "ebf192f45e7c24afc14c9ae8ad6e3dc93980ff536ce13d1cdb3b095dd5265928",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Mandatory Post-Pooling Unit Hypersphere Projection",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Asymmetric Instruction Isolation in Dual-Encoder Pipelines",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Strict 512-Token Positional Horizon Clamping and Mask Gating",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 664,
           "title": "Tokenizer-Model Vocabulary Alignment Invariant",
@@ -20974,7 +20989,7 @@
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
       ],
-      "verified_at": "2026-11-05T10:09:01.145Z",
+      "verified_at": "2026-11-09T04:12:34.065Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37261,8 +37276,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "fd69a571",
-      "content_hash": "ecf94fa1690715160a398725557cdf7431d5fbc195feff139942f0706c4bad74",
+      "source_version": "5fe4ab06",
+      "content_hash": "749187922c045b33bf66d6b6794db6a3fb93bf6c4284cbcb6f186f0569c89872",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -37274,6 +37289,11 @@
         {
           "number": null,
           "title": "deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (#7809)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "sdk: expose session-timeout in the Java and Python SDKs (#7817)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -37347,7 +37367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:37:04.887Z",
+      "verified_at": "2026-11-09T04:10:32.633Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39457,11 +39477,16 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "bb183265",
-      "content_hash": "4f84cdd4e49118dc6703b03bfb4d99eddefa85afdae658dbb96ba44805905b13",
+      "source_version": "288e4a3e",
+      "content_hash": "6f0745c4dcc643074c4e50aaf03ae92f7ee28e4697db179c0c3f39df7a88ba47",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Allow the tmux name in the naming gate (#916)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1830,
           "title": "pin native input view cleanup for release validation",
@@ -39498,7 +39523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:56:53.235Z",
+      "verified_at": "2026-11-09T04:10:25.975Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64709,13 +64734,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "703f25d7",
-      "content_hash": "1f482b0d83f1e76495bc92a7955a21ec9d77fa0033875b4ca455daa70298fa7e",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "7541db92",
+      "content_hash": "1a308824e88c60fb2c6be0ce236e92127848feb3d847a390ccbe75424f5e0096",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -64783,7 +64808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T02:54:26.190Z",
+      "verified_at": "2026-11-09T04:10:28.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

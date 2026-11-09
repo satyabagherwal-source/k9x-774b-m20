@@ -8498,3 +8498,7 @@
 | `CYCLE-20261109-H4TH` | `2026-11-09T04:00:43.685Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b882c39e...`) |
 | `CYCLE-20261109-H9A1` | `2026-11-09T04:00:49.465Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`816afd10...`) |
 | `CYCLE-20261109-HAV9` | `2026-11-09T04:00:51.525Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`ad59f4ec...`) |
+| `CYCLE-20261109-TM7E` | `2026-11-09T04:10:26.090Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6f0745c4...`) |
+| `CYCLE-20261109-TO3P` | `2026-11-09T04:10:28.549Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | Yes (`1a308824...`) |
+| `CYCLE-20261109-TRCC` | `2026-11-09T04:10:32.748Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`74918792...`) |
+| `CYCLE-20261109-WD1I` | `2026-11-09T04:12:34.182Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`ebf192f4...`) |

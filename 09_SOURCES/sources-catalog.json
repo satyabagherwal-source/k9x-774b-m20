@@ -1255,8 +1255,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceVersion": "hf-baai-bge-base-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "bdbf6ac3b6c00da66aa0d77633e78e01670533d277a8d58a6b228809778e9283",
-    "lastHarvestedAt": "2026-11-05T10:09:01.276Z",
+    "contentHash": "ebf192f45e7c24afc14c9ae8ad6e3dc93980ff536ce13d1cdb3b095dd5265928",
+    "lastHarvestedAt": "2026-11-09T04:12:34.195Z",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "bb183265",
+    "sourceVersion": "288e4a3e",
     "license": "GPL-3.0",
-    "contentHash": "4f84cdd4e49118dc6703b03bfb4d99eddefa85afdae658dbb96ba44805905b13",
-    "lastHarvestedAt": "2026-11-08T02:56:53.391Z",
+    "contentHash": "6f0745c4dcc643074c4e50aaf03ae92f7ee28e4697db179c0c3f39df7a88ba47",
+    "lastHarvestedAt": "2026-11-09T04:10:26.094Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "fd69a571",
+    "sourceVersion": "5fe4ab06",
     "license": "Apache-2.0",
-    "contentHash": "ecf94fa1690715160a398725557cdf7431d5fbc195feff139942f0706c4bad74",
-    "lastHarvestedAt": "2026-11-07T04:37:05.009Z",
+    "contentHash": "749187922c045b33bf66d6b6794db6a3fb93bf6c4284cbcb6f186f0569c89872",
+    "lastHarvestedAt": "2026-11-09T04:10:32.752Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "812e5b3a",
+    "sourceVersion": "7541db92",
     "license": "MIT",
-    "contentHash": "e17b1517f6b76691e2a5f00543883018b87f187496f4b2871752e6e6290a52c3",
-    "lastHarvestedAt": "2026-11-05T21:54:49.471Z",
+    "contentHash": "1a308824e88c60fb2c6be0ce236e92127848feb3d847a390ccbe75424f5e0096",
+    "lastHarvestedAt": "2026-11-09T04:10:28.553Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {

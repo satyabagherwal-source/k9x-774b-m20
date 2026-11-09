@@ -8507,3 +8507,7 @@ Every entry in this ledger must capture:
 | `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `7df9d947` | Multi-dimensional audit evidence | 2026-11-09T04:00:43.689Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `b078219d` | Multi-dimensional audit evidence | 2026-11-09T04:00:49.470Z |
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-09T04:00:51.529Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `288e4a3e` | Multi-dimensional audit evidence | 2026-11-09T04:10:26.094Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `7541db92` | Multi-dimensional audit evidence | 2026-11-09T04:10:28.553Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `5fe4ab06` | Multi-dimensional audit evidence | 2026-11-09T04:10:32.752Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-09T04:12:34.195Z |

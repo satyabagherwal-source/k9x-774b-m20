@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T04:00:51.550Z",
+  "last_updated": "2026-11-09T04:12:34.206Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1655,14 +1655,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
-      "content_hash": "bdbf6ac3b6c00da66aa0d77633e78e01670533d277a8d58a6b228809778e9283",
-      "verified_at": "2026-11-05T10:09:01.284Z",
+      "content_hash": "ebf192f45e7c24afc14c9ae8ad6e3dc93980ff536ce13d1cdb3b095dd5265928",
+      "verified_at": "2026-11-09T04:12:34.206Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T10:09:01.284Z"
+      "last_updated": "2026-11-09T04:12:34.206Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "4f84cdd4e49118dc6703b03bfb4d99eddefa85afdae658dbb96ba44805905b13",
-      "verified_at": "2026-11-08T02:56:53.405Z",
+      "content_hash": "6f0745c4dcc643074c4e50aaf03ae92f7ee28e4697db179c0c3f39df7a88ba47",
+      "verified_at": "2026-11-09T04:10:26.111Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:56:53.405Z"
+      "last_updated": "2026-11-09T04:10:26.111Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "1f482b0d83f1e76495bc92a7955a21ec9d77fa0033875b4ca455daa70298fa7e",
-      "verified_at": "2026-11-07T02:54:26.333Z",
+      "content_hash": "1a308824e88c60fb2c6be0ce236e92127848feb3d847a390ccbe75424f5e0096",
+      "verified_at": "2026-11-09T04:10:28.565Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T02:54:26.333Z"
+      "last_updated": "2026-11-09T04:10:28.565Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "ecf94fa1690715160a398725557cdf7431d5fbc195feff139942f0706c4bad74",
-      "verified_at": "2026-11-07T04:37:05.019Z",
+      "content_hash": "749187922c045b33bf66d6b6794db6a3fb93bf6c4284cbcb6f186f0569c89872",
+      "verified_at": "2026-11-09T04:10:32.761Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T04:37:05.019Z"
+      "last_updated": "2026-11-09T04:10:32.761Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
