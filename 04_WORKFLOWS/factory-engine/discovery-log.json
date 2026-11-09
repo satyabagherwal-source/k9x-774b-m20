@@ -20734,5 +20734,17 @@
     "qualityScore": 947,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-09T04:56:04.341Z"
+  },
+  {
+    "name": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+    "fullName": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+    "url": "https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: autotrust/Qwen3.8-Flash-Next-E384-FP4-V2 (2370 likes, 42718 downloads)",
+    "likes": 2370,
+    "downloads": 42718,
+    "qualityScore": 25700,
+    "discoveredAt": "2026-11-09T09:21:42.033Z"
   }
 ]

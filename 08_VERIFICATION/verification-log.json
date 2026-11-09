@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-1V7V",
-    "timestamp": "2026-11-07T19:37:17.899Z",
-    "repository": "bahdotsh/wrkflw",
-    "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "494054b53e017103cb470ba119cd0d93a85e8cf92de3e5c00238008199354f10",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-1V8R",
-    "timestamp": "2026-11-07T19:37:17.931Z",
-    "repository": "scrapinghub/dateparser",
-    "learningId": "learn-github-scrapinghub-dateparser",
-    "contentHash": "7a61bc657422853f210fc485ca7f0d98eb59fc57135d85d553ab2d10145c78f4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-1XYU",
-    "timestamp": "2026-11-07T19:37:21.462Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "1002b5867f9e12721f9e7f3b4f3289119e309a46f4a47fe5dcfdd4e7add16fdc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-FAKD",
     "timestamp": "2026-11-07T19:47:44.317Z",
     "repository": "agent-of-empires/agent-of-empires",
@@ -7492,6 +7447,51 @@
     "contentHash": "642b8118ae31fe3e05720bf03c6965c6644f0e2ab95b88b8c107b6cb1655b283",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-15U3",
+    "timestamp": "2026-11-09T09:24:13.899Z",
+    "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+    "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
+    "contentHash": "42906348cd1161935f00e13753bc17c06b97f2c358cdd2ce2b651dcb0984cf1e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-2BMG",
+    "timestamp": "2026-11-09T09:25:08.056Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "32264f2c58fba37b3d53e64c2b2eed1c44f9ae30bceccb3397ad48a3eb953f9c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-GZXJ",
+    "timestamp": "2026-11-09T09:36:32.743Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "70b4a33442d2093f8128a2cdf268a0ae058c6663157b247279b9252fa5868148",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

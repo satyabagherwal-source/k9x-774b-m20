@@ -4966,3 +4966,7 @@ https://github.com/wquguru/cicada
 # --- Automatically Discovered by AI Scout Engine [2026-11-09T04:59:28.126Z] ---
 # [AI-AGENTS] heymrun/heym (947 score) - Build agentic systems. Run them with confidence. Orchestrate agents, automate bu
 https://github.com/heymrun/heym
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-09T09:23:50.200Z] ---
+# [HUGGINGFACE-AI-MODELS] autotrust/Qwen3.8-Flash-Next-E384-FP4-V2 (25700 score) - Verified Hugging Face Model: autotrust/Qwen3.8-Flash-Next-E384-FP4-V2 (2370 like
+https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2

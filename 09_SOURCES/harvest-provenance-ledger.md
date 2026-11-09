@@ -8566,3 +8566,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `95ca01b3` | Multi-dimensional audit evidence | 2026-11-09T09:14:10.969Z |
 | `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-09T09:16:27.359Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `afb307a5` | Multi-dimensional audit evidence | 2026-11-09T09:16:31.359Z |
+| `learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2` | `https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T09:24:13.903Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `75259fdd` | Multi-dimensional audit evidence | 2026-11-09T09:25:08.062Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-09T09:36:32.747Z |

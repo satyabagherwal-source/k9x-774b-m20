@@ -8557,3 +8557,6 @@
 | `CYCLE-20261109-O8LW` | `2026-11-09T09:14:10.964Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`c516f17e...`) |
 | `CYCLE-20261109-R5UJ` | `2026-11-09T09:16:27.355Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`aa5b6c46...`) |
 | `CYCLE-20261109-R8XN` | `2026-11-09T09:16:31.355Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`642b8118...`) |
+| `CYCLE-20261109-15U3` | `2026-11-09T09:24:13.899Z` | `autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md` | Yes (`42906348...`) |
+| `CYCLE-20261109-2BMG` | `2026-11-09T09:25:08.056Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`32264f2c...`) |
+| `CYCLE-20261109-GZXJ` | `2026-11-09T09:36:32.743Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`70b4a334...`) |

@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "3465b2bb1628da39c9e4a55e165938ffc9b731376686a1db21cdd77e3039b1f2",
-    "lastHarvestedAt": "2026-11-05T13:13:32.526Z",
+    "contentHash": "70b4a33442d2093f8128a2cdf268a0ae058c6663157b247279b9252fa5868148",
+    "lastHarvestedAt": "2026-11-09T09:36:32.747Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "f8221ca5",
+    "sourceVersion": "75259fdd",
     "license": "AGPL-3.0",
-    "contentHash": "fd76a1aa208615122c972cd6d0b1f9895ab64f363917cc67ed9fbe6c03d0556c",
-    "lastHarvestedAt": "2026-11-05T19:15:19.438Z",
+    "contentHash": "32264f2c58fba37b3d53e64c2b2eed1c44f9ae30bceccb3397ad48a3eb953f9c",
+    "lastHarvestedAt": "2026-11-09T09:25:08.062Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -12238,5 +12238,15 @@
     "contentHash": "83deca4a0984e8b770ad84d74fd7a1787ce9d71fee239f777751a99dada2cb68",
     "lastHarvestedAt": "2026-11-09T04:59:35.463Z",
     "learningId": "learn-github-heymrun-heym"
+  },
+  "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2": {
+    "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+    "sourceVersion": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2",
+    "license": "Open-Source",
+    "contentHash": "42906348cd1161935f00e13753bc17c06b97f2c358cdd2ce2b651dcb0984cf1e",
+    "lastHarvestedAt": "2026-11-09T09:24:13.903Z",
+    "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2"
   }
 }

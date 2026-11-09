@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T09:16:31.253Z",
-  "total_verified_learnings": 1242,
+  "last_updated": "2026-11-09T09:36:32.649Z",
+  "total_verified_learnings": 1243,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -30856,10 +30856,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "3465b2bb1628da39c9e4a55e165938ffc9b731376686a1db21cdd77e3039b1f2",
+      "content_hash": "70b4a33442d2093f8128a2cdf268a0ae058c6663157b247279b9252fa5868148",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Zero-Output-Token Decision Architecture",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hybrid Attention Layer Scheduling for Cost-Efficiency",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Custom Runtime Isolation for Non-Standard Model Heads",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 284,
           "title": "RoPE for Order Invariance",
@@ -30936,7 +30951,7 @@
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc"
       ],
-      "verified_at": "2026-11-05T13:13:32.439Z",
+      "verified_at": "2026-11-09T09:36:32.611Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62685,14 +62700,19 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "f8221ca5",
-      "content_hash": "fd76a1aa208615122c972cd6d0b1f9895ab64f363917cc67ed9fbe6c03d0556c",
+      "source_version": "75259fdd",
+      "content_hash": "32264f2c58fba37b3d53e64c2b2eed1c44f9ae30bceccb3397ad48a3eb953f9c",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "sqlserver): use driver's default port in pre-dial check (#5527)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update github-actions (#5533)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62801,7 +62821,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:15:19.316Z",
+      "verified_at": "2026-11-09T09:25:07.944Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -188840,6 +188860,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-09T04:59:35.340Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2": {
+      "learning_id": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "slug": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "source_version": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2",
+      "content_hash": "42906348cd1161935f00e13753bc17c06b97f2c358cdd2ce2b651dcb0984cf1e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-09T09:24:13.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

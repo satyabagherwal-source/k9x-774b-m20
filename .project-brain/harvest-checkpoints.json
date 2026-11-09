@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T09:16:31.369Z",
+  "last_updated": "2026-11-09T09:36:32.761Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1835,14 +1835,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "3465b2bb1628da39c9e4a55e165938ffc9b731376686a1db21cdd77e3039b1f2",
-      "verified_at": "2026-11-05T13:13:32.533Z",
+      "content_hash": "70b4a33442d2093f8128a2cdf268a0ae058c6663157b247279b9252fa5868148",
+      "verified_at": "2026-11-09T09:36:32.760Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:13:32.533Z"
+      "last_updated": "2026-11-09T09:36:32.760Z"
     },
     "microsoft/FrogNano-4B-2609": {
       "repository": "microsoft/FrogNano-4B-2609",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "fd76a1aa208615122c972cd6d0b1f9895ab64f363917cc67ed9fbe6c03d0556c",
-      "verified_at": "2026-11-05T19:15:19.448Z",
+      "content_hash": "32264f2c58fba37b3d53e64c2b2eed1c44f9ae30bceccb3397ad48a3eb953f9c",
+      "verified_at": "2026-11-09T09:25:08.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:15:19.448Z"
+      "last_updated": "2026-11-09T09:25:08.082Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -18419,6 +18419,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-09T04:59:35.484Z"
+    },
+    "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2": {
+      "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
+      "content_hash": "42906348cd1161935f00e13753bc17c06b97f2c358cdd2ce2b651dcb0984cf1e",
+      "verified_at": "2026-11-09T09:24:13.913Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-09T09:24:13.913Z"
     }
   },
   "repos": {
