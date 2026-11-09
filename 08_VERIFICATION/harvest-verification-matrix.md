@@ -8541,3 +8541,4 @@
 | `CYCLE-20261109-MOG3` | `2026-11-09T07:20:59.715Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4866bb9a...`) |
 | `CYCLE-20261109-MRLD` | `2026-11-09T07:21:03.793Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c703dddf...`) |
 | `CYCLE-20261109-RTOV` | `2026-11-09T07:24:59.791Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`1bf5d705...`) |
+| `CYCLE-20261109-10GL` | `2026-11-09T07:32:08.469Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`b8add8ab...`) |

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T07:25:02.416Z",
-    "lastVerified": "2026-11-09T07:25:02.416Z",
+    "lastChecked": "2026-11-09T07:32:11.061Z",
+    "lastVerified": "2026-11-09T07:32:11.061Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-09T06:45:59.177Z",
+    "lastChecked": "2026-11-09T07:32:04.038Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-09T06:45:59.177Z"
+    "lastVerified": "2026-11-09T07:32:04.038Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -401,9 +401,9 @@
   "enaqx-awesome-react": {
     "name": "awesome-react",
     "officialUrl": "https://github.com/enaqx/awesome-react",
-    "lastChecked": "2026-11-06T13:07:45.997Z",
+    "lastChecked": "2026-11-09T07:31:54.070Z",
     "revisionIdentifier": "e6fd973e",
-    "lastVerified": "2026-11-06T13:07:45.997Z"
+    "lastVerified": "2026-11-09T07:31:54.070Z"
   },
   "nginx-kubernetes-ingress": {
     "name": "kubernetes-ingress",
@@ -733,8 +733,8 @@
     "officialUrl": "https://github.com/projectcontour/contour",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-11-08T13:59:50.648Z",
-    "lastVerified": "2026-11-08T13:59:50.648Z",
+    "lastChecked": "2026-11-09T07:31:56.648Z",
+    "lastVerified": "2026-11-09T07:31:56.648Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectcontour-contour",
@@ -1636,9 +1636,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-09T02:28:04.182Z",
+    "lastChecked": "2026-11-09T07:31:59.066Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-09T02:28:04.182Z"
+    "lastVerified": "2026-11-09T07:31:59.066Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3807,9 +3807,9 @@
   "nasiko-labs-nasiko": {
     "name": "nasiko",
     "officialUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "lastChecked": "2026-11-08T05:17:55.759Z",
+    "lastChecked": "2026-11-09T07:31:49.133Z",
     "revisionIdentifier": "10a08581",
-    "lastVerified": "2026-11-08T05:17:55.759Z"
+    "lastVerified": "2026-11-09T07:31:49.133Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -4010,8 +4010,8 @@
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T11:04:13.574Z",
-    "lastVerified": "2026-11-08T11:04:13.574Z",
+    "lastChecked": "2026-11-09T07:32:01.684Z",
+    "lastVerified": "2026-11-09T07:32:01.684Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
@@ -8256,13 +8256,13 @@
     "officialUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T12:29:15.316Z",
-    "lastVerified": "2026-11-05T12:29:15.316Z",
+    "lastChecked": "2026-11-09T07:31:51.794Z",
+    "lastVerified": "2026-11-09T07:31:51.794Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-    "contentHash": "0a63b3d9529eee7315d4ab344262c5f488cf97f6a25b7f04e3e15d1619e082c8",
-    "promotedRulesCount": 0,
+    "contentHash": "b8add8abfdab304cd03ad6b2369aa0a36b7ab2a431cb5b105c10e98b1c5e3906",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

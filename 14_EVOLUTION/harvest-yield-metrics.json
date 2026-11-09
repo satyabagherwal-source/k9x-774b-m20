@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T07:24:59.809Z",
-  "total_cycles_completed": 8506,
-  "total_learnings_persisted": 8506,
-  "total_rules_promoted": 8306,
+  "last_updated": "2026-11-09T07:32:08.487Z",
+  "total_cycles_completed": 8507,
+  "total_learnings_persisted": 8507,
+  "total_rules_promoted": 8309,
   "history": [
-    {
-      "timestamp": "2026-11-08T17:35:44.660Z",
-      "repository": "nats-io/nats.go",
-      "learningId": "learn-github-nats-io-nats-go",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T17:35:46.512Z",
       "repository": "prithivMLmods/Gender-Classifier-Mini",
@@ -1403,6 +1396,13 @@
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T07:32:08.487Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

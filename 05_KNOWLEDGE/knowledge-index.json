@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T07:24:59.699Z",
+  "last_updated": "2026-11-09T07:32:08.370Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20642,10 +20642,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "0a63b3d9529eee7315d4ab344262c5f488cf97f6a25b7f04e3e15d1619e082c8",
+      "content_hash": "b8add8abfdab304cd03ad6b2369aa0a36b7ab2a431cb5b105c10e98b1c5e3906",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Precision MoE Quantization Boundary",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Sliding Window Attention KV-Cache Boundary",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "NVFP4 Hierarchical Scaling Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1540,
           "title": "Asymmetric Quantization Isolation for MoE Architectures",
@@ -20705,7 +20720,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
       ],
-      "verified_at": "2026-11-05T12:29:16.102Z",
+      "verified_at": "2026-11-09T07:32:08.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
