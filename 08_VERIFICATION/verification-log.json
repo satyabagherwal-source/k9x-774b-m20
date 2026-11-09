@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-3J17",
-    "timestamp": "2026-11-07T18:42:36.187Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "e083b1f4a34ca01ad1608c726c21f1899c1f7f5d622fe35bd1661826ee5bed50",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-DDME",
-    "timestamp": "2026-11-07T18:50:15.734Z",
-    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-    "contentHash": "6e6193672a940f8a4ba08cb66e0ab6f8334f885a328c92a7bb2dde714a62ec7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-MBJW",
-    "timestamp": "2026-11-07T18:57:12.956Z",
-    "repository": "gkd-kit/gkd",
-    "learningId": "learn-github-gkd-kit-gkd",
-    "contentHash": "6aeb66a6b36acf948d25a520a0c52d292d7e825e3056ccead385c24111c5460d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-MC8Z",
     "timestamp": "2026-11-07T18:57:13.859Z",
     "repository": "Kong/kubernetes-ingress-controller",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "cb47d6acb752d44ad0cfbd2847585c6466485b420010eda78b73dc4f83cef338",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-UR66",
+    "timestamp": "2026-11-09T07:55:16.110Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "68e6609838e640fdd9d5d045bfba0cf98fcbbe80d2f6cb7207eb21c483c4e681",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-UWD9",
+    "timestamp": "2026-11-09T07:55:22.845Z",
+    "repository": "laurent22/joplin",
+    "learningId": "learn-github-laurent22-joplin",
+    "contentHash": "b1df17b390757b195bb2ad4c5535d31d99a1e7c6d5d7a581fe2bf36503473570",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-UYRK",
+    "timestamp": "2026-11-09T07:55:25.952Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "f926dad0f6f09f1fc3ad33856b4a318e5fb9b1fa041f8b1663f14324ff6ab5b9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

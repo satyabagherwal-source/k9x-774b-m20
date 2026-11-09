@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source**: github ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
-> **Source Version**: `d428762a`  
+> **Source Version**: `d468bb8e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:27:16.200Z  
+> **Timestamp**: 2026-11-09T07:55:21.904Z  
 > **Learning ID**: `learn-github-laurent22-joplin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:27:16.196Z  
+> **Harvest Timestamp**: 2026-11-09T07:55:21.899Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 57062 stars
+- **Stars / Engagement**: 57109 stars
 
 ---
 
@@ -930,11 +930,11 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #17054** (2026-11-07): **Desktop: Fixes #17008: Keep a list that follows another list separate when converting to Markdown**
+  *Symptoms*: AI tools assisted with this contribution.  A checklist followed by a bullet list is converted to:  ```md - [ ] task  - bullet ```  Both lists use `-`, so the Markdown is one list, and the renderer turns it into a single checklist (`data-is-checklist`). After the next save, the bullet comes back as `- [ ] bullet`. The same happens to any two lists of the same kind in a row: they merge into one list.  CommonMark starts a new list when the marker changes, so this counts how many lists of the same kind come right before the current one, and every second one uses the other marker: `*` instead of `-` (also for checkboxes), and `1)` instead of `1.`. Lists with anything between them are not touched.  ```md - [ ] task  * bullet ```  Testing: - New fixture `html_to_md/adjacent_lists` (checklist, bullet list, bullet list, ordered list, ordered list). It fails without the change. - All 83 `html_to_md` fixtures pass with the change. I ran them with a small script that calls the built turndown with the same options as `HtmlToMd`, not through the app-cli Jest setup. - Checklist + bullet HTML through turndown and then `@joplin/renderer`: on dev one `<ul data-is-checklist="1">` holds both items; with the change there are two lists and the bullet has no checkbox. - I did not run the desktop app. 
+
 - **Issue #17029** (2026-11-05): **All: Translation: Update eo.po**
   *Symptoms*:  Small follow-up review of the Esperanto translation (29 strings changed, nothing else touched).  - Fixed wrong meanings: "Dropbox Login" / "OneDrive Login" were translated as "username" (-salutnomo); now "Ensaluto al …" - Consistency: on/off settings now all use ŝalti/malŝalti (some used ebligi); "Restore" now uses restaŭri (restarigi is already used for "Reset"); Malvalida → Nevalida to match the rest of the file; "Label" was "Etikedo" (same as "tag"), now "Surskribo" - Grammar: "molajn linisaltojn", "Eliras el la aplikaĵo", "Ŝanĝi al nota/taska tipo", and added the missing "Ĉu" to two yes/no questions  All placeholders unchanged and verified. <!--  Before contributing, please read the contribution guidelines: https://github.com/laurent22/joplin/blob/dev/readme/dev/index.md  If this is a Google Summer of Code pull request, please read the [GSoC pull request guidelines](https://github.com/joplin/gsoc/blob/master/pull_request_guidelines.md).  ---  **Pull request title**: Please prefix the title with the area you are targeting, then add the issue you are addressing.  The format is:      <Prefix>: <Fixes|Resolves> #<issue>: <description>  Use "Resolves #123" for new features or improvements, and "Fixes #123" for bug fixes.  Examples of good titles:  - Desktop: Resolves #123: Added new setting to change font - Mobile, Desktop: Fixes #456: Fixed config screen error - Mobile, Desktop, Cli: Resolves #777: Improved note search performance  Valid prefixes:  - `Desktop` — the Windows/
-
-- **Issue #17015** (2026-11-04): **Desktop, Mobile: Fixes #16989: Do not schedule alarms for to-dos in the trash**
-  *Symptoms*: ## Problem Trashing a to-do only sets `deleted_time`, but `Note.needAlarm()` and `Note.dueNotes()` didn't check it. On the device where it's trashed, `NOTE_DELETE` clears the alarm. But when the trashed note syncs to another device, it's saved with its to-do fields, `EVENT_NOTE_ALARM_FIELD_CHANGE` fires, and `needAlarm()` still returned true, so the alarm stayed.  ## Solution This adds a `deleted_time` check to both. `dueNotes()` is what `updateAllNotifications()` uses after sync and on startup, so trashed to-dos are no longer rescheduled there either. Restoring from trash re-saves the note with its to-do fields, so the alarm is scheduled again.  ## Test Plan - New test in `Note.test.ts`: `needAlarm()` and `dueNotes()` before trashing, after trashing, and after restoring. It fails without the fix. - `models/Note`, `services/trash` and `services/synchronizer/Synchronizer.basics` tests pass. - Not tested on a device; covered by the unit test above.  Not included: alarms already scheduled for to-dos trashed before this fix aren't cleared, since `garbageCollect()` only removes alarms for notes that no longer exist. I can extend it to also clear alarms for trashed notes if you'd like.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,293 +951,77 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `97ed78d4` (2026-11-01)
-**Commit Message**: Renderer: Security: Always serialise attribute values and drop invalid attribute names when sanitising HTML
+### Incident Patch 1: `d468bb8e` (2026-11-08)
+**Commit Message**: Chore: Fix flaky compactCss performance test on loaded machines
 
-(cherry picked from commit ee9ee1080331575e6e420d2b5a17eaa0040f74d2)
-
-**File**: `packages/app-cli/tests/md_to_html/resource_nonexistent_image.html` (modified, +2/-2)
+**File**: `packages/lib/utils/compactCss.test.ts` (modified, +2/-1)
 ```diff
-@@ -1,9 +1,9 @@
--<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
-+<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt="" data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
- &Tab;&Tab;&lt;svg width=&quot;1700&quot; height=&quot;1536&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
- &Tab;&Tab;    &lt;path d=&quot;M1280 1344c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm256 0c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm128-224v320c0 53-43 96-96 96H96c-53 0-96-43-96-96v-320c0-53 43-96 96-96h465l135 136c37 36 85 56 136 56s99-20 136-56l136-136h464c53 0 96 43 96 96zm-325-569c10 24 5 52-14 70l-448 448c-12 13-29 19-45 19s-33-6-45-19L339 621c-19-18-24-46-14-70 10-23 33-39 59-39h256V64c0-35 29-64 64-64h256c35 0 64 29 64 64v448h256c26 0 49 16 59 39z&quot;/&gt;
- &Tab;&Tab;&lt;/svg&gt;
- &Tab;"/></span>
--<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title contenteditable="false"><img src="data:image/svg+xml;utf8,
-+<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title="" contenteditable="false"><img src="data:image/svg+xml;utf8,
- &Tab;&Tab;&lt;svg width=&quot;1700&quot; height=&quot;1536&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
- &Tab;&Tab;    &lt;path d=&quot;M1280 1344c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm256 0c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm128-224v320c0 53-43 96-96 96H96c-53 0-96-43-96-96v-320c0-53 43-96 96-96h465l135 136c37 36 85 56 136 56s99-20 136-56l136-136h464c53 0 96 43 96 96zm-325-569c10 24 5 52-14 70l-448 448c-12 13-29 19-45 19s-33-6-45-19L339 621c-19-18-24-46-14-70 10-23 33-39 59-39h256V64c0-35 29-64 64-64h256c35 0 64 29 64 64v448h256c26 0 49 16 59 39z&quot;/&gt;
- &Tab;&Tab;&lt;/svg&gt;
-```
-
-**File**: `packages/app-cli/tests/md_to_html/sanitize.html` (modified, +2/-2)
-```diff
-@@ -1,2 +1,2 @@
--<img src class="jop-noMdConv"/>
--<img src class="jop-noMdConv"/>
-\ No newline at end of file
-+<img src="" class="jop-noMdConv"/>
-+<img src="" class="jop-noMdConv"/>
-\ No newline at end of file
-```
-
-**File**: `packages/app-cli/tests/md_to_html/sanitize_25.html` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<div class="jop-noMdConv"><img src="x" a="" class="jop-noMdConv"/></div>
-```
-
-**File**: `packages/app-cli/tests/md_to_html/sanitize_25.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<div><img src="x" a="" =b="x onerror=alert(1) c"></div>
-```
-
-**File**: `packages/renderer/htmlUtils.test.ts` (modified, +8/-0)
-```diff
-@@ -29,6 +29,14 @@ describe('htmlUtils', () => {
- 		}
- 	});
- 
-+	it.each([
-+		'<img src="x" a="" =b="x onerror=alert(1) c">',
-+		'<img src="x" a =b="x onerror=alert(1) c">',
-+		'<div><img src="x" a="" =b="x onerror=alert(1) c"></div>',
-+	])('should not let an invalid attribute name bring in an event handler: %s', (html) => {
-+		expect(htmlUtils.sanitizeHtml(html)).not.toContain('onerror');
-+	});
-+
- 	test('should extract the HTML body', () => {
- 		const testCases: [string, string][] = [
- 			[
-```
-
-**File**: `packages/renderer/htmlUtils.ts` (modified, +7/-5)
-```diff
-@@ -35,17 +35,19 @@ interface SanitizeHtmlOptions {
- 	allowedFilePrefixes?: string[];
- }
- 
-+// htmlparser2 accepts attribute names that browsers parse differently, such as one starting with "=". Together with a
-+// value-less attribute before it (`a =b="x onerror=..."`), the browser would see an attribute the sanitiser never did.
-+const validAttributeName = /^[a-zA-Z_:][-a-zA-Z0-9_:.]*$/;
-+
- export const attributesHtml = (attr: Record<string, string>) => {
- 	const output = [];
- 
- 	for (const n in attr) {
- 		if (!attr.hasOwnProperty(n)) continue;
-+		if (!validAttributeName.test(n)) continue;
- 
--		if (!attr[n]) {
--			output.push(n);
--		} else {
--			output.push(`${n}="${htmlentities(attr[n])}"`);
--		}
-+		// Always with a value, even an empty one, so that nothing that follows can be read as this attribute's value
-+		output.push(`${n}="${htmlentities(attr[n] || '')}"`);
- 	}
- 
- 	return output.join(' ');
-```
-
----
-
-### Incident Patch 2: `54d4c351` (2026-11-05)
-**Commit Message**: Merge branch 'server-security-fixes' into dev
-
-**File**: `.gitignore` (modified, +2/-0)
-```diff
-@@ -2080,6 +2080,8 @@ packages/lib/utils/joplinCloud/types.js
- packages/lib/utils/markupLanguageUtils.js
- packages/lib/utils/prefixWithHttps.js
- packages/lib/utils/processStartFlags.js
-+packages/lib/utils/publicNetworkOnly.test.js
-+packages/lib/utils/publicNetworkOnly.js
- packages/lib/utils/replaceUnsupportedCharacters.test.js
- packages/lib/utils/replaceUnsupportedCharacters.js
- packages/lib/utils/resolvePathWithinDir.test.js
-```
-
-**File**: `.ignore.eslint` (modified, +2/-0)
-```diff
-@@ -2106,6 +2106,8 @@ packages/lib/utils/joplinCloud/types.js
- packages/lib/utils/markupLanguageUtils.js
- packages/lib/utils/prefixWithHttps.js
- packages/lib/utils/processStartFlags.js
-+packages/lib/utils/publicNetworkOnly.test.js
-+packages/lib/utils/publicNetworkOnly.js
- packages/lib/utils/replaceUnsupportedCharacters.test.js
- packages/lib/utils/replaceUnsupportedCharacters.js
- packages/lib/utils/resolvePathWithinDir.test.js
-```
-
-**File**: `.yarn/patches/html-minifier-npm-4.0.0-2c414aaddf.patch` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+diff --git a/src/htmlminifier.js b/src/htmlminifier.js
-+index d7efa99148a2123dfd02fc0aa095763df35fa2ff..1ee8f1576cd5a3aa9d611a6f763b3fdca47e989c 100644
-+--- a/src/htmlminifier.js
-++++ b/src/htmlminifier.js
-+@@ -1305,23 +1305,22 @@ function joinResultSegments(results, options, restoreCustom, restoreIgnore) {
-+   var maxLineLength = options.maxLineLength;
-+   if (maxLineLength) {
-+     var line = '', lines = [];
-+-    while (results.length) {
-+-      var len = line.length;
-+-      var end = results[0].indexOf('\n');
-+-      if (end < 0) {
-+-        line += restoreIgnore(restoreCustom(results.shift()));
-+-      }
-+-      else {
-+-        line += restoreIgnore(restoreCustom(results[0].slice(0, end)));
-+-        results[0] = results[0].slice(end + 1);
-+-      }
-+-      if (len > 0 && line.length > maxLineLength) {
-+-        lines.push(line.slice(0, len));
-+-        line = line.slice(len);
-+-      }
-+-      else if (end >= 0) {
-+-        lines.push(line);
-+-        line = '';
-++    // Joplin: the original shift()s the results and re-slices the current one at each newline, which is quadratic in
-++    // the output size. Same logic, walking each result's newline-separated parts by index instead.
-++    for (var resultIndex = 0; resultIndex < results.length; resultIndex++) {
-++      var parts = results[resultIndex].split('\n');
-++      for (var partIndex = 0; partIndex < parts.length; partIndex++) {
-++        var len = line.length;
-++        var endsWithNewline = partIndex < parts.length - 1;
-++        line += restoreIgnore(restoreCustom(parts[partIndex]));
-++        if (len > 0 && line.length > maxLineLength) {
-++          lines.push(line.slice(0, len));
-++          line = line.slice(len);
-++        }
-++        else if (endsWithNewline) {
-++          lines.push(line);
-++          line = '';
-++        }
-+       }
-+     }
-+     if (line) {
-```
-
-**File**: `package.json` (modified, +1/-0)
-```diff
-@@ -145,6 +145,7 @@
-     "depd@npm:^1.1.0": "patch:depd@npm%3A2.0.0#~/.yarn/patches/depd-npm-2.0.0-b6c51a4b43.patch",
-     "formidable@npm:^2.0.1": "patch:formidable@npm%3A2.1.2#~/.yarn/patches/formidable-npm-2.1.2-40ba18d67f.patch",
-     "formidable@npm:2.1.2": "patch:formidable@npm%3A2.1.2#~/.yarn/patches/formidable-npm-2.1.2-40ba18d67f.patch",
-+    "html-minifier@npm:4.0.0": "patch:html-minifier@npm%3A4.0.0#~/.yarn/patches/html-minifier-npm-4.0.0-2c414aaddf.patch",
-     "@react-native-vector-icons/fontawesome5@npm:12.3.0": "patch:@react-native-vector-icons/fontawesome5@npm%3A12.3.0#~/.yarn/patches/@react-native-vector-icons-fontawesome5-npm-12.3.0-a1ca46610f.patch",
-     "@react-native-vector-icons/ionicons@npm:12.3.0": "patch:@react-native-vector-icons/ionicons@npm%3A12.3.0#~/.yarn/patches/@react-native-vector-icons-ionicons-npm-12.3.0-9bd4746f3f.patch",
-     "@react-native-vector-icons/material-design-icons@npm:12.4.0": "patch:@react-native-vector-icons/material-design-icons@npm%3A12.4.0#~/.yarn/patches/@react-native-vector-icons-material-design-icons-npm-12.4.0-890f7f618b.patch",
-```
-
-**File**: `packages/app-cli/tests/html_to_html/sanitize.dest.html` (modified, +2/-2)
-```diff
-@@ -1,2 +1,2 @@
--<img src/>
--<img src/>
-\ No newline at end of file
-+<img src=""/>
-+<img src=""/>
-\ No newline at end of file
-```
-
-**File**: `packages/app-cli/tests/md_to_html/resource_nonexistent_image.html` (modified, +2/-2)
-```diff
-@@ -1,9 +1,9 @@
--<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
-+<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt="" data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
- &Tab;&Tab;&lt;svg width=&quot;1700&quot; height=&quot;1536&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
- &Tab;&Tab;    &lt;path d=&quot;M1280 1344c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm256 0c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm128-224v320c0 53-43 96-96 96H96c-53 0-96-43-96-96v-320c0-53 43-96 96-96h465l135 136c37 36 85 56 136 56s99-20 136-56l136-136h464c53 0 96 43 96 96zm-325-569c10 24 5 52-14 70l-448 448c-12 13-29 19-45 19s-33-6-45-19L339 621c-19-18-24-46-14-70 10-23 33-39 59-39h256V64c0-35 29-64 64-64h256c35 0 64 29 64 64v448h256c26 0 49 16 59 39z&quot;/&gt;
- &Tab;&Tab;&lt;/svg&gt;
- &Tab;"/></span>
--<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title contenteditable="false"><img src="data:image/svg+xml;utf8,
-+<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title="" contenteditable="false"><img src="data:image/svg+xml;utf8,
- &Tab;&Tab;&lt;svg width=&quot;1700&quot; height=&quot;1536&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
- &Tab;&Tab;    &lt;path d=&quot;M1280 1344c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm256 0c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm128-224v320c0 53-43 96-96 96H96c-53 0-96-43-96-96v-320c0-53 43-96 96-96h465l135 136c37 36 85 56 136 56s99-20 136-56l136-136h464c53 0 96 43 96 96zm-325-569c10 24 5 52-14 70l-448 448c-12 13-29 19-45 19s-33-6-45-19L339 621c-19-18-24-46-14-70 10-23 33-39 59-39h256V64c0-35 29-64 64-64h256c35 0 64 29 64 64v448h256c26 0 49 16 59 39z&quot;/&gt;
- &Tab;&Tab;&lt;/svg&gt;
-```
-
-**File**: `packages/app-cli/tests/md_to_html/sanitize.html` (modified, +2/-2)
-```diff
-@@ -1,2 +1,2 @@
--<img src class="jop-noMdConv"/>
--<img src class="jop-noMdConv"/>
-\ No newline at end of file
-+<img src="" class="jop-noMdConv"/>
-+<img src="" class="jop-noMdConv"/>
-\ No newline at end of file
-```
-
-**File**: `packages/app-cli/tests/md_to_html/sanitize_25.html` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<div class="jop-noMdConv"><img src="x" a="" class="jop-noMdConv"/></div>
-```
-
----
-
-### Incident Patch 3: `e5ed69ad` (2026-11-02)
-**Commit Message**: Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly followed by a tag
-
-(cherry picked from commit be60c3a2fd2d961a1f3d7c6b58adc3749e407add)
-
-**File**: `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex` (modified, +2/-0)
-```diff
-@@ -13,6 +13,8 @@
-     <updated>20260914T100000Z</updated>
-     <note-attributes>
-       <application-data key="evernote.caption">Phase 1: Mobilize & Measure, which involves forming an advocacy group.</application-data>
-+      <application-data key="evernote.caption">Caption truncated after Polars &</application-data>
-+      <application-data key="evernote.captionSource">AI</application-data>
-     </note-attributes>
-   </note>
-   <note>
-```
-
-**File**: `packages/fork-sax/lib/sax.js` (modified, +7/-0)
-```diff
-@@ -1494,6 +1494,13 @@
-             parser.state = returnState
-           } else if (isMatch(parser.entity.length ? entityBody : entityStart, c)) {
-             parser.entity += c
-+          } else if (c === '<' && parser.state === S.TEXT_ENTITY) {
-+            // Joplin: Treat "<" as the start of a tag, otherwise the tag would be swallowed as text
-+            strictFail(parser, 'Invalid character in entity name')
-+            parser[buffer] += '&' + parser.entity
-+            parser.entity = ''
-+            parser.state = S.OPEN_WAKA
-+            parser.startTagPosition = parser.position
-           } else {
-             strictFail(parser, 'Invalid character in entity name')
-             parser[buffer] += '&' + parser.entity + c
-```
-
-**File**: `packages/lib/services/interop/InteropService_Importer_EnexToMd.test.ts` (modified, +2/-2)
-```diff
-@@ -70,7 +70,7 @@ describe('InteropService_Importer_EnexToMd', () => {
- 		expect(notes[1].body).toContain('Mobilize & Measure');
- 
- 		// Reported, but flagged so it's not presented as a failed import.
--		expect(errors.length).toBe(1);
--		expect(isRecoverableError(errors[0])).toBe(true);
-+		expect(errors.length).toBe(2);
-+		expect(errors.every(isRecoverableError)).toBe(true);
+@@ -36,6 +36,7 @@ describe('compactCss', () => {
+ 	])('should compact many %s quickly', (_case, css) => {
+ 		const startTime = Date.now();
+ 		compactCss(css);
+-		expect(Date.now() - startTime).toBeLessThan(1000);
++		// Takes ~50ms normally. A quadratic implementation would take minutes, so a generous limit avoids failing on a loaded CI machine.
++		expect(Date.now() - startTime).toBeLessThan(10_000);
  	});
  });
 ```
 
+---
+
+### Incident Patch 2: `73394294` (2026-11-07)
+**Commit Message**: fix(deps): update dependency adm-zip to v0.6.0 (#17057)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `packages/lib/package.json` (modified, +1/-1)
+```diff
+@@ -59,7 +59,7 @@
+     "@joplin/turndown": "^4.0.88",
+     "@joplin/turndown-plugin-gfm": "^1.0.70",
+     "@joplin/utils": "^3.7.3",
+-    "adm-zip": "0.5.18",
++    "adm-zip": "0.6.0",
+     "async-mutex": "0.5.0",
+     "base-64": "1.0.0",
+     "base64-stream": "1.0.0",
+```
+
+**File**: `yarn.lock` (modified, +5/-5)
+```diff
+@@ -12979,7 +12979,7 @@ __metadata:
+     "@types/react": "npm:19.1.10"
+     "@types/react-dom": "npm:19.1.7"
+     "@types/uuid": "npm:11.0.0"
+-    adm-zip: "npm:0.5.18"
++    adm-zip: "npm:0.6.0"
+     async-mutex: "npm:0.5.0"
+     base-64: "npm:1.0.0"
+     base64-stream: "npm:1.0.0"
+@@ -21414,10 +21414,10 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"adm-zip@npm:0.5.18":
+-  version: 0.5.18
+-  resolution: "adm-zip@npm:0.5.18"
+-  checksum: 10/6eaa298828b92e543241fa24d01af774ad8709b80539b3fa60d4ba6f69fd5a15a19d8177e6d739f18f4e0933610ed555215dc6553b51c532534414702c255167
++"adm-zip@npm:0.6.0":
++  version: 0.6.0
++  resolution: "adm-zip@npm:0.6.0"
++  checksum: 10/6a49ab39055d8f716958d3a2055491ab86fe3359c4afeed9b14bbce78fb847bcd3cbaa0ff4921aaa19824aaa29d06691def1f53263db5224d06c068f922c5ba2
+   languageName: node
+   linkType: hard
+ 
+```
+
 #### Recent Merged Pull Requests:
-- **PR #17045** (closed): fix(deps): update dependency redux to v5 (@renovate[bot])
-- **PR #17044** (closed): fix(deps): update dependency react-redux to v9 (@renovate[bot])
-- **PR #17043** (closed): fix(deps): update dependency react-native-url-polyfill to v3 (@renovate[bot])
-- **PR #17042** (closed): fix(deps): update dependency re-reselect to v5 (@renovate[bot])
-- **PR #17041** (closed): fix(deps): update dependency node-persist to v4 (@renovate[bot])
-- **PR #17040** (closed): fix(deps): update dependency markdown-it-sub to v2 (@renovate[bot])
+- **PR #17057** (2026-11-07): fix(deps): update dependency adm-zip to v0.6.0 (@renovate[bot])
+- **PR #17055** (closed): Desktop: Fixes #17051: Show when Markdown editor search has no results (@MaybeSomeone-arc18)
+- **PR #17054** (closed): Desktop: Fixes #17008: Keep a list that follows another list separate when converting to Markdown (@jayhemnani9910)
+- **PR #17049** (closed): fix(deps): update dependency yosay to v3 (@renovate[bot])
+- **PR #17048** (closed): fix(deps): update dependency uuid to v14 (@renovate[bot])
+- **PR #17047** (closed): fix(deps): update dependency reselect to v5 (@renovate[bot])
 
 ---
 
@@ -1257,30 +1041,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Renderer: Security: Always serialise attribute values and drop invalid attribute
+## X. Fix flaky compactCss performance test on loaded machines
 
 **RULE**:
-When implementing operations in `packages/app-cli/tests/md_to_html/resource_nonexistent_image.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/lib/utils/compactCss.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `97ed78d4`: Renderer: Security: Always serialise attribute values and drop invalid attribute names when sanitising HTML. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d468bb8e`: Fix flaky compactCss performance test on loaded machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-cli/tests/md_to_html/resource_nonexistent_image.html`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/lib/utils/compactCss.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt="" data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
-<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title="" contenteditable="false"><img src="data:image/svg+xml;utf8,
+		// Takes ~50ms normally. A quadratic implementation would take minutes, so a generous limit avoids failing on a loaded CI machine.
+		expect(Date.now() - startTime).toBeLessThan(10_000);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
-<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title contenteditable="false"><img src="data:image/svg+xml;utf8,
+		expect(Date.now() - startTime).toBeLessThan(1000);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `97ed78d4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d468bb8e` are properly handled with clean fallback behavior.

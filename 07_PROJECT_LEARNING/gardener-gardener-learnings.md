@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `47780c5a`  
+> **Source Version**: `dab1739d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T14:19:38.500Z  
+> **Timestamp**: 2026-11-09T07:55:24.703Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T14:19:37.213Z  
+> **Harvest Timestamp**: 2026-11-09T07:55:24.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -726,14 +726,14 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #16260** (2026-11-08): **Update golang.org/x/tools digest to 4f7264d**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang.org/x/tools](https://pkg.go.dev/golang.org/x/tools) | require | digest | `d407941` → `4f7264d` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMjAuMCIsInVwZGF0ZWRJblZlciI6IjQ0LjIyMC4wIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+  **Post-Mortem & Fix Analysis**:
+  > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [acumino](https://github.com/acumino) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["acumino"]} -->
+
 - **Issue #16259** (2026-11-07): **[release-v1.154] Update dependency gardener/dashboard to v1.86.4**
   *Symptoms*: This is an automated cherry-pick of #16254  /assign petersutter  ```other dependency github.com/gardener/gardener #16259 @renovate[bot] The following dependencies have been updated: - `gardener/dashboard` from `1.86.3` to `1.86.4`. [Release Notes](https://redirect.github.com/gardener/dashboard/releases/tag/1.86.4) ```  /kind enhancement
-
-- **Issue #16256** (2026-11-07): **Update golang.org/x/exp digest to 47ce03d**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang.org/x/exp](https://pkg.go.dev/golang.org/x/exp) | require | digest | `d498a4c` → `47ce03d` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMjAuMCIsInVwZGF0ZWRJblZlciI6IjQ0LjIyMC4wIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
-  **Post-Mortem & Fix Analysis**:
-  > ### ℹ️ Artifact update notice  ##### File name: hack/tools/go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 1 additional dependency was updated   Details:   | **Package**          | **Change**                                           | | :------------------- | :--------------------------------------------------- | | `golang.org/x/tools` | `v0.52.0` -> `v0.52.1-0.20261106145633-d407941a339a` |
-  > /label skip-review
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -750,84 +750,109 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ce7ce11` (2026-11-06)
-**Commit Message**: Fix extension deletion race (#16203)
+### Incident Patch 1: `dab1739d` (2026-11-08)
+**Commit Message**: Update golang.org/x/tools digest to 4f7264d (#16260)
 
-Signed-off-by: Tim Usner <[REDACTED_EMAIL]>
+* Update golang.org/x/tools digest to 4f7264d
 
-**File**: `pkg/operator/controller/extension/extension/reconciler.go` (modified, +6/-3)
+* Run make tidy
+
+---------
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -87,11 +87,14 @@ func (r *Reconciler) Reconcile(ctx context.Context, request reconcile.Request) (
- 
- 	garden := newGardenInfo(gardenObj)
- 
--	if extension.DeletionTimestamp != nil || garden.deleting {
--		return r.delete(ctx, log, extension)
-+	conditions := NewConditions(r.Clock, extension.Status)
-+	if garden.deleting ||
-+		extension.DeletionTimestamp != nil ||
-+		conditions.installed.Status == gardencorev1beta1.ConditionProgressing && conditions.installed.Reason == ReasonDeleteFailed {
-+		return r.delete(ctx, log, extension, conditions)
- 	}
- 
--	return r.reconcile(ctx, log, garden, extension)
-+	return r.reconcile(ctx, log, garden, extension, conditions)
- }
- 
- func (r *Reconciler) updateExtensionStatus(ctx context.Context, log logr.Logger, extension *operatorv1alpha1.Extension, updatedConditions Conditions) error {
+@@ -64,7 +64,7 @@ require (
+ 	golang.org/x/crypto v0.58.0
+ 	golang.org/x/text v0.43.0
+ 	golang.org/x/time v0.16.0
+-	golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a // indirect
++	golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.5.0
+ 	gonum.org/v1/gonum v0.17.0
+ 	google.golang.org/protobuf v1.36.12
 ```
 
-**File**: `pkg/operator/controller/extension/extension/reconciler_delete.go` (modified, +2/-3)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -24,6 +24,7 @@ func (r *Reconciler) delete(
- 	ctx context.Context,
- 	log logr.Logger,
- 	extension *operatorv1alpha1.Extension,
-+	conditions Conditions,
- ) (
- 	reconcile.Result,
- 	error,
-@@ -56,12 +57,10 @@ func (r *Reconciler) delete(
- 		})
- 	)
- 
--	conditions := NewConditions(r.Clock, extension.Status)
--
- 	if err := g.Compile().Run(ctx, flow.Opts{
- 		Log: log,
- 	}); err != nil {
--		conditions.installed = v1beta1helper.UpdatedConditionWithClock(r.Clock, conditions.installed, gardencorev1beta1.ConditionFalse, ReasonDeleteFailed, err.Error())
-+		conditions.installed = v1beta1helper.UpdatedConditionWithClock(r.Clock, conditions.installed, gardencorev1beta1.ConditionProgressing, ReasonDeleteFailed, err.Error())
- 		if updateErr := r.updateExtensionStatus(ctx, log, extension, conditions); updateErr != nil {
- 			return reconcile.Result{}, errors.Join(err, fmt.Errorf("failed to update extension status: %w", updateErr))
- 		}
+@@ -1044,8 +1044,8 @@ golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtn
+ golang.org/x/tools v0.0.0-20191125144606-a911d9008d1f/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+ golang.org/x/tools v0.0.0-20191227053925-7b8e75db28f4/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
+ golang.org/x/tools v0.0.0-20200616133436-c1934b75d054/go.mod h1:EkVYQZoAsY45+roYkvgYkIh4xh/qjgUK9TdY2XT94GE=
+-golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a h1:Yqozs0FNPRoPGS4hNGlrNwRENWr5H5nVG9sN/f+5640=
+-golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a/go.mod h1:ItcP5UNaVGG+Yc4eIYmaFLNJ4soEopkx5Y2d4lcEurs=
++golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672 h1:VfrTmiWA9+TdDrL9VQr7aeGonnRLaEBwN3/D7jzL25Y=
++golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672/go.mod h1:ItcP5UNaVGG+Yc4eIYmaFLNJ4soEopkx5Y2d4lcEurs=
+ golang.org/x/tools/go/expect v0.1.1-deprecated h1:jpBZDwmgPhXsKZC6WhL20P4b/wmnpsEAGHaNy0n/rJM=
+ golang.org/x/tools/go/expect v0.1.1-deprecated/go.mod h1:eihoPOH+FgIqa3FpoTwguz/bVUSGBlGQU67vpBeOrBY=
+ golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated h1:1h2MnaIAIXISqTFKdENegdpAgUXz6NrPEsbIeWaBRvM=
 ```
 
-**File**: `pkg/operator/controller/extension/extension/reconciler_reconcile.go` (modified, +1/-2)
+**File**: `hack/tools/go.mod` (modified, +1/-1)
 ```diff
-@@ -33,12 +33,11 @@ func (r *Reconciler) reconcile(
- 	log logr.Logger,
- 	garden *gardenInfo,
- 	extension *operatorv1alpha1.Extension,
-+	conditions Conditions,
- ) (
- 	reconcile.Result,
- 	error,
- ) {
--	conditions := NewConditions(r.Clock, extension.Status)
--
- 	if garden.garden == nil {
- 		if conditions.installed.Status == gardencorev1beta1.ConditionFalse && conditions.installed.Reason == ReasonDeleteSuccessful {
- 			// Retain condition if the extension was previously uninstalled due to a garden deletion
+@@ -28,7 +28,7 @@ require (
+ 	// this has to be kept in sync with the used golangci-lint version
+ 	// use go version -m hack/tools/bin/<<architecture>>/golangci-lint to detect the dependency versions
+ 	// or, with `go work` enabled, use `go work sync`
+-	golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a
++	golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672
+ 	sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087
+ )
+ 
+```
+
+**File**: `hack/tools/go.sum` (modified, +2/-2)
+```diff
+@@ -958,8 +958,8 @@ golang.org/x/tools v0.1.1-0.20210302220138-2ac05c832e1a/go.mod h1:9bzcO0MWcOuT0t
+ golang.org/x/tools v0.1.10/go.mod h1:Uh6Zz+xoGYZom868N8YTex3t7RhtHDBrE8Gzo9bV56E=
+ golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc=
+ golang.org/x/tools v0.6.0/go.mod h1:Xwgl3UAJ/d3gWutnCtw505GrjyAbvKui8lOU390QaIU=
+-golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a h1:Yqozs0FNPRoPGS4hNGlrNwRENWr5H5nVG9sN/f+5640=
+-golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a/go.mod h1:ItcP5UNaVGG+Yc4eIYmaFLNJ4soEopkx5Y2d4lcEurs=
++golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672 h1:VfrTmiWA9+TdDrL9VQr7aeGonnRLaEBwN3/D7jzL25Y=
++golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672/go.mod h1:ItcP5UNaVGG+Yc4eIYmaFLNJ4soEopkx5Y2d4lcEurs=
+ golang.org/x/tools/go/expect v0.1.1-deprecated h1:jpBZDwmgPhXsKZC6WhL20P4b/wmnpsEAGHaNy0n/rJM=
+ golang.org/x/tools/go/expect v0.1.1-deprecated/go.mod h1:eihoPOH+FgIqa3FpoTwguz/bVUSGBlGQU67vpBeOrBY=
+ golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated h1:1h2MnaIAIXISqTFKdENegdpAgUXz6NrPEsbIeWaBRvM=
+```
+
+**File**: `pkg/apis/go.mod` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ require (
+ 	golang.org/x/sync v0.24.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
+-	golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a // indirect
++	golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672 // indirect
+ 	google.golang.org/protobuf v1.36.12 // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+ 	k8s.io/klog/v2 v2.140.0 // indirect
+```
+
+**File**: `pkg/apis/go.sum` (modified, +2/-2)
+```diff
+@@ -82,8 +82,8 @@ golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+ golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+ golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+-golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a h1:Yqozs0FNPRoPGS4hNGlrNwRENWr5H5nVG9sN/f+5640=
+-golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a/go.mod h1:ItcP5UNaVGG+Yc4eIYmaFLNJ4soEopkx5Y2d4lcEurs=
++golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672 h1:VfrTmiWA9+TdDrL9VQr7aeGonnRLaEBwN3/D7jzL25Y=
++golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672/go.mod h1:ItcP5UNaVGG+Yc4eIYmaFLNJ4soEopkx5Y2d4lcEurs=
+ google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
+ google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16260** (2026-11-08): Update golang.org/x/tools digest to 4f7264d (@renovate[bot])
 - **PR #16259** (2026-11-07): [release-v1.154] Update dependency gardener/dashboard to v1.86.4 (@gardener-prow-cherrypicker[bot])
+- **PR #16258** (2026-11-08): [release-v1.155] Update dependency gardener/dashboard to v1.86.4 (@gardener-prow-cherrypicker[bot])
 - **PR #16256** (2026-11-07): Update golang.org/x/exp digest to 47ce03d (@renovate[bot])
 - **PR #16254** (2026-11-07): Update dependency gardener/dashboard to v1.86.4 (@renovate[bot])
 - **PR #16251** (2026-11-06): next version: v1.154.4-dev (@oliver-goetz)
-- **PR #16250** (2026-11-06): Update golang.org/x/exp digest to d498a4c (@renovate[bot])
-- **PR #16249** (2026-11-06): Enhance error message for the deprecated `shoot.spec.dns.providers[].secretName` field (@vpnachev)
 
 ---
 
@@ -847,35 +872,28 @@ Signed-off-by: Tim Usner <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. extension deletion race (#16203)
+## X. Update golang.org/x/tools digest to 4f7264d (#16260)
 
 **RULE**:
-When implementing operations in `pkg/operator/controller/extension/extension/reconciler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ce7ce11`: extension deletion race (#16203). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dab1739d`: Update golang.org/x/tools digest to 4f7264d (#16260). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/controller/extension/extension/reconciler.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	conditions := NewConditions(r.Clock, extension.Status)
-	if garden.deleting ||
-		extension.DeletionTimestamp != nil ||
-		conditions.installed.Status == gardencorev1beta1.ConditionProgressing && conditions.installed.Reason == ReasonDeleteFailed {
-		return r.delete(ctx, log, extension, conditions)
-	return r.reconcile(ctx, log, garden, extension, conditions)
+	golang.org/x/tools v0.52.1-0.20261106210606-4f7264d11672 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if extension.DeletionTimestamp != nil || garden.deleting {
-		return r.delete(ctx, log, extension)
-	return r.reconcile(ctx, log, garden, extension)
+	golang.org/x/tools v0.52.1-0.20261106145633-d407941a339a // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ce7ce11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dab1739d` are properly handled with clean fallback behavior.

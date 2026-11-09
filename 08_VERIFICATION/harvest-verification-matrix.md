@@ -8545,3 +8545,6 @@
 | `CYCLE-20261109-FQE9` | `2026-11-09T07:43:35.265Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`2f4fe74f...`) |
 | `CYCLE-20261109-FW8I` | `2026-11-09T07:43:42.834Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c6754036...`) |
 | `CYCLE-20261109-G3GW` | `2026-11-09T07:43:52.208Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cb47d6ac...`) |
+| `CYCLE-20261109-UR66` | `2026-11-09T07:55:16.110Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`68e66098...`) |
+| `CYCLE-20261109-UWD9` | `2026-11-09T07:55:22.845Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b1df17b3...`) |
+| `CYCLE-20261109-UYRK` | `2026-11-09T07:55:25.952Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f926dad0...`) |

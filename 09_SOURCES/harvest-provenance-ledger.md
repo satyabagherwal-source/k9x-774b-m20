@@ -8554,3 +8554,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-09T07:43:35.269Z |
 | `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `f651d47d` | Multi-dimensional audit evidence | 2026-11-09T07:43:42.837Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `67fc69df` | Multi-dimensional audit evidence | 2026-11-09T07:43:52.223Z |
+| `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-09T07:55:16.113Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `d468bb8e` | Multi-dimensional audit evidence | 2026-11-09T07:55:22.848Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `dab1739d` | Multi-dimensional audit evidence | 2026-11-09T07:55:25.955Z |

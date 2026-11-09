@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T07:43:52.102Z",
+  "last_updated": "2026-11-09T07:55:25.892Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15805,8 +15805,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "47780c5a",
-      "content_hash": "7ebe422e2d610f6da8ec56e59e4d9f49ff6e1bb0bbb3313edbc4c222b95dc792",
+      "source_version": "dab1739d",
+      "content_hash": "f926dad0f6f09f1fc3ad33856b4a318e5fb9b1fa041f8b1663f14324ff6ab5b9",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -15818,6 +15818,11 @@
         {
           "number": null,
           "title": "extension deletion race (#16203)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update golang.org/x/tools digest to 4f7264d (#16260)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15931,7 +15936,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T14:19:39.722Z",
+      "verified_at": "2026-11-09T07:55:25.874Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31440,7 +31445,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "31a6a26819e9b47feb71f72fa4810281a835a6457a787cad63f7ce3bc425b98e",
+      "content_hash": "68e6609838e640fdd9d5d045bfba0cf98fcbbe80d2f6cb7207eb21c483c4e681",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "promoted_rules": [
@@ -31477,7 +31482,7 @@
         "learn-huggingface-hf-qwen-qwen3-4b-mv3xiori",
         "learn-huggingface-hf-qwen-qwen3-4b-mv4c8j52"
       ],
-      "verified_at": "2026-11-05T12:43:28.244Z",
+      "verified_at": "2026-11-09T07:55:16.023Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40185,14 +40190,19 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "d428762a",
-      "content_hash": "d5fdb0753493749dc5530130258c0c9d1ff012395ca29a34ddad60b9268bafa2",
+      "source_version": "d468bb8e",
+      "content_hash": "b1df17b390757b195bb2ad4c5535d31d99a1e7c6d5d7a581fe2bf36503473570",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Renderer: Security: Always serialise attribute values and drop invalid attribute",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Fix flaky compactCss performance test on loaded machines",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40226,7 +40236,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:27:17.312Z",
+      "verified_at": "2026-11-09T07:55:22.774Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
