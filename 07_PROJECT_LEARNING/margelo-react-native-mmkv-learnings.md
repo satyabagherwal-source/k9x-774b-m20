@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md`  
 > **Source**: github ([https://github.com/margelo/react-native-mmkv](https://github.com/margelo/react-native-mmkv))  
-> **Source Version**: `ca5acf0c`  
+> **Source Version**: `0ec4c963`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:00:33.570Z  
+> **Timestamp**: 2026-11-09T23:40:38.203Z  
 > **Learning ID**: `learn-github-margelo-react-native-mmkv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/margelo/react-native-mmkv](https://github.com/margelo/react-native-mmkv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:00:33.310Z  
+> **Harvest Timestamp**: 2026-11-09T23:35:37.174Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡️ The fastest key/value storage for React Native. ~30x faster than AsyncStorage!
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8518 stars
+- **Stars / Engagement**: 8529 stars
 
 ---
 
@@ -42,6 +42,8 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import { getDefaultMMKVInstance } from '../createMMKV/getDefaultMMKVInstance'
 import type { MMKV } from '../specs/MMKV.nitro'
+
+const getServerSnapshot = () => undefined
 
 export function createMMKVHook<
   T extends (boolean | number | string | ArrayBufferLike) | undefined,
@@ -67,7 +69,11 @@ export function createMMKVHook<
         [key, mmkv]
       ),
       useCallback(() => getter(mmkv, key), [key, mmkv]),
-      useCallback(() => getter(mmkv, key), [key, mmkv])
+      // There's no storage on the server, so a value is unset there, and while
+      // the browser hydrates the server's HTML. React only calls this then, so
+      // it never runs on native. Every getter returns `undefined` for an unset
+      // value, so `T` always includes it.
+      getServerSnapshot as () => T
     )
 
     // update value by user set
@@ -420,134 +426,128 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `48e5ed70` (2026-08-20)
-**Commit Message**: chore(deps): bump com.android.tools.build:gradle (#1080)
+### Incident Patch 1: `0ec4c963` (2026-11-09)
+**Commit Message**: fix: Return `undefined` from the hooks' server snapshot (#1102)
 
-Bumps com.android.tools.build:gradle from 9.2.1 to 9.3.1.
+`createMMKVHook` passed the storage getter as `useSyncExternalStore`'s
+`getServerSnapshot` too. On Web that reads `localStorage`, which throws on the
+server, so a component using a value hook couldn't be server-rendered. Values
+now read as unset on the server and while the browser hydrates, and the stored
+value arrives on the render after. React only calls `getServerSnapshot` then,
+so native and client-only Web are unchanged.
 
----
-updated-dependencies:
-- dependency-name: com.android.tools.build:gradle
-  dependency-version: 9.3.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Fixes #1100
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: David Uzumeri <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `packages/react-native-mmkv/android/build.gradle` (modified, +1/-1)
+**File**: `bun.lock` (modified, +4/-0)
 ```diff
-@@ -5,7 +5,7 @@ buildscript {
-   }
+@@ -65,11 +65,13 @@
+         "@testing-library/react-native": "^13.3.1",
+         "@types/jest": "^29.5.14",
+         "@types/react": "^19.2.15",
++        "@types/react-dom": "19.2.7",
+         "eslint": "^8.57.1",
+         "eslint-config-prettier": "^10.1.8",
+         "nitrogen": "0.35.9",
+         "prettier": "^3.8.3",
+         "react": "19.2.6",
++        "react-dom": "19.2.6",
+         "react-native": "0.85.3",
+         "react-native-nitro-modules": "0.35.9",
+         "typescript": "^6.0.3",
+@@ -829,6 +831,8 @@
  
-   dependencies {
--    classpath "com.android.tools.build:gradle:9.2.1"
-+    classpath "com.android.tools.build:gradle:9.3.1"
-   }
- }
+     "@types/react": ["@types/react@19.2.15", "", { "dependencies": { "csstype": "^3.2.2" } }, "sha512-eRwcGNHve+E8qtEQSSRl6urh+rFop4v8gm6O8rGv25CodbvFdLjA1vVQ1KkiFE0w0UPOnb8tDiFKL5lp0rtY5Q=="],
  
++    "@types/react-dom": ["@types/react-dom@19.2.7", "", { "peerDependencies": { "@types/react": "^19.2.0" } }, "sha512-I8bPpDLcHBv1qiIiXDCy71Rt8eQDKJP0sMSWJphDdAcdqiJ1sGpZamavoEIRZmYzjia9LuEb2HlYdDpmoENpvQ=="],
++
+     "@types/react-test-renderer": ["@types/react-test-renderer@19.1.0", "", { "dependencies": { "@types/react": "*" } }, "sha512-XD0WZrHqjNrxA/MaR9O22w/RNidWR9YZmBdRGI7wcnWGrv/3dA8wKCJ8m63Sn+tLJhcjmuhOi629N66W6kgWzQ=="],
+ 
+     "@types/stack-utils": ["@types/stack-utils@2.0.3", "", {}, "sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw=="],
 ```
 
----
-
-### Incident Patch 2: `53fa6068` (2026-08-20)
-**Commit Message**: fix: Mark react-native-nitro-modules peer dependency as optional (#1083)
-
-Semver ranges never match pre-releases, so a required peer of "*" does
-not match e.g. 0.37.0-beta.0. Package managers then install a second,
-stable copy of Nitro next to the pre-release, and the native/JS version
-guard throws "Nitro was installed twice" at runtime.
-
-Marking the peer optional leaves the consuming app in full control of
-the installed Nitro version.
-
-**File**: `bun.lock` (modified, +5/-2)
+**File**: `packages/react-native-mmkv/package.json` (modified, +2/-0)
 ```diff
-@@ -17,7 +17,7 @@
-     },
-     "example": {
-       "name": "mmkv-example",
--      "version": "4.3.1",
-+      "version": "4.3.2",
-       "dependencies": {
-         "@react-native/new-app-screen": "0.85.3",
-         "http-proxy": "^1.18.1",
-@@ -58,7 +58,7 @@
-     },
-     "packages/react-native-mmkv": {
-       "name": "react-native-mmkv",
--      "version": "4.3.1",
-+      "version": "4.3.2",
-       "devDependencies": {
-         "@react-native/eslint-config": "0.85.3",
-         "@react-native/jest-preset": "0.85.3",
-@@ -79,6 +79,9 @@
-         "react-native": "*",
-         "react-native-nitro-modules": "*",
-       },
-+      "optionalPeers": [
-+        "react-native-nitro-modules",
-+      ],
-     },
-   },
-   "packages": {
+@@ -64,11 +64,13 @@
+     "@testing-library/react-native": "^13.3.1",
+     "@types/jest": "^29.5.14",
+     "@types/react": "^19.2.15",
++    "@types/react-dom": "19.2.7",
+     "eslint": "^8.57.1",
+     "eslint-config-prettier": "^10.1.8",
+     "nitrogen": "0.35.9",
+     "prettier": "^3.8.3",
+     "react": "19.2.6",
++    "react-dom": "19.2.6",
+     "react-native": "0.85.3",
+     "react-native-nitro-modules": "0.35.9",
+     "typescript": "^6.0.3"
 ```
 
-**File**: `packages/react-native-mmkv/package.json` (modified, +5/-0)
+**File**: `packages/react-native-mmkv/src/__tests__/hooks.test.tsx` (modified, +14/-0)
 ```diff
-@@ -78,6 +78,11 @@
-     "react-native": "*",
-     "react-native-nitro-modules": "*"
-   },
-+  "peerDependenciesMeta": {
-+    "react-native-nitro-modules": {
-+      "optional": true
-+    }
-+  },
-   "eslintConfig": {
-     "root": true,
-     "extends": [
+@@ -9,6 +9,7 @@ import {
+   cleanup,
+   waitFor,
+ } from '@testing-library/react-native'
++import { renderToString } from 'react-dom/server'
+ import { createMMKV, useMMKVNumber, useMMKVString } from '..'
+ 
+ const mmkv = createMMKV()
+@@ -129,3 +130,16 @@ test('useMMKV hook stays consistent during rapid updates', async () => {
+     expect(result.current[0]).toBe(100)
+   })
+ })
++
++test('hooks read as unset when rendered on the server', () => {
++  // There's no storage on the server (on Web, reading it there throws), so a
++  // server render reads every value as unset, even one that's stored.
++  mmkv.set('string-key', 'stored value')
++
++  const Component: React.FC = () => {
++    const [value] = useMMKVString('string-key', mmkv)
++    return <>{value ?? 'unset'}</>
++  }
++
++  expect(renderToString(<Component />)).toBe('unset')
++})
 ```
 
----
-
-### Incident Patch 3: `1cd33631` (2026-06-22)
-**Commit Message**: docs: fix README object example comment and deprecated size usage (#1073)
-
-Co-authored-by: Patrick Wehbe <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +3/-3)
+**File**: `packages/react-native-mmkv/src/hooks/createMMKVHook.ts` (modified, +7/-1)
 ```diff
-@@ -181,8 +181,8 @@ const user = {
- storage.set('user', JSON.stringify(user))
+@@ -2,6 +2,8 @@ import { useCallback, useSyncExternalStore } from 'react'
+ import { getDefaultMMKVInstance } from '../createMMKV/getDefaultMMKVInstance'
+ import type { MMKV } from '../specs/MMKV.nitro'
  
- // Deserialize the JSON string into an object
--const jsonUser = storage.getString('user') // { 'username': 'Marc', 'age': 21 }
--const userObject = JSON.parse(jsonUser)
-+const jsonUser = storage.getString('user') // '{ "username": "Marc", "age": 21 }'
-+const userObject = JSON.parse(jsonUser) // { username: 'Marc', age: 21 }
- ```
++const getServerSnapshot = () => undefined
++
+ export function createMMKVHook<
+   T extends (boolean | number | string | ArrayBufferLike) | undefined,
+   TSet extends T | undefined,
+@@ -26,7 +28,11 @@ export function createMMKVHook<
+         [key, mmkv]
+       ),
+       useCallback(() => getter(mmkv, key), [key, mmkv]),
+-      useCallback(() => getter(mmkv, key), [key, mmkv])
++      // There's no storage on the server, so a value is unset there, and while
++      // the browser hydrates the server's HTML. React only calls this then, so
++      // it never runs on native. Every getter returns `undefined` for an unset
++      // value, so `T` always includes it.
++      getServerSnapshot as () => T
+     )
  
- ### Encryption
-@@ -215,7 +215,7 @@ console.log(buffer) // [1, 100, 255]
- 
- ```ts
- // get size of MMKV storage in bytes
--const size = storage.size
-+const size = storage.byteSize
- if (size >= 4096) {
-   // clean unused keys and clear memory cache
-   storage.trim()
+     // update value by user set
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1102** (2026-11-09): fix: Return `undefined` from the hooks' server snapshot (@daviduzumeri)
 - **PR #1096** (closed): Add Swift Package Manager manifest (React Native 0.87 SwiftPM) (@serpixel)
 - **PR #1091** (2026-09-14): chore: Upgrade Harness to 1.5.0 (@mrousavy)
 - **PR #1087** (2026-08-29): chore: Update links after move to margelo org (@mrousavy)
 - **PR #1085** (2026-08-23): chore: Run CI on iOS 26 (@mrousavy)
 - **PR #1084** (2026-08-23): chore(deps): bump io.github.zhongwuzw:mmkv from 2.4.1 to 2.4.2 (sync upstream Tencent/MMKV v2.4.2) (@zhongwuzw)
-- **PR #1083** (2026-08-20): fix: Mark react-native-nitro-modules peer dependency as optional (@mrousavy)
 
 ---
 
@@ -567,28 +567,31 @@ Co-authored-by: Patrick Wehbe <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump com.android.tools.build:gradle (#1080)
+## X. Return `undefined` from the hooks' server snapshot (#1102)
 
 **RULE**:
-When implementing operations in `packages/react-native-mmkv/android/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in margelo/react-native-mmkv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in margelo/react-native-mmkv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `48e5ed70`: deps): bump com.android.tools.build:gradle (#1080). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ec4c963`: Return `undefined` from the hooks' server snapshot (#1102). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-mmkv/android/build.gradle`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    classpath "com.android.tools.build:gradle:9.3.1"
+        "@types/react-dom": "19.2.7",
+        "react-dom": "19.2.6",
+    "@types/react-dom": ["@types/react-dom@19.2.7", "", { "peerDependencies": { "@types/react": "^19.2.0" } }, "sha512-I8bPpDLcHBv1qiIiXDCy71Rt8eQDKJP0sMSWJphDdAcdqiJ1sGpZamavoEIRZmYzjia9LuEb2HlYdDpmoENpvQ=="],
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    classpath "com.android.tools.build:gradle:9.2.1"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `48e5ed70` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ec4c963` are properly handled with clean fallback behavior.

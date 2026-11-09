@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T23:17:55.273Z",
+  "last_updated": "2026-11-09T23:45:25.478Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "b1a35d23ea0b1270603fe21cf38e956e73ce5debd1348b40f87083e44c4d0d1f",
-      "verified_at": "2026-11-09T22:48:35.417Z",
+      "content_hash": "dbb844c1d572d61d03c4ba0c64784de1cf0d573f0a500f0c6d8bf4a1e41344c0",
+      "verified_at": "2026-11-09T23:40:51.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T22:48:35.417Z"
+      "last_updated": "2026-11-09T23:40:51.441Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7101,14 +7101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-margelo-react-native-mmkv",
-      "content_hash": "6889ce25a7021cff22adfb10b1f8406b80a0ac17c260f66d2f729877fc27e980",
-      "verified_at": "2026-10-20T14:00:33.866Z",
+      "content_hash": "1208571917a3fe47c4055540d8499d0c24b69a5ecace46870315f52836c779f3",
+      "verified_at": "2026-11-09T23:40:39.751Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:00:33.866Z"
+      "last_updated": "2026-11-09T23:40:39.751Z"
     },
     "aquasecurity/trivy": {
       "repository": "aquasecurity/trivy",
@@ -10011,14 +10011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dalance-procs",
-      "content_hash": "0e81c1a1f7f58148d5803b28fc19d5a78160716e5188ddd180ceb554502b27b5",
-      "verified_at": "2026-11-07T05:09:02.472Z",
+      "content_hash": "db5d357075705122b0ea98ff6f146d443770f56c33b263e5bae53f1e8f76b4cf",
+      "verified_at": "2026-11-09T23:45:25.477Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:09:02.472Z"
+      "last_updated": "2026-11-09T23:45:25.477Z"
     },
     "ionic-team/ionic-framework": {
       "repository": "ionic-team/ionic-framework",

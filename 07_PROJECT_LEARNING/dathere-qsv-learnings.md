@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `dc504b1d`  
+> **Source Version**: `c31273fc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T22:48:34.451Z  
+> **Timestamp**: 2026-11-09T23:40:49.406Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T22:48:33.015Z  
+> **Harvest Timestamp**: 2026-11-09T23:35:47.571Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,106 +2203,79 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc504b1d` (2026-11-09)
-**Commit Message**: test(validate): date/time formats reject non-digits (jsonschema 0.61)
+### Incident Patch 1: `c31273fc` (2026-11-09)
+**Commit Message**: docs(changelog): measured jsonschema 0.61 validate speedup
 
-jsonschema 0.61 rejects `+ , - . /` where RFC 3339 requires a digit in
-`date-time`, `date` and `time` (jsonschema#1829); 0.60 accepted them.
-The new test fails on 0.60.3 (every row validates) and passes on 0.61.
-
-Also a CHANGELOG entry for the jsonschema 0.60.2 -> 0.61 bump: the
-stricter date/time formats, whole floats past 2^53 (jsonschema#1825),
-`.` in patterns no longer matching line terminators, the $ref/oneOf
-fixes, and the upstream-reported speedups.
+Replace "qsv hasn't measured these" with release-build numbers on the
+1M-row NYC 311 sample (0.61.0 vs 0.60.2, same tree, hyperfine 10 runs):
+3.7-4.0% fewer instructions with every row valid, 2.6-2.7% with one error
+per row; 2-3% faster with --jobs 1, no measurable wall-clock change at the
+default thread count. Outputs were identical across versions.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +6/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -34,6 +34,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
- 
- ### Fixed
-+- **`validate` is stricter and more correct with jsonschema 0.61** (from 0.60.2). Rows that passed before can now fail:
-+  - **`format: "date-time"`, `"date"` and `"time"` require a digit wherever RFC 3339 does** ([jsonschema#1829](https://github.com/Stranger6667/jsonschema/issues/1829)). Before, `+`, `,`, `-`, `.` or `/` passed in many digit positions, so `2026-11-0/T10:00:00Z` and `-----11-06T10:00:00Z` were valid date-times.
-+  - **Numeric keywords judge whole floats past 2^53 correctly** ([jsonschema#1825](https://github.com/Stranger6667/jsonschema/issues/1825)). A float equal to an integer bound past 2^53 was converted to the wrong integer, so `exclusiveMinimum` admitted the bound itself and `const` rejected it.
-+  - **`.` in `pattern` and `patternProperties` no longer matches `\r`, U+2028 or U+2029**, so a value containing one of these line terminators can now fail a pattern it passed before.
-+  - **Schema fixes:** `oneOf`/`anyOf` no longer reject valid rows when a branch's `$ref` sits under an `$id`, and `$ref` pointers through a numeric key (`#/responses/200`) now resolve the references under their target.
-+  - Validation is also faster. jsonschema reports up to 40% with `serde_json`'s `preserve_order` (which qsv enables), and `is_valid` (the per-row check) up to 14% faster on small instances. qsv hasn't measured these.
+@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **Numeric keywords judge whole floats past 2^53 correctly** ([jsonschema#1825](https://github.com/Stranger6667/jsonschema/issues/1825)). A float equal to an integer bound past 2^53 was converted to the wrong integer, so `exclusiveMinimum` admitted the bound itself and `const` rejected it.
+   - **`.` in `pattern` and `patternProperties` no longer matches `\r`, U+2028 or U+2029**, so a value containing one of these line terminators can now fail a pattern it passed before.
+   - **Schema fixes:** `oneOf`/`anyOf` no longer reject valid rows when a branch's `$ref` sits under an `$id`, and `$ref` pointers through a numeric key (`#/responses/200`) now resolve the references under their target.
+-  - Validation is also faster. jsonschema reports up to 40% with `serde_json`'s `preserve_order` (which qsv enables), and `is_valid` (the per-row check) up to 14% faster on small instances. qsv hasn't measured these.
++  - Validation is slightly faster. On the 1M-row NYC 311 sample (release build; a 41-property schema with type, length, enum and range checks), `validate` executes 3.7–4.0% fewer instructions when every row is valid, and 2.6–2.7% fewer with one error per row. That makes it 2–3% faster with `--jobs 1`, with no measurable wall-clock change at the default thread count. Upstream's larger figures (up to 40% with `preserve_order`) are best cases for the validation call itself; these are end-to-end results on this file.
  - **`profile --validate --no-projection` warns that `--validate` is ignored**. `--validate` checks the projection block, so with `--no-projection` it ran nothing (neither the schema check nor the `qsv validate` pass) and exited 0 without a word, even with `--strict`. To check the file alone, run `qsv validate`.
  - **`profile`: an `--initial-context` override that cannot be applied is reported, not silently dropped** ([#5025](https://github.com/dathere/qsv/pull/5025), fixes [#4991](https://github.com/dathere/qsv/issues/4991)). Before, the run exited 0, passed `--strict`, and left no trace of the missing value. Each such override now gets a Required `projection_warnings` entry (on stderr with `--no-projection`) naming the key and the reason, and fails `--strict`:
    - a key that is not a JSON Pointer (doesn't start with `/`);
 ```
 
-**File**: `tests/test_validate.rs` (modified, +60/-0)
+---
+
+### Incident Patch 2: `27fd4b25` (2026-11-09)
+**Commit Message**: chore(deps): cite upstream PRs in the fork-patch comments
+
+Name the upstream PR each [patch] fork waits on, so the next audit is a
+one-step lookup: csvlens YS-L/csvlens#213 (and #196/#202 merged but
+unreleased, release ETA in #206), csvs_convert kindly/csvs_convert#23,
+whatlang greyblake/whatlang-rs#154, spreadsheet-ods
+thscharler/spreadsheet-ods#77, and compact_bytes' big-endian fix
+ParkMyCar/compact_bytes#12. Comments only; Cargo.lock is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Cargo.toml` (modified, +8/-2)
 ```diff
-@@ -3399,6 +3399,66 @@ fn validate_with_ipv4_format_strict() {
-     assert_eq!(invalid_records, expected_invalid);
- }
+@@ -560,13 +560,17 @@ csv-index = { git = "https://github.com/dathere/rust-csv", branch = "qsv-tuned"
+ # csv-core = { path = "../rust-csv/csv-core" }
+ # csv-index = { path = "../rust-csv/csv-index" }
  
-+// jsonschema 0.61 rejects `+ , - . /` where RFC 3339 requires a digit (jsonschema#1829);
-+// 0.60 accepted rows 4-8.
-+#[test]
-+fn validate_date_time_formats_reject_non_digits() {
-+    let wrk = Workdir::new("validate_date_time_formats_reject_non_digits").flexible(true);
-+
-+    wrk.create(
-+        "data.csv",
-+        vec![
-+            svec!["id", "ts", "d", "t"],
-+            svec!["1", "2026-11-06T10:00:00Z", "2026-11-06", "10:00:00Z"],
-+            svec![
-+                "2",
-+                "2026-11-06T10:00:00+01:30",
-+                "2026-01-31",
-+                "23:59:59+01:30"
-+            ],
-+            svec!["3", "2026-11-06T10:00:00.5Z", "2024-02-29", "10:00:00.5Z"],
-+            svec!["4", "-----11-06T10:00:00Z", "2026-11-06", "10:00:00Z"],
-+            svec!["5", "2026-11-0/T10:00:00Z", "2026-11-06", "10:00:00Z"],
-+            svec!["6", "2026-11-06T10:00:00+01:3.", "2026-11-06", "10:00:00Z"],
-+            svec!["7", "2026-11-06T10:00:00Z", "2026-11-0+", "10:00:00Z"],
-+            svec!["8", "2026-11-06T10:00:00Z", "2026-11-06", "10:00:0/Z"],
-+        ],
-+    );
-+
-+    wrk.create_from_string(
-+        "schema.json",
-+        r#"{
-+            "$schema": "https://json-schema.org/draft/2020-12/schema",
-+            "type": "object",
-+            "properties": {
-+                "id": { "type": "string" },
-+                "ts": { "type": "string", "format": "date-time" },
-+                "d": { "type": "string", "format": "date" },
-+                "t": { "type": "string", "format": "time" }
-+            }
-+        }"#,
-+    );
-+
-+    let mut cmd = wrk.command("validate");
-+    cmd.arg("data.csv").arg("schema.json");
-+    wrk.assert_err(&mut cmd);
-+
-+    let validation_errors = wrk
-+        .read_to_string("data.csv.validation-errors.tsv")
-+        .unwrap();
-+    assert!(validation_errors.contains("is not a \"date-time\""));
-+    assert!(validation_errors.contains("is not a \"date\""));
-+    assert!(validation_errors.contains("is not a \"time\""));
-+
-+    let valid_records: Vec<Vec<String>> = wrk.read_csv("data.csv.valid");
-+    let valid_ids: Vec<&str> = valid_records.iter().map(|r| r[0].as_str()).collect();
-+    assert_eq!(valid_ids, vec!["1", "2", "3"]);
-+
-+    let invalid_records: Vec<Vec<String>> = wrk.read_csv("data.csv.invalid");
-+    let invalid_ids: Vec<&str> = invalid_records.iter().map(|r| r[0].as_str()).collect();
-+    assert_eq!(invalid_ids, vec!["4", "5", "6", "7", "8"]);
-+}
-+
- #[test]
- fn validate_with_ipv6_format_strict() {
-     let wrk = Workdir::new("validate_with_ipv6_format_strict").flexible(true);
+-# use our patched fork of csvlens until our PR is merged
++# use our patched fork of csvlens until our PR is merged and released
++# https://github.com/YS-L/csvlens/pull/213 (arrow 60, clap-cargo 0.19). #196 and #202 are merged
++# but unreleased since 0.15.1; release ETA asked in https://github.com/YS-L/csvlens/issues/206
+ csvlens = { git = "https://github.com/jqnatividad/csvlens", branch = "deps-bump-2026-11" }
+ 
+ # use our patched fork of csvs_convert to bump dependencies until our PR is merged
++# https://github.com/kindly/csvs_convert/pull/23 (qsv-stats instead of streaming-stats, zip 9)
+ csvs_convert = { git = "https://github.com/jqnatividad/csvs_convert", branch = "replace-streaming-stats-redux", optional = true }
+ 
+ # use our patched fork of whatlang to bump hashbrown until our PR is merged
++# https://github.com/greyblake/whatlang-rs/pull/154 (hashbrown 0.16)
+ whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-hashbrown-to-16" }
+ 
+ # plotly.rs 0.15.0 release-prep branch (plotly/plotly.rs#442: full plotly.js 3.7 trace coverage)
+@@ -575,10 +579,12 @@ whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-
+ plotly = { git = "https://github.com/dathere/plotly", rev = "d43be3786c32ab2790a6c0e927ee39d2bb99704c" }
+ 
+ # use our patched fork until our PR is merged with bumped deps and quick-xml RUSTSEC fixes
++# https://github.com/thscharler/spreadsheet-ods/pull/77
+ spreadsheet-ods = { git = "https://github.com/jqnatividad/spreadsheet-ods", branch = "deps-bump-202607" }
+ 
+ # compact_bytes 0.2.1 + Ord/From<&[u8]>/Borrow<[u8]>, serde, edition 2024, and the
+-# CompactBytesSlice::into_boxed_slice fix (upstream ParkMyCar/compact_bytes#11).
++# CompactBytesSlice::into_boxed_slice fix (upstream ParkMyCar/compact_bytes#11), and the
++# big-endian heap-tag fix (ParkMyCar/compact_bytes#12).
+ # Pulled in by qsv-stats' ByteKey (0.57+). Same version as upstream, so crates.io
+ # builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
+ compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch = "main" }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2331,13 +2304,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(validate): date/time formats reject non-digits (jsonschema 0.61)
+## X. docs(changelog): measured jsonschema 0.61 validate speedup
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc504b1d`: test(validate): date/time formats reject non-digits (jsonschema 0.61). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c31273fc`: docs(changelog): measured jsonschema 0.61 validate speedup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2345,19 +2318,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`validate` is stricter and more correct with jsonschema 0.61** (from 0.60.2). Rows that passed before can now fail:
-  - **`format: "date-time"`, `"date"` and `"time"` require a digit wherever RFC 3339 does** ([jsonschema#1829](https://github.com/Stranger6667/jsonschema/issues/1829)). Before, `+`, `,`, `-`, `.` or `/` passed in many digit positions, so `2026-11-0/T10:00:00Z` and `-----11-06T10:00:00Z` were valid date-times.
-  - **Numeric keywords judge whole floats past 2^53 correctly** ([jsonschema#1825](https://github.com/Stranger6667/jsonschema/issues/1825)). A float equal to an integer bound past 2^53 was converted to the wrong integer, so `exclusiveMinimum` admitted the bound itself and `const` rejected it.
-  - **`.` in `pattern` and `patternProperties` no longer matches `\r`, U+2028 or U+2029**, so a value containing one of these line terminators can now fail a pattern it passed before.
-  - **Schema fixes:** `oneOf`/`anyOf` no longer reject valid rows when a branch's `$ref` sits under an `$id`, and `$ref` pointers through a numeric key (`#/responses/200`) now resolve the references under their target.
-  - Validation is also faster. jsonschema reports up to 40% with `serde_
+  - Validation is slightly faster. On the 1M-row NYC 311 sample (release build; a 41-property schema with type, length, enum and range checks), `validate` executes 3.7–4.0% fewer instructions when every row is valid, and 2.6–2.7% fewer with one error per row. That makes it 2–3% faster with `--jobs 1`, with no measurable wall-clock change at the default thread count. Upstream's larger figures (up to 40% with `preserve_order`) are best cases for the validation call itself; these are end-to-end results on this file.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  - Validation is also faster. jsonschema reports up to 40% with `serde_json`'s `preserve_order` (which qsv enables), and `is_valid` (the per-row check) up to 14% faster on small instances. qsv hasn't measured these.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc504b1d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c31273fc` are properly handled with clean fallback behavior.

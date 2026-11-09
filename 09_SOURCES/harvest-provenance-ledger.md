@@ -8698,3 +8698,6 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `296fac67` | Multi-dimensional audit evidence | 2026-11-09T23:17:49.681Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `7c445c0c` | Multi-dimensional audit evidence | 2026-11-09T23:17:52.990Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `b7e625df` | Multi-dimensional audit evidence | 2026-11-09T23:17:55.262Z |
+| `learn-github-margelo-react-native-mmkv` | `https://github.com/margelo/react-native-mmkv` | `0ec4c963` | Multi-dimensional audit evidence | 2026-11-09T23:40:39.732Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c31273fc` | Multi-dimensional audit evidence | 2026-11-09T23:40:51.430Z |
+| `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `7ffb8c4f` | Multi-dimensional audit evidence | 2026-11-09T23:45:25.468Z |

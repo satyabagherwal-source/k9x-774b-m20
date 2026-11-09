@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T23:17:55.151Z",
+  "last_updated": "2026-11-09T23:45:25.354Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9719,8 +9719,8 @@
       "slug": "dalance-procs",
       "platform": "github",
       "source_url": "https://github.com/dalance/procs",
-      "source_version": "cada1c61",
-      "content_hash": "0e81c1a1f7f58148d5803b28fc19d5a78160716e5188ddd180ceb554502b27b5",
+      "source_version": "7ffb8c4f",
+      "content_hash": "db5d357075705122b0ea98ff6f146d443770f56c33b263e5bae53f1e8f76b4cf",
       "dossier_path": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "promoted_rules": [
@@ -9728,6 +9728,21 @@
           "number": null,
           "title": "build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Terminal Escape Slicing & Boundary Reset Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Untrusted OS Process Entity Sanitization Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dual-Representation Column Decoupling Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2237,
@@ -9760,7 +9775,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:09:02.346Z",
+      "verified_at": "2026-11-09T23:45:25.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10177,8 +10192,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "dc504b1d",
-      "content_hash": "b1a35d23ea0b1270603fe21cf38e956e73ce5debd1348b40f87083e44c4d0d1f",
+      "source_version": "c31273fc",
+      "content_hash": "dbb844c1d572d61d03c4ba0c64784de1cf0d573f0a500f0c6d8bf4a1e41344c0",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10260,6 +10275,11 @@
         {
           "number": null,
           "title": "test(validate): date/time formats reject non-digits (jsonschema 0.61)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs(changelog): measured jsonschema 0.61 validate speedup",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10613,7 +10633,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T22:48:35.332Z",
+      "verified_at": "2026-11-09T23:40:51.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42043,11 +42063,16 @@
       "slug": "margelo-react-native-mmkv",
       "platform": "github",
       "source_url": "https://github.com/margelo/react-native-mmkv",
-      "source_version": "ca5acf0c",
-      "content_hash": "6889ce25a7021cff22adfb10b1f8406b80a0ac17c260f66d2f729877fc27e980",
+      "source_version": "0ec4c963",
+      "content_hash": "1208571917a3fe47c4055540d8499d0c24b69a5ecace46870315f52836c779f3",
       "dossier_path": "07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Return `undefined` from the hooks' server snapshot (#1102)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1987,
           "title": "deps): bump com.android.tools.build:gradle (#1080)",
@@ -42059,7 +42084,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:00:33.779Z",
+      "verified_at": "2026-11-09T23:40:39.587Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "dc504b1d",
+    "sourceVersion": "c31273fc",
     "license": "NOASSERTION",
-    "contentHash": "b1a35d23ea0b1270603fe21cf38e956e73ce5debd1348b40f87083e44c4d0d1f",
-    "lastHarvestedAt": "2026-11-09T22:48:35.410Z",
+    "contentHash": "dbb844c1d572d61d03c4ba0c64784de1cf0d573f0a500f0c6d8bf4a1e41344c0",
+    "lastHarvestedAt": "2026-11-09T23:40:51.430Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4653,10 +4653,10 @@
     "repository": "margelo/react-native-mmkv",
     "platform": "github",
     "sourceUrl": "https://github.com/margelo/react-native-mmkv",
-    "sourceVersion": "ca5acf0c",
+    "sourceVersion": "0ec4c963",
     "license": "MIT",
-    "contentHash": "6889ce25a7021cff22adfb10b1f8406b80a0ac17c260f66d2f729877fc27e980",
-    "lastHarvestedAt": "2026-10-20T14:00:33.859Z",
+    "contentHash": "1208571917a3fe47c4055540d8499d0c24b69a5ecace46870315f52836c779f3",
+    "lastHarvestedAt": "2026-11-09T23:40:39.732Z",
     "learningId": "learn-github-margelo-react-native-mmkv"
   },
   "aquasecurity-trivy": {
@@ -6633,10 +6633,10 @@
     "repository": "dalance/procs",
     "platform": "github",
     "sourceUrl": "https://github.com/dalance/procs",
-    "sourceVersion": "cada1c61",
+    "sourceVersion": "7ffb8c4f",
     "license": "MIT",
-    "contentHash": "0e81c1a1f7f58148d5803b28fc19d5a78160716e5188ddd180ceb554502b27b5",
-    "lastHarvestedAt": "2026-11-07T05:09:02.462Z",
+    "contentHash": "db5d357075705122b0ea98ff6f146d443770f56c33b263e5bae53f1e8f76b4cf",
+    "lastHarvestedAt": "2026-11-09T23:45:25.468Z",
     "learningId": "learn-github-dalance-procs"
   },
   "ionic-team-ionic-framework": {

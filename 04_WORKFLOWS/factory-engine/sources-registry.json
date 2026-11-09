@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T23:17:57.872Z",
-    "lastVerified": "2026-11-09T23:17:57.872Z",
+    "lastChecked": "2026-11-09T23:45:28.049Z",
+    "lastVerified": "2026-11-09T23:45:28.049Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,12 +258,12 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T22:48:33.015Z",
-    "lastVerified": "2026-11-09T22:48:33.015Z",
+    "lastChecked": "2026-11-09T23:35:47.571Z",
+    "lastVerified": "2026-11-09T23:35:47.571Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "b1a35d23ea0b1270603fe21cf38e956e73ce5debd1348b40f87083e44c4d0d1f",
+    "contentHash": "dbb844c1d572d61d03c4ba0c64784de1cf0d573f0a500f0c6d8bf4a1e41344c0",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -1383,8 +1383,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T14:53:03.233Z",
-    "lastVerified": "2026-11-09T14:53:03.233Z",
+    "lastChecked": "2026-11-09T23:35:38.667Z",
+    "lastVerified": "2026-11-09T23:35:38.667Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -4347,11 +4347,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "margelo-react-native-mmkv": {
-    "name": "react-native-mmkv",
+    "name": "margelo/react-native-mmkv",
     "officialUrl": "https://github.com/margelo/react-native-mmkv",
-    "lastChecked": "2026-11-07T03:01:17.213Z",
-    "revisionIdentifier": "ca5acf0c",
-    "lastVerified": "2026-11-07T03:01:17.213Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-09T23:35:37.174Z",
+    "lastVerified": "2026-11-09T23:35:37.174Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-margelo-react-native-mmkv",
+    "contentHash": "1208571917a3fe47c4055540d8499d0c24b69a5ecace46870315f52836c779f3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "krakend-krakend-ce": {
     "name": "krakend-ce",
@@ -4598,9 +4608,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-11-08T22:19:44.366Z",
+    "lastChecked": "2026-11-09T23:35:36.174Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-11-08T22:19:44.366Z"
+    "lastVerified": "2026-11-09T23:35:36.174Z"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -7077,22 +7087,21 @@
     "lastVerified": "2026-11-09T22:41:03.405Z"
   },
   "dalance-procs": {
-    "name": "procs",
+    "name": "dalance/procs",
     "officialUrl": "https://github.com/dalance/procs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T17:13:11.220Z",
-    "lastVerified": "2026-11-08T17:13:11.220Z",
+    "lastChecked": "2026-11-09T23:35:32.629Z",
+    "lastVerified": "2026-11-09T23:35:32.629Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dalance-procs",
-    "contentHash": "0e81c1a1f7f58148d5803b28fc19d5a78160716e5188ddd180ceb554502b27b5",
-    "promotedRulesCount": 1,
+    "contentHash": "db5d357075705122b0ea98ff6f146d443770f56c33b263e5bae53f1e8f76b4cf",
+    "promotedRulesCount": 3,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "cada1c61"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -7403,9 +7412,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-08T21:16:43.720Z",
+    "lastChecked": "2026-11-09T23:35:41.206Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-08T21:16:43.720Z"
+    "lastVerified": "2026-11-09T23:35:41.206Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -9644,9 +9653,9 @@
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",
     "officialUrl": "https://github.com/serpapi/google-search-results-nodejs",
-    "lastChecked": "2026-11-05T19:37:58.760Z",
+    "lastChecked": "2026-11-09T23:35:31.156Z",
     "revisionIdentifier": "f6d03fc9",
-    "lastVerified": "2026-11-05T19:37:58.760Z"
+    "lastVerified": "2026-11-09T23:35:31.156Z"
   },
   "apppear-chartview": {
     "name": "ChartView",
