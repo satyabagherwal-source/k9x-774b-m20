@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T05:19:09.230Z",
+  "last_updated": "2026-11-09T07:01:05.931Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4303,6 +4303,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf"
+    },
+    {
+      "id": "CD-X3BF",
+      "directive_title": "group): preserve evaluated inputs across spill retries (#32368)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "e2459cc5",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-matrixorigin-matrixone"
     }
   ]
 }

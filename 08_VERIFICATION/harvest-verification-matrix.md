@@ -8534,3 +8534,6 @@
 | `CYCLE-20261109-DKRQ` | `2026-11-09T06:45:55.430Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`13182f34...`) |
 | `CYCLE-20261109-DOFA` | `2026-11-09T06:46:00.166Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b8ba7f5b...`) |
 | `CYCLE-20261109-JRFN` | `2026-11-09T06:50:44.003Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`674cd434...`) |
+| `CYCLE-20261109-X3B4` | `2026-11-09T07:01:05.920Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`0b3dec38...`) |
+| `CYCLE-20261109-3868` | `2026-11-09T07:05:52.160Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`6b2c784a...`) |
+| `CYCLE-20261109-3D51` | `2026-11-09T07:05:58.597Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`47bcffb5...`) |

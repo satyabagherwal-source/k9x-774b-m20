@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261107-HZ6F",
-    "timestamp": "2026-11-07T17:57:51.063Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-I0WM",
-    "timestamp": "2026-11-07T17:57:53.302Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261107-ODAF",
-    "timestamp": "2026-11-07T18:02:49.287Z",
-    "repository": "open-policy-agent/gatekeeper",
-    "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "3249e7c046f87b2f45cfececbce0b4b332b2e64c7ffbd646ade9f6f17e3daf6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261107-X85A",
     "timestamp": "2026-11-07T18:09:42.526Z",
     "repository": "matthart1983/netwatch",
@@ -7492,6 +7447,51 @@
     "contentHash": "674cd434d5cb8403b6d55c6383386c94fbfca8d29ab3dc2ced9d4cdf76203753",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-X3B4",
+    "timestamp": "2026-11-09T07:01:05.920Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "0b3dec38b942ba16a7eebfb0e4b35d1c102c2d271d0c2b4c43db1839e16e1142",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-3868",
+    "timestamp": "2026-11-09T07:05:52.160Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "6b2c784ab1976a56c7a4fe1fcdf4917b1b4543f34444d6e1d24291618b6d208b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-3D51",
+    "timestamp": "2026-11-09T07:05:58.597Z",
+    "repository": "react/react-native",
+    "learningId": "learn-github-react-react-native",
+    "contentHash": "47bcffb5b37bfd61196143d75afe91331218175e3773491d757e7820e78a2da3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

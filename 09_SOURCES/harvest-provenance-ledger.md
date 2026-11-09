@@ -8543,3 +8543,6 @@ Every entry in this ledger must capture:
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `1cf8d3e7` | Multi-dimensional audit evidence | 2026-11-09T06:45:55.434Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `88f81209` | Multi-dimensional audit evidence | 2026-11-09T06:46:00.175Z |
 | `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-09T06:50:44.007Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e2459cc5` | Multi-dimensional audit evidence | 2026-11-09T07:01:05.924Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T07:05:52.164Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `f480836a` | Multi-dimensional audit evidence | 2026-11-09T07:05:58.611Z |

@@ -185,8 +185,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "2dd84fc501a3ebf2ac66f676148e3662029acd1c9c4b076bc27cd6b2708c6a7d",
-    "lastHarvestedAt": "2026-11-05T12:06:59.474Z",
+    "contentHash": "6b2c784ab1976a56c7a4fe1fcdf4917b1b4543f34444d6e1d24291618b6d208b",
+    "lastHarvestedAt": "2026-11-09T07:05:52.164Z",
     "learningId": "learn-huggingface-liquidai-d1-3b"
   },
   "hf-cactus-compute-whistle": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "89ca3dbb",
+    "sourceVersion": "e2459cc5",
     "license": "Apache-2.0",
-    "contentHash": "591754ec2dcf23b61869eafafd68337771a238b795ce6015d65e55e0d32d2b97",
-    "lastHarvestedAt": "2026-11-08T09:56:45.068Z",
+    "contentHash": "0b3dec38b942ba16a7eebfb0e4b35d1c102c2d271d0c2b4c43db1839e16e1142",
+    "lastHarvestedAt": "2026-11-09T07:01:05.924Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "93019c44",
+    "sourceVersion": "f480836a",
     "license": "MIT",
-    "contentHash": "664cc1814002910824d5f39baa6e4028bf3cb87186ef835f59c0716338ec9a03",
-    "lastHarvestedAt": "2026-11-05T23:49:02.014Z",
+    "contentHash": "47bcffb5b37bfd61196143d75afe91331218175e3773491d757e7820e78a2da3",
+    "lastHarvestedAt": "2026-11-09T07:05:58.611Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {

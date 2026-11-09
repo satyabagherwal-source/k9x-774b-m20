@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T06:50:44.015Z",
+  "last_updated": "2026-11-09T07:05:58.621Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -170,14 +170,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-d1-3b",
-      "content_hash": "2dd84fc501a3ebf2ac66f676148e3662029acd1c9c4b076bc27cd6b2708c6a7d",
-      "verified_at": "2026-11-05T12:06:59.481Z",
+      "content_hash": "6b2c784ab1976a56c7a4fe1fcdf4917b1b4543f34444d6e1d24291618b6d208b",
+      "verified_at": "2026-11-09T07:05:52.174Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:06:59.481Z"
+      "last_updated": "2026-11-09T07:05:52.174Z"
     },
     "Cactus-Compute/whistle": {
       "repository": "Cactus-Compute/whistle",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "591754ec2dcf23b61869eafafd68337771a238b795ce6015d65e55e0d32d2b97",
-      "verified_at": "2026-11-08T09:56:45.076Z",
+      "content_hash": "0b3dec38b942ba16a7eebfb0e4b35d1c102c2d271d0c2b4c43db1839e16e1142",
+      "verified_at": "2026-11-09T07:01:05.937Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T09:56:45.076Z"
+      "last_updated": "2026-11-09T07:01:05.937Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -15426,14 +15426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-react-native",
-      "content_hash": "664cc1814002910824d5f39baa6e4028bf3cb87186ef835f59c0716338ec9a03",
-      "verified_at": "2026-11-05T23:49:02.023Z",
+      "content_hash": "47bcffb5b37bfd61196143d75afe91331218175e3773491d757e7820e78a2da3",
+      "verified_at": "2026-11-09T07:05:58.620Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T23:49:02.023Z"
+      "last_updated": "2026-11-09T07:05:58.620Z"
     },
     "faker-js/faker": {
       "repository": "faker-js/faker",

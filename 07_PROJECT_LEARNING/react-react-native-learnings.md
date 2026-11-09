@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source**: github ([https://github.com/react/react-native](https://github.com/react/react-native))  
-> **Source Version**: `93019c44`  
+> **Source Version**: `f480836a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:49:00.563Z  
+> **Timestamp**: 2026-11-09T07:05:57.187Z  
 > **Learning ID**: `learn-github-react-react-native`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:48:53.252Z  
+> **Harvest Timestamp**: 2026-11-09T07:00:56.246Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126861 stars
+- **Stars / Engagement**: 126883 stars
 
 ---
 
@@ -89,7 +89,7 @@ export type PackagerAsset = Readonly<{
 }>;
 */
 
-const androidScaleSuffix /*: {[string]: string} */ = {
+const androidScaleSuffix /*: {[key: string]: string} */ = {
   '0.75': 'ldpi',
   '1': 'mdpi',
   '1.5': 'hdpi',
@@ -618,428 +618,43 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45152f1f` (2026-11-04)
-**Commit Message**: Fix addViewAt crash for views held by startViewTransition on Android
+### Incident Patch 1: `53f48ad5` (2026-11-06)
+**Commit Message**: Use metro:runtime for asyncRequireModulePath so Metro's transform cache is shareable across checkouts (#58584)
 
-<!-- Thanks for submitting a pull request! We appreciate you spending the time to work on these changes. Please provide enough information so that others can review your pull request. The three fields below are mandatory. -->
-
-## Summary:
-
-<!-- Explain the **motivation** for making this change. What existing problem does the pull request solve? -->
-
-On Android, `SurfaceMountingManager.addViewAt` fails when it inserts a view that a parent still holds with `ViewGroup.startViewTransition`.
-
-A held child can leave its old parent's child list while `child.parent` still points to that old parent:
-
-```text
-oldParent.indexOfChild(view) == -1
-view.parent == oldParent
-```
-
-The existing recovery in `addViewAt` calls `removeView` on the old parent. That does nothing for a view that is no longer in the child list, so `addView` throws `addViewAt: failed to insert view ... into parent`. The recovery also adds the tag to `erroneouslyReaddedReactTags`, so a later Remove of that tag returns early and the view is never removed.
-
-React Native Screens holds the content of a removed screen this way during its exit animation ([`Screen.
-
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/fabric/mounting/SurfaceMountingManager.kt` (modified, +5/-1)
+**File**: `packages/metro-config/package.json` (modified, +1/-2)
 ```diff
-@@ -335,7 +335,11 @@ internal constructor(
-       logViewHierarchy(parentView, false)
-     }
- 
--    val currParentView = view.parent
-+    var currParentView = view.parent
-+    if (currParentView is ViewGroup && currParentView.indexOfChild(view) == -1) {
-+      currParentView.endViewTransition(view)
-+      currParentView = view.parent
-+    }
-     if (currParentView != null) {
-       val actualParentId = if (currParentView is ViewGroup) currParentView.id else View.NO_ID
-       ReactSoftExceptionLogger.logSoftException(
-```
-
-**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/SurfaceMountingManagerViewTransitionTest.kt` (added, +231/-0)
-```diff
-@@ -0,0 +1,231 @@
-+/*
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ */
-+
-+@file:Suppress("DEPRECATION")
-+
-+package com.facebook.react.fabric
-+
-+import android.app.Activity
-+import android.view.View
-+import android.view.ViewGroup
-+import com.facebook.react.ReactRootView
-+import com.facebook.react.bridge.JavaOnlyMap
-+import com.facebook.react.bridge.ReactTestHelper
-+import com.facebook.react.fabric.mounting.MountingManager
-+import com.facebook.react.fabric.mounting.MountingManager.MountItemExecutor
-+import com.facebook.react.fabric.mounting.SurfaceMountingManager
-+import com.facebook.react.internal.featureflags.ReactNativeFeatureFlagsForTests
-+import com.facebook.react.uimanager.ThemedReactContext
-+import com.facebook.react.uimanager.ViewManager
-+import com.facebook.react.uimanager.ViewManagerRegistry
-+import com.facebook.react.views.view.ReactViewManager
-+import com.facebook.testutils.shadows.ShadowSoLoader
-+import org.assertj.core.api.Assertions.assertThat
-+import org.junit.Before
-+import org.junit.Test
-+import org.junit.runner.RunWith
-+import org.robolectric.Robolectric
-+import org.robolectric.RobolectricTestRunner
-+import org.robolectric.annotation.Config
-+
-+/**
-+ * Tests for [SurfaceMountingManager.addViewAt] with views that a parent still holds with
-+ * [ViewGroup.startViewTransition] after their removal.
-+ */
-+@RunWith(RobolectricTestRunner::class)
-+@Config(shadows = [ShadowSoLoader::class])
-+class SurfaceMountingManagerViewTransitionTest {
-+  private lateinit var mountingManager: MountingManager
-+  private lateinit var themedReactContext: ThemedReactContext
-+  private val surfaceId = 1
-+
-+  @Before
-+  fun setUp() {
-+    ReactNativeFeatureFlagsForTests.setUp()
-+    val reactContext = ReactTestHelper.createTestReactApplicationContext()
-+    themedReactContext = ThemedReactContext(reactContext, reactContext, null, -1)
-+    mountingManager =
-+        MountingManager(
-+            ViewManagerRegistry(listOf<ViewManager<*, *>>(ReactViewManager())),
-+            MountItemExecutor {},
-+        )
-+  }
-+
-+  @Test
-+  fun addViewAt_movesHeldChildAndAllowsItsFinalRemoval() {
-+    val smm = startSurface()
-+    smm.createViews(SCREEN, CARRIER)
-+    smm.addViewAt(surfaceId, SCREEN, 0)
-+    smm.addViewAt(SCREEN, CARRIER, 0)
-+    val screen = smm.viewGroup(SCREEN)
-+    val carrier = smm.getView(CARRIER)
-+
-+    screen.startViewTransition(carrier)
-+    smm.removeViewAt(CARRIER, SCREEN, 0)
-+    assertThat(carrier.parent).isSameAs(screen)
-+
-+    smm.addViewAt(surfaceId, CARRIER, 1)
-+    assertThat(carrier.parent).isSameAs(smm.viewGroup(surfaceId))
-+
-+    smm.removeViewAt(CARRIER, surfaceId, 1)
-+    assertThat(carrier.parent).isNull()
-+    assertThat(smm.viewGroup(surfaceId).indexOfChild(carrier)).isEqualTo(-1)
-+  }
-+
-+  @Test
-+  fun addViewAt_movesNestedHeldChildrenAndAllowsTheirFinalRemoval() {
-+    val smm = startSurface()
-+    smm.createViews(SCREEN, CONTENT, CARRIER, INNER_CARRIER)
-+    smm.addViewAt(surfaceId, SCREEN, 0)
-+    smm.addViewAt(SCREEN, CONTENT, 0)
-+    smm.addViewAt(CONTENT, CARRIER, 0)
-+    smm.addViewAt(CARRIER, INNER_CARRIER, 0)
-+    val root = smm.viewGroup(surfaceId)
-+    val carrier = smm.getView(CARRIER)
-+    val innerCarrier = smm.getView(INNER_CARRIER)
-+
-+    repeat(2) {
-+      smm.viewGroup(SCREEN).startViewTransition(smm.getView(CONTENT))
-+      smm.viewGroup(CONTENT).startViewTransition(carrier)
-+      smm.viewGroup(CARRIER).startViewTransition(innerCarrier)
-+    }
-+    smm.removeViewAt(INNER_CARRIER, CARRIER, 0)
-+    smm.removeViewAt(CARRIER, CONTENT, 0)
-+    assertThat(carrier.parent).isSameAs(smm.viewGroup(CONTENT))
-+    assertThat(innerCarrier.parent).isSameAs(carrier)
-+
-+    smm.addViewAt(surfaceId, CARRIER, 1)
-+    smm.addViewAt(surfaceId, INNER_CARRIER, 2)
-+    assertThat(carrier.parent).isSameAs(root)
-+    assertThat(innerCarrier.parent).isSameAs(root)
-+
-+    smm.removeViewAt(INNER_CARRIER, surfaceId, 2)
-+    smm.removeViewAt(CARRIER, surfaceId, 1)
-+    assertThat(innerCarrier.parent).isNull()
-+    assertThat(carrier.parent).isNull()
-+    assertThat(root.childCount).isEqualTo(1)
-+  }
-+
-+  @Test
-+  fun addViewAt_movesHeldChildOfRootAttachedToWindow() {
-+    val smm = startSurface()
-+    attachToWindow(smm.getView(surfaceId))
-+    smm.createViews(SCREEN, CARRIER)
-+    smm.addViewAt(surfaceId, SCREEN, 0)
-+    smm.addViewAt(SCREEN, CARRIER, 0)
-+    val carrier = smm.getView(CARRIER)
-+
-+    smm.viewGroup(SCREEN).startViewTransition(carrier)
-+    smm.removeViewAt(CARRIER, SCREEN, 0)
-+    assertThat(carrier.isAttachedToWindow).isTrue()
-+
-+    smm.addViewAt(surfaceId, CARRIER, 1)
-+    assertThat(carrier.parent).isSameAs(smm.viewGroup(surfaceId))
-+    assertThat(carrier.isAttachedToWindow).isTrue()
-+
-+    smm.removeViewAt(CARRIER, surfaceId, 1)
-+    assertThat(carrier.parent).isNull()
-+    assertThat(carrier.isAttachedToWindow).isFalse()
-+  }
-+
-+  @Test
-+
-```
-
----
-
-### Incident Patch 2: `1f8cb8b3` (2026-11-05)
-**Commit Message**: Report the native memory of created shadow nodes to the JS GC
-
-## Summary:
-
-The JS object that `createNode` returns owns the new shadow node, so the shadow node (with its props, family and event emitter) is only freed when the GC collects that object. The GC doesn't know about this native memory: it only sees a small JS object. With Hermes, it can go a long time without a full collection, and the shadow nodes of trees that were already unmounted pile up in native memory.
-
-This change reports an estimate of that native memory with `setExternalMemoryPressure` when `createNode` returns, like the Blob module does for blob data (#44336). The GC then accounts for it and collects unmounted trees in time.
-
-The estimate is 2 KB per node. A `View` with a few style props takes about 2.4 KB on Android (shadow node, props, family and event emitter, measured with heapprofd), a bit less on iOS, which doesn't keep a `folly::dynamic` copy of the props. Only nodes from `createNode` are reported, not clones: that's where most of the memory is, and reporting clones too made no difference in the measurements below while it would make the GC run more often during frequent re-renders. JSC's `setExternalM
-
-**File**: `packages/react-native/ReactCommon/react/renderer/uimanager/UIManagerBinding.cpp` (modified, +22/-5)
-```diff
-@@ -23,6 +23,16 @@
- 
- namespace facebook::react {
- 
-+namespace {
-+
-+// Native memory that the JS object returned by `createNode` keeps alive: the
-+// shadow node with its props, family and event emitter. A View with a few
-+// style props takes about 2.4 KB on Android (measured with heapprofd), a bit
-+// less on iOS, which doesn't keep the props as `folly::dynamic`.
-+constexpr size_t kCreatedShadowNodeNativeMemory = 2048;
-+
-+} // namespace
-+
- void UIManagerBinding::createAndInstallIfNeeded(
-     jsi::Runtime& runtime,
-     const std::shared_ptr<UIManager>& uiManager) {
-@@ -245,7 +255,7 @@ jsi::Value UIManagerBinding::get(
-               return jsi::Value::undefined();
-             }
- 
--            return valueFromShadowNode(
-+            auto node = objectFromShadowNode(
-                 runtime,
-                 uiManager->createNode(
-                     tagFromValue(arguments[0]),
-@@ -254,6 +264,13 @@ jsi::Value UIManagerBinding::get(
-                     RawProps(runtime, arguments[3]),
-                     std::move(instanceHandle)),
-                 true);
-+            // The shadow node is freed only when the GC collects this object,
-+            // so tell the GC about the native memory it keeps alive. Without
-+            // this, unmounted shadow trees can pile up until the JS heap
-+            // itself grows enough for a full collection.
-+            node.setExternalMemoryPressure(
-+                runtime, kCreatedShadowNodeNativeMemory);
-+            return node;
-           } catch (const std::logic_error& ex) {
-             LOG(FATAL) << "logic_error in createNode: " << ex.what();
-           }
-@@ -339,7 +356,7 @@ jsi::Value UIManagerBinding::get(
-           // rolled out
-           // validateArgumentCount(runtime, methodName, paramCount, count);
- 
--          return valueFromShadowNode(
-+          return objectFromShadowNode(
-               runtime,
-               uiManager->cloneNode(
-                   *Bridging<std::shared_ptr<const ShadowNode>>::fromJs(
-@@ -365,7 +382,7 @@ jsi::Value UIManagerBinding::get(
-             size_t count) -> jsi::Value {
-           validateArgumentCount(runtime, methodName, paramCount, count);
- 
--          return valueFromShadowNode(
-+          return objectFromShadowNode(
-               runtime,
-               uiManager->cloneNode(
-                   *Bridging<std::shared_ptr<const ShadowNode>>::fromJs(
-@@ -393,7 +410,7 @@ jsi::Value UIManagerBinding::get(
-           // validateArgumentCount(runtime, methodName, paramCount, count);
- 
-           bool hasChildrenArg = count == 3;
--          return valueFromShadowNode(
-+          return objectFromShadowNode(
-               runtime,
-               uiManager->cloneNode(
-                   *Bridging<std::shared_ptr<const ShadowNode>>::fromJs(
-@@ -820,7 +837,7 @@ jsi::Value UIManagerBinding::get(
-             return jsi::Value::null();
-           }
- 
--          return valueFromShadowNode(runtime, shadowNode);
-+          return objectFromShadowNode(runtime, shadowNode);
-         });
+@@ -38,7 +38,6 @@
+   "dependencies": {
+     "@react-native/js-polyfills": "0.87.0-main",
+     "@react-native/metro-babel-transformer": "0.87.0-main",
+-    "metro-config": "^0.87.2",
+-    "metro-runtime": "^0.87.2"
++    "metro-config": "^0.87.2"
    }
- 
+ }
 ```
 
-**File**: `packages/react-native/ReactCommon/react/renderer/uimanager/primitives.h` (modified, +1/-1)
+**File**: `packages/metro-config/src/index.flow.js` (modified, +1/-2)
 ```diff
-@@ -43,7 +43,7 @@ struct ShadowNodeListWrapper : public jsi::NativeState {
-   std::shared_ptr<std::vector<std::shared_ptr<const ShadowNode>>> shadowNodeList;
- };
- 
--inline static jsi::Value valueFromShadowNode(
-+inline static jsi::Object objectFromShadowNode(
-     jsi::Runtime &runtime,
-     std::shared_ptr<const ShadowNode> shadowNode,
-     bool assignRuntimeShadowNodeReference = false)
-```
-
-**File**: `packages/react-native/src/private/__tests__/ShadowNodeExternalMemory-itest.js` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @fantom_mode *
-+ * @fantom_disable_coverage
-+ * @flow strict-local
-+ * @format
-+ */
-+
-+import '@react-native/fantom/src/setUpDefaultReactNativeEnvironment';
-+
-+import * as Fantom from '@react-native/fantom';
-+import nullthrows from 'nullthrows';
-+import * as React from 'react';
-+import {View} from 'react-native';
-+
-+// Must match `kCreatedShadowNodeNativeMemory` in UIManagerBinding.cpp.
-+const CREATED_SHADOW_NODE_NATIVE_MEMORY = 2048;
-+
-+function getExternalMemoryAfterGC(): number {
-+  global.gc();
-+  const stats = nullthrows(
-+    nullthrows(global.HermesInternal).getInstrumentedStats,
-+  )();
-+  const externalBytes = stats.js_externalBytes;
-+  if (typeof externalBytes !== 'number') {
-+    throw new Error('Expected js_externalBytes to be a number');
-+  }
-+  return externalBytes;
-+}
-+
-+describe('shadow node external memory', () => {
-+  it('reports the native memory of created shadow nodes to the GC until they are collected', () => {
-+    const before = getExternalMemoryAfterGC();
-+
-+    let root: ?Fantom.Root = Fantom.createRoot();
-+    Fantom.runTask(() => {
-+      nullthrows(root).render(
-+        <View>
-+          {Array.from({length: 100}, (_, i) => (
-+            <View key={i} />
-+          ))}
-+        </View>,
-+      );
-+    });
-+
-+    // The 100 children and their parent are alive, so their native memory
-+    // stays reported after a GC.
-+    expect(getExternalMemoryAfterGC() - before).toBeGreaterThanOrEqual(
-+      101 * CREATED_SHADOW_NODE_NATIVE_MEMORY,
-+    );
-+
-+    Fantom.runTask(() => {
-+      nullthrows(root).destroy();
-+    });
-+    root = null;
-+
-+    // Once the tree is unmounted and collected, its memory isn't reported
-+    // anymore.
-+    expect(getExternalMemoryAfterGC() - before).toBeLessThan(
-+      CREATED_SHADOW_NODE_NATIVE_MEMORY,
-+    );
-+  });
-+});
-```
-
----
-
-### Incident Patch 3: `4a851dde` (2026-11-05)
-**Commit Message**: Drop `PropertyDescriptor` type arguments that the upcoming non-generic builtin rejects
-
-Summary:
-Flow's builtin `PropertyDescriptor<T = unknown>` is becoming non-generic, as in TypeScript's `lib.es5.d.ts`: its `value`, `get` and `set` use `any`, and `Object.getOwnPropertyDescriptor` no longer takes a type argument. The new builtins reject `PropertyDescriptor<X>` annotations and `Object.getOwnPropertyDescriptor<X>(...)` calls.
-
-Remove those type arguments. Today's Flow accepts all of these sites without them.
-
-Nothing changes at runtime.
-
-Changelog: [Internal] Drop `PropertyDescriptor` type arguments.
-
-Differential Revision: D129956546
-
-Pull Request resolved: https://github.com/react/react-native/pull/59814
-
-**File**: `packages/react-native/Libraries/Utilities/PolyfillFunctions.js` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ export function polyfillObjectProperty<T>(
-   name: string,
-   getValue: () => T,
- ): void {
--  const descriptor = Object.getOwnPropertyDescriptor<$FlowFixMe>(object, name);
-+  const descriptor = Object.getOwnPropertyDescriptor(object, name);
-   if (__DEV__ && descriptor) {
-     const backupName = `original${name[0].toUpperCase()}${name.slice(1)}`;
-     Object.defineProperty(object, backupName, descriptor);
-```
-
-**File**: `packages/react-native/src/private/webapis/dom/oldstylecollections/HTMLCollection.js` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ import {setPlatformObject} from '../../webidl/PlatformObjects';
- // IMPORTANT: The type definition for this module is defined in `HTMLCollection.js.flow`
- // because Flow only supports indexers in classes in declaration files.
- 
--const REUSABLE_PROPERTY_DESCRIPTOR: {...PropertyDescriptor<unknown>, ...} = {
-+const REUSABLE_PROPERTY_DESCRIPTOR: {...PropertyDescriptor, ...} = {
-   value: {},
-   enumerable: true,
-   configurable: false,
-```
-
-**File**: `packages/react-native/src/private/webapis/dom/oldstylecollections/NodeList.js` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ import {setPlatformObject} from '../../webidl/PlatformObjects';
- // IMPORTANT: The Flow type definition for this module is defined in `NodeList.js.flow`
- // because Flow only supports indexers in classes in declaration files.
- 
--const REUSABLE_PROPERTY_DESCRIPTOR: {...PropertyDescriptor<unknown>, ...} = {
-+const REUSABLE_PROPERTY_DESCRIPTOR: {...PropertyDescriptor, ...} = {
-   value: {},
-   writable: false,
- };
+@@ -66,8 +66,7 @@ export function getDefaultConfig(projectRoot: string): ConfigT {
+     transformer: {
+       allowOptionalDependencies: true,
+       assetRegistryPath: 'react-native/asset-registry',
+-      asyncRequireModulePath:
+-        require.resolve('metro-runtime/src/modules/asyncRequire'),
++      asyncRequireModulePath: 'metro:runtime/modules/asyncRequire',
+       babelTransformerPath:
+         require.resolve('@react-native/metro-babel-transformer'),
+       getTransformOptions: async () => ({
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #59841** (closed): Avoid reattaching VirtualizedList cell refs on every render (@dheerajkoppu)
+- **PR #59829** (2026-11-07): Upgrade Flow in fbsource (@SamChou19815)
+- **PR #59818** (2026-11-06): Label dictionary keys in react-native (#59818) (@SamChou19815)
 - **PR #59815** (2026-11-05): xplat/js/react-native-github: opt in to fmt 12.2.0 (@r-barnes)
 - **PR #59814** (2026-11-05): Drop `PropertyDescriptor` type arguments that the upcoming non-generic builtin rejects (@SamChou19815)
 - **PR #59810** (2026-11-05): [RN][Changelog] Mark two v0.89.0-rc.0 entries as breaking (@fabriziocucci)
-- **PR #59803** (2026-11-04): Upgrade Flow in fbsource (@SamChou19815)
-- **PR #59799** (2026-11-04): Make the conversions of `parseInt` and `isNaN` explicit (@SamChou19815)
-- **PR #59798** (closed): Fix LogBox inspector content under horizontal safe area insets (@huntie)
 
 ---
 
@@ -1059,32 +674,29 @@ Pull Request resolved: https://github.com/react/react-native/pull/59814
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. addViewAt crash for views held by startViewTransition on Android
+## X. Use metro:runtime for asyncRequireModulePath so Metro's transform cache is share
 
 **RULE**:
-When implementing operations in `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/fabric/mounting/SurfaceMountingManager.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro-config/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45152f1f`: addViewAt crash for views held by startViewTransition on Android. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53f48ad5`: Use metro:runtime for asyncRequireModulePath so Metro's transform cache is shareable across checkouts (#58584). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/fabric/mounting/SurfaceMountingManager.kt`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-config/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    var currParentView = view.parent
-    if (currParentView is ViewGroup && currParentView.indexOfChild(view) == -1) {
-      currParentView.endViewTransition(view)
-      currParentView = view.parent
-    }
+    "metro-config": "^0.87.2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    val currParentView = view.parent
+    "metro-config": "^0.87.2",
+    "metro-runtime": "^0.87.2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45152f1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53f48ad5` are properly handled with clean fallback behavior.

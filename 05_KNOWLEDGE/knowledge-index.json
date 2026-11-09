@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T06:50:43.893Z",
+  "last_updated": "2026-11-09T07:05:58.509Z",
   "total_verified_learnings": 1242,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27992,7 +27992,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/d1-3B",
       "source_version": "hf-liquidai-d1-3b",
-      "content_hash": "2dd84fc501a3ebf2ac66f676148e3662029acd1c9c4b076bc27cd6b2708c6a7d",
+      "content_hash": "6b2c784ab1976a56c7a4fe1fcdf4917b1b4543f34444d6e1d24291618b6d208b",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
       "promoted_rules": [
@@ -28045,7 +28045,7 @@
         "learn-huggingface-hf-liquidai-d1-3b-mv4341q9",
         "learn-huggingface-hf-liquidai-d1-3b-mv4gd5ma"
       ],
-      "verified_at": "2026-11-05T12:06:59.363Z",
+      "verified_at": "2026-11-09T07:05:52.020Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42082,8 +42082,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "89ca3dbb",
-      "content_hash": "591754ec2dcf23b61869eafafd68337771a238b795ce6015d65e55e0d32d2b97",
+      "source_version": "e2459cc5",
+      "content_hash": "0b3dec38b942ba16a7eebfb0e4b35d1c102c2d271d0c2b4c43db1839e16e1142",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -42173,7 +42173,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T09:56:44.928Z",
+      "verified_at": "2026-11-09T07:01:05.793Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53548,14 +53548,19 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "93019c44",
-      "content_hash": "664cc1814002910824d5f39baa6e4028bf3cb87186ef835f59c0716338ec9a03",
+      "source_version": "f480836a",
+      "content_hash": "47bcffb5b37bfd61196143d75afe91331218175e3773491d757e7820e78a2da3",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "addViewAt crash for views held by startViewTransition on Android",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Use metro:runtime for asyncRequireModulePath so Metro's transform cache is share",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53589,7 +53594,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:49:01.916Z",
+      "verified_at": "2026-11-09T07:05:58.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
