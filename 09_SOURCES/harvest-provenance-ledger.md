@@ -8452,3 +8452,4 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `08a261a0` | Multi-dimensional audit evidence | 2026-11-09T00:06:14.482Z |
 | `learn-github-iziz-libphonenumber-ios` | `https://github.com/iziz/libPhoneNumber-iOS` | `91fcc745` | Multi-dimensional audit evidence | 2026-11-09T00:13:29.529Z |
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-09T00:13:34.488Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-09T00:22:53.630Z |

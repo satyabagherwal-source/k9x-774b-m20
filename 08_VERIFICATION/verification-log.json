@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-YBBA",
-    "timestamp": "2026-11-06T23:02:49.030Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-0WOZ",
     "timestamp": "2026-11-06T23:04:50.051Z",
     "repository": "github/squad",
@@ -7492,6 +7477,21 @@
     "contentHash": "9421bf83a05c4410be2bd765016f6fb69ff207f4a4935595b99ba4dc1c11f4af",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-OZWA",
+    "timestamp": "2026-11-09T00:22:53.626Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "a23fc3c79733fc66304304d1ce35e0a7b52a928d47257cbe7cb24fbbb9adaced",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

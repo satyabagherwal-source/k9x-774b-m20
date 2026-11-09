@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T00:13:34.503Z",
-  "total_cycles_completed": 8408,
-  "total_learnings_persisted": 8408,
+  "last_updated": "2026-11-09T00:22:53.635Z",
+  "total_cycles_completed": 8409,
+  "total_learnings_persisted": 8409,
   "total_rules_promoted": 8209,
   "history": [
-    {
-      "timestamp": "2026-11-08T06:50:54.434Z",
-      "repository": "ccore/Qwen3.5-4B-3D-Coder",
-      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T06:59:30.973Z",
       "repository": "mtkennerly/ludusavi",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-09T00:22:53.635Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
