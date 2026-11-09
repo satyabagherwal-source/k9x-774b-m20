@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T22:55:26.957Z",
+  "last_updated": "2026-11-09T23:10:18.820Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42104,8 +42104,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "f03e9020",
-      "content_hash": "16a8bc646831d0ec3374dd9ca58235b35c6993ad46f9c290000a0d25d1a5913f",
+      "source_version": "429abfaf",
+      "content_hash": "0b117dd733524b19ef0ff111c57c9228d9732eeb6e8d754d089c50d4d91bd9b2",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -42117,6 +42117,11 @@
         {
           "number": null,
           "title": "MDEV-42009: Set GLOBAL innodb_log_archive=ON is not crash safe",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "MDEV-41810 Atomic CoR: a crash at the end of CREATE OR REPLACE loses both the ol",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42170,7 +42175,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:02:44.820Z",
+      "verified_at": "2026-11-09T23:07:33.296Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77064,8 +77069,8 @@
       "slug": "provablehq-snarkos",
       "platform": "github",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "0d7daaab",
-      "content_hash": "58f6c89c45620eff14305853073ea01c4341119ec5af0fe8cc90dec6c8a43029",
+      "source_version": "16f3ce5c",
+      "content_hash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
       "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
@@ -77265,7 +77270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:46:47.905Z",
+      "verified_at": "2026-11-09T23:07:29.930Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161501,16 +161506,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
       "source_version": "hf-liquidai-lfm3-vl-2b",
-      "content_hash": "8b890944eb7ad12f7fbee2a3f9a74826b99eaf5f2ca3726ccf0436850320c724",
+      "content_hash": "02c31304519120660b66b6c170f61b0558ec5f167867a98ce159269d13036116",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Operator KV Cache Allocation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Partial Rotary Head Frequency Partitioning Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "ML Tool-Calling Non-Greedy Parsing Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:29:28.122Z",
+      "verified_at": "2026-11-09T23:10:18.781Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

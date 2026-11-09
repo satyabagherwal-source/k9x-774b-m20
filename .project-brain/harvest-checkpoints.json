@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T22:55:27.054Z",
+  "last_updated": "2026-11-09T23:10:18.949Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "58f6c89c45620eff14305853073ea01c4341119ec5af0fe8cc90dec6c8a43029",
-      "verified_at": "2026-11-09T01:46:48.044Z",
+      "content_hash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
+      "verified_at": "2026-11-09T23:07:30.099Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:46:48.044Z"
+      "last_updated": "2026-11-09T23:07:30.099Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "16a8bc646831d0ec3374dd9ca58235b35c6993ad46f9c290000a0d25d1a5913f",
-      "verified_at": "2026-11-08T00:02:44.954Z",
+      "content_hash": "0b117dd733524b19ef0ff111c57c9228d9732eeb6e8d754d089c50d4d91bd9b2",
+      "verified_at": "2026-11-09T23:07:33.451Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:02:44.954Z"
+      "last_updated": "2026-11-09T23:07:33.451Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",
@@ -17226,14 +17226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-vl-2b",
-      "content_hash": "8b890944eb7ad12f7fbee2a3f9a74826b99eaf5f2ca3726ccf0436850320c724",
-      "verified_at": "2026-11-05T19:29:28.268Z",
+      "content_hash": "02c31304519120660b66b6c170f61b0558ec5f167867a98ce159269d13036116",
+      "verified_at": "2026-11-09T23:10:18.948Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:29:28.268Z"
+      "last_updated": "2026-11-09T23:10:18.948Z"
     },
     "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF": {
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",

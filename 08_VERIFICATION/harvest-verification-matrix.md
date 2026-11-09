@@ -8681,3 +8681,6 @@
 | `CYCLE-20261109-HU1E` | `2026-11-09T22:41:01.010Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`09d23ae2...`) |
 | `CYCLE-20261109-RKNK` | `2026-11-09T22:48:35.408Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b1a35d23...`) |
 | `CYCLE-20261109-0E9U` | `2026-11-09T22:55:27.042Z` | `graphprotocol/graph-node` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d1eb4826...`) |
+| `CYCLE-20261109-FW69` | `2026-11-09T23:07:30.081Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md` | Yes (`cc1d8508...`) |
+| `CYCLE-20261109-FYR6` | `2026-11-09T23:07:33.426Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0b117dd7...`) |
+| `CYCLE-20261109-JIGK` | `2026-11-09T23:10:18.932Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`02c31304...`) |

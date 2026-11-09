@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-HTJL",
-    "timestamp": "2026-11-08T02:49:36.465Z",
-    "repository": "mistralai/Timestral-209M",
-    "learningId": "learn-huggingface-mistralai-timestral-209m",
-    "contentHash": "b1683ce9a60e25a8aa20d1549f9919c27b0db8b812f625a6cdaec80e84320350",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-HYQ4",
-    "timestamp": "2026-11-08T02:49:43.180Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "17757edc699c703998948140c1a8b828d023f25b59da33ab4ab27897a1fc6564",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-R6OB",
-    "timestamp": "2026-11-08T02:56:53.387Z",
-    "repository": "Kuddev/pebrel",
-    "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "4f84cdd4e49118dc6703b03bfb4d99eddefa85afdae658dbb96ba44805905b13",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-RELV",
     "timestamp": "2026-11-08T02:57:03.667Z",
     "repository": "moonshotai/Kimi-K3.1-Pro",
@@ -7492,6 +7447,51 @@
     "contentHash": "d1eb4826ef58785d11a6851393d41b2474564a4db76d782ce4a1002a20605df4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-FW69",
+    "timestamp": "2026-11-09T23:07:30.081Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-FYR6",
+    "timestamp": "2026-11-09T23:07:33.426Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "0b117dd733524b19ef0ff111c57c9228d9732eeb6e8d754d089c50d4d91bd9b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261109-JIGK",
+    "timestamp": "2026-11-09T23:10:18.932Z",
+    "repository": "LiquidAI/LFM3-VL-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+    "contentHash": "02c31304519120660b66b6c170f61b0558ec5f167867a98ce159269d13036116",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `0d7daaab`  
+> **Source Version**: `16f3ce5c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:46:46.137Z  
+> **Timestamp**: 2026-11-09T23:07:29.726Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:46:46.129Z  
+> **Harvest Timestamp**: 2026-11-09T23:07:28.802Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1988,190 +1988,143 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d7daaab` (2026-11-08)
-**Commit Message**: Merge pull request #4641 from aleo-labs-protocol/feat/fuzz-helpers-feature
+### Incident Patch 1: `9ee0e3e9` (2026-11-09)
+**Commit Message**: Move the v1-to-v2 migration guide into the repository and link to it
 
-**File**: `.github/workflows/ci.yml` (modified, +22/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `node/rest/MIGRATING_TO_V2.md` (added, +96/-0)
 ```diff
-@@ -113,6 +113,10 @@ jobs:
-       # features, so it misses a feature one of them fails to declare.
-       - run: cargo check -p snarkos-node-metrics --all-features
-       - run: cargo check -p snarkos-display --all-features
-+      # The fuzzing harness builds these two alone with `fuzz-helpers`, which
-+      # the workspace pass above only sees unified with everything else.
-+      - run: cargo check -p snarkos-node-router-messages --features fuzz-helpers
-+      - run: cargo check -p snarkos-node-bft-events --features fuzz-helpers
- 
-   # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
-   # features of a and b, and several crates enable features on their
-@@ -385,6 +389,23 @@ jobs:
-     name: devnet (${{ matrix.name }})
-     steps: *devnet-steps
- 
-+  # The release binary must compile in no test-only code. `fuzz-helpers` turns on
-+  # proptest and snarkVM's `test-helpers`, and feature unification would carry
-+  # them into the binary if any crate on its path ever enabled it.
-+  release-graph:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-+        with: { persist-credentials: false }
-+      - run: |
-+          cargo tree -p snarkos -e normal,build,features --prefix none --locked > graph.txt
-+          hits=$(grep -E '^[a-z0-9_-]+ feature "(fuzz-helpers|test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
-+          if [ -n "$hits" ]; then
-+            printf '%s\n' "$hits"
-+            echo "::error::the snarkos release build enables test-only code (above)"
-+            exit 1
-+          fi
+@@ -0,0 +1,96 @@
++# Migrating from the v1 REST API to v2
 +
-   machete:
-     runs-on: ubuntu-latest
-     steps:
-@@ -421,7 +442,7 @@ jobs:
-   # for a required check, so each job a pull request runs must succeed here.
-   ci-ok:
-     if: always()
--    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, machete, lint, test-hosted, test, build-snarkos, devnet]
-+    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, machete, release-graph, lint, test-hosted, test, build-snarkos, devnet]
-     runs-on: ubuntu-latest
-     steps:
-       - env:
-```
-
-**File**: `node/bft/events/Cargo.toml` (modified, +18/-0)
-```diff
-@@ -20,6 +20,16 @@ edition = "2024"
- default = [ ]
- metrics = [ "snarkvm/metrics" ]
- test-helpers = [ "dep:rand_chacha", "dep:rand", "dep:proptest" ]
-+# Exposes the `prop_tests` modules -- the `any_*` generators -- to callers
-+# outside this crate's own test build. They are the only practical way to seed a
-+# fuzzing corpus with structurally valid events: without them a mutator spends
-+# most of its executions failing the version byte at the head of every reader.
-+#
-+# Named for what it is rather than folded into `test-helpers`, which already
-+# means something narrower here (it pulls the rng and proptest dependencies but
-+# un-gates nothing). Enabling this in a production build would compile the
-+# generators into the binary, so it is deliberately not implied by anything.
-+fuzz-helpers = [ "test-helpers", "dep:test-strategy", "dep:time", "snarkos-node-sync-locators/test", "snarkvm/test-helpers", "snarkvm/algorithms" ]
- 
- [dependencies.anyhow]
- workspace = true
-@@ -77,6 +87,14 @@ workspace = true
- workspace = true
- features = [ "test-helpers" ]
- 
-+[dependencies.test-strategy]
-+workspace = true
-+optional = true
++The REST API is served under three prefixes: `/v2/<network>`, `/v1/<network>`, and the unversioned `/<network>`.
++The unversioned prefix serves the v1 API.
++The v1 API and the unversioned prefix are deprecated.
++Use `/v2/<network>`.
 +
-+[dependencies.time]
-+workspace = true
-+optional = true
++The alias routes `/peers/count`, `/peers/all`, `/peers/all/metrics` and `/sync_status` are also deprecated, on every version, `/v2` included.
 +
- [dev-dependencies.test-strategy]
- workspace = true
- 
++## Timeline
++
++The deprecation started on 2026-11-08.
++
++| Release | `/v1/<network>/…`, `/<network>/…` and the alias routes |
++|---|---|
++| The first release with the deprecation (N) | Served as before, plus the deprecation headers |
++| N+1 | Served as before, plus the deprecation headers |
++| N+2 | **`410 Gone`**, with a body that points to `/v2` |
++
++## What to change
++
++1. **Put `/v2` in front of the network name** in every request URL:
++
++   ```text
++   https://node.example/mainnet/block/latest     →  https://node.example/v2/mainnet/block/latest
++   https://node.example/v1/mainnet/block/latest  →  https://node.example/v2/mainnet/block/latest
++   ```
++
++   The routes, query parameters and request bodies are the same on v2.
++
++   Also replace the alias routes:
++
++   | Deprecated | Use |
++   |---|---|
++   | `/peers/count` | `/connections/p2p/count` |
++   | `/peers/all` | `/connections/p2p/all` |
++   | `/peers/all/metrics` | `/connections/p2p/all/metrics` |
++   | `/sync_status` | `/sync/status` |
++
++2. **Successful responses do not change.**
++   Every 2xx response, including `203`, has the same status and body on v2 as on v1.
++
++3. **Error responses change. You must handle the new status codes and the JSON body.**
++
++   - **Status:** v1 answers every error with `500`.
++     v2 uses the status that describes the error:
++
++     | Status | Meaning |
++     |---|---|
++     | `400 Bad Request` | The request is malformed: bad parameters, a body that does not parse, or a body over a size limit |
++     | `404 Not Found` | The resource does not exist on this node, for example a block height it does not have yet |
++     | `422 Unprocessable Entity` | The request is well formed but invalid, for example a transaction that fails verification |
++     | `429 Too Many Requests` | Rate limited. A rate-limit rejection carries `Retry-After` |
++     | `503 Service Unavailable` | The node cannot serve this now, for example because it is syncing or the route needs a validator |
++     | `500 Internal Server Error` | A fault on the node |
++
++     Branch on the status code, not on the error text.
++     Handle any other 4xx or 5xx status by its class: v2 can add more specific codes.
++
++   - **Body:** v1 sends plain text, `message — cause — …`, with an `(HTTP NNN)` suffix when the error did not come from a route.
++     v2 sends JSON with `Content-Type: application/json`:
++
++     ```json
++     { "message": "…", "error_type": "not_found", "chain": ["cause", "…"] }
++     ```
++
++     If you display or parse error text, read `message` and `chain` from the JSON.
++
++## How v2 changes
++
++v2 is the stable API.
++
++These can be added to v2: status codes, JSON fields in error and success bodies, response headers, routes, and query parameters.
++For example, `transaction/broadcast` will use `409 Conflict`, and error bodies will get a machine-readable `code` field.
++
++These do not change in v2: the status and body of an existing success response, and the meaning of an existing field.
++
++Your client must ignore JSON fields and headers that it does not know.
++It must handle an unknown status by its class (4xx or 5xx).
++A change that breaks these rules gets a new API version.
++
++## Detecting a deprecated route
++
++Every response from a deprecated route, success or error, carries these headers ([RFC 9745](https://www.rfc-editor.org/rfc/rfc9745)):
++
++```text
++Deprecation: @1794096000
++Link: <https://github.com/aleo-labs-protocol/snarkOS/blob/staging/node/rest/MIGRATING_TO_V2.md>; rel="deprecation"
++```
++
++`Deprecation` is the date of deprecation, 2026-11-08, as a Unix timestamp.
++CORS exposes both headers, so browser clients can read them.
++
++HTTP libraries do not act on these headers by themselves.
++Check for `Deprecation` in your client and log a warning.
++`snarkos developer` prints a warning for each deprecated response.
 ```
 
-**File**: `node/bft/events/src/batch_certified.rs` (modified, +2/-1)
+**File**: `node/rest/README.md` (modified, +2/-0)
 ```diff
-@@ -57,8 +57,9 @@ impl<N: Network> FromBytes for BatchCertified<N> {
-     }
- }
+@@ -8,3 +8,5 @@ The `snarkos-node-rest` crate provides a REST API for the `snarkos` node.
  
--#[cfg(test)]
-+#[cfg(any(test, feature = "fuzz-helpers"))]
- pub mod prop_tests {
-+    #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::{BatchCertified, certificate_response::prop_tests::any_batch_certificate};
-     use snarkvm::console::prelude::{FromBytes, ToBytes};
- 
+ REST responses support gzip compression when the client sends `Accept-Encoding: gzip`.
+ Responses smaller than 32 bytes are not compressed.
++
++The v1 API and the unversioned routes are deprecated. See [Migrating from the v1 REST API to v2](./MIGRATING_TO_V2.md).
 ```
 
-**File**: `node/bft/events/src/batch_propose.rs` (modified, +2/-1)
+**File**: `node/rest/src/lib.rs` (modified, +2/-1)
 ```diff
-@@ -60,8 +60,9 @@ impl<N: Network> FromBytes for BatchPropose<N> {
-     }
- }
+@@ -566,7 +566,8 @@ async fn record_rest_request(request: Request<Body>, next: middleware::Next) ->
+ const DEPRECATION_TIMESTAMP: i64 = 1_794_096_000;
  
--#[cfg(test)]
-+#[cfg(any(test, feature = "fuzz-helpers"))]
- pub mod prop_tests {
-+    #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::{
-         BatchPropose,
-         certificate_response::prop_tests::any_batch_header,
-```
-
-**File**: `node/bft/events/src/batch_signature.rs` (modified, +2/-1)
-```diff
-@@ -53,8 +53,9 @@ impl<N: Network> FromBytes for BatchSignature<N> {
-     }
- }
+ /// Where a client of a deprecated route learns how to migrate.
+-const MIGRATION_GUIDE_URL: &str = "https://github.com/aleo-labs-protocol/snarkOS/pull/4650";
++const MIGRATION_GUIDE_URL: &str =
++    "https://github.com/aleo-labs-protocol/snarkOS/blob/staging/node/rest/MIGRATING_TO_V2.md";
  
--#[cfg(test)]
-+#[cfg(any(test, feature = "fuzz-helpers"))]
- pub mod prop_tests {
-+    #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::{
-         BatchSignature,
-         certificate_request::prop_tests::any_field,
-```
-
-**File**: `node/bft/events/src/block_request.rs` (modified, +2/-1)
-```diff
-@@ -68,8 +68,9 @@ impl FromBytes for BlockRequest {
-     }
- }
- 
--#[cfg(test)]
-+#[cfg(any(test, feature = "fuzz-helpers"))]
- pub mod prop_tests {
-+    #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::{BlockRequest, DataBlocks};
- 
-     use snarkvm::{
-```
-
-**File**: `node/bft/events/src/block_response.rs` (modified, +2/-1)
-```diff
-@@ -180,8 +180,9 @@ impl<N: Network> FromBytes for DataBlocks<N> {
-     }
- }
- 
--#[cfg(test)]
-+#[cfg(any(test, feature = "fuzz-helpers"))]
- pub mod prop_tests {
-+    #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::{BlockRequest, BlockResponse, DataBlocks, block_request::prop_tests::any_block_request};
- 
-     use snarkvm::{
-```
-
-**File**: `node/bft/events/src/certificate_request.rs` (modified, +2/-1)
-```diff
-@@ -57,8 +57,9 @@ impl<N: Network> FromBytes for CertificateRequest<N> {
-     }
- }
- 
--#[cfg(test)]
-+#[cfg(any(test, feature = "fuzz-helpers"))]
- pub mod prop_tests {
-+    #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::CertificateRequest;
-     use snarkvm::{
-         console::prelude::{FromBytes, ToBytes},
+ /// The `Deprecation` response header field (RFC 9745).
+ const DEPRECATION: HeaderName = HeaderName::from_static("deprecation");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4656** (2026-11-09): Bump snarkVM to aleo-labs-protocol/snarkVM@aa342cfe7 (@aleo-labs-merge-bot[bot])
+- **PR #4655** (2026-11-09): ci: add a deploy_rate input to the load test (@cbeck88)
+- **PR #4653** (2026-11-09): Bump snarkVM to aleo-labs-protocol/snarkVM@bcf2847b8 (@aleo-labs-merge-bot[bot])
 - **PR #4652** (2026-11-08): Gauntlet load test: inherit secrets (@cbeck88)
 - **PR #4651** (2026-11-08): Gauntlet workflows: the host reports each run's check (@cbeck88)
-- **PR #4649** (closed): ci: optional A/B catch-up against the last release in sync-test (@cbeck88)
-- **PR #4648** (2026-11-08): ci: separate gate user for follow-on stress and sync jobs; start the host when stopped (@cbeck88)
-- **PR #4647** (2026-11-07): chore(deps): bump actions/upload-artifact from 4.6.2 to 7.0.2 in the github-actions group (@dependabot[bot])
-- **PR #4645** (2026-11-07): Pin external GitHub Actions to commit SHAs (@cbeck88)
+- **PR #4650** (2026-11-09): Deprecate the v1 REST API and the unversioned routes (@cbeck88)
 
 ---
 
@@ -2191,49 +2144,61 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4641 from aleo-labs-protocol/feat/fuzz-helpers-feature
+## X. Move the v1-to-v2 migration guide into the repository and link to it
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/rest/MIGRATING_TO_V2.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d7daaab`: Merge pull request #4641 from aleo-labs-protocol/feat/fuzz-helpers-feature. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ee0e3e9`: Move the v1-to-v2 migration guide into the repository and link to it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/rest/MIGRATING_TO_V2.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      # The fuzzing harness builds these two alone with `fuzz-helpers`, which
-      # the workspace pass above only sees unified with everything else.
-      - run: cargo check -p snarkos-node-router-messages --features fuzz-helpers
-      - run: cargo check -p snarkos-node-bft-events --features fuzz-helpers
-  # The release binary must compile in no test-only code. `fuzz-helpers` turns on
-  # proptest and snarkVM's `test-helpers`, and feature unification would carry
-  # them into the binary if any crate on its path ever enabled it.
-  release-graph:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with: { persist-credentials: false }
-      - run: |
-          cargo tree -p snarkos -e normal,build,features --prefix none --locked > graph.txt
-          hits=$(grep -E '^[a-z0-9_-]+ feature "(fuzz-helpers|test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
-          if [ -n "$hits" ]; then
-            printf '%s\n' "$hits"
-            echo "::error::the snarkos release build enables test-only code (above)"
-            exit 1
-          fi
+# Migrating from the v1 REST API to v2
 
-    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, mac
+The REST API is served under three prefixes: `/v2/<network>`, `/v1/<network>`, and the unversioned `/<network>`.
+The unversioned prefix serves the v1 API.
+The v1 API and the unversioned prefix are deprecated.
+Use `/v2/<network>`.
+
+The alias routes `/peers/count`, `/peers/all`, `/peers/all/metrics` and `/sync_status` are also deprecated, on every version, `/v2` included.
+
+## Timeline
+
+The deprecation started on 2026-11-08.
+
+| Release | `/v1/<network>/…`, `/<network>/…` and the alias routes |
+|---|---|
+| The first release with the deprecation (N) | Served as before, plus the deprecation headers |
+| N+1 | Served as before, plus the deprecation headers |
+| N+2 | **`410 Gone`**, with a body that points to `/v2` |
+
+## What to change
+
+1. **Put `/v2` in front of the network name** in every request URL:
+
+   ```text
+   https://node.example/mainnet/block/latest     →  https://node.example/v2/mainnet/block/latest
+   https://node.example/v1/mainnet/block/latest  →  https://node.example/v2/mainnet/block/latest
+   ```
+
+   The routes, query parameters and request bodies are the same on v2.
+
+   Also replace the alias routes:
+
+   | Deprecated | Use |
+   |---|-
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, machete, lint, test-hosted, test, build-snarkos, devnet]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d7daaab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ee0e3e9` are properly handled with clean fallback behavior.

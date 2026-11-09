@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-09T22:55:35.550Z",
-    "lastVerified": "2026-11-09T22:55:35.550Z",
+    "lastChecked": "2026-11-09T23:10:21.569Z",
+    "lastVerified": "2026-11-09T23:10:21.569Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -460,8 +460,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T22:34:19.318Z",
-    "lastVerified": "2026-11-09T22:34:19.318Z",
+    "lastChecked": "2026-11-09T23:07:29.030Z",
+    "lastVerified": "2026-11-09T23:07:29.030Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1181,22 +1181,21 @@
     "revisionIdentifier": "e2db61bd"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T14:13:00.936Z",
-    "lastVerified": "2026-11-09T14:13:00.936Z",
+    "lastChecked": "2026-11-09T23:07:28.802Z",
+    "lastVerified": "2026-11-09T23:07:28.802Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "58f6c89c45620eff14305853073ea01c4341119ec5af0fe8cc90dec6c8a43029",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0d7daaab"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -4239,9 +4238,9 @@
   "react-native-image-picker-react-native-image-picker": {
     "name": "react-native-image-picker",
     "officialUrl": "https://github.com/react-native-image-picker/react-native-image-picker",
-    "lastChecked": "2026-11-07T02:41:07.859Z",
+    "lastChecked": "2026-11-09T23:07:19.058Z",
     "revisionIdentifier": "61c0cd41",
-    "lastVerified": "2026-11-07T02:41:07.859Z"
+    "lastVerified": "2026-11-09T23:07:19.058Z"
   },
   "go-chassis-go-chassis": {
     "name": "go-chassis",
@@ -4445,9 +4444,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-08T22:00:50.342Z",
+    "lastChecked": "2026-11-09T23:07:21.569Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-08T22:00:50.342Z"
+    "lastVerified": "2026-11-09T23:07:21.569Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -6927,9 +6926,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-08T16:58:34.386Z",
+    "lastChecked": "2026-11-09T23:07:14.002Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-08T16:58:34.386Z"
+    "lastVerified": "2026-11-09T23:07:14.002Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -7260,22 +7259,21 @@
     "revisionIdentifier": "bbcac03c"
   },
   "mariadb-server": {
-    "name": "server",
+    "name": "MariaDB/server",
     "officialUrl": "https://github.com/MariaDB/server",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-08T20:59:57.890Z",
-    "lastVerified": "2026-11-08T20:59:57.890Z",
+    "lastChecked": "2026-11-09T23:07:31.785Z",
+    "lastVerified": "2026-11-09T23:07:31.785Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mariadb-server",
-    "contentHash": "16a8bc646831d0ec3374dd9ca58235b35c6993ad46f9c290000a0d25d1a5913f",
+    "contentHash": "0b117dd733524b19ef0ff111c57c9228d9732eeb6e8d754d089c50d4d91bd9b2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f03e9020"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sachaos-viddy": {
     "name": "viddy",
@@ -9662,13 +9660,13 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T19:29:27.030Z",
-    "lastVerified": "2026-11-05T19:29:27.030Z",
+    "lastChecked": "2026-11-09T23:07:16.604Z",
+    "lastVerified": "2026-11-09T23:07:16.604Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-    "contentHash": "8b890944eb7ad12f7fbee2a3f9a74826b99eaf5f2ca3726ccf0436850320c724",
-    "promotedRulesCount": 0,
+    "contentHash": "02c31304519120660b66b6c170f61b0558ec5f167867a98ce159269d13036116",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

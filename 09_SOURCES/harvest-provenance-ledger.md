@@ -8690,3 +8690,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-09T22:41:01.013Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `dc504b1d` | Multi-dimensional audit evidence | 2026-11-09T22:48:35.410Z |
 | `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `3b2f05d4` | Multi-dimensional audit evidence | 2026-11-09T22:55:27.045Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `16f3ce5c` | Multi-dimensional audit evidence | 2026-11-09T23:07:30.086Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `429abfaf` | Multi-dimensional audit evidence | 2026-11-09T23:07:33.430Z |
+| `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-09T23:10:18.937Z |

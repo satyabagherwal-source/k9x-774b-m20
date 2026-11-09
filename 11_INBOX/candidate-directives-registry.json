@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T18:11:18.627Z",
+  "last_updated": "2026-11-09T23:07:30.093Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4358,6 +4358,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-peerdb-io-peerdb"
+    },
+    {
+      "id": "CD-FW6L",
+      "directive_title": "Move the v1-to-v2 migration guide into the repository and link to it",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "16f3ce5c",
+      "date_staged": "2026-11-09",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-aleo-labs-protocol-snarkos"
     }
   ]
 }
