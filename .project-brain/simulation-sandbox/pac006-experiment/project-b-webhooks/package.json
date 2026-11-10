@@ -1,0 +1,8 @@
+{
+  "name": "tenant-webhook-delivery-engine",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/application.test.mjs"
+  }
+}

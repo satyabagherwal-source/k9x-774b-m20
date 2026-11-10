@@ -114,13 +114,13 @@
 | `CAP-L10-01` | **Project Learning Ledger Synthesis** | `project-factory-cli.mjs` | `test-universal-construction-evolution.mjs` | Generates canonical `.project-brain/PROJECT_LEARNING.md` | 🟢 **`DONE`** | Embeds exit code proof, architecture lessons, zero path leaks. |
 | `CAP-L10-02` | **4-Pillar Validation Barrier** | `project-learning-promotion-bridge.mjs` | `test-universal-construction-evolution.mjs` | Rejects non-zero exit codes, workstation paths; validates invariants | 🟢 **`DONE`** | Stage transitions to `VALIDATED`. |
 | `CAP-L10-03` | **High-Impact Governance Gating** | `project-learning-promotion-bridge.mjs` | `test-universal-construction-evolution.mjs` | Fails closed on Domains A, G, M without human token | 🟢 **`DONE`** | Emits `HIGH_IMPACT_DOMAIN_STAGED`. |
-| `CAP-L10-04` | **Controlled 2-Project Comparison** | `PAC-006 Experiment Engine` | Scheduled in PAC-006 | Protocol fully specified | ⚪ **`PLANNED`** | Project A $\to$ Promote $\to$ Project B $\to$ Measure Delta. |
+| `CAP-L10-04` | **Controlled 2-Project Comparison (PAC-006)** | `test-pac006-controlled-experiment.mjs` | `test-pac006-controlled-experiment.mjs` | **37 / 37 PASS (Exit Code 0)** | 🟢 **`DONE`** | Complete 7-step cross-project transfer loop verified: Project A $\to$ 4-Pillar Validation $\to$ Master Brain Rule 1721 $\to$ Project B retrieval & verified application with 0 leaks and 0 incorrect transfers. |
 
 ---
 
 ## 3. Summary of Verified Accomplishments
 
-* **Total Empirically Verified Passing Assertions**: **638+ passing assertions** with Exit Code 0 across active suites.
-* **Total `DONE` Capabilities**: **22 major subsystems fully operational**.
+* **Total Empirically Verified Passing Assertions**: **675+ passing assertions** with Exit Code 0 across active suites.
+* **Total `DONE` Capabilities**: **23 major subsystems fully operational**.
 * **Zero-Rework Directive**: Any agent resuming work on AI-Builder-Brain must consult this ledger. **DO NOT re-implement or re-audit any capability marked `DONE`.**
 

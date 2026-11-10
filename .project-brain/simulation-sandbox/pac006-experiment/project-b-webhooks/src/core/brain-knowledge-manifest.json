@@ -1,0 +1,20 @@
+{
+  "product": "TenantWebhookDeliveryEngine",
+  "archetype": "API_PLATFORM",
+  "governing_rules": [
+    "Rule 1670",
+    "Rule 1708",
+    "Rule 1713",
+    "Rule 1717",
+    "Rule 1720",
+    "Rule 1721"
+  ],
+  "retrieved_cross_project_learnings": [
+    {
+      "rule_id": "Rule 1721",
+      "source_project": "TenantDataAnalyticsEngine",
+      "concept_reused": "Multi-Tenant Composite Namespace & Bounded Buffer Isolation",
+      "applied_implementation": "Composite queueKey (${tenantId}:${endpointId}) and bounded queue FIFO limits"
+    }
+  ]
+}

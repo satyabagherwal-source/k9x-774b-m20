@@ -106,29 +106,29 @@ export function getDisciplineByName(name, customPath = null) {
 // 3. Automated Discipline Inference Engine
 // ---------------------------------------------------------------------------
 
-export const BASELINE_UNIVERSAL_DISCIPLINES = Object.freeze(['A', 'B', 'G', 'S', 'O']);
+export const BASELINE_UNIVERSAL_DISCIPLINES = Object.freeze(['A', 'B', 'S', 'O']);
 
 const DISCIPLINE_TRIGGERS = [
   { code: 'A', keywords: ['product', 'business', 'strategy', 'roadmap', 'revenue', 'monetize', 'saas', 'user', 'value', 'kpi', 'okr'] },
   { code: 'B', keywords: ['web', 'frontend', 'backend', 'fullstack', 'api', 'server', 'database', 'rest', 'graphql', 'app', 'code', 'ui'] },
   { code: 'C', keywords: ['mobile', 'ios', 'android', 'react native', 'flutter', 'desktop', 'electron', 'tauri', 'native app'] },
   { code: 'D', keywords: ['os', 'kernel', 'embedded', 'compiler', 'driver', 'firmware', 'c++', 'rust', 'c99', 'assembly', 'posix', 'rtos', 'systems'] },
-  { code: 'E', keywords: ['microservices', 'distributed', 'event-driven', 'kafka', 'consensus', 'raft', 'sharding', 'high-throughput', 'cluster', 'p2p'] },
-  { code: 'F', keywords: ['database', 'postgres', 'sql', 'nosql', 'redis', 'cache', 'storage', 'schema', 'replication', 'acid', 'indexing', 'sqlite'] },
-  { code: 'G', keywords: ['ui', 'ux', 'user experience', 'interaction', 'figma', 'design system', 'wireframe', 'workflow', 'ergonomics', 'prototype'] },
+  { code: 'E', keywords: ['microservices', 'distributed', 'event-driven', 'kafka', 'consensus', 'raft', 'sharding', 'high-throughput', 'cluster', 'p2p', 'webhook', 'delivery', 'fan-out', 'api architecture', 'idempotent', 'retry'] },
+  { code: 'F', keywords: ['database', 'postgres', 'sql', 'nosql', 'redis', 'cache', 'storage', 'schema', 'replication', 'acid', 'indexing', 'sqlite', 'queue', 'dead-letter', 'buffer', 'datastore'] },
+  { code: 'G', keywords: ['ui', 'ux', 'user experience', 'interaction', 'figma', 'design system', 'wireframe', 'workflow', 'ergonomics', 'prototype', 'dashboard', 'frontend view', 'gui'] },
   { code: 'H', keywords: ['brand', 'graphic', 'logo', 'illustration', 'vector', 'animation', 'typography', 'visual asset', 'iconography', 'identity'] },
-  { code: 'I', keywords: ['3d', 'webgl', 'three.js', 'shader', 'physics', 'simulation', 'opengl', 'vulkan', 'rendering', 'cad', 'gpu', 'mesh', 'blender'] },
-  { code: 'J', keywords: ['game', 'gameplay', 'mechanics', 'level design', 'game ai', 'npc', 'unity', 'unreal', 'godot', 'roguelike', 'arcade', 'rpg'] },
-  { code: 'K', keywords: ['algorithm', 'math', 'statistics', 'optimization', 'linear algebra', 'numerical', 'cryptography', 'scientific computing', 'solver'] },
-  { code: 'L', keywords: ['data pipeline', 'etl', 'elt', 'analytics', 'warehouse', 'snowflake', 'spark', 'dbt', 'lakehouse', 'bi', 'telemetry', 'dashboards'] },
+  { code: 'I', keywords: ['3d', 'webgl', 'three.js', 'shader', 'physics engine', 'simulation', 'opengl', 'vulkan', 'rendering engine', 'cad', 'gpu', 'mesh rendering', 'blender'] },
+  { code: 'J', keywords: ['game', 'gameplay', 'mechanics', 'level design', 'game ai', 'npc', 'unity', 'unreal', 'godot', 'roguelike', 'arcade', 'rpg', 'game engine'] },
+  { code: 'K', keywords: ['algorithm', 'math', 'statistics', 'optimization', 'linear algebra', 'numerical', 'cryptography', 'scientific computing', 'solver', 'p95', 'percentile', 'anomaly detection', 'statistical'] },
+  { code: 'L', keywords: ['data pipeline', 'etl', 'elt', 'analytics', 'warehouse', 'snowflake', 'spark', 'dbt', 'lakehouse', 'bi', 'telemetry', 'dashboards', 'aggregation', 'ingestion', 'time-series', 'timeseries'] },
   { code: 'M', keywords: ['ai', 'llm', 'machine learning', 'deep learning', 'embeddings', 'rag', 'neural network', 'inference', 'fine-tuning', 'prompt', 'model'] },
   { code: 'N', keywords: ['robotics', 'automation', 'ros', 'sensors', 'actuator', 'lidar', 'computer vision', 'slam', 'hardware-in-the-loop', 'iot'] },
   { code: 'O', keywords: ['documentation', 'technical writing', 'api docs', 'guides', 'manual', 'release notes', 'architecture overview', 'tutorials'] },
   { code: 'P', keywords: ['psychology', 'behavior', 'habit', 'cognitive', 'nudge', 'gamification', 'mental model', 'retention mechanics', 'motivation'] },
   { code: 'Q', keywords: ['research', 'scientific method', 'hypothesis', 'experiment', 'literature review', 'knowledge graph', 'ontology', 'corroboration'] },
-  { code: 'R', keywords: ['security', 'cybersecurity', 'privacy', 'auth', 'oauth', 'jwt', 'encryption', 'vulnerability', 'owasp', 'threat model', 'penetration', 'secret'] },
+  { code: 'R', keywords: ['security', 'cybersecurity', 'privacy', 'auth', 'oauth', 'jwt', 'encryption', 'vulnerability', 'owasp', 'threat model', 'penetration', 'secret', 'hmac', 'signing', 'leakage', 'tenant isolation'] },
   { code: 'S', keywords: ['qa', 'test', 'testing', 'unit test', 'integration test', 'end-to-end', 'playwright', 'reliability', 'performance benchmark', 'chaos'] },
-  { code: 'T', keywords: ['devops', 'sre', 'ci/cd', 'docker', 'kubernetes', 'cloud', 'aws', 'gcp', 'terraform', 'monitoring', 'observability', 'uptime', 'helm'] },
+  { code: 'T', keywords: ['devops', 'sre', 'ci/cd', 'docker', 'kubernetes', 'cloud', 'aws', 'gcp', 'terraform', 'monitoring', 'observability', 'uptime', 'helm', 'rate-limiting', 'sla'] },
   { code: 'U', keywords: ['seo', 'aso', 'growth', 'marketing', 'conversion', 'acquisition', 'social share', 'open graph', 'sitemap', 'viral loop'] },
   { code: 'V', keywords: ['accessibility', 'a11y', 'wcag', 'screen reader', 'aria', 'i18n', 'internationalization', 'l10n', 'translation', 'rtl'] },
   { code: 'W', keywords: ['legal', 'license', 'compliance', 'gdpr', 'ccpa', 'hipaa', 'soc2', 'pci-dss', 'terms of service', 'copyright', 'privacy policy'] },
@@ -149,6 +149,11 @@ export function inferRequiredDisciplines(productGoal = '', intentAnalysis = {}) 
   const text = `${productGoal} ${JSON.stringify(intentAnalysis || {})}`.toLowerCase();
 
   const activatedCodes = new Set(BASELINE_UNIVERSAL_DISCIPLINES);
+
+  // If GUI, web frontend, or dashboard is involved, activate UI/UX Design (G)
+  if (!intentAnalysis.executionEnvironment || intentAnalysis.executionEnvironment === 'GUI_WEB_APPLICATION' || /\b(gui|dashboard|view|frontend|web|interface|figma|screen)\b/i.test(text)) {
+    activatedCodes.add('G');
+  }
 
   // Trigger matching
   for (const trigger of DISCIPLINE_TRIGGERS) {
@@ -191,7 +196,7 @@ export function inferRequiredDisciplines(productGoal = '', intentAnalysis = {}) 
     activatedCodes.add('K'); // Math/Algorithms
     activatedCodes.add('Y'); // FinTech Vertical
   }
-  if (/\b(3d|game|canvas|gl|simulation|engine)\b/i.test(text)) {
+  if (/\b(3d|webgl|opengl|vulkan|physics engine|game engine|gameplay|simulation)\b/i.test(text)) {
     activatedCodes.add('I'); // 3D/Graphics
     activatedCodes.add('J'); // Game Dev
     activatedCodes.add('K'); // Math/Physics
