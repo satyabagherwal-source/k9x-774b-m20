@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "58de5a25",
+    "sourceVersion": "6899c191",
     "license": "Apache-2.0",
-    "contentHash": "8204cbc4a758343ba213270af85d18983011c97b0787340ed84b191abe81f9ce",
-    "lastHarvestedAt": "2026-11-08T04:19:27.733Z",
+    "contentHash": "1d151e429a00bbfc4d39a1ee2905380a19a65d417498f99d1356de4a61aa4401",
+    "lastHarvestedAt": "2026-11-10T04:51:50.305Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
@@ -5493,10 +5493,10 @@
     "repository": "react/metro",
     "platform": "github",
     "sourceUrl": "https://github.com/react/metro",
-    "sourceVersion": "72601c99",
+    "sourceVersion": "b76d1d61",
     "license": "MIT",
-    "contentHash": "0c660e28506a99c06ec85954bbb7f3b863acca11147d068a01e4cea51b9db219",
-    "lastHarvestedAt": "2026-11-07T05:28:16.679Z",
+    "contentHash": "e474935394132a8feedee55b208296d327f117b63b9f8c862ba8ed7eaae8e45f",
+    "lastHarvestedAt": "2026-11-10T04:51:48.773Z",
     "learningId": "learn-github-react-metro"
   },
   "checkmarx-kics": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "686b129c",
+    "sourceVersion": "de47e114",
     "license": "Apache-2.0",
-    "contentHash": "cb90c093965bf3f0c12c489120c988c46e7e6455f45731dbeb37c4f2628932b8",
-    "lastHarvestedAt": "2026-11-08T23:50:50.645Z",
+    "contentHash": "e36b0f0a10cc4867d3a03bbce67ff91e62aeeb247e7f12269096f296ef6c65dd",
+    "lastHarvestedAt": "2026-11-10T04:51:56.944Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -11505,8 +11505,8 @@
     "sourceUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
     "sourceVersion": "hf-diffuspace-clover-35b-a3b-preview",
     "license": "Open-Source",
-    "contentHash": "fc18345a4a8e641b582bc0fefeb6affa2673d80dfe0d9c9a955e6075c14200a4",
-    "lastHarvestedAt": "2026-11-05T22:47:57.427Z",
+    "contentHash": "82d8dad52a736f54717c6345338421a26180a1b2145ff91682a06edfda116acb",
+    "lastHarvestedAt": "2026-11-10T04:51:58.942Z",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview"
   },
   "cherryhq-cherry-studio": {

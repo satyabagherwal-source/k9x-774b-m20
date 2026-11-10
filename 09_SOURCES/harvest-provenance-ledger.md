@@ -8741,3 +8741,7 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `8a8b12fc` | Multi-dimensional audit evidence | 2026-11-10T03:04:38.488Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `db8874b1` | Multi-dimensional audit evidence | 2026-11-10T04:37:07.239Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `2f05e83e` | Multi-dimensional audit evidence | 2026-11-10T04:44:29.864Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `b76d1d61` | Multi-dimensional audit evidence | 2026-11-10T04:51:48.773Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `6899c191` | Multi-dimensional audit evidence | 2026-11-10T04:51:50.305Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `de47e114` | Multi-dimensional audit evidence | 2026-11-10T04:51:56.944Z |
+| `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-10T04:51:58.942Z |

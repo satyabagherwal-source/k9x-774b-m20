@@ -8732,3 +8732,7 @@
 | `CYCLE-20261110-WUVQ` | `2026-11-10T03:04:38.486Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`96fec4b5...`) |
 | `CYCLE-20261110-7SBN` | `2026-11-10T04:37:07.235Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`23d7363b...`) |
 | `CYCLE-20261110-H9US` | `2026-11-10T04:44:29.860Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`057cd7a8...`) |
+| `CYCLE-20261110-QOIP` | `2026-11-10T04:51:48.769Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e4749353...`) |
+| `CYCLE-20261110-QPP9` | `2026-11-10T04:51:50.301Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1d151e42...`) |
+| `CYCLE-20261110-QUTO` | `2026-11-10T04:51:56.940Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e36b0f0a...`) |
+| `CYCLE-20261110-QWD6` | `2026-11-10T04:51:58.938Z` | `Diffuspace/Clover-35B-A3B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`82d8dad5...`) |

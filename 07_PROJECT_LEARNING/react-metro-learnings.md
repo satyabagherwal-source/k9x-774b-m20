@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `72601c99`  
+> **Source Version**: `b76d1d61`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:28:15.814Z  
+> **Timestamp**: 2026-11-10T04:51:47.295Z  
 > **Learning ID**: `learn-github-react-metro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:28:15.000Z  
+> **Harvest Timestamp**: 2026-11-10T04:51:46.421Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🚇 The JavaScript bundler for React Native
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5663 stars
+- **Stars / Engagement**: 5661 stars
 
 ---
 
@@ -1524,175 +1524,207 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3030eda7` (2026-11-06)
-**Commit Message**: Fix crash on a non-object "exports" field in package.json (#2187)
+### Incident Patch 1: `9611b6f8` (2026-11-09)
+**Commit Message**: metro-file-map: Fix out-of-memory crash on a symlink into itself (#2204)
 
-Resolving a package whose package.json has a non-object "exports" value
-such as false, true or a number failed the whole resolution with
-"TypeError: Invalid value used as weak map key".
-
-normalizeExportsField only special cased strings, which are not weakly
-referenceable, before caching its result in a WeakMap. Booleans and
-numbers aren't either, but they pass through Object.keys() as an empty
-key list, so they reach the WeakMap set() call, which throws. This is a
-plain TypeError rather than an InvalidPackageConfigurationError, so the
-callers in resolve.js rethrow it instead of falling back.
-
-Node.js ignores these values and uses "main". Raise a config error for
-them, so that the existing handling warns and falls back to file-based
-resolution, which resolves to the same file as Node.js.
-
-**File**: `packages/metro-resolver/src/PackageExportsResolve.js` (modified, +6/-0)
+**File**: `packages/metro-file-map/src/lib/TreeFS.js` (modified, +7/-9)
 ```diff
-@@ -193,6 +193,12 @@ function normalizeExportsField(
-     return new Map([['.', exportsField]]);
-   }
+@@ -39,6 +39,11 @@ function isRegularFile(node: FileNode): boolean {
+   return node[H.SYMLINK] === 0;
+ }
  
-+  if (typeof exportsField !== 'object') {
-+    throw createConfigError(
-+      'The "exports" field must be a string, an array or an object.',
-+    );
-+  }
++// The limit Linux applies when resolving a path (`MAXSYMLINKS`). A count rather
++// than a set of visited targets because a symlink into itself (`a -> a/b`)
++// gives a longer target on every follow, and so never repeats one.
++const MAX_SYMLINK_FOLLOWS = 40;
 +
-   const cachedValue = _normalizedExportsFields.get(exportsField);
-   if (cachedValue) {
-     return cachedValue;
+ // Null if not within the ancestor ('' is the root).
+ function relativeToAncestor(
+   normalPath: string,
+@@ -701,8 +706,7 @@ export default class TreeFS implements MutableFileSystem {
+       } {
+     // We'll update the target if we hit a symlink.
+     let targetNormalPath = requestedNormalPath;
+-    // Lazy-initialised set of seen target paths, to detect symlink cycles.
+-    let seen: ?Set<string>;
++    let followedSymlinks = 0;
+     // Pointer to the first character of the current path segment in
+     // targetNormalPath.
+     let fromIdx = opts.start?.pathIdx ?? 0;
+@@ -892,20 +896,14 @@ export default class TreeFS implements MutableFileSystem {
+         // onwards.
+         unseenPathFromIdx = normalSymlinkTarget.lastIndexOf(path.sep) + 1;
+ 
+-        if (seen == null) {
+-          // Optimisation: set this lazily only when we've encountered a symlink
+-          seen = new Set([requestedNormalPath]);
+-        }
+-        if (seen.has(targetNormalPath)) {
+-          // TODO: Warn `Symlink cycle detected: ${[...seen, node].join(' -> ')}`
++        if (++followedSymlinks > MAX_SYMLINK_FOLLOWS) {
+           return {
+             canonicalMissingPath: targetNormalPath,
+             exists: false,
+             missingSegmentName: segmentName,
+             remainingPath: '',
+           };
+         }
+-        seen.add(targetNormalPath);
+         fromIdx = 0;
+         parentNode = this.#rootNode;
+         ancestorOfRootIdx = 0;
 ```
 
-**File**: `packages/metro-resolver/src/__tests__/package-exports-test.js` (modified, +32/-0)
+**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +35/-0)
 ```diff
-@@ -213,6 +213,38 @@ describe('with package exports resolution enabled', () => {
+@@ -225,6 +225,41 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
+       },
+     );
+ 
++    test('symlink into itself is missing, rather than following it forever', () => {
++      const tfs = new TreeFS({
++        rootDir: p('/project'),
++        files: new Map<CanonicalPath, FileMetadata>([
++          [p('a'), [123, 0, 0, null, 'a/b', null]],
++        ]),
++        processFile: () => {
++          throw new Error('Not implemented');
++        },
++      });
++      expect(tfs.lookup(p('/project/a/file.js'))).toEqual({exists: false});
++    });
++
++    test.each([
++      [40, true],
++      [41, false],
++    ])('a chain of %i symlinks: exists %s', (length, exists) => {
++      const links: Array<[CanonicalPath, FileMetadata]> = [];
++      for (let i = 0; i < length; i++) {
++        const target = i === length - 1 ? 'file.js' : 'link' + (i + 1);
++        links.push([p('link' + i), [123, 0, 0, null, target, null]]);
++      }
++      const tfs = new TreeFS({
++        rootDir: p('/project'),
++        files: new Map<CanonicalPath, FileMetadata>([
++          [p('file.js'), [123, 0, 0, null, 0, null]],
++          ...links,
++        ]),
++        processFile: () => {
++          throw new Error('Not implemented');
++        },
++      });
++      expect(tfs.lookup(p('/project/link0'))).toMatchObject({exists});
++    });
++
+     test('traversing the same symlink multiple times does not imply a cycle', () => {
+       expect(
+         tfs.lookup(p('/project/foo/owndir/owndir/another.js')),
+```
+
+---
+
+### Incident Patch 2: `66c7c48f` (2026-11-09)
+**Commit Message**: Name the dictionary key in the Metro build integration test
+
+Summary: Add the required dictionary key label to the diagnosed test context annotation. No runtime code or other types change.
+
+Differential Revision: D130744590
+
+Pull Request resolved: https://github.com/react/metro/pull/2211
+
+**File**: `packages/metro/src/integration_tests/__tests__/build-test.js` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@ test('builds a bundle that runs under a global prefix', async () => {
+     dev: true,
+   });
+ 
+-  const context: {[string]: unknown} = {};
++  const context: {[key: string]: unknown} = {};
+   // Exports cross realms, so compare their serialized form.
+   expect(JSON.stringify(execBundle(prefixed.code, context))).toBe(
+     JSON.stringify(execBundle(unprefixed.code)),
+```
+
+---
+
+### Incident Patch 3: `b76d1d61` (2026-11-09)
+**Commit Message**: metro-file-map: Fix the path of a file added through a symlink to the root (#2212)
+
+**File**: `packages/metro-file-map/src/lib/TreeFS.js` (modified, +9/-8)
+```diff
+@@ -566,21 +566,22 @@ export default class TreeFS implements MutableFileSystem {
+     changeListener?: FileSystemListener,
+   ): void {
+     const normalPath = this.#normalizePath(mixedPath);
++    // path.dirname gives '.' for a file in the root, whose normal path is ''.
++    const normalDirname = path.dirname(normalPath);
+     // Walk the tree to find the *real* path of the parent node, creating
+     // directories as we need.
+-    const parentDirNode = this.#lookupByNormalPath(path.dirname(normalPath), {
+-      ...LOOKUP_OPTIONS,
+-      changeListener,
+-      makeDirectories: true,
+-    });
++    const parentDirNode = this.#lookupByNormalPath(
++      normalDirname === '.' ? '' : normalDirname,
++      {...LOOKUP_OPTIONS, changeListener, makeDirectories: true},
++    );
+     if (!parentDirNode.exists) {
+       throw new Error(
+         `TreeFS: Failed to make parent directory entry for ${mixedPath}`,
        );
+     }
+-    // Normalize the resulting path to account for the parent node being root.
+-    const canonicalPath = this.#normalizePath(
+-      parentDirNode.canonicalPath + path.sep + path.basename(normalPath),
++    const {normalPath: canonicalPath} = this.#pathUtils.joinNormalToRelative(
++      parentDirNode.canonicalPath,
++      path.basename(normalPath),
+     );
+     this.bulkAddOrModify(new Map([[canonicalPath, metadata]]), changeListener);
+   }
+```
+
+**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +22/-0)
+```diff
+@@ -1137,6 +1137,28 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
+       });
      });
  
-+    test.each([
-+      ['false', false],
-+      ['true', true],
-+      ['a number', 1],
-+    ])(
-+      '[nonstrict] should fall back to "main" field resolution when "exports" is %s',
-+      (_, exportsField) => {
-+        const logWarning = jest.fn();
-+        const context = {
-+          ...baseContext,
-+          ...createPackageAccessors({
-+            [p('/root/node_modules/test-pkg/package.json')]: {
-+              main: 'index-main.js',
-+              exports: exportsField,
-+            },
-+          }),
-+          unstable_logWarning: logWarning,
-+        };
++    test('adds a file through a symlink to the root at its canonical path', () => {
++      tfs.addOrModify(p('link-to-root'), [0, 0, 0, null, '', null]);
++      const fileAdded = jest.fn();
++      tfs.addOrModify(p('link-to-root/new.js'), [1, 1, 0, null, 0, null], {
++        directoryAdded: jest.fn(),
++        directoryRemoved: jest.fn(),
++        fileAdded,
++        fileModified: jest.fn(),
++        fileRemoved: jest.fn(),
++      });
++      expect(fileAdded).toHaveBeenCalledWith(p('new.js'), [
++        1,
++        1,
++        0,
++        null,
++        0,
++        null,
++      ]);
++      expect(tfs.getAllFiles()).toContain(p('/project/new.js'));
++      expect(tfs.getAllFiles()).not.toContain(p('/new.js'));
++    });
 +
-+        expect(Resolver.resolve(context, 'test-pkg', null)).toEqual({
-+          type: 'sourceFile',
-+          filePath: p('/root/node_modules/test-pkg/index-main.js'),
-+        });
-+        expect(logWarning).toHaveBeenCalledTimes(1);
-+        expect(logWarning.mock.calls[0][0]).toBe(
-+          `The package ${p('/root/node_modules/test-pkg')} contains an invalid package.json configuration. Consider raising this issue with the package maintainer(s).
-+` +
-+            'Reason: The "exports" field must be a string, an array or an object. Falling back to file-based resolution.',
-+        );
-+      },
-+    );
-+
-     describe('should resolve "exports" target directly', () => {
-       const context = {
-         ...baseContext,
-```
-
----
-
-### Incident Patch 2: `89476f43` (2026-11-06)
-**Commit Message**: Docs: Fix the broken asyncRequireModulePath link (#2190)
-
-* Docs: Fix the broken asyncRequireModulePath anchor
-
-Sets the `asyncRequireModulePath` heading id explicitly, so Docusaurus finds the `#asyncrequiremodulepath` anchor, which raw `<a name>` tags do not provide.
-
-Changelog: [Internal]
-
-* Link to the generated asyncRequireModulePath anchor instead
-
----------
-
-Co-authored-by: Rob Hogan <[REDACTED_EMAIL]>
-
-**File**: `docs/Configuration.md` (modified, +1/-1)
-```diff
-@@ -321,7 +321,7 @@ Directories containing packages (like `node_modules`) to check after all `node_m
- 
- Type: [`?CustomResolver`](./Resolution.md#resolverequest-customresolver)
- 
--An optional function that overrides the default resolution algorithm, e.g. for aliases or custom protocols. It must delegate any specifiers it doesn't handle, including those in Metro's `metro:` scheme, such as the defaults for [`emptyModulePath`](#emptymodulepath) and [`asyncRequireModulePath`](#asyncrequiremodulepath). See [Module Resolution](./Resolution.md).
-+An optional function that overrides the default resolution algorithm, e.g. for aliases or custom protocols. It must delegate any specifiers it doesn't handle, including those in Metro's `metro:` scheme, such as the defaults for [`emptyModulePath`](#emptymodulepath) and [`asyncRequireModulePath`](#asyncrequiremodulepath-deprecated). See [Module Resolution](./Resolution.md).
- 
- ```javascript
- resolveRequest: (context, moduleName, platform) => {
-```
-
----
-
-### Incident Patch 3: `7201ee4c` (2026-11-06)
-**Commit Message**: Breaking: Make `ResolutionContext.isESMImport` required (#2182)
-
-Metro always sets this, so custom resolvers needn't handle it being missing.
-
-Changelog:
-```
- - **[Breaking]**: `ResolutionContext.isESMImport` is required
-```
-
-Test plan:
-Existing tests.
-
-**File**: `docs/Resolution.md` (modified, +1/-1)
-```diff
-@@ -266,7 +266,7 @@ Given the path to a `package.json` file, returns the parsed contents, or `null`
- 
- Given a candidate absolute module path, which need not exist, returns the closest package root (searching upwards, stopping at the nearest `node_modules`), its parsed `package.json`, and the package-relative path, or `null` if there's no `package.json` before the nearest `node_modules`. A path through a symlinked directory checks the link's target, then continues up from the link's parent; a symlinked file is scoped by where the link is. A missing path takes the scope of its deepest existing ancestor, or `null` if the first missing segment is `node_modules`. E.g. `getPackageForModule('/app/node_modules/foo/lib/index.js')` returns `{rootPath: '/app/node_modules/foo', packageJson: {...}, packageRelativePath: 'lib/index.js'}`.
- 
--#### `isESMImport?: boolean`
-+#### `isESMImport: boolean`
- 
- Whether the dependency was declared with an ESM import (`import x from 'y'` or `await import('z')`) rather than `require()`, the criteria Node.js uses to assert the `"import"` rather than the `"require"` [condition](./PackageExports.md#how-metro-applies-importrequire-exports-conditions).
- 
-```
-
-**File**: `packages/metro-resolver/API.md` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ export type ResolutionContext = Readonly<{
-   getPackage: (packageJsonPath: string) => null | undefined | PackageJson;
-   getPackageForModule: (absoluteModulePath: string) => null | undefined | PackageForModule;
-   dependency?: TransformResultDependency | undefined;
--  isESMImport?: boolean | undefined;
-+  isESMImport: boolean;
-   fileSystemLookup: FileSystemLookup;
-   mainFields: ReadonlyArray<string>;
-   originModulePath: string;
-```
-
-**File**: `packages/metro-resolver/src/types.js` (modified, +1/-1)
-```diff
-@@ -200,7 +200,7 @@ export type ResolutionContext = Readonly<{
-    * Always equal to dependency.data.isESMImport where dependency is provided,
-    * but may be used for resolution.
-    */
--  isESMImport?: boolean,
-+  isESMImport: boolean,
- 
-   /**
-    * Synchronously returns information about a given absolute path, including
+     describe('bulkAddOrModify', () => {
+       test('adds new files and modifies existing, new symlinks work', () => {
+         tfs.bulkAddOrModify(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2192** (2026-11-06): Publish 0.88.0 (@robhogan)
-- **PR #2191** (2026-11-06): Fix vacuous package root lookup tests (@vzaidman)
-- **PR #2190** (2026-11-06): Docs: Fix the broken asyncRequireModulePath anchor (@vzaidman)
-- **PR #2188** (2026-11-06): Label dictionary keys in xplat/js/tools/metro (2/69) (@SamChou19815)
-- **PR #2187** (2026-11-06): Fix crash on a non-object `exports` field in `package.json` (@kwy404)
-- **PR #2186** (2026-11-06): Breaking: Apply `globalPrefix` to all module system globals (@robhogan)
+- **PR #2212** (2026-11-09): metro-file-map: Fix the path of a file added through a symlink to the root (@robhogan)
+- **PR #2211** (2026-11-09): Name the dictionary key in the Metro build integration test (@SamChou19815)
+- **PR #2210** (closed): metro-file-map: Walk to the parent directory once in addOrModify (@robhogan)
+- **PR #2209** (2026-11-09): metro-file-map: Use a separate cache file under Bun (@robhogan)
+- **PR #2208** (2026-11-09): metro-file-map: Avoid a generator per directory in matchFiles (@robhogan)
+- **PR #2206** (2026-11-09): metro-file-map: Avoid a generator per directory when visiting every file (@robhogan)
 
 ---
 
@@ -1712,33 +1744,42 @@ Existing tests.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crash on a non-object "exports" field in package.json (#2187)
+## X. metro-file-map: Fix out-of-memory crash on a symlink into itself (#2204)
 
 **RULE**:
-When implementing operations in `packages/metro-resolver/src/PackageExportsResolve.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro-file-map/src/lib/TreeFS.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3030eda7`: crash on a non-object "exports" field in package.json (#2187). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9611b6f8`: metro-file-map: Fix out-of-memory crash on a symlink into itself (#2204). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-resolver/src/PackageExportsResolve.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-file-map/src/lib/TreeFS.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  if (typeof exportsField !== 'object') {
-    throw createConfigError(
-      'The "exports" field must be a string, an array or an object.',
-    );
-  }
+// The limit Linux applies when resolving a path (`MAXSYMLINKS`). A count rather
+// than a set of visited targets because a symlink into itself (`a -> a/b`)
+// gives a longer target on every follow, and so never repeats one.
+const MAX_SYMLINK_FOLLOWS = 40;
 
+    let followedSymlinks = 0;
+        if (++followedSymlinks > MAX_SYMLINK_FOLLOWS) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    // Lazy-initialised set of seen target paths, to detect symlink cycles.
+    let seen: ?Set<string>;
+        if (seen == null) {
+          // Optimisation: set this lazily only when we've encountered a symlink
+          seen = new Set([requestedNormalPath]);
+        }
+        if (seen.has(targetNormalPath)) {
+          // TODO: Warn `Symlink cycle detected: ${[...seen, node].join(' -> ')}`
+        seen.add(targetNormalPath);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3030eda7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9611b6f8` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T04:44:29.763Z",
+  "last_updated": "2026-11-10T04:51:58.830Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9462,8 +9462,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "58de5a25",
-      "content_hash": "8204cbc4a758343ba213270af85d18983011c97b0787340ed84b191abe81f9ce",
+      "source_version": "6899c191",
+      "content_hash": "1d151e429a00bbfc4d39a1ee2905380a19a65d417498f99d1356de4a61aa4401",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -9475,6 +9475,11 @@
         {
           "number": null,
           "title": "Merge pull request #8012 from lsviben/render-function-controlled-deletion",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #8024 from crossplane/renovate/main-renovate-44.x",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9513,7 +9518,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:19:27.600Z",
+      "verified_at": "2026-11-10T04:51:50.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44774,8 +44779,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "686b129c",
-      "content_hash": "cb90c093965bf3f0c12c489120c988c46e7e6455f45731dbeb37c4f2628932b8",
+      "source_version": "de47e114",
+      "content_hash": "e36b0f0a10cc4867d3a03bbce67ff91e62aeeb247e7f12269096f296ef6c65dd",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -44792,6 +44797,11 @@
         {
           "number": null,
           "title": "enhance: upgrade apt in ubuntu22.04 runtime images for CVE-2026-109518 (#55206)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[automated] fix: bump klauspost/compress to v1.20.2 (CVE-2026-116591) (#55260)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44875,7 +44885,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T23:50:50.486Z",
+      "verified_at": "2026-11-10T04:51:56.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53860,14 +53870,19 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "72601c99",
-      "content_hash": "0c660e28506a99c06ec85954bbb7f3b863acca11147d068a01e4cea51b9db219",
+      "source_version": "b76d1d61",
+      "content_hash": "e474935394132a8feedee55b208296d327f117b63b9f8c862ba8ed7eaae8e45f",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "crash on a non-object \"exports\" field in package.json (#2187)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "metro-file-map: Fix out-of-memory crash on a symlink into itself (#2204)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53911,7 +53926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:28:16.610Z",
+      "verified_at": "2026-11-10T04:51:48.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162575,13 +162590,23 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
       "source_version": "hf-diffuspace-clover-35b-a3b-preview",
-      "content_hash": "fc18345a4a8e641b582bc0fefeb6affa2673d80dfe0d9c9a955e6075c14200a4",
+      "content_hash": "82d8dad52a736f54717c6345338421a26180a1b2145ff91682a06edfda116acb",
       "dossier_path": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Parallel Decoding Termination Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hybrid Attention Causal Boundary Integrity",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MoE Routing Stability Under Diffusion",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -162630,7 +162655,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:47:57.356Z",
+      "verified_at": "2026-11-10T04:51:58.794Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
