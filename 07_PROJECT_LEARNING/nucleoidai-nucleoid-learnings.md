@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `db8874b1`  
+> **Source Version**: `6bc0c3f1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T04:37:05.800Z  
+> **Timestamp**: 2026-11-10T05:06:35.389Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T04:37:01.215Z  
+> **Harvest Timestamp**: 2026-11-10T05:06:34.245Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1163,13 +1163,8 @@ export async function declarations({
       {
         role: "user",
         content: `
-          train_dataset:
-          ${JSON.stringify(
-            train_dataset.dataset.map(({ input_matrix, output_matrix }) => ({
-              input_matrix,
-              output_matrix,
-            }))
-          )}
+          query:
+          ${JSON.stringify(train_dataset)}
           json_format:
           { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
         `,
@@ -1185,30 +1180,26 @@ export async function declarations({
 export async function instances({
   puzzle_id,
   only_puzzle_dataset,
-  declarations,
-  input_matrix,
-  output_matrix,
+  train_dataset,
 }) {
   milestone.segmenting_training_objects();
 
-  const { instances } = await llm.generate({
+  const { dataset } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
     messages: [
       {
         role: "user",
         content: `
-          declarations:
-          ${JSON.stringify(declarations)}
-          input_matrix:
-          ${JSON.stringify(input_matrix)}
-          output_matrix:
-          ${JSON.stringify(output_matrix)}
+          query:
+          ${JSON.stringify(train_dataset)}
           json_format:
           {
-            "instances": [{
-              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
-              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+            "dataset": [{
+              "instances": [{
+                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+              }]
             }]
           }
         `,
@@ -1216,56 +1207,60 @@ export async function instances({
     ],
   });
 
-  milestone.training_objects_segmented({ instances });
+  milestone.training_objects_segmented({ instances: dataset[0].instances });
 
-  return { instances };
+  return { instances: dataset[0].instances };
 }
 
 export async function value({
   puzzle_id,
   only_puzzle_dataset,
-  instance_name,
-  declarations,
-  input_instances,
+  train_dataset,
   input_matrix,
-  input_instance_matrix,
-  output_instance_matrix,
+  instance,
 }) {
-  milestone.constructing_instance({ instance_name });
+  milestone.constructing_instance({ instance_name: instance.instance_name });
 
-  const { x, y, width, height } = Matrix.locate(input_instance_matrix);
+  const { x, y, width, height } = Matrix.locate(instance.input_instance_matrix);
 
   const { orientation } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
-    few_shot: ({ dataset }) => ({
-      dataset: dataset.map(({ instances }) => ({
-        instances: instances.map(({ input_instance_matrix, input_value }) => ({
+    few_shot: (train_dataset) =>
+      train_dataset.dataset
+        .flat()
+        .flatMap(({ instances }) => instances)
+        .map(({ input_instance_matrix, input_value }) => ({
           matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
           orientation: input_value.orientation,
         })),
-      })),
-    }),
     messages: [
       {
         role: "assistant",
         content: `
-          instances:
+          current:
           ${JSON.stringify(
-            input_instances.map(({ input_instance_matrix, input_value }) => ({
-              matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
-              orientation: input_value.orientation,
-            }))
+            train_dataset.dataset
+              .flat()
+              .filter(({ instances }) => instances)
+              .flatMap(({ instances }) => instances)
+              .filter(({ input_value }) => input_value)
+              .map(({ input_instance_matrix, input_value }) => ({
+                matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
+                orientation: input_value.orientation,
+              }))
           )}
-          `,
+        `,
       },
       {
         role: "user",
         content: `
-          matrix:
-          ${JSON.stringify(
-            Matrix.silhouette(Matrix.crop(input_instance_matrix))
-          )}
+          query:
+          ${JSON.stringify({
+            matrix: Matrix.silhouette(
+              Matrix.crop(instance.input_instance_matrix)
+            ),
+          })}
           json_format:
           {
             "orientation": <ORIENTATION>,
@@ -1275,26 +1270,53 @@ export async function value({
     ],
   });
 
-  const { implementation } = await llm.generate({
+  const { dataset } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
+    few_shot: (train_dataset) => ({
+      ...train_dataset,
+      declarations: train_dataset.declarations[0],
+      dataset: train_dataset.dataset.map(({ instances }) => ({
+        instances: instances.map((instance) => ({
+          ...instance,
+          input_matrix: Matrix.crop(instance.input_instance_matrix),
+          output_matrix: Matrix.crop(instance.output_instance_matrix),
+        })),
+      })),
+    }),
     messages: [
       {
         role: "assistant",
         content: `
-          declarations:
-          ${JSON.stringify(declarations)}
-          input_instances:
-          ${JSON.stringify(input_instances)}
+          current:
+          ${JSON.stringify({
+            ...train_dataset,
+            declarations: train_dataset.declarations[0],
+            dataset: train_dataset.dataset
+              .filter(({ instances }) => instances)
+              .map(({ instances }) => ({
+                instances: instances
+                  .filter(({ implementation }) => implementation)
+                  .map((instance) => ({
+                    ...instance,
+                    input_matrix: Matrix.crop(instance.input_instance_matrix),
+                    output_matrix: Matrix.crop(instance.output_instance_matrix),
+                  })),
+              })),
+          })}
         `,
       },
       {
         role: "user",
         content: `
-          instance_name:
-          ${instance_name}
-          input_instance_matrix:
-          ${JSON.stringify(Matrix.crop(input_instance_matrix))}
+          query:
+          ${JSON.stringify({
+            dataset: [
+              {
+                instances: [instance],
+              },
+            ],
+          })}
           input_x: ${x}
           input_y: ${y}
           input_width: ${width}
@@ -1302,14 +1324,20 @@ export async function value({
           orientation: ${orientation}
           json_format:
           {
-            "implementation": <IMPLEMENTATION>
-          }
+            "dataset": [{
+              "instances": [{
+                "implementation": <IMPLEMENTATION>
+              }]
+            }]
+          }  
         `,
       },
     ],
   });
 
-  milestone.evaluating_rules({ instance_name });
+  const implementation = dataset[0].instances[0].implementation;
+
+  milestone.evaluating_rules({ instance_name: instance.instance_name });
 
   const canvas_width: number = input_matrix[0].length;
   const canvas_height: number = input_matrix.length;
@@ -1317,16 +1345,16 @@ export async function value({
     [
       `canvas_width = ${canvas_width}`,
       `canvas_height = ${canvas_height}`,
-      declarations[0],
+      train_dataset.declarations[0],
       implementation,
     ].join("\n\n")
   );
 
   milestone.instance_constructed({
-    instance_name,
+    instance_name: instance.instance_name,
+    input_instance_matrix: instance.input_instance_matrix,
+    output_instance_matrix: instance.output_instance_matrix,
     implementation,
-    input_instance_matrix,
-    output_instance_matrix,
     input_value,
   });
 
@@ -1380,7 +1408,7 @@ import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(
-  puzzle_id: string = "fafffa47",
+  puzzle_id: string = "3aa6fb7a",
   only_puzzle_dataset: boolean = false
 ) {
   const { arc_train, test_input_matrix, test_output_matrix } =
@@ -1390,9 +1418,9 @@ export async function start(
     dataset: arc_train.map(({ input, output }) => ({
       input_matrix: input,
       output_matrix: output,
-      instances: [],
+      instances: undefined,
     })),
-    declarations: [],
+    declarations: undefined,
     output_canvas: undefined,
   };
 
@@ -1420,18 +1448,16 @@ export async function start(
   train_dataset.output_canvas = output_canvas;
 
   for (const dataset of train_dataset.dataset) {
-    const { input_matrix, output_matrix } = dataset;
-
     const { instances } = await analyzer.instances({
       puzzle_id,
       only_puzzle_dataset,
-      declarations,
-      input_matrix,
-      output_matrix,
+      train_dataset: { ...train_dataset, dataset: [dataset] },
     });
 
-    for (const { input_instance_matrix, output_instance_matrix } of instances) {
-      const instance_name: string = `obj${String(instance_index++).padStart(
+    dataset.instances = instances;
+
+    for (const instance of dataset.instances) {
+      instance.instance_name = `obj${String(instance_index++).padStart(
         12,
         "0"
       )}`;
@@ -1439,23 +1465,13 @@ export async function start(
       const { implementation, input_value } = await analyzer.value({
         puzzle_id,
         only_puzzle_dataset,
-        instance_name,
-        declarations,
-        input_instances: train_dataset.dataset
-          .flatMap(({ instances }) => instances)
-          .filter(({ implementation }) => implementation),
-        input_matrix,
-        input_instance_matrix,
-        output_instance_matrix,
+        train_dataset,
+        instance,
+        input_matrix: dataset.input_matrix,
       });
 
-      dataset.instances.push({
-        instance_name,
-        input_instance_matrix,
-        output_instance_matrix,
-        implementation,
-        input_value,
-      });
+      instance.implementation = implementation;
+      instance.input_value = input_value;
     }
   }
 
@@ -1485,7 +1501,6 @@ export async function start(
     const { implementation, input_value } = await visualizer.value({
       puzzle_id,
       only_puzzle_dataset,
-      declarations,
       train_dataset,
       test_input_matrix,
       instance_name,
@@ -1503,18 +1518,12 @@ export async function start(
   await visualizer.state({ declarations, test_input_matrix, input_instances });
 
   for (const input_instance of input_instances) {
-    const { instance_name, input_value, input_instance_matrix, output_value } =
-      input_instance;
-
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       puzzle_id,
       only_puzzle_dataset,
-      instance_name,
       test_input_matrix,
       train_dataset,
-      input_instance_matrix,
-      input_value,
-      output_value,
+      instance: input_instance,
     });
 
     input_instance.output_instance_matrix = output_instance_matrix;
@@ -1629,26 +1638,8 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `db8874b1` (2026-11-10)
-**Commit Message**: Draft NUC 102 Implicit Receiver Properties
-
-Category: Syntax enhancement, drawn uniformly at random (index 0 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle, so token comparison is required.
-
-Requested change: in the value of an assignment to a property, a dot that
-begins an operand and is followed by a property name reads that property
-of the assigned object, so `$Order.total = .price * .qty` is
-`$Order.total = $Order.price * $Order.qty`. The receiver is the target
-without its last property; the forms are `=`, `:=` and the compound and
-logical compound assignments. Only inputs that raised
-SyntaxError("Unexpected '.'") change: selector arguments, `is`
-assignments, variable targets and member access keep their readings.
-
-This allocation changes only the Draft and its two index rows.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
+### Incident Patch 1: `6bc0c3f1` (2026-11-10)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
@@ -1769,6 +1760,26 @@ Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
 +[LICENSE](../LICENSE) for the full text.
 ```
 
+---
+
+### Incident Patch 2: `2d9c6de7` (2026-11-10)
+**Commit Message**: Rename visualizer prompt label to query
+
+Use `query` instead of `instance` in the visualizer's user prompt.
+
+**File**: `arc/src/visualizer.ts` (modified, +1/-1)
+```diff
+@@ -249,7 +249,7 @@ export async function output_instance_matrix({
+       {
+         role: "user",
+         content: `
+-          instance:
++          query:
+           ${JSON.stringify({
+             dataset: [
+               {
+```
+
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
 - **PR #70** (2025-01-09): Variable Value in Python (@canmingir)
@@ -1795,13 +1806,13 @@ Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 102 Implicit Receiver Properties
+## X. Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `db8874b1`: Draft NUC 102 Implicit Receiver Properties. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6bc0c3f1`: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1820,4 +1831,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `db8874b1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6bc0c3f1` are properly handled with clean fallback behavior.

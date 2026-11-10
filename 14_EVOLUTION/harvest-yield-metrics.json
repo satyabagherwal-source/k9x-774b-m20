@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T04:59:26.611Z",
-  "total_cycles_completed": 8703,
-  "total_learnings_persisted": 8703,
-  "total_rules_promoted": 8550,
+  "last_updated": "2026-11-10T05:06:35.857Z",
+  "total_cycles_completed": 8704,
+  "total_learnings_persisted": 8704,
+  "total_rules_promoted": 8551,
   "history": [
-    {
-      "timestamp": "2026-11-09T07:20:59.734Z",
-      "repository": "storybookjs/storybook",
-      "learningId": "learn-github-storybookjs-storybook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T07:21:03.803Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1403,6 +1396,13 @@
       "repository": "pyannote/speaker-diarization-3.1",
       "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T05:06:35.857Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
