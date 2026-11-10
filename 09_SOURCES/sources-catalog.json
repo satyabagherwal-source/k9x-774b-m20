@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "4e28fc8c",
+    "sourceVersion": "7c78aabb",
     "license": "Apache-2.0",
-    "contentHash": "453472fd444d93b57d93ddb3f209605594ca5da6d221fa60a5d4cb9fb5213a0e",
-    "lastHarvestedAt": "2026-11-09T01:01:31.088Z",
+    "contentHash": "e3df3a0aea1a1c27e6dd3362df1b446416cb2f3b7b9e0393d8600665131ffe0d",
+    "lastHarvestedAt": "2026-11-10T04:59:19.484Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -11755,8 +11755,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-3.1",
     "sourceVersion": "hf-pyannote-speaker-diarization-3.1",
     "license": "Open-Source",
-    "contentHash": "46266a7447cf96df09b612b0a571937a12b4ca454f862b7151c0ccf525e61da7",
-    "lastHarvestedAt": "2026-11-05T22:55:01.950Z",
+    "contentHash": "10fe6053571c03bc41d31bfbff823b73985029bb6e267ea34df852e9fde4f4a3",
+    "lastHarvestedAt": "2026-11-10T04:59:26.605Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1"
   },
   "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf": {

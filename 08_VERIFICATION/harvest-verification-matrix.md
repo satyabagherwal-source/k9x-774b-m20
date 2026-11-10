@@ -8736,3 +8736,5 @@
 | `CYCLE-20261110-QPP9` | `2026-11-10T04:51:50.301Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1d151e42...`) |
 | `CYCLE-20261110-QUTO` | `2026-11-10T04:51:56.940Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e36b0f0a...`) |
 | `CYCLE-20261110-QWD6` | `2026-11-10T04:51:58.938Z` | `Diffuspace/Clover-35B-A3B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`82d8dad5...`) |
+| `CYCLE-20261110-0CAG` | `2026-11-10T04:59:19.480Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e3df3a0a...`) |
+| `CYCLE-20261110-0HS8` | `2026-11-10T04:59:26.600Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`10fe6053...`) |

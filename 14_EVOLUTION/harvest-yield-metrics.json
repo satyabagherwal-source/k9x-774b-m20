@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T04:51:58.949Z",
-  "total_cycles_completed": 8701,
-  "total_learnings_persisted": 8701,
-  "total_rules_promoted": 8546,
+  "last_updated": "2026-11-10T04:59:26.611Z",
+  "total_cycles_completed": 8703,
+  "total_learnings_persisted": 8703,
+  "total_rules_promoted": 8550,
   "history": [
-    {
-      "timestamp": "2026-11-09T07:05:58.617Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T07:13:17.799Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T07:20:59.734Z",
       "repository": "storybookjs/storybook",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-10T04:51:58.949Z",
       "repository": "Diffuspace/Clover-35B-A3B-Preview",
       "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T04:59:19.500Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T04:59:26.611Z",
+      "repository": "pyannote/speaker-diarization-3.1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

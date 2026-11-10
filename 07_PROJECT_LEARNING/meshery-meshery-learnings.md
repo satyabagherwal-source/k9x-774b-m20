@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `4e28fc8c`  
+> **Source Version**: `7c78aabb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:01:29.243Z  
+> **Timestamp**: 2026-11-10T04:59:18.068Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:01:29.234Z  
+> **Harvest Timestamp**: 2026-11-10T04:59:17.899Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12149 stars
+- **Stars / Engagement**: 12160 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23045** (2026-11-08): **[Server] Parse Content-Disposition when naming a design imported from a URL**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes #23016  For a design imported from a URL, `getFileNameFromResponse` split `Content-Disposition` on `filename=` and trimmed quotes, so every parameter after the quoted name stayed in the file name, and a `filename*`-only header was ignored. That name feeds the extension check, the design name and the import event.  The header is now parsed with `mime.ParseMediaType`, which returns the `filename` parameter on its own and decodes `filename*` (RFC 6266, section 4.3) into it. When the header has no usable file name, or does not parse, the name comes from the URL path as before.  The table test in `server/handlers/design_import_filename_test.go` covers both forms together, a parameter after the name, `filename` alone, an encoded `filename*`, no header, a header without a file name, and an empty file name.  Before, on master:      --- FAIL: TestGetFileNameFromResponse (0.00s)         filename and filename*: file name "design.yaml\"; filename*=UTF-8''design.yaml", want "design.yaml"         parameter after filename: file name "design.yaml\"; size=2048", want "design.yaml"         encoded filename*: file name "from-url.yaml", want "my design.yaml"         empty filename: file name "", want "from-url.yaml"     FAIL  After:      --- PASS: TestGetFileNameFromResponse (0.00s)     ok  	github.com/meshery/meshery/server/handlers  The full `server/handlers` package passes.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING
+- **Issue #23121** (2026-11-10): **[mesheryctl] Enforce exact argument validation in workspace create**
+  *Symptoms*: ### Notes for Reviewers This PR fixes #23120   ### Overview & Root Cause `mesheryctl workspace create` did not validate positional arguments, allowing trailing arguments to be silently ignored.  ### Changes - `mesheryctl/internal/cli/root/workspaces/create.go`:   - Defined `createUsageMsg` with usage instructions.   - Added `Args` validation returning `utils.ErrInvalidArgument` when `len(args) != 0`. - `mesheryctl/internal/cli/root/workspaces/create_test.go`:   - Added test scenario to `TestCreateWorkspace` verifying that passing an unexpected positional argument returns `utils.ErrInvalidArgument`.  ### Test Evidence - Verified with command test scenarios in `mesheryctl/internal/cli/root/workspaces/create_test.go`.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Workspace creation now rejects unexpected positional arguments and displays the command’s usage message, helping clarify how to run the command. Invoking workspace creation without positional arguments continues to pass validation.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
-- **Issue #23043** (2026-11-08): **[Server] Stop repeated workspace assignments from surviving removal**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes #23014  `AddEnvironmentToWorkspace`, `AddViewToWorkspace` and `AddTeamToWorkspace` inserted a new mapping row on every call, and the matching `Delete...FromWorkspace` removed only the first row of the pair. A member assigned twice (a double-click, a retried request, an API client) therefore stayed assigned after one removal.  - Assigning a member the workspace already has now returns the existing mapping instead of inserting a second row. - Removing a member deletes every mapping row of the pair, so duplicates already stored in a database also go with one removal. A pair with no mapping still answers not found.  Designs are unchanged: `AddDesignToWorkspace` already replaces an existing mapping.  The tests in `server/models/workspace_mapping_duplicates_test.go` use `WorkspacePersister` with a SQLite database and cover environments, views and teams. The test helper migrates the v1beta3 `environments` table first, because the system migration still builds it from v1beta1 (#21802).  Before, on master:      --- FAIL: TestWorkspaceAssignTwiceThenRemoveOnce (0.04s)         environment: mappings after assigning twice = 2, want 1         view: mappings after assigning twice = 2, want 1         team: mappings after assigning twice = 2, want 1     --- FAIL: TestWorkspaceRemoveDeletesStoredDuplicates (0.03s)         environment: mappings after removing = 1, want 0         view: mappings after removing = 1, want 0         team: mappings after remov
+- **Issue #23120** (2026-11-10): **[mesheryctl] workspace create ignores extraneous positional arguments without validation**
+  *Symptoms*: ### Description `mesheryctl workspace create` receives its parameters through flags (`--orgId`, `--name`, `--description`) and takes no positional arguments. However, it does not define an `Args` validation check, meaning extraneous positional arguments are ignored instead of returning an error with usage instructions.  ### Expected Behavior Extraneous positional arguments should return `utils.ErrInvalidArgument` with command usage guidance, consistent with `workspace list`.  ### Proposed Solution 1. Define `createUsageMsg` in `workspaces/create.go`. 2. Add `Args` validation to `createWorkspaceCmd` checking `len(args) != 0`. 3. Add test scenario in `workspaces/create_test.go`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,1191 +825,732 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4d7f8a5` (2026-11-08)
-**Commit Message**: Merge pull request #23036 from nishant-devv/fix/token-view-empty-prompt-hang
+### Incident Patch 1: `7c78aabb` (2026-11-10)
+**Commit Message**: Merge pull request #23121 from madhavzanwar/fix/workspace-create-args
 
-[mesheryctl] Prevent hang on empty token view prompt and respect --yes flag
+[mesheryctl] Enforce exact argument validation in workspace create
 
-**File**: `mesheryctl/internal/cli/root/system/token.go` (modified, +4/-0)
+**File**: `mesheryctl/internal/cli/root/workspaces/create.go` (modified, +8/-0)
 ```diff
-@@ -227,6 +227,10 @@ mesheryctl system token view (show token of current context)
- 			tokenNames = append(tokenNames, t.Name)
- 		}
+@@ -37,6 +37,8 @@ type cmdWorkspaceCreateFlags struct {
  
-+		if len(tokenNames) == 0 || utils.SilentFlag {
-+			return fmt.Errorf("token %q not found in config", tokenName)
-+		}
+ var workspaceCreateFlags cmdWorkspaceCreateFlags
+ 
++var createUsageMsg = "Usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl workspace create --help' to see detailed help message"
 +
- 		utils.Log.Info("Invalid token name. Select from available tokens-")
- 		prompt := promptui.Select{
- 			Label: "Select a token from the list",
+ var createWorkspaceCmd = &cobra.Command{
+ 	Use:   "create",
+ 	Short: "Create a new workspace under an organization",
+@@ -46,6 +48,12 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace
+ // Create a new workspace in an organization
+ mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+ `,
++	Args: func(cmd *cobra.Command, args []string) error {
++		if len(args) != 0 {
++			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg))
++		}
++		return nil
++	},
+ 	PreRunE: func(cmd *cobra.Command, args []string) error {
+ 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceCreateFlags)
+ 	},
 ```
 
-**File**: `mesheryctl/internal/cli/root/system/token_test.go` (modified, +59/-0)
+**File**: `mesheryctl/internal/cli/root/workspaces/create_test.go` (modified, +11/-0)
 ```diff
-@@ -574,3 +574,62 @@ tokens:
- 		})
- 	}
+@@ -19,6 +19,17 @@ func TestCreateWorkspace(t *testing.T) {
+ 	currDir := filepath.Dir(filename)
+ 
+ 	tests := []utils.MesheryCommandTest{
++		{
++			Name:             "given unexpected positional argument when workspace create then throw error",
++			Args:             []string{"create", "extra-arg", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
++			URL:              "/api/workspaces",
++			HttpMethod:       "POST",
++			Fixture:          "",
++			ExpectedResponse: "",
++			ExpectError:      true,
++			IsOutputGolden:   false,
++			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg)),
++		},
+ 		{
+ 			Name:             "given no flags provided when workspace create throw error",
+ 			Args:             []string{"create"},
+```
+
+---
+
+### Incident Patch 2: `e2c2821d` (2026-11-10)
+**Commit Message**: Merge pull request #23117 from madhavzanwar/fix/env-view-args
+
+[mesheryctl] Enforce exact argument validation in environment view
+
+**File**: `mesheryctl/internal/cli/root/environments/view.go` (modified, +10/-2)
+```diff
+@@ -36,18 +36,26 @@ type environmentViewFlags struct {
+ 
+ var environmentViewFlagsProvided environmentViewFlags
+ 
++var viewUsageMsg = "Usage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
++
+ var viewEnvironmentCmd = &cobra.Command{
+ 	Use:   "view",
+-	Short: "View registered environmnents",
++	Short: "View registered environments",
+ 	Long: `View details of an environment registered in Meshery Server for a specific organization
+ Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/view`,
+ 	Example: `
+ // View details of a specific environment
+ mesheryctl environment view --orgId [orgId]
+ 	`,
++	Args: func(cmd *cobra.Command, args []string) error {
++		if len(args) != 0 {
++			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", viewUsageMsg))
++		}
++		return nil
++	},
+ 	PreRunE: func(cmd *cobra.Command, args []string) error {
+ 		if environmentViewFlagsProvided.orgId == "" {
+-			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
++			errMsg := "[ orgId ] isn't specified\n\n" + viewUsageMsg
+ 			return utils.ErrInvalidArgument(errors.New(errMsg))
+ 		}
+ 
+```
+
+**File**: `mesheryctl/internal/cli/root/environments/view_test.go` (modified, +7/-0)
+```diff
+@@ -41,3 +41,10 @@ func TestEnvironmentViewSaveCreatesFile(t *testing.T) {
+ 
+ 	utils.AssertFileExists(t, filepath.Join(mesheryDir, "environment_test-environment.yaml"))
  }
 +
-+// TestTokenViewCmd_NonExistentTokenWithSilentFlag tests that token view fails immediately
-+// without prompting when passed a non-existent token with the silent flag (-y / --yes).
-+func TestTokenViewCmd_NonExistentTokenWithSilentFlag(t *testing.T) {
-+	_, filename, _, ok := runtime.Caller(0)
-+	if !ok {
-+		t.Fatal("Not able to get current working directory")
++func TestEnvironmentViewExtraArgsFails(t *testing.T) {
++	run := environmentViewRun(utils.CallerDir(t), []string{"view", "extra-arg", "--orgId", testConstants["orgId"]})
++	if _, err := utils.RunMesheryctlCommand(t, run); err == nil {
++		t.Fatalf("expected error when extra positional argument is passed, got nil")
 +	}
-+	currDir := filepath.Dir(filename)
-+	utils.SetupCustomContextEnv(t, currDir+"/testdata/token/view.yaml")
-+
-+	originalSilentFlag := utils.SilentFlag
-+	utils.SilentFlag = false
-+	t.Cleanup(func() {
-+		utils.SilentFlag = originalSilentFlag
-+	})
-+
-+	b := utils.SetupMeshkitLoggerTesting(t, false)
-+	SystemCmd.SetOut(b)
-+	SystemCmd.SetArgs([]string{"token", "view", "nonexistent-token", "-y"})
-+	err := SystemCmd.Execute()
-+	assert.Error(t, err)
-+	assert.Contains(t, err.Error(), `token "nonexistent-token" not found in config`)
-+	BreakupFunc()
-+}
-+
-+// TestTokenViewCmd_NoTokensConfigured tests that token view fails immediately without hanging
-+// when attempting to view a token and no other tokens are configured in the meshconfig.
-+func TestTokenViewCmd_NoTokensConfigured(t *testing.T) {
-+	configPath := filepath.Join(t.TempDir(), "config.yaml")
-+	sampleMeshConfig := `contexts:
-+  local:
-+    endpoint: http://localhost:9081
-+    token: default
-+current-context: local
-+tokens: []
-+`
-+	if err := os.WriteFile(configPath, []byte(sampleMeshConfig), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+	viper.Reset()
-+	originalCfgFile := utils.CfgFile
-+	originalDefaultConfigPath := utils.DefaultConfigPath
-+	utils.CfgFile = configPath
-+	utils.DefaultConfigPath = configPath
-+	t.Cleanup(func() {
-+		utils.CfgFile = originalCfgFile
-+		utils.DefaultConfigPath = originalDefaultConfigPath
-+		viper.Reset()
-+	})
-+
-+	b := utils.SetupMeshkitLoggerTesting(t, false)
-+	SystemCmd.SetOut(b)
-+	SystemCmd.SetArgs([]string{"token", "view", "any-token"})
-+	err := SystemCmd.Execute()
-+	assert.Error(t, err)
-+	assert.Contains(t, err.Error(), `token "any-token" not found in config`)
-+	BreakupFunc()
 +}
 ```
 
 ---
 
-### Incident Patch 2: `e2f1c76f` (2026-11-08)
-**Commit Message**: Merge branch 'master' into fix/token-view-empty-prompt-hang
+### Incident Patch 3: `e2a407d8` (2026-11-10)
+**Commit Message**: Merge pull request #23113 from nishant-devv/fix/policy-engine-multi-selector-relationship-validation
 
-**File**: `server/handlers/design_import.go` (modified, +8/-8)
+[Server] Validate multi-selector relationships and prevent ghost relationship bleed (#23111)
+
+**File**: `server/policies/eval_rules.go` (modified, +162/-68)
 ```diff
-@@ -6,11 +6,11 @@ import (
- 	"errors"
- 	"fmt"
- 	"io"
-+	"mime"
- 	"net/http"
- 	"net/url"
- 	"os"
- 	"path"
--	"strings"
- 	"time"
+@@ -23,43 +23,66 @@ func componentDeclarationByID(design *pattern.PatternFile, id string) *component
  
- 	"github.com/meshery/meshery/server/models"
-@@ -134,13 +134,13 @@ func stringFromPtr(p *string) string {
+ // fromComponentID returns the from component ID from a relationship definition.
+ func fromComponentID(rel *relationship.RelationshipDefinition) string {
+-	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
++	if rel == nil || rel.Selectors == nil {
+ 		return ""
+ 	}
+-	ss := (*rel.Selectors)[0]
+-	if len(ss.Allow.From) == 0 {
+-		return ""
+-	}
+-	if ss.Allow.From[0].ID == nil {
+-		return ""
++	for _, ss := range *rel.Selectors {
++		for _, item := range ss.Allow.From {
++			if item.ID != nil && item.ID.String() != "" {
++				return item.ID.String()
++			}
++		}
+ 	}
+-	return ss.Allow.From[0].ID.String()
++	return ""
  }
  
- func getFileNameFromResponse(resp *http.Response, fileURL string) string {
--	// Check Content-Disposition header
--	contentDisp := resp.Header.Get("Content-Disposition")
--	if contentDisp != "" {
--		parts := strings.Split(contentDisp, "filename=")
--		if len(parts) > 1 {
--			filename := strings.Trim(parts[1], `"`)
--			return filename
-+	// Content-Disposition can carry more than the name: other parameters, or
-+	// a filename* form next to filename (RFC 6266, section 4.3).
-+	// ParseMediaType returns the filename parameter on its own, decoding
-+	// filename* into it when present.
-+	if contentDisp := resp.Header.Get("Content-Disposition"); contentDisp != "" {
-+		if _, params, err := mime.ParseMediaType(contentDisp); err == nil && params["filename"] != "" {
-+			return params["filename"]
+ // toComponentID returns the to component ID from a relationship definition.
+ func toComponentID(rel *relationship.RelationshipDefinition) string {
+-	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
++	if rel == nil || rel.Selectors == nil {
+ 		return ""
+ 	}
+-	ss := (*rel.Selectors)[0]
+-	if len(ss.Allow.To) == 0 {
+-		return ""
+-	}
+-	if ss.Allow.To[0].ID == nil {
+-		return ""
++	for _, ss := range *rel.Selectors {
++		for _, item := range ss.Allow.To {
++			if item.ID != nil && item.ID.String() != "" {
++				return item.ID.String()
++			}
++		}
+ 	}
+-	return ss.Allow.To[0].ID.String()
++	return ""
+ }
+ 
+ // fromAndToComponentsExist checks if both from and to components still exist in the design.
++// It inspects all selectors and all referenced component IDs across From and To clauses
++// to guarantee that no dangling component references linger in multi-component or
++// multi-selector relationships.
+ func fromAndToComponentsExist(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+-	fromID := fromComponentID(rel)
+-	toID := toComponentID(rel)
+-	if fromID == "" || toID == "" {
++	if rel == nil || rel.Selectors == nil || len(*rel.Selectors) == 0 || design == nil {
+ 		return false
+ 	}
+-	return componentDeclarationByID(design, fromID) != nil &&
+-		componentDeclarationByID(design, toID) != nil
++
++	for _, ss := range *rel.Selectors {
++		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
++			return false
++		}
++		for _, fromSel := range ss.Allow.From {
++			if fromSel.ID == nil || fromSel.ID.String() == "" {
++				return false
++			}
++			if componentDeclarationByID(design, fromSel.ID.String()) == nil {
++				return false
++			}
++		}
++		for _, toSel := range ss.Allow.To {
++			if toSel.ID == nil || toSel.ID.String() == "" {
++				return false
++			}
++			if componentDeclarationByID(design, toSel.ID.String()) == nil {
++				return false
++			}
++		}
++	}
++
++	return true
+ }
+ 
+ // fromOrToComponentsDontExist returns true when one or both sides are missing.
+@@ -150,55 +173,76 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
+ 	var actions []PolicyAction
+ 
+ 	for _, ss := range *rel.Selectors {
+-		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
++		fromCount := len(ss.Allow.From)
++		toCount := len(ss.Allow.To)
++		if fromCount == 0 || toCount == 0 {
+ 			continue
  		}
- 	}
- 
-```
-
-**File**: `server/handlers/design_import_filename_test.go` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+package handlers
-+
-+import (
-+	"net/http"
-+	"testing"
-+)
-+
-+// The import names a file fetched from a URL after the filename parameter of
-+// its Content-Disposition, or after the URL path when the header has none.
-+func TestGetFileNameFromResponse(t *testing.T) {
-+	const fileURL = "https://example.com/designs/from-url.yaml"
-+
-+	for _, tc := range []struct {
-+		name, disposition, want string
-+	}{
-+		{"filename and filename*", `inline; filename="design.yaml"; filename*=UTF-8''design.yaml`, "design.yaml"},
-+		{"parameter after filename", `attachment; filename="design.yaml"; size=2048`, "design.yaml"},
-+		{"filename only", `attachment; filename="design.yaml"`, "design.yaml"},
-+		{"encoded filename*", `attachment; filename*=UTF-8''my%20design.yaml`, "my design.yaml"},
-+		{"no header", "", "from-url.yaml"},
-+		{"no filename parameter", "inline", "from-url.yaml"},
-+		{"empty filename", `attachment; filename=`, "from-url.yaml"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			resp := &http.Response{Header: http.Header{}}
-+			if tc.disposition != "" {
-+				resp.Header.Set("Content-Disposition", tc.disposition)
-+			}
-+
-+			if got := getFileNameFromResponse(resp, fileURL); got != tc.want {
-+				t.Errorf("Content-Disposition %q: file name %q, want %q", tc.disposition, got, tc.want)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `server/handlers/meshsync_handler.go` (modified, +15/-24)
-```diff
-@@ -204,33 +204,24 @@ func filterByPatternIds(query *gorm.DB, patternIDs []string) *gorm.DB {
- 	return query
- }
- 
--// filterByKey filters a GORM query to only include resources with specific key-value pairs in their metadata.
-+// filterByKey keeps the resources whose metadata carries every one of the
-+// given "key=value" pairs of the given kind (e.g. "label"). The query must
-+// already join kubernetes_resource_object_meta.
- //
--// This function performs the following steps:
--// 1. Joins the `kubernetes_resources` table with `kubernetes_resource_object_meta` to access metadata for resources.
--// 2. Joins the `kubernetes_resource_object_meta` table with `kubernetes_key_values` to access key-value pairs.
--// 3. Filters the results based on:
--//   - The `kind` of the key-value pair (e.g., "label", "annotation").
--//   - A set of key-value pairs provided in the `keyValues` slice, formatted as "key=value".
--//
--// The query ensures only matching resources are returned.
--//
--// Parameters:
--// - query: The initial GORM query to apply the filters to.
--// - kind: The kind of key-value pair to filter by (e.g., "label").
--// - keyValues: A slice of strings in the format "key=value" used to match key-value pairs.
--//
--// Returns:
--// - A filtered GORM query that includes only resources with matching key-value pairs.
-+// Each pair is its own EXISTS condition rather than a join on
-+// kubernetes_key_values: the join returned a resource once per matching pair,
-+// matched any of the pairs instead of all of them, and brought a second `kind`
-+// column into scope, which made ORDER BY kind ambiguous. Key and value are
-+// compared as one "key=value" string so a key never pairs with another
-+// label's value.
- func filterByKey(query *gorm.DB, kind string, keyValues []string) *gorm.DB {
--	if len(keyValues) == 0 {
--		return query
-+	for _, keyValue := range keyValues {
-+		query = query.Where(
-+			"EXISTS (SELECT 1 FROM kubernetes_key_values WHERE kubernetes_key_values.id = kubernetes_resource_object_meta.id AND kubernetes_key_values.kind = ? AND (kubernetes_key_values.key || '=' || kubernetes_key_values.value) = ?)",
-+			kind, keyValue,
-+		)
- 	}
--	return query.
--		// Joins("join kubernetes_resource_object_meta on kubernetes_resources.id = kubernetes_resource_object_meta.id").
--		Joins("join kubernetes_key_values on kubernetes_resource_object_meta.id = kubernetes_key_values.id").
--		// We need to use the `||` operator to concatenate the key and value, so we can compare it to the key-value pairs. and not cross match with other key value pairs
--		Where("kubernetes_key_values.kind = ? AND  (kubernetes_key_values.key || '=' || kubernetes_key_values.value) IN (?)", kind, keyValues)
-+	return query
- }
- 
- func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
-```
-
-**File**: `server/handlers/meshsync_label_filter_test.go` (added, +107/-0)
-```diff
-@@ -0,0 +1,107 @@
-+package handlers
-+
-+import (
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"net/url"
-+	"path/filepath"
-+	"sort"
-+	"testing"
-+
-+	"github.com/meshery/meshery/server/models"
-+	"github.com/meshery/meshkit/database"
-+	"github.com/meshery/meshsync/pkg/model"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// newLabelFilterFixture stores two Pods of cluster c1 that share app=web and
-+// differ in tier, the way MeshSync stores them: each label is a
-+// kubernetes_key_values row keyed by the object's metadata ID.
-+func newLabelFilterFixture(t *testing.T) (*Handler, models.Provider) {
-+	t.Helper()
-+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: filepath.Join(t.TempDir(), "meshsync.db")})
-+	require.NoError(t, err)
-+	require.NoError(t, db.AutoMigrate(&model.KubernetesResource{}, &model.KubernetesResourceObjectMeta{},
-+		&model.KubernetesKeyValue{}, &model.KubernetesResourceSpec{}, &model.KubernetesResourceStatus{}))
-+
-+	for _, pod := range []struct{ id, name, tier string }{
-+		{"pod-frontend", "web-frontend", "frontend"},
-+		{"pod-backend", "web-backend", "backend"},
-+	} {
-+		resource := model.KubernetesResource{
-+			ID: pod.id, APIVersion: "v1", Kind: "Pod", Model: "kubernetes", ClusterID: "c1",
-+			KubernetesResourceMeta: &model.KubernetesResourceObjectMeta{
-+				ID: pod.id, Name: pod.name, Namespace: "default", ClusterID: "c1",
-+				Labels: []*model.KubernetesKeyValue{
-+					{ID: pod.id, Kind: model.KindLabel, Key: "app", Value: "web"},
-+					{ID: pod.id, Kind: model.KindLabel, Key: "tier", Value: pod.tier},
-+				},
-+			},
-+		}
-+		require.NoError(t, db.Create(&resource).Error)
-+	}
-+	return &Handler{log: newTestLogger(t)}, &models.DefaultLocalProvider{GenericPersister: &db}
-+}
-+
-+// listByLabels sends GET /api/system/meshsync/resources for cluster c1 with the
-+// given labels and extra query values.
-+func listByLabels(t *testing.T, h *Handler, provider models.Provider, labels []string, extra url.Values) (*httptest.ResponseRecorder, models.MeshSyncResourcesAPIResponse) {
-+	t.Helper()
-+	q := url.Values{"clusterIds": {`["c1"]`}, "label": labels}
-+	for key, values := range extra {
-+		q[key] = values
-+	}
-+	req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources?"+q.Encode(), nil)
-+	rec := httptest.NewRecorder()
-+	h.GetMeshSyncResources(rec, req, nil, nil, provider)
-+
-+	var page models.MeshSyncResourcesAPIResponse
-+	if rec.Code == http.StatusOK {
-+		require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &page))
-+	}
-+	return rec, page
-+}
-+
-+func resourceNames(page models.MeshSyncResourcesAPIResponse) []string {
-+	names := []string{}
-+	for _, resource := range page.Resources {
-+		if resource.KubernetesResourceMeta != nil {
-+			names = append(names, resource.KubernetesResourceMeta.Name)
-+		}
-+	}
-+	sort.Strings(names)
-+	return names
-+}
-+
-+// Several labels select the resources that carry all of them, each once.
-+func TestGetMeshSyncResourcesMatchesAllLabels(t *testing.T) {
-+	h, provider := newLabelFilterFixture(t)
-+
-+	rec, page := listByLabels(t, h, provider, []string{"app=web", "tier=frontend"}, nil)
-+
-+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
-+	require.Equal(t, []string{"web-frontend"}, resourceNames(page))
-+	require.EqualValues(t, 1, page.TotalCount)
-+}
-+
-+// One label still selects every resource that carries it.
-+func TestGetMeshSyncResourcesMatchesOneLabel(t *testing.T) {
-+	h, provider := newLabelFilterFixture(t)
-+
-+	rec, page := listByLabels(t, h, provider, []string{"app=web"}, nil)
-+
-+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
-+	require.Equal(t, []string{"web-backend", "web-frontend"}, resourceNames(page))
-+	require.EqualValues(t, 2, page.TotalCount)
-+}
-+
-+// Sorting by kind, an allowed sort column, works together with a label filter.
-+func TestGetMeshSyncResourcesLabelFilterSortedByKind(t *testing.T) {
-+	h, provider := newLabelFilterFixture(t)
-+
-+	rec, page := listByLabels(t, h, provider, []string{"app=web"}, url.Values{"order": {"kind asc"}})
-+
-+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
-+	require.EqualValues(t, 2, page.TotalCount)
-+}
-```
-
-**File**: `server/models/workspace_mapping_duplicates_test.go` (added, +131/-0)
-```diff
-@@ -0,0 +1,131 @@
-+package models
-+
-+import (
-+	"encoding/json"
-+	"fmt"
-+	"testing"
-+	"time"
-+
-+	"github.com/meshery/meshkit/database"
-+	"github.com/meshery/schemas/models/core"
-+	"github.com/meshery/schemas/models/v1beta3/environment"
-+)
-+
-+func newWorkspaceMappingDB(t *testing.T) *database.Handler {
-+	t.Helper()
-+	db := newMigratedDB(t)
-+	// The system migration still builds environments from v1beta1 (#21802), so
-+	// add the v1beta3 columns the environment persister writes.
-+	if err := db.AutoMigrate(&environment.Environment{}); err != nil {
-+		t.Fatalf("migrate environments: %v", err)
-+	}
-+	return db
-+}
-+
-+// workspaceMappingKinds are the workspace assignments that map one member to a
-+// workspace per row.
-+var workspaceMappingKinds = []struct {
-+	name, table, column string
-+	assign, remove      func(*WorkspacePersister, core.Uuid, core.Uuid) ([]byte, error)
-+}{
-+	{"environment", "workspaces_environments_mappings", "environment_id", (*WorkspacePersister).AddEnvironmentToWorkspace, (*WorkspacePersister).DeleteEnvironmentFromWorkspace},
-+	{"view", "workspaces_views_mappings", "view_id", (*WorkspacePersister).AddViewToWorkspace, (*WorkspacePersister).DeleteViewFromWorkspace},
-+	{"team", "workspaces_teams_mappings", "team_id", (*WorkspacePersister).AddTeamToWorkspace, (*WorkspacePersister).DeleteTeamFromWorkspace},
-+}
-+
-+func countWorkspaceMappings(t *testing.T, db *database.Handler, table, column string, workspaceID, memberID core.Uuid) int64 {
-+	t.Helper()
-+	var n int64
-+	if err := db.Table(table).Where("workspace_id = ? AND "+column+" = ?", workspaceID, memberID).Count(&n).Error; err != nil {
-+		t.Fatalf("count %s: %v", table, err)
-+	}
-+	return n
-+}
-+
-+// Assigning a member twice keeps one mapping, and one removal unassigns it.
-+func TestWorkspaceAssignTwiceThenRemoveOnce(t *testing.T) {
-+	for _, kind := range workspaceMappingKinds {
-+		t.Run(kind.name, func(t *testing.T) {
-+			db := newWorkspaceMappingDB(t)
-+			wp := &WorkspacePersister{DB: db}
-+			workspaceID, memberID := mustUUID(t), mustUUID(t)
-+
-+			for i := 1; i <= 2; i++ {
-+				if _, err := kind.assign(wp, workspaceID, memberID); err != nil {
-+					t.Fatalf("assign #%d: %v", i, err)
-+				}
-+			}
-+			if n := countWorkspaceMappings(t, db, kind.table, kind.column, workspaceID, memberID); n != 1 {
-+				t.Fatalf("mappings after assigning twice = %d, want 1", n)
-+			}
-+
-+			if _, err := kind.remove(wp, workspaceID, memberID); err != nil {
-+				t.Fatalf("remove: %v", err)
-+			}
-+			if n := countWorkspaceMappings(t, db, kind.table, kind.column, workspaceID, memberID); n != 0 {
-+				t.Errorf("mappings after removing = %d, want 0", n)
-+			}
-+		})
-+	}
-+}
-+
-+// Duplicate mappings stored before assignments were checked all go with one
-+// removal.
-+func TestWorkspaceRemoveDeletesStoredDuplicates(t *testing.T) {
-+	for _, kind := range workspaceMappingKinds {
-+		t.Run(kind.name, func(t *testing.T) {
-+			db := newWorkspaceMappingDB(t)
-+			wp := &WorkspacePersister{DB: db}
-+			workspaceID, memberID := mustUUID(t), mustUUID(t)
-+
-+			insert := fmt.Sprintf("INSERT INTO %s (id, workspace_id, %s, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", kind.table, kind.column)
-+			for i := 1; i <= 2; i++ {
-+				if err := db.Exec(insert, mustUUID(t), workspaceID, memberID, time.Now(), time.Now()).Error; err != nil {
-+					t.Fatalf("store mapping #%d: %v", i, err)
-+				}
-+			}
-+
-+			if _, err := kind.remove(wp, workspaceID, memberID); err != nil {
-+				t.Fatalf("remove: %v", err)
-+			}
-+			if n := countWorkspaceMappings(t, db, kind.table, kind.column, workspaceID, memberID); n != 0 {
-+				t.Errorf("mappings after removing = %d, want 0", n)
-+			}
-+		})
-+	}
-+}
-+
-+// An environment assigned twice and removed once is no longer listed among
-+// the workspace's environments.
-+func TestWorkspaceEnvironmentUnlistedAfterRemoval(t *testing.T) {
-+	db := newWorkspaceMappingDB(t)
-+	wp := &WorkspacePersister{DB: db}
-+	env := &environment.Environment{Name: "dev"}
-+	if _, err := (&EnvironmentPersister{DB: db}).SaveEnvironment(env); err != nil {
-+		t.Fatalf("save environment: %v", err)
-+	}
-+	workspaceID := mustUUID(t)
-+
-+	for i := 1; i <= 2; i++ {
-+		if _, err := wp.AddEnvironmentToWorkspace(workspaceID, env.ID); err != nil {
-+			t.Fatalf("assign #%d: %v", i, err)
-+		}
-+	}
-+	if _, err := wp.DeleteEnvironmentFromWorkspace(workspaceID, env.ID); err != nil {
-+		t.Fatalf("remove: %v", err)
-+	}
-+
-+	raw, err := wp.GetWorkspaceEnvironments(workspaceID, "", "", "0", "10", "")
-+	if err != nil {
-+		t.Fatalf("list: %v", err)
-+	}
-+	var page struct {
-+		TotalCount int `json:"totalCount"`
-+	}
-+	if err := json.Unmarshal(raw, &page); err != nil {
-+		t.Fatalf("decode %s: %v", raw, err)
-+	}
-+	if page.TotalCount != 0 {
-+		t.Errorf("assigned environments after removal = %d, want 0", page.TotalCount)
-+	}
-+}
-```
-
-**File**: `server/models/workspace_persister.go` (modified, +49/-18)
-```diff
-@@ -244,12 +244,16 @@ func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID core.Uuid) ([]byte
- 	return wp.DeleteWorkspace(ws)
- }
- 
--// AddEnvironmentToWorkspace adds an environment to a workspace
-+// AddEnvironmentToWorkspace adds an environment to a workspace. Adding one the
-+// workspace already has returns the existing mapping instead of a second row.
- func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
--	// delete any existing mapping for the environment in the workspace
--	_, err := wp.DeleteEnvironmentFromWorkspace(workspaceID, environmentID)
--	if err != nil && !strings.Contains(err.Error(), "record not found") {
--		return nil, fmt.Errorf("failed to delete existing environment mapping: %w", err)
-+	var existing workspace.WorkspacesEnvironmentsMapping
-+	found := wp.DB.Where("workspace_id = ? AND environment_id = ?", workspaceID, environmentID).Limit(1).Find(&existing)
-+	if found.Error != nil {
-+		return nil, ErrDBRead(found.Error)
-+	}
-+	if found.RowsAffected > 0 {
-+		return json.Marshal(existing)
- 	}
- 
- 	wsEnvMapping := workspace.WorkspacesEnvironmentsMapping{
-@@ -371,7 +375,9 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
- 	return envsJSON, nil
- }
- 
--// DeleteEnvironmentFromWorkspace deletes an environment from a workspace
-+// DeleteEnvironmentFromWorkspace deletes an environment from a workspace.
-+// Every mapping of the pair is deleted, including duplicates stored before
-+// assignments were checked.
- func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
- 	var wsEnvMapping workspace.WorkspacesEnvironmentsMapping
- 
-@@ -383,8 +389,9 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
- 		return nil, ErrDBRead(err)
- 	}
- 
--	// Delete the environment mapping
--	if err := wp.DB.Delete(&wsEnvMapping).Error; err != nil {
-+	// Delete every mapping of the pair: rows added twice before assignments
-+	// were checked would otherwise keep the environment assigned.
-+	if err := wp.DB.Where("workspace_id = ? AND environment_id = ?", workspaceID, environmentID).Delete(&workspace.WorkspacesEnvironmentsMapping{}).Error; err != nil {
- 		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
- 	}
- 
-@@ -573,11 +580,18 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.Meshery
- 	return decoded, nil
- }
- 
-+// AddViewToWorkspace adds a view to a workspace. Adding one the workspace
-+// already has returns the existing mapping instead of a second row.
- func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
--	// delete any existing mapping for the view in the workspace
--	_, err := wp.DeleteViewFromWorkspace(workspaceID, viewID)
--	if err != nil && !strings.Contains(err.Error(), "record not found") {
--		return nil, fmt.Errorf("failed to delete existing view mapping: %w", err)
-+	// A view the workspace already has keeps its mapping; a second row would
-+	// survive DeleteViewFromWorkspace.
-+	var existing workspace.WorkspacesViewsMapping
-+	found := wp.DB.Where("workspace_id = ? AND view_id = ?", workspaceID, viewID).Limit(1).Find(&existing)
-+	if found.Error != nil {
-+		return nil, ErrDBRead(found.Error)
-+	}
-+	if found.RowsAffected > 0 {
-+		return json.Marshal(existing)
- 	}
- 
- 	wsViewMapping := workspace.WorkspacesViewsMapping{
-@@ -605,6 +619,9 @@ func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid)
- 	return wsJSON, nil
- }
- 
-+// DeleteViewFromWorkspace deletes a view from a workspace. Every mapping of
-+// the pair is deleted, including duplicates stored before assignments were
-+// checked.
- func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
- 	var wsViewMapping workspace.WorkspacesViewsMapping
- 
-@@ -615,7 +632,9 @@ func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.U
- 		return nil, ErrDBRead(err)
- 	}
- 
--	if err := wp.DB.Delete(&wsViewMapping).Error; err != nil {
-+	// Delete every mapping of the pair, including duplicates stored before
-+	// assignments were checked.
-+	if err := wp.DB.Where("workspace_id = ? AND view_id = ?", workspaceID, viewID).Delete(&workspace.WorkspacesViewsMapping{}).Error; err != nil {
- 		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
- 	}
- 
-@@ -707,11 +726,18 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
- 	return viewsJSON, nil
- }
- 
-+// AddTeamToWorkspace adds a team to a workspace. Adding one the workspace
-+// already has returns the existing mapping instead of a second row.
- func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
--	// delete any existing mapping for the team in the workspace
--	_, err := wp.DeleteTeamFromWorkspace(workspaceID, teamID)
--	if err != nil && !strings.Contains(err.Error(), "record not found") {
--		return nil, fmt.Erro
-```
-
----
-
-### Incident Patch 3: `2c47fc51` (2026-11-08)
-**Commit Message**: Merge branch 'master' into fix/token-view-empty-prompt-hang
-
-**File**: `server/handlers/component_handler.go` (modified, +40/-0)
-```diff
-@@ -789,6 +789,15 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
- 			writeMeshkitError(rw, models.ErrUnmarshal(err, "component definition"), http.StatusBadRequest)
- 			return
+-		fromSel := ss.Allow.From[0]
+-		toSel := ss.Allow.To[0]
+-		if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
+-			continue
++		pairCount := fromCount
++		if toCount < pairCount {
++			pairCount = toCount
  		}
-+		// Reject a model version that could escape the export working
-+		// directory. Registration is unauthenticated, so a hostile version
-+		// planted here would otherwise reach ExportModel (CWE-22).
-+		if c.Model != nil && (!isSafePathComponent(c.Model.Version) || !isSafePathComponent(c.Model.Model.Version)) {
-+			err := fmt.Errorf("invalid model version: must be a single path component")
-+			h.log.Error(ErrRequestBody(err))
-+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
-+			return
-+		}
- 		utils.WriteSVGsOnFileSystem(&c)
- 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
- 		helpers.HandleError(registry.RegistrantHostToV1beta1(cc.Connection), &c, err, isModelError, isRegistranError)
-@@ -1313,6 +1322,16 @@ func ociRepositoryName(modelName string) string {
- 	return sanitized
- }
+-
+-		fromID := selectorItemID(fromSel)
+-		toID := selectorItemID(toSel)
+-		fromComp := componentDeclarationByID(design, fromID)
+-		toComp := componentDeclarationByID(design, toID)
+-		if fromComp == nil || toComp == nil {
+-			continue
++		// If one side has 1 element and the other side has N elements, fan out across all N targets.
++		if fromCount == 1 || toCount == 1 {
++			pairCount = max(fromCount, toCount)
+ 		}
  
-+// isSafePathComponent reports whether s can be interpolated into a filesystem
-+// path as a single component without escaping its parent directory. An empty
-+// string is harmless (filepath.Join drops it) and is accepted.
-+func isSafePathComponent(s string) bool {
-+	if s == "" {
-+		return true
-+	}
-+	return s != "." && s != ".." && filepath.Base(s) == s
-+}
-+
- func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
- 	modelId := r.URL.Query().Get("id")
- 	name := r.URL.Query().Get("name")
-@@ -1397,6 +1416,19 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
- 		writeMeshkitError(rw, ErrExportModel(err, "model name validation"), http.StatusBadRequest)
- 		return
- 	}
-+	// The model versions are interpolated into the same paths. Apply the same
-+	// single-component check to both, so a hostile version cannot escape the
-+	// per-request temp directory either (CWE-22).
-+	if !isSafePathComponent(model.Model.Version) {
-+		err := fmt.Errorf("invalid model version %q: must be a single path component", model.Model.Version)
-+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
-+		return
-+	}
-+	if !isSafePathComponent(model.Version) {
-+		err := fmt.Errorf("invalid model version %q: must be a single path component", model.Version)
-+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
-+		return
-+	}
- 	// 2. Convert it to oci
- 	// Fixed pattern: the model name is already preserved in modelDir inside the
- 	// temp root, and embedding it here risks exceeding filesystem name limits.
-@@ -1416,6 +1448,14 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
- 	modelDir := filepath.Join(tempDir, model.Name)
- 	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
+-		mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromSel.RelationshipDefinitionSelectorsPatch, toSel.RelationshipDefinitionSelectorsPatch, fromComp, toComp)
+-		if mutatorRefs == nil || mutatedRefs == nil {
+-			continue
+-		}
+-
+-		mutatedID := toID
+-		if mutatedComp.ID == fromComp.ID {
+-			mutatedID = fromID
+-		}
++		for p := 0; p < pairCount; p++ {
++			fromIdx := p
++			if fromIdx >= fromCount {
++				fromIdx = 0
++			}
++			toIdx := p
++			if toIdx >= toCount {
++				toIdx = 0
++			}
++			fromSel := ss.Allow.From[fromIdx]
++			toSel := ss.Allow.To[toIdx]
++			if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
++				continue
++			}
  
-+	// Defense in depth: even if a version slips past the checks above, the
-+	// working directory must stay inside the per-request temp directory.
-+	if versionDir != modelDir && !strings.HasPrefix(versionDir, modelDir+string(filepath.Separator)) {
-+		err := fmt.Errorf("invalid model version: resolved path %q escapes the export directory", versionDir)
-+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
-+		return
-+	}
-+
- 	// Create necessary directories: {modelName}/v1.0.0/1.0.0/{components, relationships}
- 	dirs := []string{
- 		versionDir,
+-		count := len(mutatorRefs)
+-		if len(mutatedRefs) < count {
+-			count = len(mutatedRefs)
+-		}
++			fromID := selectorItemID(fromSel)
++			toID := selectorItemID(toSel)
++			fromComp := componentDeclarationByID(design, fromID)
++			toComp := componentDeclarationByID(design, toID)
++			if fromComp == nil || toComp == nil {
++				continue
++			}
+ 
+-		for i := 0; i < count; i++ {
+-			mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
+-			oldValue := configurationForComponentAtPath(mutatedRefs[i], mutat
 ```
 
-**File**: `server/handlers/component_handler_test.go` (modified, +140/-0)
+**File**: `server/policies/eval_rules_test.go` (added, +662/-0)
 ```diff
-@@ -4,23 +4,29 @@ import (
- 	"archive/tar"
- 	"bytes"
- 	"compress/gzip"
-+	"crypto/rand"
-+	"encoding/hex"
- 	"encoding/json"
- 	"fmt"
- 	"io"
- 	"net/http"
- 	"net/http/httptest"
- 	"net/url"
-+	"os"
- 	"path/filepath"
- 	"strings"
- 	"sync"
- 	"testing"
- 
- 	"github.com/meshery/meshkit/database"
- 	"github.com/meshery/meshkit/logger"
-+	"github.com/meshery/meshkit/models/meshmodel/entity"
- 	"github.com/meshery/meshkit/models/meshmodel/registry"
- 	"github.com/meshery/schemas/models/v1beta1/category"
- 	"github.com/meshery/schemas/models/v1beta1/connection"
- 	"github.com/meshery/schemas/models/v1beta1/model"
-+	compv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
-+	connv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- )
-@@ -66,6 +72,140 @@ func seedTestExportModel(t *testing.T, rm *registry.RegistryManager, modelName s
- 	require.NoError(t, err, "seedTestExportModel: RegisterEntity failed")
- }
- 
-+// seedTestExportModelVersion seeds a model with explicit version strings,
-+// so a traversal version can be registered for export testing.
-+func seedTestExportModelVersion(t *testing.T, rm *registry.RegistryManager, modelName, modelVersion, innerVersion string) {
-+	t.Helper()
-+	conn := connection.Connection{
-+		Name:    "test-registrant",
-+		Kind:    modelName,
-+		Type:    "platform",
-+		SubType: "orchestration",
-+		Status:  connection.ConnectionStatusConnected,
-+	}
-+	m := &model.ModelDefinition{
-+		Name:          modelName,
-+		DisplayName:   "Test Model",
-+		SchemaVersion: "models.meshery.io/v1beta1",
-+		Version:       modelVersion,
-+		Model:         model.Model{Version: innerVersion},
-+		Category:      category.CategoryDefinition{Name: "Orchestration"},
-+		Status:        model.Enabled,
-+		Metadata:      &model.ModelDefinition_Metadata{},
-+	}
-+	id, err := m.GenerateID()
-+	require.NoError(t, err)
-+	m.ID = id
-+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), m)
-+	require.NoError(t, err, "seedTestExportModelVersion: RegisterEntity failed")
-+}
-+
-+// TestExportModel_VersionTraversal verifies that a model version containing
-+// path separators cannot make the export write outside the per-request temp
-+// directory (CWE-22). The export joins model.Model.Version and model.Version
-+// into the working directory, so either field carrying ".." escapes it.
-+func TestExportModel_VersionTraversal(t *testing.T) {
-+	suffix := make([]byte, 8)
-+	_, err := rand.Read(suffix)
-+	require.NoError(t, err)
-+	probeName := "meshery-traversal-probe-" + hex.EncodeToString(suffix)
-+	probePath := filepath.Join(os.TempDir(), probeName)
-+	t.Cleanup(func() {
-+		_ = os.RemoveAll(probePath)
-+	})
-+
-+	tests := []struct {
-+		name         string
-+		modelVersion string
-+		innerVersion string
-+	}{
-+		{"model version traverses", "../../../" + probeName, "v1"},
-+		{"inner model version traverses", "v1", "../../../" + probeName},
-+		{"both versions traverse", "../../../" + probeName, "../../../" + probeName},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			rm, _ := newTestRegistryDB(t)
-+			modelName := "traversal-model"
-+			seedTestExportModelVersion(t, rm, modelName, tt.modelVersion, tt.innerVersion)
-+
-+			log, err := logger.New("component_handler_test", logger.Options{})
-+			require.NoError(t, err)
-+
-+			h := &Handler{
-+				registryManager: rm,
-+				log:             log,
-+			}
-+
-+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/meshmodels/models/export?name=%s&fileType=tar", modelName), nil)
-+			rw := httptest.NewRecorder()
-+
-+			h.ExportModel(rw, req)
-+
-+			resp := rw.Result()
-+			assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
-+			_, statErr := os.Stat(probePath)
-+			assert.True(t, os.IsNotExist(statErr), "export wrote outside the temp dir: %s exists", probePath)
-+		})
-+	}
-+}
-+
-+// TestRegisterMeshmodelComponents_VersionTraversal verifies that registration
-+// rejects a component whose model version carries a traversal string, in
-+// either the outer version or the embedded model version, so a hostile
-+// version cannot be planted through the registration endpoint.
-+func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		version      string
-+		innerVersion string
-+	}{
-+		{"outer version traverses", "../../../escaped", "v1"},
-+		{"embedded version traverses", "v1", "../../../escaped"},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			rm, _ := newTestRegistryDB(t)
-+
-+			log, err := logger.New("component_handler_test", logger.Options{})
-+			require.NoError(t, err)
-+
-+			h := &Handler{
-+				registryManager: rm,
-+				log:             log,
-+			}
-+
-+			comp := compv1beta3.ComponentDefinition{
-+				Model: &model.ModelDefinition{
-+					Name:    "traversal-model",
-+					Version: tt.version,
-+					Model:   model.Model{Version: tt.innerVersion},
-+				},
-+			}
-+			entityBytes, err := json.Marshal(comp)
-+			require.NoErr
-```
-
-**File**: `server/handlers/meshery_filter_component_test.go` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+package handlers
+@@ -0,0 +1,662 @@
++package policies
 +
 +import (
-+	"encoding/json"
-+	"os"
-+	"path/filepath"
-+	"runtime"
 +	"testing"
 +
-+	"github.com/meshery/meshkit/logger"
-+	"github.com/meshery/meshkit/models/meshmodel/registry"
-+	"github.com/meshery/schemas/models/v1beta1/connection"
-+	"github.com/meshery/schemas/models/v1beta3/component"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
++	"github.com/gofrs/uuid"
++	"github.com/meshery/schemas/models/v1beta1/component"
++	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
++	"github.com/meshery/schemas/models/v1beta1/pattern"
++	"github.com/meshery/schemas/models/v1beta2/relationship"
 +)
 +
-+// registerWASMFilterComponent registers the WASMFilter component definition
-+// shipped in the meshery-core model, so the lookup in generateFilterComponent
-+// is tested against the real definition rather than a hand-written copy.
-+func registerWASMFilterComponent(t *testing.T, rm *registry.RegistryManager) {
-+	t.Helper()
-+
-+	_, filename, _, ok := runtime.Caller(0)
-+	require.True(t, ok)
-+	path := filepath.Join(filepath.Dir(filename), "..", "..", "models", "meshery-core", "0.7.2", "v1.0.0", "components", "WASMFilter.json")
-+	content, err := os.ReadFile(path)
-+	require.NoError(t, err)
-+
-+	var comp component.ComponentDefinition
-+	require.NoError(t, json.Unmarshal(content, &comp))
-+	id, err := comp.GenerateID()
-+	require.NoError(t, err)
-+	comp.ID = id
-+
-+	conn := connection.Connection{
-+		Name:   "meshery",
-+		Kind:   "meshery",
-+		Type:   "registry",
-+		Status: connection.ConnectionStatusConnected,
-+	}
-+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), &comp)
-+	require.NoError(t, err, "registering the WASMFilter component")
-+}
-+
-+func newFilterComponentTestHandler(t *testing.T, withWASMFilter bool) *Handler {
-+	t.Helper()
-+
-+	rm, _ := newTestRegistryDB(t)
-+	if withWASMFilter {
-+		registerWASMFilterComponent(t, rm)
-+	}
-+	log, err := logger.New("meshery_filter_component_test", logger.Options{})
-+	require.NoError(t, err)
-+	return &Handler{registryManager: rm, log: log}
-+}
-+
-+// TestGenerateFilterComponentCarriesConfig guards the filter configuration a
-+// save persists: it is stored in filterResource under configuration.config, and
-+// is lost if the WASMFilter component cannot be found in the registry.
-+func TestGenerateFilterComponentCarriesConfig(t *testing.T) {
-+	h := newFilterComponentTestHandler(t, true)
-+	const config = "match: route-a\nratelimit: 100\n"
-+
-+	filterResource, err := h.generateFilterComponent(config)
-+	require.NoError(t, err)
-+	require.NotEmpty(t, filterResource, "the configuration must not be dropped")
-+
-+	var stored struct {
-+		Component struct {
-+			Kind string `json:"kind"`
-+		} `json:"component"`
-+		Configuration map[string]interface{} `json:"configuration"`
-+	}
-+	require.NoError(t, json.Unmarshal([]byte(filterResource), &stored))
-+	assert.Equal(t, "WASMFilter", stored.Component.Kind)
-+	assert.Equal(t, config, stored.Configuration["config"])
-+}
-+
-+// TestGenerateFilterComponentWithoutWASMFilter pins what happens when the
-+// registry has no WASMFilter component: a configuration must not be silently
-+// discarded, while a save without one has nothing to lose.
-+func TestGenerateFilterComponentWithoutWASMFilter(t *testing.T) {
-+	h := newFilterComponentTestHandler(t, false)
-+
-+	_, err := h.generateFilterComponent("match: route-a\n")
-+	assert.Error(t, err, "a configuration that cannot be stored must be reported")
-+
-+	filterResource, err := h.generateFilterComponent("")
-+	require.NoError(t, err)
-+	assert.Empty(t, filterResource)
-+}
-```
-
-**File**: `server/handlers/meshery_filter_handler.go` (modified, +53/-37)
-```diff
-@@ -15,7 +15,6 @@ import (
- 	"github.com/meshery/meshery/server/models/pattern/utils"
- 	"github.com/meshery/meshkit/models/events"
- 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
--	"github.com/meshery/schemas/models/v1beta1"
- 	"github.com/meshery/schemas/models/v1beta1/model"
- 	"github.com/meshery/schemas/models/v1beta3/component"
- )
-@@ -543,46 +542,63 @@ func (h *Handler) FilterFileHandler(
- 	h.PatternFileHandler(rw, r, prefObj, user, provider)
- }
- 
-+// wasmFilterModelName is the model that ships the WASMFilter component.
-+const wasmFilterModelName = "meshery-core"
-+
-+// generateFilterComponent wraps a filter's configuration in a WASMFilter
-+// component, which is what a filter save persists as its filterResource.
- func (h *Handler) generateFilterComponent(config string) (string, error) {
--	res, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
--		Name:       "WASMFilter",
--		Trim:       false,
--		APIVersion: v1beta1.ComponentSchemaVersion,
--		Version:    "v1.0.0",
--		Limit:      1,
-+	// Look the component up by kind and model. ComponentFilter matches
-+	// APIVersion against the component's own version
-+	// (core.meshery.io/v1alpha1) and Version against its model's version, so
-+	// constraining them to the component schema version never matched and
-+	// every filter configuration was silently dropped.
-+	res, _, _, err := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
-+		Name:      "WASMFilter",
-+		ModelName: wasmFilterModelName,
-+		Trim:      false,
-+		Limit:     1,
- 	})
- 
-+	var filterCompDef *component.ComponentDefinition
- 	if len(res) > 0 {
--		filterEntity := res[0]
--		filterCompDef, ok := filterEntity.(*component.ComponentDefinition)
--		if ok {
--			filterID := uuid.Must(uuid.NewV4())
--			filterSvc := component.ComponentDefinition{
--				ID:          filterID,
--				DisplayName: strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
--				Component: component.Component{
--					Kind:    filterCompDef.Component.Kind,
--					Version: filterCompDef.Component.Version,
--				},
--				Model: &model.ModelDefinition{
--					Name: filterCompDef.Model.Name,
--					Model: model.Model{
--						Version: filterCompDef.Model.Model.Version,
--					},
--				},
--				Metadata: component.ComponentDefinition_Metadata{
--					IsAnnotation: true,
--				},
--				Configuration: map[string]interface{}{
--					"config": config,
--				},
--			}
--			marshalledFilter, err := json.Marshal(filterSvc)
--			if err != nil {
--				return string(marshalledFilter), err
--			}
--			return string(marshalledFilter), nil
-+		filterCompDef, _ = res[0].(*component.ComponentDefinition)
-+	}
-+	if filterCompDef == nil {
-+		// Without the component there is nowhere to keep a configuration.
-+		// Report that rather than saving the filter without it.
-+		if config == "" {
-+			return "", nil
-+		}
-+		if err != nil {
-+			return "", err
- 		}
-+		return "", fmt.Errorf("the WASMFilter component of the %s model is not registered, so the filter configuration cannot be stored", wasmFilterModelName)
-+	}
-+
-+	filterSvc := component.ComponentDefinition{
-+		ID:          uuid.Must(uuid.NewV4()),
-+		DisplayName: strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
++func newTestComponent(name, kind string) *component.ComponentDefinition {
++	id := uuid.Must(uuid.NewV4())
++	return &component.ComponentDefinition{
++		ID:          id,
++		DisplayName: name,
 +		Component: component.Component{
-+			Kind:    filterCompDef.Component.Kind,
-+			Version: filterCompDef.Component.Version,
++			Kind: kind,
 +		},
-+		Model: &model.ModelDefinition{
-+			Name: filterCompDef.Model.Name,
-+			Model: model.Model{
-+				Version: filterCompDef.Model.Model.Version,
-+			},
-+		},
-+		Metadata: component.ComponentDefinition_Metadata{
-+			IsAnnotation: true,
++		ModelReference: modelv1beta1.ModelReference{
++			Name: "kubernetes",
 +		},
 +		Configuration: map[string]interface{}{
-+			"config": config,
++			"metadata": map[string]interface{}{
++				"name": name,
++			},
 +		},
 +	}
-+	marshalledFilter, err := json.Marshal(filterSvc)
-+	if err != nil {
-+		return string(marshalledFilter), err
- 	}
--	return "", nil
-+	return string(marshalledFilter), nil
- }
-```
-
-**File**: `server/handlers/middlewares.go` (modified, +23/-0)
-```diff
-@@ -189,6 +189,29 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
- 	return http.HandlerFunc(fn)
- }
- 
-+// RegistrationAuthMiddleware requires provider authentication for component
-+// registration only when a provider is actually in play: a provider is
-+// enforced through PROVIDER, or the request carries a selector for a remote
-+// provider. Adapters register against a local deployment with no provider
-+// selector, and in local mode there is no session to validate, so forcing
-+// ProviderAuth there would redirect every selector-free registration to
-+// /provider and break adapter registration. Requests that select Local
-+// (including the legacy None alias) pass through for the same reason: local
-+// mode has no credentials to check. The traversal itself is still blocked by
-+// the single-path-component validation in RegisterMeshmodelComponents, which
-+// runs regardless of auth.
-+func (h *Handler) RegistrationAuthMiddleware(next http.Handler) http.Handler {
-+	fn := func(w http.ResponseWriter, r *http.Request) {
-+		name, _ := resolveProviderName(r, h.config.ProviderCookieName, h.Provider)
-+		if h.Provider != "" || (name != "" && name != models.LocalProviderName) {
-+			h.AuthMiddleware(next, models.ProviderAuth).ServeHTTP(w, r)
-+			return
++}
++
++// TestFromAndToComponentsExist_MultiComponentRelationship verifies that
++// fromAndToComponentsExist checks all referenced components in a multi-component
++// relationship (such as sibling matchLabels with 3+ components), not just index 0.
++func TestFromAndToComponentsExist_MultiComponentRelationship(t *testing.T) {
++	compA := newTestComponent("pod-a", "Pod")
++	compB := newTestComponent("pod-b", "Pod")
++	compC := newTestComponent("pod-c", "Pod")
++
++	kind := "Pod"
++	rel := &relationship.RelationshipDefinition{
++		ID:               uuid.Must(uuid.NewV4()),
++		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
++		RelationshipType: "sibling",
++		SubType:          "matchlabels",
++		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
++		Selectors: &relationship.SelectorSet{
++			{
++				Allow: relationship.Selector{
++					From: []relationship.SelectorItem{
++						{ID: &compA.ID, Kind: &kind},
++						{ID: &compB.ID, Kind: &kind},
++						{ID: &compC.ID, Kind: &kind},
++					},
++					To: []relationship.SelectorItem{
++						{ID: &compA.ID, Kind: &kind},
++						{ID: &compB.ID, Kind: &kind},
++						{ID: &compC.ID, Kind: &kind},
++					},
++				},
++			},
++		},
++	}
++
++	t.Run("all components exist", func(t *testing.T) {
++		design := &pattern.PatternFile{
++			Components:    []*component.ComponentDefinition{compA, compB, compC},
++			Relationships: []*relationship.RelationshipDefinition{rel},
 +		}
-+		next.ServeHTTP(w, r)
-+	}
-+	return http.HandlerFunc(fn)
++		if !fromAndToComponentsExist(rel, design) {
++			t.Fatal("expected fromAndToComponentsExist to be true when all components exist")
++		}
++		if fromOrToComponentsDontExist(rel, design) {
++			t.Fatal("expected fromOrToComponentsDontExist to be false when all components exist")
++		}
++	})
++
++	t.Run("secondary component compC deleted", func(t *testing.T) {
++		// compC is removed from design
++		design := &pattern.PatternFile{
++			Components:    []*component.ComponentDefinition{compA, compB},
++			Relationships: []*relationship.RelationshipDefinition{rel},
++		}
++		if fromAndToComponentsExist(rel, design) {
++			t.Fatal("expected fromAndToComponentsExist to be false when secondary component compC is missing")
++		}
++		if !fromOrToComponentsDontExist(rel, design) {
++			t.Fatal("expected fromOrToComponentsDontExist to be true when secondary component compC is missing")
++		}
++	})
++
++	t.Run("secondary component compB deleted", func(t *testing.T) {
++		// compB is removed from design
++		design := &pattern.PatternFile{
++			Components:    []*component.ComponentDefinition{compA, compC},
++			Relationships: []*relationship.RelationshipDefinition{rel},
++		}
++		if fromAndToComponentsExist(rel, design) {
++			t.Fatal("expected fromAndToComponentsExist to be false when secondary component compB is missing")
++		}
++		if !fromOrToComponentsDontExist(rel, design) {
++			t.Fatal("expected fromOrToComponentsDontExist to be true when secondary component compB is missing")
++		}
++	})
 +}
 +
- func (h *Handler) validateAuth(provider models.Provider, req *http.Request) (bool, error) {
- 	err := provider.GetSession(req)
- 	if err == nil {
-```
-
-**File**: `server/handlers/middlewares_test.go` (modified, +82/-0)
-```diff
-@@ -398,3 +398,85 @@ func TestKubernetesMiddleware_NilGuards(t *testing.T) {
- 		}
- 	})
- }
++// TestValidateRelationshipsInDesign_OrphanedMultiComponentRelationship verifies
++// that validateRelationshipsInDesign marks a multi-component relationship as deleted
++// when any of its constituent components are removed from the design.
++func TestValidateRelationshipsInDesign_OrphanedMultiComponentRelationship(t *testing.T) {
++	compA := newTestComponent("deploy-a", "Deployment")
++	compB := newTestComponent("deploy-b", "Deployment")
++	compC := newTestComponent("deploy-c", "Deployment")
 +
-+// TestRegistrationAuthMiddleware pins the auth boundary for component
-+// registration: selector-free posts on a PROVIDER-unset deployment must reach
-+// the handler (adapters register with no provider selector and local mode has
-+// no session to validate), while a remote selector or an enforced provider
-+// must go through ProviderAuth instead of reaching the handler.
-+func TestRegistrationAuthMiddleware(t *testing.T) {
-+	local := &models.DefaultLocalProvider{}
-+	local.Initialize()
-+	providers := map[string]models.Provider{local.Name(): local}
-+
-+	tests := []struct {
-+		name             string
-+		providerOverride string
-+		setup            func(*http.Request)
-+		wantReached      bool
-+	}{
-+		{
-+			name:        "no selector, no enforced provider reaches handler",
-+			wantReached: true,
-+		},
-+		{
-+			name: "Local cookie reaches handler",
-+			setup: func(r *http.Request) {
-+				r.AddCookie(&http.Cookie{Name: "meshery-provider", Value: "Local"})
++	kind := "Deployment"
++	rel := &relationship.RelationshipDefinition{
++		ID:               uuid.Must(uuid.NewV4()),
++		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
++		RelationshipType: "sibling",
++		SubType:          "matchlabels",
++		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
++		Selectors: &relationship.SelectorSet{
++			{
++				Allow: relationship.Selector{
++					From: []relationship.SelectorItem{
++						{ID: &compA.ID, Kind: &kind},
++						{ID: &compB.ID, Kind: &kind},
++						{ID: &compC.ID, Kind: &kind},
++					},
++					To: []relationship.SelectorItem{
++						{ID: &compA.ID, Kind: &kind},
++						{ID: &compB.ID, Kind: &kind},
++						{ID: &compC.ID, Kind: &kind},
++					},
++				},
 +			},
-+			wantReached: true,
-+		},
-+		{
-+			name: "legacy None cookie reaches handler",
-+			setup: func(r *http.Request) {
-+				r.AddCookie(&http.Cookie{Name: "meshery-provider", Value: "None"})
-+			},
-+			wantReached: true,
-+		},
-+		{
-+			name: "remote selector requires auth and does not reach handler",
-+			setup: func(r *http.Request) {
-+				r.AddCookie(&http.Cookie{Name: "meshery-provider", Value: "Meshery"})
-+			},
-+			wantReached: false,
-+		},
-+		{
-+			name: "remote provider query param requires auth and does not reach handler",
-+			setup: func(r *http.Request) {
-+				r.URL.RawQuery = "provider=Meshery"
-+			},
-+			wantReached: false,
-+		},
-+		{
-+			name:             "enforced provider requires auth and does not reach handler",
-+			providerOverride: "Meshery",
-+			wantReached:      false,
 +		},
 +	}
 +
-+	for _, tc := range tests {
-+		tc := tc
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			h := newTestHandler(t, providers, tc.providerOverride)
-+			reached := false
-+			inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				reached = true
-+				w.WriteHeader(http.StatusOK)
-+			})
-+			chain := h.ProviderMiddleware(h.RegistrationAuthMiddleware(inner))
-+			req := httptest.NewRequest(http.MethodPost, "/api/meshmodel/components/register", nil)
-+			if tc.setup != nil {
-+				tc.setup(req)
-+			}
-+			rec := httptest.NewRecorder()
-+			chain.ServeHTTP(rec, req)
-+			if reached != tc.wantReached {
-+				t.Fatalf("reached = %v, want %v (status %d, location %q)", reached, tc.wantReached, rec.Result().StatusCode, rec.Header().Get("Location"))
-+			}
-+			if tc.wantReached && rec.Result().StatusCode != http.StatusOK {
-+				t.Fatalf("expected 200 when handler is reached, got %d", rec.Result().StatusCode)
-+			}
-+		})
-+	}
-+}
++	// compC was deleted from the canvas/design
++	des
 ```
 
-**File**: `server/models/handlers.go` (modified, +6/-0)
+**File**: `server/policies/policy_alias.go` (modified, +79/-64)
 ```diff
-@@ -20,6 +20,12 @@ type HandlerInterface interface {
- 	//2. For adapter and other components of Meshery, they register/use endpoints without any provider authentication. Although we can have a different type of authentication built for
- 	//such external systems trying to communicate without provider authentication. So for different endpoints, different authentication mechanisms other than provider can be used.
- 	AuthMiddleware(http.Handler, AuthenticationMechanism) http.Handler
-+	// RegistrationAuthMiddleware requires provider authentication for
-+	// component registration only when a provider is enforced or a remote
-+	// provider is selected. Adapters register without a provider selector
-+	// on local deployments, so those requests pass through unauthenticated,
-+	// matching the pre-existing behaviour the NoAuth registration routes had.
-+	RegistrationAuthMiddleware(http.Handler) http.Handler
- 	KubernetesMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
- 	K8sFSMMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
- 	SessionInjectorMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) http.Handler
-```
-
-**File**: `server/router/server.go` (modified, +3/-3)
-```diff
-@@ -262,8 +262,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
+@@ -77,27 +77,33 @@ func isAliasRelationshipValid(rel *relationship.RelationshipDefinition, design *
+ 		return false
  	}
  
- 	handleRegistry("/validate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ValidationHandler), models.NoAuth)), "POST")
--	handleRegistry("/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.NoAuth)), "POST") //This should also be left with NoAuth
--	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware((http.HandlerFunc(h.RegisterMeshmodelComponents)))).Methods("POST") //For backwards compatibility with previous registrants
-+	handleRegistry("/components", h.ProviderMiddleware(h.RegistrationAuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents))), "POST")
-+	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware(h.RegistrationAuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents)))).Methods("POST") //For backwards compatibility with previous registrants
- 	handleRegistry("/{entityType}/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEntityStatus), models.NoAuth)), "POST")
- 	handleRegistry("/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponents), models.NoAuth)), "GET")
+-	ref := aliasRefFromRelationship(rel)
+-	if ref == nil {
++	refs := aliasRefsFromRelationship(rel)
++	if len(refs) == 0 {
+ 		return false
+ 	}
+ 	config := getComponentConfiguration(toComp, design)
+-	return objectGetNested(config, popFirst(ref), nil) != nil
++	for _, ref := range refs {
++		if objectGetNested(config, popFirst(ref), nil) == nil {
++			return false
++		}
++	}
++	return true
+ }
  
-@@ -311,7 +311,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
- 	// form above uses the corrected /policies/{name} shape.
- 	gMux.Handle("/api/meshmodels/models/{model}/policies{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPoliciesByName), models.NoAuth))).Methods("GET")
+-// aliasRefFromRelationship extracts the mutatorRef path from an alias relationship.
+-func aliasRefFromRelationship(rel *relationship.RelationshipDefinition) []string {
++// aliasRefsFromRelationship extracts the mutatorRef paths from an alias relationship.
++func aliasRefsFromRelationship(rel *relationship.RelationshipDefinition) [][]string {
+ 	if rel.Selectors == nil {
+ 		return nil
+ 	}
++	var refs [][]string
+ 	for _, ss := range *rel.Selectors {
+ 		for _, fromSel := range ss.Allow.From {
+-			if fromSel.RelationshipDefinitionSelectorsPatch != nil && fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef != nil && len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) > 0 {
+-				return (*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef)[0]
++			if fromSel.RelationshipDefinitionSelectorsPatch != nil && fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef != nil {
++				refs = append(refs, *fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef...)
+ 			}
+ 		}
+ 	}
+-	return nil
++	return refs
+ }
  
--	handleRegistry("/export", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ExportModel), models.NoAuth)), "GET")
-+	handleRegistry("/export", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ExportModel), models.ProviderAuth)), "GET")
+ // identifyAliasRelationships identifies alias relationships for a component.
+@@ -113,41 +119,42 @@ func identifyAliasRelationships(comp *component.ComponentDefinition, relDef *rel
+ 				if fromSel.RelationshipDefinitionSelectorsPatch == nil || fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef == nil || len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) == 0 {
+ 					continue
+ 				}
+-				ref := (*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef)[0]
+-				paths := getArrayAwareConfigPaths(ref, comp, design)
+-
+-				for _, path := range paths {
+-					mutatorRef := relationship.MutatorRef{path}
+-					mutatedRef := relationship.MutatedRef{path}
+-					selectorPatch := relationship.RelationshipDefinitionSelectorsPatch{
+-						MutatorRef: &mutatorRef,
+-						MutatedRef: &mutatedRef,
+-					}
+-
+-					compID := staticUUID(map[string]interface{}{"c": comp.ID.String(), "s": path})
+-
+-					newFromSel := fromSel
+-					newFromSel.ID = &compID
+-					newFromSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
+-
+-					newToSel := toSel
+-					newToSel.ID = &comp.ID
+-					newToSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
+-
+-					selectorSetItem := relationship.SelectorSetItem{
+-						Allow: relationship.Selector{
+-							From: []relationship.SelectorItem{newFromSel},
+-							To:   []relationship.SelectorItem{newToSel},
+-						},
++				for _, ref := range *fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef {
++					paths := getArrayAwareConfigPaths(ref, comp, design)
++
++					for _, path := range paths {
++						mutatorRef := relationship.MutatorRef{path}
++						mutatedRef := relationship.MutatedRef{path}
++						selectorPatch := relationship.RelationshipDefinitionSelectorsPatch{
++							MutatorRef: &mutatorRef,
++							MutatedRef: &mutatedRef,
++						}
++
++						compID := staticUUID(map[string]interface{}{"c": comp.ID.String(), "s": path})
++
++						newFromSel := fromSel
++						newFromSel.ID = &compID
++						newFromSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
++
++						newToSel := toSel
++						newToSel.ID = &comp.ID
++						newToSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
++
++						selectorSetItem := relationship.SelectorSetItem{
++							Allow: relationship.Selector{
++								From: []relationship.SelectorItem{newFromSel},
++								To:   []relationship.SelectorItem{newToSel},
++							},
++						}
++
++						decl := deepCopyRelDef(relDef)
++						selectors := relationship.SelectorSet{selectorSetItem}
++						decl.Selectors = &selectors
++						decl.ID = staticUUID(selectorSetItem)
++						setRelStatus(decl, StatusIdentified)
++
++						identified = append(identified, decl)
+ 					}
+-
+-					decl := deepCopyRelDef(relDef)
+-					selectors := relationship.SelectorSet{selectorSetItem}
+-					decl.Selectors = &selectors
+-					decl.ID = staticUUID(selectorSetItem)
+-					setRelStatus(decl, StatusIdentified)
+-
+-					identified = append(identified, decl)
+ 				}
+ 			}
+ 		}
+@@ -190,15 +197,22 @@ func getArrayAwareConfigPaths(ref []string, comp *component.ComponentDefinition,
  
- 	gMux.Handle("/api/filter/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.FilterFileHandler)), models.ProviderAuth))).
- 		Methods("POST", "DELETE")
+ // aliasRelationshipAlreadyExists checks for duplicate alias relationships.
+ func aliasRelationshipAlreadyExists(design *pattern.PatternFile, rel *relationship.RelationshipDefinition) bool {
++	if rel.Selectors == nil {
++		return false
++	}
+ 	for _, existing := range design.Relationships {
+-		if getRelStatus(existing) == StatusDeleted || !isAliasRelationship(existing) {
++		if getRelStatus(existing) == StatusDeleted 
+```
+
+**File**: `server/policies/policy_binding.go` (modified, +88/-65)
+```diff
+@@ -56,20 +56,18 @@ func patchBindingMatchFields(rel *relationship.RelationshipDefinition, design *p
+ 
+ 	for _, ss := range *rel.Selectors {
+ 		for _, selArr := range [][]relationship.SelectorItem{ss.Allow.From, ss.Allow.To} {
+-			if len(selArr) == 0 {
+-				continue
+-			}
+-			sel := selArr[0]
+-			if sel.Match == nil {
+-				continue
+-			}
+-			compID := selectorItemID(sel)
+-			comp := componentDeclarationByID(design, compID)
+-			if comp == nil {
+-				continue
+-			}
++			for _, sel := range selArr {
++				if sel.Match == nil {
++					continue
++				}
++				compID := selectorItemID(sel)
++				comp := componentDeclarationByID(design, compID)
++				if comp == nil {
++					continue
++				}
+ 
+-			actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design, reverse)...)
++				actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design, reverse)...)
++			}
+ 		}
+ 	}
+ 	return actions
+@@ -90,53 +88,66 @@ func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, _ *co
+ 		{match.To, match.From},
+ 	}
+ 	for _, ms := range sides {
+-		if ms.self == nil || len(*ms.self) == 0 {
+-			continue
+-		}
+-		mSel := (*ms.self)[0]
+-		if mSel.MutatorRef == nil {
++		if ms.self == nil || ms.other == nil || len(*ms.self) == 0 || len(*ms.other) == 0 {
+ 			continue
+ 		}
+-		matchComp := findMatchSelectorComponent(mSel, design)
+-		if matchComp == nil {
+-			continue
++		selfLen := len(*ms.self)
++		otherLen := len(*ms.other)
++		pairCount := max(selfLen, otherLen)
++		if selfLen > 1 && otherLen > 1 {
++			pairCount = min(selfLen, otherLen)
+ 		}
++		for p := 0; p < pairCount; p++ {
++			selfIdx := p
++			if selfIdx >= selfLen {
++				selfIdx = 0
++			}
++			otherIdx := p
++			if otherIdx >= otherLen {
++				otherIdx = 0
++			}
++			mSel := (*ms.self)[selfIdx]
++			if mSel.MutatorRef == nil {
++				continue
++			}
++			matchComp := findMatchSelectorComponent(mSel, design)
++			if matchComp == nil {
++				continue
++			}
+ 
+-		if ms.other == nil || len(*ms.other) == 0 {
+-			continue
+-		}
+-		otherSel := (*ms.other)[0]
+-		if otherSel.MutatedRef == nil {
+-			continue
+-		}
+-		otherComp := findMatchSelectorComponent(otherSel, design)
+-		if otherComp == nil {
+-			continue
+-		}
++			otherSel := (*ms.other)[otherIdx]
++			if otherSel.MutatedRef == nil {
++				continue
++			}
++			otherComp := findMatchSelectorComponent(otherSel, design)
++			if otherComp == nil {
++				continue
++			}
+ 
+-		count := min(len(*mSel.MutatorRef), len(*otherSel.MutatedRef))
++			count := min(len(*mSel.MutatorRef), len(*otherSel.MutatedRef))
+ 
+-		for i := range count {
+-			mutatorPath := (*mSel.MutatorRef)[i]
+-			mutatedPath := (*otherSel.MutatedRef)[i]
++			for i := range count {
++				mutatorPath := (*mSel.MutatorRef)[i]
++				mutatedPath := (*otherSel.MutatedRef)[i]
+ 
+-			mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
+-			oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
++				mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
++				oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
+ 
+-			if mutatorValue == nil {
+-				continue
+-			}
+-			if reverse {
+-				if !deepEqual(mutatorValue, oldValue) {
++				if mutatorValue == nil {
+ 					continue
+ 				}
+-				actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
+-				continue
+-			}
+-			if deepEqual(mutatorValue, oldValue) {
+-				continue
++				if reverse {
++					if !deepEqual(mutatorValue, oldValue) {
++						continue
++					}
++					actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
++					continue
++				}
++				if deepEqual(mutatorValue, oldValue) {
++					continue
++				}
++				actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
+ 			}
+-			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
+ 		}
+ 	}
+ 	return actions
+@@ -318,11 +329,15 @@ func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, m
+ 	}
+ 	fromUUID, _ := uuidFromString(matchFromID)
+ 	toUUID, _ := uuidFromString(matchToID)
+-	if sel.Match.From != nil && len(*sel.Match.From) > 0 {
+-		(*sel.Match.From)[0].ID = &fromUUID
++	if sel.Match.From != nil {
++		for i := range *sel.Match.From {
++			(*sel.Match.From)[i].ID = &fromUUID
++		}
+ 	}
+-	if sel.Match.To != nil && len(*sel.Match.To) > 0 {
+-		(*sel.Match.To)[0].ID = &toUUID
++	if sel.Match.To != nil {
++		for i := range *sel.Match.To {
++			(*sel.Match.To)[i].ID = &toUUID
++		}
+ 	}
+ }
+ 
+@@ -357,29 +372,37 @@ func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relati
+ 
+ // extractMutatorFromMatch finds the mutator component and ref paths from a match field.
+ func extractMutatorFromMatch(match *relationship.MatchSelector, comp1, comp2 *component.ComponentDefinition) (*component.ComponentDefinition, [][]string) {
+-	if match.From
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23045** (2026-11-08): [Server] Parse Content-Disposition when naming a design imported from a URL (@BarbieRajput)
-- **PR #23043** (2026-11-08): [Server] Stop repeated workspace assignments from surviving removal (@BarbieRajput)
-- **PR #23041** (2026-11-08): [Server] Match every label in MeshSync resource filters (@BarbieRajput)
-- **PR #23040** (2026-11-08): [Server][UI] Store and show filter configuration (@Asheesh7298)
-- **PR #23037** (2026-11-08): Introduction - Lekha (@lekha-saradhi)
-- **PR #23036** (2026-11-08): [mesheryctl] Prevent hang on empty token view prompt and respect --yes flag (@nishant-devv)
+- **PR #23121** (2026-11-10): [mesheryctl] Enforce exact argument validation in workspace create (@madhavzanwar)
+- **PR #23117** (2026-11-10): [mesheryctl] Enforce exact argument validation in environment view (@madhavzanwar)
+- **PR #23115** (2026-11-10): [Server] Validate credential ID path parameter in GetUserCredentialByID (@Supersaiyan101)
+- **PR #23113** (2026-11-10): [Server] Validate multi-selector relationships and prevent ghost relationship bleed (#23111) (@nishant-devv)
+- **PR #23109** (2026-11-10): [UI] Honor hideError in widget error indicators (@dropps07)
+- **PR #23105** (2026-11-09): [mesheryctl] Enforce exact argument validation in environment list (@ayushbuilds-code)
 
 ---
 
@@ -2029,24 +1570,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #23036 from nishant-devv/fix/token-view-empty-prompt-hang
+## X. Merge pull request #23121 from madhavzanwar/fix/workspace-create-args
 
 **RULE**:
-When implementing operations in `mesheryctl/internal/cli/root/system/token.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mesheryctl/internal/cli/root/workspaces/create.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4d7f8a5`: Merge pull request #23036 from nishant-devv/fix/token-view-empty-prompt-hang. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c78aabb`: Merge pull request #23121 from madhavzanwar/fix/workspace-create-args. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/system/token.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/workspaces/create.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if len(tokenNames) == 0 || utils.SilentFlag {
-			return fmt.Errorf("token %q not found in config", tokenName)
-		}
+var createUsageMsg = "Usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl workspace create --help' to see detailed help message"
 
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg))
+		}
+		return nil
+	},
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2056,4 +1601,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4d7f8a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c78aabb` are properly handled with clean fallback behavior.
